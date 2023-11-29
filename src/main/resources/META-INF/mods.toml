@@ -6,21 +6,22 @@ loaderVersion="[3,)" # Require at least 3.x
 license='LGPL'
 
 [[mods]]
-modId="examplemod"
+modId="breadmod"
 version="${file.jarVersion}"
-displayName="ExampleMod"
+displayName="The Bread Mod"
+logoFile="logo.png"
 credits="The ExampleMod dev team"
 authors="ExampleModAuthor"
 description='''
 Example mod that uses Kotlin for Forge.
 '''
-[[dependencies.examplemod]]
+[[dependencies.breadmod]]
     modId="forge"
     mandatory=true
     versionRange="[41,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.examplemod]]
+[[dependencies.breadmod]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.19,1.20)"

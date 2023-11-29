@@ -1,21 +1,23 @@
 plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
     // Adds the Kotlin Gradle plugin
-    id 'org.jetbrains.kotlin.jvm' version '1.8.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.20'
     // OPTIONAL Kotlin Serialization plugin
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
+
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 version = '1.0.0'
-group = 'example.examplemod'
-archivesBaseName = 'examplemod'
+group = 'example.breadmod'
+archivesBaseName = 'breadmod'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println ("Java: ${System.getProperty('java.version')}, JVM: ${System.getProperty('java.vm.version')} (${System.getProperty('java.vendor')}), Arch: ${System.getProperty('os.arch')}")
 minecraft {
     // Change to your preferred mappings
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
     // Add your AccessTransformer
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -25,10 +27,10 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'breadmod'
 
             mods {
-                examplemod {
+                breadmod {
                     source sourceSets.main
                 }
             }
@@ -39,10 +41,10 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'breadmod'
 
             mods {
-                examplemod {
+                breadmod {
                     source sourceSets.main
                 }
             }
@@ -53,10 +55,10 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
+            property 'forge.enabledGameTestNamespaces', 'breadmod'
 
             mods {
-                examplemod {
+                breadmod {
                     source sourceSets.main
                 }
             }
@@ -68,10 +70,10 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
+            args '--mod', 'breadmod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
 
             mods {
-                examplemod {
+                breadmod {
                     source sourceSets.main
                 }
             }
@@ -88,11 +90,12 @@ repositories {
         url = 'https://thedarkcolour.github.io/KotlinForForge/'
         content { includeGroup "thedarkcolour" }
     }
+
 }
 
 dependencies {
     // Use the latest version of Minecraft Forge
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.3'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.3.0'
 
     implementation 'thedarkcolour:kotlinforforge:3.12.0'
 }
@@ -104,7 +107,7 @@ compileKotlin {
 jar {
     manifest {
         attributes([
-                'Specification-Title': "examplemod",
+                'Specification-Title': "breadmod",
                 'Specification-Vendor': "examplemodsareus",
                 'Specification-Version': "1", // We are version 1 of ourselves
                 'Implementation-Title': project.name,
