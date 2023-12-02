@@ -1,0 +1,11 @@
+{
+  "test_sound": {
+    "sounds": [
+      {
+        "name": "breadmod:test_sound",
+        "stream": true
+      }
+    ],
+    "subtitle": "gaynerd"
+  }
+}

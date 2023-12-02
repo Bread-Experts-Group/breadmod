@@ -1,9 +1,8 @@
 package breadmod
 
 import breadmod.BreadMod.LOGGER
-import breadmod.datagen.BlockModels
-import breadmod.datagen.ItemModels
-import breadmod.datagen.Recipes
+import breadmod.datagen.provider.*
+import breadmod.datagen.provider.lang.USEnglishLanguageProvider
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber

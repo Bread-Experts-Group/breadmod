@@ -26,6 +26,7 @@ import thedarkcolour.kotlinforforge.forge.runForDist
 @Mod(BreadMod.ID)
 object BreadMod {
     const val ID = "breadmod"
+    val resourceLocation = ResourceLocation(ID)
 
     // the logger for our mod
     val LOGGER: Logger = LogManager.getLogger(ID)
