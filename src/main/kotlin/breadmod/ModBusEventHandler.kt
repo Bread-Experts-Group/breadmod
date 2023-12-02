@@ -13,24 +13,23 @@ object ModBusEventHandler {
     @SubscribeEvent
     fun gatherData(event: GatherDataEvent) {
         event.generator.let {
-            event.includeClient().let { clientIncluded ->
+            if(event.includeClient()) {
                 LOGGER.debug("Data generation: client")
-//                it.addProvider(clientIncluded, BlockStates(it, event.existingFileHelper))
-                it.addProvider(clientIncluded, ItemModels(it, event.existingFileHelper))
-                it.addProvider(clientIncluded, BlockModels(it, event.existingFileHelper))
-//                it.addProvider(clientIncluded, LanguageProvider(it, "en_us"))
+                it.addProvider(true, ItemModels(it, event.existingFileHelper))
+                it.addProvider(true, BlockModels(it, event.existingFileHelper))
+                it.addProvider(true, BlockStates(it, event.existingFileHelper))
+                it.addProvider(true, Sounds(it, event.existingFileHelper))
+                it.addProvider(true, USEnglishLanguageProvider(it))
                 LOGGER.debug("Data generation: client (finished)")
             }
 
-            event.includeClient().let { serverIncluded ->
+            if(event.includeServer()) {
                 LOGGER.debug("Data generation: server")
-//                val blockTags = BlockTags(it, event.existingFileHelper)
-//                it.addProvider(serverIncluded, blockTags)
-                it.addProvider(serverIncluded, Recipes(it))
-//                it.addProvider(serverIncluded, ItemTags(it, blockTags, event.existingFileHelper))
+                it.addProvider(true, Recipes(it))
                 LOGGER.debug("Data generation: server (finished)")
             }
         }
+
         LOGGER.debug("Data generation finished")
     }
 }

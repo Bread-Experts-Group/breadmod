@@ -11,7 +11,7 @@ class BlockModels (
     fileHelper: ExistingFileHelper,
 ) : BlockModelProvider(generator, BreadMod.ID, fileHelper) {
     override fun registerModels() {
-        cubeAll("breadmod:bread_block", modLoc("block/bread_block"))
+        //cubeAll("breadmod:bread_block", modLoc("block/bread_block"))
     }
 
 

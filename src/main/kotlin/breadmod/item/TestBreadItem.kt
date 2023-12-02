@@ -13,6 +13,8 @@ import net.minecraft.world.level.Level
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).tab(BreadModCreativeTab)) {
     override fun use(pLevel: Level, pPlayer: Player, pHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (pHand == InteractionHand.MAIN_HAND) {
+            pPlayer.playSound(ModSounds.TEST_SOUND, 100.0f, 2.0f)
+
 //            pLevel.explode(pPlayer, pPlayer.x, pPlayer.y, pPlayer.z, 10f, false, Explosion.BlockInteraction.BREAK)
 //            val vec3 = pPlayer.getViewVector(1.0f).normalize()
 //            pPlayer.sendSystemMessage(Component.literal("$vec3"))
@@ -36,7 +38,7 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
 
             // running the client ^^ aim for the sky and see what happens
 
-            TODO("unimplemented")
+            //TODO("unimplemented")
  */
         }
         return super.use(pLevel, pPlayer, pHand)

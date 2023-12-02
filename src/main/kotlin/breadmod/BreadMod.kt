@@ -1,11 +1,13 @@
 package breadmod
 
 import breadmod.block.ModBlocks
+import breadmod.datagen.provider.BlockModels
+import breadmod.datagen.provider.ItemModels
+import breadmod.datagen.provider.ModSounds
+import breadmod.datagen.provider.Recipes
+import breadmod.datagen.provider.lang.USEnglishLanguageProvider
 import breadmod.item.ModItems
 import net.minecraft.client.Minecraft
-import net.minecraft.network.chat.Component
-import net.minecraft.world.item.CreativeModeTab
-import net.minecraft.world.item.ItemStack
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent
@@ -14,15 +16,10 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import thedarkcolour.kotlinforforge.forge.runForDist
+import net.minecraft.resources.ResourceLocation
+import net.minecraftforge.data.event.GatherDataEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
 
-
-/**
- * Main mod class. Should be an `object` declaration annotated with `@Mod`.
- * The modid should be declared in this object and should match the modId entry
- * in mods.toml.
- *
- * An example for blocks is in the `blocks` package of this mod.
- */
 @Mod(BreadMod.ID)
 object BreadMod {
     const val ID = "breadmod"
@@ -36,10 +33,11 @@ object BreadMod {
         LOGGER.log(Level.INFO, "Hello world!")
 
         // Register the KDeferredRegister to the mod-specific event bus
+        ModSounds.REGISTRY.register(MOD_BUS)
         ModBlocks.REGISTRY.register(MOD_BUS)
         ModItems.REGISTRY.register(MOD_BUS)
 
-        val obj = runForDist(
+        runForDist(
             clientTarget = {
                 MOD_BUS.addListener(BreadMod::onClientSetup)
                 Minecraft.getInstance()
@@ -47,9 +45,8 @@ object BreadMod {
             serverTarget = {
                 MOD_BUS.addListener(BreadMod::onServerSetup)
                 "test"
-            })
-
-        println(obj)
+            }
+        )
     }
 
     /**
