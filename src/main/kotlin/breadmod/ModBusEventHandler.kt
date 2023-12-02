@@ -18,7 +18,7 @@ object ModBusEventHandler {
                 it.addProvider(true, ItemModels(it, event.existingFileHelper))
                 it.addProvider(true, BlockModels(it, event.existingFileHelper))
                 it.addProvider(true, BlockStates(it, event.existingFileHelper))
-                it.addProvider(true, Sounds(it, event.existingFileHelper))
+                it.addProvider(true, ModSounds.Generator(it, event.existingFileHelper))
                 it.addProvider(true, USEnglishLanguageProvider(it))
                 LOGGER.debug("Data generation: client (finished)")
             }
