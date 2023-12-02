@@ -1,2 +1,5 @@
-# Kotlin Modding Skeleton
-Provides an example mod written in Kotlin using Kotlin for Forge.
+# The Bread Mod
+No description as of yet.
+
+Made using the Kotlin Modding Skeleton
+https://github.com/thedarkcolour/KotlinModdingSkeleton/tree/1.19.x
