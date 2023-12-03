@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation
 @JeiPlugin
 @Suppress("UNUSED")
 class JEIPlugin : IModPlugin {
-    override fun getPluginUid(): ResourceLocation = BreadMod.resourceLocation // debug
+    override fun getPluginUid(): ResourceLocation = BreadMod.resource("jei_plugin") // debug
     override fun registerRecipes(registration: IRecipeRegistration) {
         registration.addItemStackInfo(BREAD_BLOCK_ITEM.defaultInstance, Component.literal("THE BREAD BLOCK IS REAL"))
     }

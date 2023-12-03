@@ -11,40 +11,37 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import thedarkcolour.kotlinforforge.forge.registerObject
 
+val DEFAULT_ITEM_PROPERTIES: Item.Properties = Item.Properties().tab(BreadModCreativeTab)
+
 @Suppress("UNUSED", "SpellCheckingInspection")
 object ModItems {
     val REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, BreadMod.ID)
 
+    // Items
+    val TEST_BREAD by REGISTRY.registerObject("test_bread") { TestBreadItem() }
+
     // Blocks
     val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {
-        BlockItem(ModBlocks.BREAD_BLOCK, Item.Properties().stacksTo(64).tab(BreadModCreativeTab)) }
-    val TEST_BREAD by REGISTRY.registerObject("test_bread") {
-        TestBreadItem() }
+        BlockItem(ModBlocks.BREAD_BLOCK, DEFAULT_ITEM_PROPERTIES) }
 
     // Armors
     val BREAD_HELMET by REGISTRY.registerObject("bread_helmet") {
-        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.HEAD, Item.Properties().tab(BreadModCreativeTab)) }
+        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.HEAD, DEFAULT_ITEM_PROPERTIES) }
     val BREAD_CHESTPLATE by REGISTRY.registerObject("bread_chestplate") {
-    ArmorItem(ArmorTiers.BREAD, EquipmentSlot.CHEST, Item.Properties().tab(BreadModCreativeTab)) }
+    ArmorItem(ArmorTiers.BREAD, EquipmentSlot.CHEST, DEFAULT_ITEM_PROPERTIES) }
     val BREAD_LEGGINGS by REGISTRY.registerObject("bread_leggings") {
-        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.LEGS, Item.Properties().tab(BreadModCreativeTab)) }
+        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.LEGS, DEFAULT_ITEM_PROPERTIES) }
     val BREAD_BOOTS by REGISTRY.registerObject("bread_boots") {
-        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.FEET, Item.Properties().tab(BreadModCreativeTab)) }
+        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.FEET, DEFAULT_ITEM_PROPERTIES) }
 
-    val TEST_SHIELD by REGISTRY.registerObject("test_shield") {
-        TestShieldItem() }
+    val TEST_SHIELD by REGISTRY.registerObject("test_shield") { TestShieldItem() }
 
     // Music Discs
-    val TEST_DISC by REGISTRY.registerObject("music_disc_test") { // pAnalogOutput is the comparator value the disc outputs
-        RecordItem(1, ModSounds.TEST_SOUND, Item.Properties()
+    val TEST_DISC by REGISTRY.registerObject("music_disc_test") {
+        RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()
             .stacksTo(1)
             .tab(BreadModCreativeTab)
             .rarity(Rarity.RARE),
             7900)
     }
-
 }
-
-
-
-// NIGHTMARE NIGHTMARE NIGHTMARE NIGHTMARE NIGHTMARE NIGHTMARE NIGHTMARE NIGHTMARE NIGHTMARE NIGHTMARE

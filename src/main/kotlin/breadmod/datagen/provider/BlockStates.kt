@@ -11,7 +11,7 @@ class BlockStates(
     generator: DataGenerator,
     fileHelper: ExistingFileHelper,
 ) : BlockStateProvider(generator, BreadMod.ID, fileHelper) {
-    protected fun simpleBlockAndItem(block: Block) = cubeAll(block).let {
+    private fun simpleBlockAndItem(block: Block) = cubeAll(block).let {
         simpleBlock(block, it)
         simpleBlockItem(block, it)
     }

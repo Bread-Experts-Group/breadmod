@@ -1,11 +1,7 @@
 package breadmod
 
 import breadmod.block.ModBlocks
-import breadmod.datagen.provider.BlockModels
-import breadmod.datagen.provider.ItemModels
 import breadmod.datagen.provider.ModSounds
-import breadmod.datagen.provider.Recipes
-import breadmod.datagen.provider.lang.USEnglishLanguageProvider
 import breadmod.item.ModItems
 import net.minecraft.client.Minecraft
 import net.minecraftforge.fml.common.Mod
@@ -17,13 +13,10 @@ import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import thedarkcolour.kotlinforforge.forge.runForDist
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.data.event.GatherDataEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
 
 @Mod(BreadMod.ID)
 object BreadMod {
     const val ID = "breadmod"
-    val resourceLocation = ResourceLocation(ID)
 
     // the logger for our mod
     val LOGGER: Logger = LogManager.getLogger(ID)
@@ -64,4 +57,6 @@ object BreadMod {
     private fun onServerSetup(event: FMLDedicatedServerSetupEvent) {
         LOGGER.log(Level.INFO, "Server starting...")
     }
+
+    fun resource(name: String) = ResourceLocation(ID, name)
 }
