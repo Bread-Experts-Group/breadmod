@@ -31,6 +31,9 @@ object ModItems {
     val BREAD_BOOTS by REGISTRY.registerObject("bread_boots") {
         ArmorItem(ArmorTiers.BREAD, EquipmentSlot.FEET, Item.Properties().tab(BreadModCreativeTab)) }
 
+    val TEST_SHIELD by REGISTRY.registerObject("test_shield") {
+        TestShieldItem() }
+
     // Music Discs
     val TEST_DISC by REGISTRY.registerObject("music_disc_test") { // pAnalogOutput is the comparator value the disc outputs
         RecordItem(1, ModSounds.TEST_SOUND, Item.Properties()
