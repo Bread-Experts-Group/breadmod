@@ -1,4 +1,4 @@
-package breadmod.item
+package breadmod.item.advanced_item
 
 import breadmod.gui.BreadModCreativeTab
 import net.minecraft.ChatFormatting

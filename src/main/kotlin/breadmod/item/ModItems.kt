@@ -5,6 +5,8 @@ import breadmod.block.ModBlocks
 import breadmod.core.ArmorTiers
 import breadmod.datagen.provider.ModSounds
 import breadmod.gui.BreadModCreativeTab
+import breadmod.item.advanced_item.TestBreadItem
+import breadmod.item.advanced_item.TestShieldItem
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
