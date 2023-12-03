@@ -1,5 +1,11 @@
 {
   "block.breadmod.bread_block": "Bread Block",
+  "item.breadmod.bread_boots": "Bread Boots",
+  "item.breadmod.bread_chestplate": "Bread Chestplate",
+  "item.breadmod.bread_helmet": "Bread Helmet",
+  "item.breadmod.bread_leggings": "Bread Leggings",
+  "item.breadmod.music_disc_test": "Test Music Disc",
+  "item.breadmod.music_disc_test.desc": "Test Description",
   "item.breadmod.test_bread": "Test Bread",
   "itemGroup.breadmod": "The Bread Mod"
 }

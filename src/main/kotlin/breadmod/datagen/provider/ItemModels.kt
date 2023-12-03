@@ -5,6 +5,7 @@ import net.minecraft.data.DataGenerator
 import net.minecraftforge.client.model.generators.ItemModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
+@Suppress("SpellCheckingInspection")
 class ItemModels (
     generator: DataGenerator,
     fileHelper: ExistingFileHelper,
@@ -12,5 +13,10 @@ class ItemModels (
     override fun registerModels() {
         //withExistingParent("breadmod:bread_block", modLoc("block/bread_block"))
         singleTexture("breadmod:test_bread", mcLoc("item/generated"), "layer0", modLoc("items/test_bread"))
+        singleTexture("breadmod:music_disc_test", mcLoc("item/generated"), "layer0", modLoc("items/music_disc_test"))
+        singleTexture("breadmod:bread_boots", mcLoc("item/generated"), "layer0", modLoc("items/bread_boots"))
+        singleTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("items/bread_leggings"))
+        singleTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("items/bread_chestplate"))
+        singleTexture("breadmod:bread_helmet", mcLoc("item/generated"), "layer0", modLoc("items/bread_helmet"))
     }
 }

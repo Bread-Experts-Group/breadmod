@@ -1,2 +1,7 @@
-// 1.19.2	2023-12-01T20:48:25.364631314	Item Models: breadmod
+// 1.19.2	2023-12-02T20:52:54.437415261	Item Models: breadmod
+fd3ebc64dabeb78d810d9bea4b922ab536c5ddbc assets/breadmod/models/item/bread_boots.json
+08e7b5dc9e94c7390e33bc5720fbeccfe1c0dba3 assets/breadmod/models/item/bread_chestplate.json
+995f1f66203972b424acd2b73878a06c8a1b0850 assets/breadmod/models/item/bread_helmet.json
+d5a4e3b23d74fdbd74c676bcebe597639fdd2948 assets/breadmod/models/item/bread_leggings.json
+fc9357f07dab8d56ddc6626b16f082f44dc27d6a assets/breadmod/models/item/music_disc_test.json
 0942f96b1f3137fd301d27d1699a107182256773 assets/breadmod/models/item/test_bread.json

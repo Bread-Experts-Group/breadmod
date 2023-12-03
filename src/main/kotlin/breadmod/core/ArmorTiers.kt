@@ -7,8 +7,8 @@ import net.minecraft.world.item.crafting.Ingredient
 import java.util.function.Supplier
 
 object ArmorTiers {
-    val BREAD_ARMOR: ArmorMaterial = ModArmorMaterial(
-        "breadarmor",
+    val BREAD: ArmorMaterial = ModArmorMaterial(
+        "bread",
         500, intArrayOf(2, 3, 4, 2),
         20,
         SoundEvents.ARMOR_EQUIP_LEATHER,

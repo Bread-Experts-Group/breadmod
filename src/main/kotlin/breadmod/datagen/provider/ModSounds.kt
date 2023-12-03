@@ -21,15 +21,20 @@ object ModSounds {
         fileHelper: ExistingFileHelper,
     ) : SoundDefinitionsProvider(generator, BreadMod.ID, fileHelper) {
         override fun registerSounds() {
+
+            // Test Sound
             add(
                 ModSounds.TEST_SOUND,
                 definition()
-                    .subtitle("gaynerd")
+                    .subtitle("test sound")
                     .with(
                         sound(ResourceLocation(BreadMod.ID, "test_sound"))
                             .stream()
                     )
             )
+
+            // Other sounds go here
+
         }
     }
 }
