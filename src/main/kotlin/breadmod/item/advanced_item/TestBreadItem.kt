@@ -13,9 +13,9 @@ import net.minecraft.world.level.Level
 
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).tab(BreadModCreativeTab)) {
     override fun use(pLevel: Level, pPlayer: Player, pHand: InteractionHand): InteractionResultHolder<ItemStack> {
-        /*if (pHand == InteractionHand.MAIN_HAND) {
+        if (pHand == InteractionHand.MAIN_HAND && pLevel.isClientSide) {
 
-        }*/
+        }
         return super.use(pLevel, pPlayer, pHand)
     }
 
