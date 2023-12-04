@@ -9,10 +9,12 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.UseAnim
 import net.minecraft.world.level.Level
 
-class TestShieldItem : ShieldItem(Properties().tab(BreadModCreativeTab)) {
+class TestShieldItem : ShieldItem(Properties().tab(BreadModCreativeTab).stacksTo(1)) {
+    /*
     override fun getUseAnimation(pStack: ItemStack): UseAnim {
         return UseAnim.BLOCK
     }
+     */
 
     override fun appendHoverText(
         pStack: ItemStack,
