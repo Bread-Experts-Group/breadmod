@@ -1,19 +1,35 @@
 package breadmod.util
 
-import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.Tesselator
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.phys.Vec3
-import com.mojang.blaze3d.vertex.VertexFormat
-import com.mojang.math.Matrix4f
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.components.DebugScreenOverlay
-import org.lwjgl.opengl.GL11
-import java.awt.Color
+import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.EntityHitResult
+import net.minecraft.world.phys.HitResult
+import net.minecraftforge.fluids.IFluidBlock
 
-fun entityRaycast(entity: Entity, maxDistance: Boolean, includeFluids: Boolean) {
-    val directionVector = Vec3.directionFromRotation(entity.rotationVector)
+fun Entity.raycast(maxDistance: Int, includeFluids: Boolean): HitResult {
+    val directionVector = Vec3.directionFromRotation(this.rotationVector)
+
+    var lastVec3 = Vec3.ZERO
+    var lastBlockPos = BlockPos.ZERO
+
+    repeat(maxDistance) {
+        lastVec3 = this.eyePosition.add(directionVector.scale(it.toDouble()))
+        lastBlockPos = BlockPos(lastVec3)
+
+        val block = this.level.getBlockState(lastBlockPos)
+        if((block is IFluidBlock && includeFluids) || !block.isAir)
+            return BlockHitResult(lastVec3, direction, lastBlockPos, true)
+
+        val foundEntity = this.level.getEntities(this, AABB.ofSize(lastVec3, 1.0, 1.0, 1.0)).firstOrNull()
+        if(foundEntity != null) return EntityHitResult(foundEntity, lastVec3)
+    }
+
+    return BlockHitResult.miss(lastVec3, direction, lastBlockPos)
 }
 
 @SubscribeEvent
