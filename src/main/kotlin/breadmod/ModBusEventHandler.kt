@@ -3,11 +3,20 @@ package breadmod
 import breadmod.BreadMod.LOGGER
 import breadmod.datagen.provider.*
 import breadmod.datagen.provider.lang.USEnglishLanguageProvider
+import breadmod.item.ModItems
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.ItemStack
+import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 
-@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.MOD)
+@Suppress("SpellCheckingInspection")
+@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object ModBusEventHandler {
     // Data Generation
     @SubscribeEvent
@@ -31,5 +40,17 @@ object ModBusEventHandler {
         }
 
         LOGGER.debug("Data generation finished")
+    }
+
+    // Client Stuff
+    private val BLOCKING_PROPERTY_RESLOC = ResourceLocation(BreadMod.ID, "blocking")
+    @SubscribeEvent
+    fun onClientSetup(event: FMLClientSetupEvent) {
+        event.enqueueWork {
+            ItemProperties.register(
+                ModItems.BREAD_SHIELD, BLOCKING_PROPERTY_RESLOC) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
+                if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1.0f else 0.0f
+            }
+        }
     }
 }

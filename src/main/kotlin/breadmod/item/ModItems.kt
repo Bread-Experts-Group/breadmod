@@ -6,7 +6,7 @@ import breadmod.core.ArmorTiers
 import breadmod.datagen.provider.ModSounds
 import breadmod.gui.BreadModCreativeTab
 import breadmod.item.advanced_item.TestBreadItem
-import breadmod.item.advanced_item.TestShieldItem
+import breadmod.item.advanced_item.BreadShieldItem
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
@@ -25,6 +25,8 @@ object ModItems {
     // Blocks
     val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {
         BlockItem(ModBlocks.BREAD_BLOCK, DEFAULT_ITEM_PROPERTIES) }
+    val REINFORCED_BREAD_BLOCK_ITEM by REGISTRY.registerObject("reinforced_bread_block") {
+        BlockItem(ModBlocks.REINFORCED_BREAD_BLOCK, DEFAULT_ITEM_PROPERTIES) }
 
     // Armors
     val BREAD_HELMET by REGISTRY.registerObject("bread_helmet") {
@@ -36,7 +38,7 @@ object ModItems {
     val BREAD_BOOTS by REGISTRY.registerObject("bread_boots") {
         ArmorItem(ArmorTiers.BREAD, EquipmentSlot.FEET, DEFAULT_ITEM_PROPERTIES) }
 
-    val TEST_SHIELD by REGISTRY.registerObject("test_shield") { TestShieldItem() }
+    val BREAD_SHIELD by REGISTRY.registerObject("bread_shield") { BreadShieldItem() }
 
     // Music Discs
     val TEST_DISC by REGISTRY.registerObject("music_disc_test") {

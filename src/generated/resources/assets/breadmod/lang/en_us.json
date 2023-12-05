@@ -4,6 +4,8 @@
   "item.breadmod.bread_chestplate": "Bread Chestplate",
   "item.breadmod.bread_helmet": "Bread Helmet",
   "item.breadmod.bread_leggings": "Bread Leggings",
+  "item.breadmod.bread_shield": "Bread Shield",
+  "item.breadmod.bread_shield.desc": "Not repairable. Not by normal means at least.",
   "item.breadmod.music_disc_test": "Test Music Disc",
   "item.breadmod.music_disc_test.desc": "Test Description",
   "item.breadmod.test_bread": "Test Bread",

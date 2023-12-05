@@ -1,20 +1,21 @@
 package breadmod.item.advanced_item
 
+import breadmod.BreadMod
 import breadmod.gui.BreadModCreativeTab
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ShieldItem
 import net.minecraft.world.item.TooltipFlag
-import net.minecraft.world.item.UseAnim
 import net.minecraft.world.level.Level
 
-class TestShieldItem : ShieldItem(Properties().tab(BreadModCreativeTab).stacksTo(1)) {
-    /*
-    override fun getUseAnimation(pStack: ItemStack): UseAnim {
-        return UseAnim.BLOCK
+
+class BreadShieldItem : ShieldItem(Properties().tab(BreadModCreativeTab).stacksTo(1).durability(250)) {
+
+    override fun isValidRepairItem(pToRepair: ItemStack, pRepair: ItemStack): Boolean {
+//        return pRepair.`is`(ModItems.BREAD_BLOCK_ITEM) || super.isValidRepairItem(pToRepair, pRepair)
+        return false
     }
-     */
 
     override fun appendHoverText(
         pStack: ItemStack,
@@ -22,7 +23,7 @@ class TestShieldItem : ShieldItem(Properties().tab(BreadModCreativeTab).stacksTo
         pTooltip: MutableList<Component>,
         pFlag: TooltipFlag
     ) {
-        return pTooltip.add(1,Component.literal("test").withStyle(ChatFormatting.GRAY))
+        return pTooltip.add(1,Component.translatable("item.${BreadMod.ID}.bread_shield.desc").withStyle(ChatFormatting.AQUA))
 //        super.appendHoverText(pStack, pLevel, pTooltip, pFlag)
     }
 }

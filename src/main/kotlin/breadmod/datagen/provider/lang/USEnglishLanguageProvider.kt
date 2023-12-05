@@ -20,6 +20,8 @@ class USEnglishLanguageProvider(generator: DataGenerator) : LanguageProvider(gen
         add(ModItems.BREAD_BOOTS, "Bread Boots")
         add(ModItems.TEST_DISC, "Test Music Disc")
         add("item.breadmod.music_disc_test.desc", "Test Description")
+        add(ModItems.BREAD_SHIELD, "Bread Shield")
+        add("item.breadmod.bread_shield.desc", "Not repairable. Not by normal means at least.")
 
     }
 }

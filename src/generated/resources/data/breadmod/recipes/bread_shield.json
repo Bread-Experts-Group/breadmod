@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "breadmod:bread_block"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "BIB",
+    "BBB",
+    " B "
+  ],
+  "result": {
+    "item": "breadmod:bread_shield"
+  }
+}
