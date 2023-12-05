@@ -1,4 +1,4 @@
-package breadmod.item.advanced_item
+package breadmod.item
 
 import breadmod.BreadMod
 import breadmod.gui.BreadModCreativeTab
@@ -23,7 +23,7 @@ class BreadShieldItem : ShieldItem(Properties().tab(BreadModCreativeTab).stacksT
         pTooltip: MutableList<Component>,
         pFlag: TooltipFlag
     ) {
-        return pTooltip.add(1,Component.translatable("item.${BreadMod.ID}.bread_shield.desc").withStyle(ChatFormatting.AQUA))
-//        super.appendHoverText(pStack, pLevel, pTooltip, pFlag)
+        pTooltip.add(1,Component.translatable("item.${BreadMod.ID}.bread_shield.desc").withStyle(ChatFormatting.AQUA))
+        super.appendHoverText(pStack, pLevel, pTooltip, pFlag)
     }
 }

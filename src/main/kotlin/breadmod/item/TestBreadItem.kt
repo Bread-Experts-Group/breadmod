@@ -1,8 +1,9 @@
-package breadmod.item.advanced_item
+package breadmod.item
 
+import breadmod.BreadMod
 import breadmod.gui.BreadModCreativeTab
-import breadmod.block.ModBlocks.BREAD_BLOCK
 import breadmod.util.raycast
+import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
@@ -21,18 +22,20 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
     override fun use(pLevel: Level, pPlayer: Player, pHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (pHand == InteractionHand.MAIN_HAND) {
             when(val hit = pPlayer.raycast(50, false)) {
-                is BlockHitResult -> { println("test"); pLevel.setBlockAndUpdate(hit.blockPos, Blocks.DIAMOND_BLOCK.defaultBlockState()) }
-            }
-
-            when(val hit = pPlayer.raycast(50, true)) {
-                is BlockHitResult -> { pLevel.setBlockAndUpdate(hit.blockPos, BREAD_BLOCK.defaultBlockState()) }
-                is EntityHitResult -> { pLevel.explode(pPlayer, hit.location.x, hit.location.y, hit.location.z, 500f, Explosion.BlockInteraction.DESTROY) }
+                is BlockHitResult -> { pLevel.setBlockAndUpdate(hit.blockPos, Blocks.AIR.defaultBlockState()) }
+                is EntityHitResult -> { pLevel.explode(pPlayer, hit.location.x, hit.location.y, hit.location.z, 5f, Explosion.BlockInteraction.DESTROY) }
             }
         }
         return super.use(pLevel, pPlayer, pHand)
     }
 
-    override fun appendHoverText(pStack: ItemStack, pLevel: Level?, pTooltipComponents: MutableList<Component>, pIsAdvanced: TooltipFlag) {
-        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced)
+    override fun appendHoverText(
+        pStack: ItemStack,
+        pLevel: Level?,
+        pTooltip: MutableList<Component>,
+        pFlag: TooltipFlag
+    ) {
+        pTooltip.add(1,Component.translatable("item.${BreadMod.ID}.test_bread.desc").withStyle(ChatFormatting.GOLD))
+        super.appendHoverText(pStack, pLevel, pTooltip, pFlag)
     }
 }

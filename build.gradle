@@ -1,8 +1,6 @@
 plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
-    // Adds the Kotlin Gradle plugin
     id 'org.jetbrains.kotlin.jvm' version '1.9.20'
-    // OPTIONAL Kotlin Serialization plugin
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
 
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'

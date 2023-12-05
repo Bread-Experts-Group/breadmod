@@ -9,5 +9,6 @@
   "item.breadmod.music_disc_test": "Test Music Disc",
   "item.breadmod.music_disc_test.desc": "Test Description",
   "item.breadmod.test_bread": "Test Bread",
+  "item.breadmod.test_bread.desc": "Identical to bread on the outside - tumors on the inside.",
   "itemGroup.breadmod": "The Bread Mod"
 }

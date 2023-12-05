@@ -5,8 +5,6 @@ import breadmod.block.ModBlocks
 import breadmod.core.ArmorTiers
 import breadmod.datagen.provider.ModSounds
 import breadmod.gui.BreadModCreativeTab
-import breadmod.item.advanced_item.TestBreadItem
-import breadmod.item.advanced_item.BreadShieldItem
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
@@ -15,7 +13,7 @@ import thedarkcolour.kotlinforforge.forge.registerObject
 
 val DEFAULT_ITEM_PROPERTIES: Item.Properties = Item.Properties().tab(BreadModCreativeTab)
 
-@Suppress("UNUSED", "SpellCheckingInspection")
+@Suppress("UNUSED")
 object ModItems {
     val REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, BreadMod.ID)
 

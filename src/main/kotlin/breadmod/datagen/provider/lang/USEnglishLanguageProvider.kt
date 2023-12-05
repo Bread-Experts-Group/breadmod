@@ -6,7 +6,6 @@ import breadmod.item.ModItems
 import net.minecraft.data.DataGenerator
 import net.minecraftforge.common.data.LanguageProvider
 
-@Suppress("SpellCheckingInspection")
 class USEnglishLanguageProvider(generator: DataGenerator) : LanguageProvider(generator, BreadMod.ID, "en_us") {
     override fun addTranslations() {
         add("itemGroup.${BreadMod.ID}", "The Bread Mod")
@@ -14,6 +13,7 @@ class USEnglishLanguageProvider(generator: DataGenerator) : LanguageProvider(gen
         add(ModItems.BREAD_BLOCK_ITEM, "Bread Block")
         // Items
         add(ModItems.TEST_BREAD, "Test Bread")
+        add("item.breadmod.test_bread.desc", "Identical to bread on the outside - tumors on the inside.")
         add(ModItems.BREAD_HELMET, "Bread Helmet")
         add(ModItems.BREAD_CHESTPLATE, "Bread Chestplate")
         add(ModItems.BREAD_LEGGINGS, "Bread Leggings")
