@@ -19,6 +19,7 @@ object ModItems {
 
     // Items
     val TEST_BREAD by REGISTRY.registerObject("test_bread") { TestBreadItem() }
+    val DOPED_BREAD by REGISTRY.registerObject("doped_bread") { DopedBreadItem() }
 
     // Blocks
     val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {

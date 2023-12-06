@@ -22,6 +22,8 @@ class USEnglishLanguageProvider(generator: DataGenerator) : LanguageProvider(gen
         // Items
         add(ModItems.TEST_BREAD)
         add("item.breadmod.test_bread.desc", "Identical to bread on the outside - tumors on the inside.")
+        add(ModItems.DOPED_BREAD)
+        add("item.breadmod.doped_bread.desc", "contains trace amounts of neurotoxin")
         add(ModItems.BREAD_HELMET)
         add(ModItems.BREAD_CHESTPLATE)
         add(ModItems.BREAD_LEGGINGS)
