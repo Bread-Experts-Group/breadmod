@@ -22,8 +22,12 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
     override fun use(pLevel: Level, pPlayer: Player, pHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (pHand == InteractionHand.MAIN_HAND) {
             when(val hit = pPlayer.raycast(50, false)) {
-                is BlockHitResult -> { pLevel.setBlockAndUpdate(hit.blockPos, Blocks.AIR.defaultBlockState()) }
-                is EntityHitResult -> { pLevel.explode(pPlayer, hit.location.x, hit.location.y, hit.location.z, 5f, Explosion.BlockInteraction.DESTROY) }
+                is BlockHitResult -> {
+                    pLevel.addDestroyBlockEffect(hit.blockPos, pLevel.getBlockState(hit.blockPos))
+                }
+                is EntityHitResult -> {
+                    hit.entity.setSecondsOnFire(5)
+                }
             }
         }
         return super.use(pLevel, pPlayer, pHand)
