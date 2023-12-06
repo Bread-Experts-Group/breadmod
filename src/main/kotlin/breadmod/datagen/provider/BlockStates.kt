@@ -3,6 +3,7 @@ package breadmod.datagen.provider
 import breadmod.BreadMod
 import net.minecraft.data.DataGenerator
 import breadmod.block.ModBlocks.BREAD_BLOCK
+import breadmod.block.ModBlocks.REINFORCED_BREAD_BLOCK
 import net.minecraft.world.level.block.Block
 import net.minecraftforge.client.model.generators.BlockStateProvider
 import net.minecraftforge.common.data.ExistingFileHelper
@@ -18,6 +19,7 @@ class BlockStates(
 
     override fun registerStatesAndModels() {
         simpleBlockAndItem(BREAD_BLOCK)
+        simpleBlockAndItem(REINFORCED_BREAD_BLOCK)
     }
 
 }
