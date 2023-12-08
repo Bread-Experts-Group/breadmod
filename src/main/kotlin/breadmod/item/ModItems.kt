@@ -2,19 +2,21 @@ package breadmod.item
 
 import breadmod.BreadMod
 import breadmod.block.ModBlocks
-import breadmod.core.ArmorTiers
+import breadmod.item.armor.ArmorTiers
 import breadmod.datagen.provider.ModSounds
 import breadmod.gui.BreadModCreativeTab
+import breadmod.item.armor.BreadShieldItem
+import breadmod.item.armor.BreadArmorItem
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import thedarkcolour.kotlinforforge.forge.registerObject
 
-val DEFAULT_ITEM_PROPERTIES: Item.Properties = Item.Properties().tab(BreadModCreativeTab)
-
 @Suppress("UNUSED")
 object ModItems {
+    val DEFAULT_ITEM_PROPERTIES: Item.Properties = Item.Properties().tab(BreadModCreativeTab)
+    // // //
     val REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, BreadMod.ID)
 
     // Items
@@ -27,15 +29,15 @@ object ModItems {
     val REINFORCED_BREAD_BLOCK_ITEM by REGISTRY.registerObject("reinforced_bread_block") {
         BlockItem(ModBlocks.REINFORCED_BREAD_BLOCK, DEFAULT_ITEM_PROPERTIES) }
 
-    // Armors
+    // Armor
     val BREAD_HELMET by REGISTRY.registerObject("bread_helmet") {
-        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.HEAD, DEFAULT_ITEM_PROPERTIES) }
+        BreadArmorItem(ArmorTiers.BREAD, EquipmentSlot.HEAD, DEFAULT_ITEM_PROPERTIES) }
     val BREAD_CHESTPLATE by REGISTRY.registerObject("bread_chestplate") {
-    ArmorItem(ArmorTiers.BREAD, EquipmentSlot.CHEST, DEFAULT_ITEM_PROPERTIES) }
+        BreadArmorItem(ArmorTiers.BREAD, EquipmentSlot.CHEST, DEFAULT_ITEM_PROPERTIES) }
     val BREAD_LEGGINGS by REGISTRY.registerObject("bread_leggings") {
-        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.LEGS, DEFAULT_ITEM_PROPERTIES) }
+        BreadArmorItem(ArmorTiers.BREAD, EquipmentSlot.LEGS, DEFAULT_ITEM_PROPERTIES) }
     val BREAD_BOOTS by REGISTRY.registerObject("bread_boots") {
-        ArmorItem(ArmorTiers.BREAD, EquipmentSlot.FEET, DEFAULT_ITEM_PROPERTIES) }
+        BreadArmorItem(ArmorTiers.BREAD, EquipmentSlot.FEET, DEFAULT_ITEM_PROPERTIES) }
 
     val BREAD_SHIELD by REGISTRY.registerObject("bread_shield") { BreadShieldItem() }
 

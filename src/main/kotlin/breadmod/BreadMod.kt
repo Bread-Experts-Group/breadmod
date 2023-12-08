@@ -1,9 +1,11 @@
 package breadmod
 
 import breadmod.block.ModBlocks
+import breadmod.recipes.ModRecipes
 import breadmod.datagen.provider.ModSounds
 import breadmod.item.ModItems
 import net.minecraft.client.Minecraft
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent
@@ -12,25 +14,23 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import thedarkcolour.kotlinforforge.forge.runForDist
-import net.minecraft.resources.ResourceLocation
 
 @Mod(BreadMod.ID)
 object BreadMod {
     const val ID = "breadmod"
 
-    // the logger for our mod
     val LOGGER: Logger = LogManager.getLogger(ID)
 
     init {
         ModBusEventHandler
         LOGGER.log(Level.INFO, "Hello world!")
 
-        // Register the KDeferredRegister to the mod-specific event bus
         ModSounds.REGISTRY.register(MOD_BUS)
         ModBlocks.REGISTRY.register(MOD_BUS)
         ModItems.REGISTRY.register(MOD_BUS)
+        ModRecipes.REGISTRY.register(MOD_BUS)
 
-        runForDist(
+            runForDist(
             clientTarget = {
                 MOD_BUS.addListener(BreadMod::onClientSetup)
                 Minecraft.getInstance()

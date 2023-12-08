@@ -5,6 +5,7 @@ import breadmod.datagen.provider.*
 import breadmod.datagen.provider.lang.USEnglishLanguageProvider
 import breadmod.datagen.provider.loot.ModLootTables
 import breadmod.item.ModItems
+import breadmod.recipes.ModRecipes
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.resources.ResourceLocation
@@ -35,7 +36,7 @@ object ModBusEventHandler {
 
             if(event.includeServer()) {
                 LOGGER.debug("Data generation: server")
-                it.addProvider(true, Recipes(it))
+                it.addProvider(true, ModRecipes.Generator(it))
                 it.addProvider(true, ModLootTables(it))
                 LOGGER.debug("Data generation: server (finished)")
             }
