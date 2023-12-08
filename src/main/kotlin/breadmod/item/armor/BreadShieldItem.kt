@@ -11,8 +11,7 @@ import net.minecraft.world.level.Level
 
 
 class BreadShieldItem : ShieldItem(Properties().tab(BreadModCreativeTab).stacksTo(1).durability(250)) {
-    override fun isValidRepairItem(pToRepair: ItemStack, pRepair: ItemStack) = false
-    override fun isEnchantable(pStack: ItemStack) = false
+    override fun isValidRepairItem(pToRepair: ItemStack, pRepair: ItemStack): Boolean = false
 
     override fun appendHoverText(
         pStack: ItemStack,

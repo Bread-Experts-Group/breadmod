@@ -8,6 +8,7 @@ import breadmod.gui.BreadModCreativeTab
 import breadmod.item.armor.BreadShieldItem
 import breadmod.item.armor.BreadArmorItem
 import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -15,13 +16,16 @@ import thedarkcolour.kotlinforforge.forge.registerObject
 
 @Suppress("UNUSED")
 object ModItems {
-    val DEFAULT_ITEM_PROPERTIES: Item.Properties = Item.Properties().tab(BreadModCreativeTab)
+    private val DEFAULT_ITEM_PROPERTIES: Item.Properties = Item.Properties().tab(BreadModCreativeTab)
     // // //
     val REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, BreadMod.ID)
 
     // Items
     val TEST_BREAD by REGISTRY.registerObject("test_bread") { TestBreadItem() }
     val DOPED_BREAD by REGISTRY.registerObject("doped_bread") { DopedBreadItem() }
+    val BREAD_SLICE by REGISTRY.registerObject("bread_slice") {
+        Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).build()).tab(BreadModCreativeTab))
+    }
 
     // Blocks
     val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {

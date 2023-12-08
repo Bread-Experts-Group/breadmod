@@ -7,6 +7,7 @@
       - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect gets applied to fellow players
 - [ ] Bread slices
   - Crafted from using a sword on bread in a crafting table (the sword does not take damage)
+  - You get 6 bread slices per bread in the recipe
   - [ ] Bread crumbs
     - Crafted from splitting toast in a crafting table
     - Usable as birdseed, provides a fraction of the saturation a full loaf does 

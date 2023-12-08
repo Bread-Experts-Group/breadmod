@@ -16,5 +16,6 @@ class ItemModels (
         singleTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("items/bread_leggings"))
         singleTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("items/bread_chestplate"))
         singleTexture("breadmod:bread_helmet", mcLoc("item/generated"), "layer0", modLoc("items/bread_helmet"))
+        singleTexture("breadmod:bread_slice", mcLoc("item/generated"), "layer0", modLoc("items/bread_slice"))
     }
 }

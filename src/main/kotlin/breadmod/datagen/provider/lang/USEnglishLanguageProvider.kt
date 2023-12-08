@@ -29,7 +29,8 @@ class USEnglishLanguageProvider(generator: DataGenerator) : LanguageProvider(gen
         add(ModItems.BREAD_LEGGINGS)
         add(ModItems.BREAD_BOOTS)
         add(ModItems.BREAD_SHIELD)
-        add("item.breadmod.bread_shield.desc", "Not repairable. Not by normal means at least.")
+        add(ModItems.BREAD_SLICE)
+        add("item.breadmod.bread_shield.desc", "No it does NOT look like balsa wood >:(")
         add(ModItems.TEST_DISC, "Test Music Disc")
         add("item.breadmod.music_disc_test.desc", "Test Description")
     }
