@@ -5,9 +5,25 @@
   - [ ] Doped bread/armor set
     - [ ] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while it's equipped
       - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect gets applied to fellow players
-- [ ] Bread slices
-  - Crafted from using a sword on bread in a crafting table (the sword does not take damage)
-  - You get 6 bread slices per bread in the recipe
+- [ ] Bread Tools
+  - Slightly weaker than wood in durability and strength but has approx 1.5x more speed
+  - [ ] Pickaxe
+  - [ ] Shovel
+  - [ ] Hoe
+  - [ ] Axe
+  - [ ] Sword
+  - [ ] Reinforced Variants of tools
+    - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
+  - Needs to be done still:
+    - [ ] Textures
+      - would be funny if the bread sword was just a long piece of bread attached to a sword handle
+    - [ ] Recipes
+    - [ ] Lang datagen
+    - [ ] Model datagen
+    - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
+- [X] Bread slices
+  - [X] Crafted from using a sword on bread in a crafting table (the sword does not take damage)
+  - [X] You get 6 bread slices per bread in the recipe
   - [ ] Bread crumbs
     - Crafted from splitting toast in a crafting table
     - Usable as birdseed, provides a fraction of the saturation a full loaf does 

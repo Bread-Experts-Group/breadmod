@@ -2,6 +2,7 @@ package breadmod.recipes
 
 
 import breadmod.BreadMod
+import breadmod.item.ModItems
 import breadmod.item.ModItems.BREAD_BLOCK_ITEM
 import breadmod.item.ModItems.BREAD_SHIELD
 import breadmod.item.armor.ArmorPotionRecipe
@@ -10,6 +11,7 @@ import net.minecraft.data.recipes.*
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.SimpleRecipeSerializer
+import net.minecraftforge.common.Tags
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import thedarkcolour.kotlinforforge.forge.registerObject
@@ -36,6 +38,13 @@ object ModRecipes {
                 .define('B', Ingredient.of(BREAD_BLOCK_ITEM))
                 .define('I', Ingredient.of(Items.IRON_INGOT))
                 .pattern("BIB").pattern("BBB").pattern(" B ")
+                .save(pFinishedRecipeConsumer)
+
+            ShapelessRecipeBuilder
+                .shapeless({ModItems.BREAD_SLICE}, 6)
+                .unlockedBy("has_item", has(Items.BREAD))
+                .requires({Items.BREAD}, 1)
+                .requires(Tags.Items.TOOLS_SWORDS)
                 .save(pFinishedRecipeConsumer)
         }
     }

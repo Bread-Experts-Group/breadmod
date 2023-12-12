@@ -7,6 +7,7 @@ import breadmod.datagen.provider.ModSounds
 import breadmod.gui.BreadModCreativeTab
 import breadmod.item.armor.BreadShieldItem
 import breadmod.item.armor.BreadArmorItem
+import breadmod.item.tools.ToolTiers
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
@@ -26,6 +27,7 @@ object ModItems {
     val BREAD_SLICE by REGISTRY.registerObject("bread_slice") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).build()).tab(BreadModCreativeTab))
     }
+    val BREAD_CRUMBS by REGISTRY.registerObject("bread_crumbs") { Item(DEFAULT_ITEM_PROPERTIES) }
 
     // Blocks
     val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {
@@ -44,6 +46,18 @@ object ModItems {
         BreadArmorItem(ArmorTiers.BREAD, EquipmentSlot.FEET, DEFAULT_ITEM_PROPERTIES) }
 
     val BREAD_SHIELD by REGISTRY.registerObject("bread_shield") { BreadShieldItem() }
+
+    // Tools // Speed modifier slows down the tool based on how much of a negative value you give it (Maybe it's a multiplier?)
+    val BREAD_PICKAXE by REGISTRY.registerObject("bread_pickaxe") {
+        PickaxeItem(ToolTiers.BREAD,1,-2.5f, DEFAULT_ITEM_PROPERTIES) }
+    val BREAD_SHOVEL by REGISTRY.registerObject("bread_shovel") {
+        ShovelItem(ToolTiers.BREAD, 1.2f,-2.8f, DEFAULT_ITEM_PROPERTIES) }
+    val BREAD_AXE by REGISTRY.registerObject("bread_axe") {
+        AxeItem(ToolTiers.BREAD, 4.0f,-3f, DEFAULT_ITEM_PROPERTIES) }
+    val BREAD_HOE by REGISTRY.registerObject("bread_hoe") {
+        HoeItem(ToolTiers.BREAD, 1,-2.8f, DEFAULT_ITEM_PROPERTIES) }
+    val BREAD_SWORD by REGISTRY.registerObject("bread_sword") {
+        SwordItem(ToolTiers.BREAD, 2,-2.5f, DEFAULT_ITEM_PROPERTIES) }
 
     // Music Discs
     val TEST_DISC by REGISTRY.registerObject("music_disc_test") {
