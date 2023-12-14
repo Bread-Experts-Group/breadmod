@@ -34,8 +34,6 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
         return super.use(pLevel, pPlayer, pHand)
     }
 
-
-
     override fun finishUsingItem(pStack: ItemStack, pLevel: Level, pLivingEntity: LivingEntity): ItemStack {
         pLivingEntity.addEffect(MobEffectInstance(MobEffects.INVISIBILITY,200,0))
 

@@ -25,13 +25,18 @@ object ModItems {
     val TEST_BREAD by REGISTRY.registerObject("test_bread") { TestBreadItem() }
     val DOPED_BREAD by REGISTRY.registerObject("doped_bread") { DopedBreadItem() }
     val BREAD_SLICE by REGISTRY.registerObject("bread_slice") {
-        Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).build()).tab(BreadModCreativeTab))
+        Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build()).tab(BreadModCreativeTab))
     }
     val BREAD_CRUMBS by REGISTRY.registerObject("bread_crumbs") { Item(DEFAULT_ITEM_PROPERTIES) }
 
     // Blocks
     val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {
-        BlockItem(ModBlocks.BREAD_BLOCK, DEFAULT_ITEM_PROPERTIES) }
+        val breadFoodStats = TEST_BREAD.getFoodProperties(TEST_BREAD.defaultInstance, null)!!
+        BlockItem(ModBlocks.BREAD_BLOCK, Item.Properties().food(FoodProperties.Builder()
+            .nutrition(breadFoodStats.nutrition * 9)
+            .saturationMod(breadFoodStats.saturationModifier * 9)
+            .build()
+        )) }
     val REINFORCED_BREAD_BLOCK_ITEM by REGISTRY.registerObject("reinforced_bread_block") {
         BlockItem(ModBlocks.REINFORCED_BREAD_BLOCK, DEFAULT_ITEM_PROPERTIES) }
 

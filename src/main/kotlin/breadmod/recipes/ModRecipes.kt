@@ -26,11 +26,11 @@ object ModRecipes {
         override fun buildCraftingRecipes(pFinishedRecipeConsumer: Consumer<FinishedRecipe>) {
             SpecialRecipeBuilder.special(ARMOR_POTIONS).save(pFinishedRecipeConsumer, "${BreadMod.ID}:armor_potion")
 
-            ShapelessRecipeBuilder
-                .shapeless { BREAD_BLOCK_ITEM }
-                .requires({ Items.BREAD }, 9)
-                .unlockedBy("has_item", has(Items.BREAD))
-                .save(pFinishedRecipeConsumer)
+//            ShapelessRecipeBuilder
+//                .shapeless { BREAD_BLOCK_ITEM }
+//                .requires({ Items.BREAD }, 9)
+//                .unlockedBy("has_item", has(Items.BREAD))
+//                .save(pFinishedRecipeConsumer)
 
             ShapedRecipeBuilder
                 .shaped { BREAD_SHIELD }

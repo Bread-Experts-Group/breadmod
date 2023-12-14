@@ -8,12 +8,12 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.LanguageProvider
 
-fun String.idToName() = substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
-// Transforms type.mod_id.example_object into Example Object
-fun LanguageProvider.add(block: Block) = add(block, block.descriptionId.idToName())
-fun LanguageProvider.add(item: Item) = add(item, item.descriptionId.idToName())
-
 class USEnglishLanguageProvider(generator: DataGenerator) : LanguageProvider(generator, BreadMod.ID, "en_us") {
+    private fun String.idToName() = substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+    // Transforms type.mod_id.example_object into Example Object
+    private fun LanguageProvider.add(block: Block) = add(block, block.descriptionId.idToName())
+    private fun LanguageProvider.add(item: Item) = add(item, item.descriptionId.idToName())
+
     override fun addTranslations() {
         add("itemGroup.${BreadMod.ID}", "The Bread Mod")
         // Blocks
