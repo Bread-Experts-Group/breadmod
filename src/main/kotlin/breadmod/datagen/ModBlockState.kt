@@ -10,6 +10,7 @@ class ModBlockState(output: PackOutput?, modid: String?, exFileHelper: ExistingF
     BlockStateProvider(output, modid, exFileHelper) {
     override fun registerStatesAndModels() {
         blockWithItem(ModBlocks.BREAD_BLOCK)
+        blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK)
     }
 
     private fun blockWithItem(blockRegistryObject: Block) {

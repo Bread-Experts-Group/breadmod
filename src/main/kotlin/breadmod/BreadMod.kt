@@ -23,23 +23,28 @@ import thedarkcolour.kotlinforforge.forge.runForDist
  *
  * An example for blocks is in the `blocks` package of this mod.
  */
-@Suppress("SpellCheckingInspection", "unused")
+@Suppress("SpellCheckingInspection", "Unused")
 @Mod(BreadMod.ID)
 object BreadMod {
     const val ID = "breadmod"
 
     // the logger for our mod
-    private val LOGGER: Logger = LogManager.getLogger(ID)
+    val LOGGER: Logger = LogManager.getLogger(ID)
 
     init {
         LOGGER.log(Level.INFO, "Hello world!")
 
         // Register the KDeferredRegister to the mod-specific event bus
+        LOGGER.log(Level.INFO, "Registering Mod Blocks")
         ModBlocks.REGISTRY.register(MOD_BUS)
+        LOGGER.log(Level.INFO, "Registering Mod Items")
         ModItems.REGISTRY.register(MOD_BUS)
+        LOGGER.log(Level.INFO, "Registering Mod Sounds")
         ModSounds.MOD_SOUNDS.register(MOD_BUS)
+        LOGGER.log(Level.INFO, "Registering Creative Tab")
         ModCreativeTab.CREATIVE_MODE_TABS.register(MOD_BUS)
 
+        LOGGER.log(Level.INFO, "Registering Mod Config")
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfiguration.SPECIFICATION, "breadmod-common.toml")
 
         val obj = runForDist(

@@ -21,6 +21,7 @@ import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import org.apache.logging.log4j.Level
 
 @Suppress("SpellCheckingInspection", "unused")
 @Mod.EventBusSubscriber(modid = BreadMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
@@ -38,6 +39,7 @@ object ModBusEventHandler {
         generator.addProvider(event.includeServer(),
             DataProvider.Factory { pOutput: PackOutput? -> ModRecipe(pOutput) } as DataProvider.Factory<ModRecipe>)
 
+        BreadMod.LOGGER.log(Level.INFO, "Generating mod tags")
         val blockTagGenerator = generator.addProvider(event.includeServer(), ModBlockTags(packOutput, lookupProvider, existingFileHelper))
         generator.addProvider(event.includeServer(), ModItemTags(
             packOutput,
@@ -47,9 +49,13 @@ object ModBusEventHandler {
         ))
 
         // Client side data generation
+        BreadMod.LOGGER.log(Level.INFO, "Generating lang file")
         generator.addProvider(event.includeClient(), USEnglishLanguageProvider(packOutput, BreadMod.ID, "en_us"))
+        BreadMod.LOGGER.log(Level.INFO, "Generating mod blockstates")
         generator.addProvider(event.includeClient(), ModBlockState(packOutput, BreadMod.ID, existingFileHelper))
+        BreadMod.LOGGER.log(Level.INFO, "Generating sound file")
         generator.addProvider(event.includeClient(), ModSoundsDatagen(packOutput, BreadMod.ID, existingFileHelper))
+        BreadMod.LOGGER.log(Level.INFO, "Generating item models")
         generator.addProvider(event.includeClient(), ModItemModels(packOutput, BreadMod.ID, existingFileHelper))
     }
 

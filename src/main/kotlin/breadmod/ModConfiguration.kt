@@ -4,8 +4,8 @@ import net.minecraftforge.common.ForgeConfigSpec
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue
 
 object ModConfiguration {
-    private val DECAY_CHANCE_PER_TICK: ConfigValue<Int>
-    private val EFFECT_DISTANCE_MULTIPLIER: ConfigValue<Double>
+    val DECAY_CHANCE_PER_TICK: ConfigValue<Int>
+    val EFFECT_DISTANCE_MULTIPLIER: ConfigValue<Double>
 
     val SPECIFICATION: ForgeConfigSpec = ForgeConfigSpec.Builder().also {
         it.push("BreadMod Configurations")

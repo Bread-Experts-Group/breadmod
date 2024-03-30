@@ -23,13 +23,9 @@ object ModCreativeTab {
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon { ModItems.BREAD_BLOCK_ITEM.defaultInstance }
             .displayItems { _: ItemDisplayParameters?, output: CreativeModeTab.Output ->
-//                for (items in ModItems) { // This for loop adds every item in ModItems to the creative tab
-//                    output.accept(items.get())
-//                }
-                output.accept(ModItems.BREAD_BLOCK_ITEM)
-                output.accept(ModItems.TEST_DISC)
-                output.accept(ModItems.BREAD_SHIELD)
-                output.accept(ModItems.TEST_BREAD)
+                for (items in ModItems.REGISTRY.entries) {
+                    output.accept(items.get())
+                }
             }
             .title(Component.translatable(BreadMod.ID + ".itemGroup"))
             .build()
