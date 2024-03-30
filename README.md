@@ -1,14 +1,5 @@
-# The Bread Mod 1.20.1 Port
-- [ ] <b>FILES TO BE MOVED FROM 1.19.2 BRANCH</b>
-  - [ ] integrations/JEIPlugin
-  - [ ] item/DopedBreadItem
-  - [ ] item/armor/ArmorPotionRecipe
-  - [ ] item/armor/ArmorTiers
-  - [ ] item/armor/BreadArmorItem
-  - [ ] item/tools/ToolTiers
-  - [ ] util/Raycast.kt
-  - [ ] also update ModItems and ModBlocks with the rest of the registry entries
----
+# The Bread Mod 1.20.1 Port (now with more bread)
+
 - [ ] Bread Armor
   - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches
   - [X] Each piece will keep your hunger from going below a certain point (+1 cumulative)
