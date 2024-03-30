@@ -17,7 +17,7 @@ class BreadArmorItem(
     material: ArmorMaterial,
     type: Type,
     properties: Properties,
-): ArmorItem(material, type, properties) {
+): DyeableArmorItem(material, type, properties) {
     private val random = Random(material.hashCode())
     private fun ItemStack.hurt(amount: Int, player: ServerPlayer) = hurtAndBreak(amount, player) { it.broadcastBreakEvent(type.slot) }
 
