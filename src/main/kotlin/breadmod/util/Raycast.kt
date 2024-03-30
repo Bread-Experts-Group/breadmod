@@ -7,6 +7,7 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
 
 fun Entity.raycast(maxDistance: Int, includeFluids: Boolean): HitResult {
     val directionVector = Vec3.directionFromRotation(this.rotationVector)
@@ -16,11 +17,7 @@ fun Entity.raycast(maxDistance: Int, includeFluids: Boolean): HitResult {
 
     repeat(maxDistance) {
         lastVec3 = lastVec3.add(directionVector.scale(it.toDouble()))
-//        lastBlockPos = BlockPos(lastVec3)
-
-//        val block = this.level.getBlockState(lastBlockPos)
-//        if((block.material.isLiquid && includeFluids) || (!block.material.isLiquid && !block.isAir))
-//            return BlockHitResult(lastVec3, direction, lastBlockPos, true)
+        lastBlockPos = BlockPos(lastVec3.toVec3i())
 
         val block = this.level().getBlockState(lastBlockPos)
         if((block.fluidState.isSource && includeFluids) || (!block.fluidState.isSource && !block.isAir))
