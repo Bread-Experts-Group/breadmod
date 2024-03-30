@@ -8,7 +8,7 @@ import net.minecraftforge.client.model.generators.ItemModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.registries.RegistryObject
 
-@Suppress("SpellCheckingInspection")
+@Suppress("SpellCheckingInspection", "unused")
 class ModItemModels(output: PackOutput?, modid: String?, existingFileHelper: ExistingFileHelper?) :
     ItemModelProvider(output, modid, existingFileHelper) {
     override fun registerModels() {
