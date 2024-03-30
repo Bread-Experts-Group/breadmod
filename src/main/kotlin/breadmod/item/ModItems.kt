@@ -17,6 +17,7 @@ import thedarkcolour.kotlinforforge.forge.registerObject
 object ModItems {
     val REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, BreadMod.ID)
 
+    val TEST_BREAD by REGISTRY.registerObject("test_bread") { TestBreadItem() }
     val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {
         val breadFoodStats = TEST_BREAD.getFoodProperties(TEST_BREAD.defaultInstance, null)!!
         BlockItem(ModBlocks.BREAD_BLOCK, Item.Properties().food(
@@ -29,7 +30,6 @@ object ModItems {
         BlockItem(ModBlocks.REINFORCED_BREAD_BLOCK, Item.Properties()) }
 
     val BREAD_SHIELD by REGISTRY.registerObject("bread_shield") { BreadShieldItem() }
-    val TEST_BREAD by REGISTRY.registerObject("test_bread") { TestBreadItem() }
     val DOPED_BREAD by REGISTRY.registerObject("doped_bread") { DopedBreadItem() }
     val BREAD_CRUMBS by REGISTRY.registerObject("bread_crumbs") { Item(Item.Properties()) }
     val BREAD_SLICE by REGISTRY.registerObject("bread_slice") {

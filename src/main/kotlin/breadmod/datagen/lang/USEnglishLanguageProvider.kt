@@ -25,7 +25,6 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
         add(ModItems.BREAD_CHESTPLATE)
         add(ModItems.BREAD_LEGGINGS)
         add(ModItems.BREAD_BOOTS)
-        add(ModItems.BREAD_SHIELD)
         add(ModItems.DOPED_BREAD)
         add("item.breadmod.music_disc_test.desc", "Music Disc Description")
         add("item.breadmod.test_bread.desc", "Identical to bread on the outside - tumors on the inside.")
