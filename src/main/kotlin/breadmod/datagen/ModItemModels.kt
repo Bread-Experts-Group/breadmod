@@ -17,10 +17,10 @@ class ModItemModels(output: PackOutput?, modid: String?, existingFileHelper: Exi
         singleTexture("breadmod:test_bread", mcLoc("item/generated"), "layer0", modLoc("item/test_bread"))
         singleTexture("breadmod:bread_slice", mcLoc("item/generated"), "layer0", modLoc("item/bread_slice"))
         singleTexture("breadmod:music_disc_test", mcLoc("item/generated"), "layer0", modLoc("item/music_disc_test"))
-        singleTexture("breadmod:bread_boots", mcLoc("item/generated"), "layer0", modLoc("item/bread_boots"))
-        singleTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("item/bread_leggings"))
-        singleTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("item/bread_chestplate"))
-        singleTexture("breadmod:bread_helmet", mcLoc("item/generated"), "layer0", modLoc("item/bread_helmet"))
+        multiTexture("breadmod:bread_boots", mcLoc("item/generated"), "layer0", modLoc("item/bread_boots"), "layer1", modLoc("item/bread_boots_overlay"))
+        multiTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("item/bread_leggings"), "layer1", modLoc("item/bread_leggings_overlay"))
+        multiTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("item/bread_chestplate"), "layer1", modLoc("item/bread_chestplate_overlay"))
+        multiTexture("breadmod:bread_helmet", mcLoc("item/generated"), "layer0", modLoc("item/bread_helmet"), "layer1", modLoc("item/bread_helmet_overlay"))
     }
 
     private fun singleItem(item: RegistryObject<Item>) { // Figure out why this is causing an error when called
@@ -31,5 +31,11 @@ class ModItemModels(output: PackOutput?, modid: String?, existingFileHelper: Exi
             "layer0",
             ResourceLocation(BreadMod.ID, "item/" + item.id.path)
         )
+    }
+
+    private fun multiTexture(name: String, parent: ResourceLocation, textureKey: String, texture: ResourceLocation, textureKey2: String, texture2: ResourceLocation) {
+        withExistingParent(name, parent)
+            .texture(textureKey, texture)
+            .texture(textureKey2, texture2)
     }
 }
