@@ -7,7 +7,9 @@ import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.item.*
+import net.minecraft.world.item.ArmorItem
+import net.minecraft.world.item.ArmorMaterial
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.alchemy.PotionUtils
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
@@ -17,7 +19,7 @@ class BreadArmorItem(
     material: ArmorMaterial,
     type: Type,
     properties: Properties,
-): DyeableArmorItem(material, type, properties) {
+): ArmorItem(material, type, properties) {
     private val random = Random(material.hashCode())
     private fun ItemStack.hurt(amount: Int, player: ServerPlayer) = hurtAndBreak(amount, player) { it.broadcastBreakEvent(type.slot) }
 
