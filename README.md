@@ -4,6 +4,7 @@
   - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches
   - [X] Each piece will keep your hunger from going below a certain point (+1 cumulative)
   - [ ] Doped bread/armor set
+  - [ ] Bread Armor Trimming
     - [ ] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while it's equipped
       - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect gets applied to fellow players
 - [ ] Bread Tools
