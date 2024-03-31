@@ -41,12 +41,7 @@ object ModBusEventHandler {
 
         BreadMod.LOGGER.log(Level.INFO, "Generating mod tags")
         val blockTagGenerator = generator.addProvider(event.includeServer(), ModBlockTags(packOutput, lookupProvider, existingFileHelper))
-        generator.addProvider(event.includeServer(), ModItemTags(
-            packOutput,
-            lookupProvider,
-            blockTagGenerator.contentsGetter(),
-            existingFileHelper
-        ))
+        generator.addProvider(event.includeServer(), ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
 
         // Client side data generation
         BreadMod.LOGGER.log(Level.INFO, "Generating lang file")
