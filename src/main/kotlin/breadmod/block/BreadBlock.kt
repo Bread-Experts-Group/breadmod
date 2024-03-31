@@ -36,18 +36,18 @@ class BreadBlock : Block(Properties.copy(Blocks.HAY_BLOCK).strength(0.5f).ignite
 
     override fun onCaughtFire(
         state: BlockState?,
-        pLevel: Level?,
-        pPos: BlockPos?,
+        pLevel: Level,
+        pPos: BlockPos,
         direction: Direction?,
         igniter: LivingEntity?
     ) {
-        val vec3 = pPos?.let { Vec3.atLowerCornerWithOffset(it, 0.5, 1.01, 0.5).offsetRandom(pLevel?.random ?: RandomSource.create(1), 0.7f) }
-        val itementity = pLevel?.let { vec3?.let { it1 -> ItemEntity(it, it1.x(), vec3.y(), vec3.z(), ItemStack(Items.CHARCOAL)) } }
-        itementity!!.setDefaultPickUpDelay()
-        itementity.isInvulnerable
-        pLevel.addFreshEntity(itementity)
+//        val vec3 = pPos?.let { Vec3.atLowerCornerWithOffset(it, 0.5, 1.01, 0.5).offsetRandom(pLevel?.random ?: RandomSource.create(1), 0.7f) }
+//        val itementity = pLevel?.let { vec3?.let { it1 -> ItemEntity(it, it1.x(), vec3.y(), vec3.z(), ItemStack(Items.CHARCOAL)) } }
+//        itementity!!.setDefaultPickUpDelay()
+//        itementity.isInvulnerable
+//        pLevel.addFreshEntity(itementity)
 
-
+        pLevel.setBlock(pPos, Blocks.COAL_BLOCK.defaultBlockState(), 1 or 2)
 
         super.onCaughtFire(state, pLevel, pPos, direction, igniter)
     }
