@@ -16,13 +16,17 @@
   - [ ] Sword
   - [ ] Reinforced Variants of tools
     - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
-  - Needs to be done still:
-    - [ ] Textures
-      - would be funny if the bread sword was just a long piece of bread attached to a sword handle
-    - [ ] Recipes
-    - [ ] Lang datagen
-    - [ ] Model datagen
-    - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
+- [ ] Bread Block
+  - [X] Mixin for turning burning blocks into another block
+  - [X] Edible (currently multiplied by the food value of TestBread)
+  - [ ] Custom charcoal block as a result of bread block being burned
+- Needs to be done still:
+  - [ ] Textures for tools, weapons, items, blocks
+    - would be funny if the bread sword was just a long piece of bread attached to a sword handle
+  - [X] Recipe datagen
+  - [X] Lang datagen
+  - [X] Model datagen
+  - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
 - [X] Bread slices
   - [X] Crafted from using a sword on bread in a crafting table (the sword does not take damage)
   - [X] You get 6 bread slices per bread in the recipe
