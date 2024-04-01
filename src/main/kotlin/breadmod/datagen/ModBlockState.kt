@@ -9,8 +9,10 @@ import net.minecraftforge.common.data.ExistingFileHelper
 class ModBlockState(output: PackOutput?, modid: String?, exFileHelper: ExistingFileHelper?) :
     BlockStateProvider(output, modid, exFileHelper) {
     override fun registerStatesAndModels() {
-        blockWithItem(ModBlocks.BREAD_BLOCK)
-        blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK)
+        blockWithItem(ModBlocks.BREAD_BLOCK.get().block)
+        blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
+        blockWithItem(ModBlocks.CHARCOAL_BLOCK.get().block)
+        blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
     }
 
     private fun blockWithItem(blockRegistryObject: Block) {

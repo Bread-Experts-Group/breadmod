@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.gen.Invoker
 import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
-import java.awt.Color
 
 @Mixin(HumanoidArmorLayer::class)
 abstract class MixinHumanoidArmorLayer<T: LivingEntity, M: HumanoidModel<T>, A: HumanoidModel<T>>(pRenderer: RenderLayerParent<T, M>) : RenderLayer<T, M>(pRenderer) {
@@ -40,16 +39,13 @@ abstract class MixinHumanoidArmorLayer<T: LivingEntity, M: HumanoidModel<T>, A: 
             val model: Model = iGetArmorModelHook(pLivingEntity, itemstack, pSlot, pModel)
             val flag: Boolean = this.iUsesInnerModel(pSlot)
 
-            val i = Color(255,0,255).rgb // item.getColor(itemstack)
-            val f = (i shr 16 and 255).toFloat() / 255.0f
-            val f1 = (i shr 8 and 255).toFloat() / 255.0f
-            val f2 = (i and 255).toFloat() / 255.0f
+            val components = item.currentColor.getRGBColorComponents(null)
             this.iRenderModel(
-                pPoseStack, pBuffer, pPackedLight, item, model, flag, f, f1, f2,
+                pPoseStack, pBuffer, pPackedLight, item, model, flag, components[0], components[1], components[2],
                 this.iGetArmorResource(pLivingEntity, itemstack, pSlot, null)
             )
             this.iRenderModel(
-                pPoseStack, pBuffer, pPackedLight, item, model, flag, 1.0f, 1.0f, 1.0f,
+                pPoseStack, pBuffer, pPackedLight, item, model, flag, 1.0f , 1.0f, 1.0f,
                 this.iGetArmorResource(pLivingEntity, itemstack, pSlot, "overlay")
             )
 

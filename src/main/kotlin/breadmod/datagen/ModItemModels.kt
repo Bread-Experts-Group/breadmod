@@ -1,6 +1,7 @@
 package breadmod.datagen
 
 import breadmod.BreadMod
+import breadmod.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
@@ -8,12 +9,12 @@ import net.minecraftforge.client.model.generators.ItemModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.registries.RegistryObject
 
-@Suppress("SpellCheckingInspection", "unused")
-class ModItemModels(output: PackOutput?, modid: String?, existingFileHelper: ExistingFileHelper?) :
+@Suppress("SpellCheckingInspection")
+class ModItemModels(output: PackOutput, modid: String, existingFileHelper: ExistingFileHelper) :
     ItemModelProvider(output, modid, existingFileHelper) {
     override fun registerModels() {
-//        singleItem(ModItems.TEST_DISC)
-//        singleItem(ModItems.TEST_BREAD)
+        singleItem(ModItems.TEST_DISC)
+        singleItem(ModItems.TEST_BREAD)
         singleTexture("breadmod:test_bread", mcLoc("item/generated"), "layer0", modLoc("item/test_bread"))
         singleTexture("breadmod:bread_slice", mcLoc("item/generated"), "layer0", modLoc("item/bread_slice"))
         singleTexture("breadmod:music_disc_test", mcLoc("item/generated"), "layer0", modLoc("item/music_disc_test"))
@@ -23,7 +24,7 @@ class ModItemModels(output: PackOutput?, modid: String?, existingFileHelper: Exi
         multiTexture("breadmod:bread_helmet", mcLoc("item/generated"), "layer0", modLoc("item/bread_helmet"), "layer1", modLoc("item/bread_helmet_overlay"))
     }
 
-    private fun singleItem(item: RegistryObject<Item>) { // Figure out why this is causing an error when called
+    private fun <T: Item> singleItem(item: RegistryObject<T>) {
         withExistingParent(
             item.id.path,
             ResourceLocation("item/generated")

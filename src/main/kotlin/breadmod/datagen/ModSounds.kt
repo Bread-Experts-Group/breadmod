@@ -11,13 +11,13 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModSounds {
-    val MOD_SOUNDS: DeferredRegister<SoundEvent> =
+    val REGISTRY: DeferredRegister<SoundEvent> =
         DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, BreadMod.ID)
 
     val TEST_SOUND: RegistryObject<SoundEvent> = registerSoundEvents("test_sound")
 
     private fun registerSoundEvents(name: String): RegistryObject<SoundEvent> {
-        return MOD_SOUNDS.register(
+        return REGISTRY.register(
             name
         ) {
             SoundEvent.createVariableRangeEvent(

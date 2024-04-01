@@ -11,16 +11,15 @@ import net.minecraftforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
 
 class ModItemTags(
-    pOutput: PackOutput?,
-    pLookupProvider: CompletableFuture<HolderLookup.Provider?>?,
-    pBlockTags: CompletableFuture<TagLookup<Block?>?>?,
-    existingFileHelper: ExistingFileHelper?
-) : ItemTagsProvider(pOutput!!, pLookupProvider!!, pBlockTags!!, BreadMod.ID, existingFileHelper) {
+    pOutput: PackOutput,
+    pLookupProvider: CompletableFuture<HolderLookup.Provider>,
+    pBlockTags: CompletableFuture<TagLookup<Block>>,
+    existingFileHelper: ExistingFileHelper
+) : ItemTagsProvider(pOutput, pLookupProvider, pBlockTags, BreadMod.ID, existingFileHelper) {
     override fun addTags(pProvider: HolderLookup.Provider) {
         tag(ItemTags.MUSIC_DISCS)
-            .add(ModItems.TEST_DISC)
-
+            .add(ModItems.TEST_DISC.get())
         tag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
-            .add(ModItems.TEST_DISC)
+            .add(ModItems.TEST_DISC.get())
     }
 }

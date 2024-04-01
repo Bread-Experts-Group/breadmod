@@ -1,6 +1,7 @@
-package breadmod.item.armor
+package breadmod.recipe
 
-import breadmod.recipe.CustomRecipeType
+import breadmod.item.armor.BreadArmorItem
+import breadmod.recipe.ModRecipeSerializers.ARMOR_POTION_CRAFTING
 import breadmod.util.StackColor.applyColor
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
@@ -12,13 +13,17 @@ import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 
-abstract class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory) : CustomRecipe(pId, pCategory) {
-    override fun matches(pInv: CraftingContainer, pLevel: Level): Boolean {
+// TODO!!!!
+class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory): CustomRecipe(pId, pCategory) {
+    override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
+        Blocks.COAL_BLOCK
+        throw IllegalStateException("2")
         var hasItem = false; var hasEffect = false
-        for (slot in 0 until pInv.containerSize) {
-            pInv.getItem(slot).also { stack ->
+        for (slot in 0 until pContainer.containerSize) {
+            pContainer.getItem(slot).also { stack ->
                 if(!stack.isEmpty) when(stack.item) {
                     is PotionItem -> {
                         if(hasEffect) return false
@@ -38,11 +43,12 @@ abstract class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookC
         return hasItem && hasEffect
     }
 
-    override fun assemble(pInv: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
+    override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
+        throw IllegalStateException()
         var itemStack: ItemStack = ItemStack.EMPTY
         val potions = buildList {
-            for (slot in 0 until pInv.containerSize) {
-                val stack = pInv.getItem(slot)
+            for (slot in 0 until pContainer.containerSize) {
+                val stack = pContainer.getItem(slot)
                 when(stack.item) {
                     is PotionItem -> addAll(PotionUtils.getPotion(stack).effects)
                     is BreadArmorItem -> if(itemStack.isEmpty) itemStack = stack else return ItemStack.EMPTY
@@ -58,6 +64,6 @@ abstract class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookC
         else ItemStack.EMPTY
     }
 
-    override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = pWidth * pHeight >= 2
-//    override fun getSerializer(): RecipeSerializer<ArmorPotionRecipe> = CustomRecipeType.ARMOR_POTIONS // TODO("To Be Fixed")
+    override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = (pWidth * pHeight) >= 2
+    override fun getSerializer(): RecipeSerializer<*> = ARMOR_POTION_CRAFTING.get()
 }

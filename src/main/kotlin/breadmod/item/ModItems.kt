@@ -1,7 +1,6 @@
 package breadmod.item
 
 import breadmod.BreadMod
-import breadmod.block.ModBlocks
 import breadmod.datagen.ModSounds
 import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
@@ -11,55 +10,45 @@ import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
-import thedarkcolour.kotlinforforge.forge.registerObject
+import net.minecraftforge.registries.RegistryObject
 
-@Suppress("unused", "SpellCheckingInspection")
+@Suppress("unused")
 object ModItems {
     val REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, BreadMod.ID)
 
-    val TEST_BREAD by REGISTRY.registerObject("test_bread") { TestBreadItem() }
-    val BREAD_BLOCK_ITEM by REGISTRY.registerObject("bread_block") {
-        val breadFoodStats = TEST_BREAD.getFoodProperties(TEST_BREAD.defaultInstance, null)!!
-        BlockItem(ModBlocks.BREAD_BLOCK, Item.Properties().food(
-            FoodProperties.Builder()
-            .nutrition(breadFoodStats.nutrition * 9)
-            .saturationMod(breadFoodStats.saturationModifier * 9)
-            .build()
-        )) }
-    val REINFORCED_BREAD_BLOCK_ITEM by REGISTRY.registerObject("reinforced_bread_block") {
-        BlockItem(ModBlocks.REINFORCED_BREAD_BLOCK, Item.Properties()) }
+    val TEST_BREAD: RegistryObject<TestBreadItem> = REGISTRY.register("test_bread") { TestBreadItem() }
 
-    val BREAD_SHIELD by REGISTRY.registerObject("bread_shield") { BreadShieldItem() }
-    val DOPED_BREAD by REGISTRY.registerObject("doped_bread") { DopedBreadItem() }
-    val BREAD_CRUMBS by REGISTRY.registerObject("bread_crumbs") { Item(Item.Properties()) }
-    val BREAD_SLICE by REGISTRY.registerObject("bread_slice") {
+    val BREAD_SHIELD: RegistryObject<BreadShieldItem> = REGISTRY.register("bread_shield") { BreadShieldItem() }
+    val DOPED_BREAD: RegistryObject<DopedBreadItem> = REGISTRY.register("doped_bread") { DopedBreadItem() }
+    val BREAD_CRUMBS: RegistryObject<Item> = REGISTRY.register("bread_crumbs") { Item(Item.Properties()) }
+    val BREAD_SLICE: RegistryObject<Item> = REGISTRY.register("bread_slice") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build()))
     }
 
     // Armor
-    val BREAD_HELMET by REGISTRY.registerObject("bread_helmet") {
+    val BREAD_HELMET: RegistryObject<BreadArmorItem> = REGISTRY.register("bread_helmet") {
         BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.HELMET, Item.Properties()) }
-    val BREAD_CHESTPLATE by REGISTRY.registerObject("bread_chestplate") {
+    val BREAD_CHESTPLATE: RegistryObject<BreadArmorItem> = REGISTRY.register("bread_chestplate") {
         BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.CHESTPLATE, Item.Properties()) }
-    val BREAD_LEGGINGS by REGISTRY.registerObject("bread_leggings") {
+    val BREAD_LEGGINGS: RegistryObject<BreadArmorItem> = REGISTRY.register("bread_leggings") {
         BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.LEGGINGS, Item.Properties()) }
-    val BREAD_BOOTS by REGISTRY.registerObject("bread_boots") {
+    val BREAD_BOOTS: RegistryObject<BreadArmorItem> = REGISTRY.register("bread_boots") {
         BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.BOOTS, Item.Properties()) }
 
     // Tools // Speed modifier slows down the tool based on how much of a negative value you give it (Maybe it's a multiplier?)
-    val BREAD_PICKAXE by REGISTRY.registerObject("bread_pickaxe") {
+    val BREAD_PICKAXE: RegistryObject<PickaxeItem> = REGISTRY.register("bread_pickaxe") {
         PickaxeItem(ToolTiers.BREAD,1,-2.5f, Item.Properties()) }
-    val BREAD_SHOVEL by REGISTRY.registerObject("bread_shovel") {
+    val BREAD_SHOVEL: RegistryObject<ShovelItem> = REGISTRY.register("bread_shovel") {
         ShovelItem(ToolTiers.BREAD, 1.2f,-2.8f, Item.Properties()) }
-    val BREAD_AXE by REGISTRY.registerObject("bread_axe") {
+    val BREAD_AXE: RegistryObject<AxeItem> = REGISTRY.register("bread_axe") {
         AxeItem(ToolTiers.BREAD, 4.0f,-3f, Item.Properties()) }
-    val BREAD_HOE by REGISTRY.registerObject("bread_hoe") {
+    val BREAD_HOE: RegistryObject<HoeItem> = REGISTRY.register("bread_hoe") {
         HoeItem(ToolTiers.BREAD, 1,-2.8f, Item.Properties()) }
-    val BREAD_SWORD by REGISTRY.registerObject("bread_sword") {
+    val BREAD_SWORD: RegistryObject<SwordItem> = REGISTRY.register("bread_sword") {
         SwordItem(ToolTiers.BREAD, 2,-2.5f, Item.Properties()) }
 
 
-    val TEST_DISC by REGISTRY.registerObject("music_disc_test") {
+    val TEST_DISC: RegistryObject<RecordItem> = REGISTRY.register("music_disc_test") {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()
             .stacksTo(1)
             .rarity(Rarity.RARE),

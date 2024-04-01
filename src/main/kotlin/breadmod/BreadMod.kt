@@ -4,6 +4,7 @@ import breadmod.block.ModBlocks
 import breadmod.datagen.ModSounds
 import breadmod.gui.ModCreativeTab
 import breadmod.item.ModItems
+import breadmod.recipe.ModRecipeSerializers
 import net.minecraft.client.Minecraft
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
@@ -16,14 +17,7 @@ import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import thedarkcolour.kotlinforforge.forge.runForDist
 
-/**
- * Main mod class. Should be an `object` declaration annotated with `@Mod`.
- * The modid should be declared in this object and should match the modId entry
- * in mods.toml.
- *
- * An example for blocks is in the `blocks` package of this mod.
- */
-@Suppress("SpellCheckingInspection", "Unused")
+@Suppress("Unused")
 @Mod(BreadMod.ID)
 object BreadMod {
     const val ID = "breadmod"
@@ -40,14 +34,17 @@ object BreadMod {
         LOGGER.log(Level.INFO, "Registering Mod Items")
         ModItems.REGISTRY.register(MOD_BUS)
         LOGGER.log(Level.INFO, "Registering Mod Sounds")
-        ModSounds.MOD_SOUNDS.register(MOD_BUS)
+        ModSounds.REGISTRY.register(MOD_BUS)
         LOGGER.log(Level.INFO, "Registering Creative Tab")
-        ModCreativeTab.CREATIVE_MODE_TABS.register(MOD_BUS)
+        ModCreativeTab.REGISTRY.register(MOD_BUS)
+        LOGGER.log(Level.INFO, "Registering Crafting Recipe Types")
+        ModRecipeSerializers.REGISTRY.register(MOD_BUS)
+
 
         LOGGER.log(Level.INFO, "Registering Mod Config")
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfiguration.SPECIFICATION, "breadmod-common.toml")
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPECIFICATION.right, "breadmod-common.toml")
 
-        val obj = runForDist(
+        runForDist(
             clientTarget = {
                 MOD_BUS.addListener(BreadMod::onClientSetup)
                 Minecraft.getInstance()
@@ -55,9 +52,8 @@ object BreadMod {
             serverTarget = {
                 MOD_BUS.addListener(BreadMod::onServerSetup)
                 "test"
-            })
-
-        println(obj)
+            }
+        )
     }
 
     /**

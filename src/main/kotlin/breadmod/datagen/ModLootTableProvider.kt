@@ -7,13 +7,9 @@ import net.minecraft.data.loot.LootTableProvider.SubProviderEntry
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 
 object ModLootTableProvider {
-    fun create(output: PackOutput?): LootTableProvider? {
-        return output?.let {
-            LootTableProvider(
-                it, setOf(), listOf(
-                    SubProviderEntry({ ModBlocks.ModBlockLoot() }, LootContextParamSets.BLOCK)
-                )
-            )
-        }
+    fun create(output: PackOutput): LootTableProvider {
+        return LootTableProvider(
+            output, setOf(), listOf(SubProviderEntry({ ModBlocks.ModBlockLoot() }, LootContextParamSets.BLOCK))
+        )
     }
 }
