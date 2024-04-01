@@ -16,10 +16,10 @@
   - [ ] Sword
   - [ ] Reinforced Variants of tools
     - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
-- [ ] Bread Block
+- [X] Bread Block
   - [X] Mixin for turning burning blocks into another block
   - [X] Edible (currently multiplied by the food value of TestBread)
-  - [ ] Custom charcoal block as a result of bread block being burned
+  - [X] Custom charcoal block as a result of bread block being burned
 - Needs to be done still:
   - [ ] Textures for tools, weapons, items, blocks
     - would be funny if the bread sword was just a long piece of bread attached to a sword handle
