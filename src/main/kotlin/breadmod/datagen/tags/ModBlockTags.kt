@@ -1,7 +1,7 @@
 package breadmod.datagen.tags
 
 import breadmod.BreadMod
-import breadmod.block.ModBlocks
+import breadmod.block.registry.ModBlocks
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
@@ -22,6 +22,7 @@ class ModBlockTags(
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .add(ModBlocks.CHARCOAL_BLOCK.get().block)
             .add(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
+            .add(ModBlocks.BREAD_FURNACE_BLOCK.get().block)
         tag(BlockTags.create(ResourceLocation("forge", "storage_blocks")))
             .add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
             .add(ModBlocks.CHARCOAL_BLOCK.get().block)

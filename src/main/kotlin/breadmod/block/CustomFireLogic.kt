@@ -1,4 +1,3 @@
 package breadmod.block
 
-interface CustomFireLogic {
-}
+interface CustomFireLogic

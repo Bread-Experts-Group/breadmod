@@ -1,7 +1,7 @@
 package breadmod.gui
 
 import breadmod.BreadMod
-import breadmod.block.ModBlocks.BREAD_BLOCK
+import breadmod.block.registry.ModBlocks.BREAD_BLOCK
 import breadmod.item.ModItems
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component

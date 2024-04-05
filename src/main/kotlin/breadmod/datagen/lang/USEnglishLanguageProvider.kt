@@ -1,7 +1,7 @@
 package breadmod.datagen.lang
 
 import breadmod.BreadMod
-import breadmod.block.ModBlocks
+import breadmod.block.registry.ModBlocks
 import breadmod.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.Item
@@ -28,10 +28,12 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
         add(ModItems.DOPED_BREAD.get())
         add(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
         add(ModBlocks.CHARCOAL_BLOCK.get().block)
+        add(ModBlocks.BREAD_FURNACE_BLOCK.get().block)
         add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block, "Low-Density Charcoal Block")
         add("item.breadmod.music_disc_test.desc", "Music Disc Description")
         add("item.breadmod.test_bread.desc", "Identical to bread on the outside - tumors on the inside.")
         add("item.breadmod.bread_shield.desc", "No it does NOT look like balsa wood >:(")
         add("item.breadmod.doped_bread.desc", "contains trace amounts of neurotoxin")
+        add("container.bread_furnace", "Bread Furnace")
     }
 }
