@@ -23,6 +23,8 @@ class ModBlockTags(
             .add(ModBlocks.CHARCOAL_BLOCK.get().block)
             .add(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
             .add(ModBlocks.BREAD_FURNACE_BLOCK.get().block)
+        tag(BlockTags.BEACON_BASE_BLOCKS)
+            .add(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
         tag(BlockTags.create(ResourceLocation("forge", "storage_blocks")))
             .add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
             .add(ModBlocks.CHARCOAL_BLOCK.get().block)

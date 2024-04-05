@@ -35,6 +35,8 @@
   - [X] Recipe datagen
   - [X] Lang datagen
   - [X] Model datagen
+  - [ ] Crafting recipes for reinforced bread block and tools
+  - [ ] Happy Block Nuclear Inferno
   - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
 - [X] Bread slices
   - [X] Crafted from using a sword on bread in a crafting table (the sword does not take damage)

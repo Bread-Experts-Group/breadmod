@@ -8,8 +8,10 @@ import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapedRecipeBuilder
 import net.minecraft.data.recipes.ShapelessRecipeBuilder
+import net.minecraft.data.recipes.SmithingTransformRecipeBuilder
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
+import net.minecraft.world.item.crafting.Ingredient
 import java.util.function.Consumer
 
 class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
@@ -68,5 +70,12 @@ class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .unlockedBy("has_item", has(ModBlocks.CHARCOAL_BLOCK.get()))
             .requires(ModBlocks.CHARCOAL_BLOCK.get(), 1)
             .save(pWriter, "charcoal_decompaction")
+        SmithingTransformRecipeBuilder.smithing(
+            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+            Ingredient.of(ModBlocks.BREAD_BLOCK.get()),
+            Ingredient.of(Items.NETHERITE_INGOT),
+            RecipeCategory.BUILDING_BLOCKS,
+            ModBlocks.REINFORCED_BREAD_BLOCK.get()
+        ).unlocks("has_item", has(ModBlocks.BREAD_BLOCK.get())).save(pWriter, "reinforced_bread_block_smithing")
     }
 }

@@ -18,6 +18,7 @@ class ModBlockState(
         blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
         blockWithItem(ModBlocks.CHARCOAL_BLOCK.get().block)
         blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
+        blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
 
         horizontalBlock(ModBlocks.BREAD_FURNACE_BLOCK.get().block) { state ->
             val furnaceOn = if(state.getValue(AbstractFurnaceBlock.LIT)) "_on" else ""

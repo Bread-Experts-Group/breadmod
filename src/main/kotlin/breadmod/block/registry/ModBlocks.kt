@@ -4,6 +4,7 @@ import breadmod.BreadMod
 import breadmod.block.BreadBlock
 import breadmod.block.BreadFurnaceBlock
 import breadmod.block.FlammableBlock
+import breadmod.block.HappyBlock
 import breadmod.item.ModItems
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.world.flag.FeatureFlags
@@ -15,6 +16,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraftforge.common.extensions.IForgeItem
 import net.minecraftforge.registries.DeferredRegister
@@ -44,7 +46,7 @@ object ModBlocks {
     )
     val REINFORCED_BREAD_BLOCK = registerBlockItem(
         "reinforced_bread_block",
-        { Block(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).strength(1f)) },
+        { Block(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).strength(1f).sound(SoundType.NETHERITE_BLOCK)) },
         Item.Properties().fireResistant()
     )
 
@@ -69,6 +71,12 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val HAPPY_BLOCK = registerBlockItem(
+        "happy_block",
+        { HappyBlock() },
+        Item.Properties()
+    )
+
     class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {
         override fun getKnownBlocks(): Iterable<Block> {
             return Iterable<Block> {
@@ -85,6 +93,7 @@ object ModBlocks {
             dropSelf(CHARCOAL_BLOCK.get().block)
             dropSelf(LOW_DENSITY_CHARCOAL_BLOCK.get().block)
             dropSelf(BREAD_FURNACE_BLOCK.get().block)
+            dropSelf(HAPPY_BLOCK.get().block)
         }
     }
 }

@@ -30,6 +30,7 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
         add(ModBlocks.CHARCOAL_BLOCK.get().block)
         add(ModBlocks.BREAD_FURNACE_BLOCK.get().block)
         add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block, "Low-Density Charcoal Block")
+        add(ModBlocks.HAPPY_BLOCK.get())
         add("item.breadmod.music_disc_test.desc", "Music Disc Description")
         add("item.breadmod.test_bread.desc", "Identical to bread on the outside - tumors on the inside.")
         add("item.breadmod.bread_shield.desc", "No it does NOT look like balsa wood >:(")
