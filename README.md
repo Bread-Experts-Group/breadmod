@@ -20,6 +20,15 @@
   - [X] Mixin for turning burning blocks into another block
   - [X] Edible (currently multiplied by the food value of TestBread)
   - [X] Custom charcoal block as a result of bread block being burned
+- [ ] Bread Machine for turning wheat into dough
+  - [ ] Screen
+  - [ ] Multiblock Structure(?)  
+  - [ ] Can be heated from the bottom
+    - [ ] (x0.5 Speed) Fire
+    - [ ] (x1.0 Speed) Normal Fuel
+    - [ ] (x2.0 Speed) RF-powered Heating coil
+    - [ ] (x2.5 Speed) Blaze Burner (Create)
+    - [ ] (x4.5 Speed) Superheated Blaze Burner (Create)
 - Needs to be done still:
   - [ ] Textures for tools, weapons, items, blocks
     - would be funny if the bread sword was just a long piece of bread attached to a sword handle
@@ -30,9 +39,13 @@
 - [X] Bread slices
   - [X] Crafted from using a sword on bread in a crafting table (the sword does not take damage)
   - [X] You get 6 bread slices per bread in the recipe
+  - [ ] Doping
+    - [ ] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisons
+      - Can only be doped once!
+  - [ ] Only stacks to 16
   - [ ] Bread crumbs
     - Crafted from splitting toast in a crafting table
-    - Usable as birdseed, provides a fraction of the saturation a full loaf does 
+    - Usable as birdseed, provides a fraction of the saturation a full loaf does
 ---
 - [ ] Joke item: "the ultimate bread" just gives you creative mode lmao
 - [ ] "Bread amulet" gives you 1 hunger point every 10 seconds
