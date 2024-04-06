@@ -9,7 +9,7 @@ import breadmod.datagen.ModSounds.ModSoundsDatagen
 import breadmod.datagen.lang.USEnglishLanguageProvider
 import breadmod.datagen.tags.ModBlockTags
 import breadmod.datagen.tags.ModItemTags
-import breadmod.entity.ModEntities.HAPPY_BLOCK
+import breadmod.entity.ModEntities.HAPPY_BLOCK_ENTITY
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.item.ModItems
 import breadmod.screens.BreadFurnaceScreen
@@ -74,7 +74,7 @@ object ModBusEventHandler {
                 BreadFurnaceScreen(pMenu,pInventory,pTitle) }
 
             fun registerRenders(event: RegisterRenderers) {
-                event.registerEntityRenderer(HAPPY_BLOCK.get()) { pContext: EntityRendererProvider.Context ->
+                event.registerEntityRenderer(HAPPY_BLOCK_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
                     PrimedHappyBlockRenderer(pContext) }
             }
         }
