@@ -3,6 +3,7 @@ package breadmod
 import breadmod.block.registry.ModBlockEntities
 import breadmod.block.registry.ModBlocks
 import breadmod.datagen.ModSounds
+import breadmod.entity.ModEntities
 import breadmod.gui.ModCreativeTab
 import breadmod.item.ModItems
 import breadmod.recipe.ModRecipeSerializers
@@ -46,6 +47,8 @@ object BreadMod {
         ModRecipeTypes.REGISTRY.register(MOD_BUS)
         LOGGER.info("Registering Mod Menu Types")
         ModMenuTypes.REGISTRY.register(MOD_BUS)
+        LOGGER.info("Registering Mod Entities")
+        ModEntities.REGISTRY.register(MOD_BUS)
 
         LOGGER.info("Registering Mod Config")
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPECIFICATION.right, "breadmod-common.toml")

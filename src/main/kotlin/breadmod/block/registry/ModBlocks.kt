@@ -1,10 +1,7 @@
 package breadmod.block.registry
 
 import breadmod.BreadMod
-import breadmod.block.BreadBlock
-import breadmod.block.BreadFurnaceBlock
-import breadmod.block.FlammableBlock
-import breadmod.block.HappyBlock
+import breadmod.block.*
 import breadmod.item.ModItems
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.world.flag.FeatureFlags

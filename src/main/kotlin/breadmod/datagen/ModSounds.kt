@@ -15,6 +15,7 @@ object ModSounds {
         DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, BreadMod.ID)
 
     val TEST_SOUND: RegistryObject<SoundEvent> = registerSoundEvents("test_sound")
+    val HAPPY_BLOCK_FUSE: RegistryObject<SoundEvent> = registerSoundEvents("happy_block_fuse")
 
     private fun registerSoundEvents(name: String): RegistryObject<SoundEvent> {
         return REGISTRY.register(
@@ -36,6 +37,10 @@ object ModSounds {
             this.add(
                 TEST_SOUND, definition().subtitle(("sound." + BreadMod.ID) + ".test_sound")
                     .with(sound(ResourceLocation(BreadMod.ID, "test_sound")).volume(1f).stream())
+            )
+            this.add(
+                HAPPY_BLOCK_FUSE, definition().subtitle("sound." + BreadMod.ID + ".happy_block_fuse")
+                    .with(sound(ResourceLocation(BreadMod.ID, "happy_block_fuse")).volume(1f))
             )
         }
     }
