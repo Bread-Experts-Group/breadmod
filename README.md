@@ -8,13 +8,15 @@
     - [ ] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while it's equipped
       - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect gets applied to fellow players
 - [ ] Bread Tools
-  - Slightly weaker than wood in durability and strength but has approx 1.5x more speed
-  - [ ] Pickaxe
-  - [ ] Shovel
-  - [ ] Hoe
-  - [ ] Axe
-  - [ ] Sword
+  - Slightly weaker than stone in durability and strength but has approx 1.5x more speed
+  - [X] Pickaxe
+  - [X] Shovel
+  - [X] Hoe
+  - [X] Axe
+  - [X] Sword
   - [ ] Reinforced Variants of tools
+  - [ ] Crafting/Smithing recipes for tools
+  - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
     - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
 - [X] Bread Block
   - [X] Mixin for turning burning blocks into another block
@@ -35,9 +37,8 @@
   - [X] Recipe datagen
   - [X] Lang datagen
   - [X] Model datagen
-  - [ ] Crafting recipes for reinforced bread block and tools
+  - [X] Crafting recipes for reinforced bread block (now smithing recipe)
   - [ ] Happy Block Nuclear Inferno
-  - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
 - [X] Bread slices
   - [X] Crafted from using a sword on bread in a crafting table (the sword does not take damage)
   - [X] You get 6 bread slices per bread in the recipe

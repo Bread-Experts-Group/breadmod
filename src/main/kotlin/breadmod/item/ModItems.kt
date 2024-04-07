@@ -47,6 +47,18 @@ object ModItems {
     val BREAD_SWORD: RegistryObject<SwordItem> = REGISTRY.register("bread_sword") {
         SwordItem(ToolTiers.BREAD, 2,-2.5f, Item.Properties()) }
 
+    // Reinforced Tools
+    val RF_BREAD_PICKAXE: RegistryObject<PickaxeItem> = REGISTRY.register("reinforced_bread_pickaxe") {
+        PickaxeItem(ToolTiers.RF_BREAD, 2, -1f, Item.Properties()) }
+    val RF_BREAD_SHOVEL: RegistryObject<ShovelItem> = REGISTRY.register("reinforced_bread_shovel") {
+        ShovelItem(ToolTiers.RF_BREAD, 1.2f,-2.8f, Item.Properties()) }
+    val RF_BREAD_AXE: RegistryObject<AxeItem> = REGISTRY.register("reinforced_bread_axe") {
+        AxeItem(ToolTiers.RF_BREAD, 4.0f,-3f, Item.Properties()) }
+    val RF_BREAD_HOE: RegistryObject<HoeItem> = REGISTRY.register("reinforced_bread_hoe") {
+        HoeItem(ToolTiers.RF_BREAD, 1,-2.8f, Item.Properties()) }
+    val RF_BREAD_SWORD: RegistryObject<SwordItem> = REGISTRY.register("reinforced_bread_sword") {
+        SwordItem(ToolTiers.RF_BREAD, 2,-2.5f, Item.Properties()) }
+
 
     val TEST_DISC: RegistryObject<RecordItem> = REGISTRY.register("music_disc_test") {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()

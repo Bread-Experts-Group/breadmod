@@ -12,7 +12,9 @@ enum class ToolTiers(
     private val getEnchantmentValue: Int,
     private val getRepairIngredient: Ingredient
 ) : Tier {
-    BREAD(50,2.5f,0.0f,0,10, Ingredient.of(Items.BREAD));
+    BREAD(100,3f,0.0f,0,10, Ingredient.of(Items.BREAD)),
+    RF_BREAD(1500,8f,3f,3,17, Ingredient.of(Items.NETHERITE_INGOT)); // Reinforced
+
     override fun getUses(): Int = getUses
     override fun getSpeed(): Float = getSpeed
     override fun getAttackDamageBonus(): Float = getAttackDamageBonus
