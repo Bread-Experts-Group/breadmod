@@ -2,8 +2,8 @@ package breadmod.datagen
 
 import breadmod.block.registry.ModBlocks
 import net.minecraft.data.PackOutput
-import net.minecraft.world.level.block.AbstractFurnaceBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.model.generators.BlockStateProvider
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
@@ -21,7 +21,7 @@ class ModBlockState(
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
 
         horizontalBlock(ModBlocks.BREAD_FURNACE_BLOCK.get().block) { state ->
-            val furnaceOn = if(state.getValue(AbstractFurnaceBlock.LIT)) "_on" else ""
+            val furnaceOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
             val name = "breadmod:block/bread_furnace$furnaceOn"
 
             val model = models().orientable(
@@ -36,6 +36,23 @@ class ModBlockState(
         simpleBlockItem(
             ModBlocks.BREAD_FURNACE_BLOCK.get().block,
             models().getBuilder("breadmod:block/bread_furnace")
+        )
+        //// // // // TODO!
+        directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { state ->
+            val coilOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
+            val name = "breadmod:block/heating_element$coilOn"
+
+            val model = models().cubeColumn(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_side$coilOn" ),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_cap$coilOn"),
+            )
+
+            return@directionalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.HEATING_ELEMENT_BLOCK.get().block,
+            models().getBuilder("breadmod:block/heating_element")
         )
     }
 

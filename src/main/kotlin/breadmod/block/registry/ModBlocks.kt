@@ -68,6 +68,12 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val HEATING_ELEMENT_BLOCK = registerBlockItem(
+        "heating_element",
+        { HeatingElementBlock() },
+        Item.Properties()
+    )
+
     val HAPPY_BLOCK = registerBlockItem(
         "happy_block",
         { HappyBlock() },
@@ -91,6 +97,7 @@ object ModBlocks {
             dropSelf(LOW_DENSITY_CHARCOAL_BLOCK.get().block)
             dropSelf(BREAD_FURNACE_BLOCK.get().block)
             dropSelf(HAPPY_BLOCK.get().block)
+            dropSelf(HEATING_ELEMENT_BLOCK.get().block)
         }
     }
 }

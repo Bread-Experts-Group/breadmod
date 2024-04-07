@@ -70,6 +70,16 @@ class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .unlockedBy("has_item", has(ModBlocks.CHARCOAL_BLOCK.get()))
             .requires(ModBlocks.CHARCOAL_BLOCK.get(), 1)
             .save(pWriter, "charcoal_decompaction")
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.HEATING_ELEMENT_BLOCK.get())
+            .unlockedBy("has_item", has(Items.COPPER_INGOT)) // TODO: Aluminum
+            .define('C', Items.COPPER_INGOT) // TODO: Aluminum String
+            .define('S', Items.STICK) // TODO: Metal rod
+            .pattern("CCC")
+            .pattern("CSC")
+            .pattern("CCC")
+            .save(pWriter)
+
         SmithingTransformRecipeBuilder.smithing(
             Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
             Ingredient.of(ModBlocks.BREAD_BLOCK.get()),

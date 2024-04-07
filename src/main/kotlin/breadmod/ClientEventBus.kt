@@ -31,7 +31,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 
 @Suppress("SpellCheckingInspection", "unused")
 @Mod.EventBusSubscriber(modid = BreadMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
-object ModBusEventHandler {
+object ClientEventBus {
     // Data Generation
     @SubscribeEvent
     fun gatherData(event: GatherDataEvent) {
