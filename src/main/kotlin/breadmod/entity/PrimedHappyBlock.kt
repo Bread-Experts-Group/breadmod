@@ -10,10 +10,6 @@ import kotlin.math.sin
 class PrimedHappyBlock(pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level) : PrimedTnt(pEntityType, pLevel) {
     private var owner: LivingEntity? = null
 
-    init {
-        this.blocksBuilding = true
-    }
-
     constructor(pLevel: Level, pX: Double, pY: Double, pZ: Double, pOwner: LivingEntity?) : this(
         ModEntities.HAPPY_BLOCK_ENTITY.get(),
         pLevel
@@ -31,5 +27,9 @@ class PrimedHappyBlock(pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level)
     override fun explode() {
         val blastRadius = 50.0f
         level().explode(this, this.x, this.getY(0.0625), this.z, blastRadius, Level.ExplosionInteraction.TNT)
+    }
+
+    override fun isPushable(): Boolean {
+        return true
     }
 }

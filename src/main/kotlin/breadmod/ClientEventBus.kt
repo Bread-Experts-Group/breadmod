@@ -60,6 +60,12 @@ object ClientEventBus {
         generator.addProvider(event.includeClient(), ModItemModels(packOutput, BreadMod.ID, existingFileHelper))
     }
 
+    @SubscribeEvent
+    fun registerRenders(event: RegisterRenderers) {
+        event.registerEntityRenderer(HAPPY_BLOCK_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
+            PrimedHappyBlockRenderer(pContext) }
+    }
+
     // Client Stuff
     private val BLOCKING_PROPERTY_RESLOC = ResourceLocation(BreadMod.ID, "blocking")
     @SubscribeEvent
@@ -72,11 +78,6 @@ object ClientEventBus {
 
             MenuScreens.register(ModMenuTypes.BREAD_FURNACE.get()) { pMenu, pInventory, pTitle ->
                 BreadFurnaceScreen(pMenu,pInventory,pTitle) }
-
-            fun registerRenders(event: RegisterRenderers) {
-                event.registerEntityRenderer(HAPPY_BLOCK_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
-                    PrimedHappyBlockRenderer(pContext) }
-            }
         }
     }
 }
