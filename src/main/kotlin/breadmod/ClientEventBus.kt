@@ -1,6 +1,8 @@
 package breadmod
 
 import breadmod.BreadMod.LOGGER
+import breadmod.block.color.BlackbodyBlockColor
+import breadmod.block.registry.ModBlocks
 import breadmod.datagen.ModBlockState
 import breadmod.datagen.ModItemModels
 import breadmod.datagen.ModLootTableProvider.create
@@ -25,6 +27,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers
+import net.minecraftforge.client.event.RegisterColorHandlersEvent
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -81,5 +84,10 @@ object ClientEventBus {
             MenuScreens.register(ModMenuTypes.BREAD_FURNACE.get()) { pMenu, pInventory, pTitle ->
                 BreadFurnaceScreen(pMenu,pInventory,pTitle) }
         }
+    }
+
+    @SubscribeEvent
+    fun registerBlockColors(event: RegisterColorHandlersEvent.Block) {
+        event.register(BlackbodyBlockColor, ModBlocks.HEATING_ELEMENT_BLOCK.get().block)
     }
 }

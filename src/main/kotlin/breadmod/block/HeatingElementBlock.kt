@@ -2,13 +2,10 @@ package breadmod.block
 
 import breadmod.BreadMod
 import breadmod.block.registry.ModBlockEntities.HEATING_ELEMENT
-import breadmod.network.CapabilityDataTransfer
-import breadmod.network.PacketHandler
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.network.chat.Component
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.context.BlockPlaceContext
@@ -28,7 +25,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.energy.IEnergyStorage
-import net.minecraftforge.network.PacketDistributor
 import org.joml.Vector3d
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVector3d
@@ -86,7 +82,7 @@ class HeatingElementBlock: Block(
         pState: BlockState,
     ) : BlockEntity(HEATING_ELEMENT.get(), pPos, pState) {
         private val energyHandlerOptional: LazyOptional<IEnergyStorage> = LazyOptional.of {
-            object : EnergyStorage(25000, 1000, 0) {
+            object : EnergyStorage(25000, 2000) {
                 override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int {
                     setChanged()
                     return super.receiveEnergy(maxReceive, simulate)
@@ -95,8 +91,9 @@ class HeatingElementBlock: Block(
         }
 
         override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-            if(side == null || side == Direction.DOWN || side == Direction.UP)
-                ForgeCapabilities.ENERGY.orEmpty(cap, energyHandlerOptional)
+            val currentDirection = this.blockState.getValue(DirectionalBlock.FACING)
+            if(cap == ForgeCapabilities.ENERGY && (side == null || side == currentDirection || side == currentDirection.opposite))
+                return energyHandlerOptional.cast()
             return super.getCapability(cap, side)
         }
 
@@ -120,25 +117,28 @@ class HeatingElementBlock: Block(
         }
 
         companion object: BlockEntityTicker<HEBlockEntity> {
-            private var tickCount = 0
             override fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: HEBlockEntity) {
                 if(pLevel.isClientSide) return
-
-                tickCount++
-                pBlockEntity.energyHandlerOptional.ifPresent {
-                    if(it.energyStored > 0) {
-                        // TODO Better impl
-                        if(tickCount % 20 == 0) PacketHandler.INSTANCE.send(
-                            PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(pPos) },
-                            CapabilityDataTransfer(pPos, it.energyStored)
-                        )
-
-                        val extracted = it.extractEnergy(750, false)
-                        pLevel.players().forEach { player ->
-                            player.sendSystemMessage(
-                                Component.literal("Voltage: ${extracted / 750.0}, Stored: ${it.energyStored}")
-                            )
+                pBlockEntity.energyHandlerOptional.ifPresent { thisStorage ->
+                    if(thisStorage.energyStored > 0) {
+                        val resistiveExtracted = thisStorage.extractEnergy(750, false)
+                        if(resistiveExtracted == 750) {
+                            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
+                            val pushExtracted = thisStorage.extractEnergy(1000, true)
+                            if(pushExtracted > 0) {
+                                val direction = pState.getValue(DirectionalBlock.FACING)
+                                val blockEntity = pLevel.getBlockEntity(BlockPos(pPos.plus(direction.normal)))
+                                blockEntity?.getCapability(ForgeCapabilities.ENERGY)?.ifPresent { extStorage ->
+                                    if(extStorage.canReceive()) {
+                                        extStorage.receiveEnergy(pushExtracted, false)
+                                        thisStorage.extractEnergy(pushExtracted, false)
+                                    }
+                                }
+                            }
+                            return@ifPresent
                         }
+                    } else if(pState.getValue(BlockStateProperties.LIT)) {
+                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
                     }
                 }
             }
