@@ -27,7 +27,9 @@
   - [ ] Nonflammable (fuel created using bread blocks in the bread machine, heated)
   - [ ] Items inside the dimension will vanish from the players inventory when they leave, and come back when they reenter
 - [ ] Bread Machine for turning wheat into dough
+  - [ ] If the machine is broken during its operation, flour will be spread everywhere 
   - [ ] Flour/Dough
+    - [ ] Snow-like layer block (Very Flammable)
     - [ ] Refinement processes
     - [ ] Textures
     - [ ] Create compat.
