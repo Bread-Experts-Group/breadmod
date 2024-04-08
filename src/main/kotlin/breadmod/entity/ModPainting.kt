@@ -14,6 +14,6 @@ object ModPainting {
     }
 
     val DEVIL_PUPP: RegistryObject<PaintingVariant> = REGISTRY.register("devil_pupp") {
-        PaintingVariant(64,64)
+        PaintingVariant(1028,1028)
     }
 }
