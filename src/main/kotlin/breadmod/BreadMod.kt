@@ -4,12 +4,17 @@ import breadmod.block.registry.ModBlockEntities
 import breadmod.block.registry.ModBlocks
 import breadmod.datagen.ModSounds
 import breadmod.entity.ModEntities
-import breadmod.gui.ModCreativeTab
+import breadmod.screens.creative.MainTab
 import breadmod.item.ModItems
+import breadmod.network.PacketHandler
 import breadmod.recipe.ModRecipeSerializers
 import breadmod.recipe.ModRecipeTypes
 import breadmod.screens.ModMenuTypes
 import net.minecraft.client.Minecraft
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.resources.ResourceLocation
+import net.minecraftforge.common.data.LanguageProvider
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.config.ModConfig
@@ -25,13 +30,18 @@ import thedarkcolour.kotlinforforge.forge.runForDist
 object BreadMod {
     const val ID = "breadmod"
 
-    // the logger for our mod
+    fun modLocation(path: String): ResourceLocation
+        = ResourceLocation(ID, path)
+    fun modTranslatable(type: String = "misc", vararg path: String): MutableComponent
+        = Component.translatable("$type.$ID.${path.joinToString(".")}")
+    fun LanguageProvider.modAdd(value: String, type: String = "misc", vararg path: String)
+        = add("$type.$ID.${path.joinToString(".")}", value)
+
     val LOGGER: Logger = LogManager.getLogger(ID)
 
     init {
         LOGGER.info("Hello world!")
 
-        // Register the KDeferredRegister to the mod-specific event bus
         LOGGER.info("Registering Mod Blocks")
         ModBlocks.REGISTRY.register(MOD_BUS)
         LOGGER.info("Registering Mod Items")
@@ -41,7 +51,7 @@ object BreadMod {
         LOGGER.info("Registering Mod Sounds")
         ModSounds.REGISTRY.register(MOD_BUS)
         LOGGER.info("Registering Creative Tab")
-        ModCreativeTab.REGISTRY.register(MOD_BUS)
+        MainTab.REGISTRY.register(MOD_BUS)
         LOGGER.info("Registering Recipe Types")
         ModRecipeSerializers.REGISTRY.register(MOD_BUS)
         ModRecipeTypes.REGISTRY.register(MOD_BUS)
@@ -49,6 +59,8 @@ object BreadMod {
         ModMenuTypes.REGISTRY.register(MOD_BUS)
         LOGGER.info("Registering Mod Entities")
         ModEntities.REGISTRY.register(MOD_BUS)
+
+        PacketHandler
 
         LOGGER.info("Registering Mod Config")
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPECIFICATION.right, "breadmod-common.toml")

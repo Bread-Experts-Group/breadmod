@@ -1,6 +1,7 @@
 package breadmod.block
 
-import breadmod.block.registry.ModBlockEntities.BREAD_FURNACE_BLOCK_ENTITY_TYPE
+import breadmod.BreadMod.modTranslatable
+import breadmod.block.registry.ModBlockEntities.BREAD_FURNACE
 import breadmod.recipe.ModRecipeTypes
 import breadmod.screens.ModMenuTypes
 import net.minecraft.core.BlockPos
@@ -53,10 +54,10 @@ class BreadFurnaceBlock: FurnaceBlock(Properties.copy(Blocks.FURNACE)) {
     class BlockEntity(
         pPos: BlockPos,
         pBlockState: BlockState,
-    ) : AbstractFurnaceBlockEntity(BREAD_FURNACE_BLOCK_ENTITY_TYPE.get(), pPos, pBlockState, ModRecipeTypes.BREAD_REFINEMENT) {
+    ) : AbstractFurnaceBlockEntity(BREAD_FURNACE.get(), pPos, pBlockState, ModRecipeTypes.BREAD_REFINEMENT) {
         override fun createMenu(pContainerId: Int, pInventory: Inventory): AbstractContainerMenu =
             Menu(pContainerId, pInventory)
-        override fun getDefaultName(): Component = Component.translatable("container.bread_furnace")
+        override fun getDefaultName(): Component = modTranslatable("container", "bread_furnace")
     }
 
     class Menu(pContainerId: Int, pInventory: Inventory): AbstractFurnaceMenu(

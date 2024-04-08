@@ -1,6 +1,7 @@
 package breadmod.item
 
 import breadmod.BreadMod
+import breadmod.BreadMod.modTranslatable
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.effect.MobEffectInstance
@@ -24,7 +25,10 @@ class DopedBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition
         pTooltip: MutableList<Component>,
         pFlag: TooltipFlag
     ) {
-        pTooltip.add(1,Component.translatable("item.${BreadMod.ID}.doped_bread.desc").withStyle(ChatFormatting.GREEN))
+        pTooltip.add(1,
+            modTranslatable("item", "doped_bread", "tooltip")
+                .withStyle(ChatFormatting.GREEN)
+        )
         super.appendHoverText(pStack, pLevel, pTooltip, pFlag)
     }
 }

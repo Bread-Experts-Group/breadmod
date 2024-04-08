@@ -1,6 +1,7 @@
 package breadmod.item.tools
 
 import breadmod.BreadMod
+import breadmod.BreadMod.modTranslatable
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
@@ -20,7 +21,10 @@ class BreadShieldItem : ShieldItem(Properties().stacksTo(1).durability(250)) {
         pTooltip: MutableList<Component>,
         pFlag: TooltipFlag
     ) {
-        pTooltip.add(1,Component.translatable("item.${BreadMod.ID}.bread_shield.desc").withStyle(ChatFormatting.AQUA))
+        pTooltip.add(1,
+            modTranslatable("item", "bread_shield", "tooltip")
+                .withStyle(ChatFormatting.AQUA)
+        )
         super.appendHoverText(pStack, pLevel, pTooltip, pFlag)
     }
 }

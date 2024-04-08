@@ -12,13 +12,13 @@ import net.minecraftforge.registries.RegistryObject
 
 object ModBlockEntities {
     val REGISTRY: DeferredRegister<BlockEntityType<*>> = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, BreadMod.ID)
-    val BREAD_FURNACE_BLOCK_ENTITY_TYPE: RegistryObject<BlockEntityType<BreadFurnaceBlock.BlockEntity>> = REGISTRY.register("bread_furnace_entity") {
+    val BREAD_FURNACE: RegistryObject<BlockEntityType<BreadFurnaceBlock.BlockEntity>> = REGISTRY.register("bread_furnace_entity") {
         BlockEntityType.Builder.of(
             { pPos, pState -> BreadFurnaceBlock.BlockEntity(pPos, pState) },
             BREAD_FURNACE_BLOCK.get().block
         ).build(null)
     }
-    val HEATING_ELEMENT_BLOCK_ENTITY_TYPE: RegistryObject<BlockEntityType<HeatingElementBlock.HEBlockEntity>> = REGISTRY.register("heating_element_entity") {
+    val HEATING_ELEMENT: RegistryObject<BlockEntityType<HeatingElementBlock.HEBlockEntity>> = REGISTRY.register("heating_element_entity") {
         BlockEntityType.Builder.of(
             { pPos, pState -> HeatingElementBlock.HEBlockEntity(pPos, pState) },
             HEATING_ELEMENT_BLOCK.get().block

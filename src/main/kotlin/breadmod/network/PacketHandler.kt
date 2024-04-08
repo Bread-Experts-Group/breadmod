@@ -1,9 +1,12 @@
 package breadmod.network
 
-/*object PacketHandler {
+import breadmod.BreadMod.modLocation
+import net.minecraftforge.network.NetworkRegistry
+
+object PacketHandler {
     private const val PROTOCOL_VERSION = "1"
     val INSTANCE = NetworkRegistry.newSimpleChannel(
-        ResourceLocation(BreadMod.ID, "main"),
+        modLocation("main"),
         { PROTOCOL_VERSION },
         PROTOCOL_VERSION::equals,
         PROTOCOL_VERSION::equals
@@ -11,7 +14,9 @@ package breadmod.network
 
     private var idCounter = 0
     init {
-        idCounter++
-        INSTANCE.registerMessage(idCounter, )
+        INSTANCE.registerMessage(
+            idCounter++, CapabilityDataTransfer::class.java,
+            CapabilityDataTransfer::encodeBuf, CapabilityDataTransfer::decodeBuf, CapabilityDataTransfer::handle
+        )
     }
-}*/
+}

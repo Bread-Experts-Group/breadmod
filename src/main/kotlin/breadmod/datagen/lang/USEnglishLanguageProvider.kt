@@ -1,7 +1,9 @@
 package breadmod.datagen.lang
 
-import breadmod.BreadMod
+import breadmod.BreadMod.modAdd
 import breadmod.block.registry.ModBlocks
+import breadmod.compat.jade.TOOLTIP_RENDERER
+import breadmod.compat.jade.addJade
 import breadmod.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.Item
@@ -15,8 +17,8 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
     // Transforms type.mod_id.example_object into Example Object
     private fun LanguageProvider.add(block: Block) = add(block, block.descriptionId.idToName())
     private fun LanguageProvider.add(item: Item) = add(item, item.descriptionId.idToName())
+
     override fun addTranslations() {
-        add(BreadMod.ID + ".itemGroup", "The Bread Mod")
         add(ModBlocks.BREAD_BLOCK.get())
         add(ModItems.TEST_DISC.get(), "Test Music Disc")
         add(ModItems.TEST_BREAD.get())
@@ -42,10 +44,33 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
         add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block, "Low-Density Charcoal Block")
         add(ModBlocks.HAPPY_BLOCK.get())
         add(ModBlocks.HEATING_ELEMENT_BLOCK.get())
-        add("item.breadmod.music_disc_test.desc", "Music Disc Description")
-        add("item.breadmod.test_bread.desc", "Identical to bread on the outside - tumors on the inside.")
-        add("item.breadmod.bread_shield.desc", "No it does NOT look like balsa wood >:(")
-        add("item.breadmod.doped_bread.desc", "contains trace amounts of neurotoxin")
-        add("container.bread_furnace", "Bread Furnace")
+
+        modAdd(
+            "The Bread Mod",
+            "itemGroup", "main"
+        )
+
+        modAdd(
+            "Music Disc Description",
+            "item", "music_disc_test", "desc" // TODO... make our own record. :3
+        )
+        modAdd(
+            "Identical to bread on the outside - tumors on the inside.",
+            "item", "test_bread", "tooltip"
+        )
+        modAdd(
+            "No it does NOT look like balsa wood >:(",
+            "item", "bread_shield", "tooltip"
+        )
+        modAdd(
+            "contains trace amounts of neurotoxin",
+            "item", "doped_bread", "tooltip"
+        )
+        modAdd(
+            "Bread Furnace",
+            "container", "bread_furnace"
+        )
+
+        addJade(TOOLTIP_RENDERER)
     }
 }

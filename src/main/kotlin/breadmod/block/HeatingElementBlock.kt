@@ -1,9 +1,13 @@
 package breadmod.block
 
-import breadmod.block.registry.ModBlockEntities.HEATING_ELEMENT_BLOCK_ENTITY_TYPE
+import breadmod.BreadMod
+import breadmod.block.registry.ModBlockEntities.HEATING_ELEMENT
+import breadmod.network.CapabilityDataTransfer
+import breadmod.network.PacketHandler
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.Entity
@@ -24,10 +28,10 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.energy.IEnergyStorage
+import net.minecraftforge.network.PacketDistributor
 import org.joml.Vector3d
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVector3d
-
 
 class HeatingElementBlock: Block(
     Properties.copy(Blocks.IRON_BLOCK)
@@ -68,7 +72,7 @@ class HeatingElementBlock: Block(
         state: BlockState,
         type: BlockEntityType<T>,
     ): BlockEntityTicker<T>? =
-        if (type == HEATING_ELEMENT_BLOCK_ENTITY_TYPE.get()) (HEBlockEntity.Companion as BlockEntityTicker<T>) else null
+        if (type == HEATING_ELEMENT.get()) (HEBlockEntity.Companion as BlockEntityTicker<T>) else null
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
         defaultBlockState().setValue(DirectionalBlock.FACING, pContext.nearestLookingDirection)
@@ -80,13 +84,18 @@ class HeatingElementBlock: Block(
     class HEBlockEntity(
         pPos: BlockPos,
         pState: BlockState,
-    ) : BlockEntity(HEATING_ELEMENT_BLOCK_ENTITY_TYPE.get(), pPos, pState) {
+    ) : BlockEntity(HEATING_ELEMENT.get(), pPos, pState) {
         private val energyHandlerOptional: LazyOptional<IEnergyStorage> = LazyOptional.of {
-            EnergyStorage(25000, 1000)
+            object : EnergyStorage(25000, 1000, 0) {
+                override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int {
+                    setChanged()
+                    return super.receiveEnergy(maxReceive, simulate)
+                }
+            }
         }
 
         override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-            if(side == Direction.DOWN || side == Direction.UP)
+            if(side == null || side == Direction.DOWN || side == Direction.UP)
                 ForgeCapabilities.ENERGY.orEmpty(cap, energyHandlerOptional)
             return super.getCapability(cap, side)
         }
@@ -96,16 +105,41 @@ class HeatingElementBlock: Block(
             energyHandlerOptional.invalidate()
         }
 
-        companion object: BlockEntityTicker<HEBlockEntity> {
-            override fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: HEBlockEntity) {
-                pBlockEntity.energyHandlerOptional.ifPresent {
-                    if(it.energyStored != it.maxEnergyStored) {
-                        it.receiveEnergy(1000, false)
-                    }
+        override fun saveAdditional(pTag: CompoundTag) {
+            super.saveAdditional(pTag)
+            pTag.put(BreadMod.ID, CompoundTag().also { dataTag ->
+                energyHandlerOptional.ifPresent { dataTag.put("energy", (it as EnergyStorage).serializeNBT()) }
+            })
+        }
 
-                    val extracted = it.extractEnergy(750, false)
-                    pLevel.server?.sendSystemMessage(Component.literal((extracted / 750.0).toString()))
-                    pLevel.server?.sendSystemMessage(Component.literal(it.energyStored.toString()))
+        override fun load(pTag: CompoundTag) {
+            super.load(pTag)
+            val dataTag = pTag.getCompound(BreadMod.ID)
+            if(dataTag.contains("energy"))
+                energyHandlerOptional.ifPresent { (it as EnergyStorage).deserializeNBT(dataTag.get("energy")) }
+        }
+
+        companion object: BlockEntityTicker<HEBlockEntity> {
+            private var tickCount = 0
+            override fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: HEBlockEntity) {
+                if(pLevel.isClientSide) return
+
+                tickCount++
+                pBlockEntity.energyHandlerOptional.ifPresent {
+                    if(it.energyStored > 0) {
+                        // TODO Better impl
+                        if(tickCount % 20 == 0) PacketHandler.INSTANCE.send(
+                            PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(pPos) },
+                            CapabilityDataTransfer(pPos, it.energyStored)
+                        )
+
+                        val extracted = it.extractEnergy(750, false)
+                        pLevel.players().forEach { player ->
+                            player.sendSystemMessage(
+                                Component.literal("Voltage: ${extracted / 750.0}, Stored: ${it.energyStored}")
+                            )
+                        }
+                    }
                 }
             }
         }

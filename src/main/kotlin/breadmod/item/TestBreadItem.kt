@@ -1,6 +1,7 @@
 package breadmod.item
 
 import breadmod.BreadMod
+import breadmod.BreadMod.modTranslatable
 import breadmod.util.raycast
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
@@ -34,9 +35,8 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
         pTooltipComponents: MutableList<Component>,
         pIsAdvanced: TooltipFlag
     ) {
-        pTooltipComponents.add(
-            1,
-            Component.translatable(("item." + BreadMod.ID) + ".test_bread.desc")
+        pTooltipComponents.add(1,
+            modTranslatable("item", "test_bread", "tooltip")
                 .withStyle(ChatFormatting.GOLD)
         )
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced)
