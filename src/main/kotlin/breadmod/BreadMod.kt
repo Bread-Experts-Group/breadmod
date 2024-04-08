@@ -4,6 +4,7 @@ import breadmod.block.registry.ModBlockEntities
 import breadmod.block.registry.ModBlocks
 import breadmod.datagen.ModSounds
 import breadmod.entity.ModEntities
+import breadmod.entity.ModPainting
 import breadmod.screens.creative.MainTab
 import breadmod.item.ModItems
 import breadmod.network.PacketHandler
@@ -59,6 +60,8 @@ object BreadMod {
         ModMenuTypes.REGISTRY.register(MOD_BUS)
         LOGGER.info("Registering Mod Entities")
         ModEntities.REGISTRY.register(MOD_BUS)
+        LOGGER.info("Registering Mod Paintings")
+        ModPainting.REGISTRY.register(MOD_BUS)
 
         PacketHandler
 

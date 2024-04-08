@@ -70,6 +70,14 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
             "Bread Furnace",
             "container", "bread_furnace"
         )
+        modAdd("His name is jeff",
+            "painting", "painting_test", "title")
+        modAdd("gchris123",
+            "painting", "painting_test", "author")
+        modAdd("dubious creature",
+            "painting", "devil_pupp", "title")
+        modAdd("https://twitter.com/devil_pupp",
+            "painting", "devil_pupp", "author")
 
         addJade(TOOLTIP_RENDERER)
     }
