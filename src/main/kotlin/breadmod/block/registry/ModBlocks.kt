@@ -13,6 +13,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.SnowLayerBlock
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraftforge.common.extensions.IForgeItem
@@ -80,6 +81,12 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val FLOUR = registerBlockItem(
+        "flour",
+        { SnowLayerBlock(BlockBehaviour.Properties.of())},
+        Item.Properties()
+    )
+
     class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {
         override fun getKnownBlocks(): Iterable<Block> {
             return Iterable<Block> {
@@ -98,6 +105,7 @@ object ModBlocks {
             dropSelf(BREAD_FURNACE_BLOCK.get().block)
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
+            dropSelf(FLOUR.get().block)
         }
     }
 }
