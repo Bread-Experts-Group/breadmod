@@ -6,7 +6,6 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
-@Suppress("unused")
 object ModPainting {
     val REGISTRY: DeferredRegister<PaintingVariant> = DeferredRegister.create(ForgeRegistries.PAINTING_VARIANTS, BreadMod.ID)
 

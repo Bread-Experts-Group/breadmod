@@ -9,6 +9,7 @@ import breadmod.datagen.ModSounds.ModSoundsDatagen
 import breadmod.datagen.lang.USEnglishLanguageProvider
 import breadmod.datagen.tags.ModBlockTags
 import breadmod.datagen.tags.ModItemTags
+import breadmod.datagen.tags.ModPaintingTags
 import breadmod.entity.ModEntities.HAPPY_BLOCK_ENTITY
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.item.ModItems
@@ -48,6 +49,7 @@ object ClientEventBus {
         LOGGER.info("Generating mod tags")
         val blockTagGenerator = generator.addProvider(event.includeServer(), ModBlockTags(packOutput, lookupProvider, existingFileHelper))
         generator.addProvider(event.includeServer(), ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
+        generator.addProvider(event.includeServer(), ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
 
         // Client side data generation
         LOGGER.info("Generating lang file")
