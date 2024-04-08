@@ -78,6 +78,7 @@
 - [ ] "Reinforced bread armor" basically bread armor except it doesn't dissolve in water and is comparable to diamond armor, high enchantability
 - [ ] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
 ---
-### Other things to consider
-- [ ] Possible farmers delight and create compat
-- [ ] With some recipes or how some items are made
+### Other mod compatibility
+- [ ] Farmers Delight
+- [ ] ProjectE
+- [ ] Add recipe integration
