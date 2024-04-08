@@ -22,13 +22,32 @@
   - [X] Mixin for turning burning blocks into another block
   - [X] Edible (currently multiplied by the food value of TestBread)
   - [X] Custom charcoal block as a result of bread block being burned
+- [ ] Bread Dimension
+  - [ ] A dimension composed of bread blocks
+  - [ ] Nonflammable (fuel created using bread blocks in the bread machine, heated)
+  - [ ] Items inside the dimension will vanish from the players inventory when they leave, and come back when they reenter
 - [ ] Bread Machine for turning wheat into dough
+  - [ ] Flour/Dough
+    - [ ] Refinement processes
+    - [ ] Textures
+    - [ ] Create compat.
   - [ ] Screen
   - [ ] Multiblock Structure(?)  
   - [ ] Can be heated from the bottom
     - [ ] (x0.5 Speed) Fire
     - [ ] (x1.0 Speed) Normal Fuel
     - [ ] (x2.0 Speed) RF-powered Heating coil
+      - [ ] Aluminum ore/metal
+        - [ ] Textures
+        - [ ] Ore generation
+      - [ ] Nickel ore/metal
+        - [ ] Textures
+        - [ ] Ore generation
+      - [ ] Mekanism compat.
+      - [ ] PneumaticCraft compat.
+      - [ ] Stefan-Boltzmann, generalzied convection/conduction
+      - [ ] "Molten" Metal
+        - [ ] Remainder TODO for BreadMod "Advanced"
     - [ ] (x2.5 Speed) Blaze Burner (Create)
     - [ ] (x4.5 Speed) Superheated Blaze Burner (Create)
 - Needs to be done still:
