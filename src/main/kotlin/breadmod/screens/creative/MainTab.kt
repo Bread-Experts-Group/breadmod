@@ -3,7 +3,7 @@ package breadmod.screens.creative
 import breadmod.BreadMod
 import breadmod.BreadMod.modTranslatable
 import breadmod.block.registry.ModBlocks.BREAD_BLOCK
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTab.ItemDisplayParameters
@@ -14,7 +14,7 @@ import net.minecraftforge.registries.RegistryObject
 object MainTab {
     val REGISTRY: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, BreadMod.ID)
 
-    val MAIN_TAB: RegistryObject<CreativeModeTab> = REGISTRY.register("main_tab") {
+    val MAIN_TAB: RegistryObject<CreativeModeTab> = REGISTRY.register("main_tab") { // TODO: Separate items to their own appropriate tabs
         CreativeModeTab.builder()
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon { BREAD_BLOCK.get().defaultInstance }

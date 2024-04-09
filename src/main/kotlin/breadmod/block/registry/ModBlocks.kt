@@ -2,7 +2,7 @@ package breadmod.block.registry
 
 import breadmod.BreadMod
 import breadmod.block.*
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.food.FoodProperties
@@ -81,9 +81,15 @@ object ModBlocks {
         Item.Properties()
     )
 
-    val FLOUR = registerBlockItem(
-        "flour",
-        { SnowLayerBlock(BlockBehaviour.Properties.of())},
+    val FLOUR_BLOCK = registerBlockItem(
+        "flour_block",
+        { Block(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK))},
+        Item.Properties()
+    )
+
+    val FLOUR_LAYER_BLOCK = registerBlockItem(
+        "flour_layer",
+        { SnowLayerBlock(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK))},
         Item.Properties()
     )
 
@@ -105,7 +111,8 @@ object ModBlocks {
             dropSelf(BREAD_FURNACE_BLOCK.get().block)
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
-            dropSelf(FLOUR.get().block)
+            dropSelf(FLOUR_BLOCK.get().block)
+            dropSelf(FLOUR_LAYER_BLOCK.get().block) // TODO: Figure out how to generate a snow layer like loot table
         }
     }
 }

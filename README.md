@@ -18,6 +18,7 @@
   - [ ] Crafting/Smithing recipes for tools
   - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
     - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
+- [ ] Separate items in creative tab to their own appropriate tabs
 - [X] Bread Block
   - [X] Mixin for turning burning blocks into another block
   - [X] Edible (currently multiplied by the food value of TestBread)
@@ -30,8 +31,9 @@
   - [ ] If the machine is broken during its operation, flour will be spread everywhere 
   - [ ] Flour/Dough
     - [ ] Snow-like layer block (Very Flammable)
+      - figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
     - [ ] Refinement processes
-    - [ ] Textures
+    - [X] Textures
     - [ ] Create compat.
   - [ ] Screen
   - [ ] Multiblock Structure(?)  
@@ -61,12 +63,13 @@
   - [X] Crafting recipes for reinforced bread block (now smithing recipe)
   - [ ] Happy Block Nuclear Inferno
 - [X] Bread slices
-  - [X] Crafted from using a sword on bread in a crafting table (the sword does not take damage)
-  - [X] You get 6 bread slices per bread in the recipe
+  - [ ] Crafted from using a sword on bread in a crafting table (the sword uses durability)
+    - FIX RECIPE TO NOT CONSUME THE SWORD, ONLY TAKE DURABILITY (IMPORTANT)
+  - [X] You get 8 bread slices per bread in the recipe
   - [ ] Doping
     - [ ] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisons
       - Can only be doped once!
-  - [ ] Only stacks to 16
+  - [ ] Crafted using a cutting board from farmer's delight
   - [ ] Bread crumbs
     - Crafted from splitting toast in a crafting table
     - Usable as birdseed, provides a fraction of the saturation a full loaf does
@@ -81,4 +84,6 @@
 ### Other mod compatibility
 - [ ] Farmers Delight
 - [ ] ProjectE
+- [ ] Create
+- [ ] Mekanism
 - [ ] Add recipe integration

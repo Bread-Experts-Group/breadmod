@@ -19,6 +19,8 @@ class ModBlockState(
         blockWithItem(ModBlocks.CHARCOAL_BLOCK.get().block)
         blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
+        blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
+        // TODO: Figure out how to generate snow layer like blockstates and models - Refer to snow.json under minecraft/assets/blockstates for clues
 
         horizontalBlock(ModBlocks.BREAD_FURNACE_BLOCK.get().block) { state ->
             val furnaceOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""

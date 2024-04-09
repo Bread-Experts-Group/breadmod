@@ -1,7 +1,9 @@
-package breadmod.item
+package breadmod.item.registry
 
 import breadmod.BreadMod
 import breadmod.datagen.ModSounds
+import breadmod.item.DopedBreadItem
+import breadmod.item.TestBreadItem
 import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.tools.BreadShieldItem
@@ -22,8 +24,9 @@ object ModItems {
     val DOPED_BREAD: RegistryObject<DopedBreadItem> = REGISTRY.register("doped_bread") { DopedBreadItem() }
     val BREAD_CRUMBS: RegistryObject<Item> = REGISTRY.register("bread_crumbs") { Item(Item.Properties()) }
     val BREAD_SLICE: RegistryObject<Item> = REGISTRY.register("bread_slice") {
-        Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build()))
-    }
+        Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build())) }
+    val FLOUR: RegistryObject<Item> = REGISTRY.register("flour") {Item(Item.Properties())}
+    val DOUGH: RegistryObject<Item> = REGISTRY.register("dough") {Item(Item.Properties())}
 
     // Armor
     val BREAD_HELMET: RegistryObject<BreadArmorItem> = REGISTRY.register("bread_helmet") {

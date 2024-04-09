@@ -1,7 +1,7 @@
 package breadmod.datagen
 
 import breadmod.BreadMod
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
@@ -22,6 +22,8 @@ class ModItemModels(output: PackOutput, modid: String, existingFileHelper: Exist
         singleItem(ModItems.BREAD_HOE)
         singleItem(ModItems.BREAD_SLICE)
         singleItem(ModItems.TEST_DISC)
+        singleItem(ModItems.DOUGH)
+        singleItem(ModItems.FLOUR)
         multiTexture("breadmod:bread_boots", mcLoc("item/generated"), "layer0", modLoc("item/bread_boots"), "layer1", modLoc("item/bread_boots_overlay"))
         multiTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("item/bread_leggings"), "layer1", modLoc("item/bread_leggings_overlay"))
         multiTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("item/bread_chestplate"), "layer1", modLoc("item/bread_chestplate_overlay"))

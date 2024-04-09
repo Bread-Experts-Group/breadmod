@@ -5,12 +5,12 @@ import breadmod.block.registry.ModBlocks
 import breadmod.datagen.ModSounds
 import breadmod.entity.ModEntities
 import breadmod.entity.ModPainting
-import breadmod.screens.creative.MainTab
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import breadmod.network.PacketHandler
 import breadmod.recipe.ModRecipeSerializers
 import breadmod.recipe.ModRecipeTypes
 import breadmod.screens.ModMenuTypes
+import breadmod.screens.creative.MainTab
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -94,5 +94,9 @@ object BreadMod {
      */
     private fun onServerSetup(event: FMLDedicatedServerSetupEvent) {
         LOGGER.info("Server starting...")
+    }
+
+    fun asResource(path: String): ResourceLocation { // JEIPlugin uses this
+        return ResourceLocation(ID, path)
     }
 }

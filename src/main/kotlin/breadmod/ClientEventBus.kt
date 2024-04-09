@@ -14,7 +14,7 @@ import breadmod.datagen.tags.ModItemTags
 import breadmod.datagen.tags.ModPaintingTags
 import breadmod.entity.ModEntities.HAPPY_BLOCK_ENTITY
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import breadmod.screens.BreadFurnaceScreen
 import breadmod.screens.ModMenuTypes
 import net.minecraft.client.gui.screens.MenuScreens

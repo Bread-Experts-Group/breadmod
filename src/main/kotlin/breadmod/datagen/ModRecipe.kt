@@ -1,13 +1,14 @@
 package breadmod.datagen
 
 import breadmod.block.registry.ModBlocks
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.FinishedRecipe
 import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapedRecipeBuilder
 import net.minecraft.data.recipes.ShapelessRecipeBuilder
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
@@ -21,10 +22,10 @@ class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requires(Items.BREAD, 9)
             .save(pWriter)
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BREAD_SLICE.get(), 6)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BREAD_SLICE.get(), 8)
             .unlockedBy("has_item", has(Items.BREAD))
             .requires(Items.BREAD)
-            .requires(ItemTags.SWORDS)
+            .requires(ItemTags.SWORDS) // TODO: Fix this to not consume the entire sword when crafting
             .save(pWriter)
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_SHIELD.get())
@@ -78,6 +79,48 @@ class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("CCC")
             .pattern("CSC")
             .pattern("CCC")
+            .save(pWriter)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FLOUR.get(), 9)
+            .unlockedBy("has_item", has(ModBlocks.FLOUR_BLOCK.get()))
+            .requires(ModBlocks.FLOUR_BLOCK.get(), 1)
+            .save((pWriter), "flour_from_flour_block")
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModBlocks.FLOUR_BLOCK.get(), 1)
+            .unlockedBy("has_item", has(ModItems.FLOUR.get()))
+            .requires(ModItems.FLOUR.get(), 9)
+            .save((pWriter), "flour_block_from_flour")
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FLOUR.get(), 1)
+            .unlockedBy("has_item", has(Items.WHEAT)) // TODO: Mortar and Pestle for crushing wheat into flour
+            .requires(Items.WHEAT, 1)
+            .save((pWriter), "flour_from_wheat")
+        SimpleCookingRecipeBuilder.smoking(
+            Ingredient.of(ModItems.DOUGH.get()),
+            RecipeCategory.FOOD,
+            Items.BREAD,
+            8f,
+            100
+        ).unlockedBy("has_item", has(ModItems.DOUGH.get())).save(pWriter, "bread_from_smoking")
+        SimpleCookingRecipeBuilder.campfireCooking(
+            Ingredient.of(ModItems.DOUGH.get()),
+            RecipeCategory.FOOD,
+            Items.BREAD,
+            8f,
+            600
+        ).unlockedBy("has_item", has(ModItems.DOUGH.get())).save(pWriter, "bread_from_campfire_cooking")
+        SimpleCookingRecipeBuilder.smelting(
+            Ingredient.of(ModItems.DOUGH.get()),
+            RecipeCategory.FOOD,
+            Items.BREAD,
+            8f,
+            200
+        ).unlockedBy("has_item", has(ModItems.DOUGH.get())).save(pWriter, "bread_from_smelting")
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.DOUGH.get(), 8)
+            .unlockedBy("has_item", has(Items.WHEAT))
+            .define('F', ModItems.FLOUR.get())
+            .define('B', Items.WATER_BUCKET)
+            .pattern("FFF")
+            .pattern("FBF")
+            .pattern("FFF")
             .save(pWriter)
 
         SmithingTransformRecipeBuilder.smithing(

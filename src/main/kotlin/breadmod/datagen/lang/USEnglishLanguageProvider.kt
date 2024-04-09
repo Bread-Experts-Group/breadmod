@@ -4,7 +4,7 @@ import breadmod.BreadMod.modAdd
 import breadmod.block.registry.ModBlocks
 import breadmod.compat.jade.TOOLTIP_RENDERER
 import breadmod.compat.jade.addJade
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -44,6 +44,12 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
         add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block, "Low-Density Charcoal Block")
         add(ModBlocks.HAPPY_BLOCK.get())
         add(ModBlocks.HEATING_ELEMENT_BLOCK.get())
+        add(ModItems.DOUGH.get())
+        add(ModItems.FLOUR.get())
+        add(ModBlocks.FLOUR_BLOCK.get())
+
+        modAdd("Flour",
+            "block", "flour")
 
         modAdd(
             "The Bread Mod",

@@ -1,10 +1,11 @@
 package breadmod.datagen.tags
 
 import breadmod.BreadMod
-import breadmod.item.ModItems
+import breadmod.item.registry.ModItems
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.data.tags.ItemTagsProvider
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.ExistingFileHelper
@@ -36,5 +37,10 @@ class ModItemTags(
         tag(ItemTags.HOES)
             .add(ModItems.BREAD_HOE.get())
             .add(ModItems.RF_BREAD_HOE.get())
+
+        tag(ItemTags.create(ResourceLocation("forge", "flour/wheat")))
+            .add(ModItems.FLOUR.get())
+        tag(ItemTags.create(ResourceLocation("forge", "dough")))
+            .add(ModItems.DOUGH.get())
     }
 }
