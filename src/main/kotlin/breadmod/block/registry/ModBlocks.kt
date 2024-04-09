@@ -3,6 +3,7 @@ package breadmod.block.registry
 import breadmod.BreadMod
 import breadmod.block.*
 import breadmod.item.registry.ModItems
+import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.food.FoodProperties
@@ -16,6 +17,16 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.SnowLayerBlock
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.storage.loot.LootContext
+import net.minecraft.world.level.storage.loot.LootPool
+import net.minecraft.world.level.storage.loot.LootTable
+import net.minecraft.world.level.storage.loot.entries.AlternativesEntry
+import net.minecraft.world.level.storage.loot.entries.LootItem
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
 import net.minecraftforge.common.extensions.IForgeItem
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -78,18 +89,18 @@ object ModBlocks {
     val HAPPY_BLOCK = registerBlockItem(
         "happy_block",
         { HappyBlock() },
-        Item.Properties()
+        Item.Properties().stacksTo(1)
     )
 
     val FLOUR_BLOCK = registerBlockItem(
         "flour_block",
-        { Block(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK))},
+        { FlourBlock() },
         Item.Properties()
     )
 
     val FLOUR_LAYER_BLOCK = registerBlockItem(
         "flour_layer",
-        { SnowLayerBlock(BlockBehaviour.Properties.copy(Blocks.SNOW_BLOCK))},
+        { FlourLayeredBlock() },
         Item.Properties()
     )
 
@@ -104,15 +115,57 @@ object ModBlocks {
         }
 
         override fun generate() {
-            dropSelf(BREAD_BLOCK.get().block)
+            dropSelf(LootContext.get().block)
             dropSelf(REINFORCED_BREAD_BLOCK.get().block)
             dropSelf(CHARCOAL_BLOCK.get().block)
             dropSelf(LOW_DENSITY_CHARCOAL_BLOCK.get().block)
             dropSelf(BREAD_FURNACE_BLOCK.get().block)
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
-            dropSelf(FLOUR_BLOCK.get().block)
-            dropSelf(FLOUR_LAYER_BLOCK.get().block) // TODO: Figure out how to generate a snow layer like loot table
+
+            createSingleItemTableWithSilkTouch(FLOUR_BLOCK.get().block, ModItems.FLOUR.get(), ConstantValue.exactly(9.0F))
+            add(FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
+                LootPool.lootPool().`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
+                    .add(
+                        AlternativesEntry.alternatives(AlternativesEntry.alternatives<Int?>(
+                            SnowLayerBlock.LAYERS.possibleValues
+                        ) { p_252097_: Int? ->
+                            LootItem.lootTableItem(Items.SNOWBALL).`when`(
+                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(p_251108_).setProperties(
+                                    StatePropertiesPredicate.Builder.properties().hasProperty(
+                                        SnowLayerBlock.LAYERS,
+                                        p_252097_!!
+                                    )
+                                )
+                            ).apply(
+                                SetItemCountFunction.setCount(
+                                    ConstantValue.exactly(
+                                        p_252097_!!.toFloat()
+                                    )
+                                )
+                            )
+                        }.`when`(HAS_NO_SILK_TOUCH), AlternativesEntry.alternatives<Int?>(
+                            SnowLayerBlock.LAYERS.possibleValues
+                        ) { p_251216_: Int? ->
+                            (if (p_251216_ == 8) LootItem.lootTableItem(
+                                Blocks.SNOW_BLOCK
+                            ) else LootItem.lootTableItem(Blocks.SNOW).apply(
+                                SetItemCountFunction.setCount(
+                                    ConstantValue.exactly(
+                                        p_251216_!!.toFloat()
+                                    )
+                                )
+                            ).`when`(
+                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(p_251108_).setProperties(
+                                    StatePropertiesPredicate.Builder.properties().hasProperty(
+                                        SnowLayerBlock.LAYERS,
+                                        p_251216_!!
+                                    )
+                                )
+                            )) as LootPoolEntryContainer.Builder<*>
+                        })
+                    )
+            )) // MEGA TODO JESUS CHRIST
         }
     }
 }
