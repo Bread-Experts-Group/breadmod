@@ -1,0 +1,3 @@
+package breadmod.block
+
+interface ICustomFireLogic

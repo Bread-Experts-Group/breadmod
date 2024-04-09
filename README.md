@@ -1,5 +1,5 @@
 # The Bread Mod 1.20.1 Port (now with more bread)
-
+## Standard, Base Mod
 - [ ] Bread Armor
   - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches
   - [X] Each piece will keep your hunger from going below a certain point (+1 cumulative)
@@ -18,10 +18,9 @@
   - [ ] Crafting/Smithing recipes for tools
   - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
     - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
-- [ ] Separate items in creative tab to their own appropriate tabs
 - [X] Bread Block
   - [X] Mixin for turning burning blocks into another block
-  - [X] Edible (currently multiplied by the food value of TestBread)
+  - [X] Edible
   - [X] Custom charcoal block as a result of bread block being burned
 - [ ] Bread Dimension
   - [ ] A dimension composed of bread blocks
@@ -30,30 +29,13 @@
 - [ ] Bread Machine for turning wheat into dough
   - [ ] If the machine is broken during its operation, flour will be spread everywhere 
   - [ ] Flour/Dough
-    - [ ] Snow-like layer block (Very Flammable)
-      - figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
+    - [ ] Snow-like layer block (Very flammable)
+      - Figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
     - [ ] Refinement processes
     - [X] Textures
     - [ ] Create compat.
-  - [ ] Screen
-  - [ ] Multiblock Structure(?)  
   - [ ] Can be heated from the bottom
-    - [ ] (x0.5 Speed) Fire
-    - [ ] (x1.0 Speed) Normal Fuel
-    - [ ] (x2.0 Speed) RF-powered Heating coil
-      - [ ] Aluminum ore/metal
-        - [ ] Textures
-        - [ ] Ore generation
-      - [ ] Nickel ore/metal
-        - [ ] Textures
-        - [ ] Ore generation
-      - [ ] Mekanism compat.
-      - [ ] PneumaticCraft compat.
-      - [ ] Stefan-Boltzmann, generalzied convection/conduction
-      - [ ] "Molten" Metal
-        - [ ] Remainder TODO for BreadMod "Advanced"
-    - [ ] (x2.5 Speed) Blaze Burner (Create)
-    - [ ] (x4.5 Speed) Superheated Blaze Burner (Create)
+    - [ ] Speed can be accelerated from external heat sources
 - Needs to be done still:
   - [ ] Textures for tools, weapons, items, blocks
     - would be funny if the bread sword was just a long piece of bread attached to a sword handle
@@ -64,7 +46,7 @@
   - [ ] Happy Block Nuclear Inferno
 - [X] Bread slices
   - [ ] Crafted from using a sword on bread in a crafting table (the sword uses durability)
-    - FIX RECIPE TO NOT CONSUME THE SWORD, ONLY TAKE DURABILITY (IMPORTANT)
+    - [ ] FIX RECIPE TO NOT CONSUME THE SWORD, ONLY TAKE DURABILITY (IMPORTANT)
   - [X] You get 8 bread slices per bread in the recipe
   - [ ] Doping
     - [ ] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisons
@@ -81,9 +63,15 @@
 - [ ] "Reinforced bread armor" basically bread armor except it doesn't dissolve in water and is comparable to diamond armor, high enchantability
 - [ ] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
 ---
+## Advanced, Machines and stuff
+Todo..
+## External Mods to look into (will be their own projects)
+- [ ] Lighting mod (colored lighting)
+- [ ] "Intrusive" mods (such as, being able to heat up a furnace like w/ the bread machine)
 ### Other mod compatibility
 - [ ] Farmers Delight
 - [ ] ProjectE
 - [ ] Create
 - [ ] Mekanism
+- [ ] PneumaticCraft
 - [ ] Add recipe integration

@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.block.state.BlockState
 
-// TODO.
+// TODO: Look into mixing-in BlockColor for dynamic changes
 object BlackbodyBlockColor: BlockColor {
     override fun getColor(pState: BlockState, pLevel: BlockAndTintGetter?, pPos: BlockPos?, pTintIndex: Int): Int {
         if(pLevel == null || pPos == null) return 0
