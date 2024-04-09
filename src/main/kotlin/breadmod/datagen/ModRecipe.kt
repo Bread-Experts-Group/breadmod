@@ -80,14 +80,17 @@ class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("CSC")
             .pattern("CCC")
             .save(pWriter)
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FLOUR.get(), 9)
+        ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModBlocks.FLOUR_BLOCK.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.FLOUR_BLOCK.get()))
+            .define('F', ModItems.FLOUR.get())
+            .pattern("FF ")
+            .pattern("FF ")
+            .pattern("   ")
+            .save((pWriter), "flour_block_from_flour")
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FLOUR.get(), 4)
+            .unlockedBy("has_item", has(ModItems.FLOUR.get()))
             .requires(ModBlocks.FLOUR_BLOCK.get(), 1)
             .save((pWriter), "flour_from_flour_block")
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModBlocks.FLOUR_BLOCK.get(), 1)
-            .unlockedBy("has_item", has(ModItems.FLOUR.get()))
-            .requires(ModItems.FLOUR.get(), 9)
-            .save((pWriter), "flour_block_from_flour")
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FLOUR.get(), 1)
             .unlockedBy("has_item", has(Items.WHEAT)) // TODO: Mortar and Pestle for crushing wheat into flour
             .requires(Items.WHEAT, 1)
@@ -96,21 +99,21 @@ class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
             Ingredient.of(ModItems.DOUGH.get()),
             RecipeCategory.FOOD,
             Items.BREAD,
-            8f,
+            0f,
             100
         ).unlockedBy("has_item", has(ModItems.DOUGH.get())).save(pWriter, "bread_from_smoking")
         SimpleCookingRecipeBuilder.campfireCooking(
             Ingredient.of(ModItems.DOUGH.get()),
             RecipeCategory.FOOD,
             Items.BREAD,
-            8f,
+            0f,
             600
         ).unlockedBy("has_item", has(ModItems.DOUGH.get())).save(pWriter, "bread_from_campfire_cooking")
         SimpleCookingRecipeBuilder.smelting(
             Ingredient.of(ModItems.DOUGH.get()),
             RecipeCategory.FOOD,
             Items.BREAD,
-            8f,
+            0f,
             200
         ).unlockedBy("has_item", has(ModItems.DOUGH.get())).save(pWriter, "bread_from_smelting")
 

@@ -115,7 +115,7 @@ object ModBlocks {
         }
 
         override fun generate() {
-            dropSelf(LootContext.get().block)
+            dropSelf(BREAD_BLOCK.get().block)
             dropSelf(REINFORCED_BREAD_BLOCK.get().block)
             dropSelf(CHARCOAL_BLOCK.get().block)
             dropSelf(LOW_DENSITY_CHARCOAL_BLOCK.get().block)
@@ -123,7 +123,10 @@ object ModBlocks {
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
 
-            createSingleItemTableWithSilkTouch(FLOUR_BLOCK.get().block, ModItems.FLOUR.get(), ConstantValue.exactly(9.0F))
+//            createSingleItemTableWithSilkTouch(FLOUR_BLOCK.get().block, ModItems.FLOUR.get(), ConstantValue.exactly(4.0F))
+            dropSelf(FLOUR_BLOCK.get().block)
+            dropSelf(FLOUR_LAYER_BLOCK.get().block) // Remove this after the hellscape below is fixed
+            /*
             add(FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
                 LootPool.lootPool().`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
                     .add(
@@ -166,6 +169,8 @@ object ModBlocks {
                         })
                     )
             )) // MEGA TODO JESUS CHRIST
+
+             */
         }
     }
 }
