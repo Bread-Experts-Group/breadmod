@@ -42,5 +42,7 @@ class ModItemTags(
             .add(ModItems.FLOUR.get())
         tag(ItemTags.create(ResourceLocation("forge", "dough")))
             .add(ModItems.DOUGH.get())
+        tag(ItemTags.create(ResourceLocation("forge", "dough/wheat")))
+            .add(ModItems.DOUGH.get())
     }
 }
