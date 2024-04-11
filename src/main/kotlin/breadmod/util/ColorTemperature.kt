@@ -31,7 +31,7 @@ private val bluePoly = doubleArrayOf(
 )
 
 // Adapted from https://gist.github.com/stasikos/06b02d18f570fc1eaa9f
-fun getRGBFromK(temperature: Int): Color {
+fun getRGBFromK(temperature: Float): Color {
     // Used this: https://gist.github.com/paulkaplan/5184275 at the beginning
     // based on http://stackoverflow.com/questions/7229895/display-temperature-as-a-color-with-c
     // this answer: http://stackoverflow.com/a/24856307
@@ -54,12 +54,15 @@ fun getRGBFromK(temperature: Int): Color {
             if(temperature < 1900) 0.0
             else if (temperature < 6600) poly(bluePoly, x)
             else 1.0
-        ).toFloat()
+        ).toFloat(),
+
+        1.0F - (temperature / 6600)
     )
 }
 
 // Is there a JOML function for this, I wonder?
 fun poly(coefficients: DoubleArray, x: Double): Double {
+    println("BEEP BEEP BEEP")
     var result = coefficients[0]
     var xn = x
     for (i in 1 until coefficients.size) {

@@ -1,6 +1,5 @@
 package breadmod.item
 
-import breadmod.BreadMod
 import breadmod.BreadMod.modTranslatable
 import breadmod.util.raycast
 import net.minecraft.ChatFormatting
@@ -17,7 +16,7 @@ import net.minecraft.world.phys.EntityHitResult
 
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).rarity(Rarity.EPIC)) {
     override fun finishUsingItem(pStack: ItemStack, pLevel: Level, pLivingEntity: LivingEntity): ItemStack {
-        when(val hit = pLivingEntity.raycast(40, false)) {
+        when(val hit = raycast(pLivingEntity, 40, false)) {
             is BlockHitResult -> {
                 pLevel.explode(pLivingEntity, hit.blockPos.x.toDouble(), hit.blockPos.y.toDouble(), hit.blockPos.z.toDouble(), 50f, true, Level.ExplosionInteraction.TNT)
             }

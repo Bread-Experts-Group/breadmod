@@ -1,17 +1,16 @@
 package breadmod.datagen.lang
 
 import breadmod.BreadMod.modAdd
-import breadmod.block.registry.ModBlocks
 import breadmod.compat.jade.TOOLTIP_RENDERER
 import breadmod.compat.jade.addJade
-import breadmod.item.registry.ModItems
+import breadmod.registry.block.ModBlocks
+import breadmod.registry.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.LanguageProvider
 
-@Suppress("SpellCheckingInspection")
-class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: String?) : LanguageProvider(output!!, modid.toString(), locale.toString()) {
+class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: String) : LanguageProvider(output, modID, locale) {
 
     private fun String.idToName() = substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
     // Transforms type.mod_id.example_object into Example Object
@@ -85,6 +84,13 @@ class USEnglishLanguageProvider(output: PackOutput?, modid: String?, locale: Str
         modAdd("https://twitter.com/devil_pupp",
             "painting", "devil_pupp", "author")
 
+        // Compat
+        // // JEI
+        modAdd(
+            "THE BREAD BLOCK IS REAL",
+            "jei", "bread_block", "description"
+        )
+        // // Jade
         addJade(TOOLTIP_RENDERER)
     }
 }

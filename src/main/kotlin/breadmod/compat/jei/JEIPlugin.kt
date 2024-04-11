@@ -1,22 +1,21 @@
 package breadmod.compat.jei
 
-import breadmod.BreadMod
-import breadmod.block.registry.ModBlocks
+import breadmod.BreadMod.modLocation
+import breadmod.BreadMod.modTranslatable
+import breadmod.registry.block.ModBlocks
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.IRecipeRegistration
-import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.ItemStack
 
-
-//@JeiPlugin
-//@Suppress("UNUSED")
-//class JEIPlugin : IModPlugin {
-//    override fun getPluginUid(): ResourceLocation = BreadMod.asResource("jei_plugin") // debug
-//    /* TODO: redo this to actually make it work
-//    override fun registerRecipes(registration: IRecipeRegistration) {
-//        registration.addItemStackInfo(ModBlocks.BREAD_BLOCK.get().asItem().defaultInstance, Component.literal("THE BREAD BLOCK IS REAL"))
-//    }
-//
-//     */
-//}
+@JeiPlugin
+class JEIPlugin : IModPlugin {
+    override fun getPluginUid(): ResourceLocation = modLocation("jei_plugin") // debug
+    override fun registerRecipes(registration: IRecipeRegistration) {
+        registration.addItemStackInfo(
+            ItemStack(ModBlocks.BREAD_BLOCK.get()),
+            modTranslatable("jei", "bread_block", "description")
+        )
+    }
+}

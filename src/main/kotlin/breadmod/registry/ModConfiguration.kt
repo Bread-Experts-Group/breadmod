@@ -1,4 +1,4 @@
-package breadmod
+package breadmod.registry
 
 import net.minecraftforge.common.ForgeConfigSpec
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue

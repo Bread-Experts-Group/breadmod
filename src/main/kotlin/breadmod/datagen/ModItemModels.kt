@@ -1,7 +1,7 @@
 package breadmod.datagen
 
-import breadmod.BreadMod
-import breadmod.item.registry.ModItems
+import breadmod.BreadMod.modLocation
+import breadmod.registry.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
@@ -36,7 +36,7 @@ class ModItemModels(output: PackOutput, modid: String, existingFileHelper: Exist
             ResourceLocation("item/generated")
         ).texture(
             "layer0",
-            ResourceLocation(BreadMod.ID, "item/" + item.id.path)
+            modLocation("item/" + item.id.path)
         )
     }
 

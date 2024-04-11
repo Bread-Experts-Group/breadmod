@@ -1,7 +1,7 @@
 package breadmod.datagen.tags
 
 import breadmod.BreadMod
-import breadmod.item.registry.ModItems
+import breadmod.registry.item.ModItems
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.data.tags.ItemTagsProvider

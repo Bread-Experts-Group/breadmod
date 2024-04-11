@@ -1,6 +1,6 @@
 package breadmod.block
 
-import breadmod.datagen.ModSounds
+import breadmod.registry.sound.ModSounds
 import breadmod.entity.PrimedHappyBlock
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction

@@ -1,8 +1,8 @@
 package breadmod.datagen.tags
 
 import breadmod.BreadMod
-import breadmod.entity.ModPainting.DEVIL_PUPP
-import breadmod.entity.ModPainting.PAINTING_TEST
+import breadmod.registry.entity.ModPainting.DEVIL_PUPP
+import breadmod.registry.entity.ModPainting.PAINTING_TEST
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.data.tags.PaintingVariantTagsProvider

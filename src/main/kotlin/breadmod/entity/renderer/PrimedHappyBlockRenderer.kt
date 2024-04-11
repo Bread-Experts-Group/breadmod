@@ -1,8 +1,8 @@
 package breadmod.entity.renderer
 
-import breadmod.BreadMod
-import breadmod.block.registry.ModBlocks
+import breadmod.BreadMod.modLocation
 import breadmod.entity.PrimedHappyBlock
+import breadmod.registry.block.ModBlocks
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
@@ -63,6 +63,6 @@ class PrimedHappyBlockRenderer(pContext: EntityRendererProvider.Context) : Entit
     }
 
     companion object {
-        private val texture = ResourceLocation(BreadMod.ID, "textures/block/happy_block.png")
+        private val texture = modLocation("textures/block/happy_block.png")
     }
 }

@@ -1,6 +1,6 @@
 package breadmod.item.armor
 
-import breadmod.ModConfiguration.COMMON
+import breadmod.registry.ModConfiguration.COMMON
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.effect.MobEffect

@@ -1,9 +1,10 @@
-package breadmod.block.registry
+package breadmod.registry.block
 
 import breadmod.BreadMod
 import breadmod.block.*
-import breadmod.item.registry.ModItems
-import net.minecraft.advancements.critereon.StatePropertiesPredicate
+import breadmod.registry.item.ModItems
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.food.FoodProperties
@@ -12,33 +13,25 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeType
+import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.SnowLayerBlock
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraft.world.level.storage.loot.LootContext
-import net.minecraft.world.level.storage.loot.LootPool
-import net.minecraft.world.level.storage.loot.LootTable
-import net.minecraft.world.level.storage.loot.entries.AlternativesEntry
-import net.minecraft.world.level.storage.loot.entries.LootItem
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer
-import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition
-import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.MapColor
 import net.minecraftforge.common.extensions.IForgeItem
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModBlocks {
-    val REGISTRY: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, BreadMod.ID)
+    val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, BreadMod.ID)
 
     private fun registerBlockItem(id: String, block: () -> Block, properties: Item.Properties): RegistryObject<BlockItem> =
-        REGISTRY.register(id, block).let { ModItems.REGISTRY.register(id) { BlockItem(it.get(), properties) } }
+        deferredRegister.register(id, block).let { ModItems.deferredRegister.register(id) { BlockItem(it.get(), properties) } }
     private fun registerBlockItem(id: String, block: () -> Block, item: (block: Block) -> BlockItem): RegistryObject<BlockItem> =
-        REGISTRY.register(id, block).let { ModItems.REGISTRY.register(id) { item(it.get()) } }
+        deferredRegister.register(id, block).let { ModItems.deferredRegister.register(id) { item(it.get()) } }
 
     val BREAD_BLOCK = registerBlockItem(
         "bread_block",
@@ -94,7 +87,10 @@ object ModBlocks {
 
     val FLOUR_BLOCK = registerBlockItem(
         "flour_block",
-        { FlourBlock() },
+        { object : FlammableBlock(Properties.of().ignitedByLava().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.SNOW)) {
+            override fun getFlammability(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int = 100
+            override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int = 150
+        } },
         Item.Properties()
     )
 
@@ -107,7 +103,7 @@ object ModBlocks {
     class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {
         override fun getKnownBlocks(): Iterable<Block> {
             return Iterable<Block> {
-                REGISTRY.entries
+                deferredRegister.entries
                     .stream()
                     .flatMap<Block> { obj: RegistryObject<Block?> -> obj.stream() }
                     .iterator()

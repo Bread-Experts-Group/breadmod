@@ -1,28 +1,19 @@
 package breadmod.block
 
-import breadmod.BreadMod.modTranslatable
-import breadmod.block.registry.ModBlockEntities.BREAD_FURNACE
-import breadmod.recipe.ModRecipeTypes
-import breadmod.screens.ModMenuTypes
+import breadmod.block.entity.BreadFurnaceBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleTypes
-import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
-import net.minecraft.world.entity.player.Inventory
-import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.inventory.AbstractFurnaceMenu
-import net.minecraft.world.inventory.RecipeBookType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.FurnaceBlock
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 
 class BreadFurnaceBlock: FurnaceBlock(Properties.copy(Blocks.FURNACE)) {
-    override fun newBlockEntity(pPos: BlockPos, pState: BlockState) = BlockEntity(pPos, pState)
+    override fun newBlockEntity(pPos: BlockPos, pState: BlockState) = BreadFurnaceBlockEntity(pPos, pState)
 
     override fun animateTick(pState: BlockState, pLevel: Level, pPos: BlockPos, pRandom: RandomSource) {
         if (pState.getValue(LIT)) {
@@ -50,17 +41,4 @@ class BreadFurnaceBlock: FurnaceBlock(Properties.copy(Blocks.FURNACE)) {
             pLevel.addParticle(ParticleTypes.FLAME, d0 + d5, d1 + d6, d2 + d7, 0.0, 0.0, 0.0)
         }
     }
-
-    class BlockEntity(
-        pPos: BlockPos,
-        pBlockState: BlockState,
-    ) : AbstractFurnaceBlockEntity(BREAD_FURNACE.get(), pPos, pBlockState, ModRecipeTypes.BREAD_REFINEMENT) {
-        override fun createMenu(pContainerId: Int, pInventory: Inventory): AbstractContainerMenu =
-            Menu(pContainerId, pInventory)
-        override fun getDefaultName(): Component = modTranslatable("container", "bread_furnace")
-    }
-
-    class Menu(pContainerId: Int, pInventory: Inventory): AbstractFurnaceMenu(
-        ModMenuTypes.BREAD_FURNACE.get(), ModRecipeTypes.BREAD_REFINEMENT, RecipeBookType.FURNACE, pContainerId, pInventory
-    )
 }

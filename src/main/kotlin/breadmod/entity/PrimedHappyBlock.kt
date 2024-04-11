@@ -1,5 +1,6 @@
 package breadmod.entity
 
+import breadmod.registry.entity.ModEntities
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.item.PrimedTnt

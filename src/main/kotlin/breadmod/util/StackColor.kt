@@ -4,14 +4,13 @@ import net.minecraft.world.item.DyeableArmorItem
 import net.minecraft.world.item.ItemStack
 import java.awt.Color
 
-@Suppress("MemberVisibilityCanBePrivate")
 /**
  * Adapted from [DyeableArmorItem]
  */
 object StackColor {
     private const val TAG_COLOR = "color"
     private const val TAG_DISPLAY = "display"
-    val defaultColor = Color(255,255,255)
+    private val defaultColor = Color(255,255,255)
 
     /* https://stackoverflow.com/a/54913292/7693129 */
     fun mixColors(vararg colors: Color): Color {

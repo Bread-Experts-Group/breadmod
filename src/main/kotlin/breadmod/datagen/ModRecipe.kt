@@ -1,7 +1,7 @@
 package breadmod.datagen
 
-import breadmod.block.registry.ModBlocks
-import breadmod.item.registry.ModItems
+import breadmod.registry.block.ModBlocks
+import breadmod.registry.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.FinishedRecipe
 import net.minecraft.data.recipes.RecipeCategory

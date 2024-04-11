@@ -1,6 +1,5 @@
 package breadmod.mixin
 
-import breadmod.block.ICustomFireLogic
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
@@ -10,6 +9,7 @@ import org.spongepowered.asm.mixin.Mixin
 import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
+import kotlin.reflect.full.hasAnnotation
 
 @Mixin(FireBlock::class)
 class MixinFireBlock {
@@ -20,7 +20,7 @@ class MixinFireBlock {
         info: CallbackInfo
     ) {
         val blockState = pLevel.getBlockState(pPos)
-        if (blockState.block is ICustomFireLogic) {
+        if (blockState.block::class.hasAnnotation<SpecialFireAction>()) {
             blockState.onCaughtFire(pLevel, pPos, pFace, null)
             info.cancel()
         }

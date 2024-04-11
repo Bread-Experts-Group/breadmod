@@ -1,7 +1,7 @@
 package breadmod.recipe
 
-import breadmod.block.registry.ModBlocks
-//import breadmod.recipe.ModRecipeSerializers.BREAD_REFINEMENT
+import breadmod.registry.block.ModBlocks
+import breadmod.registry.recipe.ModRecipeTypes
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*

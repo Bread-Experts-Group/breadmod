@@ -1,24 +1,22 @@
-package breadmod.screens
+package breadmod.block.entity.menu
 
-import breadmod.BreadMod
-import breadmod.block.BreadFurnaceBlock
+import breadmod.BreadMod.modLocation
 import net.minecraft.client.gui.screens.inventory.AbstractFurnaceScreen
 import net.minecraft.client.gui.screens.recipebook.SmeltingRecipeBookComponent
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
 
 @OnlyIn(Dist.CLIENT)
 class BreadFurnaceScreen(
-    pMenu: BreadFurnaceBlock.Menu,
+    pMenu: BreadFurnaceMenu,
     pPlayerInventory: Inventory,
     pTitle: Component
-): AbstractFurnaceScreen<BreadFurnaceBlock.Menu>(
+): AbstractFurnaceScreen<BreadFurnaceMenu>(
     pMenu,
     SmeltingRecipeBookComponent(),
     pPlayerInventory,
     pTitle,
-    ResourceLocation(BreadMod.ID, "textures/gui/container/bread_furnace.png")
+    modLocation("textures/gui/container/bread_furnace.png")
 )

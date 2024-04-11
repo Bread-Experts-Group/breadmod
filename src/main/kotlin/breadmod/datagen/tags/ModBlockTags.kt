@@ -1,7 +1,7 @@
 package breadmod.datagen.tags
 
 import breadmod.BreadMod
-import breadmod.block.registry.ModBlocks
+import breadmod.registry.block.ModBlocks
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation

@@ -1,6 +1,6 @@
 package breadmod.datagen
 
-import breadmod.block.registry.ModBlocks
+import breadmod.registry.block.ModBlocks
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -41,16 +41,19 @@ class ModBlockState(
         )
         //// // // // TODO!
         directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { state ->
-            val coilOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
-            val name = "breadmod:block/heating_element$coilOn"
-
-            val model = models().cubeColumn(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_side$coilOn" ),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_cap$coilOn"),
-            )
-
-            return@directionalBlock model
+            return@directionalBlock models().cubeColumn(
+                "breadmod:block/heating_element",
+                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_side" ),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_cap"),
+            ).element()
+                .from(0F, 0F, 0F)
+                .to(16F, 16F, 16F)
+                .allFaces { d, u ->
+                    u.uvs(0F, 0F, 16F, 16F)
+                    u.texture(if(d.axis.isVertical) "#end" else "#side")
+                    u.tintindex(0)
+                }
+                .end()
         }
         simpleBlockItem(
             ModBlocks.HEATING_ELEMENT_BLOCK.get().block,
