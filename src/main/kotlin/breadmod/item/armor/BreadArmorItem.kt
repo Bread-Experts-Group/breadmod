@@ -21,7 +21,9 @@ class BreadArmorItem(
     type: Type,
     properties: Properties,
 ): ArmorItem(material, type, properties) {
-    val currentColor = Color(216, 196, 170)
+    companion object {
+        val BREAD_COLOR = Color(216, 196, 170)
+    }
 
     private val random = Random(material.hashCode())
     private fun ItemStack.hurt(amount: Int, entity: LivingEntity) = hurtAndBreak(amount, entity) { it.broadcastBreakEvent(type.slot) }

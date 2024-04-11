@@ -121,6 +121,7 @@ repositories {
 
 dependencies {
     // Use the latest version of Minecraft Forge
+    // UPDATE TO AVOID VULNERABILITY TODO
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -135,6 +136,7 @@ dependencies {
     implementation(fg.deobf("curse.maven:jade-${jade_project_id}:${jade_file_id}"))
     implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
     implementation(fg.deobf("curse.maven:create-${create_project_id}:${create_file_id}"))
+    implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -150,7 +152,8 @@ def replaceProperties = [
 
         jei_version_range: jei_version_range,
         create_version_range: create_version_range, projecte_version_range: projecte_version_range,
-        mekanism_version_range: mekanism_version_range, jade_version_range: jade_version_range
+        mekanism_version_range: mekanism_version_range, jade_version_range: jade_version_range,
+        farmers_delight_version_range: farmers_delight_version_range
 ]
 processResources {
     inputs.properties replaceProperties

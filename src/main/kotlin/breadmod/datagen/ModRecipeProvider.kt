@@ -2,20 +2,16 @@ package breadmod.datagen
 
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
+import breadmod.registry.recipe.ModRecipeSerializers
 import net.minecraft.data.PackOutput
-import net.minecraft.data.recipes.FinishedRecipe
-import net.minecraft.data.recipes.RecipeCategory
-import net.minecraft.data.recipes.RecipeProvider
-import net.minecraft.data.recipes.ShapedRecipeBuilder
-import net.minecraft.data.recipes.ShapelessRecipeBuilder
-import net.minecraft.data.recipes.SimpleCookingRecipeBuilder
-import net.minecraft.data.recipes.SmithingTransformRecipeBuilder
+import net.minecraft.data.recipes.*
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.crafting.RecipeSerializer
 import java.util.function.Consumer
 
-class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
+class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
     override fun buildRecipes(pWriter: Consumer<FinishedRecipe>) {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ModBlocks.BREAD_BLOCK.get())
             .unlockedBy("has_item", has(Items.BREAD))
@@ -132,6 +128,11 @@ class ModRecipe(pOutput: PackOutput) : RecipeProvider(pOutput) {
             Ingredient.of(Items.NETHERITE_INGOT),
             RecipeCategory.BUILDING_BLOCKS,
             ModBlocks.REINFORCED_BREAD_BLOCK.get()
-        ).unlocks("has_item", has(ModBlocks.BREAD_BLOCK.get())).save(pWriter, "reinforced_bread_block_smithing")
+        )
+            .unlocks("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .save(pWriter, "reinforced_bread_block_smithing")
+
+        SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION_CRAFTING.get())
+            .save(pWriter, "bread_potion_crafting")
     }
 }

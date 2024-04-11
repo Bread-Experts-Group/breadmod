@@ -1,6 +1,7 @@
 package breadmod.mixin
 
 import breadmod.item.armor.BreadArmorItem
+import breadmod.util.getColor
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.HumanoidModel
 import net.minecraft.client.model.Model
@@ -31,25 +32,25 @@ abstract class MixinHumanoidArmorLayer<T: LivingEntity, M: HumanoidModel<T>, A: 
 
     @Inject(method = ["renderArmorPiece"], at = [At("HEAD")], cancellable = true)
     private fun renderArmorPiece(pPoseStack: PoseStack, pBuffer: MultiBufferSource, pLivingEntity: T, pSlot: EquipmentSlot, pPackedLight: Int, pModel: A, callbackInfo: CallbackInfo) {
-        val itemstack: ItemStack = pLivingEntity.getItemBySlot(pSlot)
-        val item = itemstack.item
+        val itemStack: ItemStack = pLivingEntity.getItemBySlot(pSlot)
+        val item = itemStack.item
         if(item is BreadArmorItem && item.equipmentSlot == pSlot) {
             this.parentModel.copyPropertiesTo(pModel)
             this.iSetPartVisibility(pModel, pSlot)
-            val model: Model = iGetArmorModelHook(pLivingEntity, itemstack, pSlot, pModel)
+            val model: Model = iGetArmorModelHook(pLivingEntity, itemStack, pSlot, pModel)
             val flag: Boolean = this.iUsesInnerModel(pSlot)
 
-            val components = item.currentColor.getRGBColorComponents(null)
+            val components = itemStack.getColor(BreadArmorItem.BREAD_COLOR).getRGBColorComponents(null)
             this.iRenderModel(
                 pPoseStack, pBuffer, pPackedLight, item, model, flag, components[0], components[1], components[2],
-                this.iGetArmorResource(pLivingEntity, itemstack, pSlot, null)
+                this.iGetArmorResource(pLivingEntity, itemStack, pSlot, null)
             )
             this.iRenderModel(
                 pPoseStack, pBuffer, pPackedLight, item, model, flag, 1.0f , 1.0f, 1.0f,
-                this.iGetArmorResource(pLivingEntity, itemstack, pSlot, "overlay")
+                this.iGetArmorResource(pLivingEntity, itemStack, pSlot, "overlay")
             )
 
-            if (itemstack.hasFoil()) this.iRenderGlint(pPoseStack, pBuffer, pPackedLight, model)
+            if (itemStack.hasFoil()) this.iRenderGlint(pPoseStack, pBuffer, pPackedLight, model)
 
             callbackInfo.cancel()
         }

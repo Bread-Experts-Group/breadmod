@@ -7,7 +7,7 @@ import net.minecraft.data.PackOutput
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.common.data.SoundDefinitionsProvider
 
-class ModSoundDefinitions(
+class ModSoundDefinitionsProvider(
     output: PackOutput,
     id: String,
     helper: ExistingFileHelper

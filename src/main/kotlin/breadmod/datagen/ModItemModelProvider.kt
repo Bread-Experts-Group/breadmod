@@ -10,7 +10,7 @@ import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.registries.RegistryObject
 
 @Suppress("SpellCheckingInspection")
-class ModItemModels(output: PackOutput, modid: String, existingFileHelper: ExistingFileHelper) :
+class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper: ExistingFileHelper) :
     ItemModelProvider(output, modid, existingFileHelper) {
     override fun registerModels() {
         singleItem(ModItems.TEST_DISC)

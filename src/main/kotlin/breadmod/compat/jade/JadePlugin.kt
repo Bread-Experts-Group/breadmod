@@ -7,7 +7,7 @@ import snownee.jade.api.WailaPlugin
 
 @WailaPlugin
 @Suppress("unused")
-class Plugin: IWailaPlugin {
+class JadePlugin: IWailaPlugin {
     override fun register(registration: IWailaCommonRegistration) {
 
     }

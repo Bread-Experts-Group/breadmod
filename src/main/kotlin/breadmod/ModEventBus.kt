@@ -45,7 +45,7 @@ object ModEventBus {
         if(event.includeServer()) {
             LOGGER.info("Server datagen")
             generator.addProvider(true, ModLootTableProvider.create(packOutput))
-            generator.addProvider(true, ModRecipe(packOutput))
+            generator.addProvider(true, ModRecipeProvider(packOutput))
 
             val blockTagGenerator = generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
             generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
@@ -53,9 +53,9 @@ object ModEventBus {
         } else if(event.includeClient()) {
             LOGGER.info("Client datagen")
             generator.addProvider(true, USEnglishLanguageProvider(packOutput, BreadMod.ID, "en_us"))
-            generator.addProvider(true, ModBlockState(packOutput, BreadMod.ID, existingFileHelper))
+            generator.addProvider(true, ModBlockStateProvider(packOutput, BreadMod.ID, existingFileHelper))
             //generator.addProvider(true, ModSoundDefinitions(packOutput, MOD_ID, existingFileHelper))
-            generator.addProvider(true, ModItemModels(packOutput, BreadMod.ID, existingFileHelper))
+            generator.addProvider(true, ModItemModelProvider(packOutput, BreadMod.ID, existingFileHelper))
         }
     }
 

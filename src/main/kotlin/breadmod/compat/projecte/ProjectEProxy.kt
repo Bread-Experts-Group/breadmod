@@ -3,7 +3,7 @@ package breadmod.compat.projecte
 import moze_intel.projecte.api.ItemInfo
 import moze_intel.projecte.api.proxy.IEMCProxy
 
-class Test: IEMCProxy {
+class ProjectEProxy: IEMCProxy {
     override fun getValue(p0: ItemInfo): Long {
         TODO("IDFK")
     }

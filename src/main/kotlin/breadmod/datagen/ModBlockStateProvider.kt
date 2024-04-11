@@ -8,7 +8,7 @@ import net.minecraftforge.client.model.generators.BlockStateProvider
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
-class ModBlockState(
+class ModBlockStateProvider(
     output: PackOutput,
     modID: String,
     exFileHelper: ExistingFileHelper
@@ -40,7 +40,7 @@ class ModBlockState(
             models().getBuilder("breadmod:block/bread_furnace")
         )
         //// // // // TODO!
-        directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { state ->
+        directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { _ ->
             return@directionalBlock models().cubeColumn(
                 "breadmod:block/heating_element",
                 modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_side" ),

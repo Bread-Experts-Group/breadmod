@@ -1,5 +1,5 @@
 package breadmod.compat.farmersdelight
 
-class FDPlugin {
+class FarmersDelightPlugin {
     // TODO: To be implemented
 }
