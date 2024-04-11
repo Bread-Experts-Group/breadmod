@@ -9,6 +9,7 @@ import breadmod.registry.entity.ModPainting
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
 import breadmod.registry.recipe.ModRecipeTypes
+import breadmod.registry.screen.ModCreativeTabs
 import breadmod.registry.screen.ModMenuTypes
 import breadmod.registry.sound.ModSounds
 import net.minecraftforge.eventbus.api.IEventBus
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.config.ModConfig
 val registerList = setOf(
     ModBlocks.deferredRegister,
     ModItems.deferredRegister,
+    ModCreativeTabs.deferredRegister,
     ModBlockEntities.deferredRegister,
     ModDimensions.deferredRegister,
     ModEntities.deferredRegister,
