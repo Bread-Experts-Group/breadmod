@@ -1,5 +1,6 @@
 package breadmod.datagen
 
+import breadmod.compat.create.CreateMixingRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
@@ -8,7 +9,6 @@ import net.minecraft.data.recipes.*
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
-import net.minecraft.world.item.crafting.RecipeSerializer
 import java.util.function.Consumer
 
 class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
@@ -17,6 +17,10 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .unlockedBy("has_item", has(Items.BREAD))
             .requires(Items.BREAD, 9)
             .save(pWriter)
+
+        CreateMixingRecipeBuilder.mixing(ModBlocks.BREAD_BLOCK.get(), 5)
+            .requires(Items.BREAD, 45)
+            .save(pWriter, "bread_block_by_mixing")
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BREAD_SLICE.get(), 8)
             .unlockedBy("has_item", has(Items.BREAD))
