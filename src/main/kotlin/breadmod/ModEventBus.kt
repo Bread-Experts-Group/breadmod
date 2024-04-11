@@ -35,8 +35,6 @@ object ModEventBus {
     // Data Generation
     @SubscribeEvent
     fun gatherData(event: GatherDataEvent) {
-        LOGGER.info("SORRY SORRY SORRY")
-
         val generator = event.generator
         val packOutput = generator.packOutput
         val existingFileHelper = event.existingFileHelper
@@ -50,11 +48,12 @@ object ModEventBus {
             val blockTagGenerator = generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
             generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
             generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
-        } else if(event.includeClient()) {
+        }
+        if(event.includeClient()) {
             LOGGER.info("Client datagen")
             generator.addProvider(true, USEnglishLanguageProvider(packOutput, BreadMod.ID, "en_us"))
             generator.addProvider(true, ModBlockStateProvider(packOutput, BreadMod.ID, existingFileHelper))
-            //generator.addProvider(true, ModSoundDefinitions(packOutput, MOD_ID, existingFileHelper))
+            generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, BreadMod.ID, existingFileHelper))
             generator.addProvider(true, ModItemModelProvider(packOutput, BreadMod.ID, existingFileHelper))
         }
     }

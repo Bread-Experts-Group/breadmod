@@ -25,4 +25,4 @@ class MixinFireBlock {
             info.cancel()
         }
     }
-}
+} // BUG: Annotation ref crashes game
