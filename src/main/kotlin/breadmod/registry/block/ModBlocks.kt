@@ -3,7 +3,6 @@ package breadmod.registry.block
 import breadmod.BreadMod
 import breadmod.block.*
 import breadmod.registry.item.ModItems
-import com.mojang.datafixers.kinds.Const
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -151,22 +150,15 @@ object ModBlocks {
                                         SnowLayerBlock.LAYERS, pValue
                                     )
                                 )
-                            ).apply(SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat())))
+                            ).apply(SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2)))
                         }.`when`(HAS_NO_SILK_TOUCH), AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
                             (if (pValue == 8)
                                 LootItem.lootTableItem(FLOUR_BLOCK.get().block)
                             else LootItem.lootTableItem(ModItems.FLOUR.get()).apply(
-                                SetItemCountFunction.setCount(
-                                    ConstantValue.exactly(
-                                        pValue.toFloat()
-                                    )
-                                )
+                                SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2))
                             ).`when`(
                                 LootItemBlockStatePropertyCondition.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block).setProperties(
-                                    StatePropertiesPredicate.Builder.properties().hasProperty(
-                                        SnowLayerBlock.LAYERS,
-                                        pValue
-                                    )
+                                    StatePropertiesPredicate.Builder.properties().hasProperty(SnowLayerBlock.LAYERS, pValue)
                                 )
                             )) as LootPoolEntryContainer.Builder<*>
                         })

@@ -120,7 +120,6 @@ repositories {
 }
 
 dependencies {
-    // Use the latest version of Minecraft Forge
     // UPDATE TO AVOID VULNERABILITY TODO
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
 
