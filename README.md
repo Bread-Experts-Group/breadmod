@@ -1,11 +1,11 @@
 # The Bread Mod 1.20.1 Port (now with more bread)
 ## Standard, Base Mod
-- [ ] Bread Armor
+- [X] Bread Armor
   - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches
   - [X] Each piece will keep your hunger from going below a certain point (+1 cumulative)
-  - [ ] Doped bread/armor set
-  - [ ] Bread Armor Trimming
-    - [ ] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while it's equipped
+  - [X] Doped bread/armor set
+  - [X] Bread Armor Trimming
+    - [X] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while it's equipped
       - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect gets applied to fellow players
 - [ ] Bread Tools
   - Slightly weaker than stone in durability and strength but has approx 1.5x more speed
@@ -29,7 +29,7 @@
 - [ ] Bread Machine for turning wheat into dough
   - [ ] If the machine is broken during its operation, flour will be spread everywhere 
   - [ ] Flour/Dough
-    - [ ] Snow-like layer block (Very flammable)
+    - [X] Snow-like layer block (Very flammable)
       - Figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
     - [ ] Refinement processes
     - [X] Textures
