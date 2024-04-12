@@ -1,5 +1,6 @@
 package breadmod.mixin
 
+import breadmod.registry.dimension.ModDimensions
 import breadmod.block.SpecialFireAction
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
