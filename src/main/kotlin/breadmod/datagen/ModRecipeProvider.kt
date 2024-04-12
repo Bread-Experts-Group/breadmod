@@ -4,9 +4,11 @@ import breadmod.compat.create.CreateMixingRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
+import com.simibubi.create.foundation.fluid.FluidIngredient
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
 import net.minecraft.tags.ItemTags
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.material.Fluids
@@ -19,10 +21,12 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requires(Items.BREAD, 9)
             .save(pWriter)
 
-        CreateMixingRecipeBuilder.mixing(ModBlocks.BREAD_BLOCK.get(), 5)
-            .requires(Items.BREAD, 45)
-            .requires(Fluids.WATER, 50)
-            .save(pWriter, "bread_block_by_mixing")
+        CreateMixingRecipeBuilder(
+            listOf(Ingredient.of(ItemStack(Items.BREAD, 45))),
+            listOf(FluidIngredient.fromFluid(Fluids.WATER, 50)),
+            ModBlocks.BREAD_BLOCK.get(),
+            5
+        ).save(pWriter, "bread_block_by_mixing")
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BREAD_SLICE.get(), 8)
             .unlockedBy("has_item", has(Items.BREAD))
