@@ -23,7 +23,7 @@ jobs:
     - name: Run Data Generation (Server, Client)
       run: ./gradlew runData
     - name: Build JAR file
-      run: ./gradlew build
+      run: ./gradlew build && ls build/libs
     - name: Read Properties
       id: readproperties
       uses: BrycensRanch/read-properties-action@v1
@@ -35,5 +35,5 @@ jobs:
       with:
         files: build/lib/*
         tag_name: 'snapshot'
-        name: ${{steps.readproperties.outputs.mod_name}} ${{steps.readproperties.outputs.mod_version}}
+        name: ${{steps.readproperties.outputs.mod_name}} ${{steps.readproperties.outputs.mod_version}} (${{ github.sha }})
         draft: false
