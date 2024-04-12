@@ -20,10 +20,12 @@ class MixinFireBlock {
         pRandom: RandomSource, pAge: Int, pFace: Direction,
         info: CallbackInfo
     ) {
+        if(pLevel.dimensionTypeId() == ModDimensions.BREAD) return info.cancel()
+        
         val blockState = pLevel.getBlockState(pPos)
         if (blockState.block::class.hasAnnotation<SpecialFireAction>()) {
             blockState.onCaughtFire(pLevel, pPos, pFace, null)
             info.cancel()
         }
     }
-} // BUG: Annotation ref crashes game
+}
