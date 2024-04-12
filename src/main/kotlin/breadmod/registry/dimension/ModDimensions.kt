@@ -1,9 +1,12 @@
 package breadmod.registry.dimension
 
 import breadmod.BreadMod
+import java.util.OptionalLong
+import net.minecraft.tags.BlockTags
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraftforge.registries.DeferredRegister
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes
 
 object ModDimensions {
     val deferredRegister: DeferredRegister<DimensionType> = DeferredRegister.create(Registries.DIMENSION_TYPE, BreadMod.ID)
@@ -20,7 +23,15 @@ object ModDimensions {
             -50, // minY TODO,
             100, // maxY TODO
             100,
-            TODO("Figure this out later https://mcstreetguy.github.io/ForgeJavaDocs/1.20.1-latest/net/minecraft/world/level/dimension/DimensionType.html")
+            BlockTags.INFINIBURN_OVERWORLD,
+            BuiltinDimensionTypes.NETHER_EFFECTS,
+            8F,
+            MonsterSettings(
+                false,
+                false,
+                ConstantInt.of(0),
+                0
+            )
         )
     }
 }
