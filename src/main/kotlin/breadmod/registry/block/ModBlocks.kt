@@ -3,6 +3,8 @@ package breadmod.registry.block
 import breadmod.BreadMod
 import breadmod.block.*
 import breadmod.registry.item.ModItems
+import com.mojang.datafixers.kinds.Const
+import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.data.loot.BlockLootSubProvider
@@ -16,10 +18,21 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.SnowLayerBlock
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.MapColor
+import net.minecraft.world.level.storage.loot.LootContext
+import net.minecraft.world.level.storage.loot.LootPool
+import net.minecraft.world.level.storage.loot.LootTable
+import net.minecraft.world.level.storage.loot.entries.AlternativesEntry
+import net.minecraft.world.level.storage.loot.entries.LootItem
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
 import net.minecraftforge.common.extensions.IForgeItem
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -27,6 +40,7 @@ import net.minecraftforge.registries.RegistryObject
 
 object ModBlocks {
     val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, BreadMod.ID)
+    fun getLocation(block: Block) = ForgeRegistries.BLOCKS.getKey(block)
 
     private fun registerBlockItem(id: String, block: () -> Block, properties: Item.Properties): RegistryObject<BlockItem> =
         deferredRegister.register(id, block).let { ModItems.deferredRegister.register(id) { BlockItem(it.get(), properties) } }
@@ -119,54 +133,45 @@ object ModBlocks {
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
 
-//            createSingleItemTableWithSilkTouch(FLOUR_BLOCK.get().block, ModItems.FLOUR.get(), ConstantValue.exactly(4.0F))
-            dropSelf(FLOUR_BLOCK.get().block)
-            dropSelf(FLOUR_LAYER_BLOCK.get().block) // Remove this after the hellscape below is fixed
-            /*
+            add(
+                FLOUR_BLOCK.get().block,
+                createSingleItemTableWithSilkTouch(
+                    FLOUR_BLOCK.get().block,
+                    ModItems.FLOUR.get(), ConstantValue.exactly(4F)
+                )
+            )
+            // TODO: All stolen from snow loot table. Remake in the future?
             add(FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
                 LootPool.lootPool().`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
                     .add(
-                        AlternativesEntry.alternatives(AlternativesEntry.alternatives<Int?>(
-                            SnowLayerBlock.LAYERS.possibleValues
-                        ) { p_252097_: Int? ->
-                            LootItem.lootTableItem(Items.SNOWBALL).`when`(
-                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(p_251108_).setProperties(
+                        AlternativesEntry.alternatives(AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
+                            LootItem.lootTableItem(ModItems.FLOUR.get()).`when`(
+                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block).setProperties(
                                     StatePropertiesPredicate.Builder.properties().hasProperty(
-                                        SnowLayerBlock.LAYERS,
-                                        p_252097_!!
+                                        SnowLayerBlock.LAYERS, pValue
                                     )
                                 )
-                            ).apply(
+                            ).apply(SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat())))
+                        }.`when`(HAS_NO_SILK_TOUCH), AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
+                            (if (pValue == 8)
+                                LootItem.lootTableItem(FLOUR_BLOCK.get().block)
+                            else LootItem.lootTableItem(ModItems.FLOUR.get()).apply(
                                 SetItemCountFunction.setCount(
                                     ConstantValue.exactly(
-                                        p_252097_!!.toFloat()
-                                    )
-                                )
-                            )
-                        }.`when`(HAS_NO_SILK_TOUCH), AlternativesEntry.alternatives<Int?>(
-                            SnowLayerBlock.LAYERS.possibleValues
-                        ) { p_251216_: Int? ->
-                            (if (p_251216_ == 8) LootItem.lootTableItem(
-                                Blocks.SNOW_BLOCK
-                            ) else LootItem.lootTableItem(Blocks.SNOW).apply(
-                                SetItemCountFunction.setCount(
-                                    ConstantValue.exactly(
-                                        p_251216_!!.toFloat()
+                                        pValue.toFloat()
                                     )
                                 )
                             ).`when`(
-                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(p_251108_).setProperties(
+                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block).setProperties(
                                     StatePropertiesPredicate.Builder.properties().hasProperty(
                                         SnowLayerBlock.LAYERS,
-                                        p_251216_!!
+                                        pValue
                                     )
                                 )
                             )) as LootPoolEntryContainer.Builder<*>
                         })
                     )
-            )) // MEGA TODO JESUS CHRIST
-
-             */
+            ))
         }
     }
 }

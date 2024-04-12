@@ -1,17 +1,19 @@
 package breadmod.datagen
 
 import breadmod.registry.block.ModBlocks
+import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.model.generators.BlockStateProvider
+import net.minecraftforge.client.model.generators.ConfiguredModel
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
 class ModBlockStateProvider(
     output: PackOutput,
     modID: String,
-    exFileHelper: ExistingFileHelper
+    exFileHelper: ExistingFileHelper,
 ) : BlockStateProvider(output, modID, exFileHelper) {
     override fun registerStatesAndModels() {
         blockWithItem(ModBlocks.BREAD_BLOCK.get().block)
@@ -60,7 +62,34 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/heating_element")
         )
         //// // // // TODO!
+        getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.get().block).forAllStates { state ->
+            val layer = state.getValue(BlockStateProperties.LAYERS)
+            ConfiguredModel.builder()
+                .modelFile(
+                    models().getBuilder("breadmod:block/flour_layer_${layer}")
+                        .parent(models().withExistingParent(
+                            ModBlocks.getLocation(ModBlocks.FLOUR_LAYER_BLOCK.get().block)!!.path,
+                            mcLoc("${ModelProvider.BLOCK_FOLDER}/thin_block")
+                        ))
+                        .texture("texture", modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
+                        .texture("particle", modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
+                        .element()
+                        .from(0F, 0F, 0F)
+                        .to(16F, 2F * layer, 16F)
+                        .allFaces { d, u ->
+                            u.uvs(0F, if(d.axis.isVertical) 0F else 16F - (2 * layer), 16F, 16F)
+                            u.texture("#texture")
+                            if(d != Direction.UP) u.cullface(d)
+                        }
+                        .end()
+                )
+                .build()
+        }
 
+        simpleBlockItem(
+            ModBlocks.FLOUR_LAYER_BLOCK.get().block,
+            models().getBuilder("breadmod:block/flour_layer_1")
+        )
     }
 
     private fun blockWithItem(blockRegistryObject: Block) {

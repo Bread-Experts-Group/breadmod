@@ -46,13 +46,16 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.DOUGH.get())
         add(ModItems.FLOUR.get())
         add(ModBlocks.FLOUR_BLOCK.get())
-
-        modAdd("Flour",
-            "block", "flour")
+        add(ModBlocks.FLOUR_LAYER_BLOCK.get(), "Flour")
 
         modAdd(
             "The Bread Mod",
             "itemGroup", "main"
+        )
+
+        modAdd(
+            "HAPPY HAPPY HAPPY",
+            "entity", "happy_block"
         )
 
         modAdd(

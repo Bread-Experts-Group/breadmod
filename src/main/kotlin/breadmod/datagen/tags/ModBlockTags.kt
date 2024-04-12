@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.BlockTags
+import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.BlockTagsProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
@@ -24,6 +25,9 @@ class ModBlockTags(
             .add(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
             .add(ModBlocks.BREAD_FURNACE_BLOCK.get().block)
             .add(ModBlocks.HEATING_ELEMENT_BLOCK.get().block)
+        tag(BlockTags.MINEABLE_WITH_SHOVEL)
+            .add(ModBlocks.FLOUR_BLOCK.get().block)
+            .add(ModBlocks.FLOUR_LAYER_BLOCK.get().block)
         tag(BlockTags.BEACON_BASE_BLOCKS)
             .add(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
         tag(BlockTags.create(ResourceLocation("forge", "storage_blocks")))
