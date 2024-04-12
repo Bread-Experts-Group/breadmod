@@ -12,6 +12,8 @@ import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.registry.screen.ModMenuTypes
 import breadmod.registry.sound.ModSounds
+import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.registries.Registries
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.config.ModConfig
@@ -21,7 +23,6 @@ val registerList = setOf(
     ModItems.deferredRegister,
     ModCreativeTabs.deferredRegister,
     ModBlockEntities.deferredRegister,
-    ModDimensions.deferredRegister,
     ModEntities.deferredRegister,
     ModPainting.deferredRegister,
     ModRecipeTypes.deferredRegister,
@@ -29,6 +30,9 @@ val registerList = setOf(
     ModMenuTypes.deferredRegister,
     ModSounds.deferredRegister
 )
+
+val registrySet = RegistrySetBuilder()
+    .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrap)
 
 fun registerConfigs() = ModLoadingContext.get().let {
     LOGGER.info("Registering configs")
@@ -40,6 +44,7 @@ fun registerAll(bus: IEventBus) {
         LOGGER.info("Pushing register for ${it.registryName}")
         it.register(bus)
     }
+    // registrySet.build
     registerConfigs()
 }
 
