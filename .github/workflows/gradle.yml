@@ -24,10 +24,13 @@ jobs:
       run: ./gradlew runData
     - name: Build JAR file
       run: ./gradlew build
+    - name: Read Properties
+      id: readproperties
+      uses: BrycensRanch/read-properties-action@v1
     - name: Create Release
       uses: softprops/action-gh/release@v2
       with:
         files: build/lib/*
         tag_name: 'snapshot'
-        name: 'test'
+        name: ${{steps.readproperties.outputs.mod_name}} ${{steps.readproperties.outputs.mod_version}}
         draft: false
