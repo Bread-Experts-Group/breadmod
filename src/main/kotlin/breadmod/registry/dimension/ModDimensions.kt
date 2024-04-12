@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes
+import net.minecraft.util.valueproviders.ConstantInt
 
 object ModDimensions {
     val deferredRegister: DeferredRegister<DimensionType> = DeferredRegister.create(Registries.DIMENSION_TYPE, BreadMod.ID)
@@ -26,7 +27,7 @@ object ModDimensions {
             BlockTags.INFINIBURN_OVERWORLD,
             BuiltinDimensionTypes.NETHER_EFFECTS,
             8F,
-            MonsterSettings(
+            DimensionType.MonsterSettings(
                 false,
                 false,
                 ConstantInt.of(0),
