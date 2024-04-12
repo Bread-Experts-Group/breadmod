@@ -9,6 +9,7 @@ import net.minecraft.data.recipes.*
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.level.material.Fluids
 import java.util.function.Consumer
 
 class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
@@ -20,6 +21,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
 
         CreateMixingRecipeBuilder.mixing(ModBlocks.BREAD_BLOCK.get(), 5)
             .requires(Items.BREAD, 45)
+            .requires(Fluids.WATER, 50)
             .save(pWriter, "bread_block_by_mixing")
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BREAD_SLICE.get(), 8)

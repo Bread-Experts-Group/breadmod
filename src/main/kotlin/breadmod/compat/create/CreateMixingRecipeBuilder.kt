@@ -15,6 +15,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.registries.ForgeRegistries
 import java.util.function.Consumer
 
@@ -35,7 +36,6 @@ class CreateMixingRecipeBuilder(pResult: ItemLike, private val count: Int) :
         for (i in 0 until pQuantity) {
             this.requires(Ingredient.of(pItem))
         }
-
         return this
     }
 
@@ -46,6 +46,10 @@ class CreateMixingRecipeBuilder(pResult: ItemLike, private val count: Int) :
         }
 
         return this
+    }
+
+    fun requires(pFluid: Fluid, pAmount: Int): CreateMixingRecipeBuilder {
+        return this.requires(pFluid, pAmount)
     }
 
     override fun unlockedBy(pCriterionName: String, pCriterionTrigger: CriterionTriggerInstance): CreateMixingRecipeBuilder {
@@ -78,9 +82,9 @@ class CreateMixingRecipeBuilder(pResult: ItemLike, private val count: Int) :
         private val result: Item,
         private val count: Int,
         private val ingredients: List<Ingredient>
-    ) : ModFinishedRecipe() {
+    ) : FinishedRecipe {
         override fun serializeRecipeData(pJson: JsonObject) {
-            super.serializeRecipeData(pJson)
+            serializeRecipeData(pJson)
 
             val jsonArray = JsonArray()
 
@@ -95,11 +99,21 @@ class CreateMixingRecipeBuilder(pResult: ItemLike, private val count: Int) :
                 jsonObject.addProperty("count", this.count)
             }
 
-            pJson.add("results", jsonObject)
+            val resultArray = JsonArray()
+            pJson.add("results", resultArray)
+            resultArray.add(jsonObject)
         }
 
         override fun getType(): RecipeSerializer<*> {
             return AllRecipeTypes.MIXING.getSerializer()
+        }
+
+        override fun serializeAdvancement(): JsonObject? {
+            return null
+        }
+
+        override fun getAdvancementId(): ResourceLocation? {
+            return null
         }
 
         override fun getId(): ResourceLocation {
