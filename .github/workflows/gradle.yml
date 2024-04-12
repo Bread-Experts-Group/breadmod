@@ -29,6 +29,7 @@ jobs:
       uses: BrycensRanch/read-properties-action@v1
       with:
         file: gradle.properties
+        all: true
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
