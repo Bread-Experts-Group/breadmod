@@ -16,6 +16,7 @@ typealias BootstrapContext<T> = BootstapContext<T>
 val entries = mutableListOf<ModDimensionEntry>()
 private var freeze = false
 
+@Suppress("unused")
 object ModDimensions {
     fun register(
         name: String,
@@ -38,9 +39,9 @@ object ModDimensions {
             4.0,
             true,
             false,
-            -50, // minY TODO,
-            100, // maxY TODO
-            100,
+            -64, // minY TODO,
+            128, // maxY TODO
+            128,
             BlockTags.INFINIBURN_OVERWORLD,
             BuiltinDimensionTypes.NETHER_EFFECTS,
             8F,
