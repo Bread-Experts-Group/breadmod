@@ -41,4 +41,4 @@ jobs:
     - name: Build JAR file
       run: ./gradlew build
     - name: TODO Publish
-      run: ls
+      run: ls build
