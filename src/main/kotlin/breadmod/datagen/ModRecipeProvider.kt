@@ -1,10 +1,9 @@
 package breadmod.datagen
 
-import breadmod.compat.create.CreateMixingRecipeBuilder
+import breadmod.compat.create.recipe.CreateMixingRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
-import com.simibubi.create.foundation.fluid.FluidIngredient
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
 import net.minecraft.tags.ItemTags
@@ -12,6 +11,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.material.Fluids
+import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 
 class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
@@ -20,13 +20,10 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .unlockedBy("has_item", has(Items.BREAD))
             .requires(Items.BREAD, 9)
             .save(pWriter)
-
-        CreateMixingRecipeBuilder(
-            listOf(Ingredient.of(ItemStack(Items.BREAD, 45))),
-            listOf(FluidIngredient.fromFluid(Fluids.WATER, 50)),
-            ModBlocks.BREAD_BLOCK.get(),
-            5
-        ).save(pWriter, "bread_block_by_mixing")
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, Items.BREAD, 9)
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .requires(ModBlocks.BREAD_BLOCK.get(), 1)
+            .save(pWriter, "bread_block_uncompaction")
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BREAD_SLICE.get(), 8)
             .unlockedBy("has_item", has(Items.BREAD))
@@ -144,5 +141,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
 
         SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION_CRAFTING.get())
             .save(pWriter, "bread_potion_crafting")
+
+        // // Compat
+        // Create
+        if(ModList.get().isLoaded("create")) {
+            CreateMixingRecipeBuilder(ModBlocks.BREAD_BLOCK.get(), 2)
+                .requires(ItemStack(Items.BREAD, 1))
+                .requiresFluid(Fluids.WATER, 1)
+                .save(pWriter, "bread_mixing_test")
+        }
     }
 }

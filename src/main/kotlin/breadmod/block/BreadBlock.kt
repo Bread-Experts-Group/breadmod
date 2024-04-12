@@ -1,6 +1,5 @@
 package breadmod.block
 
-import breadmod.mixin.SpecialFireAction
 import breadmod.registry.block.ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction

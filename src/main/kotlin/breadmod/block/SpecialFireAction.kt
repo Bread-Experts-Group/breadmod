@@ -1,4 +1,4 @@
-package breadmod.mixin
+package breadmod.block
 
 /**
  * Prevents a block from being destroyed from fire.
