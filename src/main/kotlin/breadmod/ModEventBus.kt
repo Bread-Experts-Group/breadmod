@@ -10,6 +10,8 @@ import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.registry.item.ModItems
 import breadmod.block.entity.menu.BreadFurnaceScreen
 import breadmod.datagen.*
+import breadmod.datagen.dimension.ModBiomes
+import breadmod.datagen.dimension.ModDimensions
 import breadmod.datagen.tags.ModBlockTags
 import breadmod.datagen.tags.ModItemTags
 import breadmod.datagen.tags.ModPaintingTags
@@ -22,10 +24,13 @@ import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.registries.Registries
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.client.event.RegisterColorHandlersEvent
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -37,6 +42,11 @@ object ModEventBus {
     // Data Generation
     @SubscribeEvent
     fun gatherData(event: GatherDataEvent) {
+        val registrySet = RegistrySetBuilder()
+            .add(Registries.BIOME, ModBiomes::bootstrapBiomes)
+            .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
+            .add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems)
+
         val generator = event.generator
         val packOutput = generator.packOutput
         val existingFileHelper = event.existingFileHelper
@@ -50,6 +60,8 @@ object ModEventBus {
             val blockTagGenerator = generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
             generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
             generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
+
+            generator.addProvider(true, DatapackBuiltinEntriesProvider(packOutput, lookupProvider, registrySet, setOf(BreadMod.ID)))
         }
         if(event.includeClient()) {
             LOGGER.info("Client datagen")
