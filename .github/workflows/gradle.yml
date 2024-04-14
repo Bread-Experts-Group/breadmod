@@ -13,6 +13,8 @@ jobs:
       contents: write
     steps:
     - uses: actions/checkout@v4
+    - name: M
+      run: ls
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -38,10 +40,12 @@ jobs:
       id: datagen
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
+        JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
       run: ./gradlew runData
     - name: Build JAR file
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
+        JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
       run: ./gradlew build
     - name: Create Release
       uses: softprops/action-gh-release@v2
