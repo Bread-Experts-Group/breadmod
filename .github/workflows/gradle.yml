@@ -35,5 +35,5 @@ jobs:
       with:
         files: build/libs/*
         tag_name: 'snapshot'
-        name: ${{steps.readproperties.outputs.mod_name}} ${{steps.readproperties.outputs.mod_version}} (${{ github.sha }})
+        name: ${{steps.readproperties.outputs.mod_name}} ${{steps.readproperties.outputs.mod_version}}.alpha.${GITHUB_SHA::6}
         draft: false
