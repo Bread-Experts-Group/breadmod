@@ -38,11 +38,13 @@ jobs:
       id: datagen
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
-      run: ./gradlew -Dlog4j.configuration=log4j.properties runData
+        JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
+      run: ./gradlew runData
     - name: Build JAR file
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
-      run: ./gradlew -Dlog4j.configuration=log4j.properties build
+        JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
+      run: ./gradlew build
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
