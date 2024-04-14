@@ -33,7 +33,7 @@ jobs:
         script: |
           const sha = context.sha.substring(1,6)
           core.setOutput('sha', sha)
-          core.setOutput('versionStr', '${{steps.readproperties.outputs.mod_version}}.alpha.${{ steps.truncated.outputs.sha }}')
+          core.setOutput('versionStr', '${{steps.readproperties.outputs.mod_version}}.alpha.' + sha)
     - name: Run Data Generation (Server, Client)
       id: datagen
       env:
