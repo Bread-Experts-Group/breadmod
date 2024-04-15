@@ -65,8 +65,21 @@ jobs:
       with:
         patterns: |
           build/libs/*
-    - name: Create Release
+    - name: Fetch Last Release Checksum
       if: steps.truncated.outputs.shouldBuild == 'true'
+      uses: robinraju/release-downloader@v1.10
+      with:
+        latest: true
+        fileName: checksum.txt
+        out-file-path: "lastRelease"
+    - name: Check Checksums
+      id: sum-check
+      uses: LouisBrunner/diff-action@v2.0.0
+      with:
+        old: lastRelease/checksum.txt
+        new: checksum.txt
+    - name: Create Release
+      if: steps.sum-check.outputs.passed == 'true'
       uses: softprops/action-gh-release@v2
       with:
         files: checksum.txt build/libs/*
