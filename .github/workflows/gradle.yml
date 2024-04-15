@@ -79,38 +79,16 @@ jobs:
       with:
         script: |
           const fs = require('fs')
-          if(!fs.existsSync("lastRelease/checksum.txt")) {
-            core.setOutput('same', 'false')
-            return
-          }
+          if(!fs.existsSync("lastRelease/checksum.txt")) { core.setOutput('same', 'false'); return }
           
-          const entriesA = fs.readFileSync("checksum.txt", "utf-8").split("\n")
-          const entriesB = fs.readFileSync("lastRelease/checksum.txt", "utf-8").split("\n")
-          if(entriesA.length != entriesB.length) {
-            core.setOutput('same', 'false')
-            return
-          }
+          function sums(str) { return str.split("/\s+/").filter((e,i)=> i % 2 == 0).sort() }
           
-          const mapA = entriesA.reduce((map, sumPath)=>{ 
-            const path = sumPath.split(" ")
-            map[path[1]] = path[0]
-            return map
-          }, {})
-          var idx = 0
-          entriesB.reduce((map, sumPath)=>{ 
-            const path = sumPath.split(" ")
-            map[path[1]] = path[0]
-            return map
-          }, {}).forEach((value, key) => {
-            idx++
-            if(mapA.get(key) != value) {
-              core.setOutput('same', 'false')
-              return
-            }
-          })
-          if(idx != mapA.length) {
-            core.setOutput('same', 'false')
-            return
+          const entriesA = sums(fs.readFileSync("checksum.txt", "utf-8"))
+          const entriesB = sums(fs.readFileSync("lastRelease/checksum.txt", "utf-8"))
+          if(entriesA.length != entriesB.length) { core.setOutput('same', 'false'); return }
+          
+          for (const [idx, sum] of entriesA.entries()) {
+            if(entriesB[idx] != sum) { core.setOutput('same', 'false'); return }
           }
           
           core.setOutput('same', 'true')
