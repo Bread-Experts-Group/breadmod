@@ -88,6 +88,7 @@ jobs:
           if(entriesA.length != entriesB.length) { core.setOutput('same', 'false'); return }
           
           for (const [idx, sum] of entriesA.entries()) {
+            console.log(`Checking ${sum} to {entriesB[idx]}`)
             if(entriesB[idx] != sum) { core.setOutput('same', 'false'); return }
           }
           
