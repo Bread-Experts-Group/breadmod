@@ -73,7 +73,7 @@ jobs:
         fileName: checksum.txt
         out-file-path: "lastRelease"
     - name: Last Release Has Checksum?
-      if: steps.truncated.outputs.shouldBuild == 'true
+      if: steps.truncated.outputs.shouldBuild == 'true'
       id: has-checksum
       uses: andstor/file-existence-action@v3
       with:
