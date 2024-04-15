@@ -15,13 +15,17 @@ class ModSoundDefinitionsProvider(
     override fun registerSounds() { // Adds each entry to sounds.json
         this.add(
             ModSounds.TEST_SOUND, definition()
-                .subtitle("sound.$BreadMod.ID.test_sound")
+                .subtitle("sound.${BreadMod.ID}.test_sound")
                 .with(sound(modLocation("test_sound")).volume(1f).stream())
         )
         this.add(
             ModSounds.HAPPY_BLOCK_FUSE, definition()
-                .subtitle("sound.$BreadMod.ID.happy_block_fuse")
+                .subtitle("sound.${BreadMod.ID}.happy_block_fuse")
                 .with(sound(modLocation("happy_block_fuse")).volume(1f))
+        )
+        this.add(
+            ModSounds.ULTRAMARINE, definition()
+                .with(sound(modLocation("ultramarine")).volume(1f).stream())
         )
     }
 }

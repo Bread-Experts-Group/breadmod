@@ -1,6 +1,8 @@
 package breadmod.datagen.dimension
 
 import breadmod.BreadMod.modLocation
+import breadmod.datagen.dimension.worldgen.ModBiomes
+import breadmod.datagen.dimension.worldgen.ModNoiseGenerators
 import com.mojang.datafixers.util.Pair
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
@@ -14,6 +16,7 @@ import net.minecraft.world.level.dimension.BuiltinDimensionTypes
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.dimension.LevelStem
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
 import java.util.*
 
 typealias BootstrapContext<T> = BootstapContext<T>
@@ -23,12 +26,14 @@ object ModDimensions {
         name: String,
         dimensionType: (key: ResourceKey<DimensionType>, location: ResourceLocation) -> DimensionType,
         climateParameterListBuilder: ClimateParameterListBuilder,
+        noiseGenerationSettings: ResourceKey<NoiseGeneratorSettings>
     ) = modLocation(name).let {
         ModDimensionEntry(
             it,
             ResourceKey.create(Registries.DIMENSION_TYPE, it).let { typeKey -> typeKey to dimensionType.invoke(typeKey, it) },
             ResourceKey.create(Registries.LEVEL_STEM, it),
-            climateParameterListBuilder
+            climateParameterListBuilder,
+            noiseGenerationSettings
         )
     }
 
@@ -62,17 +67,17 @@ object ModDimensions {
                 Pair.of(
                     Climate.parameters(
                         0.9F,
-                        0.0f,
+                        0.5f,
                         0.0F,
-                        0.0f,
-                        0.0f,
+                        0.25f,
+                        1.0f,
                         1.0F,
                         0.175F
-                    ), holderGetter.getOrThrow(ModBiomes.BREAD.first)
+                    ), holderGetter.getOrThrow(ModBiomes.BREAD)
                 )
             )
         )
-    })
+    }, ModNoiseGenerators.BREAD_FLOATING_ISLANDS)
 
     fun bootstrapDimensionTypes(ctx: BootstrapContext<DimensionType>) =
         ModDimensionEntry.entries.forEach { ctx.register(it.dimensionType.first, it.dimensionType.second) }

@@ -10,8 +10,10 @@ import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.registry.item.ModItems
 import breadmod.block.entity.menu.BreadFurnaceScreen
 import breadmod.datagen.*
-import breadmod.datagen.dimension.ModBiomes
+import breadmod.datagen.dimension.worldgen.ModBiomes
 import breadmod.datagen.dimension.ModDimensions
+import breadmod.datagen.dimension.worldgen.ModFeatures
+import breadmod.datagen.dimension.worldgen.ModNoiseGenerators
 import breadmod.datagen.tags.ModBlockTags
 import breadmod.datagen.tags.ModItemTags
 import breadmod.datagen.tags.ModPaintingTags
@@ -42,11 +44,6 @@ object ModEventBus {
     // Data Generation
     @SubscribeEvent
     fun gatherData(event: GatherDataEvent) {
-        val registrySet = RegistrySetBuilder()
-            .add(Registries.BIOME, ModBiomes::bootstrapBiomes)
-            .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
-            .add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems)
-
         val generator = event.generator
         val packOutput = generator.packOutput
         val existingFileHelper = event.existingFileHelper
@@ -61,7 +58,18 @@ object ModEventBus {
             generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
             generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
 
-            generator.addProvider(true, DatapackBuiltinEntriesProvider(packOutput, lookupProvider, registrySet, setOf(BreadMod.ID)))
+            generator.addProvider(true, DatapackBuiltinEntriesProvider(
+                packOutput, lookupProvider, RegistrySetBuilder()
+                    .add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
+
+                    .add(Registries.CONFIGURED_FEATURE, ModFeatures::bootstrapConfiguredFeatures)
+                    .add(Registries.PLACED_FEATURE, ModFeatures::bootstrapPlacedFeatures)
+
+                    .add(Registries.BIOME, ModBiomes::bootstrapBiomes)
+                    .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
+                    .add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems),
+                setOf(BreadMod.ID))
+            )
         }
         if(event.includeClient()) {
             LOGGER.info("Client datagen")

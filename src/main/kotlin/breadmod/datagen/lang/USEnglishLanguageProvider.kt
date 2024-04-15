@@ -49,6 +49,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.FLOUR.get())
         add(ModBlocks.FLOUR_BLOCK.get())
         add(ModBlocks.FLOUR_LAYER_BLOCK.get(), "Flour")
+        add(ModBlocks.BAUXITE_ORE.get().block)
 
         modAdd(
             "The Bread Mod",

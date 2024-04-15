@@ -113,6 +113,12 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val BAUXITE_ORE = registerBlockItem(
+        "bauxite_ore",
+        { Block(BlockBehaviour.Properties.copy(Blocks.COPPER_ORE)) },
+        Item.Properties().fireResistant()
+    )
+
     class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {
         override fun getKnownBlocks(): Iterable<Block> {
             return Iterable<Block> {
@@ -131,6 +137,7 @@ object ModBlocks {
             dropSelf(BREAD_FURNACE_BLOCK.get().block)
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
+            dropSelf(BAUXITE_ORE.get().block)
 
             add(
                 FLOUR_BLOCK.get().block,
