@@ -81,14 +81,14 @@ jobs:
           const fs = require('fs')
           if(!fs.existsSync("lastRelease/checksum.txt")) { core.setOutput('same', 'false'); return }
           
-          function sums(str) { return str.split("/\s+/").filter((e,i)=> i % 2 == 0).sort() }
+          function sums(str) { return str.split(/\s+/).filter((e,i)=> i % 2 == 0).sort() }
           
           const entriesA = sums(fs.readFileSync("checksum.txt", "utf-8"))
           const entriesB = sums(fs.readFileSync("lastRelease/checksum.txt", "utf-8"))
           if(entriesA.length != entriesB.length) { core.setOutput('same', 'false'); return }
           
           for (const [idx, sum] of entriesA.entries()) {
-            console.log(`Checking ${sum} to {entriesB[idx]}`)
+            console.log(`Checking ${sum} to ${entriesB[idx]}`)
             if(entriesB[idx] != sum) { core.setOutput('same', 'false'); return }
           }
           
