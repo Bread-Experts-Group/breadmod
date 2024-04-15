@@ -43,6 +43,6 @@ class BlackbodyRenderer: BlockEntityRenderer<HeatingElementBlockEntity> {
 //            0,
 //            pPackedOverlay
 //        )
-        println("vomit")
+        println("vomit‎")
     }
 }
