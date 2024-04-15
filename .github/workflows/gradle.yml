@@ -21,23 +21,23 @@ jobs:
           src:
             - src/**
     - name: Set up JDK 17
-      if: steps.changed-files.outputs.any_changed == true
+      if: steps.changed-files.outputs.any_changed == 'true'
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
     - name: Setup Gradle
-      if: steps.changed-files.outputs.any_changed == true
+      if: steps.changed-files.outputs.any_changed == 'true'
       uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
     - name: Read Properties
-      if: steps.changed-files.outputs.any_changed == true
+      if: steps.changed-files.outputs.any_changed == 'true'
       id: readproperties
       uses: BrycensRanch/read-properties-action@v1
       with:
         file: gradle.properties
         all: true
     - name: Truncate Git SHA
-      if: steps.changed-files.outputs.any_changed == true
+      if: steps.changed-files.outputs.any_changed == 'true'
       id: truncated
       uses: actions/github-script@v7.0.1
       with:
@@ -47,20 +47,20 @@ jobs:
           core.setOutput('versionStr', '${{steps.readproperties.outputs.mod_version}}.alpha.' + sha)
           core.setOutput('shouldBuild', (context.eventName == "push" && ${{steps.changed-files.outputs.any_changed}} == "true").toString())
     - name: Run Data Generation (Server, Client)
-      if: steps.changed-files.outputs.any_changed == true
+      if: steps.changed-files.outputs.any_changed == 'true'
       id: datagen
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
         JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
       run: ./gradlew runData
     - name: Build JAR file
-      if: steps.truncated.outputs.shouldBuild == true
+      if: steps.truncated.outputs.shouldBuild == 'true'
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
         JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
       run: ./gradlew build
     - name: Create Release
-      if: steps.truncated.outputs.shouldBuild == true
+      if: steps.truncated.outputs.shouldBuild == 'true'
       uses: softprops/action-gh-release@v2
       with:
         files: build/libs/*
