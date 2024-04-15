@@ -79,7 +79,7 @@ jobs:
       with:
         script: |
           const fs = require('fs')
-          if(fs.existsSync("lastRelease/checksum.txt")) {
+          if(!fs.existsSync("lastRelease/checksum.txt")) {
             core.setOutput('same', 'false')
             return
           }
