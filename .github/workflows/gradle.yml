@@ -84,8 +84,8 @@ jobs:
             return
           }
           
-          const entriesA = fs.readFileSync("checksum.txt").split("\n")
-          const entriesB = fs.readFileSync("lastRelease/checksum.txt").split("\n")
+          const entriesA = fs.readFileSync("checksum.txt", "utf-8").split("\n")
+          const entriesB = fs.readFileSync("lastRelease/checksum.txt", "utf-8").split("\n")
           if(entriesA.length != entriesB.length) {
             core.setOutput('same', 'false')
             return
