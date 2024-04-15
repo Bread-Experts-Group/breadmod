@@ -89,7 +89,9 @@ jobs:
       if: steps.has-checksum.outputs.files_exists == 'false' || steps.sum-check.outputs.passed == 'false'
       uses: softprops/action-gh-release@v2
       with:
-        files: checksum.txt build/libs/*
+        files: |
+          checksum.txt 
+          build/libs/*
         tag_name: snapshot-${{ steps.truncated.outputs.sha }}
         name: ${{steps.readproperties.outputs.mod_name}} ${{  steps.truncated.outputs.versionStr }}
         draft: false
