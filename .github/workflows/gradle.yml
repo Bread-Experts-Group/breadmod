@@ -72,21 +72,50 @@ jobs:
         latest: true
         #fileName: checksum.txt
         out-file-path: "lastRelease"
-    - name: Last Release Has Checksum?
-      if: steps.truncated.outputs.shouldBuild == 'true'
-      id: has-checksum
-      uses: andstor/file-existence-action@v3
-      with:
-        files: lastRelease/checksum.txt
     - name: Check Checksums
-      if: steps.has-checksum.outputs.files_exists == 'true'
-      id: sum-check
-      uses: LouisBrunner/diff-action@v2.0.0
+      if: steps.truncated.outputs.shouldBuild == 'true'
+      id: checked
+      uses: actions/github-script@v7.0.1
       with:
-        old: lastRelease/checksum.txt
-        new: checksum.txt
+        script: |
+          const fs = require('fs')
+          if(fs.existsSync("lastRelease/checksum.txt")) {
+            core.setOutput('same', 'false')
+            return
+          }
+          
+          const entriesA = fs.readFileSync("checksum.txt").split("\n")
+          const entriesB = fs.readFileSync("lastRelease/checksum.txt").split("\n")
+          if(entriesA.length != entriesB.length) {
+            core.setOutput('same', 'false')
+            return
+          }
+          
+          const mapA = entriesA.reduce((map, sumPath)=>{ 
+            const path = sumPath.split(" ")
+            map[path[1]] = path[0]
+            return map
+          }, {})
+          var idx = 0
+          entriesB.reduce((map, sumPath)=>{ 
+            const path = sumPath.split(" ")
+            map[path[1]] = path[0]
+            return map
+          }, {}).forEach((value, key) => {
+            idx++
+            if(mapA.get(key) != value) {
+              core.setOutput('same', 'false')
+              return
+            }
+          })
+          if(idx != mapA.length) {
+            core.setOutput('same', 'false')
+            return
+          }
+          
+          core.setOutput('same', 'true')
     - name: Create Release
-      if: steps.has-checksum.outputs.files_exists == 'false' || steps.sum-check.outputs.passed == 'false'
+      if: steps.checked.outputs.same == 'false'
       uses: softprops/action-gh-release@v2
       with:
         files: |
