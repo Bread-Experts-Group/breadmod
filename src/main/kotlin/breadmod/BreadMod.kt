@@ -10,8 +10,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 
-// Actions Test
-
 @Mod(BreadMod.ID)
 object BreadMod {
     const val ID = "breadmod"
