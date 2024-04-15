@@ -45,7 +45,7 @@ jobs:
           const sha = context.sha.substring(1,6)
           core.setOutput('sha', sha)
           core.setOutput('versionStr', '${{steps.readproperties.outputs.mod_version}}.alpha.' + sha)
-          core.setOutput('shouldBuild', (context.eventName == "push" && ${{steps.changed-files.outputs.any_changed}} == "true").toString())
+          core.setOutput('shouldBuild', (context.eventName === "push" && "${{steps.changed-files.outputs.src_any_changed}}" == "true").toString())
     - name: Run Data Generation (Server, Client)
       if: steps.changed-files.outputs.src_any_changed == 'true'
       id: datagen
@@ -59,11 +59,17 @@ jobs:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
         JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
       run: ./gradlew build
+    - name: Generate Checksum
+      if: steps.truncated.outputs.shouldBuild == 'true'
+      uses: jmgilman/actions-generate-checksum@v1
+      with:
+        patterns: |
+          build/libs/*
     - name: Create Release
       if: steps.truncated.outputs.shouldBuild == 'true'
       uses: softprops/action-gh-release@v2
       with:
-        files: build/libs/*
+        files: checksum.txt build/libs/*
         tag_name: snapshot-${{ steps.truncated.outputs.sha }}
         name: ${{steps.readproperties.outputs.mod_name}} ${{  steps.truncated.outputs.versionStr }}
         draft: false
