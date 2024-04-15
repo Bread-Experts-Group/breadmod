@@ -72,14 +72,21 @@ jobs:
         latest: true
         fileName: checksum.txt
         out-file-path: "lastRelease"
+    - name: Last Release Has Checksum?
+      if: steps.truncated.outputs.shouldBuild == 'true
+      id: has-checksum
+      uses: andstor/file-existence-action@v3
+      with:
+        files: lastRelease/checksum.txt
     - name: Check Checksums
+      if: steps.has-checksum.outputs.files_exists == 'true'
       id: sum-check
       uses: LouisBrunner/diff-action@v2.0.0
       with:
         old: lastRelease/checksum.txt
         new: checksum.txt
     - name: Create Release
-      if: steps.sum-check.outputs.passed == 'true'
+      if: steps.has-checksum.outputs.files_exists == 'false' || steps.sum-check.outputs.passed == 'false'
       uses: softprops/action-gh-release@v2
       with:
         files: checksum.txt build/libs/*
