@@ -14,7 +14,7 @@
   - [X] Hoe
   - [X] Axe
   - [X] Sword
-  - [ ] Reinforced Variants of tools
+  - [X] Reinforced Variants of tools
   - [ ] Crafting/Smithing recipes for tools
   - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
     - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
@@ -23,7 +23,7 @@
   - [X] Edible
   - [X] Custom charcoal block as a result of bread block being burned
 - [ ] Bread Dimension
-  - [ ] A dimension composed of bread blocks
+  - [X] A dimension composed of bread blocks
   - [ ] Nonflammable (fuel created using bread blocks in the bread machine, heated)
   - [ ] Items inside the dimension will vanish from the players inventory when they leave, and come back when they reenter
 - [ ] Bread Machine for turning wheat into dough
@@ -51,7 +51,7 @@
   - [ ] Doping
     - [ ] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisons
       - Can only be doped once!
-  - [ ] Crafted using a cutting board from farmer's delight
+  - [X] Crafted using a cutting board from farmer's delight
   - [ ] Bread crumbs
     - Crafted from splitting toast in a crafting table
     - Usable as birdseed, provides a fraction of the saturation a full loaf does
