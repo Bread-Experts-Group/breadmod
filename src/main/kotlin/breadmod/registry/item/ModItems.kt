@@ -28,6 +28,8 @@ object ModItems {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build())) }
     val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") {Item(Item.Properties())}
     val DOUGH: RegistryObject<Item> = deferredRegister.register("dough") {Item(Item.Properties())}
+//    val KNIFE: RegistryObject<Item> = deferredRegister.register("knife") {Item(Item.Properties())}
+//      Probably not for this one
 
     // Armor
     val BREAD_HELMET: RegistryObject<BreadArmorItem> = deferredRegister.register("bread_helmet") {

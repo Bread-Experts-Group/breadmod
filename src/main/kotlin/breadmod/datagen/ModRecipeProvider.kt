@@ -138,6 +138,98 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
         )
             .unlocks("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .save(pWriter, "reinforced_bread_block_smithing")
+        SmithingTransformRecipeBuilder.smithing(
+            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+            Ingredient.of(ModItems.BREAD_SWORD.get()),
+            Ingredient.of(Items.NETHERITE_INGOT),
+            RecipeCategory.COMBAT,
+            ModItems.RF_BREAD_SWORD.get()
+        )
+            .unlocks("has_item", has(ModItems.BREAD_SWORD.get()))
+            .save(pWriter, "reinforced_bread_sword_smithing")
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_SWORD.get(), 1)
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .define('S', Items.STICK)
+            .pattern(" B ")
+            .pattern(" B ")
+            .pattern(" S ")
+            .save(pWriter)
+        SmithingTransformRecipeBuilder.smithing(
+            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+            Ingredient.of(ModItems.BREAD_SHOVEL.get()),
+            Ingredient.of(Items.NETHERITE_INGOT),
+            RecipeCategory.TOOLS,
+            ModItems.RF_BREAD_SHOVEL.get()
+        )
+            .unlocks("has_item", has(ModItems.BREAD_SHOVEL.get()))
+            .save(pWriter, "reinforced_bread_shovel_smithing")
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_SHOVEL.get(), 1)
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .define('S', Items.STICK)
+            .pattern(" B ")
+            .pattern(" S ")
+            .pattern(" S ")
+            .save(pWriter)
+        SmithingTransformRecipeBuilder.smithing(
+            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+            Ingredient.of(ModItems.BREAD_AXE.get()),
+            Ingredient.of(Items.NETHERITE_INGOT),
+            RecipeCategory.TOOLS,
+            ModItems.RF_BREAD_AXE.get()
+        )
+            .unlocks("has_item", has(ModItems.BREAD_AXE.get()))
+            .save(pWriter, "reinforced_bread_axe_smithing")
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_AXE.get(), 1)
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .define('S', Items.STICK)
+            .pattern("BB ")
+            .pattern("BS ")
+            .pattern(" S ")
+            .save(pWriter)
+        SmithingTransformRecipeBuilder.smithing(
+            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+            Ingredient.of(ModItems.BREAD_PICKAXE.get()),
+            Ingredient.of(Items.NETHERITE_INGOT),
+            RecipeCategory.TOOLS,
+            ModItems.RF_BREAD_PICKAXE.get()
+        )
+            .unlocks("has_item", has(ModItems.BREAD_PICKAXE.get()))
+            .save(pWriter, "reinforced_bread_pickaxe_smithing")
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_PICKAXE.get(), 1)
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .define('S', Items.STICK)
+            .pattern("BBB")
+            .pattern(" S ")
+            .pattern(" S ")
+            .save(pWriter)
+        SmithingTransformRecipeBuilder.smithing(
+            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+            Ingredient.of(ModItems.BREAD_HOE.get()),
+            Ingredient.of(Items.NETHERITE_INGOT),
+            RecipeCategory.TOOLS,
+            ModItems.RF_BREAD_HOE.get()
+        )
+            .unlocks("has_item", has(ModItems.BREAD_PICKAXE.get()))
+            .save(pWriter, "reinforced_bread_hoe_smithing")
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_HOE.get(), 1)
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .define('S', Items.STICK)
+            .pattern("BB ")
+            .pattern(" S ")
+            .pattern(" S ")
+            .save(pWriter)
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.FLOUR_LAYER_BLOCK.get(), 6)
+            .unlockedBy("has_item", has(ModBlocks.FLOUR_BLOCK.get()))
+            .define('F', ModBlocks.FLOUR_BLOCK.get())
+            .pattern("   ")
+            .pattern("FFF")
+            .pattern("   ")
+            .save(pWriter)
 
         SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION_CRAFTING.get())
             .save(pWriter, "bread_potion_crafting")

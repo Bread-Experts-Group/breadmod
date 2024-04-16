@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
@@ -52,5 +53,17 @@ class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
             primedHappyBlock.fuse = (pLevel.random.nextInt(i / 4) + i / 8).toShort().toInt()
             pLevel.addFreshEntity(primedHappyBlock)
         }
+    }
+
+    override fun isFlammable(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Boolean {
+        return true
+    }
+
+    override fun getFlammability(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Int {
+        return 15
+    }
+
+    override fun getFireSpreadSpeed(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Int {
+        return 30
     }
 }

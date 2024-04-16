@@ -15,7 +15,7 @@
   - [X] Axe
   - [X] Sword
   - [X] Reinforced Variants of tools
-  - [ ] Crafting/Smithing recipes for tools
+  - [X] Crafting/Smithing recipes for tools
   - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
     - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
 - [X] Bread Block
@@ -61,7 +61,7 @@
 - [ ] "Godlike loaf" a monstrous combination of rare materials and a nether star to give you 10 full minutes of positive potion effects and a whole 10 absorption hearts
 - [ ] "Farmhouse structure" a random house with a farm attached to it with a random amount of bread or wheat in loot chests
 - [ ] "Reinforced bread armor" basically bread armor except it doesn't dissolve in water and is comparable to diamond armor, high enchantability
-- [ ] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
+- [X] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
 ---
 ## Advanced, Machines and stuff
 Todo..
