@@ -6,7 +6,6 @@ import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
-import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
@@ -24,12 +23,6 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .requires(ModBlocks.BREAD_BLOCK.get(), 1)
             .save(pWriter, "bread_block_uncompaction")
-
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.BREAD_SLICE.get(), 8)
-            .unlockedBy("has_item", has(Items.BREAD))
-            .requires(Items.BREAD)
-            .requires(ItemTags.SWORDS) // TODO: Fix this to not consume the entire sword when crafting
-            .save(pWriter)
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_SHIELD.get())
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
@@ -231,10 +224,11 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("   ")
             .save(pWriter)
 
-        SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION_CRAFTING.get())
+        SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION.get())
             .save(pWriter, "bread_potion_crafting")
-
-        SpecialRecipeBuilder.special(ModRecipeSerializers.DOPED_BREAD_CRAFTING.get())
+        SpecialRecipeBuilder.special(ModRecipeSerializers.BREAD_SLICE.get())
+            .save(pWriter, "bread_slice_crafting")
+        SpecialRecipeBuilder.special(ModRecipeSerializers.DOPED_BREAD.get())
             .save(pWriter, "doped_bread_crafting")
 
         // // Compat

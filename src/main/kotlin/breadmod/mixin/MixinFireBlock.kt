@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import kotlin.reflect.full.hasAnnotation
 
+@Suppress("NonJavaMixin")
 @Mixin(FireBlock::class)
 class MixinFireBlock {
     @Inject(method = ["tryCatchFire"], at = [At("HEAD")], cancellable = true)
@@ -20,8 +21,6 @@ class MixinFireBlock {
         pRandom: RandomSource, pAge: Int, pFace: Direction,
         info: CallbackInfo
     ) {
-//        if(pLevel.dimensionTypeId() == ModDimensions.BREAD) return info.cancel()
-        
         val blockState = pLevel.getBlockState(pPos)
         if (blockState.block::class.hasAnnotation<SpecialFireAction>()) {
             blockState.onCaughtFire(pLevel, pPos, pFace, null)

@@ -34,7 +34,7 @@ object ModDimensions {
             ResourceKey.create(Registries.LEVEL_STEM, it),
             climateParameterListBuilder,
             noiseGenerationSettings
-        )
+        ) to ResourceKey.create(Registries.DIMENSION, it)
     }
 
     @Suppress("unused")
@@ -85,7 +85,6 @@ object ModDimensions {
         val noiseSettings = ctx.lookup(Registries.NOISE_SETTINGS)
         val mnbspList = ctx.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
         val holderGetter = ctx.lookup(Registries.DIMENSION_TYPE)
-
         val biomeGetter = ctx.lookup(Registries.BIOME)
 
         ModDimensionEntry.entries.forEach {

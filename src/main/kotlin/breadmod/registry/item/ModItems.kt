@@ -8,6 +8,7 @@ import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
+import breadmod.util.setColor
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
@@ -31,15 +32,37 @@ object ModItems {
 //    val KNIFE: RegistryObject<Item> = deferredRegister.register("knife") {Item(Item.Properties())}
 //      Probably not for this one
 
+    val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") {Item(Item.Properties())}
+
     // Armor
-    val BREAD_HELMET: RegistryObject<BreadArmorItem> = deferredRegister.register("bread_helmet") {
-        BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.HELMET, Item.Properties()) }
-    val BREAD_CHESTPLATE: RegistryObject<BreadArmorItem> = deferredRegister.register("bread_chestplate") {
-        BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.CHESTPLATE, Item.Properties()) }
-    val BREAD_LEGGINGS: RegistryObject<BreadArmorItem> = deferredRegister.register("bread_leggings") {
-        BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.LEGGINGS, Item.Properties()) }
-    val BREAD_BOOTS: RegistryObject<BreadArmorItem> = deferredRegister.register("bread_boots") {
-        BreadArmorItem(ArmorTiers.BREAD, ArmorItem.Type.BOOTS, Item.Properties()) }
+    val BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("bread_helmet") {
+        object : BreadArmorItem(ArmorTiers.BREAD, Type.HELMET, Properties()), RegisterSpecialCreativeTab {
+            override fun displayInCreativeTab(
+                pParameters: CreativeModeTab.ItemDisplayParameters,
+                pOutput: CreativeModeTab.Output
+            ) = pOutput.accept(ItemStack(this).also { it.setColor(BREAD_COLOR) })
+        } }
+    val BREAD_CHESTPLATE: RegistryObject<ArmorItem> = deferredRegister.register("bread_chestplate") {
+        object : BreadArmorItem(ArmorTiers.BREAD, Type.CHESTPLATE, Properties()), RegisterSpecialCreativeTab {
+            override fun displayInCreativeTab(
+                pParameters: CreativeModeTab.ItemDisplayParameters,
+                pOutput: CreativeModeTab.Output
+            ) = pOutput.accept(ItemStack(this).also { it.setColor(BREAD_COLOR) })
+        } }
+    val BREAD_LEGGINGS: RegistryObject<ArmorItem> = deferredRegister.register("bread_leggings") {
+        object : BreadArmorItem(ArmorTiers.BREAD, Type.LEGGINGS, Properties()), RegisterSpecialCreativeTab {
+            override fun displayInCreativeTab(
+                pParameters: CreativeModeTab.ItemDisplayParameters,
+                pOutput: CreativeModeTab.Output
+            ) = pOutput.accept(ItemStack(this).also { it.setColor(BREAD_COLOR) })
+        } }
+    val BREAD_BOOTS: RegistryObject<ArmorItem> = deferredRegister.register("bread_boots") {
+        object : BreadArmorItem(ArmorTiers.BREAD, Type.BOOTS, Properties()), RegisterSpecialCreativeTab {
+            override fun displayInCreativeTab(
+                pParameters: CreativeModeTab.ItemDisplayParameters,
+                pOutput: CreativeModeTab.Output
+            ) = pOutput.accept(ItemStack(this).also { it.setColor(BREAD_COLOR) })
+        } }
 
     // Tools // Speed modifier slows down the tool based on how much of a negative value you give it (Maybe it's a multiplier?)
     val BREAD_PICKAXE: RegistryObject<PickaxeItem> = deferredRegister.register("bread_pickaxe") {

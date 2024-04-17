@@ -21,11 +21,11 @@ fun mixColors(vararg colors: Color): Color {
     return Color(r, g, b, a)
 }
 
-fun ItemStack.getColor(default: Color = Color.BLACK): Color = getTagElement(TAG_DISPLAY).let {
+fun ItemStack.getColor(default: Color): Color = getTagElement(TAG_DISPLAY).let {
     if (it != null && it.contains(TAG_COLOR, 99)) Color(it.getInt(TAG_COLOR)) else default
 }
 
 fun ItemStack.hasColor(): Boolean = getTagElement(TAG_DISPLAY)?.contains(TAG_COLOR, 99) ?: false
 fun ItemStack.clearColor() { getTagElement(TAG_DISPLAY)?.remove(TAG_COLOR) }
 fun ItemStack.setColor(color: Color) = getOrCreateTagElement(TAG_DISPLAY).putInt(TAG_COLOR, color.rgb)
-fun ItemStack.applyColor(color: Color) = setColor(mixColors(color, getColor()))
+fun ItemStack.applyColor(color: Color) = setColor(mixColors(color, getColor(color)))

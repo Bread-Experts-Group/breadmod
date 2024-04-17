@@ -1,7 +1,7 @@
 package breadmod.recipe
 
 import breadmod.item.armor.BreadArmorItem
-import breadmod.registry.recipe.ModRecipeSerializers.ARMOR_POTION_CRAFTING
+import breadmod.registry.recipe.ModRecipeSerializers
 import breadmod.util.applyColor
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
@@ -18,21 +18,19 @@ import java.awt.Color
 class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory): CustomRecipe(pId, pCategory) {
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
         var hasItem = false; var hasEffect = false
-        for (slot in 0 until pContainer.containerSize) {
-            pContainer.getItem(slot).also { stack ->
-                if(!stack.isEmpty) when(stack.item) {
-                    is PotionItem -> {
-                        if(hasEffect) return false
-                        PotionUtils.getPotion(stack).effects.also {
-                            if(it.size != 1 || it.firstOrNull()?.effect?.isInstantenous == true) return false }
-                        hasEffect = true
-                    }
-                    is BreadArmorItem -> {
-                        if(hasItem ||stack.tag?.contains("Potion") == true) return false
-                        hasItem = true
-                    }
-                    else -> return false
+        pContainer.items.forEach {
+            if(!it.isEmpty) when(it.item) {
+                is PotionItem -> {
+                    if(hasEffect) return false
+                    PotionUtils.getPotion(it).effects.also { effect ->
+                        if(effect.size != 1 || effect.firstOrNull()?.effect?.isInstantenous == true) return false }
+                    hasEffect = true
                 }
+                is BreadArmorItem -> {
+                    if(hasItem || PotionUtils.getCustomEffects(it).size > 0) return false
+                    hasItem = true
+                }
+                else -> return false
             }
         }
 
@@ -42,11 +40,10 @@ class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory):
     override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
         var itemStack: ItemStack = ItemStack.EMPTY
         val potions = buildList {
-            for (slot in 0 until pContainer.containerSize) {
-                val stack = pContainer.getItem(slot)
-                when(stack.item) {
-                    is PotionItem -> addAll(PotionUtils.getPotion(stack).effects)
-                    is BreadArmorItem -> if(itemStack.isEmpty) itemStack = stack else return ItemStack.EMPTY
+            pContainer.items.forEach {
+                when(it.item) {
+                    is PotionItem -> addAll(PotionUtils.getPotion(it).effects)
+                    is BreadArmorItem -> if(itemStack.isEmpty) itemStack = it else return ItemStack.EMPTY
                 }
             }
         }
@@ -60,5 +57,5 @@ class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory):
     }
 
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = (pWidth * pHeight) >= 2
-    override fun getSerializer(): RecipeSerializer<*> = ARMOR_POTION_CRAFTING.get()
+    override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.ARMOR_POTION.get()
 }

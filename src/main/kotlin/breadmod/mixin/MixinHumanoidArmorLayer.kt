@@ -21,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.At
 import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
+@Suppress("NonJavaMixin")
 @Mixin(HumanoidArmorLayer::class)
 abstract class MixinHumanoidArmorLayer<T: LivingEntity, M: HumanoidModel<T>, A: HumanoidModel<T>>(pRenderer: RenderLayerParent<T, M>) : RenderLayer<T, M>(pRenderer) {
     @Invoker("setPartVisibility") abstract fun iSetPartVisibility(pModel: A, pSlot: EquipmentSlot)

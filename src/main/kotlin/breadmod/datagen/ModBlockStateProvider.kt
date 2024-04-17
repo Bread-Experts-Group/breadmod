@@ -1,9 +1,11 @@
 package breadmod.datagen
 
 import breadmod.registry.block.ModBlocks
+import breadmod.registry.block.OreBlock
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.model.generators.BlockStateProvider
 import net.minecraftforge.client.model.generators.ConfiguredModel
@@ -22,7 +24,6 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
-        // TODO: Figure out how to generate snow layer like blockstates and models - Refer to snow.json under minecraft/assets/blockstates for clues
 
         horizontalBlock(ModBlocks.BREAD_FURNACE_BLOCK.get().block) { state ->
             val furnaceOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
@@ -90,6 +91,20 @@ class ModBlockStateProvider(
             ModBlocks.FLOUR_LAYER_BLOCK.get().block,
             models().getBuilder("breadmod:block/flour_layer_1")
         )
+
+        fun getOreModels(state: BlockState): Array<out ConfiguredModel> {
+            val path = "${ModBlocks.getLocation(state.block)!!.path}_${state.getValue(OreBlock.ORE_TYPE).serializedName}"
+
+            return models().cubeAll(
+                path,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/$path")
+            ).let {
+                itemModels().getBuilder(path).parent(it)
+                ConfiguredModel.builder().modelFile(it).build()
+            }
+        }
+
+        getVariantBuilder(ModBlocks.BAUXITE_ORE.get().block).forAllStates { state -> getOreModels(state) }
     }
 
     private fun blockWithItem(blockRegistryObject: Block) {

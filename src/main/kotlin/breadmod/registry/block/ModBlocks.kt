@@ -2,17 +2,16 @@ package breadmod.registry.block
 
 import breadmod.BreadMod
 import breadmod.block.*
+import breadmod.item.util.BlockStateStack
 import breadmod.registry.item.ModItems
+import breadmod.registry.item.RegisterSpecialCreativeTab
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.food.FoodProperties
-import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
+import net.minecraft.world.item.*
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.Block
@@ -117,8 +116,16 @@ object ModBlocks {
 
     val BAUXITE_ORE = registerBlockItem(
         "bauxite_ore",
-        { Block(BlockBehaviour.Properties.copy(Blocks.COPPER_ORE)) },
-        Item.Properties().fireResistant()
+        { OreBlock() },
+        { block -> object : BlockItem(block, Properties()), RegisterSpecialCreativeTab {
+            override fun displayInCreativeTab(
+                pParameters: CreativeModeTab.ItemDisplayParameters,
+                pOutput: CreativeModeTab.Output
+            ) {
+                pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.STONE)))
+                pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.BREAD)))
+            }
+        } }
     )
 
     class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {

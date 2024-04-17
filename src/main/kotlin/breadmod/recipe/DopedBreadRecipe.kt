@@ -1,98 +1,49 @@
 package breadmod.recipe
 
-import breadmod.item.DopedBreadItem
-import breadmod.registry.recipe.ModRecipeSerializers.DOPED_BREAD_CRAFTING
-import breadmod.util.applyColor
+import breadmod.registry.item.ModItems
+import breadmod.registry.recipe.ModRecipeSerializers.DOPED_BREAD
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.item.PotionItem
 import net.minecraft.world.item.alchemy.PotionUtils
 import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.Level
-import java.awt.Color
 
 class DopedBreadRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory) : CustomRecipe(pId, pCategory) {
-//    override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
-//        var hasItem = false; var hasEffect = false
-//        for (slot in 0 until pContainer.containerSize ) {
-//            pContainer.getItem(slot).also { stack ->
-//                if(stack.isEmpty) {
-//                    return false
-//                }
-//                else if(stack.`is`(Items.BREAD.asItem())) {
-//                    hasItem = true
-//                }
-//                else if (stack.`is`(Items.POTION)) {
-//                    hasEffect = true
-//                }
-//                else return false
-//            }
-//        }
-//
-//        return hasItem && hasEffect
-//    }
-//
-//    override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
-//        val itemStack = ItemStack(ModItems.DOPED_BREAD.get(), 1)
-//        for (slot in 0 until pContainer.containerSize) {
-//            pContainer.getItem(slot).also { stack ->
-//                PotionUtils.setPotion(itemStack, PotionUtils.getPotion(stack))
-//                PotionUtils.setCustomEffects(itemStack, PotionUtils.getCustomEffects(stack))
-//            }
-//        }
-//        return itemStack
-//    }
-
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
-        var hasItem = false; var hasEffect = false
-        for (slot in 0 until pContainer.containerSize) {
-            pContainer.getItem(slot).also { stack ->
-                if(!stack.isEmpty) when(stack.item) {
-                    is PotionItem -> {
-                        if(hasEffect) return false
-                        PotionUtils.getPotion(stack).effects.also {
-                            if(it.size != 1 || it.firstOrNull()?.effect?.isInstantenous == true) return false }
-                        hasEffect = true
-                    }
-                    is DopedBreadItem -> {
-                        if(hasItem ||stack.tag?.contains("Potion") == true) return false
-                        hasItem = true
-                    }
-                    else -> return false
-                }
-            }
+        var hasPotion = false; var hasBread = false
+        pContainer.items.forEach {
+            if(!it.isEmpty)
+                if(it.item is PotionItem) {
+                    if(!hasPotion) hasPotion = true
+                    else return false
+                } else if(it.`is`(Items.BREAD)) hasBread = true
+                else return false
         }
 
-        return hasItem && hasEffect
+        return hasBread && hasPotion
     }
 
     override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
-        var itemStack: ItemStack = ItemStack.EMPTY
-        val potions = buildList {
-            for (slot in 0 until pContainer.containerSize) {
-                val stack = pContainer.getItem(slot)
-                when(stack.item) {
-                    is PotionItem -> addAll(PotionUtils.getPotion(stack).effects)
-                    is DopedBreadItem -> if(itemStack.isEmpty) itemStack = stack else return ItemStack.EMPTY
-                }
-            }
+        val itemStack = ItemStack(ModItems.DOPED_BREAD.get(), 0)
+        var potionStack = ItemStack.EMPTY
+
+        pContainer.items.forEach {
+            if(it.`is`(Items.BREAD)) itemStack.grow(1)
+            else if(it.item is PotionItem) potionStack = it
         }
 
-        return if(!itemStack.isEmpty && potions.isNotEmpty())
-            itemStack.copy().also { stack ->
-//                stack.applyColor(Color(PotionUtils.getColor(potions)))
-                PotionUtils.setPotion(stack, PotionUtils.getPotion(stack))
-                PotionUtils.setCustomEffects(stack, potions)
-            }
-        else ItemStack.EMPTY
+        val effects = PotionUtils.getMobEffects(potionStack).map { MobEffectInstance(it.effect, it.duration / itemStack.count) }
+        PotionUtils.setCustomEffects(itemStack, effects)
+        return itemStack
     }
 
-
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = (pWidth * pHeight) >= 2
-
-    override fun getSerializer(): RecipeSerializer<*> = DOPED_BREAD_CRAFTING.get()
+    override fun getSerializer(): RecipeSerializer<*> = DOPED_BREAD.get()
 }
