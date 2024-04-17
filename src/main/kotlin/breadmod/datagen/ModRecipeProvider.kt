@@ -234,6 +234,9 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
         SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION_CRAFTING.get())
             .save(pWriter, "bread_potion_crafting")
 
+        SpecialRecipeBuilder.special(ModRecipeSerializers.DOPED_BREAD_CRAFTING.get())
+            .save(pWriter, "doped_bread_crafting")
+
         // // Compat
         // Create
         if(ModList.get().isLoaded("create")) {

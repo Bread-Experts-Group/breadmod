@@ -2,6 +2,7 @@ package breadmod.registry.recipe
 
 import breadmod.BreadMod
 import breadmod.recipe.ArmorPotionRecipe
+import breadmod.recipe.DopedBreadRecipe
 import net.minecraft.world.item.crafting.*
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -13,6 +14,10 @@ object ModRecipeSerializers {
 
     val ARMOR_POTION_CRAFTING: RegistryObject<SimpleCraftingRecipeSerializer<ArmorPotionRecipe>> = deferredRegister.register("bread_potion_crafting") {
         SimpleCraftingRecipeSerializer { pId, pCategory -> ArmorPotionRecipe(pId, pCategory) } }
+
+    val DOPED_BREAD_CRAFTING: RegistryObject<SimpleCraftingRecipeSerializer<DopedBreadRecipe>> = deferredRegister.register("doped_bread_crafting") {
+        SimpleCraftingRecipeSerializer { pId, pCategory -> DopedBreadRecipe(pId, pCategory) } }
+
     /*val BREAD_REFINEMENT = REGISTRY.register("bread_refinement") {
         SimpleCookingSerializer({
             pId, pGroup, pCategory, pIngredient, pResult, pExperience, pCookingTime ->

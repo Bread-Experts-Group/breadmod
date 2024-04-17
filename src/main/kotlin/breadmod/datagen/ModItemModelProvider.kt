@@ -33,6 +33,7 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         multiTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("item/bread_leggings"), "layer1", modLoc("item/bread_leggings_overlay"))
         multiTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("item/bread_chestplate"), "layer1", modLoc("item/bread_chestplate_overlay"))
         multiTexture("breadmod:bread_helmet", mcLoc("item/generated"), "layer0", modLoc("item/bread_helmet"), "layer1", modLoc("item/bread_helmet_overlay"))
+        multiTexture("breadmod:doped_bread", mcLoc("item/generated"), "layer0", modLoc("item/doped_bread"), "layer1", modLoc("item/doped_bread_overlay"))
     }
 
     private fun <T: Item> singleItem(item: RegistryObject<T>) {
