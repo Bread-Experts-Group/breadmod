@@ -107,7 +107,7 @@ class ModBlockStateProvider(
         getVariantBuilder(ModBlocks.BAUXITE_ORE.get().block).forAllStates { state -> getOreModels(state) }
 
         // // //
-        horizontalBlock(ModBlocks.CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get().block) { state ->
+        horizontalBlock(ModBlocks.CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get().block) {
             val name = "breadmod:block/bread_screen"
 
             val model = models().cube(

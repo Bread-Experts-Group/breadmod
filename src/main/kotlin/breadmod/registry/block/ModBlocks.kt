@@ -154,6 +154,7 @@ object ModBlocks {
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
             dropSelf(BAUXITE_ORE.get().block)
+            dropSelf(CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get().block)
 
             add(
                 FLOUR_BLOCK.get().block,
