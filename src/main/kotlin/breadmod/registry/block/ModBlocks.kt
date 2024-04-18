@@ -59,10 +59,17 @@ object ModBlocks {
             )
         }
     )
+
     val REINFORCED_BREAD_BLOCK = registerBlockItem(
         "reinforced_bread_block",
         { Block(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).strength(1f).sound(SoundType.NETHERITE_BLOCK)) },
         Item.Properties().fireResistant()
+    )
+
+    val CONCEPTUALLY_DANGEROUS_BREAD_BLOCK = registerBlockItem(
+        "bread_screen_omg",
+        { Block(BlockBehaviour.Properties.copy(Blocks.COAL_BLOCK)) },
+        Item.Properties()
     )
 
     val CHARCOAL_BLOCK = registerBlockItem(

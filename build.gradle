@@ -5,8 +5,13 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-
     id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+mixin {
+    // MixinGradle Settings
+    add sourceSets.main, "breadmod.refmap.json"
+    config "breadmod.mixin.json"
 }
 
 String buildVersion
@@ -204,8 +209,4 @@ publishing {
             url "file://${project.projectDir}/mcmodsrepo"
         }
     }
-}
-
-mixin {
-    // MixinGradle Settings
 }

@@ -39,17 +39,18 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.RF_BREAD_SWORD.get())
         add(ModItems.BREAD_CRUMBS.get())
         add(ModItems.BREAD_SLICE.get())
-        add(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
-        add(ModBlocks.CHARCOAL_BLOCK.get().block)
-        add(ModBlocks.BREAD_FURNACE_BLOCK.get().block)
-        add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block, "Low-Density Charcoal Block")
+        add(ModBlocks.REINFORCED_BREAD_BLOCK.get())
+        add(ModBlocks.CHARCOAL_BLOCK.get())
+        add(ModBlocks.BREAD_FURNACE_BLOCK.get())
+        add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get(), "Low-Density Charcoal Block")
         add(ModBlocks.HAPPY_BLOCK.get())
         add(ModBlocks.HEATING_ELEMENT_BLOCK.get())
         add(ModItems.DOUGH.get())
         add(ModItems.FLOUR.get())
         add(ModBlocks.FLOUR_BLOCK.get())
         add(ModBlocks.FLOUR_LAYER_BLOCK.get(), "Flour")
-        add(ModBlocks.BAUXITE_ORE.get().block)
+        add(ModBlocks.BAUXITE_ORE.get())
+        add(ModBlocks.CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get())
 
         modAdd(
             "The Bread Mod",

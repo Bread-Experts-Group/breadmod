@@ -51,13 +51,11 @@ jobs:
       id: datagen
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
-        JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
       run: ./gradlew runData
     - name: Build JAR file
       if: steps.truncated.outputs.shouldBuild == 'true'
       env:
         MOD_VERSION: ${{ steps.truncated.outputs.versionStr }}
-        JAVA_OPTS: -Dlog4j.configuration=log4j.properties 
       run: ./gradlew build
     - name: Generate Checksum
       if: steps.truncated.outputs.shouldBuild == 'true'
