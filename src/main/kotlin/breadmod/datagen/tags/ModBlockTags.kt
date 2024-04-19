@@ -25,7 +25,7 @@ class ModBlockTags(
             .add(ModBlocks.BREAD_FURNACE_BLOCK.get().block)
             .add(ModBlocks.HEATING_ELEMENT_BLOCK.get().block)
             .add(ModBlocks.BAUXITE_ORE.get().block)
-            .add(ModBlocks.CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get().block)
+            .add(ModBlocks.BREAD_SCREEN.get().block)
         tag(BlockTags.STONE_ORE_REPLACEABLES)
             .add(ModBlocks.BREAD_BLOCK.get().block)
         tag(BlockTags.MINEABLE_WITH_SHOVEL)

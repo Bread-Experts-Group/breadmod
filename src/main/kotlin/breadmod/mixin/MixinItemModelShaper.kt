@@ -15,6 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 abstract class MixinItemModelShaper: ItemModelShaperAccessor {
     @Inject(method = ["getItemModel"], at = [At("HEAD")], cancellable = true)
     private fun getItemModel(pStack: ItemStack, info: CallbackInfoReturnable<BakedModel>) {
-        if(pStack is BlockStateStack) info.returnValue = this.modelManager.blockModelShaper.getBlockModel(pStack.blockState)
+        //if(pStack is BlockStateStack) info.returnValue = this.modelManager.blockModelShaper.getBlockModel(pStack.blockState)
     }
 }

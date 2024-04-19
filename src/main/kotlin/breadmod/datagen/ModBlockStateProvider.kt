@@ -107,23 +107,23 @@ class ModBlockStateProvider(
         getVariantBuilder(ModBlocks.BAUXITE_ORE.get().block).forAllStates { state -> getOreModels(state) }
 
         // // //
-        horizontalBlock(ModBlocks.CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get().block) {
+        directionalBlock(ModBlocks.BREAD_SCREEN.get().block) {
             val name = "breadmod:block/bread_screen"
 
             val model = models().cube(
                 name,
                 modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_top"),
                 modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_top"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_furnace_face"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_furnace_face"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_furnace_side"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_furnace_side")
+                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_face"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_top"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_side"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_side")
             )
 
-            return@horizontalBlock model
+            return@directionalBlock model
         }
         simpleBlockItem(
-            ModBlocks.CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get().block,
+            ModBlocks.BREAD_SCREEN.get().block,
             models().getBuilder("breadmod:block/bread_screen")
         )
     }

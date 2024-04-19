@@ -9,6 +9,7 @@ import breadmod.registry.entity.ModEntities.HAPPY_BLOCK_ENTITY
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.registry.item.ModItems
 import breadmod.block.entity.menu.BreadFurnaceScreen
+import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.datagen.*
 import breadmod.datagen.dimension.worldgen.ModBiomes
 import breadmod.datagen.dimension.ModDimensions
@@ -115,5 +116,6 @@ object ModEventBus {
     @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerBlockEntityRenderer(ModBlockEntities.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntities.BREAD_SCREEN.get()) { SidedScreenRenderer() }
     }
 }

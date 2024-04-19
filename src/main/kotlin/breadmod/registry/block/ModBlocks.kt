@@ -66,9 +66,9 @@ object ModBlocks {
         Item.Properties().fireResistant()
     )
 
-    val CONCEPTUALLY_DANGEROUS_BREAD_BLOCK = registerBlockItem(
-        "bread_screen_omg",
-        { Block(BlockBehaviour.Properties.copy(Blocks.COAL_BLOCK)) },
+    val BREAD_SCREEN = registerBlockItem(
+        "bread_screen",
+        { BreadScreenBlock() },
         Item.Properties()
     )
 
@@ -154,7 +154,7 @@ object ModBlocks {
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
             dropSelf(BAUXITE_ORE.get().block)
-            dropSelf(CONCEPTUALLY_DANGEROUS_BREAD_BLOCK.get().block)
+            dropSelf(BREAD_SCREEN.get().block)
 
             add(
                 FLOUR_BLOCK.get().block,
