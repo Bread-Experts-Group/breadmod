@@ -62,22 +62,19 @@ class VirtualProcessor {
     class RegisterRegisterInstruction(override val instruction: Int): InstructionFormat(instruction) {
         constructor(
             opcode: Int,
-            destinationRegister1: Int,
-            opcodeExtension3B: Int,
-            sourceRegister1: Int,
-            sourceRegister2: Int,
-            opcodeExtension7B: Int
-        ) : this(
-            opcode or destinationRegister1 or opcodeExtension3B or
-            sourceRegister1 or sourceRegister2 or opcodeExtension7B
-        )
+            rd: Int,
+            funct3: Int,
+            rs1: Int,
+            rs2: Int,
+            funct7: Int
+        ) : this(opcode or rd or funct3 or rs1 or rs2 or funct7)
 
-        val opcode: Int = instruction and 0xFFFFFF
-        val destinationRegister1: Int = (instruction and 0xFFFFF) shr 7 // one bit remaining
-        val opcodeExtension3B: Int = 0
-        val sourceRegister1: Int = 0
-        val sourceRegister2: Int = 0
-        val opcodeExtension7B: Int = 0
+        val opcode: Int = instruction and 0x0000007F
+        val rd    : Int = instruction and 0x00000F80
+        val funct3: Int = instruction and 0x00007000
+        val rs1   : Int = instruction and 0x000F8000
+        val rs2   : Int = instruction and 0x01F00000
+        val funct7: Int = instruction and 0xFE000000
 
         override fun process(forCpu: VirtualProcessor) {
             TODO("Not yet implemented")
