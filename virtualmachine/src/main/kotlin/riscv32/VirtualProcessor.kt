@@ -1,4 +1,9 @@
-package breadmod.util.riscv32
+package breadmod.rnd.riscv32
+
+import breadmod.rnd.Baseboard
+import breadmod.rnd.Memory
+import breadmod.rnd.riscv32.instructions.InstructionFormat
+import breadmod.rnd.riscv32.instructions.RegisterRegisterInstruction
 
 /**
  * RISC-V (32-bit) implementation
@@ -10,7 +15,7 @@ package breadmod.util.riscv32
  * @see Register
  * @since 1.0.0
  */
-class VirtualProcessor {
+class VirtualProcessor(val parent: Baseboard) {
     val registers = listOf(
         Register(0, RegisterSaver.NONE), // zero
         Register(saver = RegisterSaver.CALLER), // return address (ra)
@@ -46,38 +51,30 @@ class VirtualProcessor {
         Register(saver = RegisterSaver.CALLER), // ditto (t6)
     )
 
-    fun decodeInstruction(instruction: Int) {
-
-    }
-
-    abstract class InstructionFormat(open val instruction: Int) {
-        abstract fun process(forCpu: VirtualProcessor)
-    }
-
-    /**
-     * R-type [instruction format](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf#section.2.2)
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
-    class RegisterRegisterInstruction(override val instruction: Int): InstructionFormat(instruction) {
-        constructor(
-            opcode: Int,
-            rd: Int,
-            funct3: Int,
-            rs1: Int,
-            rs2: Int,
-            funct7: Int
-        ) : this(opcode or rd or funct3 or rs1 or rs2 or funct7)
-
-        val opcode: Int = instruction and 0x0000007F
-        val rd    : Int = instruction and 0x00000F80
-        val funct3: Int = instruction and 0x00007000
-        val rs1   : Int = instruction and 0x000F8000
-        val rs2   : Int = instruction and 0x01F00000
-        val funct7: Int = instruction and 0xFE000000
-
-        override fun process(forCpu: VirtualProcessor) {
-            TODO("Not yet implemented")
+    @OptIn(ExperimentalStdlibApi::class)
+    fun executeProgram(string: String) {
+        string.split(Regex("........")).forEach {
+            when(val instruction = InstructionFormat.findInstruction(it.hexToUInt())) {
+                is RegisterRegisterInstruction -> RegisterRegisterInstruction.funct3List[instruction.funct3]?.get(instruction.funct7)?.invoke(this, instruction)
+            }
         }
     }
+
+    fun getModuleAtAddress(offset: Long): Pair<Memory, Long> {
+        var currentOffset = offset
+        return parent.memoryModules.first {
+            val size = it.data.size
+            if(size == null || currentOffset <= size) true else { currentOffset -= size; false }
+        } to currentOffset
+    }
+
+    inline fun <reified T> readMemory(offset: Long): T {
+        val location = getModuleAtAddress(offset)
+        return when (T::class) {
+            Int::class -> location.first.data[location.second]?.toInt() as T
+            else -> throw IllegalStateException("Illegal type")
+        }
+    }
+
+    inline fun <reified T> readMemory(offset: Int): T = readMemory<T>(offset.toLong())
 }

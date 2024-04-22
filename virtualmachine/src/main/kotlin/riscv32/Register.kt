@@ -1,4 +1,4 @@
-package breadmod.util.riscv32
+package breadmod.rnd.riscv32
 
 /**
  * A register to store a value (or locking to a certain value, e.g. a zero register.)
