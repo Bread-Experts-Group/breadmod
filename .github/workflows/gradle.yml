@@ -3,10 +3,10 @@ name: Mod Compile Checks
 on:
   push:
     branches: [ "1.20.1" ]
-    paths: [".github/workflows/**","src/**"]
+    paths: [".github/workflows/gradle.yml","src/**"]
   pull_request:
     branches: [ "1.20.1" ]
-    paths: [".github/workflows/**","src/**"]
+    paths: [".github/workflows/gradle.yml","src/**"]
 
 jobs:
   release-jar-snapshot:
