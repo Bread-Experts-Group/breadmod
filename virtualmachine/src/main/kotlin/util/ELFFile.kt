@@ -1,5 +1,7 @@
 package breadmod.rnd.util
 
+import java.io.DataInputStream
+
 data class ELFFile(
     val ident: ELFIdentification,
     val abi: ELFABI,
@@ -168,34 +170,33 @@ data class ELFFile(
     companion object {
         fun bitCheck(n: Long, b: Long): Boolean = (n and b) == b
         fun bitCheck(n: Int, b: Int) = bitCheck(n.toLong(), b.toLong())
-
-        private fun BinaryStringCursor.readBitwise(read64: Boolean) =
-            if(read64) this.readLong() else this.readInt().toLong()
         
-        fun decodeElf(data: BinaryStringCursor): ELFFile {
+        fun decodeElf(data: DataInputStream): ELFFile {
             if(data.readInt() != 0x7F454C46) throw MalformedELFException("Magic numbers incorrect")
             val ident = ELFIdentification(
                 if(data.readByte().toInt() == 1) ELFIdentification.Bitness.BIT32 else ELFIdentification.Bitness.BIT64,
                 if(data.readByte().toInt() == 1) ELFIdentification.Endianness.LITTLE else ELFIdentification.Endianness.BIG
             )
-            data.skip(1)
+            data.skipBytes(1)
             val programHeaders = mutableListOf<ProgramHeader>()
             val sectionHeaders = mutableMapOf<String, SectionHeader>()
 
-            val use64 = ident.clazz == ELFIdentification.Bitness.BIT64
+            fun DataInputStream.readBitwise() =
+                if(ident.clazz == ELFIdentification.Bitness.BIT64) this.readLong() else this.readInt()
+
             val baseElf = ELFFile(
                 ident,
                 ELFABI(
                     data.readByte(),
                     data.readByte()
                 ),
-                data.skip(7).let { ELFType.getType(data.readShort()) },
+                data.skipBytes(7).let { ELFType.getType(data.readShort()) },
                 data.readShort(),
-                data.skip(4).let { data.readBitwise(use64) },
+                data.skipBytes(4).let { data.readBitwise() },
                 programHeaders,
                 sectionHeaders, 
-                data.readBitwise(use64),
-                data.readBitwise(use64),
+                data.readBitwise(),
+                data.readBitwise(),
                 data.readInt(),
                 data.readShort(),
                 data.readShort(),
@@ -205,16 +206,17 @@ data class ELFFile(
                 data.readShort()
             )
 
+            println(baseElf)
             data.position = baseElf.programHeaderStart.toInt() // use an extended array for this?
             repeat(baseElf.programHeaderEntryCount.toInt()) {
                 val type = ProgramHeader.Type.getType(data.readInt())
                 val flags = if(use64) data.readInt() else null
-                val offset = data.readBitwise(use64)
-                val virtualAddress = data.readBitwise(use64)
-                val physicalAddress = data.readBitwise(use64)
-                val fileSize = data.readBitwise(use64)
-                val memorySize = data.readBitwise(use64)
-                val alignment = data.readBitwise(use64)
+                val offset = data.readBitwise()
+                val virtualAddress = data.readBitwise()
+                val physicalAddress = data.readBitwise()
+                val fileSize = data.readBitwise()
+                val memorySize = data.readBitwise()
+                val alignment = data.readBitwise()
                 val reifiedFlags = flags ?: data.readInt()
                 programHeaders.add(ProgramHeader(
                     type,
@@ -240,7 +242,7 @@ data class ELFFile(
                         data.readInt(),
                         SectionHeader(
                             SectionHeader.Type.getType(data.readInt()),
-                            (data.readBitwise(use64)).let {
+                            (data.readBitwise()).let {
                                  SectionHeader.Flags(
                                      bitCheck(it, 0x1),
                                      bitCheck(it, 0x2),
@@ -258,13 +260,13 @@ data class ELFFile(
                                      bitCheck(it, 0x8000000)
                                  )
                             },
-                            data.readBitwise(use64),
-                            data.readBitwise(use64),
-                            data.readBitwise(use64),
+                            data.readBitwise(),
+                            data.readBitwise(),
+                            data.readBitwise(),
                             data.readInt(),
                             data.readInt(),
-                            data.readBitwise(use64),
-                            data.readBitwise(use64)
+                            data.readBitwise(),
+                            data.readBitwise()
                         ).also {
                             if(it.type == SectionHeader.Type.SHT_STRTAB) nameSectionHeader = it
                         }
