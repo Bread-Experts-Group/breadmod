@@ -1,6 +1,7 @@
 package breadmod.rnd.util
 
 import java.io.DataInputStream
+import java.io.RandomAccessFile
 
 data class ELFFile(
     val ident: ELFIdentification,
@@ -171,7 +172,7 @@ data class ELFFile(
         fun bitCheck(n: Long, b: Long): Boolean = (n and b) == b
         fun bitCheck(n: Int, b: Int) = bitCheck(n.toLong(), b.toLong())
         
-        fun decodeElf(data: DataInputStream): ELFFile {
+        fun decodeElf(data: RandomAccessFile): ELFFile {
             if(data.readInt() != 0x7F454C46) throw MalformedELFException("Magic numbers incorrect")
             val ident = ELFIdentification(
                 if(data.readByte().toInt() == 1) ELFIdentification.Bitness.BIT32 else ELFIdentification.Bitness.BIT64,
@@ -181,8 +182,8 @@ data class ELFFile(
             val programHeaders = mutableListOf<ProgramHeader>()
             val sectionHeaders = mutableMapOf<String, SectionHeader>()
 
-            fun DataInputStream.readBitwise() =
-                if(ident.clazz == ELFIdentification.Bitness.BIT64) this.readLong() else this.readInt()
+            val use64 = ident.clazz == ELFIdentification.Bitness.BIT64
+            fun readBitwise() = if(use64) data.readLong() else data.readInt().toLong()
 
             val baseElf = ELFFile(
                 ident,
@@ -192,11 +193,11 @@ data class ELFFile(
                 ),
                 data.skipBytes(7).let { ELFType.getType(data.readShort()) },
                 data.readShort(),
-                data.skipBytes(4).let { data.readBitwise() },
+                data.skipBytes(4).let { readBitwise() },
                 programHeaders,
                 sectionHeaders, 
-                data.readBitwise(),
-                data.readBitwise(),
+                readBitwise(),
+                readBitwise(),
                 data.readInt(),
                 data.readShort(),
                 data.readShort(),
@@ -206,17 +207,16 @@ data class ELFFile(
                 data.readShort()
             )
 
-            println(baseElf)
-            data.position = baseElf.programHeaderStart.toInt() // use an extended array for this?
+            data.seek(baseElf.programHeaderStart) // use an extended array for this?
             repeat(baseElf.programHeaderEntryCount.toInt()) {
                 val type = ProgramHeader.Type.getType(data.readInt())
                 val flags = if(use64) data.readInt() else null
-                val offset = data.readBitwise()
-                val virtualAddress = data.readBitwise()
-                val physicalAddress = data.readBitwise()
-                val fileSize = data.readBitwise()
-                val memorySize = data.readBitwise()
-                val alignment = data.readBitwise()
+                val offset = readBitwise()
+                val virtualAddress = readBitwise()
+                val physicalAddress = readBitwise()
+                val fileSize = readBitwise()
+                val memorySize = readBitwise()
+                val alignment = readBitwise()
                 val reifiedFlags = flags ?: data.readInt()
                 programHeaders.add(ProgramHeader(
                     type,
@@ -234,7 +234,7 @@ data class ELFFile(
                 ))
             }
 
-            data.position = baseElf.sectionHeaderStart.toInt()
+            data.seek(baseElf.sectionHeaderStart)
             var nameSectionHeader: SectionHeader
             val unnamedSections = buildMap {
                 repeat(baseElf.sectionHeaderEntryCount.toInt()) {
@@ -242,7 +242,7 @@ data class ELFFile(
                         data.readInt(),
                         SectionHeader(
                             SectionHeader.Type.getType(data.readInt()),
-                            (data.readBitwise()).let {
+                            (readBitwise()).let {
                                  SectionHeader.Flags(
                                      bitCheck(it, 0x1),
                                      bitCheck(it, 0x2),
@@ -260,13 +260,13 @@ data class ELFFile(
                                      bitCheck(it, 0x8000000)
                                  )
                             },
-                            data.readBitwise(),
-                            data.readBitwise(),
-                            data.readBitwise(),
+                            readBitwise(),
+                            readBitwise(),
+                            readBitwise(),
                             data.readInt(),
                             data.readInt(),
-                            data.readBitwise(),
-                            data.readBitwise()
+                            readBitwise(),
+                            readBitwise()
                         ).also {
                             if(it.type == SectionHeader.Type.SHT_STRTAB) nameSectionHeader = it
                         }
