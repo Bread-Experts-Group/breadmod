@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    application
 }
 
 group = "breadmod.rnd"
@@ -16,6 +17,10 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+application {
+    mainClass = "breadmod.rnd.MainKt"
+}
+
 kotlin {
     jvmToolchain(17)
 }
