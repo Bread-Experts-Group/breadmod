@@ -93,6 +93,12 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val DOUGH_MACHINE_BLOCK = registerBlockItem(
+        "dough_machine",
+        { DoughMachineBlock() },
+        Item.Properties()
+    )
+
     val HEATING_ELEMENT_BLOCK = registerBlockItem(
         "heating_element",
         { HeatingElementBlock() },
@@ -155,6 +161,7 @@ object ModBlocks {
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
             dropSelf(BAUXITE_ORE.get().block)
             dropSelf(BREAD_SCREEN.get().block)
+            dropSelf(DOUGH_MACHINE_BLOCK.get().block)
 
             add(
                 FLOUR_BLOCK.get().block,

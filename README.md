@@ -53,8 +53,8 @@
       - Can only be doped once!
   - [X] Crafted using a cutting board from farmer's delight
   - [ ] Bread crumbs
-    - Crafted from splitting toast in a crafting table
-    - Usable as birdseed, provides a fraction of the saturation a full loaf does
+    - Crafted from splitting toast in a crafting table    
+    - Usable as parrot food (needs a mixin to work)
 ---
 - [ ] Joke item: "the ultimate bread" just gives you creative mode lmao
 - [ ] "Bread amulet" gives you 1 hunger point every 10 seconds
