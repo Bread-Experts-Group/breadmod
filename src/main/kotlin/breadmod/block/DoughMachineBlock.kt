@@ -28,16 +28,16 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
         this.registerDefaultState(
             stateDefinition.any()
                 .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
-                .setValue(FlourMachineEnums.running, false)
+                .setValue(DoughMachineEnums.running, false)
         )
     }
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState {
-        return defaultBlockState().setValue(FlourMachineEnums.facing, pContext.horizontalDirection.opposite) as BlockState
+        return defaultBlockState().setValue(DoughMachineEnums.facing, pContext.horizontalDirection.opposite) as BlockState
     }
 
     override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(FlourMachineEnums.facing, FlourMachineEnums.running)
+        pBuilder.add(DoughMachineEnums.facing, DoughMachineEnums.running)
     }
 
     override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity {
@@ -84,7 +84,7 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
     }
 
     override fun rotate(pState: BlockState, level: LevelAccessor, pos: BlockPos, pRotation: Rotation): BlockState {
-        return pState.setValue(BlockStateProperties.FACING, pState.getValue(FlourMachineEnums.facing))
+        return pState.setValue(BlockStateProperties.FACING, pState.getValue(DoughMachineEnums.facing))
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("RenderShape.MODEL", "net.minecraft.world.level.block.RenderShape"))
@@ -92,7 +92,7 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
         return RenderShape.MODEL
     }
 
-    object FlourMachineEnums {
+    object DoughMachineEnums {
         val running: BooleanProperty = BooleanProperty.create("running")
         val facing: DirectionProperty = HorizontalDirectionalBlock.FACING
     }

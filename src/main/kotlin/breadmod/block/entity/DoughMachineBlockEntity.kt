@@ -1,5 +1,6 @@
 package breadmod.block.entity
 
+import breadmod.block.DoughMachineBlock.DoughMachineEnums
 import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.item.ModItems
@@ -109,6 +110,7 @@ class DoughMachineBlockEntity(
         if(hasRecipe()) {
             progress++
             setChanged(pLevel, pPos, pState)
+            pLevel.setBlockAndUpdate(pPos, pState.setValue(DoughMachineEnums.running, true))
 
             if(hasProgressFinished()) {
                 craftItem()
@@ -116,6 +118,7 @@ class DoughMachineBlockEntity(
             }
         } else {
             progress = 0
+            pLevel.setBlockAndUpdate(pPos, pState.setValue(DoughMachineEnums.running, false))
         }
     }
 
