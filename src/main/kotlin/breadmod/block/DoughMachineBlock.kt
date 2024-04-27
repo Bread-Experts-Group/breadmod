@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.block.state.properties.DirectionProperty
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
@@ -28,7 +27,7 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
         this.registerDefaultState(
             stateDefinition.any()
                 .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
-                .setValue(DoughMachineEnums.running, false)
+                .setValue(BlockStateProperties.LIT, false)
         )
     }
 
@@ -37,7 +36,7 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
     }
 
     override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(DoughMachineEnums.facing, DoughMachineEnums.running)
+        pBuilder.add(DoughMachineEnums.facing, BlockStateProperties.LIT)
     }
 
     override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity {
@@ -93,7 +92,6 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
     }
 
     object DoughMachineEnums {
-        val running: BooleanProperty = BooleanProperty.create("running")
         val facing: DirectionProperty = HorizontalDirectionalBlock.FACING
     }
 }

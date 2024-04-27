@@ -16,8 +16,6 @@ class DoughMachineScreen(
 ) : AbstractContainerScreen<DoughMachineMenu>(pMenu, pPlayerInventory, pTitle) {
     val texture = ResourceLocation(BreadMod.ID, "textures/gui/container/dough_machine.png")
 
-
-
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F)

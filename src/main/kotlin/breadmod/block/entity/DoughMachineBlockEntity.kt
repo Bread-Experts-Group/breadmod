@@ -1,6 +1,5 @@
 package breadmod.block.entity
 
-import breadmod.block.DoughMachineBlock.DoughMachineEnums
 import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.item.ModItems
@@ -20,6 +19,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
@@ -110,7 +110,7 @@ class DoughMachineBlockEntity(
         if(hasRecipe()) {
             progress++
             setChanged(pLevel, pPos, pState)
-            pLevel.setBlockAndUpdate(pPos, pState.setValue(DoughMachineEnums.running, true))
+            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
 
             if(hasProgressFinished()) {
                 craftItem()
@@ -118,7 +118,7 @@ class DoughMachineBlockEntity(
             }
         } else {
             progress = 0
-            pLevel.setBlockAndUpdate(pPos, pState.setValue(DoughMachineEnums.running, false))
+            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
         }
     }
 

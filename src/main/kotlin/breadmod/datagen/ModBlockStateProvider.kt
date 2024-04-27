@@ -1,6 +1,5 @@
 package breadmod.datagen
 
-import breadmod.block.DoughMachineBlock.DoughMachineEnums
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.block.OreBlock
 import net.minecraft.core.Direction
@@ -44,7 +43,7 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/bread_furnace")
         )
         horizontalBlock(ModBlocks.DOUGH_MACHINE_BLOCK.get().block) { state ->
-            val machineOn = if(state.getValue(DoughMachineEnums.running)) "_on" else ""
+            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
             val name = "breadmod:block/dough_machine$machineOn"
 
             val model = models().orientable(

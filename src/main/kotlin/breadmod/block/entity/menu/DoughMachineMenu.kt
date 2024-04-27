@@ -55,7 +55,7 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
 
         blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent { iItemHandler: IItemHandler? ->
             this.addSlot(SlotItemHandler(iItemHandler, 0, 56, 17))
-            this.addSlot(SlotItemHandler(iItemHandler, 1, 116, 35))
+            this.addSlot(DoughMachineResultSlot(iItemHandler, 1, 116, 35))
         }
 
         addDataSlots(data)
@@ -103,8 +103,8 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         return copyOfSourceStack
     }
 
-    override fun stillValid(p0: Player): Boolean {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.blockPos), p0, ModBlocks.DOUGH_MACHINE_BLOCK.get().block)
+    override fun stillValid(pPlayer: Player): Boolean {
+        return stillValid(ContainerLevelAccess.create(level, blockEntity.blockPos), pPlayer, ModBlocks.DOUGH_MACHINE_BLOCK.get().block)
     }
 
     private fun addPlayerInventory(playerInventory: Inventory) {
@@ -124,7 +124,7 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
     companion object {
         // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
         // must assign a slot number to each of the slots used by the GUI.
-        // For this container, we can see both the tile inventory's slots as well as the player inventory slots and the hotbar.
+        // For this container, we can see both the tile inventory's slots and the player inventory slots and the hotbar.
         // Each time we add a Slot to the container, it automatically increases the slotIndex, which means
         //  0 - 8 = hotbar slots (which will map to the InventoryPlayer slot numbers 0 - 8)
         //  9 - 35 = player inventory slots (which map to the InventoryPlayer slot numbers 9 - 35)
