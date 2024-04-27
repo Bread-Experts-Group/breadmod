@@ -9,6 +9,7 @@ import breadmod.registry.entity.ModEntities.HAPPY_BLOCK_ENTITY
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.registry.item.ModItems
 import breadmod.block.entity.menu.BreadFurnaceScreen
+import breadmod.block.entity.menu.DoughMachineScreen
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.datagen.*
 import breadmod.datagen.dimension.worldgen.ModBiomes
@@ -92,6 +93,7 @@ object ModEventBus {
             }
 
             MenuScreens.register(ModMenuTypes.BREAD_FURNACE.get()) { pMenu, pInventory, pTitle -> BreadFurnaceScreen(pMenu,pInventory,pTitle) }
+            MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
         }
     }
 
