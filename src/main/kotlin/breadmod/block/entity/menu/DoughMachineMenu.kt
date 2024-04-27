@@ -18,7 +18,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.SlotItemHandler
 
-@Suppress("SpellCheckingInspection")
 class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, data: ContainerData) : AbstractContainerMenu(
     ModMenuTypes.DOUGH_MACHINE.get(), pContainerId) {
     private val blockEntity: DoughMachineBlockEntity
@@ -29,15 +28,31 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         pContainerId,
         inv,
         inv.player.level().getBlockEntity(extraData.readBlockPos()),
-        SimpleContainerData(2)
+        SimpleContainerData(6)
     )
 
     fun getScaledProgress(): Int {
         val progress = this.data.get(0)
         val maxProgress = this.data.get(1)
-        val progressArrowSize = 24
+        val progressArrowSize = 24 // Size in pixels along the x-axis
 
         return if (maxProgress != 0 && progress != 0) progress * progressArrowSize / maxProgress else 0
+    }
+
+    fun getEnergyStored(): Int {
+        val energyStored = this.data.get(2)
+        val maxEnergyStored = this.data.get(3)
+        val energyMeterSize = 56 // Size in pixels along the x-axis
+
+        return if (energyStored != 0 && maxEnergyStored != 0) energyStored * energyMeterSize / maxEnergyStored else 0
+    }
+
+    fun getFluidStored(): Int {
+        val fluidStored = this.data.get(4)
+        val maxFluidStored = this.data.get(5)
+        val fluidMeterSize = 56 // Size in pixels along the x-axis
+
+        return if (fluidStored != 0 && maxFluidStored != 0) fluidStored * fluidMeterSize / maxFluidStored else 0
     }
 
     fun isCrafting(): Boolean {

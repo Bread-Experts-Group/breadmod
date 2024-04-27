@@ -27,12 +27,22 @@ class DoughMachineScreen(
         pGuiGraphics.blit(texture, x, y, 0, 0, imageWidth, imageHeight)
 
         renderProgressArrow(pGuiGraphics, x, y)
+        renderEnergyMeter(pGuiGraphics, x, y)
+        renderFluidMeter(pGuiGraphics, x, y)
     }
 
     private fun renderProgressArrow(pGuiGraphics : GuiGraphics, x : Int, y : Int) {
         if(menu.isCrafting()) {
             pGuiGraphics.blit(texture, x + 79, y + 35, 176, 0, menu.getScaledProgress(), 17)
         }
+    }
+
+    private fun renderEnergyMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
+        pGuiGraphics.blit(texture, x + 96, y + 60, 176, 17, menu.getEnergyStored(), 2)
+    }
+
+    private fun renderFluidMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
+        pGuiGraphics.blit(texture, x + 96, y + 66, 176, 19, menu.getFluidStored(), 2)
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
