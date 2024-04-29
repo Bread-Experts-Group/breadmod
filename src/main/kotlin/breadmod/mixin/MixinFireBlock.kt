@@ -1,6 +1,6 @@
 package breadmod.mixin
 
-import breadmod.block.SpecialFireAction
+import breadmod.block.ISpecialFireAction
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
@@ -22,7 +22,7 @@ class MixinFireBlock {
         info: CallbackInfo
     ) {
         val blockState = pLevel.getBlockState(pPos)
-        if (blockState.block::class.hasAnnotation<SpecialFireAction>()) {
+        if (blockState.block::class.hasAnnotation<ISpecialFireAction>()) {
             blockState.onCaughtFire(pLevel, pPos, pFace, null)
             info.cancel()
         }

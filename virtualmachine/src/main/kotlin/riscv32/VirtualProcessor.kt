@@ -2,8 +2,9 @@ package breadmod.rnd.riscv32
 
 import breadmod.rnd.Baseboard
 import breadmod.rnd.Memory
-import breadmod.rnd.riscv32.instructions.InstructionFormat
-import breadmod.rnd.riscv32.instructions.RegisterRegisterInstruction
+import breadmod.rnd.riscv32.instructions.*
+import breadmod.rnd.util.OrderableRandomAccessFile
+import kotlin.coroutines.coroutineContext
 
 /**
  * RISC-V (32-bit) implementation
@@ -51,12 +52,29 @@ class VirtualProcessor(val parent: Baseboard) {
         Register(saver = RegisterSaver.CALLER), // ditto (t6)
     )
 
-    @OptIn(ExperimentalStdlibApi::class)
-    fun executeProgram(string: String) {
-        string.split(Regex("........")).forEach {
-            when(val instruction = InstructionFormat.findInstruction(it.hexToUInt())) {
-                is RegisterRegisterInstruction -> RegisterRegisterInstruction.funct3List[instruction.funct3]?.get(instruction.funct7)?.invoke(this, instruction)
+    fun executeProgram(data: OrderableRandomAccessFile) {
+        repeat(82) {
+
+            when(val instruction = InstructionFormat.findInstruction(data.readIntOrdered().toUInt().also { println(it.toString(radix = 2).padStart(32, '0')) })) {
+                is RegisterRegisterInstruction -> RegisterRegisterInstruction.funct3List[instruction.funct3]?.get(instruction.funct7)!!.invoke(this, instruction)
+                is ImmediateInstruction -> {
+                    when(instruction.opcode) {
+                        0b0000011u -> ImmediateInstruction.funct3List0000011[instruction.funct3]!!.invoke(this, instruction)
+                        0b0010011u -> ImmediateInstruction.funct3List0010011[instruction.funct3]!!.invoke(this, instruction)
+                        0b1100111u -> ImmediateInstruction.jalr(this, instruction)
+                    }
+                }
+                is UpperImmediateInstruction -> {
+                    when(instruction.opcode) {
+                        0b0110111u -> TODO("")
+                        0b0010111u -> UpperImmediateInstruction.auipic(this, instruction)
+                    }
+                }
+                is StoreInstruction -> StoreInstruction.funct3List[instruction.funct3]!!.invoke(this, instruction)
+                else -> throw IllegalStateException("Illegal operation")
             }
+            println(this.parent.memoryModules)
+            println("OUT < ${registers.joinToString { it.storedValue.toString() }}")
         }
     }
 
@@ -64,17 +82,40 @@ class VirtualProcessor(val parent: Baseboard) {
         var currentOffset = offset
         return parent.memoryModules.first {
             val size = it.data.size
-            if(size == null || currentOffset <= size) true else { currentOffset -= size; false }
+            if(currentOffset <= size) true else { currentOffset -= size; false }
         } to currentOffset
+    }
+
+    fun combine(vararg bytes: Byte): Long {
+        var concat = 0L
+        bytes.forEach { concat = (concat shl 8) or it.toLong() }
+        return concat
     }
 
     inline fun <reified T> readMemory(offset: Long): T {
         val location = getModuleAtAddress(offset)
         return when (T::class) {
-            Int::class -> location.first.data[location.second]?.toInt() as T
+            Int::class -> { combine(*location.first.data.slice(offset, 4).toByteArray()).toInt() as T }
+            Byte::class -> { location.first.data[location.second] as T }
             else -> throw IllegalStateException("Illegal type")
         }
     }
 
+    inline fun <reified T> writeMemory(offset: Long, data: T) {
+        val location = getModuleAtAddress(offset)
+        when (T::class) {
+            Int::class -> {
+                val int = data as Int
+                location.first.data[location.second + 3] = (int shr 24).toByte()
+                location.first.data[location.second + 2] = (int shr 16).toByte()
+                location.first.data[location.second + 1] = (int shr 8 ).toByte()
+                location.first.data[location.second    ] = (int       ).toByte()
+            }
+            Byte::class -> { location.first.data[location.second] = data as Byte }
+            else -> throw IllegalStateException("Illegal type")
+        }
+    }
+
+    inline fun <reified T> writeMemory(offset: Int, data: T) = writeMemory<T>(offset.toLong(), data)
     inline fun <reified T> readMemory(offset: Int): T = readMemory<T>(offset.toLong())
 }

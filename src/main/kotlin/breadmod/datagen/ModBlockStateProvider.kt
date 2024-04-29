@@ -124,25 +124,28 @@ class ModBlockStateProvider(
         getVariantBuilder(ModBlocks.BAUXITE_ORE.get().block).forAllStates { state -> getOreModels(state) }
 
         // // //
-        directionalBlock(ModBlocks.BREAD_SCREEN.get().block) {
-            val name = "breadmod:block/bread_screen"
+        directionalBlock(ModBlocks.MONITOR.get().block) {
+            val name = "breadmod:block/monitor"
 
             val model = models().cube(
                 name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_top"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_top"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_face"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_top"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_side"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_screen_side")
+                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
             )
 
             return@directionalBlock model
         }
         simpleBlockItem(
-            ModBlocks.BREAD_SCREEN.get().block,
-            models().getBuilder("breadmod:block/bread_screen")
+            ModBlocks.MONITOR.get().block,
+            models().getBuilder("breadmod:block/monitor")
         )
+        // // //
+        horizontalBlock(ModBlocks.KEYBOARD.get().block, models().getBuilder("breadmod:block/keyboard"))
+        simpleBlockItem(ModBlocks.KEYBOARD.get().block, models().getBuilder("breadmod:block/keyboard"))
     }
 
     private fun blockWithItem(blockRegistryObject: Block) {

@@ -6,4 +6,4 @@ package breadmod.block
  * @since 1.0.0
  */
 @Target(AnnotationTarget.CLASS)
-annotation class SpecialFireAction
+annotation class ISpecialFireAction

@@ -66,10 +66,16 @@ object ModBlocks {
         Item.Properties().fireResistant()
     )
 
-    val BREAD_SCREEN = registerBlockItem(
-        "bread_screen",
-        { BreadScreenBlock() },
+    val MONITOR = registerBlockItem(
+        "monitor",
+        { MonitorBlock() },
         Item.Properties()
+    )
+    
+    val KEYBOARD = registerBlockItem(
+        "keyboard",
+        { KeyboardBlock() },
+        Item.Properties().stacksTo(1)
     )
 
     val CHARCOAL_BLOCK = registerBlockItem(
@@ -160,8 +166,9 @@ object ModBlocks {
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
             dropSelf(BAUXITE_ORE.get().block)
-            dropSelf(BREAD_SCREEN.get().block)
+            dropSelf(MONITOR.get().block)
             dropSelf(DOUGH_MACHINE_BLOCK.get().block)
+            dropSelf(KEYBOARD.get().block)
 
             add(
                 FLOUR_BLOCK.get().block,

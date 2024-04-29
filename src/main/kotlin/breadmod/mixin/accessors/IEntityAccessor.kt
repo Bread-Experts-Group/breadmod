@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor
 
 @Suppress("NonJavaMixin")
 @Mixin(Entity::class)
-interface EntityAccessor {
+interface IEntityAccessor {
     @get:Accessor("level") val level: Level
 }

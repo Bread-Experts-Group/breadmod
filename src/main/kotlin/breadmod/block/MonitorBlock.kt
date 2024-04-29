@@ -9,8 +9,10 @@ import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.VoxelShape
 
-class BreadScreenBlock: Block(Properties.copy(Blocks.IRON_BLOCK)), EntityBlock {
+class MonitorBlock: Block(Properties.copy(Blocks.IRON_BLOCK)), EntityBlock {
     init {
         this.registerDefaultState(
             stateDefinition.any()

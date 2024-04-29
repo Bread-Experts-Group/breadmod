@@ -34,10 +34,10 @@ object ModBlockEntities {
             HEATING_ELEMENT_BLOCK.get().block
         ).build(null)
     }
-    val BREAD_SCREEN: RegistryObject<BlockEntityType<BreadScreenBlockEntity>> = deferredRegister.register("bread_screen_entity") {
+    val MONITOR: RegistryObject<BlockEntityType<BreadScreenBlockEntity>> = deferredRegister.register("monitor_entity") {
         BlockEntityType.Builder.of(
             { pPos, pState -> BreadScreenBlockEntity(pPos, pState) },
-            ModBlocks.BREAD_SCREEN.get().block
+            ModBlocks.MONITOR.get().block
         ).build(null)
     }
 }

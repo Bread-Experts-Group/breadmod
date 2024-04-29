@@ -1,5 +1,7 @@
 package breadmod.rnd.riscv32.instructions
 
+import breadmod.rnd.riscv32.VirtualProcessor
+
 typealias ImmediateOpcodes = Map<UInt, OpcodeMethod<ImmediateInstruction>>
 
 class ImmediateInstruction(instruction: UInt): InstructionFormat(instruction) {
@@ -50,20 +52,25 @@ class ImmediateInstruction(instruction: UInt): InstructionFormat(instruction) {
         )
         val funct3List0000011: ImmediateOpcodes = mapOf(
             0x0u to { cpu, ir -> // Load Byte, DIRTY!
-                cpu.registers[ir.rd.toInt()].storedValue = cpu.registers[ir.rd.toInt()].storedValue and (cpu.readMemory<Byte>(cpu.registers[ir.rs1.toInt() + ir.imm.toInt()].storedValue).toInt())
+                val rd = cpu.registers[ir.rd.toInt()]
+                rd.storedValue = (((rd.storedValue.toUInt() and 0xFFFFF00u) or (cpu.readMemory<Byte>(cpu.registers[ir.rs1.toInt()].storedValue + ir.imm.toInt()).toUInt()))).toInt()
             },
             0x1u to { cpu, ir -> // Load Half (Short), DIRTY!
-                cpu.registers[ir.rd.toInt()].storedValue = cpu.registers[ir.rd.toInt()].storedValue and (cpu.readMemory<Short>(cpu.registers[ir.rs1.toInt() + ir.imm.toInt()].storedValue).toInt())
+                val rd = cpu.registers[ir.rd.toInt()]
+                rd.storedValue = (((rd.storedValue.toUInt() and 0xFFFF0000u) or (cpu.readMemory<Short>(cpu.registers[ir.rs1.toInt()].storedValue + ir.imm.toInt()).toUInt()))).toInt()
             },
             0x2u to { cpu, ir -> // Load Word (Int), DIRTY!
-                cpu.registers[ir.rd.toInt()].storedValue = cpu.registers[ir.rd.toInt()].storedValue and cpu.readMemory<Int>(cpu.registers[ir.rs1.toInt() + ir.imm.toInt()].storedValue)
+                cpu.registers[ir.rd.toInt()].storedValue = cpu.readMemory<Int>(cpu.registers[ir.rs1.toInt()].storedValue + ir.imm.toInt())
             },
             0x4u to { cpu, ir -> // Load Half (Short) (U), DIRTY!
-                cpu.registers[ir.rd.toInt()].storedValue = (cpu.readMemory<Short>(cpu.registers[ir.rs1.toInt() + ir.imm.toInt()].storedValue).toInt())
+                TODO("!")
             },
             0x5u to { cpu, ir -> // Load Word (Int) (U), DIRTY!
-                cpu.registers[ir.rd.toInt()].storedValue = cpu.readMemory<Int>(cpu.registers[ir.rs1.toInt() + ir.imm.toInt()].storedValue)
+                TODO("!")
             },
         )
+        fun jalr(cpu: VirtualProcessor, immediateInstruction: ImmediateInstruction) {
+
+        }
     }
 }

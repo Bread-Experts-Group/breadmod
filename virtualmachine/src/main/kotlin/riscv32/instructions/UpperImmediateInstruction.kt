@@ -1,5 +1,7 @@
 package breadmod.rnd.riscv32.instructions
 
+import breadmod.rnd.riscv32.VirtualProcessor
+
 /**
  * R-type [instruction format](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf#section.2.2)
  * @author Miko Elbrecht
@@ -16,8 +18,8 @@ class UpperImmediateInstruction(instruction: UInt): InstructionFormat(instructio
     val imm: UInt = instruction and 0xFFFFF000u shr 12
 
     companion object {
-        val funct3List = mapOf<UInt, OpcodeMethod<UpperImmediateInstruction>>(
+        fun auipic(cpu: VirtualProcessor, upperImmediateInstruction: UpperImmediateInstruction) {
 
-        )
+        }
     }
 }

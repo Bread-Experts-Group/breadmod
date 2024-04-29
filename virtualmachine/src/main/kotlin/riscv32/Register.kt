@@ -6,8 +6,10 @@ package breadmod.rnd.riscv32
  * @author Miko Elbrecht
  * @see 1.0.0
  */
-class Register(private val lock: Int? = null, val saver: RegisterSaver) {
+data class Register(private val lock: Int? = null, val saver: RegisterSaver) {
     var storedValue: Int = 0
         get() = lock ?: field
         internal set
+
+    override fun toString(): String = "Register(${if(lock != null) "lock=$lock, " else ""}saver=$saver, storedValue=$storedValue)"
 }

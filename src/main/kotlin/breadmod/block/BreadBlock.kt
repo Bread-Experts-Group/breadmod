@@ -17,12 +17,12 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 
-@SpecialFireAction
+@ISpecialFireAction
 class BreadBlock : FlammableBlock(
     Properties.copy(Blocks.HAY_BLOCK)
         .strength(0.5f)
         .lightLevel { state -> if(state.getValue(BlockStateProperties.LIT)) 8 else 0 }
-), LightningStrikeAction {
+), ILightningStrikeAction {
     init {
         this.registerDefaultState(this.defaultBlockState()
             .setValue(BlockStateProperties.LIT, false)

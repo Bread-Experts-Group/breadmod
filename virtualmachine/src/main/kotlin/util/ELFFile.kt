@@ -2,6 +2,7 @@ package breadmod.rnd.util
 
 import java.io.DataInputStream
 import java.io.RandomAccessFile
+import java.nio.ByteOrder
 
 data class ELFFile(
     val ident: ELFIdentification,
@@ -23,15 +24,11 @@ data class ELFFile(
 ) {
     data class ELFIdentification(
         val clazz: Bitness,
-        val data: Endianness
+        val data: ByteOrder
     ) {
         enum class Bitness {
             BIT32,
             BIT64
-        }
-        enum class Endianness {
-            LITTLE,
-            BIG
         }
     }
 
@@ -172,18 +169,19 @@ data class ELFFile(
         fun bitCheck(n: Long, b: Long): Boolean = (n and b) == b
         fun bitCheck(n: Int, b: Int) = bitCheck(n.toLong(), b.toLong())
         
-        fun decodeElf(data: RandomAccessFile): ELFFile {
-            if(data.readInt() != 0x7F454C46) throw MalformedELFException("Magic numbers incorrect")
+        fun decodeElf(data: OrderableRandomAccessFile): ELFFile {
+            if(data.readIntOrdered() != 0x7F454C46) throw MalformedELFException("Magic numbers incorrect")
             val ident = ELFIdentification(
                 if(data.readByte().toInt() == 1) ELFIdentification.Bitness.BIT32 else ELFIdentification.Bitness.BIT64,
-                if(data.readByte().toInt() == 1) ELFIdentification.Endianness.LITTLE else ELFIdentification.Endianness.BIG
+                if(data.readByte().toInt() == 1) ByteOrder.LITTLE_ENDIAN else ByteOrder.BIG_ENDIAN
             )
             data.skipBytes(1)
             val programHeaders = mutableListOf<ProgramHeader>()
             val sectionHeaders = mutableMapOf<String, SectionHeader>()
 
+            data.order = ident.data
             val use64 = ident.clazz == ELFIdentification.Bitness.BIT64
-            fun readBitwise() = if(use64) data.readLong() else data.readInt().toLong()
+            fun readBitwise() = if(use64) data.readLongOrdered() else data.readIntOrdered().toLong()
 
             val baseElf = ELFFile(
                 ident,
@@ -191,33 +189,33 @@ data class ELFFile(
                     data.readByte(),
                     data.readByte()
                 ),
-                data.skipBytes(7).let { ELFType.getType(data.readShort()) },
-                data.readShort(),
+                data.skipBytes(7).let { ELFType.getType(data.readShortOrdered()) },
+                data.readShortOrdered(),
                 data.skipBytes(4).let { readBitwise() },
                 programHeaders,
                 sectionHeaders, 
                 readBitwise(),
                 readBitwise(),
-                data.readInt(),
-                data.readShort(),
-                data.readShort(),
-                data.readShort(),
-                data.readShort(),
-                data.readShort(),
-                data.readShort()
+                data.readIntOrdered(),
+                data.readShortOrdered(),
+                data.readShortOrdered(),
+                data.readShortOrdered(),
+                data.readShortOrdered(),
+                data.readShortOrdered(),
+                data.readShortOrdered()
             )
 
             data.seek(baseElf.programHeaderStart) // use an extended array for this?
             repeat(baseElf.programHeaderEntryCount.toInt()) {
-                val type = ProgramHeader.Type.getType(data.readInt())
-                val flags = if(use64) data.readInt() else null
+                val type = ProgramHeader.Type.getType(data.readIntOrdered())
+                val flags = if(use64) data.readIntOrdered() else null
                 val offset = readBitwise()
                 val virtualAddress = readBitwise()
                 val physicalAddress = readBitwise()
                 val fileSize = readBitwise()
                 val memorySize = readBitwise()
                 val alignment = readBitwise()
-                val reifiedFlags = flags ?: data.readInt()
+                val reifiedFlags = flags ?: data.readIntOrdered()
                 programHeaders.add(ProgramHeader(
                     type,
                     offset,
@@ -235,13 +233,12 @@ data class ELFFile(
             }
 
             data.seek(baseElf.sectionHeaderStart)
-            var nameSectionHeader: SectionHeader
             val unnamedSections = buildMap {
                 repeat(baseElf.sectionHeaderEntryCount.toInt()) {
                     set(
-                        data.readInt(),
+                        data.readIntOrdered(),
                         SectionHeader(
-                            SectionHeader.Type.getType(data.readInt()),
+                            SectionHeader.Type.getType(data.readIntOrdered()),
                             (readBitwise()).let {
                                  SectionHeader.Flags(
                                      bitCheck(it, 0x1),
@@ -263,15 +260,27 @@ data class ELFFile(
                             readBitwise(),
                             readBitwise(),
                             readBitwise(),
-                            data.readInt(),
-                            data.readInt(),
+                            data.readIntOrdered(),
+                            data.readIntOrdered(),
                             readBitwise(),
                             readBitwise()
-                        ).also {
-                            if(it.type == SectionHeader.Type.SHT_STRTAB) nameSectionHeader = it
-                        }
+                        )
                     )
                 }
+            }
+
+            fun RandomAccessFile.readNullTerminatedString() = mutableListOf<Byte>().also {
+                do {
+                    val readChar = this.readByte()
+                    val int = readChar.toInt()
+                    if(int != 0) it.add(readChar)
+                } while (int != 0)
+            }.toByteArray().decodeToString()
+
+            val nameSection = unnamedSections.values.toList()[baseElf.sectionNameEntryIndex.toInt()]
+            unnamedSections.forEach { (nameOffset, section) ->
+                data.seek(nameSection.offset + nameOffset)
+                sectionHeaders[data.readNullTerminatedString()] = section
             }
 
             return baseElf

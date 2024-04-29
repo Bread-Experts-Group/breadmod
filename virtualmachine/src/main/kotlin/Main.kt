@@ -1,14 +1,25 @@
 package breadmod.rnd
 
+import breadmod.rnd.riscv32.VirtualProcessor
 import breadmod.rnd.util.ELFFile
-import java.io.DataInputStream
-import java.io.RandomAccessFile
-import java.net.URL
+import breadmod.rnd.util.OrderableRandomAccessFile
 import java.nio.file.Files
-import java.util.*
 
 fun main() {
-    println("Begin ELF")
-    val tempFile = RandomAccessFile(Files.createTempFile("elf",null).toFile(), "r")
-    println(ELFFile.decodeElf(RandomAccessFile(URL("https://cdn.discordapp.com/attachments/936081172885291038/1231782758825857065/boot.elf?ex=66271297&is=6625c117&hm=8626dee01544106562ad5928a5515974c915e33e666b313e91016b7cd89315b1&").openStream())))
+    val tempFile = Files.createTempFile("elf",null).toFile()
+    println("rig for silent run")
+    tempFile::class.java.getResourceAsStream("riscv32.o").let {
+        if(it != null) {
+            it.copyTo(tempFile.outputStream())
+            val oraf = OrderableRandomAccessFile(tempFile, "r")
+            val elf = ELFFile.decodeElf(oraf)
+
+            println("Begin scan for .text")
+            val progbits = elf.sectionHeaders[".text"] ?: throw IllegalStateException("No .text!")
+            oraf.seek(progbits.offset)
+            val cpu = VirtualProcessor(Baseboard(memoryModules = listOf(Memory(8196))))
+            cpu.executeProgram(oraf)
+            it.close()
+        }
+    }
 }
