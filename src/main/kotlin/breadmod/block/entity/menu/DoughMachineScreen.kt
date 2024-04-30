@@ -1,6 +1,7 @@
 package breadmod.block.entity.menu
 
 import breadmod.BreadMod
+import com.google.common.collect.Lists
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -47,7 +48,21 @@ class DoughMachineScreen(
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
         renderBackground(pGuiGraphics)
-        super.render(pGuiGraphics, pMouseX, pMouseY, delta)
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+        super.render(pGuiGraphics, pMouseX, pMouseY, delta)
+
+        // Power Tooltip
+        if(this.isHovering(96,60, 56, 2, pMouseX.toDouble(), pMouseY.toDouble())) {
+            val list: List<Component> = Lists.newArrayList(
+                Component.literal(menu.getRawEnergyStored().toString() + " FE"))
+            pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)
+        }
+        // Fluid Tooltip
+        if(this.isHovering(96,66, 56, 2, pMouseX.toDouble(), pMouseY.toDouble())) {
+            val list: List<Component> = Lists.newArrayList(
+                Component.literal(menu.getRawFluidStored().toString() + " mB"))
+            pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)
+        }
+
     }
 }
