@@ -17,32 +17,33 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.material.Fluids
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.energy.IEnergyStorage
+import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.fluids.capability.templates.FluidTank
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 
-@Suppress("SpellCheckingInspection")
 class DoughMachineBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : BlockEntity(ModBlockEntities.DOUGH_MACHINE.get(), pPos, pBlockState), MenuProvider {
-    private val itemHandler = ItemStackHandler(2)
+    private val itemHandler = ItemStackHandler(3) // Container slots
     private val inputSlot = 0
     private val outputSlot = 1
-
+    private val bucketSlot = 2
     private var lazyItemHandler: LazyOptional<IItemHandler> = LazyOptional.empty()
-
     var data: ContainerData
     private var progress = 0
     private var maxProgress = 60
@@ -63,6 +64,10 @@ class DoughMachineBlockEntity(
         override fun onContentsChanged() {
             super.onContentsChanged()
             setChanged()
+        }
+
+        override fun isFluidValid(stack: FluidStack): Boolean {
+            return stack.fluid == Fluids.WATER
         }
     }
     private val fluidHandlerOptional: LazyOptional<FluidTank> = LazyOptional.of { this.fluidTank }
@@ -166,6 +171,17 @@ class DoughMachineBlockEntity(
     fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: DoughMachineBlockEntity) {
         pBlockEntity.energyHandlerOptional.ifPresent { energyStorage -> energyStored = energyStorage.energyStored }
         pBlockEntity.fluidHandlerOptional.ifPresent { fluidStorage -> fluidStored = fluidStorage.fluidAmount }
+
+        // Empty input handler
+        if(itemHandler.getStackInSlot(inputSlot).isEmpty) {
+            progress = 0
+        }
+
+        if(!itemHandler.getStackInSlot(bucketSlot).isEmpty && itemHandler.getStackInSlot(bucketSlot).`is`(Items.WATER_BUCKET) && fluidStored <= 1000) {
+            pBlockEntity.fluidTank.fill(FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE)
+            itemHandler.extractItem(bucketSlot, 1, false)
+            itemHandler.setStackInSlot(bucketSlot, Items.BUCKET.defaultInstance)
+        }
         
         if(hasRecipe()) {
             setChanged(pLevel, pPos, pState)
@@ -191,7 +207,6 @@ class DoughMachineBlockEntity(
                 progress = 0
             }
         } else {
-//            progress = 0
             pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
         }
     }
@@ -221,5 +236,4 @@ class DoughMachineBlockEntity(
     private fun hasProgressFinished(): Boolean {
         return progress >= maxProgress
     }
-
 }

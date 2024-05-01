@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.common.capabilities.ForgeCapabilities
@@ -39,18 +40,25 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         return if (maxProgress != 0 && progress != 0) progress * progressArrowSize / maxProgress else 0
     }
 
-    fun getEnergyStored(): Int {
+    fun getEnergyStoredScaled(): Int {
         val energyStored = this.data.get(2)
         val maxEnergyStored = this.data.get(3)
-        val energyMeterSize = 56 // Size in pixels along the x-axis
+        val energyMeterSize = 47 // Size in pixels along the y-axis
 
         return if (energyStored != 0 && maxEnergyStored != 0) energyStored * energyMeterSize / maxEnergyStored else 0
     }
 
-    fun getFluidStored(): Int {
+    // Power Meter tooltip
+    // Probably a better way to get the raw value without declaring a new function but whatever
+    fun getRawEnergyStored(): Int { return this.data.get(2) }
+
+    // Fluid Meter tooltip
+    fun getRawFluidStored(): Int { return this.data.get(4) }
+
+    fun getFluidStoredScaled(): Int {
         val fluidStored = this.data.get(4)
         val maxFluidStored = this.data.get(5)
-        val fluidMeterSize = 56 // Size in pixels along the x-axis
+        val fluidMeterSize = 47 // Size in pixels along the y-axis
 
         return if (fluidStored != 0 && maxFluidStored != 0) fluidStored * fluidMeterSize / maxFluidStored else 0
     }
@@ -60,7 +68,8 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
     }
 
     init {
-        checkContainerSize(inv, 2)
+        checkContainerSize(inv, 3) // Checks the container size for the slot count
+        checkContainerDataCount(data, 6) // Same as the function above, but for data
         blockEntity = (entity as DoughMachineBlockEntity)
         this.level = inv.player.level()
         this.data = data
@@ -68,9 +77,10 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         addPlayerInventory(inv)
         addPlayerHotBar(inv)
 
-        blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent { iItemHandler: IItemHandler? ->
-            this.addSlot(SlotItemHandler(iItemHandler, 0, 56, 17))
-            this.addSlot(DoughMachineResultSlot(iItemHandler, 1, 116, 35))
+        blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent { iItemHandler: IItemHandler ->
+            this.addSlot(SlotItemHandler(iItemHandler, 0, 26, 34))
+            this.addSlot(DoughMachineResultSlot(iItemHandler, 1, 78, 35))
+            this.addSlot(DoughMachineBucketSlot(iItemHandler, 2, 153, 7))
         }
 
         addDataSlots(data)
@@ -153,6 +163,14 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         private const val TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT
 
         // THIS YOU HAVE TO DEFINE!
-        private const val TE_INVENTORY_SLOT_COUNT = 2 // must be the number of slots you have!
+        private const val TE_INVENTORY_SLOT_COUNT = 3 // must be the number of slots you have!
     }
+
+    class DoughMachineResultSlot(itemHandler: IItemHandler?, index: Int, xPosition: Int, yPosition: Int) :
+        SlotItemHandler(itemHandler, index, xPosition, yPosition) {
+        override fun mayPlace(stack: ItemStack): Boolean = false }
+
+    class DoughMachineBucketSlot(itemHandler: IItemHandler?, index: Int, xPosition: Int, yPosition: Int) :
+        SlotItemHandler(itemHandler, index, xPosition, yPosition) {
+        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) }
 }

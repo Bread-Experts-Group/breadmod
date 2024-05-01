@@ -26,8 +26,8 @@ class PrimedHappyBlock(pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level)
     }
 
     override fun explode() {
-        val blastRadius = 50.0f
-        level().explode(this, this.x, this.getY(0.0625), this.z, blastRadius, Level.ExplosionInteraction.TNT)
+        val blastRadius = 30.0f
+        level().explode(this, this.getX(0.05), this.getY(0.0625), this.z, blastRadius, Level.ExplosionInteraction.TNT)
     }
 
     override fun isPushable(): Boolean {

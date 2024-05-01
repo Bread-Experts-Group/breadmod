@@ -1,6 +1,7 @@
 package breadmod.block.entity.menu
 
 import breadmod.BreadMod
+import com.google.common.collect.Lists
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -33,21 +34,37 @@ class DoughMachineScreen(
 
     private fun renderProgressArrow(pGuiGraphics : GuiGraphics, x : Int, y : Int) {
         if(menu.isCrafting()) {
-            pGuiGraphics.blit(texture, x + 79, y + 35, 176, 0, menu.getScaledProgress(), 17)
+            pGuiGraphics.blit(texture, x + 46, y + 35, 176, 0, menu.getScaledProgress(), 17)
         }
     }
 
     private fun renderEnergyMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
-        pGuiGraphics.blit(texture, x + 96, y + 60, 176, 17, menu.getEnergyStored(), 2)
+        val energyStored = menu.getEnergyStoredScaled()
+        pGuiGraphics.blit(texture, x + 132, y + 28 + 47 - energyStored, 176, 64 - energyStored, 16, 47)
     }
 
     private fun renderFluidMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
-        pGuiGraphics.blit(texture, x + 96, y + 66, 176, 19, menu.getFluidStored(), 2)
+        val fluidStored = menu.getFluidStoredScaled()
+        pGuiGraphics.blit(texture, x + 153, y + 28 + 47 - fluidStored, 192, 64 - fluidStored, 16, 47)
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
         renderBackground(pGuiGraphics)
-        super.render(pGuiGraphics, pMouseX, pMouseY, delta)
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+        super.render(pGuiGraphics, pMouseX, pMouseY, delta)
+
+        // Power Tooltip
+        if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+            val list: List<Component> = Lists.newArrayList(
+                Component.literal(menu.getRawEnergyStored().toString() + " FE"))
+            pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)
+        }
+        // Fluid Tooltip
+        if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+            val list: List<Component> = Lists.newArrayList(
+                Component.literal(menu.getRawFluidStored().toString() + " mB"))
+            pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)
+        }
+
     }
 }
