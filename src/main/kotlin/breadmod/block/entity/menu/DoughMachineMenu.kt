@@ -43,7 +43,7 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
     fun getEnergyStored(): Int {
         val energyStored = this.data.get(2)
         val maxEnergyStored = this.data.get(3)
-        val energyMeterSize = 56 // Size in pixels along the x-axis
+        val energyMeterSize = 47 // Size in pixels along the y-axis
 
         return if (energyStored != 0 && maxEnergyStored != 0) energyStored * energyMeterSize / maxEnergyStored else 0
     }
@@ -58,7 +58,7 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
     fun getFluidStored(): Int {
         val fluidStored = this.data.get(4)
         val maxFluidStored = this.data.get(5)
-        val fluidMeterSize = 56 // Size in pixels along the x-axis
+        val fluidMeterSize = 47 // Size in pixels along the y-axis
 
         return if (fluidStored != 0 && maxFluidStored != 0) fluidStored * fluidMeterSize / maxFluidStored else 0
     }
@@ -68,7 +68,8 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
     }
 
     init {
-        checkContainerSize(inv, 3) // Determines how many slots the container can have... I think
+        checkContainerSize(inv, 3) // Checks the container size for the slot count
+        checkContainerDataCount(data, 6) // Same as the function above, but for data
         blockEntity = (entity as DoughMachineBlockEntity)
         this.level = inv.player.level()
         this.data = data
@@ -77,10 +78,9 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         addPlayerHotBar(inv)
 
         blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent { iItemHandler: IItemHandler ->
-            this.addSlot(SlotItemHandler(iItemHandler, 0, 56, 17))
-            this.addSlot(DoughMachineResultSlot(iItemHandler, 1, 116, 35))
-//            this.addSlot(DoughMachineBucketSlot(iItemHandler, 2, 153, 7)) // TODO WHY DOES IT FUCKING CRASH
-            // Caused by: java.lang.RuntimeException: Slot 2 not in valid range - [0,2) <-- HOW????
+            this.addSlot(SlotItemHandler(iItemHandler, 0, 26, 34))
+            this.addSlot(DoughMachineResultSlot(iItemHandler, 1, 78, 35))
+            this.addSlot(DoughMachineBucketSlot(iItemHandler, 2, 153, 7))
         }
 
         addDataSlots(data)
@@ -172,5 +172,5 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
 
     class DoughMachineBucketSlot(itemHandler: IItemHandler?, index: Int, xPosition: Int, yPosition: Int) :
         SlotItemHandler(itemHandler, index, xPosition, yPosition) {
-        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) }
+        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) } // might be the cause of the crashing??
 }

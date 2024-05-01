@@ -34,16 +34,17 @@ class DoughMachineScreen(
 
     private fun renderProgressArrow(pGuiGraphics : GuiGraphics, x : Int, y : Int) {
         if(menu.isCrafting()) {
-            pGuiGraphics.blit(texture, x + 79, y + 35, 176, 0, menu.getScaledProgress(), 17)
+            pGuiGraphics.blit(texture, x + 46, y + 35, 176, 0, menu.getScaledProgress(), 17)
         }
     }
 
+    // TODO make these increase from the bottom of the meter instead of the top
     private fun renderEnergyMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
-        pGuiGraphics.blit(texture, x + 96, y + 60, 176, 17, menu.getEnergyStored(), 2)
+        pGuiGraphics.blit(texture, x + 132, y + 28, 176, 17, 16, menu.getEnergyStored())
     }
 
     private fun renderFluidMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
-        pGuiGraphics.blit(texture, x + 96, y + 66, 176, 19, menu.getFluidStored(), 2)
+        pGuiGraphics.blit(texture, x + 153, y + 28, 192, 17, 16, menu.getFluidStored())
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
@@ -52,13 +53,13 @@ class DoughMachineScreen(
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
         // Power Tooltip
-        if(this.isHovering(96,60, 56, 2, pMouseX.toDouble(), pMouseY.toDouble())) {
+        if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
             val list: List<Component> = Lists.newArrayList(
                 Component.literal(menu.getRawEnergyStored().toString() + " FE"))
             pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)
         }
         // Fluid Tooltip
-        if(this.isHovering(96,66, 56, 2, pMouseX.toDouble(), pMouseY.toDouble())) {
+        if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
             val list: List<Component> = Lists.newArrayList(
                 Component.literal(menu.getRawFluidStored().toString() + " mB"))
             pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)

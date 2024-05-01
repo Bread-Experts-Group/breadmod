@@ -17,6 +17,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -38,9 +39,10 @@ class DoughMachineBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : BlockEntity(ModBlockEntities.DOUGH_MACHINE.get(), pPos, pBlockState), MenuProvider {
-    private val itemHandler = ItemStackHandler(3) // Determines slot count
+    private val itemHandler = ItemStackHandler(3) // Container slots
     private val inputSlot = 0
     private val outputSlot = 1
+    private val bucketSlot = 2
     private var lazyItemHandler: LazyOptional<IItemHandler> = LazyOptional.empty()
     var data: ContainerData
     private var progress = 0
@@ -170,9 +172,20 @@ class DoughMachineBlockEntity(
         pBlockEntity.energyHandlerOptional.ifPresent { energyStorage -> energyStored = energyStorage.energyStored }
         pBlockEntity.fluidHandlerOptional.ifPresent { fluidStorage -> fluidStored = fluidStorage.fluidAmount }
 
-        if(itemHandler.getStackInSlot(0).isEmpty) {
+        // Empty input handler
+        if(itemHandler.getStackInSlot(inputSlot).isEmpty) {
             progress = 0
         }
+        // TODO Fix to only fill tank with 1000mb instead of looping forever
+        if(!itemHandler.getStackInSlot(bucketSlot).isEmpty && itemHandler.getStackInSlot(bucketSlot) != Items.BUCKET && fluidStored <= 1000) {
+//            println("water bucket detected in slot 2 (bucket slot)")
+            pBlockEntity.fluidTank.fill(FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE)
+            itemHandler.extractItem(bucketSlot, 1, false)
+            itemHandler.setStackInSlot(bucketSlot, Items.BUCKET.defaultInstance)
+        } //else {
+//            println("no water bucket detected in slot 2 (bucket slot)")
+//            println(itemHandler.getStackInSlot(bucketSlot))
+        //}
         
         if(hasRecipe()) {
             setChanged(pLevel, pPos, pState)
