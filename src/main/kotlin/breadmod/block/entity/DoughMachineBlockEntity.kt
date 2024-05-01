@@ -176,16 +176,12 @@ class DoughMachineBlockEntity(
         if(itemHandler.getStackInSlot(inputSlot).isEmpty) {
             progress = 0
         }
-        // TODO Fix to only fill tank with 1000mb instead of looping forever
-        if(!itemHandler.getStackInSlot(bucketSlot).isEmpty && itemHandler.getStackInSlot(bucketSlot) != Items.BUCKET && fluidStored <= 1000) {
-//            println("water bucket detected in slot 2 (bucket slot)")
+
+        if(!itemHandler.getStackInSlot(bucketSlot).isEmpty && itemHandler.getStackInSlot(bucketSlot).`is`(Items.WATER_BUCKET) && fluidStored <= 1000) {
             pBlockEntity.fluidTank.fill(FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE)
             itemHandler.extractItem(bucketSlot, 1, false)
             itemHandler.setStackInSlot(bucketSlot, Items.BUCKET.defaultInstance)
-        } //else {
-//            println("no water bucket detected in slot 2 (bucket slot)")
-//            println(itemHandler.getStackInSlot(bucketSlot))
-        //}
+        }
         
         if(hasRecipe()) {
             setChanged(pLevel, pPos, pState)

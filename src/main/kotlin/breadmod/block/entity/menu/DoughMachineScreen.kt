@@ -38,13 +38,14 @@ class DoughMachineScreen(
         }
     }
 
-    // TODO make these increase from the bottom of the meter instead of the top
     private fun renderEnergyMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
-        pGuiGraphics.blit(texture, x + 132, y + 28, 176, 17, 16, menu.getEnergyStored())
+        val energyStored = menu.getEnergyStoredScaled()
+        pGuiGraphics.blit(texture, x + 132, y + 28 + 47 - energyStored, 176, 64 - energyStored, 16, 47)
     }
 
     private fun renderFluidMeter(pGuiGraphics: GuiGraphics, x: Int, y: Int) {
-        pGuiGraphics.blit(texture, x + 153, y + 28, 192, 17, 16, menu.getFluidStored())
+        val fluidStored = menu.getFluidStoredScaled()
+        pGuiGraphics.blit(texture, x + 153, y + 28 + 47 - fluidStored, 192, 64 - fluidStored, 16, 47)
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {

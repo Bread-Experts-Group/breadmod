@@ -40,7 +40,7 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         return if (maxProgress != 0 && progress != 0) progress * progressArrowSize / maxProgress else 0
     }
 
-    fun getEnergyStored(): Int {
+    fun getEnergyStoredScaled(): Int {
         val energyStored = this.data.get(2)
         val maxEnergyStored = this.data.get(3)
         val energyMeterSize = 47 // Size in pixels along the y-axis
@@ -55,7 +55,7 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
     // Fluid Meter tooltip
     fun getRawFluidStored(): Int { return this.data.get(4) }
 
-    fun getFluidStored(): Int {
+    fun getFluidStoredScaled(): Int {
         val fluidStored = this.data.get(4)
         val maxFluidStored = this.data.get(5)
         val fluidMeterSize = 47 // Size in pixels along the y-axis
@@ -172,5 +172,5 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
 
     class DoughMachineBucketSlot(itemHandler: IItemHandler?, index: Int, xPosition: Int, yPosition: Int) :
         SlotItemHandler(itemHandler, index, xPosition, yPosition) {
-        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) } // might be the cause of the crashing??
+        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) }
 }
