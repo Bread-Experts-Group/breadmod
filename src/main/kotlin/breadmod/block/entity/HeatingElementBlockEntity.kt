@@ -20,14 +20,13 @@ import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.energy.EnergyStorage
-import net.minecraftforge.energy.IEnergyStorage
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 
 class HeatingElementBlockEntity(
     pPos: BlockPos,
     pState: BlockState,
 ) : BlockEntity(ModBlockEntities.HEATING_ELEMENT.get(), pPos, pState) {
-    private val energyHandlerOptional: LazyOptional<IEnergyStorage> = LazyOptional.of {
+    private val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
         object : EnergyStorage(25000, 2000) {
             override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int {
                 setChanged()
@@ -58,7 +57,7 @@ class HeatingElementBlockEntity(
     override fun saveAdditional(pTag: CompoundTag) {
         super.saveAdditional(pTag)
         pTag.put(BreadMod.ID, CompoundTag().also { dataTag ->
-            energyHandlerOptional.ifPresent { dataTag.put("energy", (it as EnergyStorage).serializeNBT()) }
+            energyHandlerOptional.ifPresent { dataTag.put("energy", it.serializeNBT()) }
             temperatureHandlerOptional.ifPresent { dataTag.put("temperature", it.serializeNBT()) }
         })
     }
@@ -66,7 +65,7 @@ class HeatingElementBlockEntity(
     override fun load(pTag: CompoundTag) {
         super.load(pTag)
         val dataTag = pTag.getCompound(BreadMod.ID)
-        energyHandlerOptional.ifPresent { (it as EnergyStorage).deserializeNBT(dataTag.get("energy")) }
+        energyHandlerOptional.ifPresent { it.deserializeNBT(dataTag.get("energy")) }
         temperatureHandlerOptional.ifPresent { it.deserializeNBT(dataTag.get("temperature")) }
     }
 

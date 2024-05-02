@@ -1,89 +1,53 @@
 package breadmod.block.entity.menu
 
 import breadmod.block.entity.DoughMachineBlockEntity
+import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.screen.ModMenuTypes
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
-import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.SlotItemHandler
 
-class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, data: ContainerData) : AbstractContainerMenu(
-    ModMenuTypes.DOUGH_MACHINE.get(), pContainerId) {
-    private val blockEntity: DoughMachineBlockEntity
-    private val level: Level
-    private val data: ContainerData
-
-    constructor(pContainerId: Int, inv: Inventory, extraData: FriendlyByteBuf) : this(
-        pContainerId,
-        inv,
-        inv.player.level().getBlockEntity(extraData.readBlockPos()),
-        SimpleContainerData(6)
+class DoughMachineMenu(
+    pContainerId: Int,
+    private val inventory: Inventory,
+    val parent: DoughMachineBlockEntity
+) : AbstractContainerMenu(
+    ModMenuTypes.DOUGH_MACHINE.get(),
+    pContainerId
+) {
+    constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
+        pContainerId, inventory,
+        inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.DOUGH_MACHINE.get()).get()
     )
 
-    fun getScaledProgress(): Int {
-        val progress = this.data.get(0)
-        val maxProgress = this.data.get(1)
-        val progressArrowSize = 24 // Size in pixels along the x-axis
+    fun getScaledProgress(): Int = ((parent.data[0].toFloat() / DoughMachineBlockEntity.MAX_PROGRESS) * 24).toInt()
+    fun getEnergyStoredScaled(): Int = ((parent.data[2].toFloat() / parent.data[3]) * 47).toInt()
+    fun getFluidStoredScaled(): Int = ((parent.data[4].toFloat() / parent.data[5]) * 47).toInt()
+    fun isCrafting(): Boolean = parent.data[0] > 0
 
-        return if (maxProgress != 0 && progress != 0) progress * progressArrowSize / maxProgress else 0
-    }
-
-    fun getEnergyStoredScaled(): Int {
-        val energyStored = this.data.get(2)
-        val maxEnergyStored = this.data.get(3)
-        val energyMeterSize = 47 // Size in pixels along the y-axis
-
-        return if (energyStored != 0 && maxEnergyStored != 0) energyStored * energyMeterSize / maxEnergyStored else 0
-    }
-
-    // Power Meter tooltip
-    // Probably a better way to get the raw value without declaring a new function but whatever
-    fun getRawEnergyStored(): Int { return this.data.get(2) }
-
-    // Fluid Meter tooltip
-    fun getRawFluidStored(): Int { return this.data.get(4) }
-
-    fun getFluidStoredScaled(): Int {
-        val fluidStored = this.data.get(4)
-        val maxFluidStored = this.data.get(5)
-        val fluidMeterSize = 47 // Size in pixels along the y-axis
-
-        return if (fluidStored != 0 && maxFluidStored != 0) fluidStored * fluidMeterSize / maxFluidStored else 0
-    }
-
-    fun isCrafting(): Boolean {
-        return data[0] > 0
-    }
+    class DoughMachineResultSlot(handler: IItemHandler) : SlotItemHandler(handler,1, 78, 35) {
+        override fun mayPlace(stack: ItemStack): Boolean = false }
+    class DoughMachineBucketSlot(itemHandler: IItemHandler) : SlotItemHandler(itemHandler, 2, 153, 7) {
+        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) }
 
     init {
-        checkContainerSize(inv, 3) // Checks the container size for the slot count
-        checkContainerDataCount(data, 6) // Same as the function above, but for data
-        blockEntity = (entity as DoughMachineBlockEntity)
-        this.level = inv.player.level()
-        this.data = data
-
-        addPlayerInventory(inv)
-        addPlayerHotBar(inv)
-
-        blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent { iItemHandler: IItemHandler ->
-            this.addSlot(SlotItemHandler(iItemHandler, 0, 26, 34))
-            this.addSlot(DoughMachineResultSlot(iItemHandler, 1, 78, 35))
-            this.addSlot(DoughMachineBucketSlot(iItemHandler, 2, 153, 7))
+        addDataSlots(parent.data)
+        parent.itemHandlerOptional.ifPresent { iItemHandler ->
+            addSlot(SlotItemHandler(iItemHandler, 0, 26, 34))
+            addSlot(DoughMachineResultSlot(iItemHandler))
+            addSlot(DoughMachineBucketSlot(iItemHandler))
         }
 
-        addDataSlots(data)
+        repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, 142)) }
+        repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, 84 + y * 18)) } }
     }
 
     override fun quickMoveStack(playerIn: Player, pIndex: Int): ItemStack {
@@ -128,23 +92,11 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         return copyOfSourceStack
     }
 
-    override fun stillValid(pPlayer: Player): Boolean {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.blockPos), pPlayer, ModBlocks.DOUGH_MACHINE_BLOCK.get().block)
-    }
-
-    private fun addPlayerInventory(playerInventory: Inventory) {
-        for (i in 0..2) {
-            for (l in 0..8) {
-                this.addSlot(Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18))
-            }
-        }
-    }
-
-    private fun addPlayerHotBar(playerInventory: Inventory) {
-        for (i in 0..8) {
-            this.addSlot(Slot(playerInventory, i, 8 + i * 18, 142))
-        }
-    }
+    override fun stillValid(pPlayer: Player): Boolean = stillValid(
+            ContainerLevelAccess.create(pPlayer.level(), parent.blockPos),
+            pPlayer,
+            ModBlocks.DOUGH_MACHINE_BLOCK.get().block
+        )
 
     companion object {
         // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
@@ -165,12 +117,4 @@ class DoughMachineMenu(pContainerId: Int, inv: Inventory, entity: BlockEntity?, 
         // THIS YOU HAVE TO DEFINE!
         private const val TE_INVENTORY_SLOT_COUNT = 3 // must be the number of slots you have!
     }
-
-    class DoughMachineResultSlot(itemHandler: IItemHandler?, index: Int, xPosition: Int, yPosition: Int) :
-        SlotItemHandler(itemHandler, index, xPosition, yPosition) {
-        override fun mayPlace(stack: ItemStack): Boolean = false }
-
-    class DoughMachineBucketSlot(itemHandler: IItemHandler?, index: Int, xPosition: Int, yPosition: Int) :
-        SlotItemHandler(itemHandler, index, xPosition, yPosition) {
-        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) }
 }

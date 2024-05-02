@@ -25,23 +25,6 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
 
-        horizontalBlock(ModBlocks.BREAD_FURNACE_BLOCK.get().block) { state ->
-            val furnaceOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
-            val name = "breadmod:block/bread_furnace$furnaceOn"
-
-            val model = models().orientable(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_furnace_side" ),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_furnace_front$furnaceOn"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/bread_furnace_top$furnaceOn")
-            )
-
-            return@horizontalBlock model
-        }
-        simpleBlockItem(
-            ModBlocks.BREAD_FURNACE_BLOCK.get().block,
-            models().getBuilder("breadmod:block/bread_furnace")
-        )
         horizontalBlock(ModBlocks.DOUGH_MACHINE_BLOCK.get().block) { state ->
             val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
             val name = "breadmod:block/dough_machine$machineOn"

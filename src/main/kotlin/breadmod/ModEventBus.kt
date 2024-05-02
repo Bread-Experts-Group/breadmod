@@ -3,7 +3,7 @@ package breadmod
 import breadmod.BreadMod.LOGGER
 import breadmod.BreadMod.modLocation
 import breadmod.block.color.BlackbodyBlockColor
-import breadmod.block.entity.menu.BreadFurnaceScreen
+import breadmod.block.entity.menu.DoughMachineScreen
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.datagen.*
@@ -28,14 +28,10 @@ import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.Util
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.client.renderer.RenderStateShard.*
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.RenderType.create
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.item.ItemProperties
-import net.minecraft.client.renderer.texture.OverlayTexture
-import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
@@ -48,7 +44,6 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.earlydisplay.ElementShader
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import java.util.function.Function
 
@@ -105,7 +100,7 @@ object ModEventBus {
                 if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1.0f else 0.0f
             }
 
-            MenuScreens.register(ModMenuTypes.BREAD_FURNACE.get()) { pMenu, pInventory, pTitle -> BreadFurnaceScreen(pMenu,pInventory,pTitle) }
+            MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
         }
     }
 

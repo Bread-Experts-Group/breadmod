@@ -1,7 +1,7 @@
 package breadmod.block.entity.menu
 
 import breadmod.BreadMod
-import com.google.common.collect.Lists
+import breadmod.util.formatUnit
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -51,20 +51,18 @@ class DoughMachineScreen(
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
         renderBackground(pGuiGraphics)
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
-        super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
         // Power Tooltip
         if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            val list: List<Component> = Lists.newArrayList(
-                Component.literal(menu.getRawEnergyStored().toString() + " FE"))
-            pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)
+            val energy = menu.parent.data[2]; val maxEnergy = menu.parent.data[3]
+            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(energy, maxEnergy, "FE", true, 2))), pMouseX, pMouseY)
         }
         // Fluid Tooltip
         if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            val list: List<Component> = Lists.newArrayList(
-                Component.literal(menu.getRawFluidStored().toString() + " mB"))
-            pGuiGraphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY)
+            val fluid = menu.parent.data[4]; val maxFluid = menu.parent.data[5]
+            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(fluid, maxFluid, "B", true, 2, -1))), pMouseX, pMouseY)
         }
 
+        super.render(pGuiGraphics, pMouseX, pMouseY, delta)
     }
 }

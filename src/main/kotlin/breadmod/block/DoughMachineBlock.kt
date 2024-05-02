@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.*
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.DirectionProperty
+import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
@@ -29,7 +31,6 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()
     .mapColor(MapColor.COLOR_GRAY)
     .sound(SoundType.METAL))
 {
-
     init {
         this.registerDefaultState(
             stateDefinition.any()
@@ -54,15 +55,19 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()
         return DoughMachineBlockEntity(pPos, pState)
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onRemove(pState: BlockState, pLevel: Level, pPos: BlockPos, pNewState: BlockState, pMovedByPiston: Boolean) {
-        if(pState.block != pNewState.block) {
-            val blockEntity = pLevel.getBlockEntity(pPos)
-            if(blockEntity is DoughMachineBlockEntity) {
-                blockEntity.drops()
-            }
-        }
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
+    override fun onBlockExploded(state: BlockState?, level: Level?, pos: BlockPos?, explosion: Explosion?) {
+        super.onBlockExploded(state, level, pos, explosion)
+    }
+
+    override fun onDestroyedByPlayer(
+        state: BlockState?,
+        level: Level?,
+        pos: BlockPos?,
+        player: Player?,
+        willHarvest: Boolean,
+        fluid: FluidState?
+    ): Boolean {
+        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid)
     }
 
     @Deprecated("Deprecated in Java")
@@ -76,9 +81,7 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()
     ): InteractionResult {
         if(!pLevel.isClientSide) {
             val entity = pLevel.getBlockEntity(pPos)
-            if(entity is DoughMachineBlockEntity) {
-                NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
-            }
+            if(entity is DoughMachineBlockEntity) NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
         }
         return InteractionResult.sidedSuccess(pLevel.isClientSide())
     }

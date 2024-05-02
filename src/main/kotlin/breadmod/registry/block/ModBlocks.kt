@@ -2,7 +2,7 @@ package breadmod.registry.block
 
 import breadmod.BreadMod
 import breadmod.block.*
-import breadmod.item.util.BlockStateStack
+//import breadmod.item.util.BlockStateStack
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.RegisterSpecialCreativeTab
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
@@ -93,12 +93,6 @@ object ModBlocks {
         } }
     )
 
-    val BREAD_FURNACE_BLOCK = registerBlockItem(
-        "bread_furnace",
-        { BreadFurnaceBlock() },
-        Item.Properties()
-    )
-
     val DOUGH_MACHINE_BLOCK = registerBlockItem(
         "dough_machine",
         { DoughMachineBlock() },
@@ -141,8 +135,8 @@ object ModBlocks {
                 pParameters: CreativeModeTab.ItemDisplayParameters,
                 pOutput: CreativeModeTab.Output
             ) {
-                pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.STONE)))
-                pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.BREAD)))
+                //pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.STONE)))
+                //pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.BREAD)))
             }
         } }
     )
@@ -162,7 +156,6 @@ object ModBlocks {
             dropSelf(REINFORCED_BREAD_BLOCK.get().block)
             dropSelf(CHARCOAL_BLOCK.get().block)
             dropSelf(LOW_DENSITY_CHARCOAL_BLOCK.get().block)
-            dropSelf(BREAD_FURNACE_BLOCK.get().block)
             dropSelf(HAPPY_BLOCK.get().block)
             dropSelf(HEATING_ELEMENT_BLOCK.get().block)
             dropSelf(BAUXITE_ORE.get().block)

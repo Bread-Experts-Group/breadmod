@@ -41,7 +41,6 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.BREAD_SLICE.get())
         add(ModBlocks.REINFORCED_BREAD_BLOCK.get())
         add(ModBlocks.CHARCOAL_BLOCK.get())
-        add(ModBlocks.BREAD_FURNACE_BLOCK.get())
         add(ModBlocks.DOUGH_MACHINE_BLOCK.get())
         add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get(), "Low-Density Charcoal Block")
         add(ModBlocks.HAPPY_BLOCK.get())
