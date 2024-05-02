@@ -6,6 +6,7 @@ import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.menu.DoughMachineScreen
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
+import breadmod.compat.projecte.ModEMCProvider
 import breadmod.datagen.*
 import breadmod.datagen.dimension.ModDimensions
 import breadmod.datagen.dimension.worldgen.ModBiomes
@@ -63,6 +64,7 @@ object ModEventBus {
             LOGGER.info("Server datagen")
             generator.addProvider(true, ModLootTableProvider.create(packOutput))
             generator.addProvider(true, ModRecipeProvider(packOutput))
+            generator.addProvider(true, ModEMCProvider(packOutput, lookupProvider))
 
             val blockTagGenerator = generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
             generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
