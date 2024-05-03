@@ -5,18 +5,18 @@ import com.mojang.blaze3d.vertex.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.core.Direction
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import org.joml.Matrix4f
 import java.awt.Color
-import kotlin.math.abs
 import kotlin.math.min
 
 val formatArray = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
-fun formatNumber(number: Double, offset: Int): Pair<Double, String> {
-    var num = number
-    var index = 3 + offset
+fun formatNumber(pN: Double, pUnitOffset: Int): Pair<Double, String> {
+    var num = pN
+    var index = 3 + pUnitOffset
     while (num >= 1000 && index < formatArray.size - 1) {
         num /= 1000
         index++
@@ -28,23 +28,23 @@ fun formatNumber(number: Double, offset: Int): Pair<Double, String> {
     return num to formatArray[index]
 }
 
-fun formatUnit(from: Double, to: Double, unit: String, formatShort: Boolean, places: Int, offset: Int = 0): String {
-    val formatStr = "%.${places}f %s/ %.${places}f %s (%.${places}f%%)"
-    val percent = (from / to) * 100
-    if (formatShort) {
-        val toFormat = formatNumber(to, offset)
-        val fromFormat = formatNumber(from, offset)
+fun formatUnit(pFrom: Double, pTo: Double, pUnit: String, pFormatShort: Boolean, pDecimals: Int, pUnitOffset: Int = 0): String {
+    val formatStr = "%.${pDecimals}f %s/ %.${pDecimals}f %s (%.${pDecimals}f%%)"
+    val percent = (pFrom / pTo) * 100
+    if (pFormatShort) {
+        val toFormat = formatNumber(pTo, pUnitOffset)
+        val fromFormat = formatNumber(pFrom, pUnitOffset)
         return String.format(
             formatStr,
-            fromFormat.first, if(toFormat.second != fromFormat.second) "${fromFormat.second}$unit " else "",
-            toFormat.first, toFormat.second + unit,
+            fromFormat.first, if(toFormat.second != fromFormat.second) "${fromFormat.second}$pUnit " else "",
+            toFormat.first, toFormat.second + pUnit,
             percent
         )
     } else {
         return String.format(
             formatStr,
-            from, "",
-            to, unit,
+            pFrom, "",
+            pTo, pUnit,
             percent
         )
     }
@@ -52,12 +52,14 @@ fun formatUnit(from: Double, to: Double, unit: String, formatShort: Boolean, pla
 fun formatUnit(from: Int, to: Int, unit: String, formatShort: Boolean, places: Int, offset: Int = 0): String =
     formatUnit(from.toDouble(), to.toDouble(), unit, formatShort, places, offset)
 
-fun GuiGraphics.renderFluid(pX: Float, pY: Float, pWidth: Int, pHeight: Int, fluid: Fluid, flowing: Boolean) {
+fun GuiGraphics.renderFluid(
+    pX: Float, pY: Float, pWidth: Int, pHeight: Int,
+    pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH
+) {
     val minecraft = Minecraft.getInstance()
-    val nWidth = abs(pWidth)
 
-    val ext = IClientFluidTypeExtensions.of(fluid)
-    val texture = if(flowing) ext.flowingTexture else ext.stillTexture
+    val ext = IClientFluidTypeExtensions.of(pFluid)
+    val texture = if(pFlowing) ext.flowingTexture else ext.stillTexture
     val sprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(texture)
     val colors = FloatArray(4).also { Color(ext.tintColor).getComponents(it) }
 
@@ -70,14 +72,14 @@ fun GuiGraphics.renderFluid(pX: Float, pY: Float, pWidth: Int, pHeight: Int, flu
     val bufferBuilder = Tesselator.getInstance().builder
     bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX)
 
-    val pX2 = pX + nWidth
+    val pX2 = pX + pWidth
 
     var v1: Float = sprite.v1; var u1: Float = sprite.u1
     var remainingFluid = pHeight; var ranDiff = false
     while(remainingFluid > 0) {
-        val lpY = (pY - remainingFluid); val lpY2 = lpY + min(remainingFluid, nWidth)
+        val lpY = (pY - remainingFluid); val lpY2 = lpY + min(remainingFluid, pWidth)
 
-        if(flowing && !ranDiff) {
+        if(pFlowing && !ranDiff) {
             val stillSprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ext.stillTexture)
             val diff = (stillSprite.contents().width().toFloat() / spriteData.width())
             v1 = sprite.v0 + ((v1 - sprite.v0) * diff)
@@ -85,18 +87,17 @@ fun GuiGraphics.renderFluid(pX: Float, pY: Float, pWidth: Int, pHeight: Int, flu
 
             ranDiff = true
         }
-        if(remainingFluid < nWidth) v1 = sprite.v0 + (((v1 - sprite.v0) / nWidth) * remainingFluid)
+        if(remainingFluid < pWidth) v1 = sprite.v0 + (((v1 - sprite.v0) / pWidth) * remainingFluid)
 
+        // Draw fluid "upright;" fluid flows down from the top of the screen
         fun VertexConsumer.color() = this.color(colors[0], colors[1], colors[2], colors[3])
-        val flipped = pWidth < 0
-        val fX1 = if(flipped) pX else pX2; val fX2 = if(flipped) pX2 else pX
-        val fY1 = if(flipped) lpY else lpY2; val fY2 = if(flipped) lpY2 else lpY
-        bufferBuilder.vertex(matrix4f, fX2, fY2, 0F).color().uv(sprite.u0, sprite.v0).endVertex()
-        bufferBuilder.vertex(matrix4f, fX2, fY1, 0F).color().uv(sprite.u0, v1).endVertex()
-        bufferBuilder.vertex(matrix4f, fX1, fY1, 0F).color().uv(u1, v1).endVertex()
-        bufferBuilder.vertex(matrix4f, fX1, fY2, 0F).color().uv(u1, sprite.v0).endVertex()
+        matrix4f.rotateY(pDirection.toYRot())
+        bufferBuilder.vertex(matrix4f, pX, lpY, 0F).color().uv(sprite.u0, sprite.v0).endVertex()
+        bufferBuilder.vertex(matrix4f, pX, lpY2, 0F).color().uv(sprite.u0, v1).endVertex()
+        bufferBuilder.vertex(matrix4f, pX2, lpY2, 0F).color().uv(u1, v1).endVertex()
+        bufferBuilder.vertex(matrix4f, pX2, lpY, 0F).color().uv(u1, sprite.v0).endVertex()
 
-        remainingFluid -= nWidth
+        remainingFluid -= pWidth
     }
 
     BufferUploader.drawWithShader(bufferBuilder.end())

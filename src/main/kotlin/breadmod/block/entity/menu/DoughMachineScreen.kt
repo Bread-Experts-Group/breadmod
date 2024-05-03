@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -50,11 +51,13 @@ class DoughMachineScreen(
             val fluidDelta = menu.parent.data[6]
             val percentage = (fluid.toFloat() / maxFluid) * 47
             pGuiGraphics.renderFluid(
-                leftPos + 153F,
-                (topPos + 75F),
-                if(fluidDelta == 1) -16 else 16,
-                percentage.toInt(),
-                Fluids.WATER, fluidDelta != 0
+                pX         = leftPos + 153F,
+                pY         = (topPos + 75F),
+                pWidth     = 16,
+                pHeight    = percentage.toInt(),
+                pFluid     = Fluids.WATER,
+                pFlowing   = fluidDelta != 0,
+                pDirection = Direction.EAST
             )
         }
 
