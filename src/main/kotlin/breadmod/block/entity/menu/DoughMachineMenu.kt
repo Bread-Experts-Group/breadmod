@@ -30,7 +30,6 @@ class DoughMachineMenu(
 
     fun getScaledProgress(): Int = ((parent.data[0].toFloat() / DoughMachineBlockEntity.MAX_PROGRESS) * 24).toInt()
     fun getEnergyStoredScaled(): Int = ((parent.data[2].toFloat() / parent.data[3]) * 47).toInt()
-    fun getFluidStoredScaled(): Int = ((parent.data[4].toFloat() / parent.data[5]) * 47).toInt()
     fun isCrafting(): Boolean = parent.data[0] > 0
 
     class DoughMachineResultSlot(handler: IItemHandler) : SlotItemHandler(handler,1, 78, 35) {

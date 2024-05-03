@@ -37,7 +37,7 @@ class DoughMachineBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : BlockEntity(ModBlockEntities.DOUGH_MACHINE.get(), pPos, pBlockState), MenuProvider {
-    val data = SimpleContainerData(6)
+    val data = SimpleContainerData(7)
     init { data[1] = MAX_PROGRESS }
 
     val itemHandlerOptional: LazyOptional<ItemStackHandler> = LazyOptional.of {
@@ -45,8 +45,8 @@ class DoughMachineBlockEntity(
             override fun onContentsChanged(slot: Int) = setChanged()
         }
     }
-    val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
-        object : EnergyStorage(100000000, 2000) {
+    private val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
+        object : EnergyStorage(50000, 2000) {
             override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(maxReceive, simulate).also {
                 setChanged()
                 data[2] = energyStored
@@ -58,8 +58,10 @@ class DoughMachineBlockEntity(
             }
         }.also { data[3] = it.maxEnergyStored }
     }
-    val fluidHandlerOptional: LazyOptional<FluidTank> = LazyOptional.of {
-        object : FluidTank(5000) {
+
+    private var lastFluidCount = 0
+    private val fluidHandlerOptional: LazyOptional<FluidTank> = LazyOptional.of {
+        object : FluidTank(50000) {
             override fun onContentsChanged() {
                 setChanged()
                 data[4] = fluidAmount
@@ -107,9 +109,15 @@ class DoughMachineBlockEntity(
     override fun load(pTag: CompoundTag) {
         super.load(pTag)
         val dataTag = pTag.getCompound(BreadMod.ID)
-        energyHandlerOptional.ifPresent { it.deserializeNBT(dataTag.get("energy")) }
+        energyHandlerOptional.ifPresent {
+            it.deserializeNBT(dataTag.get("energy"))
+            data[2] = it.energyStored; data[3] = it.maxEnergyStored
+        }
+        fluidHandlerOptional.ifPresent {
+            it.readFromNBT(dataTag.getCompound("fluids"))
+            data[4] = it.fluidAmount; data[5] = it.capacity
+        }
         itemHandlerOptional.ifPresent { it.deserializeNBT(dataTag.getCompound("items")) }
-        fluidHandlerOptional.ifPresent { it.readFromNBT(dataTag.getCompound("fluids")) }
     }
 
     override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }
@@ -119,6 +127,9 @@ class DoughMachineBlockEntity(
         val energyHandle = pBlockEntity.energyHandlerOptional.resolve().getOrNull() ?: return
         val fluidHandle = pBlockEntity.fluidHandlerOptional.resolve().getOrNull() ?: return
         val itemHandle = pBlockEntity.itemHandlerOptional.resolve().getOrNull() ?: return
+
+        data[6] = fluidHandle.fluidAmount.compareTo(lastFluidCount)
+        lastFluidCount = fluidHandle.fluidAmount
 
         itemHandle.getStackInSlot(2).let {
             if(!it.isEmpty && (it.item as? BucketItem)?.fluid?.isSame(Fluids.WATER) == true && fluidHandle.space > 1000) {
