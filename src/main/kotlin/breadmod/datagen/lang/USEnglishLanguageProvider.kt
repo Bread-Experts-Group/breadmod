@@ -37,7 +37,6 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.RF_BREAD_AXE.get())
         add(ModItems.RF_BREAD_PICKAXE.get())
         add(ModItems.RF_BREAD_SWORD.get())
-        add(ModItems.BREAD_CRUMBS.get())
         add(ModItems.BREAD_SLICE.get())
         add(ModBlocks.REINFORCED_BREAD_BLOCK.get())
         add(ModBlocks.CHARCOAL_BLOCK.get())

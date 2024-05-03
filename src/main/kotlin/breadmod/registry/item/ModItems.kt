@@ -24,7 +24,6 @@ object ModItems {
 
     val BREAD_SHIELD: RegistryObject<BreadShieldItem> = deferredRegister.register("bread_shield") { BreadShieldItem() }
     val DOPED_BREAD: RegistryObject<DopedBreadItem> = deferredRegister.register("doped_bread") { DopedBreadItem() }
-    val BREAD_CRUMBS: RegistryObject<Item> = deferredRegister.register("bread_crumbs") { Item(Item.Properties()) }
     val BREAD_SLICE: RegistryObject<Item> = deferredRegister.register("bread_slice") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build())) }
     val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") {Item(Item.Properties())}

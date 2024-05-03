@@ -4,6 +4,7 @@
   - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches
   - [X] Each piece will keep your hunger from going below a certain point (+1 cumulative)
   - [X] Doped bread/armor set
+    - [ ] Reinforced bread armor, doesn't dissolve in water. stats comparable to diamond armor, high enchantability
   - [X] Bread Armor Trimming
     - [X] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while it's equipped
       - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect gets applied to fellow players
@@ -26,19 +27,23 @@
   - [X] A dimension composed of bread blocks
   - [X] Nonflammable
   - [ ] Items inside the dimension will vanish from the players inventory when they leave, and come back when they reenter
-- [ ] Bread Machine for turning wheat into dough
+- [ ] Bread (Dough) Machine for turning flour into dough
   - [ ] If the machine is broken during its operation, flour will be spread everywhere 
-  - [ ] Flour/Dough
+  - [X] Flour/Dough
     - [X] Snow-like layer block (Very flammable)
       - Figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
-    - [ ] Refinement processes
+    - [X] Refinement processes
     - [X] Textures
     - [ ] Create compat.
-  - [ ] Can be heated from the bottom
+    - [ ] Compat with fluid tank-like containers in the bucket slot
+  - [ ] Can be heated from the bottom (probably maybe going to scrap this one IDK)
     - [ ] Speed can be accelerated from external heat sources
 - Needs to be done still:
+  - [ ] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder\
+    - [ ] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
   - [ ] Textures for tools, weapons, items, blocks
     - would be funny if the bread sword was just a long piece of bread attached to a sword handle
+  - [ ] Fix mixins
   - [X] Recipe datagen
   - [X] Lang datagen
   - [X] Model datagen
@@ -52,15 +57,12 @@
     - [X] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisions
       - Can only be doped once!
   - [X] Crafted using a cutting board from farmer's delight
-  - [ ] Bread crumbs
-    - Crafted from splitting toast in a crafting table    
-    - Usable as parrot food (needs a mixin to work)
 ---
 - [ ] Joke item: "the ultimate bread" just gives you creative mode lmao
 - [ ] "Bread amulet" gives you 1 hunger point every 10 seconds
+  - Curios Compat.
 - [ ] "Godlike loaf" a monstrous combination of rare materials and a nether star to give you 10 full minutes of positive potion effects and a whole 10 absorption hearts
 - [ ] "Farmhouse structure" a random house with a farm attached to it with a random amount of bread or wheat in loot chests
-- [ ] "Reinforced bread armor" basically bread armor except it doesn't dissolve in water and is comparable to diamond armor, high enchantability
 - [X] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
 ---
 ## Advanced, Machines and stuff
@@ -71,7 +73,14 @@ Todo..
 ### Other mod compatibility
 - [ ] Farmers Delight
 - [ ] ProjectE
+  - [ ] Add EMC to items
+  - [ ] Potential Bread-like EMC holder
 - [ ] Create
 - [ ] Mekanism
 - [ ] PneumaticCraft
 - [ ] Add recipe integration
+- [ ] JEI Integration
+  - [ ] Recipe Categories
+  - [ ] Custom recipe support
+  - [ ] Item infos
+  - [ ] Recipe auto-fill support
