@@ -36,6 +36,7 @@
       - Figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
     - [X] Refinement processes
     - [X] Textures
+    - [ ] Data driven recipe and serializer
     - [ ] Create compat.
       - [ ] Mixing recipe for flour to dough (might already work with the item tags)
     - [ ] Compat with fluid tank-like containers in the bucket slot
@@ -80,6 +81,7 @@ Todo..
   - [ ] Add EMC to items
   - [ ] Potential Bread-like EMC holder
 - [ ] Create
+  - [ ] Create recipe generators for the other recipe types
 - [ ] Mekanism
   - [ ] Crushing recipes for the food-like items
 - [ ] PneumaticCraft

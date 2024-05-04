@@ -5,6 +5,11 @@ import breadmod.compat.create.recipe.CreateMixingRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
+import com.simibubi.create.content.kinetics.crusher.CrushingRecipe
+import mekanism.api.datagen.recipe.builder.ItemStackToItemStackRecipeBuilder
+import mekanism.api.datagen.recipe.builder.SawmillRecipeBuilder
+import mekanism.api.recipes.ingredients.ItemStackIngredient
+import mekanism.common.registries.MekanismItems
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
 import net.minecraft.world.item.ItemStack
@@ -270,6 +275,11 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
                 .requires(ItemStack(Items.BREAD, 1))
                 .requiresFluid(Fluids.WATER, 1)
                 .save(pWriter, modLocation("mixing/bread_mixing_test"))
+        }
+
+        // Mekanism
+        if(ModList.get().isLoaded("mekanism")) {
+//            ItemStackToItemStackRecipeBuilder.crushing(ModBlocks.BREAD_BLOCK.get().asItem(), MekanismItems.BIO_FUEL.get().defaultInstance)
         }
     }
 }
