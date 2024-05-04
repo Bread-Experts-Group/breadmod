@@ -2,23 +2,50 @@ package breadmod.item
 
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder
-import net.minecraft.world.item.Item
+import moze_intel.projecte.capability.EmcHolderItemCapabilityWrapper
+import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.item.ItemStack
+import kotlin.math.min
 
-class BreadEMCItem : Item(Properties()), IItemEmcHolder {
-    override fun insertEmc(p0: ItemStack, p1: Long, p2: IEmcStorage.EmcAction?): Long {
-        TODO("Not yet implemented")
+class BreadEMCItem : ItemPE(Properties()), IItemEmcHolder {
+
+    init {
+        this.addItemCapability { EmcHolderItemCapabilityWrapper() }
     }
 
-    override fun extractEmc(p0: ItemStack, p1: Long, p2: IEmcStorage.EmcAction?): Long {
-        TODO("Not yet implemented")
+    override fun insertEmc(pStack: ItemStack, pLong: Long, pEmcAction: IEmcStorage.EmcAction?): Long {
+        if (pLong < 0L) {
+            return this.extractEmc(pStack, -pLong, pEmcAction)
+        } else {
+            val toAdd = min(getNeededEmc(pStack).toDouble(), pLong.toDouble()).toLong()
+            if (pEmcAction != null) {
+                if (pEmcAction.execute()) {
+                    addEmcToStack(pStack, toAdd)
+                }
+            }
+
+            return toAdd
+        }
     }
 
-    override fun getStoredEmc(p0: ItemStack): Long {
-        TODO("Not yet implemented")
+    override fun extractEmc(pStack: ItemStack, pLong: Long, pEmcAction: IEmcStorage.EmcAction?): Long {
+        if (pLong < 0L) {
+            return this.insertEmc(pStack, -pLong, pEmcAction)
+        } else {
+            val storedEmc = this.getStoredEmc(pStack)
+            val toRemove = min(storedEmc.toDouble(), pLong.toDouble()).toLong()
+            if (pEmcAction != null) {
+                if (pEmcAction.execute()) {
+                    setEmc(pStack, storedEmc - toRemove)
+                }
+            }
+
+            return toRemove
+        }
     }
 
-    override fun getMaximumEmc(p0: ItemStack): Long {
-        TODO("Not yet implemented")
-    }
+    override fun getStoredEmc(pStack: ItemStack): Long = getEmc(pStack)
+
+    override fun getMaximumEmc(pStack: ItemStack): Long = 100000
+
 }

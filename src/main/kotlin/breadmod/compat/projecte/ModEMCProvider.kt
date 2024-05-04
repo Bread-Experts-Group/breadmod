@@ -13,5 +13,6 @@ class ModEMCProvider(packOutput: PackOutput, lookupProvider: CompletableFuture<H
         createConversionBuilder(BreadMod.modLocation("defaults"))
             .comment("Default EMC Values for Bread Mod")
             .before(ModItems.FLOUR.get(), 250)
+            .before(ModItems.BREAD_EMC_ITEM.get(), 5000)
     }
 }

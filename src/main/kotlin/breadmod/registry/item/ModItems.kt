@@ -1,6 +1,7 @@
 package breadmod.registry.item
 
 import breadmod.BreadMod
+import breadmod.item.BreadEMCItem
 import breadmod.registry.sound.ModSounds
 import breadmod.item.DopedBreadItem
 import breadmod.item.TestBreadItem
@@ -8,6 +9,7 @@ import breadmod.item.armor.BreadArmorItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
 import breadmod.util.setColor
+import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraftforge.registries.DeferredRegister
@@ -73,6 +75,9 @@ object ModItems {
         HoeItem(ToolTiers.BREAD, 1,-2.8f, Item.Properties()) }
     val BREAD_SWORD: RegistryObject<SwordItem> = deferredRegister.register("bread_sword") {
         SwordItem(ToolTiers.BREAD, 2,-2.5f, Item.Properties()) }
+
+    // ProjectE Stuff
+    val BREAD_EMC_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { BreadEMCItem() }
 
     // Reinforced Tools
     val RF_BREAD_PICKAXE: RegistryObject<PickaxeItem> = deferredRegister.register("reinforced_bread_pickaxe") {
