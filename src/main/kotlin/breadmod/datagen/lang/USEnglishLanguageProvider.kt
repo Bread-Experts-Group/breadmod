@@ -47,7 +47,6 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.DOUGH.get())
         add(ModItems.FLOUR.get())
         add(ModBlocks.FLOUR_BLOCK.get())
-        add(ModItems.BREAD_EMC_ITEM.get())
         add(ModBlocks.FLOUR_LAYER_BLOCK.get(), "Flour")
         add(ModBlocks.BAUXITE_ORE.get())
         add(ModBlocks.MONITOR.get())
@@ -100,5 +99,9 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         )
         // // Jade
         addJade(TOOLTIP_RENDERER)
+        // // ProjectE
+        ModItems.PROJECT_E?.also {
+            add(it.BREAD_EMC_ITEM.get(), "Bread Orb")
+        }
     }
 }

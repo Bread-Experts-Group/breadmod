@@ -15,8 +15,8 @@ object BreadMod {
     const val ID = "breadmod"
     val LOGGER: Logger = LogManager.getLogger(ID)
 
-    fun modLocation(path: String): ResourceLocation
-            = ResourceLocation(ID, path)
+    fun modLocation(vararg path: String): ResourceLocation
+            = ResourceLocation(ID, path.joinToString("/"))
     fun modTranslatable(type: String = "misc", vararg path: String): MutableComponent
             = Component.translatable("$type.$ID.${path.joinToString(".")}")
     fun LanguageProvider.modAdd(value: String, type: String = "misc", vararg path: String)

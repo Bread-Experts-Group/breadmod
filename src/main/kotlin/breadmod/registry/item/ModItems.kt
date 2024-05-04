@@ -12,6 +12,7 @@ import breadmod.util.setColor
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
+import net.minecraftforge.fml.ModList
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
@@ -76,9 +77,6 @@ object ModItems {
     val BREAD_SWORD: RegistryObject<SwordItem> = deferredRegister.register("bread_sword") {
         SwordItem(ToolTiers.BREAD, 2,-2.5f, Item.Properties()) }
 
-    // ProjectE Stuff
-    val BREAD_EMC_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { BreadEMCItem() }
-
     // Reinforced Tools
     val RF_BREAD_PICKAXE: RegistryObject<PickaxeItem> = deferredRegister.register("reinforced_bread_pickaxe") {
         PickaxeItem(ToolTiers.RF_BREAD, 2, -1f, Item.Properties()) }
@@ -91,11 +89,17 @@ object ModItems {
     val RF_BREAD_SWORD: RegistryObject<SwordItem> = deferredRegister.register("reinforced_bread_sword") {
         SwordItem(ToolTiers.RF_BREAD, 2,-2.5f, Item.Properties()) }
 
-
     val TEST_DISC: RegistryObject<RecordItem> = deferredRegister.register("music_disc_test") {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()
             .stacksTo(1)
             .rarity(Rarity.RARE),
             7900)
+    }
+
+    val PROJECT_E: ProjectEItems? = if(ModList.get().isLoaded("projecte")) ProjectEItems() else null
+
+    @Suppress("PropertyName")
+    class ProjectEItems {
+        val BREAD_EMC_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { BreadEMCItem() }
     }
 }

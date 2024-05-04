@@ -9,6 +9,7 @@ import com.simibubi.create.content.kinetics.crusher.CrushingRecipe
 import mekanism.api.datagen.recipe.builder.ItemStackToItemStackRecipeBuilder
 import mekanism.api.datagen.recipe.builder.SawmillRecipeBuilder
 import mekanism.api.recipes.ingredients.ItemStackIngredient
+import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess
 import mekanism.common.registries.MekanismItems
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
@@ -24,12 +25,12 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ModBlocks.BREAD_BLOCK.get())
             .unlockedBy("has_item", has(Items.BREAD))
             .requires(Items.BREAD, 9)
-            .save(pWriter, modLocation("building_blocks/bread_block"))
+            .save(pWriter, modLocation("building_blocks", "bread_block"))
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, Items.BREAD, 9)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .requires(ModBlocks.BREAD_BLOCK.get(), 1)
-            .save(pWriter, modLocation("building_blocks/bread_block_to_bread"))
+            .save(pWriter, modLocation("building_blocks", "bread_block_to_bread"))
 
         // Built-in function from RecipeProvider, needs .unlockedBy and .save to work properly
 //        buttonBuilder(Items.BIRCH_BUTTON, Ingredient.of(ModItems.FLOUR.get()))
@@ -44,14 +45,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("BIB")
             .pattern("BBB")
             .pattern(" B ")
-            .save(pWriter, modLocation("combat/bread_shield"))
+            .save(pWriter, modLocation("combat", "bread_shield"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get())
             .unlockedBy("has_item", has(Items.CHARCOAL))
             .define('C', Items.CHARCOAL)
             .pattern("CC")
             .pattern("CC")
-            .save(pWriter, modLocation("building_blocks/charcoal_low_compaction"))
+            .save(pWriter, modLocation("building_blocks", "charcoal_low_compaction"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHARCOAL_BLOCK.get(), 4)
             .unlockedBy("has_item", has(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get()))
@@ -59,7 +60,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("CCC")
             .pattern("CCC")
             .pattern("CCC")
-            .save(pWriter, modLocation("building_blocks/ld_charcoal_compaction_9"))
+            .save(pWriter, modLocation("building_blocks", "ld_charcoal_compaction_9"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHARCOAL_BLOCK.get())
             .unlockedBy("has_item", has(Items.CHARCOAL))
@@ -67,23 +68,23 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("CCC")
             .pattern("CCC")
             .pattern("CCC")
-            .save(pWriter, modLocation("building_blocks/charcoal_compaction"))
+            .save(pWriter, modLocation("building_blocks", "charcoal_compaction"))
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHARCOAL_BLOCK.get())
             .unlockedBy("has_item", has(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get()))
             .requires(Items.CHARCOAL, 1)
             .requires(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get(), 2)
-            .save(pWriter, modLocation("building_blocks/ld_charcoal_compaction"))
+            .save(pWriter, modLocation("building_blocks", "ld_charcoal_compaction"))
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.CHARCOAL, 4)
             .unlockedBy("has_item", has(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get()))
             .requires(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get(), 1)
-            .save(pWriter, modLocation("building_blocks/ld_charcoal_decompaction"))
+            .save(pWriter, modLocation("building_blocks", "ld_charcoal_decompaction"))
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, Items.CHARCOAL, 9)
             .unlockedBy("has_item", has(ModBlocks.CHARCOAL_BLOCK.get()))
             .requires(ModBlocks.CHARCOAL_BLOCK.get(), 1)
-            .save(pWriter, modLocation("building_blocks/charcoal_decompaction"))
+            .save(pWriter, modLocation("building_blocks", "charcoal_decompaction"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.HEATING_ELEMENT_BLOCK.get())
             .unlockedBy("has_item", has(Items.COPPER_INGOT)) // TODO: Aluminum
@@ -100,17 +101,17 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("FF ")
             .pattern("FF ")
             .pattern("   ")
-            .save((pWriter), modLocation("food/flour_block_from_flour"))
+            .save((pWriter), modLocation("food", "flour_block_from_flour"))
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FLOUR.get(), 4)
             .unlockedBy("has_item", has(ModItems.FLOUR.get()))
             .requires(ModBlocks.FLOUR_BLOCK.get(), 1)
-            .save((pWriter), modLocation("food/flour_from_flour_block"))
+            .save((pWriter), modLocation("food", "flour_from_flour_block"))
 
         ShapelessRecipeBuilder.shapeless(RecipeCategory.FOOD, ModItems.FLOUR.get(), 1)
             .unlockedBy("has_item", has(Items.WHEAT)) // TODO: Mortar and Pestle for crushing wheat into flour
             .requires(Items.WHEAT, 1)
-            .save((pWriter), modLocation("food/flour_from_wheat"))
+            .save((pWriter), modLocation("food", "flour_from_wheat"))
 
         SimpleCookingRecipeBuilder.smoking(
             Ingredient.of(ModItems.DOUGH.get()),
@@ -119,7 +120,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             0f,
             100
         ).unlockedBy("has_item", has(ModItems.DOUGH.get()))
-            .save(pWriter, modLocation("food/bread_from_smoking"))
+            .save(pWriter, modLocation("food", "bread_from_smoking"))
 
         SimpleCookingRecipeBuilder.campfireCooking(
             Ingredient.of(ModItems.DOUGH.get()),
@@ -128,7 +129,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             0f,
             600
         ).unlockedBy("has_item", has(ModItems.DOUGH.get()))
-            .save(pWriter, modLocation("food/bread_from_campfire_cooking"))
+            .save(pWriter, modLocation("food", "bread_from_campfire_cooking"))
 
         SimpleCookingRecipeBuilder.smelting(
             Ingredient.of(ModItems.DOUGH.get()),
@@ -137,7 +138,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             0f,
             200
         ).unlockedBy("has_item", has(ModItems.DOUGH.get()))
-            .save(pWriter, modLocation("food/bread_from_smelting"))
+            .save(pWriter, modLocation("food", "bread_from_smelting"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModItems.DOUGH.get(), 8)
             .unlockedBy("has_item", has(Items.WHEAT))
@@ -146,7 +147,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("FFF")
             .pattern("FBF")
             .pattern("FFF")
-            .save(pWriter, modLocation("food/dough"))
+            .save(pWriter, modLocation("food", "dough"))
 
         SmithingTransformRecipeBuilder.smithing(
             Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
@@ -156,7 +157,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             ModBlocks.REINFORCED_BREAD_BLOCK.get()
         )
             .unlocks("has_item", has(ModBlocks.BREAD_BLOCK.get()))
-            .save(pWriter, modLocation("smithing/reinforced_bread_block_smithing"))
+            .save(pWriter, modLocation("smithing", "reinforced_bread_block_smithing"))
 
         SmithingTransformRecipeBuilder.smithing(
             Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
@@ -166,7 +167,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             ModItems.RF_BREAD_SWORD.get()
         )
             .unlocks("has_item", has(ModItems.BREAD_SWORD.get()))
-            .save(pWriter, modLocation("smithing/reinforced_bread_sword_smithing"))
+            .save(pWriter, modLocation("smithing", "reinforced_bread_sword_smithing"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_SWORD.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
@@ -175,7 +176,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" B ")
             .pattern(" B ")
             .pattern(" S ")
-            .save(pWriter, modLocation("combat/bread_sword"))
+            .save(pWriter, modLocation("combat", "bread_sword"))
 
         SmithingTransformRecipeBuilder.smithing(
             Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
@@ -185,7 +186,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             ModItems.RF_BREAD_SHOVEL.get()
         )
             .unlocks("has_item", has(ModItems.BREAD_SHOVEL.get()))
-            .save(pWriter, modLocation("smithing/reinforced_bread_shovel_smithing"))
+            .save(pWriter, modLocation("smithing", "reinforced_bread_shovel_smithing"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_SHOVEL.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
@@ -194,7 +195,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" B ")
             .pattern(" S ")
             .pattern(" S ")
-            .save(pWriter, modLocation("tools/bread_shovel"))
+            .save(pWriter, modLocation("tools", "bread_shovel"))
 
         SmithingTransformRecipeBuilder.smithing(
             Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
@@ -204,7 +205,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             ModItems.RF_BREAD_AXE.get()
         )
             .unlocks("has_item", has(ModItems.BREAD_AXE.get()))
-            .save(pWriter, modLocation("smithing/reinforced_bread_axe_smithing"))
+            .save(pWriter, modLocation("smithing", "reinforced_bread_axe_smithing"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_AXE.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
@@ -213,7 +214,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("BB ")
             .pattern("BS ")
             .pattern(" S ")
-            .save(pWriter, modLocation("tools/bread_axe"))
+            .save(pWriter, modLocation("tools", "bread_axe"))
 
         SmithingTransformRecipeBuilder.smithing(
             Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
@@ -223,7 +224,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             ModItems.RF_BREAD_PICKAXE.get()
         )
             .unlocks("has_item", has(ModItems.BREAD_PICKAXE.get()))
-            .save(pWriter, modLocation("smithing/reinforced_bread_pickaxe_smithing"))
+            .save(pWriter, modLocation("smithing", "reinforced_bread_pickaxe_smithing"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_PICKAXE.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
@@ -232,7 +233,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("BBB")
             .pattern(" S ")
             .pattern(" S ")
-            .save(pWriter, modLocation("tools/bread_pickaxe"))
+            .save(pWriter, modLocation("tools", "bread_pickaxe"))
 
         SmithingTransformRecipeBuilder.smithing(
             Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
@@ -242,7 +243,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             ModItems.RF_BREAD_HOE.get()
         )
             .unlocks("has_item", has(ModItems.BREAD_PICKAXE.get()))
-            .save(pWriter, modLocation("smithing/reinforced_bread_hoe_smithing"))
+            .save(pWriter, modLocation("smithing", "reinforced_bread_hoe_smithing"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_HOE.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
@@ -251,7 +252,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("BB ")
             .pattern(" S ")
             .pattern(" S ")
-            .save(pWriter, modLocation("tools/bread_hoe"))
+            .save(pWriter, modLocation("tools", "bread_hoe"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.FLOUR_LAYER_BLOCK.get(), 6)
             .unlockedBy("has_item", has(ModBlocks.FLOUR_BLOCK.get()))
@@ -259,14 +260,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("   ")
             .pattern("FFF")
             .pattern("   ")
-            .save(pWriter, modLocation("building_blocks/flour_layer_block"))
+            .save(pWriter, modLocation("building_blocks", "flour_layer_block"))
 
         SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION.get())
-            .save(pWriter, modLocation("special/bread_potion_crafting").toString())
+            .save(pWriter, modLocation("special", "bread_potion_crafting").toString())
         SpecialRecipeBuilder.special(ModRecipeSerializers.BREAD_SLICE.get())
-            .save(pWriter, modLocation("special/bread_slice_crafting").toString())
+            .save(pWriter, modLocation("special", "bread_slice_crafting").toString())
         SpecialRecipeBuilder.special(ModRecipeSerializers.DOPED_BREAD.get())
-            .save(pWriter, modLocation("special/doped_bread_crafting").toString())
+            .save(pWriter, modLocation("special", "doped_bread_crafting").toString())
 
         // // Compat
         // Create
@@ -274,12 +275,15 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             CreateMixingRecipeBuilder(ModBlocks.BREAD_BLOCK.get(), 2)
                 .requires(ItemStack(Items.BREAD, 1))
                 .requiresFluid(Fluids.WATER, 1)
-                .save(pWriter, modLocation("mixing/bread_mixing_test"))
+                .save(pWriter, modLocation("mixing", "bread_mixing_test"))
         }
 
         // Mekanism
         if(ModList.get().isLoaded("mekanism")) {
-//            ItemStackToItemStackRecipeBuilder.crushing(ModBlocks.BREAD_BLOCK.get().asItem(), MekanismItems.BIO_FUEL.get().defaultInstance)
+            ItemStackToItemStackRecipeBuilder.crushing(
+                IngredientCreatorAccess.item().from(ModBlocks.BREAD_BLOCK.get()),
+                ItemStack(MekanismItems.BIO_FUEL.get(), 63)
+            )
         }
     }
 }

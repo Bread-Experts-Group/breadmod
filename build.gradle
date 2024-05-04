@@ -118,7 +118,10 @@ repositories {
         url = "https://maven.blamejared.com/"
     }
     maven {
-        // location of a maven mirror for JEI files, as a fallback
+        name = 'tterrag maven'
+        url = 'https://maven.tterrag.com/'
+    }
+    maven {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
@@ -140,12 +143,15 @@ dependencies {
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+    implementation("mekanism:Mekanism:${minecraft_version}-${mekanism_version}")
+    //implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    //implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+    //implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
 
     runtimeOnly(fg.deobf("curse.maven:pipez-${pipez_project_id}:${pipez_file_id}"))
-    implementation(fg.deobf("curse.maven:mekanism-${mekanism_project_id}:${mekanism_file_id}"))
     implementation(fg.deobf("curse.maven:jade-${jade_project_id}:${jade_file_id}"))
-    implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
     implementation(fg.deobf("curse.maven:create-${create_project_id}:${create_file_id}"))
+    implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
     implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
 }
 
