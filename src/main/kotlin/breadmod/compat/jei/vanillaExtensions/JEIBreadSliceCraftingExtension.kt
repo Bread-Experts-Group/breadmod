@@ -5,6 +5,7 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper
 import mezz.jei.api.recipe.IFocusGroup
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 
 class JEIBreadSliceCraftingExtension: ICraftingCategoryExtension {
@@ -36,6 +37,6 @@ class JEIBreadSliceCraftingExtension: ICraftingCategoryExtension {
         )
         craftingGridHelper.createAndSetOutputs(
             builder,
-            listOf(ModItems.BREAD_SLICE.get().defaultInstance)) //TODO needs to have 8 slices as the output
+            listOf(ItemStack(ModItems.BREAD_SLICE.get(), 8)))
     }
 }
