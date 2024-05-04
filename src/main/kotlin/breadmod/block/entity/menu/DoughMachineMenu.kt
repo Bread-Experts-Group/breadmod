@@ -12,8 +12,11 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraftforge.items.IItemHandler
-import net.minecraftforge.items.SlotItemHandler
+import net.minecraft.world.level.material.Fluids
+import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.fluids.FluidUtil
+import net.minecraftforge.fluids.capability.IFluidHandler
+import kotlin.jvm.optionals.getOrNull
 
 class DoughMachineMenu(
     pContainerId: Int,
@@ -32,18 +35,18 @@ class DoughMachineMenu(
     fun getEnergyStoredScaled(): Int = ((parent.data[2].toFloat() / parent.data[3]) * 47).toInt()
     fun isCrafting(): Boolean = parent.data[0] > 0
 
-    class DoughMachineResultSlot(handler: IItemHandler) : SlotItemHandler(handler,1, 78, 35) {
+    class DoughMachineResultSlot(parent: DoughMachineBlockEntity) : Slot(parent,1, 78, 35) {
         override fun mayPlace(stack: ItemStack): Boolean = false }
-    class DoughMachineBucketSlot(itemHandler: IItemHandler) : SlotItemHandler(itemHandler, 2, 153, 7) {
-        override fun mayPlace(stack: ItemStack): Boolean = stack.`is`(Items.WATER_BUCKET) }
+    class DoughMachineBucketSlot(parent: DoughMachineBlockEntity) : Slot(parent, 2, 153, 7) {
+        override fun mayPlace(stack: ItemStack): Boolean =
+            stack.`is`(Items.WATER_BUCKET) || FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { it?.drain(FluidStack(Fluids.WATER, 1), IFluidHandler.FluidAction.SIMULATE)?.amount == 1 }
+    }
 
     init {
         addDataSlots(parent.data)
-        parent.itemHandlerOptional.ifPresent { iItemHandler ->
-            addSlot(SlotItemHandler(iItemHandler, 0, 26, 34))
-            addSlot(DoughMachineResultSlot(iItemHandler))
-            addSlot(DoughMachineBucketSlot(iItemHandler))
-        }
+        addSlot(Slot(parent, 0, 26, 34))
+        addSlot(DoughMachineResultSlot(parent))
+        addSlot(DoughMachineBucketSlot(parent))
 
         repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, 142)) }
         repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, 84 + y * 18)) } }

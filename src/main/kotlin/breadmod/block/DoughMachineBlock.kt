@@ -5,26 +5,36 @@ import breadmod.registry.block.ModBlockEntities
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
+import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.LevelAccessor
-import net.minecraft.world.level.block.*
+import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.HorizontalDirectionalBlock
+import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.block.state.properties.DirectionProperty
-import net.minecraft.world.level.material.FluidState
+import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.fluids.FluidUtil
+import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.network.NetworkHooks
+import kotlin.jvm.optionals.getOrNull
+import kotlin.math.min
 
 class DoughMachineBlock : BaseEntityBlock(Properties.of()
     .strength(1f)
@@ -39,35 +49,34 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()
         )
     }
 
-    override fun canHarvestBlock(state: BlockState?, level: BlockGetter?, pos: BlockPos?, player: Player?): Boolean {
-        return true
-    }
+    override fun canHarvestBlock(pState: BlockState, pLevel: BlockGetter, pPos: BlockPos, pPlayer: Player): Boolean = !pPlayer.isCreative
 
-    override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState {
-        return defaultBlockState().setValue(DoughMachineEnums.facing, pContext.horizontalDirection.opposite) as BlockState
-    }
+    override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
+        defaultBlockState()
+            .setValue(HorizontalDirectionalBlock.FACING, pContext.horizontalDirection.opposite)
 
     override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(DoughMachineEnums.facing, BlockStateProperties.LIT)
+        pBuilder.add(HorizontalDirectionalBlock.FACING, BlockStateProperties.LIT)
     }
 
-    override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity {
-        return DoughMachineBlockEntity(pPos, pState)
-    }
-
+    override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity = DoughMachineBlockEntity(pPos, pState)
     override fun onBlockExploded(state: BlockState?, level: Level?, pos: BlockPos?, explosion: Explosion?) {
         super.onBlockExploded(state, level, pos, explosion)
     }
 
-    override fun onDestroyedByPlayer(
-        state: BlockState?,
-        level: Level?,
-        pos: BlockPos?,
-        player: Player?,
-        willHarvest: Boolean,
-        fluid: FluidState?
-    ): Boolean {
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid)
+    @Deprecated("Deprecated in Java")
+    override fun onRemove(
+        pState: BlockState,
+        pLevel: Level,
+        pPos: BlockPos,
+        pNewState: BlockState,
+        pMovedByPiston: Boolean,
+    ) {
+        if(!pState.`is`(pNewState.block)) {
+            val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return
+            Containers.dropContents(pLevel, pPos, entity)
+            super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -77,35 +86,39 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()
         pPos: BlockPos,
         pPlayer: Player,
         pHand: InteractionHand,
-        pHit: BlockHitResult
+        pHit: BlockHitResult,
     ): InteractionResult {
         if(!pLevel.isClientSide) {
-            val entity = pLevel.getBlockEntity(pPos)
-            if(entity is DoughMachineBlockEntity) NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
+            val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return InteractionResult.FAIL
+            if(pHand == InteractionHand.MAIN_HAND) entity.fluidHandlerOptional.resolve().getOrNull().also {
+                if(it == null) return InteractionResult.FAIL
+
+                val stack = pPlayer.getItemInHand(pHand)
+                val filled = if(stack.`is`(Items.WATER_BUCKET) && it.space >= 1000) {
+                    if(!pPlayer.isCreative) pPlayer.setItemInHand(pHand, Items.BUCKET.defaultInstance)
+                    it.fill(FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE)
+                } else {
+                    FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { stackFluidHandle ->
+                        if(stackFluidHandle != null) it.fill(
+                            stackFluidHandle.drain(
+                                FluidStack(Fluids.WATER, min(1000, it.space)),
+                                if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
+                            ),
+                            IFluidHandler.FluidAction.EXECUTE
+                        ) else 0
+                    }
+                }
+                if(filled > 0) {
+                    pLevel.playSound(null, pPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f)
+                    return InteractionResult.CONSUME
+                }
+            }
+            NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
         }
         return InteractionResult.sidedSuccess(pLevel.isClientSide())
     }
 
-    override fun <T : BlockEntity?> getTicker(pLevel: Level, pState: BlockState, pBlockEntityType: BlockEntityType<T>): BlockEntityTicker<T>? {
-        if(pLevel.isClientSide()) {
-            return null
-        }
-
-        return createTickerHelper(pBlockEntityType, ModBlockEntities.DOUGH_MACHINE.get()
-        ) { pLevel1: Level, pPos: BlockPos, pState1: BlockState, pBlockEntity: DoughMachineBlockEntity ->
-            pBlockEntity.tick(pLevel1, pPos, pState1, pBlockEntity) }
-    }
-
-    override fun rotate(pState: BlockState, level: LevelAccessor, pos: BlockPos, pRotation: Rotation): BlockState {
-        return pState.setValue(BlockStateProperties.FACING, pState.getValue(DoughMachineEnums.facing))
-    }
-
-    @Deprecated("Deprecated in Java", ReplaceWith("RenderShape.MODEL", "net.minecraft.world.level.block.RenderShape"))
-    override fun getRenderShape(pState: BlockState): RenderShape {
-        return RenderShape.MODEL
-    }
-
-    object DoughMachineEnums {
-        val facing: DirectionProperty = HorizontalDirectionalBlock.FACING
-    }
+    override fun <T : BlockEntity?> getTicker(pLevel: Level, pState: BlockState, pBlockEntityType: BlockEntityType<T>): BlockEntityTicker<T>? =
+        if(pLevel.isClientSide()) null else createTickerHelper(pBlockEntityType, ModBlockEntities.DOUGH_MACHINE.get())
+            { lLevel, lPos, lState, lBlockEntity -> lBlockEntity.tick(lLevel, lPos, lState, lBlockEntity) }
 }
