@@ -10,7 +10,9 @@ import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import java.awt.Color
+import java.util.*
 import kotlin.math.min
 
 val formatArray = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
@@ -74,6 +76,7 @@ fun GuiGraphics.renderFluid(
 
     val pX2 = pX + pWidth
 
+
     var v1: Float = sprite.v1; var u1: Float = sprite.u1
     var remainingFluid = pHeight; var ranDiff = false
     while(remainingFluid > 0) {
@@ -89,13 +92,23 @@ fun GuiGraphics.renderFluid(
         }
         if(remainingFluid < pWidth) v1 = sprite.v0 + (((v1 - sprite.v0) / pWidth) * remainingFluid)
 
-        // Draw fluid "upright;" fluid flows down from the top of the screen
+        // N  // E  // S  // W
+        // AB // CA // DC // BD
+        // CD // DB // BA // AC
+        // (pX, lpY2), (pX2, lpY2)
+        // (pX, lpY ), (pX2, lpY )
+        val rotated = listOf(Vector2f(pX, lpY2), Vector2f(pX2, lpY2), Vector2f(pX, lpY), Vector2f(pX2, lpY)).also {
+            Collections.rotate(
+                it,
+                when(pDirection) { Direction.EAST -> 1; Direction.SOUTH -> 2; Direction.WEST -> 3; else -> 0 }
+            )
+        }
+
         fun VertexConsumer.color() = this.color(colors[0], colors[1], colors[2], colors[3])
-        matrix4f.rotateY(pDirection.toYRot())
-        bufferBuilder.vertex(matrix4f, pX, lpY, 0F).color().uv(sprite.u0, sprite.v0).endVertex()
-        bufferBuilder.vertex(matrix4f, pX, lpY2, 0F).color().uv(sprite.u0, v1).endVertex()
-        bufferBuilder.vertex(matrix4f, pX2, lpY2, 0F).color().uv(u1, v1).endVertex()
-        bufferBuilder.vertex(matrix4f, pX2, lpY, 0F).color().uv(u1, sprite.v0).endVertex()
+        rotated[0].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, sprite.v0).endVertex() }
+        rotated[1].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, v1).endVertex() }
+        rotated[2].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(u1, v1).endVertex() }
+        rotated[3].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(u1, sprite.v0).endVertex() }
 
         remainingFluid -= pWidth
     }
