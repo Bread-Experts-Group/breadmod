@@ -1,6 +1,6 @@
 package breadmod.block.entity.menu
 
-import breadmod.BreadMod
+import breadmod.BreadMod.modLocation
 import breadmod.util.formatUnit
 import breadmod.util.renderFluid
 import com.mojang.blaze3d.systems.RenderSystem
@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.level.material.Fluids
 
@@ -18,7 +17,7 @@ class DoughMachineScreen(
     pPlayerInventory: Inventory,
     pTitle: Component,
 ) : AbstractContainerScreen<DoughMachineMenu>(pMenu, pPlayerInventory, pTitle) {
-    val texture = ResourceLocation(BreadMod.ID, "textures/gui/container/dough_machine.png")
+    val texture = modLocation("textures/gui/container/dough_machine.png")
 
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
@@ -57,7 +56,7 @@ class DoughMachineScreen(
                 pHeight    = percentage.toInt(),
                 pFluid     = Fluids.WATER,
                 pFlowing   = fluidDelta != 0,
-                pDirection = Direction.EAST
+                pDirection = if(fluidDelta > 0) Direction.NORTH else Direction.SOUTH
             )
         }
 

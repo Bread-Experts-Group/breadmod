@@ -58,16 +58,16 @@ fun GuiGraphics.renderFluid(
     pX: Float, pY: Float, pWidth: Int, pHeight: Int,
     pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH
 ) {
-    val minecraft = Minecraft.getInstance()
-
+    val atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
     val ext = IClientFluidTypeExtensions.of(pFluid)
-    val texture = if(pFlowing) ext.flowingTexture else ext.stillTexture
-    val sprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(texture)
+    val spriteDiff = if(pFlowing) {
+        val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
+        atlas.apply(ext.flowingTexture).let { val flowingWidth = it.contents().width(); it to if(flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F }
+    } else atlas.apply(ext.stillTexture) to 1F
+
+    val sprite = spriteDiff.first
     val colors = FloatArray(4).also { Color(ext.tintColor).getComponents(it) }
-
-    val spriteData = sprite.contents()
     val matrix4f: Matrix4f = this.pose().last().pose()
-
     RenderSystem.setShaderTexture(0, sprite.atlasLocation())
     RenderSystem.setShader { GameRenderer.getPositionColorTexShader() }
     RenderSystem.enableBlend()
@@ -76,39 +76,32 @@ fun GuiGraphics.renderFluid(
 
     val pX2 = pX + pWidth
 
-
-    var v1: Float = sprite.v1; var u1: Float = sprite.u1
-    var remainingFluid = pHeight; var ranDiff = false
+    var remainingFluid = pHeight
     while(remainingFluid > 0) {
+        // TODO: Make pY the TOP LEFT, instead of BOTTOM LEFT
         val lpY = (pY - remainingFluid); val lpY2 = lpY + min(remainingFluid, pWidth)
-
-        if(pFlowing && !ranDiff) {
-            val stillSprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ext.stillTexture)
-            val diff = (stillSprite.contents().width().toFloat() / spriteData.width())
-            v1 = sprite.v0 + ((v1 - sprite.v0) * diff)
-            u1 = sprite.u0 + ((u1 - sprite.u0) * diff)
-
-            ranDiff = true
-        }
-        if(remainingFluid < pWidth) v1 = sprite.v0 + (((v1 - sprite.v0) / pWidth) * remainingFluid)
 
         // N  // E  // S  // W
         // AB // CA // DC // BD
         // CD // DB // BA // AC
         // (pX, lpY2), (pX2, lpY2)
         // (pX, lpY ), (pX2, lpY )
-        val rotated = listOf(Vector2f(pX, lpY2), Vector2f(pX2, lpY2), Vector2f(pX, lpY), Vector2f(pX2, lpY)).also {
+        val rotated = listOf(Vector2f(pX, lpY), Vector2f(pX, lpY2), Vector2f(pX2, lpY2), Vector2f(pX2, lpY)).also {
             Collections.rotate(
                 it,
                 when(pDirection) { Direction.EAST -> 1; Direction.SOUTH -> 2; Direction.WEST -> 3; else -> 0 }
             )
         }
 
+        val dv1 = (sprite.v1 - sprite.v0)
+        val v1 = if(remainingFluid < pWidth) (sprite.v0 + ((dv1 / pWidth) * remainingFluid)) else (sprite.v0 + (dv1 * spriteDiff.second))
+        val u1 = sprite.u0 + ((sprite.u1 - sprite.u0) * spriteDiff.second)
+
         fun VertexConsumer.color() = this.color(colors[0], colors[1], colors[2], colors[3])
-        rotated[0].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, sprite.v0).endVertex() }
-        rotated[1].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, v1).endVertex() }
-        rotated[2].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(u1, v1).endVertex() }
-        rotated[3].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(u1, sprite.v0).endVertex() }
+        rotated[0].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1,        v1).endVertex() }
+        rotated[1].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1, sprite.v0).endVertex() }
+        rotated[2].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, sprite.v0).endVertex() }
+        rotated[3].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0,        v1).endVertex() }
 
         remainingFluid -= pWidth
     }

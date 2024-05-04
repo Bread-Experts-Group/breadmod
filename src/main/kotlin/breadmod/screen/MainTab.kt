@@ -19,9 +19,7 @@ object MainTab {
             .withTabsBefore(CreativeModeTabs.COMBAT)
             .icon { BREAD_BLOCK.get().defaultInstance }
             .displayItems { _: ItemDisplayParameters?, output: CreativeModeTab.Output ->
-                for (items in ModItems.deferredRegister.entries) {
-                    output.accept(items.get())
-                }
+                for (items in ModItems.deferredRegister.entries) output.accept(items.get())
             }
             .title(modTranslatable("itemGroup", "main"))
             .build()

@@ -9,7 +9,6 @@ import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ArmorItem
-import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.alchemy.PotionUtils
@@ -18,11 +17,7 @@ import net.minecraft.world.phys.AABB
 import java.awt.Color
 import kotlin.random.Random
 
-open class BreadArmorItem(
-    material: ArmorMaterial,
-    type: Type,
-    properties: Properties,
-): ArmorItem(material, type, properties) {
+open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Properties()) {
     companion object {
         val BREAD_COLOR = Color(216, 196, 170)
     }

@@ -5,6 +5,7 @@ import breadmod.registry.recipe.ModRecipeSerializers
 import breadmod.util.applyColor
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.PotionItem
@@ -37,6 +38,11 @@ class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory):
         return hasItem && hasEffect
     }
 
+    fun applyPotionForItem(effects: List<MobEffectInstance>, stack: ItemStack): ItemStack = stack.copy().also { copied ->
+        copied.applyColor(Color(PotionUtils.getColor(effects)))
+        PotionUtils.setCustomEffects(copied, effects)
+    }
+
     override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
         var itemStack: ItemStack = ItemStack.EMPTY
         val potions = buildList {
@@ -48,12 +54,7 @@ class ArmorPotionRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory):
             }
         }
 
-        return if(!itemStack.isEmpty && potions.isNotEmpty())
-            itemStack.copy().also { stack ->
-                stack.applyColor(Color(PotionUtils.getColor(potions)))
-                PotionUtils.setCustomEffects(stack, potions)
-            }
-        else ItemStack.EMPTY
+        return if(!itemStack.isEmpty && potions.isNotEmpty()) applyPotionForItem(potions, itemStack) else ItemStack.EMPTY
     }
 
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = (pWidth * pHeight) >= 2

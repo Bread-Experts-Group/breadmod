@@ -3,8 +3,8 @@ package breadmod.util
 import net.minecraft.world.item.ItemStack
 import java.awt.Color
 
-private const val TAG_COLOR = "color"
-private const val TAG_DISPLAY = "display"
+private const val TAG_COLOR = "b_color" // Avoid "Dyed" tooltip
+private const val TAG_DISPLAY = "b_display"
 /* https://stackoverflow.com/a/54913292/7693129 */
 fun mixColors(vararg colors: Color): Color {
     val ratio = 1f / colors.size.toFloat()
