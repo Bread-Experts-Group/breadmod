@@ -1,7 +1,6 @@
 package breadmod.block
 
 import breadmod.block.entity.DoughMachineBlockEntity
-import breadmod.registry.block.ModBlockEntities
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer
@@ -16,8 +15,8 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -36,10 +35,10 @@ import net.minecraftforge.network.NetworkHooks
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
 
-class DoughMachineBlock : BaseEntityBlock(Properties.of()
+class DoughMachineBlock : Block(Properties.of()
     .strength(1f)
     .mapColor(MapColor.COLOR_GRAY)
-    .sound(SoundType.METAL))
+    .sound(SoundType.METAL)), EntityBlock
 {
     init {
         this.registerDefaultState(
@@ -119,6 +118,5 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()
     }
 
     override fun <T : BlockEntity?> getTicker(pLevel: Level, pState: BlockState, pBlockEntityType: BlockEntityType<T>): BlockEntityTicker<T>? =
-        if(pLevel.isClientSide()) null else createTickerHelper(pBlockEntityType, ModBlockEntities.DOUGH_MACHINE.get())
-            { lLevel, lPos, lState, lBlockEntity -> lBlockEntity.tick(lLevel, lPos, lState, lBlockEntity) }
+        if(pLevel.isClientSide()) null else BlockEntityTicker<T> { _, pPos, _, pBlockEntity -> (pBlockEntity as DoughMachineBlockEntity).tick(pLevel, pPos, pState, pBlockEntity) }
 }
