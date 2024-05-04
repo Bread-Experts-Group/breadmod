@@ -47,6 +47,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.DOUGH.get())
         add(ModItems.FLOUR.get())
         add(ModBlocks.FLOUR_BLOCK.get())
+        add(ModItems.BREAD_EMC_ITEM.get())
         add(ModBlocks.FLOUR_LAYER_BLOCK.get(), "Flour")
         add(ModBlocks.BAUXITE_ORE.get())
         add(ModBlocks.MONITOR.get())

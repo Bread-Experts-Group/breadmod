@@ -61,6 +61,9 @@
     - [ ] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisions
       - Can only be doped once!
   - [X] Crafted using a cutting board from farmer's delight
+- [ ] Recipe Fixes with other mods
+  - [ ] Dough compat with create mod dough
+  - [ ] Charcoal block compat with mekanism charcoal block
 ---
 - [ ] Joke item: "the ultimate bread" just gives you creative mode lmao
 - [ ] "Bread amulet" gives you 1 hunger point every 10 seconds
@@ -80,6 +83,7 @@ Todo..
 - [ ] ProjectE
   - [ ] Add EMC to items
   - [ ] Potential Bread-like EMC holder
+    - [ ] Make texture for item
 - [ ] Create
   - [ ] Create recipe generators for the other recipe types
 - [ ] Mekanism
