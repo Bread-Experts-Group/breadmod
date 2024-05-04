@@ -2,7 +2,9 @@ package breadmod.compat.jei
 
 import breadmod.BreadMod
 import breadmod.compat.jei.vanillaExtensions.JEIArmorPotionCraftingExtension
+import breadmod.compat.jei.vanillaExtensions.JEIBreadSliceCraftingExtension
 import breadmod.recipe.ArmorPotionRecipe
+import breadmod.recipe.BreadSliceRecipe
 import breadmod.registry.block.ModBlocks
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
@@ -11,12 +13,13 @@ import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-@JeiPlugin
+@JeiPlugin @Suppress("unused")
 class JEIPlugin : IModPlugin {
     override fun getPluginUid(): ResourceLocation = ResourceLocation(BreadMod.ID, "jei_plugin")
 
     override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
         registration.craftingCategory.addCategoryExtension(ArmorPotionRecipe::class.java) { JEIArmorPotionCraftingExtension(it) }
+        registration.craftingCategory.addCategoryExtension(BreadSliceRecipe::class.java) { JEIBreadSliceCraftingExtension()}
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
