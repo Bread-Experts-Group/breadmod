@@ -1,8 +1,11 @@
 package breadmod.compat.jei
 
+import breadmod.BreadMod
+import breadmod.recipe.ArmorPotionRecipe
 import breadmod.registry.block.ModBlocks
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
+import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.registration.IRecipeCategoryRegistration
 import mezz.jei.api.registration.IRecipeRegistration
 import net.minecraft.network.chat.Component
@@ -12,22 +15,24 @@ import net.minecraft.resources.ResourceLocation
 @JeiPlugin
 class JEIPlugin : IModPlugin {
     //    override fun getPluginUid(): ResourceLocation = modLocation("jei_plugin") // debug
-
-    private val potionCategory: BreadModCategory? = null
+    private val armorPotionRecipeType: RecipeType<ArmorPotionRecipe> = RecipeType.create(BreadMod.ID, "bread_potion_crafting", ArmorPotionRecipe::class.java)
 
     override fun getPluginUid(): ResourceLocation {
-        return ResourceLocation("breadmod", "jei_plugin")
+        return ResourceLocation(BreadMod.ID, "jei_plugin")
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
         registration.addItemStackInfo(ModBlocks.BREAD_BLOCK.get().defaultInstance, Component.literal("FUCK"))
+//        registration.addRecipes(armorPotionRecipeType, ) // @VanillaPlugin.class
     }
 
     override fun registerCategories(registration: IRecipeCategoryRegistration) {
-//        val jeiHelpers = registration.jeiHelpers
-//        val guiHelper = jeiHelpers.guiHelper
-        registration.addRecipeCategories(potionCategory)
-        super.registerCategories(registration)
+        val jeiHelpers = registration.jeiHelpers
+        val guiHelper = jeiHelpers.guiHelper
+        BreadMod.LOGGER.info("REGISTERING BREAD MOD RECIPE CATEGORY")
+        registration.addRecipeCategories(
+            BreadModCategory(guiHelper)
+        )
     }
 
     /*
