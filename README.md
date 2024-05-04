@@ -5,9 +5,10 @@
   - [X] Each piece will keep your hunger from going below a certain point (+1 cumulative)
   - [X] Doped bread/armor set
     - [ ] Reinforced bread armor, doesn't dissolve in water. stats comparable to diamond armor, high enchantability
-  - [X] Bread Armor Trimming
+  - [ ] Bread Armor Doping
     - [X] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while it's equipped
       - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect gets applied to fellow players
+      - [ ] Make doped armor effects only target players and non-hostile entities
 - [ ] Bread Tools
   - Slightly weaker than stone in durability and strength but has approx 1.5x more speed
   - [X] Pickaxe
@@ -23,6 +24,7 @@
   - [X] Mixin for turning burning blocks into another block
   - [X] Edible
   - [X] Custom charcoal block as a result of bread block being burned
+- [ ] Heating Element
 - [ ] Bread Dimension
   - [X] A dimension composed of bread blocks
   - [X] Nonflammable
@@ -35,15 +37,16 @@
     - [X] Refinement processes
     - [X] Textures
     - [ ] Create compat.
+      - [ ] Mixing recipe for flour to dough (might already work with the item tags)
     - [ ] Compat with fluid tank-like containers in the bucket slot
-  - [ ] Can be heated from the bottom (probably maybe going to scrap this one IDK)
+  - [ ] Can be heated from the bottom (PneumaticCraft Compat)
     - [ ] Speed can be accelerated from external heat sources
 - Needs to be done still:
   - [ ] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder\
     - [ ] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
   - [ ] Textures for tools, weapons, items, blocks
     - would be funny if the bread sword was just a long piece of bread attached to a sword handle
-  - [ ] Fix mixins
+  - [ ] Fix mixins not loading on built mod file
   - [X] Recipe datagen
   - [X] Lang datagen
   - [X] Model datagen
@@ -53,8 +56,8 @@
   - [X] Crafted from using a sword on bread in a crafting table (the sword uses durability)
     - [X] FIX RECIPE TO NOT CONSUME THE SWORD, ONLY TAKE DURABILITY (IMPORTANT)
   - [X] You get 8 bread slices per bread in the recipe
-  - [X] Doping
-    - [X] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisions
+  - [ ] Doping
+    - [ ] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisions
       - Can only be doped once!
   - [X] Crafted using a cutting board from farmer's delight
 ---
@@ -71,14 +74,15 @@ Todo..
 - [ ] Lighting mod (colored lighting)
 - [ ] "Intrusive" mods (such as, being able to heat up a furnace like w/ the bread machine)
 ### Other mod compatibility
+- [ ] Add recipe integrations with other mods where possible
 - [ ] Farmers Delight
 - [ ] ProjectE
   - [ ] Add EMC to items
   - [ ] Potential Bread-like EMC holder
 - [ ] Create
 - [ ] Mekanism
+  - [ ] Crushing recipes for the food-like items
 - [ ] PneumaticCraft
-- [ ] Add recipe integration
 - [ ] JEI Integration
   - [ ] Recipe Categories
   - [ ] Custom recipe support
