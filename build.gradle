@@ -150,7 +150,6 @@ dependencies {
 
     runtimeOnly(fg.deobf("curse.maven:pipez-${pipez_project_id}:${pipez_file_id}"))
     implementation(fg.deobf("curse.maven:jade-${jade_project_id}:${jade_file_id}"))
-//    implementation(fg.deobf("curse.maven:create-${create_project_id}:${create_file_id}"))
     implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
     implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
 }

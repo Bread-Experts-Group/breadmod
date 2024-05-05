@@ -6,7 +6,7 @@ import java.io.RandomAccessFile
 import java.nio.ByteOrder
 
 class OrderableRandomAccessFile(file: File, mode: String): RandomAccessFile(file, mode) {
-    var order = ByteOrder.BIG_ENDIAN
+    var order: ByteOrder = ByteOrder.BIG_ENDIAN
     fun readShortOrdered(): Short =
         if(order == ByteOrder.BIG_ENDIAN) readShort()
         else {

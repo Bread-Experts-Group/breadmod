@@ -2,10 +2,11 @@ package breadmod.network
 
 import breadmod.BreadMod.modLocation
 import net.minecraftforge.network.NetworkRegistry
+import net.minecraftforge.network.simple.SimpleChannel
 
 object PacketHandler {
     private const val PROTOCOL_VERSION = "1"
-    val INSTANCE = NetworkRegistry.newSimpleChannel(
+    val INSTANCE: SimpleChannel = NetworkRegistry.newSimpleChannel(
         modLocation("main"),
         { PROTOCOL_VERSION },
         PROTOCOL_VERSION::equals,

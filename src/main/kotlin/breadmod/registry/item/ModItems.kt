@@ -5,6 +5,7 @@ import breadmod.item.BreadEMCItem
 import breadmod.registry.sound.ModSounds
 import breadmod.item.DopedBreadItem
 import breadmod.item.TestBreadItem
+import breadmod.item.UltimateBreadItem
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
@@ -23,6 +24,15 @@ object ModItems {
     fun getLocation(item: Item) = ForgeRegistries.ITEMS.getKey(item)
 
     val TEST_BREAD: RegistryObject<TestBreadItem> = deferredRegister.register("test_bread") { TestBreadItem() }
+    val ULTIMATE_BREAD: RegistryObject<UltimateBreadItem> = deferredRegister.register("ultimate_bread") {
+        object : UltimateBreadItem(), RegisterSpecialCreativeTab {
+            override fun displayInCreativeTab(
+                pParameters: CreativeModeTab.ItemDisplayParameters,
+                pOutput: CreativeModeTab.Output,
+            ) = pOutput.accept(this.defaultInstance.also { this.setTimeLeft(it, 20F * 20) })
+
+        }
+    }
 
     val BREAD_SHIELD: RegistryObject<BreadShieldItem> = deferredRegister.register("bread_shield") { BreadShieldItem() }
     val DOPED_BREAD: RegistryObject<DopedBreadItem> = deferredRegister.register("doped_bread") { DopedBreadItem() }

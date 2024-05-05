@@ -26,6 +26,6 @@ class OreBlock(property: Properties = Properties.copy(Blocks.STONE)): Block(prop
 
             override fun getSerializedName(): String = this.name.lowercase()
         }
-        val ORE_TYPE = object : EnumProperty<OreTypes>("ore_type", OreTypes::class.java, OreTypes.values().toSet()) {}
+        val ORE_TYPE = object : EnumProperty<OreTypes>("ore_type", OreTypes::class.java, OreTypes.entries.toSet()) {}
     }
 }
