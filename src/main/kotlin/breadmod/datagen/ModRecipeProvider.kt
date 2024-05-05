@@ -2,13 +2,11 @@ package breadmod.datagen
 
 import breadmod.BreadMod.modLocation
 import breadmod.compat.create.recipe.CreateMixingRecipeBuilder
+import breadmod.datagen.recipe.FluidEnergyRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
-import com.simibubi.create.content.kinetics.crusher.CrushingRecipe
 import mekanism.api.datagen.recipe.builder.ItemStackToItemStackRecipeBuilder
-import mekanism.api.datagen.recipe.builder.SawmillRecipeBuilder
-import mekanism.api.recipes.ingredients.ItemStackIngredient
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess
 import mekanism.common.registries.MekanismItems
 import net.minecraft.data.PackOutput
@@ -17,6 +15,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.material.Fluids
+import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 
@@ -263,11 +262,19 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .save(pWriter, modLocation("building_blocks", "flour_layer_block"))
 
         SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION.get())
-            .save(pWriter, modLocation("special", "bread_potion_crafting").toString())
+            .save(pWriter, modLocation("special", "crafting", "armor_potion_doping").toString())
         SpecialRecipeBuilder.special(ModRecipeSerializers.BREAD_SLICE.get())
-            .save(pWriter, modLocation("special", "bread_slice_crafting").toString())
+            .save(pWriter, modLocation("special", "crafting", "bread_slicing").toString())
         SpecialRecipeBuilder.special(ModRecipeSerializers.DOPED_BREAD.get())
-            .save(pWriter, modLocation("special", "doped_bread_crafting").toString())
+            .save(pWriter, modLocation("special", "crafting", "bread_potion_doping").toString())
+
+        FluidEnergyRecipeBuilder(listOf(ModItems.DOUGH.get().defaultInstance))
+            .setSerializer(ModRecipeSerializers.FLOUR_TO_DOUGH.get())
+            .setTimeTicks(20 * 5)
+            .setEnergy(500)
+            .addItem(ModItems.FLOUR.get().defaultInstance)
+            .addFluid(FluidStack(Fluids.WATER, 250))
+            .save(pWriter, modLocation("special", "machine", "flour_to_dough"))
 
         // // Compat
         // Create

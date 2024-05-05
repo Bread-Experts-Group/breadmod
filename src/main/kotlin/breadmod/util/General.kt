@@ -6,7 +6,9 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.inventory.InventoryMenu
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import org.joml.Matrix4f
@@ -109,3 +111,10 @@ fun GuiGraphics.renderFluid(
     BufferUploader.drawWithShader(bufferBuilder.end())
     RenderSystem.disableBlend()
 }
+
+fun Collection<ItemStack>.serialize(tag: CompoundTag): CompoundTag {
+    this.forEachIndexed { index, stack -> tag.put(index.toString(), stack.serializeNBT()) }
+    return tag
+}
+fun Collection<ItemStack>.serialize() = this.serialize(CompoundTag())
+fun MutableList<ItemStack>.deserialize(tag: CompoundTag) = tag.allKeys.forEach { this[it.toInt()] = ItemStack.of(tag.getCompound(it)) }

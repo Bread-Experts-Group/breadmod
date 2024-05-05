@@ -6,6 +6,7 @@ import breadmod.util.renderFluid
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.player.KeyboardInput
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
@@ -17,7 +18,7 @@ class DoughMachineScreen(
     pPlayerInventory: Inventory,
     pTitle: Component,
 ) : AbstractContainerScreen<DoughMachineMenu>(pMenu, pPlayerInventory, pTitle) {
-    val texture = modLocation("textures/gui/container/dough_machine.png")
+    val texture = modLocation("textures", "gui", "container", "dough_machine.png")
 
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
@@ -62,14 +63,16 @@ class DoughMachineScreen(
 
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
 
+
+        val showShort = !KeyboardInput(minecraft!!.options).shiftKeyDown
         // Power Tooltip
         if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
             val energy = menu.parent.data[2]; val maxEnergy = menu.parent.data[3]
-            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(energy, maxEnergy, "FE", true, 2))), pMouseX, pMouseY)
+            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(energy, maxEnergy, "FE", showShort, 2))), pMouseX, pMouseY)
         }
         // Fluid Tooltip
         if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(fluid, maxFluid, "B", true, 2, -1))), pMouseX, pMouseY)
+            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(fluid, maxFluid, "B", showShort, 2, -1))), pMouseX, pMouseY)
         }
     }
 }

@@ -93,14 +93,15 @@ class DoughMachineBlock : Block(Properties.of()
                 if(it == null) return InteractionResult.FAIL
 
                 val stack = pPlayer.getItemInHand(pHand)
-                val filled = if(stack.`is`(Items.WATER_BUCKET) && it.space >= 1000) {
+
+                val filled = if(stack.`is`(Items.WATER_BUCKET) && it.capacity(Fluids.WATER) >= 1000) {
                     if(!pPlayer.isCreative) pPlayer.setItemInHand(pHand, Items.BUCKET.defaultInstance)
                     it.fill(FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE)
                 } else {
                     FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { stackFluidHandle ->
                         if(stackFluidHandle != null) it.fill(
                             stackFluidHandle.drain(
-                                FluidStack(Fluids.WATER, min(1000, it.space)),
+                                FluidStack(Fluids.WATER, min(1000, it.space(Fluids.WATER))),
                                 if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
                             ),
                             IFluidHandler.FluidAction.EXECUTE

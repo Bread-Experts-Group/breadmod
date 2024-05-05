@@ -63,6 +63,6 @@ class PrimedHappyBlockRenderer(pContext: EntityRendererProvider.Context) : Entit
     }
 
     companion object {
-        private val texture = modLocation("textures/block/happy_block.png")
+        private val texture = modLocation("textures", "block", "happy_block.png")
     }
 }

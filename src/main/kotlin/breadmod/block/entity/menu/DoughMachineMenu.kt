@@ -31,7 +31,7 @@ class DoughMachineMenu(
         inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.DOUGH_MACHINE.get()).get()
     )
 
-    fun getScaledProgress(): Int = ((parent.data[0].toFloat() / DoughMachineBlockEntity.MAX_PROGRESS) * 24).toInt()
+    fun getScaledProgress(): Int = ((parent.data[0].toFloat() / parent.data[1]) * 24).toInt()
     fun getEnergyStoredScaled(): Int = ((parent.data[2].toFloat() / parent.data[3]) * 47).toInt()
     fun isCrafting(): Boolean = parent.data[0] > 0
 
