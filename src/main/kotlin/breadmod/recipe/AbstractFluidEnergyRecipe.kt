@@ -4,12 +4,15 @@ import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.PoweredFluidCraftingContainer
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import net.minecraft.world.inventory.CraftingContainer
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
 
 abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pId, CraftingBookCategory.MISC) {
@@ -36,25 +39,7 @@ abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pI
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    final override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean = true
-    /**
-     * Overload of original assemble function to facilitate returning multiple fluids and items
-     * @return Items and fluids crafted as a result of this recipe, wrapped in a [Pair] of [List]s
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
-     fun assemble(pContainer: PoweredFluidCraftingContainer): Pair<List<ItemStack>, List<FluidStack>> = itemsOutput to fluidsOutput
-
-    /**
-     * @return If the container is able to craft this recipe
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
-    fun matches(pContainer: PoweredFluidCraftingContainer, pLevel: Level): Boolean =
-        fluidsRequired.all { pContainer.fluidContainer.contains(it, false) != null  }
-        && itemsRequired.all { pContainer.itemContainer.items.any { containerItem -> containerItem.`is`(it.item) && containerItem.count >= it.count } }
-        && pContainer.energy >= energy
-
+    final override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean = TODO(" MATCHES")
     /**
      * @return Default time this recipe takes to complete
      * @author Miko Elbrecht
@@ -74,21 +59,21 @@ abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pI
      */
     abstract val fluidsRequired: List<FluidStack>
     /**
+     * @return Tagged fluids required to complete this recipe
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    abstract val fluidsRequiredTagged: List<Pair<TagKey<Fluid>, Int>>
+    /**
      * @return Items required to complete this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
     abstract val itemsRequired: List<ItemStack>
     /**
-     * @return Fluids created as a result of this recipe
+     * @return Tagged items required to complete this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    abstract val fluidsOutput: List<FluidStack>
-    /**
-     * @return Items created as a result of this recipe
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
-    abstract val itemsOutput: List<ItemStack>
+    abstract val itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>
 }

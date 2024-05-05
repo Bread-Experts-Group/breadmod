@@ -1,12 +1,17 @@
 package breadmod.recipe.serializers
 
 import breadmod.recipe.AbstractFluidEnergyRecipe
+import breadmod.util.*
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.IForgeRegistry
@@ -15,84 +20,73 @@ import net.minecraftforge.registries.IForgeRegistry
 class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
     val factory: (
         cId: ResourceLocation, cTime: Int, cEnergy: Int,
-        cFluidsRequired: List<FluidStack>, cItemsRequired: List<ItemStack>,
-        cFluidsOutput: List<FluidStack>, cItemsOutput: List<ItemStack>
+        cFluidsRequired: List<FluidStack>, cFluidTagsRequired: List<Pair<TagKey<Fluid>, Int>>,
+        cItemsRequired: List<ItemStack>, cItemTagsRequired: List<Pair<TagKey<Item>, Int>>
     ) -> T
 ) : RecipeSerializer<T> {
     companion object {
-        const val ENTRY_ID_KEY = "id"
-        const val ENTRY_AMOUNT_KEY = "amount"
         const val ENERGY_KEY = "energy"
         const val TIME_KEY = "time"
         const val FLUIDS_KEY = "fluids"
         const val ITEMS_KEY = "items"
-    }
-    private fun <T> IForgeRegistry<T>.reifyEntryID(p0: JsonObject) = this.getValue(ResourceLocation(p0.get(ENTRY_ID_KEY).asString))!!
 
-    private fun JsonArray.extractFluidList() = this.map { entryObject ->
-        val entry = entryObject.asJsonObject
-        FluidStack(ForgeRegistries.FLUIDS.reifyEntryID(entry), entry.get(ENTRY_AMOUNT_KEY).asInt)
-    }
-    private fun List<FluidStack>.jsonifyFluidList() = JsonArray().also {
-        this.forEach { stack -> it.add(JsonObject().also { obj ->
-            obj.addProperty(ENTRY_ID_KEY, ForgeRegistries.FLUIDS.getKey(stack.fluid).toString())
-            obj.addProperty(ENTRY_AMOUNT_KEY, stack.amount)
-        }) }
-    }
-    private fun JsonArray.extractItemList() = this.map { entryObject ->
-        val entry = entryObject.asJsonObject
-        ItemStack(ForgeRegistries.ITEMS.reifyEntryID(entry), entry.get(ENTRY_AMOUNT_KEY).asInt)
-    }
-    private fun List<ItemStack>.jsonifyItemList() = JsonArray().also {
-        this.forEach { stack -> it.add(JsonObject().also { obj ->
-            obj.addProperty(ENTRY_ID_KEY, ForgeRegistries.ITEMS.getKey(stack.item).toString())
-            obj.addProperty(ENTRY_AMOUNT_KEY, stack.count)
-        }) }
+        const val INPUT_KEY = "inputs"
+        const val CERTAIN_KEY = "certain"
+        const val TAGGED_KEY = "tags"
     }
 
     override fun fromJson(p0: ResourceLocation, p1: JsonObject): T {
-        val required =  p1.getAsJsonObject("inputs")
-        val outputs =  p1.getAsJsonObject("outputs")
+        val inputs = p1.getAsJsonObject(INPUT_KEY)
+        val requiredFluids = inputs.getAsJsonObject(FLUIDS_KEY)
+        val requiredItems = inputs.getAsJsonObject(ITEMS_KEY)
         return factory(
             ResourceLocation(p1.get(ENTRY_ID_KEY).asString),
             p1.get(TIME_KEY).asInt,
-            required.get(ENERGY_KEY).asInt,
-            required.getAsJsonArray(FLUIDS_KEY).extractFluidList(),
-            required.getAsJsonArray(ITEMS_KEY).extractItemList(),
-            outputs.getAsJsonArray(FLUIDS_KEY).extractFluidList(),
-            outputs.getAsJsonArray(ITEMS_KEY).extractItemList()
+            inputs.get(ENERGY_KEY).asInt,
+            requiredFluids.getAsJsonArray(CERTAIN_KEY).extractJsonFluidList(),
+            requiredFluids.getAsJsonArray(TAGGED_KEY).extractJsonTagList(ForgeRegistries.FLUIDS),
+            requiredItems.getAsJsonArray(CERTAIN_KEY).extractJsonItemList(),
+            requiredItems.getAsJsonArray(TAGGED_KEY).extractJsonTagList(ForgeRegistries.ITEMS)
         )
     }
 
-    fun toJson(to: JsonObject, location: ResourceLocation, time: Int, energy: Int, fluidList: List<FluidStack>, itemList: List<ItemStack>, fluidOutputs: List<FluidStack>, itemOutputs: List<ItemStack>) = to.also {
+    fun toJson(
+        to: JsonObject, location: ResourceLocation,
+        time: Int, energy: Int,
+        fluidList: List<FluidStack>, fluidTagList: List<Pair<TagKey<Fluid>, Int>>,
+        itemList: List<ItemStack>, itemTagList: List<Pair<TagKey<ItemLike>, Int>>,
+        fluidOutputs: List<FluidStack>, itemOutputs: List<ItemStack>
+    ) = to.also {
         it.addProperty(ENTRY_ID_KEY, location.toString())
         it.addProperty(TIME_KEY, time)
-        it.add("inputs", JsonObject().also { required ->
+        it.add(INPUT_KEY, JsonObject().also { required ->
             required.addProperty(ENERGY_KEY, energy)
-            required.add(FLUIDS_KEY, fluidList.jsonifyFluidList())
-            required.add(ITEMS_KEY, itemList.jsonifyItemList())
-        })
-        it.add("outputs", JsonObject().also { outputs ->
-            outputs.add(FLUIDS_KEY, fluidOutputs.jsonifyFluidList())
-            outputs.add(ITEMS_KEY, itemOutputs.jsonifyItemList())
+            required.add(FLUIDS_KEY, JsonObject().also { obj ->
+                obj.add(CERTAIN_KEY, fluidList.jsonifyFluidList())
+                obj.add(TAGGED_KEY, fluidTagList.jsonifyTagList())
+            })
+            required.add(ITEMS_KEY, JsonObject().also { obj ->
+                obj.add(CERTAIN_KEY, itemList.jsonifyItemList())
+                obj.add(TAGGED_KEY, itemTagList.jsonifyTagList())
+            })
         })
     }
 
-    fun FriendlyByteBuf.readFluidList(): List<FluidStack> = List(this.readInt()) { this.readFluidStack() }
-    fun FriendlyByteBuf.writeFluidList(fluidList: List<FluidStack>) { this.writeInt(fluidList.size); fluidList.forEach { this.writeFluidStack(it) } }
-    fun FriendlyByteBuf.readItemList(): List<ItemStack> = List(this.readInt()) { this.readItem() }
-    fun FriendlyByteBuf.writeItemList(itemList: List<ItemStack>) { this.writeInt(itemList.size); itemList.forEach { this.writeItem(it) } }
-
     override fun fromNetwork(p0: ResourceLocation, p1: FriendlyByteBuf): T =
-        factory(ResourceLocation(p1.readUtf()), p1.readInt(), p1.readInt(), p1.readFluidList(), p1.readItemList(), p1.readFluidList(), p1.readItemList())
+        factory(
+            ResourceLocation(p1.readUtf()),
+            p1.readInt(), p1.readInt(),
+            p1.readFluidList(), p1.readTagList(ForgeRegistries.FLUIDS),
+            p1.readItemList(), p1.readTagList(ForgeRegistries.ITEMS)
+        )
 
     override fun toNetwork(pBuffer: FriendlyByteBuf, pRecipe: T) {
         pBuffer.writeUtf(pRecipe.id.toString())
-        pBuffer.writeInt(pRecipe.energy)
         pBuffer.writeInt(pRecipe.time)
+        pBuffer.writeInt(pRecipe.energy)
         pBuffer.writeFluidList(pRecipe.fluidsRequired)
+        pBuffer.writeTagList(ForgeRegistries.FLUIDS, pRecipe.fluidsRequiredTagged)
         pBuffer.writeItemList(pRecipe.itemsRequired)
-        pBuffer.writeFluidList(pRecipe.fluidsOutput)
-        pBuffer.writeItemList(pRecipe.itemsOutput)
+        pBuffer.writeTagList(ForgeRegistries.ITEMS, pRecipe.itemsRequiredTagged)
     }
 }

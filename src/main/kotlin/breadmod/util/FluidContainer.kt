@@ -1,10 +1,12 @@
 package breadmod.util
 
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.tags.TagKey
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction
 import net.minecraftforge.fluids.capability.templates.FluidTank
 
 abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFluidHandler, INBTSerializable<CompoundTag> {
@@ -29,7 +31,7 @@ abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFlui
 
     override fun getTankCapacity(tank: Int): Int = tanks[tank].capacity
     override fun isFluidValid(tank: Int, stack: FluidStack): Boolean = tanks[tank].isFluidValid(stack)
-    override fun fill(resource: FluidStack?, action: IFluidHandler.FluidAction): Int {
+    override fun fill(resource: FluidStack?, action: FluidAction): Int {
         if(resource == null || resource.isEmpty) return 0
         var filledTotal = 0
         for(tank in tanks.filter { it.isFluidValid(resource) && (it.isEmpty || it.fluid.fluid.isSame(resource.fluid)) && it.space > 0 }) {
@@ -42,7 +44,7 @@ abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFlui
         return filledTotal
     }
 
-    override fun drain(resource: FluidStack?, action: IFluidHandler.FluidAction): FluidStack {
+    override fun drain(resource: FluidStack?, action: FluidAction): FluidStack {
         if(resource == null || resource.isEmpty) return FluidStack.EMPTY
         val drainedTotal = FluidStack(resource.fluid, 0)
         for(tank in tanks.filter { !it.isEmpty && it.fluid.fluid.isSame(resource.fluid) }) {
@@ -55,7 +57,25 @@ abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFlui
         return drainedTotal
     }
 
-    override fun drain(maxDrain: Int, action: IFluidHandler.FluidAction): FluidStack =
+    fun drain(resource: TagKey<Fluid>, amount: Int, action: FluidAction): FluidStack {
+        if(amount <= 0) return FluidStack.EMPTY
+        var drainedTotal: FluidStack = FluidStack.EMPTY; var remainingAmount = amount
+        for(tank in tanks.filter { !it.isEmpty && it.fluid.fluid.`is`(resource) }) {
+            if(drainedTotal.isEmpty) {
+                drainedTotal = tank.drain(FluidStack(tank.fluid.fluid, remainingAmount), action)
+                remainingAmount -= drainedTotal.amount
+            } else {
+                val drained = tank.drain(FluidStack(drainedTotal.fluid, remainingAmount), action).amount
+                drainedTotal.grow(drained)
+                remainingAmount -= drained
+            }
+            if(remainingAmount <= 0) break
+        }
+        if(action.execute() && drainedTotal.amount > 0) contentsChanged()
+        return drainedTotal
+    }
+
+    override fun drain(maxDrain: Int, action: FluidAction): FluidStack =
         drain(tanks.firstOrNull { !it.isEmpty }?.fluid?.let { FluidStack(it, maxDrain) }, action)
 
     override fun serializeNBT(): CompoundTag = CompoundTag().also {

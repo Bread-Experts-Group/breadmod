@@ -1,7 +1,7 @@
 package breadmod.datagen
 
 import breadmod.BreadMod.modLocation
-import breadmod.compat.create.recipe.CreateMixingRecipeBuilder
+import breadmod.datagen.recipe.compat.create.CreateMixingRecipeBuilder
 import breadmod.datagen.recipe.FluidEnergyRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
@@ -11,6 +11,7 @@ import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess
 import mekanism.common.registries.MekanismItems
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
+import net.minecraft.tags.FluidTags
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
@@ -270,18 +271,19 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
 
         FluidEnergyRecipeBuilder(listOf(ModItems.DOUGH.get().defaultInstance))
             .setSerializer(ModRecipeSerializers.FLOUR_TO_DOUGH.get())
-            .setTimeTicks(20 * 5)
-            .setEnergy(500)
-            .addItem(ModItems.FLOUR.get().defaultInstance)
-            .addFluid(FluidStack(Fluids.WATER, 250))
+            .setTimeRequired(20 * 5)
+            .setRFRequired(500)
+            .requiresItem(ModItems.FLOUR.get())
+            .requiresFluid(FluidTags.WATER, 250)
             .save(pWriter, modLocation("special", "machine", "flour_to_dough"))
 
         // // Compat
         // Create
         if(ModList.get().isLoaded("create")) {
-            CreateMixingRecipeBuilder(ModBlocks.BREAD_BLOCK.get(), 2)
-                .requires(ItemStack(Items.BREAD, 1))
-                .requiresFluid(Fluids.WATER, 1)
+            CreateMixingRecipeBuilder(ItemStack(ModBlocks.BREAD_BLOCK.get(), 2))
+                .heatRequirement(CreateMixingRecipeBuilder.HeatRequirement.HEATED)
+                .requiresItem(Items.BREAD, 1)
+                .requiresFluid(FluidTags.WATER, 1000)
                 .save(pWriter, modLocation("mixing", "bread_mixing_test"))
         }
 

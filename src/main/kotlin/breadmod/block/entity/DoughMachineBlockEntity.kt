@@ -154,36 +154,17 @@ class DoughMachineBlockEntity(
 
         if(currentRecipe != null) {
             if(data[0] < data[1]) {
-                println("${data[0]} / ${data[1]}")
                 data[0]++
                 pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
                 if(energyHandle.extractEnergy(energyDivision, false) != energyDivision) data[0]--
             } else {
-                println("assemble")
-                val assembled = currentRecipe!!.assemble(PoweredFluidCraftingContainer(energyHandle.energyStored, this, fluidHandle))
-                val canFitFluid = assembled.second.all { fluidHandle.fill(it.copy(), IFluidHandler.FluidAction.SIMULATE) == it.amount }
-                if(canFitFluid && storedItems[1].let {
-                    val firstAssembled = assembled.first[0] // BAD IMPL, TODO!
-                    if(it.isEmpty) { storedItems[1] = firstAssembled; true }
-                    else if(it.`is`(firstAssembled.item) && it.count < (it.maxStackSize - firstAssembled.count)) { storedItems[1].grow(firstAssembled.count); true }
-                    else false
-                }) {
-                    println("Done.")
-                    assembled.second.forEach { fluidHandle.fill(it.copy(), IFluidHandler.FluidAction.EXECUTE) }
-                    currentRecipe = null
-                }
+                println("data d stopped.")
             }
         } else {
             pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
             data[0] = 0
             recipeDial.getRecipeFor(pBlockEntity, pLevel).ifPresent { recipe ->
-                if(recipe.matches(PoweredFluidCraftingContainer(energyHandle.energyStored, this, fluidHandle), pLevel)) {
-                    currentRecipe = recipe
-                    recipe.itemsRequired.forEach { storedItems.find { item -> it.count == item.count && item.`is`(it.item) }?.count = 0 }
-                    recipe.fluidsRequired.forEach { fluidHandle.drain(it, IFluidHandler.FluidAction.EXECUTE) }
-                    data[1] = recipe.time
-                    energyDivision = (recipe.energy.toFloat() / recipe.time).roundToInt()
-                }
+
             }
         }
     }
