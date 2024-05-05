@@ -8,7 +8,7 @@ import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.item.ItemStack
 import kotlin.math.min
 
-class BreadEMCItem : ItemPE(Properties()), IItemEmcHolder, IBarHelper {
+class BreadEMCItem : ItemPE(Properties().stacksTo(1)), IItemEmcHolder, IBarHelper {
     private val emcAmount = 5000
     init {
         this.addItemCapability { EmcHolderItemCapabilityWrapper() }

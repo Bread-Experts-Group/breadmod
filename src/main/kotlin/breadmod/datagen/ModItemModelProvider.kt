@@ -29,6 +29,9 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.TEST_DISC)
         singleItem(ModItems.DOUGH)
         singleItem(ModItems.FLOUR)
+        ModItems.PROJECT_E?.also {
+            singleItem(it.BREAD_EMC_ITEM)
+        }
         multiTexture("breadmod:bread_boots", mcLoc("item/generated"), "layer0", modLoc("item/bread_boots"), "layer1", modLoc("item/bread_boots_overlay"))
         multiTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("item/bread_leggings"), "layer1", modLoc("item/bread_leggings_overlay"))
         multiTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("item/bread_chestplate"), "layer1", modLoc("item/bread_chestplate_overlay"))

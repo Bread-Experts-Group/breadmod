@@ -4,6 +4,7 @@ import breadmod.BreadMod
 import breadmod.recipe.ArmorPotionRecipe
 import breadmod.recipe.BreadSliceRecipe
 import breadmod.recipe.DopedBreadRecipe
+import breadmod.recipe.DoughMachineRecipe
 import net.minecraft.world.item.crafting.*
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -19,6 +20,10 @@ object ModRecipeSerializers {
         SimpleCraftingRecipeSerializer { pId, pCategory -> DopedBreadRecipe(pId, pCategory) } }
     val BREAD_SLICE: RegistryObject<SimpleCraftingRecipeSerializer<BreadSliceRecipe>> = deferredRegister.register("bread_slice_crafting") {
         SimpleCraftingRecipeSerializer { pId, pCategory -> BreadSliceRecipe(pId, pCategory) } }
+
+    val DOUGH_MACHINE_RECIPE: RegistryObject<DoughMachineRecipeSerializer<DoughMachineRecipe>> = deferredRegister.register("dough_machine_recipe") {
+        DoughMachineRecipeSerializer {pId, pCategory, pIngredient, pResult -> DoughMachineRecipe(pId, pCategory, pIngredient, pResult)}
+    }
 
     /*val BREAD_REFINEMENT = REGISTRY.register("bread_refinement") {
         SimpleCookingSerializer({
