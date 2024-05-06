@@ -45,10 +45,10 @@ class FluidEnergyRecipeBuilder(
             override fun serializeRecipeData(pJson: JsonObject) {
                 type.toJson(
                     pJson, pRecipeId,
-                    timeInTicks, powerInRF,
-                    fluidsRequired, fluidsRequiredTagged,
-                    itemsRequired, itemsRequiredTagged,
-                    fluidOutputs, itemOutputs
+                    timeInTicks, powerInRF.takeIf { it == 0 },
+                    fluidsRequired.takeIf { it.isNotEmpty() }, fluidsRequiredTagged.takeIf { it.isNotEmpty() },
+                    itemsRequired.takeIf { it.isNotEmpty() }, itemsRequiredTagged.takeIf { it.isNotEmpty() },
+                    fluidOutputs.takeIf { it.isNotEmpty() }, itemOutputs.takeIf { it.isNotEmpty() }
                 )
             }
 

@@ -55,28 +55,32 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
 
     fun toJson(
         to: JsonObject, location: ResourceLocation,
-        time: Int, energy: Int,
-        fluidList: List<FluidStack>, fluidTagList: List<Pair<TagKey<Fluid>, Int>>,
-        itemList: List<ItemStack>, itemTagList: List<Pair<TagKey<ItemLike>, Int>>,
+        time: Int, energy: Int?,
+        fluidList: List<FluidStack>?, fluidTagList: List<Pair<TagKey<Fluid>, Int>>?,
+        itemList: List<ItemStack>?, itemTagList: List<Pair<TagKey<ItemLike>, Int>>?,
         fluidOutputs: List<FluidStack>?, itemOutputs: List<ItemStack>?
     ) = to.also {
         it.addProperty(ENTRY_ID_KEY, location.toString())
         it.addProperty(TIME_KEY, time)
         it.add(INPUT_KEY, JsonObject().also { required ->
-            required.addProperty(ENERGY_KEY, energy)
-            required.add(FLUIDS_KEY, JsonObject().also { obj ->
-                obj.add(CERTAIN_KEY, fluidList.jsonifyFluidList())
-                obj.add(TAGGED_KEY, fluidTagList.jsonifyTagList())
-            })
-            required.add(ITEMS_KEY, JsonObject().also { obj ->
-                obj.add(CERTAIN_KEY, itemList.jsonifyItemList())
-                obj.add(TAGGED_KEY, itemTagList.jsonifyTagList())
-            })
+            if(energy != null) required.addProperty(ENERGY_KEY, energy)
+            JsonObject().also { obj ->
+                if(!fluidList.isNullOrEmpty()) obj.add(CERTAIN_KEY, fluidList.jsonifyFluidList())
+                if(!fluidTagList.isNullOrEmpty()) obj.add(TAGGED_KEY, fluidTagList.jsonifyTagList())
+                if(obj.size() > 0) required.add(FLUIDS_KEY, obj)
+            }
+            JsonObject().also { obj ->
+                if(!itemList.isNullOrEmpty()) obj.add(CERTAIN_KEY, itemList.jsonifyItemList())
+                if(!itemTagList.isNullOrEmpty()) obj.add(TAGGED_KEY, itemTagList.jsonifyTagList())
+                if(obj.size() > 0) required.add(ITEMS_KEY, obj)
+            }
+            if(required.size() == 0) throw IllegalArgumentException("Not enough inputs")
         })
-        it.add(OUTPUT_KEY, JsonObject().also { outputs ->
-            if(fluidOutputs != null) outputs.add(FLUIDS_KEY, fluidOutputs.jsonifyFluidList())
-            if(itemOutputs != null) outputs.add(ITEMS_KEY, itemOutputs.jsonifyItemList())
-        })
+        JsonObject().also { outputs ->
+            if (!fluidOutputs.isNullOrEmpty()) outputs.add(FLUIDS_KEY, fluidOutputs.jsonifyFluidList())
+            if (!itemOutputs.isNullOrEmpty()) outputs.add(ITEMS_KEY, itemOutputs.jsonifyItemList())
+            if (outputs.size() > 0) it.add(OUTPUT_KEY, outputs)
+        }
     }
 
     override fun fromNetwork(p0: ResourceLocation, p1: FriendlyByteBuf): T =
