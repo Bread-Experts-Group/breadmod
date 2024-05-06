@@ -23,9 +23,6 @@ import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 
 class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
-    // TODO refactor existing smithing recipes to use this function instead
-    // TODO create simplified 3x3 and 2x2 item to block recipes from the functions in RecipeProvider
-    // TODO crafting recipes for the bread armor
     private fun modNetheriteSmithing(
         pFinishedRecipeConsumer: Consumer<FinishedRecipe>,
         pRecipeLocation: ResourceLocation,
@@ -172,26 +169,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("FFF")
             .save(pWriter, modLocation("food", "dough"))
 
-        SmithingTransformRecipeBuilder.smithing(
-            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-            Ingredient.of(ModBlocks.BREAD_BLOCK.get()),
-            Ingredient.of(Items.NETHERITE_INGOT),
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_block_smithing"),
+            ModBlocks.BREAD_BLOCK.get(),
+            ModBlocks.REINFORCED_BREAD_BLOCK.get(),
             RecipeCategory.BUILDING_BLOCKS,
-            ModBlocks.REINFORCED_BREAD_BLOCK.get()
-        )
-            .unlocks("has_item", has(ModBlocks.BREAD_BLOCK.get()))
-            .save(pWriter, modLocation("smithing", "reinforced_bread_block_smithing"))
+            ModBlocks.BREAD_BLOCK.get())
 
-        SmithingTransformRecipeBuilder.smithing(
-            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-            Ingredient.of(ModItems.BREAD_SWORD.get()),
-            Ingredient.of(Items.NETHERITE_INGOT),
-            RecipeCategory.COMBAT,
-            ModItems.RF_BREAD_SWORD.get()
-        )
-            .unlocks("has_item", has(ModItems.BREAD_SWORD.get()))
-            .save(pWriter, modLocation("smithing", "reinforced_bread_sword_smithing"))
-
+        // Bread Sword
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_SWORD.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .define('B', ModBlocks.BREAD_BLOCK.get())
@@ -201,23 +186,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("combat", "bread_sword"))
 
-        SmithingTransformRecipeBuilder.smithing(
-            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-            Ingredient.of(ModItems.BREAD_SHOVEL.get()),
-            Ingredient.of(Items.NETHERITE_INGOT),
-            RecipeCategory.TOOLS,
-            ModItems.RF_BREAD_SHOVEL.get()
-        )
-            .unlocks("has_item", has(ModItems.BREAD_SHOVEL.get()))
-            .save(pWriter, modLocation("smithing", "reinforced_bread_shovel_smithing"))
-
         modNetheriteSmithing(pWriter,
-            modLocation("smithing", "reinforced_bread_helmet_smithing"),
-            ModItems.BREAD_HELMET.get(),
-            ModItems.RF_BREAD_HELMET.get(),
+            modLocation("smithing", "reinforced_bread_sword_smithing"),
+            ModItems.BREAD_SWORD.get(),
+            ModItems.RF_BREAD_SWORD.get(),
             RecipeCategory.COMBAT,
-            ModItems.BREAD_HELMET.get())
+            ModItems.BREAD_SWORD.get())
 
+        // Bread Shovel
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_SHOVEL.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .define('B', ModBlocks.BREAD_BLOCK.get())
@@ -227,16 +203,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_shovel"))
 
-        SmithingTransformRecipeBuilder.smithing(
-            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-            Ingredient.of(ModItems.BREAD_AXE.get()),
-            Ingredient.of(Items.NETHERITE_INGOT),
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_shovel_smithing"),
+            ModItems.BREAD_SHOVEL.get(),
+            ModItems.RF_BREAD_SHOVEL.get(),
             RecipeCategory.TOOLS,
-            ModItems.RF_BREAD_AXE.get()
-        )
-            .unlocks("has_item", has(ModItems.BREAD_AXE.get()))
-            .save(pWriter, modLocation("smithing", "reinforced_bread_axe_smithing"))
+            ModItems.BREAD_SHOVEL.get())
 
+        // Bread Axe
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_AXE.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .define('B', ModBlocks.BREAD_BLOCK.get())
@@ -246,16 +220,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_axe"))
 
-        SmithingTransformRecipeBuilder.smithing(
-            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-            Ingredient.of(ModItems.BREAD_PICKAXE.get()),
-            Ingredient.of(Items.NETHERITE_INGOT),
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_axe_smithing"),
+            ModItems.BREAD_AXE.get(),
+            ModItems.RF_BREAD_AXE.get(),
             RecipeCategory.TOOLS,
-            ModItems.RF_BREAD_PICKAXE.get()
-        )
-            .unlocks("has_item", has(ModItems.BREAD_PICKAXE.get()))
-            .save(pWriter, modLocation("smithing", "reinforced_bread_pickaxe_smithing"))
+            ModItems.BREAD_AXE.get())
 
+        // Bread Pickaxe
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_PICKAXE.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .define('B', ModBlocks.BREAD_BLOCK.get())
@@ -265,16 +237,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_pickaxe"))
 
-        SmithingTransformRecipeBuilder.smithing(
-            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
-            Ingredient.of(ModItems.BREAD_HOE.get()),
-            Ingredient.of(Items.NETHERITE_INGOT),
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_pickaxe_smithing"),
+            ModItems.BREAD_PICKAXE.get(),
+            ModItems.RF_BREAD_PICKAXE.get(),
             RecipeCategory.TOOLS,
-            ModItems.RF_BREAD_HOE.get()
-        )
-            .unlocks("has_item", has(ModItems.BREAD_PICKAXE.get()))
-            .save(pWriter, modLocation("smithing", "reinforced_bread_hoe_smithing"))
+            ModItems.BREAD_PICKAXE.get())
 
+        // Bread Hoe
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_HOE.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
             .define('B', ModBlocks.BREAD_BLOCK.get())
@@ -283,6 +253,77 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_hoe"))
+
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_hoe_smithing"),
+            ModItems.BREAD_HOE.get(),
+            ModItems.RF_BREAD_HOE.get(),
+            RecipeCategory.TOOLS,
+            ModItems.BREAD_HOE.get())
+
+        //// Armor
+        // Bread Helmet
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_HELMET.get())
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .pattern("BBB")
+            .pattern("B B")
+            .save(pWriter, modLocation("combat", "bread_helmet"))
+
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_helmet_smithing"),
+            ModItems.BREAD_HELMET.get(),
+            ModItems.RF_BREAD_HELMET.get(),
+            RecipeCategory.COMBAT,
+            ModItems.BREAD_HELMET.get())
+
+        // Bread Chestplate
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_CHESTPLATE.get())
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .pattern("B B")
+            .pattern("BBB")
+            .pattern("BBB")
+            .save(pWriter, modLocation("combat", "bread_chestplate"))
+
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_chestplate_smithing"),
+            ModItems.BREAD_CHESTPLATE.get(),
+            ModItems.RF_BREAD_CHESTPLATE.get(),
+            RecipeCategory.COMBAT,
+            ModItems.BREAD_CHESTPLATE.get())
+
+        // Bread Leggings
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_LEGGINGS.get())
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .pattern("BBB")
+            .pattern("B B")
+            .pattern("B B")
+            .save(pWriter, modLocation("combat", "bread_leggings"))
+
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_leggings_smithing"),
+            ModItems.BREAD_LEGGINGS.get(),
+            ModItems.RF_BREAD_LEGGINGS.get(),
+            RecipeCategory.COMBAT,
+            ModItems.BREAD_LEGGINGS.get())
+
+        // Bread Boots
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_BOOTS.get())
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .define('B', ModBlocks.BREAD_BLOCK.get())
+            .pattern("B B")
+            .pattern("B B")
+            .save(pWriter, modLocation("combat", "bread_boots"))
+
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_boots_smithing"),
+            ModItems.BREAD_BOOTS.get(),
+            ModItems.RF_BREAD_BOOTS.get(),
+            RecipeCategory.COMBAT,
+            ModItems.BREAD_BOOTS.get())
+
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.FLOUR_LAYER_BLOCK.get(), 6)
             .unlockedBy("has_item", has(ModBlocks.FLOUR_BLOCK.get()))
