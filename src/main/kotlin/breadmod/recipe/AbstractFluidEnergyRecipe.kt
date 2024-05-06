@@ -2,6 +2,7 @@ package breadmod.recipe
 
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.amount
+import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.inventory.CraftingContainer
@@ -31,6 +32,11 @@ abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pI
                     fluidsRequiredTagged.all { fluidHandler.amount(it.first) >= it.second }
         } else return false
     }
+
+    override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
+        TODO("Not yet implemented")
+    }
+
     /**
      * @return Default time this recipe takes to complete
      * @author Miko Elbrecht
@@ -67,4 +73,16 @@ abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pI
      * @since 1.0.0
      */
     abstract val itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>
+    /**
+     * @return Items created as a result of this recipe
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    val itemsOutput: List<ItemStack>? = null
+    /**
+     * @return Fluids created as a result of this recipe
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    val fluidsOutput: List<FluidStack>? = null
 }

@@ -19,7 +19,8 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
     val factory: (
         cId: ResourceLocation, cTime: Int, cEnergy: Int,
         cFluidsRequired: List<FluidStack>, cFluidTagsRequired: List<Pair<TagKey<Fluid>, Int>>,
-        cItemsRequired: List<ItemStack>, cItemTagsRequired: List<Pair<TagKey<Item>, Int>>
+        cItemsRequired: List<ItemStack>, cItemTagsRequired: List<Pair<TagKey<Item>, Int>>,
+        cFluidsOutput: List<FluidStack>?, cItemsOutput: List<ItemStack>?
     ) -> T
 ) : RecipeSerializer<T> {
     companion object {
@@ -28,6 +29,7 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
         const val FLUIDS_KEY = "fluids"
         const val ITEMS_KEY = "items"
 
+        const val OUTPUT_KEY = "outputs"
         const val INPUT_KEY = "inputs"
         const val CERTAIN_KEY = "certain"
         const val TAGGED_KEY = "tags"
@@ -37,6 +39,7 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
         val inputs = p1.getAsJsonObject(INPUT_KEY)
         val requiredFluids = inputs.getAsJsonObject(FLUIDS_KEY)
         val requiredItems = inputs.getAsJsonObject(ITEMS_KEY)
+        val outputItems = p1.getAsJsonObject(OUTPUT_KEY)
         return factory(
             ResourceLocation(p1.get(ENTRY_ID_KEY).asString),
             p1.get(TIME_KEY).asInt,
@@ -44,7 +47,9 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
             requiredFluids.getAsJsonArray(CERTAIN_KEY).extractJsonFluidList(),
             requiredFluids.getAsJsonArray(TAGGED_KEY).extractJsonTagList(ForgeRegistries.FLUIDS),
             requiredItems.getAsJsonArray(CERTAIN_KEY).extractJsonItemList(),
-            requiredItems.getAsJsonArray(TAGGED_KEY).extractJsonTagList(ForgeRegistries.ITEMS)
+            requiredItems.getAsJsonArray(TAGGED_KEY).extractJsonTagList(ForgeRegistries.ITEMS),
+            outputItems.getAsJsonArray(FLUIDS_KEY).extractJsonFluidList(),
+            outputItems.getAsJsonArray(ITEMS_KEY).extractJsonItemList()
         )
     }
 
@@ -52,7 +57,8 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
         to: JsonObject, location: ResourceLocation,
         time: Int, energy: Int,
         fluidList: List<FluidStack>, fluidTagList: List<Pair<TagKey<Fluid>, Int>>,
-        itemList: List<ItemStack>, itemTagList: List<Pair<TagKey<ItemLike>, Int>>
+        itemList: List<ItemStack>, itemTagList: List<Pair<TagKey<ItemLike>, Int>>,
+        fluidOutputs: List<FluidStack>?, itemOutputs: List<ItemStack>?
     ) = to.also {
         it.addProperty(ENTRY_ID_KEY, location.toString())
         it.addProperty(TIME_KEY, time)
@@ -67,6 +73,10 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
                 obj.add(TAGGED_KEY, itemTagList.jsonifyTagList())
             })
         })
+        it.add(OUTPUT_KEY, JsonObject().also { outputs ->
+            if(fluidOutputs != null) outputs.add(FLUIDS_KEY, fluidOutputs.jsonifyFluidList())
+            if(itemOutputs != null) outputs.add(ITEMS_KEY, itemOutputs.jsonifyItemList())
+        })
     }
 
     override fun fromNetwork(p0: ResourceLocation, p1: FriendlyByteBuf): T =
@@ -74,7 +84,8 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
             ResourceLocation(p1.readUtf()),
             p1.readInt(), p1.readInt(),
             p1.readFluidList(), p1.readTagList(ForgeRegistries.FLUIDS),
-            p1.readItemList(), p1.readTagList(ForgeRegistries.ITEMS)
+            p1.readItemList(), p1.readTagList(ForgeRegistries.ITEMS),
+            p1.readNullable { p1.readFluidList() }, p1.readNullable { p1.readItemList() }
         )
 
     override fun toNetwork(pBuffer: FriendlyByteBuf, pRecipe: T) {
@@ -82,8 +93,10 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
         pBuffer.writeInt(pRecipe.time)
         pBuffer.writeInt(pRecipe.energy)
         pBuffer.writeFluidList(pRecipe.fluidsRequired)
-        pBuffer.writeTagList(ForgeRegistries.FLUIDS, pRecipe.fluidsRequiredTagged)
+        pBuffer.writeTagList(pRecipe.fluidsRequiredTagged)
         pBuffer.writeItemList(pRecipe.itemsRequired)
-        pBuffer.writeTagList(ForgeRegistries.ITEMS, pRecipe.itemsRequiredTagged)
+        pBuffer.writeTagList(pRecipe.itemsRequiredTagged)
+        pBuffer.writeNullable(pRecipe.fluidsOutput) { buf, stack -> buf.writeFluidList(stack) }
+        pBuffer.writeNullable(pRecipe.itemsOutput) { buf, stack -> buf.writeItemList(stack) }
     }
 }

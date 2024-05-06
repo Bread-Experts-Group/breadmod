@@ -21,8 +21,6 @@ import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 
 class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
-
-
     // TODO refactor existing smithing recipes to use this function instead
     // TODO create simplified 3x3 and 2x2 item to block recipes from the functions in RecipeProvider
     // TODO crafting recipes for the bread armor
