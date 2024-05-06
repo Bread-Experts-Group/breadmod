@@ -3,7 +3,7 @@ package breadmod.block.entity
 import breadmod.BreadMod
 import breadmod.BreadMod.modTranslatable
 import breadmod.block.entity.menu.DoughMachineMenu
-import breadmod.recipe.AbstractFluidEnergyRecipe
+import breadmod.recipe.FluidEnergyRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.FluidContainer
@@ -120,9 +120,9 @@ class DoughMachineBlockEntity(
     override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }
     override fun getDisplayName(): MutableComponent = modTranslatable("block", "dough_machine")
 
-    private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, AbstractFluidEnergyRecipe> =
+    private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, FluidEnergyRecipe> =
         RecipeManager.createCheck(ModRecipeTypes.ENERGY_FLUID_ITEM)
-    private var currentRecipe: AbstractFluidEnergyRecipe? = null
+    private var currentRecipe: FluidEnergyRecipe? = null
     private var energyDivision = 0
 
     fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: DoughMachineBlockEntity) {

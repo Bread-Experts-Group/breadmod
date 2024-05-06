@@ -298,7 +298,6 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .save(pWriter, modLocation("special", "crafting", "bread_potion_doping").toString())
 
         FluidEnergyRecipeBuilder(listOf(ModItems.DOUGH.get().defaultInstance))
-            .setSerializer(ModRecipeSerializers.FLOUR_TO_DOUGH.get())
             .setTimeRequired(20 * 5)
             .setRFRequired(500)
             .requiresItem(ModItems.FLOUR.get())

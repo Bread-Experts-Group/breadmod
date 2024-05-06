@@ -1,6 +1,7 @@
 package breadmod.datagen.recipe
 
 import breadmod.recipe.serializers.SimpleFluidEnergyRecipeSerializer
+import breadmod.registry.recipe.ModRecipeSerializers
 import com.google.gson.JsonObject
 import net.minecraft.advancements.CriterionTriggerInstance
 import net.minecraft.data.recipes.FinishedRecipe
@@ -9,7 +10,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
@@ -22,9 +22,6 @@ class FluidEnergyRecipeBuilder(
     override fun unlockedBy(pCriterionName: String, pCriterionTrigger: CriterionTriggerInstance): RecipeBuilder = this
     override fun group(pGroupName: String?): RecipeBuilder = this
     override fun getResult(): Item = itemOutputs.first().item
-
-    lateinit var serializer: SimpleFluidEnergyRecipeSerializer<*>
-    fun setSerializer(setSerializer: SimpleFluidEnergyRecipeSerializer<*>) = this.also { serializer = setSerializer }
 
     override val fluidsRequired: MutableList<FluidStack> = mutableListOf()
     override val fluidsRequiredTagged: MutableList<Pair<TagKey<Fluid>, Int>> = mutableListOf()
@@ -46,7 +43,7 @@ class FluidEnergyRecipeBuilder(
     override fun save(pFinishedRecipeConsumer: Consumer<FinishedRecipe>, pRecipeId: ResourceLocation) {
         pFinishedRecipeConsumer.accept(object: FinishedRecipe {
             override fun serializeRecipeData(pJson: JsonObject) {
-                serializer.toJson(
+                type.toJson(
                     pJson, pRecipeId,
                     timeInTicks, powerInRF,
                     fluidsRequired, fluidsRequiredTagged,
@@ -56,7 +53,7 @@ class FluidEnergyRecipeBuilder(
             }
 
             override fun getId(): ResourceLocation = pRecipeId
-            override fun getType(): RecipeSerializer<*> = serializer
+            override fun getType(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY.get()
 
             override fun serializeAdvancement(): JsonObject? = null
             override fun getAdvancementId(): ResourceLocation? = null

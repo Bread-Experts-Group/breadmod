@@ -1,6 +1,6 @@
 package breadmod.recipe.serializers
 
-import breadmod.recipe.AbstractFluidEnergyRecipe
+import breadmod.recipe.FluidEnergyRecipe
 import breadmod.util.*
 import com.google.gson.JsonObject
 import net.minecraft.network.FriendlyByteBuf
@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.registries.ForgeRegistries
 
 @Suppress("MemberVisibilityCanBePrivate")
-class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
+class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
     val factory: (
         cId: ResourceLocation, cTime: Int, cEnergy: Int?,
         cFluidsRequired: List<FluidStack>?, cFluidTagsRequired: List<Pair<TagKey<Fluid>, Int>>?,

@@ -1,7 +1,7 @@
 package breadmod.registry.recipe
 
 import breadmod.BreadMod
-import breadmod.recipe.AbstractFluidEnergyRecipe
+import breadmod.recipe.FluidEnergyRecipe
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraftforge.registries.DeferredRegister
@@ -13,5 +13,5 @@ object ModRecipeTypes {
     private fun <T: Recipe<*>> register(name: String): RecipeType<T> =
         object : RecipeType<T> { override fun toString(): String = name }
 
-    val ENERGY_FLUID_ITEM = register<AbstractFluidEnergyRecipe>("energy_fluid_item")
+    val ENERGY_FLUID_ITEM = register<FluidEnergyRecipe>("energy_fluid_item")
 }

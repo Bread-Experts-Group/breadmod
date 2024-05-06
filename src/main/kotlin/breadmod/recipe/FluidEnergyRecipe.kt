@@ -1,5 +1,6 @@
 package breadmod.recipe
 
+import breadmod.registry.recipe.ModRecipeSerializers
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.amount
 import net.minecraft.core.RegistryAccess
@@ -10,6 +11,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
+import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -18,7 +20,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.fluids.FluidStack
 import kotlin.jvm.optionals.getOrNull
 
-abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pId, CraftingBookCategory.MISC) {
+open class FluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pId, CraftingBookCategory.MISC) {
     override fun getType(): RecipeType<*> = ModRecipeTypes.ENERGY_FLUID_ITEM
 
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
@@ -36,6 +38,9 @@ abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pI
     override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
         TODO("Not yet implemented")
     }
+
+    override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = true
+    override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY.get()
 
     /**
      * @return Default time this recipe takes to complete
