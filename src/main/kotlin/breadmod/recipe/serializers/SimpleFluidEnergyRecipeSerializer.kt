@@ -17,9 +17,9 @@ import net.minecraftforge.registries.ForgeRegistries
 @Suppress("MemberVisibilityCanBePrivate")
 class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
     val factory: (
-        cId: ResourceLocation, cTime: Int, cEnergy: Int,
-        cFluidsRequired: List<FluidStack>, cFluidTagsRequired: List<Pair<TagKey<Fluid>, Int>>,
-        cItemsRequired: List<ItemStack>, cItemTagsRequired: List<Pair<TagKey<Item>, Int>>,
+        cId: ResourceLocation, cTime: Int, cEnergy: Int?,
+        cFluidsRequired: List<FluidStack>?, cFluidTagsRequired: List<Pair<TagKey<Fluid>, Int>>?,
+        cItemsRequired: List<ItemStack>?, cItemTagsRequired: List<Pair<TagKey<Item>, Int>>?,
         cFluidsOutput: List<FluidStack>?, cItemsOutput: List<ItemStack>?
     ) -> T
 ) : RecipeSerializer<T> {
@@ -82,20 +82,21 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
     override fun fromNetwork(p0: ResourceLocation, p1: FriendlyByteBuf): T =
         factory(
             ResourceLocation(p1.readUtf()),
-            p1.readInt(), p1.readInt(),
-            p1.readFluidList(), p1.readTagList(ForgeRegistries.FLUIDS),
-            p1.readItemList(), p1.readTagList(ForgeRegistries.ITEMS),
+            p1.readInt(),
+            p1.readNullable { p1.readInt() },
+            p1.readNullable { p1.readFluidList() }, p1.readNullable { p1.readTagList(ForgeRegistries.FLUIDS) },
+            p1.readNullable { p1.readItemList () }, p1.readNullable { p1.readTagList(ForgeRegistries.ITEMS) },
             p1.readNullable { p1.readFluidList() }, p1.readNullable { p1.readItemList() }
         )
 
     override fun toNetwork(pBuffer: FriendlyByteBuf, pRecipe: T) {
         pBuffer.writeUtf(pRecipe.id.toString())
         pBuffer.writeInt(pRecipe.time)
-        pBuffer.writeInt(pRecipe.energy)
-        pBuffer.writeFluidList(pRecipe.fluidsRequired)
-        pBuffer.writeTagList(pRecipe.fluidsRequiredTagged)
-        pBuffer.writeItemList(pRecipe.itemsRequired)
-        pBuffer.writeTagList(pRecipe.itemsRequiredTagged)
+        pBuffer.writeNullable(pRecipe.energy) { buf, int -> buf.writeInt(int) }
+        pBuffer.writeNullable(pRecipe.fluidsRequired) { buf, stack -> buf.writeFluidList(stack) }
+        pBuffer.writeNullable(pRecipe.fluidsRequiredTagged) { buf, tags -> buf.writeTagList(tags) }
+        pBuffer.writeNullable(pRecipe.itemsRequired) { buf, stack -> buf.writeItemList(stack) }
+        pBuffer.writeNullable(pRecipe.itemsRequiredTagged) { buf, tags -> buf.writeTagList(tags) }
         pBuffer.writeNullable(pRecipe.fluidsOutput) { buf, stack -> buf.writeFluidList(stack) }
         pBuffer.writeNullable(pRecipe.itemsOutput) { buf, stack -> buf.writeItemList(stack) }
     }

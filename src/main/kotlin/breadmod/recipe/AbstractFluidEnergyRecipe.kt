@@ -23,13 +23,13 @@ abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pI
 
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
         val okay =
-                itemsRequired.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.item) }?.count ?: -1) >= it.count } &&
-                itemsRequiredTagged.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.first) }?.count ?: -1) >= it.second }
-        if(okay && (fluidsRequiredTagged.size + fluidsRequired.size) > 0) {
+                itemsRequired?.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.item) }?.count ?: -1) >= it.count } ?: true &&
+                itemsRequiredTagged?.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.first) }?.count ?: -1) >= it.second } ?: true
+        if(okay && (fluidsRequired != null || fluidsRequiredTagged != null)) {
             val fluidHandler = (pContainer as? BlockEntity)?.getCapability(ForgeCapabilities.FLUID_HANDLER)?.resolve()?.getOrNull() ?: return false
 
-            return fluidsRequired.all { fluidHandler.amount(it.fluid) >= it.amount } &&
-                    fluidsRequiredTagged.all { fluidHandler.amount(it.first) >= it.second }
+            return fluidsRequired?.all { fluidHandler.amount(it.fluid) >= it.amount } ?: true &&
+                    fluidsRequiredTagged?.all { fluidHandler.amount(it.first) >= it.second } ?: true
         } else return false
     }
 
@@ -42,47 +42,47 @@ abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pI
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    abstract val time: Int
+    open val time: Int = 0
     /**
      * @return Energy in RF required to complete this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    abstract val energy: Int
+    open val energy: Int? = null
     /**
      * @return Fluids required to complete this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    abstract val fluidsRequired: List<FluidStack>
+    open val fluidsRequired: List<FluidStack>? = null
     /**
      * @return Tagged fluids required to complete this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    abstract val fluidsRequiredTagged: List<Pair<TagKey<Fluid>, Int>>
+    open val fluidsRequiredTagged: List<Pair<TagKey<Fluid>, Int>>? = null
     /**
      * @return Items required to complete this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    abstract val itemsRequired: List<ItemStack>
+    open val itemsRequired: List<ItemStack>? = null
     /**
      * @return Tagged items required to complete this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    abstract val itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>
+    open val itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>? = null
     /**
      * @return Items created as a result of this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    val itemsOutput: List<ItemStack>? = null
+    open val itemsOutput: List<ItemStack>? = null
     /**
      * @return Fluids created as a result of this recipe
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    val fluidsOutput: List<FluidStack>? = null
+    open val fluidsOutput: List<FluidStack>? = null
 }

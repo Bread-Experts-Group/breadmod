@@ -11,19 +11,7 @@ import net.minecraft.world.item.crafting.*
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
 
-class FlourToDoughMachineRecipe(
-    cId: ResourceLocation,
-    override val time: Int,
-    override val energy: Int,
-    override val fluidsRequired: List<FluidStack>,
-    override val fluidsRequiredTagged: List<Pair<TagKey<Fluid>, Int>>,
-    override val itemsRequired: List<ItemStack>,
-    override val itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>
-) : AbstractFluidEnergyRecipe(cId) {
-    override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
-        TODO("Not yet implemented")
-    }
-
+class FlourToDoughMachineRecipe(cId: ResourceLocation): AbstractFluidEnergyRecipe(cId) {
     override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLOUR_TO_DOUGH.get()
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = pWidth == 1 && pHeight == 1
 }

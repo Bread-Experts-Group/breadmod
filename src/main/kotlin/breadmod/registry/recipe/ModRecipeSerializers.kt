@@ -23,10 +23,7 @@ object ModRecipeSerializers {
         SimpleCraftingRecipeSerializer { pId, pCategory -> BreadSliceRecipe(pId, pCategory) } }
 
     val FLOUR_TO_DOUGH: RegistryObject<SimpleFluidEnergyRecipeSerializer<FlourToDoughMachineRecipe>> = deferredRegister.register("energy_fluid_item") {
-        SimpleFluidEnergyRecipeSerializer { cId, cTime, cEnergy, cFluidsRequired, cFluidTagsRequired, cItemsRequired, cItemTagsRequired ->
-            FlourToDoughMachineRecipe(cId, cTime, cEnergy, cFluidsRequired, cFluidTagsRequired, cItemsRequired, cItemTagsRequired)
-        }
-    }
+        SimpleFluidEnergyRecipeSerializer { cId, _, _, _, _, _, _, _, _ -> FlourToDoughMachineRecipe(cId) } }
 
     /*val BREAD_REFINEMENT = REGISTRY.register("bread_refinement") {
         SimpleCookingSerializer({
