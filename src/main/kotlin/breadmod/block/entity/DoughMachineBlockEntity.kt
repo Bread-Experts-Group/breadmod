@@ -123,7 +123,7 @@ class DoughMachineBlockEntity(
     private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, FluidEnergyRecipe> =
         RecipeManager.createCheck(ModRecipeTypes.ENERGY_FLUID_ITEM)
     private var currentRecipe: FluidEnergyRecipe? = null
-    private var energyDivision = 0
+    private var energyDivision: Int? = 0
 
     fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: DoughMachineBlockEntity) {
         val energyHandle = pBlockEntity.energyHandlerOptional.resolve().getOrNull() ?: return
@@ -150,19 +150,30 @@ class DoughMachineBlockEntity(
         data[6] = fluidAmount.compareTo(lastFluidCount)
         lastFluidCount = fluidAmount
 
-        if(currentRecipe != null) {
-            if(data[0] < data[1]) {
-                data[0]++
-                pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
-                if(energyHandle.extractEnergy(energyDivision, false) != energyDivision) data[0]--
+        currentRecipe.also {
+            if(it != null) {
+                if(data[0] < data[1]) {
+                    data[0]++
+                    pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
+                    energyDivision?.let { if(energyHandle.extractEnergy(it, false) != it) data[0]-- }
+                } else if(it.canFitResults(storedItems to listOf(1), fluidHandle)) {
+                    val assembled = it.assembleOutputs(this, pLevel)
+                    assembled.first.forEach { stack -> storedItems[1].let { slot -> if(slot.isEmpty) storedItems[1] = stack.copy() else slot.grow(stack.count) } }
+                    assembled.second.forEach { stack -> fluidHandle.fill(stack, IFluidHandler.FluidAction.EXECUTE) }
+                    currentRecipe = null
+                }
             } else {
-                println("data d stopped.")
-            }
-        } else {
-            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
-            data[0] = 0
-            recipeDial.getRecipeFor(pBlockEntity, pLevel).ifPresent { recipe ->
-                println("MATCH! $recipe")
+                pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
+                data[0] = 0
+                recipeDial.getRecipeFor(pBlockEntity, pLevel).ifPresent { recipe ->
+                    data[1] = recipe.time
+                    recipe.fluidsRequired?.forEach { fluidHandle.drain(it, IFluidHandler.FluidAction.EXECUTE) }
+                    recipe.fluidsRequiredTagged?.forEach { fluidHandle.drain(it.first, it.second, IFluidHandler.FluidAction.EXECUTE) }
+                    recipe.itemsRequired?.forEach { storedItems[0].shrink(it.count) }
+                    recipe.itemsRequiredTagged?.forEach { storedItems[0].shrink(it.second) }
+                    energyDivision = recipe.energy?.let { (it.toFloat() / recipe.time).toInt() }
+                    currentRecipe = recipe
+                }
             }
         }
     }

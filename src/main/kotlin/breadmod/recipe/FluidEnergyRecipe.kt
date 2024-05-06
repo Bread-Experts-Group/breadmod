@@ -14,10 +14,11 @@ import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.fluids.capability.IFluidHandler
 import kotlin.jvm.optionals.getOrNull
 
 open class FluidEnergyRecipe(
@@ -38,7 +39,7 @@ open class FluidEnergyRecipe(
                 itemsRequired?.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.item) }?.count ?: -1) >= it.count } ?: true &&
                 itemsRequiredTagged?.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.first) }?.count ?: -1) >= it.second } ?: true
         if(okay) {
-            val entityCheck = pContainer as? BlockEntity
+            val entityCheck = pContainer as? ICapabilityProvider
             if(energy != null && energy!! > 0) {
                 val energyHandle = entityCheck?.getCapability(ForgeCapabilities.ENERGY)?.resolve()?.getOrNull() ?: return false
                 if(energyHandle.energyStored < energy!!) return false
@@ -53,9 +54,23 @@ open class FluidEnergyRecipe(
         return okay
     }
 
-    override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack {
-        TODO("Not yet implemented")
+    open fun canFitResults(itemOutput: Pair<List<ItemStack>, List<Int>>?, fluidOutput: IFluidHandler?): Boolean {
+        if(!fluidsOutput.isNullOrEmpty() && fluidOutput == null) return false
+        else fluidsOutput?.forEach { if((fluidOutput?.fill(it, IFluidHandler.FluidAction.SIMULATE) ?: -1) < it.amount) return false }
+        itemsOutput?.also {
+            if(itemOutput == null) return false
+            else {
+                val check = itemOutput.first.filterIndexed { index, _ -> itemOutput.second.contains(index) }
+                it.forEach { stack -> if(!check.any { slot -> slot.isEmpty || (slot.`is`(stack.item) && slot.count < stack.maxStackSize) }) return false }
+            }
+        }
+        return true
     }
+
+    open fun assembleOutputs(pContainer: CraftingContainer, pLevel: Level): Pair<List<ItemStack>, List<FluidStack>> =
+        (itemsOutput ?: listOf()) to (fluidsOutput ?: listOf())
+
+    final override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack = ItemStack.EMPTY
 
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = true
     override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY.get()
