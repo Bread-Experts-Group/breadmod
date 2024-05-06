@@ -303,6 +303,12 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requiresItem(ModItems.FLOUR.get())
             .requiresFluid(FluidTags.WATER, 250)
             .save(pWriter, modLocation("special", "machine", "flour_to_dough"))
+        FluidEnergyRecipeBuilder(listOf(ModItems.ULTIMATE_BREAD.get().defaultInstance))
+            .setTimeRequired(20 * 5)
+            .setRFRequired(5000)
+            .requiresItem(Items.BREAD, 5)
+            .requiresFluid(FluidTags.WATER, 5000)
+            .save(pWriter, modLocation("special", "machine", "it_worked"))
 
         // // Compat
         // Create
