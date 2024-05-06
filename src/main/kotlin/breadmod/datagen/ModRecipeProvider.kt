@@ -11,6 +11,8 @@ import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess
 import mekanism.common.registries.MekanismItems
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.Item
 import net.minecraft.tags.FluidTags
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -19,6 +21,29 @@ import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 
 class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
+
+
+    // TODO refactor existing smithing recipes to use this function instead
+    // TODO create simplified 3x3 and 2x2 item to block recipes from the functions in RecipeProvider
+    // TODO crafting recipes for the bread armor
+    private fun modNetheriteSmithing(
+        pFinishedRecipeConsumer: Consumer<FinishedRecipe>,
+        pRecipeLocation: ResourceLocation,
+        pIngredient: Item,
+        pResult: Item,
+        pCategory: RecipeCategory,
+        pUnlockItem: Item
+    ) {
+        SmithingTransformRecipeBuilder.smithing(
+            Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+            Ingredient.of(pIngredient),
+            Ingredient.of(Items.NETHERITE_INGOT),
+            pCategory,
+            pResult
+        ).unlocks("has_item", has(pUnlockItem))
+            .save(pFinishedRecipeConsumer, pRecipeLocation)
+    }
+
     override fun buildRecipes(pWriter: Consumer<FinishedRecipe>) {
         ShapelessRecipeBuilder.shapeless(RecipeCategory.BUILDING_BLOCKS, ModBlocks.BREAD_BLOCK.get())
             .unlockedBy("has_item", has(Items.BREAD))
@@ -185,6 +210,13 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
         )
             .unlocks("has_item", has(ModItems.BREAD_SHOVEL.get()))
             .save(pWriter, modLocation("smithing", "reinforced_bread_shovel_smithing"))
+
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_bread_helmet_smithing"),
+            ModItems.BREAD_HELMET.get(),
+            ModItems.RF_BREAD_HELMET.get(),
+            RecipeCategory.COMBAT,
+            ModItems.BREAD_HELMET.get())
 
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_SHOVEL.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))

@@ -36,15 +36,15 @@
       - Figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
     - [X] Refinement processes
     - [X] Textures
-    - [ ] Data driven recipe and serializer
+    - [X] Data driven recipe and serializer
     - [ ] Create compat.
       - [ ] Mixing recipe for flour to dough (might already work with the item tags)
     - [ ] Compat with fluid tank-like containers in the bucket slot
-  - [ ] Can be heated from the bottom (PneumaticCraft Compat)
+  - [ ] Can be heated from the bottom (possible PneumaticCraft Compat?)
     - [ ] Speed can be accelerated from external heat sources
 - Needs to be done still:
-  - [ ] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder\
-    - [ ] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
+  - [X] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder
+    - [X] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
   - [ ] Textures for tools, weapons, items, blocks
     - would be funny if the bread sword was just a long piece of bread attached to a sword handle
   - [ ] Fix mixins not loading on built mod file
@@ -82,8 +82,8 @@ Todo..
 - [ ] Farmers Delight
 - [ ] ProjectE
   - [ ] Add EMC to items
-  - [ ] Potential Bread-like EMC holder
-    - [ ] Make texture for item
+  - [X] Potential Bread-like EMC holder
+    - [X] Make texture for item
 - [ ] Create
   - [ ] Create recipe generators for the other recipe types
 - [ ] Mekanism

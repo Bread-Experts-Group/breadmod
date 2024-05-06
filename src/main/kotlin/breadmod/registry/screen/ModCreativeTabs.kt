@@ -15,7 +15,7 @@ object ModCreativeTabs {
     @Suppress("unused")
     val MAIN_TAB: RegistryObject<CreativeModeTab> = deferredRegister.register("main_tab") {
         CreativeModeTab.builder()
-            .withSearchBar(60)
+            .withSearchBar()
             .title(modTranslatable("itemGroup", "main"))
             .displayItems { pParameters, pOutput ->
                 pOutput.acceptAll(ModItems.deferredRegister.entries.filter {
