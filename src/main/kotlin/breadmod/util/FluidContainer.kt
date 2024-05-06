@@ -9,6 +9,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction
 import net.minecraftforge.fluids.capability.templates.FluidTank
 
+@Suppress("UNUSED", "MemberVisibilityCanBePrivate")
 abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFluidHandler, INBTSerializable<CompoundTag> {
     val tanks: MutableList<FluidTank> = MutableList(size, init)
     val totalCapacity: Int
@@ -16,10 +17,14 @@ abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFlui
 
 
     fun filterFluid(fluid: Fluid, includeEmpty: Boolean) = tanks.filter { it.fluid.fluid.isSame(fluid) || (includeEmpty && it.isEmpty) }
+    fun filterFluid(fluid: TagKey<Fluid>, includeEmpty: Boolean) = tanks.filter { it.fluid.fluid.`is`(fluid) || (includeEmpty && it.isEmpty) }
 
     fun amount(fluid: Fluid) = filterFluid(fluid, false).sumOf { it.fluidAmount }
+    fun amount(fluid: TagKey<Fluid>) = filterFluid(fluid, false).sumOf { it.fluidAmount }
     fun capacity(fluid: Fluid) = filterFluid(fluid, true).sumOf { it.capacity }
+    fun capacity(fluid: TagKey<Fluid>) = filterFluid(fluid, true).sumOf { it.capacity }
     fun space(fluid: Fluid) = filterFluid(fluid, true).sumOf { it.space }
+    fun space(fluid: TagKey<Fluid>) = filterFluid(fluid, true).sumOf { it.space }
 
     fun contains(fluid: FluidStack, onlyCheckFluid: Boolean) = tanks.firstOrNull { it.fluid == fluid && (!onlyCheckFluid || it.fluid.amount >= fluid.amount) }
     fun contains(fluid: Fluid) = tanks.firstOrNull { it.fluid.fluid.isSame(fluid) }
@@ -34,11 +39,12 @@ abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFlui
     override fun isFluidValid(tank: Int, stack: FluidStack): Boolean = tanks[tank].isFluidValid(stack)
     override fun fill(resource: FluidStack?, action: FluidAction): Int {
         if(resource == null || resource.isEmpty) return 0
+        val resourceCopy = resource.copy()
         var filledTotal = 0
-        for(tank in tanks.filter { it.isFluidValid(resource) && (it.isEmpty || it.fluid.fluid.isSame(resource.fluid)) && it.space > 0 }) {
-            if(resource.isEmpty) break
+        for(tank in tanks.filter { it.isFluidValid(resourceCopy) && (it.isEmpty || it.fluid.fluid.isSame(resourceCopy.fluid)) && it.space > 0 }) {
+            if(resourceCopy.isEmpty) break
             val filledAmount = tank.fill(resource, action)
-            resource.amount -= filledAmount
+            resourceCopy.amount -= filledAmount
             filledTotal += filledAmount
         }
         if(action.execute() && filledTotal > 0) contentsChanged()
@@ -47,11 +53,12 @@ abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFlui
 
     override fun drain(resource: FluidStack?, action: FluidAction): FluidStack {
         if(resource == null || resource.isEmpty) return FluidStack.EMPTY
+        val resourceCopy = resource.copy()
         val drainedTotal = FluidStack(resource.fluid, 0)
-        for(tank in tanks.filter { !it.isEmpty && it.fluid.fluid.isSame(resource.fluid) }) {
-            if(resource.isEmpty) break
-            val filledAmount = tank.drain(resource, action)
-            resource.amount -= filledAmount.amount
+        for(tank in tanks.filter { !it.isEmpty && it.fluid.fluid.isSame(resourceCopy.fluid) }) {
+            if(resourceCopy.isEmpty) break
+            val filledAmount = tank.drain(resourceCopy, action)
+            resourceCopy.amount -= filledAmount.amount
             drainedTotal.amount += filledAmount.amount
         }
         if(action.execute() && drainedTotal.amount > 0) contentsChanged()

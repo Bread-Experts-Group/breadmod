@@ -39,17 +39,17 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         val inputs = p1.getAsJsonObject(INPUT_KEY)
         val requiredFluids = inputs.getAsJsonObject(FLUIDS_KEY)
         val requiredItems = inputs.getAsJsonObject(ITEMS_KEY)
-        val outputItems = p1.getAsJsonObject(OUTPUT_KEY)
+        val outputs = p1.getAsJsonObject(OUTPUT_KEY)
         return factory(
             ResourceLocation(p1.get(ENTRY_ID_KEY).asString),
             p1.get(TIME_KEY).asInt,
             inputs.get(ENERGY_KEY)?.asInt,
-            requiredFluids.getAsJsonArray(CERTAIN_KEY)?.extractJsonFluidList(),
-            requiredFluids.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.FLUIDS),
-            requiredItems.getAsJsonArray(CERTAIN_KEY)?.extractJsonItemList(),
-            requiredItems.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.ITEMS),
-            outputItems.getAsJsonArray(FLUIDS_KEY)?.extractJsonFluidList(),
-            outputItems.getAsJsonArray(ITEMS_KEY)?.extractJsonItemList()
+            requiredFluids?.getAsJsonArray(CERTAIN_KEY)?.extractJsonFluidList(),
+            requiredFluids?.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.FLUIDS),
+            requiredItems?.getAsJsonArray(CERTAIN_KEY)?.extractJsonItemList(),
+            requiredItems?.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.ITEMS),
+            outputs.getAsJsonArray(FLUIDS_KEY)?.extractJsonFluidList(),
+            outputs.getAsJsonArray(ITEMS_KEY)?.extractJsonItemList()
         )
     }
 

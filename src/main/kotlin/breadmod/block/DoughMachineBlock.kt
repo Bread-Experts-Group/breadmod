@@ -6,10 +6,12 @@ import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
+import net.minecraft.tags.FluidTags
 import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
@@ -25,7 +27,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.fluids.FluidStack
@@ -93,15 +94,16 @@ class DoughMachineBlock : Block(Properties.of()
                 if(it == null) return InteractionResult.FAIL
 
                 val stack = pPlayer.getItemInHand(pHand)
+                val item = stack.item
 
-                val filled = if(stack.`is`(Items.WATER_BUCKET) && it.capacity(Fluids.WATER) >= 1000) {
+                val filled = if(item is BucketItem && item.fluid.`is`(FluidTags.WATER) && it.space(FluidTags.WATER) > 0) {
                     if(!pPlayer.isCreative) pPlayer.setItemInHand(pHand, Items.BUCKET.defaultInstance)
-                    it.fill(FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE)
+                    it.fill(FluidStack(item.fluid, 1000), IFluidHandler.FluidAction.EXECUTE)
                 } else {
                     FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { stackFluidHandle ->
-                        if(stackFluidHandle != null) it.fill(
+                        if(stackFluidHandle != null && stackFluidHandle.drain(1, IFluidHandler.FluidAction.SIMULATE).fluid.`is`(FluidTags.WATER)) it.fill(
                             stackFluidHandle.drain(
-                                FluidStack(Fluids.WATER, min(1000, it.space(Fluids.WATER))),
+                                min(1000, it.space(FluidTags.WATER)),
                                 if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
                             ),
                             IFluidHandler.FluidAction.EXECUTE

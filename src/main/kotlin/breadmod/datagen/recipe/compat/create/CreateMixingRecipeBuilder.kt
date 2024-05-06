@@ -28,7 +28,9 @@ class CreateMixingRecipeBuilder(
     private val fluidResults: List<FluidStack> = listOf()
 ) : CraftingRecipeBuilder(), ItemBearingRecipeBuilder, FluidBearingRecipeBuilder {
     constructor(result: ItemStack): this(itemResults = listOf(result))
+    constructor(result: ItemLike, count: Int = 1): this(ItemStack(result, count))
     constructor(result: FluidStack): this(fluidResults = listOf(result))
+    constructor(result: Fluid, count: Int = 1): this(FluidStack(result, count))
     constructor(itemResult: ItemStack, fluidResult: FluidStack): this(listOf(itemResult), listOf(fluidResult))
     constructor(itemResult: ItemStack, fluidsResult: List<FluidStack>): this(listOf(itemResult), fluidsResult)
     constructor(itemsResult: List<ItemStack>, fluidResult: FluidStack): this(itemsResult, listOf(fluidResult))
