@@ -15,13 +15,22 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
 import java.util.function.Consumer
 
+@Suppress("unused")
 class FluidEnergyRecipeBuilder(
-    val itemOutputs: List<ItemStack>,
-    val fluidOutputs: List<FluidStack> = listOf()
+    val itemResults: List<ItemStack> = listOf(),
+    val fluidResults: List<FluidStack> = listOf()
 ): ItemBearingRecipeBuilder, FluidBearingRecipeBuilder, TimedRecipeBuilder, PoweredRecipeBuilder {
+    constructor(result: ItemStack): this(itemResults = listOf(result))
+    constructor(result: ItemLike, count: Int = 1): this(ItemStack(result, count))
+    constructor(result: FluidStack): this(fluidResults = listOf(result))
+    constructor(result: Fluid, count: Int = 1): this(FluidStack(result, count))
+    constructor(itemResult: ItemStack, fluidResult: FluidStack): this(listOf(itemResult), listOf(fluidResult))
+    constructor(itemResult: ItemStack, fluidsResult: List<FluidStack>): this(listOf(itemResult), fluidsResult)
+    constructor(itemsResult: List<ItemStack>, fluidResult: FluidStack): this(itemsResult, listOf(fluidResult))
+
     override fun unlockedBy(pCriterionName: String, pCriterionTrigger: CriterionTriggerInstance): RecipeBuilder = this
     override fun group(pGroupName: String?): RecipeBuilder = this
-    override fun getResult(): Item = itemOutputs.first().item
+    override fun getResult(): Item = itemResults.first().item
 
     override val fluidsRequired: MutableList<FluidStack> = mutableListOf()
     override val fluidsRequiredTagged: MutableList<Pair<TagKey<Fluid>, Int>> = mutableListOf()
@@ -48,7 +57,7 @@ class FluidEnergyRecipeBuilder(
                     timeInTicks, powerInRF.takeIf { it > 0 },
                     fluidsRequired.takeIf { it.isNotEmpty() }, fluidsRequiredTagged.takeIf { it.isNotEmpty() },
                     itemsRequired.takeIf { it.isNotEmpty() }, itemsRequiredTagged.takeIf { it.isNotEmpty() },
-                    fluidOutputs.takeIf { it.isNotEmpty() }, itemOutputs.takeIf { it.isNotEmpty() }
+                    fluidResults.takeIf { it.isNotEmpty() }, itemResults.takeIf { it.isNotEmpty() }
                 )
             }
 

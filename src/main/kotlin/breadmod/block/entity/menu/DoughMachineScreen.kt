@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
-import net.minecraft.world.level.material.Fluids
 
 class DoughMachineScreen(
     pMenu: DoughMachineMenu,
@@ -45,34 +44,42 @@ class DoughMachineScreen(
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
-        val fluid = menu.parent.data[4]
-        val maxFluid = menu.parent.data[5]
-        if(fluid > 0) {
-            val fluidDelta = menu.parent.data[6]
-            val percentage = (fluid.toFloat() / maxFluid) * 47
-            pGuiGraphics.renderFluid(
-                pX         = leftPos + 153F,
-                pY         = (topPos + 75F),
-                pWidth     = 16,
-                pHeight    = percentage.toInt(),
-                pFluid     = Fluids.WATER,
-                pFlowing   = fluidDelta != 0,
-                pDirection = if(fluidDelta > 0) Direction.NORTH else Direction.SOUTH
-            )
+        val showShort = !KeyboardInput(minecraft!!.options).shiftKeyDown
+        menu.parent.fluidHandlerOptional.ifPresent {
+            it.tanks.firstOrNull()?.let { tank ->
+                if(tank.fluidAmount > 0) {
+                    val percentage = (tank.fluidAmount.toFloat() / tank.capacity) * 47
+                    pGuiGraphics.renderFluid(
+                        pX         = leftPos + 153F,
+                        pY         = (topPos + 75F),
+                        pWidth     = 16,
+                        pHeight    = percentage.toInt(),
+                        pFluid     = tank.fluid.fluid,
+                        pFlowing   = false,
+                        pDirection = Direction.SOUTH
+                    )
+                }
+
+                if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+                    pGuiGraphics.renderComponentTooltip(
+                        this.font,
+                        listOf(Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1))),
+                        pMouseX, pMouseY
+                    )
+                }
+            }
+        }
+
+        if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+            menu.parent.energyHandlerOptional.ifPresent {
+                pGuiGraphics.renderComponentTooltip(
+                    this.font,
+                    listOf(Component.literal(formatUnit(it.energyStored, it.maxEnergyStored, "FE", showShort, 2))),
+                    pMouseX, pMouseY
+                )
+            }
         }
 
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
-
-
-        val showShort = !KeyboardInput(minecraft!!.options).shiftKeyDown
-        // Power Tooltip
-        if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            val energy = menu.parent.data[2]; val maxEnergy = menu.parent.data[3]
-            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(energy, maxEnergy, "FE", showShort, 2))), pMouseX, pMouseY)
-        }
-        // Fluid Tooltip
-        if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            pGuiGraphics.renderComponentTooltip(this.font, listOf(Component.literal(formatUnit(fluid, maxFluid, "B", showShort, 2, -1))), pMouseX, pMouseY)
-        }
     }
 }

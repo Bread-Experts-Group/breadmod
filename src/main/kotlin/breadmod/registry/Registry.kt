@@ -38,7 +38,6 @@ fun registerAll(bus: IEventBus) {
         LOGGER.info("Pushing register for ${it.registryName}")
         it.register(bus)
     }
-    // registrySet.build
     registerConfigs()
 }
 

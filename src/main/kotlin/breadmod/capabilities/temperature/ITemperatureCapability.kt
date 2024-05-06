@@ -20,10 +20,10 @@ interface ITemperatureCapability: INBTSerializable<Tag> {
 
     fun radiate(pLevel: ServerLevel, pPos: BlockPos) = pLevel.getBlockState(pPos).let { pState ->
         temperature += 10.0F
-        if(pState.isAir) {
+        //if(pState.isAir) {
             // Probably an item
-        } else {
+        //} else {
 
-        }
+        //}
     }
 }

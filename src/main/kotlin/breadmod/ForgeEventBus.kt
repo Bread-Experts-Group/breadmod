@@ -20,7 +20,7 @@ object ForgeEventBus {
     fun scheduleServerEvent(inTicks: Int, event: () -> Unit) = (ticks + inTicks).also { serverEvents[it] = event }
 
     @SubscribeEvent
-    fun serverTicker(event: TickEvent.ServerTickEvent) {
+    fun serverTicker(@Suppress("UNUSED_PARAMETER") event: TickEvent.ServerTickEvent) {
         serverEvents[ticks]?.invoke()
         ticks++
     }

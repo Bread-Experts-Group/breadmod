@@ -17,6 +17,8 @@ import net.minecraft.tags.FluidTags
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.level.material.Fluids
+import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 
@@ -297,23 +299,22 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
         SpecialRecipeBuilder.special(ModRecipeSerializers.DOPED_BREAD.get())
             .save(pWriter, modLocation("special", "crafting", "bread_potion_doping").toString())
 
-        FluidEnergyRecipeBuilder(listOf(ModItems.DOUGH.get().defaultInstance))
+        FluidEnergyRecipeBuilder(ModItems.DOUGH.get())
             .setTimeRequired(20 * 5)
             .setRFRequired(500)
             .requiresItem(ModItems.FLOUR.get())
             .requiresFluid(FluidTags.WATER, 250)
             .save(pWriter, modLocation("special", "machine", "flour_to_dough"))
-        FluidEnergyRecipeBuilder(listOf(ModItems.ULTIMATE_BREAD.get().defaultInstance))
+        FluidEnergyRecipeBuilder(ItemStack(ModItems.ULTIMATE_BREAD.get()), FluidStack(Fluids.WATER, 1000))
             .setTimeRequired(20 * 5)
             .setRFRequired(5000)
             .requiresItem(Items.BREAD, 5)
-            .requiresFluid(FluidTags.WATER, 5000)
             .save(pWriter, modLocation("special", "machine", "it_worked"))
 
         // // Compat
         // Create
         if(ModList.get().isLoaded("create")) {
-            CreateMixingRecipeBuilder(ItemStack(ModBlocks.BREAD_BLOCK.get(), 2))
+            CreateMixingRecipeBuilder(ModBlocks.BREAD_BLOCK.get(), 2)
                 .heatRequirement(CreateMixingRecipeBuilder.HeatRequirement.HEATED)
                 .requiresItem(Items.BREAD, 1)
                 .requiresFluid(FluidTags.WATER, 1000)

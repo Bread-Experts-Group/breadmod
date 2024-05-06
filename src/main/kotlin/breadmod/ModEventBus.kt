@@ -19,6 +19,7 @@ import breadmod.datagen.tags.ModPaintingTags
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
+import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntities.HAPPY_BLOCK_ENTITY
@@ -46,6 +47,7 @@ import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import java.util.function.Function
 
 
@@ -104,6 +106,11 @@ object ModEventBus {
 
             MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
         }
+    }
+
+    @SubscribeEvent
+    fun onCommonSetup(event: FMLCommonSetupEvent) {
+        NETWORK
     }
 
     @SubscribeEvent

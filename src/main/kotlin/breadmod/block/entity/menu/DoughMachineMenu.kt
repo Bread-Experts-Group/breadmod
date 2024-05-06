@@ -5,15 +5,14 @@ import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.screen.ModMenuTypes
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.tags.FluidTags
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
-import net.minecraft.world.level.material.Fluids
-import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.FluidUtil
 import net.minecraftforge.fluids.capability.IFluidHandler
 import kotlin.jvm.optionals.getOrNull
@@ -31,19 +30,19 @@ class DoughMachineMenu(
         inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.DOUGH_MACHINE.get()).get()
     )
 
-    fun getScaledProgress(): Int = ((parent.data[0].toFloat() / parent.data[1]) * 24).toInt()
-    fun getEnergyStoredScaled(): Int = ((parent.data[2].toFloat() / parent.data[3]) * 47).toInt()
-    fun isCrafting(): Boolean = parent.data[0] > 0
+    fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 24).toInt()
+    fun getEnergyStoredScaled(): Int = parent.energyHandlerOptional.resolve().getOrNull()?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
+    fun isCrafting(): Boolean = parent.progress > 0
 
     class DoughMachineResultSlot(parent: DoughMachineBlockEntity) : Slot(parent,1, 78, 35) {
         override fun mayPlace(stack: ItemStack): Boolean = false }
     class DoughMachineBucketSlot(parent: DoughMachineBlockEntity) : Slot(parent, 2, 153, 7) {
         override fun mayPlace(stack: ItemStack): Boolean =
-            stack.`is`(Items.WATER_BUCKET) || FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { it?.drain(FluidStack(Fluids.WATER, 1), IFluidHandler.FluidAction.SIMULATE)?.amount == 1 }
+            stack.item.let { it is BucketItem && it.fluid.`is`(FluidTags.WATER) } ||
+            FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { it?.drain(1, IFluidHandler.FluidAction.SIMULATE)?.let { drained -> drained.amount == 1 && drained.fluid.`is`(FluidTags.WATER) } == true }
     }
 
     init {
-        addDataSlots(parent.data)
         addSlot(Slot(parent, 0, 26, 34))
         addSlot(DoughMachineResultSlot(parent))
         addSlot(DoughMachineBucketSlot(parent))
