@@ -43,13 +43,13 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         return factory(
             ResourceLocation(p1.get(ENTRY_ID_KEY).asString),
             p1.get(TIME_KEY).asInt,
-            inputs.get(ENERGY_KEY).asInt,
-            requiredFluids.getAsJsonArray(CERTAIN_KEY).extractJsonFluidList(),
-            requiredFluids.getAsJsonArray(TAGGED_KEY).extractJsonTagList(ForgeRegistries.FLUIDS),
-            requiredItems.getAsJsonArray(CERTAIN_KEY).extractJsonItemList(),
-            requiredItems.getAsJsonArray(TAGGED_KEY).extractJsonTagList(ForgeRegistries.ITEMS),
-            outputItems.getAsJsonArray(FLUIDS_KEY).extractJsonFluidList(),
-            outputItems.getAsJsonArray(ITEMS_KEY).extractJsonItemList()
+            inputs.get(ENERGY_KEY)?.asInt,
+            requiredFluids.getAsJsonArray(CERTAIN_KEY)?.extractJsonFluidList(),
+            requiredFluids.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.FLUIDS),
+            requiredItems.getAsJsonArray(CERTAIN_KEY)?.extractJsonItemList(),
+            requiredItems.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.ITEMS),
+            outputItems.getAsJsonArray(FLUIDS_KEY)?.extractJsonFluidList(),
+            outputItems.getAsJsonArray(ITEMS_KEY)?.extractJsonItemList()
         )
     }
 
