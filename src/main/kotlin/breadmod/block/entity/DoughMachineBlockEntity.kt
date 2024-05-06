@@ -7,7 +7,6 @@ import breadmod.recipe.AbstractFluidEnergyRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.FluidContainer
-import breadmod.util.PoweredFluidCraftingContainer
 import breadmod.util.deserialize
 import breadmod.util.serialize
 import net.minecraft.core.BlockPos
@@ -42,7 +41,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.fluids.capability.templates.FluidTank
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 class DoughMachineBlockEntity(
     pPos: BlockPos,
@@ -164,7 +162,7 @@ class DoughMachineBlockEntity(
             pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
             data[0] = 0
             recipeDial.getRecipeFor(pBlockEntity, pLevel).ifPresent { recipe ->
-
+                println("MATCH! $recipe")
             }
         }
     }

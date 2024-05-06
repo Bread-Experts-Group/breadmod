@@ -22,7 +22,8 @@ abstract class FluidContainer(size: Int, init: (index: Int) -> FluidTank): IFlui
     fun space(fluid: Fluid) = filterFluid(fluid, true).sumOf { it.space }
 
     fun contains(fluid: FluidStack, onlyCheckFluid: Boolean) = tanks.firstOrNull { it.fluid == fluid && (!onlyCheckFluid || it.fluid.amount >= fluid.amount) }
-    fun contains(fluid: Fluid) = tanks.firstOrNull { it.fluid == fluid }
+    fun contains(fluid: Fluid) = tanks.firstOrNull { it.fluid.fluid.isSame(fluid) }
+    fun contains(fluid: TagKey<Fluid>) = tanks.firstOrNull { it.fluid.fluid.`is`(fluid) }
 
     final override fun getTanks(): Int = tanks.size
     final override fun getFluidInTank(tank: Int): FluidStack = tanks[tank].fluid.copy()

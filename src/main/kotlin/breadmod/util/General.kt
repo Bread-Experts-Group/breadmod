@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.IForgeRegistry
 import org.joml.Matrix4f
@@ -168,7 +169,7 @@ fun FriendlyByteBuf.writeFluidList(fluidList: List<FluidStack>) { this.writeInt(
 fun FriendlyByteBuf.readItemList(): List<ItemStack> = List(this.readInt()) { this.readItem() }
 fun FriendlyByteBuf.writeItemList(itemList: List<ItemStack>) { this.writeInt(itemList.size); itemList.forEach { this.writeItem(it) } }
 fun <T> FriendlyByteBuf.readTagList(registry: IForgeRegistry<T>): List<Pair<TagKey<T>, Int>> = List(this.readInt()) { registry.createTagKey(this.readUtf()) to this.readInt() }
-fun <T> FriendlyByteBuf.writeTagList(registry: IForgeRegistry<T>, tagList: List<Pair<TagKey<T>, Int>>) { this.writeInt(tagList.size); tagList.forEach { this.writeUtf(it.first.location.toString()); this.writeInt(it.second)} }
+fun <T> FriendlyByteBuf.writeTagList(tagList: List<Pair<TagKey<T>, Int>>) { this.writeInt(tagList.size); tagList.forEach { this.writeUtf(it.first.location.toString()); this.writeInt(it.second)} }
 
 fun Collection<ItemStack>.serialize(tag: CompoundTag): CompoundTag {
     this.forEachIndexed { index, stack -> tag.put(index.toString(), stack.serializeNBT()) }
@@ -176,3 +177,12 @@ fun Collection<ItemStack>.serialize(tag: CompoundTag): CompoundTag {
 }
 fun Collection<ItemStack>.serialize() = this.serialize(CompoundTag())
 fun MutableList<ItemStack>.deserialize(tag: CompoundTag) = tag.allKeys.forEach { this[it.toInt()] = ItemStack.of(tag.getCompound(it)) }
+
+fun IFluidHandler.amount(fluid: Fluid) =
+    List(this.tanks) { this.getFluidInTank(it) }
+        .filter { !it.isEmpty && it.fluid.isSame(fluid) }
+        .sumOf { it.amount }
+fun IFluidHandler.amount(fluid: TagKey<Fluid>) =
+    List(this.tanks) { this.getFluidInTank(it) }
+        .filter { !it.isEmpty && it.fluid.`is`(fluid) }
+        .sumOf { it.amount }

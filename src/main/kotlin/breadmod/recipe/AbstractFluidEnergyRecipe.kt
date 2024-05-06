@@ -1,8 +1,7 @@
 package breadmod.recipe
 
 import breadmod.registry.recipe.ModRecipeTypes
-import breadmod.util.PoweredFluidCraftingContainer
-import net.minecraft.core.RegistryAccess
+import breadmod.util.amount
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.inventory.CraftingContainer
@@ -12,34 +11,26 @@ import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.material.Fluid
+import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.fluids.FluidStack
+import kotlin.jvm.optionals.getOrNull
 
 abstract class AbstractFluidEnergyRecipe(pId: ResourceLocation): CustomRecipe(pId, CraftingBookCategory.MISC) {
     override fun getType(): RecipeType<*> = ModRecipeTypes.ENERGY_FLUID_ITEM
 
-    companion object {
-        /**
-         * Don't stick beans up your nose
-         * @author Miko Elbrecht
-         * @since 1.0.0
-         */
-        fun dsbuyn(): Nothing = throw IllegalStateException("Bad!")
+    override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
+        val okay =
+                itemsRequired.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.item) }?.count ?: -1) >= it.count } &&
+                itemsRequiredTagged.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.first) }?.count ?: -1) >= it.second }
+        if(okay && (fluidsRequiredTagged.size + fluidsRequired.size) > 0) {
+            val fluidHandler = (pContainer as? BlockEntity)?.getCapability(ForgeCapabilities.FLUID_HANDLER)?.resolve()?.getOrNull() ?: return false
+
+            return fluidsRequired.all { fluidHandler.amount(it.fluid) >= it.amount } &&
+                    fluidsRequiredTagged.all { fluidHandler.amount(it.first) >= it.second }
+        } else return false
     }
-
-    /**
-     * Original assemble function intentionally finally overridden to facilitate returning multiple fluids and items
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
-    final override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack = dsbuyn()
-
-    /**
-     * Original matches function intentionally finally overridden to facilitate checking fluids as well as items for the recipe
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
-    final override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean = TODO(" MATCHES")
     /**
      * @return Default time this recipe takes to complete
      * @author Miko Elbrecht

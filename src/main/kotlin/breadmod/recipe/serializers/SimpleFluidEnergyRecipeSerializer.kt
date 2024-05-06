@@ -2,7 +2,6 @@ package breadmod.recipe.serializers
 
 import breadmod.recipe.AbstractFluidEnergyRecipe
 import breadmod.util.*
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
@@ -14,7 +13,6 @@ import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.registries.ForgeRegistries
-import net.minecraftforge.registries.IForgeRegistry
 
 @Suppress("MemberVisibilityCanBePrivate")
 class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
@@ -54,8 +52,7 @@ class SimpleFluidEnergyRecipeSerializer<T: AbstractFluidEnergyRecipe>(
         to: JsonObject, location: ResourceLocation,
         time: Int, energy: Int,
         fluidList: List<FluidStack>, fluidTagList: List<Pair<TagKey<Fluid>, Int>>,
-        itemList: List<ItemStack>, itemTagList: List<Pair<TagKey<ItemLike>, Int>>,
-        fluidOutputs: List<FluidStack>, itemOutputs: List<ItemStack>
+        itemList: List<ItemStack>, itemTagList: List<Pair<TagKey<ItemLike>, Int>>
     ) = to.also {
         it.addProperty(ENTRY_ID_KEY, location.toString())
         it.addProperty(TIME_KEY, time)

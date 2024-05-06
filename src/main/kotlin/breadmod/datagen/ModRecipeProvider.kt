@@ -15,8 +15,6 @@ import net.minecraft.tags.FluidTags
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
-import net.minecraft.world.level.material.Fluids
-import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 

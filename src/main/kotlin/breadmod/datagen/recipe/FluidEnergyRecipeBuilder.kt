@@ -1,6 +1,5 @@
 package breadmod.datagen.recipe
 
-import breadmod.recipe.AbstractFluidEnergyRecipe.Companion.dsbuyn
 import breadmod.recipe.serializers.SimpleFluidEnergyRecipeSerializer
 import com.google.gson.JsonObject
 import net.minecraft.advancements.CriterionTriggerInstance
@@ -22,7 +21,7 @@ class FluidEnergyRecipeBuilder(
 ): ItemBearingRecipeBuilder, FluidBearingRecipeBuilder, TimedRecipeBuilder, PoweredRecipeBuilder {
     override fun unlockedBy(pCriterionName: String, pCriterionTrigger: CriterionTriggerInstance): RecipeBuilder = this
     override fun group(pGroupName: String?): RecipeBuilder = this
-    override fun getResult(): Item = dsbuyn()
+    override fun getResult(): Item = itemOutputs.first().item
 
     lateinit var serializer: SimpleFluidEnergyRecipeSerializer<*>
     fun setSerializer(setSerializer: SimpleFluidEnergyRecipeSerializer<*>) = this.also { serializer = setSerializer }
