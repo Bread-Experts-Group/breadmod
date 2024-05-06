@@ -57,9 +57,6 @@
   - [X] Crafted from using a sword on bread in a crafting table (the sword uses durability)
     - [X] FIX RECIPE TO NOT CONSUME THE SWORD, ONLY TAKE DURABILITY (IMPORTANT)
   - [X] You get 8 bread slices per bread in the recipe
-  - [ ] Doping
-    - [ ] Surround 1-8 bread slices around a potion to dope them, time the potion lasts when eaten depends on the divisions
-      - Can only be doped once!
   - [X] Crafted using a cutting board from farmer's delight
 - [ ] Recipe Fixes with other mods
   - [ ] Dough compat with create mod dough
