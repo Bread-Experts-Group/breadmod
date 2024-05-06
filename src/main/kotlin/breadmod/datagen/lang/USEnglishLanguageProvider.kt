@@ -53,7 +53,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.KEYBOARD.get())
 
         modAdd(
-            "The Bread Mod",
+            "Bread Mod",
             "itemGroup", "main"
         )
 

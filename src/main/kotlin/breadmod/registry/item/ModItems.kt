@@ -6,6 +6,7 @@ import breadmod.registry.sound.ModSounds
 import breadmod.item.DopedBreadItem
 import breadmod.item.TestBreadItem
 import breadmod.item.UltimateBreadItem
+import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
@@ -74,6 +75,16 @@ object ModItems {
                 pOutput: CreativeModeTab.Output
             ) = pOutput.accept(this.defaultInstance.also { it.setColor(BREAD_COLOR) })
         } }
+
+    // Reinforced Armor
+    val RF_BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("reinforced_bread_helmet") {
+        ArmorItem(ArmorTiers.RF_BREAD, ArmorItem.Type.HELMET, Item.Properties()) }
+    val RF_BREAD_CHESTPLATE: RegistryObject<ArmorItem> = deferredRegister.register("reinforced_bread_chestplate") {
+        ArmorItem(ArmorTiers.RF_BREAD, ArmorItem.Type.CHESTPLATE, Item.Properties()) }
+    val RF_BREAD_LEGGINGS: RegistryObject<ArmorItem> = deferredRegister.register("reinforced_bread_leggings") {
+        ArmorItem(ArmorTiers.RF_BREAD, ArmorItem.Type.LEGGINGS, Item.Properties()) }
+    val RF_BREAD_BOOTS: RegistryObject<ArmorItem> = deferredRegister.register("reinforced_bread_boots") {
+        ArmorItem(ArmorTiers.RF_BREAD, ArmorItem.Type.BOOTS, Item.Properties()) }
 
     // Tools // Speed modifier slows down the tool based on how much of a negative value you give it (Maybe it's a multiplier?)
     val BREAD_PICKAXE: RegistryObject<PickaxeItem> = deferredRegister.register("bread_pickaxe") {
