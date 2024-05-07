@@ -1,7 +1,7 @@
 package breadmod.block.entity
 
-import breadmod.BreadMod
-import breadmod.BreadMod.modTranslatable
+import breadmod.ModMain
+import breadmod.ModMain.modTranslatable
 import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.network.CapabilityDataTransfer
 import breadmod.network.PacketHandler.NETWORK
@@ -38,6 +38,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.FluidUtil
 import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.fluids.capability.templates.FluidTank
@@ -96,7 +97,7 @@ class DoughMachineBlockEntity(
     var progress = 0; var maxProgress = 0
     override fun saveAdditional(pTag: CompoundTag) {
         super.saveAdditional(pTag)
-        pTag.put(BreadMod.ID, CompoundTag().also { dataTag ->
+        pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
             dataTag.put("items", storedItems.serialize())
             energyHandlerOptional.ifPresent { dataTag.put("energy", it.serializeNBT()) }
             fluidHandlerOptional.ifPresent { dataTag.put("fluids", it.serializeNBT()) }
@@ -106,7 +107,7 @@ class DoughMachineBlockEntity(
 
     override fun load(pTag: CompoundTag) {
         super.load(pTag)
-        val dataTag = pTag.getCompound(BreadMod.ID)
+        val dataTag = pTag.getCompound(ModMain.ID)
         storedItems.deserialize(dataTag.getCompound("items"))
         energyHandlerOptional.ifPresent {
             it.deserializeNBT(dataTag.get("energy"))
@@ -129,8 +130,8 @@ class DoughMachineBlockEntity(
             if(!it.isEmpty) {
                 val space = fluidHandle.space(FluidTags.WATER)
                 val item = it.item
-                if(space > 1000 && item is BucketItem && item.fluid.`is`(FluidTags.WATER)) {
-                    fluidHandle.fill(FluidStack(item.fluid, 1000), IFluidHandler.FluidAction.EXECUTE)
+                if(space > FluidType.BUCKET_VOLUME && item is BucketItem && item.fluid.`is`(FluidTags.WATER)) {
+                    fluidHandle.fill(FluidStack(item.fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE)
                     storedItems[2] = Items.BUCKET.defaultInstance
                 } else if(space > 0) {
                     FluidUtil.getFluidHandler(it).ifPresent { stackFluidHandle ->

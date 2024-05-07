@@ -1,6 +1,6 @@
 package breadmod.datagen.dimension.worldgen
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.datagen.dimension.BootstrapContext
 import breadmod.registry.block.ModBlocks
 import net.minecraft.core.HolderGetter
@@ -19,7 +19,7 @@ object ModNoiseGenerators: NoiseRouterData() {
     private val entries = mutableListOf<Pair<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorBuilder>>()
     fun register(name: String, builder: NoiseGeneratorBuilder): ResourceKey<NoiseGeneratorSettings> = ResourceKey.create(
         Registries.NOISE_SETTINGS,
-        BreadMod.modLocation(name)
+        ModMain.modLocation(name)
     ).also {
         entries.add(it to builder)
     }

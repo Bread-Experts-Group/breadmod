@@ -1,6 +1,7 @@
 package breadmod.datagen
 
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
+import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
@@ -29,6 +30,8 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.TEST_DISC)
         singleItem(ModItems.DOUGH)
         singleItem(ModItems.FLOUR)
+        singleItem(ModItems.ULTIMATE_BREAD)
+        singleItem(ModFluids.BREAD_LIQUID.bucket)
         ModItems.PROJECT_E?.also {
             singleItem(it.BREAD_EMC_ITEM)
         }

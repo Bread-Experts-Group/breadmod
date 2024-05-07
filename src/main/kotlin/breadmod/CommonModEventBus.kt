@@ -1,0 +1,73 @@
+package breadmod
+
+import breadmod.ModMain.LOGGER
+import breadmod.compat.projecte.ModEMCProvider
+import breadmod.datagen.*
+import breadmod.datagen.dimension.ModDimensions
+import breadmod.datagen.dimension.worldgen.ModBiomes
+import breadmod.datagen.dimension.worldgen.ModFeatures
+import breadmod.datagen.dimension.worldgen.ModNoiseGenerators
+import breadmod.datagen.lang.USEnglishLanguageProvider
+import breadmod.datagen.tags.ModBlockTags
+import breadmod.datagen.tags.ModFluidTags
+import breadmod.datagen.tags.ModItemTags
+import breadmod.datagen.tags.ModPaintingTags
+import breadmod.network.PacketHandler.NETWORK
+import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.registries.Registries
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
+import net.minecraftforge.data.event.GatherDataEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+
+@Suppress("unused")
+@Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+object CommonModEventBus {
+    // Data Generation
+    @SubscribeEvent
+    fun gatherData(event: GatherDataEvent) {
+        val generator = event.generator
+        val packOutput = generator.packOutput
+        val existingFileHelper = event.existingFileHelper
+        val lookupProvider = event.lookupProvider
+
+        if(event.includeServer()) {
+            LOGGER.info("Server datagen")
+            generator.addProvider(true, ModLootTableProvider.create(packOutput))
+            generator.addProvider(true, ModRecipeProvider(packOutput))
+            generator.addProvider(true, ModEMCProvider(packOutput, lookupProvider))
+
+            val blockTagGenerator = generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
+            generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
+            generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
+            generator.addProvider(true, ModFluidTags(packOutput, lookupProvider, existingFileHelper))
+
+            generator.addProvider(true, DatapackBuiltinEntriesProvider(
+                packOutput, lookupProvider, RegistrySetBuilder()
+                    .add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
+
+                    .add(Registries.CONFIGURED_FEATURE, ModFeatures::bootstrapConfiguredFeatures)
+                    .add(Registries.PLACED_FEATURE, ModFeatures::bootstrapPlacedFeatures)
+
+                    .add(Registries.BIOME, ModBiomes::bootstrapBiomes)
+                    .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
+                    .add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems),
+                setOf(ModMain.ID))
+            )
+        }
+        if(event.includeClient()) {
+            LOGGER.info("Client datagen")
+            generator.addProvider(true, USEnglishLanguageProvider(packOutput, ModMain.ID, "en_us"))
+            generator.addProvider(true, ModBlockStateProvider(packOutput, ModMain.ID, existingFileHelper))
+            generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, ModMain.ID, existingFileHelper))
+            generator.addProvider(true, ModItemModelProvider(packOutput, ModMain.ID, existingFileHelper))
+        }
+    }
+
+    @SubscribeEvent
+    fun onCommonSetup(event: FMLCommonSetupEvent) {
+        LOGGER.info("Common setup")
+        NETWORK
+    }
+}

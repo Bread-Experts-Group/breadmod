@@ -1,6 +1,6 @@
 package breadmod.datagen.tags
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.registry.block.ModBlocks
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
@@ -14,7 +14,7 @@ class ModBlockTags(
     output: PackOutput,
     lookupProvider: CompletableFuture<HolderLookup.Provider>,
     existingFileHelper: ExistingFileHelper,
-) : BlockTagsProvider(output, lookupProvider, BreadMod.ID, existingFileHelper) {
+) : BlockTagsProvider(output, lookupProvider, ModMain.ID, existingFileHelper) {
     override fun addTags(pProvider: HolderLookup.Provider) {
         tag(BlockTags.MINEABLE_WITH_HOE)
             .add(ModBlocks.BREAD_BLOCK.get().block)

@@ -1,6 +1,6 @@
 package breadmod.datagen.dimension
 
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
 import breadmod.datagen.dimension.worldgen.ModBiomes
 import breadmod.datagen.dimension.worldgen.ModNoiseGenerators
 import com.mojang.datafixers.util.Pair

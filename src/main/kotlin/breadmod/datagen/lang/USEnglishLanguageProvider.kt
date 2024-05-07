@@ -1,56 +1,61 @@
 package breadmod.datagen.lang
 
-import breadmod.BreadMod.modAdd
+import breadmod.ModMain.modAdd
 import breadmod.compat.jade.TOOLTIP_RENDERER
 import breadmod.compat.jade.addJade
 import breadmod.registry.block.ModBlocks
+import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
 import net.minecraft.data.PackOutput
-import net.minecraft.world.item.Item
-import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.ItemLike
 import net.minecraftforge.common.data.LanguageProvider
+import net.minecraftforge.registries.RegistryObject
 
 class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: String) : LanguageProvider(output, modID, locale) {
-
-    private fun String.idToName() = substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
     // Transforms type.mod_id.example_object into Example Object
-    private fun LanguageProvider.add(block: Block) = add(block, block.descriptionId.idToName())
-    private fun LanguageProvider.add(item: Item) = add(item, item.descriptionId.idToName())
+    private fun String.idToName() = substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+
+    private fun LanguageProvider.add(item: ItemLike) = item.asItem().let { add(it, it.descriptionId.idToName()) }
+    private fun <T: ItemLike> LanguageProvider.add(obj: RegistryObject<T>, override: String? = null) =
+        obj.get().let { if(override != null) this.add(it.asItem(), override) else this.add(it) } // TODO: CRITICAL: ADD SUPPORT FOR FLUIDS/WHERE asItem IS AIR!
 
     override fun addTranslations() {
-        add(ModBlocks.BREAD_BLOCK.get())
-        add(ModItems.TEST_DISC.get(), "Test Music Disc")
-        add(ModItems.TEST_BREAD.get())
-        add(ModItems.BREAD_SHIELD.get())
-        add(ModItems.BREAD_HELMET.get())
-        add(ModItems.BREAD_CHESTPLATE.get())
-        add(ModItems.BREAD_LEGGINGS.get())
-        add(ModItems.BREAD_BOOTS.get())
-        add(ModItems.DOPED_BREAD.get())
-        add(ModItems.BREAD_SHOVEL.get())
-        add(ModItems.BREAD_HOE.get())
-        add(ModItems.BREAD_AXE.get())
-        add(ModItems.BREAD_PICKAXE.get())
-        add(ModItems.BREAD_SWORD.get())
-        add(ModItems.RF_BREAD_SHOVEL.get())
-        add(ModItems.RF_BREAD_HOE.get())
-        add(ModItems.RF_BREAD_AXE.get())
-        add(ModItems.RF_BREAD_PICKAXE.get())
-        add(ModItems.RF_BREAD_SWORD.get())
-        add(ModItems.BREAD_SLICE.get())
-        add(ModBlocks.REINFORCED_BREAD_BLOCK.get())
-        add(ModBlocks.CHARCOAL_BLOCK.get())
-        add(ModBlocks.DOUGH_MACHINE_BLOCK.get())
-        add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get(), "Low-Density Charcoal Block")
-        add(ModBlocks.HAPPY_BLOCK.get())
-        add(ModBlocks.HEATING_ELEMENT_BLOCK.get())
-        add(ModItems.DOUGH.get())
-        add(ModItems.FLOUR.get())
-        add(ModBlocks.FLOUR_BLOCK.get())
-        add(ModBlocks.FLOUR_LAYER_BLOCK.get(), "Flour")
-        add(ModBlocks.BAUXITE_ORE.get())
-        add(ModBlocks.MONITOR.get())
-        add(ModBlocks.KEYBOARD.get())
+        add(ModBlocks.BREAD_BLOCK)
+        add(ModItems.TEST_DISC, "Test Music Disc")
+        add(ModItems.TEST_BREAD)
+        add(ModItems.BREAD_SHIELD)
+        add(ModItems.BREAD_HELMET)
+        add(ModItems.BREAD_CHESTPLATE)
+        add(ModItems.BREAD_LEGGINGS)
+        add(ModItems.BREAD_BOOTS)
+        add(ModItems.DOPED_BREAD)
+        add(ModItems.BREAD_SHOVEL)
+        add(ModItems.BREAD_HOE)
+        add(ModItems.BREAD_AXE)
+        add(ModItems.BREAD_PICKAXE)
+        add(ModItems.BREAD_SWORD)
+        add(ModItems.RF_BREAD_SHOVEL)
+        add(ModItems.RF_BREAD_HOE)
+        add(ModItems.RF_BREAD_AXE)
+        add(ModItems.RF_BREAD_PICKAXE)
+        add(ModItems.RF_BREAD_SWORD)
+        add(ModItems.BREAD_SLICE)
+        add(ModBlocks.REINFORCED_BREAD_BLOCK)
+        add(ModBlocks.CHARCOAL_BLOCK)
+        add(ModBlocks.DOUGH_MACHINE_BLOCK)
+        add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK, "Low-Density Charcoal Block")
+        add(ModBlocks.HAPPY_BLOCK)
+        add(ModBlocks.HEATING_ELEMENT_BLOCK)
+        add(ModItems.DOUGH)
+        add(ModItems.FLOUR)
+        add(ModBlocks.FLOUR_BLOCK)
+        add(ModBlocks.FLOUR_LAYER_BLOCK, "Flour")
+        add(ModBlocks.BAUXITE_ORE)
+        add(ModBlocks.MONITOR)
+        add(ModBlocks.KEYBOARD)
+        add(ModItems.ULTIMATE_BREAD)
+        add(ModFluids.BREAD_LIQUID.block)
+        add(ModFluids.BREAD_LIQUID.bucket)
 
         modAdd(
             "Bread Mod",
@@ -101,7 +106,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         addJade(TOOLTIP_RENDERER)
         // // ProjectE
         ModItems.PROJECT_E?.also {
-            add(it.BREAD_EMC_ITEM.get(), "Bread Orb")
+            add(it.BREAD_EMC_ITEM, "Bread Orb")
         }
     }
 }

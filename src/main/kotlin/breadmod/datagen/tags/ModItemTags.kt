@@ -1,6 +1,6 @@
 package breadmod.datagen.tags
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.registry.item.ModItems
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
@@ -16,7 +16,7 @@ class ModItemTags(
     pLookupProvider: CompletableFuture<HolderLookup.Provider>,
     pBlockTags: CompletableFuture<TagLookup<Block>>,
     existingFileHelper: ExistingFileHelper
-) : ItemTagsProvider(pOutput, pLookupProvider, pBlockTags, BreadMod.ID, existingFileHelper) {
+) : ItemTagsProvider(pOutput, pLookupProvider, pBlockTags, ModMain.ID, existingFileHelper) {
     override fun addTags(pProvider: HolderLookup.Provider) {
         tag(ItemTags.MUSIC_DISCS)
             .add(ModItems.TEST_DISC.get())

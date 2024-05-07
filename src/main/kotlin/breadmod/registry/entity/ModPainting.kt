@@ -1,13 +1,13 @@
 package breadmod.registry.entity
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import net.minecraft.world.entity.decoration.PaintingVariant
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModPainting {
-    val deferredRegister: DeferredRegister<PaintingVariant> = DeferredRegister.create(ForgeRegistries.PAINTING_VARIANTS, BreadMod.ID)
+    val deferredRegister: DeferredRegister<PaintingVariant> = DeferredRegister.create(ForgeRegistries.PAINTING_VARIANTS, ModMain.ID)
 
     val PAINTING_TEST: RegistryObject<PaintingVariant> = deferredRegister.register("painting_test") {
         PaintingVariant(64,64)

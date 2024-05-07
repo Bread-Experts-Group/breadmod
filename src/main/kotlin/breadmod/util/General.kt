@@ -28,26 +28,26 @@ import java.util.*
 import kotlin.math.min
 
 val formatArray = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
-fun formatNumber(pN: Double, pUnitOffset: Int): Pair<Double, String> {
+fun formatNumber(pN: Double, pUnitOffset: Int = 0, pUnitMax: Int = 1000): Pair<Double, String> {
     var num = pN
     var index = 3 + pUnitOffset
-    while (num >= 1000 && index < formatArray.size - 1) {
-        num /= 1000
+    while (num >= pUnitMax && index < formatArray.size - 1) {
+        num /= pUnitMax
         index++
     }
     while (num < 1 && index > 0) {
-        num *= 1000
+        num *= pUnitMax
         index--
     }
     return num to formatArray[index]
 }
 
-fun formatUnit(pFrom: Double, pTo: Double, pUnit: String, pFormatShort: Boolean, pDecimals: Int, pUnitOffset: Int = 0): String {
+fun formatUnit(pFrom: Double, pTo: Double, pUnit: String, pFormatShort: Boolean, pDecimals: Int, pUnitOffset: Int = 0, pUnitMax: Int = 1000): String {
     val formatStr = "%.${pDecimals}f %s/ %.${pDecimals}f %s (%.${pDecimals}f%%)"
     val percent = (pFrom / pTo) * 100
     if (pFormatShort) {
-        val toFormat = formatNumber(pTo, pUnitOffset)
-        val fromFormat = formatNumber(pFrom, pUnitOffset)
+        val toFormat = formatNumber(pTo, pUnitOffset, pUnitMax)
+        val fromFormat = formatNumber(pFrom, pUnitOffset, pUnitMax)
         return String.format(
             formatStr,
             fromFormat.first, if(toFormat.second != fromFormat.second) "${fromFormat.second}$pUnit " else "",
@@ -63,8 +63,8 @@ fun formatUnit(pFrom: Double, pTo: Double, pUnit: String, pFormatShort: Boolean,
         )
     }
 }
-fun formatUnit(from: Int, to: Int, unit: String, formatShort: Boolean, places: Int, offset: Int = 0): String =
-    formatUnit(from.toDouble(), to.toDouble(), unit, formatShort, places, offset)
+fun formatUnit(pFrom: Int, pTo: Int, pUnit: String, pFormatShort: Boolean, pDecimals: Int, pUnitOffset: Int = 0, pUnitMax: Int = 1000): String =
+    formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
 
 fun GuiGraphics.renderFluid(
     pX: Float, pY: Float, pWidth: Int, pHeight: Int,

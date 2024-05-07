@@ -1,6 +1,6 @@
 package breadmod.compat.jei
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.compat.jei.vanillaExtensions.JEIArmorPotionCraftingExtension
 import breadmod.compat.jei.vanillaExtensions.JEIBreadSliceCraftingExtension
 import breadmod.recipe.ArmorPotionRecipe
@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation
 
 @JeiPlugin @Suppress("unused")
 class JEIPlugin : IModPlugin {
-    override fun getPluginUid(): ResourceLocation = ResourceLocation(BreadMod.ID, "jei_plugin")
+    override fun getPluginUid(): ResourceLocation = ResourceLocation(ModMain.ID, "jei_plugin")
 
     override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
         registration.craftingCategory.addCategoryExtension(ArmorPotionRecipe::class.java) { JEIArmorPotionCraftingExtension(it) }

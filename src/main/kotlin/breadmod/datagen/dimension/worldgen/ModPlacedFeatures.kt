@@ -1,6 +1,6 @@
 package breadmod.datagen.dimension.worldgen
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.datagen.dimension.BootstrapContext
 import breadmod.registry.block.ModBlocks
 import net.minecraft.core.HolderGetter
@@ -25,11 +25,11 @@ object ModFeatures {
     )
     private fun registerPlacedFeature(name: String, builder: PlacedFeatureBuilder): ResourceKey<PlacedFeature> = ResourceKey.create(
         Registries.PLACED_FEATURE,
-        BreadMod.modLocation(name)
+        ModMain.modLocation(name)
     ).also { entries.first.add(it to builder) }
     private fun registerConfiguredFeature(name: String, builder: ConfiguredFeatureBuilder): ResourceKey<ConfiguredFeature<*,*>> = ResourceKey.create(
         Registries.CONFIGURED_FEATURE,
-        BreadMod.modLocation(name)
+        ModMain.modLocation(name)
     ).also { entries.second.add(it to builder) }
 
     private val BAUXITE_ORE_CONFIGURED = registerConfiguredFeature("bauxite") {

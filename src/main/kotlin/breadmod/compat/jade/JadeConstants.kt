@@ -1,6 +1,6 @@
 package breadmod.compat.jade
 
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.common.data.LanguageProvider
 

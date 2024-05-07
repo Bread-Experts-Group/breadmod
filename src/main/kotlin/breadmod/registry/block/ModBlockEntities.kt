@@ -1,6 +1,6 @@
 package breadmod.registry.block
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.block.entity.BreadScreenBlockEntity
 import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.block.entity.HeatingElementBlockEntity
@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModBlockEntities {
-    val deferredRegister: DeferredRegister<BlockEntityType<*>> = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, BreadMod.ID)
+    val deferredRegister: DeferredRegister<BlockEntityType<*>> = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ModMain.ID)
 
     val DOUGH_MACHINE: RegistryObject<BlockEntityType<DoughMachineBlockEntity>> = deferredRegister.register("dough_machine_entity") {
         BlockEntityType.Builder.of(

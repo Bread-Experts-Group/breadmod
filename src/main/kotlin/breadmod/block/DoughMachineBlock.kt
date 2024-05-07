@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.FluidUtil
 import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.network.NetworkHooks
@@ -98,12 +99,12 @@ class DoughMachineBlock : Block(Properties.of()
 
                 val filled = if(item is BucketItem && item.fluid.`is`(FluidTags.WATER) && it.space(FluidTags.WATER) > 0) {
                     if(!pPlayer.isCreative) pPlayer.setItemInHand(pHand, Items.BUCKET.defaultInstance)
-                    it.fill(FluidStack(item.fluid, 1000), IFluidHandler.FluidAction.EXECUTE)
+                    it.fill(FluidStack(item.fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE)
                 } else {
                     FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { stackFluidHandle ->
                         if(stackFluidHandle != null && stackFluidHandle.drain(1, IFluidHandler.FluidAction.SIMULATE).fluid.`is`(FluidTags.WATER)) it.fill(
                             stackFluidHandle.drain(
-                                min(1000, it.space(FluidTags.WATER)),
+                                min(FluidType.BUCKET_VOLUME, it.space(FluidTags.WATER)),
                                 if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
                             ),
                             IFluidHandler.FluidAction.EXECUTE

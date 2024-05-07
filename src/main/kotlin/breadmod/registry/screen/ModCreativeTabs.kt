@@ -1,7 +1,7 @@
 package breadmod.registry.screen
 
-import breadmod.BreadMod
-import breadmod.BreadMod.modTranslatable
+import breadmod.ModMain
+import breadmod.ModMain.modTranslatable
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.RegisterSpecialCreativeTab
@@ -11,7 +11,7 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.RegistryObject
 
 object ModCreativeTabs {
-    val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, BreadMod.ID)
+    val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModMain.ID)
     @Suppress("unused")
     val MAIN_TAB: RegistryObject<CreativeModeTab> = deferredRegister.register("main_tab") {
         CreativeModeTab.builder()

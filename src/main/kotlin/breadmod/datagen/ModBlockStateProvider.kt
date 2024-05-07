@@ -2,6 +2,7 @@ package breadmod.datagen
 
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.block.OreBlock
+import breadmod.registry.fluid.ModFluids
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
@@ -129,6 +130,8 @@ class ModBlockStateProvider(
         // // //
         horizontalBlock(ModBlocks.KEYBOARD.get().block, models().getBuilder("breadmod:block/keyboard"))
         simpleBlockItem(ModBlocks.KEYBOARD.get().block, models().getBuilder("breadmod:block/keyboard"))
+        // // //
+        blockTexture(ModFluids.BREAD_LIQUID.block.get())
     }
 
     private fun blockWithItem(blockRegistryObject: Block) {

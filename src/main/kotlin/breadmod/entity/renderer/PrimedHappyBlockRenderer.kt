@@ -1,6 +1,6 @@
 package breadmod.entity.renderer
 
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
 import breadmod.entity.PrimedHappyBlock
 import breadmod.registry.block.ModBlocks
 import com.mojang.blaze3d.vertex.PoseStack

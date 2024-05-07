@@ -1,7 +1,7 @@
 package breadmod.network
 
-import breadmod.BreadMod.LOGGER
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.LOGGER
+import breadmod.ModMain.modLocation
 import net.minecraftforge.network.NetworkRegistry
 import net.minecraftforge.network.simple.SimpleChannel
 

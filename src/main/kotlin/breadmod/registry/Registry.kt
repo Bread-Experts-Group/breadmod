@@ -1,10 +1,11 @@
 package breadmod.registry
 
-import breadmod.BreadMod.LOGGER
+import breadmod.ModMain.LOGGER
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntities
 import breadmod.registry.entity.ModPainting
+import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
 import breadmod.registry.recipe.ModRecipeTypes
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.config.ModConfig
 
 val registerList = setOf(
+    ModFluids.deferredRegister,
     ModBlocks.deferredRegister,
     ModItems.deferredRegister,
     ModCreativeTabs.deferredRegister,

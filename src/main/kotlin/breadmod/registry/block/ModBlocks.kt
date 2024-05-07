@@ -1,6 +1,6 @@
 package breadmod.registry.block
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.block.*
 //import breadmod.item.util.BlockStateStack
 import breadmod.registry.item.ModItems
@@ -38,7 +38,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModBlocks {
-    val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, BreadMod.ID)
+    val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModMain.ID)
     fun getLocation(block: Block) = ForgeRegistries.BLOCKS.getKey(block)
 
     private fun registerBlockItem(id: String, block: () -> Block, properties: Item.Properties): RegistryObject<BlockItem> =
@@ -162,6 +162,8 @@ object ModBlocks {
             dropSelf(MONITOR.get().block)
             dropSelf(DOUGH_MACHINE_BLOCK.get().block)
             dropSelf(KEYBOARD.get().block)
+            // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
+            dropNone.forEach { add(it, noDrop()) }
 
             add(
                 FLOUR_BLOCK.get().block,
@@ -195,6 +197,10 @@ object ModBlocks {
                         })
                     )
             ))
+        }
+
+        companion object {
+            val dropNone = mutableListOf<Block>()
         }
     }
 }

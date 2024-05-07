@@ -1,6 +1,6 @@
 package breadmod.block.entity.menu
 
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
 import breadmod.util.formatUnit
 import breadmod.util.renderFluid
 import com.mojang.blaze3d.systems.RenderSystem
@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import net.minecraftforge.fluids.FluidType
 
 class DoughMachineScreen(
     pMenu: DoughMachineMenu,
@@ -63,7 +64,7 @@ class DoughMachineScreen(
                 if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
                     pGuiGraphics.renderComponentTooltip(
                         this.font,
-                        listOf(Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1))),
+                        listOf(Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1, FluidType.BUCKET_VOLUME))),
                         pMouseX, pMouseY
                     )
                 }

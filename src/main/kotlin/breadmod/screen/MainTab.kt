@@ -1,7 +1,7 @@
 package breadmod.screen
 
-import breadmod.BreadMod
-import breadmod.BreadMod.modTranslatable
+import breadmod.ModMain
+import breadmod.ModMain.modTranslatable
 import breadmod.registry.block.ModBlocks.BREAD_BLOCK
 import breadmod.registry.item.ModItems
 import net.minecraft.core.registries.Registries
@@ -12,7 +12,7 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.RegistryObject
 
 object MainTab {
-    val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, BreadMod.ID)
+    val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModMain.ID)
 
     val MAIN_TAB: RegistryObject<CreativeModeTab> = deferredRegister.register("main_tab") { // TODO: Separate items to their own appropriate tabs
         CreativeModeTab.builder()

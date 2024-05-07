@@ -1,6 +1,6 @@
 package breadmod.item
 
-import breadmod.BreadMod.modTranslatable
+import breadmod.ModMain.modTranslatable
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.LivingEntity

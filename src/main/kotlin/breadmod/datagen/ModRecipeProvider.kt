@@ -1,6 +1,6 @@
 package breadmod.datagen
 
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
 import breadmod.datagen.recipe.compat.create.CreateMixingRecipeBuilder
 import breadmod.datagen.recipe.FluidEnergyRecipeBuilder
 import breadmod.registry.block.ModBlocks
@@ -19,6 +19,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.material.Fluids
 import net.minecraftforge.fluids.FluidStack
+import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fml.ModList
 import java.util.function.Consumer
 
@@ -346,7 +347,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requiresItem(ModItems.FLOUR.get())
             .requiresFluid(FluidTags.WATER, 250)
             .save(pWriter, modLocation("special", "machine", "flour_to_dough"))
-        FluidEnergyRecipeBuilder(ItemStack(ModItems.ULTIMATE_BREAD.get()), FluidStack(Fluids.WATER, 1000))
+        FluidEnergyRecipeBuilder(ItemStack(ModItems.ULTIMATE_BREAD.get()), FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME))
             .setTimeRequired(20 * 5)
             .setRFRequired(5000)
             .requiresItem(Items.BREAD, 5)
@@ -358,7 +359,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             CreateMixingRecipeBuilder(ModBlocks.BREAD_BLOCK.get(), 2)
                 .heatRequirement(CreateMixingRecipeBuilder.HeatRequirement.HEATED)
                 .requiresItem(Items.BREAD, 1)
-                .requiresFluid(FluidTags.WATER, 1000)
+                .requiresFluid(FluidTags.WATER, FluidType.BUCKET_VOLUME)
                 .save(pWriter, modLocation("mixing", "bread_mixing_test"))
         }
 

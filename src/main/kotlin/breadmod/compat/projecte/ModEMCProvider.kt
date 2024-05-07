@@ -1,6 +1,6 @@
 package breadmod.compat.projecte
 
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
 import breadmod.registry.item.ModItems
 import moze_intel.projecte.api.data.CustomConversionProvider
 import net.minecraft.core.HolderLookup

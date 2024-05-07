@@ -1,6 +1,6 @@
 package breadmod.block.entity
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.capabilities.ModCapabilities
 import breadmod.capabilities.temperature.ITemperatureCapability
 import breadmod.capabilities.temperature.TemperatureImpl
@@ -56,7 +56,7 @@ class HeatingElementBlockEntity(
 
     override fun saveAdditional(pTag: CompoundTag) {
         super.saveAdditional(pTag)
-        pTag.put(BreadMod.ID, CompoundTag().also { dataTag ->
+        pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
             energyHandlerOptional.ifPresent { dataTag.put("energy", it.serializeNBT()) }
             temperatureHandlerOptional.ifPresent { dataTag.put("temperature", it.serializeNBT()) }
         })
@@ -64,7 +64,7 @@ class HeatingElementBlockEntity(
 
     override fun load(pTag: CompoundTag) {
         super.load(pTag)
-        val dataTag = pTag.getCompound(BreadMod.ID)
+        val dataTag = pTag.getCompound(ModMain.ID)
         energyHandlerOptional.ifPresent { it.deserializeNBT(dataTag.get("energy")) }
         temperatureHandlerOptional.ifPresent { it.deserializeNBT(dataTag.get("temperature")) }
     }

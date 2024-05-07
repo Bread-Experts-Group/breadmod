@@ -1,6 +1,6 @@
 package breadmod.datagen.dimension.worldgen
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import breadmod.datagen.dimension.BootstrapContext
 import breadmod.registry.sound.ModSounds
 import net.minecraft.core.HolderGetter
@@ -25,7 +25,7 @@ object ModBiomes {
 
     fun register(name: String, builder: BiomeBuilder): ResourceKey<Biome> = ResourceKey.create(
         Registries.BIOME,
-        BreadMod.modLocation(name)
+        ModMain.modLocation(name)
     ).also {
         entries.add(it to builder)
     }

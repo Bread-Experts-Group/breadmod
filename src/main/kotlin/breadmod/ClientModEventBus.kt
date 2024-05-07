@@ -1,25 +1,13 @@
 package breadmod
 
-import breadmod.BreadMod.LOGGER
-import breadmod.BreadMod.modLocation
+import breadmod.ModMain.modLocation
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.menu.DoughMachineScreen
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
-import breadmod.compat.projecte.ModEMCProvider
-import breadmod.datagen.*
-import breadmod.datagen.dimension.ModDimensions
-import breadmod.datagen.dimension.worldgen.ModBiomes
-import breadmod.datagen.dimension.worldgen.ModFeatures
-import breadmod.datagen.dimension.worldgen.ModNoiseGenerators
-import breadmod.datagen.lang.USEnglishLanguageProvider
-import breadmod.datagen.tags.ModBlockTags
-import breadmod.datagen.tags.ModItemTags
-import breadmod.datagen.tags.ModPaintingTags
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
-import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntities.HAPPY_BLOCK_ENTITY
@@ -34,68 +22,24 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.item.ItemProperties
-import net.minecraft.core.RegistrySetBuilder
-import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
+import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.client.event.RegisterColorHandlersEvent
 import net.minecraftforge.client.event.RegisterShadersEvent
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
-import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import java.util.function.Function
 
-
 @Suppress("unused")
-@Mod.EventBusSubscriber(modid = BreadMod.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-object ModEventBus {
-    // Data Generation
-    @SubscribeEvent
-    fun gatherData(event: GatherDataEvent) {
-        val generator = event.generator
-        val packOutput = generator.packOutput
-        val existingFileHelper = event.existingFileHelper
-        val lookupProvider = event.lookupProvider
-
-        if(event.includeServer()) {
-            LOGGER.info("Server datagen")
-            generator.addProvider(true, ModLootTableProvider.create(packOutput))
-            generator.addProvider(true, ModRecipeProvider(packOutput))
-            generator.addProvider(true, ModEMCProvider(packOutput, lookupProvider))
-
-            val blockTagGenerator = generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
-            generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
-            generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
-
-            generator.addProvider(true, DatapackBuiltinEntriesProvider(
-                packOutput, lookupProvider, RegistrySetBuilder()
-                    .add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
-
-                    .add(Registries.CONFIGURED_FEATURE, ModFeatures::bootstrapConfiguredFeatures)
-                    .add(Registries.PLACED_FEATURE, ModFeatures::bootstrapPlacedFeatures)
-
-                    .add(Registries.BIOME, ModBiomes::bootstrapBiomes)
-                    .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
-                    .add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems),
-                setOf(BreadMod.ID))
-            )
-        }
-        if(event.includeClient()) {
-            LOGGER.info("Client datagen")
-            generator.addProvider(true, USEnglishLanguageProvider(packOutput, BreadMod.ID, "en_us"))
-            generator.addProvider(true, ModBlockStateProvider(packOutput, BreadMod.ID, existingFileHelper))
-            generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, BreadMod.ID, existingFileHelper))
-            generator.addProvider(true, ModItemModelProvider(packOutput, BreadMod.ID, existingFileHelper))
-        }
-    }
-
+@Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
+object ClientModEventBus {
     @SubscribeEvent
     fun onClientSetup(event: FMLClientSetupEvent) {
+        ModMain.LOGGER.info("Client setup")
         val blockingProperty = modLocation("blocking")
 
         event.enqueueWork {
@@ -106,11 +50,6 @@ object ModEventBus {
 
             MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
         }
-    }
-
-    @SubscribeEvent
-    fun onCommonSetup(event: FMLCommonSetupEvent) {
-        NETWORK
     }
 
     @SubscribeEvent

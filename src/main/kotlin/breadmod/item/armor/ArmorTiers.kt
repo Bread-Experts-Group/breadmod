@@ -1,6 +1,6 @@
 package breadmod.item.armor
 
-import breadmod.BreadMod
+import breadmod.ModMain
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.ArmorItem
@@ -26,7 +26,7 @@ enum class ArmorTiers(
 
     private val durabilityForSlot = listOf(13,15,16,11)
 
-    override fun getName               (                     ): String     = "${BreadMod.ID}:${this.name.lowercase()}"
+    override fun getName               (                     ): String     = "${ModMain.ID}:${this.name.lowercase()}"
     override fun getDurabilityForType  (pType: ArmorItem.Type): Int        = durabilityForSlot[pType.ordinal] * durabilityMultiplier
     override fun getDefenseForType     (pType: ArmorItem.Type): Int        = defense[pType.ordinal]
     override fun getEnchantmentValue   (                     ): Int        = enchantmentValue

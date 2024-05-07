@@ -20,7 +20,7 @@ open class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()) {
         getTimeLeft(pStack) / MAX_TIME_CONFIG.get(),
         1.0f, 1.0f
     )
-    override fun getBarWidth(pStack: ItemStack): Int = (13 * (getTimeLeft(pStack) / MAX_TIME_CONFIG.get())).roundToInt()
+    override fun getBarWidth(pStack: ItemStack): Int = (13F * (getTimeLeft(pStack) / MAX_TIME_CONFIG.get())).roundToInt()
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
         if(pEntity is ServerPlayer) {
