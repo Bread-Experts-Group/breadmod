@@ -88,10 +88,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
             "contains trace amounts of neurotoxin",
             "item", "doped_bread", "tooltip"
         )
-        modAdd(
-            "Bread Furnace",
-            "container", "bread_furnace"
-        )
+
         modAdd("His name is jeff",
             "painting", "painting_test", "title")
         modAdd("gchris123",
@@ -100,6 +97,10 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
             "painting", "devil_pupp", "title")
         modAdd("https://twitter.com/devil_pupp",
             "painting", "devil_pupp", "author")
+
+        modAdd("Energy", path = arrayOf("energy"))
+        modAdd("Input", path = arrayOf("input"))
+        modAdd("Output", path = arrayOf("output"))
 
         // Compat
         // // JEI

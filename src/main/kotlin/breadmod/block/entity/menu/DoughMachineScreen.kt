@@ -1,16 +1,22 @@
 package breadmod.block.entity.menu
 
 import breadmod.ModMain.modLocation
+import breadmod.ModMain.modTranslatable
+import breadmod.network.PacketHandler.NETWORK
+import breadmod.network.VoidTankPacket
 import breadmod.util.formatUnit
 import breadmod.util.renderFluid
 import com.mojang.blaze3d.systems.RenderSystem
+import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractButton
+import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.player.KeyboardInput
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.fluids.FluidType
 
 class DoughMachineScreen(
@@ -45,26 +51,77 @@ class DoughMachineScreen(
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
-        val showShort = !KeyboardInput(minecraft!!.options).shiftKeyDown
+        val showShort = !minecraft!!.options.keyShift.isDown
         menu.parent.fluidHandlerOptional.ifPresent {
-            it.tanks.firstOrNull()?.let { tank ->
+            it.allTanks[0].let { tank ->
+                val fluid = tank.fluid.fluid
                 if(tank.fluidAmount > 0) {
-                    val percentage = (tank.fluidAmount.toFloat() / tank.capacity) * 47
+                    val percentage = (tank.fluidAmount.toFloat() / tank.capacity) * 28
                     pGuiGraphics.renderFluid(
                         pX         = leftPos + 153F,
                         pY         = (topPos + 75F),
                         pWidth     = 16,
                         pHeight    = percentage.toInt(),
-                        pFluid     = tank.fluid.fluid,
+                        pFluid     = fluid,
                         pFlowing   = false,
                         pDirection = Direction.SOUTH
                     )
                 }
 
-                if(this.isHovering(153,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+                if(this.isHovering(153,46, 16, 28, pMouseX.toDouble(), pMouseY.toDouble())) {
                     pGuiGraphics.renderComponentTooltip(
                         this.font,
-                        listOf(Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1, FluidType.BUCKET_VOLUME))),
+                        listOf(
+                            modTranslatable(path = arrayOf("input")).withStyle { style ->
+                                style
+                                    .withColor(ChatFormatting.RED)
+                                    .withItalic(true)
+                            }
+                                .append(" - ")
+                                .append(Component.translatable(fluid.fluidType.descriptionId).withStyle { style ->
+                                    style
+                                        .withColor(IClientFluidTypeExtensions.of(fluid).tintColor)
+                                        .withItalic(!fluid.fluidType.isAir)
+                                }),
+                            Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1, FluidType.BUCKET_VOLUME))
+                        ),
+                        pMouseX, pMouseY
+                    )
+                }
+            }
+
+            it.allTanks[1].let { tank ->
+                val fluid = tank.fluid.fluid
+                if(tank.fluidAmount > 0) {
+                    val percentage = (tank.fluidAmount.toFloat() / tank.capacity) * 16
+                    pGuiGraphics.renderFluid(
+                        pX         = leftPos + 153F,
+                        pY         = (topPos + 44F),
+                        pWidth     = 16,
+                        pHeight    = percentage.toInt(),
+                        pFluid     = fluid,
+                        pFlowing   = false,
+                        pDirection = Direction.SOUTH
+                    )
+                }
+
+                if(this.isHovering(153,28, 16, 16, pMouseX.toDouble(), pMouseY.toDouble())) {
+                    pGuiGraphics.renderComponentTooltip(
+                        this.font,
+                        listOf(
+                            modTranslatable(path = arrayOf("output")).withStyle { style ->
+                                style
+                                    .withColor(ChatFormatting.RED)
+                                    .withItalic(true)
+                            }
+                                .append(" - ")
+                                .append(Component.translatable(fluid.fluidType.descriptionId).withStyle { style ->
+                                    style
+                                        .withColor(IClientFluidTypeExtensions.of(fluid).tintColor)
+                                        .withItalic(fluid.fluidType.isAir)
+                                }),
+                            Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1, FluidType.BUCKET_VOLUME))
+                        ),
                         pMouseX, pMouseY
                     )
                 }
@@ -75,12 +132,31 @@ class DoughMachineScreen(
             menu.parent.energyHandlerOptional.ifPresent {
                 pGuiGraphics.renderComponentTooltip(
                     this.font,
-                    listOf(Component.literal(formatUnit(it.energyStored, it.maxEnergyStored, "FE", showShort, 2))),
+                    listOf(
+                        modTranslatable(path = arrayOf("energy"))
+                            .withStyle(ChatFormatting.RED)
+                            .withStyle(ChatFormatting.ITALIC),
+                        Component.literal(formatUnit(it.energyStored, it.maxEnergyStored, "FE", showShort, 2))
+                    ),
                     pMouseX, pMouseY
                 )
             }
         }
 
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+    }
+
+    override fun init() {
+        super.init()
+        addRenderableWidget(VoidTankButton(9, 121, 27, 1))
+        addRenderableWidget(VoidTankButton(9, 121, 66, 0))
+    }
+
+    inner class VoidTankButton(pSize: Int, pX: Int, pY: Int, val tankIndex: Int): AbstractButton(leftPos + pX, topPos + pY, pSize, pSize, Component.literal("x")) {
+        override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
+
+        override fun onPress() {
+            NETWORK.sendToServer(VoidTankPacket(menu.parent.blockPos, tankIndex))
+        }
     }
 }

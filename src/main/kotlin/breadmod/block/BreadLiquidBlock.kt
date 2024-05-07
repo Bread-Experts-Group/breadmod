@@ -1,6 +1,5 @@
 package breadmod.block
 
-import breadmod.ModMain.modLocation
 import breadmod.registry.fluid.ModFluids
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.state.StateDefinition
@@ -8,6 +7,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.fluids.ForgeFlowingFluid
+import java.awt.Color
 
 abstract class BreadLiquidBlock: ForgeFlowingFluid(
     Properties({ ModFluids.BREAD_LIQUID.type.get() }, { ModFluids.BREAD_LIQUID.source.get() }, { ModFluids.BREAD_LIQUID.flowing.get() })
@@ -15,8 +15,9 @@ abstract class BreadLiquidBlock: ForgeFlowingFluid(
         .explosionResistance(100F)
 ) {
     object ClientExtensions: IClientFluidTypeExtensions {
-        override fun getFlowingTexture(): ResourceLocation = modLocation("block", "bread_liquid_flow")
-        override fun getStillTexture(): ResourceLocation = modLocation("block", "bread_liquid_still")
+        override fun getFlowingTexture(): ResourceLocation = ResourceLocation("block/water_flow")
+        override fun getStillTexture(): ResourceLocation = ResourceLocation("block/water_still")
+        override fun getTintColor(): Int = Color(155,120,10, 200).rgb
     }
 
     class Flowing: BreadLiquidBlock() {

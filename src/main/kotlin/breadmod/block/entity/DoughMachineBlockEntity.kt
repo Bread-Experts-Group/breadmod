@@ -3,12 +3,13 @@ package breadmod.block.entity
 import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.block.entity.menu.DoughMachineMenu
-import breadmod.network.CapabilityDataTransfer
+import breadmod.network.CapabilityDataPacket
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.recipe.FluidEnergyRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.FluidContainer
+import breadmod.util.FluidContainer.Companion.drain
 import breadmod.util.deserialize
 import breadmod.util.serialize
 import net.minecraft.core.BlockPos
@@ -53,7 +54,7 @@ class DoughMachineBlockEntity(
     override fun setChanged() = super.setChanged().also {
         if(level is ServerLevel) NETWORK.send(
             PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
-            CapabilityDataTransfer(blockPos, updateTag)
+            CapabilityDataPacket(blockPos, updateTag)
         )
     }
 
@@ -65,7 +66,7 @@ class DoughMachineBlockEntity(
         }
     }
     val fluidHandlerOptional: LazyOptional<FluidContainer> = LazyOptional.of {
-        object : FluidContainer(1, { FluidTank(8000) }) {
+        object : FluidContainer(mutableMapOf(FluidTank(8000) to TankFlow.FILL_ONLY, FluidTank(4000) to TankFlow.DRAIN_ONLY)) {
             override fun contentsChanged() { setChanged() }
         }
     }
@@ -128,8 +129,8 @@ class DoughMachineBlockEntity(
 
         storedItems[2].let {
             if(!it.isEmpty) {
-                val space = fluidHandle.space(FluidTags.WATER)
                 val item = it.item
+                val space = fluidHandle.space(FluidTags.WATER)
                 if(space > FluidType.BUCKET_VOLUME && item is BucketItem && item.fluid.`is`(FluidTags.WATER)) {
                     fluidHandle.fill(FluidStack(item.fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE)
                     storedItems[2] = Items.BUCKET.defaultInstance
@@ -150,20 +151,24 @@ class DoughMachineBlockEntity(
                     progress++
                     pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
                     energyDivision?.let { rfd -> if(energyHandle.extractEnergy(rfd, false) != rfd) progress-- }
-                } else if(it.canFitResults(storedItems to listOf(1), fluidHandle)) {
-                    val assembled = it.assembleOutputs(this, pLevel)
-                    assembled.first.forEach { stack -> storedItems[1].let { slot -> if(slot.isEmpty) storedItems[1] = stack.copy() else slot.grow(stack.count) } }
-                    assembled.second.forEach { stack -> fluidHandle.fill(stack, IFluidHandler.FluidAction.EXECUTE) }
-                    setChanged()
-                    currentRecipe = null
-                    progress = 0
+                } else {
+                    val outputTank = fluidHandle.allTanks[1]
+                    if(it.canFitResults(storedItems to listOf(1), outputTank)) {
+                        val assembled = it.assembleOutputs(this, pLevel)
+                        assembled.first.forEach { stack -> storedItems[1].let { slot -> if(slot.isEmpty) storedItems[1] = stack.copy() else slot.grow(stack.count) } }
+                        assembled.second.forEach { stack ->  outputTank.fill(stack, IFluidHandler.FluidAction.EXECUTE) }
+                        setChanged()
+                        currentRecipe = null
+                        progress = 0
+                    }
                 }
             } else {
                 pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
                 recipeDial.getRecipeFor(pBlockEntity, pLevel).ifPresent { recipe ->
                     maxProgress = recipe.time
-                    recipe.fluidsRequired?.forEach { stack -> fluidHandle.drain(stack, IFluidHandler.FluidAction.EXECUTE) }
-                    recipe.fluidsRequiredTagged?.forEach { tag -> fluidHandle.drain(tag.first, tag.second, IFluidHandler.FluidAction.EXECUTE) }
+                    val inputTank = fluidHandle.allTanks[0]
+                    recipe.fluidsRequired?.forEach { stack -> inputTank.drain(stack, IFluidHandler.FluidAction.EXECUTE) }
+                    recipe.fluidsRequiredTagged?.forEach { tag -> inputTank.drain(tag.first, tag.second, IFluidHandler.FluidAction.EXECUTE) }
                     recipe.itemsRequired?.forEach { stack -> storedItems[0].shrink(stack.count) }
                     recipe.itemsRequiredTagged?.forEach { tag -> storedItems[0].shrink(tag.second) }
                     energyDivision = recipe.energy?.let { rf -> (rf.toFloat() / recipe.time).toInt() }
