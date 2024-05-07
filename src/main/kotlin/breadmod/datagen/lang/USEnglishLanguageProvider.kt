@@ -9,15 +9,20 @@ import breadmod.registry.item.ModItems
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.ItemLike
 import net.minecraftforge.common.data.LanguageProvider
+import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.registries.RegistryObject
 
 class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: String) : LanguageProvider(output, modID, locale) {
     // Transforms type.mod_id.example_object into Example Object
-    private fun String.idToName() = substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+    private fun String.addTransformed(override: String? = null) =
+        if(override != null) add(this, override)
+        else add(this, this.substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } })
 
-    private fun LanguageProvider.add(item: ItemLike) = item.asItem().let { add(it, it.descriptionId.idToName()) }
-    private fun <T: ItemLike> LanguageProvider.add(obj: RegistryObject<T>, override: String? = null) =
-        obj.get().let { if(override != null) this.add(it.asItem(), override) else this.add(it) } // TODO: CRITICAL: ADD SUPPORT FOR FLUIDS/WHERE asItem IS AIR!
+    private inline fun <reified T> add(obj: RegistryObject<T>, override: String? = null) = when(val entry = obj.get()) {
+        is ItemLike -> entry.asItem().descriptionId.addTransformed(override)
+        is FluidType -> entry.descriptionId.addTransformed(override)
+        else -> throw IllegalArgumentException("Object provided, ${T::class.qualifiedName}, cannot be added")
+    }
 
     override fun addTranslations() {
         add(ModBlocks.BREAD_BLOCK)
@@ -54,7 +59,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.MONITOR)
         add(ModBlocks.KEYBOARD)
         add(ModItems.ULTIMATE_BREAD)
-        add(ModFluids.BREAD_LIQUID.block)
+        add(ModFluids.BREAD_LIQUID.type)
         add(ModFluids.BREAD_LIQUID.bucket)
 
         modAdd(

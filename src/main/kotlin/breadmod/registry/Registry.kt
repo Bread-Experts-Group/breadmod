@@ -18,6 +18,7 @@ import net.minecraftforge.fml.config.ModConfig
 
 val registerList = setOf(
     ModFluids.deferredRegister,
+    ModFluids.deferredTypesRegister,
     ModBlocks.deferredRegister,
     ModItems.deferredRegister,
     ModCreativeTabs.deferredRegister,

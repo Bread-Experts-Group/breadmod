@@ -9,24 +9,40 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.LiquidBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraft.world.level.material.FlowingFluid
 import net.minecraft.world.level.material.Fluid
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.fluids.FluidType
+import net.minecraftforge.fluids.ForgeFlowingFluid
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
+import java.util.function.Consumer
 
 object ModFluids {
     val deferredRegister: DeferredRegister<Fluid> = DeferredRegister.create(ForgeRegistries.FLUIDS, ModMain.ID)
-    private fun registerWithBucket(id: String, sourceSupplier: () -> FlowingFluid, flowingSupplier: () -> FlowingFluid, itemProperties: Item.Properties, blockProperties: BlockBehaviour.Properties, fluidProperties: FluidType.Properties): FluidHolder {
+    val deferredTypesRegister: DeferredRegister<FluidType> = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, ModMain.ID)
+
+    private fun <S: ForgeFlowingFluid, F: ForgeFlowingFluid> registerWithBucket(
+        id: String,
+        sourceSupplier: () -> S, flowingSupplier: () -> F,
+        itemProperties: Item.Properties, blockProperties: BlockBehaviour.Properties, fluidProperties: FluidType.Properties,
+        clientExtensions: IClientFluidTypeExtensions
+    ): FluidHolder<S,F> {
         val source = deferredRegister.register(id, sourceSupplier)
-        val flowing = deferredRegister.register("${id}_flowing", flowingSupplier)
+        val flowing = deferredRegister.register("flowing_$id", flowingSupplier)
         val block = ModBlocks.deferredRegister.register(id) { LiquidBlock({ source.get() }, blockProperties).also { ModBlocks.ModBlockLoot.dropNone.add(it) } }
+
+        val fluidType: RegistryObject<FluidType> = deferredTypesRegister.register(id) {
+            object : FluidType(fluidProperties) {
+                override fun initializeClient(consumer: Consumer<IClientFluidTypeExtensions>) = consumer.accept(clientExtensions)
+            }
+        }
+
         return FluidHolder(
             source, flowing,
             ModItems.deferredRegister.register("${id}_bucket") { BucketItem({ source.get() }, itemProperties) },
             block,
-            FluidType(fluidProperties)
+            fluidType
         )
     }
 
@@ -35,12 +51,13 @@ object ModFluids {
         { BreadLiquidBlock.Source() }, { BreadLiquidBlock.Flowing() },
         Item.Properties().stacksTo(1),
         BlockBehaviour.Properties.copy(Blocks.WATER),
-        FluidType.Properties.create()
+        FluidType.Properties.create(),
+        BreadLiquidBlock.ClientExtensions
     )
 
-    data class FluidHolder(
-        val source: RegistryObject<FlowingFluid>, val flowing: RegistryObject<FlowingFluid>,
+    data class FluidHolder<S: ForgeFlowingFluid, F: ForgeFlowingFluid>(
+        val source: RegistryObject<S>, val flowing: RegistryObject<F>,
         val bucket: RegistryObject<BucketItem>, val block: RegistryObject<LiquidBlock>,
-        val type: FluidType
+        val type: RegistryObject<FluidType>
     )
 }
