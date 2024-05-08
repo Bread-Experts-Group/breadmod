@@ -1,4 +1,4 @@
-package breadmod.datagen.dimension
+package breadmod.registry.worldgen.dimensions
 
 import net.minecraft.core.Holder
 import net.minecraft.core.HolderGetter

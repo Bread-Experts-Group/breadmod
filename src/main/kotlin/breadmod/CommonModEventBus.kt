@@ -3,23 +3,28 @@ package breadmod
 import breadmod.ModMain.LOGGER
 import breadmod.compat.projecte.ModEMCProvider
 import breadmod.datagen.*
-import breadmod.datagen.dimension.ModDimensions
-import breadmod.datagen.dimension.worldgen.ModBiomes
-import breadmod.datagen.dimension.worldgen.ModFeatures
-import breadmod.datagen.dimension.worldgen.ModNoiseGenerators
+import breadmod.registry.worldgen.dimensions.ModDimensions
+import breadmod.registry.worldgen.dimensions.ModBiomes
+import breadmod.registry.worldgen.dimensions.ModFeatures
+import breadmod.registry.worldgen.dimensions.ModNoiseGenerators
 import breadmod.datagen.lang.USEnglishLanguageProvider
 import breadmod.datagen.tags.ModBlockTags
 import breadmod.datagen.tags.ModFluidTags
 import breadmod.datagen.tags.ModItemTags
 import breadmod.datagen.tags.ModPaintingTags
 import breadmod.network.PacketHandler.NETWORK
+import breadmod.registry.worldgen.structures.ModPools
+import breadmod.registry.worldgen.structures.ModStructures
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
+import net.minecraft.data.worldgen.BootstapContext
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+
+typealias BootstrapContext<T> = BootstapContext<T>
 
 @Suppress("unused")
 @Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -45,6 +50,9 @@ object CommonModEventBus {
 
             generator.addProvider(true, DatapackBuiltinEntriesProvider(
                 packOutput, lookupProvider, RegistrySetBuilder()
+                    .add(Registries.TEMPLATE_POOL, ModPools::bootstrap)
+                    .add(Registries.STRUCTURE, ModStructures::bootstrap)
+
                     .add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
 
                     .add(Registries.CONFIGURED_FEATURE, ModFeatures::bootstrapConfiguredFeatures)

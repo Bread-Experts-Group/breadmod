@@ -368,7 +368,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             ItemStackToItemStackRecipeBuilder.crushing(
                 IngredientCreatorAccess.item().from(ModBlocks.BREAD_BLOCK.get()),
                 ItemStack(MekanismItems.BIO_FUEL.get(), 63)
-            )
+            ).build { pWriter.accept(it) }
         }
     }
 }

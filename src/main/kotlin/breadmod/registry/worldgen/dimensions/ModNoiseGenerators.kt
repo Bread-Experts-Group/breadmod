@@ -1,7 +1,7 @@
-package breadmod.datagen.dimension.worldgen
+package breadmod.registry.worldgen.dimensions
 
+import breadmod.BootstrapContext
 import breadmod.ModMain
-import breadmod.datagen.dimension.BootstrapContext
 import breadmod.registry.block.ModBlocks
 import net.minecraft.core.HolderGetter
 import net.minecraft.core.registries.Registries
@@ -11,9 +11,9 @@ import net.minecraft.world.level.levelgen.DensityFunction
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
 import net.minecraft.world.level.levelgen.NoiseRouterData
 import net.minecraft.world.level.levelgen.NoiseSettings
-import net.minecraft.world.level.levelgen.synth.NormalNoise.NoiseParameters
+import net.minecraft.world.level.levelgen.synth.NormalNoise
 
-typealias NoiseGeneratorBuilder = (HolderGetter<DensityFunction>, HolderGetter<NoiseParameters>) -> NoiseGeneratorSettings
+typealias NoiseGeneratorBuilder = (HolderGetter<DensityFunction>, HolderGetter<NormalNoise.NoiseParameters>) -> NoiseGeneratorSettings
 
 object ModNoiseGenerators: NoiseRouterData() {
     private val entries = mutableListOf<Pair<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorBuilder>>()

@@ -1,6 +1,6 @@
 package breadmod.block
 
-import breadmod.datagen.dimension.ModDimensions
+import breadmod.registry.worldgen.dimensions.ModDimensions
 import breadmod.registry.block.ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction

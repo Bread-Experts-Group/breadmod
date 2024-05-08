@@ -1,17 +1,16 @@
-package breadmod.datagen.dimension
+package breadmod.registry.worldgen.dimensions
 
-import breadmod.ModMain.modLocation
-import breadmod.datagen.dimension.worldgen.ModBiomes
-import breadmod.datagen.dimension.worldgen.ModNoiseGenerators
+import breadmod.BootstrapContext
+import breadmod.ModMain
 import com.mojang.datafixers.util.Pair
 import net.minecraft.core.registries.Registries
-import net.minecraft.data.worldgen.BootstapContext
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.BlockTags
 import net.minecraft.util.valueproviders.ConstantInt
-import net.minecraft.world.level.biome.*
-import net.minecraft.world.level.biome.Climate.ParameterList
+import net.minecraft.world.level.biome.Climate
+import net.minecraft.world.level.biome.MultiNoiseBiomeSource
+import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.dimension.LevelStem
@@ -19,18 +18,17 @@ import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
 import java.util.*
 
-typealias BootstrapContext<T> = BootstapContext<T>
-
 object ModDimensions {
     fun register(
         name: String,
         dimensionType: (key: ResourceKey<DimensionType>, location: ResourceLocation) -> DimensionType,
         climateParameterListBuilder: ClimateParameterListBuilder,
         noiseGenerationSettings: ResourceKey<NoiseGeneratorSettings>
-    ) = modLocation(name).let {
+    ) = ModMain.modLocation(name).let {
         ModDimensionEntry(
             it,
-            ResourceKey.create(Registries.DIMENSION_TYPE, it).let { typeKey -> typeKey to dimensionType.invoke(typeKey, it) },
+            ResourceKey.create(Registries.DIMENSION_TYPE, it)
+                .let { typeKey -> typeKey to dimensionType.invoke(typeKey, it) },
             ResourceKey.create(Registries.LEVEL_STEM, it),
             climateParameterListBuilder,
             noiseGenerationSettings
@@ -62,7 +60,7 @@ object ModDimensions {
             )
         )
     }, { holderGetter ->
-        ParameterList(
+        Climate.ParameterList(
             listOf(
                 Pair.of(
                     Climate.parameters(
@@ -92,12 +90,17 @@ object ModDimensions {
                 holderGetter.getOrThrow(it.dimensionType.first),
                 NoiseBasedChunkGenerator(
                     it.climateParameterListBuilder.let { builder ->
-                        if(builder != null) MultiNoiseBiomeSource.createFromList(builder(biomeGetter))
-                        else MultiNoiseBiomeSource.createFromPreset(mnbspList.getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD))
+                        if (builder != null) MultiNoiseBiomeSource.createFromList(builder(biomeGetter))
+                        else MultiNoiseBiomeSource.createFromPreset(
+                            mnbspList.getOrThrow(
+                                MultiNoiseBiomeSourceParameterLists.OVERWORLD
+                            )
+                        )
                     },
                     noiseSettings.getOrThrow(it.noiseSettings)
                 )
-            ))
+            )
+            )
         }
     }
 

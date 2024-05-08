@@ -1,7 +1,7 @@
-package breadmod.datagen.dimension.worldgen
+package breadmod.registry.worldgen.dimensions
 
+import breadmod.BootstrapContext
 import breadmod.ModMain
-import breadmod.datagen.dimension.BootstrapContext
 import breadmod.registry.sound.ModSounds
 import net.minecraft.core.HolderGetter
 import net.minecraft.core.particles.ParticleTypes
