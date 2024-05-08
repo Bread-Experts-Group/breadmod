@@ -44,5 +44,8 @@ class ModItemTags(
             .add(ModItems.DOUGH.get())
         tag(ItemTags.create(ResourceLocation("forge", "dough/wheat")))
             .add(ModItems.DOUGH.get())
+
+        tag(ItemTags.create(ResourceLocation("curios", "necklace")))
+            .add(ModItems.BREAD_AMULET.get())
     }
 }
