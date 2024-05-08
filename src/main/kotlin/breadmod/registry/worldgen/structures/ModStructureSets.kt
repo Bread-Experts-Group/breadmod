@@ -20,7 +20,7 @@ object ModStructureSets {
         val structureHolder = pContext.lookup(Registries.STRUCTURE)
         pContext.register(
             FARMHOUSE, StructureSet(structureHolder.getOrThrow(ModStructures.FARMHOUSE), RandomSpreadStructurePlacement(
-                50, 15, RandomSpreadType.LINEAR, RANDOM.nextInt().absoluteValue
+                34, 8, RandomSpreadType.LINEAR, RANDOM.nextInt().absoluteValue
             ))
         )
     }
