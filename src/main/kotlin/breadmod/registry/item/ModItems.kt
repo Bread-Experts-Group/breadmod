@@ -1,11 +1,8 @@
 package breadmod.registry.item
 
 import breadmod.ModMain
-import breadmod.item.BreadEMCItem
+import breadmod.item.*
 import breadmod.registry.sound.ModSounds
-import breadmod.item.DopedBreadItem
-import breadmod.item.TestBreadItem
-import breadmod.item.UltimateBreadItem
 import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.tools.BreadShieldItem
@@ -45,6 +42,8 @@ object ModItems {
 //      Probably not for this one
 
     val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") {Item(Item.Properties())}
+
+    val BREAD_AMULET: RegistryObject<Item> = deferredRegister.register("bread_amulet") {BreadAmuletItem()}
 
     // Armor
     val BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("bread_helmet") {
