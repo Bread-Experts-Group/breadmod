@@ -22,7 +22,7 @@ import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
 object ModStructures {
     private fun createKey(id: String) = ResourceKey.create(Registries.STRUCTURE, ModMain.modLocation(id))
 
-    private val FARMHOUSE: ResourceKey<Structure> = createKey("farmhouse")
+    val FARMHOUSE: ResourceKey<Structure> = createKey("farmhouse")
 
     private fun structure(
         biomes: HolderSet<Biome>,
@@ -36,7 +36,7 @@ object ModStructures {
         pContext.register(
             FARMHOUSE, JigsawStructure(
             structure(biomeHolder.getOrThrow(BiomeTags.HAS_VILLAGE_PLAINS), adjustment = TerrainAdjustment.BEARD_THIN),
-            templateHolder.getOrThrow(FARMHOUSE_POOL), 6, ConstantHeight.of(VerticalAnchor.absolute(0)), false,
+            templateHolder.getOrThrow(FARMHOUSE_POOL), 1, ConstantHeight.of(VerticalAnchor.absolute(0)), false,
             Heightmap.Types.WORLD_SURFACE_WG
         ))
     }
