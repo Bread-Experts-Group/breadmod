@@ -47,5 +47,9 @@ class ModItemTags(
 
         tag(ItemTags.create(ResourceLocation("curios", "necklace")))
             .add(ModItems.BREAD_AMULET.get())
+        ModItems.PROJECT_E?.also {
+            tag(ItemTags.create(ResourceLocation("curios", "klein_star")))
+                .add(it.BREAD_EMC_ITEM.get())
+        }
     }
 }
