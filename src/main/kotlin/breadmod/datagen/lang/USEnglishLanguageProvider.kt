@@ -61,6 +61,9 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.ULTIMATE_BREAD)
         add(ModFluids.BREAD_LIQUID.type)
         add(ModFluids.BREAD_LIQUID.bucket)
+        add(ModItems.BREAD_AMULET)
+        modAdd("Heals for 2 hunger every 10 seconds",
+            "item", "bread_amulet", "description")
 
         modAdd(
             "Bread Mod",
