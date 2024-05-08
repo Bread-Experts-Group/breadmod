@@ -14,6 +14,7 @@ import breadmod.datagen.tags.ModItemTags
 import breadmod.datagen.tags.ModPaintingTags
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.worldgen.structures.ModPools
+import breadmod.registry.worldgen.structures.ModStructureSets
 import breadmod.registry.worldgen.structures.ModStructures
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
@@ -52,6 +53,7 @@ object CommonModEventBus {
                 packOutput, lookupProvider, RegistrySetBuilder()
                     .add(Registries.TEMPLATE_POOL, ModPools::bootstrap)
                     .add(Registries.STRUCTURE, ModStructures::bootstrap)
+                    .add(Registries.STRUCTURE_SET, ModStructureSets::bootstrap)
 
                     .add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
 
