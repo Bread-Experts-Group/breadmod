@@ -5,6 +5,8 @@ import breadmod.item.*
 import breadmod.registry.sound.ModSounds
 import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
+import breadmod.item.compat.curios.BreadAmuletItem
+import breadmod.item.compat.projecte.BreadEMCItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
 import breadmod.util.setColor
@@ -43,7 +45,7 @@ object ModItems {
 
     val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") {Item(Item.Properties())}
 
-    val BREAD_AMULET: RegistryObject<Item> = deferredRegister.register("bread_amulet") {BreadAmuletItem()}
+    val BREAD_AMULET: RegistryObject<Item> = deferredRegister.register("bread_amulet") { BreadAmuletItem() }
 
     // Armor
     val BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("bread_helmet") {

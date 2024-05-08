@@ -1,4 +1,4 @@
-package breadmod.datagen.tags
+package breadmod.datagen.compat.curios.tag
 
 class ModCuriosTags {
     // TODO make a generator that adds items to curios tags and custom slots

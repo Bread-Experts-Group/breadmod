@@ -1,4 +1,4 @@
-package breadmod.datagen.tags
+package breadmod.datagen.tag
 
 import breadmod.ModMain
 import breadmod.registry.entity.ModPainting.DEVIL_PUPP

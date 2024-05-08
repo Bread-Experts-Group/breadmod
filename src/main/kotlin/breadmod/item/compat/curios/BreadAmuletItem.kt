@@ -1,4 +1,4 @@
-package breadmod.item
+package breadmod.item.compat.curios
 
 import breadmod.ModMain.modTranslatable
 import net.minecraft.ChatFormatting
@@ -10,10 +10,10 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.common.capabilities.ICapabilityProvider
+import net.minecraftforge.fml.ModList
 import top.theillusivec4.curios.api.CuriosApi
 import top.theillusivec4.curios.api.SlotContext
 import top.theillusivec4.curios.api.type.capability.ICurio
-
 
 class BreadAmuletItem: Item(Properties()) {
     private var timer: Long = 200L
@@ -42,15 +42,16 @@ class BreadAmuletItem: Item(Properties()) {
         pTooltipComponents.add(modTranslatable("item", "bread_amulet", "description").withStyle(ChatFormatting.GOLD))
     }
 
-    override fun initCapabilities(stack: ItemStack, nbt: CompoundTag?): ICapabilityProvider {
-        return CuriosApi.createCurioProvider(object : ICurio {
-            override fun getStack(): ItemStack {
-                return stack
-            }
+    override fun initCapabilities(stack: ItemStack, nbt: CompoundTag?): ICapabilityProvider? =
+        if(ModList.get().isLoaded("curios")) {
+            CuriosApi.createCurioProvider(object : ICurio {
+                override fun getStack(): ItemStack {
+                    return stack
+                }
 
-            override fun curioTick(slotContext: SlotContext) {
-                // ticking logic here
-            }
-        })
-    }
+                override fun curioTick(slotContext: SlotContext) {
+                    // ticking logic here
+                }
+            })
+        } else null
 }

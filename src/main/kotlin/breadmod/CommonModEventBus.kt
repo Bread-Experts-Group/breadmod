@@ -8,10 +8,10 @@ import breadmod.registry.worldgen.dimensions.ModBiomes
 import breadmod.registry.worldgen.dimensions.ModFeatures
 import breadmod.registry.worldgen.dimensions.ModNoiseGenerators
 import breadmod.datagen.lang.USEnglishLanguageProvider
-import breadmod.datagen.tags.ModBlockTags
-import breadmod.datagen.tags.ModFluidTags
-import breadmod.datagen.tags.ModItemTags
-import breadmod.datagen.tags.ModPaintingTags
+import breadmod.datagen.tag.ModBlockTags
+import breadmod.datagen.tag.ModFluidTags
+import breadmod.datagen.tag.ModItemTags
+import breadmod.datagen.tag.ModPaintingTags
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.worldgen.structures.ModPools
 import breadmod.registry.worldgen.structures.ModStructureSets

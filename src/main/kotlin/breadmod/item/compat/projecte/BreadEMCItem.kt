@@ -1,4 +1,4 @@
-package breadmod.item
+package breadmod.item.compat.projecte
 
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder
