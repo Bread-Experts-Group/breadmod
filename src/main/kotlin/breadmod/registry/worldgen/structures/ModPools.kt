@@ -20,7 +20,7 @@ object ModPools {
             FARMHOUSE_POOL, StructureTemplatePool(
                 templateHolder,
                 listOf(Pair.of(StructurePoolElement.single("breadmod:farmhouse"), 50)),
-                StructureTemplatePool.Projection.TERRAIN_MATCHING
+                StructureTemplatePool.Projection.RIGID
             ))
     }
 }
