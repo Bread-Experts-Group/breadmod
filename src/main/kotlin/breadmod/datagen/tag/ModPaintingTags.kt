@@ -9,6 +9,7 @@ import net.minecraft.data.tags.PaintingVariantTagsProvider
 import net.minecraft.tags.PaintingVariantTags
 import net.minecraftforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
+import breadmod.util.add
 
 class ModPaintingTags(
     output: PackOutput,
@@ -17,7 +18,6 @@ class ModPaintingTags(
 ) : PaintingVariantTagsProvider(output, lookupProvider, ModMain.ID, existingFileHelper) {
     override fun addTags(pProvider: HolderLookup.Provider) {
         tag(PaintingVariantTags.PLACEABLE)
-            .add(PAINTING_TEST.key!!)
-            .add(DEVIL_PUPP.key!!)
+            .add(PAINTING_TEST, DEVIL_PUPP)
     }
 }

@@ -1,6 +1,8 @@
 package breadmod.datagen.lang
 
 import breadmod.ModMain.modAdd
+import breadmod.compat.curios.BREAD_ORB_SLOT
+import breadmod.compat.curios.addCurios
 import breadmod.compat.jade.TOOLTIP_RENDERER
 import breadmod.compat.jade.addJade
 import breadmod.registry.block.ModBlocks
@@ -44,6 +46,10 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.RF_BREAD_AXE)
         add(ModItems.RF_BREAD_PICKAXE)
         add(ModItems.RF_BREAD_SWORD)
+        add(ModItems.RF_BREAD_HELMET)
+        add(ModItems.RF_BREAD_CHESTPLATE)
+        add(ModItems.RF_BREAD_LEGGINGS)
+        add(ModItems.RF_BREAD_BOOTS)
         add(ModItems.BREAD_SLICE)
         add(ModBlocks.REINFORCED_BREAD_BLOCK)
         add(ModBlocks.CHARCOAL_BLOCK)
@@ -117,5 +123,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         ModItems.PROJECT_E?.also {
             add(it.BREAD_EMC_ITEM, "Bread Orb")
         }
+        // // Curios
+        addCurios(BREAD_ORB_SLOT)
     }
 }

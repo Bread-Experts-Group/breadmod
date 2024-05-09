@@ -9,7 +9,9 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.ExistingFileHelper
+import net.minecraftforge.fml.ModList
 import java.util.concurrent.CompletableFuture
+import breadmod.util.add
 
 class ModItemTags(
     pOutput: PackOutput,
@@ -19,37 +21,35 @@ class ModItemTags(
 ) : ItemTagsProvider(pOutput, pLookupProvider, pBlockTags, ModMain.ID, existingFileHelper) {
     override fun addTags(pProvider: HolderLookup.Provider) {
         tag(ItemTags.MUSIC_DISCS)
-            .add(ModItems.TEST_DISC.get())
+            .add(ModItems.TEST_DISC)
         tag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
-            .add(ModItems.TEST_DISC.get())
+            .add(ModItems.TEST_DISC)
         tag(ItemTags.SWORDS)
-            .add(ModItems.BREAD_SWORD.get())
-            .add(ModItems.RF_BREAD_SWORD.get())
+            .add(ModItems.BREAD_SWORD, ModItems.RF_BREAD_SWORD)
         tag(ItemTags.PICKAXES)
-            .add(ModItems.BREAD_PICKAXE.get())
-            .add(ModItems.RF_BREAD_PICKAXE.get())
+            .add(ModItems.BREAD_PICKAXE, ModItems.RF_BREAD_PICKAXE)
         tag(ItemTags.SHOVELS)
-            .add(ModItems.BREAD_SHOVEL.get())
-            .add(ModItems.RF_BREAD_SHOVEL.get())
+            .add(ModItems.BREAD_SHOVEL, ModItems.RF_BREAD_SHOVEL)
         tag(ItemTags.AXES)
-            .add(ModItems.BREAD_AXE.get())
-            .add(ModItems.RF_BREAD_AXE.get())
+            .add(ModItems.BREAD_AXE, ModItems.RF_BREAD_AXE)
         tag(ItemTags.HOES)
-            .add(ModItems.BREAD_HOE.get())
-            .add(ModItems.RF_BREAD_HOE.get())
+            .add(ModItems.BREAD_HOE, ModItems.RF_BREAD_HOE)
 
         tag(ItemTags.create(ResourceLocation("forge", "flour/wheat")))
-            .add(ModItems.FLOUR.get())
+            .add(ModItems.FLOUR)
         tag(ItemTags.create(ResourceLocation("forge", "dough")))
-            .add(ModItems.DOUGH.get())
+            .add(ModItems.DOUGH)
         tag(ItemTags.create(ResourceLocation("forge", "dough/wheat")))
-            .add(ModItems.DOUGH.get())
+            .add(ModItems.DOUGH)
 
-        tag(ItemTags.create(ResourceLocation("curios", "necklace")))
-            .add(ModItems.BREAD_AMULET.get())
-        ModItems.PROJECT_E?.also {
-            tag(ItemTags.create(ResourceLocation("curios", "klein_star")))
-                .add(it.BREAD_EMC_ITEM.get())
+        // Curios
+        if(ModList.get().isLoaded("curios")) {
+            tag(ItemTags.create(ResourceLocation("curios", "necklace")))
+                .add(ModItems.BREAD_AMULET)
+            ModItems.PROJECT_E?.also {
+                tag(ItemTags.create(ResourceLocation("curios", "bread_orb")))
+                    .add(it.BREAD_EMC_ITEM)
+            }
         }
     }
 }

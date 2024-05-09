@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
+import net.minecraft.data.tags.TagsProvider
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
@@ -21,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.IForgeRegistry
+import net.minecraftforge.registries.RegistryObject
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import java.awt.Color
@@ -186,3 +189,10 @@ fun IFluidHandler.amount(fluid: TagKey<Fluid>) =
     List(this.tanks) { this.getFluidInTank(it) }
         .filter { !it.isEmpty && it.fluid.`is`(fluid) }
         .sumOf { it.amount }
+
+inline fun <T, reified A: T> IntrinsicTagAppender<T>.add(vararg toAdd: RegistryObject<A>) =
+    this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
+fun <T> IntrinsicTagAppender<T>.add(vararg toAdd: RegistryObject<T>) =
+    (this as TagsProvider.TagAppender<T>).add(*toAdd.map { it }.toTypedArray())
+fun <T> TagsProvider.TagAppender<T>.add(vararg toAdd: RegistryObject<T>) =
+    this.also { this.add(*toAdd.map { it.key }.toTypedArray()) }

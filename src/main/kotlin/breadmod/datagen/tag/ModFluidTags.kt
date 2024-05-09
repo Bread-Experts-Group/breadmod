@@ -8,14 +8,16 @@ import net.minecraft.data.tags.FluidTagsProvider
 import net.minecraft.tags.FluidTags
 import net.minecraftforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
+import breadmod.util.add
 
 class ModFluidTags(
     output: PackOutput,
     lookupProvider: CompletableFuture<HolderLookup.Provider>,
     existingFileHelper: ExistingFileHelper,
 ) : FluidTagsProvider(output, lookupProvider, ModMain.ID, existingFileHelper) {
+
     override fun addTags(pProvider: HolderLookup.Provider) {
         tag(FluidTags.WATER)
-            .add(ModFluids.BREAD_LIQUID.source.get())
+            .add(ModFluids.BREAD_LIQUID.source)
     }
 }

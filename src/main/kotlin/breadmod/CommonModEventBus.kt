@@ -3,6 +3,7 @@ package breadmod
 import breadmod.ModMain.LOGGER
 import breadmod.compat.projecte.ModEMCProvider
 import breadmod.datagen.*
+import breadmod.compat.curios.ModCuriosSlotsProvider
 import breadmod.registry.worldgen.dimensions.ModDimensions
 import breadmod.registry.worldgen.dimensions.ModBiomes
 import breadmod.registry.worldgen.dimensions.ModFeatures
@@ -48,6 +49,7 @@ object CommonModEventBus {
             generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
             generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
             generator.addProvider(true, ModFluidTags(packOutput, lookupProvider, existingFileHelper))
+            generator.addProvider(true, ModCuriosSlotsProvider(packOutput, existingFileHelper, lookupProvider))
 
             generator.addProvider(true, DatapackBuiltinEntriesProvider(
                 packOutput, lookupProvider, RegistrySetBuilder()

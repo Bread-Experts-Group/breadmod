@@ -63,10 +63,10 @@
   - [ ] Charcoal block compat with mekanism charcoal block
 ---
 - [ ] Joke item: "the ultimate bread" just gives you creative mode lmao
-- [ ] "Bread amulet" gives you 1 hunger point every 10 seconds
+- [X] "Bread amulet" gives you 1 hunger point every 10 seconds
   - Curios Compat.
 - [ ] "Godlike loaf" a monstrous combination of rare materials and a nether star to give you 10 full minutes of positive potion effects and a whole 10 absorption hearts
-- [ ] "Farmhouse structure" a random house with a farm attached to it with a random amount of bread or wheat in loot chests
+- [X] "Farmhouse structure" a random house with a farm attached to it with a random amount of bread or wheat in loot chests
 - [X] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
 ---
 ## Advanced, Machines and stuff

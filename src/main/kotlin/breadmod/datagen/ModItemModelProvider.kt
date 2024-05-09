@@ -33,6 +33,10 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.ULTIMATE_BREAD)
         singleItem(ModFluids.BREAD_LIQUID.bucket)
         singleItem(ModItems.BREAD_AMULET)
+        singleItem(ModItems.RF_BREAD_HELMET)
+        singleItem(ModItems.RF_BREAD_CHESTPLATE)
+        singleItem(ModItems.RF_BREAD_LEGGINGS)
+        singleItem(ModItems.RF_BREAD_BOOTS)
         ModItems.PROJECT_E?.also {
             singleItem(it.BREAD_EMC_ITEM)
         }
