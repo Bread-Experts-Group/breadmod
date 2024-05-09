@@ -1,7 +1,7 @@
 package breadmod.compat.jade.component
 
 import breadmod.ModMain.modTranslatable
-import breadmod.compat.jade.TOOLTIP_RENDERER
+import breadmod.compat.jade.JadePlugin.Companion.TOOLTIP_RENDERER
 import net.minecraft.resources.ResourceLocation
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider

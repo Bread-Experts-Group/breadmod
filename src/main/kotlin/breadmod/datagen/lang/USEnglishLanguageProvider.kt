@@ -1,10 +1,8 @@
 package breadmod.datagen.lang
 
 import breadmod.ModMain.modAdd
-import breadmod.compat.curios.BREAD_ORB_SLOT
-import breadmod.compat.curios.addCurios
-import breadmod.compat.jade.TOOLTIP_RENDERER
-import breadmod.compat.jade.addJade
+import breadmod.ModMain.modAddExt
+import breadmod.compat.jade.JadePlugin.Companion.TOOLTIP_RENDERER
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
@@ -112,19 +110,19 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         modAdd("Output", path = arrayOf("output"))
 
         // Compat
-        // // JEI
+        // JEI
         modAdd(
             "THE BREAD BLOCK IS REAL",
             "jei", "bread_block", "description"
         )
-        // // Jade
-        addJade(TOOLTIP_RENDERER)
-        // // ProjectE
-        ModItems.PROJECT_E?.also {
-            add(it.BREAD_ORB_ITEM, "Bread Orb")
+        // Curios
+        modAddExt("Bread Orb", "curios", "identifier", "bread_orb")
+        // Project E
+        ModItems.PROJECT_E?.also { items ->
+            add(items.BREAD_ORB_ITEM, "Bread Orb")
             modAdd("An EMC battery made of... bread?", "item", "bread_orb", "tooltip")
         }
-        // // Curios
-        addCurios(BREAD_ORB_SLOT)
+        // // Jade
+        modAddExt(TOOLTIP_RENDERER.second, "config", "jade", "plugin_", TOOLTIP_RENDERER.first.toLanguageKey())
     }
 }
