@@ -48,7 +48,7 @@ class ModItemTags(
                 .add(ModItems.BREAD_AMULET)
             ModItems.PROJECT_E?.also {
                 tag(ItemTags.create(ResourceLocation("curios", "bread_orb")))
-                    .add(it.BREAD_EMC_ITEM)
+                    .add(it.BREAD_ORB_ITEM)
             }
         }
     }

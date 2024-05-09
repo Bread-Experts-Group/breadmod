@@ -13,7 +13,9 @@ class ModEMCProvider(packOutput: PackOutput, lookupProvider: CompletableFuture<H
         val projectEItems = ModItems.PROJECT_E!!
         createConversionBuilder(modLocation("defaults"))
             .comment("Default EMC Values for Bread Mod")
-            .before(ModItems.FLOUR.get(), 250)
-            .before(projectEItems.BREAD_EMC_ITEM.get(), 5000)
+            .before(ModItems.FLOUR.get(), 24)
+            .before(projectEItems.BREAD_ORB_ITEM.get(), 5000)
+            .before(ModItems.ULTIMATE_BREAD.get(), 1000000000)
+            .before(ModItems.BREAD_SLICE.get(), 3)
     }
 }

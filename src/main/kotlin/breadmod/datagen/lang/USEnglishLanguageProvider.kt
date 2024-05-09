@@ -121,7 +121,8 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         addJade(TOOLTIP_RENDERER)
         // // ProjectE
         ModItems.PROJECT_E?.also {
-            add(it.BREAD_EMC_ITEM, "Bread Orb")
+            add(it.BREAD_ORB_ITEM, "Bread Orb")
+            modAdd("An EMC battery made of... bread?", "item", "bread_orb", "tooltip")
         }
         // // Curios
         addCurios(BREAD_ORB_SLOT)

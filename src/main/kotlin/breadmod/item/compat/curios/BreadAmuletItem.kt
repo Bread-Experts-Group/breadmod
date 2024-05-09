@@ -16,7 +16,7 @@ import top.theillusivec4.curios.api.CuriosApi
 import top.theillusivec4.curios.api.SlotContext
 import top.theillusivec4.curios.api.type.capability.ICurio
 
-class BreadAmuletItem: Item(Properties()) {
+class BreadAmuletItem: Item(Properties().stacksTo(1)) {
     private var timer: Long = 200L
     private fun playerFood(pPlayer: Player) {
         val hungerLevel = pPlayer.foodData.foodLevel
@@ -25,6 +25,8 @@ class BreadAmuletItem: Item(Properties()) {
             timer = 200L
         } else if(hungerLevel <= 19) timer--
     }
+
+    // TODO fix item effects stacking with multiple of the same item in a player's inventory
 
     override fun onInventoryTick(pStack: ItemStack, pLevel: Level, pPlayer: Player, slotIndex: Int, selectedIndex: Int) = playerFood(pPlayer)
 

@@ -6,7 +6,7 @@ import breadmod.registry.sound.ModSounds
 import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.compat.curios.BreadAmuletItem
-import breadmod.item.compat.projecte.BreadEMCItem
+import breadmod.item.compat.projecte.BreadOrbItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
 import breadmod.util.setColor
@@ -122,6 +122,6 @@ object ModItems {
 
     @Suppress("PropertyName")
     class ProjectEItems {
-        val BREAD_EMC_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { BreadEMCItem() }
+        val BREAD_ORB_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { BreadOrbItem() }
     }
 }

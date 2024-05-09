@@ -38,7 +38,7 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.RF_BREAD_LEGGINGS)
         singleItem(ModItems.RF_BREAD_BOOTS)
         ModItems.PROJECT_E?.also {
-            singleItem(it.BREAD_EMC_ITEM)
+            singleItem(it.BREAD_ORB_ITEM)
         }
         multiTexture("breadmod:bread_boots", mcLoc("item/generated"), "layer0", modLoc("item/bread_boots"), "layer1", modLoc("item/bread_boots_overlay"))
         multiTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("item/bread_leggings"), "layer1", modLoc("item/bread_leggings_overlay"))

@@ -1,17 +1,22 @@
 package breadmod.item.compat.projecte
 
+import breadmod.ModMain.modTranslatable
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder
 import moze_intel.projecte.capability.EmcHolderItemCapabilityWrapper
 import moze_intel.projecte.gameObjs.items.IBarHelper
 import moze_intel.projecte.gameObjs.items.ItemPE
 import moze_intel.projecte.integration.IntegrationHelper
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.level.Level
 import net.minecraftforge.fml.ModList
 import kotlin.math.min
 
-class BreadEMCItem : ItemPE(Properties().stacksTo(1)), IItemEmcHolder, IBarHelper {
-    private val emcAmount = 5000
+class BreadOrbItem : ItemPE(Properties().stacksTo(1)), IItemEmcHolder, IBarHelper {
+    private val emcAmount = 45000
     init {
         this.addItemCapability { EmcHolderItemCapabilityWrapper() }
         if(ModList.get().isLoaded("curios")) {
@@ -47,6 +52,15 @@ class BreadEMCItem : ItemPE(Properties().stacksTo(1)), IItemEmcHolder, IBarHelpe
             }
             return toRemove
         }
+    }
+
+    override fun appendHoverText(
+        pStack: ItemStack,
+        pLevel: Level?,
+        pTooltipComponents: MutableList<Component>,
+        pIsAdvanced: TooltipFlag
+    ) {
+        pTooltipComponents.add(modTranslatable("item","bread_orb", "tooltip").withStyle(ChatFormatting.GOLD))
     }
 
     override fun getStoredEmc(pStack: ItemStack): Long = getEmc(pStack)
