@@ -18,7 +18,7 @@ import top.theillusivec4.curios.api.SlotContext
 import top.theillusivec4.curios.api.type.capability.ICurio
 
 class BreadAmuletItem: Item(Properties().stacksTo(1)) {
-    private var timer: Int = COMMON.BREAD_AMULET_FEED_TIME_TICKS.get()
+    private var timer: Int = COMMON.BREAD_AMULET_FEED_TIME_TICKS.default
     private var alreadyRun: Int = 0
     private fun playerFood(pPlayer: ServerPlayer) {
         if(alreadyRun != pPlayer.tickCount) {
