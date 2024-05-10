@@ -1,7 +1,9 @@
 package breadmod.item.armor
 
+import breadmod.ModMain.modTranslatable
 import breadmod.item.DyedTintableItem
 import breadmod.registry.ModConfiguration.COMMON
+import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -16,6 +18,7 @@ import net.minecraft.world.item.alchemy.PotionUtils
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
 import java.awt.Color
+import java.text.DecimalFormat
 import kotlin.random.Random
 
 open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Properties()), DyedTintableItem {
@@ -29,12 +32,24 @@ open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Propert
         pLevel: Level?,
         pTooltip: MutableList<Component>,
         pFlag: TooltipFlag
-    ) = PotionUtils.addPotionTooltip(PotionUtils.getCustomEffects(pStack), pTooltip, 1.0F)
+    ) = PotionUtils.addPotionTooltip(
+        PotionUtils.getCustomEffects(pStack).map {
+            val range = distanceMultiplier.get() * it.amplifier
+            pTooltip.add(
+            modTranslatable(
+                "item", "bread_armor", "range",
+                args = listOf(decimalFormat.format(range), if(range == 1.0) "block" else "blocks")
+            ).withStyle { style -> style.withColor(ChatFormatting.BLUE); style.withItalic(true) })
+            MobEffectInstance(it.effect, -1, 0)
+        },
+        pTooltip,
+        1.0F
+    )
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
         if(type.slot.index == pSlotId && pLevel is ServerLevel && pEntity is ServerPlayer) {
             if(pEntity.isInLava) { pStack.hurt(Int.MAX_VALUE, pEntity); return }
-            if(random.nextInt(1, COMMON.DECAY_CHANCE_PER_TICK.get()) == 1 || pEntity.isInWater) pStack.hurt(if(pEntity.isUnderWater) 2 else 1, pEntity)
+            if(random.nextInt(1, decayChance.get()) == 1 || pEntity.isInWater) pStack.hurt(if(pEntity.isUnderWater) 2 else 1, pEntity)
 
             val allEffects = mutableMapOf<MobEffect, Int>()
             val breadArmorEquipped = pEntity.armorSlots.count { stack ->
@@ -47,10 +62,17 @@ open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Propert
             allEffects.forEach { (effect, amplifier) ->
                 val appliedEffect = MobEffectInstance(effect, 200, 0, false, false)
 
-                val distance = amplifier * COMMON.EFFECT_DISTANCE_MULTIPLIER.get()
+                val distance =  distanceMultiplier.get() * amplifier
                 val effectArea = AABB.ofSize(pEntity.eyePosition, distance, distance, distance)
                 pLevel.getEntities(null, effectArea).forEach { if(it is LivingEntity) it.addEffect(appliedEffect) }
             }
         }
+    }
+
+    companion object {
+        val distanceMultiplier = COMMON.EFFECT_DISTANCE_MULTIPLIER
+        val decayChance = COMMON.DECAY_CHANCE_PER_TICK
+
+        private val decimalFormat = DecimalFormat("0.#")
     }
 }

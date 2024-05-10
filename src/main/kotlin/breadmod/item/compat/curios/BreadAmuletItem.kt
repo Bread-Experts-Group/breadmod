@@ -5,7 +5,6 @@ import breadmod.registry.ModConfiguration.COMMON
 import net.minecraft.ChatFormatting
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
@@ -25,8 +24,9 @@ class BreadAmuletItem: Item(Properties().stacksTo(1)) {
         private val feedAmt = COMMON.BREAD_AMULET_FEED_AMOUNT
         private val feedStacks = COMMON.BREAD_AMULET_STACKS
 
+        private val decimalFormat = DecimalFormat("0.#")
         data class PlayerData(var timeLeft: Int, var lastExec: Int)
-        val timers = mutableMapOf<String,PlayerData>()
+        private val timers = mutableMapOf<String,PlayerData>()
     }
 
     private fun playerFood(pPlayer: ServerPlayer) {
@@ -44,7 +44,6 @@ class BreadAmuletItem: Item(Properties().stacksTo(1)) {
     override fun onInventoryTick(pStack: ItemStack, pLevel: Level, pPlayer: Player, slotIndex: Int, selectedIndex: Int): Unit =
         if(pPlayer is ServerPlayer) playerFood(pPlayer) else {}
 
-    private val decimalFormat = DecimalFormat("0.#")
     override fun appendHoverText(
         pStack: ItemStack,
         pLevel: Level?,

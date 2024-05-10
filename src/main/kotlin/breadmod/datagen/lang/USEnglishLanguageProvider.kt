@@ -66,10 +66,19 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModFluids.BREAD_LIQUID.type)
         add(ModFluids.BREAD_LIQUID.bucket)
         add(ModItems.BREAD_AMULET)
-        modAdd("Feeds %s every %s",
-            "item", "bread_amulet", "description")
-        modAdd("(stacking!)",
-            "item", "bread_amulet", "stacks")
+        modAdd(
+            "Feeds %s every %s",
+            "item", "bread_amulet", "description"
+        )
+        modAdd(
+            "(stacking!)",
+            "item", "bread_amulet", "stacks"
+        )
+
+        modAdd(
+            "Effect Range: %s %s",
+            "item", "bread_armor", "range"
+        )
 
         modAdd(
             "Bread Mod",
