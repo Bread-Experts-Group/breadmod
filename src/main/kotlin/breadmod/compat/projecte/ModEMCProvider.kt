@@ -10,12 +10,9 @@ import java.util.concurrent.CompletableFuture
 class ModEMCProvider(packOutput: PackOutput, lookupProvider: CompletableFuture<HolderLookup.Provider>
 ) : CustomConversionProvider(packOutput, lookupProvider) {
     override fun addCustomConversions(pWriter: HolderLookup.Provider) {
-        val projectEItems = ModItems.PROJECT_E!!
         createConversionBuilder(modLocation("defaults"))
             .comment("Default EMC Values for Bread Mod")
             .before(ModItems.FLOUR.get(), 24)
-            .before(projectEItems.BREAD_ORB_ITEM.get(), 5000)
-            .before(ModItems.ULTIMATE_BREAD.get(), 1000000000)
             .before(ModItems.BREAD_SLICE.get(), 3)
     }
 }

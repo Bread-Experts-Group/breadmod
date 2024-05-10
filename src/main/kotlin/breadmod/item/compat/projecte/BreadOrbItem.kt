@@ -10,12 +10,13 @@ import moze_intel.projecte.integration.IntegrationHelper
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.ModList
 import kotlin.math.min
 
-class BreadOrbItem : ItemPE(Properties().stacksTo(1)), IItemEmcHolder, IBarHelper {
+class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper {
     private val emcAmount = 45000
     init {
         this.addItemCapability { EmcHolderItemCapabilityWrapper() }
