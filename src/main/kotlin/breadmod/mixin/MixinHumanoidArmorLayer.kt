@@ -41,7 +41,7 @@ abstract class MixinHumanoidArmorLayer<T: LivingEntity, M: HumanoidModel<T>, A: 
             val model: Model = iGetArmorModelHook(pLivingEntity, itemStack, pSlot, pModel)
             val flag: Boolean = this.iUsesInnerModel(pSlot)
 
-            val components = itemStack.getColor(BreadArmorItem.BREAD_COLOR).getRGBColorComponents(null)
+            val components = itemStack.getColor(item.defaultTint).getRGBColorComponents(null)
             this.iRenderModel(
                 pPoseStack, pBuffer, pPackedLight, item, model, flag, components[0], components[1], components[2],
                 this.iGetArmorResource(pLivingEntity, itemStack, pSlot, null)

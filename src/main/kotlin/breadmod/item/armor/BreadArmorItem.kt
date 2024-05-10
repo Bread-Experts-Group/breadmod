@@ -1,5 +1,6 @@
 package breadmod.item.armor
 
+import breadmod.item.DyedTintableItem
 import breadmod.registry.ModConfiguration.COMMON
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
@@ -17,10 +18,8 @@ import net.minecraft.world.phys.AABB
 import java.awt.Color
 import kotlin.random.Random
 
-open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Properties()) {
-    companion object {
-        val BREAD_COLOR = Color(216, 196, 170)
-    }
+open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Properties()), DyedTintableItem {
+    override val defaultTint: Color = Color(216, 196, 170)
 
     private val random = Random(material.hashCode())
     private fun ItemStack.hurt(amount: Int, entity: LivingEntity) = hurtAndBreak(amount, entity) { it.broadcastBreakEvent(type.slot) }

@@ -1,6 +1,5 @@
 package breadmod.compat.jei.vanillaExtensions
 
-import breadmod.item.armor.BreadArmorItem.Companion.BREAD_COLOR
 import breadmod.recipe.ArmorPotionRecipe
 import breadmod.registry.item.ModItems
 import breadmod.util.setColor
@@ -17,8 +16,12 @@ class JEIArmorPotionCraftingExtension(val recipe: ArmorPotionRecipe): ICraftingC
     override fun getHeight(): Int = 1
 
     // TODO: Naive Impl. See if there's any better way to do this. ~ Miko
-    private val armorSet = listOf(ModItems.BREAD_HELMET.get(), ModItems.BREAD_CHESTPLATE.get(), ModItems.BREAD_LEGGINGS.get(), ModItems.BREAD_BOOTS.get())
-        .map { it.defaultInstance.also { item -> item.setColor(BREAD_COLOR) } }
+    private val armorSet = listOf(
+        ModItems.BREAD_HELMET.get(),
+        ModItems.BREAD_CHESTPLATE.get(),
+        ModItems.BREAD_LEGGINGS.get(),
+        ModItems.BREAD_BOOTS.get()
+    ).map { it.defaultInstance }
 
     override fun setRecipe(
         builder: IRecipeLayoutBuilder,
