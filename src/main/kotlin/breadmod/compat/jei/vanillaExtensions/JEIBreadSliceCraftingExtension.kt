@@ -11,17 +11,16 @@ import net.minecraft.world.item.Items
 import net.minecraftforge.registries.ForgeRegistries
 
 class JEIBreadSliceCraftingExtension: ICraftingCategoryExtension {
+    private val swordTags = ForgeRegistries.ITEMS.tags()?.getTag(ItemTags.SWORDS) ?: listOf()
+    private val swordList = swordTags.map { it.defaultInstance }
+
     override fun getWidth(): Int = 2
     override fun getHeight(): Int = 1
-
     override fun setRecipe(
         builder: IRecipeLayoutBuilder,
         craftingGridHelper: ICraftingGridHelper,
         focuses: IFocusGroup)
     {
-        val swordTags = ForgeRegistries.ITEMS.tags()?.getTag(ItemTags.SWORDS) ?: listOf()
-        val swordList = swordTags.map { it.defaultInstance }
-
         craftingGridHelper.createAndSetInputs(
             builder,
             listOf(
