@@ -9,6 +9,7 @@ import breadmod.registry.recipe.ModRecipeSerializers
 import mekanism.api.datagen.recipe.builder.ItemStackToItemStackRecipeBuilder
 import mekanism.api.recipes.ingredients.creator.IngredientCreatorAccess
 import mekanism.common.registries.MekanismItems
+import moze_intel.projecte.gameObjs.registries.PEItems
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
 import net.minecraft.resources.ResourceLocation
@@ -391,6 +392,19 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
                 IngredientCreatorAccess.item().from(ModBlocks.BREAD_BLOCK.get()),
                 ItemStack(MekanismItems.BIO_FUEL.get(), 63)
             ).build { pWriter.accept(it) }
+        }
+
+        // ProjectE
+        ModItems.PROJECT_E?.also { items ->
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, items.BREAD_ORB_ITEM.get())
+                .unlockedBy("has_item", has(PEItems.MOBIUS_FUEL))
+                .define('M', PEItems.MOBIUS_FUEL)
+                .define('C', Items.COPPER_INGOT)
+                .define('B', ModBlocks.BREAD_BLOCK.get())
+                .pattern("CMC")
+                .pattern("MBM")
+                .pattern("CMC")
+                .save(pWriter, modLocation("misc", "bread_orb"))
         }
     }
 }

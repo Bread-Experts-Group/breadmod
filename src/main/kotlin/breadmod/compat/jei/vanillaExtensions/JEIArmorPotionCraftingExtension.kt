@@ -2,7 +2,6 @@ package breadmod.compat.jei.vanillaExtensions
 
 import breadmod.recipe.ArmorPotionRecipe
 import breadmod.registry.item.ModItems
-import breadmod.util.setColor
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper
 import mezz.jei.api.recipe.IFocusGroup
@@ -30,7 +29,9 @@ class JEIArmorPotionCraftingExtension(val recipe: ArmorPotionRecipe): ICraftingC
     ) {
         val potion = PotionUtils.setPotion(
             Items.POTION.defaultInstance,
-            ForgeRegistries.POTIONS.values.filter { !it.hasInstantEffects() && it.effects.isNotEmpty() }.random()
+            ForgeRegistries.POTIONS.values.filter {
+                !it.hasInstantEffects() && it.effects.size == 1
+            }.random()
         )
 
         craftingGridHelper.createAndSetInputs(
