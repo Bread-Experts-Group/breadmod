@@ -20,8 +20,8 @@ object ModMain {
      */
     fun modLocation(vararg path: String, override: Boolean = false): ResourceLocation
             = path.toMutableList().let { ResourceLocation(if(override) it.removeFirst() else ID, it.joinToString("/")) }
-    fun modTranslatable(type: String = "misc", vararg path: String): MutableComponent
-            = Component.translatable("$type.$ID.${path.joinToString(".")}")
+    fun modTranslatable(type: String = "misc", vararg path: String, args: List<Any> = listOf()): MutableComponent
+            = Component.translatable("$type.$ID.${path.joinToString(".")}", *args.toTypedArray())
     /**
      * Only use this for translatable strings for mods outside breadmod
      * @see modAddExt

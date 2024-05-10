@@ -16,6 +16,7 @@ object ModConfiguration {
         val ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS: ConfigValue<Int>
         val BREAD_AMULET_FEED_TIME_TICKS: ConfigValue<Int>
         val BREAD_AMULET_FEED_AMOUNT: ConfigValue<Int>
+        val BREAD_AMULET_STACKS: ConfigValue<Boolean>
 
         init {
             builder.push("common")
@@ -35,6 +36,9 @@ object ModConfiguration {
             BREAD_AMULET_FEED_AMOUNT = builder
                 .comment("The amount the bread amulet will feed someone - one hunger icon is 2")
                 .define("breadAmuletFeedAmount", 2)
+            BREAD_AMULET_STACKS = builder
+                .comment("Allows the bread amulet to stack effects with other bread amulets")
+                .define("breadAmuletStacks", false)
 
             builder.pop()
         }
