@@ -14,6 +14,8 @@ object ModConfiguration {
         val DECAY_CHANCE_PER_TICK: ConfigValue<Int>
         val EFFECT_DISTANCE_MULTIPLIER: ConfigValue<Double>
         val ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS: ConfigValue<Int>
+        val BREAD_AMULET_FEED_TIME_TICKS: ConfigValue<Int>
+        val BREAD_AMULET_FEED_AMOUNT: ConfigValue<Int>
 
         init {
             builder.push("common")
@@ -27,6 +29,12 @@ object ModConfiguration {
             ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS = builder
                 .comment("How long the ultimate bread will give someone creative, in ticks")
                 .define("ultimateBreadMaxTicks", 20 * 20)
+            BREAD_AMULET_FEED_TIME_TICKS = builder
+                .comment("Time, in ticks, before the bread amulet will feed someone")
+                .define("breadAmuletFeedTime", 20 * 10)
+            BREAD_AMULET_FEED_AMOUNT = builder
+                .comment("The amount the bread amulet will feed someone - one hunger icon is 2")
+                .define("breadAmuletFeedAmount", 2)
 
             builder.pop()
         }
