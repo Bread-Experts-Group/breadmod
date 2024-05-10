@@ -9,7 +9,6 @@ import breadmod.item.compat.curios.BreadAmuletItem
 import breadmod.item.compat.projecte.BreadOrbItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
-import breadmod.util.setColor
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
@@ -48,34 +47,10 @@ object ModItems {
     val BREAD_AMULET: RegistryObject<Item> = deferredRegister.register("bread_amulet") { BreadAmuletItem() }
 
     // Armor
-    val BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("bread_helmet") {
-        object : BreadArmorItem(Type.HELMET), RegisterSpecialCreativeTab {
-            override fun displayInCreativeTab(
-                pParameters: CreativeModeTab.ItemDisplayParameters,
-                pOutput: CreativeModeTab.Output
-            ) = pOutput.accept(this.defaultInstance.also { it.setColor(BREAD_COLOR) })
-        } }
-    val BREAD_CHESTPLATE: RegistryObject<ArmorItem> = deferredRegister.register("bread_chestplate") {
-        object : BreadArmorItem(Type.CHESTPLATE), RegisterSpecialCreativeTab {
-            override fun displayInCreativeTab(
-                pParameters: CreativeModeTab.ItemDisplayParameters,
-                pOutput: CreativeModeTab.Output
-            ) = pOutput.accept(this.defaultInstance.also { it.setColor(BREAD_COLOR) })
-        } }
-    val BREAD_LEGGINGS: RegistryObject<ArmorItem> = deferredRegister.register("bread_leggings") {
-        object : BreadArmorItem(Type.LEGGINGS), RegisterSpecialCreativeTab {
-            override fun displayInCreativeTab(
-                pParameters: CreativeModeTab.ItemDisplayParameters,
-                pOutput: CreativeModeTab.Output
-            ) = pOutput.accept(this.defaultInstance.also { it.setColor(BREAD_COLOR) })
-        } }
-    val BREAD_BOOTS: RegistryObject<ArmorItem> = deferredRegister.register("bread_boots") {
-        object : BreadArmorItem(Type.BOOTS), RegisterSpecialCreativeTab {
-            override fun displayInCreativeTab(
-                pParameters: CreativeModeTab.ItemDisplayParameters,
-                pOutput: CreativeModeTab.Output
-            ) = pOutput.accept(this.defaultInstance.also { it.setColor(BREAD_COLOR) })
-        } }
+    val BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("bread_helmet") { BreadArmorItem(ArmorItem.Type.HELMET) }
+    val BREAD_CHESTPLATE: RegistryObject<ArmorItem> = deferredRegister.register("bread_chestplate") { BreadArmorItem(ArmorItem.Type.CHESTPLATE) }
+    val BREAD_LEGGINGS: RegistryObject<ArmorItem> = deferredRegister.register("bread_leggings") { BreadArmorItem(ArmorItem.Type.LEGGINGS) }
+    val BREAD_BOOTS: RegistryObject<ArmorItem> = deferredRegister.register("bread_boots") { BreadArmorItem(ArmorItem.Type.BOOTS) }
 
     // Reinforced Armor
     val RF_BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("reinforced_bread_helmet") {
