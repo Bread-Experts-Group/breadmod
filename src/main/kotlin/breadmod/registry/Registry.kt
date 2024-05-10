@@ -37,10 +37,10 @@ fun registerConfigs() = ModLoadingContext.get().let {
 }
 
 fun registerAll(bus: IEventBus) {
+    registerConfigs()
     registerList.forEach {
         LOGGER.info("Pushing register for ${it.registryName}")
         it.register(bus)
     }
-    registerConfigs()
 }
 
