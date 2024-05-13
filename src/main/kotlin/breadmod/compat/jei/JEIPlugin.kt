@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation
 
 @JeiPlugin @Suppress("unused")
 class JEIPlugin : IModPlugin {
-    val minecraft: Minecraft = Minecraft.getInstance()
+    val minecraft: Minecraft? = Minecraft.getInstance()
 
     override fun getPluginUid(): ResourceLocation = ResourceLocation(ModMain.ID, "jei_plugin")
 
@@ -41,7 +41,7 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
-        val recipeManager = minecraft.level?.recipeManager ?: throw IllegalStateException()
+        val recipeManager = minecraft?.level?.recipeManager ?: throw IllegalStateException()
         val testRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.ENERGY_FLUID_ITEM)
 
         registration.addItemStackInfo(ModBlocks.BREAD_BLOCK.get().defaultInstance, Component.literal("FUCK"))
