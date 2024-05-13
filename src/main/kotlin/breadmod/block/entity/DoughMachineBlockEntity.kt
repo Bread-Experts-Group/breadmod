@@ -51,6 +51,11 @@ class DoughMachineBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState,
 ) : BlockEntity(ModBlockEntities.DOUGH_MACHINE.get(), pPos, pBlockState), MenuProvider, WorldlyContainer, CraftingContainer {
+    companion object {
+        val INPUT_TANK_CAPACITY = 8000
+        val OUTPUT_TANK_CAPACITY = 4000
+    }
+
     override fun setChanged() = super.setChanged().also {
         if(level is ServerLevel) NETWORK.send(
             PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
@@ -66,7 +71,7 @@ class DoughMachineBlockEntity(
         }
     }
     val fluidHandlerOptional: LazyOptional<FluidContainer> = LazyOptional.of {
-        object : FluidContainer(mutableMapOf(FluidTank(8000) to TankFlow.FILL_ONLY, FluidTank(4000) to TankFlow.DRAIN_ONLY)) {
+        object : FluidContainer(mutableMapOf(FluidTank(INPUT_TANK_CAPACITY) to TankFlow.FILL_ONLY, FluidTank(OUTPUT_TANK_CAPACITY) to TankFlow.DRAIN_ONLY)) {
             override fun contentsChanged() { setChanged() }
         }
     }

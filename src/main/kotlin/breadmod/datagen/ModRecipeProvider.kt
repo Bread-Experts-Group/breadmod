@@ -375,6 +375,11 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .setRFRequired(5000)
             .requiresItem(Items.BREAD, 5)
             .save(pWriter, modLocation("special", "machine", "it_worked"))
+        FluidEnergyRecipeBuilder(FluidStack(Fluids.LAVA, FluidType.BUCKET_VOLUME * 2))
+            .setTimeRequired(5)
+            .setRFRequired(10000)
+            .requiresItem(Items.OBSIDIAN)
+            .save(pWriter, modLocation("special", "machine", "boo"))
 
         // // Compat
         // Create
