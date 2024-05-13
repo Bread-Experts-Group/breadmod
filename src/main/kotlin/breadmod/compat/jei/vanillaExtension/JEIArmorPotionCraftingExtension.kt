@@ -1,4 +1,4 @@
-package breadmod.compat.jei.vanillaExtensions
+package breadmod.compat.jei.vanillaExtension
 
 import breadmod.recipe.ArmorPotionRecipe
 import breadmod.registry.item.ModItems

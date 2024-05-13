@@ -72,6 +72,7 @@ open class FluidEnergyRecipe(
 
     final override fun assemble(pContainer: CraftingContainer, pRegistryAccess: RegistryAccess): ItemStack = ItemStack.EMPTY
 
+
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = true
     override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY.get()
 }
