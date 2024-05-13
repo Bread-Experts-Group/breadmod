@@ -1,6 +1,7 @@
 package breadmod.compat.jei.category
 
 import breadmod.ModMain.modLocation
+import breadmod.ModMain.modTranslatable
 import breadmod.block.entity.DoughMachineBlockEntity.Companion.INPUT_TANK_CAPACITY
 import breadmod.block.entity.DoughMachineBlockEntity.Companion.OUTPUT_TANK_CAPACITY
 import breadmod.recipe.FluidEnergyRecipe
@@ -15,6 +16,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView
 import mezz.jei.api.helpers.IGuiHelper
 import mezz.jei.api.recipe.IFocusGroup
 import mezz.jei.api.recipe.RecipeIngredientRole
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
@@ -33,12 +35,22 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
         }
     })
 
-    private fun getArrow(recipe : FluidEnergyRecipe): IDrawableAnimated {
+    private fun drawArrow(recipe : FluidEnergyRecipe): IDrawableAnimated {
         var recipeTime = recipe.time
         if(recipeTime <= 0) {
             recipeTime = this.recipeTime
         }
         return this.cachedArrows.getUnchecked(recipeTime)
+    }
+
+    private fun drawRecipeTime(recipe : FluidEnergyRecipe, guiGraphics: GuiGraphics, x : Int, y : Int) {
+        if(recipe.time > 0) {
+            val recipeTimeSeconds = recipe.time / 20
+            val timeString = modTranslatable("jei", "dough_machine", "recipe_time", args = listOf("$recipeTimeSeconds"))
+            val minecraft = Minecraft.getInstance()
+            val fontRenderer = minecraft.font
+            guiGraphics.drawString(fontRenderer, timeString, x , y, -8355712, false)
+        }
     }
 
     override fun getTitle(): Component = Component.translatable(ModBlocks.DOUGH_MACHINE_BLOCK.get().descriptionId)
@@ -51,8 +63,9 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
         mouseX: Double,
         mouseY: Double
     ) {
-        val arrow = getArrow(recipe)
+        val arrow = drawArrow(recipe)
         arrow.draw(guiGraphics, 28, 19)
+        drawRecipeTime(recipe, guiGraphics, 56, 42)
         guiGraphics.blit(texture, 102, 4, 147, 17, 16, 47)
     }
 

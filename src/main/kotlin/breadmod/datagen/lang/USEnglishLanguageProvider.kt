@@ -70,6 +70,9 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
             "Feeds %s every %s",
             "item", "bread_amulet", "description"
         )
+        modAdd("%ss",
+            "jei","dough_machine","recipe_time"
+        )
         modAdd(
             "(stacking!)",
             "item", "bread_amulet", "stacks"
