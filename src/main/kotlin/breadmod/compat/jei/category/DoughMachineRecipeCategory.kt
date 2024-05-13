@@ -52,14 +52,19 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
         val arrow = getArrow(recipe)
         arrow.draw(guiGraphics, 28, 19)
 
-        val randomFluids = ForgeRegistries.FLUIDS.values.filter { it.`is`(FluidTags.WATER) }.random()
-        guiGraphics.renderFluid(123f, 51f, 16, 28, randomFluids, false, Direction.NORTH)
+//        val randomFluids = ForgeRegistries.FLUIDS.values.filter { it.`is`(FluidTags.WATER) }.random()
+//        guiGraphics.renderFluid(123f, 51f, 16, 28, randomFluids, false, Direction.NORTH)
 
         guiGraphics.blit(texture, 102, 4, 147, 17, 16, 47)
     }
 
     override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: FluidEnergyRecipe, focuses: IFocusGroup) {
+//        val randomFluids = ForgeRegistries.FLUIDS.values.filter { it.`is`(recipe.fluidsRequiredTagged?.firstOrNull()?.first) }.random()
+        val recipeFluids = recipe.fluidsRequiredTagged?.firstOrNull()?.first.let {ForgeRegistries.FLUIDS.values.filter { it.`is`(FluidTags.WATER) }.random() }
+
         recipe.itemsRequired?.firstOrNull()?.let { builder.addSlot(RecipeIngredientRole.INPUT, 8, 18).addItemStack(it) }
         recipe.itemsOutput?.firstOrNull()?.let { builder.addSlot(RecipeIngredientRole.OUTPUT, 60, 19).addItemStack(it) }
+        recipeFluids.let { builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 123,23 ).addFluidStack(it, 28) }
+
     }
 }
