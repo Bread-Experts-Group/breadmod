@@ -87,7 +87,7 @@ Todo..
   - [ ] Crushing recipes for the food-like items
 - [ ] PneumaticCraft
 - [ ] JEI Integration
-  - [ ] Recipe Categories
-  - [ ] Custom recipe support
+  - [X] Recipe Categories
+  - [X] Custom recipe support
   - [ ] Item infos
-  - [ ] Recipe auto-fill support
+  - [X] Recipe auto-fill support

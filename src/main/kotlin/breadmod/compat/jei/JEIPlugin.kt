@@ -1,6 +1,7 @@
 package breadmod.compat.jei
 
 import breadmod.ModMain
+import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.block.entity.menu.DoughMachineScreen
 import breadmod.compat.jei.category.DoughMachineRecipeCategory
 import breadmod.compat.jei.vanillaExtension.JEIArmorPotionCraftingExtension
@@ -9,6 +10,7 @@ import breadmod.recipe.ArmorPotionRecipe
 import breadmod.recipe.BreadSliceRecipe
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.recipe.ModRecipeTypes
+import breadmod.registry.screen.ModMenuTypes
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.*
@@ -48,5 +50,9 @@ class JEIPlugin : IModPlugin {
 
     override fun registerGuiHandlers(registration: IGuiHandlerRegistration) {
         registration.addRecipeClickArea(DoughMachineScreen::class.java, 47, 34, 23, 17, ModJEIRecipeTypes.fluidEnergyRecipeType)
+    }
+
+    override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
+        registration.addRecipeTransferHandler(DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.fluidEnergyRecipeType, 0, 2, 3, 36)
     }
 }
