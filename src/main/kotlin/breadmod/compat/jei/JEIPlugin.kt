@@ -1,7 +1,6 @@
 package breadmod.compat.jei
 
 import breadmod.ModMain
-import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.block.entity.menu.DoughMachineScreen
 import breadmod.compat.jei.category.DoughMachineRecipeCategory
 import breadmod.compat.jei.vanillaExtension.JEIArmorPotionCraftingExtension
@@ -10,7 +9,6 @@ import breadmod.recipe.ArmorPotionRecipe
 import breadmod.recipe.BreadSliceRecipe
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.recipe.ModRecipeTypes
-import breadmod.registry.screen.ModMenuTypes
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.*
@@ -53,6 +51,7 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
-        registration.addRecipeTransferHandler(DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.fluidEnergyRecipeType, 0, 2, 3, 36)
+        val transferHelper = registration.transferHelper
+        registration.addRecipeTransferHandler(DoughMachineTransferHandler(transferHelper), ModJEIRecipeTypes.fluidEnergyRecipeType)
     }
 }
