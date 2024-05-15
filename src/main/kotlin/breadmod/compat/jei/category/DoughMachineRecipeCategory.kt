@@ -77,7 +77,16 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
                     ForgeRegistries.ITEMS.filter { it.defaultInstance.`is`(tagKey) }.forEach { item -> add(ItemStack(item, amount)) }
                 }
             })
-        builder.addSlot(RecipeIngredientRole.INPUT, 123,23)
+
+        if(recipe.fluidsRequiredTagged != null || recipe.fluidsRequired != null) { //TODO list builder for fluids
+            val fluid = recipe.fluidsRequiredTagged?.firstOrNull()?.first?.let { ForgeRegistries.FLUIDS.tags()?.getTag(it) ?: listOf() }
+            val fluidList = fluid?.map { it.defaultFluidState().type.bucket.defaultInstance }
+            if (fluidList != null) {
+                builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addItemStacks(fluidList)
+            }
+        }
+
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 123,23)
             .addIngredients(ForgeTypes.FLUID_STACK, buildList {
                 recipe.fluidsRequired?.forEach { add(it) }
                 recipe.fluidsRequiredTagged?.forEach { (tagKey, amount) ->
