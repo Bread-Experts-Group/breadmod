@@ -57,10 +57,7 @@ class PrimedHappyBlockRenderer(pContext: EntityRendererProvider.Context) : Entit
         pPoseStack.popPose()
         super.render(pEntity, pEntityYaw, pPartialTicks, pPoseStack, pBuffer, pPackedLight)
     }
-
-    override fun getTextureLocation(pEntity: PrimedHappyBlock): ResourceLocation {
-        return texture
-    }
+    override fun getTextureLocation(pEntity: PrimedHappyBlock): ResourceLocation = texture
 
     companion object {
         private val texture = modLocation("textures", "block", "happy_block.png")

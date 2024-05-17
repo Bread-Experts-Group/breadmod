@@ -68,7 +68,7 @@ class DoughMachineBlock : Block(Properties.of()
         super.onBlockExploded(state, level, pos, explosion)
     }
 
-    val random = Random(-7689986)
+    private val random = Random(-7689986)
     @Deprecated("Deprecated in Java")
     override fun onRemove(
         pState: BlockState,
