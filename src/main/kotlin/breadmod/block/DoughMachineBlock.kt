@@ -1,8 +1,11 @@
 package breadmod.block
 
 import breadmod.block.entity.DoughMachineBlockEntity
+import breadmod.registry.block.ModBlocks
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -10,6 +13,8 @@ import net.minecraft.tags.FluidTags
 import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.MobSpawnType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.Items
@@ -77,6 +82,16 @@ class DoughMachineBlock : Block(Properties.of()
             val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return
             Containers.dropContents(pLevel, pPos, entity)
             super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
+        }
+        if(pState.getValue(BlockStateProperties.LIT)) {
+            pLevel.setBlockAndUpdate(pPos, ModBlocks.FLOUR_BLOCK.get().block.defaultBlockState())
+            pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
+            val compoundTag = CompoundTag() //todo figure out how to add specific NBT data, refer to command below for nbt data
+            compoundTag.putString("BlockState", "{Name:\"minecraft:sand\"}") // No worky
+            println(EntityType.FALLING_BLOCK.tags) // :(
+            // Need motion and blockstate
+            // /summon minecraft:falling_block 1001090.57 125.65 103139.66 {Motion: [0.0d, 0.0d, 0.0d], ForgeData: {}, FallHurtMax: 40, Invulnerable: 0b, Time: 130, Air: 300s, OnGround: 0b, PortalCooldown: 0, Rotation: [0.0f, 0.0f], DropItem: 1b, FallDistance: 0.0f, HurtEntities: 0b, BlockState: {Name: "minecraft:sand"}, CanUpdate: 1b, CancelDrop: 0b, Fire: -1s, FallHurtAmount: 0.0f}
+            EntityType.FALLING_BLOCK.create(pLevel as ServerLevel, compoundTag, null, BlockPos(pPos.x, pPos.y + 2, pPos.z), MobSpawnType.MOB_SUMMONED, false, false)?.let { pLevel.addFreshEntity(it) }
         }
     }
 
