@@ -78,22 +78,17 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
                 }
             })
 
-        if(recipe.fluidsRequiredTagged != null || recipe.fluidsRequired != null) { //TODO list builder for fluids
-            val fluid = recipe.fluidsRequiredTagged?.firstOrNull()?.first?.let { ForgeRegistries.FLUIDS.tags()?.getTag(it) ?: listOf() }
-            val fluidList = fluid?.map { it.defaultFluidState().type.bucket.defaultInstance }
-            if (fluidList != null) {
-                builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addItemStacks(fluidList)
-            }
-        }
-
+        val buckets = mutableListOf<ItemStack>()
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 123,23)
             .addIngredients(ForgeTypes.FLUID_STACK, buildList {
                 recipe.fluidsRequired?.forEach { add(it) }
                 recipe.fluidsRequiredTagged?.forEach { (tagKey, amount) ->
-                    ForgeRegistries.FLUIDS.filter { it.`is`(tagKey) }.forEach { fluid -> add(FluidStack(fluid, amount)) }
+                    ForgeRegistries.FLUIDS.filter { it.`is`(tagKey) }.forEach { fluid -> add(FluidStack(fluid, amount)); buckets.add(fluid.bucket.defaultInstance) }
                 }
             })
             .setFluidRenderer(INPUT_TANK_CAPACITY.toLong(), true, 16, 28)
+        builder.addSlot(RecipeIngredientRole.INPUT, 8, 0).addItemStacks(buckets)
+
         recipe.itemsOutput?.let { builder.addSlot(RecipeIngredientRole.OUTPUT, 60, 19).addItemStacks(it) }
         recipe.fluidsOutput?.let { builder.addSlot(RecipeIngredientRole.OUTPUT, 123,4)
             .addIngredients(ForgeTypes.FLUID_STACK, it)

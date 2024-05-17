@@ -2,19 +2,15 @@ package breadmod.block
 
 import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.registry.block.ModBlocks
+import breadmod.registry.item.ModItems
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
-import net.minecraft.tags.FluidTags
-import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.MobSpawnType
+import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.Items
@@ -34,6 +30,7 @@ import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.Vec3
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.FluidUtil
@@ -41,6 +38,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.network.NetworkHooks
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
+import kotlin.random.Random
 
 class DoughMachineBlock : Block(Properties.of()
     .strength(1f)
@@ -70,6 +68,7 @@ class DoughMachineBlock : Block(Properties.of()
         super.onBlockExploded(state, level, pos, explosion)
     }
 
+    val random = Random(-7689986)
     @Deprecated("Deprecated in Java")
     override fun onRemove(
         pState: BlockState,
@@ -80,18 +79,28 @@ class DoughMachineBlock : Block(Properties.of()
     ) {
         if(!pState.`is`(pNewState.block)) {
             val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return
-            Containers.dropContents(pLevel, pPos, entity)
+            //Containers.dropContents(pLevel, pPos, entity)
+
+            //if(pState.getValue(BlockStateProperties.LIT)) {
+                pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
+
+                val stack = entity.itemHandlerActual.getStackInSlot(0)
+                when(stack.item) {
+                    ModItems.FLOUR.get() -> {
+                        while(stack.count > 0) {
+                            val toSubtract = pLevel.random.nextInt(1, 4)
+                            val state = ModBlocks.FLOUR_LAYER_BLOCK.get().block.defaultBlockState().setValue(BlockStateProperties.LAYERS, toSubtract)
+                            val fallingFlour = FallingBlockEntity.fall(pLevel, pPos.atY(pPos.y + 2), state)
+                            fun nextDouble() = random.nextDouble(-0.5, 0.5)
+                            fallingFlour.deltaMovement = Vec3(nextDouble(), nextDouble(), nextDouble())
+                            fallingFlour.dropItem = false
+                            pLevel.addFreshEntity(fallingFlour)
+                            stack.shrink(toSubtract)
+                        }
+                    }
+                }
+            //}
             super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
-        }
-        if(pState.getValue(BlockStateProperties.LIT)) {
-            pLevel.setBlockAndUpdate(pPos, ModBlocks.FLOUR_BLOCK.get().block.defaultBlockState())
-            pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
-            val compoundTag = CompoundTag() //todo figure out how to add specific NBT data, refer to command below for nbt data
-            compoundTag.putString("BlockState", "{Name:\"minecraft:sand\"}") // No worky
-            println(EntityType.FALLING_BLOCK.tags) // :(
-            // Need motion and blockstate
-            // /summon minecraft:falling_block 1001090.57 125.65 103139.66 {Motion: [0.0d, 0.0d, 0.0d], ForgeData: {}, FallHurtMax: 40, Invulnerable: 0b, Time: 130, Air: 300s, OnGround: 0b, PortalCooldown: 0, Rotation: [0.0f, 0.0f], DropItem: 1b, FallDistance: 0.0f, HurtEntities: 0b, BlockState: {Name: "minecraft:sand"}, CanUpdate: 1b, CancelDrop: 0b, Fire: -1s, FallHurtAmount: 0.0f}
-            EntityType.FALLING_BLOCK.create(pLevel as ServerLevel, compoundTag, null, BlockPos(pPos.x, pPos.y + 2, pPos.z), MobSpawnType.MOB_SUMMONED, false, false)?.let { pLevel.addFreshEntity(it) }
         }
     }
 
@@ -112,18 +121,23 @@ class DoughMachineBlock : Block(Properties.of()
                 val stack = pPlayer.getItemInHand(pHand)
                 val item = stack.item
 
-                val filled = if(item is BucketItem && item.fluid.`is`(FluidTags.WATER) && it.space(FluidTags.WATER) > 0) {
+                val filled = if(item is BucketItem && it.space(item.fluid) > 0) {
                     if(!pPlayer.isCreative) pPlayer.setItemInHand(pHand, Items.BUCKET.defaultInstance)
                     it.fill(FluidStack(item.fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE)
                 } else {
                     FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { stackFluidHandle ->
-                        if(stackFluidHandle != null && stackFluidHandle.drain(1, IFluidHandler.FluidAction.SIMULATE).fluid.`is`(FluidTags.WATER)) it.fill(
-                            stackFluidHandle.drain(
-                                min(FluidType.BUCKET_VOLUME, it.space(FluidTags.WATER)),
-                                if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
-                            ),
-                            IFluidHandler.FluidAction.EXECUTE
-                        ) else 0
+                        if(stackFluidHandle != null) {
+                            val spaceOfDrained = it.space(stackFluidHandle.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE).fluid)
+                            if(spaceOfDrained > 0) {
+                                it.fill(
+                                    stackFluidHandle.drain(
+                                        min(FluidType.BUCKET_VOLUME, spaceOfDrained),
+                                        if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
+                                    ),
+                                    IFluidHandler.FluidAction.EXECUTE
+                                )
+                            } else 0
+                        } else 0
                     }
                 }
                 if(filled > 0) {
@@ -136,6 +150,10 @@ class DoughMachineBlock : Block(Properties.of()
         return InteractionResult.sidedSuccess(pLevel.isClientSide())
     }
 
-    override fun <T : BlockEntity?> getTicker(pLevel: Level, pState: BlockState, pBlockEntityType: BlockEntityType<T>): BlockEntityTicker<T>? =
+    override fun <T : BlockEntity?> getTicker(
+        pLevel: Level,
+        pState: BlockState,
+        pBlockEntityType: BlockEntityType<T>
+    ): BlockEntityTicker<T>? =
         if(pLevel.isClientSide()) null else BlockEntityTicker<T> { _, pPos, _, pBlockEntity -> (pBlockEntity as DoughMachineBlockEntity).tick(pLevel, pPos, pState, pBlockEntity) }
 }

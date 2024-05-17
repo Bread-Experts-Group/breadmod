@@ -53,6 +53,9 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
-        registration.addRecipeTransferHandler(DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.fluidEnergyRecipeType, 0, 2, 3, 36)
+        registration.addRecipeTransferHandler(
+            DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.fluidEnergyRecipeType,
+            0, 3, 3, 36
+        )
     }
 }

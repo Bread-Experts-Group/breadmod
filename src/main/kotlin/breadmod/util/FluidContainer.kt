@@ -35,6 +35,13 @@ abstract class FluidContainer(val tanks: MutableMap<FluidTank, TankFlow>): IFlui
     fun space(fluid: Fluid, flow: TankFlow? = null) = filterFluid(fluid, true, flow).sumOf { it.space }
     fun space(fluid: TagKey<Fluid>, flow: TankFlow? = null) = filterFluid(fluid, true, flow).sumOf { it.space }
 
+    val space: Int
+        get() = allTanks.sumOf { it.space }
+    val capacity: Int
+        get() = allTanks.sumOf { it.capacity }
+    val amount: Int
+        get() = allTanks.sumOf { it.fluidAmount }
+
     fun contains(fluid: FluidStack, onlyCheckFluid: Boolean, flow: TankFlow? = null) =
         tanksWithFlow(flow).firstOrNull { it.fluid == fluid && (!onlyCheckFluid || it.fluid.amount >= fluid.amount) }
     fun contains(fluid: Fluid, flow: TankFlow? = null) = tanksWithFlow(flow).firstOrNull { it.fluid.fluid.isSame(fluid) }
