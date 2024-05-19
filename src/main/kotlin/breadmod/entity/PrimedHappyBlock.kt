@@ -8,10 +8,15 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.random.Random
 
-class PrimedHappyBlock(pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level, val shouldSpread: Boolean) : PrimedTnt(pEntityType, pLevel) {
+class PrimedHappyBlock(pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level, private val shouldSpread: Boolean) : PrimedTnt(pEntityType, pLevel) {
     private var owner: LivingEntity? = null
+    private val circularPattern: HashMap<Double, Double> = hashMapOf(
+        0.0 to 1.0,
+        1.0 to 0.0,
+        -1.0 to 0.0,
+        0.0 to -1.0
+    )
 
     constructor(pLevel: Level, pX: Double, pY: Double, pZ: Double, pOwner: LivingEntity?, shouldSpread: Boolean) : this(
         ModEntities.HAPPY_BLOCK_ENTITY.get(),
@@ -27,25 +32,29 @@ class PrimedHappyBlock(pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level,
         this.owner = pOwner
     }
 
-    private val randomNum = Random(-985657)
-    private var whileX = 10
+    private val spreadRadius = 0.5
+    private val divisions = 4
+    private val divisionsRad = divisions / 360
+
     override fun explode() = level().let {
         val blastRadius = 25.0f
         it.explode(owner, this.getX(0.05), this.getY(0.0625), this.z, blastRadius, Level.ExplosionInteraction.TNT)
         if(shouldSpread) {
-            while(whileX > 0) {
+//            circularPattern.forEach { (deltaX, deltaZ) ->
+//                val extraPrimedHappyBlock = PrimedHappyBlock(it, this.x, this.y, this.z, this.owner, false)
+//                extraPrimedHappyBlock.deltaMovement = Vec3(deltaX, 0.5, deltaZ)
+//                it.addFreshEntity(extraPrimedHappyBlock)
+//            }
+            repeat(divisions) { div ->
+                val current = div * divisionsRad.toDouble()
+                val delta = Vec3(spreadRadius * cos(current), 0.5, spreadRadius * sin(current))
+                println("X: ${delta.x} : Z: ${delta.z}")
+                println("cos sin: ${cos(current)}, ${sin(current)}")
+                println("raw current value: $current")
                 val extraPrimedHappyBlock = PrimedHappyBlock(it, this.x, this.y, this.z, this.owner, false)
-                fun nextDouble() = randomNum.nextDouble(-0.5, 0.5)
-                extraPrimedHappyBlock.deltaMovement = Vec3(nextDouble(), 0.5, nextDouble())
+                extraPrimedHappyBlock.deltaMovement = delta
                 it.addFreshEntity(extraPrimedHappyBlock)
-                whileX--
             }
         }
     }
-
-    override fun onRemovedFromWorld() {
-        super.onRemovedFromWorld()
-    }
-
-    override fun isPushable(): Boolean = true
 }
