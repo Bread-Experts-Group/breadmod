@@ -26,7 +26,7 @@ class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
         pEntity: LivingEntity?
     ) {
         if (!pLevel.isClientSide) {
-            val primedHappyBlock = PrimedHappyBlock(pLevel, pPos.x.toDouble() + 0.5, pPos.y.toDouble(), pPos.z.toDouble() + 0.5, pEntity)
+            val primedHappyBlock = PrimedHappyBlock(pLevel, pPos.x.toDouble() + 0.5, pPos.y.toDouble(), pPos.z.toDouble() + 0.5, pEntity, true)
             pLevel.addFreshEntity(primedHappyBlock)
             pLevel.playSound(
                 null,
@@ -39,17 +39,17 @@ class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
                 1.0f
             )
             pLevel.gameEvent(pEntity, GameEvent.PRIME_FUSE, pPos)
-            var x = 10
-            while(x > 0) {
-                println(x)
-                println("added new happy block entity")
-                val extraPrimedHappyBlock = PrimedHappyBlock(pLevel, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), pEntity)
-                fun nextDouble() = random.nextDouble(-0.5, 0.5) //todo replace this with a predetermined circular spread pattern
-                println(nextDouble())
-                extraPrimedHappyBlock.deltaMovement = Vec3(nextDouble(), 0.5, nextDouble())
-                pLevel.addFreshEntity(extraPrimedHappyBlock)
-                x--
-            }
+//            var x = 10
+//            while(x > 0) {
+//                println(x)
+//                println("added new happy block entity")
+//                val extraPrimedHappyBlock = PrimedHappyBlock(pLevel, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), pEntity)
+//                fun nextDouble() = random.nextDouble(-0.5, 0.5) //todo replace this with a predetermined circular spread pattern
+//                println(nextDouble())
+//                extraPrimedHappyBlock.deltaMovement = Vec3(nextDouble(), 0.5, nextDouble())
+//                pLevel.addFreshEntity(extraPrimedHappyBlock)
+//                x--
+//            }
         }
     }
 
@@ -60,7 +60,8 @@ class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
                 pPos.x.toDouble() + 0.5,
                 pPos.y.toDouble(),
                 pPos.z.toDouble() + 0.5,
-                pExplosion.indirectSourceEntity
+                pExplosion.indirectSourceEntity,
+                true
             )
             val i = primedHappyBlock.fuse
             primedHappyBlock.fuse = (pLevel.random.nextInt(i / 4) + i / 8).toShort().toInt()
