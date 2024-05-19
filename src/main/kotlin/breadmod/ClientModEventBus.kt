@@ -10,7 +10,7 @@ import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
-import breadmod.registry.entity.ModEntities.HAPPY_BLOCK_ENTITY
+import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.screen.ModMenuTypes
 import com.mojang.blaze3d.vertex.DefaultVertexFormat

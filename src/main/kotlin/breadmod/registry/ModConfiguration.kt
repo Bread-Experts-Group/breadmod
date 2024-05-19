@@ -17,6 +17,8 @@ object ModConfiguration {
         val BREAD_AMULET_FEED_TIME_TICKS: ConfigValue<Int>
         val BREAD_AMULET_FEED_AMOUNT: ConfigValue<Int>
         val BREAD_AMULET_STACKS: ConfigValue<Boolean>
+        val HAPPY_BLOCK_DIVISIONS: ConfigValue<Int>
+        val HAPPY_BLOCK_SPREAD_RADIUS: ConfigValue<Double>
 
         init {
             builder.push("common")
@@ -39,6 +41,12 @@ object ModConfiguration {
             BREAD_AMULET_STACKS = builder
                 .comment("Allows the bread amulet to stack effects with other bread amulets")
                 .define("breadAmuletStacks", false)
+            HAPPY_BLOCK_DIVISIONS = builder
+                .comment("How many happy blocks will be created after the first explosion")
+                .define("happyBlockDiv", 8)
+            HAPPY_BLOCK_SPREAD_RADIUS = builder
+                .comment("How far the happy block will spread it's divided blocks")
+                .define("happyBlockRng", 0.5)
 
             builder.pop()
         }

@@ -3,7 +3,7 @@ package breadmod.registry
 import breadmod.ModMain.LOGGER
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
-import breadmod.registry.entity.ModEntities
+import breadmod.registry.entity.ModEntityTypes
 import breadmod.registry.entity.ModPainting
 import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
@@ -23,7 +23,7 @@ val registerList = setOf(
     ModItems.deferredRegister,
     ModCreativeTabs.deferredRegister,
     ModBlockEntities.deferredRegister,
-    ModEntities.deferredRegister,
+    ModEntityTypes.deferredRegister,
     ModPainting.deferredRegister,
     ModRecipeTypes.deferredRegister,
     ModRecipeSerializers.deferredRegister,

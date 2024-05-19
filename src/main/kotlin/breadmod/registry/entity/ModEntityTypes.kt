@@ -10,11 +10,11 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
-object ModEntities {
+object ModEntityTypes {
     val deferredRegister: DeferredRegister<EntityType<*>> = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ModMain.ID)
 
     val HAPPY_BLOCK_ENTITY: RegistryObject<EntityType<PrimedHappyBlock>> = deferredRegister.register("happy_block") {
-        EntityType.Builder.of({ pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level -> PrimedHappyBlock(pEntityType, pLevel, true) }, MobCategory.MISC)
+        EntityType.Builder.of({ _, pLevel -> PrimedHappyBlock(pLevel, shouldSpread = true) }, MobCategory.AMBIENT)
             .sized(0.98f, 0.98f)
             .build(modLocation("happy_block").toString())
     }

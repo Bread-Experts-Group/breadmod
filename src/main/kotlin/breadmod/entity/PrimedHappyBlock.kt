@@ -1,60 +1,53 @@
 package breadmod.entity
 
-import breadmod.registry.entity.ModEntities
-import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.LivingEntity
+import breadmod.registry.ModConfiguration
+import breadmod.registry.entity.ModEntityTypes
+import breadmod.util.BMExplosion
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.commands.FillCommand
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.item.PrimedTnt
+import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import kotlin.math.cos
 import kotlin.math.sin
 
-class PrimedHappyBlock(pEntityType: EntityType<PrimedHappyBlock>, pLevel: Level, private val shouldSpread: Boolean) : PrimedTnt(pEntityType, pLevel) {
-    private var owner: LivingEntity? = null
-    private val circularPattern: HashMap<Double, Double> = hashMapOf(
-        0.0 to 1.0,
-        1.0 to 0.0,
-        -1.0 to 0.0,
-        0.0 to -1.0
-    )
+class PrimedHappyBlock(
+    pLevel: Level,
+    pPos: Vec3 = Vec3.ZERO,
+    pDelta: Vec3 = Vec3.ZERO,
+    private val owner: Entity? = null,
+    private var shouldSpread: Boolean = false
+) : PrimedTnt(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), pLevel) {
+    init { this.setPos(pPos); this.deltaMovement = pDelta }
 
-    constructor(pLevel: Level, pX: Double, pY: Double, pZ: Double, pOwner: LivingEntity?, shouldSpread: Boolean) : this(
-        ModEntities.HAPPY_BLOCK_ENTITY.get(),
-        pLevel, shouldSpread
-    ) {
-        this.setPos(pX, pY, pZ)
-        val d0 = pLevel.random.nextDouble() * (Math.PI.toFloat() * 2f).toDouble()
-        this.setDeltaMovement(-sin(d0) * 0.02, 0.2, -cos(d0) * 0.02)
-        this.fuse = 80
-        this.xo = pX
-        this.yo = pY
-        this.zo = pZ
-        this.owner = pOwner
-    }
-
-    private val spreadRadius = 0.5
-    private val divisions = 4
-    private val divisionsRad = divisions / 360
+    private val spreadRadius = ModConfiguration.COMMON.HAPPY_BLOCK_SPREAD_RADIUS.get()
+    private val divisions = ModConfiguration.COMMON.HAPPY_BLOCK_DIVISIONS.get()
 
     override fun explode() = level().let {
-        val blastRadius = 25.0f
-        it.explode(owner, this.getX(0.05), this.getY(0.0625), this.z, blastRadius, Level.ExplosionInteraction.TNT)
+        BMExplosion(it, owner, position(), 500.0, 5, Explosion.BlockInteraction.DESTROY).explodeThreaded()
         if(shouldSpread) {
-//            circularPattern.forEach { (deltaX, deltaZ) ->
-//                val extraPrimedHappyBlock = PrimedHappyBlock(it, this.x, this.y, this.z, this.owner, false)
-//                extraPrimedHappyBlock.deltaMovement = Vec3(deltaX, 0.5, deltaZ)
-//                it.addFreshEntity(extraPrimedHappyBlock)
-//            }
-            repeat(divisions) { div ->
-                val current = div * divisionsRad.toDouble()
-                val delta = Vec3(spreadRadius * cos(current), 0.5, spreadRadius * sin(current))
-                println("X: ${delta.x} : Z: ${delta.z}")
-                println("cos sin: ${cos(current)}, ${sin(current)}")
-                println("raw current value: $current")
-                val extraPrimedHappyBlock = PrimedHappyBlock(it, this.x, this.y, this.z, this.owner, false)
-                extraPrimedHappyBlock.deltaMovement = delta
+            repeat(divisions) { arc ->
+                val current = arc.toDouble()
+                val extraPrimedHappyBlock = PrimedHappyBlock(
+                    it, position(),
+                    Vec3(spreadRadius * cos(current), 0.5, spreadRadius * sin(current)),
+                    this.owner
+                )
                 it.addFreshEntity(extraPrimedHappyBlock)
             }
         }
+    }
+
+    override fun save(pCompound: CompoundTag): Boolean =
+        if(!pCompound.getBoolean("shouldSpread")) {
+            pCompound.putBoolean("shouldSpread", true)
+            true
+        } else false
+
+    override fun load(pCompound: CompoundTag) {
+        shouldSpread = pCompound.getBoolean("shouldSpread")
+        super.load(pCompound)
     }
 }

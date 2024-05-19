@@ -14,10 +14,15 @@ import net.minecraft.world.level.block.TntBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.Vec3
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
-    private val random = Random(-7689986)
+    private fun BlockPos.adjust() = this.toVec3() + Vec3(0.5, 0.0, 0.5)
+
     override fun onCaughtFire(
         state: BlockState,
         pLevel: Level,
@@ -26,7 +31,7 @@ class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
         pEntity: LivingEntity?
     ) {
         if (!pLevel.isClientSide) {
-            val primedHappyBlock = PrimedHappyBlock(pLevel, pPos.x.toDouble() + 0.5, pPos.y.toDouble(), pPos.z.toDouble() + 0.5, pEntity, true)
+            val primedHappyBlock = PrimedHappyBlock(pLevel, pPos.adjust(), owner = pEntity, shouldSpread = true)
             pLevel.addFreshEntity(primedHappyBlock)
             pLevel.playSound(
                 null,
@@ -39,32 +44,13 @@ class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
                 1.0f
             )
             pLevel.gameEvent(pEntity, GameEvent.PRIME_FUSE, pPos)
-//            var x = 10
-//            while(x > 0) {
-//                println(x)
-//                println("added new happy block entity")
-//                val extraPrimedHappyBlock = PrimedHappyBlock(pLevel, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), pEntity)
-//                fun nextDouble() = random.nextDouble(-0.5, 0.5) //todo replace this with a predetermined circular spread pattern
-//                println(nextDouble())
-//                extraPrimedHappyBlock.deltaMovement = Vec3(nextDouble(), 0.5, nextDouble())
-//                pLevel.addFreshEntity(extraPrimedHappyBlock)
-//                x--
-//            }
         }
     }
 
     override fun wasExploded(pLevel: Level, pPos: BlockPos, pExplosion: Explosion) {
         if (!pLevel.isClientSide) {
-            val primedHappyBlock = PrimedHappyBlock(
-                pLevel,
-                pPos.x.toDouble() + 0.5,
-                pPos.y.toDouble(),
-                pPos.z.toDouble() + 0.5,
-                pExplosion.indirectSourceEntity,
-                true
-            )
-            val i = primedHappyBlock.fuse
-            primedHappyBlock.fuse = (pLevel.random.nextInt(i / 4) + i / 8).toShort().toInt()
+            val primedHappyBlock = PrimedHappyBlock(pLevel, pPos.adjust(), owner = pExplosion.indirectSourceEntity, shouldSpread = true)
+            primedHappyBlock.fuse -= ((primedHappyBlock.fuse - 10.0) * (1.0 / (1.0 + pExplosion.position.distanceTo(pPos.toVec3())))).roundToInt()
             pLevel.addFreshEntity(primedHappyBlock)
         }
     }
