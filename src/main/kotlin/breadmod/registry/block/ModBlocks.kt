@@ -14,14 +14,12 @@ import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.FallingBlock
-import net.minecraft.world.level.block.SnowLayerBlock
-import net.minecraft.world.level.block.SoundType
+import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockSetType
 import net.minecraft.world.level.material.MapColor
+import net.minecraft.world.level.material.PushReaction
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.LootPool
 import net.minecraft.world.level.storage.loot.LootTable
@@ -127,6 +125,28 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val BREAD_FENCE = registerBlockItem( //todo blockstates... everything else about a fence
+        "bread_fence",
+        { object : FenceBlock(Properties.of()) {
+            override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int = 100
+            override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
+        } },
+        Item.Properties()
+    )
+
+    val BREAD_DOOR = registerBlockItem(
+        "bread_door",
+        { object : DoorBlock(Properties.of()
+            .mapColor(MapColor.WOOD)
+            .strength(1.0F)
+            .pushReaction(PushReaction.DESTROY)
+            .noOcclusion(), //TODO FIX THE BLOCK SOMEHOW OCCLUDING BLANK PIXELS WHEN IT'S LITERALLY NOT SUPPOSED TO IN CODE
+            BlockSetType.OAK) { //todo create bread block set type, make door block and item texture
+            override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
+        } },
+        Item.Properties()
+    )
+
     val BAUXITE_ORE = registerBlockItem(
         "bauxite_ore",
         { OreBlock() },
@@ -162,6 +182,8 @@ object ModBlocks {
             dropSelf(MONITOR.get().block)
             dropSelf(DOUGH_MACHINE_BLOCK.get().block)
             dropSelf(KEYBOARD.get().block)
+            dropSelf(BREAD_FENCE.get().block)
+            add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
             dropNone.forEach { add(it, noDrop()) }
 

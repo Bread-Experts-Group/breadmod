@@ -1,6 +1,7 @@
 package breadmod.datagen
 
 import breadmod.ModMain.modLocation
+import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
 import net.minecraft.data.PackOutput
@@ -37,6 +38,7 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.RF_BREAD_CHESTPLATE)
         singleItem(ModItems.RF_BREAD_LEGGINGS)
         singleItem(ModItems.RF_BREAD_BOOTS)
+        singleItem(ModBlocks.BREAD_DOOR)
         ModItems.PROJECT_E?.also {
             singleItem(it.BREAD_ORB_ITEM)
         }
@@ -57,7 +59,14 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         )
     }
 
-    private fun multiTexture(name: String, parent: ResourceLocation, textureKey: String, texture: ResourceLocation, textureKey2: String, texture2: ResourceLocation) {
+    private fun multiTexture(
+        name: String,
+        parent: ResourceLocation,
+        textureKey: String,
+        texture: ResourceLocation,
+        textureKey2: String,
+        texture2: ResourceLocation)
+    {
         withExistingParent(name, parent)
             .texture(textureKey, texture)
             .texture(textureKey2, texture2)

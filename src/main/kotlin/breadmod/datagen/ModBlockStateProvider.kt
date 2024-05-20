@@ -6,6 +6,7 @@ import breadmod.registry.fluid.ModFluids
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.DoorBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.model.generators.BlockStateProvider
@@ -25,6 +26,11 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
+
+        doorBlock(ModBlocks.BREAD_DOOR.get().block as DoorBlock,
+            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
+            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top")
+        )
 
         horizontalBlock(ModBlocks.DOUGH_MACHINE_BLOCK.get().block) { state ->
             val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
