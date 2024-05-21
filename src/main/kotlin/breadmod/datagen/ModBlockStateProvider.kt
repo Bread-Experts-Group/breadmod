@@ -27,9 +27,10 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
 
-        doorBlock(ModBlocks.BREAD_DOOR.get().block as DoorBlock,
+        doorBlockWithRenderType(ModBlocks.BREAD_DOOR.get().block as DoorBlock,
             modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
-            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top")
+            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top"),
+            "minecraft:cutout"
         )
 
         horizontalBlock(ModBlocks.DOUGH_MACHINE_BLOCK.get().block) { state ->
