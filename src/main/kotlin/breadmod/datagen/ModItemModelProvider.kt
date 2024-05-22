@@ -8,6 +8,7 @@ import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraftforge.client.model.generators.ItemModelProvider
+import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.registries.RegistryObject
 
@@ -39,6 +40,7 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.RF_BREAD_LEGGINGS)
         singleItem(ModItems.RF_BREAD_BOOTS)
         singleItem(ModBlocks.BREAD_DOOR)
+        fenceInventory("bread_fence", modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"))
         ModItems.PROJECT_E?.also {
             singleItem(it.BREAD_ORB_ITEM)
         }

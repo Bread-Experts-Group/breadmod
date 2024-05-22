@@ -66,6 +66,8 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModFluids.BREAD_LIQUID.type)
         add(ModFluids.BREAD_LIQUID.bucket)
         add(ModItems.BREAD_AMULET)
+        add(ModBlocks.BREAD_DOOR)
+        add(ModBlocks.BREAD_FENCE)
         modAdd(
             "Feeds %s every %s",
             "item", "bread_amulet", "description"

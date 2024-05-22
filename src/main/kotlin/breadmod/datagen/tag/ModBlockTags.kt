@@ -40,5 +40,7 @@ class ModBlockTags(
             .add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK,
                 ModBlocks.CHARCOAL_BLOCK,
                 ModBlocks.BREAD_BLOCK)
+        tag(BlockTags.FENCES)
+            .add(ModBlocks.BREAD_FENCE)
     }
 }

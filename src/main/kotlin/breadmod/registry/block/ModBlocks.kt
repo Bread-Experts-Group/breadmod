@@ -17,7 +17,6 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.properties.BlockSetType
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.material.PushReaction
 import net.minecraft.world.level.storage.loot.LootContext
@@ -125,9 +124,13 @@ object ModBlocks {
         Item.Properties()
     )
 
-    val BREAD_FENCE = registerBlockItem( //todo blockstates... everything else about a fence
+    val BREAD_FENCE = registerBlockItem(
         "bread_fence",
-        { object : FenceBlock(Properties.of()) {
+        { object : FenceBlock(Properties.of()
+            .forceSolidOn()
+            .sound(SoundType.GRASS)
+            .strength(1.0F)
+        ) {
             override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int = 100
             override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
         } },
@@ -140,8 +143,8 @@ object ModBlocks {
             .mapColor(MapColor.WOOD)
             .strength(1.0F)
             .pushReaction(PushReaction.DESTROY)
-            .noOcclusion(), //TODO FIX THE BLOCK SOMEHOW OCCLUDING BLANK PIXELS WHEN IT'S LITERALLY NOT SUPPOSED TO IN CODE
-            BlockSetType.OAK) { //todo create bread block set type, make door block and item texture
+            .noOcclusion(),
+            ModBlockSetTypes.BREAD) { //todo create item texture
             override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
         } },
         Item.Properties()

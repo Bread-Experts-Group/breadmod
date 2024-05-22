@@ -357,6 +357,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("   ")
             .save(pWriter, modLocation("building_blocks", "flour_layer_block"))
 
+        doorBuilder(ModBlocks.BREAD_DOOR.get(), Ingredient.of(ModBlocks.BREAD_BLOCK.get()))
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .save(pWriter, modLocation("redstone", "bread_door"))
+
+        fenceBuilder(ModBlocks.BREAD_FENCE.get(), Ingredient.of(ModBlocks.BREAD_BLOCK.get()))
+            .unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
+            .save(pWriter, modLocation("decorations", "bread_fence"))
+
         SpecialRecipeBuilder.special(ModRecipeSerializers.ARMOR_POTION.get())
             .save(pWriter, modLocation("special", "crafting", "armor_potion_doping").toString())
         SpecialRecipeBuilder.special(ModRecipeSerializers.BREAD_SLICE.get())
