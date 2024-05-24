@@ -46,6 +46,10 @@ class BMExplosion(
                 DAMAGE_CALC.getBlockExplosionResistance(this, pLevel, blockPos, state, pLevel.getFluidState(it)).ifPresent { resist ->
                     if((pRadius * (0.7 + (pLevel.random.nextFloat() * 0.6)) - ((resist + 0.3) * 0.3)) > 0) toDestroy.add(it to state)
                 }
+                println("block explosion resistance: ${state.block}, ${state.block.explosionResistance}")
+                val float: Float = pRadius.toFloat() * (0.7F + pLevel.random.nextFloat() * 0.6F)
+                if(float > 0.0F && DAMAGE_CALC.shouldBlockExplode(this, pLevel, blockPos, state, float)) toDestroy.add(it to state)
+                println("block should explode: ${state.block}, $blockPos")
             }
 
             val blockDrops = mutableListOf<Pair<BlockPos, ItemStack>>()
@@ -71,7 +75,6 @@ class BMExplosion(
                     state.onBlockExploded(pLevel, blockPos, this)
                     if(pFire != null && (pLevel.random.nextInt() * pFire == 0) && !pLevel.getBlockState(pos.below()).isSolidRender(pLevel, pos))
                         pLevel.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState())
-
                     pLevel.profiler.pop()
                 }
             }
@@ -81,21 +84,30 @@ class BMExplosion(
 
     fun explodeThreaded() {
         println("THR")
-        if (pLevel.isClientSide)
-            pLevel.playLocalSound(
+        if(!pLevel.isClientSide) {
+            pLevel.playSound(null, BlockPos(pPos.x.toInt(), pPos.y.toInt(), pPos.z.toInt()), SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0f, 1.0f)
+            pLevel.addParticle(
+                if(!(pRadius < 2.0f) && interactsWithBlocks()) ParticleTypes.EXPLOSION_EMITTER else ParticleTypes.EXPLOSION,
                 pPos.x,
                 pPos.y,
-                pPos.z,
-                SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0f,
-                (1.0f + (pLevel.random.nextFloat() - pLevel.random.nextFloat()) * 0.2f) * 0.7f, false
+                pPos.z, 1.0, 0.0, 0.0
             )
-        pLevel.addParticle(
-            if(!(pRadius < 2.0f) && interactsWithBlocks()) ParticleTypes.EXPLOSION_EMITTER else ParticleTypes.EXPLOSION,
-            pPos.x,
-            pPos.y,
-            pPos.z, 1.0, 0.0, 0.0
-        )
-
+        }
+//        if (pLevel.isClientSide)
+//            pLevel.playLocalSound(
+//                pPos.x,
+//                pPos.y,
+//                pPos.z,
+//                SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 4.0f,
+//                (1.0f + (pLevel.random.nextFloat() - pLevel.random.nextFloat()) * 0.2f) * 0.7f, false
+//            )
+//        pLevel.addParticle(
+//            if(!(pRadius < 2.0f) && interactsWithBlocks()) ParticleTypes.EXPLOSION_EMITTER else ParticleTypes.EXPLOSION,
+//            pPos.x,
+//            pPos.y,
+//            pPos.z, 1.0, 0.0, 0.0
+//        )
+//
         thread {
             synchronized(pLevel) { explode() }
         }

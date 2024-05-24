@@ -26,7 +26,7 @@ class PrimedHappyBlock(
     private val divisions = ModConfiguration.COMMON.HAPPY_BLOCK_DIVISIONS.get()
 
     override fun explode() = level().let {
-        BMExplosion(it, owner, position(), 500.0, 5, Explosion.BlockInteraction.DESTROY).explodeThreaded()
+        BMExplosion(it, owner, position(), 250.0, 5, Explosion.BlockInteraction.DESTROY).explodeThreaded()
         if(shouldSpread) {
             repeat(divisions) { arc ->
                 val current = arc.toDouble()
