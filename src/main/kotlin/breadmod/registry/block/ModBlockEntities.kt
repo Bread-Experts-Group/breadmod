@@ -4,8 +4,10 @@ import breadmod.ModMain
 import breadmod.block.entity.BreadScreenBlockEntity
 import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.block.entity.HeatingElementBlockEntity
+import breadmod.block.entity.WheatCrusherBlockEntity
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK
+import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -18,6 +20,12 @@ object ModBlockEntities {
         BlockEntityType.Builder.of(
             { pPos, pState -> DoughMachineBlockEntity(pPos, pState) },
             DOUGH_MACHINE_BLOCK.get().block
+        ).build(null)
+    }
+    val WHEAT_CRUSHER: RegistryObject<BlockEntityType<WheatCrusherBlockEntity>> = deferredRegister.register("wheat_crusher_entity") {
+        BlockEntityType.Builder.of(
+            { pPos, pState -> WheatCrusherBlockEntity(pPos, pState) },
+            WHEAT_CRUSHER_BLOCK.get().block
         ).build(null)
     }
     val HEATING_ELEMENT: RegistryObject<BlockEntityType<HeatingElementBlockEntity>> = deferredRegister.register("heating_element_entity") {

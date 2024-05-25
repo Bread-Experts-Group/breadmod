@@ -49,12 +49,27 @@ class ModBlockStateProvider(
                 modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
                 modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_top")
             )
-
             return@horizontalBlock model
         }
         simpleBlockItem(
             ModBlocks.DOUGH_MACHINE_BLOCK.get().block,
             models().getBuilder("breadmod:block/dough_machine")
+        )
+        horizontalBlock(ModBlocks.WHEAT_CRUSHER_BLOCK.get().block) { state ->
+            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
+            val name = "breadmod:block/wheat_crusher$machineOn"
+
+            val model = models().orientable(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_side"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_top")
+            )
+            return@horizontalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.WHEAT_CRUSHER_BLOCK.get().block,
+            models().getBuilder("breadmod:block/wheat_crusher")
         )
         //// // // // TODO!
         directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { _ ->

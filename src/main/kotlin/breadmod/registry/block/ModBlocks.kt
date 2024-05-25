@@ -96,6 +96,12 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val WHEAT_CRUSHER_BLOCK = registerBlockItem(
+        "wheat_crusher",
+        { WheatCrusherBlock() },
+        Item.Properties()
+    )
+
     val HEATING_ELEMENT_BLOCK = registerBlockItem(
         "heating_element",
         { HeatingElementBlock() },
@@ -186,6 +192,7 @@ object ModBlocks {
             dropSelf(DOUGH_MACHINE_BLOCK.get().block)
             dropSelf(KEYBOARD.get().block)
             dropSelf(BREAD_FENCE.get().block)
+            dropSelf(WHEAT_CRUSHER_BLOCK.get().block)
             add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
             dropNone.forEach { add(it, noDrop()) }

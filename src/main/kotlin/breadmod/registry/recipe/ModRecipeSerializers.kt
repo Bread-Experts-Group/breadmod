@@ -1,11 +1,9 @@
 package breadmod.registry.recipe
 
 import breadmod.ModMain
-import breadmod.recipe.ArmorPotionRecipe
-import breadmod.recipe.BreadSliceRecipe
-import breadmod.recipe.DopedBreadRecipe
-import breadmod.recipe.FluidEnergyRecipe
+import breadmod.recipe.*
 import breadmod.recipe.serializers.SimpleFluidEnergyRecipeSerializer
+import breadmod.recipe.serializers.SimpleItemEnergyRecipeSerializer
 import net.minecraft.world.item.crafting.*
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -24,6 +22,9 @@ object ModRecipeSerializers {
 
     val FLUID_ENERGY: RegistryObject<SimpleFluidEnergyRecipeSerializer<FluidEnergyRecipe>> = deferredRegister.register("fluid_energy") {
         SimpleFluidEnergyRecipeSerializer { pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut -> FluidEnergyRecipe(pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut) }
+    }
+    val WHEAT_CRUSHING: RegistryObject<SimpleItemEnergyRecipeSerializer<WheatCrusherRecipe>> = deferredRegister.register("wheat_crushing") {
+        SimpleItemEnergyRecipeSerializer { pId, pTime, pEnergy, pItems, pItemsTagged, pItemsOut -> WheatCrusherRecipe(pId,pTime,pEnergy,pItems,pItemsTagged,pItemsOut)}
     }
 
     /*val BREAD_REFINEMENT = REGISTRY.register("bread_refinement") {

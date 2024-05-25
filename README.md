@@ -42,6 +42,10 @@
     - [ ] Compat with fluid tank-like containers in the bucket slot
   - [ ] Can be heated from the bottom (possible PneumaticCraft Compat?)
     - [ ] Speed can be accelerated from external heat sources
+- [ ] Wheat Crusher
+  - [ ] Block model and textures (animated)
+  - [ ] Menu actually working
+  - [X] Recipe type and serializer
 - Needs to be done still:
   - [X] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder
     - [X] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)

@@ -4,7 +4,6 @@ import breadmod.registry.ModConfiguration
 import breadmod.registry.entity.ModEntityTypes
 import breadmod.util.BMExplosion
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.server.commands.FillCommand
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.item.PrimedTnt
 import net.minecraft.world.level.Explosion
@@ -26,7 +25,7 @@ class PrimedHappyBlock(
     private val divisions = ModConfiguration.COMMON.HAPPY_BLOCK_DIVISIONS.get()
 
     override fun explode() = level().let {
-        BMExplosion(it, owner, position(), 250.0, 5, Explosion.BlockInteraction.DESTROY).explodeThreaded()
+        BMExplosion(it, owner, position(), 10.0, 5, Explosion.BlockInteraction.DESTROY).explodeThreaded()
         if(shouldSpread) {
             repeat(divisions) { arc ->
                 val current = arc.toDouble()

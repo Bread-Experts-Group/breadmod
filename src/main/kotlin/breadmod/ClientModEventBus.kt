@@ -3,6 +3,7 @@ package breadmod
 import breadmod.ModMain.modLocation
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.menu.DoughMachineScreen
+import breadmod.block.entity.menu.WheatCrusherScreen
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
@@ -49,6 +50,7 @@ object ClientModEventBus {
             }
 
             MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
+            MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle -> WheatCrusherScreen(pMenu,pInventory,pTitle) }
         }
     }
 

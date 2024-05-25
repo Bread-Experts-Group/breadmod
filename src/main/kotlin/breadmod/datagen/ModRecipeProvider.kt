@@ -3,6 +3,7 @@ package breadmod.datagen
 import breadmod.ModMain.modLocation
 import breadmod.datagen.recipe.compat.create.CreateMixingRecipeBuilder
 import breadmod.datagen.recipe.FluidEnergyRecipeBuilder
+import breadmod.datagen.recipe.WheatCrusherRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
@@ -388,6 +389,11 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .setRFRequired(10000)
             .requiresItem(Items.OBSIDIAN)
             .save(pWriter, modLocation("special", "machine", "boo"))
+        WheatCrusherRecipeBuilder(ModItems.FLOUR.get())
+            .setTimeRequired(20 * 5)
+            .setRFRequired(5000)
+            .requiresItem(Items.WHEAT)
+            .save(pWriter, modLocation("special", "machine", "wheat_crushing"))
 
         // // Compat
         // Create
