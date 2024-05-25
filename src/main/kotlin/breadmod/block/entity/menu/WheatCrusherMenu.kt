@@ -38,7 +38,7 @@ class WheatCrusherMenu(
         addSlot(WheatCrusherResultSlot(parent))
 
         repeat(9) { addSlot(Slot(inventory, it, 8 * it * 18, 174)) }
-        repeat(9) { y -> repeat(9) {x -> addSlot(Slot(inventory, x+ y * 9 + 9, 8 + x * 18, 116 + y * 18))} }
+        repeat(9) { y -> repeat(9) { x -> addSlot(Slot(inventory, x+ y * 9 + 9, 8 + x * 18, 116 + y * 18)) } }
     }
 
     // lifted from DoughMachineMenu, possibly cleaner solution in NeoForge's Docs

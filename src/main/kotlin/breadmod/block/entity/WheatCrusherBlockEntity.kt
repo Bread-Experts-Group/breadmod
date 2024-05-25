@@ -4,7 +4,7 @@ import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.block.entity.menu.WheatCrusherMenu
 import breadmod.network.CapabilityDataPacket
-import breadmod.network.PacketHandler
+import breadmod.network.PacketHandler.NETWORK
 import breadmod.recipe.WheatCrusherRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
@@ -40,7 +40,7 @@ class WheatCrusherBlockEntity(
     pBlockState: BlockState
 ) : BlockEntity(ModBlockEntities.WHEAT_CRUSHER.get(), pPos, pBlockState), MenuProvider, WorldlyContainer, CraftingContainer {
     override fun setChanged() = super.setChanged().also {
-        if(level is ServerLevel) PacketHandler.NETWORK.send(
+        if(level is ServerLevel) NETWORK.send(
             PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
             CapabilityDataPacket(blockPos, updateTag)
         )
@@ -71,9 +71,8 @@ class WheatCrusherBlockEntity(
         itemHandlerOptional.invalidate()
     }
 
-    override fun createMenu(pContainerId: Int, pInventory: Inventory, pPlayer: Player): AbstractContainerMenu {
-        return WheatCrusherMenu(pContainerId, pInventory, this)
-    }
+    override fun createMenu(pContainerId: Int, pInventory: Inventory, pPlayer: Player): AbstractContainerMenu =
+        WheatCrusherMenu(pContainerId, pInventory, this)
 
     private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, WheatCrusherRecipe> =
         RecipeManager.createCheck(ModRecipeTypes.WHEAT_CRUSHING)
@@ -88,6 +87,17 @@ class WheatCrusherBlockEntity(
             energyHandlerOptional.ifPresent { dataTag.put("energy", it.serializeNBT()) }
             dataTag.putInt("progress", progress); dataTag.putInt("maxProgress", maxProgress)
         })
+    }
+
+    override fun load(pTag: CompoundTag) {
+        super.load(pTag)
+        val dataTag = pTag.getCompound(ModMain.ID)
+        itemHandlerActual.deserializeNBT(dataTag.getCompound("items"))
+        energyHandlerOptional.ifPresent {
+            it.deserializeNBT(dataTag.getCompound("energy"))
+        }
+        progress = dataTag.getInt("progress")
+        maxProgress = dataTag.getInt("maxProgress")
     }
 
     override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }

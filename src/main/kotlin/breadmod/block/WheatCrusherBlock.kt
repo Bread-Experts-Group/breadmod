@@ -75,7 +75,7 @@ class WheatCrusherBlock: Block(Properties.of()
     ): InteractionResult {
         if(!pLevel.isClientSide) {
             val entity = (pLevel.getBlockEntity(pPos) as? WheatCrusherBlockEntity) ?: return InteractionResult.FAIL
-            NetworkHooks.openScreen(pPlayer as ServerPlayer, entity)
+            NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
         }
         return InteractionResult.sidedSuccess(pLevel.isClientSide())
     }

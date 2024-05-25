@@ -46,6 +46,8 @@
   - [ ] Block model and textures (animated)
   - [ ] Menu actually working
   - [X] Recipe type and serializer
+  - [ ] jei category and recipe
+  - [ ] gui size fix
 - Needs to be done still:
   - [X] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder
     - [X] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
