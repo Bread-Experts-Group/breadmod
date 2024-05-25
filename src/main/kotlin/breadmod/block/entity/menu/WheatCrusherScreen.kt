@@ -14,13 +14,17 @@ class WheatCrusherScreen(
     pTitle: Component
 ) : AbstractContainerScreen<WheatCrusherMenu>(pMenu, pPlayerInventory, pTitle) {
     val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
+    private val textureWidth = 176
+    private val textureHeight = 198
+
 
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         RenderSystem.setShaderTexture(0, texture)
 
-        pGuiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight)
+        pGuiGraphics.blit(texture, leftPos, topPos, 0, 0, textureWidth, textureHeight)
+        inventoryLabelY = textureHeight - 94
 
         renderEnergyMeter(pGuiGraphics)
     }
