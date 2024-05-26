@@ -8,7 +8,8 @@ import breadmod.network.PacketHandler.NETWORK
 import breadmod.recipe.WheatCrusherRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
-import breadmod.util.IndexableItemHandler
+import breadmod.util.deserialize
+import breadmod.util.serialize
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -46,8 +47,7 @@ class WheatCrusherBlockEntity(
         )
     }
 
-    private val itemHandlerActual = IndexableItemHandler(2)
-    private val itemHandlerOptional: LazyOptional<IndexableItemHandler> = LazyOptional.of { itemHandlerActual }
+    private val storedItems = MutableList(3) { ItemStack.EMPTY }
 
     val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
         object : EnergyStorage(50000, 2000) {
@@ -60,7 +60,6 @@ class WheatCrusherBlockEntity(
         val currentDirection = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
         return when {
             (cap == ForgeCapabilities.ENERGY) && (side == null || side == currentDirection.opposite) -> energyHandlerOptional.cast()
-            (cap == ForgeCapabilities.ITEM_HANDLER) -> itemHandlerOptional.cast()
             else -> super.getCapability(cap, side)
         }
     }
@@ -68,7 +67,6 @@ class WheatCrusherBlockEntity(
     override fun invalidateCaps() {
         super.invalidateCaps()
         energyHandlerOptional.invalidate()
-        itemHandlerOptional.invalidate()
     }
 
     override fun createMenu(pContainerId: Int, pInventory: Inventory, pPlayer: Player): AbstractContainerMenu =
@@ -83,7 +81,7 @@ class WheatCrusherBlockEntity(
     override fun saveAdditional(pTag: CompoundTag) {
         super.saveAdditional(pTag)
         pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
-            dataTag.put("items", itemHandlerActual.serializeNBT())
+            dataTag.put("items", storedItems.serialize())
             energyHandlerOptional.ifPresent { dataTag.put("energy", it.serializeNBT()) }
             dataTag.putInt("progress", progress); dataTag.putInt("maxProgress", maxProgress)
         })
@@ -92,9 +90,9 @@ class WheatCrusherBlockEntity(
     override fun load(pTag: CompoundTag) {
         super.load(pTag)
         val dataTag = pTag.getCompound(ModMain.ID)
-        itemHandlerActual.deserializeNBT(dataTag.getCompound("items"))
+        storedItems.deserialize(dataTag.getCompound("items"))
         energyHandlerOptional.ifPresent {
-            it.deserializeNBT(dataTag.getCompound("energy"))
+            it.deserializeNBT(dataTag.get("energy"))
         }
         progress = dataTag.getInt("progress")
         maxProgress = dataTag.getInt("maxProgress")
@@ -113,11 +111,11 @@ class WheatCrusherBlockEntity(
                     // I'm going to assume this function here this function subtracts the progress every tick if there's not enough energy present
                     energyDivision?.let { rfd -> if(energyHandle.extractEnergy(rfd, false) != rfd) progress-- }
                 } else {
-                    if(it.canFitResults(itemHandlerActual.exposed to listOf(1))) {
+                    if(it.canFitResults(storedItems to listOf(1))) {
                         val assembled = it.assembleOutputs(this, pLevel)
                         assembled.forEach {
-                            stack -> itemHandlerActual[1].let {
-                                slot -> if(slot.isEmpty) itemHandlerActual[1] = stack.copy() else
+                            stack -> storedItems[1].let {
+                                slot -> if(slot.isEmpty) storedItems[1] = stack.copy() else
                                     slot.grow(stack.count) } }
                         setChanged()
                         currentRecipe = null
@@ -128,8 +126,8 @@ class WheatCrusherBlockEntity(
                 pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
                 recipeDial.getRecipeFor(pBlockEntity, pLevel).ifPresent { recipe ->
                     maxProgress = recipe.time
-                    recipe.itemsRequired?.forEach { stack -> itemHandlerActual[0].shrink(stack.count) } // gregtech lookin ass recipe logic
-                    recipe.itemsRequiredTagged?.forEach { tag -> itemHandlerActual[0].shrink(tag.second) }
+                    recipe.itemsRequired?.forEach { stack -> storedItems[0].shrink(stack.count) } // gregtech lookin ass recipe logic
+                    recipe.itemsRequiredTagged?.forEach { tag -> storedItems[0].shrink(tag.second) }
                     energyDivision = recipe.energy?.let { fe -> (fe.toFloat() / recipe.time).toInt() }
                     currentRecipe = recipe
                 }
@@ -138,19 +136,19 @@ class WheatCrusherBlockEntity(
     }
 
     override fun getDisplayName(): Component = modTranslatable("block", "wheat_crusher")
-    override fun clearContent() = itemHandlerActual.exposed.forEach { it.count = 0 }
-    override fun getContainerSize(): Int = itemHandlerActual.exposed.size
-    override fun isEmpty(): Boolean = itemHandlerActual.exposed.any { !it.isEmpty }
-    override fun getItem(pSlot: Int): ItemStack = itemHandlerActual[pSlot]
-    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = itemHandlerActual[pSlot].split(pAmount)
-    override fun removeItemNoUpdate(pSlot: Int): ItemStack =itemHandlerActual[pSlot].copyAndClear()
-    override fun setItem(pSlot: Int, pStack: ItemStack) { itemHandlerActual[pSlot] = pStack }
+    override fun clearContent() = storedItems.forEach { it.count = 0 }
+    override fun getContainerSize(): Int = storedItems.size
+    override fun isEmpty(): Boolean = storedItems.any { !it.isEmpty }
+    override fun getItem(pSlot: Int): ItemStack = storedItems[pSlot]
+    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = storedItems[pSlot].split(pAmount)
+    override fun removeItemNoUpdate(pSlot: Int): ItemStack = storedItems[pSlot].copyAndClear()
+    override fun setItem(pSlot: Int, pStack: ItemStack) { storedItems[pSlot] = pStack }
     override fun stillValid(pPlayer: Player): Boolean = true
 
-    override fun fillStackedContents(pContents: StackedContents) { pContents.accountStack(itemHandlerActual[0]) }
+    override fun fillStackedContents(pContents: StackedContents) { pContents.accountStack(storedItems[0]) }
     override fun getWidth(): Int = 1
     override fun getHeight(): Int = 1
-    override fun getItems(): MutableList<ItemStack> = itemHandlerActual.exposed
+    override fun getItems(): MutableList<ItemStack> = storedItems
 
     override fun getSlotsForFace(pSide: Direction): IntArray = when(pSide) {
         Direction.UP -> intArrayOf(0)

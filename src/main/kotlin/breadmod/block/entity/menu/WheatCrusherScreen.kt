@@ -32,6 +32,7 @@ class WheatCrusherScreen(
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
+        renderTooltip(pGuiGraphics, pMouseX, pMouseY)
     }
 
     private fun renderEnergyMeter(pGuiGraphics: GuiGraphics) {

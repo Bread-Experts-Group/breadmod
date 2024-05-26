@@ -61,7 +61,12 @@ class DoughMachineBlockEntity(
         )
     }
 
-    val itemHandlerActual = IndexableItemHandler(3)
+    val itemHandlerActual = object : IndexableItemHandler(3) {
+        override fun set(index: Int, value: ItemStack) {
+            setChanged()
+            super.set(index, value)
+        }
+    }
     private val itemHandlerOptional: LazyOptional<IndexableItemHandler> = LazyOptional.of { itemHandlerActual }
 
     val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
