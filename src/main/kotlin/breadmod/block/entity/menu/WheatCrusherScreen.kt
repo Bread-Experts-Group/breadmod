@@ -13,10 +13,9 @@ class WheatCrusherScreen(
     pPlayerInventory: Inventory,
     pTitle: Component
 ) : AbstractContainerScreen<WheatCrusherMenu>(pMenu, pPlayerInventory, pTitle) {
-    val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
+    private val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
     private val textureWidth = 176
     private val textureHeight = 198
-
 
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
@@ -26,17 +25,38 @@ class WheatCrusherScreen(
         pGuiGraphics.blit(texture, leftPos, topPos, 0, 0, textureWidth, textureHeight)
         inventoryLabelY = textureHeight - 94
 
+        renderProgressArrow(pGuiGraphics)
         renderEnergyMeter(pGuiGraphics)
     }
 
+    private var step: Int = -32; private var timer: Int = 20
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
+
+        if(menu.isCrafting()) {
+            // Left crushing wheel
+            pGuiGraphics.blit(texture, leftPos + 51, topPos + 38, 176, step, 32, 32)
+            // Right crushing wheel
+            pGuiGraphics.blit(texture, leftPos + 92, topPos + 38, 208, step, 32, 32)
+            if(timer <= 0) {
+                timer = 40
+                if(step < 32) step += 32 else step = -32
+            } else timer -=2
+        } else step = -32
+
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+
     }
 
     private fun renderEnergyMeter(pGuiGraphics: GuiGraphics) {
         val energyStored = menu.getEnergyStoredScaled()
-        pGuiGraphics.blit(texture, leftPos + 133, topPos + 49 + 47 - energyStored, 176, 64 - energyStored, 16, 47)
+        pGuiGraphics.blit(texture, leftPos + 151, topPos + 14 + 47 - energyStored, 176, 111 - energyStored, 16, 47)
+    }
+
+    private fun renderProgressArrow(pGuiGraphics: GuiGraphics) {
+        if(menu.isCrafting()) {
+            pGuiGraphics.blit(texture, leftPos + 83, topPos + 32, 192, 64, 9, menu.getScaledProgress())
+        }
     }
 }

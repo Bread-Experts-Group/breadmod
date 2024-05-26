@@ -26,15 +26,15 @@ class WheatCrusherMenu(
         inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.WHEAT_CRUSHER.get()).get()
     )
 
-    fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 24).toInt()
+    fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 48).toInt()
     fun getEnergyStoredScaled(): Int = parent.energyHandlerOptional.resolve().getOrNull()?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
     fun isCrafting(): Boolean = parent.progress > 0
 
-    class WheatCrusherResultSlot(parent: WheatCrusherBlockEntity) : Slot(parent, 1, 79, 56) {
+    class WheatCrusherResultSlot(parent: WheatCrusherBlockEntity) : Slot(parent, 1, 80, 87) {
         override fun mayPlace(pStack: ItemStack): Boolean = false }
 
     init {
-        addSlot(Slot(parent, 0, 27, 55))
+        addSlot(Slot(parent, 0, 80, 15))
         addSlot(WheatCrusherResultSlot(parent))
 
         repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, 174)) }

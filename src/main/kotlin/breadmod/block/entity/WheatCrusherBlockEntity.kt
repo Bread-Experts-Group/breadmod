@@ -33,6 +33,8 @@ import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.energy.EnergyStorage
+import net.minecraftforge.items.IItemHandlerModifiable
+import net.minecraftforge.items.wrapper.SidedInvWrapper
 import net.minecraftforge.network.PacketDistributor
 import kotlin.jvm.optionals.getOrNull
 
@@ -47,7 +49,12 @@ class WheatCrusherBlockEntity(
         )
     }
 
-    private val storedItems = MutableList(3) { ItemStack.EMPTY }
+    private val storedItems = MutableList(2) { ItemStack.EMPTY }
+
+    // Lifted from AbstractFurnaceBlockEntity.java @ Line 531 to 560
+    private var handlers: Array<out LazyOptional<IItemHandlerModifiable>> = SidedInvWrapper.create(
+        this, Direction.UP, Direction.DOWN
+    )
 
     val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
         object : EnergyStorage(50000, 2000) {
@@ -60,6 +67,8 @@ class WheatCrusherBlockEntity(
         val currentDirection = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
         return when {
             (cap == ForgeCapabilities.ENERGY) && (side == null || side == currentDirection.opposite) -> energyHandlerOptional.cast()
+            (cap == ForgeCapabilities.ITEM_HANDLER && side != null && side == Direction.UP && !this.remove) -> handlers[0].cast()
+            (cap == ForgeCapabilities.ITEM_HANDLER && side != null && side == Direction.DOWN && !this.remove) -> handlers[1].cast()
             else -> super.getCapability(cap, side)
         }
     }
@@ -67,6 +76,13 @@ class WheatCrusherBlockEntity(
     override fun invalidateCaps() {
         super.invalidateCaps()
         energyHandlerOptional.invalidate()
+        handlers.forEach { it.invalidate() }
+    }
+
+    // we might want to call energyHandlerOptional in reviveCaps as well since we're invalidating them
+    override fun reviveCaps() {
+        super.reviveCaps()
+        this.handlers = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN)
     }
 
     override fun createMenu(pContainerId: Int, pInventory: Inventory, pPlayer: Player): AbstractContainerMenu =
