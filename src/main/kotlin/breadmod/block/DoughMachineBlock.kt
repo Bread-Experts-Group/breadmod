@@ -84,7 +84,7 @@ class DoughMachineBlock : Block(Properties.of()
             //if(pState.getValue(BlockStateProperties.LIT)) {
                 pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
 
-                val stack = entity.itemHandlerActual.getStackInSlot(0)
+                val stack = entity.storedItems[0]
                 when(stack.item) {
                     ModItems.FLOUR.get() -> {
                         while(stack.count > 0) {

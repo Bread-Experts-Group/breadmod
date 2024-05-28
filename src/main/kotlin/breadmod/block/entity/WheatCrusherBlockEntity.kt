@@ -42,6 +42,7 @@ class WheatCrusherBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : BlockEntity(ModBlockEntities.WHEAT_CRUSHER.get(), pPos, pBlockState), MenuProvider, WorldlyContainer, CraftingContainer {
+    // todo this class and DoughMachineBlockEntity have very similar contents, possible generic block entity class for easy implementation?
     override fun setChanged() = super.setChanged().also {
         if(level is ServerLevel) NETWORK.send(
             PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
@@ -67,8 +68,8 @@ class WheatCrusherBlockEntity(
         val currentDirection = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
         return when {
             (cap == ForgeCapabilities.ENERGY) && (side == null || side == currentDirection.opposite) -> energyHandlerOptional.cast()
-            (cap == ForgeCapabilities.ITEM_HANDLER && side != null && side == Direction.UP && !this.remove) -> handlers[0].cast()
-            (cap == ForgeCapabilities.ITEM_HANDLER && side != null && side == Direction.DOWN && !this.remove) -> handlers[1].cast()
+            (cap == ForgeCapabilities.ITEM_HANDLER) && (side != null && side == Direction.UP && !this.remove) -> handlers[0].cast() // todo fine a better way to assign caps to block sides, possibly dynamically
+            (cap == ForgeCapabilities.ITEM_HANDLER) && (side != null && side == Direction.DOWN && !this.remove) -> handlers[1].cast()
             else -> super.getCapability(cap, side)
         }
     }
@@ -77,12 +78,6 @@ class WheatCrusherBlockEntity(
         super.invalidateCaps()
         energyHandlerOptional.invalidate()
         handlers.forEach { it.invalidate() }
-    }
-
-    // we might want to call energyHandlerOptional in reviveCaps as well since we're invalidating them
-    override fun reviveCaps() {
-        super.reviveCaps()
-        this.handlers = SidedInvWrapper.create(this, Direction.UP, Direction.DOWN)
     }
 
     override fun createMenu(pContainerId: Int, pInventory: Inventory, pPlayer: Player): AbstractContainerMenu =

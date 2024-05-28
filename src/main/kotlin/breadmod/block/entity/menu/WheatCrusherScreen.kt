@@ -1,7 +1,10 @@
 package breadmod.block.entity.menu
 
 import breadmod.ModMain.modLocation
+import breadmod.ModMain.modTranslatable
+import breadmod.util.formatUnit
 import com.mojang.blaze3d.systems.RenderSystem
+import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
@@ -34,7 +37,23 @@ class WheatCrusherScreen(
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
-        if(menu.isCrafting()) {
+        val showShort = !minecraft!!.options.keyShift.isDown
+        if(this.isHovering(151,14, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+            menu.parent.energyHandlerOptional.ifPresent {
+                pGuiGraphics.renderComponentTooltip(
+                    this.font,
+                    listOf(
+                        modTranslatable(path = arrayOf("energy"))
+                            .withStyle(ChatFormatting.RED)
+                            .withStyle(ChatFormatting.ITALIC),
+                        Component.literal(formatUnit(it.energyStored, it.maxEnergyStored, "FE", showShort, 2))
+                    ),
+                    pMouseX, pMouseY
+                )
+            }
+        }
+
+        if(menu.isCrafting()) { // The timer might be irrelevant in this since the code runs every tick, but I'm not sure yet
             // Left crushing wheel
             pGuiGraphics.blit(texture, leftPos + 51, topPos + 38, 176, step, 32, 32)
             // Right crushing wheel
