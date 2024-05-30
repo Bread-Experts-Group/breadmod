@@ -1,5 +1,7 @@
 package breadmod.block.multiblock.farmer
 
+import breadmod.block.multiblock.farmer.entity.FarmerPowerBlockEntity
+import breadmod.registry.block.ModBlocks
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.InteractionHand
@@ -15,7 +17,9 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
+import kotlin.jvm.optionals.getOrNull
 
 class FarmerControllerBlock: Block(Properties.of()
     .strength(2.0f, 6.0f)
@@ -41,6 +45,7 @@ class FarmerControllerBlock: Block(Properties.of()
         pBuilder.add(HorizontalDirectionalBlock.FACING, BlockStateProperties.TRIGGERED)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun use(
         pState: BlockState,
         pLevel: Level,
@@ -49,7 +54,19 @@ class FarmerControllerBlock: Block(Properties.of()
         pHand: InteractionHand,
         pHit: BlockHitResult
     ): InteractionResult {
+        val aabb = AABB(pPos.offset(-1, 0, 0), pPos.offset(1,2,2))
+//        println("blockstate AABB")
+//        println(pLevel.getBlockStates(aabb).map { it.block }.toList())
 
+        println("cursed block entity fetcher")
+        BlockPos.betweenClosedStream(aabb).forEach { subPos ->
+            if(pLevel.getBlockState(subPos).`is`(ModBlocks.FARMER_POWER_BLOCK.get().block)) {
+                val entity = pLevel.getBlockEntity(BlockPos(subPos.x, subPos.y, subPos.z)) as? FarmerPowerBlockEntity ?: return@forEach
+                println(entity.energyHandlerOptional.resolve().getOrNull()?.energyStored)
+            }
+
+            println("Block and pos: ${BlockPos(subPos.x, subPos.y, subPos.z)} : ${pLevel.getBlockState(subPos).block}")
+        }
         return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit)
     }
 }
