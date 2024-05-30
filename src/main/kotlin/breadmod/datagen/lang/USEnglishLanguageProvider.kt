@@ -69,6 +69,13 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.BREAD_DOOR)
         add(ModBlocks.BREAD_FENCE)
         add(ModBlocks.WHEAT_CRUSHER_BLOCK)
+        // Farmer
+        add(ModBlocks.FARMER_CONTROLLER, "Farmer")
+        add(ModBlocks.FARMER_BASE_BLOCK)
+        add(ModBlocks.FARMER_INPUT_BLOCK, "Farmer Input")
+        add(ModBlocks.FARMER_OUTPUT_BLOCK, "Farmer Output")
+        add(ModBlocks.FARMER_POWER_BLOCK, "Farmer Power")
+        ////
         modAdd(
             "Feeds %s every %s",
             "item", "bread_amulet", "description"

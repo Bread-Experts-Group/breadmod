@@ -23,7 +23,7 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
 
 class WheatCrusherBlock: Block(Properties.of()
-    .strength(1f)
+    .strength(1f, 5.0f)
     .mapColor(MapColor.COLOR_GRAY)
     .sound(SoundType.METAL)), EntityBlock
 {

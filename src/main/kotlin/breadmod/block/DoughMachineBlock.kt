@@ -41,7 +41,7 @@ import kotlin.math.min
 import kotlin.random.Random
 
 class DoughMachineBlock : Block(Properties.of()
-    .strength(1f)
+    .strength(1f, 5.0f)
     .mapColor(MapColor.COLOR_GRAY)
     .sound(SoundType.METAL)), EntityBlock
 {

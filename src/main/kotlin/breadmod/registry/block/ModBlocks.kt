@@ -2,6 +2,10 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.*
+import breadmod.block.multiblock.farmer.FarmerControllerBlock
+import breadmod.block.multiblock.farmer.FarmerInputBlock
+import breadmod.block.multiblock.farmer.FarmerOutputBlock
+import breadmod.block.multiblock.farmer.FarmerPowerBlock
 //import breadmod.item.util.BlockStateStack
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.RegisterSpecialCreativeTab
@@ -59,7 +63,7 @@ object ModBlocks {
 
     val REINFORCED_BREAD_BLOCK = registerBlockItem(
         "reinforced_bread_block",
-        { Block(BlockBehaviour.Properties.copy(Blocks.COBBLESTONE).strength(1f).sound(SoundType.NETHERITE_BLOCK)) },
+        { Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).strength(25.0f, 1200.0f)) },
         Item.Properties().fireResistant()
     )
 
@@ -102,6 +106,34 @@ object ModBlocks {
         Item.Properties()
     )
 
+    // Farmer Multiblock
+    val FARMER_CONTROLLER = registerBlockItem(
+        "farmer_controller",
+        { FarmerControllerBlock() },
+        Item.Properties()
+    )
+    val FARMER_BASE_BLOCK = registerBlockItem(
+        "farmer_base_block",
+        { Block(BlockBehaviour.Properties.copy(Blocks.COPPER_BLOCK)) },
+        Item.Properties()
+    )
+    val FARMER_INPUT_BLOCK = registerBlockItem(
+        "farmer_input_block",
+        { FarmerInputBlock() },
+        Item.Properties()
+    )
+    val FARMER_OUTPUT_BLOCK = registerBlockItem(
+        "farmer_output_block",
+        { FarmerOutputBlock() },
+        Item.Properties()
+    )
+    val FARMER_POWER_BLOCK = registerBlockItem(
+        "farmer_power_block",
+        { FarmerPowerBlock() },
+        Item.Properties()
+    )
+
+    ////
     val HEATING_ELEMENT_BLOCK = registerBlockItem(
         "heating_element",
         { HeatingElementBlock() },
@@ -193,6 +225,11 @@ object ModBlocks {
             dropSelf(KEYBOARD.get().block)
             dropSelf(BREAD_FENCE.get().block)
             dropSelf(WHEAT_CRUSHER_BLOCK.get().block)
+            dropSelf(FARMER_CONTROLLER.get().block)
+            dropSelf(FARMER_BASE_BLOCK.get().block)
+            dropSelf(FARMER_INPUT_BLOCK.get().block)
+            dropSelf(FARMER_OUTPUT_BLOCK.get().block)
+            dropSelf(FARMER_POWER_BLOCK.get().block)
             add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
             dropNone.forEach { add(it, noDrop()) }

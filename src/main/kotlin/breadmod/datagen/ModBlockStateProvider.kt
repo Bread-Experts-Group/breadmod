@@ -71,6 +71,58 @@ class ModBlockStateProvider(
             ModBlocks.WHEAT_CRUSHER_BLOCK.get().block,
             models().getBuilder("breadmod:block/wheat_crusher")
         )
+
+        // Farmer Multiblock
+        blockWithItem(ModBlocks.FARMER_BASE_BLOCK.get().block)
+        horizontalBlock(ModBlocks.FARMER_CONTROLLER.get().block) { state ->
+            val machineOn = if(state.getValue(BlockStateProperties.TRIGGERED)) "_on" else ""
+            val name = "breadmod:block/farmer_controller$machineOn"
+
+            val model = models().orientable(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_base_block"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_controller$machineOn"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_base_block"),
+            )
+            return@horizontalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.FARMER_CONTROLLER.get().block,
+            models().getBuilder("breadmod:block/farmer_controller")
+        )
+
+        directionalBlock(ModBlocks.FARMER_INPUT_BLOCK.get().block) { _ ->
+            val name = "breadmod:block/farmer_input_block"
+            return@directionalBlock models().cubeTop(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_base_block"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_input_block")
+            )
+        }
+        simpleBlockItem(ModBlocks.FARMER_INPUT_BLOCK.get().block,
+            models().getBuilder("breadmod:block/farmer_input_block"))
+
+        directionalBlock(ModBlocks.FARMER_OUTPUT_BLOCK.get().block) { _ ->
+            val name = "breadmod:block/farmer_output_block"
+            return@directionalBlock models().cubeTop(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_base_block"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_output_block")
+            )
+        }
+        simpleBlockItem(ModBlocks.FARMER_OUTPUT_BLOCK.get().block,
+            models().getBuilder("breadmod:block/farmer_output_block"))
+
+        directionalBlock(ModBlocks.FARMER_POWER_BLOCK.get().block) { _ ->
+            val name = "breadmod:block/farmer_power_block"
+            return@directionalBlock models().cubeTop(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_base_block"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_power_block")
+            )
+        }
+        simpleBlockItem(ModBlocks.FARMER_POWER_BLOCK.get().block,
+            models().getBuilder("breadmod:block/farmer_power_block"))
         //// // // // TODO!
         directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { _ ->
             return@directionalBlock models().cubeColumn(
