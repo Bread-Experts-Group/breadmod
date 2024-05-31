@@ -2,7 +2,7 @@ package breadmod.registry.entity
 
 import breadmod.ModMain
 import breadmod.ModMain.modLocation
-import breadmod.entity.BreadBullet
+import breadmod.entity.BreadBulletEntity
 import breadmod.entity.PrimedHappyBlock
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
@@ -21,8 +21,8 @@ object ModEntityTypes {
             .build(modLocation("happy_block").toString())
     }
 
-    val BREAD_BULLET_ENTITY: RegistryObject<EntityType<BreadBullet>> = deferredRegister.register("bread_bullet") {
-        EntityType.Builder.of({ _, pLevel -> BreadBullet(pLevel)}, MobCategory.MISC)
+    val BREAD_BULLET_ENTITY: RegistryObject<EntityType<BreadBulletEntity>> = deferredRegister.register("bread_bullet") {
+        EntityType.Builder.of({ _, pLevel -> BreadBulletEntity(pLevel)}, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .clientTrackingRange(4)
             .updateInterval(20)

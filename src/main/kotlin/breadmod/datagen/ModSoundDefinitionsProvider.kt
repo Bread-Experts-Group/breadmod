@@ -27,5 +27,10 @@ class ModSoundDefinitionsProvider(
             ModSounds.ULTRAMARINE, definition()
                 .with(sound(modLocation("ultramarine")).volume(1f).stream())
         )
+        this.add(
+            ModSounds.POW, definition()
+                .subtitle("sound.${ModMain.ID}.pow")
+                .with(sound(modLocation("pow")).volume(1f))
+        )
     }
 }

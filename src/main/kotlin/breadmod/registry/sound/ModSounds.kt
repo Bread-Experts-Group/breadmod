@@ -14,6 +14,7 @@ object ModSounds {
     val TEST_SOUND: RegistryObject<SoundEvent> = registerSoundEvents("test_sound")
     val HAPPY_BLOCK_FUSE: RegistryObject<SoundEvent> = registerSoundEvents("happy_block_fuse")
     val ULTRAMARINE: RegistryObject<SoundEvent> = registerSoundEvents("ultramarine")
+    val POW: RegistryObject<SoundEvent> = registerSoundEvents("pow")
 
     private fun registerSoundEvents(name: String): RegistryObject<SoundEvent> {
         return deferredRegister.register(name) {
