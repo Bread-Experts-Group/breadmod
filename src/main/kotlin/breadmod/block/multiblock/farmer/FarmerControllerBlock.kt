@@ -65,7 +65,7 @@ class FarmerControllerBlock: Block(Properties.of()
                 println(entity.energyHandlerOptional.resolve().getOrNull()?.energyStored)
             }
 
-            println("Block and pos: ${BlockPos(subPos.x, subPos.y, subPos.z)} : ${pLevel.getBlockState(subPos).block}")
+            println("Block and pos: ${BlockPos(subPos.x, subPos.y, subPos.z)}, Relative to controller: ${BlockPos(subPos.x - pPos.x, subPos.y - pPos.y, subPos.z - pPos.z)} : ${pLevel.getBlockState(subPos).block}")
         }
         return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit)
     }
