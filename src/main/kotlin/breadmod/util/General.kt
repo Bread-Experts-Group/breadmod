@@ -161,9 +161,9 @@ fun <T> JsonArray.extractJsonTagList(registry: IForgeRegistry<T>, keyUseName: St
     registry.createTagKey(entry.get(keyUseName).asString) to entry.get(ENTRY_AMOUNT_KEY).readIntSafe()
 }
 fun List<Pair<TagKey<*>, Int>>.jsonifyTagList(into: JsonArray = JsonArray(), keyUseName: String = ENTRY_ID_KEY) = into.also {
-    this.forEach { pair -> it.add(JsonObject().also { obj ->
-        obj.addProperty(keyUseName, pair.first.location.toString())
-        if(pair.second > 1) obj.addProperty(ENTRY_AMOUNT_KEY, pair.second)
+    this.forEach { (tag, count) -> it.add(JsonObject().also { obj ->
+        obj.addProperty(keyUseName, tag.location.toString())
+        if(count > 1) obj.addProperty(ENTRY_AMOUNT_KEY, count)
     }) }
 }
 

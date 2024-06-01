@@ -1,7 +1,7 @@
 package breadmod.datagen
 
 import breadmod.registry.block.ModBlocks
-import breadmod.registry.block.OreBlock
+import breadmod.block.OreBlock
 import breadmod.registry.fluid.ModFluids
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
@@ -113,7 +113,7 @@ class ModBlockStateProvider(
         simpleBlockItem(ModBlocks.FARMER_OUTPUT_BLOCK.get().block,
             models().getBuilder("breadmod:block/farmer_output_block"))
 
-        directionalBlock(ModBlocks.FARMER_POWER_BLOCK.get().block) { _ ->
+        directionalBlock(ModBlocks.GENERIC_POWER_INTERFACE.get().block) { _ ->
             val name = "breadmod:block/farmer_power_block"
             return@directionalBlock models().cubeTop(
                 name,
@@ -121,7 +121,7 @@ class ModBlockStateProvider(
                 modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_power_block")
             )
         }
-        simpleBlockItem(ModBlocks.FARMER_POWER_BLOCK.get().block,
+        simpleBlockItem(ModBlocks.GENERIC_POWER_INTERFACE.get().block,
             models().getBuilder("breadmod:block/farmer_power_block"))
         //// // // // TODO!
         directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { _ ->

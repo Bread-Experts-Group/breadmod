@@ -77,7 +77,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.FARMER_BASE_BLOCK)
         add(ModBlocks.FARMER_INPUT_BLOCK, "Farmer Input")
         add(ModBlocks.FARMER_OUTPUT_BLOCK, "Farmer Output")
-        add(ModBlocks.FARMER_POWER_BLOCK, "Farmer Power")
+        add(ModBlocks.GENERIC_POWER_INTERFACE)
         ////
         modAdd(
             "Feeds %s every %s",

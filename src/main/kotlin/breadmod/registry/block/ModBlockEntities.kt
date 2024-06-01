@@ -1,5 +1,3 @@
-
-
 package breadmod.registry.block
 
 import breadmod.ModMain
@@ -7,10 +5,7 @@ import breadmod.block.entity.BreadScreenBlockEntity
 import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.block.entity.HeatingElementBlockEntity
 import breadmod.block.entity.WheatCrusherBlockEntity
-import breadmod.block.multiblock.farmer.entity.FarmerControllerBlockEntity
-import breadmod.block.multiblock.farmer.entity.FarmerInputBlockEntity
-import breadmod.block.multiblock.farmer.entity.FarmerOutputBlockEntity
-import breadmod.block.multiblock.farmer.entity.FarmerPowerBlockEntity
+import breadmod.block.multiblock.farmer.entity.*
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK
 import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK
@@ -48,13 +43,14 @@ object ModBlockEntities {
         ).build(null)
     }
 
-    // Farmer
-    val FARMER_POWER: RegistryObject<BlockEntityType<FarmerPowerBlockEntity>> = deferredRegister.register("farmer_power_entity") {
+    val MULTIBLOCK_GENERIC_POWER: RegistryObject<BlockEntityType<PowerInterfaceBlockEntity>> = deferredRegister.register("generic_power_entity") {
         BlockEntityType.Builder.of(
-            { pPos, pState -> FarmerPowerBlockEntity(pPos, pState) },
-            ModBlocks.FARMER_POWER_BLOCK.get().block
+            { pPos, pState -> PowerInterfaceBlockEntity(pPos, pState) },
+            ModBlocks.GENERIC_POWER_INTERFACE.get().block
         ).build(null)
     }
+
+    // Farmer
     val FARMER_INPUT: RegistryObject<BlockEntityType<FarmerInputBlockEntity>> = deferredRegister.register("farmer_input_entity") {
         BlockEntityType.Builder.of(
             { pPos, pState -> FarmerInputBlockEntity(pPos, pState) },

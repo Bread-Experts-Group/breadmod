@@ -72,7 +72,8 @@ class BMExplosion(
                         })
                     }
 
-                    state.onBlockExploded(pLevel, blockPos, this)
+                    //state.onBlockExploded(pLevel, blockPos, this)
+                    pLevel.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState())
                     if(pFire != null && (pLevel.random.nextInt() * pFire == 0) && !pLevel.getBlockState(pos.below()).isSolidRender(pLevel, pos))
                         pLevel.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState())
                     pLevel.profiler.pop()

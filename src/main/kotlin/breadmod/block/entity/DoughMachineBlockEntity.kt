@@ -8,17 +8,14 @@ import breadmod.network.PacketHandler.NETWORK
 import breadmod.recipe.FluidEnergyRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
-import breadmod.util.FluidContainer
+import breadmod.util.*
 import breadmod.util.FluidContainer.Companion.drain
-import breadmod.util.deserialize
-import breadmod.util.serialize
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.MenuProvider
-import net.minecraft.world.WorldlyContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.StackedContents
@@ -42,16 +39,13 @@ import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.FluidUtil
 import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.fluids.capability.templates.FluidTank
-import net.minecraftforge.items.IItemHandlerModifiable
-import net.minecraftforge.items.wrapper.SidedInvWrapper
 import net.minecraftforge.network.PacketDistributor
-import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
 
 class DoughMachineBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState,
-) : BlockEntity(ModBlockEntities.DOUGH_MACHINE.get(), pPos, pBlockState), MenuProvider, WorldlyContainer, CraftingContainer {
+) : BlockEntity(ModBlockEntities.DOUGH_MACHINE.get(), pPos, pBlockState), MenuProvider, CraftingContainer {
     companion object {
         const val INPUT_TANK_CAPACITY = 8000
         const val OUTPUT_TANK_CAPACITY = 4000
@@ -64,45 +58,30 @@ class DoughMachineBlockEntity(
         )
     }
 
-    val storedItems = MutableList(3) { ItemStack.EMPTY }
-
-    private var handlers: Array<out LazyOptional<IItemHandlerModifiable>> = SidedInvWrapper.create(
-        this, Direction.UP, Direction.DOWN
-    )
-
-    val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
-        object : EnergyStorage(50000, 2000) {
+    val capabilities = CapabilityHolder(mapOf(
+        ForgeCapabilities.ENERGY to (object : EnergyStorage(50000, 2000) {
             override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(maxReceive, simulate).also { setChanged() }
             override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = super.extractEnergy(maxExtract, simulate).also { setChanged() }
-        }
-    }
-    val fluidHandlerOptional: LazyOptional<FluidContainer> = LazyOptional.of {
-        object : FluidContainer(mutableMapOf(FluidTank(INPUT_TANK_CAPACITY) to TankFlow.FILL_ONLY, FluidTank(OUTPUT_TANK_CAPACITY) to TankFlow.DRAIN_ONLY)) {
+        } to null),
+        ForgeCapabilities.FLUID_HANDLER to (object : FluidContainer(mutableMapOf(FluidTank(INPUT_TANK_CAPACITY) to TankFlow.FILL_ONLY, FluidTank(OUTPUT_TANK_CAPACITY) to TankFlow.DRAIN_ONLY)) {
             override fun contentsChanged() { setChanged() }
-        }
-    }
+        } to null),
+        ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(3, ::setChanged) to null)
+    ))
 
-    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-        val currentDirection = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
-        return when {
-            (cap == ForgeCapabilities.FLUID_HANDLER) && (side == null || side == Direction.UP) -> fluidHandlerOptional.cast()
-            (cap == ForgeCapabilities.ENERGY) && (side == null || side == currentDirection.opposite) -> energyHandlerOptional.cast()
-            (cap == ForgeCapabilities.ITEM_HANDLER) && (side != null && side == Direction.UP && !this.remove) -> handlers[0].cast()
-            (cap == ForgeCapabilities.ITEM_HANDLER) && (side != null && side == Direction.DOWN && !this.remove) -> handlers[1].cast()
-            else -> super.getCapability(cap, side)
-        }
-    }
+    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> =
+        capabilities.capabilitySided(cap, this.blockState.getValue(HorizontalDirectionalBlock.FACING), side) ?: super.getCapability(cap, side)
 
     override fun invalidateCaps() {
+        capabilities.invalidate()
         super.invalidateCaps()
-        energyHandlerOptional.invalidate()
-        fluidHandlerOptional.invalidate()
-        handlers.forEach { it.invalidate() }
     }
 
     override fun createMenu(pContainerId: Int, pInventory: Inventory, p2: Player): AbstractContainerMenu {
         return DoughMachineMenu(pContainerId, pInventory, this)
     }
+
+    private fun getItemHandler() = capabilities.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
     private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, FluidEnergyRecipe> =
         RecipeManager.createCheck(ModRecipeTypes.ENERGY_FLUID_ITEM)
@@ -113,40 +92,33 @@ class DoughMachineBlockEntity(
     override fun saveAdditional(pTag: CompoundTag) {
         super.saveAdditional(pTag)
         pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
-            dataTag.put("items", storedItems.serialize())
-            energyHandlerOptional.ifPresent { dataTag.put("energy", it.serializeNBT()) }
-            fluidHandlerOptional.ifPresent { dataTag.put("fluids", it.serializeNBT()) }
+            capabilities.serialize(pTag)
             dataTag.putInt("progress", progress); dataTag.putInt("maxProgress", maxProgress)
         })
     }
 
     override fun load(pTag: CompoundTag) {
         super.load(pTag)
-        val dataTag = pTag.getCompound(ModMain.ID)
-        storedItems.deserialize(dataTag.getCompound("items"))
-        energyHandlerOptional.ifPresent {
-            it.deserializeNBT(dataTag.get("energy"))
+        pTag.getCompound(ModMain.ID).also { tag ->
+            capabilities.deserialize(pTag)
+            progress = tag.getInt("progress"); maxProgress = tag.getInt("maxProgress")
         }
-        fluidHandlerOptional.ifPresent {
-            it.deserializeNBT(dataTag.getCompound("fluids"))
-        }
-        progress = dataTag.getInt("progress")
-        maxProgress = dataTag.getInt("maxProgress")
     }
 
     override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }
     override fun getDisplayName(): MutableComponent = modTranslatable("block", "dough_machine")
 
     fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: DoughMachineBlockEntity) {
-        val energyHandle = pBlockEntity.energyHandlerOptional.resolve().getOrNull() ?: return
-        val fluidHandle = (pBlockEntity.fluidHandlerOptional.resolve().getOrNull() ?: return)
+        val energyHandle = capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY) ?: return
+        val fluidHandle = capabilities.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return
+        val itemHandle = getItemHandler() ?: return
 
-        storedItems[2].let {
+        itemHandle[2].let {
             if(!it.isEmpty) {
                 val item = it.item
                 if(item is BucketItem && fluidHandle.space(item.fluid) >= FluidType.BUCKET_VOLUME) {
                     fluidHandle.fill(FluidStack(item.fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE)
-                    storedItems[2] = Items.BUCKET.defaultInstance
+                    itemHandle[2] = Items.BUCKET.defaultInstance
                 } else {
                     FluidUtil.getFluidHandler(it).ifPresent { stackFluidHandle ->
                         val spaceOfDrained = fluidHandle.space(stackFluidHandle.drain(1, IFluidHandler.FluidAction.SIMULATE).fluid)
@@ -169,9 +141,9 @@ class DoughMachineBlockEntity(
                     energyDivision?.let { rfd -> if(energyHandle.extractEnergy(rfd, false) != rfd) progress-- }
                 } else {
                     val outputTank = fluidHandle.allTanks[1]
-                    if(it.canFitResults(storedItems to listOf(1), outputTank)) {
+                    if(it.canFitResults(itemHandle to listOf(1), outputTank)) {
                         val assembled = it.assembleOutputs(this, pLevel)
-                        assembled.first.forEach { stack -> storedItems[1].let { slot -> if(slot.isEmpty) storedItems[1] = stack.copy() else slot.grow(stack.count) } }
+                        assembled.first.forEach { stack -> itemHandle[1].let { slot -> if(slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count) } }
                         assembled.second.forEach { stack ->  outputTank.fill(stack, IFluidHandler.FluidAction.EXECUTE) }
                         setChanged()
                         currentRecipe = null
@@ -185,8 +157,8 @@ class DoughMachineBlockEntity(
                     val inputTank = fluidHandle.allTanks[0]
                     recipe.fluidsRequired?.forEach { stack -> inputTank.drain(stack, IFluidHandler.FluidAction.EXECUTE) }
                     recipe.fluidsRequiredTagged?.forEach { (tag, amount) -> inputTank.drain(tag, amount, IFluidHandler.FluidAction.EXECUTE) }
-                    recipe.itemsRequired?.forEach { stack -> storedItems[0].shrink(stack.count) }
-                    recipe.itemsRequiredTagged?.forEach { tag -> storedItems[0].shrink(tag.second) }
+                    recipe.itemsRequired?.forEach { stack -> itemHandle[0].shrink(stack.count) }
+                    recipe.itemsRequiredTagged?.forEach { tag -> itemHandle[0].shrink(tag.second) }
                     energyDivision = recipe.energy?.let { rf -> (rf.toFloat() / recipe.time).toInt() }
                     currentRecipe = recipe
                 }
@@ -194,29 +166,18 @@ class DoughMachineBlockEntity(
         }
     }
 
-    override fun clearContent() = storedItems.forEach { it.count = 0 }
-    override fun getContainerSize(): Int = storedItems.size
-    override fun isEmpty(): Boolean = storedItems.any { !it.isEmpty }
-    override fun getItem(pSlot: Int): ItemStack = storedItems[pSlot]
-    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = storedItems[pSlot].split(pAmount)
-    override fun removeItemNoUpdate(pSlot: Int): ItemStack = storedItems[pSlot].copyAndClear()
-    override fun setItem(pSlot: Int, pStack: ItemStack) { storedItems[pSlot] = pStack }
-    override fun stillValid(pPlayer: Player): Boolean = true
+    override fun clearContent() { getItemHandler()?.clear() }
+    override fun getContainerSize(): Int = getItemHandler()?.size ?: 0
+    override fun isEmpty(): Boolean = getItemHandler()?.isEmpty() ?: true
+    override fun getItem(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot) ?: ItemStack.EMPTY
+    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = getItemHandler()?.extractItem(pSlot, pAmount, false) ?: ItemStack.EMPTY
+    override fun removeItemNoUpdate(pSlot: Int): ItemStack = getItemHandler()?.removeAt(pSlot) ?: ItemStack.EMPTY
+    override fun setItem(pSlot: Int, pStack: ItemStack) { getItemHandler()?.set(pSlot, pStack) }
+    override fun stillValid(pPlayer: Player): Boolean = getItemHandler() != null
+    override fun fillStackedContents(pContents: StackedContents) { TODO("Not yet implemented") }
 
-    override fun fillStackedContents(pContents: StackedContents) { pContents.accountStack(storedItems[0]) }
     override fun getWidth(): Int = 1
     override fun getHeight(): Int = 1
-    override fun getItems(): MutableList<ItemStack> = storedItems
 
-    override fun getSlotsForFace(pSide: Direction): IntArray = when(pSide) {
-        Direction.WEST -> intArrayOf(0)
-        Direction.DOWN -> intArrayOf(1)
-        Direction.EAST -> intArrayOf(2)
-        else -> intArrayOf()
-    }
-    // Bad impl? TODO
-    override fun canPlaceItemThroughFace(pIndex: Int, pItemStack: ItemStack, pDirection: Direction?): Boolean =
-        if(pDirection != null) getSlotsForFace(pDirection).contains(pIndex) else true
-    override fun canTakeItemThroughFace(pIndex: Int, pStack: ItemStack, pDirection: Direction): Boolean =
-        getSlotsForFace(pDirection).contains(pIndex)
+    override fun getItems(): MutableList<ItemStack> = getItemHandler()?.items ?: mutableListOf()
 }

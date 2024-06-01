@@ -4,6 +4,7 @@ import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.VoidTankPacket
+import breadmod.util.FluidContainer
 import breadmod.util.formatUnit
 import breadmod.util.renderFluid
 import com.mojang.blaze3d.systems.RenderSystem
@@ -17,6 +18,8 @@ import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
+import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.fluids.FluidType
 
 class DoughMachineScreen(
@@ -51,8 +54,8 @@ class DoughMachineScreen(
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
-        val showShort = !minecraft!!.options.keyShift.isDown
-        menu.parent.fluidHandlerOptional.ifPresent {
+        val showShort = !(minecraft ?: return).options.keyShift.isDown
+        menu.parent.capabilities.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
             it.allTanks[0].let { tank ->
                 val fluid = tank.fluid.fluid
                 if(tank.fluidAmount > 0) {
@@ -129,7 +132,7 @@ class DoughMachineScreen(
         }
 
         if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            menu.parent.energyHandlerOptional.ifPresent {
+            menu.parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let {
                 pGuiGraphics.renderComponentTooltip(
                     this.font,
                     listOf(

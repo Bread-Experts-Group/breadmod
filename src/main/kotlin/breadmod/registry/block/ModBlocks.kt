@@ -2,10 +2,8 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.*
-import breadmod.block.multiblock.farmer.FarmerControllerBlock
-import breadmod.block.multiblock.farmer.FarmerInputBlock
-import breadmod.block.multiblock.farmer.FarmerOutputBlock
-import breadmod.block.multiblock.farmer.FarmerPowerBlock
+import breadmod.block.multiblock.farmer.*
+import breadmod.block.multiblock.generic.PowerInterfaceBlock
 //import breadmod.item.util.BlockStateStack
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.RegisterSpecialCreativeTab
@@ -127,9 +125,9 @@ object ModBlocks {
         { FarmerOutputBlock() },
         Item.Properties()
     )
-    val FARMER_POWER_BLOCK = registerBlockItem(
-        "farmer_power_block",
-        { FarmerPowerBlock() },
+    val GENERIC_POWER_INTERFACE = registerBlockItem(
+        "generic_power_interface",
+        { PowerInterfaceBlock() },
         Item.Properties()
     )
 
@@ -229,7 +227,7 @@ object ModBlocks {
             dropSelf(FARMER_BASE_BLOCK.get().block)
             dropSelf(FARMER_INPUT_BLOCK.get().block)
             dropSelf(FARMER_OUTPUT_BLOCK.get().block)
-            dropSelf(FARMER_POWER_BLOCK.get().block)
+            dropSelf(GENERIC_POWER_INTERFACE.get().block)
             add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
             dropNone.forEach { add(it, noDrop()) }

@@ -13,6 +13,8 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.ItemStack
+import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.fluids.FluidUtil
 import net.minecraftforge.fluids.capability.IFluidHandler
 import kotlin.jvm.optionals.getOrNull
@@ -31,7 +33,7 @@ class DoughMachineMenu(
     )
 
     fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 24).toInt()
-    fun getEnergyStoredScaled(): Int = parent.energyHandlerOptional.resolve().getOrNull()?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
+    fun getEnergyStoredScaled(): Int = parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
     fun isCrafting(): Boolean = parent.progress > 0
 
     class DoughMachineResultSlot(parent: DoughMachineBlockEntity) : Slot(parent,1, 78, 35) {

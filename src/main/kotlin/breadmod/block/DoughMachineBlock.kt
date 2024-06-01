@@ -3,11 +3,14 @@ package breadmod.block
 import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
+import breadmod.util.FluidContainer
+import breadmod.util.IndexableItemHandler
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.item.FallingBlockEntity
@@ -31,6 +34,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
+import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.FluidUtil
@@ -79,12 +83,11 @@ class DoughMachineBlock : Block(Properties.of()
     ) {
         if(!pState.`is`(pNewState.block)) {
             val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return
-            //Containers.dropContents(pLevel, pPos, entity)
-
-            //if(pState.getValue(BlockStateProperties.LIT)) {
+            if(pState.getValue(BlockStateProperties.LIT)) {
                 pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
+                val itemContainer = entity.capabilities.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER) ?: return
 
-                val stack = entity.storedItems[0]
+                val stack = itemContainer[0]
                 when(stack.item) {
                     ModItems.FLOUR.get() -> {
                         while(stack.count > 0) {
@@ -99,7 +102,8 @@ class DoughMachineBlock : Block(Properties.of()
                         }
                     }
                 }
-            //}
+                Containers.dropContents(pLevel, pPos, entity)
+            }
             super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
         }
     }
@@ -115,35 +119,34 @@ class DoughMachineBlock : Block(Properties.of()
     ): InteractionResult {
         if(!pLevel.isClientSide) {
             val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return InteractionResult.FAIL
-            if(pHand == InteractionHand.MAIN_HAND) entity.fluidHandlerOptional.resolve().getOrNull().also {
-                if(it == null) return InteractionResult.FAIL
+            if(pHand != InteractionHand.MAIN_HAND) return InteractionResult.PASS
+            val fluidHandler = entity.capabilities.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return InteractionResult.FAIL
 
-                val stack = pPlayer.getItemInHand(pHand)
-                val item = stack.item
+            val stack = pPlayer.getItemInHand(pHand)
+            val item = stack.item
 
-                val filled = if(item is BucketItem && it.space(item.fluid) > 0) {
-                    if(!pPlayer.isCreative) pPlayer.setItemInHand(pHand, Items.BUCKET.defaultInstance)
-                    it.fill(FluidStack(item.fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE)
-                } else {
-                    FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { stackFluidHandle ->
-                        if(stackFluidHandle != null) {
-                            val spaceOfDrained = it.space(stackFluidHandle.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE).fluid)
-                            if(spaceOfDrained > 0) {
-                                it.fill(
-                                    stackFluidHandle.drain(
-                                        min(FluidType.BUCKET_VOLUME, spaceOfDrained),
-                                        if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
-                                    ),
-                                    IFluidHandler.FluidAction.EXECUTE
-                                )
-                            } else 0
+            val filled = if(item is BucketItem && fluidHandler.space(item.fluid) > 0) {
+                if(!pPlayer.isCreative) pPlayer.setItemInHand(pHand, Items.BUCKET.defaultInstance)
+                fluidHandler.fill(FluidStack(item.fluid, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE)
+            } else {
+                FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { stackFluidHandle ->
+                    if(stackFluidHandle != null) {
+                        val spaceOfDrained = fluidHandler.space(stackFluidHandle.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE).fluid)
+                        if(spaceOfDrained > 0) {
+                            fluidHandler.fill(
+                                stackFluidHandle.drain(
+                                    min(FluidType.BUCKET_VOLUME, spaceOfDrained),
+                                    if(pPlayer.isCreative) IFluidHandler.FluidAction.SIMULATE else IFluidHandler.FluidAction.EXECUTE
+                                ),
+                                IFluidHandler.FluidAction.EXECUTE
+                            )
                         } else 0
-                    }
+                    } else 0
                 }
-                if(filled > 0) {
-                    pLevel.playSound(null, pPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f)
-                    return InteractionResult.CONSUME
-                }
+            }
+            if(filled > 0) {
+                pLevel.playSound(null, pPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f)
+                return InteractionResult.CONSUME
             }
             NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
         }

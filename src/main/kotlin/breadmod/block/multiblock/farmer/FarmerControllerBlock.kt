@@ -1,6 +1,6 @@
 package breadmod.block.multiblock.farmer
 
-import breadmod.block.multiblock.farmer.entity.FarmerPowerBlockEntity
+import breadmod.block.multiblock.farmer.entity.PowerInterfaceBlockEntity
 import breadmod.registry.block.ModBlocks
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -19,7 +19,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
-import kotlin.jvm.optionals.getOrNull
+import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.energy.EnergyStorage
 
 class FarmerControllerBlock: Block(Properties.of()
     .strength(2.0f, 6.0f)
@@ -60,9 +61,9 @@ class FarmerControllerBlock: Block(Properties.of()
 
         println("cursed block entity fetcher")
         BlockPos.betweenClosedStream(aabb).forEach { subPos ->
-            if(pLevel.getBlockState(subPos).`is`(ModBlocks.FARMER_POWER_BLOCK.get().block)) {
-                val entity = pLevel.getBlockEntity(BlockPos(subPos.x, subPos.y, subPos.z)) as? FarmerPowerBlockEntity ?: return@forEach
-                println(entity.energyHandlerOptional.resolve().getOrNull()?.energyStored)
+            if(pLevel.getBlockState(subPos).`is`(ModBlocks.GENERIC_POWER_INTERFACE.get().block)) {
+                val entity = pLevel.getBlockEntity(BlockPos(subPos.x, subPos.y, subPos.z)) as? PowerInterfaceBlockEntity ?: return@forEach
+                println(entity.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.energyStored)
             }
 
             println("Block and pos: ${BlockPos(subPos.x, subPos.y, subPos.z)}, Relative to controller: ${BlockPos(subPos.x - pPos.x, subPos.y - pPos.y, subPos.z - pPos.z)} : ${pLevel.getBlockState(subPos).block}")

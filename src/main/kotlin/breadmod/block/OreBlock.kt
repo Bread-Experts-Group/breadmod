@@ -1,4 +1,4 @@
-package breadmod.registry.block
+package breadmod.block
 
 import net.minecraft.util.StringRepresentable
 import net.minecraft.world.level.block.Block
