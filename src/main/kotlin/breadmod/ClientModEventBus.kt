@@ -6,11 +6,13 @@ import breadmod.block.entity.menu.DoughMachineScreen
 import breadmod.block.entity.menu.WheatCrusherScreen
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
+import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
+import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.screen.ModMenuTypes
@@ -70,6 +72,8 @@ object ClientModEventBus {
     fun registerRenders(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerEntityRenderer(HAPPY_BLOCK_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
             PrimedHappyBlockRenderer(pContext) }
+        event.registerEntityRenderer(BREAD_BULLET_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
+            BreadBulletEntityRenderer(pContext) }
     }
 
     @SubscribeEvent

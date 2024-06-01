@@ -32,5 +32,10 @@ class ModSoundDefinitionsProvider(
                 .subtitle("sound.${ModMain.ID}.pow")
                 .with(sound(modLocation("pow")).volume(1f))
         )
+        this.add(
+            ModSounds.SCREAM, definition()
+                .subtitle("sound.${ModMain.ID}.scream")
+                .with(sound(modLocation("scream")).volume(1f))
+        )
     }
 }

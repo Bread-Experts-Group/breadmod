@@ -87,7 +87,7 @@ object ModItems {
         SwordItem(ToolTiers.RF_BREAD, 2,-2.5f, Item.Properties()) }
 
     val BREAD_GUN_ITEM: RegistryObject<ProjectileWeaponItem> = deferredRegister.register("bread_gun") { BreadGunItem() }
-    val BREAD_BULLET_ITEM: RegistryObject<Item> = deferredRegister.register("bread_bullet") { BreadBulletItem() }
+    val BREAD_BULLET_ITEM: RegistryObject<Item> = deferredRegister.register("bread_bullet") { Item(Item.Properties()) }
 
     val TEST_DISC: RegistryObject<RecordItem> = deferredRegister.register("music_disc_test") {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()

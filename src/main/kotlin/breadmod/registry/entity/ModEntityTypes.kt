@@ -22,7 +22,7 @@ object ModEntityTypes {
     }
 
     val BREAD_BULLET_ENTITY: RegistryObject<EntityType<BreadBulletEntity>> = deferredRegister.register("bread_bullet") {
-        EntityType.Builder.of({ _, pLevel -> BreadBulletEntity(pLevel)}, MobCategory.MISC)
+        EntityType.Builder.of({ pEntityType, pLevel -> BreadBulletEntity(pEntityType, pLevel)}, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .clientTrackingRange(4)
             .updateInterval(20)
