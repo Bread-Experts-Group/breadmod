@@ -26,7 +26,7 @@ object ModItems {
     val TEST_BREAD: RegistryObject<TestBreadItem> = deferredRegister.register("test_bread") { TestBreadItem() }
     val ULTIMATE_BREAD: RegistryObject<UltimateBreadItem> = deferredRegister.register("ultimate_bread") {
         object : UltimateBreadItem(), RegisterSpecialCreativeTab {
-            override val creativeModeTab: RegistryObject<CreativeModeTab> = ModCreativeTabs.CHRIS_TAB
+            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.CHRIS_TAB)
 
             override fun displayInCreativeTab(
                 pParameters: CreativeModeTab.ItemDisplayParameters,

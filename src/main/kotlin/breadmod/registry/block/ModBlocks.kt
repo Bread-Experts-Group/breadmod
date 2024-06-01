@@ -190,7 +190,7 @@ object ModBlocks {
         "bauxite_ore",
         { OreBlock() },
         { block -> object : BlockItem(block, Properties()), RegisterSpecialCreativeTab {
-            override val creativeModeTab: RegistryObject<CreativeModeTab> = ModCreativeTabs.CHRIS_TAB
+            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.CHRIS_TAB)
 
             override fun displayInCreativeTab(
                 pParameters: CreativeModeTab.ItemDisplayParameters,
