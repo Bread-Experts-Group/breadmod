@@ -2,7 +2,7 @@ package breadmod.block.multiblock.farmer.entity
 
 import breadmod.ModMain
 import breadmod.registry.block.ModBlockEntities
-import breadmod.util.CapabilityHolder
+import breadmod.util.capability.CapabilityHolder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag

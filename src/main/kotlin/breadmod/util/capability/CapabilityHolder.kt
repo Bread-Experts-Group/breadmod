@@ -1,4 +1,4 @@
-package breadmod.util
+package breadmod.util.capability
 
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -52,6 +52,8 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, Pair<INBTSerializa
      * @see capability
      * @see capabilityOrNull
      */
+
+    // TODO TRANSLATEFOR
     fun <T> capabilitySided(capability: Capability<T>, translateFor: Direction, side: Direction?): LazyOptional<T>? {
         capabilities.forEach { (myCapability, pair) ->
             if(myCapability == capability && (pair.second == null || (pair.second ?: return@forEach).contains(side))) return pair.first.cast()
@@ -105,5 +107,8 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, Pair<INBTSerializa
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    fun deserialize(tag: CompoundTag) = tag.also { capabilities.forEach { (capability, actual) -> actual.first.ifPresent { it.deserializeNBT(tag.get(capability.name) as Nothing?) } } }
+    fun deserialize(tag: CompoundTag) = tag.also { capabilities.forEach { (capability, actual) -> actual.first.ifPresent { it.deserializeNBT(tag.get(capability.name)) } } }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T: Tag> INBTSerializable<T>.deserializeNBT(tag: Tag?) { if(tag != null) this.deserializeNBT(tag as T) }
 }

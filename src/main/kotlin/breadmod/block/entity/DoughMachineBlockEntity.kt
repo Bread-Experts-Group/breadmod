@@ -8,8 +8,11 @@ import breadmod.network.PacketHandler.NETWORK
 import breadmod.recipe.FluidEnergyRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
-import breadmod.util.*
-import breadmod.util.FluidContainer.Companion.drain
+import breadmod.util.capability.CapabilityHolder
+import breadmod.util.capability.FluidContainer
+import breadmod.util.capability.FluidContainer.Companion.drain
+import breadmod.util.capability.IndexableItemHandler
+import breadmod.util.capability.StorageDirection
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -63,9 +66,10 @@ class DoughMachineBlockEntity(
             override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(maxReceive, simulate).also { setChanged() }
             override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = super.extractEnergy(maxExtract, simulate).also { setChanged() }
         } to null),
-        ForgeCapabilities.FLUID_HANDLER to (object : FluidContainer(mutableMapOf(FluidTank(INPUT_TANK_CAPACITY) to TankFlow.FILL_ONLY, FluidTank(OUTPUT_TANK_CAPACITY) to TankFlow.DRAIN_ONLY)) {
-            override fun contentsChanged() { setChanged() }
-        } to null),
+        ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(
+            FluidTank(INPUT_TANK_CAPACITY) to StorageDirection.STORE_ONLY,
+            FluidTank(OUTPUT_TANK_CAPACITY) to StorageDirection.EMPTY_ONLY
+        ), ::setChanged) to null),
         ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(3, ::setChanged) to null)
     ))
 

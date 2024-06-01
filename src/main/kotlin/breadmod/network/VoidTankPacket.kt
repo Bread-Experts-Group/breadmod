@@ -1,6 +1,6 @@
 package breadmod.network
 
-import breadmod.util.FluidContainer
+import breadmod.util.capability.FluidContainer
 import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraftforge.common.capabilities.ForgeCapabilities

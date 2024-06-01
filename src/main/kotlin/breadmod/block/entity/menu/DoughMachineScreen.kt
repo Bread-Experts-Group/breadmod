@@ -4,7 +4,7 @@ import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.VoidTankPacket
-import breadmod.util.FluidContainer
+import breadmod.util.capability.FluidContainer
 import breadmod.util.formatUnit
 import breadmod.util.renderFluid
 import com.mojang.blaze3d.systems.RenderSystem

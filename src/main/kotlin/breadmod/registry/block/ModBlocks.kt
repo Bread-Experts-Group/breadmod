@@ -4,9 +4,9 @@ import breadmod.ModMain
 import breadmod.block.*
 import breadmod.block.multiblock.farmer.*
 import breadmod.block.multiblock.generic.PowerInterfaceBlock
-//import breadmod.item.util.BlockStateStack
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.registry.screen.ModCreativeTabs
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -49,7 +49,7 @@ object ModBlocks {
         "bread_block",
         { BreadBlock() },
         Item.Properties().also {
-            val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null)!!
+            val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null) ?: throw IllegalStateException("Bread has no food properties???")
             it.food(
                 FoodProperties.Builder()
                     .nutrition(breadFoodStats.nutrition * 9)
@@ -190,6 +190,8 @@ object ModBlocks {
         "bauxite_ore",
         { OreBlock() },
         { block -> object : BlockItem(block, Properties()), RegisterSpecialCreativeTab {
+            override val creativeModeTab: RegistryObject<CreativeModeTab> = ModCreativeTabs.CHRIS_TAB
+
             override fun displayInCreativeTab(
                 pParameters: CreativeModeTab.ItemDisplayParameters,
                 pOutput: CreativeModeTab.Output

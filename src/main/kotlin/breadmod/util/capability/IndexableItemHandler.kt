@@ -1,9 +1,10 @@
-package breadmod.util
+package breadmod.util.capability
 
 import net.minecraft.core.NonNullList
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.items.ItemStackHandler
 
+// TODO: Use [StorageDirection]
 open class IndexableItemHandler(override val size: Int, val changed: () -> Unit) : ItemStackHandler(size), MutableList<ItemStack> {
     val items: NonNullList<ItemStack> = this.stacks
 

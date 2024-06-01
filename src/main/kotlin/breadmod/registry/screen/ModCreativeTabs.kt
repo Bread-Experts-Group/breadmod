@@ -12,19 +12,34 @@ import net.minecraftforge.registries.RegistryObject
 
 object ModCreativeTabs {
     val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModMain.ID)
-    @Suppress("unused")
-    val MAIN_TAB: RegistryObject<CreativeModeTab> = deferredRegister.register("main_tab") {
-        CreativeModeTab.builder()
-            .withSearchBar()
-            .title(modTranslatable("itemGroup", "main"))
+    private fun constructTab(name: String, general: Boolean, constructor: CreativeModeTab.Builder.() -> Unit): RegistryObject<CreativeModeTab> {
+        val builder = CreativeModeTab.builder()
+        val registryObject = deferredRegister.register(name) { builder.build() }
+        builder
+            .title(modTranslatable("itemGroup", name))
             .displayItems { pParameters, pOutput ->
-                pOutput.acceptAll(ModItems.deferredRegister.entries.filter {
+                ModItems.deferredRegister.entries.forEach {
                     val item = it.get()
-                    if(item is RegisterSpecialCreativeTab) { item.displayInCreativeTab(pParameters, pOutput); false }
-                    else true
-                }.map { it.get().defaultInstance })
+                    if(item is RegisterSpecialCreativeTab && item.creativeModeTab == registryObject) item.displayInCreativeTab(pParameters, pOutput)
+                    else if(general) pOutput.accept(item.defaultInstance)
+                }
             }
-            .icon { ModBlocks.BREAD_BLOCK.get().defaultInstance }
-            .build()
+        constructor(builder)
+        return registryObject
+    }
+
+    val MAIN_TAB: RegistryObject<CreativeModeTab> = constructTab("main", true) {
+        icon { ModBlocks.BREAD_BLOCK.get().defaultInstance }
+        withSearchBar()
+    }
+
+    val CHRIS_TAB: RegistryObject<CreativeModeTab> = constructTab("chrisp", false) {
+        icon { ModBlocks.GENERIC_POWER_INTERFACE.get().defaultInstance }
+        withTabsBefore(MAIN_TAB.id)
+    }
+
+    val EXAMPLE_GENERAL_TAB: RegistryObject<CreativeModeTab> = constructTab("gen2", true) {
+        icon { ModBlocks.MONITOR.get().defaultInstance }
+        withTabsBefore(CHRIS_TAB.id)
     }
 }

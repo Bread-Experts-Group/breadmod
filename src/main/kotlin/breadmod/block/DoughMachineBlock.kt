@@ -3,8 +3,8 @@ package breadmod.block
 import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
-import breadmod.util.FluidContainer
-import breadmod.util.IndexableItemHandler
+import breadmod.util.capability.FluidContainer
+import breadmod.util.capability.IndexableItemHandler
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer

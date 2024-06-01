@@ -9,6 +9,7 @@ import breadmod.item.compat.curios.BreadAmuletItem
 import breadmod.item.compat.projecte.BreadOrbItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
+import breadmod.registry.screen.ModCreativeTabs
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
@@ -25,6 +26,8 @@ object ModItems {
     val TEST_BREAD: RegistryObject<TestBreadItem> = deferredRegister.register("test_bread") { TestBreadItem() }
     val ULTIMATE_BREAD: RegistryObject<UltimateBreadItem> = deferredRegister.register("ultimate_bread") {
         object : UltimateBreadItem(), RegisterSpecialCreativeTab {
+            override val creativeModeTab: RegistryObject<CreativeModeTab> = ModCreativeTabs.CHRIS_TAB
+
             override fun displayInCreativeTab(
                 pParameters: CreativeModeTab.ItemDisplayParameters,
                 pOutput: CreativeModeTab.Output,
