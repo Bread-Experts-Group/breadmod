@@ -18,17 +18,17 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
     override fun registerModels() {
         singleItem(ModItems.TEST_DISC)
         singleItem(ModItems.TEST_BREAD)
-        singleItem(ModItems.BREAD_SWORD)
-        singleItem(ModItems.BREAD_PICKAXE)
-        singleItem(ModItems.BREAD_SHOVEL)
-        singleItem(ModItems.BREAD_AXE)
-        singleItem(ModItems.BREAD_HOE)
+        handheldItem(ModItems.BREAD_SWORD)
+        handheldItem(ModItems.BREAD_PICKAXE)
+        handheldItem(ModItems.BREAD_SHOVEL)
+        handheldItem(ModItems.BREAD_AXE)
+        handheldItem(ModItems.BREAD_HOE)
         singleItem(ModItems.BREAD_SLICE)
-        singleItem(ModItems.RF_BREAD_SHOVEL)
-        singleItem(ModItems.RF_BREAD_AXE)
-        singleItem(ModItems.RF_BREAD_HOE)
-        singleItem(ModItems.RF_BREAD_SWORD)
-        singleItem(ModItems.RF_BREAD_PICKAXE)
+        handheldItem(ModItems.RF_BREAD_SHOVEL)
+        handheldItem(ModItems.RF_BREAD_AXE)
+        handheldItem(ModItems.RF_BREAD_HOE)
+        handheldItem(ModItems.RF_BREAD_SWORD)
+        handheldItem(ModItems.RF_BREAD_PICKAXE)
         singleItem(ModItems.TEST_DISC)
         singleItem(ModItems.DOUGH)
         singleItem(ModItems.FLOUR)
@@ -40,8 +40,9 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.RF_BREAD_LEGGINGS)
         singleItem(ModItems.RF_BREAD_BOOTS)
         singleItem(ModBlocks.BREAD_DOOR)
-        singleItem(ModItems.BREAD_GUN_ITEM)
-        singleItem(ModItems.THE_STICK)
+        handheldItem(ModItems.BREAD_GUN_ITEM)
+        handheldItem(ModItems.THE_STICK)
+
         fenceInventory("bread_fence", modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"))
         ModItems.PROJECT_E?.also {
             singleItem(it.BREAD_ORB_ITEM)
@@ -57,6 +58,16 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         withExistingParent(
             item.id.path,
             ResourceLocation("item/generated")
+        ).texture(
+            "layer0",
+            modLocation("item/" + item.id.path)
+        )
+    }
+
+    private fun <T: Item> handheldItem(item: RegistryObject<T>) {
+        withExistingParent(
+            item.id.path,
+            ResourceLocation("item/handheld")
         ).texture(
             "layer0",
             modLocation("item/" + item.id.path)
