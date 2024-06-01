@@ -10,6 +10,7 @@ import breadmod.item.compat.projecte.BreadOrbItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
 import breadmod.registry.screen.ModCreativeTabs
+import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
@@ -27,7 +28,6 @@ object ModItems {
     val ULTIMATE_BREAD: RegistryObject<UltimateBreadItem> = deferredRegister.register("ultimate_bread") {
         object : UltimateBreadItem(), RegisterSpecialCreativeTab {
             override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.CHRIS_TAB)
-
             override fun displayInCreativeTab(
                 pParameters: CreativeModeTab.ItemDisplayParameters,
                 pOutput: CreativeModeTab.Output,
@@ -42,8 +42,6 @@ object ModItems {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build())) }
     val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") {Item(Item.Properties())}
     val DOUGH: RegistryObject<Item> = deferredRegister.register("dough") {Item(Item.Properties())}
-//    val KNIFE: RegistryObject<Item> = deferredRegister.register("knife") {Item(Item.Properties())}
-//      Probably not for this one
 
     val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") {Item(Item.Properties())}
 
@@ -104,6 +102,16 @@ object ModItems {
 
     @Suppress("PropertyName")
     class ProjectEItems {
-        val BREAD_ORB_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { BreadOrbItem() }
+        val BREAD_ORB_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { object : BreadOrbItem(), RegisterSpecialCreativeTab {
+            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.CHRIS_TAB)
+            override fun displayInCreativeTab(
+                pParameters: CreativeModeTab.ItemDisplayParameters,
+                pOutput: CreativeModeTab.Output
+            ){
+                pOutput.accept(this.defaultInstance.also { this.insertEmc(it, 45000, IEmcStorage.EmcAction.EXECUTE) })
+                pOutput.accept(this.defaultInstance)
+            }
+
+        }}
     }
 }

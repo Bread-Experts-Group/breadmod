@@ -20,9 +20,10 @@ object ModCreativeTabs {
             .displayItems { pParameters, pOutput ->
                 ModItems.deferredRegister.entries.forEach {
                     val item = it.get()
-                    if(item is RegisterSpecialCreativeTab)
-                        if(item.creativeModeTabs.contains(registryObject)) item.displayInCreativeTab(pParameters, pOutput)
-                    else if(general) pOutput.accept(item.defaultInstance)
+                    when {
+                        item is RegisterSpecialCreativeTab -> if (item.creativeModeTabs.contains(registryObject)) item.displayInCreativeTab(pParameters, pOutput)
+                        general -> pOutput.accept(item.defaultInstance)
+                    }
                 }
             }
         constructor(builder)

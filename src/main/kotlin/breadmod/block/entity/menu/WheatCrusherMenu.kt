@@ -11,7 +11,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import kotlin.jvm.optionals.getOrNull
+import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.energy.EnergyStorage
 
 class WheatCrusherMenu(
     pContainerId: Int,
@@ -27,7 +28,7 @@ class WheatCrusherMenu(
     )
 
     fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 48).toInt()
-    fun getEnergyStoredScaled(): Int = parent.energyHandlerOptional.resolve().getOrNull()?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
+    fun getEnergyStoredScaled(): Int = parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
     fun isCrafting(): Boolean = parent.progress > 0
 
     class WheatCrusherResultSlot(parent: WheatCrusherBlockEntity) : Slot(parent, 1, 80, 87) {

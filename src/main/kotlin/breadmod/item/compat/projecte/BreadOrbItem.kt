@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level
 import net.minecraftforge.fml.ModList
 import kotlin.math.min
 
-class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper {
+open class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper {
     private val emcAmount = 45000
     init {
         this.addItemCapability { EmcHolderItemCapabilityWrapper() }

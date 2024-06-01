@@ -178,10 +178,8 @@ class DoughMachineBlockEntity(
     override fun removeItemNoUpdate(pSlot: Int): ItemStack = getItemHandler()?.removeAt(pSlot) ?: ItemStack.EMPTY
     override fun setItem(pSlot: Int, pStack: ItemStack) { getItemHandler()?.set(pSlot, pStack) }
     override fun stillValid(pPlayer: Player): Boolean = getItemHandler() != null
-    override fun fillStackedContents(pContents: StackedContents) { TODO("Not yet implemented") }
-
+    override fun fillStackedContents(pContents: StackedContents) { getItemHandler()?.get(0)?.let { pContents.accountStack(it) } }
     override fun getWidth(): Int = 1
     override fun getHeight(): Int = 1
-
     override fun getItems(): MutableList<ItemStack> = getItemHandler()?.items ?: mutableListOf()
 }

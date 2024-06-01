@@ -10,6 +10,8 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.energy.EnergyStorage
 
 class WheatCrusherScreen(
     pMenu: WheatCrusherMenu,
@@ -39,7 +41,7 @@ class WheatCrusherScreen(
 
         val showShort = !minecraft!!.options.keyShift.isDown
         if(this.isHovering(151,14, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            menu.parent.energyHandlerOptional.ifPresent {
+            menu.parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let {
                 pGuiGraphics.renderComponentTooltip(
                     this.font,
                     listOf(

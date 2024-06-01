@@ -79,6 +79,14 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.FARMER_OUTPUT_BLOCK, "Farmer Output")
         add(ModBlocks.GENERIC_POWER_INTERFACE)
         ////
+        // Funny stick
+        modAdd("%s left the game",
+            "item", "leftgame")
+        modAdd("trolled lmao",
+            "item", "thestick", "playerkick")
+        modAdd("A mysterious stick with unfathomable powers",
+            "item", "thestick", "tooltip")
+        ////
         modAdd(
             "Feeds %s every %s",
             "item", "bread_amulet", "description"
