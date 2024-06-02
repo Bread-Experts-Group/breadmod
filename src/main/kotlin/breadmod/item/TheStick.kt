@@ -21,9 +21,9 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
         if(level is ServerLevel) {
             if(pTarget is ServerPlayer) {
                 pTarget.connection.disconnect(modTranslatable("item", "thestick", "playerkick"))
-                (pAttacker.level() as ServerLevel).server.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
             } else {
                 pTarget.remove(Entity.RemovalReason.DISCARDED)
+                level.server.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
                 repeat(20) {
                     val bullet = BreadBulletEntity(level, pAttacker)
                     bullet.moveTo(pTarget.x, pTarget.y, pTarget.z)
