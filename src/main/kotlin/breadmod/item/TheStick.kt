@@ -2,6 +2,7 @@ package breadmod.item
 
 import breadmod.ModMain.modTranslatable
 import breadmod.registry.entity.ModEntityTypes
+import breadmod.registry.sound.ModSounds
 import net.minecraft.ChatFormatting
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
@@ -27,6 +28,7 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
             if(pTarget is ServerPlayer) {
                 pTarget.connection.disconnect(modTranslatable("item", "thestick", "playerkick"))
             } else {
+                pTarget.playSound(ModSounds.TOOLGUN.get(), 2.0f, 1.0f)
                 pTarget.remove(Entity.RemovalReason.DISCARDED)
                 level.server.playerList.players.forEach {
                     it.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
