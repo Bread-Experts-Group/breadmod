@@ -37,5 +37,12 @@ class ModSoundDefinitionsProvider(
                 .subtitle("sound.${ModMain.ID}.scream")
                 .with(sound(modLocation("scream")).volume(1f))
         )
+        this.add(
+            ModSounds.TOOLGUN, definition()
+                .subtitle("sound.${ModMain.ID}.toolgun")
+                .with(sound(modLocation("toolgun_one")).volume(1f),
+                    sound(modLocation("toolgun_two")).volume(1f)
+                )
+        )
     }
 }
