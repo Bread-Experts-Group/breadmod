@@ -34,12 +34,12 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
                 pTarget.discard()
                 level.server.playerList.players.forEach { it.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW)) }
             }
-
             pTarget.playSound(ModSounds.TOOL_GUN.get(), 2.0f, 1f)
+        } else {
             fun rand() = (random.nextDouble() - 0.5)*1.2
             repeat(40) { level.addParticle(ParticleTypes.FIREWORK, pTarget.x, pTarget.y, pTarget.z, rand(), random.nextDouble() + 0.1, rand()) }
         }
-        return InteractionResult.SUCCESS
+        return InteractionResult.sidedSuccess(level.isClientSide)
     }
 
     override fun appendHoverText(

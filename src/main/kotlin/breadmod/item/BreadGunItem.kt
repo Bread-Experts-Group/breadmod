@@ -29,8 +29,8 @@ class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(900
             if(!flag) {
                 itemStack.shrink(1)
                 if(itemStack.isEmpty) pPlayer.inventory.removeItem(itemStack)
-                pPlayer.cooldowns.addCooldown(this, 10)
             }
+            pPlayer.cooldowns.addCooldown(this, 80)
         }
 
         return InteractionResultHolder.consume(pPlayer.getItemInHand(pUsedHand))
@@ -42,8 +42,9 @@ class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(900
             if(fire) {
                 pLevel.playSound(null, pEntity.blockPosition(), ModSounds.MINIGUN.get(), SoundSource.PLAYERS)
                 fireTimes = 15
+                fire = false
             }
-            if(fireTimes > 0) {
+            if(!pLevel.isClientSide && fireTimes > 0) {
                 val bullet = ModEntityTypes.BREAD_BULLET_ENTITY.get().create(pLevel)
                 if(bullet != null) {
                     pStack.hurtAndBreak(1, pEntity) { event -> event.broadcastBreakEvent(pEntity.usedItemHand) }
