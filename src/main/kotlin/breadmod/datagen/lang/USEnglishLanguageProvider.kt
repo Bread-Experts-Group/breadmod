@@ -92,7 +92,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
             "item", "bread_amulet", "description"
         )
         modAdd("%ss",
-            "jei","dough_machine","recipe_time"
+            "jei","generic","recipe_time"
         )
         modAdd(
             "(stacking!)",

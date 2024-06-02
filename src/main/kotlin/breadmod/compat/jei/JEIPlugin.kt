@@ -3,7 +3,10 @@ package breadmod.compat.jei
 import breadmod.ModMain
 import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.block.entity.menu.DoughMachineScreen
+import breadmod.block.entity.menu.WheatCrusherMenu
+import breadmod.block.entity.menu.WheatCrusherScreen
 import breadmod.compat.jei.category.DoughMachineRecipeCategory
+import breadmod.compat.jei.category.WheatCrusherRecipeCategory
 import breadmod.compat.jei.vanillaExtension.JEIArmorPotionCraftingExtension
 import breadmod.compat.jei.vanillaExtension.JEIBreadSliceCraftingExtension
 import breadmod.recipe.ArmorPotionRecipe
@@ -34,6 +37,7 @@ class JEIPlugin : IModPlugin {
         val guiHelper = jeiHelpers.guiHelper
 
         registration.addRecipeCategories(DoughMachineRecipeCategory(guiHelper))
+        registration.addRecipeCategories(WheatCrusherRecipeCategory(guiHelper))
     }
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
@@ -53,12 +57,17 @@ class JEIPlugin : IModPlugin {
 
     override fun registerGuiHandlers(registration: IGuiHandlerRegistration) {
         registration.addRecipeClickArea(DoughMachineScreen::class.java, 47, 34, 23, 17, ModJEIRecipeTypes.fluidEnergyRecipeType)
+        registration.addRecipeClickArea(WheatCrusherScreen::class.java, 84, 34, 7, 48, ModJEIRecipeTypes.wheatCrusherRecipeType)
     }
 
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
         registration.addRecipeTransferHandler(
             DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.fluidEnergyRecipeType,
             0, 3, 3, 36
+        )
+        registration.addRecipeTransferHandler(
+            WheatCrusherMenu::class.java, ModMenuTypes.WHEAT_CRUSHER.get(), ModJEIRecipeTypes.wheatCrusherRecipeType,
+            0, 2, 2, 36
         )
     }
 }
