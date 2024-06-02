@@ -3,6 +3,7 @@ package breadmod.item
 import breadmod.ModMain.modTranslatable
 import breadmod.registry.entity.ModEntityTypes
 import net.minecraft.ChatFormatting
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -25,6 +26,7 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
             if(pTarget is ServerPlayer) {
                 pTarget.connection.disconnect(modTranslatable("item", "thestick", "playerkick"))
             } else {
+                pTarget.brain.removeAllBehaviors()
                 pTarget.remove(Entity.RemovalReason.DISCARDED)
                 level.server.playerList.players.forEach {
                     it.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
@@ -39,6 +41,13 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
                         level.addFreshEntity(bullet)
                     }
                 }
+            }
+        }
+        repeat(20) {
+            fun rand() = (random.nextDouble() - 0.5)*2
+            if(level.isClientSide) {
+                println("test")
+                level.addParticle(ParticleTypes.FIREWORK, pTarget.x, pTarget.y, pTarget.z, rand(), random.nextDouble() + 0.1, rand())
             }
         }
         return super.hurtEnemy(pStack, pTarget, pAttacker)

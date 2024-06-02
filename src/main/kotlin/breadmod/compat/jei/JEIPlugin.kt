@@ -38,14 +38,17 @@ class JEIPlugin : IModPlugin {
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
         registration.addRecipeCatalyst(ModBlocks.DOUGH_MACHINE_BLOCK.get().defaultInstance, ModJEIRecipeTypes.fluidEnergyRecipeType)
+        registration.addRecipeCatalyst(ModBlocks.WHEAT_CRUSHER_BLOCK.get().defaultInstance, ModJEIRecipeTypes.wheatCrusherRecipeType)
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
         val recipeManager = minecraft?.level?.recipeManager ?: throw IllegalStateException()
         val testRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.ENERGY_FLUID_ITEM)
+        val wheatCrusherRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.WHEAT_CRUSHING)
 
         registration.addItemStackInfo(ModBlocks.BREAD_BLOCK.get().defaultInstance, Component.literal("FUCK"))
         registration.addRecipes(ModJEIRecipeTypes.fluidEnergyRecipeType, testRecipeList)
+        registration.addRecipes(ModJEIRecipeTypes.wheatCrusherRecipeType, wheatCrusherRecipeList)
     }
 
     override fun registerGuiHandlers(registration: IGuiHandlerRegistration) {
