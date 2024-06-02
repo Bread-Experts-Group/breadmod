@@ -38,11 +38,16 @@ class ModSoundDefinitionsProvider(
                 .with(sound(modLocation("scream")).volume(1f))
         )
         this.add(
-            ModSounds.TOOLGUN, definition()
+            ModSounds.TOOL_GUN, definition()
                 .subtitle("sound.${ModMain.ID}.toolgun")
                 .with(sound(modLocation("toolgun_one")).volume(1f),
                     sound(modLocation("toolgun_two")).volume(1f)
                 )
+        )
+        this.add(
+            ModSounds.MINIGUN, definition()
+                .subtitle("sound.${ModMain.ID}.minigun")
+                .with(sound(modLocation("minigun")).volume(1f))
         )
     }
 }
