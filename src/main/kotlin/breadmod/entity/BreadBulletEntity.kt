@@ -2,7 +2,6 @@ package breadmod.entity
 
 import breadmod.registry.item.ModItems
 import breadmod.registry.sound.ModSounds
-import breadmod.registry.worldgen.dimensions.ModDimensions
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -31,8 +30,9 @@ class BreadBulletEntity: Arrow {
         val level = this.level()
         if(level is ServerLevel) {
             pResult.entity.playSound(ModSounds.SCREAM.get(), 100.0f, 1.0f + (random.nextFloat() * 0.25F))
-            pResult.entity.changeDimension(level.server.getLevel(ModDimensions.BREAD.second) ?: return)
-            level.explode(this.effectSource, pResult.location.x, pResult.location.y, pResult.location.z, 10.0f, true, Level.ExplosionInteraction.MOB)
+            pResult.entity.changeDimension(level.server.getLevel(Level.NETHER) ?: return)
+            pResult.entity.getDimensions(pResult.entity.pose).scale(2.0f)
+            level.explode(this.effectSource, pResult.location.x, pResult.location.y, pResult.location.z, 100.0f, true, Level.ExplosionInteraction.MOB)
         }
     }
 }

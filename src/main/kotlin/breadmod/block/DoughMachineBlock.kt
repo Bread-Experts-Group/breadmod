@@ -94,7 +94,8 @@ class DoughMachineBlock : Block(Properties.of()
                             val toSubtract = pLevel.random.nextInt(1, 4)
                             val state = ModBlocks.FLOUR_LAYER_BLOCK.get().block.defaultBlockState().setValue(BlockStateProperties.LAYERS, toSubtract)
                             val fallingFlour = FallingBlockEntity.fall(pLevel, pPos.atY(pPos.y + 2), state)
-                            fallingFlour.deltaMovement = Vec3(random.nextDouble() - 0.5, random.nextDouble() - 0.5, random.nextDouble() - 0.5)
+                            fun rand() = (random.nextDouble() - 0.5)*2
+                            fallingFlour.deltaMovement = Vec3(rand(), rand(), rand())
                             fallingFlour.dropItem = false
                             pLevel.addFreshEntity(fallingFlour)
                             stack.shrink(toSubtract)
