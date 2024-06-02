@@ -2,6 +2,7 @@ package breadmod.item
 
 import breadmod.ModMain.modTranslatable
 import net.minecraft.ChatFormatting
+import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
@@ -11,15 +12,13 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 
+@Suppress("SpellCheckingInspection")
 class TheStick: Item(Properties()) {
-
     override fun hurtEnemy(pStack: ItemStack, pTarget: LivingEntity, pAttacker: LivingEntity): Boolean {
-        val chat = pAttacker as ServerPlayer
-//        chat.sendChatMessage(OutgoingChatMessage.create(PlayerChatMessage.system("test")), false, ChatType.bind(ChatType.CHAT, pAttacker))
         if(pTarget is ServerPlayer){
             pTarget.connection.disconnect(modTranslatable("item", "thestick", "playerkick"))
         } else {
-            chat.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
+            Minecraft.getInstance().chatListener.handleSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW), false)
             pTarget.remove(Entity.RemovalReason.DISCARDED)
         }
         return super.hurtEnemy(pStack, pTarget, pAttacker)
@@ -31,13 +30,11 @@ class TheStick: Item(Properties()) {
         pTooltipComponents: MutableList<Component>,
         pIsAdvanced: TooltipFlag
     ) {
-//        pTooltipComponents.add(
-//            Component.literal("aaa").withStyle(ChatFormatting.OBFUSCATED)
-//                .append(modTranslatable("item", "thestick", "tooltip"))
-//                .append(Component.literal("aaa").withStyle(ChatFormatting.OBFUSCATED)))
         pTooltipComponents.addAll(arrayOf(
             Component.literal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").withStyle(ChatFormatting.OBFUSCATED),
             modTranslatable("item", "thestick", "tooltip").withStyle(ChatFormatting.RED),
             Component.literal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").withStyle(ChatFormatting.OBFUSCATED)))
     }
+
+    override fun getMaxStackSize(stack: ItemStack?): Int = 1
 }
