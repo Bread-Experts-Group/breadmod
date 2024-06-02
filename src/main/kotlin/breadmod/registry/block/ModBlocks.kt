@@ -4,9 +4,12 @@ import breadmod.ModMain
 import breadmod.block.*
 import breadmod.block.multiblock.farmer.*
 import breadmod.block.multiblock.generic.PowerInterfaceBlock
+import breadmod.block.specialItem.OreBlock
+import breadmod.block.specialItem.UseBlockStateNBT
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.RegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
+import com.google.common.collect.ImmutableMap
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -196,8 +199,12 @@ object ModBlocks {
                 pParameters: CreativeModeTab.ItemDisplayParameters,
                 pOutput: CreativeModeTab.Output
             ) {
-                //pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.STONE)))
-                //pOutput.accept(BlockStateStack(block.defaultBlockState().setValue(OreBlock.ORE_TYPE, OreBlock.Companion.OreTypes.BREAD)))
+                OreBlock.Companion.OreTypes.entries.forEach { type ->
+                    pOutput.accept(ItemStack(block).also {
+                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                        UseBlockStateNBT.saveState(it.orCreateTag, BlockState(block, ImmutableMap.copyOf(mapOf(OreBlock.ORE_TYPE to type)), null))
+                    })
+                }
             }
         } }
     )

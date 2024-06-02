@@ -70,7 +70,11 @@ class DoughMachineBlockEntity(
             FluidTank(INPUT_TANK_CAPACITY) to StorageDirection.STORE_ONLY,
             FluidTank(OUTPUT_TANK_CAPACITY) to StorageDirection.EMPTY_ONLY
         ), ::setChanged) to null),
-        ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(3, ::setChanged) to null)
+        ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(listOf(
+            64 to StorageDirection.STORE_ONLY,
+            64 to StorageDirection.EMPTY_ONLY,
+            1 to StorageDirection.BIDIRECTIONAL
+        ), ::setChanged) to null)
     ))
 
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> =
@@ -181,5 +185,5 @@ class DoughMachineBlockEntity(
     override fun fillStackedContents(pContents: StackedContents) { getItemHandler()?.get(0)?.let { pContents.accountStack(it) } }
     override fun getWidth(): Int = 1
     override fun getHeight(): Int = 1
-    override fun getItems(): MutableList<ItemStack> = getItemHandler()?.items ?: mutableListOf()
+    override fun getItems(): MutableList<ItemStack> = getItemHandler() ?: mutableListOf()
 }

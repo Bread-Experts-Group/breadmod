@@ -1,7 +1,7 @@
 package breadmod.datagen
 
 import breadmod.registry.block.ModBlocks
-import breadmod.block.OreBlock
+import breadmod.block.specialItem.OreBlock
 import breadmod.registry.fluid.ModFluids
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput

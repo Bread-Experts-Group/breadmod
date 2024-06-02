@@ -10,6 +10,7 @@ import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.CapabilityHolder
 import breadmod.util.capability.IndexableItemHandler
+import breadmod.util.capability.StorageDirection
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -50,7 +51,10 @@ class WheatCrusherBlockEntity(
             override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(maxReceive, simulate).also { setChanged() }
             override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = super.extractEnergy(maxExtract, simulate).also { setChanged() }
         } to null),
-        ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(2, ::setChanged) to null)
+        ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(listOf(
+            64 to StorageDirection.STORE_ONLY,
+            64 to StorageDirection.EMPTY_ONLY
+        ), ::setChanged) to null)
     ))
 
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> =
@@ -134,5 +138,5 @@ class WheatCrusherBlockEntity(
     override fun fillStackedContents(pContents: StackedContents) { getItemHandler()?.get(0)?.let { pContents.accountStack(it) } }
     override fun getWidth(): Int = 1
     override fun getHeight(): Int = 1
-    override fun getItems(): MutableList<ItemStack> = getItemHandler()?.items ?: mutableListOf()
+    override fun getItems(): MutableList<ItemStack> = getItemHandler() ?: mutableListOf()
 }
