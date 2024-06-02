@@ -13,9 +13,12 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
+import net.minecraft.world.phys.Vec3
+import kotlin.random.Random
 
 @Suppress("SpellCheckingInspection")
 class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC)) {
+    private val random = Random(592042)
     override fun hurtEnemy(pStack: ItemStack, pTarget: LivingEntity, pAttacker: LivingEntity): Boolean {
         val level = pAttacker.level()
         if(level is ServerLevel) {
@@ -23,9 +26,12 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
                 pTarget.connection.disconnect(modTranslatable("item", "thestick", "playerkick"))
             } else {
                 pTarget.remove(Entity.RemovalReason.DISCARDED)
-                level.server.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
+                level.server.playerList.players.forEach {
+                    it.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
+                }
                 repeat(20) {
                     val bullet = BreadBulletEntity(level, pAttacker)
+                    bullet.deltaMovement = Vec3(random.nextDouble() - 0.5, random.nextDouble() - 0.5, random.nextDouble() - 0.5)
                     bullet.moveTo(pTarget.x, pTarget.y, pTarget.z)
                     level.addFreshEntity(bullet)
                 }
