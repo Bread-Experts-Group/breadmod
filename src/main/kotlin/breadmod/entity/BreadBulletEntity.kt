@@ -2,6 +2,7 @@ package breadmod.entity
 
 import breadmod.registry.item.ModItems
 import breadmod.registry.sound.ModSounds
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.projectile.Arrow
@@ -21,13 +22,16 @@ class BreadBulletEntity: Arrow {
     // i'm going insane
     // todo GOOD GOD MAKE THIS BETTER
 
-
     override fun getPickupItem(): ItemStack = ModItems.BREAD_BULLET_ITEM.get().defaultInstance
 
     override fun onHitEntity(pResult: EntityHitResult) {
         super.onHitEntity(pResult)
-//        println("hit!")
-//        println(pResult.entity.name)
-        pResult.entity.playSound(ModSounds.SCREAM.get(), 1.0f, 1.0f)
+
+        val level = this.level()
+        if(level is ServerLevel) {
+            pResult.entity.playSound(ModSounds.SCREAM.get(), 10.0f, 1.0f)
+            level.explode(this.effectSource, pResult.location.x, pResult.location.y, pResult.location.z, 10.0f, true, Level.ExplosionInteraction.MOB)
+            pResult.entity.changeDimension(level.server.getLevel(Level.END) ?: return)
+        }
     }
 }

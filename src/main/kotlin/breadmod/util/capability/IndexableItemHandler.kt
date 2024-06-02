@@ -87,8 +87,11 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
         val reifiedSlot = slots[slot]
         if(reifiedSlot.second != StorageDirection.EMPTY_ONLY) {
             val space = min(min(stack.maxStackSize, reifiedSlot.first)-stack.count, it.count)
+            if(!simulate) {
+                if(stack.isEmpty) stacks[slot] = it.copyWithCount(space)
+                else stack.grow(space)
+            }
             it.shrink(space)
-            if(!simulate) stacks[slot].grow(space)
             if(it.count == 0) return ItemStack.EMPTY
         } else return it
     }
@@ -111,11 +114,12 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
             }
         toFill.forEach { (stack, pair) ->
             val space = min(min(stack.maxStackSize, pair.first.first)-stack.count, it.count)
-            it.shrink(space)
             if(!simulate) {
                 if(stack.isEmpty) stacks[pair.second] = it.copyWithCount(space)
                 else stack.grow(space)
             }
+
+            it.shrink(space)
             if(it.count == 0) return ItemStack.EMPTY
         }
         return it
@@ -156,7 +160,12 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
         return concatStack ?: ItemStack.EMPTY
     }
 
-    override fun getSlotLimit(slot: Int): Int = min(slots[slot].first, stacks[slot].maxStackSize)
+    override fun getSlotLimit(slot: Int): Int {
+        val slotMax = slots[slot].first
+        val slotActual = stacks[slot]
+        return if(!slotActual.isEmpty) min(slotMax, slotActual.maxStackSize)
+        else slotMax
+    }
     override fun isItemValid(slot: Int, stack: ItemStack): Boolean = true
 
     override fun serializeNBT(): CompoundTag = CompoundTag().also { tag ->
