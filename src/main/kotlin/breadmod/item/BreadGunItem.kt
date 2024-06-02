@@ -1,8 +1,9 @@
 package breadmod.item
 
-import breadmod.entity.BreadBulletEntity
+import breadmod.registry.entity.ModEntityTypes
 import breadmod.registry.item.ModItems
 import breadmod.registry.sound.ModSounds
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
@@ -20,19 +21,22 @@ class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(900
         val pStack = pPlayer.getItemInHand(pUsedHand)
         if(itemStack.isEmpty) return InteractionResultHolder.fail(pStack)
 
-        if(!pLevel.isClientSide && !itemStack.isEmpty || flag) {
-            val entity = BreadBulletEntity(pLevel, pPlayer)
-            entity.shootFromRotation(pPlayer, pPlayer.xRot, pPlayer.yRot, 0.0F, 10f, 0.5f)
-            pStack.hurtAndBreak(1, pPlayer) { event -> event.broadcastBreakEvent(pPlayer.usedItemHand) } // Item has no durability yet so this is redundant
-            entity.baseDamage = 1.0
-            entity.knockback = 100
-            pLevel.addFreshEntity(entity)
+        if(pLevel is ServerLevel && !itemStack.isEmpty || flag) {
+            val bullet = ModEntityTypes.BREAD_BULLET_ENTITY.get().create(pLevel)
+            if(bullet != null) {
+                bullet.shootFromRotation(pPlayer, pPlayer.xRot, pPlayer.yRot, 0.0F, 1f, 0f)
+                pStack.hurtAndBreak(1, pPlayer) { event -> event.broadcastBreakEvent(pPlayer.usedItemHand) } // Item has no durability yet so this is redundant
+                bullet.owner = pPlayer
+                bullet.baseDamage = 1.0
+                bullet.knockback = 100
+                pLevel.addFreshEntity(bullet)
 
-            pLevel.playSound(null, pPlayer.x, pPlayer.y, pPlayer.z, ModSounds.POW.get(), SoundSource.PLAYERS, 0.5f, 1.0f)
-            if(!flag) {
-                itemStack.shrink(1)
-                if(itemStack.isEmpty) pPlayer.inventory.removeItem(itemStack)
-                pPlayer.cooldowns.addCooldown(this, 10)
+                pLevel.playSound(null, pPlayer.x, pPlayer.y, pPlayer.z, ModSounds.POW.get(), SoundSource.VOICE, 0.5f, 1.0f)
+                if(!flag) {
+                    itemStack.shrink(1)
+                    if(itemStack.isEmpty) pPlayer.inventory.removeItem(itemStack)
+                    pPlayer.cooldowns.addCooldown(this, 10)
+                }
             }
         }
 

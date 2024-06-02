@@ -1,7 +1,7 @@
 package breadmod.item
 
 import breadmod.ModMain.modTranslatable
-import breadmod.entity.BreadBulletEntity
+import breadmod.registry.entity.ModEntityTypes
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
@@ -29,12 +29,15 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
                 level.server.playerList.players.forEach {
                     it.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
                 }
+                fun rand() = (random.nextDouble() - 0.5)*4
                 repeat(20) {
-                    val bullet = BreadBulletEntity(level, pAttacker)
-                    fun rand() = (random.nextDouble() - 0.5)*2
-                    bullet.deltaMovement = Vec3(rand(), random.nextDouble() + 0.1, rand())
-                    bullet.moveTo(pTarget.x, pTarget.y, pTarget.z)
-                    level.addFreshEntity(bullet)
+                    val bullet = ModEntityTypes.BREAD_BULLET_ENTITY.get().create(level)
+                    if(bullet != null) {
+                        bullet.owner = pAttacker
+                        bullet.deltaMovement = Vec3(rand(), random.nextDouble() + 0.1, rand())
+                        bullet.moveTo(pTarget.x, pTarget.y, pTarget.z)
+                        level.addFreshEntity(bullet)
+                    }
                 }
             }
         }
