@@ -1,25 +1,35 @@
 package breadmod.item
 
 import breadmod.ModMain.modTranslatable
+import breadmod.entity.BreadBulletEntity
 import net.minecraft.ChatFormatting
-import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 
 @Suppress("SpellCheckingInspection")
-class TheStick: Item(Properties()) {
+class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC)) {
     override fun hurtEnemy(pStack: ItemStack, pTarget: LivingEntity, pAttacker: LivingEntity): Boolean {
-        if(pTarget is ServerPlayer){
-            pTarget.connection.disconnect(modTranslatable("item", "thestick", "playerkick"))
-        } else {
-            Minecraft.getInstance().chatListener.handleSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW), false)
-            pTarget.remove(Entity.RemovalReason.DISCARDED)
+        val level = pAttacker.level()
+        if(level is ServerLevel) {
+            if(pTarget is ServerPlayer) {
+                pTarget.connection.disconnect(modTranslatable("item", "thestick", "playerkick"))
+                (pAttacker.level() as ServerLevel).server.sendSystemMessage(Component.translatable("item.breadmod.leftgame", pTarget.name).withStyle(ChatFormatting.YELLOW))
+            } else {
+                pTarget.remove(Entity.RemovalReason.DISCARDED)
+                repeat(20) {
+                    val bullet = BreadBulletEntity(level, pAttacker)
+                    bullet.moveTo(pTarget.x, pTarget.y, pTarget.z)
+                    level.addFreshEntity(bullet)
+                }
+            }
         }
         return super.hurtEnemy(pStack, pTarget, pAttacker)
     }
@@ -35,6 +45,4 @@ class TheStick: Item(Properties()) {
             modTranslatable("item", "thestick", "tooltip").withStyle(ChatFormatting.RED),
             Component.literal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").withStyle(ChatFormatting.OBFUSCATED)))
     }
-
-    override fun getMaxStackSize(stack: ItemStack?): Int = 1
 }

@@ -9,7 +9,6 @@ import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ProjectileWeaponItem
-import net.minecraft.world.item.UseAnim
 import net.minecraft.world.item.Vanishable
 import net.minecraft.world.level.Level
 import java.util.function.Predicate
@@ -40,7 +39,6 @@ class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(900
         return InteractionResultHolder.consume(pPlayer.getItemInHand(pUsedHand))
     }
 
-    override fun getUseAnimation(pStack: ItemStack): UseAnim = UseAnim.BLOCK
     override fun getAllSupportedProjectiles(): Predicate<ItemStack> = Predicate { stack -> stack.`is`(ModItems.BREAD_BULLET_ITEM.get()) }
     override fun getDefaultProjectileRange(): Int = 50
 }

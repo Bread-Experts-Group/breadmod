@@ -51,7 +51,7 @@ class BreadBlock : FlammableBlock(
                 if (pLevel.dimensionType() === ModDimensions.BREAD.first.dimensionType.second) Level.OVERWORLD
                 else ModDimensions.BREAD.second
             pEntity.changeDimension(pLevel.server.getLevel(resourceKey) ?: return)
-            pLevel.explode(pEntity, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 8.0F, true, Level.ExplosionInteraction.TNT)
+            pLevel.explode(pEntity, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 8.0F, true, Level.ExplosionInteraction.BLOCK)
         }
     }
 
