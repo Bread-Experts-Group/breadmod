@@ -32,10 +32,10 @@ class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(900
             if(!flag) {
                 itemStack.shrink(1)
                 if(itemStack.isEmpty) pPlayer.inventory.removeItem(itemStack)
+                pPlayer.cooldowns.addCooldown(this, 10)
             }
         }
 
-        pPlayer.cooldowns.addCooldown(this, 10)
         return InteractionResultHolder.consume(pPlayer.getItemInHand(pUsedHand))
     }
 

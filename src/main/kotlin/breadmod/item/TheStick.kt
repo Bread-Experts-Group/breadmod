@@ -31,8 +31,8 @@ class TheStick: Item(Properties().stacksTo(1).fireResistant().rarity(Rarity.EPIC
                 }
                 repeat(20) {
                     val bullet = BreadBulletEntity(level, pAttacker)
-                    fun rand() = (random.nextDouble() - 0.5)*10
-                    bullet.deltaMovement = Vec3(rand(), rand(), rand())
+                    fun rand() = (random.nextDouble() - 0.5)*2
+                    bullet.deltaMovement = Vec3(rand(), random.nextDouble() + 0.1, rand())
                     bullet.moveTo(pTarget.x, pTarget.y, pTarget.z)
                     level.addFreshEntity(bullet)
                 }

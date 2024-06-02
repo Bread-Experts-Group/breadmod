@@ -29,10 +29,10 @@ class BreadBulletEntity: Arrow {
 
         val level = this.level()
         if(level is ServerLevel) {
-            pResult.entity.playSound(ModSounds.SCREAM.get(), 100.0f, 1.0f + (random.nextFloat() * 0.25F))
-            pResult.entity.changeDimension(level.server.getLevel(Level.NETHER) ?: return)
+            pResult.entity.playSound(ModSounds.SCREAM.get(), 100.0f, 1.0f + (random.nextFloat() * 0.5F))
+            pResult.entity.changeDimension(level.server.getLevel(Level.END) ?: return)
             pResult.entity.getDimensions(pResult.entity.pose).scale(2.0f)
-            level.explode(this.effectSource, pResult.location.x, pResult.location.y, pResult.location.z, 100.0f, true, Level.ExplosionInteraction.MOB)
+            level.explode(this.effectSource, pResult.location.x, pResult.location.y, pResult.location.z, 5.0f, true, Level.ExplosionInteraction.MOB)
         }
     }
 }
