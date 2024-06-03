@@ -21,7 +21,8 @@ object ModCreativeTabs {
                 ModItems.deferredRegister.entries.forEach {
                     val item = it.get()
                     when {
-                        item is RegisterSpecialCreativeTab -> if (item.creativeModeTabs.contains(registryObject)) item.displayInCreativeTab(pParameters, pOutput)
+                        item is RegisterSpecialCreativeTab -> if (item.creativeModeTabs.contains(registryObject))
+                            if(item.displayInCreativeTab(pParameters, pOutput)) pOutput.accept(item.defaultInstance)
                         general -> pOutput.accept(item.defaultInstance)
                     }
                 }
@@ -35,13 +36,8 @@ object ModCreativeTabs {
         withSearchBar()
     }
 
-    val CHRIS_TAB: RegistryObject<CreativeModeTab> = constructTab("chrisp", false) {
-        icon { ModBlocks.GENERIC_POWER_INTERFACE.get().defaultInstance }
-        withTabsBefore(MAIN_TAB.id)
-    }
-
-    val EXAMPLE_GENERAL_TAB: RegistryObject<CreativeModeTab> = constructTab("gen2", true) {
-        icon { ModBlocks.MONITOR.get().defaultInstance }
-        withTabsBefore(CHRIS_TAB.id)
+    val SPECIALS_TAB: RegistryObject<CreativeModeTab> = constructTab("specials", false) {
+        icon { ModItems.ULTIMATE_BREAD.get().defaultInstance }
+        withTabsBefore(MAIN_TAB.key)
     }
 }

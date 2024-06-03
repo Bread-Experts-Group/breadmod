@@ -9,8 +9,6 @@ import breadmod.item.compat.curios.BreadAmuletItem
 import breadmod.item.compat.projecte.BreadOrbItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
-import breadmod.registry.screen.ModCreativeTabs
-import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
@@ -25,16 +23,7 @@ object ModItems {
     fun getLocation(item: Item) = ForgeRegistries.ITEMS.getKey(item)
 
     val TEST_BREAD: RegistryObject<TestBreadItem> = deferredRegister.register("test_bread") { TestBreadItem() }
-    val ULTIMATE_BREAD: RegistryObject<UltimateBreadItem> = deferredRegister.register("ultimate_bread") {
-        object : UltimateBreadItem(), RegisterSpecialCreativeTab {
-            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.CHRIS_TAB)
-            override fun displayInCreativeTab(
-                pParameters: CreativeModeTab.ItemDisplayParameters,
-                pOutput: CreativeModeTab.Output,
-            ) = pOutput.accept(this.defaultInstance.also { this.setTimeLeft(it, 20F * 20) })
-
-        }
-    }
+    val ULTIMATE_BREAD: RegistryObject<UltimateBreadItem> = deferredRegister.register("ultimate_bread") { UltimateBreadItem() }
 
     val BREAD_SHIELD: RegistryObject<BreadShieldItem> = deferredRegister.register("bread_shield") { BreadShieldItem() }
     val DOPED_BREAD: RegistryObject<DopedBreadItem> = deferredRegister.register("doped_bread") { DopedBreadItem() }
@@ -89,7 +78,6 @@ object ModItems {
 
     val BREAD_GUN_ITEM: RegistryObject<ProjectileWeaponItem> = deferredRegister.register("bread_gun") { BreadGunItem() }
     val BREAD_BULLET_ITEM: RegistryObject<Item> = deferredRegister.register("bread_bullet") { Item(Item.Properties()) }
-    val THE_STICK: RegistryObject<Item> = deferredRegister.register("the_stick") { TheStick() }
     val TOOL_GUN: RegistryObject<Item> = deferredRegister.register("tool_gun") { ToolGunItem() }
 
     val TEST_DISC: RegistryObject<RecordItem> = deferredRegister.register("music_disc_test") {
@@ -103,16 +91,6 @@ object ModItems {
 
     @Suppress("PropertyName")
     class ProjectEItems {
-        val BREAD_ORB_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { object : BreadOrbItem(), RegisterSpecialCreativeTab {
-            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.CHRIS_TAB)
-            override fun displayInCreativeTab(
-                pParameters: CreativeModeTab.ItemDisplayParameters,
-                pOutput: CreativeModeTab.Output
-            ){
-                pOutput.accept(this.defaultInstance.also { this.insertEmc(it, 45000, IEmcStorage.EmcAction.EXECUTE) })
-                pOutput.accept(this.defaultInstance)
-            }
-
-        }}
+        val BREAD_ORB_ITEM: RegistryObject<ItemPE> = deferredRegister.register("bread_emc_item") { BreadOrbItem() }
     }
 }

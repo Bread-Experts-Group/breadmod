@@ -13,7 +13,7 @@ object ModConfiguration {
     class Common(builder: ForgeConfigSpec.Builder) {
         val DECAY_CHANCE_PER_TICK: ConfigValue<Int>
         val EFFECT_DISTANCE_MULTIPLIER: ConfigValue<Double>
-        val ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS: ConfigValue<Int>
+        val ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS: ConfigValue<Long>
         val BREAD_AMULET_FEED_TIME_TICKS: ConfigValue<Int>
         val BREAD_AMULET_FEED_AMOUNT: ConfigValue<Int>
         val BREAD_AMULET_STACKS: ConfigValue<Boolean>

@@ -41,7 +41,6 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         singleItem(ModItems.RF_BREAD_BOOTS)
         singleItem(ModBlocks.BREAD_DOOR)
         handheldItem(ModItems.BREAD_GUN_ITEM)
-        handheldItem(ModItems.THE_STICK)
 
         fenceInventory("bread_fence", modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"))
         ModItems.PROJECT_E?.also {

@@ -39,9 +39,9 @@ class ModSoundDefinitionsProvider(
         )
         this.add(
             ModSounds.TOOL_GUN, definition()
-                .subtitle("sound.${ModMain.ID}.toolgun")
-                .with(sound(modLocation("toolgun_one")).volume(1f),
-                    sound(modLocation("toolgun_two")).volume(1f)
+                .subtitle("sound.${ModMain.ID}.tool_gun")
+                .with(sound(modLocation("tool_gun_one")).volume(1f),
+                    sound(modLocation("tool_gun_two")).volume(1f)
                 )
         )
         this.add(

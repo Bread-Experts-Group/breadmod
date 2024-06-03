@@ -1,6 +1,8 @@
 package breadmod.item.compat.projecte
 
 import breadmod.ModMain.modTranslatable
+import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.registry.screen.ModCreativeTabs
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder
 import moze_intel.projecte.capability.EmcHolderItemCapabilityWrapper
@@ -9,14 +11,16 @@ import moze_intel.projecte.gameObjs.items.ItemPE
 import moze_intel.projecte.integration.IntegrationHelper
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.ModList
+import net.minecraftforge.registries.RegistryObject
 import kotlin.math.min
 
-open class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper {
+class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper, RegisterSpecialCreativeTab {
     private val emcAmount = 45000
     init {
         this.addItemCapability { EmcHolderItemCapabilityWrapper() }
@@ -67,4 +71,12 @@ open class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), 
     override fun getStoredEmc(pStack: ItemStack): Long = getEmc(pStack)
     override fun getMaximumEmc(pStack: ItemStack): Long = emcAmount.toLong()
 
+    override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.MAIN_TAB)
+    override fun displayInCreativeTab(
+        pParameters: CreativeModeTab.ItemDisplayParameters,
+        pOutput: CreativeModeTab.Output
+    ): Boolean {
+        pOutput.accept(ItemStack(this).also { this.insertEmc(it, 45000, IEmcStorage.EmcAction.EXECUTE) })
+        return true
+    }
 }

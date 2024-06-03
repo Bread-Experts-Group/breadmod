@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.data.tags.TagsProvider
@@ -17,7 +18,11 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
+import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.Vec3
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
@@ -26,6 +31,9 @@ import net.minecraftforge.registries.IForgeRegistry
 import net.minecraftforge.registries.RegistryObject
 import org.joml.Matrix4f
 import org.joml.Vector2f
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.times
+import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
 import java.awt.Color
 import java.util.*
 import kotlin.math.min
@@ -71,7 +79,7 @@ fun formatUnit(pFrom: Int, pTo: Int, pUnit: String, pFormatShort: Boolean, pDeci
 
 fun GuiGraphics.renderFluid(
     pX: Float, pY: Float, pWidth: Int, pHeight: Int,
-    pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH
+    pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH,
 ) {
     val atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
     val ext = IClientFluidTypeExtensions.of(pFluid)
@@ -196,3 +204,39 @@ fun <T> IntrinsicTagAppender<T>.add(vararg toAdd: RegistryObject<T>) =
     (this as TagsProvider.TagAppender<T>).add(*toAdd.map { it }.toTypedArray())
 fun <T> TagsProvider.TagAppender<T>.add(vararg toAdd: RegistryObject<T>) =
     this.also { this.add(*toAdd.map { it.key }.toTypedArray()) }
+
+sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec3, val direction: Vec3, val length: Double) {
+    enum class RayMarchResultType {
+        ENTITY,
+        BLOCK
+    }
+
+    class Block(val blockState: BlockState, startPosition: Vec3, direction: Vec3, length: Double):
+        RayMarchResult(RayMarchResultType.BLOCK, startPosition, direction, length)
+    class Entity(val entity: net.minecraft.world.entity.Entity, startPosition: Vec3, direction: Vec3, length: Double):
+        RayMarchResult(RayMarchResultType.ENTITY, startPosition, direction, length)
+
+    companion object {
+        fun Level.rayMarchEntity(exclude: net.minecraft.world.entity.Entity?, origin: Vec3, direction: Vec3, length: Double): Entity? {
+            var distance = 0.0
+            while(true) {
+                val position = origin + (direction * distance)
+                val entities = this.getEntities(exclude, AABB.ofSize(position, 1.0, 1.0, 1.0))
+                if(entities.size > 0) entities.forEach { if(it.position().distanceTo(position) < 1.0) return Entity(it, origin, direction, length) }
+                if(distance > length) return null
+                distance += 0.1
+            }
+        }
+
+        fun Level.rayMarchBlock(origin: Vec3, direction: Vec3, length: Double, countFluid: Boolean): Block? {
+            var distance = 0.0
+            while(true) {
+                val position = origin + (direction * distance)
+                val state = this.getBlockState(BlockPos(position.toVec3i()))
+                if(!state.isAir && (countFluid || state.fluidState.fluidType.isAir)) return Block(state, origin, direction, length)
+                if(distance > length) return null
+                distance += 0.1
+            }
+        }
+    }
+}

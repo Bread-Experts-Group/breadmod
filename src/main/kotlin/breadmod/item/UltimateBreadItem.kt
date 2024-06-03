@@ -2,22 +2,34 @@ package breadmod.item
 
 import breadmod.registry.ModConfiguration
 import breadmod.registry.item.ModItems
+import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.registry.screen.ModCreativeTabs
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.GameType
 import net.minecraft.world.level.Level
+import net.minecraftforge.registries.RegistryObject
 import java.awt.Color
 import java.lang.Math.random
+import kotlin.math.min
 import kotlin.math.roundToInt
 
-open class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()) {
-    private fun getTimeLeft(pStack: ItemStack): Float = pStack.orCreateTag.getFloat(TIME_LEFT_NBT)
-    fun setTimeLeft(pStack: ItemStack, ticks: Float) = pStack.orCreateTag.putFloat(TIME_LEFT_NBT, ticks)
+class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()), RegisterSpecialCreativeTab {
+    private fun getTimeLeft(pStack: ItemStack): Long {
+        if(pStack.orCreateTag.contains(TIME_LEFT_NBT)) return pStack.orCreateTag.getLong(TIME_LEFT_NBT)
+        else {
+            val max = MAX_TIME_CONFIG.get()
+            setTimeLeft(pStack, max)
+            return max
+        }
+    }
+    fun setTimeLeft(pStack: ItemStack, ticks: Long) = pStack.orCreateTag.putLong(TIME_LEFT_NBT, ticks)
 
     override fun getBarColor(pStack: ItemStack): Int = Color.HSBtoRGB(
-        getTimeLeft(pStack) / MAX_TIME_CONFIG.get(),
+        MAX_TIME_CONFIG.get().let { min(it, getTimeLeft(pStack)).toFloat() / it },
         1.0f, 1.0f
     )
     override fun getBarWidth(pStack: ItemStack): Int = (13F * (getTimeLeft(pStack) / MAX_TIME_CONFIG.get())).roundToInt()
@@ -34,7 +46,7 @@ open class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()) {
             if(pEntity.inventory.countItem(ModItems.ULTIMATE_BREAD.get()) > 1) {
                 pEntity.setGameMode(GameType.DEFAULT_MODE)
                 pEntity.inventory.items.forEach { if(it.`is`(ModItems.ULTIMATE_BREAD.get())) it.count = 0 }
-                pLevel.explode(null, pEntity.x, pEntity.y, pEntity.z, 5.0f, Level.ExplosionInteraction.MOB)
+                pLevel.explode(pEntity, pEntity.x, pEntity.y, pEntity.z, 5.0f, Level.ExplosionInteraction.MOB)
             }
 
             val timeLeft = getTimeLeft(pStack)
@@ -49,6 +61,16 @@ open class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()) {
     }
 
     override fun getEntityLifespan(itemStack: ItemStack, level: Level): Int = 0
+
+    override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
+    override fun displayInCreativeTab(
+        pParameters: CreativeModeTab.ItemDisplayParameters,
+        pOutput: CreativeModeTab.Output,
+    ): Boolean {
+        pOutput.accept(ItemStack(this).also { this.setTimeLeft(it, ModConfiguration.COMMON.ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS.get()) })
+        pOutput.accept(ItemStack(this).also { this.setTimeLeft(it, Long.MAX_VALUE) })
+        return false
+    }
 
     companion object {
         val MAX_TIME_CONFIG = ModConfiguration.COMMON.ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS

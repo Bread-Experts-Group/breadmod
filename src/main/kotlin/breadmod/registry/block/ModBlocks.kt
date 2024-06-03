@@ -193,18 +193,19 @@ object ModBlocks {
         "bauxite_ore",
         { OreBlock() },
         { block -> object : BlockItem(block, Properties()), RegisterSpecialCreativeTab {
-            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.CHRIS_TAB)
+            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.MAIN_TAB)
 
             override fun displayInCreativeTab(
                 pParameters: CreativeModeTab.ItemDisplayParameters,
                 pOutput: CreativeModeTab.Output
-            ) {
+            ): Boolean {
                 OreBlock.Companion.OreTypes.entries.forEach { type ->
                     pOutput.accept(ItemStack(block).also {
                         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
                         UseBlockStateNBT.saveState(it.orCreateTag, BlockState(block, ImmutableMap.copyOf(mapOf(OreBlock.ORE_TYPE to type)), null))
                     })
                 }
+                return false
             }
         } }
     )

@@ -35,8 +35,7 @@ class ToolGunShotEntity(pEntityType: EntityType<ToolGunShotEntity>, pLevel: Leve
             }
             target.playSound(ModSounds.TOOL_GUN.get(), 2.0f, 1f)
         } else { // todo Isn't spawning particles clientside
-            fun rand() = (random.nextDouble() - 0.5)*1.2
-            repeat(40) { level.addParticle(ParticleTypes.FIREWORK, target.x, target.y, target.z, rand(), random.nextDouble() + 0.1, rand()) }
+
         }
         this.discard()
     }

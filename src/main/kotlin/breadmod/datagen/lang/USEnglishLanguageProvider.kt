@@ -1,26 +1,32 @@
 package breadmod.datagen.lang
 
+import breadmod.ModMain
 import breadmod.ModMain.modAdd
 import breadmod.ModMain.modAddExt
 import breadmod.compat.jade.JadePlugin.Companion.TOOLTIP_RENDERER
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
+import breadmod.registry.screen.ModCreativeTabs
 import net.minecraft.data.PackOutput
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike
 import net.minecraftforge.common.data.LanguageProvider
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.registries.RegistryObject
 
 class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: String) : LanguageProvider(output, modID, locale) {
+    private fun String.joinUnderscoreWithCaps() =
+        this.split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+
     // Transforms type.mod_id.example_object into Example Object
-    private fun String.addTransformed(override: String? = null) =
-        if(override != null) add(this, override)
-        else add(this, this.substringAfterLast('.').split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } })
+    private fun String.addTransformed(override: String? = null) = add(this, override ?: this.substringAfterLast('.').joinUnderscoreWithCaps())
 
     private inline fun <reified T> add(obj: RegistryObject<T>, override: String? = null) = when(val entry = obj.get()) {
         is ItemLike -> entry.asItem().descriptionId.addTransformed(override)
         is FluidType -> entry.descriptionId.addTransformed(override)
+        is CreativeModeTab -> add("itemGroup.${ModMain.ID}.${obj.id.path}", override ?: obj.id.path.joinUnderscoreWithCaps())
         else -> throw IllegalArgumentException("Object provided, ${T::class.qualifiedName}, cannot be added")
     }
 
@@ -70,8 +76,11 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.BREAD_FENCE)
         add(ModBlocks.WHEAT_CRUSHER_BLOCK)
         add(ModItems.BREAD_GUN_ITEM)
-        add(ModItems.THE_STICK)
         add(ModItems.BREAD_BULLET_ITEM)
+        add(ModItems.TOOL_GUN)
+
+        add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
+        add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")
         // Farmer
         add(ModBlocks.FARMER_CONTROLLER, "Farmer")
         add(ModBlocks.FARMER_BASE_BLOCK)
@@ -81,11 +90,9 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         ////
         // Funny stick
         modAdd("%s left the game",
-            "item", "leftgame")
-        modAdd("trolled lmao",
-            "item", "thestick", "playerkick")
-        modAdd("A mysterious stick with unfathomable powers",
-            "item", "thestick", "tooltip")
+            "item", "tool_gun", "entity_left_game")
+        modAdd("Disconnect: Client 0 overflowed reliable channel.",
+            "item", "tool_gun", "player_left_game")
         ////
         modAdd(
             "Feeds %s every %s",
@@ -102,11 +109,6 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         modAdd(
             "Effect Range: %s %s",
             "item", "bread_armor", "range"
-        )
-
-        modAdd(
-            "Bread Mod",
-            "itemGroup", "main"
         )
 
         modAdd(
