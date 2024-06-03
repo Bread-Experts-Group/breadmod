@@ -8,12 +8,14 @@ import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
+import breadmod.entity.renderer.ToolGunShotEntityRenderer
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
+import breadmod.registry.entity.ModEntityTypes.TOOL_GUN_SHOT_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.screen.ModMenuTypes
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -74,6 +76,9 @@ object ClientModEventBus {
             PrimedHappyBlockRenderer(pContext) }
         event.registerEntityRenderer(BREAD_BULLET_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
             BreadBulletEntityRenderer(pContext) }
+        event.registerEntityRenderer(TOOL_GUN_SHOT_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
+            ToolGunShotEntityRenderer(pContext)
+        }
     }
 
     @SubscribeEvent
