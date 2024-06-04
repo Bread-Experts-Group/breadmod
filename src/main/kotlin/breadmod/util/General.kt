@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package breadmod.util
 
 import com.google.gson.JsonArray
@@ -189,13 +191,15 @@ fun Collection<ItemStack>.serialize(tag: CompoundTag): CompoundTag {
 fun Collection<ItemStack>.serialize() = this.serialize(CompoundTag())
 fun MutableList<ItemStack>.deserialize(tag: CompoundTag) = tag.allKeys.forEach { this[it.toInt()] = ItemStack.of(tag.getCompound(it)) }
 
+fun Fluid.isTag(tag: TagKey<Fluid>): Boolean = ForgeRegistries.FLUIDS.tags()?.getTag(tag)?.contains(this) ?: false
+
 fun IFluidHandler.amount(fluid: Fluid) =
     List(this.tanks) { this.getFluidInTank(it) }
         .filter { !it.isEmpty && it.fluid.isSame(fluid) }
         .sumOf { it.amount }
 fun IFluidHandler.amount(fluid: TagKey<Fluid>) =
     List(this.tanks) { this.getFluidInTank(it) }
-        .filter { !it.isEmpty && it.fluid.`is`(fluid) }
+        .filter { !it.isEmpty && it.fluid.isTag(fluid) }
         .sumOf { it.amount }
 
 inline fun <T, reified A: T> IntrinsicTagAppender<T>.add(vararg toAdd: RegistryObject<A>) =
@@ -222,7 +226,7 @@ sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec
             while(true) {
                 val position = origin + (direction * distance)
                 val entities = this.getEntities(exclude, AABB.ofSize(position, 1.0, 1.0, 1.0))
-                if(entities.size > 0) entities.forEach { if(it.position().distanceTo(position) < 1.0) return Entity(it, origin, direction, position, length) }
+                if(entities.size > 0) entities.forEach { if(it.position().distanceTo(position) < 1.0) return Entity(it, origin, position, direction, length) }
                 if(distance > length) return null
                 distance += 0.1
             }
@@ -233,7 +237,7 @@ sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec
             while(true) {
                 val position = origin + (direction * distance)
                 val state = this.getBlockState(BlockPos(position.toVec3i()))
-                if(!state.isAir && (countFluid || state.fluidState.fluidType.isAir)) return Block(state, origin, direction, position, length)
+                if(!state.isAir && (countFluid || state.fluidState.fluidType.isAir)) return Block(state, origin, position, direction, length)
                 if(distance > length) return null
                 distance += 0.1
             }

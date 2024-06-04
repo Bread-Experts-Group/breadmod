@@ -1,23 +1,31 @@
 package breadmod.network
 
-import breadmod.util.readVec3
-import breadmod.util.render.drawLine
-import breadmod.util.writeVec3
+import breadmod.util.render.addBeamTask
 import net.minecraft.network.FriendlyByteBuf
-import net.minecraft.world.phys.Vec3
 import net.minecraftforge.network.NetworkEvent
+import org.joml.Vector3f
 import java.util.function.Supplier
 
-data class BeamPacket(val pStart: Vec3, val pEnd: Vec3, val thickness: Float) {
+/**
+ * Client-bound packet to draw a line between [pStart] and [pEnd].
+ *
+ * **TODO:** [thickness] doesn't do anything right now since we're rendering DEBUG_LINES, not QUADS.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+data class BeamPacket(val pStart: Vector3f, val pEnd: Vector3f, val thickness: Double) {
     companion object {
         fun encodeBuf(input: BeamPacket, buffer: FriendlyByteBuf) {
-            buffer.writeVec3(input.pStart).writeVec3(input.pEnd).writeFloat(input.thickness) }
+            buffer.writeVector3f(input.pStart)
+            buffer.writeVector3f(input.pEnd)
+            buffer.writeDouble(input.thickness)
+        }
         fun decodeBuf(input: FriendlyByteBuf): BeamPacket =
-            BeamPacket(input.readVec3(), input.readVec3(), input.readFloat())
+            BeamPacket(input.readVector3f(), input.readVector3f(), input.readDouble())
 
         fun handle(input: BeamPacket, ctx: Supplier<NetworkEvent.Context>) = ctx.get().let {
             if(it.sender == null) {
-                drawLine(input.pStart, input.pEnd, input.thickness)
+                addBeamTask(input.pStart, input.pEnd, /*input.thickness*/)
                 it.packetHandled = true
             }
         }
