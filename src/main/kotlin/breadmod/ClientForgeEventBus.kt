@@ -9,9 +9,15 @@ import net.minecraftforge.fml.common.Mod
 @Suppress("unused")
 @Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = [Dist.CLIENT])
 object ClientForgeEventBus {
+    /**
+     * Level scene render event.
+     * @see renderBuffer
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
     @SubscribeEvent
     fun onLevelRender(event: RenderLevelStageEvent) {
         if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
-        renderBuffer.forEach { it.invoke() }
+        renderBuffer.forEach { if(it.invoke(event)) renderBuffer.remove(it) }
     }
 }

@@ -4,6 +4,7 @@ import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.screen.ModMenuTypes
+import breadmod.util.isTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.tags.FluidTags
 import net.minecraft.world.entity.player.Inventory
@@ -40,8 +41,8 @@ class DoughMachineMenu(
         override fun mayPlace(stack: ItemStack): Boolean = false }
     class DoughMachineBucketSlot(parent: DoughMachineBlockEntity) : Slot(parent, 2, 153, 7) {
         override fun mayPlace(stack: ItemStack): Boolean =
-            stack.item.let { it is BucketItem && it.fluid.`is`(FluidTags.WATER) } ||
-            FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { it?.drain(1, IFluidHandler.FluidAction.SIMULATE)?.let { drained -> drained.amount == 1 && drained.fluid.`is`(FluidTags.WATER) } == true }
+            stack.item.let { it is BucketItem && it.fluid.isTag(FluidTags.WATER) } ||
+            FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { it?.drain(1, IFluidHandler.FluidAction.SIMULATE)?.let { drained -> drained.amount == 1 && drained.fluid.isTag(FluidTags.WATER) } == true }
     }
 
     init {

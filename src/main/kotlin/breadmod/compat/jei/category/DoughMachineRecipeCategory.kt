@@ -6,6 +6,7 @@ import breadmod.block.entity.DoughMachineBlockEntity.Companion.INPUT_TANK_CAPACI
 import breadmod.block.entity.DoughMachineBlockEntity.Companion.OUTPUT_TANK_CAPACITY
 import breadmod.recipe.FluidEnergyRecipe
 import breadmod.registry.block.ModBlocks
+import breadmod.util.isTag
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import mezz.jei.api.forge.ForgeTypes
@@ -81,7 +82,7 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
             .addIngredients(ForgeTypes.FLUID_STACK, buildList {
                 recipe.fluidsRequired?.forEach { add(it) }
                 recipe.fluidsRequiredTagged?.forEach { (tagKey, amount) ->
-                    ForgeRegistries.FLUIDS.filter { it.`is`(tagKey) }.forEach { fluid -> add(FluidStack(fluid, amount)); buckets.add(fluid.bucket.defaultInstance) }
+                    ForgeRegistries.FLUIDS.filter { it.isTag(tagKey) }.forEach { fluid -> add(FluidStack(fluid, amount)); buckets.add(fluid.bucket.defaultInstance) }
                 }
             })
             .setFluidRenderer(INPUT_TANK_CAPACITY.toLong(), true, 16, 28)

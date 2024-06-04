@@ -34,13 +34,13 @@ class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
     private val random = Random(-34295000)
     override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if(pLevel is ServerLevel) {
-            pLevel.rayMarchEntity(pPlayer, pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)?.let {
+            pLevel.rayMarchEntity(pPlayer, pPlayer.position(), Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)?.let {
                 fun rand() = (random.nextDouble() - 0.5)*1.2
-                pLevel.sendParticles(ParticleTypes.FIREWORK, it.entity.x, it.entity.y, it.entity.z, 40, rand(), random.nextDouble(), rand(), 1.0)
+                pLevel.sendParticles(ParticleTypes.END_ROD, it.entity.x, it.entity.y, it.entity.z, 40, rand(), random.nextDouble(), rand(), 1.0)
                 pLevel.playSound(null, pPlayer.blockPosition(), ModSounds.TOOL_GUN.get(), SoundSource.PLAYERS, 2.0f, 1f)
                 NETWORK.send(
                     PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(it.entity.blockPosition()) },
-                    BeamPacket(it.startPosition, it.endPosition, 5f)
+                    BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 0.1)
                 )
 
                 if(it.entity is ServerPlayer) it.entity.connection.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))

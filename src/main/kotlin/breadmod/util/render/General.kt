@@ -4,34 +4,47 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GameRenderer
-import net.minecraft.world.phys.Vec3
+import net.minecraftforge.client.event.RenderLevelStageEvent
+import org.joml.Vector3f
 
-val renderBuffer = mutableListOf<() -> Unit>()
-fun drawLine(start: Vec3, end: Vec3, thickness: Float) {
-    val bufferBuilder = Tesselator.getInstance().builder
+/**
+ * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
+ * @see breadmod.ClientForgeEventBus.onLevelRender
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+val renderBuffer = mutableListOf<(RenderLevelStageEvent) -> Boolean>()
 
-    val direction = end.subtract(start).normalize()
-    val perpendicular = direction.cross(Vec3(0.0, 1.0, 0.0)).normalize().scale(thickness / 2.0)
-    val p1 = start.add(perpendicular)
-    val p2 = start.subtract(perpendicular)
-    val p3 = end.add(perpendicular)
-    val p4 = end.subtract(perpendicular)
+/**
+ * Draws a line from between [start] and [end], translated according to the current [net.minecraft.client.player.LocalPlayer]'s position.
+ *
+ * **TODO:** Implement line thickness using QUADS.
+ * @see breadmod.network.BeamPacket
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun addBeamTask(start: Vector3f, end: Vector3f) = renderBuffer.add {
+    val playerEyePos = (Minecraft.getInstance().player ?: return@add true).getEyePosition(it.partialTick)
 
-    renderBuffer.add {
-        RenderSystem.setShader { GameRenderer.getPositionColorShader() }
-        RenderSystem.enableBlend()
-        RenderSystem.defaultBlendFunc()
-        RenderSystem.lineWidth(thickness)
+    RenderSystem.enableBlend()
+    RenderSystem.defaultBlendFunc()
+    RenderSystem.setShader { GameRenderer.getPositionColorShader() }
 
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR)
+    val tesselator = Tesselator.getInstance()
+    it.poseStack.pushPose()
+    it.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
+    val stack = it.poseStack.last().pose()
+    
+    val builder = tesselator.builder
+    builder.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR)
+    builder.vertex(stack, start.x, start.y, start.z).color(0f,1f,1f,1f).endVertex()
+    builder.vertex(stack, end.x, end.y, end.z).color(0f,1f,1f,1f).endVertex()
 
-        bufferBuilder.vertex(p1.x, p1.y, p1.z).color(255, 255, 255, 255).endVertex()
-        bufferBuilder.vertex(p2.x, p2.y, p2.z).color(255, 255, 255, 255).endVertex()
-        bufferBuilder.vertex(p4.x, p4.y, p4.z).color(255, 255, 255, 255).endVertex()
-        bufferBuilder.vertex(p3.x, p3.y, p3.z).color(255, 255, 255, 255).endVertex()
+    tesselator.end()
+    RenderSystem.disableBlend()
+    it.poseStack.popPose()
 
-        Tesselator.getInstance().end()
-        RenderSystem.disableBlend()
-    }
+    return@add false
 }

@@ -1,5 +1,6 @@
 package breadmod.util.capability
 
+import breadmod.util.isTag
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.tags.TagKey
 import net.minecraft.world.level.material.Fluid
@@ -59,7 +60,7 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, val cha
      * @return A list of [FluidTank]s with the specified [Fluid] under [fluidTag], are empty (if [includeEmpty]), and match the [direction] (if any)
      */
     fun filterFluid(fluidTag: TagKey<Fluid>, includeEmpty: Boolean, direction: StorageDirection? = null) = tanksWithDirection(direction)
-        .filter { it.fluid.fluid.`is`(fluidTag) || (includeEmpty && it.isEmpty) }
+        .filter { it.fluid.fluid.isTag(fluidTag) || (includeEmpty && it.isEmpty) }
 
     /**
      * Counts the amount of [fluid] contained within this [FluidContainer]'s [FluidTank]s, optionally filtering out for [direction].
