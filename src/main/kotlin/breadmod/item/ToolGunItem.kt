@@ -2,13 +2,11 @@ package breadmod.item
 
 import breadmod.ModMain.modTranslatable
 import breadmod.network.BeamPacket
-import breadmod.network.CapabilityDataPacket
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.registry.sound.ModSounds
 import breadmod.util.RayMarchResult.Companion.rayMarchEntity
-import com.simibubi.create.foundation.item.render.SimpleCustomRenderer
 import net.minecraft.ChatFormatting
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
@@ -22,10 +20,8 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.client.extensions.common.IClientItemExtensions
 import net.minecraftforge.network.PacketDistributor
 import net.minecraftforge.registries.RegistryObject
-import java.util.function.Consumer
 import kotlin.random.Random
 
 class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
@@ -54,5 +50,5 @@ class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
         return InteractionResultHolder.fail(pPlayer.getItemInHand(pUsedHand))
     }
 
-    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(SimpleCustomRenderer.create(this, ToolGunItemRenderer()))
+    //override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(SimpleCustomRenderer.create(this, ToolGunItemRenderer()))
 }
