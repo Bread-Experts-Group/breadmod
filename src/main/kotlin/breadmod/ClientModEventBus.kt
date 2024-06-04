@@ -1,5 +1,6 @@
 package breadmod
 
+import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.menu.DoughMachineScreen
@@ -32,15 +33,17 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
+import net.minecraftforge.client.event.ModelEvent.RegisterAdditional
 import net.minecraftforge.client.event.RegisterColorHandlersEvent
 import net.minecraftforge.client.event.RegisterShadersEvent
+import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import java.util.function.Function
 
 @Suppress("unused")
-@Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
+@Mod.EventBusSubscriber(modid = ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object ClientModEventBus {
     @SubscribeEvent
     fun onClientSetup(event: FMLClientSetupEvent) {
@@ -82,12 +85,18 @@ object ClientModEventBus {
     }
 
     @SubscribeEvent
+    fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
+        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/tool_gun_model"))
+        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun_coil_model"))
+    }
+
+    @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerBlockEntityRenderer(ModBlockEntities.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get()) { SidedScreenRenderer() }
     }
 
-    lateinit var loadedShader: ShaderInstance
+    private lateinit var loadedShader: ShaderInstance
     @SubscribeEvent
     fun registerShaders(event: RegisterShadersEvent) {
         event.registerShader(ShaderInstance(event.resourceProvider, modLocation("projector"), DefaultVertexFormat.NEW_ENTITY)) { shader ->

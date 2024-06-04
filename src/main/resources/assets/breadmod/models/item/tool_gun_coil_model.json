@@ -1,6 +1,4 @@
 {
-	"credit": "Made with Blockbench",
-	"parent": "breadmod:item/tool_gun",
 	"textures": {
 		"0": "breadmod:item/tool_gun",
 		"particle": "breadmod:item/tool_gun"
