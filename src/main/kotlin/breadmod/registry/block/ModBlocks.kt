@@ -7,7 +7,7 @@ import breadmod.block.multiblock.generic.PowerInterfaceBlock
 import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT
 import breadmod.registry.item.ModItems
-import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import com.google.common.collect.ImmutableMap
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
@@ -192,7 +192,7 @@ object ModBlocks {
     val BAUXITE_ORE = registerBlockItem(
         "bauxite_ore",
         { OreBlock() },
-        { block -> object : BlockItem(block, Properties()), RegisterSpecialCreativeTab {
+        { block -> object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
             override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.MAIN_TAB)
 
             override fun displayInCreativeTab(

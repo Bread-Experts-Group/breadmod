@@ -26,5 +26,9 @@ object PacketHandler {
             idCounter++, VoidTankPacket::class.java,
             VoidTankPacket::encodeBuf, VoidTankPacket::decodeBuf, VoidTankPacket::handle
         )
+        NETWORK.registerMessage(
+            idCounter++, BeamPacket::class.java,
+            BeamPacket::encodeBuf, BeamPacket::decodeBuf, BeamPacket::handle
+        )
     }
 }

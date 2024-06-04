@@ -205,16 +205,16 @@ fun <T> IntrinsicTagAppender<T>.add(vararg toAdd: RegistryObject<T>) =
 fun <T> TagsProvider.TagAppender<T>.add(vararg toAdd: RegistryObject<T>) =
     this.also { this.add(*toAdd.map { it.key }.toTypedArray()) }
 
-sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec3, val direction: Vec3, val length: Double) {
+sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec3, val endPosition: Vec3, val direction: Vec3, val length: Double) {
     enum class RayMarchResultType {
         ENTITY,
         BLOCK
     }
 
-    class Block(val blockState: BlockState, startPosition: Vec3, direction: Vec3, length: Double):
-        RayMarchResult(RayMarchResultType.BLOCK, startPosition, direction, length)
-    class Entity(val entity: net.minecraft.world.entity.Entity, startPosition: Vec3, direction: Vec3, length: Double):
-        RayMarchResult(RayMarchResultType.ENTITY, startPosition, direction, length)
+    class Block(val blockState: BlockState, startPosition: Vec3, endPosition: Vec3, direction: Vec3, length: Double):
+        RayMarchResult(RayMarchResultType.BLOCK, startPosition, endPosition, direction, length)
+    class Entity(val entity: net.minecraft.world.entity.Entity, startPosition: Vec3, endPosition: Vec3, direction: Vec3, length: Double):
+        RayMarchResult(RayMarchResultType.ENTITY, startPosition, endPosition, direction, length)
 
     companion object {
         fun Level.rayMarchEntity(exclude: net.minecraft.world.entity.Entity?, origin: Vec3, direction: Vec3, length: Double): Entity? {
@@ -222,7 +222,7 @@ sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec
             while(true) {
                 val position = origin + (direction * distance)
                 val entities = this.getEntities(exclude, AABB.ofSize(position, 1.0, 1.0, 1.0))
-                if(entities.size > 0) entities.forEach { if(it.position().distanceTo(position) < 1.0) return Entity(it, origin, direction, length) }
+                if(entities.size > 0) entities.forEach { if(it.position().distanceTo(position) < 1.0) return Entity(it, origin, direction, position, length) }
                 if(distance > length) return null
                 distance += 0.1
             }
@@ -233,10 +233,13 @@ sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec
             while(true) {
                 val position = origin + (direction * distance)
                 val state = this.getBlockState(BlockPos(position.toVec3i()))
-                if(!state.isAir && (countFluid || state.fluidState.fluidType.isAir)) return Block(state, origin, direction, length)
+                if(!state.isAir && (countFluid || state.fluidState.fluidType.isAir)) return Block(state, origin, direction, position, length)
                 if(distance > length) return null
                 distance += 0.1
             }
         }
     }
 }
+
+fun FriendlyByteBuf.writeVec3(vec3: Vec3) = this.also { this.writeDouble(vec3.x).writeDouble(vec3.y).writeDouble(vec3.z) }
+fun FriendlyByteBuf.readVec3() = Vec3(this.readDouble(), this.readDouble(), this.readDouble())

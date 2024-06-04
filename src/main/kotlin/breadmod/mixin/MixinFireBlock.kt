@@ -14,7 +14,7 @@ import kotlin.reflect.full.hasAnnotation
 
 @Suppress("NonJavaMixin")
 @Mixin(FireBlock::class)
-class MixinFireBlock {
+abstract class MixinFireBlock {
     @Inject(method = ["tryCatchFire"], at = [At("HEAD")], cancellable = true)
     private fun tryCatchFire(
         pLevel: Level, pPos: BlockPos, pChance: Int,

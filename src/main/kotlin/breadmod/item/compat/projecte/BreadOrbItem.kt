@@ -1,7 +1,7 @@
 package breadmod.item.compat.projecte
 
 import breadmod.ModMain.modTranslatable
-import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.ModList
 import net.minecraftforge.registries.RegistryObject
 import kotlin.math.min
 
-class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper, RegisterSpecialCreativeTab {
+class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper, IRegisterSpecialCreativeTab {
     private val emcAmount = 45000
     init {
         this.addItemCapability { EmcHolderItemCapabilityWrapper() }

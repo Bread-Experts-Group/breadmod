@@ -1,7 +1,10 @@
 package breadmod.item
 
 import breadmod.ModMain.modTranslatable
-import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.network.BeamPacket
+import breadmod.network.CapabilityDataPacket
+import breadmod.network.PacketHandler.NETWORK
+import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.registry.sound.ModSounds
 import breadmod.util.RayMarchResult.Companion.rayMarchEntity
@@ -17,17 +20,17 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.UseAnim
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.client.extensions.common.IClientItemExtensions
+import net.minecraftforge.network.PacketDistributor
 import net.minecraftforge.registries.RegistryObject
 import java.util.function.Consumer
 import kotlin.random.Random
 
-class ToolGunItem: Item(Properties().stacksTo(1)), RegisterSpecialCreativeTab {
+class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
+    override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
+
     private val random = Random(-34295000)
     override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if(pLevel is ServerLevel) {
@@ -35,6 +38,10 @@ class ToolGunItem: Item(Properties().stacksTo(1)), RegisterSpecialCreativeTab {
                 fun rand() = (random.nextDouble() - 0.5)*1.2
                 pLevel.sendParticles(ParticleTypes.FIREWORK, it.entity.x, it.entity.y, it.entity.z, 40, rand(), random.nextDouble(), rand(), 1.0)
                 pLevel.playSound(null, pPlayer.blockPosition(), ModSounds.TOOL_GUN.get(), SoundSource.PLAYERS, 2.0f, 1f)
+                NETWORK.send(
+                    PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(it.entity.blockPosition()) },
+                    BeamPacket(it.startPosition, it.endPosition, 5f)
+                )
 
                 if(it.entity is ServerPlayer) it.entity.connection.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))
                 else {
@@ -44,19 +51,8 @@ class ToolGunItem: Item(Properties().stacksTo(1)), RegisterSpecialCreativeTab {
             }
         }
 
-        return InteractionResultHolder.consume(pPlayer.getItemInHand(pUsedHand))
+        return InteractionResultHolder.fail(pPlayer.getItemInHand(pUsedHand))
     }
 
-    override fun getUseAnimation(pStack: ItemStack): UseAnim = UseAnim.CUSTOM
-
-    override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
-
-    override fun shouldCauseReequipAnimation(
-        oldStack: ItemStack?,
-        newStack: ItemStack?,
-        slotChanged: Boolean
-    ): Boolean = false
-
-    @OnlyIn(Dist.CLIENT)
     override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(SimpleCustomRenderer.create(this, ToolGunItemRenderer()))
 }

@@ -2,6 +2,6 @@ package breadmod.item
 
 import java.awt.Color
 
-interface DyedTintableItem {
+interface IDyedTintableItem {
     val defaultTint: Color
 }

@@ -8,7 +8,7 @@ import net.minecraftforge.registries.RegistryObject
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-interface RegisterSpecialCreativeTab {
+interface IRegisterSpecialCreativeTab {
     /**
      * Creative tabs to register this item for.
      * @author Miko Elbrecht

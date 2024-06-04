@@ -4,7 +4,7 @@ import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
-import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.registry.item.IRegisterSpecialCreativeTab
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraftforge.registries.DeferredRegister
@@ -21,7 +21,7 @@ object ModCreativeTabs {
                 ModItems.deferredRegister.entries.forEach {
                     val item = it.get()
                     when {
-                        item is RegisterSpecialCreativeTab -> if (item.creativeModeTabs.contains(registryObject))
+                        item is IRegisterSpecialCreativeTab -> if (item.creativeModeTabs.contains(registryObject))
                             if(item.displayInCreativeTab(pParameters, pOutput)) pOutput.accept(item.defaultInstance)
                         general -> pOutput.accept(item.defaultInstance)
                     }

@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor
 
 @Suppress("NonJavaMixin")
 @Mixin(ItemModelShaper::class)
-interface IItemModelShaperAccessor {
+interface IAccessorItemModelShaper {
     @get:Accessor val modelManager: ModelManager
 }

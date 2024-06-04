@@ -1,7 +1,7 @@
 package breadmod.mixin
 
 import breadmod.block.ILightningStrikeAction
-import breadmod.mixin.accessors.IEntityAccessor
+import breadmod.mixin.accessors.IAccessorEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.LightningBolt
 import net.minecraft.world.level.block.state.BlockState
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 
 @Suppress("NonJavaMixin")
 @Mixin(LightningBolt::class)
-abstract class MixinLightningBolt: IEntityAccessor {
+abstract class MixinLightningBolt: IAccessorEntity {
     @Invoker("getStrikePosition") abstract fun iGetStrikePosition(): BlockPos
 
     @Inject(method = ["powerLightningRod"], at = [At("HEAD")], cancellable = true)

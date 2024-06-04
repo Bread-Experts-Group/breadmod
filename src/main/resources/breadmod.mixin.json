@@ -6,12 +6,12 @@
   "mixins": [
     "MixinFireBlock",
     "MixinLightningBolt",
-    "accessors.IEntityAccessor"
+    "accessors.IAccessorEntity"
   ],
   "client": [
     "MixinHumanoidArmorLayer",
     "MixinItemModelShaper",
-    "accessors.IItemModelShaperAccessor"
+    "accessors.IAccessorItemModelShaper"
   ],
   "refmap": "breadmod.refmap.json",
   "injectors": {

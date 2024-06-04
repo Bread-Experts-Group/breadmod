@@ -1,7 +1,7 @@
 package breadmod.item.armor
 
 import breadmod.ModMain.modTranslatable
-import breadmod.item.DyedTintableItem
+import breadmod.item.IDyedTintableItem
 import breadmod.registry.ModConfiguration.COMMON
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
@@ -21,7 +21,7 @@ import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.random.Random
 
-open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Properties()), DyedTintableItem {
+open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Properties()), IDyedTintableItem {
     override val defaultTint: Color = Color(216, 196, 170)
 
     private val random = Random(material.hashCode())

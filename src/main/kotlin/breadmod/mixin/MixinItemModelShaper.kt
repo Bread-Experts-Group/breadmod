@@ -1,7 +1,7 @@
 package breadmod.mixin
 
 import breadmod.block.specialItem.UseBlockStateNBT
-import breadmod.mixin.accessors.IItemModelShaperAccessor
+import breadmod.mixin.accessors.IAccessorItemModelShaper
 import net.minecraft.client.renderer.ItemModelShaper
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.world.item.BlockItem
@@ -14,7 +14,7 @@ import kotlin.reflect.full.hasAnnotation
 
 @Mixin(ItemModelShaper::class)
 @Suppress("NonJavaMixin")
-abstract class MixinItemModelShaper: IItemModelShaperAccessor {
+abstract class MixinItemModelShaper: IAccessorItemModelShaper {
     @Inject(method = ["getItemModel"], at = [At("HEAD")], cancellable = true)
     private fun getItemModel(pStack: ItemStack, info: CallbackInfoReturnable<BakedModel>) = pStack.item.let {
         if(it is BlockItem && it.block::class.hasAnnotation<UseBlockStateNBT>()) {

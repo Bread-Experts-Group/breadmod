@@ -2,7 +2,7 @@ package breadmod.item
 
 import breadmod.registry.ModConfiguration
 import breadmod.registry.item.ModItems
-import breadmod.registry.item.RegisterSpecialCreativeTab
+import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
@@ -17,7 +17,7 @@ import java.lang.Math.random
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()), RegisterSpecialCreativeTab {
+class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()), IRegisterSpecialCreativeTab {
     private fun getTimeLeft(pStack: ItemStack): Long {
         if(pStack.orCreateTag.contains(TIME_LEFT_NBT)) return pStack.orCreateTag.getLong(TIME_LEFT_NBT)
         else {
