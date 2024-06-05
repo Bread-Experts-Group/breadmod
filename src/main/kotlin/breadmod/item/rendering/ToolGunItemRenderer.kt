@@ -2,6 +2,7 @@ package breadmod.item.rendering
 
 import breadmod.ModMain.modLocation
 import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
@@ -34,22 +35,22 @@ class ToolGunItemRenderer() : BlockEntityWithoutLevelRenderer(
         val coilModel = modelManager.getModel(coilModelLocation)
 
         pPoseStack.pushPose()
-        mainModel.applyTransform(pDisplayContext, pPoseStack, isLeftHand(pDisplayContext))
-        coilModel.applyTransform(pDisplayContext, pPoseStack, isLeftHand(pDisplayContext))
-
-        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
-        renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+//        mainModel.applyTransform(pDisplayContext, pPoseStack, isLeftHand(pDisplayContext))
+//        coilModel.applyTransform(pDisplayContext, pPoseStack, isLeftHand(pDisplayContext))
+//
+//        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+//        renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
 
         // todo proper coil rotating, gun recoiling back after firing
         // refer to WrenchItemRenderer and WorldshaperItemRenderer for insight
         // ..also it's custom BEWLRs
 
         // These calls here actually have the coil rotate and render in place properly, but the entire model is offset in the wrong position
-        /*
+
         renderer.render(pStack, pDisplayContext, isLeftHand(pDisplayContext), pPoseStack, pBuffer, pPackedLight, pPackedOverlay, mainModel)
         pPoseStack.mulPose(Axis.XN.rotationDegrees(-45F))
         renderer.render(pStack, pDisplayContext, isLeftHand(pDisplayContext), pPoseStack, pBuffer, pPackedLight, pPackedOverlay, coilModel)
-        */
+
 
         pPoseStack.popPose()
     }
