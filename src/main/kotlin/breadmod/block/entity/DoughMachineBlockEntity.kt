@@ -5,7 +5,8 @@ import breadmod.ModMain.modTranslatable
 import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.network.CapabilityDataPacket
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.recipe.FluidEnergyRecipe
+import breadmod.recipe.fluidEnergy.DoughMachineRecipe
+import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.CapabilityHolder
@@ -91,8 +92,7 @@ class DoughMachineBlockEntity(
 
     private fun getItemHandler() = capabilities.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
-    private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, FluidEnergyRecipe> =
-        RecipeManager.createCheck(ModRecipeTypes.ENERGY_FLUID_ITEM)
+    private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, DoughMachineRecipe> = RecipeManager.createCheck(ModRecipeTypes.DOUGH_MACHINE)
     private var currentRecipe: FluidEnergyRecipe? = null
     private var energyDivision: Int? = null
 

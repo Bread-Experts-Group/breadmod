@@ -1,6 +1,6 @@
 package breadmod.compat.jei.vanillaExtension
 
-import breadmod.recipe.ArmorPotionRecipe
+import breadmod.recipe.crafting.ArmorPotionRecipe
 import breadmod.registry.item.ModItems
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper

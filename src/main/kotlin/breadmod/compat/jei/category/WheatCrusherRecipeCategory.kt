@@ -3,7 +3,7 @@ package breadmod.compat.jei.category
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.compat.jei.ModJEIRecipeTypes
-import breadmod.recipe.WheatCrusherRecipe
+import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
 import breadmod.registry.block.ModBlocks
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
@@ -22,7 +22,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.registries.ForgeRegistries
 
-class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCategory<WheatCrusherRecipe> {
+class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCategory<WheatCrushingRecipe> {
     val texture = modLocation("textures","gui","jei","gui_wheat_crusher.png")
     private val recipeTime : Int = 0
 
@@ -32,7 +32,7 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCate
         }
     })
 
-    private fun drawArrow(recipe : WheatCrusherRecipe): IDrawableAnimated {
+    private fun drawArrow(recipe : WheatCrushingRecipe): IDrawableAnimated {
         var recipeTime = recipe.time
         if(recipeTime <= 0) {
             recipeTime = this.recipeTime
@@ -40,7 +40,7 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCate
         return this.cachedArrows.getUnchecked(recipeTime)
     }
 
-    private fun drawRecipeTime(recipe : WheatCrusherRecipe, guiGraphics: GuiGraphics) {
+    private fun drawRecipeTime(recipe : WheatCrushingRecipe, guiGraphics: GuiGraphics) {
         if(recipe.time > 0) {
             val recipeTimeSeconds = recipe.time / 20
             val timeString = modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
@@ -50,14 +50,14 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCate
         }
     }
 
-    override fun getRecipeType(): RecipeType<WheatCrusherRecipe> = ModJEIRecipeTypes.wheatCrusherRecipeType
+    override fun getRecipeType(): RecipeType<WheatCrushingRecipe> = ModJEIRecipeTypes.wheatCrusherRecipeType
     override fun getTitle(): Component = Component.translatable(ModBlocks.WHEAT_CRUSHER_BLOCK.get().descriptionId)
     override fun getBackground(): IDrawable = guiHelper.createDrawable(texture, 0, 0, 161, 65)
     override fun getIcon(): IDrawable = guiHelper.createDrawableItemStack(ModBlocks.WHEAT_CRUSHER_BLOCK.get().defaultInstance)
 
     private var step: Int = -32; private var timer: Int = 20
     override fun draw(
-        recipe: WheatCrusherRecipe,
+        recipe: WheatCrushingRecipe,
         recipeSlotsView: IRecipeSlotsView,
         guiGraphics: GuiGraphics,
         mouseX: Double,
@@ -75,7 +75,7 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCate
         } else timer -= 2
     }
 
-    override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: WheatCrusherRecipe, focuses: IFocusGroup) {
+    override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: WheatCrushingRecipe, focuses: IFocusGroup) {
         builder.addSlot(RecipeIngredientRole.INPUT, 43, 24)
             .addItemStacks(buildList {
                 recipe.itemsRequired?.forEach { add(it) }

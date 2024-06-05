@@ -1,6 +1,6 @@
-package breadmod.recipe.serializers
+package breadmod.recipe.serializer
 
-import breadmod.recipe.FluidEnergyRecipe
+import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
 import breadmod.util.*
 import com.google.gson.JsonObject
 import net.minecraft.network.FriendlyByteBuf
@@ -48,8 +48,8 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
             requiredFluids?.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.FLUIDS),
             requiredItems?.getAsJsonArray(CERTAIN_KEY)?.extractJsonItemList(),
             requiredItems?.getAsJsonArray(TAGGED_KEY)?.extractJsonTagList(ForgeRegistries.ITEMS),
-            outputs.getAsJsonArray(FLUIDS_KEY)?.extractJsonFluidList(),
-            outputs.getAsJsonArray(ITEMS_KEY)?.extractJsonItemList()
+            outputs?.getAsJsonArray(FLUIDS_KEY)?.extractJsonFluidList(),
+            outputs?.getAsJsonArray(ITEMS_KEY)?.extractJsonItemList()
         )
     }
 

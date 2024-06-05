@@ -5,7 +5,7 @@ import breadmod.ModMain.modTranslatable
 import breadmod.block.entity.menu.WheatCrusherMenu
 import breadmod.network.CapabilityDataPacket
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.recipe.WheatCrusherRecipe
+import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.CapabilityHolder
@@ -70,9 +70,8 @@ class WheatCrusherBlockEntity(
 
     private fun getItemHandler() = capabilities.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
-    private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, WheatCrusherRecipe> =
-        RecipeManager.createCheck(ModRecipeTypes.WHEAT_CRUSHING)
-    private var currentRecipe: WheatCrusherRecipe? = null
+    private val recipeDial: RecipeManager.CachedCheck<CraftingContainer, WheatCrushingRecipe> = RecipeManager.createCheck(ModRecipeTypes.WHEAT_CRUSHING)
+    private var currentRecipe: WheatCrushingRecipe? = null
     private var energyDivision: Int? = null
 
     var progress = 0; var maxProgress = 0
@@ -104,10 +103,9 @@ class WheatCrusherBlockEntity(
                     pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
                     energyDivision?.let { rfd -> if(energyHandle.extractEnergy(rfd, false) != rfd) progress-- }
                 } else {
-                    if(it.canFitResults(itemHandle to listOf(1))) {
+                    if(it.canFitResults(itemHandle to listOf(1), null)) {
                         val assembled = it.assembleOutputs(this, pLevel)
-                        assembled.forEach {
-                            stack -> itemHandle[1].let { slot -> if(slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count) } }
+                        assembled.first.forEach { stack -> itemHandle[1].let { slot -> if(slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count) } }
                         setChanged()
                         currentRecipe = null
                         progress = 0

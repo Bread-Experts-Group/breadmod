@@ -4,7 +4,9 @@ import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.block.entity.DoughMachineBlockEntity.Companion.INPUT_TANK_CAPACITY
 import breadmod.block.entity.DoughMachineBlockEntity.Companion.OUTPUT_TANK_CAPACITY
-import breadmod.recipe.FluidEnergyRecipe
+import breadmod.compat.jei.ModJEIRecipeTypes
+import breadmod.recipe.fluidEnergy.DoughMachineRecipe
+import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
 import breadmod.registry.block.ModBlocks
 import breadmod.util.isTag
 import com.google.common.cache.CacheBuilder
@@ -17,6 +19,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView
 import mezz.jei.api.helpers.IGuiHelper
 import mezz.jei.api.recipe.IFocusGroup
 import mezz.jei.api.recipe.RecipeIngredientRole
+import mezz.jei.api.recipe.RecipeType
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
@@ -24,7 +27,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.registries.ForgeRegistries
 
-class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergyRecipeCategory(guiHelper) {
+class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergyRecipeCategory<DoughMachineRecipe>(guiHelper) {
     val texture = modLocation("textures","gui","jei","gui_dough_machine.png")
     private val recipeTime : Int = 0
 
@@ -54,9 +57,10 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
 
     override fun getTitle(): Component = Component.translatable(ModBlocks.DOUGH_MACHINE_BLOCK.get().descriptionId)
     override fun getBackground(): IDrawable = guiHelper.createDrawable(texture, 0, 0, 147, 55)
+    override fun getRecipeType(): RecipeType<DoughMachineRecipe> = ModJEIRecipeTypes.doughMachineRecipeType
 
     override fun draw(
-        recipe: FluidEnergyRecipe,
+        recipe: DoughMachineRecipe,
         recipeSlotsView: IRecipeSlotsView,
         guiGraphics: GuiGraphics,
         mouseX: Double,
@@ -68,7 +72,7 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
         guiGraphics.blit(texture, 102, 4, 147, 17, 16, 47)
     }
 
-    override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: FluidEnergyRecipe, focuses: IFocusGroup) {
+    override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: DoughMachineRecipe, focuses: IFocusGroup) {
         builder.addSlot(RecipeIngredientRole.INPUT, 8, 18)
             .addItemStacks(buildList {
                 recipe.itemsRequired?.forEach { add(it) }

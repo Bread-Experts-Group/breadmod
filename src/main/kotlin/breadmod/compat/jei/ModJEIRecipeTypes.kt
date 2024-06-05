@@ -1,11 +1,11 @@
 package breadmod.compat.jei
 
 import breadmod.ModMain
-import breadmod.recipe.FluidEnergyRecipe
-import breadmod.recipe.WheatCrusherRecipe
+import breadmod.recipe.fluidEnergy.DoughMachineRecipe
+import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
 import mezz.jei.api.recipe.RecipeType
 
 object ModJEIRecipeTypes {
-    val fluidEnergyRecipeType: RecipeType<FluidEnergyRecipe> = RecipeType.create(ModMain.ID, "fluid_energy_recipe", FluidEnergyRecipe::class.java)
-    val wheatCrusherRecipeType: RecipeType<WheatCrusherRecipe> = RecipeType.create(ModMain.ID, "wheat_crusher_recipe", WheatCrusherRecipe::class.java)
+    val doughMachineRecipeType: RecipeType<DoughMachineRecipe> = RecipeType.create(ModMain.ID, "dough_machine_recipe", DoughMachineRecipe::class.java)
+    val wheatCrusherRecipeType: RecipeType<WheatCrushingRecipe> = RecipeType.create(ModMain.ID, "wheat_crusher_recipe", WheatCrushingRecipe::class.java)
 }

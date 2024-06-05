@@ -9,8 +9,8 @@ import breadmod.compat.jei.category.DoughMachineRecipeCategory
 import breadmod.compat.jei.category.WheatCrusherRecipeCategory
 import breadmod.compat.jei.vanillaExtension.JEIArmorPotionCraftingExtension
 import breadmod.compat.jei.vanillaExtension.JEIBreadSliceCraftingExtension
-import breadmod.recipe.ArmorPotionRecipe
-import breadmod.recipe.BreadSliceRecipe
+import breadmod.recipe.crafting.ArmorPotionRecipe
+import breadmod.recipe.crafting.BreadSliceRecipe
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.registry.screen.ModMenuTypes
@@ -41,28 +41,28 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
-        registration.addRecipeCatalyst(ModBlocks.DOUGH_MACHINE_BLOCK.get().defaultInstance, ModJEIRecipeTypes.fluidEnergyRecipeType)
+        registration.addRecipeCatalyst(ModBlocks.DOUGH_MACHINE_BLOCK.get().defaultInstance, ModJEIRecipeTypes.doughMachineRecipeType)
         registration.addRecipeCatalyst(ModBlocks.WHEAT_CRUSHER_BLOCK.get().defaultInstance, ModJEIRecipeTypes.wheatCrusherRecipeType)
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
         val recipeManager = minecraft?.level?.recipeManager ?: throw IllegalStateException()
-        val testRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.ENERGY_FLUID_ITEM)
+        val doughMachineRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.DOUGH_MACHINE)
         val wheatCrusherRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.WHEAT_CRUSHING)
 
         registration.addItemStackInfo(ModBlocks.BREAD_BLOCK.get().defaultInstance, Component.literal("FUCK"))
-        registration.addRecipes(ModJEIRecipeTypes.fluidEnergyRecipeType, testRecipeList)
+        registration.addRecipes(ModJEIRecipeTypes.doughMachineRecipeType, doughMachineRecipeList)
         registration.addRecipes(ModJEIRecipeTypes.wheatCrusherRecipeType, wheatCrusherRecipeList)
     }
 
     override fun registerGuiHandlers(registration: IGuiHandlerRegistration) {
-        registration.addRecipeClickArea(DoughMachineScreen::class.java, 47, 34, 23, 17, ModJEIRecipeTypes.fluidEnergyRecipeType)
+        registration.addRecipeClickArea(DoughMachineScreen::class.java, 47, 34, 23, 17, ModJEIRecipeTypes.doughMachineRecipeType)
         registration.addRecipeClickArea(WheatCrusherScreen::class.java, 84, 34, 7, 48, ModJEIRecipeTypes.wheatCrusherRecipeType)
     }
 
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
         registration.addRecipeTransferHandler(
-            DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.fluidEnergyRecipeType,
+            DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.doughMachineRecipeType,
             0, 3, 3, 36
         )
         registration.addRecipeTransferHandler(

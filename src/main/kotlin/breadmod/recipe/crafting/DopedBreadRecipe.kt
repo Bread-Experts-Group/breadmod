@@ -1,4 +1,4 @@
-package breadmod.recipe
+package breadmod.recipe.crafting
 
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers.DOPED_BREAD

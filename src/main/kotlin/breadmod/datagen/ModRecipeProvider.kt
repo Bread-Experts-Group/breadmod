@@ -3,7 +3,6 @@ package breadmod.datagen
 import breadmod.ModMain.modLocation
 import breadmod.datagen.recipe.compat.create.CreateMixingRecipeBuilder
 import breadmod.datagen.recipe.FluidEnergyRecipeBuilder
-import breadmod.datagen.recipe.WheatCrusherRecipeBuilder
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
@@ -378,21 +377,31 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .setRFRequired(500)
             .requiresItem(ModItems.FLOUR.get())
             .requiresFluid(FluidTags.WATER, 250)
+            .setSerializer(ModRecipeSerializers.DOUGH_MACHINE.get())
             .save(pWriter, modLocation("special", "machine", "flour_to_dough"))
         FluidEnergyRecipeBuilder(ItemStack(ModItems.ULTIMATE_BREAD.get()), FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME))
             .setTimeRequired(20 * 5)
             .setRFRequired(5000)
             .requiresItem(Items.BREAD, 5)
+            .setSerializer(ModRecipeSerializers.DOUGH_MACHINE.get())
             .save(pWriter, modLocation("special", "machine", "it_worked"))
         FluidEnergyRecipeBuilder(FluidStack(Fluids.LAVA, FluidType.BUCKET_VOLUME * 2))
             .setTimeRequired(20 * 5)
             .setRFRequired(10000)
             .requiresItem(Items.OBSIDIAN)
+            .setSerializer(ModRecipeSerializers.DOUGH_MACHINE.get())
             .save(pWriter, modLocation("special", "machine", "boo"))
-        WheatCrusherRecipeBuilder(ModItems.FLOUR.get())
+        FluidEnergyRecipeBuilder()
+            .setTimeRequired(20 * 5)
+            .setRFRequired(-10000)
+            .requiresItem(Items.LAVA_BUCKET)
+            .setSerializer(ModRecipeSerializers.DOUGH_MACHINE.get())
+            .save(pWriter, modLocation("special", "machine", "meow"))
+        FluidEnergyRecipeBuilder(ModItems.FLOUR.get())
             .setTimeRequired(20 * 5)
             .setRFRequired(5000)
             .requiresItem(Items.WHEAT)
+            .setSerializer(ModRecipeSerializers.WHEAT_CRUSHER.get())
             .save(pWriter, modLocation("special", "machine", "wheat_crushing"))
 
         // // Compat

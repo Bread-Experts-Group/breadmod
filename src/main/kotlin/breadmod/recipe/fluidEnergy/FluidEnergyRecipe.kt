@@ -1,7 +1,5 @@
-package breadmod.recipe
+package breadmod.recipe.fluidEnergy
 
-import breadmod.registry.recipe.ModRecipeSerializers
-import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.amount
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
@@ -21,7 +19,7 @@ import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
 import kotlin.jvm.optionals.getOrNull
 
-open class FluidEnergyRecipe(
+abstract class FluidEnergyRecipe(
     pId: ResourceLocation,
     open val time: Int = 0,
     open val energy: Int? = null,
@@ -32,7 +30,8 @@ open class FluidEnergyRecipe(
     open val fluidsOutput: List<FluidStack>? = null,
     open val itemsOutput: List<ItemStack>? = null,
 ): CustomRecipe(pId, CraftingBookCategory.MISC) {
-    override fun getType(): RecipeType<*> = ModRecipeTypes.ENERGY_FLUID_ITEM
+    abstract override fun getType(): RecipeType<*>
+    abstract override fun getSerializer(): RecipeSerializer<*>
 
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
         val okay =
@@ -74,5 +73,4 @@ open class FluidEnergyRecipe(
 
 
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = true
-    override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY.get()
 }

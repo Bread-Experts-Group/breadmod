@@ -1,7 +1,6 @@
 package breadmod.datagen.recipe
 
-import breadmod.recipe.serializers.SimpleFluidEnergyRecipeSerializer
-import breadmod.registry.recipe.ModRecipeSerializers
+import breadmod.recipe.serializer.SimpleFluidEnergyRecipeSerializer
 import com.google.gson.JsonObject
 import net.minecraft.advancements.CriterionTriggerInstance
 import net.minecraft.data.recipes.FinishedRecipe
@@ -49,12 +48,15 @@ class FluidEnergyRecipeBuilder(
     override fun setRFRequired(rf: Int) = this.also { super.setRFRequired(rf) }
     override fun setTimeRequired(ticks: Int) = this.also { super.setTimeRequired(ticks) }
 
+    private var serializer: SimpleFluidEnergyRecipeSerializer<*>? = null
+    fun setSerializer(newSerializer: SimpleFluidEnergyRecipeSerializer<*>) = this.also { serializer = newSerializer }
+
     override fun save(pFinishedRecipeConsumer: Consumer<FinishedRecipe>, pRecipeId: ResourceLocation) {
         pFinishedRecipeConsumer.accept(object: FinishedRecipe {
             override fun serializeRecipeData(pJson: JsonObject) {
                 type.toJson(
                     pJson, pRecipeId,
-                    timeInTicks, powerInRF.takeIf { it > 0 },
+                    timeInTicks, powerInRF.takeIf { it != 0 },
                     fluidsRequired.takeIf { it.isNotEmpty() }, fluidsRequiredTagged.takeIf { it.isNotEmpty() },
                     itemsRequired.takeIf { it.isNotEmpty() }, itemsRequiredTagged.takeIf { it.isNotEmpty() },
                     fluidResults.takeIf { it.isNotEmpty() }, itemResults.takeIf { it.isNotEmpty() }
@@ -62,7 +64,7 @@ class FluidEnergyRecipeBuilder(
             }
 
             override fun getId(): ResourceLocation = pRecipeId
-            override fun getType(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY.get()
+            override fun getType(): SimpleFluidEnergyRecipeSerializer<*> = serializer ?: throw IllegalArgumentException("You must provide a serializer.")
 
             override fun serializeAdvancement(): JsonObject? = null
             override fun getAdvancementId(): ResourceLocation? = null

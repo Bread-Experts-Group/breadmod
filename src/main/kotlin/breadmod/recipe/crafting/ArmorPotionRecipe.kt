@@ -1,4 +1,4 @@
-package breadmod.recipe
+package breadmod.recipe.crafting
 
 import breadmod.item.armor.BreadArmorItem
 import breadmod.registry.recipe.ModRecipeSerializers
