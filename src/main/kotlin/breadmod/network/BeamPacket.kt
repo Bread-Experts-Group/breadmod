@@ -25,7 +25,7 @@ data class BeamPacket(val pStart: Vector3f, val pEnd: Vector3f, val thickness: D
 
         fun handle(input: BeamPacket, ctx: Supplier<NetworkEvent.Context>) = ctx.get().let {
             if(it.sender == null) {
-                addBeamTask(input.pStart, input.pEnd, /*input.thickness*/)
+                addBeamTask(input.pStart, input.pEnd /*input.thickness*/)
                 it.packetHandled = true
             }
         }

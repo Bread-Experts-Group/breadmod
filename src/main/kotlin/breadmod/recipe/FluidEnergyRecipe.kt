@@ -40,7 +40,7 @@ open class FluidEnergyRecipe(
                 itemsRequiredTagged?.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.first) }?.count ?: -1) >= it.second } ?: true
         if(okay) {
             val entityCheck = pContainer as? ICapabilityProvider
-            if(energy != null && energy!! > 0) {
+            if(energy != null) {
                 val energyHandle = entityCheck?.getCapability(ForgeCapabilities.ENERGY)?.resolve()?.getOrNull() ?: return false
                 if(energyHandle.energyStored < energy!!) return false
             }
