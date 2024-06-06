@@ -1,15 +1,17 @@
 package breadmod.item
 
 import breadmod.ModMain.modTranslatable
-import breadmod.item.rendering.ToolGunItemRenderer
+import breadmod.item.rendering.CreateToolGunItemRenderer
+import breadmod.item.rendering.CustomToolGunItemRenderer
+import breadmod.item.rendering.helper.SimpleCustomItemRenderer
 import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.registry.sound.ModSounds
 import breadmod.util.RayMarchResult.Companion.rayMarchEntity
+import com.simibubi.create.foundation.item.render.SimpleCustomRenderer
 import net.minecraft.ChatFormatting
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -54,7 +56,16 @@ class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
         return InteractionResultHolder.fail(pPlayer.getItemInHand(pUsedHand))
     }
 
-    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions {
-        override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
-    })
+    // Backup model files are in the model assets folder
+
+    // renderer without any helper classes, need to use files in the backup models folder for this to work properly
+//    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions {
+//        override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
+//    })
+
+    // breadmod renderer (broken)
+//    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(SimpleCustomItemRenderer.create(this, CustomToolGunItemRenderer()))
+
+    // create renderer
+    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(SimpleCustomRenderer.create(this, CreateToolGunItemRenderer()))
 }
