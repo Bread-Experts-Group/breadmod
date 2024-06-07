@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.model.BakedModelWrapper
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 abstract class AbstractRenderedItemModelRenderer : BlockEntityWithoutLevelRenderer(null, null) {
 
     override fun renderByItem(
@@ -19,9 +20,10 @@ abstract class AbstractRenderedItemModelRenderer : BlockEntityWithoutLevelRender
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val mainModel: CustomRenderedItemModel = Minecraft.getInstance().itemRenderer.getModel(pStack, null, null, 0) as CustomRenderedItemModel
-        val renderer: PartialItemModelRenderer =
-            PartialItemModelRenderer.of(pStack, pDisplayContext, pPoseStack, pBuffer, pPackedOverlay)
+        val mainModel = Minecraft.getInstance()
+            .itemRenderer
+            .getModel(pStack, null, null, 0) as CustomRenderedItemModel
+        val renderer = PartialItemModelRenderer.of(pStack, pDisplayContext, pPoseStack, pBuffer, pPackedOverlay)
 
         pPoseStack.pushPose()
         pPoseStack.translate(0.5F, 0.5F, 0.5F)
@@ -44,10 +46,10 @@ abstract class AbstractRenderedItemModelRenderer : BlockEntityWithoutLevelRender
         override fun isCustomRenderer(): Boolean = true
         override fun applyTransform(
             cameraTransformType: ItemDisplayContext,
-            poseStack: PoseStack,
+            pPoseStack: PoseStack,
             applyLeftHandTransform: Boolean
         ): BakedModel {
-            super.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform)
+            super.applyTransform(cameraTransformType, pPoseStack, applyLeftHandTransform)
             return this
         }
         fun getOriginalModel(): BakedModel = originalModel

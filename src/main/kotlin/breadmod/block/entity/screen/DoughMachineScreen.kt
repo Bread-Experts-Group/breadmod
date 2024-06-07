@@ -1,7 +1,8 @@
-package breadmod.block.entity.menu
+package breadmod.block.entity.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
+import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.VoidTankPacket
 import breadmod.util.capability.FluidContainer

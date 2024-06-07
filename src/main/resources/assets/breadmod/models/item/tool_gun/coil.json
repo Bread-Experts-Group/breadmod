@@ -1,4 +1,5 @@
 {
+	"parent": "breadmod:item/tool_gun/item",
 	"textures": {
 		"0": "breadmod:item/tool_gun",
 		"particle": "breadmod:item/tool_gun"

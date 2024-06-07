@@ -6,7 +6,8 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions
 import net.minecraftforge.registries.ForgeRegistries
 import java.util.function.Consumer
 
-class SimpleCustomItemRenderer(private val renderer: AbstractRenderedItemModelRenderer) : IClientItemExtensions {
+class SimpleCustomItemRenderer(private var renderer: AbstractRenderedItemModelRenderer) : IClientItemExtensions {
+
     override fun getCustomRenderer(): AbstractRenderedItemModelRenderer = renderer
 
     companion object {
@@ -20,7 +21,7 @@ class SimpleCustomItemRenderer(private val renderer: AbstractRenderedItemModelRe
         private val items: MutableSet<Item> = ReferenceOpenHashSet()
         private var itemsFiltered = false
 
-        fun register(pItem: Item) = items.add(pItem)
+        fun register(pItem: Item) { items.add(pItem) }
         fun forEach(pConsumer: Consumer<Item>) {
             if(!itemsFiltered) {
                 val iterator = items.iterator()

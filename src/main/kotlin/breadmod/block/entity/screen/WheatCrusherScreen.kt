@@ -1,7 +1,8 @@
-package breadmod.block.entity.menu
+package breadmod.block.entity.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
+import breadmod.block.entity.menu.WheatCrusherMenu
 import breadmod.util.formatUnit
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.ChatFormatting

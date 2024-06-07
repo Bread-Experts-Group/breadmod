@@ -3,8 +3,8 @@ package breadmod
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
 import breadmod.block.color.BlackbodyBlockColor
-import breadmod.block.entity.menu.DoughMachineScreen
-import breadmod.block.entity.menu.WheatCrusherScreen
+import breadmod.block.entity.screen.DoughMachineScreen
+import breadmod.block.entity.screen.WheatCrusherScreen
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.entity.renderer.BreadBulletEntityRenderer
@@ -84,11 +84,11 @@ object ClientModEventBus {
         }
     }
 
-    @SubscribeEvent
-    fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
-        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/tool_gun_model"))
-        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun_coil_model"))
-    }
+//    @SubscribeEvent
+//    fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
+//        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/tool_gun/item"))
+//        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun/coil"))
+//    }
 
     @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {

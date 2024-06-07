@@ -1,17 +1,15 @@
 package breadmod.item
 
 import breadmod.ModMain.modTranslatable
-import breadmod.item.rendering.CreateToolGunItemRenderer
-import breadmod.item.rendering.CustomToolGunItemRenderer
-import breadmod.item.rendering.helper.SimpleCustomItemRenderer
+import breadmod.compat.geckolib.ToolGunGeoRenderer
 import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.registry.sound.ModSounds
 import breadmod.util.RayMarchResult.Companion.rayMarchEntity
-import com.simibubi.create.foundation.item.render.SimpleCustomRenderer
 import net.minecraft.ChatFormatting
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
@@ -27,10 +25,28 @@ import net.minecraft.world.phys.Vec3
 import net.minecraftforge.client.extensions.common.IClientItemExtensions
 import net.minecraftforge.network.PacketDistributor
 import net.minecraftforge.registries.RegistryObject
+import software.bernie.geckolib.animatable.GeoItem
+import software.bernie.geckolib.animatable.SingletonGeoAnimatable
+import software.bernie.geckolib.core.animatable.GeoAnimatable
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache
+import software.bernie.geckolib.core.animation.AnimatableManager
+import software.bernie.geckolib.core.animation.AnimationController
+import software.bernie.geckolib.core.animation.RawAnimation
+import software.bernie.geckolib.core.`object`.PlayState
+import software.bernie.geckolib.util.RenderUtils
 import java.util.function.Consumer
 import kotlin.random.Random
 
-class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
+
+class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab, GeoItem {
+    private val cache: AnimatableInstanceCache = SingletonAnimatableInstanceCache(this)
+    private val activateAnim: RawAnimation = RawAnimation.begin().thenPlay("animation.tool_gun")
+
+    init {
+        SingletonGeoAnimatable.registerSyncedAnimatable(this)
+    }
+
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
     private val random = Random(-34295000)
@@ -44,6 +60,7 @@ class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
                     PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(it.entity.blockPosition()) },
                     BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 0.1)
                 )
+                triggerAnim<GeoAnimatable>(pPlayer, GeoItem.getOrAssignId(pPlayer.getItemInHand(pUsedHand), pLevel), "Activation", "activate")
 
                 if(it.entity is ServerPlayer) it.entity.connection.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))
                 else {
@@ -56,16 +73,17 @@ class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
         return InteractionResultHolder.fail(pPlayer.getItemInHand(pUsedHand))
     }
 
-    // Backup model files are in the model assets folder
+    override fun registerControllers(controllers: AnimatableManager.ControllerRegistrar) {
+        controllers.add(AnimationController(this, "Activation", 0) { PlayState.STOP }.triggerableAnim("activate", activateAnim))
+    }
 
-    // renderer without any helper classes, need to use files in the backup models folder for this to work properly
-//    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions {
-//        override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
-//    })
-
-    // breadmod renderer (broken)
-//    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(SimpleCustomItemRenderer.create(this, CustomToolGunItemRenderer()))
-
-    // create renderer
-    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(SimpleCustomRenderer.create(this, CreateToolGunItemRenderer()))
+    override fun getAnimatableInstanceCache(): AnimatableInstanceCache = cache
+    override fun getTick(itemStack: Any?): Double = RenderUtils.getCurrentTick()
+    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions {
+        var renderer: ToolGunGeoRenderer? = null
+        override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer {
+            if(this.renderer == null) this.renderer = ToolGunGeoRenderer()
+            return renderer as ToolGunGeoRenderer
+        }
+    })
 }
