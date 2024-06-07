@@ -1,5 +1,5 @@
 {
-	"parent": "breadmod:item/tool_gun/item",
+	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "breadmod:item/tool_gun",
 		"particle": "breadmod:item/tool_gun"
@@ -7,9 +7,9 @@
 	"elements": [
 		{
 			"name": "coil",
-			"from": [8.3, 7.55, 7.625],
-			"to": [10.1, 8.3, 8.375],
-			"rotation": {"angle": 0, "axis": "y", "origin": [9.2, 7.925, 8]},
+			"from": [15.3, -0.375, -0.375],
+			"to": [17.1, 0.375, 0.375],
+			"rotation": {"angle": 0, "axis": "x", "origin": [16.2, 0, 0]},
 			"faces": {
 				"north": {"uv": [7.25, 0, 9.125, 0.75], "texture": "#0"},
 				"east": {"uv": [11, 0, 11.75, 0.75], "texture": "#0"},
@@ -19,5 +19,6 @@
 				"down": {"uv": [9.125, 0.75, 11, 1.5], "texture": "#0"}
 			}
 		}
-	]
+	],
+	"display": {}
 }

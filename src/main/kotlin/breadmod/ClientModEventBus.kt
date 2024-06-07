@@ -84,11 +84,11 @@ object ClientModEventBus {
         }
     }
 
-//    @SubscribeEvent
-//    fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
-//        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/tool_gun/item"))
-//        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun/coil"))
-//    }
+    @SubscribeEvent
+    fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
+        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/tool_gun/item"))
+        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun/coil"))
+    }
 
     @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
