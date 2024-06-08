@@ -10,6 +10,7 @@ import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.entity.renderer.ToolGunShotEntityRenderer
+import breadmod.hud.ToolGunOverlay
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
 import breadmod.registry.block.ModBlockEntities
@@ -35,7 +36,9 @@ import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.client.event.ModelEvent.RegisterAdditional
 import net.minecraftforge.client.event.RegisterColorHandlersEvent
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
 import net.minecraftforge.client.event.RegisterShadersEvent
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -82,6 +85,11 @@ object ClientModEventBus {
         event.registerEntityRenderer(TOOL_GUN_SHOT_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
             ToolGunShotEntityRenderer(pContext)
         }
+    }
+
+    @SubscribeEvent
+    fun registerGuiOverlays(event: RegisterGuiOverlaysEvent) {
+        event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "tool_gun_overlay", ToolGunOverlay())
     }
 
     @SubscribeEvent
