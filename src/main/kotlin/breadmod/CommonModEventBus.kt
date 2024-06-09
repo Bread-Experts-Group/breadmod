@@ -85,11 +85,6 @@ object CommonModEventBus {
     }
 
     @SubscribeEvent
-    fun onResourceReload(event: AddReloadListenerEvent) {
-        event.addListener(ModToolgunModeDataLoader)
-    }
-
-    @SubscribeEvent
     fun onCommonSetup(event: FMLCommonSetupEvent) {
         LOGGER.info("Common setup")
         NETWORK
