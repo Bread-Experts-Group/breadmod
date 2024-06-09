@@ -1,21 +1,57 @@
 package breadmod.datagen.toolgun
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import net.minecraft.client.KeyMapping
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
 import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.contents.LiteralContents
+import net.minecraft.network.chat.contents.TranslatableContents
 import java.util.concurrent.CompletableFuture
 
 abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, private val modID: String): DataProvider {
     private val addedModes: MutableMap<String, Triple<Pair<Component, Component>, List<KeyMapping>, Class<*>>> = mutableMapOf()
     final override fun run(p0: CachedOutput): CompletableFuture<*> {
         addModes()
+        val dataLocation = packOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(modID).resolve("toolgun").resolve("mode")
         return CompletableFuture.allOf(
             *buildList {
-                addedModes.forEach { _ -> add(DataProvider.saveStable(p0, com.google.gson.JsonObject(), packOutput.outputFolder.resolve("test.json"))) }
+                addedModes.forEach { (name, data) ->
+                    add(DataProvider.saveStable(p0, JsonObject().also {
+                        it.add("displayName", componentToJson(data.first.first))
+                        it.add("tooltip", componentToJson(data.first.second))
+                        it.add("keyBinds", JsonArray().also { array ->
+                            data.second.forEach {
+                                array.add(JsonObject().also { keyObj ->
+                                    keyObj.add("message", componentToJson(it.translatedKeyMessage))
+                                    keyObj.addProperty("key", it.key.value)
+                                    // TODO! This is certain to break key saving.
+                                })
+                            }
+                        })
+                        it.addProperty("class", data.third.kotlin.qualifiedName)
+                    }, dataLocation.resolve("$name.json")))
+                }
             }.toTypedArray()
         )
+    }
+
+    private fun componentToJson(component: Component) = JsonObject().also {
+        when(val contents = component.contents) {
+            is TranslatableContents -> {
+                it.addProperty("type", "translate")
+                it.addProperty("key", contents.key)
+                it.addProperty("fallback", contents.fallback)
+                if(contents.args.isNotEmpty()) throw IllegalArgumentException("Arguments not supposed for jsonifying translatable contents - sorry!")
+            }
+            is LiteralContents -> {
+                it.addProperty("type", "literal")
+                it.addProperty("text", contents.text)
+            }
+            else -> throw IllegalArgumentException("Illegal contents: ${contents::class.qualifiedName} - please dbg.")
+        }
     }
 
     abstract fun addModes()
@@ -26,6 +62,7 @@ abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, p
         keyActions: List<KeyMapping>,
         actionClass: Class<T>
     ) {
+        if(addedModes.containsKey(name)) throw IllegalStateException("There already exists a toolgun mode for $modID/$name!")
         addedModes[name] = Triple(displayName to tooltip, keyActions, actionClass)
     }
 
