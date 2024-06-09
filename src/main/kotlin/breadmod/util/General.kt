@@ -16,6 +16,10 @@ import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.data.tags.TagsProvider
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.contents.LiteralContents
+import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.inventory.InventoryMenu
@@ -247,3 +251,29 @@ sealed class RayMarchResult(val type: RayMarchResultType, val startPosition: Vec
 
 fun FriendlyByteBuf.writeVec3(vec3: Vec3) = this.also { this.writeDouble(vec3.x).writeDouble(vec3.y).writeDouble(vec3.z) }
 fun FriendlyByteBuf.readVec3() = Vec3(this.readDouble(), this.readDouble(), this.readDouble())
+
+
+fun componentToJson(component: Component) = JsonObject().also {
+    when(val contents = component.contents) {
+        is TranslatableContents -> {
+            it.addProperty("type", "translate")
+            it.addProperty("key", contents.key)
+            it.addProperty("fallback", contents.fallback)
+            if(contents.args.isNotEmpty()) throw IllegalArgumentException("Arguments not supposed for jsonifying translatable contents - sorry!")
+        }
+        is LiteralContents -> {
+            it.addProperty("type", "literal")
+            it.addProperty("text", contents.text)
+        }
+        else -> throw IllegalArgumentException("Illegal contents: ${contents::class.qualifiedName} - please dbg.")
+    }
+}
+
+fun jsonToComponent(json: JsonObject): MutableComponent = when(val type = json.getAsJsonPrimitive("type").asString) {
+    "translate" -> Component.translatableWithFallback(
+        json.getAsJsonPrimitive("key").asString,
+        json.getAsJsonPrimitive("fallback")?.asString
+    )
+    "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
+    else -> throw IllegalArgumentException("Illegal component type: $type")
+}

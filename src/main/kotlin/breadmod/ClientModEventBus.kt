@@ -2,14 +2,16 @@ package breadmod
 
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
+import breadmod.ModMain.modTranslatable
 import breadmod.block.color.BlackbodyBlockColor
-import breadmod.block.entity.screen.DoughMachineScreen
-import breadmod.block.entity.screen.WheatCrusherScreen
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
+import breadmod.block.entity.screen.DoughMachineScreen
+import breadmod.block.entity.screen.WheatCrusherScreen
+import breadmod.datagen.toolgun.BreadModToolgunModeProvider
+import breadmod.datagen.toolgun.BreadModToolgunModeProvider.Control
 import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
-import breadmod.entity.renderer.ToolGunShotEntityRenderer
 import breadmod.hud.ToolGunOverlay
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
@@ -17,12 +19,13 @@ import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
-import breadmod.registry.entity.ModEntityTypes.TOOL_GUN_SHOT_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.screen.ModMenuTypes
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.Util
+import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.RenderType
@@ -33,17 +36,16 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.EntityRenderersEvent
+import net.minecraftforge.client.event.*
 import net.minecraftforge.client.event.ModelEvent.RegisterAdditional
-import net.minecraftforge.client.event.RegisterColorHandlersEvent
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
-import net.minecraftforge.client.event.RegisterShadersEvent
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.minecraftforge.client.model.generators.ModelProvider
+import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import java.util.function.Function
+
 
 @Suppress("unused")
 @Mod.EventBusSubscriber(modid = ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
@@ -82,9 +84,6 @@ object ClientModEventBus {
             PrimedHappyBlockRenderer(pContext) }
         event.registerEntityRenderer(BREAD_BULLET_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
             BreadBulletEntityRenderer(pContext) }
-        event.registerEntityRenderer(TOOL_GUN_SHOT_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
-            ToolGunShotEntityRenderer(pContext)
-        }
     }
 
     @SubscribeEvent
@@ -102,6 +101,38 @@ object ClientModEventBus {
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerBlockEntityRenderer(ModBlockEntities.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get()) { SidedScreenRenderer() }
+    }
+
+    val toolgunBindList = mutableMapOf<BreadModToolgunModeProvider.Control, KeyMapping?>(
+        Control(
+            "toolgun.$ID.mode.controls.name.remover.rmb",
+            "toolgun.$ID.mode.controls.category.remover.rmb",
+            modTranslatable("toolgun", "mode", "toolgun", "remover", "rmb"),
+            InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
+        ) to null
+    )
+    @SubscribeEvent
+    fun registerBindings(event: RegisterKeyMappingsEvent) {
+        toolgunBindList.keys.forEach {
+            val mapping = if(it.modifier != null) {
+                KeyMapping(
+                    it.nameKey,
+                    KeyConflictContext.IN_GAME,
+                    it.modifier,
+                    it.key,
+                    it.categoryKey
+                )
+            } else {
+                KeyMapping(
+                    it.nameKey,
+                    KeyConflictContext.IN_GAME,
+                    it.key,
+                    it.categoryKey
+                )
+            }
+            toolgunBindList[it] = mapping
+            event.register(mapping)
+        }
     }
 
     private lateinit var loadedShader: ShaderInstance

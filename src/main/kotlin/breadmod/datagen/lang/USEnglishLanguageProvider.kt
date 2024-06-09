@@ -132,6 +132,9 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
             "item", "doped_bread", "tooltip"
         )
 
+        modAdd("Shift + R-click to change modes.",
+            "item", "toolgun", "tooltip", "mode_switch"
+        )
         modAdd("His name is jeff",
             "painting", "painting_test", "title")
         modAdd("gchris123",

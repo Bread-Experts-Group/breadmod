@@ -4,7 +4,6 @@ import breadmod.ModMain
 import breadmod.ModMain.modLocation
 import breadmod.entity.BreadBulletEntity
 import breadmod.entity.PrimedHappyBlock
-import breadmod.entity.ToolGunShotEntity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
 import net.minecraftforge.registries.DeferredRegister
@@ -28,13 +27,5 @@ object ModEntityTypes {
             .clientTrackingRange(4)
             .updateInterval(20)
             .build(modLocation("bread_bullet").toString())
-    }
-
-    val TOOL_GUN_SHOT_ENTITY: RegistryObject<EntityType<ToolGunShotEntity>> = deferredRegister.register("tool_gun_shot") {
-        EntityType.Builder.of({ pEntityType, pLevel -> ToolGunShotEntity(pEntityType, pLevel)}, MobCategory.MISC)
-            .sized(0.5f, 0.5f)
-            .clientTrackingRange(5)
-            .updateInterval(20)
-            .build(modLocation("tool_gun_shot").toString())
     }
 }

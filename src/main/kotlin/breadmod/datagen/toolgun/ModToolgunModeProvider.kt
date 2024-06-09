@@ -4,7 +4,6 @@ import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.toolgun.mode.ToolgunRemoverMode
 import com.mojang.blaze3d.platform.InputConstants
-import net.minecraft.client.KeyMapping
 import net.minecraft.data.PackOutput
 import org.jetbrains.annotations.ApiStatus.Internal
 
@@ -18,10 +17,11 @@ internal class ModToolgunModeProvider(
             modTranslatable("toolgun", "mode", "display_name", "remover"),
             modTranslatable("toolgun", "mode", "tooltip", "remover"),
             listOf(
-                KeyMapping(
-                    "ichiban",
-                    InputConstants.KEY_P,
-                    "n/a"
+                Control(
+                    "toolgun.${ModMain.ID}.mode.controls.name.remover.rmb",
+                    "toolgun.${ModMain.ID}.mode.controls.category.remover.rmb",
+                    modTranslatable("toolgun", "mode", "toolgun", "remover", "rmb"),
+                    InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
                 )
             ),
             ToolgunRemoverMode::class.java
