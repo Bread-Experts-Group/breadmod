@@ -2,6 +2,7 @@ package breadmod.registry.sound
 
 import breadmod.ModMain
 import breadmod.ModMain.modLocation
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import net.minecraft.sounds.SoundEvent
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -17,7 +18,7 @@ object ModSounds {
     val POW: RegistryObject<SoundEvent> = registerSoundEvents("pow")
     val SCREAM: RegistryObject<SoundEvent> = registerSoundEvents("scream")
     val MINIGUN: RegistryObject<SoundEvent> = registerSoundEvents("minigun")
-    val TOOL_GUN: RegistryObject<SoundEvent> = registerSoundEvents("tool_gun")
+    val TOOL_GUN: RegistryObject<SoundEvent> = registerSoundEvents(TOOL_GUN_DEF)
 
     private fun registerSoundEvents(name: String): RegistryObject<SoundEvent> {
         return deferredRegister.register(name) {

@@ -1,4 +1,4 @@
-package breadmod.datagen.toolgun
+package breadmod.datagen.tool_gun
 
 import breadmod.util.componentToJson
 import com.google.gson.JsonArray
@@ -13,17 +13,17 @@ import java.util.concurrent.CompletableFuture
 
 /**
  * Data generator for [breadmod.item.ToolGunItem]. Use this if your mod adds a mode.
- * Mode classes must implement [IToolgunMode].
+ * Mode classes must implement [IToolGunMode].
  *
- * @see IToolgunMode
+ * @see IToolGunMode
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, private val modID: String): DataProvider {
+abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, private val modID: String): DataProvider {
     data class Control(
         val nameKey: String,
         val categoryKey: String,
-        val toolgunComponent: Component,
+        val toolGunComponent: Component,
         val key: InputConstants.Key,
         val modifier: KeyModifier? = null
     )
@@ -31,7 +31,7 @@ abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, p
 
     final override fun run(p0: CachedOutput): CompletableFuture<*> {
         addModes()
-        val dataLocation = packOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(modID).resolve("toolgun").resolve("mode")
+        val dataLocation = packOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(modID).resolve(TOOL_GUN_DEF).resolve("mode")
         return CompletableFuture.allOf(
             *buildList {
                 addedModes.forEach { (name, data) ->
@@ -45,7 +45,7 @@ abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, p
                                     keyObj.addProperty(MODIFIER_ENTRY_KEY, it.modifier?.name)
                                     keyObj.addProperty(CONTROLS_NAME_TRANSLATION_KEY, it.nameKey)
                                     keyObj.addProperty(CONTROLS_CATEGORY_TRANSLATION_KEY, it.categoryKey)
-                                    keyObj.add(TOOLGUN_INFO_DISPLAY_KEY, componentToJson(it.toolgunComponent))
+                                    keyObj.add(TOOLGUN_INFO_DISPLAY_KEY, componentToJson(it.toolGunComponent))
                                 })
                             }
                         })
@@ -58,22 +58,24 @@ abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, p
 
     abstract fun addModes()
 
-    fun <T: IToolgunMode> addMode(
+    fun <T: IToolGunMode> addMode(
         name: String,
         displayName: Component, tooltip: Component,
         keyActions: List<Control>,
         actionClass: Class<T>
     ) {
-        if(addedModes.containsKey(name)) throw IllegalStateException("There already exists a toolgun mode for $modID/$name!")
+        if(addedModes.containsKey(name)) throw IllegalStateException("There already exists a tool gun mode for $modID/$name!")
         addedModes[name] = Triple(displayName to tooltip, keyActions, actionClass)
     }
 
     final override fun getName(): String = "Toolgun Modes: $modID"
 
     internal companion object {
+        const val TOOL_GUN_DEF = "tool_gun"
+
         const val CONTROLS_NAME_TRANSLATION_KEY = "controls_name_key"
         const val CONTROLS_CATEGORY_TRANSLATION_KEY = "controls_category_key"
-        const val TOOLGUN_INFO_DISPLAY_KEY = "toolgun_key"
+        const val TOOLGUN_INFO_DISPLAY_KEY = "${TOOL_GUN_DEF}_key"
         const val KEY_ENTRY_KEY = "key"
         const val MODIFIER_ENTRY_KEY = "modifier"
 

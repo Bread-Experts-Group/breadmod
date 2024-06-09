@@ -1,6 +1,6 @@
 package breadmod
 
-import breadmod.datagen.toolgun.ModToolgunModeDataLoader
+import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import net.minecraftforge.event.AddReloadListenerEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -10,6 +10,6 @@ import net.minecraftforge.fml.common.Mod
 object CommonForgeEventBus {
     @SubscribeEvent
     fun onResourceReload(event: AddReloadListenerEvent) {
-        event.addListener(ModToolgunModeDataLoader)
+        event.addListener(ModToolGunModeDataLoader)
     }
 }

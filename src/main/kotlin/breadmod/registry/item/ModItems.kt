@@ -1,6 +1,7 @@
 package breadmod.registry.item
 
 import breadmod.ModMain
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.*
 import breadmod.registry.sound.ModSounds
 import breadmod.item.armor.ArmorTiers
@@ -78,7 +79,7 @@ object ModItems {
 
     val BREAD_GUN_ITEM: RegistryObject<ProjectileWeaponItem> = deferredRegister.register("bread_gun") { BreadGunItem() }
     val BREAD_BULLET_ITEM: RegistryObject<Item> = deferredRegister.register("bread_bullet") { Item(Item.Properties()) }
-    val TOOL_GUN: RegistryObject<Item> = deferredRegister.register("tool_gun") { ToolGunItem() }
+    val TOOL_GUN: RegistryObject<Item> = deferredRegister.register(TOOL_GUN_DEF) { ToolGunItem() }
 
     val TEST_DISC: RegistryObject<RecordItem> = deferredRegister.register("music_disc_test") {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()

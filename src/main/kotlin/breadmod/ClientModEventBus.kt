@@ -8,8 +8,8 @@ import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.block.entity.screen.DoughMachineScreen
 import breadmod.block.entity.screen.WheatCrusherScreen
-import breadmod.datagen.toolgun.BreadModToolgunModeProvider
-import breadmod.datagen.toolgun.BreadModToolgunModeProvider.Control
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.hud.ToolGunOverlay
@@ -93,8 +93,8 @@ object ClientModEventBus {
 
     @SubscribeEvent
     fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
-        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/tool_gun/item"))
-        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun/coil"))
+        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
+        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
     }
 
     @SubscribeEvent
@@ -103,17 +103,18 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get()) { SidedScreenRenderer() }
     }
 
-    val toolgunBindList = mutableMapOf<BreadModToolgunModeProvider.Control, KeyMapping?>(
+    val additionalBindList = mutableListOf<KeyMapping>()
+    val toolGunBindList = mutableMapOf<Control, KeyMapping?>(
         Control(
-            "toolgun.$ID.mode.controls.name.remover.rmb",
-            "toolgun.$ID.mode.controls.category.remover.rmb",
-            modTranslatable("toolgun", "mode", "toolgun", "remover", "rmb"),
+            "$TOOL_GUN_DEF.$ID.mode.controls.name.remover.rmb",
+            "$TOOL_GUN_DEF.$ID.mode.controls.category.remover.rmb",
+            modTranslatable(TOOL_GUN_DEF, "mode", TOOL_GUN_DEF, "remover", "rmb"),
             InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
         ) to null
     )
     @SubscribeEvent
     fun registerBindings(event: RegisterKeyMappingsEvent) {
-        toolgunBindList.keys.forEach {
+        toolGunBindList.keys.forEach {
             val mapping = if(it.modifier != null) {
                 KeyMapping(
                     it.nameKey,
@@ -130,9 +131,10 @@ object ClientModEventBus {
                     it.categoryKey
                 )
             }
-            toolgunBindList[it] = mapping
+            toolGunBindList[it] = mapping
             event.register(mapping)
         }
+        additionalBindList.forEach { event.register(it) }
     }
 
     private lateinit var loadedShader: ShaderInstance

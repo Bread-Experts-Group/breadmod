@@ -4,6 +4,7 @@ import breadmod.ModMain
 import breadmod.ModMain.modAdd
 import breadmod.ModMain.modAddExt
 import breadmod.compat.jade.JadePlugin.Companion.TOOLTIP_RENDERER
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
@@ -87,12 +88,6 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.FARMER_OUTPUT_BLOCK, "Farmer Output")
         add(ModBlocks.GENERIC_POWER_INTERFACE)
         ////
-        // Funny stick
-        modAdd("%s left the game",
-            "item", "tool_gun", "entity_left_game")
-        modAdd("Disconnect: Client 0 overflowed reliable channel.",
-            "item", "tool_gun", "player_left_game")
-        ////
         modAdd(
             "Feeds %s every %s",
             "item", "bread_amulet", "description"
@@ -132,9 +127,6 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
             "item", "doped_bread", "tooltip"
         )
 
-        modAdd("Shift + R-click to change modes.",
-            "item", "toolgun", "tooltip", "mode_switch"
-        )
         modAdd("His name is jeff",
             "painting", "painting_test", "title")
         modAdd("gchris123",
@@ -151,16 +143,31 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         // Tool Gun
         // Remover Action
         modAdd("Remover",
-            "tool_gun", "mode", "display_name", "remover")
+            TOOL_GUN_DEF, "mode", "display_name", "remover")
         modAdd("Remove entities with right click.",
-            "tool_gun", "mode_description", "remover")
+            TOOL_GUN_DEF, "mode", "tooltip", "remover")
 
         // Creator action
         modAdd("Creator",
-            "tool_gun", "mode", "display_name", "creator")
+            TOOL_GUN_DEF, "mode", "display_name", "creator")
         modAdd("Add entities/blocks with right click.",
-            "tool_gun", "mode_description", "creator")
+            TOOL_GUN_DEF, "mode", "tooltip", "creator")
 
+        // Explode action
+        modAdd("Exploder",
+            TOOL_GUN_DEF, "mode", "display_name", "explode")
+        modAdd("Explodes whatever surface you're pointing at.",
+            TOOL_GUN_DEF, "mode", "tooltip", "explode")
+
+        // Misc
+        modAdd("%s left the game",
+            "item", TOOL_GUN_DEF, "entity_left_game")
+        modAdd("Disconnect: Client 0 overflowed reliable channel.",
+            "item", TOOL_GUN_DEF, "player_left_game")
+        modAdd("Current Mode: ",
+            "item", TOOL_GUN_DEF, "tooltip", "current_mode")
+        modAdd(" to switch modes",
+            "item", TOOL_GUN_DEF, "tooltip", "mode_switch")
         // Compat
         // JEI
         modAdd(

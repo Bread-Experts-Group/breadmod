@@ -9,8 +9,7 @@ import breadmod.datagen.tag.ModBlockTags
 import breadmod.datagen.tag.ModFluidTags
 import breadmod.datagen.tag.ModItemTags
 import breadmod.datagen.tag.ModPaintingTags
-import breadmod.datagen.toolgun.ModToolgunModeDataLoader
-import breadmod.datagen.toolgun.ModToolgunModeProvider
+import breadmod.datagen.tool_gun.ModToolGunModeProvider
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.worldgen.dimensions.ModBiomes
 import breadmod.registry.worldgen.dimensions.ModDimensions
@@ -22,11 +21,8 @@ import breadmod.registry.worldgen.structures.ModStructures
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
-import net.minecraftforge.common.ForgeInternalHandler
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
-import net.minecraftforge.common.loot.LootModifierManager
 import net.minecraftforge.data.event.GatherDataEvent
-import net.minecraftforge.event.AddReloadListenerEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -44,7 +40,7 @@ object CommonModEventBus {
         val existingFileHelper = event.existingFileHelper
         val lookupProvider = event.lookupProvider
 
-        generator.addProvider(true, ModToolgunModeProvider(packOutput))
+        generator.addProvider(true, ModToolGunModeProvider(packOutput))
 
         if(event.includeServer()) {
             LOGGER.info("Server datagen")

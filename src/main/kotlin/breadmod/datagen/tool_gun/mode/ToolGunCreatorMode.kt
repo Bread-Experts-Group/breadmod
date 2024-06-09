@@ -1,12 +1,10 @@
-package breadmod.datagen.toolgun.mode
+package breadmod.datagen.tool_gun.mode
 
-import breadmod.datagen.toolgun.IToolgunMode
+import breadmod.datagen.tool_gun.IToolGunMode
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
-import org.jetbrains.annotations.ApiStatus.Internal
 
-@Internal
-internal class ToolgunRemoverMode: IToolgunMode {
+internal class ToolGunCreatorMode: IToolGunMode {
     override fun action(pPlayer: Player, pGunStack: ItemStack) {
         TODO("Not yet implemented")
     }

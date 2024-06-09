@@ -1,6 +1,7 @@
 package breadmod.item.rendering
 
 import breadmod.ModMain.modLocation
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler
@@ -23,8 +24,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     Minecraft.getInstance().blockEntityRenderDispatcher,
     Minecraft.getInstance().entityModels
 ) {
-    private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun/item")
-    private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/tool_gun/coil")
+    private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
+    private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
 
     override fun renderByItem(
         pStack: ItemStack,
