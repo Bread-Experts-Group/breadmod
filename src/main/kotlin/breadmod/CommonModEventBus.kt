@@ -13,6 +13,7 @@ import breadmod.datagen.tag.ModBlockTags
 import breadmod.datagen.tag.ModFluidTags
 import breadmod.datagen.tag.ModItemTags
 import breadmod.datagen.tag.ModPaintingTags
+import breadmod.datagen.toolgun.ModToolgunModeProvider
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.worldgen.structures.ModPools
 import breadmod.registry.worldgen.structures.ModStructureSets
@@ -38,6 +39,8 @@ object CommonModEventBus {
         val packOutput = generator.packOutput
         val existingFileHelper = event.existingFileHelper
         val lookupProvider = event.lookupProvider
+
+        generator.addProvider(true, ModToolgunModeProvider(packOutput))
 
         if(event.includeServer()) {
             LOGGER.info("Server datagen")

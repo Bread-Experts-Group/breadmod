@@ -1,7 +1,7 @@
 package breadmod.datagen.recipe.compat.create
 
-import breadmod.datagen.recipe.FluidBearingRecipeBuilder
-import breadmod.datagen.recipe.ItemBearingRecipeBuilder
+import breadmod.datagen.recipe.IFluidBearingRecipeBuilder
+import breadmod.datagen.recipe.IItemBearingRecipeBuilder
 import breadmod.util.jsonifyFluidList
 import breadmod.util.jsonifyItemList
 import breadmod.util.jsonifyTagList
@@ -26,7 +26,7 @@ import java.util.function.Consumer
 class CreateMixingRecipeBuilder(
     private val itemResults: List<ItemStack> = listOf(),
     private val fluidResults: List<FluidStack> = listOf()
-) : CraftingRecipeBuilder(), ItemBearingRecipeBuilder, FluidBearingRecipeBuilder {
+) : CraftingRecipeBuilder(), IItemBearingRecipeBuilder, IFluidBearingRecipeBuilder {
     constructor(result: ItemStack): this(itemResults = listOf(result))
     constructor(result: ItemLike, count: Int = 1): this(ItemStack(result, count))
     constructor(result: FluidStack): this(fluidResults = listOf(result))

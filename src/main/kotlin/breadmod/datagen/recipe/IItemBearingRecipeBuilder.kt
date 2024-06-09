@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ItemLike
 
 @Suppress("unused")
-interface ItemBearingRecipeBuilder: RecipeBuilder {
+interface IItemBearingRecipeBuilder: RecipeBuilder {
     val itemsRequired: MutableList<ItemStack>
     val itemsRequiredTagged: MutableList<Pair<TagKey<ItemLike>, Int>>
     fun requiresItem(itemStack: ItemStack) = this.also { itemsRequired.add(itemStack) }

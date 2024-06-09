@@ -6,7 +6,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
 
 @Suppress("unused")
-interface FluidBearingRecipeBuilder: RecipeBuilder {
+interface IFluidBearingRecipeBuilder: RecipeBuilder {
     val fluidsRequired: MutableList<FluidStack>
     val fluidsRequiredTagged: MutableList<Pair<TagKey<Fluid>, Int>>
     fun requiresFluid(fluidStack: FluidStack) = this.also { fluidsRequired.add(fluidStack) }

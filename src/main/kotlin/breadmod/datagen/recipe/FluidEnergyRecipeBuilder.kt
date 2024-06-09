@@ -18,7 +18,7 @@ import java.util.function.Consumer
 class FluidEnergyRecipeBuilder(
     val itemResults: List<ItemStack> = listOf(),
     val fluidResults: List<FluidStack> = listOf()
-): ItemBearingRecipeBuilder, FluidBearingRecipeBuilder, TimedRecipeBuilder, PoweredRecipeBuilder {
+): IItemBearingRecipeBuilder, IFluidBearingRecipeBuilder, ITimedRecipeBuilder, IPoweredRecipeBuilder {
     constructor(result: ItemStack): this(itemResults = listOf(result))
     constructor(result: ItemLike, count: Int = 1): this(ItemStack(result, count))
     constructor(result: FluidStack): this(fluidResults = listOf(result))

@@ -33,9 +33,7 @@ import java.util.function.Consumer
 import kotlin.random.Random
 
 
-object ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab{
-    var currentMode = ToolGunModes.REMOVER
-
+class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
     override fun appendHoverText(
         pStack: ItemStack,
         pLevel: Level?,
@@ -52,7 +50,7 @@ object ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab{
 
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
-    private val random = Random(-34295000)
+    private val random = Random(-3428960)
     override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if(pLevel is ServerLevel && !pPlayer.isShiftKeyDown) {
             pLevel.rayMarchEntity(pPlayer, pPlayer.position(), Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)?.let {
@@ -84,9 +82,4 @@ object ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab{
     override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions {
         override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
     })
-
-    enum class ToolGunModes {
-        REMOVER,
-        CREATOR;
-    }
 }

@@ -2,7 +2,7 @@ package breadmod.datagen.recipe
 
 import net.minecraft.data.recipes.RecipeBuilder
 
-interface PoweredRecipeBuilder: RecipeBuilder {
+interface IPoweredRecipeBuilder: RecipeBuilder {
     var powerInRF: Int
     fun setRFRequired(rf: Int) = this.also { powerInRF = rf }
 }
