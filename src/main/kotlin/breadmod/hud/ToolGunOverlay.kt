@@ -1,6 +1,7 @@
 package breadmod.hud
 
 import breadmod.ModMain.modLocation
+import breadmod.item.ToolGunItem
 import breadmod.registry.item.ModItems
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
@@ -24,6 +25,8 @@ class ToolGunOverlay: IGuiOverlay {
         val y = pScreenHeight - (pScreenHeight - 3)
         val player = pGui.minecraft.player
         val holdingToolGun = player?.isHolding(ModItems.TOOL_GUN.get())
+        val toolGunMode = ToolGunItem.currentMode
+
 
         if(!pGui.minecraft.options.hideGui && holdingToolGun == true) {
 //            printOverlayStats(pScreenWidth, pScreenHeight, x, y)
