@@ -7,7 +7,6 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import org.jetbrains.annotations.ApiStatus.Internal
-import kotlin.reflect.full.primaryConstructor
 
 @Internal
 internal object ModToolgunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), "toolgun") {
@@ -29,7 +28,7 @@ internal object ModToolgunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                     classConstructor.isAccessible = true
                     classSet.add(classConstructor.newInstance() as IToolgunMode)
                     classConstructor.isAccessible = false
-                } else throw IllegalArgumentException("Class parameter for toolgun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolgunMode::class.qualifiedName}")
+                } else throw IllegalArgumentException("Class parameter for toolgun mode $location is invalid. Loaded an instance of ${loadedClass.kotlin.qualifiedName}, expected a subclass of ${IToolgunMode::class.qualifiedName}")
             }
         }
         println("Here's the classes I loaded: $loadedModes")
