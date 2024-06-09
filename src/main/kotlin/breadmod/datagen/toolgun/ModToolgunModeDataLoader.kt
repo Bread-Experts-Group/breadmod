@@ -18,7 +18,8 @@ internal object ModToolgunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         pResourceManager: ResourceManager,
         pProfiler: ProfilerFiller
     ) {
-        println("TLGN DATA LOADER::: !!! :::")
-        TODO("Not yet implemented")
+        pProfiler.push("Load toolgun data")
+        println("SEARCH HERE: $pObject")
+        pProfiler.pop()
     }
 }
