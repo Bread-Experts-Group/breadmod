@@ -23,9 +23,12 @@ internal object ModToolgunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         pObject.forEach { (location, data) ->
             if(location.path.startsWith("mode/")) {
                 val classSet = loadedModes.getOrPut(location.namespace) { mutableSetOf() }
-                val loadedClass = ClassLoader.getSystemClassLoader().loadClass(data.asJsonObject.getAsJsonPrimitive("class").asString).kotlin
-                if(loadedClass.java.isAssignableFrom(IToolgunMode::class.java)) {
-                    classSet.add(loadedClass.primaryConstructor!!.call() as IToolgunMode)
+                val loadedClass = ClassLoader.getSystemClassLoader().loadClass(data.asJsonObject.getAsJsonPrimitive("class").asString)
+                if(IToolgunMode::class.java.isAssignableFrom(loadedClass)) {
+                    val classConstructor = loadedClass.constructors.first()
+                    classConstructor.isAccessible = true
+                    classSet.add(classConstructor.newInstance() as IToolgunMode)
+                    classConstructor.isAccessible = false
                 } else throw IllegalArgumentException("Class parameter for toolgun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolgunMode::class.qualifiedName}")
             }
         }
