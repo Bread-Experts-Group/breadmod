@@ -9,7 +9,6 @@ import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
 import breadmod.registry.screen.ModCreativeTabs
 import net.minecraft.data.PackOutput
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike
 import net.minecraftforge.common.data.LanguageProvider
@@ -145,6 +144,19 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         modAdd("Energy", path = arrayOf("energy"))
         modAdd("Input", path = arrayOf("input"))
         modAdd("Output", path = arrayOf("output"))
+
+        // Tool Gun
+        // Remover Action
+        modAdd("Remover",
+            "tool_gun", "mode", "display_name", "remover")
+        modAdd("Remove entities with right click.",
+            "tool_gun", "mode_description", "remover")
+
+        // Creator action
+        modAdd("Creator",
+            "tool_gun", "mode", "display_name", "creator")
+        modAdd("Add entities/blocks with right click.",
+            "tool_gun", "mode_description", "creator")
 
         // Compat
         // JEI

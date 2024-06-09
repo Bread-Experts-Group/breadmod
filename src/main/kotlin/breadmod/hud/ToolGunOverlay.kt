@@ -1,7 +1,7 @@
 package breadmod.hud
 
 import breadmod.ModMain.modLocation
-import breadmod.item.ToolGunItem
+import breadmod.ModMain.modTranslatable
 import breadmod.registry.item.ModItems
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
@@ -13,6 +13,7 @@ import java.awt.Color
 
 class ToolGunOverlay: IGuiOverlay {
     private val overlayTexture = modLocation("textures", "gui", "hud", "tool_gun_overlay.png")
+    private val textColor = Color.WHITE.rgb
 
     override fun render(
         pGui: ForgeGui,
@@ -49,58 +50,48 @@ class ToolGunOverlay: IGuiOverlay {
         pPose.popPose()
     }
 
-    private fun renderRemoverMode(pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, x: Int, y: Int) {
-        pPose.pushPose()
-        pPose.scale(3.0f, 3.0f, 3.0f)
-        pGuiGraphics.drawString(
-            pGui.minecraft.font,
-            Component.literal("Remover").withStyle(ChatFormatting.BOLD),
-            x - 1,
-            y,
-            Color(255,255,255).rgb,
-            false
+    private fun renderRemoverMode(pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, pX: Int, pY: Int) {
+        // Action source
+        drawScaledText(Component.literal("Bread Mod").withStyle(ChatFormatting.BLUE, ChatFormatting.UNDERLINE),
+            pPose, pGuiGraphics, pGui, pX + 2, pY + 2, 0.8f, 0.8f, 0.8f, true
         )
-        pPose.popPose()
-        pPose.pushPose()
+
+        // Action name
+        drawScaledText(
+            modTranslatable("tool_gun", "mode", "display_name", "remover").withStyle(ChatFormatting.BOLD),
+            pPose, pGuiGraphics, pGui, pX - 1, pY + 4, 2.2f, 2.2f, 2.2f, false
+        )
         // Info icon
-        pGuiGraphics.blit(overlayTexture, x, y + 32, 148, 0, 8, 8)
-        pPose.scale(0.8f, 0.8f, 0.8f)
-        pGuiGraphics.drawString(
-            pGui.minecraft.font,
-            Component.literal("Remove entities with right click."),
-            x + 12,
-            y + 43,
-            Color(255,255,255).rgb,
-            false
-        )
+        pPose.pushPose()
+        pGuiGraphics.blit(overlayTexture, pX, pY + 32, 148, 0, 8, 8)
         pPose.popPose()
+
+        // Action Description
+        drawScaledText(modTranslatable("tool_gun", "mode_description", "remover"),
+            pPose, pGuiGraphics, pGui, pX + 13, pY + 43, 0.8f, 0.8f, 0.8f, false
+        )
     }
 
-    private fun renderCreatorMode(pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, x: Int, y: Int) {
-        pPose.pushPose()
-        pPose.scale(3.0f, 3.0f, 3.0f)
-        pGuiGraphics.drawString(
-            pGui.minecraft.font,
-            Component.literal("Creator").withStyle(ChatFormatting.BOLD),
-            x - 1,
-            y,
-            Color(255,255,255).rgb,
-            false
+    private fun renderCreatorMode(pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, pX: Int, pY: Int) {
+        // Action source
+        drawScaledText(Component.literal("Bread Mod").withStyle(ChatFormatting.BLUE, ChatFormatting.UNDERLINE),
+            pPose, pGuiGraphics, pGui, pX + 2, pY + 2, 0.8f, 0.8f, 0.8f, true
         )
-        pPose.popPose()
-        pPose.pushPose()
+
+        // Action Name
+        drawScaledText(
+            modTranslatable("tool_gun", "mode", "display_name", "creator").withStyle(ChatFormatting.BOLD),
+            pPose, pGuiGraphics, pGui, pX - 1, pY + 4, 2.2f, 2.2f, 2.2f, false
+        )
         // Info icon
-        pGuiGraphics.blit(overlayTexture, x, y + 32, 148, 0, 8, 8)
-        pPose.scale(0.8f, 0.8f, 0.8f)
-        pGuiGraphics.drawString(
-            pGui.minecraft.font,
-            Component.literal("Add entities/blocks with right click."),
-            x + 12,
-            y + 43,
-            Color(255,255,255).rgb,
-            false
-        )
+        pPose.pushPose()
+        pGuiGraphics.blit(overlayTexture, pX, pY + 32, 148, 0, 8, 8)
         pPose.popPose()
+
+        // Action Description
+        drawScaledText(modTranslatable("tool_gun", "mode_description", "creator"),
+            pPose, pGuiGraphics, pGui, pX + 13, pY + 43, 0.8f, 0.8f, 0.8f, false
+        )
     }
 
     private fun printOverlayStats(pScreenWidth: Int, pScreenHeight: Int, x: Int, y: Int) {
@@ -111,5 +102,32 @@ class ToolGunOverlay: IGuiOverlay {
         println("x value: $x")
         println("y value: $y")
         println("-----------------")
+    }
+
+    private fun drawText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pDropShadow: Boolean) {
+        pPose.pushPose()
+        pGuiGraphics.drawString(
+            pGui.minecraft.font,
+            pText,
+            pX,
+            pY,
+            textColor,
+            pDropShadow
+        )
+        pPose.popPose()
+    }
+
+    private fun drawScaledText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScaleX: Float, pScaleY: Float, pScaleZ: Float, pDropShadow: Boolean) {
+        pPose.pushPose()
+        pPose.scale(pScaleX, pScaleY, pScaleZ)
+        pGuiGraphics.drawString(
+            pGui.minecraft.font,
+            pText,
+            pX,
+            pY,
+            textColor,
+            pDropShadow
+        )
+        pPose.popPose()
     }
 }
