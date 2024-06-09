@@ -7,11 +7,13 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import org.jetbrains.annotations.ApiStatus.Internal
+import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.primaryConstructor
 
 @Internal
 internal object ModToolgunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), "toolgun") {
-    private val loadedActions: MutableMap<String, List<IToolgunMode>> = mutableMapOf()
-    val actions: Map<String, List<IToolgunMode>> = loadedActions
+    private val loadedModes: MutableMap<String, MutableSet<IToolgunMode>> = mutableMapOf()
+    val modes: Map<String, Set<IToolgunMode>> = loadedModes
 
     override fun apply(
         pObject: MutableMap<ResourceLocation, JsonElement>,
@@ -19,7 +21,16 @@ internal object ModToolgunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         pProfiler: ProfilerFiller
     ) {
         pProfiler.push("Load toolgun data")
-        println("SEARCH HERE: $pObject")
+        pObject.forEach { (location, data) ->
+            if(location.path.startsWith("mode/")) {
+                val classSet = loadedModes.getOrPut(location.namespace) { mutableSetOf() }
+                val loadedClass = ClassLoader.getSystemClassLoader().loadClass(data.asJsonObject.getAsJsonPrimitive("class").asString).kotlin
+                if(loadedClass.isSubclassOf(IToolgunMode::class)) {
+                    classSet.add(loadedClass.primaryConstructor!!.call() as IToolgunMode)
+                } else throw IllegalArgumentException("Class parameter for toolgun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolgunMode::class.qualifiedName}")
+            }
+        }
+        println("Here's the classes I loaded: $loadedModes")
         pProfiler.pop()
     }
 }
