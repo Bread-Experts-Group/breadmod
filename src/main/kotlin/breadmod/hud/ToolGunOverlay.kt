@@ -3,6 +3,7 @@ package breadmod.hud
 import breadmod.ModMain.modLocation
 import breadmod.item.ToolGunItem
 import breadmod.registry.item.ModItems
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
@@ -29,35 +30,76 @@ class ToolGunOverlay: IGuiOverlay {
 
 
         if(!pGui.minecraft.options.hideGui && holdingToolGun == true) {
-//            printOverlayStats(pScreenWidth, pScreenHeight, x, y)
 
             pGui.setupOverlayRenderState(true, false)
-            pose.pushPose()
-//            pose.translate(0.0,0.0, -50.0)
-            pGuiGraphics.blit(overlayTexture, x, y, 0, 0, 148, 42)
-            pose.scale(3.0f, 3.0f, 3.0f)
-            pGuiGraphics.drawString(
-                pGui.minecraft.font,
-                Component.literal("Remover").withStyle(ChatFormatting.BOLD),
-                x - 1,
-                y,
-                Color(255,255,255).rgb,
-                false
-            )
-            pose.popPose()
-            pose.pushPose()
-            pGuiGraphics.blit(overlayTexture, x, y + 32, 148, 0, 8, 8)
-            pose.scale(0.8f, 0.8f, 0.8f)
-            pGuiGraphics.drawString(
-                pGui.minecraft.font,
-                Component.literal("Remove entities with right click."),
-                x + 12,
-                y + 43,
-                Color(255,255,255).rgb,
-                false
-            )
-            pose.popPose()
+            renderBackground(pGuiGraphics, pose, x, y)
+
+            when(toolGunMode) {
+                ToolGunItem.ToolGunModes.REMOVER -> renderRemoverMode(pGuiGraphics, pose, pGui, x, y)
+                ToolGunItem.ToolGunModes.CREATOR -> renderCreatorMode(pGuiGraphics, pose, pGui, x, y)
+            }
         }
+    }
+
+    private fun renderBackground(pGuiGraphics: GuiGraphics, pPose: PoseStack, x: Int, y: Int) {
+        pPose.pushPose()
+        // Main Background Texture
+        pGuiGraphics.blit(overlayTexture, x, y, 0, 0, 148, 42)
+        pPose.popPose()
+    }
+
+    private fun renderRemoverMode(pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, x: Int, y: Int) {
+        pPose.pushPose()
+        pPose.scale(3.0f, 3.0f, 3.0f)
+        pGuiGraphics.drawString(
+            pGui.minecraft.font,
+            Component.literal("Remover").withStyle(ChatFormatting.BOLD),
+            x - 1,
+            y,
+            Color(255,255,255).rgb,
+            false
+        )
+        pPose.popPose()
+        pPose.pushPose()
+        // Info icon
+        pGuiGraphics.blit(overlayTexture, x, y + 32, 148, 0, 8, 8)
+        pPose.scale(0.8f, 0.8f, 0.8f)
+        pGuiGraphics.drawString(
+            pGui.minecraft.font,
+            Component.literal("Remove entities with right click."),
+            x + 12,
+            y + 43,
+            Color(255,255,255).rgb,
+            false
+        )
+        pPose.popPose()
+    }
+
+    private fun renderCreatorMode(pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, x: Int, y: Int) {
+        pPose.pushPose()
+        pPose.scale(3.0f, 3.0f, 3.0f)
+        pGuiGraphics.drawString(
+            pGui.minecraft.font,
+            Component.literal("Creator").withStyle(ChatFormatting.BOLD),
+            x - 1,
+            y,
+            Color(255,255,255).rgb,
+            false
+        )
+        pPose.popPose()
+        pPose.pushPose()
+        // Info icon
+        pGuiGraphics.blit(overlayTexture, x, y + 32, 148, 0, 8, 8)
+        pPose.scale(0.8f, 0.8f, 0.8f)
+        pGuiGraphics.drawString(
+            pGui.minecraft.font,
+            Component.literal("Add entities/blocks with right click."),
+            x + 12,
+            y + 43,
+            Color(255,255,255).rgb,
+            false
+        )
+        pPose.popPose()
     }
 
     private fun printOverlayStats(pScreenWidth: Int, pScreenHeight: Int, x: Int, y: Int) {
