@@ -11,6 +11,14 @@ import net.minecraft.network.chat.contents.LiteralContents
 import net.minecraft.network.chat.contents.TranslatableContents
 import java.util.concurrent.CompletableFuture
 
+/**
+ * Data generator for [breadmod.item.ToolGunItem]. Use this if your mod adds a mode.
+ * Mode classes must implement [IToolgunMode].
+ *
+ * @see IToolgunMode
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
 abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, private val modID: String): DataProvider {
     private val addedModes: MutableMap<String, Triple<Pair<Component, Component>, List<KeyMapping>, Class<*>>> = mutableMapOf()
     final override fun run(p0: CachedOutput): CompletableFuture<*> {
@@ -20,9 +28,9 @@ abstract class BreadModToolgunModeProvider(private val packOutput: PackOutput, p
             *buildList {
                 addedModes.forEach { (name, data) ->
                     add(DataProvider.saveStable(p0, JsonObject().also {
-                        it.add("displayName", componentToJson(data.first.first))
+                        it.add("display_name", componentToJson(data.first.first))
                         it.add("tooltip", componentToJson(data.first.second))
-                        it.add("keyBinds", JsonArray().also { array ->
+                        it.add("keybinds", JsonArray().also { array ->
                             data.second.forEach {
                                 array.add(JsonObject().also { keyObj ->
                                     keyObj.add("message", componentToJson(it.translatedKeyMessage))
