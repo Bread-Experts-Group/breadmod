@@ -26,18 +26,19 @@ class ToolGunOverlay: IGuiOverlay {
         val y = pScreenHeight - (pScreenHeight - 3)
         val player = pGui.minecraft.player
         val holdingToolGun = player?.isHolding(ModItems.TOOL_GUN.get())
-        val toolGunMode = ToolGunItem.currentMode
+//        val toolGunMode = ToolGunItem.currentMode
 
 
         if(!pGui.minecraft.options.hideGui && holdingToolGun == true) {
 
             pGui.setupOverlayRenderState(true, false)
             renderBackground(pGuiGraphics, pose, x, y)
+            renderRemoverMode(pGuiGraphics, pose, pGui, x, y)
 
-            when(toolGunMode) {
-                ToolGunItem.ToolGunModes.REMOVER -> renderRemoverMode(pGuiGraphics, pose, pGui, x, y)
-                ToolGunItem.ToolGunModes.CREATOR -> renderCreatorMode(pGuiGraphics, pose, pGui, x, y)
-            }
+//            when(toolGunMode) {
+//                ToolGunItem.ToolGunModes.REMOVER -> renderRemoverMode(pGuiGraphics, pose, pGui, x, y)
+//                ToolGunItem.ToolGunModes.CREATOR -> renderCreatorMode(pGuiGraphics, pose, pGui, x, y)
+//            }
         }
     }
 

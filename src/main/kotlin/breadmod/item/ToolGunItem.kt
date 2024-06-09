@@ -40,7 +40,7 @@ class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
         pTooltipComponents: MutableList<Component>,
         pIsAdvanced: TooltipFlag
     ) {
-        pTooltipComponents.add(Component.literal("Current Mode: $currentMode"))
+//        pTooltipComponents.add(Component.literal("Current Mode: $currentMode"))
         pTooltipComponents.add(Component.literal("Shift + R-click to change modes."))
     }
 
@@ -71,9 +71,9 @@ class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
         } else if(pPlayer.isShiftKeyDown && pUsedHand == InteractionHand.MAIN_HAND) {
             println("$pUsedHand")
             pPlayer.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
-            currentMode = if(currentMode == ToolGunModes.REMOVER) ToolGunModes.CREATOR else ToolGunModes.REMOVER
+//            currentMode = if(currentMode == ToolGunModes.REMOVER) ToolGunModes.CREATOR else ToolGunModes.REMOVER
             pPlayer.cooldowns.addCooldown(this, 10)
-            println(currentMode)
+//            println(currentMode)
         }
 
         return InteractionResultHolder.fail(pPlayer.getItemInHand(pUsedHand))
