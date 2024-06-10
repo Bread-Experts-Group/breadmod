@@ -28,6 +28,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
     private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
 
+    private val screenTint = 0xFFFFFF
     override fun renderByItem(
         pStack: ItemStack,
         pDisplayContext: ItemDisplayContext,
@@ -36,18 +37,17 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-//        println("is working")
         val renderer = Minecraft.getInstance().itemRenderer
         val fontRenderer = Minecraft.getInstance().font
         val mainModel = Minecraft.getInstance().modelManager.getModel(mainModelLocation)
         val coilModel = Minecraft.getInstance().modelManager.getModel(coilModelLocation)
 
         pPoseStack.pushPose()
-        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay)
         // todo decouple idle spinning from create's rotation logic
         // todo recoil and increased coil spin when using tool gun
         pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks())))
-        renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+        renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay)
         pPoseStack.popPose()
         // x, y, z after rotations
         // x: back and forward, y: up and down, z: left and right
@@ -114,14 +114,13 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pStack: ItemStack,
         pPoseStack: PoseStack,
         pBuffer: MultiBufferSource,
-        pPackedLight: Int,
         pPackedOverlay: Int
     ) {
         val glint = pStack.hasFoil()
         for(type in pModel.getRenderTypes(pStack, false)) {
             val helper: RenderType = RenderTypeHelper.getEntityRenderType(type, false)
             val consumer = ItemRenderer.getFoilBuffer(pBuffer, helper, true, glint)
-            pRenderer.renderModelLists(pModel, pStack, pPackedLight, pPackedOverlay, pPoseStack, consumer)
+            pRenderer.renderModelLists(pModel, pStack, screenTint, pPackedOverlay, pPoseStack, consumer)
         }
     }
 }

@@ -71,13 +71,12 @@ class ToolGunOverlay: IGuiOverlay {
         pMode.keyBinds.forEachIndexed { index, control ->
             val moved = ((index+1) * 9) + 3
             drawScaledText(
-                toolGunBindList[control]!!.translatedKeyMessage.copy().withStyle(ChatFormatting.GOLD)
+                toolGunBindList[control]!!.translatedKeyMessage.copy()
+                    .withStyle { it.withColor(ChatFormatting.GOLD).withItalic(true) }
                     .append(control.toolGunComponent.copy().withStyle(ChatFormatting.WHITE)),
                 pPose, pGuiGraphics, pGui,
-                pX + 13, pY + 43 + moved, 1f, true
+                pX + 73, pY + 43 + moved, 1f, true
             )
-            // TODO. Chris, could you look into doing control textures and implementing them here? Thanks
-            //pGuiGraphics.blit(overlayTexture, pX, pY + 43 + moved, 148, 0, 8, 8)
         }
         pGuiGraphics.blit(overlayTexture, pX, pY + 43, 148, 0, 8, 8)
         pPose.popPose()
