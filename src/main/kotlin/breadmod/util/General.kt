@@ -277,3 +277,5 @@ fun jsonToComponent(json: JsonObject): MutableComponent = when(val type = json.g
     "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
     else -> throw IllegalArgumentException("Illegal component type: $type")
 }
+
+// This is a test
