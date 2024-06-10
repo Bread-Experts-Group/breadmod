@@ -1,6 +1,7 @@
 package breadmod.registry.block
 
 import breadmod.ModMain
+import breadmod.block.entity.CoalGeneratorBlockEntity
 import breadmod.block.entity.BreadScreenBlockEntity
 import breadmod.block.entity.DoughMachineBlockEntity
 import breadmod.block.entity.HeatingElementBlockEntity
@@ -67,6 +68,13 @@ object ModBlockEntities {
         BlockEntityType.Builder.of(
             { pPos, pState -> FarmerControllerBlockEntity(pPos, pState) },
             ModBlocks.FARMER_CONTROLLER.get().block
+        ).build(null)
+    }
+
+    // Power Generators
+    val COAL_GENERATOR: RegistryObject<BlockEntityType<CoalGeneratorBlockEntity>> = deferredRegister.register("coal_generator_entity") {
+        BlockEntityType.Builder.of(
+            { pPos, pState -> CoalGeneratorBlockEntity(pPos, pState) },
         ).build(null)
     }
 }

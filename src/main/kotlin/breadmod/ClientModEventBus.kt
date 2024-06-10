@@ -6,6 +6,7 @@ import breadmod.ModMain.modTranslatable
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
+import breadmod.block.entity.screen.CoalGeneratorScreen
 import breadmod.block.entity.screen.DoughMachineScreen
 import breadmod.block.entity.screen.WheatCrusherScreen
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
@@ -63,6 +64,9 @@ object ClientModEventBus {
 
             MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
             MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle -> WheatCrusherScreen(pMenu,pInventory,pTitle) }
+
+            // Power Generators
+            MenuScreens.register(ModMenuTypes.COAL_GENERATOR.get()) { pMenu, pInventory, pTitle -> CoalGeneratorScreen(pMenu, pInventory, pTitle) }
         }
     }
 

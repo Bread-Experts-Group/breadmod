@@ -107,6 +107,12 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val COAL_GENERATOR = registerBlockItem(
+        "coal_generator",
+        { CoalGeneratorBlock() },
+        Item.Properties()
+    )
+
     // Farmer Multiblock
     val FARMER_CONTROLLER = registerBlockItem(
         "farmer_controller",
@@ -233,6 +239,7 @@ object ModBlocks {
             dropSelf(KEYBOARD.get().block)
             dropSelf(BREAD_FENCE.get().block)
             dropSelf(WHEAT_CRUSHER_BLOCK.get().block)
+            dropSelf(COAL_GENERATOR.get().block)
             dropSelf(FARMER_CONTROLLER.get().block)
             dropSelf(FARMER_BASE_BLOCK.get().block)
             dropSelf(FARMER_INPUT_BLOCK.get().block)

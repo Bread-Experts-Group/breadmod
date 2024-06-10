@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.RenderTypeHelper
@@ -48,49 +49,62 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks())))
         renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
         pPoseStack.popPose()
-        pPoseStack.pushPose()
         // x, y, z after rotations
         // x: back and forward, y: up and down, z: left and right
 
         // big text
-        pPoseStack.translate(0.923, 0.055, -0.031)
-        pPoseStack.scale(0.005f, 0.005f, 0.005f)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-        pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
-        pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
-        fontRenderer.drawInBatch(
-            "test",
-            0f,
-            0f,
-            Color.WHITE.rgb,
-            false,
-            pPoseStack.last().pose(),
-            pBuffer,
-            Font.DisplayMode.NORMAL,
-            Color(0,0,255,128).rgb,
-            15728880
+        drawTextOnScreen("☠☠", Color.BLACK.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+            0.9215, 0.0555, -0.028, 0.0035f, 0.0035f, 0.0035f
         )
-        pPoseStack.popPose()
 
         // smol text
-        pPoseStack.pushPose()
-        pPoseStack.translate(0.925, 0.063, -0.035)
-        pPoseStack.scale(0.0005f, 0.0005f, 0.0005f)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-        pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
-        pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
-        fontRenderer.drawInBatch(
-            "funny text",
+        drawTextOnScreen("Mode: Remover", Color.WHITE.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+            0.923, 0.065, -0.038, 0.0007f, 0.0007f, 0.0007f
+        )
+
+        // bottom text
+        drawTextOnScreen("WARNING: your fat", Color.RED.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+            0.9, 0.0175, -0.040, 0.0007f, 0.0007f, 0.0007f
+        )
+
+    }
+
+    private fun renderText(pText: String, pColor: Int, pBackgroundColor: Int, pFontRenderer: Font, pPoseStack: PoseStack, pBuffer: MultiBufferSource) {
+        pFontRenderer.drawInBatch(
+            Component.literal(pText),
             0f,
             0f,
-            Color.WHITE.rgb,
+            pColor,
             false,
             pPoseStack.last().pose(),
             pBuffer,
             Font.DisplayMode.NORMAL,
-            Color(0,0,255,128).rgb,
-            15728880
+            pBackgroundColor,
+            16777215
         )
+    }
+
+    private fun drawTextOnScreen(
+        pText: String,
+        pColor: Int,
+        pBackgroundColor: Int,
+        pFontRenderer: Font,
+        pPoseStack: PoseStack,
+        pBuffer: MultiBufferSource,
+        pPosX: Double,
+        pPosY: Double,
+        pPosZ: Double,
+        pScaleX: Float,
+        pScaleY: Float,
+        pScaleZ: Float
+    ) {
+        pPoseStack.pushPose()
+        pPoseStack.translate(pPosX, pPosY, pPosZ)
+        pPoseStack.scale(pScaleX, pScaleY, pScaleZ)
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
+        pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
+        pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
+        renderText(pText, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer)
         pPoseStack.popPose()
     }
 

@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.InteractionHand
 import net.minecraftforge.client.gui.overlay.ForgeGui
 import net.minecraftforge.client.gui.overlay.IGuiOverlay
@@ -96,6 +97,20 @@ class ToolGunOverlay: IGuiOverlay {
     }
 
     private fun drawScaledText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScaleX: Float, pScaleY: Float, pScaleZ: Float, pDropShadow: Boolean) {
+        pPose.pushPose()
+        pPose.scale(pScaleX, pScaleY, pScaleZ)
+        pGuiGraphics.drawString(
+            pGui.minecraft.font,
+            pText,
+            pX,
+            pY,
+            textColor,
+            pDropShadow
+        )
+        pPose.popPose()
+    }
+
+    private fun drawFormattedText(pText: FormattedCharSequence, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScaleX: Float, pScaleY: Float, pScaleZ: Float, pDropShadow: Boolean) {
         pPose.pushPose()
         pPose.scale(pScaleX, pScaleY, pScaleZ)
         pGuiGraphics.drawString(

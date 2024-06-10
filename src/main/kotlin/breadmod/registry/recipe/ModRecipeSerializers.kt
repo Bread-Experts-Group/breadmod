@@ -6,6 +6,7 @@ import breadmod.recipe.crafting.BreadSliceRecipe
 import breadmod.recipe.crafting.DopedBreadRecipe
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
+import breadmod.recipe.fluidEnergy.generators.CoalGeneratorRecipe
 import breadmod.recipe.serializer.SimpleFluidEnergyRecipeSerializer
 import net.minecraft.world.item.crafting.*
 import net.minecraftforge.registries.DeferredRegister
@@ -28,6 +29,11 @@ object ModRecipeSerializers {
     }
     val WHEAT_CRUSHER: RegistryObject<SimpleFluidEnergyRecipeSerializer<WheatCrushingRecipe>> = deferredRegister.register("wheat_crusher") {
         SimpleFluidEnergyRecipeSerializer { pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut -> WheatCrushingRecipe(pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut) }
+    }
+
+    // Power Generators
+    val COAL_GENERATOR: RegistryObject<SimpleFluidEnergyRecipeSerializer<CoalGeneratorRecipe>> = deferredRegister.register("coal_generator") {
+        SimpleFluidEnergyRecipeSerializer { pId, pTime, pEnergy, _, _, pItems, pItemsTagged, _, _ -> CoalGeneratorRecipe(pId, pTime, pEnergy, pItems, pItemsTagged) }
     }
 
     /*val BREAD_REFINEMENT = REGISTRY.register("bread_refinement") {

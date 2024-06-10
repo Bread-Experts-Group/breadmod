@@ -1,6 +1,7 @@
 package breadmod.registry.screen
 
 import breadmod.ModMain
+import breadmod.block.entity.menu.CoalGeneratorMenu
 import breadmod.block.entity.menu.DoughMachineMenu
 import breadmod.block.entity.menu.WheatCrusherMenu
 import net.minecraft.world.inventory.MenuType
@@ -17,5 +18,10 @@ object ModMenuTypes {
     }
     val WHEAT_CRUSHER: RegistryObject<MenuType<WheatCrusherMenu>> = deferredRegister.register("wheat_crusher_menu") {
         IForgeMenuType.create { pContainerId, pInventory, extraData -> WheatCrusherMenu(pContainerId, pInventory, extraData)}
+    }
+
+    // Power Generators
+    val COAL_GENERATOR: RegistryObject<MenuType<CoalGeneratorMenu>> = deferredRegister.register("coal_generator_menu") {
+        IForgeMenuType.create { pContainerId, pInventory, extraData -> CoalGeneratorMenu(pContainerId, pInventory, extraData) }
     }
 }

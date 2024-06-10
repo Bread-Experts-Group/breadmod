@@ -403,6 +403,12 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requiresItem(Items.WHEAT)
             .setSerializer(ModRecipeSerializers.WHEAT_CRUSHER.get())
             .save(pWriter, modLocation("special", "machine", "wheat_crushing"))
+        FluidEnergyRecipeBuilder()
+            .setTimeRequired(20 * 80)
+            .setRFRequired(-5000)
+            .requiresItem(Items.COAL)
+            .setSerializer(ModRecipeSerializers.COAL_GENERATOR.get())
+            .save(pWriter, modLocation("special", "generators", "coal_generator", "coal"))
 
         // // Compat
         // Create
