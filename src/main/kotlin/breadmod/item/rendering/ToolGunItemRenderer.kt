@@ -1,11 +1,14 @@
 package breadmod.item.rendering
 
 import breadmod.ModMain.modLocation
+import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
+import breadmod.item.ToolGunItem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler
 import com.simibubi.create.foundation.utility.AnimationTickHolder
+import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
@@ -19,16 +22,24 @@ import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.model.generators.ModelProvider
 import java.awt.Color
+import java.security.SecureRandom
+import kotlin.math.round
 
 
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
-    Minecraft.getInstance().blockEntityRenderDispatcher,
-    Minecraft.getInstance().entityModels
+    minecraft.blockEntityRenderDispatcher,
+    minecraft.entityModels
 ) {
+    private companion object {
+        const val SCREEN_TINT = 0xFFFFFF
+
+        val minecraft: Minecraft = Minecraft.getInstance()
+        val secureRandom = SecureRandom()
+    }
+
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
     private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
 
-    private val screenTint = 0xFFFFFF
     override fun renderByItem(
         pStack: ItemStack,
         pDisplayContext: ItemDisplayContext,
@@ -37,6 +48,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
+        val toolgunItem = pStack.item as ToolGunItem
         val renderer = Minecraft.getInstance().itemRenderer
         val fontRenderer = Minecraft.getInstance().font
         val mainModel = Minecraft.getInstance().modelManager.getModel(mainModelLocation)
@@ -53,25 +65,35 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         // x: back and forward, y: up and down, z: left and right
 
         // big text
-        drawTextOnScreen("☠☠", Color.BLACK.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
-            0.9215, 0.0555, -0.028, 0.0035f, 0.0035f, 0.0035f
+        val byteArray = ByteArray(2)
+        secureRandom.nextBytes(byteArray)
+        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+            0.9215, 0.0555, -0.028, 0.0035f
         )
 
-        // smol text
-        drawTextOnScreen("Mode: Remover", Color.WHITE.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
-            0.923, 0.065, -0.038, 0.0007f, 0.0007f, 0.0007f
+        drawTextOnScreen(
+            modTranslatable("item", TOOL_GUN_DEF, "tooltip", "current_mode")
+            .append(toolgunItem.getCurrentMode(pStack).displayName.copy().withStyle(ChatFormatting.GOLD)),
+            Color.WHITE.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+            0.923, 0.065, -0.038, 0.0007f
         )
 
-        // bottom text
-        drawTextOnScreen("WARNING: your fat", Color.RED.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
-            0.9, 0.0175, -0.040, 0.0007f, 0.0007f, 0.0007f
+        drawTextOnScreen("CASEOH DANGER: ${round(secureRandom.nextDouble() * 50000)}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+            0.9, 0.0175, -0.040, 0.0007f
         )
 
     }
 
-    private fun renderText(pText: String, pColor: Int, pBackgroundColor: Int, pFontRenderer: Font, pPoseStack: PoseStack, pBuffer: MultiBufferSource) {
+    private fun renderText(
+        pComponent: Component,
+        pColor: Int,
+        pBackgroundColor: Int,
+        pFontRenderer: Font,
+        pPoseStack: PoseStack,
+        pBuffer: MultiBufferSource
+    ) {
         pFontRenderer.drawInBatch(
-            Component.literal(pText),
+            pComponent,
             0f,
             0f,
             pColor,
@@ -80,7 +102,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
             pBuffer,
             Font.DisplayMode.NORMAL,
             pBackgroundColor,
-            16777215
+            SCREEN_TINT
         )
     }
 
@@ -94,17 +116,31 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPosX: Double,
         pPosY: Double,
         pPosZ: Double,
-        pScaleX: Float,
-        pScaleY: Float,
-        pScaleZ: Float
+        pScale: Float
+    ) = drawTextOnScreen(
+        Component.literal(pText),
+        pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
+    )
+
+    private fun drawTextOnScreen(
+        pComponent: Component,
+        pColor: Int,
+        pBackgroundColor: Int,
+        pFontRenderer: Font,
+        pPoseStack: PoseStack,
+        pBuffer: MultiBufferSource,
+        pPosX: Double,
+        pPosY: Double,
+        pPosZ: Double,
+        pScale: Float
     ) {
         pPoseStack.pushPose()
         pPoseStack.translate(pPosX, pPosY, pPosZ)
-        pPoseStack.scale(pScaleX, pScaleY, pScaleZ)
+        pPoseStack.scale(pScale, pScale, pScale)
         pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
         pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
         pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
-        renderText(pText, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer)
+        renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer)
         pPoseStack.popPose()
     }
 
@@ -120,7 +156,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         for(type in pModel.getRenderTypes(pStack, false)) {
             val helper: RenderType = RenderTypeHelper.getEntityRenderType(type, false)
             val consumer = ItemRenderer.getFoilBuffer(pBuffer, helper, true, glint)
-            pRenderer.renderModelLists(pModel, pStack, screenTint, pPackedOverlay, pPoseStack, consumer)
+            pRenderer.renderModelLists(pModel, pStack, SCREEN_TINT, pPackedOverlay, pPoseStack, consumer)
         }
     }
 }
