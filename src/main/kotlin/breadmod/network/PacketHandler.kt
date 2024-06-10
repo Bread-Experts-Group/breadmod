@@ -30,9 +30,14 @@ object PacketHandler {
             idCounter++, BeamPacket::class.java,
             BeamPacket::encodeBuf, BeamPacket::decodeBuf, BeamPacket::handle
         )
+
         NETWORK.registerMessage(
             idCounter++, ToolGunPacket::class.java,
             ToolGunPacket::encodeBuf, ToolGunPacket::decodeBuf, ToolGunPacket::handle
+        )
+        NETWORK.registerMessage(
+            idCounter++, SDPacket::class.java,
+            SDPacket::encodeBuf, SDPacket::decodeBuf, SDPacket::handle
         )
     }
 }

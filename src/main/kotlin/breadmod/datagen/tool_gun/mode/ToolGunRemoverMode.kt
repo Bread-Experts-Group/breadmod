@@ -7,6 +7,7 @@ import breadmod.datagen.tool_gun.IToolGunMode
 import breadmod.datagen.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
+import breadmod.network.SDPacket
 import breadmod.util.RayMarchResult.Companion.rayMarchEntity
 import net.minecraft.ChatFormatting
 import net.minecraft.core.particles.ParticleTypes
@@ -35,8 +36,10 @@ internal class ToolGunRemoverMode: IToolGunMode {
                     BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 0.1f)
                 )
 
-                if(it.entity is ServerPlayer) it.entity.connection.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))
-                else {
+                if(it.entity is ServerPlayer) {
+                    NETWORK.send(PacketDistributor.PLAYER.with { it.entity }, SDPacket(null))
+                    it.entity.connection.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))
+                } else {
                     it.entity.discard()
                     pLevel.server.playerList.players.forEach { player -> player.sendSystemMessage(modTranslatable("item", TOOL_GUN_DEF, "entity_left_game", args = listOf(it.entity.name)).withStyle(ChatFormatting.YELLOW)) }
                 }
