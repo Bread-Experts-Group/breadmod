@@ -114,13 +114,15 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
         internal const val NAMESPACE_ITERATOR_STATE_TAG = "namespaceIteratorState"
         internal const val MODE_ITERATOR_STATE_TAG = "modeIteratorState"
 
-        private val changeMode = KeyMapping(
-            "controls.${ModMain.ID}.$TOOL_GUN_DEF.change_mode",
-            KeyConflictContext.IN_GAME,
-            KeyModifier.SHIFT,
-            InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
-            "controls.${ModMain.ID}.category.$TOOL_GUN_DEF"
-        )
+        private val changeMode by lazy {
+            KeyMapping(
+                "controls.${ModMain.ID}.$TOOL_GUN_DEF.change_mode",
+                KeyConflictContext.IN_GAME,
+                KeyModifier.SHIFT,
+                InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
+                "controls.${ModMain.ID}.category.$TOOL_GUN_DEF"
+            )
+        }
 
         init {
             additionalBindList.add(changeMode)

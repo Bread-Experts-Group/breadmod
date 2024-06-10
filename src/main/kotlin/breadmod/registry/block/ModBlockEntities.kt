@@ -3,6 +3,7 @@ package breadmod.registry.block
 import breadmod.ModMain
 import breadmod.block.entity.*
 import breadmod.block.multiblock.farmer.entity.*
+import breadmod.block.multiblock.generic.entity.PowerInterfaceBlockEntity
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK
 import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK

@@ -1,6 +1,6 @@
 package breadmod.block.multiblock.farmer
 
-import breadmod.block.multiblock.farmer.entity.PowerInterfaceBlockEntity
+import breadmod.block.multiblock.generic.entity.PowerInterfaceBlockEntity
 import breadmod.registry.block.ModBlocks
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -62,7 +62,8 @@ class FarmerControllerBlock: Block(Properties.of()
         println("cursed block entity fetcher")
         BlockPos.betweenClosedStream(aabb).forEach { subPos ->
             if(pLevel.getBlockState(subPos).`is`(ModBlocks.GENERIC_POWER_INTERFACE.get().block)) {
-                val entity = pLevel.getBlockEntity(BlockPos(subPos.x, subPos.y, subPos.z)) as? PowerInterfaceBlockEntity ?: return@forEach
+                val entity = pLevel.getBlockEntity(BlockPos(subPos.x, subPos.y, subPos.z)) as? PowerInterfaceBlockEntity
+                    ?: return@forEach
                 println(entity.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.energyStored)
             }
 

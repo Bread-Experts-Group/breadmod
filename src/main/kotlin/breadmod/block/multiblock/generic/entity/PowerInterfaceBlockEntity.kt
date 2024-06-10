@@ -1,4 +1,4 @@
-package breadmod.block.multiblock.farmer.entity
+package breadmod.block.multiblock.generic.entity
 
 import breadmod.ModMain
 import breadmod.registry.block.ModBlockEntities
