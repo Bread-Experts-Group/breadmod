@@ -2,6 +2,9 @@ package breadmod.network
 
 import breadmod.ModMain.LOGGER
 import breadmod.ModMain.modLocation
+import breadmod.network.tool_gun.SDPacket
+import breadmod.network.tool_gun.ToolGunModeDataPacket
+import breadmod.network.tool_gun.ToolGunPacket
 import net.minecraftforge.network.NetworkRegistry
 import net.minecraftforge.network.simple.SimpleChannel
 
@@ -34,6 +37,10 @@ object PacketHandler {
         NETWORK.registerMessage(
             idCounter++, ToolGunPacket::class.java,
             ToolGunPacket::encodeBuf, ToolGunPacket::decodeBuf, ToolGunPacket::handle
+        )
+        NETWORK.registerMessage(
+            idCounter++, ToolGunModeDataPacket::class.java,
+            ToolGunModeDataPacket::encodeBuf, ToolGunModeDataPacket::decodeBuf, ToolGunModeDataPacket::handle
         )
         NETWORK.registerMessage(
             idCounter++, SDPacket::class.java,

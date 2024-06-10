@@ -1,4 +1,4 @@
-package breadmod.network
+package breadmod.network.tool_gun
 
 import breadmod.ModMain.modTranslatable
 import breadmod.item.ToolGunItem
@@ -14,7 +14,7 @@ import java.util.function.Supplier
 
 data class SDPacket(val playerUUID: UUID?) {
     companion object {
-        fun encodeBuf(input: SDPacket, buffer: FriendlyByteBuf) { buffer.writeNullable(input.playerUUID) { a,b -> a.writeUUID(b) } }
+        fun encodeBuf(input: SDPacket, buffer: FriendlyByteBuf) { buffer.writeNullable(input.playerUUID) { a, b -> a.writeUUID(b) } }
         fun decodeBuf(input: FriendlyByteBuf) = SDPacket(input.readNullable { it.readUUID() })
 
         fun handle(input: SDPacket, ctx: Supplier<NetworkEvent.Context>) = ctx.get().let {

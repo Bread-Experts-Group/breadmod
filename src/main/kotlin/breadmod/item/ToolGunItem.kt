@@ -7,7 +7,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.rendering.ToolGunItemRenderer
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.network.ToolGunPacket
+import breadmod.network.tool_gun.ToolGunPacket
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.util.MapIterator
@@ -66,7 +66,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     }
 
     internal fun getCurrentMode(pStack: ItemStack) = ensureCurrentMode(pStack).let {
-        ModToolGunModeDataLoader.modes[it.getString(MODE_NAMESPACE_TAG)]!![it.getString(MODE_NAME_TAG)]!!
+        ModToolGunModeDataLoader.modes[it.getString(MODE_NAMESPACE_TAG)]!![it.getString(MODE_NAME_TAG)]!!.first
     }
 
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)

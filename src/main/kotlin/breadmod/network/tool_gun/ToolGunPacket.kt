@@ -1,4 +1,4 @@
-package breadmod.network
+package breadmod.network.tool_gun
 
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
@@ -54,7 +54,7 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                         val modeIterator = MapIterator(namespaceIterator.current().value)
                         modeIterator.restoreState(currentMode.getInt(MODE_ITERATOR_STATE_TAG))
 
-                        val last = modeIterator.current()
+                        val last = modeIterator.current().value.first
                         when {
                             modeIterator.hasNext() -> {
                                 currentMode.putString(MODE_NAME_TAG, modeIterator.next().key)
@@ -75,8 +75,8 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                         }
 
                         val level = player.level()
-                        last.value.mode.close(level, player, stack, modeIterator.current().value.mode)
-                        modeIterator.current().value.mode.open(level, player, stack, last.value.mode)
+                        last.mode.close(level, player, stack, modeIterator.current().value.first.mode)
+                        modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
                         player.cooldowns.addCooldown(item, 10)
                     } else {
                         println("PACKET RCV. ${input.pControl}")

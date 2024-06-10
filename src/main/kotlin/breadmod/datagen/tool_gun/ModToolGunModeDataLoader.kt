@@ -27,7 +27,6 @@ import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.client.settings.KeyModifier
 import org.apache.commons.lang3.ArrayUtils
 import org.jetbrains.annotations.ApiStatus.Internal
-import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
@@ -41,8 +40,8 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         val mode: IToolGunMode
     )
 
-    private val loadedModes: MutableMap<String, MutableMap<String, ToolgunMode>> = mutableMapOf()
-    val modes: Map<String, Map<String, ToolgunMode>>
+    private val loadedModes: MutableMap<String, MutableMap<String, Triple<ToolgunMode, ResourceLocation, ByteArray>>> = mutableMapOf()
+    val modes: Map<String, Map<String, Triple<ToolgunMode, ResourceLocation, ByteArray>>>
         get() = loadedModes
 
     override fun apply(
@@ -51,16 +50,28 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         pProfiler: ProfilerFiller
     ) {
         pProfiler.push("Load tool gun data")
+        load(pObject)
+        pProfiler.pop()
+
+        pProfiler.push("Load controls from toolgun data")
+        try {
+            loadKeys()
+        } catch(e: RuntimeException) {
+            ModMain.LOGGER.info("We're not on the client, so we're gonna skip over toolgun mode key maps.")
+        }
+        pProfiler.pop()
+    }
+
+    fun load(pObject: Map<ResourceLocation, JsonElement>) {
         pObject.forEach { (location, data) ->
             if(location.path.startsWith("mode/")) {
                 val dataObj = data.asJsonObject
                 val classSet = loadedModes.getOrPut(location.namespace) { mutableMapOf() }
                 val loadedClass = Class.forName(dataObj.getAsJsonPrimitive(CLASS_KEY).asString).kotlin
-                loadedClass.allSuperclasses
                 if(loadedClass.isSubclassOf(IToolGunMode::class)) {
                     val classConstructor = loadedClass.primaryConstructor!!
                     classConstructor.isAccessible = true
-                    classSet[location.path.substringAfter("mode/")] = ToolgunMode(
+                    classSet[location.path.substringAfter("mode/")] = Triple(ToolgunMode(
                         displayName = jsonToComponent(dataObj.getAsJsonObject(DISPLAY_NAME_KEY)),
                         tooltip = jsonToComponent(dataObj.getAsJsonObject(TOOLTIP_KEY)),
                         keyBinds = buildList {
@@ -79,23 +90,19 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                             }
                         },
                         mode = classConstructor.call() as IToolGunMode
-                    )
+                    ), location, dataObj.toString().encodeToByteArray())
                     classConstructor.isAccessible = false
                 } else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolGunMode::class.qualifiedName}")
             }
         }
-        pProfiler.pop()
-        try {
-            pProfiler.push("Load controls from toolgun data")
-            val options = Minecraft.getInstance().options
-            val keyMaps = ClientModEventBus.createMappingsForControls()
-            options.keyMappings = ArrayUtils.addAll(
-                options.keyMappings,
-                *keyMaps.filter { toolgunMap -> options.keyMappings.firstOrNull { it == toolgunMap } == null }.toTypedArray()
-            )
-            pProfiler.pop()
-        } catch(e: RuntimeException) {
-            ModMain.LOGGER.info("We're not on the client, so we're gonna skip over toolgun mode key maps.")
-        }
+    }
+
+    fun loadKeys() {
+        val options = Minecraft.getInstance().options
+        val keyMaps = ClientModEventBus.createMappingsForControls()
+        options.keyMappings = ArrayUtils.addAll(
+            options.keyMappings,
+            *keyMaps.filter { toolgunMap -> options.keyMappings.firstOrNull { it == toolgunMap } == null }.toTypedArray()
+        )
     }
 }
