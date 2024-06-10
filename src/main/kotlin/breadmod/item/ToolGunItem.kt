@@ -50,7 +50,6 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
 
     internal fun ensureCurrentMode(pStack: ItemStack): CompoundTag {
         if(!pStack.orCreateTag.contains(CURRENT_MODE_TAG)) {
-            println(ModToolGunModeDataLoader.modes.size)
             val nextNamespace = MapIterator(ModToolGunModeDataLoader.modes).next()
             val nextMode = MapIterator(nextNamespace.value).next()
 

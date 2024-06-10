@@ -83,7 +83,6 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                 } else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolGunMode::class.qualifiedName}")
             }
         }
-        println("Here's the classes I loaded: $loadedModes")
         pProfiler.pop()
         pProfiler.push("Load controls from toolgun data")
         val options = Minecraft.getInstance().options
