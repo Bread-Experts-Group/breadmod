@@ -2,7 +2,6 @@ package breadmod
 
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
-import breadmod.ModMain.modTranslatable
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
@@ -22,18 +21,11 @@ import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.screen.ModMenuTypes
-import com.mojang.blaze3d.platform.InputConstants
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.VertexFormat
-import net.minecraft.Util
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.item.ItemProperties
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
@@ -45,7 +37,6 @@ import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
-import java.util.function.Function
 
 
 @Suppress("unused")
@@ -108,17 +99,14 @@ object ClientModEventBus {
     }
 
     val additionalBindList = mutableListOf<KeyMapping>()
-    val toolGunBindList = mutableMapOf<Control, KeyMapping?>(
-        Control(
-            "$TOOL_GUN_DEF.$ID.mode.controls.name.remover.rmb",
-            "$TOOL_GUN_DEF.$ID.mode.controls.category.remover.rmb",
-            modTranslatable(TOOL_GUN_DEF, "mode", TOOL_GUN_DEF, "remover", "rmb"),
-            InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
-        ) to null
-    )
+    val toolGunBindList = mutableMapOf<Control, KeyMapping?>()
     @SubscribeEvent
     fun registerBindings(event: RegisterKeyMappingsEvent) {
-        toolGunBindList.keys.forEach {
+        additionalBindList.forEach { event.register(it) }
+    }
+
+    fun createMappingsForControls(): List<KeyMapping> {
+        toolGunBindList.filter { it.value == null }.keys.forEach {
             val mapping = if(it.modifier != null) {
                 KeyMapping(
                     it.nameKey,
@@ -136,12 +124,11 @@ object ClientModEventBus {
                 )
             }
             toolGunBindList[it] = mapping
-            event.register(mapping)
         }
-        additionalBindList.forEach { event.register(it) }
+        return toolGunBindList.values.mapNotNull { it }
     }
 
-    private lateinit var loadedShader: ShaderInstance
+    /*private lateinit var loadedShader: ShaderInstance
     @SubscribeEvent
     fun registerShaders(event: RegisterShadersEvent) {
         event.registerShader(ShaderInstance(event.resourceProvider, modLocation("projector"), DefaultVertexFormat.NEW_ENTITY)) { shader ->
@@ -192,5 +179,5 @@ object ClientModEventBus {
                 )
             }
         }
-    }
+    }*/
 }

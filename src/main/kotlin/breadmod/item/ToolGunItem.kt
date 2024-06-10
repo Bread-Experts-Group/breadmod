@@ -1,13 +1,14 @@
 package breadmod.item
 
 import breadmod.ClientModEventBus.additionalBindList
+import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.rendering.ToolGunItemRenderer
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.network.ToolGunUpdate
+import breadmod.network.ToolGunPacket
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.util.MapIterator
@@ -17,10 +18,7 @@ import net.minecraft.client.KeyMapping
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
@@ -36,8 +34,6 @@ import java.util.function.Consumer
 
 
 internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
-
-
     override fun appendHoverText(
         pStack: ItemStack,
         pLevel: Level?,
@@ -46,7 +42,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     ) {
         pTooltipComponents.add(
             modTranslatable("item", TOOL_GUN_DEF, "tooltip", "current_mode")
-                .append(Component.literal(ensureCurrentMode(pStack).getString(MODE_NAME_TAG)).withStyle(ChatFormatting.GOLD))
+                .append(getCurrentMode(pStack).displayName.copy().withStyle(ChatFormatting.GOLD))
         )
         pTooltipComponents.add(
             changeMode.translatedKeyMessage.copy().withStyle(ChatFormatting.GREEN).append(modTranslatable("item", TOOL_GUN_DEF, "tooltip", "mode_switch"))
@@ -77,17 +73,21 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
 
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
-    override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
-        val stack = pPlayer.getItemInHand(pUsedHand)
-
-        if(pLevel is ServerLevel) getCurrentMode(stack).action(pPlayer, stack)
-        return InteractionResultHolder.fail(pPlayer.getItemInHand(pUsedHand))
-    }
-
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
-        if(changeMode.consumeClick() && changeMode.isDown) {
-            NETWORK.sendToServer(ToolGunUpdate(pSlotId))
-            pEntity.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
+        val currentMode = getCurrentMode(pStack)
+        if(pEntity is Player && pLevel.isClientSide) {
+            if(changeMode.consumeClick()) {
+                NETWORK.sendToServer(ToolGunPacket(true, pSlotId))
+                pEntity.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
+            } else {
+                currentMode.keyBinds.forEach {
+                    val bind = toolGunBindList[it]
+                    if(bind != null && bind.consumeClick()) {
+                        NETWORK.sendToServer(ToolGunPacket(false, pSlotId, it))
+                        currentMode.action(pLevel, pEntity, pStack, it)
+                    }
+                }
+            }
         }
     }
 
@@ -108,7 +108,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
             KeyConflictContext.IN_GAME,
             KeyModifier.SHIFT,
             InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
-            "controls.${ModMain.ID}.$TOOL_GUN_DEF"
+            "controls.${ModMain.ID}.category.$TOOL_GUN_DEF"
         )
 
         init {

@@ -19,11 +19,12 @@ val renderBuffer = mutableListOf<(RenderLevelStageEvent) -> Boolean>()
 
 /**
  * Draws a line from between [start] and [end], translated according to the current [net.minecraft.client.player.LocalPlayer]'s position.
+ * BUG: Only works on X axis
  * @see breadmod.network.BeamPacket
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Double?) = renderBuffer.add {
+fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add {
     val playerEyePos = (Minecraft.getInstance().player ?: return@add true).getEyePosition(it.partialTick)
 
     RenderSystem.enableBlend()
@@ -41,26 +42,26 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Double?) = renderBuff
     builder.vertex(stack, start.x, start.y, start.z).color(0f,1f,1f,1f).endVertex()
     builder.vertex(stack, end.x, end.y, end.z).color(0f,1f,1f,1f).endVertex()
     if(thickness != null) {
-        builder.vertex(stack, start.x + 0.1f, start.y, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + 0.1f, end.y, end.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, start.x + thickness, start.y, start.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, end.x + thickness, end.y, end.z).color(0f,1f,1f,1f).endVertex()
         // Q2
-        builder.vertex(stack, start.x, start.y + 0.1f, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x, end.y + 0.1f, end.z).color(0f,1f,1f,1f) .endVertex()
+        builder.vertex(stack, start.x, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, end.x, end.y + thickness, end.z).color(0f,1f,1f,1f) .endVertex()
 
-        builder.vertex(stack, start.x + 0.1f, start.y + 0.1f, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + 0.1f, end.y + 0.1f, end.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, start.x + thickness, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, end.x + thickness, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
         // Q3
-        builder.vertex(stack, start.x + 0.1f, start.y, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + 0.1f, end.y, end.z).color(0f,1f,1f,1f) .endVertex()
+        builder.vertex(stack, start.x + thickness, start.y, start.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, end.x + thickness, end.y, end.z).color(0f,1f,1f,1f) .endVertex()
 
-        builder.vertex(stack, start.x + 0.1f, start.y + 0.1f, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + 0.1f, end.y + 0.1f, end.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, start.x + thickness, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, end.x + thickness, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
         // Q4
         builder.vertex(stack, start.x, start.y, start.z).color(0f,1f,1f,1f).endVertex()
         builder.vertex(stack, end.x, end.y, end.z).color(0f,1f,1f,1f) .endVertex()
 
-        builder.vertex(stack, start.x, start.y + 0.1f, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x, end.y + 0.1f, end.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, start.x, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(stack, end.x, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
     }
 
     tessellator.end()

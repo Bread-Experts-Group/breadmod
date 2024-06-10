@@ -18,9 +18,10 @@ internal class ModToolGunModeProvider(
             modTranslatable(TOOL_GUN_DEF, "mode", "tooltip", "remover"),
             listOf(
                 Control(
+                    "use",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.remover.rmb",
-                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.remover.rmb",
-                    modTranslatable(TOOL_GUN_DEF, "mode", "remover", "rmb"),
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.remover",
+                    modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "remover", "rmb"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
                 )
             ),
@@ -33,9 +34,10 @@ internal class ModToolGunModeProvider(
             modTranslatable(TOOL_GUN_DEF, "mode", "tooltip", "creator"),
             listOf(
                 Control(
+                    "use",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.creator.rmb",
-                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator.rmb",
-                    modTranslatable(TOOL_GUN_DEF, "mode", "creator", "rmb"),
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
+                    modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
                 )
             ),
@@ -48,16 +50,18 @@ internal class ModToolGunModeProvider(
             modTranslatable(TOOL_GUN_DEF, "mode", "tooltip", "explode"),
             listOf(
                 Control(
+                    "use",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.explode.rmb",
-                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.explode.rmb",
-                    modTranslatable(TOOL_GUN_DEF, "mode", "explode", "rmb"),
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.explode",
+                    modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "rmb"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
                 ),
                 Control(
-                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.explode.rmb",
-                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.explode.rmb",
-                    modTranslatable(TOOL_GUN_DEF, "mode", "explode", "rmb"),
-                    InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
+                    "fluid_toggle",
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.explode.mmb",
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.explode",
+                    modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off"),
+                    InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_MIDDLE)
                 )
             ),
             ToolGunExplodeMode::class.java

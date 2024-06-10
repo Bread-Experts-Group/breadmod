@@ -1,8 +1,10 @@
 package breadmod.datagen.tool_gun
 
+import breadmod.ClientModEventBus
 import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CLASS_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CONTROLS_CATEGORY_TRANSLATION_KEY
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CONTROLS_ID_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CONTROLS_NAME_TRANSLATION_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.DISPLAY_NAME_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.KEYBINDS_KEY
@@ -15,7 +17,7 @@ import breadmod.util.jsonToComponent
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mojang.blaze3d.platform.InputConstants
-import net.minecraft.client.KeyMapping
+import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
@@ -23,7 +25,9 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 import net.minecraftforge.client.settings.KeyModifier
+import org.apache.commons.lang3.ArrayUtils
 import org.jetbrains.annotations.ApiStatus.Internal
 import kotlin.reflect.full.allSuperclasses
 import kotlin.reflect.full.isSubclassOf
@@ -35,8 +39,8 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
     data class ToolgunMode internal constructor(
         val displayName: Component,
         val tooltip: Component,
-        val keyBinds: List<KeyMapping>,
-        val action: (Player, ItemStack) -> Unit
+        val keyBinds: List<BreadModToolGunModeProvider.Control>,
+        val action: (Level, Player, ItemStack, BreadModToolGunModeProvider.Control) -> Unit
     )
 
     private val loadedModes: MutableMap<String, MutableMap<String, ToolgunMode>> = mutableMapOf()
@@ -64,13 +68,16 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                         keyBinds = buildList {
                             dataObj.getAsJsonArray(KEYBINDS_KEY).forEach {
                                 val keybind = it.asJsonObject
-                                toolGunBindList[BreadModToolGunModeProvider.Control(
+                                val control = BreadModToolGunModeProvider.Control(
+                                    keybind.getAsJsonPrimitive(CONTROLS_ID_KEY).asString,
                                     keybind.getAsJsonPrimitive(CONTROLS_NAME_TRANSLATION_KEY).asString,
                                     keybind.getAsJsonPrimitive(CONTROLS_CATEGORY_TRANSLATION_KEY).asString,
                                     jsonToComponent(keybind.getAsJsonObject(TOOLGUN_INFO_DISPLAY_KEY)),
                                     InputConstants.getKey(keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString),
                                     keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString?.let { mod -> KeyModifier.getModifier(InputConstants.getKey(mod)) }
-                                )] = null
+                                )
+                                toolGunBindList[control] = null
+                                add(control)
                             }
                         },
                         action = (classConstructor.call() as IToolGunMode)::action
@@ -80,6 +87,14 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
             }
         }
         println("Here's the classes I loaded: $loadedModes")
+        pProfiler.pop()
+        pProfiler.push("Load controls from toolgun data")
+        val options = Minecraft.getInstance().options
+        val keyMaps = ClientModEventBus.createMappingsForControls()
+        options.keyMappings = ArrayUtils.addAll(
+            options.keyMappings,
+            *keyMaps.filter { toolgunMap -> options.keyMappings.firstOrNull { it == toolgunMap } == null }.toTypedArray()
+        )
         pProfiler.pop()
     }
 }

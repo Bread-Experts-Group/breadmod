@@ -1,5 +1,6 @@
 package breadmod.hud
 
+import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.ToolGunItem
@@ -8,7 +9,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
-import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.InteractionHand
 import net.minecraftforge.client.gui.overlay.ForgeGui
 import net.minecraftforge.client.gui.overlay.IGuiOverlay
@@ -52,39 +52,39 @@ class ToolGunOverlay: IGuiOverlay {
     }
 
     private fun renderMode(namespace: String, pMode: ModToolGunModeDataLoader.ToolgunMode, pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, pX: Int, pY: Int) {
+        pPose.pushPose()
         // Action source
-        drawScaledText(Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.UNDERLINE),
-            pPose, pGuiGraphics, pGui, pX + 2, pY + 2, 0.8f, 0.8f, 0.8f, true
+        drawScaledText(Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
+            pPose, pGuiGraphics, pGui, pX + 2, pY + 2, 0.8f, true
         )
 
         // Action Name
         drawScaledText(
             pMode.displayName.copy().withStyle(ChatFormatting.BOLD),
-            pPose, pGuiGraphics, pGui, pX - 1, pY + 4, 2.2f, 2.2f, 2.2f, false
+            pPose, pGuiGraphics, pGui, pX - 1, pY + 4, 2.5f, false
         )
         // Info icon
-        pPose.pushPose()
-        pGuiGraphics.blit(overlayTexture, pX, pY + 32, 148, 0, 8, 8)
-        pPose.popPose()
-
-        // Action Description
-        drawScaledText(pMode.tooltip.copy(),
-            pPose, pGuiGraphics, pGui, pX + 13, pY + 43, 0.8f, 0.8f, 0.8f, false
+        drawScaledText(pMode.tooltip.copy(), pPose, pGuiGraphics, pGui,
+            pX + 13, pY + 43, 0.4f, true
         )
+        // Keybinds
+        pMode.keyBinds.forEachIndexed { index, control ->
+            val moved = ((index+1) * 9) + 3
+            drawScaledText(
+                toolGunBindList[control]!!.translatedKeyMessage.copy().withStyle(ChatFormatting.GOLD)
+                    .append(control.toolGunComponent.copy().withStyle(ChatFormatting.WHITE)),
+                pPose, pGuiGraphics, pGui,
+                pX + 13, pY + 43 + moved, 1f, true
+            )
+            // TODO. Chris, could you look into doing control textures and implementing them here? Thanks
+            //pGuiGraphics.blit(overlayTexture, pX, pY + 43 + moved, 148, 0, 8, 8)
+        }
+        pGuiGraphics.blit(overlayTexture, pX, pY + 43, 148, 0, 8, 8)
+        pPose.popPose()
     }
 
-    private fun printOverlayStats(pScreenWidth: Int, pScreenHeight: Int, x: Int, y: Int) {
-        println("-----------------")
-        println("Overlay Stats")
-        println("screen width: $pScreenWidth")
-        println("screen height: $pScreenHeight")
-        println("x value: $x")
-        println("y value: $y")
-        println("-----------------")
-    }
-
-    private fun drawText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pDropShadow: Boolean) {
-        pPose.pushPose()
+    private fun drawScaledText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScale: Float, pDropShadow: Boolean) {
+        pPose.scaleFlat(pScale)
         pGuiGraphics.drawString(
             pGui.minecraft.font,
             pText,
@@ -93,34 +93,8 @@ class ToolGunOverlay: IGuiOverlay {
             textColor,
             pDropShadow
         )
-        pPose.popPose()
+        pPose.scaleFlat(1f)
     }
 
-    private fun drawScaledText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScaleX: Float, pScaleY: Float, pScaleZ: Float, pDropShadow: Boolean) {
-        pPose.pushPose()
-        pPose.scale(pScaleX, pScaleY, pScaleZ)
-        pGuiGraphics.drawString(
-            pGui.minecraft.font,
-            pText,
-            pX,
-            pY,
-            textColor,
-            pDropShadow
-        )
-        pPose.popPose()
-    }
-
-    private fun drawFormattedText(pText: FormattedCharSequence, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScaleX: Float, pScaleY: Float, pScaleZ: Float, pDropShadow: Boolean) {
-        pPose.pushPose()
-        pPose.scale(pScaleX, pScaleY, pScaleZ)
-        pGuiGraphics.drawString(
-            pGui.minecraft.font,
-            pText,
-            pX,
-            pY,
-            textColor,
-            pDropShadow
-        )
-        pPose.popPose()
-    }
+    private fun PoseStack.scaleFlat(scale: Float) = this.scale(scale, scale, scale)
 }

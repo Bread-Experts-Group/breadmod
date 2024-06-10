@@ -31,8 +31,8 @@ object PacketHandler {
             BeamPacket::encodeBuf, BeamPacket::decodeBuf, BeamPacket::handle
         )
         NETWORK.registerMessage(
-            idCounter++, ToolGunUpdate::class.java,
-            ToolGunUpdate::encodeBuf, ToolGunUpdate::decodeBuf, ToolGunUpdate::handle
+            idCounter++, ToolGunPacket::class.java,
+            ToolGunPacket::encodeBuf, ToolGunPacket::decodeBuf, ToolGunPacket::handle
         )
     }
 }

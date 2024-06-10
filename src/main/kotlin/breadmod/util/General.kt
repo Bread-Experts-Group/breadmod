@@ -272,7 +272,7 @@ fun componentToJson(component: Component) = JsonObject().also {
 fun jsonToComponent(json: JsonObject): MutableComponent = when(val type = json.getAsJsonPrimitive("type").asString) {
     "translate" -> Component.translatableWithFallback(
         json.getAsJsonPrimitive("key").asString,
-        json.getAsJsonPrimitive("fallback")?.asString
+        json.get("fallback")?.let { if(it.isJsonNull) null else it.asString }
     )
     "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
     else -> throw IllegalArgumentException("Illegal component type: $type")

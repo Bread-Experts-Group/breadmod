@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, private val modID: String): DataProvider {
     data class Control(
+        val id: String,
         val nameKey: String,
         val categoryKey: String,
         val toolGunComponent: Component,
@@ -41,6 +42,7 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
                         it.add(KEYBINDS_KEY, JsonArray().also { array ->
                             data.second.forEach {
                                 array.add(JsonObject().also { keyObj ->
+                                    keyObj.addProperty(CONTROLS_ID_KEY, it.id)
                                     keyObj.addProperty(KEY_ENTRY_KEY, it.key.name)
                                     keyObj.addProperty(MODIFIER_ENTRY_KEY, it.modifier?.name)
                                     keyObj.addProperty(CONTROLS_NAME_TRANSLATION_KEY, it.nameKey)
@@ -73,6 +75,7 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
     internal companion object {
         const val TOOL_GUN_DEF = "tool_gun"
 
+        const val CONTROLS_ID_KEY = "id"
         const val CONTROLS_NAME_TRANSLATION_KEY = "controls_name_key"
         const val CONTROLS_CATEGORY_TRANSLATION_KEY = "controls_category_key"
         const val TOOLGUN_INFO_DISPLAY_KEY = "${TOOL_GUN_DEF}_key"

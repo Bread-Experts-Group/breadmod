@@ -13,15 +13,15 @@ import java.util.function.Supplier
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-data class BeamPacket(val pStart: Vector3f, val pEnd: Vector3f, val thickness: Double?) {
+data class BeamPacket(val pStart: Vector3f, val pEnd: Vector3f, val thickness: Float?) {
     companion object {
         fun encodeBuf(input: BeamPacket, buffer: FriendlyByteBuf) {
             buffer.writeVector3f(input.pStart)
             buffer.writeVector3f(input.pEnd)
-            buffer.writeNullable(input.thickness) { cons, vr -> cons.writeDouble(vr) }
+            buffer.writeNullable(input.thickness) { cons, vr -> cons.writeFloat(vr) }
         }
         fun decodeBuf(input: FriendlyByteBuf): BeamPacket =
-            BeamPacket(input.readVector3f(), input.readVector3f(), input.readNullable { it.readDouble() })
+            BeamPacket(input.readVector3f(), input.readVector3f(), input.readNullable { it.readFloat() })
 
         fun handle(input: BeamPacket, ctx: Supplier<NetworkEvent.Context>) = ctx.get().let {
             if(it.sender == null) {

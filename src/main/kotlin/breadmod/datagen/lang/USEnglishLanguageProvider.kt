@@ -141,23 +141,55 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         modAdd("Output", path = arrayOf("output"))
 
         // Tool Gun
+        modAdd("Toolgun",
+            "controls", "category", TOOL_GUN_DEF)
+        modAdd("Switch Mode",
+            "controls", TOOL_GUN_DEF, "change_mode")
+
         // Remover Action
         modAdd("Remover",
             TOOL_GUN_DEF, "mode", "display_name", "remover")
         modAdd("Remove entities with right click.",
             TOOL_GUN_DEF, "mode", "tooltip", "remover")
+        modAdd("... to remove the entity you're looking at.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "remover", "rmb")
+
+        modAdd("Remove Entity",
+            TOOL_GUN_DEF, "mode", "controls", "name", "remover", "rmb")
+        modAdd("Toolgun: Remover",
+            TOOL_GUN_DEF, "mode", "controls", "category", "remover")
 
         // Creator action
         modAdd("Creator",
             TOOL_GUN_DEF, "mode", "display_name", "creator")
         modAdd("Add entities/blocks with right click.",
             TOOL_GUN_DEF, "mode", "tooltip", "creator")
+        modAdd("... to add an entity.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb")
+
+        modAdd("Create Entity",
+            TOOL_GUN_DEF, "mode", "controls", "name", "creator", "rmb")
+        modAdd("Toolgun: Creator",
+            TOOL_GUN_DEF, "mode", "controls", "category", "creator")
 
         // Explode action
         modAdd("Exploder",
             TOOL_GUN_DEF, "mode", "display_name", "explode")
         modAdd("Explodes whatever surface you're pointing at.",
             TOOL_GUN_DEF, "mode", "tooltip", "explode")
+        modAdd("... to explode the block you're looking at.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "rmb")
+        modAdd("... to target fluids.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off")
+        modAdd("... to not target fluids.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "on") // TODO
+
+        modAdd("Explode",
+            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "rmb")
+        modAdd("Target Fluids",
+            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "mmb")
+        modAdd("Toolgun: Exploder",
+            TOOL_GUN_DEF, "mode", "controls", "category", "explode")
 
         // Misc
         modAdd("%s left the game",

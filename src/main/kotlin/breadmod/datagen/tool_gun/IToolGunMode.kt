@@ -2,6 +2,7 @@ package breadmod.datagen.tool_gun
 
 import breadmod.registry.sound.ModSounds
 import net.minecraft.core.BlockPos
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
@@ -15,8 +16,12 @@ interface IToolGunMode {
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    fun action(pPlayer: Player, pGunStack: ItemStack)
+    fun action(pLevel: Level, pPlayer: Player, pGunStack: ItemStack, pControl: BreadModToolGunModeProvider.Control)
 
-    fun playToolGunSound(pLevel: Level, at: BlockPos) =
-        pLevel.playSound(null, at, ModSounds.TOOL_GUN.get(), SoundSource.PLAYERS, 2.0f, 1f)
+    companion object {
+        fun playToolGunSound(pLevel: Level, at: BlockPos) =
+            pLevel.playSound(null, at, ModSounds.TOOL_GUN.get(), SoundSource.PLAYERS, 2.0f, 1f)
+        fun playModeSound(pLevel: Level, at: BlockPos) =
+            pLevel.playSound(null, at, SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 2.0f, 1f)
+    }
 }
