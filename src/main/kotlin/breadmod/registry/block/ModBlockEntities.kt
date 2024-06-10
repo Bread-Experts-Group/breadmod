@@ -1,11 +1,7 @@
 package breadmod.registry.block
 
 import breadmod.ModMain
-import breadmod.block.entity.CoalGeneratorBlockEntity
-import breadmod.block.entity.BreadScreenBlockEntity
-import breadmod.block.entity.DoughMachineBlockEntity
-import breadmod.block.entity.HeatingElementBlockEntity
-import breadmod.block.entity.WheatCrusherBlockEntity
+import breadmod.block.entity.*
 import breadmod.block.multiblock.farmer.entity.*
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK

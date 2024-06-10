@@ -13,6 +13,7 @@ internal class ToolGunCreatorMode: IToolGunMode {
         pGunStack: ItemStack,
         pControl: BreadModToolGunModeProvider.Control
     ) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        println("Not yet implemented.")
     }
 }

@@ -91,7 +91,6 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
     }
 
     override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }
-
     abstract override fun getDisplayName(): Component
 
     fun tick(

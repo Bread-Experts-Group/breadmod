@@ -47,12 +47,15 @@ class ToolGunOverlay: IGuiOverlay {
     private fun renderBackground(pGuiGraphics: GuiGraphics, pPose: PoseStack, x: Int, y: Int) {
         pPose.pushPose()
         // Main Background Texture
-        pGuiGraphics.blit(overlayTexture, x, y, 0, 0, 148, 42)
+        pGuiGraphics.blit(overlayTexture, x, y, 0, 0, 166, 41)
         pPose.popPose()
     }
 
     private fun renderMode(namespace: String, pMode: ModToolGunModeDataLoader.ToolgunMode, pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, pX: Int, pY: Int) {
         pPose.pushPose()
+        // Icon renders
+        pGuiGraphics.blit(overlayTexture, pX + 1, pY + 33, 0, 41, 8, 8)
+
         // Action source
         drawScaledText(Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
             pPose, pGuiGraphics, pGui, pX + 2, pY + 2, 0.8f, true
@@ -63,7 +66,7 @@ class ToolGunOverlay: IGuiOverlay {
             pMode.displayName.copy().withStyle(ChatFormatting.BOLD),
             pPose, pGuiGraphics, pGui, pX - 1, pY + 4, 2.5f, false
         )
-        // Info icon
+        // Mode Tooltip
         drawScaledText(pMode.tooltip.copy(), pPose, pGuiGraphics, pGui,
             pX + 13, pY + 43, 0.4f, true
         )
@@ -78,7 +81,6 @@ class ToolGunOverlay: IGuiOverlay {
                 pX + 73, pY + 43 + moved, 1f, true
             )
         }
-        pGuiGraphics.blit(overlayTexture, pX, pY + 43, 148, 0, 8, 8)
         pPose.popPose()
     }
 

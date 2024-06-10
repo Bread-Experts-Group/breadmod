@@ -64,9 +64,6 @@ abstract class AbstractPowerGeneratorBlock: Block(Properties.of()
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith("RenderShape.MODEL", "net.minecraft.world.level.block.RenderShape"))
-    override fun getRenderShape(pState: BlockState): RenderShape = RenderShape.MODEL
-
     @Deprecated("Deprecated in Java", ReplaceWith(
         "super.use(pState, pLevel, pPos, pPlayer, pHand, pHit)",
         "net.minecraft.world.level.block.Block"
@@ -80,6 +77,7 @@ abstract class AbstractPowerGeneratorBlock: Block(Properties.of()
         pHand: InteractionHand,
         pHit: BlockHitResult
     ): InteractionResult {
+        super.use(pState, pLevel, pPos, pPlayer, pHand, pHit)
         if(!pLevel.isClientSide) {
             val entity = (pLevel.getBlockEntity(pPos) as? AbstractPowerGeneratorBlockEntity<*>) ?: return InteractionResult.FAIL
             NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
