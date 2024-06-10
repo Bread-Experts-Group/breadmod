@@ -48,8 +48,8 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
 
     val capabilities = CapabilityHolder(mapOf(
         ForgeCapabilities.ENERGY to (object : EnergyStorage(100000, 10000) {
-            override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(maxReceive, simulate).also { setChanged() }
-            override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = super.extractEnergy(maxExtract, simulate).also { setChanged() }
+            override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(0, simulate).also { setChanged() }
+            override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = super.extractEnergy(maxExtract, false).also { setChanged() }
         } to null),
         ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(listOf(
             64 to StorageDirection.STORE_ONLY,
@@ -78,7 +78,7 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
         super.saveAdditional(pTag)
         pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
             capabilities.serialize(pTag)
-            dataTag.putInt("process", progress); dataTag.putInt("maxProgress", maxProgress)
+            dataTag.putInt("progress", progress); dataTag.putInt("maxProgress", maxProgress)
         })
     }
 
@@ -104,14 +104,10 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
 
         currentRecipe.also {
             if(it != null) {
-                if(progress < maxProgress) {
+                if(progress < maxProgress && energyHandle.energyStored < energyHandle.maxEnergyStored) {
                     progress++
                     pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
                     energyDivision?.let { rfd -> if(energyHandle.extractEnergy(rfd, false) != rfd) progress-- }
-                } else {
-                    setChanged()
-                    currentRecipe = null
-                    progress = 0
                 }
             } else {
                 pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
