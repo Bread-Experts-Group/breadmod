@@ -13,6 +13,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.hud.ToolGunOverlay
+import breadmod.item.ToolGunItem.Companion.changeMode
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
 import breadmod.registry.block.ModBlockEntities
@@ -98,11 +99,10 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get()) { SidedScreenRenderer() }
     }
 
-    val additionalBindList = mutableListOf<KeyMapping>()
     val toolGunBindList = mutableMapOf<Control, KeyMapping?>()
     @SubscribeEvent
     fun registerBindings(event: RegisterKeyMappingsEvent) {
-        additionalBindList.forEach { event.register(it) }
+        event.register(changeMode)
     }
 
     fun createMappingsForControls(): List<KeyMapping> {

@@ -1,6 +1,5 @@
 package breadmod.item
 
-import breadmod.ClientModEventBus.additionalBindList
 import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
@@ -76,7 +75,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
         if(pEntity is Player) {
             val currentMode = getCurrentMode(pStack)
-            if(!pIsSelected) {
+            if(pLevel.isClientSide && !pIsSelected) {
                 changeMode.consumeClick()
                 currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
                 currentMode.mode.close(pLevel, pEntity, pStack, null)
@@ -106,15 +105,15 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
         override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
     })
 
-    companion object {
-        internal const val CURRENT_MODE_TAG = "currentMode"
-        internal const val MODE_NAMESPACE_TAG = "namespace"
-        internal const val MODE_NAME_TAG = "name"
+    internal companion object {
+        const val CURRENT_MODE_TAG = "currentMode"
+        const val MODE_NAMESPACE_TAG = "namespace"
+        const val MODE_NAME_TAG = "name"
 
-        internal const val NAMESPACE_ITERATOR_STATE_TAG = "namespaceIteratorState"
-        internal const val MODE_ITERATOR_STATE_TAG = "modeIteratorState"
+        const val NAMESPACE_ITERATOR_STATE_TAG = "namespaceIteratorState"
+        const val MODE_ITERATOR_STATE_TAG = "modeIteratorState"
 
-        private val changeMode by lazy {
+        val changeMode by lazy {
             KeyMapping(
                 "controls.${ModMain.ID}.$TOOL_GUN_DEF.change_mode",
                 KeyConflictContext.IN_GAME,
@@ -122,10 +121,6 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
                 InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
                 "controls.${ModMain.ID}.category.$TOOL_GUN_DEF"
             )
-        }
-
-        init {
-            additionalBindList.add(changeMode)
         }
     }
 }
