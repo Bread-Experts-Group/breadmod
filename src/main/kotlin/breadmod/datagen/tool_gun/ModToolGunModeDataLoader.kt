@@ -2,6 +2,7 @@ package breadmod.datagen.tool_gun
 
 import breadmod.ClientModEventBus
 import breadmod.ClientModEventBus.toolGunBindList
+import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CLASS_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CONTROLS_CATEGORY_TRANSLATION_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CONTROLS_ID_KEY
@@ -84,13 +85,17 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
             }
         }
         pProfiler.pop()
-        pProfiler.push("Load controls from toolgun data")
-        val options = Minecraft.getInstance().options
-        val keyMaps = ClientModEventBus.createMappingsForControls()
-        options.keyMappings = ArrayUtils.addAll(
-            options.keyMappings,
-            *keyMaps.filter { toolgunMap -> options.keyMappings.firstOrNull { it == toolgunMap } == null }.toTypedArray()
-        )
-        pProfiler.pop()
+        try {
+            pProfiler.push("Load controls from toolgun data")
+            val options = Minecraft.getInstance().options
+            val keyMaps = ClientModEventBus.createMappingsForControls()
+            options.keyMappings = ArrayUtils.addAll(
+                options.keyMappings,
+                *keyMaps.filter { toolgunMap -> options.keyMappings.firstOrNull { it == toolgunMap } == null }.toTypedArray()
+            )
+            pProfiler.pop()
+        } catch(e: RuntimeException) {
+            ModMain.LOGGER.info("We're not on the client, so we're gonna skip over toolgun mode key maps.")
+        }
     }
 }
