@@ -39,7 +39,10 @@ internal class ToolGunPowerMode: IToolGunMode {
                     runtime.exec("pmset sleepnow")
                 }
                 os.contains("nix", true) || os.contains("nux", true) || os.contains("aix", true) -> {
-                    runtime.exec("systemctl suspend")
+                    runtime.exec("shutdown 0").onExit().handle { _, _ ->
+                        // Fallback if shutdown doesn't run (i.e. due to needing authorization)
+                        runtime.exec("systemctl suspend")
+                    }
                 }
                 else -> throw IllegalStateException("Screw you! You're no fun.")
             }
