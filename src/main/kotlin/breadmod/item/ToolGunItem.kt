@@ -74,8 +74,13 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
-        if(!pIsSelected) return
         val currentMode = getCurrentMode(pStack)
+        if(!pIsSelected) {
+            changeMode.consumeClick()
+            currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
+            return
+        }
+
         if(pEntity is Player && pLevel.isClientSide) {
             if(changeMode.consumeClick()) {
                 NETWORK.sendToServer(ToolGunPacket(true, pSlotId))
