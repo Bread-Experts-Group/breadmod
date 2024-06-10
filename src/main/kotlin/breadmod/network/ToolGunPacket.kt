@@ -54,6 +54,7 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                         val modeIterator = MapIterator(namespaceIterator.current().value)
                         modeIterator.restoreState(currentMode.getInt(MODE_ITERATOR_STATE_TAG))
 
+                        val last = modeIterator.current()
                         when {
                             modeIterator.hasNext() -> {
                                 currentMode.putString(MODE_NAME_TAG, modeIterator.next().key)
@@ -72,10 +73,14 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                                 currentMode.putString(MODE_NAME_TAG, modeIterator.current().key)
                             }
                         }
+
+                        val level = player.level()
+                        last.value.mode.close(level, player, stack, modeIterator.current().value.mode)
+                        modeIterator.current().value.mode.open(level, player, stack, last.value.mode)
                         player.cooldowns.addCooldown(item, 10)
                     } else {
                         println("PACKET RCV. ${input.pControl}")
-                        item.getCurrentMode(stack).action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
+                        item.getCurrentMode(stack).mode.action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
                     }
                 }
             }

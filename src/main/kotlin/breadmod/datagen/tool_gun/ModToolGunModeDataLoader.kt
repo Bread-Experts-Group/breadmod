@@ -23,9 +23,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.Level
 import net.minecraftforge.client.settings.KeyModifier
 import org.apache.commons.lang3.ArrayUtils
 import org.jetbrains.annotations.ApiStatus.Internal
@@ -40,7 +37,7 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         val displayName: Component,
         val tooltip: Component,
         val keyBinds: List<BreadModToolGunModeProvider.Control>,
-        val action: (Level, Player, ItemStack, BreadModToolGunModeProvider.Control) -> Unit
+        val mode: IToolGunMode
     )
 
     private val loadedModes: MutableMap<String, MutableMap<String, ToolgunMode>> = mutableMapOf()
@@ -80,7 +77,7 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                                 add(control)
                             }
                         },
-                        action = (classConstructor.call() as IToolGunMode)::action
+                        mode = classConstructor.call() as IToolGunMode
                     )
                     classConstructor.isAccessible = false
                 } else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolGunMode::class.qualifiedName}")

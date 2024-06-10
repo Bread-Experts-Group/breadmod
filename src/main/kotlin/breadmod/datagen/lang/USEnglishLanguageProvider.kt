@@ -172,6 +172,19 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         modAdd("Toolgun: Creator",
             TOOL_GUN_DEF, "mode", "controls", "category", "creator")
 
+        // Power action
+        modAdd("Power",
+            TOOL_GUN_DEF, "mode", "display_name", "power")
+        modAdd("Turns off the \"power.\"",
+            TOOL_GUN_DEF, "mode", "tooltip", "power")
+        modAdd("... to turn off the \"power.\"",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "power", "rmb")
+
+        modAdd("Power Off (5 Times)",
+            TOOL_GUN_DEF, "mode", "controls", "name", "power", "rmb")
+        modAdd("Toolgun: Power",
+            TOOL_GUN_DEF, "mode", "controls", "category", "power")
+
         // Explode action
         modAdd("Exploder",
             TOOL_GUN_DEF, "mode", "display_name", "explode")

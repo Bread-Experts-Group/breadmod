@@ -74,23 +74,28 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
-        val currentMode = getCurrentMode(pStack)
-        if(!pIsSelected) {
-            changeMode.consumeClick()
-            currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
-            return
-        }
+        if(pEntity is Player) {
+            val currentMode = getCurrentMode(pStack)
+            if(!pIsSelected) {
+                changeMode.consumeClick()
+                currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
+                currentMode.mode.close(pLevel, pEntity, pStack, null)
+                return
+            }
 
-        if(pEntity is Player && pLevel.isClientSide) {
-            if(changeMode.consumeClick()) {
+            if(pLevel.isClientSide && changeMode.consumeClick()) {
                 NETWORK.sendToServer(ToolGunPacket(true, pSlotId))
                 pEntity.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
+                return
             } else {
-                currentMode.keyBinds.forEach {
-                    val bind = toolGunBindList[it]
-                    if(bind != null && bind.consumeClick()) {
-                        NETWORK.sendToServer(ToolGunPacket(false, pSlotId, it))
-                        currentMode.action(pLevel, pEntity, pStack, it)
+                currentMode.mode.open(pLevel, pEntity, pStack, null)
+                if(pLevel.isClientSide) {
+                    currentMode.keyBinds.forEach {
+                        val bind = toolGunBindList[it]
+                        if(bind != null && bind.consumeClick()) {
+                            NETWORK.sendToServer(ToolGunPacket(false, pSlotId, it))
+                            currentMode.mode.action(pLevel, pEntity, pStack, it)
+                        }
                     }
                 }
             }

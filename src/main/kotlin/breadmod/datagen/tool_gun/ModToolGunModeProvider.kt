@@ -4,6 +4,7 @@ import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.mode.ToolGunCreatorMode
 import breadmod.datagen.tool_gun.mode.ToolGunExplodeMode
+import breadmod.datagen.tool_gun.mode.ToolGunPowerMode
 import breadmod.datagen.tool_gun.mode.ToolGunRemoverMode
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.data.PackOutput
@@ -42,6 +43,22 @@ internal class ModToolGunModeProvider(
                 )
             ),
             ToolGunCreatorMode::class.java
+        )
+
+        addMode(
+            "power",
+            modTranslatable(TOOL_GUN_DEF, "mode", "display_name", "power"),
+            modTranslatable(TOOL_GUN_DEF, "mode", "tooltip", "power"),
+            listOf(
+                Control(
+                    "use",
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.power.rmb",
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.power",
+                    modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "power", "rmb"),
+                    InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT)
+                )
+            ),
+            ToolGunPowerMode::class.java
         )
 
         addMode(
