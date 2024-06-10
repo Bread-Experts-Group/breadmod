@@ -1,6 +1,5 @@
 package breadmod.block
 
-
 import breadmod.block.entity.AbstractPowerGeneratorBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -66,8 +65,7 @@ abstract class AbstractPowerGeneratorBlock: Block(Properties.of()
 
     @Deprecated("Deprecated in Java", ReplaceWith(
         "super.use(pState, pLevel, pPos, pPlayer, pHand, pHit)",
-        "net.minecraft.world.level.block.Block"
-    )
+        "net.minecraft.world.level.block.Block")
     )
     override fun use(
         pState: BlockState,
@@ -85,5 +83,5 @@ abstract class AbstractPowerGeneratorBlock: Block(Properties.of()
         return InteractionResult.sidedSuccess(pLevel.isClientSide)
     }
 
-    abstract override fun <T : BlockEntity?> getTicker(pLevel: Level, pState: BlockState, pBlockEntityType: BlockEntityType<T>): BlockEntityTicker<T>?
+    abstract override fun <T : BlockEntity> getTicker(pLevel: Level, pState: BlockState, pBlockEntityType: BlockEntityType<T>): BlockEntityTicker<T>?
 }

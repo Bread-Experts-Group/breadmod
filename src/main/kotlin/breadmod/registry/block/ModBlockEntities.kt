@@ -71,6 +71,7 @@ object ModBlockEntities {
     val COAL_GENERATOR: RegistryObject<BlockEntityType<CoalGeneratorBlockEntity>> = deferredRegister.register("coal_generator_entity") {
         BlockEntityType.Builder.of(
             { pPos, pState -> CoalGeneratorBlockEntity(pPos, pState) },
+            ModBlocks.COAL_GENERATOR.get().block
         ).build(null)
     }
 }

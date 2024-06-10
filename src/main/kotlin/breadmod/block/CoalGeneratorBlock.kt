@@ -11,12 +11,13 @@ import net.minecraft.world.level.block.state.BlockState
 class CoalGeneratorBlock: AbstractPowerGeneratorBlock() {
     override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity = CoalGeneratorBlockEntity(pPos, pState)
 
-    override fun <T : BlockEntity?> getTicker(
+    override fun <T : BlockEntity> getTicker(
         pLevel: Level,
         pState: BlockState,
         pBlockEntityType: BlockEntityType<T>
     ): BlockEntityTicker<T>? =
-        if(pLevel.isClientSide()) null else BlockEntityTicker<T> { _, pPos, _, pBlockEntity -> (pBlockEntity as CoalGeneratorBlockEntity).tick(pLevel, pPos, pState, pBlockEntity) }
+        if(pLevel.isClientSide()) null
+        else BlockEntityTicker<T> { _, pPos, _, pBlockEntity -> (pBlockEntity as CoalGeneratorBlockEntity).tick(pLevel, pPos, pState, pBlockEntity) }
 
-    // todo block texture, blockstates, fix ticking
+    // todo block texture, blockstates
 }
