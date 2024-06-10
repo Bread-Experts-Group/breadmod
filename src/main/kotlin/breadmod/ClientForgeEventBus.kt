@@ -18,6 +18,6 @@ object ClientForgeEventBus {
     @SubscribeEvent
     fun onLevelRender(event: RenderLevelStageEvent) {
         if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
-        renderBuffer.forEach { if(it.invoke(event)) renderBuffer.remove(it) }
+        renderBuffer.removeIf { it.invoke(event) }
     }
 }

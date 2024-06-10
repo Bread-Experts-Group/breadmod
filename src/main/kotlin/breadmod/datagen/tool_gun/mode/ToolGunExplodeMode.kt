@@ -18,7 +18,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
             level.rayMarchBlock(pPlayer.position(), Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0, false)?.let {
                 NETWORK.send(
                     PacketDistributor.TRACKING_CHUNK.with { level.getChunkAt(pPlayer.blockPosition()) },
-                    BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 0.1)
+                    BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 5.0)
                 )
                 playToolGunSound(level, pPlayer.blockPosition())
 
