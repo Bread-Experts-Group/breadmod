@@ -71,7 +71,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         )
 
         drawTextOnScreen(
-            toolgunItem.getCurrentMode(pStack).displayName.copy().withStyle(ChatFormatting.BOLD),
+            (toolgunItem.getCurrentMode(pStack)?.displayName?.copy() ?: Component.literal("???")).withStyle(ChatFormatting.BOLD),
             Color.WHITE.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
             0.923, 0.065, -0.038, 0.0007f
         )

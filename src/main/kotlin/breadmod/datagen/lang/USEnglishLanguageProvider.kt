@@ -145,6 +145,8 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
             "controls", "category", TOOL_GUN_DEF)
         modAdd("Switch Mode",
             "controls", TOOL_GUN_DEF, "change_mode")
+        modAdd("Mode is in a broken state. Run /data get entity @s and report this as a bug.",
+            TOOL_GUN_DEF, "broken_tooltip")
 
         // Remover Action
         modAdd("Remover",

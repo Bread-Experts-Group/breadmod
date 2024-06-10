@@ -41,7 +41,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     ) {
         pTooltipComponents.add(
             modTranslatable("item", TOOL_GUN_DEF, "tooltip", "current_mode")
-                .append(getCurrentMode(pStack).displayName.copy().withStyle(ChatFormatting.GOLD))
+                .append((getCurrentMode(pStack)?.displayName?.copy() ?: Component.literal("???")).withStyle(ChatFormatting.GOLD))
         )
         pTooltipComponents.add(
             changeMode.translatedKeyMessage.copy().withStyle(ChatFormatting.GREEN).append(modTranslatable("item", TOOL_GUN_DEF, "tooltip", "mode_switch"))
@@ -66,22 +66,25 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     }
 
     internal fun getCurrentMode(pStack: ItemStack) = ensureCurrentMode(pStack).let {
-        ModToolGunModeDataLoader.modes[it.getString(MODE_NAMESPACE_TAG)]!![it.getString(MODE_NAME_TAG)]!!.first
+        ModToolGunModeDataLoader.modes[it.getString(MODE_NAMESPACE_TAG)]?.get(it.getString(MODE_NAME_TAG))?.first
     }
 
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
         if(pEntity is Player) {
-            val currentMode = getCurrentMode(pStack)
+            val currentMode = getCurrentMode(pStack) ?: return
+            fun clearMode() = currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
+
             if(pLevel.isClientSide && !pIsSelected) {
                 changeMode.consumeClick()
-                currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
+                clearMode()
                 currentMode.mode.close(pLevel, pEntity, pStack, null)
                 return
             }
 
             if(pLevel.isClientSide && changeMode.consumeClick()) {
+                clearMode()
                 NETWORK.sendToServer(ToolGunPacket(true, pSlotId))
                 pEntity.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
                 return

@@ -2,6 +2,8 @@ package breadmod.hud
 
 import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.ModMain.modLocation
+import breadmod.ModMain.modTranslatable
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.ToolGunItem
 import breadmod.item.ToolGunItem.Companion.MODE_NAMESPACE_TAG
@@ -51,7 +53,7 @@ class ToolGunOverlay: IGuiOverlay {
         pPose.popPose()
     }
 
-    private fun renderMode(namespace: String, pMode: ModToolGunModeDataLoader.ToolgunMode, pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, pX: Int, pY: Int) {
+    private fun renderMode(namespace: String, pMode: ModToolGunModeDataLoader.ToolgunMode?, pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, pX: Int, pY: Int) {
         pPose.pushPose()
         // Icon renders
         pGuiGraphics.blit(overlayTexture, pX + 1, pY + 33, 0, 41, 8, 8)
@@ -63,15 +65,15 @@ class ToolGunOverlay: IGuiOverlay {
 
         // Action Name
         drawScaledText(
-            pMode.displayName.copy().withStyle(ChatFormatting.BOLD),
+            (pMode?.displayName?.copy() ?: Component.literal("???")).withStyle(ChatFormatting.BOLD),
             pPose, pGuiGraphics, pGui, pX - 1, pY + 4, 2.5f, false
         )
         // Mode Tooltip
-        drawScaledText(pMode.tooltip.copy(), pPose, pGuiGraphics, pGui,
+        drawScaledText((pMode?.tooltip?.copy() ?: modTranslatable(TOOL_GUN_DEF, "broken_tooltip")), pPose, pGuiGraphics, pGui,
             pX + 13, pY + 43, 0.4f, true
         )
         // Keybinds
-        pMode.keyBinds.forEachIndexed { index, control ->
+        pMode?.keyBinds?.forEachIndexed { index, control ->
             val moved = ((index+1) * 9) + 3
             drawScaledText(
                 toolGunBindList[control]!!.translatedKeyMessage.copy()

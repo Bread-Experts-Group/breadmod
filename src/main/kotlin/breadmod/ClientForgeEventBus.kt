@@ -5,7 +5,7 @@ import breadmod.util.render.renderBuffer
 import net.minecraft.client.Minecraft
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.RenderLevelStageEvent
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import org.apache.commons.lang3.ArrayUtils
@@ -27,7 +27,7 @@ object ClientForgeEventBus {
 
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
-    fun levelLeave(event: PlayerLoggedOutEvent) {
+    fun myLogin(event: PlayerLoggedInEvent) {
         val options = Minecraft.getInstance().options
         options.keyMappings = ArrayUtils.removeElements(options.keyMappings, *createMappingsForControls().toTypedArray())
     }

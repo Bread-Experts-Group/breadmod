@@ -1,5 +1,6 @@
 package breadmod.network.tool_gun
 
+import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.ToolGunItem
@@ -16,6 +17,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraftforge.client.settings.KeyModifier
 import net.minecraftforge.network.NetworkEvent
+import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
 
 data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl: BreadModToolGunModeProvider.Control? = null) {
@@ -41,7 +43,7 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                 )
             })
 
-        fun handle(input: ToolGunPacket, ctx: Supplier<NetworkEvent.Context>) = ctx.get().let {
+        fun handle(input: ToolGunPacket, ctx: Supplier<NetworkEvent.Context>): CompletableFuture<Void> = ctx.get().let {
             it.enqueueWork {
                 val player = it.sender ?: return@enqueueWork
                 val stack = player.inventory.items[input.pSlot]
@@ -79,12 +81,12 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                         modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
                         player.cooldowns.addCooldown(item, 10)
                     } else {
-                        println("PACKET RCV. ${input.pControl}")
-                        item.getCurrentMode(stack).mode.action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
+                        (item.getCurrentMode(stack) ?: return@enqueueWork ModMain.LOGGER.error("ToolGun is in an erroneous state! Something stinky is going on!"))
+                            .mode.action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
                     }
+                    it.packetHandled = true
                 }
             }
-            it.packetHandled = true
         }
     }
 }
