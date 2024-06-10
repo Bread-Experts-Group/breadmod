@@ -112,14 +112,14 @@ object ClientModEventBus {
                     it.nameKey,
                     KeyConflictContext.IN_GAME,
                     it.modifier,
-                    it.key,
+                    it.key(),
                     it.categoryKey
                 )
             } else {
                 KeyMapping(
                     it.nameKey,
                     KeyConflictContext.IN_GAME,
-                    it.key,
+                    it.key(),
                     it.categoryKey
                 )
             }

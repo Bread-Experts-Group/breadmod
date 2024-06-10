@@ -70,7 +70,7 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                                     keybind.getAsJsonPrimitive(CONTROLS_NAME_TRANSLATION_KEY).asString,
                                     keybind.getAsJsonPrimitive(CONTROLS_CATEGORY_TRANSLATION_KEY).asString,
                                     jsonToComponent(keybind.getAsJsonObject(TOOLGUN_INFO_DISPLAY_KEY)),
-                                    InputConstants.getKey(keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString),
+                                    { InputConstants.getKey(keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString) },
                                     keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString?.let { mod -> KeyModifier.getModifier(InputConstants.getKey(mod)) }
                                 )
                                 toolGunBindList[control] = null

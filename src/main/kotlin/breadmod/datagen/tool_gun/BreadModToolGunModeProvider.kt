@@ -25,7 +25,7 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
         val nameKey: String,
         val categoryKey: String,
         val toolGunComponent: Component,
-        val key: InputConstants.Key,
+        val key: () -> InputConstants.Key,
         val modifier: KeyModifier? = null
     )
     private val addedModes: MutableMap<String, Triple<Pair<Component, Component>, List<Control>, Class<*>>> = mutableMapOf()
@@ -43,7 +43,7 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
                             data.second.forEach {
                                 array.add(JsonObject().also { keyObj ->
                                     keyObj.addProperty(CONTROLS_ID_KEY, it.id)
-                                    keyObj.addProperty(KEY_ENTRY_KEY, it.key.name)
+                                    keyObj.addProperty(KEY_ENTRY_KEY, it.key().name)
                                     keyObj.addProperty(MODIFIER_ENTRY_KEY, it.modifier?.name)
                                     keyObj.addProperty(CONTROLS_NAME_TRANSLATION_KEY, it.nameKey)
                                     keyObj.addProperty(CONTROLS_CATEGORY_TRANSLATION_KEY, it.categoryKey)
