@@ -78,7 +78,7 @@ class ToolGunOverlay: IGuiOverlay {
                     .withStyle { it.withColor(ChatFormatting.GOLD).withItalic(true) }
                     .append(control.toolGunComponent.copy().withStyle(ChatFormatting.WHITE)),
                 pPose, pGuiGraphics, pGui,
-                pX + 73, pY + 43 + moved, 1f, true
+                pX + 43, pY + 43 + moved, 1f, true
             )
         }
         pPose.popPose()

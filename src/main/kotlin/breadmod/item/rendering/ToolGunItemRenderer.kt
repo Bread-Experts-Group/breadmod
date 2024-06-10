@@ -1,7 +1,6 @@
 package breadmod.item.rendering
 
 import breadmod.ModMain.modLocation
-import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.ToolGunItem
 import com.mojang.blaze3d.vertex.PoseStack
@@ -55,11 +54,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val coilModel = Minecraft.getInstance().modelManager.getModel(coilModelLocation)
 
         pPoseStack.pushPose()
-        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay)
+        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         // todo decouple idle spinning from create's rotation logic
         // todo recoil and increased coil spin when using tool gun
         pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks())))
-        renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay)
+        renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         pPoseStack.popPose()
         // x, y, z after rotations
         // x: back and forward, y: up and down, z: left and right
@@ -67,18 +66,17 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         // big text
         val byteArray = ByteArray(2)
         secureRandom.nextBytes(byteArray)
-        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(25,25,25,0).rgb, fontRenderer, pPoseStack, pBuffer,
             0.9215, 0.0555, -0.028, 0.0035f
         )
 
         drawTextOnScreen(
-            modTranslatable("item", TOOL_GUN_DEF, "tooltip", "current_mode")
-            .append(toolgunItem.getCurrentMode(pStack).displayName.copy().withStyle(ChatFormatting.GOLD)),
+            toolgunItem.getCurrentMode(pStack).displayName.copy().withStyle(ChatFormatting.BOLD),
             Color.WHITE.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
             0.923, 0.065, -0.038, 0.0007f
         )
 
-        drawTextOnScreen("CASEOH DANGER: ${round(secureRandom.nextDouble() * 50000)}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+        drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
             0.9, 0.0175, -0.040, 0.0007f
         )
 
@@ -150,13 +148,14 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pStack: ItemStack,
         pPoseStack: PoseStack,
         pBuffer: MultiBufferSource,
-        pPackedOverlay: Int
+        pPackedOverlay: Int,
+        pPackedLight: Int
     ) {
         val glint = pStack.hasFoil()
         for(type in pModel.getRenderTypes(pStack, false)) {
             val helper: RenderType = RenderTypeHelper.getEntityRenderType(type, false)
             val consumer = ItemRenderer.getFoilBuffer(pBuffer, helper, true, glint)
-            pRenderer.renderModelLists(pModel, pStack, SCREEN_TINT, pPackedOverlay, pPoseStack, consumer)
+            pRenderer.renderModelLists(pModel, pStack, pPackedLight, pPackedOverlay, pPoseStack, consumer)
         }
     }
 }
