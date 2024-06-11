@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
 
-abstract class AbstractPowerGeneratorBlock: Block(Properties.of()
+abstract class AbstractPowerGeneratorBlock: Block(Properties.of().noOcclusion()
     .strength(1.5f, 5.0f)
     .sound(SoundType.METAL)), EntityBlock
 {

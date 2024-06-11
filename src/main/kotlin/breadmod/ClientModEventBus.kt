@@ -91,6 +91,7 @@ object ClientModEventBus {
     fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
         event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
         event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
+        event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/coal_generator_on"))
     }
 
     @SubscribeEvent

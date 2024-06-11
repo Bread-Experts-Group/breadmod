@@ -46,9 +46,10 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
         )
     }
 
+    // todo fix power extracting, possible deadlock while recipe is running
     val capabilities = CapabilityHolder(mapOf(
         ForgeCapabilities.ENERGY to (object : EnergyStorage(100000, 10000) {
-            override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(0, simulate).also { setChanged() }
+            override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = super.receiveEnergy(0, false).also { setChanged() }
             override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = super.extractEnergy(maxExtract, false).also { setChanged() }
         } to null),
         ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(listOf(

@@ -15,6 +15,7 @@ import net.minecraftforge.client.model.generators.ConfiguredModel
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
+@Suppress("SpellCheckingInspection")
 class ModBlockStateProvider(
     output: PackOutput,
     modID: String,
@@ -27,6 +28,23 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
+
+        horizontalBlock(ModBlocks.COAL_GENERATOR.get().block) {state ->
+            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
+            val name = "breadmod:block/coal_generator$machineOn"
+
+            val model = models().singleTexture(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/coal_generator$machineOn"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/coal_generator$machineOn")
+            )
+
+            return@horizontalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.COAL_GENERATOR.get().block,
+            models().getBuilder("breadmod:block/coal_generator")
+        )
 
         doorBlockWithRenderType(ModBlocks.BREAD_DOOR.get().block as DoorBlock,
             modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),

@@ -18,6 +18,4 @@ class CoalGeneratorBlock: AbstractPowerGeneratorBlock() {
     ): BlockEntityTicker<T>? =
         if(pLevel.isClientSide()) null
         else BlockEntityTicker<T> { _, pPos, _, pBlockEntity -> (pBlockEntity as CoalGeneratorBlockEntity).tick(pLevel, pPos, pState, pBlockEntity) }
-
-    // todo block texture, blockstates
 }
