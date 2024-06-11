@@ -103,12 +103,16 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
         val energyHandle = capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY) ?: return
         val itemHandle = getItemHandler() ?: return
 
-        currentRecipe.also {
+        currentRecipe.also { // todo rework ticking logic to generate power with a positive value in the recipe instead of negative
             if(it != null) {
                 if(progress < maxProgress && energyHandle.energyStored < energyHandle.maxEnergyStored) {
                     progress++
                     pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
                     energyDivision?.let { rfd -> if(energyHandle.extractEnergy(rfd, false) != rfd) progress-- }
+                } else if(progress >= maxProgress) {
+                    setChanged()
+                    progress = 0
+                    currentRecipe = null
                 }
             } else {
                 pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
@@ -127,8 +131,8 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
     override fun getContainerSize(): Int = getItemHandler()?.size ?: 0
     override fun isEmpty(): Boolean = getItemHandler()?.isEmpty() ?: true
     override fun getItem(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot) ?: ItemStack.EMPTY
-    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = getItemHandler()?.extractItem(pSlot, pAmount, false) ?: ItemStack.EMPTY
-    override fun removeItemNoUpdate(pSlot: Int): ItemStack = getItemHandler()?.removeAt(pSlot) ?: ItemStack.EMPTY
+    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack? = getItemHandler()?.get(pSlot)?.split(pAmount)
+    override fun removeItemNoUpdate(pSlot: Int): ItemStack? = getItemHandler()?.get(pSlot)?.copyAndClear()
     override fun setItem(pSlot: Int, pStack: ItemStack) { getItemHandler()?.set(pSlot, pStack) }
     override fun stillValid(pPlayer: Player): Boolean = getItemHandler() != null
     override fun fillStackedContents(pContents: StackedContents) { getItemHandler()?.get(0)?.let { pContents.accountStack(it) } }

@@ -23,7 +23,7 @@ class FarmerInputBlockEntity( // todo add menu and screen
     pPos: BlockPos,
     pBlockState: BlockState
 ) : BlockEntity(ModBlockEntities.FARMER_INPUT.get(), pPos, pBlockState), WorldlyContainer {
-    val storedItems = MutableList(4) { ItemStack.EMPTY }
+    private val storedItems = MutableList(4) { ItemStack.EMPTY }
 
     private val facing = this.blockState.getValue(DirectionalBlock.FACING)
     private var handlers: Array<out LazyOptional<IItemHandlerModifiable>> = SidedInvWrapper.create(
