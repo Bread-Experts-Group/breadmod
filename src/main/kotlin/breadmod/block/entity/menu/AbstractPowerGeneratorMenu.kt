@@ -25,9 +25,10 @@ abstract class AbstractPowerGeneratorMenu<R : FluidEnergyRecipe>(
 //        inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.COAL_GENERATOR.get()).get()
 //    )
 
-    fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 24).toInt()
+    fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 14).toInt()
     fun getEnergyStoredScaled(): Int = parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
     fun isCrafting(): Boolean = parent.progress > 0
+    fun isEnabled(): Boolean = parent.enabled
 
     init {
         this.addSlot(Slot(parent, 0, 52, 34))

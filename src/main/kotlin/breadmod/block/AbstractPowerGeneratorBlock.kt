@@ -21,17 +21,21 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
 
-abstract class AbstractPowerGeneratorBlock: Block(Properties.of().noOcclusion()
+abstract class AbstractPowerGeneratorBlock: BaseEntityBlock(Properties.of().noOcclusion()
     .strength(1.5f, 5.0f)
-    .sound(SoundType.METAL)), EntityBlock
+    .sound(SoundType.METAL))
 {
     init {
         this.registerDefaultState(
             stateDefinition.any()
                 .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
                 .setValue(BlockStateProperties.LIT, false)
+                .setValue(BlockStateProperties.ENABLED, true)
         )
     }
+
+    @Deprecated("Deprecated in Java", ReplaceWith("RenderShape.MODEL", "net.minecraft.world.level.block.RenderShape"))
+    override fun getRenderShape(pState: BlockState): RenderShape = RenderShape.MODEL
 
     override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean = !player.isCreative
 
@@ -40,7 +44,7 @@ abstract class AbstractPowerGeneratorBlock: Block(Properties.of().noOcclusion()
             .setValue(HorizontalDirectionalBlock.FACING, pContext.horizontalDirection.opposite)
 
     override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(HorizontalDirectionalBlock.FACING, BlockStateProperties.LIT)
+        pBuilder.add(HorizontalDirectionalBlock.FACING, BlockStateProperties.LIT, BlockStateProperties.ENABLED)
     }
 
     abstract override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity

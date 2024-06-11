@@ -11,4 +11,8 @@ class CoalGeneratorScreen(
     pPlayerInventory: Inventory,
     pTitle: Component
 ) : AbstractPowerGeneratorScreen<CoalGeneratorRecipe, CoalGeneratorMenu>(
-    pMenu, pPlayerInventory, pTitle, modLocation("textures", "gui", "container", "coal_generator.png"))
+    pMenu, pPlayerInventory, pTitle,
+    modLocation("textures", "gui", "container", "coal_generator.png")
+) {
+
+}

@@ -1,9 +1,13 @@
 package breadmod.block.entity.screen
 
 import breadmod.block.entity.menu.AbstractPowerGeneratorMenu
+import breadmod.network.PacketHandler.NETWORK
+import breadmod.network.ToggleMachinePacket
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractButton
+import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
@@ -25,6 +29,9 @@ abstract class AbstractPowerGeneratorScreen<R: FluidEnergyRecipe, T: AbstractPow
         RenderSystem.setShaderTexture(0, pTexture)
 
         pGuiGraphics.blit(pTexture, leftPos, topPos, 0, 0, textureWidth, textureHeight)
+
+        renderEnergyMeter(pGuiGraphics)
+        renderRecipeProgress(pGuiGraphics)
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
@@ -32,5 +39,30 @@ abstract class AbstractPowerGeneratorScreen<R: FluidEnergyRecipe, T: AbstractPow
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
 
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+    }
+
+    open fun renderEnergyMeter(pGuiGraphics: GuiGraphics) {
+        val energyStored = menu.getEnergyStoredScaled()
+        pGuiGraphics.blit(pTexture, leftPos + 108, topPos + 19 + 47 - energyStored, 176, 61 - energyStored, 16, 47)
+    }
+
+    open fun renderRecipeProgress(pGuiGraphics: GuiGraphics) {
+        if(menu.isCrafting()) {
+            pGuiGraphics.blit(pTexture, leftPos + 53, topPos + 53 + 14 + menu.getScaledProgress(), 176, -14 + menu.getScaledProgress(), 14, 14)
+        }
+    }
+
+    override fun init() {
+        super.init()
+        addRenderableWidget(ToggleMachineButton(9, 121, 27, false))
+        addRenderableWidget(ToggleMachineButton(9, 121, 37, true))
+    }
+
+    inner class ToggleMachineButton(pSize: Int, pX: Int, pY: Int, private val toggle: Boolean): AbstractButton(leftPos + pX, topPos + pY, pSize, pSize, Component.empty()) {
+        override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
+
+        override fun onPress() {
+            NETWORK.sendToServer(ToggleMachinePacket(menu.parent.blockPos, toggle))
+        }
     }
 }

@@ -156,7 +156,7 @@ class DoughMachineScreen(
         addRenderableWidget(VoidTankButton(9, 121, 66, 0))
     }
 
-    inner class VoidTankButton(pSize: Int, pX: Int, pY: Int, val tankIndex: Int): AbstractButton(leftPos + pX, topPos + pY, pSize, pSize, Component.literal("x")) {
+    inner class VoidTankButton(pSize: Int, pX: Int, pY: Int, private val tankIndex: Int): AbstractButton(leftPos + pX, topPos + pY, pSize, pSize, Component.literal("x")) {
         override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
 
         override fun onPress() {

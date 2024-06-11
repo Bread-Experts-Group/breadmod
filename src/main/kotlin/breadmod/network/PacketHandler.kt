@@ -46,5 +46,9 @@ object PacketHandler {
             idCounter++, SDPacket::class.java,
             SDPacket::encodeBuf, SDPacket::decodeBuf, SDPacket::handle
         )
+        NETWORK.registerMessage(
+            idCounter++, ToggleMachinePacket::class.java,
+            ToggleMachinePacket::encodeBuf, ToggleMachinePacket::decodeBuf, ToggleMachinePacket::handle
+        )
     }
 }

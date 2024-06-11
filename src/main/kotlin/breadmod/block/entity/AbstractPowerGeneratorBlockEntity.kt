@@ -74,12 +74,14 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
     private var currentRecipe: R? = null
     private var energyDivision: Int? = null
 
+    var enabled: Boolean = this.blockState.getValue(BlockStateProperties.ENABLED)
     var progress = 0; var maxProgress = 0
     override fun saveAdditional(pTag: CompoundTag) {
         super.saveAdditional(pTag)
         pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
             capabilities.serialize(pTag)
             dataTag.putInt("progress", progress); dataTag.putInt("maxProgress", maxProgress)
+            dataTag.putBoolean("enabled", enabled)
         })
     }
 
@@ -88,6 +90,7 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
         pTag.getCompound(ModMain.ID).also { tag ->
             capabilities.deserialize(pTag)
             progress = tag.getInt("progress"); maxProgress = tag.getInt("maxProgress")
+            enabled = tag.getBoolean("enabled")
         }
     }
 
@@ -105,7 +108,7 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
 
         currentRecipe.also { // todo rework ticking logic to generate power with a positive value in the recipe instead of negative
             if(it != null) {
-                if(progress < maxProgress && energyHandle.energyStored < energyHandle.maxEnergyStored) {
+                if(progress < maxProgress && energyHandle.energyStored < energyHandle.maxEnergyStored && enabled) {
                     progress++
                     pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
                     energyDivision?.let { rfd -> if(energyHandle.extractEnergy(rfd, false) != rfd) progress-- }
@@ -127,14 +130,14 @@ abstract class AbstractPowerGeneratorBlockEntity<R : FluidEnergyRecipe>(
         }
     }
 
-    override fun clearContent() { getItemHandler()?.clear() }
+    override fun clearContent() { getItemHandler()?.forEach { it.count = 0 } }
     override fun getContainerSize(): Int = getItemHandler()?.size ?: 0
-    override fun isEmpty(): Boolean = getItemHandler()?.isEmpty() ?: true
+    override fun isEmpty(): Boolean = getItemHandler()?.any { !it.isEmpty } ?: true
     override fun getItem(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot) ?: ItemStack.EMPTY
-    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack? = getItemHandler()?.get(pSlot)?.split(pAmount)
-    override fun removeItemNoUpdate(pSlot: Int): ItemStack? = getItemHandler()?.get(pSlot)?.copyAndClear()
+    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = getItemHandler()?.get(pSlot)?.split(pAmount) ?: ItemStack.EMPTY
+    override fun removeItemNoUpdate(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot)?.copyAndClear() ?: ItemStack.EMPTY
     override fun setItem(pSlot: Int, pStack: ItemStack) { getItemHandler()?.set(pSlot, pStack) }
-    override fun stillValid(pPlayer: Player): Boolean = getItemHandler() != null
+    override fun stillValid(pPlayer: Player): Boolean = true
     override fun fillStackedContents(pContents: StackedContents) { getItemHandler()?.get(0)?.let { pContents.accountStack(it) } }
     override fun getWidth(): Int = 1
     override fun getHeight(): Int = 1
