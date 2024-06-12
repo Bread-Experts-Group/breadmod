@@ -18,7 +18,9 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
     pMenuType: MenuType<*>,
     pContainerId: Int,
     protected val inventory: Inventory,
-    val parent: T
+    val parent: T,
+    hotbarY: Int,
+    inventoryY: Int
 ) : AbstractContainerMenu(pMenuType, pContainerId) {
     fun getScaledProgress(): Int = parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 14).toInt() } ?: 0
     fun getEnergyStoredScaled(): Int = parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
@@ -28,8 +30,8 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
     inner class ResultSlot(id: Int, x: Int, y: Int) : Slot(parent, id, x, y) { override fun mayPlace(pStack: ItemStack): Boolean = false }
     
     init {
-        repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, 142)) }
-        repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, 84 + y * 18)) } }
+        repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, hotbarY)) }
+        repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, inventoryY + y * 18)) } }
     }
 
     final override fun quickMoveStack(playerIn: Player, pIndex: Int): ItemStack {

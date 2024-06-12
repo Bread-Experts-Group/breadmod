@@ -21,7 +21,7 @@ class DoughMachineMenu(
     parent: DoughMachineBlockEntity
 ) : AbstractMachineMenu<DoughMachineBlockEntity, DoughMachineRecipe>(
     ModMenuTypes.DOUGH_MACHINE.get(),
-    pContainerId, inventory, parent
+    pContainerId, inventory, parent, 142, 84
 ) {
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,

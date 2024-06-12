@@ -14,7 +14,7 @@ class WheatCrusherMenu(
     parent: WheatCrusherBlockEntity
 ) : AbstractMachineMenu<WheatCrusherBlockEntity, WheatCrushingRecipe>(
     ModMenuTypes.WHEAT_CRUSHER.get(),
-    pContainerId, inventory, parent
+    pContainerId, inventory, parent, 174, 116
 ) {
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,

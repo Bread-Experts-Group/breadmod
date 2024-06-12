@@ -16,7 +16,7 @@ class GeneratorMenu(
     ModMenuTypes.GENERATOR.get(),
     pContainerId,
     inventory,
-    parent
+    parent, 142, 84
 ) {
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,
