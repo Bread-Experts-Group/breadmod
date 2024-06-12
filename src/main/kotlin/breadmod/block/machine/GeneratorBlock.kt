@@ -2,6 +2,7 @@ package breadmod.block.machine
 
 import breadmod.block.machine.entity.GeneratorBlockEntity
 import breadmod.registry.block.ModBlockEntities
+import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.SoundType
@@ -19,6 +20,10 @@ class GeneratorBlock: BaseAbstractMachineBlock.Powered<GeneratorBlockEntity>(
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
         pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
     }
+
+    override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState? =
+        defaultBlockState()
+            .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
 
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<GeneratorBlockEntity> =
         BlockEntityTicker { tLevel, pPos, tState, pBlockEntity -> pBlockEntity.tick(tLevel, pPos, tState, pBlockEntity) }

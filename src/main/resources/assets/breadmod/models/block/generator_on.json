@@ -4,7 +4,7 @@
 	"ambientocclusion": false,
 	"texture_size": [128, 128],
 	"textures": {
-		"0": "breadmod:block/coal_generator",
+		"0": "breadmod:block/generator_on",
 		"particle": "minecraft:block/netherite_block"
 	},
 	"elements": [
