@@ -1,6 +1,7 @@
-package breadmod.block
+package breadmod.block.machine
 
-import breadmod.block.entity.DoughMachineBlockEntity
+import breadmod.block.machine.entity.DoughMachineBlockEntity
+import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.util.capability.FluidContainer
@@ -19,15 +20,10 @@ import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.EntityBlock
-import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.SoundType
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -44,33 +40,27 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
 import kotlin.random.Random
 
-class DoughMachineBlock : Block(Properties.of()
-    .strength(1f, 5.0f)
-    .mapColor(MapColor.COLOR_GRAY)
-    .sound(SoundType.METAL)), EntityBlock
-{
+class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEntity>(
+    ModBlockEntities.DOUGH_MACHINE,
+    Properties.of()
+        .strength(1f, 5.0f)
+        .mapColor(MapColor.COLOR_GRAY)
+        .sound(SoundType.METAL)
+) {
     init {
         this.registerDefaultState(
             stateDefinition.any()
-                .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
-                .setValue(BlockStateProperties.LIT, false)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
         )
     }
 
-    override fun canHarvestBlock(pState: BlockState, pLevel: BlockGetter, pPos: BlockPos, pPlayer: Player): Boolean = !pPlayer.isCreative
-
+    override fun canHarvestBlock(pState: BlockState, pLevel: BlockGetter, pPos: BlockPos, pPlayer: Player): Boolean =
+        !pPlayer.isCreative
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
         defaultBlockState()
-            .setValue(HorizontalDirectionalBlock.FACING, pContext.horizontalDirection.opposite)
-
-    override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(HorizontalDirectionalBlock.FACING, BlockStateProperties.LIT)
-    }
-
-    override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity = DoughMachineBlockEntity(pPos, pState)
-    override fun onBlockExploded(state: BlockState?, level: Level?, pos: BlockPos?, explosion: Explosion?) {
-        super.onBlockExploded(state, level, pos, explosion)
-    }
+            .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
+    override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
+        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING) }
 
     private val random = Random(-7689986)
     @Deprecated("Deprecated in Java")
@@ -83,9 +73,9 @@ class DoughMachineBlock : Block(Properties.of()
     ) {
         if(!pState.`is`(pNewState.block)) {
             val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return
-            if(pState.getValue(BlockStateProperties.LIT)) {
+            if(pState.getValue(BlockStateProperties.POWERED)) {
                 pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
-                val itemContainer = entity.capabilities.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER) ?: return
+                val itemContainer = entity.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER) ?: return
 
                 val stack = itemContainer[0]
                 when(stack.item) {
@@ -104,6 +94,7 @@ class DoughMachineBlock : Block(Properties.of()
                 }
                 Containers.dropContents(pLevel, pPos, entity)
             }
+            @Suppress("DEPRECATION")
             super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
         }
     }
@@ -120,7 +111,7 @@ class DoughMachineBlock : Block(Properties.of()
         if(!pLevel.isClientSide) {
             val entity = (pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity) ?: return InteractionResult.FAIL
             if(pHand != InteractionHand.MAIN_HAND) return InteractionResult.PASS
-            val fluidHandler = entity.capabilities.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return InteractionResult.FAIL
+            val fluidHandler = entity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return InteractionResult.FAIL
 
             val stack = pPlayer.getItemInHand(pHand)
             val item = stack.item
@@ -153,10 +144,6 @@ class DoughMachineBlock : Block(Properties.of()
         return InteractionResult.sidedSuccess(pLevel.isClientSide())
     }
 
-    override fun <T : BlockEntity?> getTicker(
-        pLevel: Level,
-        pState: BlockState,
-        pBlockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T>? =
-        if(pLevel.isClientSide()) null else BlockEntityTicker<T> { _, pPos, _, pBlockEntity -> (pBlockEntity as DoughMachineBlockEntity).tick(pLevel, pPos, pState, pBlockEntity) }
+    override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<DoughMachineBlockEntity> =
+        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity -> tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity) }
 }

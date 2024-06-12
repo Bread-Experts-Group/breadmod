@@ -1,6 +1,7 @@
-package breadmod.block
+package breadmod.block.machine
 
-import breadmod.block.entity.WheatCrusherBlockEntity
+import breadmod.block.machine.entity.WheatCrusherBlockEntity
+import breadmod.registry.block.ModBlockEntities
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer
@@ -12,9 +13,7 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.*
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -22,28 +21,29 @@ import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
 
-class WheatCrusherBlock: Block(Properties.of()
-    .strength(1f, 5.0f)
-    .mapColor(MapColor.COLOR_GRAY)
-    .sound(SoundType.METAL)), EntityBlock
-{
+class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEntity>(
+    ModBlockEntities.WHEAT_CRUSHER,
+    Properties.of()
+        .strength(1f, 5.0f)
+        .mapColor(MapColor.COLOR_GRAY)
+        .sound(SoundType.METAL)
+) {
     init {
         this.registerDefaultState(
             stateDefinition.any()
-                .setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
-                .setValue(BlockStateProperties.LIT, false)
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+                .setValue(BlockStateProperties.POWERED, false)
         )
     }
 
     override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean = !player.isCreative
-    override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity = WheatCrusherBlockEntity(pPos, pState)
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState? =
         defaultBlockState()
-            .setValue(HorizontalDirectionalBlock.FACING, pContext.horizontalDirection.opposite)
+            .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
 
-    override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(HorizontalDirectionalBlock.FACING, BlockStateProperties.LIT)
+    override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
+        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith(
@@ -61,6 +61,7 @@ class WheatCrusherBlock: Block(Properties.of()
             val entity = (pLevel.getBlockEntity(pPos) as? WheatCrusherBlockEntity) ?: return
             Containers.dropContents(pLevel, pPos, entity)
         }
+        @Suppress("DEPRECATION")
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
     }
 
@@ -80,10 +81,6 @@ class WheatCrusherBlock: Block(Properties.of()
         return InteractionResult.sidedSuccess(pLevel.isClientSide())
     }
 
-    override fun <T : BlockEntity?> getTicker(
-        pLevel: Level,
-        pState: BlockState,
-        pBlockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T>? =
-        if(pLevel.isClientSide()) null else BlockEntityTicker<T> { _, pPos, _, pBlockEntity -> (pBlockEntity as WheatCrusherBlockEntity).tick(pLevel, pPos, pState, pBlockEntity) }
+    override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<WheatCrusherBlockEntity> =
+        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity -> tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity) }
 }

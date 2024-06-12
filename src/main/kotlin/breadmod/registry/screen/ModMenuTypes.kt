@@ -1,9 +1,9 @@
 package breadmod.registry.screen
 
 import breadmod.ModMain
-import breadmod.block.entity.menu.CoalGeneratorMenu
-import breadmod.block.entity.menu.DoughMachineMenu
-import breadmod.block.entity.menu.WheatCrusherMenu
+import breadmod.block.machine.entity.menu.GeneratorMenu
+import breadmod.block.machine.entity.menu.DoughMachineMenu
+import breadmod.block.machine.entity.menu.WheatCrusherMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraftforge.common.extensions.IForgeMenuType
 import net.minecraftforge.registries.DeferredRegister
@@ -17,11 +17,11 @@ object ModMenuTypes {
         IForgeMenuType.create { pContainerId, pInventory, extraData -> DoughMachineMenu(pContainerId, pInventory, extraData) }
     }
     val WHEAT_CRUSHER: RegistryObject<MenuType<WheatCrusherMenu>> = deferredRegister.register("wheat_crusher_menu") {
-        IForgeMenuType.create { pContainerId, pInventory, extraData -> WheatCrusherMenu(pContainerId, pInventory, extraData)}
+        IForgeMenuType.create { pContainerId, pInventory, extraData -> WheatCrusherMenu(pContainerId, pInventory, extraData) }
     }
 
     // Power Generators
-    val COAL_GENERATOR: RegistryObject<MenuType<CoalGeneratorMenu>> = deferredRegister.register("coal_generator_menu") {
-        IForgeMenuType.create { pContainerId, pInventory, extraData -> CoalGeneratorMenu(pContainerId, pInventory, extraData) }
+    val GENERATOR: RegistryObject<MenuType<GeneratorMenu>> = deferredRegister.register("generator_menu") {
+        IForgeMenuType.create { pContainerId, pInventory, extraData -> GeneratorMenu(pContainerId, pInventory, extraData) }
     }
 }

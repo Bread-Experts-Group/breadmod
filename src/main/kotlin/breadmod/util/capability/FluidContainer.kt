@@ -4,7 +4,6 @@ import breadmod.util.isTag
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.tags.TagKey
 import net.minecraft.world.level.material.Fluid
-import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction
@@ -17,7 +16,8 @@ import net.minecraftforge.fluids.capability.templates.FluidTank
  * @since 1.0.0
  */
 @Suppress("UNUSED", "MemberVisibilityCanBePrivate", "Deprecation")
-class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, val changed: () -> Unit): IFluidHandler, INBTSerializable<CompoundTag> {
+class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, override var changed: (() -> Unit)? = null): IFluidHandler, ICapabilitySavable<CompoundTag> {
+
     /**
      * [FluidTank]s controlled by this [FluidContainer].
      * @see FluidTank
@@ -159,7 +159,7 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, val cha
             resourceCopy.amount -= filledAmount
             filledTotal += filledAmount
         }
-        if(action.execute() && filledTotal > 0) changed()
+        if(action.execute() && filledTotal > 0) changed?.invoke()
         return filledTotal
     }
 
@@ -173,7 +173,7 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, val cha
             resourceCopy.amount -= filledAmount.amount
             drainedTotal.amount += filledAmount.amount
         }
-        if(action.execute() && drainedTotal.amount > 0) changed()
+        if(action.execute() && drainedTotal.amount > 0) changed?.invoke()
         return drainedTotal
     }
 
@@ -191,7 +191,7 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, val cha
             }
             if(remainingAmount <= 0) break
         }
-        if(action.execute() && drainedTotal.amount > 0) changed()
+        if(action.execute() && drainedTotal.amount > 0) changed?.invoke()
         return drainedTotal
     }
 

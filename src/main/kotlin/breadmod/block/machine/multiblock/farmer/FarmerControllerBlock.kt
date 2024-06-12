@@ -1,6 +1,6 @@
-package breadmod.block.multiblock.farmer
+package breadmod.block.machine.multiblock.farmer
 
-import breadmod.block.multiblock.generic.entity.PowerInterfaceBlockEntity
+import breadmod.block.machine.multiblock.generic.entity.PowerInterfaceBlockEntity
 import breadmod.registry.block.ModBlocks
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -64,11 +64,11 @@ class FarmerControllerBlock: Block(Properties.of()
             if(pLevel.getBlockState(subPos).`is`(ModBlocks.GENERIC_POWER_INTERFACE.get().block)) {
                 val entity = pLevel.getBlockEntity(BlockPos(subPos.x, subPos.y, subPos.z)) as? PowerInterfaceBlockEntity
                     ?: return@forEach
-                println(entity.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.energyStored)
+                println(entity.capabilityHolder.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.energyStored)
             }
 
             println("Block and pos: ${BlockPos(subPos.x, subPos.y, subPos.z)}, Relative to controller: ${BlockPos(subPos.x - pPos.x, subPos.y - pPos.y, subPos.z - pPos.z)} : ${pLevel.getBlockState(subPos).block}")
         }
-        return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit)
+        return InteractionResult.PASS
     }
 }

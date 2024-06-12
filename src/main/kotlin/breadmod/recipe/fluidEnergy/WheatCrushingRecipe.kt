@@ -1,12 +1,12 @@
 package breadmod.recipe.fluidEnergy
 
+import breadmod.recipe.serializer.SimpleFluidEnergyRecipeSerializer
 import breadmod.registry.recipe.ModRecipeSerializers
 import breadmod.registry.recipe.ModRecipeTypes
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
@@ -23,5 +23,5 @@ class WheatCrushingRecipe(
     itemsOutput: List<ItemStack>? = null,
 ): FluidEnergyRecipe(pId, time, energy, fluidsRequired, fluidsRequiredTagged, itemsRequired, itemsRequiredTagged, fluidsOutput, itemsOutput) {
     override fun getType(): RecipeType<*> = ModRecipeTypes.WHEAT_CRUSHING
-    override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.WHEAT_CRUSHER.get()
+    override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.WHEAT_CRUSHER.get()
 }

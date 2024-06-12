@@ -1,6 +1,6 @@
-package breadmod.block.multiblock.generic
+package breadmod.block.machine.multiblock.generic
 
-import breadmod.block.multiblock.generic.entity.PowerInterfaceBlockEntity
+import breadmod.block.machine.multiblock.generic.entity.PowerInterfaceBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.item.context.BlockPlaceContext

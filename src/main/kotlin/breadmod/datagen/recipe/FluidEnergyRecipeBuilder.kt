@@ -59,7 +59,7 @@ class FluidEnergyRecipeBuilder(
                     timeInTicks, powerInRF.takeIf { it != 0 },
                     fluidsRequired.takeIf { it.isNotEmpty() }, fluidsRequiredTagged.takeIf { it.isNotEmpty() },
                     itemsRequired.takeIf { it.isNotEmpty() }, itemsRequiredTagged.takeIf { it.isNotEmpty() },
-                    fluidResults.takeIf { it.isNotEmpty() }, itemResults.takeIf { it.isNotEmpty() }
+                    itemResults.takeIf { it.isNotEmpty() }, fluidResults.takeIf { it.isNotEmpty() }
                 )
             }
 

@@ -8,6 +8,8 @@ import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.common.util.LazyOptional
 import kotlin.jvm.optionals.getOrNull
 
+typealias CapabilityContainer = Pair<ICapabilitySavable<Tag>, MutableList<Direction?>?>
+
 /**
  * Holds a [Map] of [Capability]s, linking to a pair of actual capability objects and the valid sides they can be applied to.
  * This class is for convenience.
@@ -19,7 +21,7 @@ import kotlin.jvm.optionals.getOrNull
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-class CapabilityHolder(passedCapabilities: Map<Capability<*>, Pair<INBTSerializable<out Tag>, MutableList<Direction?>?>>) {
+class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContainer>) {
     /**
      * The capabilities this [CapabilityHolder] is keeping track of.
      * @author Miko Elbrecht
@@ -29,7 +31,7 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, Pair<INBTSerializa
      * @see capabilityOrNull
      * @see invalidate
      */
-    private val capabilities = passedCapabilities.mapValues {
+    val capabilities = passedCapabilities.mapValues {
         LazyOptional.of { it.value.first } to it.value.second
     }
 

@@ -1,5 +1,6 @@
 package breadmod.recipe.fluidEnergy
 
+import breadmod.recipe.serializer.SimpleFluidEnergyRecipeSerializer
 import breadmod.util.amount
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
@@ -9,7 +10,6 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.CraftingBookCategory
 import net.minecraft.world.item.crafting.CustomRecipe
-import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.Fluid
@@ -31,7 +31,7 @@ abstract class FluidEnergyRecipe(
     open val itemsOutput: List<ItemStack>? = null,
 ): CustomRecipe(pId, CraftingBookCategory.MISC) {
     abstract override fun getType(): RecipeType<*>
-    abstract override fun getSerializer(): RecipeSerializer<*>
+    abstract override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*>
 
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
         val okay =

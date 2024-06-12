@@ -5,7 +5,6 @@ import breadmod.ModMain.modLocation
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
-import breadmod.block.entity.screen.CoalGeneratorScreen
 import breadmod.block.entity.screen.DoughMachineScreen
 import breadmod.block.entity.screen.WheatCrusherScreen
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
@@ -58,7 +57,7 @@ object ClientModEventBus {
             MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle -> WheatCrusherScreen(pMenu,pInventory,pTitle) }
 
             // Power Generators
-            MenuScreens.register(ModMenuTypes.COAL_GENERATOR.get()) { pMenu, pInventory, pTitle -> CoalGeneratorScreen(pMenu, pInventory, pTitle) }
+            //MenuScreens.register(ModMenuTypes.GENERATOR.get()) { pMenu, pInventory, pTitle -> GeneratorScreen(pMenu, pInventory, pTitle) }
         }
     }
 
@@ -91,7 +90,7 @@ object ClientModEventBus {
     fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
         event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
         event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
-        event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/coal_generator_on"))
+        event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/generator_on"))
     }
 
     @SubscribeEvent

@@ -23,7 +23,7 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         cFluidsOutput: List<FluidStack>?, cItemsOutput: List<ItemStack>?
     ) -> T
 ) : RecipeSerializer<T> {
-    companion object {
+    private companion object {
         const val ENERGY_KEY = "energy"
         const val TIME_KEY = "time"
         const val FLUIDS_KEY = "fluids"
@@ -53,35 +53,42 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         )
     }
 
-    fun toJson(
-        to: JsonObject, location: ResourceLocation,
-        time: Int, energy: Int?,
-        fluidList: List<FluidStack>?, fluidTagList: List<Pair<TagKey<Fluid>, Int>>?,
-        itemList: List<ItemStack>?, itemTagList: List<Pair<TagKey<ItemLike>, Int>>?,
-        fluidOutputs: List<FluidStack>?, itemOutputs: List<ItemStack>?
+    fun <T: ItemLike> toJson(
+        to: JsonObject, id: ResourceLocation, time: Int, energy: Int?,
+        fluidsRequired: List<FluidStack>?, fluidsRequiredTagged: List<Pair<TagKey<Fluid>, Int>>?,
+        itemsRequired: List<ItemStack>?, itemsRequiredTagged: List<Pair<TagKey<T>, Int>>?,
+        itemsOutput: List<ItemStack>?, fluidsOutput: List<FluidStack>?
     ) = to.also {
-        it.addProperty(ENTRY_ID_KEY, location.toString())
+        it.addProperty(ENTRY_ID_KEY, id.toString())
         it.addProperty(TIME_KEY, time)
         it.add(INPUT_KEY, JsonObject().also { required ->
             if(energy != null) required.addProperty(ENERGY_KEY, energy)
             JsonObject().also { obj ->
-                if(!fluidList.isNullOrEmpty()) obj.add(CERTAIN_KEY, fluidList.jsonifyFluidList())
-                if(!fluidTagList.isNullOrEmpty()) obj.add(TAGGED_KEY, fluidTagList.jsonifyTagList())
+                if(!fluidsRequired.isNullOrEmpty()) obj.add(CERTAIN_KEY, fluidsRequired.jsonifyFluidList())
+                if(!fluidsRequiredTagged.isNullOrEmpty()) obj.add(TAGGED_KEY, fluidsRequiredTagged.jsonifyTagList())
                 if(obj.size() > 0) required.add(FLUIDS_KEY, obj)
             }
             JsonObject().also { obj ->
-                if(!itemList.isNullOrEmpty()) obj.add(CERTAIN_KEY, itemList.jsonifyItemList())
-                if(!itemTagList.isNullOrEmpty()) obj.add(TAGGED_KEY, itemTagList.jsonifyTagList())
+                if(!itemsRequired.isNullOrEmpty()) obj.add(CERTAIN_KEY, itemsRequired.jsonifyItemList())
+                if(!itemsRequiredTagged.isNullOrEmpty()) obj.add(TAGGED_KEY, itemsRequiredTagged.jsonifyTagList())
                 if(obj.size() > 0) required.add(ITEMS_KEY, obj)
             }
             if(required.size() == 0) throw IllegalArgumentException("Not enough inputs")
         })
         JsonObject().also { outputs ->
-            if (!fluidOutputs.isNullOrEmpty()) outputs.add(FLUIDS_KEY, fluidOutputs.jsonifyFluidList())
-            if (!itemOutputs.isNullOrEmpty()) outputs.add(ITEMS_KEY, itemOutputs.jsonifyItemList())
+            if (!fluidsOutput.isNullOrEmpty()) outputs.add(FLUIDS_KEY, fluidsOutput.jsonifyFluidList())
+            if (!itemsOutput.isNullOrEmpty()) outputs.add(ITEMS_KEY, itemsOutput.jsonifyItemList())
             if (outputs.size() > 0) it.add(OUTPUT_KEY, outputs)
         }
     }
+
+    fun toJsonR(to: JsonObject, recipe: FluidEnergyRecipe) = toJson(
+            to, recipe.id, recipe.time, recipe.energy,
+            recipe.fluidsRequired, recipe.fluidsRequiredTagged,
+            recipe.itemsRequired, recipe.itemsRequiredTagged,
+            recipe.itemsOutput, recipe.fluidsOutput
+        )
+    fun toJsonObject(recipe: FluidEnergyRecipe) = JsonObject().also { toJsonR(it, recipe) }
 
     override fun fromNetwork(p0: ResourceLocation, p1: FriendlyByteBuf): T =
         factory(

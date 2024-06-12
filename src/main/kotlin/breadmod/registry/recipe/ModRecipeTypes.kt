@@ -3,7 +3,7 @@ package breadmod.registry.recipe
 import breadmod.ModMain
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
-import breadmod.recipe.fluidEnergy.generators.CoalGeneratorRecipe
+import breadmod.recipe.fluidEnergy.generators.GeneratorRecipe
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraftforge.registries.DeferredRegister
@@ -19,5 +19,5 @@ object ModRecipeTypes {
     val WHEAT_CRUSHING = register<WheatCrushingRecipe>("wheat_crusher")
 
     // Power Generators
-    val COAL_GENERATOR = register<CoalGeneratorRecipe>("coal_generator")
+    val GENERATOR = register<GeneratorRecipe>("generator")
 }

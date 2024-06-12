@@ -2,8 +2,13 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.*
-import breadmod.block.multiblock.farmer.*
-import breadmod.block.multiblock.generic.PowerInterfaceBlock
+import breadmod.block.machine.GeneratorBlock
+import breadmod.block.machine.DoughMachineBlock
+import breadmod.block.machine.WheatCrusherBlock
+import breadmod.block.machine.multiblock.farmer.FarmerControllerBlock
+import breadmod.block.machine.multiblock.farmer.FarmerInputBlock
+import breadmod.block.machine.multiblock.farmer.FarmerOutputBlock
+import breadmod.block.machine.multiblock.generic.PowerInterfaceBlock
 import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT
 import breadmod.registry.item.ModItems
@@ -107,9 +112,9 @@ object ModBlocks {
         Item.Properties()
     )
 
-    val COAL_GENERATOR = registerBlockItem(
-        "coal_generator",
-        { CoalGeneratorBlock() },
+    val GENERATOR = registerBlockItem(
+        "generator",
+        { GeneratorBlock() },
         Item.Properties()
     )
 
@@ -239,7 +244,7 @@ object ModBlocks {
             dropSelf(KEYBOARD.get().block)
             dropSelf(BREAD_FENCE.get().block)
             dropSelf(WHEAT_CRUSHER_BLOCK.get().block)
-            dropSelf(COAL_GENERATOR.get().block)
+            dropSelf(GENERATOR.get().block)
             dropSelf(FARMER_CONTROLLER.get().block)
             dropSelf(FARMER_BASE_BLOCK.get().block)
             dropSelf(FARMER_INPUT_BLOCK.get().block)

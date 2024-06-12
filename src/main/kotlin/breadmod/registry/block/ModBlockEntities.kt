@@ -2,8 +2,13 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.entity.*
-import breadmod.block.multiblock.farmer.entity.*
-import breadmod.block.multiblock.generic.entity.PowerInterfaceBlockEntity
+import breadmod.block.machine.entity.GeneratorBlockEntity
+import breadmod.block.machine.entity.DoughMachineBlockEntity
+import breadmod.block.machine.entity.WheatCrusherBlockEntity
+import breadmod.block.machine.multiblock.farmer.entity.FarmerControllerBlockEntity
+import breadmod.block.machine.multiblock.farmer.entity.FarmerInputBlockEntity
+import breadmod.block.machine.multiblock.farmer.entity.FarmerOutputBlockEntity
+import breadmod.block.machine.multiblock.generic.entity.PowerInterfaceBlockEntity
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK
 import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK
@@ -69,10 +74,10 @@ object ModBlockEntities {
     }
 
     // Power Generators
-    val COAL_GENERATOR: RegistryObject<BlockEntityType<CoalGeneratorBlockEntity>> = deferredRegister.register("coal_generator_entity") {
+    val GENERATOR: RegistryObject<BlockEntityType<GeneratorBlockEntity>> = deferredRegister.register("generator_entity") {
         BlockEntityType.Builder.of(
-            { pPos, pState -> CoalGeneratorBlockEntity(pPos, pState) },
-            ModBlocks.COAL_GENERATOR.get().block
+            { pPos, pState -> GeneratorBlockEntity(pPos, pState) },
+            ModBlocks.GENERATOR.get().block
         ).build(null)
     }
 }

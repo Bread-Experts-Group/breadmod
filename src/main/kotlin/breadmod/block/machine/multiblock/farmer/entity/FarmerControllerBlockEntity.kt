@@ -1,4 +1,4 @@
-package breadmod.block.multiblock.farmer.entity
+package breadmod.block.machine.multiblock.farmer.entity
 
 import breadmod.registry.block.ModBlockEntities
 import net.minecraft.core.BlockPos

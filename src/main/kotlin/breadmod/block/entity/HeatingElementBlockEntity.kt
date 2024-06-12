@@ -81,7 +81,7 @@ class HeatingElementBlockEntity(
                 if(thisStorage.energyStored > 0) {
                     val resistiveExtracted = thisStorage.extractEnergy(750, false)
                     if(resistiveExtracted == 750) {
-                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
+                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, true))
                         val pushExtracted = thisStorage.extractEnergy(1000, true)
                         if(pushExtracted > 0) {
                             val direction = pState.getValue(DirectionalBlock.FACING)
@@ -95,8 +95,8 @@ class HeatingElementBlockEntity(
                         }
                         return@ifPresent
                     }
-                } else if(pState.getValue(BlockStateProperties.LIT)) {
-                    pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, false))
+                } else if(pState.getValue(BlockStateProperties.POWERED)) {
+                    pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
                 }
             }
         }

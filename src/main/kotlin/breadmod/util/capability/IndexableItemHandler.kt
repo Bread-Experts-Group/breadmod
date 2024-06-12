@@ -3,7 +3,6 @@ package breadmod.util.capability
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.items.IItemHandler
 import kotlin.math.min
 
@@ -15,21 +14,21 @@ import kotlin.math.min
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirection>>, val changed: () -> Unit) : IItemHandler, INBTSerializable<CompoundTag>, MutableList<ItemStack> {
+open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirection>>, override var changed: (() -> Unit)? = null) : IItemHandler, ICapabilitySavable<CompoundTag>, MutableList<ItemStack> {
     private val stacks = MutableList(slots.size) { ItemStack.EMPTY }
     override val size: Int = slots.size
 
-    override operator fun set(index: Int, element: ItemStack): ItemStack = stacks[index].also { changed(); stacks[index] = element }
+    override operator fun set(index: Int, element: ItemStack): ItemStack = stacks[index].also { changed?.invoke(); stacks[index] = element }
     override operator fun get(index: Int): ItemStack = stacks[index]
 
     override fun contains(element: ItemStack): Boolean = stacks.contains(element)
 
-    override fun add(element: ItemStack): Boolean = stacks.add(element).also { changed() }
-    override fun add(index: Int, element: ItemStack) = stacks.add(index, element).also { changed() }
-    override fun addAll(index: Int, elements: Collection<ItemStack>): Boolean = stacks.addAll(index, elements).also { if(it) changed() }
-    override fun addAll(elements: Collection<ItemStack>): Boolean = stacks.addAll(elements).also { if(it) changed() }
+    override fun add(element: ItemStack): Boolean = stacks.add(element).also { changed?.invoke() }
+    override fun add(index: Int, element: ItemStack) = stacks.add(index, element).also { changed?.invoke() }
+    override fun addAll(index: Int, elements: Collection<ItemStack>): Boolean = stacks.addAll(index, elements).also { if(it) changed?.invoke() }
+    override fun addAll(elements: Collection<ItemStack>): Boolean = stacks.addAll(elements).also { if(it) changed?.invoke() }
 
-    override fun clear() = stacks.clear().also { changed() }
+    override fun clear() = stacks.clear().also { changed?.invoke() }
     override fun containsAll(elements: Collection<ItemStack>): Boolean = stacks.containsAll(elements)
     override fun isEmpty(): Boolean = stacks.isEmpty()
 
@@ -44,7 +43,7 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
         private val base = stacks.iterator()
         override fun hasNext(): Boolean = base.hasNext()
         override fun next(): ItemStack = base.next().copy()
-        override fun remove() = base.remove().also { changed() }
+        override fun remove() = base.remove().also { changed?.invoke() }
     }
     /**
      * List mutating methods such as [MutableListIterator.add], [MutableListIterator.remove] and [MutableListIterator.set] will notify the attached
@@ -55,7 +54,7 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
      */
     override fun listIterator(): MutableListIterator<ItemStack> = object : MutableListIterator<ItemStack> {
         private val base = stacks.listIterator()
-        override fun add(element: ItemStack) = base.add(element).also { changed() }
+        override fun add(element: ItemStack) = base.add(element).also { changed?.invoke() }
 
         override fun hasNext(): Boolean = base.hasNext()
         override fun hasPrevious(): Boolean = base.hasPrevious()
@@ -65,17 +64,17 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
         override fun previous(): ItemStack = base.previous().copy()
         override fun previousIndex(): Int = base.previousIndex()
 
-        override fun remove() = base.remove().also { changed() }
-        override fun set(element: ItemStack) = base.set(element).also { changed }
+        override fun remove() = base.remove().also { changed?.invoke() }
+        override fun set(element: ItemStack) = base.set(element).also { changed?.invoke() }
     }
     override fun listIterator(index: Int): MutableListIterator<ItemStack> = stacks.listIterator(index)
 
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<ItemStack> = stacks.subList(fromIndex, toIndex)
-    override fun retainAll(elements: Collection<ItemStack>): Boolean = stacks.retainAll(elements.toSet()).also { if(it) changed() }
+    override fun retainAll(elements: Collection<ItemStack>): Boolean = stacks.retainAll(elements.toSet()).also { if(it) changed?.invoke() }
 
-    override fun removeAll(elements: Collection<ItemStack>): Boolean = stacks.removeAll(elements.toSet()).also { if(it) changed() }
-    override fun removeAt(index: Int): ItemStack = stacks.removeAt(index).also { if(!it.isEmpty) changed() }
-    override fun remove(element: ItemStack): Boolean = stacks.remove(element).also { if(it) changed() }
+    override fun removeAll(elements: Collection<ItemStack>): Boolean = stacks.removeAll(elements.toSet()).also { if(it) changed?.invoke() }
+    override fun removeAt(index: Int): ItemStack = stacks.removeAt(index).also { if(!it.isEmpty) changed?.invoke() }
+    override fun remove(element: ItemStack): Boolean = stacks.remove(element).also { if(it) changed?.invoke() }
 
     override fun lastIndexOf(element: ItemStack): Int = stacks.lastIndexOf(element)
     override fun indexOf(element: ItemStack): Int = stacks.indexOf(element)
@@ -90,6 +89,7 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
             if(!simulate) {
                 if(stack.isEmpty) stacks[slot] = it.copyWithCount(space)
                 else stack.grow(space)
+                changed?.invoke()
             }
             it.shrink(space)
             if(it.count == 0) return ItemStack.EMPTY
@@ -122,6 +122,8 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
             it.shrink(space)
             if(it.count == 0) return ItemStack.EMPTY
         }
+
+        if(!simulate && it.count != stack.count) changed?.invoke()
         return it
     }
 
@@ -130,7 +132,7 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
         if(reifiedSlot.second != StorageDirection.STORE_ONLY) {
             val stack = stacks[slot]
             val removed = stack.copyWithCount(min(amount, stack.count))
-            if(!simulate) stack.shrink(removed.count)
+            if(!simulate) stack.shrink(removed.count).also { changed?.invoke() }
             return removed
         } else return ItemStack.EMPTY
     }
@@ -157,6 +159,8 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
             remainder -= concatStack!!.count
             if(!simulate) stack.shrink(toRemove)
         }
+
+        if(!simulate) changed?.invoke()
         return concatStack ?: ItemStack.EMPTY
     }
 

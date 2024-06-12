@@ -2,9 +2,10 @@ package breadmod.block.entity.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
-import breadmod.block.entity.menu.DoughMachineMenu
+import breadmod.block.machine.entity.menu.DoughMachineMenu
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.VoidTankPacket
+import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.formatUnit
 import breadmod.util.renderFluid
@@ -20,7 +21,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.fluids.FluidType
 
 class DoughMachineScreen(
@@ -56,7 +56,7 @@ class DoughMachineScreen(
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
         val showShort = !(minecraft ?: return).options.keyShift.isDown
-        menu.parent.capabilities.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
+        menu.parent.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
             it.allTanks[0].let { tank ->
                 val fluid = tank.fluid.fluid
                 if(tank.fluidAmount > 0) {
@@ -133,7 +133,7 @@ class DoughMachineScreen(
         }
 
         if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            menu.parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let {
+            menu.parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let {
                 pGuiGraphics.renderComponentTooltip(
                     this.font,
                     listOf(

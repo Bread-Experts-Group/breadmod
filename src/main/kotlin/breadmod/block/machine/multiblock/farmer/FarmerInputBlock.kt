@@ -1,6 +1,6 @@
-package breadmod.block.multiblock.farmer
+package breadmod.block.machine.multiblock.farmer
 
-import breadmod.block.multiblock.farmer.entity.FarmerOutputBlockEntity
+import breadmod.block.machine.multiblock.farmer.entity.FarmerInputBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.Containers
@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.material.MapColor
 
-class FarmerOutputBlock: Block(Properties.of()
+class FarmerInputBlock: Block(Properties.of()
     .strength(2.0f, 6.0f)
     .mapColor(MapColor.COLOR_BROWN)
     .sound(SoundType.COPPER)
@@ -41,9 +41,10 @@ class FarmerOutputBlock: Block(Properties.of()
         pMovedByPiston: Boolean
     ) {
         if(!pState.`is`(pNewState.block)) {
-            val entity = (pLevel.getBlockEntity(pPos) as? FarmerOutputBlockEntity) ?: return
+            val entity = (pLevel.getBlockEntity(pPos) as? FarmerInputBlockEntity) ?: return
             Containers.dropContents(pLevel, pPos, entity)
         }
+        @Suppress("DEPRECATION")
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
     }
 
@@ -56,6 +57,6 @@ class FarmerOutputBlock: Block(Properties.of()
     }
 
     override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity =
-        FarmerOutputBlockEntity(pPos, pState)
+        FarmerInputBlockEntity(pPos, pState)
 
 }

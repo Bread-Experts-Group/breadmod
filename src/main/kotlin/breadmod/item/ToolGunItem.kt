@@ -77,7 +77,8 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
             fun clearMode() = currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
 
             if(pLevel.isClientSide && !pIsSelected) {
-                changeMode.consumeClick()
+                changeMode.
+                    consumeClick()
                 clearMode()
                 currentMode.mode.close(pLevel, pEntity, pStack, null)
                 return

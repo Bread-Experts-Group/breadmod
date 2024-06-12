@@ -407,8 +407,8 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .setTimeRequired(20 * 80)
             .setRFRequired(-5000)
             .requiresItem(Items.COAL)
-            .setSerializer(ModRecipeSerializers.COAL_GENERATOR.get())
-            .save(pWriter, modLocation("special", "generators", "coal_generator", "coal"))
+            .setSerializer(ModRecipeSerializers.GENERATOR.get())
+            .save(pWriter, modLocation("special", "generators", "generator", "coal"))
 
         // // Compat
         // Create

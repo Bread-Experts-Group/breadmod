@@ -21,16 +21,16 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 class BreadBlock : FlammableBlock(
     Properties.copy(Blocks.HAY_BLOCK)
         .strength(0.5f)
-        .lightLevel { state -> if(state.getValue(BlockStateProperties.LIT)) 8 else 0 }
+        .lightLevel { state -> if(state.getValue(BlockStateProperties.POWERED)) 8 else 0 }
 ), ILightningStrikeAction {
     init {
         this.registerDefaultState(this.defaultBlockState()
-            .setValue(BlockStateProperties.LIT, false)
+            .setValue(BlockStateProperties.POWERED, false)
         )
     }
 
     override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean =
-        !(state.getValue(BlockStateProperties.LIT) || (level is ServerLevel && level.dimensionType() == ModDimensions.BREAD.first.dimensionType.second))
+        !(state.getValue(BlockStateProperties.POWERED) || (level is ServerLevel && level.dimensionType() == ModDimensions.BREAD.first.dimensionType.second))
     override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int
             = 120
 
@@ -57,10 +57,10 @@ class BreadBlock : FlammableBlock(
 
     override fun onLightningStruck(pLevel: Level, pPos: BlockPos, pState: BlockState) {
         pLevel.playSound(null, pPos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 2.0F, 1.0F)
-        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LIT, true))
+        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, true))
     }
 
     override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(BlockStateProperties.LIT)
+        pBuilder.add(BlockStateProperties.POWERED)
     }
 }

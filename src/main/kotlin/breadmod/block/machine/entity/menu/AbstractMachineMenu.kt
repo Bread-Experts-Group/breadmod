@@ -1,7 +1,8 @@
-package breadmod.block.entity.menu
+package breadmod.block.machine.entity.menu
 
-import breadmod.block.entity.AbstractPowerGeneratorBlockEntity
+import breadmod.block.machine.entity.AbstractMachineBlockEntity
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
+import breadmod.util.capability.EnergyBattery
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -9,35 +10,29 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.energy.EnergyStorage
+import kotlin.jvm.optionals.getOrNull
 
-abstract class AbstractPowerGeneratorMenu<R : FluidEnergyRecipe>(
+abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,R>, R : FluidEnergyRecipe>(
     pMenuType: MenuType<*>,
     pContainerId: Int,
-    val inventory: Inventory,
-    val parent: AbstractPowerGeneratorBlockEntity<R>,
-    private val pBlock: Block
+    protected val inventory: Inventory,
+    val parent: T
 ) : AbstractContainerMenu(pMenuType, pContainerId) {
-//    constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this( // todo figure out how to make this constructor work in the abstract class
-//        pContainerId, inventory,
-//        inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.COAL_GENERATOR.get()).get()
-//    )
-
-    fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress) * 14).toInt()
-    fun getEnergyStoredScaled(): Int = parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
+    fun getScaledProgress(): Int = parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 14).toInt() } ?: 0
+    fun getEnergyStoredScaled(): Int = parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
     fun isCrafting(): Boolean = parent.progress > 0
-    fun isEnabled(): Boolean = parent.enabled
+    protected fun isEnabled(): Boolean = parent.blockState.getValue(BlockStateProperties.ENABLED)
 
+    inner class ResultSlot(id: Int, x: Int, y: Int) : Slot(parent, id, x, y) { override fun mayPlace(pStack: ItemStack): Boolean = false }
+    
     init {
-        this.addSlot(Slot(parent, 0, 52, 34))
-
         repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, 142)) }
         repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, 84 + y * 18)) } }
     }
 
-    override fun quickMoveStack(playerIn: Player, pIndex: Int): ItemStack {
+    final override fun quickMoveStack(playerIn: Player, pIndex: Int): ItemStack {
         val sourceSlot = slots[pIndex]
         if (!sourceSlot.hasItem()) return ItemStack.EMPTY //EMPTY_ITEM
 
@@ -80,13 +75,13 @@ abstract class AbstractPowerGeneratorMenu<R : FluidEnergyRecipe>(
         return copyOfSourceStack
     }
 
-    override fun stillValid(pPlayer: Player): Boolean = stillValid(
+    final override fun stillValid(pPlayer: Player): Boolean = stillValid(
         ContainerLevelAccess.create(pPlayer.level(), parent.blockPos),
         pPlayer,
-        pBlock
+        parent.blockState.block
     )
 
-    companion object {
+    private companion object {
         // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
         // must assign a slot number to each of the slots used by the GUI.
         // For this container, we can see both the tile inventory's slots and the player inventory slots and the hotbar.
@@ -94,15 +89,15 @@ abstract class AbstractPowerGeneratorMenu<R : FluidEnergyRecipe>(
         //  0 - 8 = hotbar slots (which will map to the InventoryPlayer slot numbers 0 - 8)
         //  9 - 35 = player inventory slots (which map to the InventoryPlayer slot numbers 9 - 35)
         //  36 - 44 = TileInventory slots, which map to our TileEntity slot numbers 0 - 8)
-        private const val HOTBAR_SLOT_COUNT = 9
-        private const val PLAYER_INVENTORY_ROW_COUNT = 3
-        private const val PLAYER_INVENTORY_COLUMN_COUNT = 9
-        private const val PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT
-        private const val VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT
-        private const val VANILLA_FIRST_SLOT_INDEX = 0
-        private const val TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT
+        const val HOTBAR_SLOT_COUNT = 9
+        const val PLAYER_INVENTORY_ROW_COUNT = 3
+        const val PLAYER_INVENTORY_COLUMN_COUNT = 9
+        const val PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT
+        const val VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT
+        const val VANILLA_FIRST_SLOT_INDEX = 0
+        const val TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT
 
         // THIS YOU HAVE TO DEFINE!
-        private const val TE_INVENTORY_SLOT_COUNT = 1 // must be the number of slots you have!
+        const val TE_INVENTORY_SLOT_COUNT = 1 // must be the number of slots you have!
     }
 }

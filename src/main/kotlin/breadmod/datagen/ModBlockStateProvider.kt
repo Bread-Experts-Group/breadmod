@@ -15,7 +15,6 @@ import net.minecraftforge.client.model.generators.ConfiguredModel
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
-@Suppress("SpellCheckingInspection")
 class ModBlockStateProvider(
     output: PackOutput,
     modID: String,
@@ -29,21 +28,21 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
 
-        horizontalBlock(ModBlocks.COAL_GENERATOR.get().block) {state ->
-            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
-            val name = "breadmod:block/coal_generator$machineOn"
+        horizontalBlock(ModBlocks.GENERATOR.get().block) { state ->
+            val machineOn = if(state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+            val name = "breadmod:block/generator$machineOn"
 
             val model = models().singleTexture(
                 name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/coal_generator$machineOn"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/coal_generator$machineOn")
+                modLoc("${ModelProvider.BLOCK_FOLDER}/generator$machineOn"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/generator$machineOn")
             )
 
             return@horizontalBlock model
         }
         simpleBlockItem(
-            ModBlocks.COAL_GENERATOR.get().block,
-            models().getBuilder("breadmod:block/coal_generator")
+            ModBlocks.GENERATOR.get().block,
+            models().getBuilder("breadmod:block/generator")
         )
 
         doorBlockWithRenderType(ModBlocks.BREAD_DOOR.get().block as DoorBlock,
@@ -58,7 +57,7 @@ class ModBlockStateProvider(
         )
 
         horizontalBlock(ModBlocks.DOUGH_MACHINE_BLOCK.get().block) { state ->
-            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
+            val machineOn = if(state.getValue(BlockStateProperties.POWERED)) "_on" else ""
             val name = "breadmod:block/dough_machine$machineOn"
 
             val model = models().orientable(
@@ -74,7 +73,7 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/dough_machine")
         )
         horizontalBlock(ModBlocks.WHEAT_CRUSHER_BLOCK.get().block) { state ->
-            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
+            val machineOn = if(state.getValue(BlockStateProperties.POWERED)) "_on" else ""
             val name = "breadmod:block/wheat_crusher$machineOn"
 
             val model = models().orientable(

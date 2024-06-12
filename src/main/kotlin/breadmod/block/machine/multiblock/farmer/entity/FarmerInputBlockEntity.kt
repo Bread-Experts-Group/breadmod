@@ -1,4 +1,4 @@
-package breadmod.block.multiblock.farmer.entity
+package breadmod.block.machine.multiblock.farmer.entity
 
 import breadmod.ModMain
 import breadmod.registry.block.ModBlockEntities
@@ -19,11 +19,11 @@ import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandlerModifiable
 import net.minecraftforge.items.wrapper.SidedInvWrapper
 
-class FarmerOutputBlockEntity( // todo add menu and screen
+class FarmerInputBlockEntity( // todo add menu and screen
     pPos: BlockPos,
     pBlockState: BlockState
-) : BlockEntity(ModBlockEntities.FARMER_OUTPUT.get(), pPos, pBlockState), WorldlyContainer {
-    val storedItems = MutableList(4) { ItemStack.EMPTY }
+) : BlockEntity(ModBlockEntities.FARMER_INPUT.get(), pPos, pBlockState), WorldlyContainer {
+    private val storedItems = MutableList(4) { ItemStack.EMPTY }
 
     private val facing = this.blockState.getValue(DirectionalBlock.FACING)
     private var handlers: Array<out LazyOptional<IItemHandlerModifiable>> = SidedInvWrapper.create(
@@ -67,7 +67,7 @@ class FarmerOutputBlockEntity( // todo add menu and screen
         facing -> intArrayOf(0,1,2,3)
         else -> intArrayOf()
     }
-    override fun canPlaceItemThroughFace(pIndex: Int, pItemStack: ItemStack, pDirection: Direction?): Boolean = false
-    override fun canTakeItemThroughFace(pIndex: Int, pStack: ItemStack, pDirection: Direction): Boolean =
-        getSlotsForFace(pDirection).contains(pIndex)
+    override fun canPlaceItemThroughFace(pIndex: Int, pItemStack: ItemStack, pDirection: Direction?): Boolean =
+        if(pDirection != null) getSlotsForFace(pDirection).contains(pIndex) else true
+    override fun canTakeItemThroughFace(pIndex: Int, pStack: ItemStack, pDirection: Direction): Boolean = false
 }

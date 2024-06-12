@@ -1,5 +1,6 @@
 package breadmod.network
 
+import breadmod.block.machine.entity.AbstractMachineBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -18,11 +19,12 @@ class ToggleMachinePacket(val pPos: BlockPos, val index: Boolean) {
                 it.sender?.let { player ->
                     println("${player.name}")
                     val level = player.level()
+                    @Suppress("DEPRECATION")
                     if(level.hasChunkAt(input.pPos)) {
-                        level.getBlockEntity(input.pPos)?.blockState.let { state ->
-                            if(state?.getValue(BlockStateProperties.ENABLED) == true) {
-                                state.setValue(BlockStateProperties.ENABLED, false)
-                            } else state?.setValue(BlockStateProperties.ENABLED, true)
+                        val entity = level.getBlockEntity(input.pPos)
+                        if(entity != null && entity is AbstractMachineBlockEntity<*>) {
+                            val state = entity.getBlockState()
+                            state.setValue(BlockStateProperties.ENABLED, !state.getValue(BlockStateProperties.ENABLED))
                         }
                     }
                 }

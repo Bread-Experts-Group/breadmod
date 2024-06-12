@@ -2,7 +2,8 @@ package breadmod.block.entity.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
-import breadmod.block.entity.menu.WheatCrusherMenu
+import breadmod.block.machine.entity.menu.WheatCrusherMenu
+import breadmod.util.capability.EnergyBattery
 import breadmod.util.formatUnit
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.ChatFormatting
@@ -12,7 +13,6 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.energy.EnergyStorage
 
 class WheatCrusherScreen(
     pMenu: WheatCrusherMenu,
@@ -42,7 +42,7 @@ class WheatCrusherScreen(
 
         val showShort = !minecraft!!.options.keyShift.isDown
         if(this.isHovering(151,14, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
-            menu.parent.capabilities.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.let {
+            menu.parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let {
                 pGuiGraphics.renderComponentTooltip(
                     this.font,
                     listOf(

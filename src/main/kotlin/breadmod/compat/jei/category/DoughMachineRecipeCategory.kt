@@ -2,8 +2,8 @@ package breadmod.compat.jei.category
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
-import breadmod.block.entity.DoughMachineBlockEntity.Companion.INPUT_TANK_CAPACITY
-import breadmod.block.entity.DoughMachineBlockEntity.Companion.OUTPUT_TANK_CAPACITY
+import breadmod.block.machine.entity.DoughMachineBlockEntity.Companion.INPUT_TANK_CAPACITY
+import breadmod.block.machine.entity.DoughMachineBlockEntity.Companion.OUTPUT_TANK_CAPACITY
 import breadmod.compat.jei.ModJEIRecipeTypes
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe

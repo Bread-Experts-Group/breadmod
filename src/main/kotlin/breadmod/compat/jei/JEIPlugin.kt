@@ -1,9 +1,9 @@
 package breadmod.compat.jei
 
 import breadmod.ModMain
-import breadmod.block.entity.menu.DoughMachineMenu
+import breadmod.block.machine.entity.menu.DoughMachineMenu
 import breadmod.block.entity.screen.DoughMachineScreen
-import breadmod.block.entity.menu.WheatCrusherMenu
+import breadmod.block.machine.entity.menu.WheatCrusherMenu
 import breadmod.block.entity.screen.WheatCrusherScreen
 import breadmod.compat.jei.category.DoughMachineRecipeCategory
 import breadmod.compat.jei.category.WheatCrusherRecipeCategory
