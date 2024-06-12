@@ -43,12 +43,13 @@ abstract class AbstractPowerGeneratorScreen<R: FluidEnergyRecipe, T: AbstractPow
 
     open fun renderEnergyMeter(pGuiGraphics: GuiGraphics) {
         val energyStored = menu.getEnergyStoredScaled()
-        pGuiGraphics.blit(pTexture, leftPos + 108, topPos + 19 + 47 - energyStored, 176, 61 - energyStored, 16, 47)
+        pGuiGraphics.blit(pTexture, leftPos + 108, topPos + 19 + 47 - energyStored, 176, 47 - energyStored, 16, 47)
     }
 
     open fun renderRecipeProgress(pGuiGraphics: GuiGraphics) {
         if(menu.isCrafting()) {
-            pGuiGraphics.blit(pTexture, leftPos + 53, topPos + 53 + 14 + menu.getScaledProgress(), 176, -14 + menu.getScaledProgress(), 14, 14)
+            val progress = menu.getScaledProgress()
+            pGuiGraphics.blit(pTexture, leftPos + 53, topPos + 53 + progress, 192, progress, 14, 14)
         }
     }
 
