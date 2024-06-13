@@ -29,7 +29,7 @@ internal class ToolGunRemoverMode: IToolGunMode {
         if(pLevel is ServerLevel) {
             pLevel.rayMarchEntity(pPlayer, pPlayer.position(), Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)?.let {
                 fun rand() = (pPlayer.random.nextDouble() - 0.5)*1.2
-                pLevel.sendParticles(ParticleTypes.END_ROD, it.entity.x, it.entity.y, it.entity.z, 40, rand(), pPlayer.random.nextDouble(), rand(), 1.0)
+                pLevel.sendParticles(ParticleTypes.END_ROD, it.entity.x, it.entity.y, it.entity.z, 60, rand(), pPlayer.random.nextDouble(), rand(), 1.0)
                 playToolGunSound(pLevel, pPlayer.blockPosition())
                 NETWORK.send(
                     PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(it.entity.blockPosition()) },

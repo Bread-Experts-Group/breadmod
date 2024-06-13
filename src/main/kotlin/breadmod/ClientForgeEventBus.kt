@@ -1,10 +1,12 @@
 package breadmod
 
 import breadmod.ClientModEventBus.createMappingsForControls
+import breadmod.item.rendering.TimerTicker
 import breadmod.util.render.renderBuffer
 import net.minecraft.client.Minecraft
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.RenderLevelStageEvent
+import net.minecraftforge.event.TickEvent.ClientTickEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -30,5 +32,13 @@ object ClientForgeEventBus {
     fun myLogin(event: PlayerLoggedInEvent) {
         val options = Minecraft.getInstance().options
         options.keyMappings = ArrayUtils.removeElements(options.keyMappings, *createMappingsForControls().toTypedArray())
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    @SubscribeEvent
+    fun onTick(event: ClientTickEvent) {
+        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) return
+
+        TimerTicker.tick()
     }
 }

@@ -55,9 +55,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
         pPoseStack.pushPose()
         renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        // todo decouple idle spinning from create's rotation logic
+        // todo smooth rotation after firing toolgun, quickly tapering off
         // todo recoil and increased coil spin when using tool gun
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks())))
+
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks()) * 100))
+
         renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         pPoseStack.popPose()
         // x, y, z after rotations

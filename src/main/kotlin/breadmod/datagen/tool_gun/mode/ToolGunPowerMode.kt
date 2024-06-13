@@ -19,7 +19,8 @@ internal class ToolGunPowerMode: IToolGunMode {
         if(pLevel.isClientSide) {
             count++
             if(count < 5) return
-            computerSD(true)
+//            computerSD(true)
+            println("LOBOTOMIZED")
         }
     }
 
