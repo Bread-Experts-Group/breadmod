@@ -9,6 +9,7 @@ import breadmod.datagen.tag.ModBlockTags
 import breadmod.datagen.tag.ModFluidTags
 import breadmod.datagen.tag.ModItemTags
 import breadmod.datagen.tag.ModPaintingTags
+import breadmod.datagen.texture_plane.ModTexturePlaneProvider
 import breadmod.datagen.tool_gun.ModToolGunModeProvider
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.registry.worldgen.dimensions.ModBiomes
@@ -41,6 +42,9 @@ object CommonModEventBus {
         val lookupProvider = event.lookupProvider
 
         generator.addProvider(true, ModToolGunModeProvider(packOutput))
+
+        // experimental texture to 2d plane
+        generator.addProvider(true, ModTexturePlaneProvider(packOutput))
 
         if(event.includeServer()) {
             LOGGER.info("Server datagen")

@@ -38,6 +38,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
     private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
+    private val testModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/textureplane_test")
 
     override fun renderByItem(
         pStack: ItemStack,
@@ -50,11 +51,14 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val toolgunItem = pStack.item as ToolGunItem
         val renderer = Minecraft.getInstance().itemRenderer
         val fontRenderer = Minecraft.getInstance().font
-        val mainModel = Minecraft.getInstance().modelManager.getModel(mainModelLocation)
-        val coilModel = Minecraft.getInstance().modelManager.getModel(coilModelLocation)
+        val modelManager = Minecraft.getInstance().modelManager
+        val mainModel = modelManager.getModel(mainModelLocation)
+        val coilModel = modelManager.getModel(coilModelLocation)
+        val testModel = modelManager.getModel(testModelLocation)
 
         pPoseStack.pushPose()
         renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         // todo smooth rotation after firing toolgun, quickly tapering off
         // todo recoil and increased coil spin when using tool gun
 

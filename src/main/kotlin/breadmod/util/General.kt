@@ -46,6 +46,9 @@ import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.writeBytes
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.ln
 import kotlin.math.min
 import kotlin.system.exitProcess
 
@@ -87,6 +90,10 @@ fun formatUnit(pFrom: Double, pTo: Double, pUnit: String, pFormatShort: Boolean,
 }
 fun formatUnit(pFrom: Int, pTo: Int, pUnit: String, pFormatShort: Boolean, pDecimals: Int, pUnitOffset: Int = 0, pUnitMax: Int = 1000): String =
     formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
+
+private val logs = mutableMapOf<Double, Double>()
+fun isSquareOf(n: Double, p: Double) = logs.getOrPut(p) { ln(p) }.let { ((ceil(n) / it)) == floor(n / it) }
+fun isSquareOf(n: Int, p: Int) = isSquareOf(n.toDouble(), p.toDouble())
 
 fun GuiGraphics.renderFluid(
     pX: Float, pY: Float, pWidth: Int, pHeight: Int,

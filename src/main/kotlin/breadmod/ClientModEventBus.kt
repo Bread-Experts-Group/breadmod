@@ -91,6 +91,7 @@ object ClientModEventBus {
         event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
         event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/generator_on"))
+        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/textureplane_test"))
     }
 
     @SubscribeEvent
