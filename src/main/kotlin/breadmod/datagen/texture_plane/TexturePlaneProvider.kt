@@ -17,7 +17,7 @@ abstract class TexturePlaneProvider(private val packOutput: PackOutput, private 
 
     override fun run(pOutput: CachedOutput): CompletableFuture<*> {
         addTextures()
-        val dataLocation = packOutput.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(modID).resolve(MODELS_LOC)
+        val dataLocation = packOutput.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(modID).resolve(MODELS_LOC).resolve(RESULT_LOC)
         return CompletableFuture.allOf(
             *buildList{
                 addedModels.forEach { (name, location) ->
@@ -80,6 +80,7 @@ abstract class TexturePlaneProvider(private val packOutput: PackOutput, private 
 
     internal companion object {
         const val MODELS_LOC = "models/item"
+        const val RESULT_LOC = "textureplane"
 
         const val TEXTURE_SIZE = "texture_size"
         const val TEXTURES = "textures"

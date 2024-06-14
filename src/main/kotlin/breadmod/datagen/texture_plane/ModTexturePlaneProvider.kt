@@ -7,6 +7,6 @@ class ModTexturePlaneProvider(
     packOutput: PackOutput
 ) : TexturePlaneProvider(packOutput, ModMain.ID) {
     override fun addTextures() {
-        addTexture("textureplane_test", ModMain.modLocation("item", "tool_gun"))
+        addTexture("textureplane_test", ModMain.modLocation("item", "creature"))
     }
 }

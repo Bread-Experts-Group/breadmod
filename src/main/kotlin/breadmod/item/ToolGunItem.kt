@@ -110,15 +110,15 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
 
     override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions {
         override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
-        override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose {
-            val armPose = IArmPoseTransformer { model, entity, arm ->
-                if(entity.isHolding(this@ToolGunItem)) {
-                    model.rightArm.yRot = -0.1F + model.head.yRot
-                    model.rightArm.xRot = ((-Math.PI / 2f) + model.head.xRot).toFloat()
-                }
-            }
-            return ArmPose.create("tool_gun", false, armPose)
-        }
+//        override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose {
+//            val armPose = IArmPoseTransformer { model, entity, arm ->
+//                if(entity.isHolding(this@ToolGunItem)) {
+//                    model.rightArm.yRot = -0.1F + model.head.yRot
+//                    model.rightArm.xRot = ((-Math.PI / 2f) + model.head.xRot).toFloat()
+//                }
+//            }
+//            return ArmPose.create("tool_gun", false, armPose)
+//        }
     })
 
     internal companion object {

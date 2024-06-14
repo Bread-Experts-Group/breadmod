@@ -38,7 +38,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
     private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
-    private val testModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/textureplane_test")
+    private val testModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/textureplane/textureplane_test")
 
     override fun renderByItem(
         pStack: ItemStack,

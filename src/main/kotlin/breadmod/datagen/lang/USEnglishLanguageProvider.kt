@@ -79,6 +79,7 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModItems.BREAD_BULLET_ITEM)
         add(ModItems.TOOL_GUN)
         add(ModBlocks.GENERATOR)
+        add(ModItems.CREATURE)
 
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
         add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")
