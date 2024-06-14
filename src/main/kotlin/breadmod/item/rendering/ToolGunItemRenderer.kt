@@ -23,6 +23,7 @@ import net.minecraftforge.client.model.generators.ModelProvider
 import java.awt.Color
 import java.security.SecureRandom
 import kotlin.math.round
+import kotlin.math.sin
 
 
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
@@ -49,22 +50,28 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPackedOverlay: Int
     ) {
         val toolgunItem = pStack.item as ToolGunItem
-        val renderer = Minecraft.getInstance().itemRenderer
-        val fontRenderer = Minecraft.getInstance().font
-        val modelManager = Minecraft.getInstance().modelManager
+        val instance = Minecraft.getInstance()
+        val renderer = instance.itemRenderer
+        val fontRenderer = instance.font
+        val modelManager = instance.modelManager
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
         val testModel = modelManager.getModel(testModelLocation)
 
         pPoseStack.pushPose()
-        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         // todo smooth rotation after firing toolgun, quickly tapering off
         // todo recoil and increased coil spin when using tool gun
 
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks()) * 100))
+        val worldTime: Float = TimerTicker.getRenderTime() / 20f
+        var angle = worldTime * -25
+        angle %= 360
 
+//        pPoseStack.translate(sin(angle.toDouble() / 30), 0.0, 0.0)
+        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(angle * 10))
         renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+//        pPoseStack.mulPose(Axis.YN.rotationDegrees(angle * 30))
+//        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         pPoseStack.popPose()
         // x, y, z after rotations
         // x: back and forward, y: up and down, z: left and right

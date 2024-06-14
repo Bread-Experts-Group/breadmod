@@ -1,6 +1,5 @@
 package breadmod.datagen.texture_plane
 
-import breadmod.util.isSquareOf
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import net.minecraft.data.CachedOutput
@@ -30,8 +29,8 @@ abstract class TexturePlaneProvider(private val packOutput: PackOutput, private 
                         })
                         it.add(ELEMENTS, JsonArray().also { element ->
                             element.add(JsonObject().also { elementObject ->
-                                elementObject.add("from", JsonArray().also { array -> array.add(0.0); array.add(0); array.add(0) })
-                                elementObject.add("to", JsonArray().also { array -> array.add(16); array.add(0.025); array.add(16) })
+                                elementObject.add("from", JsonArray().also { array -> array.add(8); array.add(0); array.add(-8) })
+                                elementObject.add("to", JsonArray().also { array -> array.add(24); array.add(0.025); array.add(8) })
                                 elementObject.add("faces", JsonObject().also { faceObject ->
                                     directions.forEach { direction ->
                                         faceObject.add(direction, JsonObject().also { directions ->
@@ -61,10 +60,10 @@ abstract class TexturePlaneProvider(private val packOutput: PackOutput, private 
         textureLocation: ResourceLocation
     ) {
         if(addedModels.containsKey(name)) throw IllegalStateException("$name is already defined.")
-        println("texture width: ${getTextureRes(textureLocation).first}")
-        println("${isSquareOf(getTextureRes(textureLocation).first, 2)}")
-        println("texture height: ${getTextureRes(textureLocation).second}")
-        println(println("${isSquareOf(getTextureRes(textureLocation).second, 2)}"))
+//        println("texture width: ${getTextureRes(textureLocation).first}")
+//        println("${isSquareOf(getTextureRes(textureLocation).first, 2)}")
+//        println("texture height: ${getTextureRes(textureLocation).second}")
+//        println(println("${isSquareOf(getTextureRes(textureLocation).second, 2)}"))
 //        if(!isSquareOf(getTextureRes(textureLocation).first, 2) && !isSquareOf(getTextureRes(textureLocation).second, 2)) throw IllegalStateException("Texture resolution is not power of 2.")
         addedModels[name] = textureLocation
     }
