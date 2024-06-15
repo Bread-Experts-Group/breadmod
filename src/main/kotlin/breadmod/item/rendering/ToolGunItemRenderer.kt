@@ -5,8 +5,6 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.item.ToolGunItem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
-import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler
-import com.simibubi.create.foundation.utility.AnimationTickHolder
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
@@ -23,7 +21,6 @@ import net.minecraftforge.client.model.generators.ModelProvider
 import java.awt.Color
 import java.security.SecureRandom
 import kotlin.math.round
-import kotlin.math.sin
 
 
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
@@ -95,6 +92,20 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
     }
 
+    /**
+     * Renders a given [Component] onto a [BlockEntityWithoutLevelRenderer]
+     *
+     * @param pComponent The text as a [Component.literal] or [Component.translatable] to be rendered onto the target model.
+     * @param pColor The primary text color as an integer.
+     * @param pBackgroundColor Secondary text color as an integer, applies to the background
+     * @param pFontRenderer Draws the text onto the target model
+     * @param pPoseStack Positions the text onto the target model
+     * @param pBuffer see [MultiBufferSource]
+     *
+     * @see Font.drawInBatch
+     * @author Logan McLean
+     * @since 1.0.0
+     */
     private fun renderText(
         pComponent: Component,
         pColor: Int,
@@ -117,21 +128,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         )
     }
 
-    private fun drawTextOnScreen(
-        pText: String,
-        pColor: Int,
-        pBackgroundColor: Int,
-        pFontRenderer: Font,
-        pPoseStack: PoseStack,
-        pBuffer: MultiBufferSource,
-        pPosX: Double,
-        pPosY: Double,
-        pPosZ: Double,
-        pScale: Float
-    ) = drawTextOnScreen(
-        Component.literal(pText),
-        pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
-    )
 
     private fun drawTextOnScreen(
         pComponent: Component,
@@ -155,6 +151,35 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPoseStack.popPose()
     }
 
+    /**
+     * @see drawTextOnScreen
+     */
+    private fun drawTextOnScreen(
+        pText: String,
+        pColor: Int,
+        pBackgroundColor: Int,
+        pFontRenderer: Font,
+        pPoseStack: PoseStack,
+        pBuffer: MultiBufferSource,
+        pPosX: Double,
+        pPosY: Double,
+        pPosZ: Double,
+        pScale: Float
+    ) = drawTextOnScreen(
+        Component.literal(pText),
+        pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
+    )
+
+    /**
+     * Renders a provided [pModel] onto a target [BlockEntityWithoutLevelRenderer]
+     * # to be finished #
+     *
+     * @param pModel The model provided via [net.minecraft.client.resources.model.ModelManager.getModel] using [net.minecraft.resources.ResourceLocation]
+     * @param pRenderer
+     *
+     * @author Logan McLean
+     * @since 1.0.0
+     */
     private fun renderModel(
         pModel: BakedModel,
         pRenderer: ItemRenderer,
