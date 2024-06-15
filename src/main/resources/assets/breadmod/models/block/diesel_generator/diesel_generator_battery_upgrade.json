@@ -1,0 +1,25 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "diesel_generator",
+	"ambientocclusion": false,
+	"texture_size": [128, 128],
+	"textures": {
+		"0": "breadmod:block/diesel_generator",
+		"particle": "breadmod:block/diesel_generator"
+	},
+	"elements": [
+		{
+			"from": [15, 0, 0],
+			"to": [16, 5, 1],
+			"rotation": {"angle": 0, "axis": "y", "origin": [15.5, 2.5, 0.5]},
+			"faces": {
+				"north": {"uv": [11.625, 0, 11.75, 0.625], "texture": "#0"},
+				"east": {"uv": [12.125, 0, 12.25, 0.625], "texture": "#0"},
+				"south": {"uv": [12.375, 0, 12.5, 0.625], "texture": "#0"},
+				"west": {"uv": [11.875, 0, 12, 0.625], "texture": "#0"},
+				"up": {"uv": [12.75, 0.125, 12.625, 0], "texture": "#0"},
+				"down": {"uv": [12.75, 0.25, 12.625, 0.375], "texture": "#0"}
+			}
+		}
+	]
+}
