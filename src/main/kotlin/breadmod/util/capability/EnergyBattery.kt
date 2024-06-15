@@ -34,7 +34,7 @@ class EnergyBattery(
     } else 0
 
     override fun getEnergyStored(): Int = stored
-    override fun getMaxEnergyStored(): Int = stored
+    override fun getMaxEnergyStored(): Int = capacity
     override fun canExtract(): Boolean = bMaxExtract > 0
     override fun canReceive(): Boolean = bMaxReceive > 0
 

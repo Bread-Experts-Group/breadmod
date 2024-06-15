@@ -22,6 +22,6 @@ class WheatCrushingRecipe(
     fluidsOutput: List<FluidStack>? = null,
     itemsOutput: List<ItemStack>? = null,
 ): FluidEnergyRecipe(pId, time, energy, fluidsRequired, fluidsRequiredTagged, itemsRequired, itemsRequiredTagged, fluidsOutput, itemsOutput) {
-    override fun getType(): RecipeType<*> = ModRecipeTypes.WHEAT_CRUSHING
+    override fun getType(): RecipeType<*> = ModRecipeTypes.WHEAT_CRUSHING.get()
     override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.WHEAT_CRUSHER.get()
 }

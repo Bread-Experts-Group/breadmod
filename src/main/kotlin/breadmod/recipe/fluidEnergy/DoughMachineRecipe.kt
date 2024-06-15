@@ -22,6 +22,6 @@ class DoughMachineRecipe(
     fluidsOutput: List<FluidStack>? = null,
     itemsOutput: List<ItemStack>? = null,
 ): FluidEnergyRecipe(pId, time, energy, fluidsRequired, fluidsRequiredTagged, itemsRequired, itemsRequiredTagged, fluidsOutput, itemsOutput) {
-    override fun getType(): RecipeType<*> = ModRecipeTypes.DOUGH_MACHINE
+    override fun getType(): RecipeType<*> = ModRecipeTypes.DOUGH_MACHINE.get()
     override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.DOUGH_MACHINE.get()
 }

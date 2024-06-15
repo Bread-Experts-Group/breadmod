@@ -45,15 +45,9 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
     Properties.of()
         .strength(1f, 5.0f)
         .mapColor(MapColor.COLOR_GRAY)
-        .sound(SoundType.METAL)
+        .sound(SoundType.METAL),
+    true
 ) {
-    init {
-        this.registerDefaultState(
-            stateDefinition.any()
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
-        )
-    }
-
     override fun canHarvestBlock(pState: BlockState, pLevel: BlockGetter, pPos: BlockPos, pPlayer: Player): Boolean =
         !pPlayer.isCreative
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =

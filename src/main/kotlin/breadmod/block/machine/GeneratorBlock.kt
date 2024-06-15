@@ -15,7 +15,8 @@ class GeneratorBlock: BaseAbstractMachineBlock.Powered<GeneratorBlockEntity>(
     ModBlockEntities.GENERATOR,
     Properties.of().noOcclusion()
         .strength(1.5f, 5.0f)
-        .sound(SoundType.METAL)
+        .sound(SoundType.METAL),
+    false
 ) {
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
         pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
@@ -24,7 +25,6 @@ class GeneratorBlock: BaseAbstractMachineBlock.Powered<GeneratorBlockEntity>(
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState? =
         defaultBlockState()
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
-
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<GeneratorBlockEntity> =
         BlockEntityTicker { tLevel, pPos, tState, pBlockEntity -> pBlockEntity.tick(tLevel, pPos, tState, pBlockEntity) }
 }

@@ -17,6 +17,6 @@ class GeneratorRecipe(
     itemsRequired: List<ItemStack>? = null,
     itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>? = null,
 ) : FluidEnergyRecipe(pId, time, energy, null, null, itemsRequired, itemsRequiredTagged) {
-    override fun getType(): RecipeType<*> = ModRecipeTypes.GENERATOR
+    override fun getType(): RecipeType<*> = ModRecipeTypes.GENERATOR.get()
     override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.GENERATOR.get()
 }
