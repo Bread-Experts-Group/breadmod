@@ -1,8 +1,9 @@
-package breadmod.item.rendering
+package breadmod.item.tool_gun.render
 
 import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
-import breadmod.item.ToolGunItem
+import breadmod.item.tool_gun.ToolGunItem
+import breadmod.util.render.TimerTicker
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.ChatFormatting
@@ -36,7 +37,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
     private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
-    private val testModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/textureplane/textureplane_test")
+//    private val testModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/textureplane/textureplane_test")
 
     override fun renderByItem(
         pStack: ItemStack,
@@ -47,13 +48,15 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPackedOverlay: Int
     ) {
         val toolgunItem = pStack.item as ToolGunItem
+        val toolgunMode = toolgunItem.getCurrentMode(pStack)
+
         val instance = Minecraft.getInstance()
         val renderer = instance.itemRenderer
         val fontRenderer = instance.font
         val modelManager = instance.modelManager
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
-        val testModel = modelManager.getModel(testModelLocation)
+//        val testModel = modelManager.getModel(testModelLocation)
 
         pPoseStack.pushPose()
         // todo smooth rotation after firing toolgun, quickly tapering off
@@ -81,7 +84,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         )
 
         drawTextOnScreen(
-            (toolgunItem.getCurrentMode(pStack)?.displayName?.copy() ?: Component.literal("???")).withStyle(ChatFormatting.BOLD),
+            (toolgunMode?.displayName?.copy() ?: Component.literal("???")).withStyle(ChatFormatting.BOLD),
             Color.WHITE.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
             0.923, 0.065, -0.038, 0.0007f
         )
@@ -90,6 +93,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
             0.9, 0.0175, -0.040, 0.0007f
         )
 
+        if(toolgunMode != null) {
+            pPoseStack.pushPose()
+            toolgunMode.mode.render(pStack, pPoseStack)
+            pPoseStack.popPose()
+        }
     }
 
     /**

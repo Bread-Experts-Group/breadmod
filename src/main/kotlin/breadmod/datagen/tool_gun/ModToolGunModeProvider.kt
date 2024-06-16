@@ -2,10 +2,10 @@ package breadmod.datagen.tool_gun
 
 import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
-import breadmod.datagen.tool_gun.mode.ToolGunCreatorMode
-import breadmod.datagen.tool_gun.mode.ToolGunExplodeMode
-import breadmod.datagen.tool_gun.mode.ToolGunPowerMode
-import breadmod.datagen.tool_gun.mode.ToolGunRemoverMode
+import breadmod.item.tool_gun.mode.ToolGunCreatorMode
+import breadmod.item.tool_gun.mode.ToolGunExplodeMode
+import breadmod.item.tool_gun.mode.ToolGunPowerMode
+import breadmod.item.tool_gun.mode.ToolGunRemoverMode
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.data.PackOutput
 

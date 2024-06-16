@@ -1,7 +1,9 @@
-package breadmod.datagen.tool_gun
+package breadmod.item.tool_gun
 
-import breadmod.item.rendering.ToolGunItemRenderer
+import breadmod.item.tool_gun.render.ToolGunItemRenderer
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.registry.sound.ModSounds
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -50,12 +52,12 @@ interface IToolGunMode {
     fun open(pLevel: Level, pPlayer: Player, pGunStack: ItemStack, lastMode: IToolGunMode?) {}
 
     /**
-     * Gateway to [ToolGunItemRenderer] for [IToolGunMode]s.
+     * Gateway to [ToolGunItemRenderer] for [IToolGunMode]s. This will run every frame.
      *
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    fun render(pLevel: Level, pPlayer: Player, pGunStack: ItemStack) {}
+    fun render(pGunStack: ItemStack, pPoseStack: PoseStack) {}
 
     companion object {
         fun playToolGunSound(pLevel: Level, at: BlockPos) =

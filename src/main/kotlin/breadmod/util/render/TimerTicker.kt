@@ -1,10 +1,10 @@
-package breadmod.item.rendering
+package breadmod.util.render
 
 import net.minecraft.client.Minecraft
 
 object TimerTicker {
     private val instance = Minecraft.getInstance()
-    private var lastRotation = 0f
+    //private var lastRotation = 0f
     var rotation = 0f
     private var ticks = 0.0f
 
@@ -21,5 +21,5 @@ object TimerTicker {
     }
 
     fun getRenderTime(): Float = ticks + instance.partialTick
-    fun reset() { ticks = 0f; rotation = 0f }
+    //fun reset() { ticks = 0f; rotation = 0f }
 }

@@ -1,5 +1,6 @@
 package breadmod.datagen.tool_gun
 
+import breadmod.item.tool_gun.IToolGunMode
 import breadmod.util.componentToJson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -12,7 +13,7 @@ import net.minecraftforge.client.settings.KeyModifier
 import java.util.concurrent.CompletableFuture
 
 /**
- * Data generator for [breadmod.item.ToolGunItem]. Use this if your mod adds a mode.
+ * Data generator for [breadmod.item.tool_gun.IToolGunMode]. Use this if your mod adds a mode.
  * Mode classes must implement [IToolGunMode].
  *
  * @see IToolGunMode

@@ -1,9 +1,9 @@
-package breadmod.datagen.tool_gun.mode
+package breadmod.item.tool_gun.mode
 
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
-import breadmod.datagen.tool_gun.IToolGunMode
-import breadmod.datagen.tool_gun.IToolGunMode.Companion.playModeSound
-import breadmod.datagen.tool_gun.IToolGunMode.Companion.playToolGunSound
+import breadmod.item.tool_gun.IToolGunMode
+import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
+import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.util.RayMarchResult.Companion.rayMarchBlock
