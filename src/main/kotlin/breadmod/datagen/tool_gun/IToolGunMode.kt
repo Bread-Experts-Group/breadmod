@@ -1,5 +1,6 @@
 package breadmod.datagen.tool_gun
 
+import breadmod.item.rendering.ToolGunItemRenderer
 import breadmod.registry.sound.ModSounds
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
@@ -47,6 +48,14 @@ interface IToolGunMode {
      * @since 1.0.0
      */
     fun open(pLevel: Level, pPlayer: Player, pGunStack: ItemStack, lastMode: IToolGunMode?) {}
+
+    /**
+     * Gateway to [ToolGunItemRenderer] for [IToolGunMode]s.
+     *
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    fun render(pLevel: Level, pPlayer: Player, pGunStack: ItemStack) {}
 
     companion object {
         fun playToolGunSound(pLevel: Level, at: BlockPos) =

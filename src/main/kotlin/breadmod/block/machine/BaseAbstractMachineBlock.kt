@@ -12,13 +12,16 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.energy.EnergyStorage
 import net.minecraftforge.registries.RegistryObject
 
 abstract class BaseAbstractMachineBlock<T: AbstractMachineBlockEntity<T>> private constructor(
     private val blockEntityType: RegistryObject<BlockEntityType<T>>,
     properties: Properties
 ): Block(properties), EntityBlock {
+    init {
+        registerDefaultState(defaultBlockState().setValue(BlockStateProperties.ENABLED, true))
+    }
+
     open fun getClientTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<T>? = null
     open fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<T>? = null
 
@@ -34,21 +37,25 @@ abstract class BaseAbstractMachineBlock<T: AbstractMachineBlockEntity<T>> privat
         pState: BlockState,
         pBlockEntityType: BlockEntityType<R>
     ): BlockEntityTicker<R>? {
-        return if(pBlockEntityType == blockEntityType) {
+        return if(pBlockEntityType == blockEntityType.get()) {
             @Suppress("UNCHECKED_CAST")
             val ticker = (if(pLevel.isClientSide) getClientTicker(pLevel, pState)
-            else getServerTicker(pLevel, pState)) as BlockEntityTicker<R>
-            return BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
+            else getServerTicker(pLevel, pState)) as BlockEntityTicker<R>?
+            if(ticker != null) return BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
                 if(tState.getValue(BlockStateProperties.ENABLED)) ticker.tick(tLevel, tPos, tState, tBlockEntity)
-            }
+            } else null
         } else null
     }
 
-    // TODO CHECK <T>
     abstract class Powered<T: AbstractMachineBlockEntity<T>>(
         blockEntityType: RegistryObject<BlockEntityType<T>>,
-        properties: Properties
+        properties: Properties,
+        private val requiresPower: Boolean
     ): BaseAbstractMachineBlock<T>(blockEntityType, properties) {
+        init {
+            registerDefaultState(defaultBlockState().setValue(BlockStateProperties.POWERED, false))
+        }
+
         final override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
             super.createBlockStateDefinition(pBuilder)
             pBuilder.add(BlockStateProperties.POWERED)
@@ -59,11 +66,13 @@ abstract class BaseAbstractMachineBlock<T: AbstractMachineBlockEntity<T>> privat
             pState: BlockState,
             pBlockEntityType: BlockEntityType<R>
         ): BlockEntityTicker<R>? = super.getTicker(pLevel, pState, pBlockEntityType)?.let {
-            BlockEntityTicker { pLevel, pPos, pState, pBlockEntity ->
-                @Suppress("UNCHECKED_CAST")
-                val extracted = ((pBlockEntity as T).capabilityHolder.capability(ForgeCapabilities.ENERGY) as EnergyStorage).extractEnergy(1, true)
-                if(extracted != 0) it.tick(pLevel, pPos, pState, pBlockEntity)
-            }
+            if(requiresPower) {
+                BlockEntityTicker { pLevel, pPos, pState, pBlockEntity ->
+                    pBlockEntity.getCapability(ForgeCapabilities.ENERGY).ifPresent { battery ->
+                        if (battery.energyStored > 0) it.tick(pLevel, pPos, pState, pBlockEntity)
+                    }
+                }
+            } else it
         }
     }
 

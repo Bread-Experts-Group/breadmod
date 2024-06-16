@@ -26,16 +26,9 @@ class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEnti
     Properties.of()
         .strength(1f, 5.0f)
         .mapColor(MapColor.COLOR_GRAY)
-        .sound(SoundType.METAL)
+        .sound(SoundType.METAL),
+    true
 ) {
-    init {
-        this.registerDefaultState(
-            stateDefinition.any()
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
-                .setValue(BlockStateProperties.POWERED, false)
-        )
-    }
-
     override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean = !player.isCreative
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState? =

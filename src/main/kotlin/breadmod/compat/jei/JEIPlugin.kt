@@ -47,8 +47,8 @@ class JEIPlugin : IModPlugin {
 
     override fun registerRecipes(registration: IRecipeRegistration) {
         val recipeManager = minecraft?.level?.recipeManager ?: throw IllegalStateException()
-        val doughMachineRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.DOUGH_MACHINE)
-        val wheatCrusherRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.WHEAT_CRUSHING)
+        val doughMachineRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.DOUGH_MACHINE.get())
+        val wheatCrusherRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.WHEAT_CRUSHING.get())
 
         registration.addItemStackInfo(ModBlocks.BREAD_BLOCK.get().defaultInstance, Component.literal("FUCK"))
         registration.addRecipes(ModJEIRecipeTypes.doughMachineRecipeType, doughMachineRecipeList)

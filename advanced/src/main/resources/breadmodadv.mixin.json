@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "breadmod.breadmodadvanced.mixin",
+  "package": "breadmod.advanced.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "advanced.refmap.json",
   "mixins": [

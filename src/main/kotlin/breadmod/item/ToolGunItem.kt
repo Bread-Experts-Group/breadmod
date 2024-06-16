@@ -78,33 +78,28 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
         if(pEntity is Player) {
             val currentMode = getCurrentMode(pStack) ?: return
-            fun clearMode() = currentMode.keyBinds.forEach { toolGunBindList[it]?.consumeClick() }
-
-            if(pLevel.isClientSide && !pIsSelected) {
-                changeMode.
-                    consumeClick()
-                clearMode()
-                currentMode.mode.close(pLevel, pEntity, pStack, null)
-                return
-            }
-
-            if(pLevel.isClientSide && changeMode.consumeClick()) {
-                clearMode()
-                NETWORK.sendToServer(ToolGunPacket(true, pSlotId))
-                pEntity.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
-                return
-            } else {
-                currentMode.mode.open(pLevel, pEntity, pStack, null)
-                if(pLevel.isClientSide) {
-                    currentMode.keyBinds.forEach {
-                        val bind = toolGunBindList[it]
-                        if(bind != null && bind.consumeClick()) {
-                            NETWORK.sendToServer(ToolGunPacket(false, pSlotId, it))
-                            currentMode.mode.action(pLevel, pEntity, pStack, it)
+            if(pLevel.isClientSide) {
+                if(!pIsSelected) currentMode.mode.close(pLevel, pEntity, pStack, null)
+                else {
+                    if(changeMode.consumeClick()) {
+                        // TODO open/close for client
+                        NETWORK.sendToServer(ToolGunPacket(true, pSlotId))
+                        pEntity.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
+                    } else {
+                        currentMode.mode.open(pLevel, pEntity, pStack, null)
+                        currentMode.keyBinds.forEach {
+                            val bind = toolGunBindList[it]
+                            if(bind != null && bind.consumeClick()) {
+                                NETWORK.sendToServer(ToolGunPacket(false, pSlotId, it))
+                                currentMode.mode.action(pLevel, pEntity, pStack, it)
+                            }
                         }
                     }
                 }
-            }
+            } else
+                // Server
+                if(pIsSelected) currentMode.mode.open(pLevel, pEntity, pStack, null)
+                else currentMode.mode.close(pLevel, pEntity, pStack, null)
         }
     }
 

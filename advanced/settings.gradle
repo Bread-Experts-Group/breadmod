@@ -1,10 +1,8 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        maven {
-            name = 'MinecraftForge'
-            url = 'https://maven.minecraftforge.net/'
-        }
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.parchmentmc.org' }
     }
 }
 
@@ -13,3 +11,4 @@ plugins {
 }
 
 rootProject.name = 'advanced'
+include ':breadmod'

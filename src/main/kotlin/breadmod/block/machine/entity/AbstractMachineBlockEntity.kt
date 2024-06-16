@@ -23,6 +23,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.energy.IEnergyStorage
 import net.minecraftforge.network.PacketDistributor
+import net.minecraftforge.registries.RegistryObject
 import java.util.*
 import kotlin.math.max
 
@@ -70,6 +71,9 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         }
     }
 
+    open fun preTick (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}
+    open fun postTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}
+
     abstract class Powered<T: AbstractMachineBlockEntity<T>>(
         pType: BlockEntityType<T>,
         pPos: BlockPos,
@@ -82,26 +86,30 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         pType: BlockEntityType<T>,
         pPos: BlockPos,
         pBlockState: BlockState,
-        recipeType: RecipeType<R>,
+        private val recipeType: RegistryObject<RecipeType<R>>,
         vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
     ): AbstractMachineBlockEntity<T>(pType, pPos, pBlockState, *additionalCapabilities), CraftingContainer {
-        protected val recipeDial: RecipeManager.CachedCheck<CraftingContainer, R> = RecipeManager.createCheck(recipeType)
+        protected val recipeDial: RecipeManager.CachedCheck<CraftingContainer, R> by lazy { RecipeManager.createCheck(recipeType.get()) }
         var currentRecipe: Optional<R> = Optional.empty()
             protected set
         var progress = 0
             protected set
 
-        open fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) = currentRecipe.ifPresentOrElse({
-            progress++
-            recipeTick(pLevel, pPos, pState, pBlockEntity, it)
-            if(progress > it.time) {
-                recipeDone(pLevel, pPos, pState, pBlockEntity, it)
-                currentRecipe = Optional.empty()
-            }
-        }, {
-            val sLevel = level
-            if(sLevel != null) currentRecipe = recipeDial.getRecipeFor(this, sLevel)
-        })
+        open fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) {
+            preTick(pLevel, pPos, pState, pBlockEntity)
+            currentRecipe.ifPresentOrElse({
+                progress++
+                recipeTick(pLevel, pPos, pState, pBlockEntity, it)
+                if (progress > it.time) {
+                    recipeDone(pLevel, pPos, pState, pBlockEntity, it)
+                    currentRecipe = Optional.empty()
+                }
+            }, {
+                val sLevel = level
+                if (sLevel != null) currentRecipe = recipeDial.getRecipeFor(this, sLevel)
+            })
+            postTick(pLevel, pPos, pState, pBlockEntity)
+        }
 
         open fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {}
         final override fun adjustSaveAdditional(pTag: CompoundTag) {
@@ -124,37 +132,53 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             pType: BlockEntityType<T>,
             pPos: BlockPos,
             pBlockState: BlockState,
-            recipeType: RecipeType<R>,
+            recipeType: RegistryObject<RecipeType<R>>,
             powerHandler: CapabilityContainer,
             vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
         ): Progressive<T,R>(pType, pPos, pBlockState, recipeType, ForgeCapabilities.ENERGY to powerHandler, *additionalCapabilities), CraftingContainer {
-            private var energyDivision: Int? = null
-            final override fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) = currentRecipe.ifPresentOrElse({
-                val div = if(energyDivision == null) ((it.energy ?: 0) / max(it.time, 1)).also { div -> energyDivision = div } else energyDivision!!
-                val energy = capabilityHolder.capability<IEnergyStorage>(ForgeCapabilities.ENERGY).extractEnergy(div, false)
+            open fun recipeTickPrePower(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>, recipe: R) {}
 
-                if(energy >= div) {
-                    if(progress > it.time && recipeDone(pLevel, pPos, pState, pBlockEntity, it)) {
-                        energyDivision = null
-                        currentRecipe = Optional.empty()
+            private var energyDivision: Int? = null
+            final override fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) {
+                preTick(pLevel, pPos, pState, pBlockEntity)
+                currentRecipe.ifPresentOrElse({
+                    preTick(pLevel, pPos, pState, pBlockEntity)
+                    val div = if (energyDivision == null) ((it.energy ?: 0) / max(
+                        it.time,
+                        1
+                    )).also { div -> energyDivision = div } else energyDivision!!
+
+                    recipeTickPrePower(pLevel, pPos, pState, pBlockEntity, it)
+                    val cap = capabilityHolder.capability<IEnergyStorage>(ForgeCapabilities.ENERGY)
+                    // Suspend "charging" if this entity is full of energy
+                    if ((div < 0) && (cap.energyStored + div > cap.maxEnergyStored)) return@ifPresentOrElse
+                    val energy = cap.extractEnergy(div, false)
+
+                    if (energy >= div) {
+                        if (progress > it.time && recipeDone(pLevel, pPos, pState, pBlockEntity, it)) {
+                            energyDivision = null
+                            currentRecipe = Optional.empty()
+                        } else {
+                            progress++
+                            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, true))
+                            recipeTick(pLevel, pPos, pState, pBlockEntity, it)
+                        }
+                    } else progress--
+                }, {
+                    val sLevel = level
+                    if (sLevel != null) {
+                        println("NOTICE: Inventory: ${this.getItem(0)}")
+                        val recipe = recipeDial.getRecipeFor(this, sLevel)
+                        recipe.ifPresent {
+                            if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) currentRecipe = recipe
+                        }
                     } else {
-                        progress++
-                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, true))
-                        recipeTick(pLevel, pPos, pState, pBlockEntity, it)
+                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
+                        noRecipeTick(pLevel, pPos, pState, pBlockEntity)
                     }
-                } else progress--
-            }, {
-                val sLevel = level
-                if(sLevel != null) {
-                    val recipe = recipeDial.getRecipeFor(this, sLevel)
-                    recipe.ifPresent {
-                        if(consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) currentRecipe = recipe
-                    }
-                } else {
-                    pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
-                    noRecipeTick(pLevel, pPos, pState, pBlockEntity)
-                }
-            })
+                })
+                postTick(pLevel, pPos, pState, pBlockEntity)
+            }
         }
 
         private companion object {
