@@ -46,13 +46,13 @@ class BMExplosion(
                 DAMAGE_CALC.getBlockExplosionResistance(this, pLevel, blockPos, state, pLevel.getFluidState(it)).ifPresent { resist ->
                     if((pRadius * (0.7 + (pLevel.random.nextFloat() * 0.6)) - ((resist + 0.3) * 0.3)) > 0) toDestroy.add(it to state)
                 }
-                println("block explosion resistance: ${state.block}, ${state.block.explosionResistance}")
+                println("block explosion resistance: ${state.block}, ${state.block.getExplosionResistance(state, pLevel, blockPos, this)}")
                 val float: Float = pRadius.toFloat() * (0.7F + pLevel.random.nextFloat() * 0.6F)
                 if(float > 0.0F && DAMAGE_CALC.shouldBlockExplode(this, pLevel, blockPos, state, float)) toDestroy.add(it to state)
                 println("block should explode: ${state.block}, $blockPos")
             }
 
-            val blockDrops = mutableListOf<Pair<BlockPos, ItemStack>>()
+//            val blockDrops = mutableListOf<Pair<BlockPos, ItemStack>>()
             toDestroy.forEach { (pos, state) ->
                 if(!state.isAir) {
                     pLevel.profiler.push("explosion_blocks")

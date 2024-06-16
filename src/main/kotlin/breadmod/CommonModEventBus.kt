@@ -85,7 +85,7 @@ object CommonModEventBus {
     }
 
     @SubscribeEvent
-    fun onCommonSetup(event: FMLCommonSetupEvent) {
+    fun onCommonSetup(@Suppress("UNUSED_PARAMETER") event: FMLCommonSetupEvent) {
         LOGGER.info("Common setup")
         NETWORK
     }

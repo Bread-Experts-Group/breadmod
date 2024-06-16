@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo
 import kotlin.reflect.full.hasAnnotation
 
-@Suppress("NonJavaMixin")
+@Suppress("NonJavaMixin", "Unused", "UNUSED_PARAMETER")
 @Mixin(FireBlock::class)
 abstract class MixinFireBlock {
     @Inject(method = ["tryCatchFire"], at = [At("HEAD")], cancellable = true)

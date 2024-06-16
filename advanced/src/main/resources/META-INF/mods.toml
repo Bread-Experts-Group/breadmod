@@ -26,5 +26,5 @@ license="${mod_license}"
     modId = "breadmod"
     mandatory=true
     versionRange="${breadmod_version_range}"
-    ordering="AFTER"
+    ordering="BEFORE"
     side="BOTH"

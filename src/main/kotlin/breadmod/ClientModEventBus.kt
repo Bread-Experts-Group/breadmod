@@ -12,9 +12,9 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.hud.ToolGunOverlay
-import breadmod.item.ToolGunItem.Companion.changeMode
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.colors.ArmorColor
+import breadmod.item.tool_gun.ToolGunItem.Companion.changeMode
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY

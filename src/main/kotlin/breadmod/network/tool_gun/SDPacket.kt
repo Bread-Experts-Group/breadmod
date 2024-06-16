@@ -1,7 +1,7 @@
 package breadmod.network.tool_gun
 
 import breadmod.ModMain.modTranslatable
-import breadmod.item.ToolGunItem
+import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.util.computerSD
 import net.minecraft.client.Minecraft

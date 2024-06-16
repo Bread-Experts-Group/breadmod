@@ -3,11 +3,11 @@ package breadmod.network.tool_gun
 import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
-import breadmod.item.ToolGunItem
-import breadmod.item.ToolGunItem.Companion.MODE_ITERATOR_STATE_TAG
-import breadmod.item.ToolGunItem.Companion.MODE_NAMESPACE_TAG
-import breadmod.item.ToolGunItem.Companion.MODE_NAME_TAG
-import breadmod.item.ToolGunItem.Companion.NAMESPACE_ITERATOR_STATE_TAG
+import breadmod.item.tool_gun.ToolGunItem
+import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_ITERATOR_STATE_TAG
+import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_NAMESPACE_TAG
+import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_NAME_TAG
+import breadmod.item.tool_gun.ToolGunItem.Companion.NAMESPACE_ITERATOR_STATE_TAG
 import breadmod.util.MapIterator
 import breadmod.util.componentToJson
 import breadmod.util.jsonToComponent

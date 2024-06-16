@@ -5,8 +5,8 @@ import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
-import breadmod.item.ToolGunItem
-import breadmod.item.ToolGunItem.Companion.MODE_NAMESPACE_TAG
+import breadmod.item.tool_gun.ToolGunItem
+import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_NAMESPACE_TAG
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics

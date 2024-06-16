@@ -18,7 +18,7 @@ interface ITemperatureCapability: INBTSerializable<Tag> {
         temperature = (nbt as? FloatTag)?.asFloat ?: 273.15F
     }
 
-    fun radiate(pLevel: ServerLevel, pPos: BlockPos) = pLevel.getBlockState(pPos).let { pState ->
+    fun radiate(pLevel: ServerLevel, pPos: BlockPos) = pLevel.getBlockState(pPos).let {
         temperature += 10.0F
         //if(pState.isAir) {
             // Probably an item

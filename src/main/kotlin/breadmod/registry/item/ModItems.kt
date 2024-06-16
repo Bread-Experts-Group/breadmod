@@ -8,6 +8,7 @@ import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.compat.curios.BreadAmuletItem
 import breadmod.item.compat.projecte.BreadOrbItem
+import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
 import moze_intel.projecte.gameObjs.items.ItemPE
