@@ -3,6 +3,7 @@
   - [ ] Port mod to 1.21 when KFF is released for that version
   - [ ] Set up secondary mod for Bread Mod Advanced
   - [ ] Document functions and code to make it more understandable
+  - [ ] (1.21 todo) remove mixin for dye able armor layers and items and replace with built-in methods
 ## Standard, Base Mod
 - [X] Bread Armor
   - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches
@@ -28,7 +29,11 @@
   - [X] Mixin for turning burning blocks into another block
   - [X] Edible
   - [X] Custom charcoal block as a result of bread block being burned
+  - [ ] Portal block that leads into the bread dimension
 - [ ] Heating Element
+  - [ ] make it work properly
+  - [ ] integrate into heating system
+  - [ ] actually make the heating system work (pneumaticcraft compat?)
 - [ ] Bread Dimension
   - [X] A dimension composed of bread blocks
   - [X] Nonflammable
@@ -71,9 +76,15 @@
   - [ ] Dough compat with create mod dough
   - [ ] Charcoal block compat with mekanism charcoal block
 - [ ] Pipes and cables that transport items, fluids, and power (important)
+  - [ ] Blockstates or similar connecting system for the model to connect to each-other
+- [ ] Fix up base mod generator (not the diesel one)
+- [ ] Decoration blocks
+  - Pending ideas.
 
 ### Tool gun (totally not from gmod)
   - [ ] Recoil and rapid coil spin animation when tool gun is used
+    - [ ] timer-like system for the animations
+  - [ ] Improve gui overlay, add mouse and key icons
   - [ ] turn IToolgunMode into an api
   - [ ] Tool gun modes
     - fix up and polish existing modes
@@ -81,7 +92,7 @@
 ### BUGS
   - [ ] items inputted into machines from their sides are voided out of existence
 ---
-- [ ] Joke item: "the ultimate bread" just gives you creative mode lmao
+- [X] Joke item: "the ultimate bread" just gives you creative mode lmao
 - [X] "Bread amulet" gives you 1 hunger point every 10 seconds
   - Curios Compat.
 - [ ] "Godlike loaf" a monstrous combination of rare materials and a nether star to give you 10 full minutes of positive potion effects and a whole 10 absorption hearts
@@ -90,23 +101,26 @@
 ---
 ## Advanced, Machines and stuff
 - [ ] Diesel Generator
-  - [ ] Custom rendering
+  - [ ] Custom rendering (BER) / fluid rendering inside of model
+  - [ ] Particles
   - [ ] logic
   - [ ] upgrades
     -  [ ] Turbo
     -  [ ] Internal power buffer
     -  [ ] charger
+- [ ] Bread Screen
+  - WIP
 ## External Mods to look into (will be their own projects)
 - [ ] Lighting mod (colored lighting)
 - [ ] "Intrusive" mods (such as, being able to heat up a furnace like w/ the bread machine)
-### Other mod compatibility
+### Other mod compatibility (items crossed off in this list will be removed from the mod when I get around to it)
 - [ ] Add recipe integrations with other mods where possible
-- [ ] <s>Farmers Delight</s> (to be removed)
-- [ ] <s>ProjectE</s> (to be removed when 1.21 port happens)
+- [ ] <s>Farmers Delight</s>
+- [ ] <s>ProjectE</s>
   - [ ] Add EMC to items
   - [X] Potential Bread-like EMC holder
     - [X] Make texture for item
-- [ ] <s>Create</s> to be removed
+- [ ] <s>Create</s>
   - [ ] Create recipe generators for the other recipe types
 - [ ] Mekanism
   - [ ] Crushing recipes for the food-like items
