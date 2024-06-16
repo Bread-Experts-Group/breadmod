@@ -47,7 +47,7 @@ minecraft {
 
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            args '--username', 'Meownium', '--uuid', '34e8274a-c02c-4c32-9311-2bccc9f6ba7d'
+//            args '--username', 'PizzaTime65', '--uuid', '30cdf636-82ed-47ee-9a9c-4d820c0d76a9'
             property 'forge.enabledGameTestNamespaces', mod_id
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"

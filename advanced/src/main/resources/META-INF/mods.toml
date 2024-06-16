@@ -22,10 +22,9 @@ license="${mod_license}"
     versionRange="[4.10,)"
     ordering="BEFORE"
     side="BOTH"
-[[dependencies."${mod_id}"]]
+[[dependencies.${mod_id}]]
     modId = "breadmod"
     mandatory=true
-    # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="${breadmod_version_range}"
     ordering="AFTER"
     side="BOTH"

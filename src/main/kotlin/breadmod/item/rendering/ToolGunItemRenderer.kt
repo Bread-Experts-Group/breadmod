@@ -2,6 +2,7 @@ package breadmod.item.rendering
 
 import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
+import breadmod.datagen.tool_gun.IToolGunMode
 import breadmod.item.ToolGunItem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis

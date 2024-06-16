@@ -58,3 +58,9 @@ license="${mod_license}"
     versionRange="${create_version_range}"
     ordering="BEFORE"
     side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="breadmodadv"
+    mandatory=false
+    versionRange="0.0.1"
+    ordering="AFTER"
+    side="BOTH"

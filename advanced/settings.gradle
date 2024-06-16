@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = 'advanced'
-include ':breadmod'
+include 'breadmod'
