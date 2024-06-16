@@ -185,8 +185,26 @@ compileKotlin {
     kotlinOptions.jvmTarget = "17"
 }
 
-task prepareKotlinBuildScriptModel {
+tasks.register('prepareKotlinBuildScriptModel') {
 
+}
+
+CopySpec constructParentModJarSpec = copySpec {
+    from rootProject.layout.buildDirectory.dir('libs')
+    include 'breadmod-*.jar'
+}
+
+tasks.register('copyParentBuild', Copy) {
+    dependsOn(':jar')
+
+    into layout.projectDirectory.dir("run").dir("mods")
+    with constructParentModJarSpec
+}
+
+afterEvaluate {
+    tasks.named("prepareRuns") {
+        dependsOn("copyParentBuild")
+    }
 }
 
 jar {
