@@ -1,9 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
@@ -24,16 +26,20 @@ base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+compileKotlin.compilerOptions.jvmTarget = JvmTarget.JVM_21
 
 println("Java: ${System.getProperty('java.version')}, JVM: ${System.getProperty('java.vm.version')} (${System.getProperty('java.vendor')}), Arch: ${System.getProperty('os.arch')}")
 minecraft {
     mappings channel: mapping_channel_parchment, version: mapping_version_parchment
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
+    // Tell FG to not automtically create the reobf tasks, as we now use Official mappings at runtime, If you don't use them at dev time then you'll have to fix your reobf yourself.
+//    reobf = false
+    // REQUIRED for processResources to work in dev
+    copyIdeResources = true
+
     runs {
-        // REQUIRED for processResources to work in dev
-        copyIdeResources = true
 
         client {
             workingDirectory project.file('run')
@@ -135,7 +141,9 @@ repositories {
 dependencies {
     // UPDATE TO AVOID VULNERABILITY TODO
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
-    implementation "thedarkcolour:kotlinforforge:$kff_version"
+    implementation group: "thedarkcolour", name: "kfflang", version: kff_version, changing: true
+    implementation group: "thedarkcolour", name: "kfflib", version: kff_version, changing: true
+    implementation group: "thedarkcolour", name: "kffmod", version: kff_version, changing: true
 
 //    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
 //    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
@@ -179,10 +187,6 @@ processResources {
     }
 
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "17"
 }
 
 tasks.register('prepareKotlinBuildScriptModel') {

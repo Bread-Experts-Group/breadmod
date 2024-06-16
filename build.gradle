@@ -1,9 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
 }
@@ -31,16 +33,20 @@ base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+compileKotlin.compilerOptions.jvmTarget = JvmTarget.JVM_21
 
 println("Java: ${System.getProperty('java.version')}, JVM: ${System.getProperty('java.vm.version')} (${System.getProperty('java.vendor')}), Arch: ${System.getProperty('os.arch')}")
 minecraft {
     mappings channel: mapping_channel_parchment, version: mapping_version_parchment
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
+    // Tell FG to not automtically create the reobf tasks, as we now use Official mappings at runtime, If you don't use them at dev time then you'll have to fix your reobf yourself.
+//    reobf = false
+    // REQUIRED for processResources to work in dev
+    copyIdeResources = true
+
     runs {
-        // REQUIRED for processResources to work in dev
-        copyIdeResources = true
 
         client {
             workingDirectory project.file('run')
@@ -142,22 +148,27 @@ repositories {
 dependencies {
     // UPDATE TO AVOID VULNERABILITY TODO
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
-    implementation "thedarkcolour:kotlinforforge:$kff_version"
+    implementation group: "thedarkcolour", name: "kfflang", version: kff_version, changing: true
+    implementation group: "thedarkcolour", name: "kfflib", version: kff_version, changing: true
+    implementation group: "thedarkcolour", name: "kffmod", version: kff_version, changing: true
 
-    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
-    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
-    compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api"))
-    runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
-    implementation fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}")
-    implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
-    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+    // Hack fix for now, force jopt-simple to be exactly 5.0.4 because Mojang ships that version, but some transitive dependencies request 6.0+
+    implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 
-    runtimeOnly(fg.deobf("curse.maven:pipez-${pipez_project_id}:${pipez_file_id}"))
-    implementation(fg.deobf("curse.maven:jade-${jade_project_id}:${jade_file_id}"))
-    implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
-    implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
+//    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
+//    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
+//    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+//    compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api"))
+//    runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
+    implementation ("mekanism:Mekanism:${minecraft_version}-${mekanism_version}")
+//    implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+//    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+//    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    runtimeOnly("curse.maven:pipez-${pipez_project_id}:${pipez_file_id}")
+    implementation("curse.maven:jade-${jade_project_id}:${jade_file_id}")
+//    implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
+//    implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
@@ -186,10 +197,6 @@ processResources {
     }
 
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "17"
 }
 
 jar {
