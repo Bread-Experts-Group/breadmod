@@ -9,7 +9,6 @@
     "accessors.IAccessorEntity"
   ],
   "client": [
-    "MixinHumanoidArmorLayer",
     "MixinItemModelShaper",
     "accessors.IAccessorItemModelShaper"
   ],

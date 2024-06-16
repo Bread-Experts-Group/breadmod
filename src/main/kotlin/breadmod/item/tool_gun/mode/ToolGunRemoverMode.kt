@@ -1,10 +1,10 @@
-package breadmod.datagen.tool_gun.mode
+package breadmod.item.tool_gun.mode
 
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
-import breadmod.datagen.tool_gun.IToolGunMode
-import breadmod.datagen.tool_gun.IToolGunMode.Companion.playToolGunSound
+import breadmod.item.tool_gun.IToolGunMode
+import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.tool_gun.SDPacket

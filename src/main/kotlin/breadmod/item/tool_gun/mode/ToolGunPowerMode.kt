@@ -1,8 +1,7 @@
-package breadmod.datagen.tool_gun.mode
+package breadmod.item.tool_gun.mode
 
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
-import breadmod.datagen.tool_gun.IToolGunMode
-import breadmod.util.computerSD
+import breadmod.item.tool_gun.IToolGunMode
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level

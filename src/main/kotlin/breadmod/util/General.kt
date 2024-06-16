@@ -2,7 +2,7 @@
 
 package breadmod.util
 
-import breadmod.datagen.tool_gun.mode.ToolGunPowerMode
+import breadmod.item.tool_gun.mode.ToolGunPowerMode
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject

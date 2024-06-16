@@ -14,6 +14,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.MODIFIER_
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOLGUN_INFO_DISPLAY_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOLTIP_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
+import breadmod.item.tool_gun.IToolGunMode
 import breadmod.util.jsonToComponent
 import com.google.gson.Gson
 import com.google.gson.JsonElement

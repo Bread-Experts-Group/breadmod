@@ -1,7 +1,7 @@
 package breadmod
 
 import breadmod.ClientModEventBus.createMappingsForControls
-import breadmod.item.rendering.TimerTicker
+import breadmod.util.render.TimerTicker
 import breadmod.util.render.renderBuffer
 import net.minecraft.client.Minecraft
 import net.minecraftforge.api.distmarker.Dist

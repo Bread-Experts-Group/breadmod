@@ -1,11 +1,11 @@
-package breadmod.item
+package breadmod.item.tool_gun
 
 import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
-import breadmod.item.rendering.ToolGunItemRenderer
+import breadmod.item.tool_gun.render.ToolGunItemRenderer
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.tool_gun.ToolGunPacket
 import breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -14,21 +14,17 @@ import breadmod.util.MapIterator
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.ChatFormatting
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.model.HumanoidModel.ArmPose
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import net.minecraftforge.client.IArmPoseTransformer
 import net.minecraftforge.client.extensions.common.IClientItemExtensions
 import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.client.settings.KeyModifier
