@@ -5,6 +5,7 @@ import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
+import breadmod.item.tool_gun.mode.ToolGunNoMode
 import breadmod.item.tool_gun.render.ToolGunItemRenderer
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.tool_gun.ToolGunPacket
@@ -41,7 +42,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     ) {
         pTooltipComponents.add(
             modTranslatable("item", TOOL_GUN_DEF, "tooltip", "current_mode")
-                .append((getCurrentMode(pStack)?.displayName?.copy() ?: Component.literal("???")).withStyle(ChatFormatting.GOLD))
+                .append((getCurrentMode(pStack).displayName.copy() ?: Component.literal("???")).withStyle(ChatFormatting.GOLD))
         )
         pTooltipComponents.add(
             changeMode.translatedKeyMessage.copy().withStyle(ChatFormatting.GREEN).append(modTranslatable("item", TOOL_GUN_DEF, "tooltip", "mode_switch"))
@@ -65,15 +66,22 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
         return pStack.orCreateTag.getCompound(CURRENT_MODE_TAG)
     }
 
-    internal fun getCurrentMode(pStack: ItemStack) = ensureCurrentMode(pStack).let {
-        ModToolGunModeDataLoader.modes[it.getString(MODE_NAMESPACE_TAG)]?.get(it.getString(MODE_NAME_TAG))?.first
+    internal fun getCurrentMode(pStack: ItemStack): ModToolGunModeDataLoader.ToolgunMode {
+        return try {
+            ensureCurrentMode(pStack).let {
+                ModToolGunModeDataLoader.modes[it.getString(MODE_NAMESPACE_TAG)]?.get(it.getString(MODE_NAME_TAG))?.first
+                    ?: ToolGunNoMode
+            }
+        } catch(e: NoSuchElementException) {
+            ToolGunNoMode
+        }
     }
 
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
         if(pEntity is Player) {
-            val currentMode = getCurrentMode(pStack) ?: return
+            val currentMode = getCurrentMode(pStack)
             if(pLevel.isClientSide) {
                 if(!pIsSelected) currentMode.mode.close(pLevel, pEntity, pStack, null)
                 else {

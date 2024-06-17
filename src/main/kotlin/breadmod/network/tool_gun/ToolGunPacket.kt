@@ -1,6 +1,5 @@
 package breadmod.network.tool_gun
 
-import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.tool_gun.ToolGunItem
@@ -81,8 +80,7 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                         modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
                         player.cooldowns.addCooldown(item, 10)
                     } else {
-                        (item.getCurrentMode(stack) ?: return@enqueueWork ModMain.LOGGER.error("ToolGun is in an erroneous state! Something stinky is going on!"))
-                            .mode.action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
+                        item.getCurrentMode(stack).mode.action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
                     }
                     it.packetHandled = true
                 }

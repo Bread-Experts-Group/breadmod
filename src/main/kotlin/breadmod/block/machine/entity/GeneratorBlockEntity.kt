@@ -68,14 +68,16 @@ class GeneratorBlockEntity(
             runSignsOne { z -> pLevel.getBlockEntity(pPos.offset(0, 0, z))?.getCapability(ForgeCapabilities.ENERGY)?.let { add(it) } }
         }
 
-        val total = min(energyHandle.bMaxExtract, energyHandle.stored)
-        val toDistribute = total / blockEntities.size
-        var distributed = 0
-        blockEntities.forEach { opt -> opt.ifPresent {
-            distributed += it.receiveEnergy(toDistribute, true)
-            if(distributed > total) { energyHandle.extractEnergy(total, false); return@ifPresent }
-        } }
-        energyHandle.extractEnergy(distributed, false)
+        if(blockEntities.isNotEmpty()) {
+            val total = min(energyHandle.bMaxExtract, energyHandle.stored)
+            val toDistribute = total / blockEntities.size
+            var distributed = 0
+            blockEntities.forEach { opt -> opt.ifPresent {
+                distributed += it.receiveEnergy(toDistribute, true)
+                if(distributed > total) { energyHandle.extractEnergy(total, false); return@ifPresent }
+            } }
+            energyHandle.extractEnergy(distributed, false)
+        }
     }
 
     override fun clearContent() { getItemHandler()?.clear() }

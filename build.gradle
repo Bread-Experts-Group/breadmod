@@ -1,3 +1,4 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'idea'
     id 'maven-publish'
@@ -14,6 +15,7 @@ mixin {
     config "breadmod.mixin.json"
 }
 
+// Jar Construction: Version
 String buildVersion
 try {
     String envVer = System.getenv("MOD_VERSION")
@@ -23,124 +25,172 @@ try {
     System.out.println("Cannot get env variable 'MOD_VERSION', falling back to gradle.properties")
     buildVersion = mod_version
 }
+String minimumLevel = "error"
 mod_version = buildVersion
 version = buildVersion
 group = mod_group_id
+base { archivesName = mod_id }
 
-base {
-    archivesName = mod_id
-}
+allprojects {
+    String thisModId = getProperty("mod_id")
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+    compileKotlin { kotlinOptions.jvmTarget = "17" }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+    minecraft {
+        mappings channel: mapping_channel_parchment, version: mapping_version_parchment
+        File atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
+        if(atFile.canRead()) { accessTransformer = atFile }
 
-println("Java: ${System.getProperty('java.version')}, JVM: ${System.getProperty('java.vm.version')} (${System.getProperty('java.vendor')}), Arch: ${System.getProperty('os.arch')}")
-minecraft {
-    mappings channel: mapping_channel_parchment, version: mapping_version_parchment
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+        runs {
+            // REQUIRED for processResources to work in dev
+            //noinspection GroovyAssignabilityCheck
+            copyIdeResources = true
 
-    runs {
-        // REQUIRED for processResources to work in dev
-        copyIdeResources = true
+            client {
+                workingDirectory file("run")
 
-        client {
-            workingDirectory project.file('run')
+//                args '--username', 'PizzaTime65', '--uuid', '30cdf636-82ed-47ee-9a9c-4d820c0d76a9'
+//                args '--username', 'Meownium', '--uuid', '34e8274a-c02c-4c32-9311-2bccc9f6ba7d'
 
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-//            args '--username', 'PizzaTime65', '--uuid', '30cdf636-82ed-47ee-9a9c-4d820c0d76a9'
-            property 'forge.enabledGameTestNamespaces', mod_id
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-//            args '--username', 'Meownium', '--uuid', '34e8274a-c02c-4c32-9311-2bccc9f6ba7d'
-            arg "-mixin.config=breadmod.mixin.json"
+                property 'forge.enabledGameTestNamespaces', thisModId
+                property 'forge.logging.markers', 'REGISTRIES'
+                property 'forge.logging.console.level', minimumLevel
+                property 'mixin.env.remapRefMap', 'true'
+                property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
-            mods {
-                "$mod_id" {
-                    source sourceSets.main
+                File mixinFile = file("src/main/resources/${thisModId}.mixin.json")
+                if(mixinFile.canRead()) { arg "-mixin.config=${thisModId}.mixin.json" }
+
+                mods {
+                    "$mod_id" {
+                        source sourceSets.main
+                    }
+                }
+            }
+
+            server {
+                workingDirectory file('run/server')
+
+                property 'forge.logging.markers', 'REGISTRIES'
+                property 'forge.logging.console.level', minimumLevel
+                property 'forge.enabledGameTestNamespaces', thisModId
+
+                mods {
+                    "$mod_id" {
+                        source sourceSets.main
+                    }
+                }
+            }
+
+            gameTestServer {
+                workingDirectory file('run/server')
+
+                property 'forge.logging.markers', 'REGISTRIES'
+                property 'forge.logging.console.level', minimumLevel
+                property 'forge.enabledGameTestNamespaces', thisModId
+
+                mods {
+                    "$mod_id" {
+                        source sourceSets.main
+                    }
+                }
+            }
+
+            data {
+                workingDirectory file('run')
+
+                property 'forge.logging.markers', 'REGISTRIES'
+                property 'forge.logging.console.level', minimumLevel
+
+                args '--mod', thisModId, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
+
+                mods {
+                    "$mod_id" {
+                        source sourceSets.main
+                    }
                 }
             }
         }
+    }
 
-        server {
-            workingDirectory project.file('run/server')
+    // Include assets and data from data generators
+    sourceSets.main.resources { srcDirs 'src/generated/resources/' }
 
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', mod_id
-
-            mods {
-                "$mod_id" {
-                    source sourceSets.main
-                }
+    repositories {
+        maven {
+            name = 'Kotlin for Forge'
+            url = 'https://thedarkcolour.github.io/KotlinForForge/'
+            content { includeGroup "thedarkcolour" }
+        }
+        maven {
+            name = "Jared's maven"
+            url = "https://maven.blamejared.com/"
+        }
+        maven {
+            name = 'tterrag Maven'
+            url = 'https://maven.tterrag.com/'
+        }
+        maven {
+            name = "ModMaven"
+            url = "https://modmaven.dev"
+        }
+        maven {
+            name = "CurseForge Maven"
+            url "https://cursemaven.com"
+            content {
+                includeGroup "curse.maven"
             }
         }
-
-        gameTestServer {
-            workingDirectory project.file('run/server')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', mod_id
-
-            mods {
-                "$mod_id" {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
-
-            mods {
-                "$mod_id" {
-                    source sourceSets.main
-                }
-            }
+        maven {
+            name = "Illusive Soulworks maven"
+            url = "https://maven.theillusivec4.top/"
         }
     }
-}
 
-// Include assets and data from data generators
-sourceSets.main.resources { srcDirs 'src/generated/resources/' }
+    tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 
-repositories {
-    maven {
-        name = 'Kotlin for Forge'
-        url = 'https://thedarkcolour.github.io/KotlinForForge/'
-        content { includeGroup "thedarkcolour" }
-    }
-    maven {
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
-    }
-    maven {
-        name = 'tterrag maven'
-        url = 'https://maven.tterrag.com/'
-    }
-    maven {
-        name = "ModMaven"
-        url = "https://modmaven.dev"
-    }
-    maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
+    // use in the future for maven
+    // jar.finalizedBy('reobfJar')
+
+    def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
+    def replaceProperties  = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: buildVersion,
+            mod_authors: mod_authors, mod_description: mod_description,
+
+            jei_version_range: jei_version_range,
+            create_version_range: create_version_range, projecte_version_range: projecte_version_range,
+            mekanism_version_range: mekanism_version_range, jade_version_range: jade_version_range,
+            farmers_delight_version_range: farmers_delight_version_range
+    ]
+    processResources {
+        inputs.properties replaceProperties
+
+        filesMatching(resourceTargets) {
+            expand replaceProperties
         }
+
+        duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     }
-    maven {
-        name = "Illusive Soulworks maven"
-        url = "https://maven.theillusivec4.top/"
+
+    jar {
+        manifest {
+            String authors = rootProject.property("mod_authors")
+            attributes([
+                    'Specification-Title'     : thisModId,
+                    'Specification-Vendor'    : authors,
+                    'Specification-Version'   : "1",
+                    'Implementation-Title'    : project.name,
+                    'Implementation-Version'  : project.jar.archiveVersion,
+                    'Implementation-Vendor'   : authors,
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            ])
+        }
     }
 }
 
 dependencies {
-    // UPDATE TO AVOID VULNERABILITY TODO
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
     implementation "thedarkcolour:kotlinforforge:$kff_version"
 
@@ -161,66 +211,15 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
-// This block of code expands all declared replace properties in the specified resource targets.
-// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
-// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
-// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
-def replaceProperties  = [
-        minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
-        forge_version: forge_version, forge_version_range: forge_version_range,
-        mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: buildVersion,
-        mod_authors: mod_authors, mod_description: mod_description,
-
-        jei_version_range: jei_version_range,
-        create_version_range: create_version_range, projecte_version_range: projecte_version_range,
-        mekanism_version_range: mekanism_version_range, jade_version_range: jade_version_range,
-        farmers_delight_version_range: farmers_delight_version_range
-]
-processResources {
-    inputs.properties replaceProperties
-    replaceProperties.put 'project', project
-
-    filesMatching(resourceTargets) {
-        expand replaceProperties
-    }
-
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "17"
-}
-
-jar {
-    manifest {
-        attributes([
-                'Specification-Title'     : mod_id,
-                'Specification-Vendor'    : mod_authors,
-                'Specification-Version'   : "1",
-                'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : mod_authors,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
-// The below is only required if using 'maven-publish' and you want to publish to maven or use JitPack
-jar.finalizedBy('reobfJar')
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            artifact jar
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url "file://${project.projectDir}/mcmodsrepo"
+//        }
+//    }
+//}
