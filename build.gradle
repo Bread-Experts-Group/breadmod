@@ -25,7 +25,7 @@ try {
     System.out.println("Cannot get env variable 'MOD_VERSION', falling back to gradle.properties")
     buildVersion = mod_version
 }
-String minimumLevel = "error"
+String minimumLevel = "INFO"
 mod_version = buildVersion
 version = buildVersion
 group = mod_group_id
@@ -102,7 +102,13 @@ allprojects {
                 property 'forge.logging.markers', 'REGISTRIES'
                 property 'forge.logging.console.level', minimumLevel
 
-                args '--mod', thisModId, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources')
+                getArgs().clear() // Prevents stacking args whenever going thru the projects
+                println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
+                args = List.of(
+                        '--mod', thisModId,
+                        '--all', '--output', "C:/Users/Adenosine3Phosphate/Desktop/Projects/breadmod/src/generated/resources/",
+                        '--existing', "C:/Users/Adenosine3Phosphate/Desktop/Projects/breadmod/src/main/resources/"
+                )
 
                 mods {
                     "$mod_id" {
