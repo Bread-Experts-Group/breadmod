@@ -7,7 +7,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModPainting {
-    val deferredRegister: DeferredRegister<PaintingVariant> = DeferredRegister.create(ForgeRegistries.PAINTING_VARIANTS, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<PaintingVariant> = DeferredRegister.create(ForgeRegistries.PAINTING_VARIANTS, ModMain.ID)
 
     val PAINTING_TEST: RegistryObject<PaintingVariant> = deferredRegister.register("painting_test") {
         PaintingVariant(64,64)

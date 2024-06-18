@@ -11,7 +11,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModEntityTypes {
-    val deferredRegister: DeferredRegister<EntityType<*>> = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<EntityType<*>> = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ModMain.ID)
 
     val HAPPY_BLOCK_ENTITY: RegistryObject<EntityType<PrimedHappyBlock>> = deferredRegister.register("happy_block") {
         EntityType.Builder.of({ _, pLevel -> PrimedHappyBlock(pLevel, shouldSpread = true) }, MobCategory.AMBIENT)

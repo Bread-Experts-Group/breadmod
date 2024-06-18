@@ -11,7 +11,7 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.RegistryObject
 
 object ModCreativeTabs {
-    val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModMain.ID)
     private fun constructTab(name: String, general: Boolean, constructor: CreativeModeTab.Builder.() -> Unit): RegistryObject<CreativeModeTab> {
         val builder = CreativeModeTab.builder()
         val registryObject = deferredRegister.register(name) { builder.build() }

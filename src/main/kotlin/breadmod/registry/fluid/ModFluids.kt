@@ -19,8 +19,8 @@ import net.minecraftforge.registries.RegistryObject
 import java.util.function.Consumer
 
 object ModFluids {
-    val deferredRegister: DeferredRegister<Fluid> = DeferredRegister.create(ForgeRegistries.FLUIDS, ModMain.ID)
-    val deferredTypesRegister: DeferredRegister<FluidType> = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<Fluid> = DeferredRegister.create(ForgeRegistries.FLUIDS, ModMain.ID)
+    internal val deferredTypesRegister: DeferredRegister<FluidType> = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, ModMain.ID)
 
     private fun <S: ForgeFlowingFluid, F: ForgeFlowingFluid> registerWithBucket(
         id: String,

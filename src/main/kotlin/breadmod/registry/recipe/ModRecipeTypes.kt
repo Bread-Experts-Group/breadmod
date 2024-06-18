@@ -11,14 +11,14 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModRecipeTypes {
-    val deferredRegister: DeferredRegister<RecipeType<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<RecipeType<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ModMain.ID)
 
-    private fun <T: Recipe<*>> register(name: String): RegistryObject<RecipeType<T>> =
-        deferredRegister.register(name) { object : RecipeType<T> { override fun toString(): String = name } }
+    fun <T: Recipe<*>> DeferredRegister<RecipeType<*>>.registerType(name: String): RegistryObject<RecipeType<T>> =
+        this.register(name) { object : RecipeType<T> { override fun toString(): String = name } }
 
-    val DOUGH_MACHINE = register<DoughMachineRecipe>("dough_machine")
-    val WHEAT_CRUSHING = register<WheatCrushingRecipe>("wheat_crusher")
+    val DOUGH_MACHINE = deferredRegister.registerType<DoughMachineRecipe>("dough_machine")
+    val WHEAT_CRUSHING = deferredRegister.registerType<WheatCrushingRecipe>("wheat_crusher")
 
     // Power Generators
-    val GENERATOR = register<GeneratorRecipe>("generator")
+    val GENERATOR = deferredRegister.registerType<GeneratorRecipe>("generator")
 }

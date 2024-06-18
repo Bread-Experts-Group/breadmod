@@ -1,6 +1,6 @@
 package breadmodadvanced.registry
 
-import breadmod.ModMain.LOGGER
+import breadmodadvanced.ModMainAdv.LOGGER
 import breadmodadvanced.registry.block.ModBlockEntitiesAdv
 import breadmodadvanced.registry.block.ModBlocksAdv
 import breadmodadvanced.registry.item.ModItemsAdv

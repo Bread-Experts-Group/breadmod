@@ -11,20 +11,18 @@ class ModBlockStateProviderAdv(
     output: PackOutput,
     exFileHelper: ExistingFileHelper
 ) : BlockStateProvider(output, ModMainAdv.ID, exFileHelper) {
-    override fun registerStatesAndModels() {
-        horizontalBlock(ModBlocksAdv.DIESEL_GENERATOR.get().block) {
-            val name = "breadmodadv:block/diesel_generator"
-            val model = models().singleTexture(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/diesel_generator"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/diesel_generator")
-            )
+    private fun getLocForBlock(name: String) = modLoc("${ModelProvider.BLOCK_FOLDER}/$name")
 
-            return@horizontalBlock model
+    override fun registerStatesAndModels() {
+        getLocForBlock("diesel_generator").let {
+            val abs = it.toString()
+            horizontalBlock(ModBlocksAdv.DIESEL_GENERATOR.get().block) { _ ->
+                models().singleTexture(abs, it, it).renderType("cutout")
+            }
+            simpleBlockItem(
+                ModBlocksAdv.DIESEL_GENERATOR.get().block,
+                models().getBuilder(abs)
+            )
         }
-        simpleBlockItem(
-            ModBlocksAdv.DIESEL_GENERATOR.get().block,
-            models().getBuilder("breadmodadv:block/diesel_generator")
-        )
     }
 }

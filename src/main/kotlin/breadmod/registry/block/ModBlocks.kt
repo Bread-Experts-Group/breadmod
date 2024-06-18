@@ -45,15 +45,16 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModBlocks {
-    val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModMain.ID)
     fun getLocation(block: Block) = ForgeRegistries.BLOCKS.getKey(block)
 
-    private fun registerBlockItem(id: String, block: () -> Block, properties: Item.Properties): RegistryObject<BlockItem> =
-        deferredRegister.register(id, block).let { ModItems.deferredRegister.register(id) { BlockItem(it.get(), properties) } }
-    private fun registerBlockItem(id: String, block: () -> Block, item: (block: Block) -> BlockItem): RegistryObject<BlockItem> =
-        deferredRegister.register(id, block).let { ModItems.deferredRegister.register(id) { item(it.get()) } }
+    fun DeferredRegister<Block>.registerBlockItem(itemRegister: DeferredRegister<Item>, id: String, block: () -> Block, properties: Item.Properties): RegistryObject<BlockItem> =
+        this.register(id, block).let { itemRegister.register(id) { BlockItem(it.get(), properties) } }
+    fun DeferredRegister<Block>.registerBlockItem(itemRegister: DeferredRegister<Item>,id: String, block: () -> Block, item: (block: Block) -> BlockItem): RegistryObject<BlockItem> =
+        this.register(id, block).let { itemRegister.register(id) { item(it.get()) } }
 
-    val BREAD_BLOCK = registerBlockItem(
+    val BREAD_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "bread_block",
         { BreadBlock() },
         Item.Properties().also {
@@ -67,32 +68,37 @@ object ModBlocks {
         }
     )
 
-    val REINFORCED_BREAD_BLOCK = registerBlockItem(
+    val REINFORCED_BREAD_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "reinforced_bread_block",
         { Block(BlockBehaviour.Properties.copy(Blocks.NETHERITE_BLOCK).strength(25.0f, 1200.0f)) },
         Item.Properties().fireResistant()
     )
 
-    val MONITOR = registerBlockItem(
+    val MONITOR = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "monitor",
         { MonitorBlock() },
         Item.Properties()
     )
     
-    val KEYBOARD = registerBlockItem(
+    val KEYBOARD = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "keyboard",
         { KeyboardBlock() },
         Item.Properties().stacksTo(1)
     )
 
-    val CHARCOAL_BLOCK = registerBlockItem(
+    val CHARCOAL_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "charcoal_block",
         { FlammableBlock(BlockBehaviour.Properties.copy(Blocks.COAL_BLOCK)) },
         { block -> object : BlockItem(block, Properties()), IForgeItem {
             override fun getBurnTime(itemStack: ItemStack?, recipeType: RecipeType<*>?): Int = 1600 * 9
         } }
     )
-    val LOW_DENSITY_CHARCOAL_BLOCK = registerBlockItem(
+    val LOW_DENSITY_CHARCOAL_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "ld_charcoal_block",
         { FlammableBlock(BlockBehaviour.Properties.copy(Blocks.BLACK_WOOL)) },
         { block -> object : BlockItem(block, Properties()), IForgeItem {
@@ -100,65 +106,76 @@ object ModBlocks {
         } }
     )
 
-    val DOUGH_MACHINE_BLOCK = registerBlockItem(
+    val DOUGH_MACHINE_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "dough_machine",
         { DoughMachineBlock() },
         Item.Properties()
     )
 
-    val WHEAT_CRUSHER_BLOCK = registerBlockItem(
+    val WHEAT_CRUSHER_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "wheat_crusher",
         { WheatCrusherBlock() },
         Item.Properties()
     )
 
-    val GENERATOR = registerBlockItem(
+    val GENERATOR = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "generator",
         { GeneratorBlock() },
         Item.Properties()
     )
 
     // Farmer Multiblock
-    val FARMER_CONTROLLER = registerBlockItem(
+    val FARMER_CONTROLLER = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "farmer_controller",
         { FarmerControllerBlock() },
         Item.Properties()
     )
-    val FARMER_BASE_BLOCK = registerBlockItem(
+    val FARMER_BASE_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "farmer_base_block",
         { Block(BlockBehaviour.Properties.copy(Blocks.COPPER_BLOCK)) },
         Item.Properties()
     )
-    val FARMER_INPUT_BLOCK = registerBlockItem(
+    val FARMER_INPUT_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "farmer_input_block",
         { FarmerInputBlock() },
         Item.Properties()
     )
-    val FARMER_OUTPUT_BLOCK = registerBlockItem(
+    val FARMER_OUTPUT_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "farmer_output_block",
         { FarmerOutputBlock() },
         Item.Properties()
     )
-    val GENERIC_POWER_INTERFACE = registerBlockItem(
+    val GENERIC_POWER_INTERFACE = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "generic_power_interface",
         { PowerInterfaceBlock() },
         Item.Properties()
     )
 
     ////
-    val HEATING_ELEMENT_BLOCK = registerBlockItem(
+    val HEATING_ELEMENT_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "heating_element",
         { HeatingElementBlock() },
         Item.Properties()
     )
 
-    val HAPPY_BLOCK = registerBlockItem(
+    val HAPPY_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "happy_block",
         { HappyBlock() },
         Item.Properties().stacksTo(1)
     )
 
-    val FLOUR_BLOCK = registerBlockItem(
+    val FLOUR_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "flour_block",
         { object : FallingBlock(Properties.of().ignitedByLava().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.SNOW)) {
             override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
@@ -168,13 +185,15 @@ object ModBlocks {
         Item.Properties()
     )
 
-    val FLOUR_LAYER_BLOCK = registerBlockItem(
+    val FLOUR_LAYER_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "flour_layer",
         { FlourLayeredBlock() },
         Item.Properties()
     )
 
-    val BREAD_FENCE = registerBlockItem(
+    val BREAD_FENCE = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "bread_fence",
         { object : FenceBlock(Properties.of()
             .forceSolidOn()
@@ -187,7 +206,8 @@ object ModBlocks {
         Item.Properties()
     )
 
-    val BREAD_DOOR = registerBlockItem(
+    val BREAD_DOOR = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "bread_door",
         { object : DoorBlock(Properties.of()
             .mapColor(MapColor.WOOD)
@@ -200,7 +220,8 @@ object ModBlocks {
         Item.Properties()
     )
 
-    val BAUXITE_ORE = registerBlockItem(
+    val BAUXITE_ORE = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
         "bauxite_ore",
         { OreBlock() },
         { block -> object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
@@ -221,7 +242,7 @@ object ModBlocks {
         } }
     )
 
-    class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {
+    internal class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {
         override fun getKnownBlocks(): Iterable<Block> {
             return Iterable<Block> {
                 deferredRegister.entries

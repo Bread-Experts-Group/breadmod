@@ -12,6 +12,7 @@ import breadmod.datagen.tag.ModPaintingTags
 import breadmod.datagen.texture_plane.ModTexturePlaneProvider
 import breadmod.datagen.tool_gun.ModToolGunModeProvider
 import breadmod.network.PacketHandler.NETWORK
+import breadmod.registry.block.ModBlocks
 import breadmod.registry.worldgen.dimensions.ModBiomes
 import breadmod.registry.worldgen.dimensions.ModDimensions
 import breadmod.registry.worldgen.dimensions.ModFeatures
@@ -43,12 +44,12 @@ object CommonModEventBus {
 
         generator.addProvider(true, ModToolGunModeProvider(packOutput))
 
-        // experimental texture to 2d plane (not so experimental anymore but it needs some docs)
+        // experimental texture to 2d plane (not so experimental anymore, but it needs some docs)
         generator.addProvider(true, ModTexturePlaneProvider(packOutput))
 
         if(event.includeServer()) {
             LOGGER.info("Server datagen")
-            generator.addProvider(true, ModLootTableProvider.create(packOutput))
+            generator.addProvider(true, constructLootProvider(ModBlocks.ModBlockLoot(), packOutput))
             generator.addProvider(true, ModRecipeProvider(packOutput))
             generator.addProvider(true, ModEMCProvider(packOutput, lookupProvider))
 

@@ -14,7 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModRecipeSerializers {
-    val deferredRegister: DeferredRegister<RecipeSerializer<*>> =
+    internal val deferredRegister: DeferredRegister<RecipeSerializer<*>> =
         DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModMain.ID)
 
     val ARMOR_POTION: RegistryObject<SimpleCraftingRecipeSerializer<ArmorPotionRecipe>> = deferredRegister.register("bread_potion_crafting") {

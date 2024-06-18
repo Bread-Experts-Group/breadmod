@@ -21,7 +21,7 @@ import net.minecraftforge.registries.RegistryObject
 
 @Suppress("unused")
 object ModItems {
-    val deferredRegister: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModMain.ID)
     fun getLocation(item: Item) = ForgeRegistries.ITEMS.getKey(item)
 
     val TEST_BREAD: RegistryObject<TestBreadItem> = deferredRegister.register("test_bread") { TestBreadItem() }

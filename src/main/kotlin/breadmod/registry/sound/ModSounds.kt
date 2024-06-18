@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModSounds {
-    val deferredRegister: DeferredRegister<SoundEvent> =
+    internal val deferredRegister: DeferredRegister<SoundEvent> =
         DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, ModMain.ID)
 
     val TEST_SOUND: RegistryObject<SoundEvent> = registerSoundEvents("test_sound")

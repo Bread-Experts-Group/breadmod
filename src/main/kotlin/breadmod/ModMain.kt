@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 
 @Mod(ModMain.ID)
-object ModMain {
+internal object ModMain {
     const val ID = "breadmod"
     val LOGGER: Logger = LogManager.getLogger(ID)
 
@@ -26,7 +26,7 @@ object ModMain {
      * Only use this for translatable strings for mods outside breadmod
      * @see modAddExt
      */
-    fun modTranslatableExt(vararg path: String): MutableComponent
+    private fun modTranslatableExt(vararg path: String): MutableComponent
             = Component.translatable(path.joinToString("."))
     fun LanguageProvider.modAdd(value: String, type: String = "misc", vararg path: String)
             = add("$type.$ID.${path.joinToString(".")}", value)
