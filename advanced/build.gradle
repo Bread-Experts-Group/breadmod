@@ -59,7 +59,7 @@ dependencies {
     implementation(fg.deobf("curse.maven:jade-${jade_project_id}:${jade_file_id}"))
     implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
     implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+//    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
