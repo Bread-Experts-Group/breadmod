@@ -1,13 +1,13 @@
-package breadmod.advanced.registry.block
+package breadmodadvanced.registry.block
 
-import breadmod.advanced.ModMainAdv
-import breadmod.advanced.registry.item.ModItemsAdv
+import breadmodadvanced.ModMainAdv
+import breadmodadvanced.block.DieselGeneratorBlock
+import breadmodadvanced.registry.item.ModItemsAdv
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
@@ -22,7 +22,7 @@ object ModBlocksAdv {
 
     val DIESEL_GENERATOR = registerBlockItem(
         "diesel_generator",
-        { Block(BlockBehaviour.Properties.of())},
+        { DieselGeneratorBlock() },
         Item.Properties()
     )
 

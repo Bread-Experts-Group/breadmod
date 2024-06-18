@@ -1,7 +1,7 @@
-package breadmod.advanced
+package breadmodadvanced
 
 import breadmod.ModMain.LOGGER
-import breadmod.advanced.registry.registerAll
+import breadmodadvanced.registry.registerAll
 import net.minecraftforge.fml.common.Mod
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 

@@ -40,6 +40,8 @@ minecraft {
     }
 }
 
+sourceSets.main.resources { srcDirs 'advanced/src/generated/resources/' }
+
 dependencies {
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
     implementation "thedarkcolour:kotlinforforge:$kff_version"
@@ -87,21 +89,23 @@ processResources {
 
 tasks.register('prepareKotlinBuildScriptModel') {}
 
+// Keeping this jar copy code here just in case something fucks up and we have to fall back to it
+
 // Copy breadmod to runs/breadmod-x.jar for run
-CopySpec constructParentModJarSpec = copySpec {
-    from rootProject.layout.buildDirectory.dir('libs')
-    include 'breadmod-*.jar'
-}
-
-tasks.register('copyParentBuild', Copy) {
-    dependsOn(':jar')
-
-    into layout.projectDirectory.dir("run").dir("mods")
-    with constructParentModJarSpec
-}
-
-afterEvaluate {
-    tasks.named("prepareRuns") {
-        dependsOn("copyParentBuild")
-    }
-}
+//CopySpec constructParentModJarSpec = copySpec {
+//    from rootProject.layout.buildDirectory.dir('libs')
+//    include 'breadmod-*.jar'
+//}
+//
+//tasks.register('copyParentBuild', Copy) {
+//    dependsOn(':jar')
+//
+//    into layout.projectDirectory.dir("run").dir("mods")
+//    with constructParentModJarSpec
+//}
+//
+//afterEvaluate {
+//    tasks.named("prepareRuns") {
+//        dependsOn("copyParentBuild")
+//    }
+//}

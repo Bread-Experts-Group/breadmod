@@ -1,6 +1,6 @@
-package breadmod.advanced.registry.item
+package breadmodadvanced.registry.item
 
-import breadmod.advanced.ModMainAdv
+import breadmodadvanced.ModMainAdv
 import net.minecraft.world.item.Item
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries

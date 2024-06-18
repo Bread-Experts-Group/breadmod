@@ -43,7 +43,7 @@ object CommonModEventBus {
 
         generator.addProvider(true, ModToolGunModeProvider(packOutput))
 
-        // experimental texture to 2d plane
+        // experimental texture to 2d plane (not so experimental anymore but it needs some docs)
         generator.addProvider(true, ModTexturePlaneProvider(packOutput))
 
         if(event.includeServer()) {
