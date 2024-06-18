@@ -4,8 +4,8 @@
 	"ambientocclusion": false,
 	"texture_size": [128, 128],
 	"textures": {
-		"0": "breadmod:block/diesel_generator",
-		"particle": "breadmod:block/diesel_generator"
+		"0": "breadmodadv:block/diesel_generator",
+		"particle": "breadmodadv:block/diesel_generator"
 	},
 	"elements": [
 		{
