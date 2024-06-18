@@ -2,8 +2,11 @@ package breadmodadvanced
 
 import breadmod.datagen.constructLootProvider
 import breadmodadvanced.ModMainAdv.LOGGER
+import breadmodadvanced.block.entity.renderer.DieselGeneratorRenderer
 import breadmodadvanced.datagen.ModBlockStateProviderAdv
+import breadmodadvanced.registry.block.ModBlockEntitiesAdv
 import breadmodadvanced.registry.block.ModBlocksAdv
+import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -27,5 +30,10 @@ object CommonModEventBusAdv {
             LOGGER.info("Client datagen")
             generator.addProvider(true, ModBlockStateProviderAdv(packOutput, existingFileHelper))
         }
+    }
+
+    @SubscribeEvent
+    fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
+        event.registerBlockEntityRenderer(ModBlockEntitiesAdv.DIESEL_GENERATOR.get()) { DieselGeneratorRenderer() }
     }
 }
