@@ -103,13 +103,13 @@ allprojects {
                 property 'forge.logging.console.level', minimumLevel
 
                 getArgs().clear() // Prevents stacking args whenever going thru the projects
-                println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
+//                println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
                 args = List.of(
                         '--mod', thisModId,
-                        '--all', '--output', "C:/Users/Adenosine3Phosphate/Desktop/Projects/breadmod/src/generated/resources/",
-                        '--existing', "C:/Users/Adenosine3Phosphate/Desktop/Projects/breadmod/src/main/resources/"
+                        '--all', '--output', "/home/logan/IdeaProjects/breadmod/src/generated/resources/",
+                        '--existing', "/home/logan/IdeaProjects/breadmod/src/main/resources/"
                 )
-
+//                println(args)
                 mods {
                     "$mod_id" {
                         source sourceSets.main

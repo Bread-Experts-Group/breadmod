@@ -5,6 +5,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.22'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 String buildVersion
@@ -20,12 +21,22 @@ mod_version = buildVersion
 version = buildVersion
 group = mod_group_id
 base { archivesName = mod_id }
+String thisModId = getProperty("mod_id")
 
 minecraft {
     mappings channel: mapping_channel_parchment, version: mapping_version_parchment
     runs {
         client {}
-        data {}
+        data {
+            getArgs().clear()
+//            println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
+            args = List.of(
+                    '--mod', thisModId,
+                    '--all', '--output', "/home/logan/IdeaProjects/breadmod/advanced/src/generated/resources/",
+                    '--existing', "/home/logan/IdeaProjects/breadmod/advanced/src/main/resources/"
+            )
+//            println(args)
+        }
     }
 }
 
@@ -37,17 +48,17 @@ dependencies {
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
-//    compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api"))
-//    runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
-//    implementation fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}")
-//    implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-//    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
-//    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
-//
-//    runtimeOnly(fg.deobf("curse.maven:pipez-${pipez_project_id}:${pipez_file_id}"))
-//    implementation(fg.deobf("curse.maven:jade-${jade_project_id}:${jade_file_id}"))
-//    implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
-//    implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
+    compileOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api"))
+    runtimeOnly(fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}"))
+    implementation fg.deobf("mekanism:Mekanism:${minecraft_version}-${mekanism_version}")
+    implementation fg.deobf("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    runtimeOnly(fg.deobf("curse.maven:pipez-${pipez_project_id}:${pipez_file_id}"))
+    implementation(fg.deobf("curse.maven:jade-${jade_project_id}:${jade_file_id}"))
+    implementation(fg.deobf("curse.maven:projecte-${projecte_project_id}:${projecte_file_id}"))
+    implementation(fg.deobf("curse.maven:farmersdelight-${farmers_delight_project_id}:${farmers_delight_file_id}"))
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
