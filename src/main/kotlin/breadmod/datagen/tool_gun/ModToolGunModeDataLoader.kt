@@ -19,7 +19,6 @@ import breadmod.util.jsonToComponent
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mojang.blaze3d.platform.InputConstants
-import cpw.mods.modlauncher.ClassTransformer
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -71,9 +70,7 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                     val dataObj = data.asJsonObject
                     val classSet = loadedModes.getOrPut(location.namespace) { mutableMapOf() }
 
-                    // Figure out TransformingClassLoader.java
-                    //ClassTransformer()
-                    val loadedClass = Class.forName(dataObj.getAsJsonPrimitive(CLASS_KEY).asString).kotlin
+                    val loadedClass = Thread.currentThread().contextClassLoader.loadClass(dataObj.getAsJsonPrimitive(CLASS_KEY).asString).kotlin
                     if(loadedClass.isSubclassOf(IToolGunMode::class)) {
                         val classConstructor = loadedClass.primaryConstructor!!
                         classConstructor.isAccessible = true

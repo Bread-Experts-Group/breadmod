@@ -1,6 +1,6 @@
 package breadmodadvanced.registry.block
 
-import breadmod.registry.block.ModBlocks.registerBlockItem
+import breadmod.util.registerBlockItem
 import breadmodadvanced.ModMainAdv
 import breadmodadvanced.block.DieselGeneratorBlock
 import breadmodadvanced.registry.item.ModItemsAdv

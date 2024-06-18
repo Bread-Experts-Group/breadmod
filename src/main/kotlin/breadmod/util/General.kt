@@ -24,8 +24,13 @@ import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.inventory.InventoryMenu
+import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
@@ -33,6 +38,7 @@ import net.minecraft.world.phys.Vec3
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
+import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.IForgeRegistry
 import net.minecraftforge.registries.RegistryObject
@@ -318,3 +324,11 @@ fun computerSD(aggressive: Boolean) {
         exitProcess(0)
     }
 }
+
+fun DeferredRegister<Block>.registerBlockItem(itemRegister: DeferredRegister<Item>, id: String, block: () -> Block, properties: Item.Properties): RegistryObject<BlockItem> =
+    this.register(id, block).let { itemRegister.register(id) { BlockItem(it.get(), properties) } }
+fun DeferredRegister<Block>.registerBlockItem(itemRegister: DeferredRegister<Item>, id: String, block: () -> Block, item: (block: Block) -> BlockItem): RegistryObject<BlockItem> =
+    this.register(id, block).let { itemRegister.register(id) { item(it.get()) } }
+
+fun <T: Recipe<*>> DeferredRegister<RecipeType<*>>.registerType(name: String): RegistryObject<RecipeType<T>> =
+    this.register(name) { object : RecipeType<T> { override fun toString(): String = name } }

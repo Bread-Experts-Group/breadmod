@@ -1,6 +1,6 @@
 package breadmodadvanced.registry.recipe
 
-import breadmod.registry.recipe.ModRecipeTypes.registerType
+import breadmod.util.registerType
 import breadmodadvanced.ModMainAdv
 import breadmodadvanced.recipe.fluidEnergy.generators.DieselGeneratorRecipe
 import net.minecraft.world.item.crafting.RecipeType

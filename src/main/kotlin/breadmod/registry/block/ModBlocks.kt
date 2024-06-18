@@ -14,6 +14,7 @@ import breadmod.block.specialItem.UseBlockStateNBT
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
+import breadmod.util.registerBlockItem
 import com.google.common.collect.ImmutableMap
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.BlockPos
@@ -47,11 +48,6 @@ import net.minecraftforge.registries.RegistryObject
 object ModBlocks {
     internal val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModMain.ID)
     fun getLocation(block: Block) = ForgeRegistries.BLOCKS.getKey(block)
-
-    fun DeferredRegister<Block>.registerBlockItem(itemRegister: DeferredRegister<Item>, id: String, block: () -> Block, properties: Item.Properties): RegistryObject<BlockItem> =
-        this.register(id, block).let { itemRegister.register(id) { BlockItem(it.get(), properties) } }
-    fun DeferredRegister<Block>.registerBlockItem(itemRegister: DeferredRegister<Item>,id: String, block: () -> Block, item: (block: Block) -> BlockItem): RegistryObject<BlockItem> =
-        this.register(id, block).let { itemRegister.register(id) { item(it.get()) } }
 
     val BREAD_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,

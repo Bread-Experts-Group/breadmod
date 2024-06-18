@@ -8,7 +8,7 @@ import breadmodadvanced.registry.recipe.ModRecipeSerializersAdv
 import breadmodadvanced.registry.recipe.ModRecipeTypesAdv
 import net.minecraftforge.eventbus.api.IEventBus
 
-val registerList = setOf(
+internal val registerList = setOf(
     ModBlocksAdv.deferredRegister,
     ModItemsAdv.deferredRegister,
     ModRecipeTypesAdv.deferredRegister,
@@ -16,7 +16,7 @@ val registerList = setOf(
     ModBlockEntitiesAdv.deferredRegister
 )
 
-fun registerAll(bus: IEventBus) {
+internal fun registerAll(bus: IEventBus) {
     registerList.forEach {
         LOGGER.info("Pushing register for ${it.registryName}")
         it.register(bus)
