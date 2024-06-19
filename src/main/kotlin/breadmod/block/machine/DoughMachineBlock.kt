@@ -7,7 +7,6 @@ import breadmod.registry.item.ModItems
 import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.IndexableItemHandler
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -45,7 +44,9 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
     Properties.of()
         .strength(1f, 5.0f)
         .mapColor(MapColor.COLOR_GRAY)
-        .sound(SoundType.METAL),
+        .sound(SoundType.METAL)
+        .lightLevel { pState -> if(pState.getValue(BlockStateProperties.POWERED)) 5 else 0 }
+        .emissiveRendering { pState, _, _ -> pState.getValue(BlockStateProperties.POWERED) },
     true
 ) {
     override fun canHarvestBlock(pState: BlockState, pLevel: BlockGetter, pPos: BlockPos, pPlayer: Player): Boolean =

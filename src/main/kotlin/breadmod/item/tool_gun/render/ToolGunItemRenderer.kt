@@ -6,6 +6,8 @@ import breadmod.item.tool_gun.ToolGunItem
 import breadmod.util.render.TimerTicker
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
+import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler
+import com.simibubi.create.foundation.utility.AnimationTickHolder
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
@@ -15,6 +17,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.network.chat.Component
+import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.RenderTypeHelper
@@ -60,15 +63,17 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
         pPoseStack.pushPose()
         // todo smooth rotation after firing toolgun, quickly tapering off
-        // todo recoil and increased coil spin when using tool gun
+//        // todo recoil and increased coil spin when using tool gun
 
-        val worldTime: Float = TimerTicker.getRenderTime() / 20f
+        val worldTime: Float = TimerTicker.getRenderTime() / 20
         var angle = worldTime * -25
         angle %= 360
+//        println(angle)
 
 //        pPoseStack.translate(sin(angle.toDouble() / 30), 0.0, 0.0)
         renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(angle * 10))
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(angle * 5))
+//        pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks()))) // todo HOW IS CREATE'S TICKER SO SMOOTH??
         renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
 //        pPoseStack.mulPose(Axis.YN.rotationDegrees(angle * 30))
 //        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
@@ -110,7 +115,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
      *
      * @see Font.drawInBatch
      * @author Logan McLean
-     * @since 1.0.0
+     * @since 0.0.1
      */
     private fun renderText(
         pComponent: Component,
@@ -184,7 +189,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
      * @param pRenderer
      *
      * @author Logan McLean
-     * @since 1.0.0
+     * @since 0.0.1
      */
     private fun renderModel(
         pModel: BakedModel,
