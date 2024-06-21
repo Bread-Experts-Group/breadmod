@@ -167,7 +167,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                 }, {
                     val sLevel = level
                     if (sLevel != null) {
-                        println("NOTICE: Inventory: ${this.getItem(0)}")
+//                        println("NOTICE: Inventory: ${this.getItem(0)}") //todo uncomment this later
                         val recipe = recipeDial.getRecipeFor(this, sLevel)
                         recipe.ifPresent {
                             if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) currentRecipe = recipe

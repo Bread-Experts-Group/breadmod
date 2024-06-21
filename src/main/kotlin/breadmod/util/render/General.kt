@@ -1,11 +1,18 @@
 package breadmod.util.render
 
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.Tesselator
-import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.blaze3d.vertex.*
 import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.entity.ItemRenderer
+import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import org.joml.Vector3f
 
@@ -69,4 +76,85 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
     it.poseStack.popPose()
 
     return@add false
+}
+
+/**
+ * Renders a provided [pModel] (as an item model) onto a [BlockEntityWithoutLevelRenderer]
+ */
+fun renderItemModel(
+    pModel: BakedModel,
+    pRenderer: ItemRenderer,
+    pStack: ItemStack,
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pPackedOverlay: Int,
+    pPackedLight: Int
+) {
+    val glint = pStack.hasFoil()
+    for(type in pModel.getRenderTypes(pStack, false)) {
+        val helper: RenderType = RenderTypeHelper.getEntityRenderType(type, false)
+        val consumer = ItemRenderer.getFoilBuffer(pBuffer, helper, true, glint)
+        pRenderer.renderModelLists(pModel, pStack, pPackedLight, pPackedOverlay, pPoseStack, consumer)
+    }
+}
+
+/**
+ * Renders a provided [pModel] (as a block model) onto a [BlockEntityRenderer]
+ */
+fun renderBlockModel(
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pBlockEntity: BlockEntity,
+    pModel: BakedModel,
+    pPackedLight: Int,
+    pPackedOverlay: Int
+) {
+    Minecraft.getInstance().blockRenderer.modelRenderer.renderModel(
+        pPoseStack.last(),
+        pBuffer.getBuffer(RenderType.solid()),
+        pBlockEntity.blockState,
+        pModel,
+        1f,
+        1f,
+        1f,
+        pPackedLight,
+        pPackedOverlay,
+        pBlockEntity.modelData,
+        RenderType.solid()
+    )
+}
+
+fun drawVertex(
+    pBuilder: VertexConsumer,
+    pPoseStack: PoseStack,
+    pX: Float,
+    pY: Float,
+    pZ: Float,
+    pU: Float,
+    pV: Float,
+    pPackedLight: Int,
+    pColor: Int
+) {
+    pBuilder.vertex(pPoseStack.last().pose(), pX, pY, pZ)
+        .color(pColor)
+        .uv(pU, pV)
+        .uv2(pPackedLight)
+        .normal(1f, 0f, 0f)
+        .endVertex()
+}
+
+fun drawQuad(
+    pBuilder: VertexConsumer,
+    pPoseStack: PoseStack,
+    pX0: Float, pY0: Float, pZ0: Float,
+    pX1: Float, pY1: Float, pZ1: Float,
+    pU0: Float, pV0: Float,
+    pU1: Float, pV1: Float,
+    pPackedLight: Int,
+    pColor: Int
+) {
+    drawVertex(pBuilder, pPoseStack, pX0, pY0, pZ0, pU0, pV0, pPackedLight, pColor)
+    drawVertex(pBuilder, pPoseStack, pX0, pY1, pZ1, pU0, pV1, pPackedLight, pColor)
+    drawVertex(pBuilder, pPoseStack, pX1, pY1, pZ1, pU1, pV1, pPackedLight, pColor)
+    drawVertex(pBuilder, pPoseStack, pX1, pY0, pZ0, pU1, pV0, pPackedLight, pColor)
 }

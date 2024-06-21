@@ -4,23 +4,17 @@ import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.util.render.TimerTicker
+import breadmod.util.render.renderItemModel
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
-import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueHandler
-import com.simibubi.create.foundation.utility.AnimationTickHolder
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.entity.ItemRenderer
-import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.network.chat.Component
-import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
-import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.model.generators.ModelProvider
 import java.awt.Color
 import java.security.SecureRandom
@@ -62,7 +56,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //        val testModel = modelManager.getModel(testModelLocation)
 
         pPoseStack.pushPose()
-        // todo smooth rotation after firing toolgun, quickly tapering off
+        // todo smooth rotation after firing toolgun, quickly tapering off. GameRenderer.java@1177 found a function that uses the same posestack calls as this, could be used for smooth anims
 //        // todo recoil and increased coil spin when using tool gun
 
         val worldTime: Float = TimerTicker.getRenderTime() / 20
@@ -71,10 +65,10 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //        println(angle)
 
 //        pPoseStack.translate(sin(angle.toDouble() / 30), 0.0, 0.0)
-        renderModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         pPoseStack.mulPose(Axis.XN.rotationDegrees(angle * 5))
 //        pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks()))) // todo HOW IS CREATE'S TICKER SO SMOOTH??
-        renderModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
 //        pPoseStack.mulPose(Axis.YN.rotationDegrees(angle * 30))
 //        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         pPoseStack.popPose()
@@ -180,31 +174,4 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         Component.literal(pText),
         pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
     )
-
-    /**
-     * Renders a provided [pModel] onto a target [BlockEntityWithoutLevelRenderer]
-     * # to be finished #
-     *
-     * @param pModel The model provided via [net.minecraft.client.resources.model.ModelManager.getModel] using [net.minecraft.resources.ResourceLocation]
-     * @param pRenderer
-     *
-     * @author Logan McLean
-     * @since 0.0.1
-     */
-    private fun renderModel(
-        pModel: BakedModel,
-        pRenderer: ItemRenderer,
-        pStack: ItemStack,
-        pPoseStack: PoseStack,
-        pBuffer: MultiBufferSource,
-        pPackedOverlay: Int,
-        pPackedLight: Int
-    ) {
-        val glint = pStack.hasFoil()
-        for(type in pModel.getRenderTypes(pStack, false)) {
-            val helper: RenderType = RenderTypeHelper.getEntityRenderType(type, false)
-            val consumer = ItemRenderer.getFoilBuffer(pBuffer, helper, true, glint)
-            pRenderer.renderModelLists(pModel, pStack, pPackedLight, pPackedOverlay, pPoseStack, consumer)
-        }
-    }
 }

@@ -2,7 +2,9 @@ package breadmodadvanced.block.entity
 
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
 import breadmod.util.capability.EnergyBattery
+import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.IndexableItemHandler
+import breadmod.util.capability.StorageDirection
 import breadmodadvanced.recipe.fluidEnergy.generators.DieselGeneratorRecipe
 import breadmodadvanced.registry.block.ModBlockEntitiesAdv
 import breadmodadvanced.registry.recipe.ModRecipeTypesAdv
@@ -12,6 +14,7 @@ import net.minecraft.world.entity.player.StackedContents
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.fluids.capability.templates.FluidTank
 
 class DieselGeneratorBlockEntity(
     pPos: BlockPos,
@@ -21,7 +24,10 @@ class DieselGeneratorBlockEntity(
     pPos,
     pBlockState,
     ModRecipeTypesAdv.DIESEL_GENERATOR,
-    EnergyBattery(50000, 0, 2000) to mutableListOf(null)
+    EnergyBattery(50000, 0, 2000) to mutableListOf(null),
+    ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(
+        FluidTank(5000) to StorageDirection.BIDIRECTIONAL
+    )) to null)
 ) {
     private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
