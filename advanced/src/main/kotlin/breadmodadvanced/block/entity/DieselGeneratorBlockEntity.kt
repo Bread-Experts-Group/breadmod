@@ -9,8 +9,6 @@ import breadmodadvanced.recipe.fluidEnergy.generators.DieselGeneratorRecipe
 import breadmodadvanced.registry.block.ModBlockEntitiesAdv
 import breadmodadvanced.registry.recipe.ModRecipeTypesAdv
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.StackedContents
 import net.minecraft.world.item.ItemStack
@@ -27,11 +25,8 @@ class DieselGeneratorBlockEntity(
     pBlockState,
     ModRecipeTypesAdv.DIESEL_GENERATOR,
     EnergyBattery(50000, 0, 2000) to null,
-    ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(
-        FluidTank(8000) to StorageDirection.STORE_ONLY
-    )) to mutableListOf(Direction.UP, null))
+    ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(FluidTank(8000) to StorageDirection.STORE_ONLY)) to null)
 ) {
-    override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }
     private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
     override fun clearContent() { getItemHandler()?.clear() }

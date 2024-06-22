@@ -14,9 +14,11 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.core.Direction
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.material.Fluids
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.capabilities.ForgeCapabilities
+import net.minecraftforge.fluids.FluidStack
 
 class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     private val doorModelLocation = ModMainAdv.modLocation("${ModelProvider.BLOCK_FOLDER}/diesel_generator/diesel_generator_door")
@@ -34,6 +36,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         val doorModel = instance.modelManager.getModel(doorModelLocation)
         val blockRotation = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
 
+        pPoseStack.pushPose()
         when(blockRotation) { // TODO Set up rotations and translations for door, upgrade cards, and fluid, set up functions for transforming separate models
             Direction.NORTH -> {
 //                println("facing north")
@@ -64,8 +67,58 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
 //        pPoseStack.rotateAround(blockRotation, 0.0f, 0.0f, 0.0f)
 
         renderBlockModel(pPoseStack, pBuffer, pBlockEntity, doorModel, pPackedLight, pPackedOverlay)
+        pPoseStack.popPose()
+        val amount = 6000f
+        val capacity = 8000f
+        val blockPos = pBlockEntity.blockPos
+        val fluidTypeExtensions = IClientFluidTypeExtensions.of(Fluids.WATER)
+        val stillFluidTexture = fluidTypeExtensions.getStillTexture(FluidStack(Fluids.WATER, 1000))?: return
+        val fluidState = Fluids.WATER.defaultFluidState()
+        val fluidSprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
+        val fluidTint = fluidTypeExtensions.getTintColor(fluidState, pBlockEntity.level, blockPos)
 
-        pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let { // todo figure out why this isn't returning any fluid or amount at all
+        val fluidHeight: Float = ((amount / capacity * 0.5f) + 0.37f)
+        val builder = pBuffer.getBuffer(ItemBlockRenderTypes.getRenderLayer(fluidState))
+
+//        val fluidCap = pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
+//
+//        println(fluidCap?.allTanks?.get(0)?.fluidAmount?.toFloat())
+
+        // Top
+        if(amount < capacity) {
+            pPoseStack.pushPose()
+            drawQuad(builder, pPoseStack, 0.02f, fluidHeight, 0.02f, 0.75f, fluidHeight, 0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+            pPoseStack.popPose()
+        }
+
+        // North
+//        pPoseStack.pushPose()
+//        drawQuad(builder, pPoseStack, 0.25f, 0f, 0.25f, 0.75f, fluidHeight, 0.25f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+//        pPoseStack.popPose()
+
+        // South
+//        pPoseStack.pushPose()
+//        pPoseStack.mulPose(Axis.YP.rotationDegrees(180f))
+//        pPoseStack.translate(-1f, 0f, 0f)
+//        drawQuad(builder, pPoseStack, 0.25f, 0f, -0.75f, 0.75f, fluidHeight, -0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+//        pPoseStack.popPose()
+
+        // West
+        pPoseStack.pushPose()
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(90f))
+        pPoseStack.translate(-1f, 0f, 0f)
+        drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.02f, 0.75f, fluidHeight, 0.02f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+        pPoseStack.popPose()
+
+        // East
+        pPoseStack.pushPose()
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(-90f))
+        pPoseStack.translate(0f, 0f, -1f)
+        drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.02f, 0.75f, fluidHeight, 0.02f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+        pPoseStack.popPose()
+
+        /* old code block
+                pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let { // todo figure out why this isn't returning any fluid or amount at all
             it.allTanks[0].let { tank ->
 //                println(tank.space)
                 if(tank.isEmpty) return
@@ -102,7 +155,6 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
                 pPoseStack.translate(0f, 0f, -1f)
                 drawQuad(builder, pPoseStack, 0.25f, 0f, 0.25f, 0.75f, fluidHeight, 0.25f, fluidSprite.u0, fluidSprite.v0, fluidSprite.v0, fluidSprite.v1, pPackedLight, fluidTint)
                 pPoseStack.popPose()
-            }
-        }
+         */
     }
 }
