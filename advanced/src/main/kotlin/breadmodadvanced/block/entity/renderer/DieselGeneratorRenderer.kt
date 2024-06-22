@@ -67,7 +67,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
 
         pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let { // todo figure out why this isn't returning any fluid or amount at all
             it.allTanks[0].let { tank ->
-                println(tank.fluid.fluid.fluidType)
+//                println(tank.space)
                 if(tank.isEmpty) return
                 val blockPos = pBlockEntity.blockPos
                 val fluidTypeExtensions = IClientFluidTypeExtensions.of(tank.fluid.fluid)
