@@ -9,10 +9,8 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.model.generators.ModelProvider
@@ -26,8 +24,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     minecraft.entityModels
 ) {
     private companion object {
-        const val SCREEN_TINT = 0xFFFFFF
-
         val minecraft: Minecraft = Minecraft.getInstance()
         val secureRandom = SecureRandom()
     }
@@ -75,12 +71,12 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         // x, y, z after rotations
         // x: back and forward, y: up and down, z: left and right
 
-        // big text
-        val byteArray = ByteArray(2)
-        secureRandom.nextBytes(byteArray)
-        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(25,25,25,0).rgb, fontRenderer, pPoseStack, pBuffer,
-            0.9215, 0.0555, -0.028, 0.0035f
-        )
+        // Tool gun mode specific rendering
+//        val byteArray = ByteArray(2)
+//        secureRandom.nextBytes(byteArray)
+//        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(25,25,25,0).rgb, fontRenderer, pPoseStack, pBuffer,
+//            0.9215, 0.0555, -0.028, 0.0035f
+//        )
 
         drawTextOnScreen(
             (toolgunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
@@ -93,85 +89,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         )
 
         pPoseStack.pushPose()
-        toolgunMode.mode.render(pStack, pPoseStack)
+        toolgunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
         pPoseStack.popPose()
     }
-
-    /**
-     * Renders a given [Component] onto a [BlockEntityWithoutLevelRenderer]
-     *
-     * @param pComponent The text as a [Component.literal] or [Component.translatable] to be rendered onto the target model.
-     * @param pColor The primary text color as an integer.
-     * @param pBackgroundColor Secondary text color as an integer, applies to the background
-     * @param pFontRenderer Draws the text onto the target model
-     * @param pPoseStack Positions the text onto the target model
-     * @param pBuffer see [MultiBufferSource]
-     *
-     * @see Font.drawInBatch
-     * @author Logan McLean
-     * @since 0.0.1
-     */
-    private fun renderText(
-        pComponent: Component,
-        pColor: Int,
-        pBackgroundColor: Int,
-        pFontRenderer: Font,
-        pPoseStack: PoseStack,
-        pBuffer: MultiBufferSource
-    ) {
-        pFontRenderer.drawInBatch(
-            pComponent,
-            0f,
-            0f,
-            pColor,
-            false,
-            pPoseStack.last().pose(),
-            pBuffer,
-            Font.DisplayMode.NORMAL,
-            pBackgroundColor,
-            SCREEN_TINT
-        )
-    }
-
-
-    private fun drawTextOnScreen(
-        pComponent: Component,
-        pColor: Int,
-        pBackgroundColor: Int,
-        pFontRenderer: Font,
-        pPoseStack: PoseStack,
-        pBuffer: MultiBufferSource,
-        pPosX: Double,
-        pPosY: Double,
-        pPosZ: Double,
-        pScale: Float
-    ) {
-        pPoseStack.pushPose()
-        pPoseStack.translate(pPosX, pPosY, pPosZ)
-        pPoseStack.scale(pScale, pScale, pScale)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-        pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
-        pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
-        renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer)
-        pPoseStack.popPose()
-    }
-
-    /**
-     * @see drawTextOnScreen
-     */
-    private fun drawTextOnScreen(
-        pText: String,
-        pColor: Int,
-        pBackgroundColor: Int,
-        pFontRenderer: Font,
-        pPoseStack: PoseStack,
-        pBuffer: MultiBufferSource,
-        pPosX: Double,
-        pPosY: Double,
-        pPosZ: Double,
-        pScale: Float
-    ) = drawTextOnScreen(
-        Component.literal(pText),
-        pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
-    )
 }

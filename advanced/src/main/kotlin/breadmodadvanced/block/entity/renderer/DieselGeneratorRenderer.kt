@@ -80,9 +80,9 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         val fluidHeight: Float = ((amount / capacity * 0.5f) + 0.37f)
         val builder = pBuffer.getBuffer(ItemBlockRenderTypes.getRenderLayer(fluidState))
 
-//        val fluidCap = pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
-//
-//        println(fluidCap?.allTanks?.get(0)?.fluidAmount?.toFloat())
+        val fluidCap = pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
+
+//        println(fluidCap?.getFluidInTank(0)?.amount?.toFloat())
 
         // Top
         if(amount < capacity) {

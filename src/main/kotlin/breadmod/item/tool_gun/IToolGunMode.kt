@@ -4,6 +4,7 @@ import breadmod.item.tool_gun.render.ToolGunItemRenderer
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.registry.sound.ModSounds
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -57,7 +58,7 @@ interface IToolGunMode {
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    fun render(pGunStack: ItemStack, pPoseStack: PoseStack) {}
+    fun render(pGunStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBufferSource, pPackedLight: Int, pPackedOverlay: Int) {}
 
     companion object {
         fun playToolGunSound(pLevel: Level, at: BlockPos) =

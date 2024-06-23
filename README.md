@@ -85,12 +85,18 @@
   - [ ] Recoil and rapid coil spin animation when tool gun is used
     - [ ] timer-like system for the animations
   - [ ] Improve gui overlay, add mouse and key icons
-  - [ ] turn IToolgunMode into an api
+  - [ ] turn IToolGunMode into an api
   - [ ] Tool gun modes
     - fix up and polish existing modes
     - tool gun displaying mode information and image accompanying said mode
 ### BUGS
   - [ ] items inputted into machines from their sides are voided out of existence
+  - [ ] fluid capability does not show current fluid amount or type
+  - [ ] energy capability does not respect energy limit in container
+  - [ ] capability invalidation occasionally crashes the game
+  - [ ] tool gun stacking up/absorbing clicks when not equipped
+  - [ ] happy block explosion not actually exploding an area
+  - [ ] (gradle specific problem) main mod runClient crashing at mixins
 ---
 - [X] Joke item: "the ultimate bread" just gives you creative mode lmao
 - [X] "Bread amulet" gives you 1 hunger point every 10 seconds
