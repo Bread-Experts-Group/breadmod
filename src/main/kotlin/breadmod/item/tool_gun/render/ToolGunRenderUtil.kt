@@ -11,6 +11,14 @@ import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 
 private const val SCREEN_TINT = 0xFFFFFF
+/**
+ * +X moves text forward on tool gun
+ * -X moves text backward on tool gun
+ *
+ * +Z moves text right on tool gun
+ * -Z moves text left on tool gun
+ */
+
 
 /**
  * Renders a given [Component] onto a [BlockEntityWithoutLevelRenderer]
@@ -32,14 +40,15 @@ fun renderText(
     pBackgroundColor: Int,
     pFontRenderer: Font,
     pPoseStack: PoseStack,
-    pBuffer: MultiBufferSource
+    pBuffer: MultiBufferSource,
+    pDropShadow: Boolean
 ) {
     pFontRenderer.drawInBatch(
         pComponent,
         0f,
         0f,
         pColor,
-        false,
+        pDropShadow,
         pPoseStack.last().pose(),
         pBuffer,
         Font.DisplayMode.NORMAL,
@@ -52,6 +61,7 @@ fun drawTextOnScreen(
     pComponent: Component,
     pColor: Int,
     pBackgroundColor: Int,
+    pDropShadow: Boolean,
     pFontRenderer: Font,
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
@@ -66,7 +76,7 @@ fun drawTextOnScreen(
     pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
     pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
     pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
-    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer)
+    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow)
     pPoseStack.popPose()
 }
 
@@ -77,6 +87,7 @@ fun drawTextOnScreen(
     pText: String,
     pColor: Int,
     pBackgroundColor: Int,
+    pDropShadow: Boolean,
     pFontRenderer: Font,
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
@@ -86,7 +97,7 @@ fun drawTextOnScreen(
     pScale: Float
 ) = drawTextOnScreen(
     Component.literal(pText),
-    pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
+    pColor, pBackgroundColor, pDropShadow, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
 )
 
 //fun drawWrappedTextOnScreen( // Old wrapped text function using FormattedCharSequence, can possibly be repurposed
@@ -135,6 +146,7 @@ fun drawWrappedTextOnScreen(
     pBuffer: MultiBufferSource,
     pColor: Int,
     pBackgroundColor: Int,
+    pDropShadow: Boolean,
     pPosX: Double,
     pPosY: Double,
     pPosZ: Double,
@@ -155,7 +167,7 @@ fun drawWrappedTextOnScreen(
             0f,
             split,
             pColor,
-            false,
+            pDropShadow,
             pPoseStack.last().pose(),
             pBuffer,
             Font.DisplayMode.NORMAL,
@@ -167,5 +179,6 @@ fun drawWrappedTextOnScreen(
     pPoseStack.popPose()
 }
 
+// Font.split() converted to take in a Component instead of a FormattedCharSequence
 fun componentSplit(pText: Component, pMaxWidth: Int, pFont: Font): MutableList<FormattedCharSequence> =
     Language.getInstance().getVisualOrder(pFont.splitter.splitLines(pText, pMaxWidth, Style.EMPTY))

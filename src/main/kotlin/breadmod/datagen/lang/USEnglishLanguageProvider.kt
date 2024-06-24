@@ -208,6 +208,13 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         modAdd("Toolgun: Exploder",
             TOOL_GUN_DEF, "mode", "controls", "category", "explode")
 
+        modAdd("Targeting Fluids:",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid")
+        modAdd("Enabled",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "enabled")
+        modAdd("Disabled",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "disabled")
+
         // Misc
         modAdd("%s left the game",
             "item", TOOL_GUN_DEF, "entity_left_game")

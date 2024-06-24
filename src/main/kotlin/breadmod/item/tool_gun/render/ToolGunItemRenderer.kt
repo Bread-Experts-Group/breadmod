@@ -3,12 +3,12 @@ package breadmod.item.tool_gun.render
 import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
-import breadmod.util.render.TimerTicker
 import breadmod.util.render.renderItemModel
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
+import net.minecraft.client.Timer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.item.ItemDisplayContext
@@ -26,6 +26,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     private companion object {
         val minecraft: Minecraft = Minecraft.getInstance()
         val secureRandom = SecureRandom()
+        private val timer = Timer(20f, 0).partialTick
+        private var angle = 0f
     }
 
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
@@ -40,8 +42,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val toolgunItem = pStack.item as ToolGunItem
-        val toolgunMode = toolgunItem.getCurrentMode(pStack)
+        val toolGunItem = pStack.item as ToolGunItem
+        val toolGunMode = toolGunItem.getCurrentMode(pStack)
 
         val instance = Minecraft.getInstance()
         val renderer = instance.itemRenderer
@@ -51,19 +53,17 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val coilModel = modelManager.getModel(coilModelLocation)
 //        val testModel = modelManager.getModel(testModelLocation)
 
+        val f: Float = 1f + timer
+        if(!instance.isPaused) angle += f; angle %= 360
+        println(angle)
+
         pPoseStack.pushPose()
         // todo smooth rotation after firing toolgun, quickly tapering off. GameRenderer.java@1177 found a function that uses the same posestack calls as this, could be used for smooth anims
 //        // todo recoil and increased coil spin when using tool gun
 
-        val worldTime: Float = TimerTicker.getRenderTime() / 20
-        var angle = worldTime * -25
-        angle %= 360
-//        println(angle)
-
 //        pPoseStack.translate(sin(angle.toDouble() / 30), 0.0, 0.0)
         renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(angle * 5))
-//        pPoseStack.mulPose(Axis.XN.rotationDegrees(ScrollValueHandler.getScroll(AnimationTickHolder.getPartialTicks()))) // todo HOW IS CREATE'S TICKER SO SMOOTH??
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(angle))
         renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
 //        pPoseStack.mulPose(Axis.YN.rotationDegrees(angle * 30))
 //        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
@@ -79,17 +79,17 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //        )
 
         drawTextOnScreen(
-            (toolgunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
-            Color.WHITE.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+            (toolGunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
+            Color.WHITE.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
             0.923, 0.065, -0.038, 0.0007f
         )
 
-        drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, fontRenderer, pPoseStack, pBuffer,
+        drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
             0.9, 0.0175, -0.040, 0.0007f
         )
 
         pPoseStack.pushPose()
-        toolgunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+        toolGunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
         pPoseStack.popPose()
     }
 }

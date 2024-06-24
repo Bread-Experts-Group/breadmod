@@ -36,6 +36,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         val doorModel = instance.modelManager.getModel(doorModelLocation)
         val blockRotation = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
 
+        // Door Rendering
         pPoseStack.pushPose()
         when(blockRotation) { // TODO Set up rotations and translations for door, upgrade cards, and fluid, set up functions for transforming separate models
             Direction.NORTH -> {
@@ -64,9 +65,9 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             }
             else -> println("facing.. nowhere??")
         }
-//        pPoseStack.rotateAround(blockRotation, 0.0f, 0.0f, 0.0f)
-
         renderBlockModel(pPoseStack, pBuffer, pBlockEntity, doorModel, pPackedLight, pPackedOverlay)
+
+        // Fluid Tank Rendering
         pPoseStack.popPose()
         val amount = 6000f
         val capacity = 8000f
@@ -87,9 +88,26 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         // Top
         if(amount < capacity) {
             pPoseStack.pushPose()
-            drawQuad(builder, pPoseStack, 0.02f, fluidHeight, 0.02f, 0.75f, fluidHeight, 0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+            rotateModel(blockRotation, pPoseStack) // Rotate on East and West axis
+            drawQuad(builder, pPoseStack, 0.02f, fluidHeight, 0.27f, 1f, fluidHeight, 0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
             pPoseStack.popPose()
         }
+
+        // West
+        pPoseStack.pushPose()
+        rotateModel(blockRotation, pPoseStack)
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(90f))
+        pPoseStack.translate(-1f, 0f, 0f)
+        drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.02f, 0.75f, fluidHeight, 0.02f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+        pPoseStack.popPose()
+
+        // East
+        pPoseStack.pushPose()
+        rotateModel(blockRotation, pPoseStack)
+        pPoseStack.mulPose(Axis.YP.rotationDegrees(-90f))
+        pPoseStack.translate(0f, 0f, -1f)
+        drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.02f, 0.75f, fluidHeight, 0.02f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+        pPoseStack.popPose()
 
         // North
 //        pPoseStack.pushPose()
@@ -103,21 +121,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
 //        drawQuad(builder, pPoseStack, 0.25f, 0f, -0.75f, 0.75f, fluidHeight, -0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
 //        pPoseStack.popPose()
 
-        // West
-        pPoseStack.pushPose()
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(90f))
-        pPoseStack.translate(-1f, 0f, 0f)
-        drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.02f, 0.75f, fluidHeight, 0.02f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
-        pPoseStack.popPose()
-
-        // East
-        pPoseStack.pushPose()
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(-90f))
-        pPoseStack.translate(0f, 0f, -1f)
-        drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.02f, 0.75f, fluidHeight, 0.02f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
-        pPoseStack.popPose()
-
-        /* old code block
+        /* old code block todo [REPLACE CODE ABOVE WITH BITS OF THIS AFTER CAPABILITY PROBLEM IS FIXED]
                 pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let { // todo figure out why this isn't returning any fluid or amount at all
             it.allTanks[0].let { tank ->
 //                println(tank.space)
@@ -156,5 +160,12 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
                 drawQuad(builder, pPoseStack, 0.25f, 0f, 0.25f, 0.75f, fluidHeight, 0.25f, fluidSprite.u0, fluidSprite.v0, fluidSprite.v0, fluidSprite.v1, pPackedLight, fluidTint)
                 pPoseStack.popPose()
          */
+    }
+
+    private fun rotateModel(pBlockRotation: Direction, pPoseStack: PoseStack) {
+        if(pBlockRotation == Direction.WEST || pBlockRotation == Direction.EAST) {
+            pPoseStack.mulPose(Axis.YN.rotationDegrees(90f))
+            pPoseStack.translate(0f, 0f, -1f)
+        }
     }
 }

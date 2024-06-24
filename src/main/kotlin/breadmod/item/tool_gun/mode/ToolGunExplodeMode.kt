@@ -5,6 +5,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
+import breadmod.item.tool_gun.render.drawTextOnScreen
 import breadmod.item.tool_gun.render.drawWrappedTextOnScreen
 import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
@@ -73,12 +74,39 @@ internal class ToolGunExplodeMode: IToolGunMode {
             modTranslatable("tool_gun", "mode", "explode", "hit_fluid"),
             pPoseStack,
             pBuffer,
-
             Color.BLACK.rgb,
             Color(0,0,0,0).rgb,
-            0.923, 0.058, -0.0363,
+            false,
+            0.925, 0.0635, -0.036,
             10f, 0.0007f, 100
         )
+        if(hitFluid) {
+            drawTextOnScreen(
+                modTranslatable("tool_gun", "mode", "explode", "hit_fluid", "enabled"),
+                Color(35,189,0,255).rgb,
+                Color(0,0,0,0).rgb,
+                false,
+                fontRenderer,
+                pPoseStack,
+                pBuffer,
+                0.92, 0.052, -0.036,
+                0.0007f
+            )
+        } else {
+            drawTextOnScreen(
+                modTranslatable("tool_gun", "mode", "explode", "hit_fluid", "disabled"),
+                Color.RED.rgb,
+                Color(0,0,0,0).rgb,
+                false,
+                fontRenderer,
+                pPoseStack,
+                pBuffer,
+                0.92, 0.052, -0.036,
+                0.0007f
+            )
+        }
+        // render current hit fluid toggle
+//        drawTextOnScreen()
         super.render(pGunStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
     }
 }
