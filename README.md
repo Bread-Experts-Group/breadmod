@@ -89,8 +89,9 @@
   - [ ] Tool gun modes
     - fix up and polish existing modes
     - tool gun displaying mode information and image accompanying said mode
-### BUGS
+# BUGS
   - [ ] items inputted into machines from their sides are voided out of existence
+  - [ ] (minor) tool gun anim speeds up when you have multiple tool guns at once
   - [ ] fluid capability does not show current fluid amount or type
   - [ ] energy capability does not respect energy limit in container
   - [ ] capability invalidation occasionally crashes the game

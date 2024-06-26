@@ -105,8 +105,6 @@ internal class ToolGunExplodeMode: IToolGunMode {
                 0.0007f
             )
         }
-        // render current hit fluid toggle
-//        drawTextOnScreen()
         super.render(pGunStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
     }
 }

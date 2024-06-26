@@ -41,10 +41,16 @@ allprojects {
         File atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
         if(atFile.canRead()) { accessTransformer = atFile }
 
+        // REQUIRED for processResources to work in dev
+        copyIdeResources = true
+
         runs {
-            // REQUIRED for processResources to work in dev
-            //noinspection GroovyAssignabilityCheck
-            copyIdeResources = true
+
+//            configureEach {
+//                property 'mixin.env.remapRefMap', 'true'
+//                property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+//            }
+            // External mods crashing using mixins cause they're (create specifically) using official mappings, and we're using parchment mappings
 
             client {
                 workingDirectory file("run")
@@ -55,8 +61,6 @@ allprojects {
                 property 'forge.enabledGameTestNamespaces', thisModId
                 property 'forge.logging.markers', 'REGISTRIES'
                 property 'forge.logging.console.level', minimumLevel
-                property 'mixin.env.remapRefMap', 'true'
-                property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
                 File mixinFile = file("src/main/resources/${thisModId}.mixin.json")
                 if(mixinFile.canRead()) { arg "-mixin.config=${thisModId}.mixin.json" }

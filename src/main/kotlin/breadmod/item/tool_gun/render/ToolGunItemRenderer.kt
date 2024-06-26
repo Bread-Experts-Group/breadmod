@@ -26,7 +26,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     private companion object {
         val minecraft: Minecraft = Minecraft.getInstance()
         val secureRandom = SecureRandom()
-        private val timer = Timer(20f, 0).partialTick
+        private val timer = Timer(20f, 0).partialTick // todo replace with what create uses since this has odd behaviour
         private var angle = 0f
     }
 
