@@ -17,6 +17,7 @@ try {
     System.out.println("Cannot get env variable 'MOD_VERSION', falling back to gradle.properties")
     buildVersion = mod_version
 }
+String minimumLevel = "INFO"
 mod_version = buildVersion
 version = buildVersion
 group = mod_group_id
@@ -29,11 +30,15 @@ minecraft {
         client {}
         data {
             getArgs().clear()
+            workingDirectory file("advanced/run")
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', minimumLevel
 //            println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
             args = List.of(
                     '--mod', thisModId,
-                    '--all', '--output', "/home/logan/IdeaProjects/breadmod/advanced/src/generated/resources/",
-                    '--existing', "/home/logan/IdeaProjects/breadmod/advanced/src/main/resources/"
+                    '--all', '--output', file('src/generated/resources/'),
+                    '--existing', file('src/main/resources')
             )
 //            println(args)
         }

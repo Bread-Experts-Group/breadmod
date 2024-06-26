@@ -46,21 +46,22 @@ allprojects {
 
         runs {
 
-//            configureEach {
+            configureEach {
 //                property 'mixin.env.remapRefMap', 'true'
 //                property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-//            }
+                property 'forge.logging.markers', 'REGISTRIES'
+                property 'forge.logging.console.level', minimumLevel
+            }
             // External mods crashing using mixins cause they're (create specifically) using official mappings, and we're using parchment mappings
 
-            client {
+            client { // todo figure out how to separate the run folder attaching to the sub projects, reinclude virtualmachine after fixing
+                getArgs().clear()
                 workingDirectory file("run")
 
 //                args '--username', 'PizzaTime65', '--uuid', '30cdf636-82ed-47ee-9a9c-4d820c0d76a9'
 //                args '--username', 'Meownium', '--uuid', '34e8274a-c02c-4c32-9311-2bccc9f6ba7d'
 
                 property 'forge.enabledGameTestNamespaces', thisModId
-                property 'forge.logging.markers', 'REGISTRIES'
-                property 'forge.logging.console.level', minimumLevel
 
                 File mixinFile = file("src/main/resources/${thisModId}.mixin.json")
                 if(mixinFile.canRead()) { arg "-mixin.config=${thisModId}.mixin.json" }
@@ -74,9 +75,6 @@ allprojects {
 
             server {
                 workingDirectory file('run/server')
-
-                property 'forge.logging.markers', 'REGISTRIES'
-                property 'forge.logging.console.level', minimumLevel
                 property 'forge.enabledGameTestNamespaces', thisModId
 
                 mods {
@@ -88,9 +86,6 @@ allprojects {
 
             gameTestServer {
                 workingDirectory file('run/server')
-
-                property 'forge.logging.markers', 'REGISTRIES'
-                property 'forge.logging.console.level', minimumLevel
                 property 'forge.enabledGameTestNamespaces', thisModId
 
                 mods {
@@ -101,17 +96,16 @@ allprojects {
             }
 
             data {
-                workingDirectory file('run')
+                getArgs().clear()
+                workingDirectory file("run")
 
                 property 'forge.logging.markers', 'REGISTRIES'
                 property 'forge.logging.console.level', minimumLevel
-
-                getArgs().clear() // Prevents stacking args whenever going thru the projects
 //                println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
                 args = List.of(
                         '--mod', thisModId,
-                        '--all', '--output', "/home/logan/IdeaProjects/breadmod/src/generated/resources/",
-                        '--existing', "/home/logan/IdeaProjects/breadmod/src/main/resources/"
+                        '--all', '--output', file('src/generated/resources/'),
+                        '--existing', file('src/main/resources')
                 )
 //                println(args)
                 mods {

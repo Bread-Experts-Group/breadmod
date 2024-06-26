@@ -15,4 +15,6 @@ plugins {
 }
 
 rootProject.name = 'breadmod'
-include 'virtualmachine', 'advanced'
+//include 'virtualmachine', 'advanced'
+include 'advanced'
+// todo temporary until main mod stops putting the run folder inside of virtualmachine
