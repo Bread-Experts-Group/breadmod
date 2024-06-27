@@ -7,6 +7,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_NAMESPACE_TAG
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
@@ -58,6 +59,8 @@ class ToolGunOverlay: IGuiOverlay {
         // Icon renders
         pGuiGraphics.blit(overlayTexture, pX + 1, pY + 33, 0, 41, 8, 8)
 
+        // start rendering key (with the key letter on them) and mouse icons, fix positioning on description and controls, set up 9 sliced key texture for wider keys
+
         // Action source
         drawScaledText(Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
             pPose, pGuiGraphics, pGui, pX + 2, pY + 2, 0.8f, true
@@ -72,19 +75,37 @@ class ToolGunOverlay: IGuiOverlay {
         drawScaledText((pMode?.tooltip?.copy() ?: modTranslatable(TOOL_GUN_DEF, "broken_tooltip")), pPose, pGuiGraphics, pGui,
             pX + 13, pY + 43, 0.4f, true
         )
-        // Keybinds
+        // KeyBinds
         pMode?.keyBinds?.forEachIndexed { index, control ->
-            val moved = ((index+1) * 9) + 3
+            val moved = ((index+1) * 12) + 2
             drawScaledText(
                 toolGunBindList[control]!!.translatedKeyMessage.copy()
                     .withStyle { it.withColor(ChatFormatting.GOLD).withItalic(true) }
                     .append(control.toolGunComponent.copy().withStyle(ChatFormatting.WHITE)),
                 pPose, pGuiGraphics, pGui,
-                pX + 43, pY + 43 + moved, 1f, true
+                pX + 10, pY + 43 + moved, 1f, true
             )
+//            toolGunBindList[control]?.key = InputConstants.getKey("key.mouse.right")
+            when(toolGunBindList[control]?.key) {
+                getInput("key.mouse.right") -> {
+                    pPose.pushPose()
+                    pPose.scaleFlat(0.68f)
+                    pGuiGraphics.blit(overlayTexture, pX , pY + 69 + moved, 240, 63, 16, 16)
+                    pPose.popPose()
+                }
+                getInput("key.mouse.middle") -> {
+                    pPose.pushPose()
+                    pPose.scaleFlat(0.68f)
+                    pGuiGraphics.blit(overlayTexture, pX , pY + 73 + moved, 240, 47, 16, 16)
+                    pPose.popPose()
+                }
+            }
         }
         pPose.popPose()
     }
+
+    private fun getInput(input: String) = InputConstants.getKey(input)
+
 
     private fun drawScaledText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScale: Float, pDropShadow: Boolean) {
         pPose.scaleFlat(pScale)

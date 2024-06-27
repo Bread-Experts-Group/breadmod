@@ -55,7 +55,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
         val f: Float = 1f + timer
         if(!instance.isPaused) angle += f; angle %= 360
-        println(angle)
+//        println(angle)
 
         pPoseStack.pushPose()
         // todo smooth rotation after firing toolgun, quickly tapering off. GameRenderer.java@1177 found a function that uses the same posestack calls as this, could be used for smooth anims
