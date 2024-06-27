@@ -1,3 +1,4 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'idea'
     id 'maven-publish'
@@ -27,13 +28,28 @@ String thisModId = getProperty("mod_id")
 minecraft {
     mappings channel: mapping_channel_parchment, version: mapping_version_parchment
     runs {
-        client {}
-        data {
-            getArgs().clear()
-            workingDirectory file("advanced/run")
-
+        configureEach {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', minimumLevel
+
+            mods {
+                "$mod_id" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            workingDirectory file("run")
+
+            property 'forge.enabledGameTestNamespaces', thisModId
+
+            File mixinFile = file("src/main/resources/${thisModId}.mixin.json")
+            if(mixinFile.canRead()) { arg "-mixin.config=${thisModId}.mixin.json" }
+        }
+        data {
+            workingDirectory file("run")
+
 //            println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
             args = List.of(
                     '--mod', thisModId,

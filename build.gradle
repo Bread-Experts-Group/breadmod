@@ -30,95 +30,11 @@ mod_version = buildVersion
 version = buildVersion
 group = mod_group_id
 base { archivesName = mod_id }
+String thisModId = getProperty("mod_id")
 
 allprojects {
-    String thisModId = getProperty("mod_id")
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
     compileKotlin { kotlinOptions.jvmTarget = "17" }
-
-    minecraft {
-        mappings channel: mapping_channel_parchment, version: mapping_version_parchment
-        File atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
-        if(atFile.canRead()) { accessTransformer = atFile }
-
-        // REQUIRED for processResources to work in dev
-        copyIdeResources = true
-
-        runs {
-
-            configureEach {
-//                property 'mixin.env.remapRefMap', 'true'
-//                property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-                property 'forge.logging.markers', 'REGISTRIES'
-                property 'forge.logging.console.level', minimumLevel
-            }
-            // External mods crashing using mixins cause they're (create specifically) using official mappings, and we're using parchment mappings
-
-            client { // todo figure out how to separate the run folder attaching to the sub projects, reinclude virtualmachine after fixing
-                getArgs().clear()
-                workingDirectory file("run")
-
-//                args '--username', 'PizzaTime65', '--uuid', '30cdf636-82ed-47ee-9a9c-4d820c0d76a9'
-//                args '--username', 'Meownium', '--uuid', '34e8274a-c02c-4c32-9311-2bccc9f6ba7d'
-
-                property 'forge.enabledGameTestNamespaces', thisModId
-
-                File mixinFile = file("src/main/resources/${thisModId}.mixin.json")
-                if(mixinFile.canRead()) { arg "-mixin.config=${thisModId}.mixin.json" }
-
-                mods {
-                    "$mod_id" {
-                        source sourceSets.main
-                    }
-                }
-            }
-
-            server {
-                workingDirectory file('run/server')
-                property 'forge.enabledGameTestNamespaces', thisModId
-
-                mods {
-                    "$mod_id" {
-                        source sourceSets.main
-                    }
-                }
-            }
-
-            gameTestServer {
-                workingDirectory file('run/server')
-                property 'forge.enabledGameTestNamespaces', thisModId
-
-                mods {
-                    "$mod_id" {
-                        source sourceSets.main
-                    }
-                }
-            }
-
-            data {
-                getArgs().clear()
-                workingDirectory file("run")
-
-                property 'forge.logging.markers', 'REGISTRIES'
-                property 'forge.logging.console.level', minimumLevel
-//                println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
-                args = List.of(
-                        '--mod', thisModId,
-                        '--all', '--output', file('src/generated/resources/'),
-                        '--existing', file('src/main/resources')
-                )
-//                println(args)
-                mods {
-                    "$mod_id" {
-                        source sourceSets.main
-                    }
-                }
-            }
-        }
-    }
-
-    // Include assets and data from data generators
-    sourceSets.main.resources { srcDirs 'src/generated/resources/' }
 
     repositories {
         maven {
@@ -193,6 +109,73 @@ allprojects {
         }
     }
 }
+
+minecraft {
+    mappings channel: mapping_channel_parchment, version: mapping_version_parchment
+    File atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
+    if(atFile.canRead()) { accessTransformer = atFile }
+
+    // REQUIRED for processResources to work in dev
+    copyIdeResources = true
+
+    runs {
+
+        configureEach {
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', minimumLevel
+
+            mods {
+                "$mod_id" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            workingDirectory file("run")
+
+//            args '--username', 'PizzaTime65', '--uuid', '30cdf636-82ed-47ee-9a9c-4d820c0d76a9'
+//            args '--username', 'Meownium', '--uuid', '34e8274a-c02c-4c32-9311-2bccc9f6ba7d'
+
+//            property 'mixin.env.remapRefMap', 'true'
+//            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+            // External mods crashing using mixins cause they're (create specifically) using official mappings, and we're using parchment mappings
+            // mixins also don't initialize at all for some reason
+
+            property 'forge.enabledGameTestNamespaces', thisModId
+
+            File mixinFile = file("src/main/resources/${thisModId}.mixin.json")
+            if(mixinFile.canRead()) { arg "-mixin.config=${thisModId}.mixin.json" }
+        }
+
+        server {
+            workingDirectory file('run/server')
+            property 'forge.enabledGameTestNamespaces', thisModId
+        }
+
+        gameTestServer {
+            workingDirectory file('run/server')
+            property 'forge.enabledGameTestNamespaces', thisModId
+        }
+
+        data {
+            workingDirectory file("run")
+
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', minimumLevel
+//                println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
+            args = List.of(
+                    '--mod', thisModId,
+                    '--all', '--output', file('src/generated/resources/'),
+                    '--existing', file('src/main/resources')
+            )
+//                println(args)
+        }
+    }
+}
+
+// Include assets and data from data generators
+sourceSets.main.resources { srcDirs 'src/generated/resources/' }
 
 dependencies {
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
