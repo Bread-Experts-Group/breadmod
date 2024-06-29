@@ -98,6 +98,8 @@
   - [ ] tool gun stacking up/absorbing clicks when not equipped
   - [ ] happy block explosion not actually exploding an area
   - [ ] (gradle specific problem) main mod runClient crashing at mixins
+  - [ ] (Production specific) Tool gun action not triggering
+  - [ ] BMExplosion causing crash
 ---
 - [X] Joke item: "the ultimate bread" just gives you creative mode lmao
 - [X] "Bread amulet" gives you 1 hunger point every 10 seconds
