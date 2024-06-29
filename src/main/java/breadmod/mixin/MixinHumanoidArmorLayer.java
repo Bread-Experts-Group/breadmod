@@ -28,7 +28,7 @@ abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends Humanoi
         super(pRenderer);
     }
 
-    @Invoker(value = "setPartVisibility", remap = false)
+    @Invoker(value = "setPartVisibility")
     abstract void iSetPartVisibility(A pModel, EquipmentSlot pSlot);
     @Invoker(value = "getArmorModelHook", remap = false)
     abstract Model iGetArmorModelHook(T entity, ItemStack itemStack, EquipmentSlot slot, A model);
@@ -38,10 +38,10 @@ abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends Humanoi
     abstract void iRenderModel(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, ArmorItem pArmorItem, Model pModel, boolean pWithGlint, float pRed, float pGreen, float pBlue, ResourceLocation armorResource);
     @Invoker(value = "getArmorResource", remap = false)
     abstract ResourceLocation iGetArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type);
-    @Invoker(value = "usesInnerModel", remap = false)
+    @Invoker(value = "usesInnerModel")
     abstract boolean iUsesInnerModel(EquipmentSlot pSlot);
 
-    @Inject(method = "renderArmorPiece", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "renderArmorPiece", at = @At("HEAD"), cancellable = true)
     private void renderArmorPiece(PoseStack pPoseStack, MultiBufferSource pBuffer, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo callbackInfo) {
         ItemStack itemStack = pLivingEntity.getItemBySlot(pSlot);
         Item item = itemStack.getItem();
