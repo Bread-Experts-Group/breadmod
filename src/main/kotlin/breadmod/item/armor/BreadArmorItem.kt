@@ -74,5 +74,6 @@ open class BreadArmorItem(type: Type): ArmorItem(ArmorTiers.BREAD, type, Propert
         val decayChance = COMMON.DECAY_CHANCE_PER_TICK
 
         private val decimalFormat = DecimalFormat("0.#")
+        val BREAD_COLOR = Color(216, 196, 170)
     }
 }
