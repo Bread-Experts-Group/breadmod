@@ -41,7 +41,7 @@ abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends Humanoi
     @Invoker("usesInnerModel")
     abstract boolean iUsesInnerModel(EquipmentSlot pSlot);
 
-    @Inject(method = "renderArmorPiece", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "renderArmorPiece", at = @At("HEAD"), cancellable = true, remap = false)
     private void renderArmorPiece(PoseStack pPoseStack, MultiBufferSource pBuffer, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo callbackInfo) {
         ItemStack itemStack = pLivingEntity.getItemBySlot(pSlot);
         Item item = itemStack.getItem();
