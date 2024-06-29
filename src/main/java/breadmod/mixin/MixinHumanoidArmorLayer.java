@@ -28,17 +28,17 @@ abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends Humanoi
         super(pRenderer);
     }
 
-    @Invoker("setPartVisibility")
+    @Invoker(value = "setPartVisibility", remap = false)
     abstract void iSetPartVisibility(A pModel, EquipmentSlot pSlot);
-    @Invoker("getArmorModelHook")
+    @Invoker(value = "getArmorModelHook", remap = false)
     abstract Model iGetArmorModelHook(T entity, ItemStack itemStack, EquipmentSlot slot, A model);
-    @Invoker("renderGlint")
+    @Invoker(value = "renderGlint", remap = false)
     abstract void iRenderGlint(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, Model pModel);
-    @Invoker("renderModel")
+    @Invoker(value = "renderModel", remap = false)
     abstract void iRenderModel(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, ArmorItem pArmorItem, Model pModel, boolean pWithGlint, float pRed, float pGreen, float pBlue, ResourceLocation armorResource);
-    @Invoker("getArmorResource")
+    @Invoker(value = "getArmorResource", remap = false)
     abstract ResourceLocation iGetArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type);
-    @Invoker("usesInnerModel")
+    @Invoker(value = "usesInnerModel", remap = false)
     abstract boolean iUsesInnerModel(EquipmentSlot pSlot);
 
     @Inject(method = "renderArmorPiece", at = @At("HEAD"), cancellable = true, remap = false)
