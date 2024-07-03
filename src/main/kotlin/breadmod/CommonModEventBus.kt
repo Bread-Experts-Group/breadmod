@@ -48,7 +48,7 @@ object CommonModEventBus {
         generator.addProvider(true, ModTexturePlaneProvider(packOutput))
 
         if(event.includeServer()) {
-            LOGGER.info("Server datagen")
+            LOGGER.info("Server data-gen")
             generator.addProvider(true, constructLootProvider(ModBlocks.ModBlockLoot(), packOutput))
             generator.addProvider(true, ModRecipeProvider(packOutput))
             generator.addProvider(true, ModEMCProvider(packOutput, lookupProvider))
@@ -77,11 +77,11 @@ object CommonModEventBus {
             )
         }
         if(event.includeClient()) {
-            LOGGER.info("Client datagen")
-            generator.addProvider(true, USEnglishLanguageProvider(packOutput, ModMain.ID, "en_us"))
-            generator.addProvider(true, ModBlockStateProvider(packOutput, ModMain.ID, existingFileHelper))
-            generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, ModMain.ID, existingFileHelper))
-            generator.addProvider(true, ModItemModelProvider(packOutput, ModMain.ID, existingFileHelper))
+            LOGGER.info("Client data-gen")
+            generator.addProvider(true, USEnglishLanguageProvider(packOutput, "en_us"))
+            generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))
+            generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, existingFileHelper))
+            generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
         }
     }
 

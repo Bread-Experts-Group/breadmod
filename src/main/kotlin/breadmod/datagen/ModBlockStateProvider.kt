@@ -1,25 +1,29 @@
 package breadmod.datagen
 
-import breadmod.registry.block.ModBlocks
+import breadmod.ModMain
 import breadmod.block.specialItem.OreBlock
+import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.ButtonBlock
 import net.minecraft.world.level.block.DoorBlock
 import net.minecraft.world.level.block.FenceBlock
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.AttachFace
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.model.generators.BlockStateProvider
 import net.minecraftforge.client.model.generators.ConfiguredModel
+import net.minecraftforge.client.model.generators.ModelFile
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
+@Suppress("SpellCheckingInspection")
 class ModBlockStateProvider(
-    output: PackOutput,
-    modID: String,
-    exFileHelper: ExistingFileHelper,
-) : BlockStateProvider(output, modID, exFileHelper) {
+    packOutput: PackOutput,
+    private val existingFileHelper: ExistingFileHelper
+) : BlockStateProvider(packOutput, ModMain.ID, existingFileHelper) {
     override fun registerStatesAndModels() {
         blockWithItem(ModBlocks.BREAD_BLOCK.get().block)
         blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK.get().block)
@@ -87,6 +91,16 @@ class ModBlockStateProvider(
         simpleBlockItem(
             ModBlocks.WHEAT_CRUSHER_BLOCK.get().block,
             models().getBuilder("breadmod:block/wheat_crusher")
+        )
+
+        // Hell Naw button
+        val button = ModBlocks.HELL_NAW.get().block as ButtonBlock
+        val buttonModel = ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/hell_naw"), existingFileHelper)
+        val buttonPressedModel = ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/hell_naw_pressed"), existingFileHelper)
+        modButtonBlock(button, buttonModel, buttonPressedModel)
+        simpleBlockItem(
+            ModBlocks.HELL_NAW.get().block,
+            models().getBuilder("breadmod:block/hell_naw")
         )
 
         // Farmer Multiblock
@@ -233,5 +247,19 @@ class ModBlockStateProvider(
 
     private fun blockWithItem(blockRegistryObject: Block) {
         simpleBlockWithItem(blockRegistryObject, cubeAll(blockRegistryObject))
+    }
+
+    // Literally the vanilla button builder without the uv lock, cause the hell naw button's texture breaks with it
+    private fun modButtonBlock(block: ButtonBlock, button: ModelFile, buttonPressed: ModelFile) {
+        getVariantBuilder(block).forAllStates { state: BlockState ->
+            val facing = state.getValue(ButtonBlock.FACING)
+            val face = state.getValue(ButtonBlock.FACE)
+            val powered = state.getValue(ButtonBlock.POWERED)
+            ConfiguredModel.builder()
+                .modelFile(if(powered) buttonPressed else button)
+                .rotationX(if(face == AttachFace.FLOOR) 0 else if(face == AttachFace.WALL) 90 else 180)
+                .rotationY((if(face == AttachFace.CEILING) facing else facing.opposite).toYRot().toInt())
+                .build()
+        }
     }
 }

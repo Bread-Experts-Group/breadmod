@@ -8,11 +8,11 @@ import net.minecraft.data.PackOutput
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.common.data.SoundDefinitionsProvider
 
+@Suppress("SpellCheckingInspection")
 class ModSoundDefinitionsProvider(
-    output: PackOutput,
-    id: String,
-    helper: ExistingFileHelper
-) : SoundDefinitionsProvider(output, id, helper) {
+    packOutput: PackOutput,
+    existingFileHelper: ExistingFileHelper
+) : SoundDefinitionsProvider(packOutput, ModMain.ID, existingFileHelper) {
     override fun registerSounds() { // Adds each entry to sounds.json
         this.add(
             ModSounds.TEST_SOUND, definition()
@@ -49,6 +49,11 @@ class ModSoundDefinitionsProvider(
             ModSounds.MINIGUN, definition()
                 .subtitle("sound.${ModMain.ID}.minigun")
                 .with(sound(modLocation("minigun")).volume(1f))
+        )
+        this.add(
+            ModSounds.HELL_NAW, definition()
+                .subtitle("sound.${ModMain.ID}.hell_naw")
+                .with(sound(modLocation("hell_naw")).volume(1f))
         )
     }
 }

@@ -16,7 +16,11 @@ import net.minecraftforge.common.data.LanguageProvider
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.registries.RegistryObject
 
-class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: String) : LanguageProvider(output, modID, locale) {
+@Suppress("SpellCheckingInspection")
+class USEnglishLanguageProvider(
+    packOutput: PackOutput,
+    locale: String
+) : LanguageProvider(packOutput, ModMain.ID, locale) {
     private fun String.joinUnderscoreWithCaps() =
         this.split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
 
@@ -90,6 +94,8 @@ class USEnglishLanguageProvider(output: PackOutput, modID: String, locale: Strin
         add(ModBlocks.FARMER_OUTPUT_BLOCK, "Farmer Output")
         add(ModBlocks.GENERIC_POWER_INTERFACE)
         ////
+        modAdd("Hell Naw Button",
+            "block", "hell_naw")
         modAdd(
             "Feeds %s every %s",
             "item", "bread_amulet", "description"

@@ -1,9 +1,9 @@
-# The Bread Mod <s>1.20.1</s> soon to be 1.21 Port (the breadening)
+# The Bread Mod (ultimate bread edition)
 ## Priority todos
-  - [ ] Port mod to 1.21 when KFF is released for that version
-  - [ ] Set up secondary mod for Bread Mod Advanced
+  - [ ] <s>Port mod to 1.21</s> (postponed until further notice)
+    - remove mixin for dye able armor layers and items and replace with built-in methods
+  - [X] Set up secondary mod for Bread Mod Advanced
   - [ ] Document functions and code to make it more understandable
-  - [ ] (1.21 todo) remove mixin for dye able armor layers and items and replace with built-in methods
 ## Standard, Base Mod
 - [X] Bread Armor
   - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches

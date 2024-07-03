@@ -1,5 +1,6 @@
 package breadmod.datagen
 
+import breadmod.ModMain
 import breadmod.ModMain.modLocation
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
@@ -13,8 +14,10 @@ import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.registries.RegistryObject
 
 @Suppress("SpellCheckingInspection")
-class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper: ExistingFileHelper) :
-    ItemModelProvider(output, modid, existingFileHelper) {
+class ModItemModelProvider(
+    packOutput: PackOutput,
+    existingFileHelper: ExistingFileHelper
+) : ItemModelProvider(packOutput, ModMain.ID, existingFileHelper) {
     override fun registerModels() {
         singleItem(ModItems.TEST_DISC)
         singleItem(ModItems.TEST_BREAD)
@@ -47,11 +50,11 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         ModItems.PROJECT_E?.also {
             singleItem(it.BREAD_ORB_ITEM)
         }
-        multiTexture("breadmod:bread_boots", mcLoc("item/generated"), "layer0", modLoc("item/bread_boots"), "layer1", modLoc("item/bread_boots_overlay"))
-        multiTexture("breadmod:bread_leggings", mcLoc("item/generated"), "layer0", modLoc("item/bread_leggings"), "layer1", modLoc("item/bread_leggings_overlay"))
-        multiTexture("breadmod:bread_chestplate", mcLoc("item/generated"), "layer0", modLoc("item/bread_chestplate"), "layer1", modLoc("item/bread_chestplate_overlay"))
-        multiTexture("breadmod:bread_helmet", mcLoc("item/generated"), "layer0", modLoc("item/bread_helmet"), "layer1", modLoc("item/bread_helmet_overlay"))
-        multiTexture("breadmod:doped_bread", mcLoc("item/generated"), "layer0", modLoc("item/doped_bread"), "layer1", modLoc("item/doped_bread_overlay"))
+        multiLayeredTexture("breadmod:bread_boots", mcLoc("item/generated"), modLoc("item/bread_boots"), modLoc("item/bread_boots_overlay"))
+        multiLayeredTexture("breadmod:bread_leggings", mcLoc("item/generated"), modLoc("item/bread_leggings"), modLoc("item/bread_leggings_overlay"))
+        multiLayeredTexture("breadmod:bread_chestplate", mcLoc("item/generated"), modLoc("item/bread_chestplate"), modLoc("item/bread_chestplate_overlay"))
+        multiLayeredTexture("breadmod:bread_helmet", mcLoc("item/generated"), modLoc("item/bread_helmet"), modLoc("item/bread_helmet_overlay"))
+        multiLayeredTexture("breadmod:doped_bread", mcLoc("item/generated"), modLoc("item/doped_bread"), modLoc("item/doped_bread_overlay"))
     }
 
     private fun <T: Item> singleItem(item: RegistryObject<T>) {
@@ -74,16 +77,14 @@ class ModItemModelProvider(output: PackOutput, modid: String, existingFileHelper
         )
     }
 
-    private fun multiTexture(
+    private fun multiLayeredTexture(
         name: String,
         parent: ResourceLocation,
-        textureKey: String,
         texture: ResourceLocation,
-        textureKey2: String,
-        texture2: ResourceLocation)
-    {
+        texture2: ResourceLocation
+    ) {
         withExistingParent(name, parent)
-            .texture(textureKey, texture)
-            .texture(textureKey2, texture2)
+            .texture("layer0", texture)
+            .texture("layer1", texture2)
     }
 }
