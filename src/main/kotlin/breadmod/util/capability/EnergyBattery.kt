@@ -15,8 +15,9 @@ class EnergyBattery(
         set(value) { stored = min(stored, value); field = value }
 
     override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = if(bMaxReceive > 0) {
+        val toReceive = min(maxReceive, bMaxReceive)
         val newStore = stored + min(maxReceive, bMaxReceive)
-        val delta = if(newStore > capacity) capacity - newStore else maxReceive
+        val delta = if(newStore > capacity) min(capacity - stored, newStore) else toReceive
         if(!simulate && delta != 0) {
             stored += delta
             changed?.invoke()
