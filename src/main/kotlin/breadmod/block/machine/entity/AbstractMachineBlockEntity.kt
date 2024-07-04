@@ -94,6 +94,8 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             protected set
         var progress = 0
             protected set
+        var maxProgress = 0
+            protected set
 
         open fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) {
             preTick(pLevel, pPos, pState, pBlockEntity)
@@ -116,14 +118,14 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         final override fun adjustSaveAdditional(pTag: CompoundTag) {
             adjustSaveAdditionalProgressive(pTag)
 //            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) } // todo figure out why progress isn't syncing to the client
-            pTag.putInt(PROGRESS_KEY, progress)
+            pTag.putInt(PROGRESS_KEY, progress); pTag.putInt(MAX_PROGRESS_KEY, maxProgress)
         }
 
         open fun adjustLoadProgressive(pTag: CompoundTag) {}
         final override fun adjustLoad(pTag: CompoundTag) {
             adjustLoadProgressive(pTag)
 //            currentRecipe.ifPresent { progress = pTag.getInt(PROGRESS_KEY) } // TODO RVW
-            progress = pTag.getInt(PROGRESS_KEY)
+            progress = pTag.getInt(PROGRESS_KEY); maxProgress = pTag.getInt(MAX_PROGRESS_KEY)
         }
 
         open fun noRecipeTick (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) {}
@@ -175,6 +177,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                         val recipe = recipeDial.getRecipeFor(this, sLevel)
                         recipe.ifPresent {
                             if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) currentRecipe = recipe
+                            maxProgress = it.time
                         }
                     } else {
                         pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
@@ -187,6 +190,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 
         private companion object {
             const val PROGRESS_KEY = "progress"
+            const val MAX_PROGRESS_KEY = "maxProgress"
             //const val RECIPE_KEY = "currentRecipe"
         }
     }

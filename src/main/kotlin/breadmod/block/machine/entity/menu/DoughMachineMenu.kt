@@ -23,7 +23,7 @@ class DoughMachineMenu(
     ModMenuTypes.DOUGH_MACHINE.get(),
     pContainerId, inventory, parent, 142, 84
 ) {
-    override fun getScaledProgress(): Int = parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 24).toInt() } ?: 0
+    override fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress.toFloat()) * 24).toInt()
 
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,

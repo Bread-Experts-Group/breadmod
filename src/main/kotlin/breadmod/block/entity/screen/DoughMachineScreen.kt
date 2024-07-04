@@ -38,6 +38,8 @@ class DoughMachineScreen(
         pGuiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight)
 
         renderProgressArrow(pGuiGraphics)
+        println(menu.parent.progress)
+        println(menu.parent.maxProgress)
         renderEnergyMeter(pGuiGraphics)
     }
 

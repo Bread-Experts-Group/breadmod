@@ -7,7 +7,6 @@ import breadmod.registry.screen.ModMenuTypes
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.Slot
-import kotlin.jvm.optionals.getOrNull
 
 class WheatCrusherMenu(
     pContainerId: Int,
@@ -17,7 +16,7 @@ class WheatCrusherMenu(
     ModMenuTypes.WHEAT_CRUSHER.get(),
     pContainerId, inventory, parent, 174, 116
 ) {
-    override fun getScaledProgress(): Int = parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 48).toInt() } ?: 0
+    override fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress.toFloat()) * 48).toInt()
 
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,
