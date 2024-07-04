@@ -92,12 +92,12 @@
 # BUGS
   - [ ] items inputted into machines from their sides are voided out of existence
   - [ ] (minor) tool gun anim speeds up when you have multiple tool guns at once
-  - [ ] fluid capability does not show current fluid amount or type
   - [ ] energy capability does not respect energy limit in container
-  - [ ] capability invalidation occasionally crashes the game
+  - [ ] AbstractMachineMenu#getScaledProgress always returns 0
+  - [ ] Machine not clearing progress and blockstate upon recipe completion (progress resets when the output item is taken)
+  - [ ] (?) capability invalidation occasionally crashes the game (possibly fixed?)
   - [ ] tool gun stacking up/absorbing clicks when not equipped
   - [ ] happy block explosion not actually exploding an area
-  - [ ] (gradle specific problem) main mod runClient crashing at mixins
   - [ ] (Production specific) Tool gun action not triggering
   - [ ] BMExplosion causing crash
 ---

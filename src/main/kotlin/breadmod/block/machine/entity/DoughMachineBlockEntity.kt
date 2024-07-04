@@ -1,5 +1,6 @@
 package breadmod.block.machine.entity
 
+import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.block.machine.entity.menu.DoughMachineMenu
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
@@ -49,6 +50,26 @@ class DoughMachineBlockEntity(
         const val OUTPUT_TANK_CAPACITY = 4000
     }
 
+    override fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {
+        super.adjustSaveAdditionalProgressive(pTag)
+        pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
+            capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)?.let {
+                dataTag.put("inventory", it.serializeNBT()) }
+            capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let {
+                dataTag.put("energy", it.serializeNBT()) }
+            capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
+                dataTag.put("fluid", it.serializeNBT()) }
+        })
+    }
+
+    override fun adjustLoadProgressive(pTag: CompoundTag) {
+        super.adjustLoadProgressive(pTag)
+        val dataTag = pTag.getCompound(ModMain.ID)
+        capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)?.deserializeNBT(dataTag.getCompound("inventory"))
+        capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.deserializeNBT(dataTag.getCompound("energy"))
+        capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.deserializeNBT(dataTag.getCompound("fluid"))
+    }
+
     override fun createMenu(pContainerId: Int, pInventory: Inventory, p2: Player): AbstractContainerMenu {
         return DoughMachineMenu(pContainerId, pInventory, this)
     }
@@ -85,6 +106,7 @@ class DoughMachineBlockEntity(
         val fluidHandle = capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return false
         val itemHandle = getItemHandler() ?: return false
 
+        progress = 0
         val outputTank = fluidHandle.allTanks[1]
         return if(recipe.canFitResults(itemHandle to listOf(1), outputTank)) {
             val assembled = recipe.assembleOutputs(this, pLevel)
@@ -98,8 +120,8 @@ class DoughMachineBlockEntity(
     override fun getContainerSize(): Int = getItemHandler()?.size ?: 0
     override fun isEmpty(): Boolean = getItemHandler()?.isEmpty() ?: true
     override fun getItem(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot) ?: ItemStack.EMPTY
-    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = getItemHandler()?.extractItem(pSlot, pAmount, false) ?: ItemStack.EMPTY
-    override fun removeItemNoUpdate(pSlot: Int): ItemStack = getItemHandler()?.removeAt(pSlot) ?: ItemStack.EMPTY
+    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = getItemHandler()?.get(pSlot)?.split(pAmount) ?: ItemStack.EMPTY
+    override fun removeItemNoUpdate(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot)?.copyAndClear() ?: ItemStack.EMPTY
     override fun setItem(pSlot: Int, pStack: ItemStack) { getItemHandler()?.set(pSlot, pStack) }
     override fun stillValid(pPlayer: Player): Boolean = getItemHandler() != null
     override fun fillStackedContents(pContents: StackedContents) { getItemHandler()?.get(0)?.let { pContents.accountStack(it) } }

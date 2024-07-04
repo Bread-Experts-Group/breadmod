@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import net.minecraftforge.common.capabilities.ForgeCapabilities
+import kotlin.jvm.optionals.getOrNull
 
 class WheatCrusherScreen(
     pMenu: WheatCrusherMenu,
@@ -32,6 +33,8 @@ class WheatCrusherScreen(
         inventoryLabelY = textureHeight - 94
 
         renderProgressArrow(pGuiGraphics)
+        println(menu.parent.progress)
+        println(menu.parent.currentRecipe.getOrNull()?.time ?: "null recipe")
         renderEnergyMeter(pGuiGraphics)
     }
 

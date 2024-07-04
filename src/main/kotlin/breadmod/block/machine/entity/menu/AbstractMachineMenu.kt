@@ -19,21 +19,23 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
     pContainerId: Int,
     protected val inventory: Inventory,
     val parent: T,
-    hotbarY: Int,
+    hotBarY: Int,
     inventoryY: Int
 ) : AbstractContainerMenu(pMenuType, pContainerId) {
-    fun getScaledProgress(): Int = parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 14).toInt() } ?: 0
-    fun getEnergyStoredScaled(): Int = parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
+    open fun getScaledProgress(): Int = parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 14).toInt() } ?: 0
+    open fun getEnergyStoredScaled(): Int = parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
     fun isCrafting(): Boolean = parent.progress > 0
     protected fun isEnabled(): Boolean = parent.blockState.getValue(BlockStateProperties.ENABLED)
 
     inner class ResultSlot(id: Int, x: Int, y: Int) : Slot(parent, id, x, y) { override fun mayPlace(pStack: ItemStack): Boolean = false }
     
     init {
-        repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, hotbarY)) }
+        repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, hotBarY)) }
         repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, inventoryY + y * 18)) } }
     }
 
+    // todo investigate "Invalid slotIndex:37" when trying to shift click items from the output slot on machines
+    // todo side note: quickMoveStack shouldn't be final since TE_INVENTORY_SLOT_COUNT wouldn't be the same for every machine
     final override fun quickMoveStack(playerIn: Player, pIndex: Int): ItemStack {
         val sourceSlot = slots[pIndex]
         if (!sourceSlot.hasItem()) return ItemStack.EMPTY //EMPTY_ITEM

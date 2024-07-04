@@ -137,11 +137,8 @@ minecraft {
 //            args '--username', 'PizzaTime65', '--uuid', '30cdf636-82ed-47ee-9a9c-4d820c0d76a9'
 //            args '--username', 'Meownium', '--uuid', '34e8274a-c02c-4c32-9311-2bccc9f6ba7d'
 
-//            property 'mixin.env.remapRefMap', 'true'
-//            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
-            // External mods crashing using mixins cause they're (create specifically) using official mappings, and we're using parchment mappings
-            // mixins also don't initialize at all for some reason
-
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
             property 'forge.enabledGameTestNamespaces', thisModId
 
             File mixinFile = file("src/main/resources/${thisModId}.mixin.json")

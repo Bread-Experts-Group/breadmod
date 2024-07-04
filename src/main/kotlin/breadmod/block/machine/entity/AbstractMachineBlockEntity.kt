@@ -100,9 +100,10 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             currentRecipe.ifPresentOrElse({
                 progress++
                 recipeTick(pLevel, pPos, pState, pBlockEntity, it)
-                if (progress > it.time) {
+                if (progress >= it.time) {
                     recipeDone(pLevel, pPos, pState, pBlockEntity, it)
                     currentRecipe = Optional.empty()
+                    progress = 0
                 }
             }, {
                 val sLevel = level
@@ -114,13 +115,15 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         open fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {}
         final override fun adjustSaveAdditional(pTag: CompoundTag) {
             adjustSaveAdditionalProgressive(pTag)
-            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) }
+//            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) } // todo figure out why progress isn't syncing to the client
+            pTag.putInt(PROGRESS_KEY, progress)
         }
 
         open fun adjustLoadProgressive(pTag: CompoundTag) {}
         final override fun adjustLoad(pTag: CompoundTag) {
             adjustLoadProgressive(pTag)
-            currentRecipe.ifPresent { progress = pTag.getInt(PROGRESS_KEY) } // TODO RVW
+//            currentRecipe.ifPresent { progress = pTag.getInt(PROGRESS_KEY) } // TODO RVW
+            progress = pTag.getInt(PROGRESS_KEY)
         }
 
         open fun noRecipeTick (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) {}
@@ -155,9 +158,10 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                     val energy = cap.extractEnergy(div, false)
 
                     if (energy >= div) {
-                        if (progress > it.time && recipeDone(pLevel, pPos, pState, pBlockEntity, it)) {
+                        if (progress >= it.time && recipeDone(pLevel, pPos, pState, pBlockEntity, it)) {
                             energyDivision = null
                             currentRecipe = Optional.empty()
+                            progress = 0
                         } else {
                             progress++
                             pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, true))

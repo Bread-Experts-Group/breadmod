@@ -5,10 +5,12 @@ import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.capability.StorageDirection
+import breadmodadvanced.ModMainAdv
 import breadmodadvanced.recipe.fluidEnergy.generators.DieselGeneratorRecipe
 import breadmodadvanced.registry.block.ModBlockEntitiesAdv
 import breadmodadvanced.registry.recipe.ModRecipeTypesAdv
 import net.minecraft.core.BlockPos
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.StackedContents
 import net.minecraft.world.item.ItemStack
@@ -27,6 +29,24 @@ class DieselGeneratorBlockEntity(
     EnergyBattery(50000, 0, 2000) to null,
     ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(FluidTank(8000) to StorageDirection.STORE_ONLY)) to null)
 ) {
+    override fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {
+        super.adjustSaveAdditionalProgressive(pTag)
+        pTag.put(ModMainAdv.ID, CompoundTag().also { dataTag ->
+            capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let {
+                dataTag.put("energy", it.serializeNBT()) }
+            capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
+                dataTag.put("fluid", it.serializeNBT()) }
+        })
+    }
+
+    override fun adjustLoadProgressive(pTag: CompoundTag) {
+        super.adjustLoadProgressive(pTag)
+        val dataTag = pTag.getCompound(ModMainAdv.ID)
+        capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.deserializeNBT(dataTag.getCompound("energy"))
+        capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.deserializeNBT(dataTag.getCompound("fluid"))
+    }
+
+    override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }
     private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
     override fun clearContent() { getItemHandler()?.clear() }
