@@ -60,6 +60,7 @@
 ### Needs to be done still:
   - [X] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder
     - [X] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
+  - [ ] actually work on recipes
   - [ ] Textures for tools, weapons, items, blocks
   - [ ] Fix mixin refmaps not generating during mod build
   - [X] Recipe datagen
@@ -92,10 +93,8 @@
 # BUGS
   - [ ] items inputted into machines from their sides are voided out of existence
   - [ ] (minor) tool gun anim speeds up when you have multiple tool guns at once
-  - [ ] energy capability does not respect energy limit in container
-  - [ ] AbstractMachineMenu#getScaledProgress always returns 0
-  - [ ] Machine not clearing progress and blockstate upon recipe completion (progress resets when the output item is taken)
-  - [ ] (?) capability invalidation occasionally crashes the game (possibly fixed?)
+  - [ ] AbstractMachineMenu#getScaledProgress always returns 0 (temporarily fixed with using a maxProgress value)
+  - [ ] Fluid texture on diesel machine needs to be normalized
   - [ ] tool gun stacking up/absorbing clicks when not equipped
   - [ ] happy block explosion not actually exploding an area
   - [ ] (Production specific) Tool gun action not triggering
@@ -109,6 +108,7 @@
 - [X] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
 ---
 ## Advanced, Machines and stuff
+- [ ] Creative mode tab for advanced
 - [ ] Diesel Generator
   - [ ] Custom rendering (BER) / fluid rendering inside of model
   - [ ] Particles
@@ -122,14 +122,14 @@
 ## External Mods to look into (will be their own projects)
 - [ ] Lighting mod (colored lighting)
 - [ ] "Intrusive" mods (such as, being able to heat up a furnace like w/ the bread machine)
-### Other mod compatibility (items crossed off in this list will be removed from the mod when I get around to it)
+### Other mod compatibility
 - [ ] Add recipe integrations with other mods where possible
-- [ ] <s>Farmers Delight</s>
-- [ ] <s>ProjectE</s>
+- [ ] Farmers Delight
+- [ ] ProjectE
   - [ ] Add EMC to items
   - [X] Potential Bread-like EMC holder
     - [X] Make texture for item
-- [ ] <s>Create</s>
+- [ ] Create
   - [ ] Create recipe generators for the other recipe types
 - [ ] Mekanism
   - [ ] Crushing recipes for the food-like items

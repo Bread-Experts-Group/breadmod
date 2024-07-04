@@ -161,6 +161,8 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 
                     if (energy >= div) {
                         if (progress >= it.time && recipeDone(pLevel, pPos, pState, pBlockEntity, it)) {
+                            // todo this needs a more elegant solution instead of toggling the blockstate to false whenever the recipe completes (needs to only turn off when the input ingredients are not met)
+                            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
                             energyDivision = null
                             currentRecipe = Optional.empty()
                             progress = 0

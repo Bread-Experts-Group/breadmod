@@ -32,8 +32,6 @@ class WheatCrusherScreen(
         inventoryLabelY = textureHeight - 94
 
         renderProgressArrow(pGuiGraphics)
-        println(menu.parent.progress)
-        println(menu.parent.maxProgress)
         renderEnergyMeter(pGuiGraphics)
     }
 
