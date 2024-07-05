@@ -44,6 +44,8 @@ class ModItemModelProvider(
         singleItem(ModItems.RF_BREAD_BOOTS)
         singleItem(ModBlocks.BREAD_DOOR)
         singleItem(ModItems.CREATURE)
+        singleItem(ModItems.CAPRISPIN)
+        singleItem(ModItems.TOAST)
         handheldItem(ModItems.BREAD_GUN_ITEM)
 
         fenceInventory("bread_fence", modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"))

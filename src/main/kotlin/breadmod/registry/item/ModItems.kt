@@ -30,11 +30,13 @@ object ModItems {
     val BREAD_SHIELD: RegistryObject<BreadShieldItem> = deferredRegister.register("bread_shield") { BreadShieldItem() }
     val DOPED_BREAD: RegistryObject<DopedBreadItem> = deferredRegister.register("doped_bread") { DopedBreadItem() }
     val BREAD_SLICE: RegistryObject<Item> = deferredRegister.register("bread_slice") {
-        Item(Item.Properties().food(FoodProperties.Builder().nutrition(1).fast().build())) }
-    val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") {Item(Item.Properties())}
-    val DOUGH: RegistryObject<Item> = deferredRegister.register("dough") {Item(Item.Properties())}
+        Item(Item.Properties().food(FoodProperties.Builder().nutrition(2).fast().build())) }
+    val TOAST: RegistryObject<Item> = deferredRegister.register("toast") {
+        Item(Item.Properties().food(FoodProperties.Builder().nutrition(5).fast().build())) }
+    val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") { Item(Item.Properties()) }
+    val DOUGH: RegistryObject<Item> = deferredRegister.register("dough") { Item(Item.Properties()) }
 
-    val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") {Item(Item.Properties())}
+    val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") { Item(Item.Properties()) }
 
     val BREAD_AMULET: RegistryObject<Item> = deferredRegister.register("bread_amulet") { BreadAmuletItem() }
 
@@ -81,8 +83,9 @@ object ModItems {
     val BREAD_GUN_ITEM: RegistryObject<ProjectileWeaponItem> = deferredRegister.register("bread_gun") { BreadGunItem() }
     val BREAD_BULLET_ITEM: RegistryObject<Item> = deferredRegister.register("bread_bullet") { Item(Item.Properties()) }
     val TOOL_GUN: RegistryObject<Item> = deferredRegister.register(TOOL_GUN_DEF) { ToolGunItem() }
+    val CAPRISPIN: RegistryObject<Item> = deferredRegister.register("caprispin") { Item(Item.Properties()) }
 
-    val CREATURE: RegistryObject<Item> = deferredRegister.register("creature") {Item(Item.Properties())}
+    val CREATURE: RegistryObject<Item> = deferredRegister.register("creature") { Item(Item.Properties()) }
 
     val TEST_DISC: RegistryObject<RecordItem> = deferredRegister.register("music_disc_test") {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()

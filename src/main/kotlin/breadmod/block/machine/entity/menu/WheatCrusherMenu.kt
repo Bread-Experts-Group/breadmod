@@ -17,6 +17,7 @@ class WheatCrusherMenu(
     pContainerId, inventory, parent, 174, 116
 ) {
     override fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress.toFloat()) * 48).toInt()
+    override val containerSlotCount: Int = 2
 
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,

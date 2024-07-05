@@ -93,7 +93,6 @@
 # BUGS
   - [ ] items inputted into machines from their sides are voided out of existence
   - [ ] (minor) tool gun anim speeds up when you have multiple tool guns at once
-  - [ ] AbstractMachineMenu#getScaledProgress always returns 0 (temporarily fixed with using a maxProgress value)
   - [ ] Fluid texture on diesel machine needs to be normalized
   - [ ] tool gun stacking up/absorbing clicks when not equipped
   - [ ] happy block explosion not actually exploding an area

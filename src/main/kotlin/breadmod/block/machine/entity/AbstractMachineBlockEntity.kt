@@ -117,7 +117,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         open fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {}
         final override fun adjustSaveAdditional(pTag: CompoundTag) {
             adjustSaveAdditionalProgressive(pTag)
-//            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) } // todo figure out why progress isn't syncing to the client
+//            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) }
             pTag.putInt(PROGRESS_KEY, progress); pTag.putInt(MAX_PROGRESS_KEY, maxProgress)
         }
 
@@ -161,11 +161,9 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 
                     if (energy >= div) {
                         if (progress >= it.time && recipeDone(pLevel, pPos, pState, pBlockEntity, it)) {
-                            // todo this needs a more elegant solution instead of toggling the blockstate to false whenever the recipe completes (needs to only turn off when the input ingredients are not met)
-                            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
                             energyDivision = null
                             currentRecipe = Optional.empty()
-                            progress = 0
+                            progress = 0; maxProgress = 0
                         } else {
                             progress++
                             pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, true))
@@ -174,16 +172,18 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                     } else progress--
                 }, {
                     val sLevel = level
-                    if (sLevel != null) {
+                    sLevel?.let {
 //                        println("NOTICE: Inventory: ${this.getItem(0)}") //todo uncomment this later
                         val recipe = recipeDial.getRecipeFor(this, sLevel)
-                        recipe.ifPresent {
-                            if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) currentRecipe = recipe
-                            maxProgress = it.time
-                        }
-                    } else {
-                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
-                        noRecipeTick(pLevel, pPos, pState, pBlockEntity)
+                        recipe.ifPresentOrElse({
+                            if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) {
+                                currentRecipe = recipe
+                                maxProgress = it.time
+                            }
+                        }, {
+                            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
+                            noRecipeTick(pLevel, pPos, pState, pBlockEntity)
+                        })
                     }
                 })
                 postTick(pLevel, pPos, pState, pBlockEntity)

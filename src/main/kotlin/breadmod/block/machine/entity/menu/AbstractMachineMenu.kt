@@ -34,8 +34,7 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
         repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, inventoryY + y * 18)) } }
     }
 
-    // todo investigate "Invalid slotIndex:37" when trying to shift click items from the output slot on machines
-    // todo side note: quickMoveStack shouldn't be final since TE_INVENTORY_SLOT_COUNT wouldn't be the same for every machine
+    open val containerSlotCount: Int = 1 // number of inventory slots the block entity has
     final override fun quickMoveStack(playerIn: Player, pIndex: Int): ItemStack {
         val sourceSlot = slots[pIndex]
         if (!sourceSlot.hasItem()) return ItemStack.EMPTY //EMPTY_ITEM
@@ -46,25 +45,10 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
         // Check if the slot clicked is one of the vanilla container slots
         if (pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
             // This is a vanilla container slot so merge the stack into the tile inventory
-            if (!moveItemStackTo(
-                    sourceStack,
-                    TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
-                            + TE_INVENTORY_SLOT_COUNT, false
-                )
-            ) {
-                return ItemStack.EMPTY // EMPTY_ITEM
-            }
-        } else if (pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
+            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + containerSlotCount, false)) return ItemStack.EMPTY // EMPTY_ITEM
+        } else if (pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + containerSlotCount) {
             // This is a TE slot so merge the stack into the players inventory
-            if (!moveItemStackTo(
-                    sourceStack,
-                    VANILLA_FIRST_SLOT_INDEX,
-                    VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT,
-                    false
-                )
-            ) {
-                return ItemStack.EMPTY
-            }
+            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) return ItemStack.EMPTY
         } else {
             println("Invalid slotIndex:$pIndex")
             return ItemStack.EMPTY
@@ -72,9 +56,7 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
         // If stack size == 0 (the entire stack was moved) set slot contents to null
         if (sourceStack.count == 0) {
             sourceSlot.set(ItemStack.EMPTY)
-        } else {
-            sourceSlot.setChanged()
-        }
+        } else sourceSlot.setChanged()
         sourceSlot.onTake(playerIn, sourceStack)
         return copyOfSourceStack
     }
@@ -100,8 +82,5 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
         const val VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT
         const val VANILLA_FIRST_SLOT_INDEX = 0
         const val TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT
-
-        // THIS YOU HAVE TO DEFINE!
-        const val TE_INVENTORY_SLOT_COUNT = 1 // must be the number of slots you have!
     }
 }

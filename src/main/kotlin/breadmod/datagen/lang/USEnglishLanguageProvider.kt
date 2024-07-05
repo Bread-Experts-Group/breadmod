@@ -84,6 +84,8 @@ class USEnglishLanguageProvider(
         add(ModItems.TOOL_GUN)
         add(ModBlocks.GENERATOR)
         add(ModItems.CREATURE)
+        add(ModItems.CAPRISPIN)
+        add(ModItems.TOAST)
 
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
         add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")

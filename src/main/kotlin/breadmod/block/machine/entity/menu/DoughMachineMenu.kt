@@ -24,6 +24,7 @@ class DoughMachineMenu(
     pContainerId, inventory, parent, 142, 84
 ) {
     override fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress.toFloat()) * 24).toInt()
+    override val containerSlotCount: Int = 3
 
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,
