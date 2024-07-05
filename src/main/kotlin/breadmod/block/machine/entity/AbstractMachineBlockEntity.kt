@@ -171,20 +171,16 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                         }
                     } else progress--
                 }, {
-                    val sLevel = level
-                    sLevel?.let {
-//                        println("NOTICE: Inventory: ${this.getItem(0)}") //todo uncomment this later
-                        val recipe = recipeDial.getRecipeFor(this, sLevel)
-                        recipe.ifPresentOrElse({
-                            if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) {
-                                currentRecipe = recipe
-                                maxProgress = it.time
-                            }
-                        }, {
-                            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
-                            noRecipeTick(pLevel, pPos, pState, pBlockEntity)
-                        })
-                    }
+                    val recipe = recipeDial.getRecipeFor(this, pLevel)
+                    recipe.ifPresentOrElse({
+                        if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) {
+                            currentRecipe = recipe
+                            maxProgress = it.time
+                        }
+                    }, {
+                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
+                        noRecipeTick(pLevel, pPos, pState, pBlockEntity)
+                    })
                 })
                 postTick(pLevel, pPos, pState, pBlockEntity)
             }
