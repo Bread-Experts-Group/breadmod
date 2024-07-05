@@ -38,6 +38,6 @@ object ModCreativeTabs {
 
     val SPECIALS_TAB: RegistryObject<CreativeModeTab> = constructTab("specials", false) {
         icon { ModItems.ULTIMATE_BREAD.get().defaultInstance }
-        withTabsBefore(MAIN_TAB.key)
+//        withTabsBefore(MAIN_TAB.key)
     }
 }

@@ -1,6 +1,8 @@
 package breadmodadvanced
 
 import breadmodadvanced.registry.registerAll
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.common.Mod
 import org.apache.logging.log4j.LogManager
@@ -15,6 +17,8 @@ internal object ModMainAdv {
 
     internal fun modLocation(vararg path: String, override: Boolean = false): ResourceLocation
             = path.toMutableList().let { ResourceLocation(if(override) it.removeFirst() else ID, it.joinToString("/")) }
+    internal fun modTranslatable(type: String = "misc", vararg path: String, args: List<Any> = listOf()): MutableComponent
+            = Component.translatable("$type.$ID.${path.joinToString(".")}", *args.toTypedArray())
 
     init {
         Thread.currentThread().contextClassLoader.loadClass("breadmod.util.GeneralKt").kotlin.functions.forEach {

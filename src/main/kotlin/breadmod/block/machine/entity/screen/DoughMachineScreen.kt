@@ -1,4 +1,4 @@
-package breadmod.block.entity.screen
+package breadmod.block.machine.entity.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable

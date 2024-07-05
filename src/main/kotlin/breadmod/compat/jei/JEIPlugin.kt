@@ -2,9 +2,9 @@ package breadmod.compat.jei
 
 import breadmod.ModMain
 import breadmod.block.machine.entity.menu.DoughMachineMenu
-import breadmod.block.entity.screen.DoughMachineScreen
+import breadmod.block.machine.entity.screen.DoughMachineScreen
 import breadmod.block.machine.entity.menu.WheatCrusherMenu
-import breadmod.block.entity.screen.WheatCrusherScreen
+import breadmod.block.machine.entity.screen.WheatCrusherScreen
 import breadmod.compat.jei.category.DoughMachineRecipeCategory
 import breadmod.compat.jei.category.WheatCrusherRecipeCategory
 import breadmod.compat.jei.vanillaExtension.JEIArmorPotionCraftingExtension
@@ -23,7 +23,7 @@ import net.minecraft.resources.ResourceLocation
 
 @JeiPlugin @Suppress("unused")
 class JEIPlugin : IModPlugin {
-    val minecraft: Minecraft? = Minecraft.getInstance()
+    val minecraft: Minecraft = Minecraft.getInstance()
 
     override fun getPluginUid(): ResourceLocation = ResourceLocation(ModMain.ID, "jei_plugin")
 
@@ -46,7 +46,7 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
-        val recipeManager = minecraft?.level?.recipeManager ?: throw IllegalStateException()
+        val recipeManager = minecraft.level?.recipeManager ?: throw IllegalStateException()
         val doughMachineRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.DOUGH_MACHINE.get())
         val wheatCrusherRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.WHEAT_CRUSHING.get())
 

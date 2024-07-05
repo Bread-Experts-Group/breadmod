@@ -2,6 +2,7 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.entity.*
+import breadmod.block.machine.entity.CreativeGeneratorBlockEntity
 import breadmod.block.machine.entity.GeneratorBlockEntity
 import breadmod.block.machine.entity.DoughMachineBlockEntity
 import breadmod.block.machine.entity.WheatCrusherBlockEntity
@@ -78,6 +79,12 @@ object ModBlockEntities {
         BlockEntityType.Builder.of(
             { pPos, pState -> GeneratorBlockEntity(pPos, pState) },
             ModBlocks.GENERATOR.get().block
+        ).build(null)
+    }
+    val CREATIVE_GENERATOR: RegistryObject<BlockEntityType<CreativeGeneratorBlockEntity>> = deferredRegister.register("creative_generator_entity") {
+        BlockEntityType.Builder.of(
+            { pPos, pState -> CreativeGeneratorBlockEntity(pPos, pState) },
+            ModBlocks.CREATIVE_GENERATOR.get().block
         ).build(null)
     }
 }

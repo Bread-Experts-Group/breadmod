@@ -5,25 +5,25 @@ loaderVersion="[4,)" # Require at least 4.x
 license="${mod_license}"
 
 [[mods]]
-    modId="${mod_id}"
+    modId="breadmodadv"
     version="${mod_version}"
     displayName="${mod_name}"
     authors="${mod_authors}"
     description='''${mod_description}'''
     logoFile="logo.png"
-[[dependencies.${mod_id}]]
+[[dependencies.breadmodadv]]
     modId="forge"
     mandatory=true
     versionRange="[46,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.${mod_id}]]
+[[dependencies.breadmodadv]]
     modId="kotlinforforge"
     mandatory=true
     versionRange="[4.10,)"
     ordering="BEFORE"
     side="BOTH"
-[[dependencies.${mod_id}]]
+[[dependencies.breadmodadv]]
     modId = "breadmod"
     mandatory=true
     versionRange="${breadmod_version_range}"

@@ -5,8 +5,8 @@ import breadmod.ModMain.modLocation
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
-import breadmod.block.entity.screen.DoughMachineScreen
-import breadmod.block.entity.screen.WheatCrusherScreen
+import breadmod.block.machine.entity.screen.DoughMachineScreen
+import breadmod.block.machine.entity.screen.WheatCrusherScreen
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.entity.renderer.BreadBulletEntityRenderer

@@ -4,6 +4,7 @@ import breadmod.datagen.constructLootProvider
 import breadmodadvanced.ModMainAdv.LOGGER
 import breadmodadvanced.block.entity.renderer.DieselGeneratorRenderer
 import breadmodadvanced.datagen.ModBlockStateProviderAdv
+import breadmodadvanced.datagen.lang.USEnglishLanguageProviderAdv
 import breadmodadvanced.registry.block.ModBlockEntitiesAdv
 import breadmodadvanced.registry.block.ModBlocksAdv
 import net.minecraftforge.client.event.EntityRenderersEvent
@@ -29,6 +30,7 @@ object CommonModEventBusAdv {
         if(event.includeClient()) {
             LOGGER.info("Client datagen")
             generator.addProvider(true, ModBlockStateProviderAdv(packOutput, existingFileHelper))
+            generator.addProvider(true, USEnglishLanguageProviderAdv(packOutput, "en_us"))
         }
     }
 

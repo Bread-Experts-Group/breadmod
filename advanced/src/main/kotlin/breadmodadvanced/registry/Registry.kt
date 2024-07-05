@@ -6,6 +6,7 @@ import breadmodadvanced.registry.block.ModBlocksAdv
 import breadmodadvanced.registry.item.ModItemsAdv
 import breadmodadvanced.registry.recipe.ModRecipeSerializersAdv
 import breadmodadvanced.registry.recipe.ModRecipeTypesAdv
+import breadmodadvanced.registry.screen.ModCreativeTabsAdv
 import net.minecraftforge.eventbus.api.IEventBus
 
 internal val registerList = setOf(
@@ -13,7 +14,8 @@ internal val registerList = setOf(
     ModItemsAdv.deferredRegister,
     ModRecipeTypesAdv.deferredRegister,
     ModRecipeSerializersAdv.deferredRegister,
-    ModBlockEntitiesAdv.deferredRegister
+    ModBlockEntitiesAdv.deferredRegister,
+    ModCreativeTabsAdv.deferredRegister
 )
 
 internal fun registerAll(bus: IEventBus) {

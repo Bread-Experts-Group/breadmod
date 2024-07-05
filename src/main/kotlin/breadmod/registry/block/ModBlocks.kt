@@ -2,6 +2,7 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.*
+import breadmod.block.machine.CreativeGeneratorBlock
 import breadmod.block.machine.GeneratorBlock
 import breadmod.block.machine.DoughMachineBlock
 import breadmod.block.machine.WheatCrusherBlock
@@ -120,6 +121,13 @@ object ModBlocks {
         ModItems.deferredRegister,
         "generator",
         { GeneratorBlock() },
+        Item.Properties()
+    )
+
+    val CREATIVE_GENERATOR = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "creative_generator",
+        { CreativeGeneratorBlock() },
         Item.Properties()
     )
 
