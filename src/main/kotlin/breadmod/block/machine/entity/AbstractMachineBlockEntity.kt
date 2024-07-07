@@ -9,6 +9,9 @@ import breadmod.util.capability.ICapabilitySavable
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.item.crafting.RecipeManager
@@ -43,6 +46,8 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         capabilityHolder.invalidate()
         super.invalidateCaps()
     }
+
+    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
 
     open fun adjustSaveAdditional(pTag: CompoundTag) {}
     final override fun saveAdditional(pTag: CompoundTag) {
@@ -105,7 +110,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                 if (progress >= it.time) {
                     recipeDone(pLevel, pPos, pState, pBlockEntity, it)
                     currentRecipe = Optional.empty()
-                    progress = 0
+                    progress = 0; maxProgress = 0
                 }
             }, {
                 val sLevel = level

@@ -2,10 +2,7 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.*
-import breadmod.block.machine.CreativeGeneratorBlock
-import breadmod.block.machine.GeneratorBlock
-import breadmod.block.machine.DoughMachineBlock
-import breadmod.block.machine.WheatCrusherBlock
+import breadmod.block.machine.*
 import breadmod.block.machine.multiblock.farmer.FarmerControllerBlock
 import breadmod.block.machine.multiblock.farmer.FarmerInputBlock
 import breadmod.block.machine.multiblock.farmer.FarmerOutputBlock
@@ -231,6 +228,13 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val TOASTER = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "toaster",
+        { ToasterBlock() },
+        Item.Properties()
+    )
+
     val BAUXITE_ORE = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "bauxite_ore",
@@ -283,6 +287,8 @@ object ModBlocks {
             dropSelf(FARMER_OUTPUT_BLOCK.get().block)
             dropSelf(GENERIC_POWER_INTERFACE.get().block)
             dropSelf(HELL_NAW.get().block)
+            dropSelf(CREATIVE_GENERATOR.get().block)
+            dropSelf(TOASTER.get().block)
             add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
             dropNone.forEach { add(it, noDrop()) }

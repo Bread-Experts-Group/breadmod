@@ -19,7 +19,7 @@ class CreativeGeneratorBlockEntity(
 ) {
 
     fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Powered<CreativeGeneratorBlockEntity>) {
-        println("TICKING!!")
+//        println("TICKING!!")
 
         pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY).let {
             it?.stored = Int.MAX_VALUE

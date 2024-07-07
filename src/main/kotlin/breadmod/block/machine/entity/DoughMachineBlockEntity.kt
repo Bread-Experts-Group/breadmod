@@ -105,8 +105,6 @@ class DoughMachineBlockEntity(
     ): Boolean {
         val fluidHandle = capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return false
         val itemHandle = getItemHandler() ?: return false
-
-        progress = 0
         val outputTank = fluidHandle.allTanks[1]
         return if(recipe.canFitResults(itemHandle to listOf(1), outputTank)) {
             val assembled = recipe.assembleOutputs(this, pLevel)

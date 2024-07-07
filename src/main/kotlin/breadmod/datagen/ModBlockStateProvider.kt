@@ -49,6 +49,22 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/generator")
         )
 
+        horizontalBlock(ModBlocks.TOASTER.get().block) {
+            val name = "breadmod:block/toaster"
+
+            val model = models().singleTexture(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/toaster"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/toaster")
+            )
+
+            return@horizontalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.TOASTER.get().block,
+            models().getBuilder("breadmod:block/toaster")
+        )
+
         doorBlockWithRenderType(ModBlocks.BREAD_DOOR.get().block as DoorBlock,
             modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
             modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top"),

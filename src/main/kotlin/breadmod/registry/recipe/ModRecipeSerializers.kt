@@ -5,6 +5,7 @@ import breadmod.recipe.crafting.ArmorPotionRecipe
 import breadmod.recipe.crafting.BreadSliceRecipe
 import breadmod.recipe.crafting.DopedBreadRecipe
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
+import breadmod.recipe.fluidEnergy.ToasterRecipe
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
 import breadmod.recipe.fluidEnergy.generators.GeneratorRecipe
 import breadmod.recipe.serializer.SimpleFluidEnergyRecipeSerializer
@@ -29,6 +30,9 @@ object ModRecipeSerializers {
     }
     val WHEAT_CRUSHER: RegistryObject<SimpleFluidEnergyRecipeSerializer<WheatCrushingRecipe>> = deferredRegister.register("wheat_crusher") {
         SimpleFluidEnergyRecipeSerializer { pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut -> WheatCrushingRecipe(pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut) }
+    }
+    val TOASTER: RegistryObject<SimpleFluidEnergyRecipeSerializer<ToasterRecipe>> = deferredRegister.register("toaster") {
+        SimpleFluidEnergyRecipeSerializer { pId, pTime, _, _, _, pItems, pItemsTagged, _, pItemsOut -> ToasterRecipe(pId, pTime, pItems, pItemsTagged, pItemsOut) }
     }
 
     // Power Generators

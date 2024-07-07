@@ -2,10 +2,7 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.entity.*
-import breadmod.block.machine.entity.CreativeGeneratorBlockEntity
-import breadmod.block.machine.entity.GeneratorBlockEntity
-import breadmod.block.machine.entity.DoughMachineBlockEntity
-import breadmod.block.machine.entity.WheatCrusherBlockEntity
+import breadmod.block.machine.entity.*
 import breadmod.block.machine.multiblock.farmer.entity.FarmerControllerBlockEntity
 import breadmod.block.machine.multiblock.farmer.entity.FarmerInputBlockEntity
 import breadmod.block.machine.multiblock.farmer.entity.FarmerOutputBlockEntity
@@ -44,6 +41,12 @@ object ModBlockEntities {
         BlockEntityType.Builder.of(
             { pPos, pState -> BreadScreenBlockEntity(pPos, pState) },
             ModBlocks.MONITOR.get().block
+        ).build(null)
+    }
+    val TOASTER: RegistryObject<BlockEntityType<ToasterBlockEntity>> = deferredRegister.register("toaster_entity") {
+        BlockEntityType.Builder.of(
+            { pPos, pState -> ToasterBlockEntity(pPos, pState) },
+            ModBlocks.TOASTER.get().block
         ).build(null)
     }
 

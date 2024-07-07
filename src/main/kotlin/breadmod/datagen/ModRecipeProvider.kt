@@ -416,6 +416,11 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requiresItem(ModFluids.BREAD_LIQUID.bucket.get())
             .setSerializer(ModRecipeSerializers.GENERATOR.get())
             .save(pWriter, modLocation("special", "machine", "generator", "ethanol"))
+        FluidEnergyRecipeBuilder(ModItems.TOAST.get(), 2)
+            .setTimeRequired(20 * 5)
+            .requiresItem(ModItems.BREAD_SLICE.get(), 2)
+            .setSerializer(ModRecipeSerializers.TOASTER.get())
+            .save(pWriter, modLocation("special", "machine", "toaster", "toast"))
 
         // // Compat
         // Create
