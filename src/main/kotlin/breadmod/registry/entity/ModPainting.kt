@@ -14,6 +14,10 @@ object ModPainting {
     }
 
     val DEVIL_PUPP: RegistryObject<PaintingVariant> = deferredRegister.register("devil_pupp") {
-        PaintingVariant(1028,1028)
+        PaintingVariant(64,64)
+    }
+
+    val FISH: RegistryObject<PaintingVariant> = deferredRegister.register("fish") {
+        PaintingVariant(32, 16)
     }
 }

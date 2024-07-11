@@ -45,10 +45,10 @@ class ModItemTags(
         // Curios
         if(ModList.get().isLoaded("curios")) {
             tag(ItemTags.create(ResourceLocation("curios", "necklace")))
-                .add(ModItems.BREAD_AMULET)
+                .addOptional(ModItems.BREAD_AMULET.id)
             ModItems.PROJECT_E?.also {
                 tag(ItemTags.create(ResourceLocation("curios", "bread_orb")))
-                    .add(it.BREAD_ORB_ITEM)
+                    .addOptional(it.BREAD_ORB_ITEM.id)
             }
         }
     }

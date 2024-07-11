@@ -110,6 +110,8 @@ class USEnglishLanguageProvider(
             "(stacking!)",
             "item", "bread_amulet", "stacks"
         )
+        modAdd("I wouldn't cook charcoal in it..",
+            "toaster", "tooltip")
 
         modAdd(
             "Effect Range: %s %s",
@@ -146,6 +148,10 @@ class USEnglishLanguageProvider(
             "painting", "devil_pupp", "title")
         modAdd("https://twitter.com/devil_pupp",
             "painting", "devil_pupp", "author")
+        modAdd("FISH",
+            "painting", "fish", "title")
+        modAdd("FISH ARTIST",
+            "painting", "fish", "author")
 
         modAdd("Energy", path = arrayOf("energy"))
         modAdd("Input", path = arrayOf("input"))

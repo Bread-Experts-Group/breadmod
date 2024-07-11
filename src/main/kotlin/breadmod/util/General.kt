@@ -224,6 +224,7 @@ fun IFluidHandler.amount(fluid: TagKey<Fluid>) =
         .filter { !it.isEmpty && it.fluid.isTag(fluid) }
         .sumOf { it.amount }
 
+// todo function does not account for vanilla items that don't require get() or key, causing an error that uses these methods
 inline fun <T, reified A: T> IntrinsicTagAppender<T>.add(vararg toAdd: RegistryObject<A>) =
     this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
 fun <T> IntrinsicTagAppender<T>.add(vararg toAdd: RegistryObject<T>) =

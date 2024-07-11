@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.Direction
 import net.minecraft.world.item.ItemDisplayContext
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.model.generators.ModelProvider
 
@@ -27,7 +29,6 @@ class ToasterRenderer: BlockEntityRenderer<ToasterBlockEntity> {
         pPackedOverlay: Int
     ) {
         val instance = Minecraft.getInstance()
-        val itemRenderer = instance.itemRenderer
         val handleModel = instance.modelManager.getModel(handleModelLocation)
         val blockRotation = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
         val triggered = pBlockEntity.blockState.getValue(BlockStateProperties.TRIGGERED)
@@ -56,11 +57,31 @@ class ToasterRenderer: BlockEntityRenderer<ToasterBlockEntity> {
 
         renderBlockModel(pPoseStack, pBuffer, pBlockEntity, handleModel, pPackedLight, pPackedOverlay)
         pPoseStack.popPose()
+        val itemStack = pBlockEntity.getRenderStack()
 
-        // todo set up 2 items in the up and down position depending on triggered state
         pPoseStack.pushPose()
+        pPoseStack.translate(0.5, 0.3, 0.61)
+        pPoseStack.scale(0.6f, 0.6f, 0.6f)
+        if(blockRotation == Direction.SOUTH || blockRotation == Direction.NORTH) {
+            pPoseStack.mulPose(Axis.YN.rotationDegrees(90f))
+            pPoseStack.translate(-0.185, 0.0, 0.185)
+        }
+        if(!triggered) {
+            if(itemStack.count == 2) {
+                renderStaticItem(itemStack, pPoseStack, pBuffer, pBlockEntity, pPackedLight)
+                pPoseStack.translate(0.0, 0.0, -0.37)
+                renderStaticItem(itemStack, pPoseStack, pBuffer, pBlockEntity, pPackedLight)
+            } else {
+                renderStaticItem(itemStack, pPoseStack, pBuffer, pBlockEntity, pPackedLight)
+            }
+        }
+        pPoseStack.popPose()
+    }
+
+    private fun renderStaticItem(pStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBufferSource, pBlockEntity: BlockEntity, pPackedLight: Int) {
+        val itemRenderer = Minecraft.getInstance().itemRenderer
         itemRenderer.renderStatic(
-            pBlockEntity.getRenderStack(),
+            pStack,
             ItemDisplayContext.FIXED,
             pPackedLight,
             OverlayTexture.NO_OVERLAY,
@@ -69,6 +90,5 @@ class ToasterRenderer: BlockEntityRenderer<ToasterBlockEntity> {
             pBlockEntity.level,
             1
         )
-        pPoseStack.popPose()
     }
 }

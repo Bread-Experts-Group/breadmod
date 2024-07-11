@@ -12,6 +12,8 @@ import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
 import moze_intel.projecte.gameObjs.items.ItemPE
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraftforge.fml.ModList
@@ -83,7 +85,11 @@ object ModItems {
     val BREAD_GUN_ITEM: RegistryObject<ProjectileWeaponItem> = deferredRegister.register("bread_gun") { BreadGunItem() }
     val BREAD_BULLET_ITEM: RegistryObject<Item> = deferredRegister.register("bread_bullet") { Item(Item.Properties()) }
     val TOOL_GUN: RegistryObject<Item> = deferredRegister.register(TOOL_GUN_DEF) { ToolGunItem() }
-    val CAPRISPIN: RegistryObject<Item> = deferredRegister.register("caprispin") { Item(Item.Properties()) }
+    val CAPRISPIN: RegistryObject<Item> = deferredRegister.register("caprispin") { object : Item(Properties()
+        .food(FoodProperties.Builder().alwaysEat().nutrition(20).effect(MobEffectInstance(MobEffects.LEVITATION, 100, 20), 1f).build())
+        .rarity(Rarity.EPIC)){
+        override fun getUseAnimation(pStack: ItemStack): UseAnim = UseAnim.DRINK
+    } }
 
     val CREATURE: RegistryObject<Item> = deferredRegister.register("creature") { Item(Item.Properties()) }
 

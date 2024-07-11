@@ -421,6 +421,11 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requiresItem(ModItems.BREAD_SLICE.get(), 2)
             .setSerializer(ModRecipeSerializers.TOASTER.get())
             .save(pWriter, modLocation("special", "machine", "toaster", "toast"))
+        FluidEnergyRecipeBuilder(Items.CHARCOAL, 2)
+            .setTimeRequired(20 * 5)
+            .requiresItem(ModItems.TOAST.get(), 2)
+            .setSerializer(ModRecipeSerializers.TOASTER.get())
+            .save(pWriter, modLocation("special", "machine", "toaster", "burnt_toast"))
 
         // // Compat
         // Create
