@@ -3,16 +3,13 @@ package breadmod.block.machine.entity.renderer
 import breadmod.ModMain
 import breadmod.block.machine.entity.ToasterBlockEntity
 import breadmod.util.render.renderBlockModel
+import breadmod.util.render.renderStaticItem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
-import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.Direction
-import net.minecraft.world.item.ItemDisplayContext
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.model.generators.ModelProvider
 
@@ -76,19 +73,5 @@ class ToasterRenderer: BlockEntityRenderer<ToasterBlockEntity> {
             }
         }
         pPoseStack.popPose()
-    }
-
-    private fun renderStaticItem(pStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBufferSource, pBlockEntity: BlockEntity, pPackedLight: Int) {
-        val itemRenderer = Minecraft.getInstance().itemRenderer
-        itemRenderer.renderStatic(
-            pStack,
-            ItemDisplayContext.FIXED,
-            pPackedLight,
-            OverlayTexture.NO_OVERLAY,
-            pPoseStack,
-            pBuffer,
-            pBlockEntity.level,
-            1
-        )
     }
 }

@@ -9,7 +9,9 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.ItemRenderer
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.client.RenderTypeHelper
@@ -100,6 +102,8 @@ fun renderItemModel(
 
 /**
  * Renders a provided [pModel] (as a block model) onto a [BlockEntityRenderer]
+ *
+ * *Note that the [pModel] does not rotate with the block*
  */
 fun renderBlockModel(
     pPoseStack: PoseStack,
@@ -121,6 +125,23 @@ fun renderBlockModel(
         pPackedOverlay,
         pBlockEntity.modelData,
         RenderType.solid()
+    )
+}
+
+/**
+ * Renders a provided [pStack] onto a [BlockEntityRenderer]
+ */
+fun renderStaticItem(pStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBufferSource, pBlockEntity: BlockEntity, pPackedLight: Int) {
+    val itemRenderer = Minecraft.getInstance().itemRenderer
+    itemRenderer.renderStatic(
+        pStack,
+        ItemDisplayContext.FIXED,
+        pPackedLight,
+        OverlayTexture.NO_OVERLAY,
+        pPoseStack,
+        pBuffer,
+        pBlockEntity.level,
+        1
     )
 }
 

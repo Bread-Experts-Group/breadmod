@@ -51,12 +51,17 @@ class CreativeGeneratorBlockEntity(
         if(blockEntities.isNotEmpty()) {
             val total = min(energyHandle.bMaxExtract, energyHandle.stored)
             val toDistribute = total / blockEntities.size
-            var distributed = 0
-            blockEntities.forEach { opt -> opt.ifPresent {
-                distributed += it.receiveEnergy(toDistribute, false)
-                if(distributed > total) { energyHandle.extractEnergy(total, false); return@ifPresent }
+            blockEntities.forEach { opt -> opt.ifPresent { present ->
+                val energyToPush = min(present.maxEnergyStored - present.energyStored, toDistribute)
+                println("present block entity storage/max storage: ${present.energyStored}/${present.maxEnergyStored}")
+                println("to distribute: $energyToPush")
+                present.receiveEnergy(energyToPush, false)
+                energyHandle.extractEnergy(energyToPush, false)
+
+//                distributed += present.receiveEnergy(energyToPush, false)
+//                if(distributed > total) { energyHandle.extractEnergy(total, false) }
+                return@ifPresent
             } }
-            energyHandle.extractEnergy(distributed, false)
         }
     }
 }
