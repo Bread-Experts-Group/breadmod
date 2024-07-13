@@ -87,6 +87,7 @@ class USEnglishLanguageProvider(
         add(ModItems.CAPRISPIN)
         add(ModItems.TOAST)
         add(ModBlocks.TOASTER)
+        add(ModItems.TOASTER_HEATING_ELEMENT)
 
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
         add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")

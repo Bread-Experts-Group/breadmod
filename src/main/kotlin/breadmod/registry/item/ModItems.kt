@@ -86,10 +86,17 @@ object ModItems {
     val BREAD_BULLET_ITEM: RegistryObject<Item> = deferredRegister.register("bread_bullet") { Item(Item.Properties()) }
     val TOOL_GUN: RegistryObject<Item> = deferredRegister.register(TOOL_GUN_DEF) { ToolGunItem() }
     val CAPRISPIN: RegistryObject<Item> = deferredRegister.register("caprispin") { object : Item(Properties()
-        .food(FoodProperties.Builder().alwaysEat().nutrition(20).effect(MobEffectInstance(MobEffects.LEVITATION, 100, 20), 1f).build())
-        .rarity(Rarity.EPIC)){
+        .food(FoodProperties.Builder()
+            .alwaysEat()
+            .nutrition(20)
+            .effect(MobEffectInstance(MobEffects.LEVITATION, 100, 20), 1f)
+            .build()
+        )
+        .rarity(Rarity.EPIC)
+    ){
         override fun getUseAnimation(pStack: ItemStack): UseAnim = UseAnim.DRINK
-    } }
+    }}
+    val TOASTER_HEATING_ELEMENT: RegistryObject<Item> = deferredRegister.register("toaster_heating_element") { Item(Item.Properties()) }
 
     val CREATURE: RegistryObject<Item> = deferredRegister.register("creature") { Item(Item.Properties()) }
 
@@ -97,7 +104,8 @@ object ModItems {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()
             .stacksTo(1)
             .rarity(Rarity.RARE),
-            7900)
+            7900
+        )
     }
 
     val PROJECT_E: ProjectEItems? = if(ModList.get().isLoaded("projecte")) ProjectEItems() else null

@@ -40,7 +40,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 
     final override fun <T : Any?> getCapability(cap: Capability<T>): LazyOptional<T> =
         getCapability(cap, null)
-    final override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T>
+    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T>
         = capabilityHolder.capabilitySided(cap, /*blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)*/ Direction.NORTH, side) ?: super.getCapability(cap, side)
     final override fun invalidateCaps() {
         capabilityHolder.invalidate()
