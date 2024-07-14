@@ -82,7 +82,7 @@ object ModBlockEntities {
     // Power Generators
     val GENERATOR: RegistryObject<BlockEntityType<GeneratorBlockEntity>> = deferredRegister.register("generator_entity") {
         BlockEntityType.Builder.of(
-            { pPos, pState -> GeneratorBlockEntity(pPos, pState, ModRecipeTypes.GENERATOR) },
+            { pPos, pState -> GeneratorBlockEntity(pPos, pState) },
             ModBlocks.GENERATOR.get().block
         ).build(null)
     }

@@ -2,6 +2,7 @@ package breadmod.block.machine.entity
 
 import breadmod.recipe.fluidEnergy.generators.GeneratorRecipe
 import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.IndexableItemHandler
@@ -12,23 +13,20 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.StackedContents
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.fluids.capability.templates.FluidTank
-import net.minecraftforge.registries.RegistryObject
 
 class GeneratorBlockEntity(
     pPos: BlockPos,
-    pBlockState: BlockState,
-    pRecipeType: RegistryObject<RecipeType<GeneratorRecipe>>
+    pBlockState: BlockState
 ) : AbstractMachineBlockEntity.Progressive.Powered<GeneratorBlockEntity, GeneratorRecipe>(
     ModBlockEntities.GENERATOR.get(),
     pPos,
     pBlockState,
-    pRecipeType,
+    ModRecipeTypes.GENERATOR,
     EnergyBattery(50000, 0, 2000) to mutableListOf(Direction.WEST, null),
     ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(FluidTank(8000) to StorageDirection.STORE_ONLY)) to mutableListOf(Direction.UP, null)),
     ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(mutableListOf(64 to StorageDirection.STORE_ONLY)) to mutableListOf(Direction.UP, null))
