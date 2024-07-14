@@ -107,7 +107,7 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
 
             if(!pPlayer.isCrouching && !triggeredState && entity.progress == 0 && !stack.isEmpty && itemHandlerSlot.count != 2) {
                 if(!pPlayer.isCreative) stack.shrink(1)
-                itemHandler.insertItem(ItemStack(item, 1), false)
+                itemHandler.insertItem(0, ItemStack(item, 1), false)
                 pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.2f, random.nextFloat()-0.3f)
                 entity.setChanged()
             } else if(!pPlayer.isCrouching && !triggeredState && entity.progress == 0) {

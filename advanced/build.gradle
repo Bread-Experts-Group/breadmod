@@ -26,7 +26,7 @@ base { archivesName = mod_id }
 String thisModId = getProperty("mod_id")
 
 minecraft {
-    mappings channel: mapping_channel, version: mapping_version
+    mappings channel: mapping_channel_parchment, version: mapping_version_parchment
     runs {
         configureEach {
             property 'forge.logging.markers', 'REGISTRIES'
