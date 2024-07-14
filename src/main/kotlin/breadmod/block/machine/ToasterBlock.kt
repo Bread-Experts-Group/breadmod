@@ -144,7 +144,7 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
                 )
                 pLevel.addParticle(
                     ParticleTypes.LAVA,
-                    posX + d2,
+                    posX + d2 + 0.2,
                     posY + d3,
                     posZ + d4 + if(axis == Direction.Axis.X) 0.1 else 0.0,
                     0.0, 0.0, 0.0

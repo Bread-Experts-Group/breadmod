@@ -31,9 +31,11 @@ object ModItems {
 
     val BREAD_SHIELD: RegistryObject<BreadShieldItem> = deferredRegister.register("bread_shield") { BreadShieldItem() }
     val DOPED_BREAD: RegistryObject<DopedBreadItem> = deferredRegister.register("doped_bread") { DopedBreadItem() }
+    val TOASTED_BREAD: RegistryObject<Item> = deferredRegister.register("toasted_bread") { Item(Item.Properties()
+        .food(FoodProperties.Builder().nutrition(7).saturationMod(0.8F).build())) }
     val BREAD_SLICE: RegistryObject<Item> = deferredRegister.register("bread_slice") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(2).fast().build())) }
-    val TOAST: RegistryObject<Item> = deferredRegister.register("toast") {
+    val TOAST_SLICE: RegistryObject<Item> = deferredRegister.register("toast") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(5).fast().build())) }
     val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") { Item(Item.Properties()) }
     val DOUGH: RegistryObject<Item> = deferredRegister.register("dough") { Item(Item.Properties()) }

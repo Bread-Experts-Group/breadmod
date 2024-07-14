@@ -19,10 +19,6 @@ class ModBlockStateProviderAdv(
             horizontalBlock(ModBlocksAdv.DIESEL_GENERATOR.get().block) { _ ->
                 models().singleTexture(abs, it, it).renderType("cutout")
             }
-            simpleBlockItem(
-                ModBlocksAdv.DIESEL_GENERATOR.get().block,
-                models().getBuilder(abs)
-            )
         }
     }
 }

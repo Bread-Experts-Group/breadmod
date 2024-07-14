@@ -85,7 +85,8 @@ class USEnglishLanguageProvider(
         add(ModBlocks.GENERATOR)
         add(ModItems.CREATURE)
         add(ModItems.CAPRISPIN)
-        add(ModItems.TOAST)
+        add(ModItems.TOAST_SLICE)
+        add(ModItems.TOASTED_BREAD)
         add(ModBlocks.TOASTER)
         add(ModItems.TOASTER_HEATING_ELEMENT)
 
