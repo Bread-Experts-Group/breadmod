@@ -1,5 +1,6 @@
 package breadmod.util.capability
 
+import breadmod.util.translateDirection
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
@@ -54,11 +55,10 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContaine
      * @see capability
      * @see capabilityOrNull
      */
-
-    // TODO TRANSLATEFOR
     fun <T> capabilitySided(capability: Capability<T>, translateFor: Direction, side: Direction?): LazyOptional<T>? {
+        val translatedSide = translateDirection(translateFor, side)
         capabilities.forEach { (myCapability, pair) ->
-            if(myCapability == capability && (pair.second == null || (pair.second ?: return@forEach).contains(side))) return pair.first.cast()
+            if(myCapability == capability && (pair.second == null || (pair.second ?: return@forEach).contains(translatedSide))) return pair.first.cast()
         }
         return null
     }

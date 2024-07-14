@@ -38,10 +38,17 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 ): BlockEntity(pType, pPos, pBlockState) {
     val capabilityHolder = CapabilityHolder(mapOf(*additionalCapabilities))
 
+    init {
+        this.capabilityHolder.capabilities.forEach { (_, u) ->
+            u.first.ifPresent { it.changed = { println("saved"); setChanged() } }
+        }
+    }
+
     final override fun <T : Any?> getCapability(cap: Capability<T>): LazyOptional<T> =
         getCapability(cap, null)
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T>
-        = capabilityHolder.capabilitySided(cap, /*blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)*/ Direction.NORTH, side) ?: super.getCapability(cap, side)
+        = capabilityHolder.capabilitySided(cap, blockState.getValue(BlockStateProperties.HORIZONTAL_FACING), side)
+        ?: super.getCapability(cap, side)
     final override fun invalidateCaps() {
         capabilityHolder.invalidate()
         super.invalidateCaps()
@@ -51,23 +58,37 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 
     open fun adjustSaveAdditional(pTag: CompoundTag) {}
     final override fun saveAdditional(pTag: CompoundTag) {
-        adjustSaveAdditional(pTag)
+        val additionalCompound = CompoundTag()
+        adjustSaveAdditional(additionalCompound)
+        val breadmodCompound = CompoundTag()
+        capabilityHolder.capabilities.forEach { (t, u) ->
+            u.first.ifPresent { breadmodCompound.put(t.name, it.serializeNBT()) }
+        }
+
+        pTag.put(ADDITIONAL_KEY, additionalCompound)
+        pTag.put(BREADMOD_CAPABILITY_KEY, breadmodCompound)
         super.saveAdditional(pTag)
     }
 
     open fun adjustLoad(pTag: CompoundTag) {}
     final override fun load(pTag: CompoundTag) {
         adjustLoad(pTag)
+        adjustLoad(pTag.getCompound(ADDITIONAL_KEY))
+        val capabilityData = pTag.getCompound(BREADMOD_CAPABILITY_KEY)
+        capabilityHolder.capabilities.forEach { (t, u) ->
+            u.first.ifPresent { it.deserializeNBT(capabilityData.get(t.name)) }
+        }
         super.load(pTag)
     }
 
     open fun adjustChanged() {}
-    final override fun setChanged() = super.setChanged().also {
+    final override fun setChanged() {
         adjustChanged()
         if(level is ServerLevel) NETWORK.send(
             PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
             CapabilityDataPacket(blockPos, updateTag)
         )
+        super.setChanged()
     }
 
     init {
@@ -196,5 +217,10 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             const val MAX_PROGRESS_KEY = "maxProgress"
             //const val RECIPE_KEY = "currentRecipe"
         }
+    }
+
+    private companion object {
+        const val ADDITIONAL_KEY = "additional"
+        const val BREADMOD_CAPABILITY_KEY = "capability"
     }
 }

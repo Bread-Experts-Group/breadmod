@@ -12,7 +12,7 @@ import net.minecraft.world.level.material.PushReaction
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class HellNaw: ButtonBlock(
+class HellNawButtonBlock: ButtonBlock(
     Properties.of()
         .noCollission()
         .strength(0.5f)

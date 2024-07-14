@@ -91,12 +91,13 @@
     - fix up and polish existing modes
     - tool gun displaying mode information and image accompanying said mode
 # BUGS
-  - [ ] items inputted into machines from their sides are voided out of existence
+  - [X] items inputted into machines from their sides are voided out of existence
+    - [X] items not saving on world save/load
   - [ ] (minor) tool gun anim speeds up when you have multiple tool guns at once
   - [ ] Fluid texture on diesel machine needs to be normalized
-  - [ ] tool gun stacking up/absorbing clicks when not equipped
+  - [ ] (major) tool gun stacking up/absorbing clicks when not equipped
   - [ ] happy block explosion not actually exploding an area
-  - [ ] (Production specific) Tool gun action not triggering
+  - [ ] (production specific) Tool gun action not triggering
   - [ ] BMExplosion causing crash
 ---
 - [X] Joke item: "the ultimate bread" just gives you creative mode lmao

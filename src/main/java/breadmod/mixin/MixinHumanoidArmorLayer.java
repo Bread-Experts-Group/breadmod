@@ -45,6 +45,7 @@ abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends Humanoi
     private void renderArmorPiece(PoseStack pPoseStack, MultiBufferSource pBuffer, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo callbackInfo) {
         ItemStack itemStack = pLivingEntity.getItemBySlot(pSlot);
         Item item = itemStack.getItem();
+        // TODO: Better way to write this
         if(item instanceof BreadArmorItem && ((BreadArmorItem) item).getEquipmentSlot() == pSlot) {
             this.getParentModel().copyPropertiesTo(pModel);
             this.iSetPartVisibility(pModel, pSlot);

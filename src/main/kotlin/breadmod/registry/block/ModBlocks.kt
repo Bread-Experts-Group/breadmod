@@ -178,7 +178,7 @@ object ModBlocks {
     val HELL_NAW = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "hell_naw",
-        { HellNaw() },
+        { HellNawButtonBlock() },
         Item.Properties()
     )
 

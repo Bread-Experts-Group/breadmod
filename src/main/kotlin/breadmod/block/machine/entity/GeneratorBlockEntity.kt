@@ -15,9 +15,9 @@ import net.minecraft.world.entity.player.StackedContents
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.fluids.capability.templates.FluidTank
-import kotlin.math.min
 
 class GeneratorBlockEntity(
     pPos: BlockPos,
@@ -47,37 +47,18 @@ class GeneratorBlockEntity(
         return true
     }
 
-    private fun runSignsOne(lambda: (Int) -> Unit) {
-        var i = -1
-        while (i < 2) {
-            lambda(i)
-            i += 2
-        }
-    }
-
-    override fun postTick(
+    override fun recipeTick(
         pLevel: Level,
         pPos: BlockPos,
         pState: BlockState,
-        pBlockEntity: AbstractMachineBlockEntity<GeneratorBlockEntity>
+        pBlockEntity: Progressive<GeneratorBlockEntity, GeneratorRecipe>,
+        recipe: GeneratorRecipe
     ) {
-        val energyHandle = capabilityHolder.capability<EnergyBattery>(ForgeCapabilities.ENERGY)
-        val blockEntities = buildList {
-            runSignsOne { x -> pLevel.getBlockEntity(pPos.offset(x, 0, 0))?.getCapability(ForgeCapabilities.ENERGY)?.let { add(it) } }
-            runSignsOne { y -> pLevel.getBlockEntity(pPos.offset(0, y, 0))?.getCapability(ForgeCapabilities.ENERGY)?.let { add(it) } }
-            runSignsOne { z -> pLevel.getBlockEntity(pPos.offset(0, 0, z))?.getCapability(ForgeCapabilities.ENERGY)?.let { add(it) } }
-        }
-
-        if(blockEntities.isNotEmpty()) {
-            val total = min(energyHandle.bMaxExtract, energyHandle.stored)
-            val toDistribute = total / blockEntities.size
-            var distributed = 0
-            blockEntities.forEach { opt -> opt.ifPresent {
-                distributed += it.receiveEnergy(toDistribute, true)
-                if(distributed > total) { energyHandle.extractEnergy(total, false); return@ifPresent }
-            } }
-            energyHandle.extractEnergy(distributed, false)
-        }
+        val sides = (capabilityHolder.capabilities[ForgeCapabilities.ENERGY] ?: return).second
+        capabilityHolder.capability<EnergyBattery>(ForgeCapabilities.ENERGY).distribute(
+            pLevel, pPos, sides,
+            blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+        )
     }
 
     override fun clearContent() { getItemHandler()?.clear() }

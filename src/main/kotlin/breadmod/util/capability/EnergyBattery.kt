@@ -1,17 +1,24 @@
 package breadmod.util.capability
 
+import breadmod.util.translateDirection
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.level.Level
+import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.energy.IEnergyStorage
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
 
 class EnergyBattery(
-    capacity: Int, var bMaxReceive: Int = Int.MAX_VALUE, var bMaxExtract: Int = Int.MAX_VALUE,
+    capacity: Int,
+    private var bMaxReceive: Int = Int.MAX_VALUE, var bMaxExtract: Int = Int.MAX_VALUE,
     override var changed: (() -> Unit)? = null
 ) : IEnergyStorage, ICapabilitySavable<CompoundTag> {
     constructor(capacity: Int, bTransportLimit: Int = Int.MAX_VALUE, changed: (() -> Unit)? = null): this(capacity, bTransportLimit, bTransportLimit, changed)
 
     var stored: Int = 0
-    var capacity: Int = capacity
+    private var capacity: Int = capacity
         set(value) { stored = min(stored, value); field = value }
 
     override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = if(bMaxReceive > 0) {
@@ -53,6 +60,23 @@ class EnergyBattery(
             bMaxReceive = it.getInt(MAX_RECEIVE_TAG)
             stored = it.getInt(STORED_TAG)
             changed?.invoke()
+        }
+    }
+
+    fun distribute(pLevel: Level, pPos: BlockPos, sides: List<Direction?>?, facing: Direction = Direction.NORTH) {
+        val energies = (sides?.filterNotNull() ?: Direction.entries).mapNotNull {
+            val rotated = translateDirection(facing, it)!!.let { r -> if(r.axis == Direction.Axis.Z) r.opposite else r }
+            pLevel.getBlockEntity(pPos.offset(rotated.normal))?.getCapability(
+                ForgeCapabilities.ENERGY,
+                rotated.opposite
+            )?.resolve()?.getOrNull()
+        }
+
+        if (energies.isNotEmpty()) {
+            val toDistribute = this.extractEnergy(bMaxExtract, true) / energies.size
+            var distributed = 0
+            energies.forEach { distributed += it.receiveEnergy(toDistribute, false) }
+            this.extractEnergy(distributed, false)
         }
     }
 

@@ -84,15 +84,18 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
 
     override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy().also {
         val reifiedSlot = slots[slot]
-        if(reifiedSlot.second != StorageDirection.EMPTY_ONLY) {
-            val space = min(min(stack.maxStackSize, reifiedSlot.first)-stack.count, it.count)
+        val reifiedStack = stacks[slot]
+        val toMove = min(min(reifiedSlot.first, reifiedStack.maxStackSize) - reifiedStack.count, it.count)
+
+        if(reifiedSlot.second != StorageDirection.EMPTY_ONLY
+            && toMove > 0
+            && (reifiedStack.isEmpty || stack.item == reifiedStack.item)
+        ) {
             if(!simulate) {
-                if(stack.isEmpty) stacks[slot] = it.copyWithCount(space)
-                else stack.grow(space)
-                changed?.invoke()
+                if(reifiedStack.isEmpty) stacks[slot] = it.copyWithCount(toMove)
+                else stacks[slot].grow(toMove)
             }
-            it.shrink(space)
-            if(it.count == 0) return ItemStack.EMPTY
+            it.shrink(toMove)
         } else return it
     }
 
@@ -104,38 +107,9 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
      * @since 1.0.0
      */
     @Suppress("MemberVisibilityCanBePrivate", "unused")
-    fun insertItem(stack: ItemStack, simulate: Boolean): ItemStack = stack.copy().also {
-        val toFill = slots
-            .filterIndexed { index, (max, direction) -> max > 0 && stacks[index].let { actual -> actual.isEmpty ||( actual.`is`(it.item) && actual.count != actual.maxStackSize) } && direction != StorageDirection.EMPTY_ONLY }
-            .mapIndexed { index, pair -> stacks[index] to (pair to index) }
-            .sortedWith { (stack1, pair1), (stack2, pair2) ->
-                val cmp = (stack1.maxStackSize-stack1.count).compareTo(stack2.maxStackSize-stack2.count)
-                if(cmp != 1) pair1.first.first.compareTo(pair2.first.first) else cmp
-            }
-        toFill.forEach { (stack, pair) ->
-            val space = min(min(stack.maxStackSize, pair.first.first)-stack.count, it.count)
-            if(!simulate) {
-                if(stack.isEmpty) stacks[pair.second] = it.copyWithCount(space)
-                else stack.grow(space)
-            }
+    fun insertItem(stack: ItemStack, simulate: Boolean): ItemStack = TODO("insert items 2")
 
-            it.shrink(space)
-            if(it.count == 0) return ItemStack.EMPTY
-        }
-
-        if(!simulate && it.count != stack.count) changed?.invoke()
-        return it
-    }
-
-    override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack {
-        val reifiedSlot = slots[slot]
-        if(reifiedSlot.second != StorageDirection.STORE_ONLY) {
-            val stack = stacks[slot]
-            val removed = stack.copyWithCount(min(amount, stack.count))
-            if(!simulate) stack.shrink(removed.count).also { changed?.invoke() }
-            return removed
-        } else return ItemStack.EMPTY
-    }
+    override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack = TODO("extr items")
 
     /**
      * Non-specific slot version of [extractItem].
@@ -144,25 +118,7 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
      * @since 1.0.0
      */
     @Suppress("MemberVisibilityCanBePrivate", "unused", "ReplaceNotNullAssertionWithElvisReturn")
-    fun extractItem(target: Item? = null, amount: Int, simulate: Boolean): ItemStack {
-        val reifiedTarget = target ?: (stacks.firstOrNull { !it.isEmpty } ?: return ItemStack.EMPTY).item
-        var remainder = amount
-
-        val toFill = slots
-            .filterIndexed { index, (max, direction) -> max > 0 && stacks[index].let { actual -> !actual.isEmpty && actual.`is`(reifiedTarget) } && direction != StorageDirection.STORE_ONLY }
-            .mapIndexed { index, pair -> stacks[index] to pair }
-            .sortedWith { (stack1), (stack2) -> stack1.count.compareTo(stack2.count) }
-        var concatStack: ItemStack? = null
-        toFill.forEach { (stack) ->
-            val toRemove = min(remainder, stack.count)
-            if(concatStack == null) concatStack = stack.copyWithCount(toRemove) else concatStack!!.grow(toRemove)
-            remainder -= concatStack!!.count
-            if(!simulate) stack.shrink(toRemove)
-        }
-
-        if(!simulate) changed?.invoke()
-        return concatStack ?: ItemStack.EMPTY
-    }
+    fun extractItem(target: Item? = null, amount: Int, simulate: Boolean): ItemStack = TODO("extr items 2")
 
     override fun getSlotLimit(slot: Int): Int {
         val slotMax = slots[slot].first

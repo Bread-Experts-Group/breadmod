@@ -333,3 +333,14 @@ fun DeferredRegister<Block>.registerBlockItem(itemRegister: DeferredRegister<Ite
 
 fun <T: Recipe<*>> DeferredRegister<RecipeType<*>>.registerType(name: String): RegistryObject<RecipeType<T>> =
     this.register(name) { object : RecipeType<T> { override fun toString(): String = name } }
+
+fun translateDirection(translateFor: Direction, side: Direction?): Direction? =
+    if(side == null) null
+    else if(side.axis == Direction.Axis.Y) side
+    else when(translateFor) {
+        Direction.NORTH -> side.opposite
+        Direction.SOUTH -> side
+        Direction.EAST -> side.clockWise
+        Direction.WEST -> side.counterClockWise
+        else -> null
+    }
