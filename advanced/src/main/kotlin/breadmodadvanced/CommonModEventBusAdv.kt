@@ -2,7 +2,7 @@ package breadmodadvanced
 
 import breadmod.datagen.constructLootProvider
 import breadmodadvanced.ModMainAdv.LOGGER
-import breadmodadvanced.block.entity.renderer.DieselGeneratorRenderer
+import breadmodadvanced.block.machine.entity.renderer.DieselGeneratorRenderer
 import breadmodadvanced.datagen.ModBlockStateProviderAdv
 import breadmodadvanced.datagen.lang.USEnglishLanguageProviderAdv
 import breadmodadvanced.registry.block.ModBlockEntitiesAdv

@@ -40,7 +40,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 
     init {
         this.capabilityHolder.capabilities.forEach { (_, u) ->
-            u.first.ifPresent { it.changed = { println("saved"); setChanged() } }
+            u.first.ifPresent { it.changed = { setChanged() } }
         }
     }
 
@@ -100,13 +100,10 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
     open fun preTick (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}
     open fun postTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}
 
-    abstract class Powered<T: AbstractMachineBlockEntity<T>>(
-        pType: BlockEntityType<T>,
-        pPos: BlockPos,
-        pBlockState: BlockState,
-        powerHandler: CapabilityContainer,
-        vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
-    ): AbstractMachineBlockEntity<T>(pType, pPos, pBlockState, ForgeCapabilities.ENERGY to powerHandler, *additionalCapabilities)
+    open fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {
+        preTick(pLevel, pPos, pState, pBlockEntity)
+        postTick(pLevel, pPos, pState, pBlockEntity)
+    }
 
     abstract class Progressive<T: AbstractMachineBlockEntity<T>, R: FluidEnergyRecipe>(
         pType: BlockEntityType<T>,

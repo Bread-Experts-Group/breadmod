@@ -4,7 +4,6 @@ import breadmod.ModMain.modLocation
 import breadmod.datagen.recipe.compat.create.CreateMixingRecipeBuilder
 import breadmod.datagen.recipe.FluidEnergyRecipeBuilder
 import breadmod.registry.block.ModBlocks
-import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeSerializers
 import mekanism.api.datagen.recipe.builder.ItemStackToItemStackRecipeBuilder
@@ -418,18 +417,6 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requiresItem(Items.WHEAT)
             .setSerializer(ModRecipeSerializers.WHEAT_CRUSHER.get())
             .save(pWriter, modLocation("special", "machine", "wheat_crushing"))
-        FluidEnergyRecipeBuilder()
-            .setTimeRequired(20 * 80)
-            .setRFRequired(-5000)
-            .requiresItem(Items.COAL)
-            .setSerializer(ModRecipeSerializers.GENERATOR.get())
-            .save(pWriter, modLocation("special", "machine", "generator", "coal"))
-        FluidEnergyRecipeBuilder()
-            .setTimeRequired(20 * 14400)
-            .setRFRequired(-6439200)
-            .requiresItem(ModFluids.BREAD_LIQUID.bucket.get())
-            .setSerializer(ModRecipeSerializers.GENERATOR.get())
-            .save(pWriter, modLocation("special", "machine", "generator", "ethanol"))
         FluidEnergyRecipeBuilder(ModItems.TOAST_SLICE.get(), 2)
             .setTimeRequired(20 * 5)
             .requiresItem(ModItems.BREAD_SLICE.get(), 2)

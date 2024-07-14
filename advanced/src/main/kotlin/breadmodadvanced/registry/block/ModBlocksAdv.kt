@@ -2,7 +2,7 @@ package breadmodadvanced.registry.block
 
 import breadmod.util.registerBlockItem
 import breadmodadvanced.ModMainAdv
-import breadmodadvanced.block.DieselGeneratorBlock
+import breadmodadvanced.block.machine.DieselGeneratorBlock
 import breadmodadvanced.item.render.DieselGeneratorItemRenderer
 import breadmodadvanced.registry.item.ModItemsAdv
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer

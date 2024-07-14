@@ -149,8 +149,14 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, overrid
 
     override fun getTankCapacity(tank: Int): Int = allTanks[tank].capacity
     override fun isFluidValid(tank: Int, stack: FluidStack): Boolean = allTanks[tank].isFluidValid(stack)
+
+    var insertFluidCheck: ((resource: FluidStack, action: FluidAction) -> Boolean)? = null
+    var extractFluidCheck: ((resource: FluidStack, action: FluidAction) -> Boolean)? = null
+    var extractFluidTagCheck: ((resource: TagKey<Fluid>, amount: Int, action: FluidAction) -> Boolean)? = null
+
+
     override fun fill(resource: FluidStack?, action: FluidAction): Int {
-        if(resource == null || resource.isEmpty) return 0
+        if(resource == null || resource.isEmpty || insertFluidCheck?.invoke(resource, action) != true) return 0
         val resourceCopy = resource.copy()
         var filledTotal = 0
         for(tank in tanksWithDirection(StorageDirection.STORE_ONLY).filter { it.isFluidValid(resourceCopy) && (it.isEmpty || it.fluid.fluid.isSame(resourceCopy.fluid)) && it.space > 0 }) {
@@ -164,7 +170,7 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, overrid
     }
 
     override fun drain(resource: FluidStack?, action: FluidAction): FluidStack {
-        if(resource == null || resource.isEmpty) return FluidStack.EMPTY
+        if(resource == null || resource.isEmpty || extractFluidCheck?.invoke(resource, action) != true) return FluidStack.EMPTY
         val resourceCopy = resource.copy()
         val drainedTotal = FluidStack(resource.fluid, 0)
         for(tank in tanksWithDirection(StorageDirection.EMPTY_ONLY).filter { !it.isEmpty && it.fluid.fluid.isSame(resourceCopy.fluid) }) {
@@ -178,7 +184,7 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, overrid
     }
 
     fun drain(resource: TagKey<Fluid>, amount: Int, action: FluidAction): FluidStack {
-        if(amount <= 0) return FluidStack.EMPTY
+        if(amount <= 0 || extractFluidTagCheck?.invoke(resource, amount, action) != true) return FluidStack.EMPTY
         var drainedTotal: FluidStack = FluidStack.EMPTY; var remainingAmount = amount
         for(tank in tanksWithDirection(StorageDirection.EMPTY_ONLY).filter { !it.isEmpty && it.fluid.fluid.`is`(resource) }) {
             if(drainedTotal.isEmpty) {

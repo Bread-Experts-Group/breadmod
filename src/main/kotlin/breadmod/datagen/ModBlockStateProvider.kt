@@ -19,7 +19,6 @@ import net.minecraftforge.client.model.generators.ModelFile
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
-@Suppress("SpellCheckingInspection")
 class ModBlockStateProvider(
     packOutput: PackOutput,
     private val existingFileHelper: ExistingFileHelper
@@ -33,7 +32,7 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
 
         horizontalBlock(ModBlocks.GENERATOR.get().block) { state ->
-            val machineOn = if(state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
             val name = "breadmod:block/generator$machineOn"
 
             val model = models().singleTexture(

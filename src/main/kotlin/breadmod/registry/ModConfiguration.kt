@@ -19,6 +19,8 @@ object ModConfiguration {
         val BREAD_AMULET_STACKS: ConfigValue<Boolean>
         val HAPPY_BLOCK_DIVISIONS: ConfigValue<Int>
         val HAPPY_BLOCK_SPREAD_RADIUS: ConfigValue<Double>
+        val GENERATOR_MAX_BURN_TIME_TICKS: ConfigValue<Int>
+        val GENERATOR_RF_PER_TICK: ConfigValue<Int>
 
         init {
             builder.push("common")
@@ -47,6 +49,12 @@ object ModConfiguration {
             HAPPY_BLOCK_SPREAD_RADIUS = builder
                 .comment("How far the happy block will spread it's divided blocks")
                 .define("happyBlockRng", 0.5)
+            GENERATOR_MAX_BURN_TIME_TICKS = builder
+                .comment("How long the generator will burn for, in ticks")
+                .define("generatorMaxBurnTime", 20000)
+            GENERATOR_RF_PER_TICK = builder
+                .comment("How much RF the generator will produce per tick")
+                .define("generatorRfPerTick", 64)
 
             builder.pop()
         }

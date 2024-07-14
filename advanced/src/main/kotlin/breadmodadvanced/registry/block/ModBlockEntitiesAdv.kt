@@ -1,7 +1,7 @@
 package breadmodadvanced.registry.block
 
 import breadmodadvanced.ModMainAdv
-import breadmodadvanced.block.entity.DieselGeneratorBlockEntity
+import breadmodadvanced.block.machine.entity.DieselGeneratorBlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries

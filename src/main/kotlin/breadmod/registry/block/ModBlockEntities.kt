@@ -7,11 +7,9 @@ import breadmod.block.machine.multiblock.farmer.entity.FarmerControllerBlockEnti
 import breadmod.block.machine.multiblock.farmer.entity.FarmerInputBlockEntity
 import breadmod.block.machine.multiblock.farmer.entity.FarmerOutputBlockEntity
 import breadmod.block.machine.multiblock.generic.entity.PowerInterfaceBlockEntity
-import breadmod.recipe.fluidEnergy.generators.GeneratorRecipe
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK
 import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK
-import breadmod.registry.recipe.ModRecipeTypes
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries

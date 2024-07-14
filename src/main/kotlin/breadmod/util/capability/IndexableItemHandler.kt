@@ -82,7 +82,11 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
     override fun getSlots(): Int = size
     override fun getStackInSlot(slot: Int): ItemStack = stacks[slot].copy()
 
+    var insertItemCheck: ((slot: Int, stack: ItemStack, simulate: Boolean) -> Boolean)? = null
+    var extractItemCheck: ((slot: Int, amount: Int, simulate: Boolean) -> Boolean)? = null
+
     override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy().also {
+        if(insertItemCheck?.invoke(slot, stack, simulate) != true) return it
         val reifiedSlot = slots[slot]
         val reifiedStack = stacks[slot]
         val toMove = min(min(reifiedSlot.first, reifiedStack.maxStackSize) - reifiedStack.count, it.count)

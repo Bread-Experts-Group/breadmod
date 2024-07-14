@@ -4,7 +4,6 @@ import breadmod.ModMain
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
 import breadmod.recipe.fluidEnergy.ToasterRecipe
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
-import breadmod.recipe.fluidEnergy.generators.GeneratorRecipe
 import breadmod.util.registerType
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraftforge.registries.DeferredRegister
@@ -16,7 +15,4 @@ object ModRecipeTypes {
     val DOUGH_MACHINE = deferredRegister.registerType<DoughMachineRecipe>("dough_machine")
     val WHEAT_CRUSHING = deferredRegister.registerType<WheatCrushingRecipe>("wheat_crusher")
     val TOASTING = deferredRegister.registerType<ToasterRecipe>("toasting")
-
-    // Power Generators
-    val GENERATOR = deferredRegister.registerType<GeneratorRecipe>("generator")
 }
