@@ -155,15 +155,15 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         open fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {}
         final override fun adjustSaveAdditional(pTag: CompoundTag) {
             adjustSaveAdditionalProgressive(pTag)
-            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) }
-            pTag.putInt(PROGRESS_KEY, progress); pTag.putInt(MAX_PROGRESS_KEY, maxProgress)
+            pTag.putInt(PROGRESS_KEY, progress)
+            pTag.putInt(MAX_PROGRESS_KEY, maxProgress)
         }
 
         open fun adjustLoadProgressive(pTag: CompoundTag) {}
         final override fun adjustLoad(pTag: CompoundTag) {
             adjustLoadProgressive(pTag)
-            currentRecipe.ifPresent { progress = pTag.getInt(PROGRESS_KEY) }
-            progress = pTag.getInt(PROGRESS_KEY); maxProgress = pTag.getInt(MAX_PROGRESS_KEY)
+            progress = pTag.getInt(PROGRESS_KEY)
+            maxProgress = pTag.getInt(MAX_PROGRESS_KEY)
         }
 
         open fun noRecipeTick (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) {}
