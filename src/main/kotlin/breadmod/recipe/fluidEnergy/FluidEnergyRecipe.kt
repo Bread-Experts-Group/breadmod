@@ -1,7 +1,9 @@
 package breadmod.recipe.fluidEnergy
 
+import breadmod.block.machine.CraftingManager
 import breadmod.recipe.serializer.SimpleFluidEnergyRecipeSerializer
-import breadmod.util.amount
+import breadmod.util.capability.EnergyBattery
+import breadmod.util.capability.FluidContainer
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
@@ -14,10 +16,8 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
-import kotlin.jvm.optionals.getOrNull
 
 abstract class FluidEnergyRecipe(
     pId: ResourceLocation,
@@ -34,18 +34,18 @@ abstract class FluidEnergyRecipe(
     abstract override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*>
 
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
-        val okay =
-                itemsRequired?.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.item) }?.count ?: -1) >= it.count } ?: true &&
-                itemsRequiredTagged?.all { (pContainer.items.firstOrNull { conItem -> conItem.`is`(it.first) }?.count ?: -1) >= it.second } ?: true
+        val okay = itemsRequired?.all { r -> pContainer.items.firstOrNull { it.`is`(r.item) }?.let { it.count >= r.count } ?: false } ?: true
+                && itemsRequiredTagged?.all { r -> pContainer.items.firstOrNull { it.`is`(r.first) }?.let { it.count >= r.second } ?: false } ?: true
+
         if(okay) {
-            val entityCheck = pContainer as? ICapabilityProvider
+            val entityCheck = (pContainer as CraftingManager<*>).parent
             if(energy != null) {
-                val energyHandle = entityCheck?.getCapability(ForgeCapabilities.ENERGY)?.resolve()?.getOrNull() ?: return false
+                val energyHandle = entityCheck.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY) ?: return false
                 if(energyHandle.energyStored < energy!!) return false
             }
 
             if(!fluidsRequired.isNullOrEmpty() || !fluidsRequiredTagged.isNullOrEmpty()) {
-                val fluidHandle = entityCheck?.getCapability(ForgeCapabilities.FLUID_HANDLER)?.resolve()?.getOrNull() ?: return false
+                val fluidHandle = entityCheck.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return false
                 return (fluidsRequired?.all { fluidHandle.amount(it.fluid) >= it.amount } ?: true) &&
                     (fluidsRequiredTagged?.all { fluidHandle.amount(it.first) >= it.second } ?: true)
             }

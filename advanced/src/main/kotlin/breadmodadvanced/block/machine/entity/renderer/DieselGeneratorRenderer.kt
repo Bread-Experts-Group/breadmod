@@ -67,49 +67,50 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
 
         // Fluid Tank Rendering
         pPoseStack.popPose()
-        val handler = pBlockEntity.capabilityHolder.capability<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
-        val tank = handler.allTanks[0]
-        if(tank.isEmpty) return
+        pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
+            val tank = it.allTanks[0]
+            if(tank.isEmpty) return
 
-        val blockPos = pBlockEntity.blockPos
-        val fluidTypeExtensions = IClientFluidTypeExtensions.of(tank.fluid.fluid)
-        val stillFluidTexture = fluidTypeExtensions.getStillTexture(tank.fluid)?: return
-        val fluidState = tank.fluid.fluid.defaultFluidState()
-        val fluidSprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
-        val fluidTint = fluidTypeExtensions.getTintColor(fluidState, pBlockEntity.level, blockPos)
+            val blockPos = pBlockEntity.blockPos
+            val fluidTypeExtensions = IClientFluidTypeExtensions.of(tank.fluid.fluid)
+            val stillFluidTexture = fluidTypeExtensions.getStillTexture(tank.fluid)?: return
+            val fluidState = tank.fluid.fluid.defaultFluidState()
+            val fluidSprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
+            val fluidTint = fluidTypeExtensions.getTintColor(fluidState, pBlockEntity.level, blockPos)
 
-        // todo normalize texture size to not be squashed or stretched, refer to General#GuiGraphics.renderFluid for clues
+            // todo normalize texture size to not be squashed or stretched, refer to General#GuiGraphics.renderFluid for clues
 
-        val fluidHeight: Float = ((tank.fluidAmount.toFloat() / tank.capacity.toFloat() * 0.2f) + 0.623f)
-        val builder = pBuffer.getBuffer(ItemBlockRenderTypes.getRenderLayer(fluidState))
+            val fluidHeight: Float = ((tank.fluidAmount.toFloat() / tank.capacity.toFloat() * 0.2f) + 0.623f)
+            val builder = pBuffer.getBuffer(ItemBlockRenderTypes.getRenderLayer(fluidState))
 
-        val dv1 = (fluidSprite.v1 - fluidSprite.v0)
-        val v1 = (fluidSprite.v0 + ((dv1 / 2f) * fluidHeight))
-        val u1 = fluidSprite.u0 + ((fluidSprite.u1 - fluidSprite.u0) * 0.8F)
+            val dv1 = (fluidSprite.v1 - fluidSprite.v0)
+            val v1 = (fluidSprite.v0 + ((dv1 / 2f) * fluidHeight))
+            val u1 = fluidSprite.u0 + ((fluidSprite.u1 - fluidSprite.u0) * 0.8F)
 
-        // Top / pX0 = Right, pX1 = left, pZ0 = Front, pZ1 = Back
-        if(tank.fluidAmount.toFloat() < tank.capacity.toFloat()) {
+            // Top / pX0 = Right, pX1 = left, pZ0 = Front, pZ1 = Back
+            if(tank.fluidAmount.toFloat() < tank.capacity.toFloat()) {
+                pPoseStack.pushPose()
+                rotateModel(blockRotation, pPoseStack) // Rotate on East and West axis
+                drawQuad(builder, pPoseStack, 0.005f, fluidHeight, 0.27f, 0.995f, fluidHeight, 0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+                pPoseStack.popPose()
+            }
+
+            // West / Right
             pPoseStack.pushPose()
-            rotateModel(blockRotation, pPoseStack) // Rotate on East and West axis
-            drawQuad(builder, pPoseStack, 0.005f, fluidHeight, 0.27f, 0.995f, fluidHeight, 0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight, fluidTint)
+            rotateModel(blockRotation, pPoseStack)
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(90f))
+            pPoseStack.translate(-1f, 0f, 0f)
+            drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.0005f, 0.73f, fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1, pPackedLight, fluidTint)
+            pPoseStack.popPose()
+
+            // East / Left
+            pPoseStack.pushPose()
+            rotateModel(blockRotation, pPoseStack)
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(-90f))
+            pPoseStack.translate(0f, 0f, -1f)
+            drawQuad(builder, pPoseStack, 0.27f, 0.57f, 0.005f, 0.75f, fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1, pPackedLight, fluidTint)
             pPoseStack.popPose()
         }
-
-        // West / Right
-        pPoseStack.pushPose()
-        rotateModel(blockRotation, pPoseStack)
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(90f))
-        pPoseStack.translate(-1f, 0f, 0f)
-        drawQuad(builder, pPoseStack, 0.25f, 0.57f, 0.0005f, 0.73f, fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1, pPackedLight, fluidTint)
-        pPoseStack.popPose()
-
-        // East / Left
-        pPoseStack.pushPose()
-        rotateModel(blockRotation, pPoseStack)
-        pPoseStack.mulPose(Axis.YP.rotationDegrees(-90f))
-        pPoseStack.translate(0f, 0f, -1f)
-        drawQuad(builder, pPoseStack, 0.27f, 0.57f, 0.005f, 0.75f, fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1, pPackedLight, fluidTint)
-        pPoseStack.popPose()
     }
 
     private fun rotateModel(pBlockRotation: Direction, pPoseStack: PoseStack) {

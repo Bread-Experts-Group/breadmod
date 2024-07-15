@@ -28,16 +28,17 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.capability.IFluidHandler
+import kotlin.jvm.optionals.getOrNull
 
 class DieselGeneratorBlock: BaseAbstractMachineBlock.Toggleable<DieselGeneratorBlockEntity>(
     ModBlockEntitiesAdv.DIESEL_GENERATOR,
     Properties.of().noOcclusion()
         .strength(1.5f, 5.0f)
         .sound(SoundType.METAL)
-        .lightLevel { state -> if(state.getValue(BlockStateProperties.LIT)) 8 else 0 }
+        .lightLevel { state -> (if(state.getValue(BlockStateProperties.LIT)) 8 else 0) + state.getValue(BlockStateProperties.LEVEL) }
 ) {
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT)
+        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT, BlockStateProperties.LEVEL)
     }
 
     @Deprecated("Deprecated in Java")
@@ -66,7 +67,11 @@ class DieselGeneratorBlock: BaseAbstractMachineBlock.Toggleable<DieselGeneratorB
                         handStack.shrink(1)
                         pPlayer.inventory.placeItemBackInInventory(BucketItem.getEmptySuccessItem(handStack, pPlayer))
                     }
-                    pLevel.playSound(null, pPos, item.fluid.pickupSound.get(), SoundSource.BLOCKS, 1.0f, 1.0f)
+                    pLevel.playSound(
+                        null, pPos,
+                        item.fluid.pickupSound.getOrNull() ?: SoundEvents.BUCKET_EMPTY,
+                        SoundSource.BLOCKS, 1.0f, 1.0f
+                    )
                     handler.fill(stack, IFluidHandler.FluidAction.EXECUTE)
 
                     return InteractionResult.SUCCESS
@@ -89,6 +94,7 @@ class DieselGeneratorBlock: BaseAbstractMachineBlock.Toggleable<DieselGeneratorB
         defaultBlockState()
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
             .setValue(BlockStateProperties.LIT, false)
+            .setValue(BlockStateProperties.LEVEL, 0)
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<DieselGeneratorBlockEntity> =
         BlockEntityTicker { tLevel, pPos, tState, pBlockEntity -> pBlockEntity.tick(tLevel, pPos, tState, pBlockEntity) }
 }

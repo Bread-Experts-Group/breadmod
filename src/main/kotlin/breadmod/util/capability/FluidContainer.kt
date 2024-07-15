@@ -150,9 +150,9 @@ class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, overrid
     override fun getTankCapacity(tank: Int): Int = allTanks[tank].capacity
     override fun isFluidValid(tank: Int, stack: FluidStack): Boolean = allTanks[tank].isFluidValid(stack)
 
-    var insertFluidCheck: ((resource: FluidStack, action: FluidAction) -> Boolean)? = null
-    var extractFluidCheck: ((resource: FluidStack, action: FluidAction) -> Boolean)? = null
-    var extractFluidTagCheck: ((resource: TagKey<Fluid>, amount: Int, action: FluidAction) -> Boolean)? = null
+    var insertFluidCheck: ((resource: FluidStack, action: FluidAction) -> Boolean)? = { _, _ -> true }
+    var extractFluidCheck: ((resource: FluidStack, action: FluidAction) -> Boolean)? =  { _, _ -> true }
+    var extractFluidTagCheck: ((resource: TagKey<Fluid>, amount: Int, action: FluidAction) -> Boolean)? = { _, _, _ -> true }
 
 
     override fun fill(resource: FluidStack?, action: FluidAction): Int {

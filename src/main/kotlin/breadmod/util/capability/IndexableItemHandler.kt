@@ -82,8 +82,8 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
     override fun getSlots(): Int = size
     override fun getStackInSlot(slot: Int): ItemStack = stacks[slot].copy()
 
-    var insertItemCheck: ((slot: Int, stack: ItemStack, simulate: Boolean) -> Boolean)? = null
-    var extractItemCheck: ((slot: Int, amount: Int, simulate: Boolean) -> Boolean)? = null
+    var insertItemCheck: ((slot: Int, stack: ItemStack, simulate: Boolean) -> Boolean)? = { _, _, _ -> true }
+    var extractItemCheck: ((slot: Int, amount: Int, simulate: Boolean) -> Boolean)? = { _, _, _ -> true }
 
     override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy().also {
         if(insertItemCheck?.invoke(slot, stack, simulate) != true) return it
@@ -113,7 +113,18 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
     @Suppress("MemberVisibilityCanBePrivate", "unused")
     fun insertItem(stack: ItemStack, simulate: Boolean): ItemStack = TODO("insert items 2")
 
-    override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack = TODO("extr items")
+    override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack {
+        if(extractItemCheck?.invoke(slot, amount, simulate) != true) return ItemStack.EMPTY
+        val reifiedSlot = slots[slot]
+        val reifiedStack = stacks[slot]
+        val toMove = min(reifiedStack.count, amount)
+
+        return if(reifiedSlot.second != StorageDirection.STORE_ONLY && toMove > 0) {
+            val extracted = reifiedStack.copy().also { it.count = toMove }
+            if(!simulate) reifiedStack.shrink(toMove)
+            extracted
+        } else ItemStack.EMPTY
+    }
 
     /**
      * Non-specific slot version of [extractItem].

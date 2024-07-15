@@ -57,6 +57,10 @@ class DieselGeneratorBlockEntity(
             val tank = it.allTanks.first()
             val maxDrink = min(tank.fluid.amount, FluidType.BUCKET_VOLUME / 75)
 
+            val lightLevel = tank.fluid.fluid.fluidType.lightLevel
+            if(lightLevel != pState.getValue(BlockStateProperties.LEVEL))
+                pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.LEVEL, tank.fluid.fluid.fluidType.lightLevel))
+
             if(
                 burnTime < MAX_BURN_TIME.get() &&
                 addBurnTime(

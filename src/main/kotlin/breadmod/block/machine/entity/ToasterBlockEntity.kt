@@ -1,17 +1,13 @@
 package breadmod.block.machine.entity
 
-import breadmod.ModMain
 import breadmod.recipe.fluidEnergy.ToasterRecipe
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.capability.StorageDirection
 import net.minecraft.core.BlockPos
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.entity.player.StackedContents
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
@@ -28,29 +24,13 @@ class ToasterBlockEntity(
     pPos,
     pBlockState,
     ModRecipeTypes.TOASTING,
-    ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(listOf(
+    IndexableItemHandler(listOf(
         2 to StorageDirection.STORE_ONLY
-    )) to null)
+    )) to null,
+    listOf(0),
+    1 to 1
 ) {
     private val triggered = BlockStateProperties.TRIGGERED
-
-    override fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {
-        super.adjustSaveAdditionalProgressive(pTag)
-        pTag.put(ModMain.ID, CompoundTag().also { dataTag ->
-            capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)?.let {
-                dataTag.put("inventory", it.serializeNBT())
-            }
-        })
-    }
-
-    override fun adjustLoadProgressive(pTag: CompoundTag) {
-        super.adjustLoadProgressive(pTag)
-        val dataTag = pTag.getCompound(ModMain.ID)
-        capabilityHolder.capabilityOrNull<IndexableItemHandler>(
-            ForgeCapabilities.ITEM_HANDLER)?.deserializeNBT(dataTag.getCompound("inventory"))
-    }
-
-    override fun getUpdateTag(): CompoundTag = super.getUpdateTag().also { saveAdditional(it) }
 
     override fun tick(
         pLevel: Level,
@@ -80,7 +60,7 @@ class ToasterBlockEntity(
                         pLevel.playSound(null, pPos, SoundEvents.NOTE_BLOCK_BELL.get(), SoundSource.BLOCKS, 0.2f, 0.8f)
                     }
                 }, {
-                    val recipe = recipeDial.getRecipeFor(this, pLevel)
+                    val recipe = recipeDial.getRecipeFor(cManager, pLevel)
                     recipe.ifPresentOrElse({
                         currentRecipe = recipe
                         maxProgress = it.time
@@ -102,11 +82,10 @@ class ToasterBlockEntity(
         recipe: ToasterRecipe
     ): Boolean {
         val itemHandle = getItemHandler() ?: return false
-        println("TOASTING COMPLETE")
         recipe.itemsRequired?.forEach { stack -> itemHandle[0].shrink(stack.count) }
         recipe.itemsRequiredTagged?.forEach { tag -> itemHandle[0].shrink(tag.second) }
         return if(recipe.canFitResults(itemHandle to listOf(0), null)) {
-            val assembled = recipe.assembleOutputs(this, pLevel)
+            val assembled = recipe.assembleOutputs(cManager, pLevel)
             assembled.first.forEach { stack -> itemHandle[0].let { slot -> if(slot.isEmpty) itemHandle[0] = stack.copy() else slot.grow(stack.count) } }
             true
         } else false
@@ -120,17 +99,4 @@ class ToasterBlockEntity(
     }
 
     private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
-
-    override fun clearContent() { getItemHandler()?.clear() }
-    override fun getContainerSize(): Int = getItemHandler()?.size ?: 0
-    override fun isEmpty(): Boolean = getItemHandler()?.isEmpty() ?: true
-    override fun getItem(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot) ?: ItemStack.EMPTY
-    override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = getItemHandler()?.get(pSlot)?.split(pAmount) ?: ItemStack.EMPTY
-    override fun removeItemNoUpdate(pSlot: Int): ItemStack = getItemHandler()?.get(pSlot)?.copyAndClear() ?: ItemStack.EMPTY
-    override fun setItem(pSlot: Int, pStack: ItemStack) { getItemHandler()?.set(pSlot, pStack) }
-    override fun stillValid(pPlayer: Player): Boolean = getItemHandler() != null
-    override fun fillStackedContents(pContents: StackedContents) { getItemHandler()?.get(0)?.let { pContents.accountStack(it) } }
-    override fun getWidth(): Int = 1
-    override fun getHeight(): Int = 1
-    override fun getItems(): MutableList<ItemStack> = getItemHandler() ?: mutableListOf()
 }

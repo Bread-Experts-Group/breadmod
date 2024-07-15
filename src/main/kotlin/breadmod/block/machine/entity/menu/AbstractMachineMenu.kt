@@ -27,7 +27,7 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
     fun isCrafting(): Boolean = parent.progress > 0
     protected fun isEnabled(): Boolean = parent.blockState.getValue(BlockStateProperties.ENABLED)
 
-    inner class ResultSlot(id: Int, x: Int, y: Int) : Slot(parent, id, x, y) { override fun mayPlace(pStack: ItemStack): Boolean = false }
+    inner class ResultSlot(id: Int, x: Int, y: Int) : Slot(parent.cManager, id, x, y) { override fun mayPlace(pStack: ItemStack): Boolean = false }
     
     init {
         repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, hotBarY)) }

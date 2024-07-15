@@ -1,5 +1,6 @@
 package breadmod.block.machine.entity
 
+import breadmod.block.machine.CraftingManager
 import breadmod.registry.ModConfiguration
 import breadmod.registry.block.ModBlockEntities
 import breadmod.util.capability.EnergyBattery
@@ -34,6 +35,12 @@ class GeneratorBlockEntity(
         }
     }
 
+    val cManager = CraftingManager(
+        capabilityHolder.capability(ForgeCapabilities.ITEM_HANDLER),
+        listOf(0),
+        1, 1,
+        this
+    )
     private var burnTime = 0
 
     fun addBurnTime(ticks: Int): Boolean {

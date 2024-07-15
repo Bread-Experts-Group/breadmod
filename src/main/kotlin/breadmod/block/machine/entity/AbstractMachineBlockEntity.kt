@@ -1,11 +1,10 @@
 package breadmod.block.machine.entity
 
+import breadmod.block.machine.CraftingManager
 import breadmod.network.CapabilityDataPacket
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
-import breadmod.util.capability.CapabilityContainer
-import breadmod.util.capability.CapabilityHolder
-import breadmod.util.capability.ICapabilitySavable
+import breadmod.util.capability.*
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -54,7 +53,10 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         super.invalidateCaps()
     }
 
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
+    final override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
+        ClientboundBlockEntityDataPacket.create(this)
+    final override fun getUpdateTag(): CompoundTag =
+        CompoundTag().also { saveAdditional(it) }
 
     open fun adjustSaveAdditional(pTag: CompoundTag) {}
     final override fun saveAdditional(pTag: CompoundTag) {
@@ -110,9 +112,23 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         pPos: BlockPos,
         pBlockState: BlockState,
         private val recipeType: RegistryObject<RecipeType<R>>,
+        itemHandler: Pair<IndexableItemHandler, MutableList<Direction?>?>,
+        itemHandlerViewSlots: List<Int>,
+        craftingWidthHeight: Pair<Int, Int>,
         vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
-    ): AbstractMachineBlockEntity<T>(pType, pPos, pBlockState, *additionalCapabilities), CraftingContainer {
+    ): AbstractMachineBlockEntity<T>(
+        pType, pPos, pBlockState,
+        ForgeCapabilities.ITEM_HANDLER to itemHandler,
+        *additionalCapabilities
+    ) {
+        val cManager = CraftingManager(
+            itemHandler.first,
+            itemHandlerViewSlots,
+            craftingWidthHeight.first, craftingWidthHeight.second,
+            this
+        )
         protected val recipeDial: RecipeManager.CachedCheck<CraftingContainer, R> by lazy { RecipeManager.createCheck(recipeType.get()) }
+
         var currentRecipe: Optional<R> = Optional.empty()
             protected set
         var progress = 0
@@ -131,8 +147,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                     progress = 0; maxProgress = 0
                 }
             }, {
-                val sLevel = level
-                if (sLevel != null) currentRecipe = recipeDial.getRecipeFor(this, sLevel)
+                currentRecipe = recipeDial.getRecipeFor(cManager, pLevel)
             })
             postTick(pLevel, pPos, pState, pBlockEntity)
         }
@@ -140,14 +155,14 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         open fun adjustSaveAdditionalProgressive(pTag: CompoundTag) {}
         final override fun adjustSaveAdditional(pTag: CompoundTag) {
             adjustSaveAdditionalProgressive(pTag)
-//            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) }
+            currentRecipe.ifPresent { pTag.putInt(PROGRESS_KEY, progress) }
             pTag.putInt(PROGRESS_KEY, progress); pTag.putInt(MAX_PROGRESS_KEY, maxProgress)
         }
 
         open fun adjustLoadProgressive(pTag: CompoundTag) {}
         final override fun adjustLoad(pTag: CompoundTag) {
             adjustLoadProgressive(pTag)
-//            currentRecipe.ifPresent { progress = pTag.getInt(PROGRESS_KEY) } // TODO RVW
+            currentRecipe.ifPresent { progress = pTag.getInt(PROGRESS_KEY) }
             progress = pTag.getInt(PROGRESS_KEY); maxProgress = pTag.getInt(MAX_PROGRESS_KEY)
         }
 
@@ -161,9 +176,22 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             pPos: BlockPos,
             pBlockState: BlockState,
             recipeType: RegistryObject<RecipeType<R>>,
-            powerHandler: CapabilityContainer,
+            itemHandler: Pair<IndexableItemHandler, MutableList<Direction?>?>,
+            itemHandlerViewSlots: List<Int>,
+            craftingWidthHeight: Pair<Int, Int>,
+            powerHandler: Pair<EnergyBattery, MutableList<Direction?>?>,
             vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
-        ): Progressive<T,R>(pType, pPos, pBlockState, recipeType, ForgeCapabilities.ENERGY to powerHandler, *additionalCapabilities), CraftingContainer {
+        ): Progressive<T,R>(
+            pType,
+            pPos,
+            pBlockState,
+            recipeType,
+            itemHandler,
+            itemHandlerViewSlots,
+            craftingWidthHeight,
+            ForgeCapabilities.ENERGY to powerHandler,
+            *additionalCapabilities
+        ) {
             open fun recipeTickPrePower(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>, recipe: R) {}
 
             private var energyDivision: Int? = null
@@ -194,14 +222,15 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                         }
                     } else progress--
                 }, {
-                    val recipe = recipeDial.getRecipeFor(this, pLevel)
+                    val recipe = recipeDial.getRecipeFor(cManager, pLevel)
                     recipe.ifPresentOrElse({
                         if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) {
                             currentRecipe = recipe
                             maxProgress = it.time
                         }
                     }, {
-                        pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
+                        if(pState.getValue(BlockStateProperties.POWERED))
+                            pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
                         noRecipeTick(pLevel, pPos, pState, pBlockEntity)
                     })
                 })

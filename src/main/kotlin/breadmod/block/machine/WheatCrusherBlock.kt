@@ -3,7 +3,6 @@ package breadmod.block.machine
 import breadmod.block.machine.entity.WheatCrusherBlockEntity
 import breadmod.registry.block.ModBlockEntities
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
@@ -17,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
@@ -38,24 +38,18 @@ class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEnti
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
         pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
     }
-
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)",
-        "net.minecraft.world.level.block.Block"
-    ))
-    override fun onRemove(
+    
+    override fun onDestroyedByPlayer(
         pState: BlockState,
         pLevel: Level,
         pPos: BlockPos,
-        pNewState: BlockState,
-        pMovedByPiston: Boolean
-    ) {
-        if(!pState.`is`(pNewState.block)) {
-            val entity = (pLevel.getBlockEntity(pPos) as? WheatCrusherBlockEntity) ?: return
-            Containers.dropContents(pLevel, pPos, entity)
-        }
-        @Suppress("DEPRECATION")
-        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)
+        pPlayer: Player, 
+        pWillHarvest: Boolean,
+        pFluid: FluidState
+    ): Boolean {
+        val entity = (pLevel.getBlockEntity(pPos) as WheatCrusherBlockEntity)
+        Containers.dropContents(pLevel, pPos, entity.cManager)
+        return super.onDestroyedByPlayer(pState, pLevel, pPos, pPlayer, pWillHarvest, pFluid)
     }
 
     @Deprecated("Deprecated in Java")

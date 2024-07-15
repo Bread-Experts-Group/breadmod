@@ -111,7 +111,7 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
                 pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.2f, random.nextFloat()-0.3f)
                 entity.setChanged()
             } else if(!pPlayer.isCrouching && !triggeredState && entity.progress == 0) {
-                Containers.dropContents(pLevel, pPos, entity)
+                Containers.dropContents(pLevel, pPos, entity.cManager)
                 entity.setChanged()
             }
         }
@@ -190,7 +190,7 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
     ) {
         if(!pState.`is`(pNewState.block)) {
             val entity = (pLevel.getBlockEntity(pPos) as? ToasterBlockEntity) ?: return
-            Containers.dropContents(pLevel, pPos, entity)
+            Containers.dropContents(pLevel, pPos, entity.cManager)
         }
         @Suppress("DEPRECATION")
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)

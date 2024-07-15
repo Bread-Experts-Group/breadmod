@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.util.RandomSource
+import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.common.ForgeHooks
 
@@ -62,6 +64,19 @@ class GeneratorBlock: BaseAbstractMachineBlock.Toggleable<GeneratorBlockEntity>(
                 ParticleTypes.CAMPFIRE_COSY_SMOKE, SoundEvents.FIRE_AMBIENT,
                 5 to 8, pState.getValue(BlockStateProperties.HORIZONTAL_FACING)
             )
+    }
+
+    override fun onDestroyedByPlayer(
+        pState: BlockState,
+        pLevel: Level,
+        pPos: BlockPos,
+        pPlayer: Player,
+        pWillHarvest: Boolean,
+        pFluid: FluidState
+    ): Boolean {
+        val entity = (pLevel.getBlockEntity(pPos) as GeneratorBlockEntity)
+        Containers.dropContents(pLevel, pPos, entity.cManager)
+        return super.onDestroyedByPlayer(pState, pLevel, pPos, pPlayer, pWillHarvest, pFluid)
     }
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState? =
