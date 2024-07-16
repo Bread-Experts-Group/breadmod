@@ -1,16 +1,22 @@
 package breadmod.compat.jei.vanillaExtension
 
-import breadmod.registry.item.ModItems
+import breadmod.compat.jei.recipeList
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper
 import mezz.jei.api.recipe.IFocusGroup
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension
 import net.minecraft.tags.ItemTags
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
+import net.minecraft.world.item.Item
 import net.minecraftforge.registries.ForgeRegistries
 
-class JEIBreadSliceCraftingExtension: ICraftingCategoryExtension {
+class JEISliceCraftingExtension(
+    private val pInputItem: Item,
+    private val pOutputItem: Item,
+    private val pInputMultiplier: Int,
+    private val pInputRepeatCount: Int,
+    private val pOutputMultiplier: Int,
+    private val pOutputRepeatCount: Int
+): ICraftingCategoryExtension {
     private val swordTags = ForgeRegistries.ITEMS.tags()?.getTag(ItemTags.SWORDS) ?: listOf()
     private val swordList = swordTags.map { it.defaultInstance }
 
@@ -19,17 +25,19 @@ class JEIBreadSliceCraftingExtension: ICraftingCategoryExtension {
     override fun setRecipe(
         builder: IRecipeLayoutBuilder,
         craftingGridHelper: ICraftingGridHelper,
-        focuses: IFocusGroup)
-    {
+        focuses: IFocusGroup
+    ) {
         craftingGridHelper.createAndSetInputs(
             builder,
             listOf(
                 swordList,
-                listOf(Items.BREAD.defaultInstance)
+                recipeList(pInputItem, pInputMultiplier, pInputRepeatCount)
             ), width, height
         )
         craftingGridHelper.createAndSetOutputs(
             builder,
-            listOf(ItemStack(ModItems.BREAD_SLICE.get(), 8)))
+            recipeList(pOutputItem, pOutputMultiplier, pOutputRepeatCount)
+
+        )
     }
 }

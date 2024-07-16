@@ -6,11 +6,11 @@ import breadmod.item.*
 import breadmod.registry.sound.ModSounds
 import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
-import breadmod.item.compat.curios.BreadAmuletItem
 import breadmod.item.compat.projecte.BreadOrbItem
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tools.BreadShieldItem
 import breadmod.item.tools.ToolTiers
+import breadmod.item.TieredBreadAmuletItem.BreadAmuletType
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
@@ -32,17 +32,33 @@ object ModItems {
     val BREAD_SHIELD: RegistryObject<BreadShieldItem> = deferredRegister.register("bread_shield") { BreadShieldItem() }
     val DOPED_BREAD: RegistryObject<DopedBreadItem> = deferredRegister.register("doped_bread") { DopedBreadItem() }
     val TOASTED_BREAD: RegistryObject<Item> = deferredRegister.register("toasted_bread") { Item(Item.Properties()
-        .food(FoodProperties.Builder().nutrition(7).saturationMod(0.8F).build())) }
+        .food(FoodProperties.Builder().nutrition(7).saturationMod(0.8f).build())) }
     val BREAD_SLICE: RegistryObject<Item> = deferredRegister.register("bread_slice") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(2).fast().build())) }
-    val TOAST_SLICE: RegistryObject<Item> = deferredRegister.register("toast") {
+    val TOAST_SLICE: RegistryObject<Item> = deferredRegister.register("toast_slice") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(5).fast().build())) }
     val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") { Item(Item.Properties()) }
     val DOUGH: RegistryObject<Item> = deferredRegister.register("dough") { Item(Item.Properties()) }
 
+    // todo better knife texture
+    val KNIFE: RegistryObject<KnifeItem> = deferredRegister.register("knife") {
+        KnifeItem(Tiers.IRON, 0.5f, -2.0f) }
+
+    // todo textures, recipes
+    val BAGEL: RegistryObject<Item> = deferredRegister.register("bagel") { Item(Item.Properties()
+        .food(FoodProperties.Builder().nutrition(4).saturationMod(0.2f).build())) }
+    val HALF_BAGEL: RegistryObject<Item> = deferredRegister.register("half_bagel") { Item(Item.Properties()
+        .food(FoodProperties.Builder().nutrition(2).saturationMod(0.1f).fast().build())) }
+
     val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") { Item(Item.Properties()) }
 
-    val BREAD_AMULET: RegistryObject<Item> = deferredRegister.register("bread_amulet") { BreadAmuletItem() }
+    // todo fix durability, textures
+    val BASIC_BREAD_AMULET: RegistryObject<TieredBreadAmuletItem> = deferredRegister.register("bread_amulet") {
+        TieredBreadAmuletItem(BreadAmuletType.NORMAL, 500) }
+    val REINFORCED_BREAD_AMULET: RegistryObject<TieredBreadAmuletItem> = deferredRegister.register("reinforced_bread_amulet") {
+        TieredBreadAmuletItem(BreadAmuletType.REINFORCED, 2500) }
+    val INDESTRUCTIBLE_BREAD_AMULET: RegistryObject<TieredBreadAmuletItem> = deferredRegister.register("indestructible_bread_amulet") {
+        TieredBreadAmuletItem(BreadAmuletType.INDESTRUCTIBLE, 0) }
 
     // Armor
     val BREAD_HELMET: RegistryObject<ArmorItem> = deferredRegister.register("bread_helmet") { BreadArmorItem(ArmorItem.Type.HELMET) }
@@ -91,9 +107,8 @@ object ModItems {
         .food(FoodProperties.Builder()
             .alwaysEat()
             .nutrition(20)
-            .effect(MobEffectInstance(MobEffects.LEVITATION, 100, 20), 1f)
-            .build()
-        )
+            .effect({MobEffectInstance(MobEffects.LEVITATION, 100, 20)}, 1f)
+            .build())
         .rarity(Rarity.EPIC)
     ){
         override fun getUseAnimation(pStack: ItemStack): UseAnim = UseAnim.DRINK

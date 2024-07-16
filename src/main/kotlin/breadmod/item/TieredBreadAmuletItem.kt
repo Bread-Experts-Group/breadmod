@@ -1,4 +1,4 @@
-package breadmod.item.compat.curios
+package breadmod.item
 
 import breadmod.ModMain.modTranslatable
 import breadmod.registry.ModConfiguration.COMMON
@@ -18,7 +18,13 @@ import top.theillusivec4.curios.api.SlotContext
 import top.theillusivec4.curios.api.type.capability.ICurio
 import java.text.DecimalFormat
 
-class BreadAmuletItem: Item(Properties().stacksTo(1)) {
+class TieredBreadAmuletItem(
+    private val pType: Enum<BreadAmuletType>,
+    pDurability: Int
+) : Item(Properties()
+    .durability(if(pDurability > 0) pDurability else Int.MAX_VALUE)
+) {
+
     companion object {
         private val feedTime = COMMON.BREAD_AMULET_FEED_TIME_TICKS
         private val feedAmt = COMMON.BREAD_AMULET_FEED_AMOUNT
@@ -29,11 +35,15 @@ class BreadAmuletItem: Item(Properties().stacksTo(1)) {
         private val timers = mutableMapOf<String,PlayerData>()
     }
 
+    // todo item durability not lowering on item trigger, possibly due to multiple amulets in the same inventory
     private fun playerFood(pPlayer: ServerPlayer) {
         val timer = timers.getOrPut(pPlayer.stringUUID) { PlayerData(feedTime.get(), 0) }
         if(feedStacks.get() || timer.lastExec != pPlayer.tickCount) {
             val hungerLevel = pPlayer.foodData.foodLevel
             if(hungerLevel <= 20 && timer.timeLeft <= 0) {
+                if(pType == BreadAmuletType.NORMAL || pType == BreadAmuletType.REINFORCED) {
+                    ItemStack(this).hurtAndBreak(1, pPlayer) {it.broadcastBreakEvent(pPlayer.usedItemHand)}
+                }
                 pPlayer.foodData.foodLevel += feedAmt.get()
                 timer.timeLeft = feedTime.get()
             } else if(hungerLevel <= 19) timer.timeLeft--
@@ -52,7 +62,6 @@ class BreadAmuletItem: Item(Properties().stacksTo(1)) {
     ) {
         val bars = feedAmt.get().toDouble() / 2
         val secDelay = feedTime.get().toDouble() / 20
-
         pTooltipComponents.add(modTranslatable(
             "item",
             "bread_amulet", "description",
@@ -79,4 +88,6 @@ class BreadAmuletItem: Item(Properties().stacksTo(1)) {
                 }
             })
         } else null
+
+    enum class BreadAmuletType { NORMAL, REINFORCED, INDESTRUCTIBLE }
 }

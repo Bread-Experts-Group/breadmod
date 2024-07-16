@@ -81,7 +81,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("IRI")
             .save(pWriter, modLocation("misc", "dough_machine"))
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BREAD_AMULET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BASIC_BREAD_AMULET.get())
             .unlockedBy("has_item", has(Items.GOLDEN_APPLE))
             .define('B', ModBlocks.BREAD_BLOCK.get())
             .define('S', Items.STRING)
@@ -385,6 +385,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("CHC")
             .pattern("IRI")
             .save(pWriter, modLocation("misc", "toaster"))
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOASTER_HEATING_ELEMENT.get())
+            .unlockedBy("has_item", has(Items.COPPER_INGOT))
+            .define('C', Items.COPPER_INGOT)
+            .define('I', Items.IRON_INGOT)
+            .pattern("I I")
+            .pattern("III")
+            .pattern("C C")
+            .save(pWriter, modLocation("misc", "toaster_heating_element"))
 
         FluidEnergyRecipeBuilder(ModItems.DOUGH.get())
             .setTimeRequired(20 * 5)

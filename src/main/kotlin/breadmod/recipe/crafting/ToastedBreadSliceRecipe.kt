@@ -16,7 +16,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.Level
 import kotlin.math.min
 
-class ToastedBreadToSliceRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory): CustomRecipe(pId, pCategory) {
+class ToastedBreadSliceRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory): CustomRecipe(pId, pCategory) {
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
         var hasToast = false; var hasSword = false
         pContainer.items.forEach {
@@ -41,7 +41,6 @@ class ToastedBreadToSliceRecipe(pId: ResourceLocation, pCategory: CraftingBookCa
                 if(!stack.isEmpty)
                     if(stack.`is`(ModItems.TOASTED_BREAD.get()))
                         if(((toastToCut.size + 1) * 8) <= toastSliceItem.getMaxStackSize(toastSliceItem.defaultInstance)) toastToCut.add(stack)
-                        //else break TODO: Get Kotlin 1.9.x
                         else shouldBreak = true
                     else if(stack.`is`(ItemTags.SWORDS)) {
                         if(swordItem.isEmpty) swordItem = stack
