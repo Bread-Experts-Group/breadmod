@@ -6,7 +6,8 @@
   "mixins": [
     "accessors.common.IAccessorEntity",
     "common.MixinFireBlock",
-    "common.MixinLightningBolt"
+    "common.MixinLightningBolt",
+    "common.MixinParrot"
   ],
   "client": [
     "accessors.client.IAccessorDirectoryLister",

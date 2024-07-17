@@ -1,4 +1,4 @@
-package breadmod.mixin;
+package breadmod.mixin.common;
 
 import breadmod.registry.item.ModItems;
 import net.minecraft.world.InteractionHand;
