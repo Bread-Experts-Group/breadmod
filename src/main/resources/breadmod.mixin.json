@@ -4,14 +4,16 @@
   "package": "breadmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MixinFireBlock",
-    "MixinLightningBolt",
-    "accessors.IAccessorEntity"
+    "accessors.common.IAccessorEntity",
+    "common.MixinFireBlock",
+    "common.MixinLightningBolt"
   ],
   "client": [
-    "MixinHumanoidArmorLayer",
-    "MixinItemModelShaper",
-    "accessors.IAccessorItemModelShaper"
+    "accessors.client.IAccessorDirectoryLister",
+    "client.MixinDirectoryLister",
+    "client.MixinHumanoidArmorLayer",
+    "client.MixinItemModelShaper",
+    "client.MixinSpriteLoader"
   ],
   "refmap": "breadmod.refmap.json",
   "injectors": {

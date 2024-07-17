@@ -1,4 +1,4 @@
-package breadmod.mixin;
+package breadmod.mixin.common;
 
 import breadmod.block.ISpecialFireAction;
 import net.minecraft.core.BlockPos;

@@ -1,6 +1,7 @@
 package breadmod.datagen.tag
 
 import breadmod.ModMain
+import breadmod.registry.entity.ModPainting.CLASSIFIED
 import breadmod.registry.entity.ModPainting.DEVIL_PUPP
 import breadmod.registry.entity.ModPainting.FISH
 import breadmod.registry.entity.ModPainting.PAINTING_TEST
@@ -19,6 +20,6 @@ class ModPaintingTags(
 ) : PaintingVariantTagsProvider(output, lookupProvider, ModMain.ID, existingFileHelper) {
     override fun addTags(pProvider: HolderLookup.Provider) {
         tag(PaintingVariantTags.PLACEABLE)
-            .add(PAINTING_TEST, DEVIL_PUPP, FISH)
+            .add(PAINTING_TEST, DEVIL_PUPP, FISH, CLASSIFIED)
     }
 }

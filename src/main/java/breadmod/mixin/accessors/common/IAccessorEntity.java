@@ -1,4 +1,4 @@
-package breadmod.mixin.accessors;
+package breadmod.mixin.accessors.common;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;

@@ -1,7 +1,6 @@
-package breadmod.mixin;
+package breadmod.mixin.client;
 
 import breadmod.block.specialItem.UseBlockStateNBT;
-import breadmod.mixin.accessors.IAccessorItemModelShaper;
 import net.minecraft.client.renderer.ItemModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
@@ -15,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemModelShaper.class)
-abstract class MixinItemModelShaper implements IAccessorItemModelShaper {
+abstract class MixinItemModelShaper {
     @Shadow @Final private ModelManager modelManager;
 
     @Inject(method = "getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("HEAD"), cancellable = true)

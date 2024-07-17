@@ -1,4 +1,4 @@
-package breadmod.mixin;
+package breadmod.mixin.client;
 
 import breadmod.item.armor.BreadArmorItem;
 import breadmod.util.StackColorKt;
