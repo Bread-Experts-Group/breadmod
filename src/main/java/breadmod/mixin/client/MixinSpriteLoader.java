@@ -31,6 +31,9 @@ abstract class MixinSpriteLoader {
         return pLocation.withPath(path.substring(0, path.lastIndexOf('.')));
     }
 
+    @Unique
+    private static volatile SpriteContents breadmod$result = null;
+
     @Inject(
             method = "loadSprite",
             at = @At(
@@ -81,13 +84,13 @@ abstract class MixinSpriteLoader {
 
                             ResourceLocation stripped = breadmod$stripExtension(pLocation);
                             breadmod$LOGGER.info("Decrypted and loaded ASC/GPG sprite: {}", stripped);
-                            cir.setReturnValue(new SpriteContents(
+                            breadmod$result = new SpriteContents(
                                     stripped,
                                     new FrameSize(readImage.getWidth(), readImage.getHeight()),
                                     img,
                                     AnimationMetadataSection.EMPTY,
                                     null
-                            ));
+                            );
                         } else throw new IOException("Image data corrupt");
                     } catch (IOException e) {
                         breadmod$LOGGER.error("Failed to decrypt ASC/GPG sprite: {}", pLocation, e);
@@ -105,7 +108,7 @@ abstract class MixinSpriteLoader {
                 breadmod$LOGGER.error("Failed to process ASC/GPG sprite: {}", pLocation, e);
             }
 
-            cir.setReturnValue(null);
+            cir.setReturnValue(breadmod$result);
         }
         // Allow assets that can't be decoded by default to use the missing texture.
         // JPG/APNG/GIF support...?

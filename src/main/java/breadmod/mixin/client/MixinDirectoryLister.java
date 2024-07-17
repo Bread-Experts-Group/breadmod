@@ -26,6 +26,7 @@ abstract class MixinDirectoryLister implements IAccessorDirectoryLister {
                     )
             );
 
+            if(location.getNamespace().equals("breadmod")) System.out.println(translated);
             translated = translated.withPrefix(this.getIDPrefix());
             pOutput.add(translated, resource);
         });
