@@ -48,6 +48,22 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/generator")
         )
 
+        horizontalBlock(ModBlocks.CREATIVE_GENERATOR.get().block) {
+            val name = "breadmod:block/creative_generator"
+
+            val model = models().singleTexture(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator")
+            ).renderType("minecraft:cutout")
+
+            return@horizontalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.CREATIVE_GENERATOR.get().block,
+            models().getBuilder("breadmod:block/creative_generator")
+        )
+
         horizontalBlock(ModBlocks.TOASTER.get().block) {
             val name = "breadmod:block/toaster"
 

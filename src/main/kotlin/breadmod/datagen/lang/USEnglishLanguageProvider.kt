@@ -92,6 +92,7 @@ class USEnglishLanguageProvider(
         add(ModItems.TOASTED_BREAD)
         add(ModBlocks.TOASTER)
         add(ModItems.TOASTER_HEATING_ELEMENT)
+        add(ModBlocks.CREATIVE_GENERATOR)
 
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
         add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")
