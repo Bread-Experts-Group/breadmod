@@ -32,6 +32,8 @@ class ToasterBlockEntity(
 ) {
     private val triggered = BlockStateProperties.TRIGGERED
 
+    private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
+
     override fun tick(
         pLevel: Level,
         pPos: BlockPos,
@@ -97,6 +99,4 @@ class ToasterBlockEntity(
             item.getStackInSlot(0)
         } else ItemStack.EMPTY
     }
-
-    private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 }

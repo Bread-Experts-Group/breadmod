@@ -31,6 +31,9 @@ class GeneratorBlock: BaseAbstractMachineBlock.Toggleable<GeneratorBlockEntity>(
         .sound(SoundType.METAL)
         .lightLevel { state -> if(state.getValue(BlockStateProperties.LIT)) 8 else 0 }
 ) {
+    // todo convert generator model to a base textureless generator model and have the lit and unlit generator models use it
+    // button.json / stone_button.json
+
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
         pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT)
     }

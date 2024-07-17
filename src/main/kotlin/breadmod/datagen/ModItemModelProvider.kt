@@ -13,7 +13,6 @@ import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.registries.RegistryObject
 
-@Suppress("SpellCheckingInspection")
 class ModItemModelProvider(
     packOutput: PackOutput,
     existingFileHelper: ExistingFileHelper
@@ -37,7 +36,10 @@ class ModItemModelProvider(
         singleItem(ModItems.FLOUR)
         singleItem(ModItems.ULTIMATE_BREAD)
         singleItem(ModFluids.BREAD_LIQUID.bucket)
-        singleItem(ModItems.BREAD_AMULET)
+        singleItem(ModItems.BASIC_BREAD_AMULET)
+//        singleItem(ModItems.REINFORCED_BREAD_AMULET)
+//        singleItem(ModItems.INDESTRUCTIBLE_BREAD_AMULET)
+        handheldItem(ModItems.KNIFE)
         singleItem(ModItems.RF_BREAD_HELMET)
         singleItem(ModItems.RF_BREAD_CHESTPLATE)
         singleItem(ModItems.RF_BREAD_LEGGINGS)

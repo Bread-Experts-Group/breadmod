@@ -2,6 +2,7 @@ package breadmod.block.machine
 
 import breadmod.ModMain
 import breadmod.block.machine.entity.ToasterBlockEntity
+import breadmod.datagen.tag.ModItemTags
 import breadmod.registry.block.ModBlockEntities
 import breadmod.util.capability.IndexableItemHandler
 import net.minecraft.ChatFormatting
@@ -78,8 +79,6 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
         }
     }
 
-    // todo yeeterson idea, waterlogged toaster that will zap and kill you if you activate it
-    // todo (figure out lightning particle or model that starts from the toaster to the player)
     @Deprecated("Deprecated in Java")
     override fun use(
         pState: BlockState,
@@ -105,7 +104,8 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
                 }
             }
 
-            if(!pPlayer.isCrouching && !triggeredState && entity.progress == 0 && !stack.isEmpty && itemHandlerSlot.count != 2) {
+            if(!pPlayer.isCrouching && !triggeredState && entity.progress == 0 &&
+                !stack.isEmpty && itemHandlerSlot.count != 2 && stack.`is`(ModItemTags.TOASTABLE)) {
                 if(!pPlayer.isCreative) stack.shrink(1)
                 itemHandler.insertItem(0, ItemStack(item, 1), false)
                 pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.2f, random.nextFloat()-0.3f)

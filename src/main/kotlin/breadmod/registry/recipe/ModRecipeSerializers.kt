@@ -4,7 +4,7 @@ import breadmod.ModMain
 import breadmod.recipe.crafting.ArmorPotionRecipe
 import breadmod.recipe.crafting.BreadSliceRecipe
 import breadmod.recipe.crafting.DopedBreadRecipe
-import breadmod.recipe.crafting.ToastedBreadToSliceRecipe
+import breadmod.recipe.crafting.ToastedBreadSliceRecipe
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
 import breadmod.recipe.fluidEnergy.ToasterRecipe
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
@@ -24,8 +24,8 @@ object ModRecipeSerializers {
         SimpleCraftingRecipeSerializer { pId, pCategory -> DopedBreadRecipe(pId, pCategory) } }
     val BREAD_SLICE: RegistryObject<SimpleCraftingRecipeSerializer<BreadSliceRecipe>> = deferredRegister.register("bread_slice_crafting") {
         SimpleCraftingRecipeSerializer { pId, pCategory -> BreadSliceRecipe(pId, pCategory) } }
-    val TOAST_TO_TOAST_SLICE: RegistryObject<SimpleCraftingRecipeSerializer<ToastedBreadToSliceRecipe>> = deferredRegister.register("toast_to_slice_crafting") {
-        SimpleCraftingRecipeSerializer { pId, pCategory -> ToastedBreadToSliceRecipe(pId, pCategory) } }
+    val TOAST_TO_TOAST_SLICE: RegistryObject<SimpleCraftingRecipeSerializer<ToastedBreadSliceRecipe>> = deferredRegister.register("toast_to_slice_crafting") {
+        SimpleCraftingRecipeSerializer { pId, pCategory -> ToastedBreadSliceRecipe(pId, pCategory) } }
 
     val DOUGH_MACHINE: RegistryObject<SimpleFluidEnergyRecipeSerializer<DoughMachineRecipe>> = deferredRegister.register("dough_machine") {
         SimpleFluidEnergyRecipeSerializer { pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut -> DoughMachineRecipe(
