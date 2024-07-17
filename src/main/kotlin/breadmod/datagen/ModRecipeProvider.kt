@@ -81,6 +81,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("IRI")
             .save(pWriter, modLocation("misc", "dough_machine"))
 
+        // Amulets
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.BASIC_BREAD_AMULET.get())
             .unlockedBy("has_item", has(Items.GOLDEN_APPLE))
             .define('B', ModBlocks.BREAD_BLOCK.get())
@@ -90,6 +91,22 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("BAB")
             .pattern(" B ")
             .save(pWriter, modLocation("misc", "bread_amulet"))
+        modNetheriteSmithing(pWriter,
+            modLocation("smithing", "reinforced_amulet"),
+            ModItems.BASIC_BREAD_AMULET.get(),
+            ModItems.REINFORCED_BREAD_AMULET.get(),
+            RecipeCategory.MISC,
+            ModItems.BASIC_BREAD_AMULET.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.INDESTRUCTIBLE_BREAD_AMULET.get())
+            .unlockedBy("has_item", has(ModItems.REINFORCED_BREAD_AMULET.get()))
+            .define('S', Items.NETHER_STAR)
+            .define('R', ModBlocks.REINFORCED_BREAD_BLOCK.get())
+            .define('A', ModItems.REINFORCED_BREAD_AMULET.get())
+            .define('D', Items.DIAMOND)
+            .pattern(" D ")
+            .pattern("RAR")
+            .pattern(" S ")
+            .save(pWriter, modLocation("misc", "indestructible_bread_amulet"))
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get())
             .unlockedBy("has_item", has(Items.CHARCOAL))

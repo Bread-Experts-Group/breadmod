@@ -6,6 +6,7 @@
   "mixins": [
     "MixinFireBlock",
     "MixinLightningBolt",
+    "MixinParrot",
     "accessors.IAccessorEntity"
   ],
   "client": [
