@@ -8,7 +8,6 @@ import net.minecraft.client.resources.metadata.animation.AnimationMetadataSectio
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,7 +19,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Mixin(SpriteLoader.class)
 abstract class MixinSpriteLoader {
@@ -43,15 +41,13 @@ abstract class MixinSpriteLoader {
             cancellable = true)
     private static void loadSprite(ResourceLocation pLocation, Resource pResource, CallbackInfoReturnable<SpriteContents> cir) {
         if(pLocation.getPath().endsWith(".asc")) {
-            AtomicReference<InputStream> resourceStream = new AtomicReference<>();
             ProcessBuilder pb = new ProcessBuilder("gpg");
 
             try {
                 Process process = pb.start();
                 Thread inputThread = new Thread(() -> {
-                    try {
-                        resourceStream.set(pResource.open());
-                        BufferedInputStream fileInput = new BufferedInputStream(resourceStream.get());
+                    try (InputStream pResourceStream = pResource.open()) {
+                        BufferedInputStream fileInput = new BufferedInputStream(pResourceStream);
                         BufferedOutputStream processInput = new BufferedOutputStream(process.getOutputStream());
                         byte[] buffer = new byte[4096];
                         int bytesRead;
@@ -109,7 +105,6 @@ abstract class MixinSpriteLoader {
                 breadmod$LOGGER.error("Failed to process ASC/GPG sprite: {}", pLocation, e);
             }
 
-            IOUtils.closeQuietly(resourceStream.get());
             cir.setReturnValue(null);
         }
         // Allow assets that can't be decoded by default to use the missing texture.
