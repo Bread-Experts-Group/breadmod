@@ -1,6 +1,5 @@
 package breadmod.mixin.client;
 
-import breadmod.ModMain;
 import breadmod.mixinUtil.ImageFrame;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -10,7 +9,6 @@ import net.minecraft.client.resources.metadata.animation.AnimationMetadataSectio
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,11 +22,10 @@ import java.io.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static breadmod.mixinUtil.General.breadmod$LOGGER;
+
 @Mixin(SpriteLoader.class)
 abstract class MixinSpriteLoader {
-    @Unique
-    private final static Logger breadmod$LOGGER = ModMain.INSTANCE.getLOGGER();
-
     @Unique
     private static ResourceLocation breadmod$stripExtension(ResourceLocation pLocation) {
         String path = pLocation.getPath();
@@ -70,7 +67,10 @@ abstract class MixinSpriteLoader {
             at = @At("HEAD"),
             cancellable = true)
     private static void loadSprite(ResourceLocation pLocation, Resource pResource, CallbackInfoReturnable<SpriteContents> cir) {
-        if(pLocation.getPath().endsWith(".asc")) {
+        breadmod$result = null;
+        final String path = pLocation.getPath();
+
+        if(path.endsWith(".asc")) {
             ProcessBuilder pb = new ProcessBuilder("gpg");
 
             try {
@@ -125,29 +125,35 @@ abstract class MixinSpriteLoader {
             }
 
             cir.setReturnValue(breadmod$result);
-            return;
-        }
-
-        if (pLocation.getPath().endsWith(".gif")) {
+        } else if (path.endsWith(".gif") || path.endsWith(".apng")) {
             try {
-                ImageFrame[] frames = ImageFrame.readGif(pResource.open());
+                InputStream resourceStream = pResource.open();
+                ImageFrame[] frames;
+
+                if(path.endsWith(".gif")) frames = ImageFrame.readGIF(resourceStream);
+                else frames = ImageFrame.readAPNG(resourceStream);
+
                 ImageFrame baseFrame = frames[0];
-                FrameSize frameSize = new FrameSize(baseFrame.getWidth(), baseFrame.getHeight());
                 BufferedImage concatenated = null;
 
                 List<AnimationFrame> animationFrames = new java.util.ArrayList<>(frames.length);
                 for (int i = 0; i < frames.length; i++) {
                     ImageFrame frame = frames[i];
 
-                    double breadmod$tickTime = (double) 1 / 20;
-                    animationFrames.add(new AnimationFrame(i, (int) Math.round(((double) frame.getDelay() / 100) / breadmod$tickTime)));
+                    //double breadmod$tickTime = (double) 1 / 20;
+                    animationFrames.add(new AnimationFrame(i, 1 /*(int) Math.round(((double) frame.delay / 100) / breadmod$tickTime)*/));
 
-                    if(concatenated == null) concatenated = frame.getImage();
-                    else concatenated = breadmod$mergeImages(concatenated, frame.getImage());
+                    if(concatenated == null) concatenated = frame.image;
+                    else concatenated = breadmod$mergeImages(concatenated, frame.image);
                 }
 
+                FrameSize frameSize = new FrameSize(baseFrame.getWidth(), baseFrame.getHeight());
+
                 ResourceLocation stripped = breadmod$stripExtension(pLocation);
-                breadmod$LOGGER.info("Parsed and loaded GIF sprite: {}", stripped);
+                breadmod$LOGGER.info(
+                        "Parsed and loaded animated sprite: {} ({} frames, stitch: {} x {})",
+                        stripped, frames.length, concatenated.getWidth(), concatenated.getHeight()
+                );
                 cir.setReturnValue(new SpriteContents(
                         stripped,
                         frameSize,
@@ -155,13 +161,13 @@ abstract class MixinSpriteLoader {
                         new AnimationMetadataSection(
                                 animationFrames,
                                 frameSize.width(), frameSize.height(),
-                                baseFrame.getDelay(),
+                                1 /*baseFrame.delay*/,
                                 false
                         ),
                         null
                 ));
             } catch (IOException e) {
-                breadmod$LOGGER.error("Failed to process GIF sprite: {}", pLocation, e);
+                breadmod$LOGGER.error("Failed to process animated sprite: {}", pLocation, e);
             }
         }
 
