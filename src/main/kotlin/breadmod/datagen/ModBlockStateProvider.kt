@@ -59,10 +59,6 @@ class ModBlockStateProvider(
 
             return@horizontalBlock model
         }
-        simpleBlockItem(
-            ModBlocks.CREATIVE_GENERATOR.get().block,
-            models().getBuilder("breadmod:block/creative_generator")
-        )
 
         horizontalBlock(ModBlocks.TOASTER.get().block) {
             val name = "breadmod:block/toaster"

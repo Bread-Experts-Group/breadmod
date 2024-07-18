@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
-import net.minecraft.client.Timer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.item.ItemDisplayContext
@@ -26,8 +25,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     private companion object {
         val minecraft: Minecraft = Minecraft.getInstance()
         val secureRandom = SecureRandom()
-        private val timer = Timer(20f, 0).partialTick // todo replace with what create uses since this has odd behaviour
-        private var angle = 0f
     }
 
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
@@ -44,26 +41,21 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     ) {
         val toolGunItem = pStack.item as ToolGunItem
         val toolGunMode = toolGunItem.getCurrentMode(pStack)
-
         val instance = Minecraft.getInstance()
         val renderer = instance.itemRenderer
         val fontRenderer = instance.font
         val modelManager = instance.modelManager
+        val level = instance.level ?: return
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
 //        val testModel = modelManager.getModel(testModelLocation)
 
-        val f: Float = 1f + timer
-        if(!instance.isPaused) angle += f; angle %= 360
-//        println(angle)
-
         pPoseStack.pushPose()
-        // todo smooth rotation after firing toolgun, quickly tapering off. GameRenderer.java@1177 found a function that uses the same posestack calls as this, could be used for smooth anims
-//        // todo recoil and increased coil spin when using tool gun
+//      // todo recoil and increased coil spin when using tool gun
 
 //        pPoseStack.translate(sin(angle.toDouble() / 30), 0.0, 0.0)
         renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(angle))
+        pPoseStack.mulPose(Axis.XN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + instance.partialTick) * 1.5f))
         renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
 //        pPoseStack.mulPose(Axis.YN.rotationDegrees(angle * 30))
 //        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)

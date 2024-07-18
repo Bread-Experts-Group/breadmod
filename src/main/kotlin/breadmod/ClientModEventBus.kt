@@ -5,6 +5,7 @@ import breadmod.ModMain.modLocation
 import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
+import breadmod.block.machine.entity.renderer.CreativeGeneratorRenderer
 import breadmod.block.machine.entity.screen.DoughMachineScreen
 import breadmod.block.machine.entity.screen.WheatCrusherScreen
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
@@ -93,12 +94,15 @@ object ClientModEventBus {
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/generator_on"))
         event.register(modLocation("${ModelProvider.ITEM_FOLDER}/textureplane/textureplane_test"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
+        event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star"))
+        event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
     }
 
     @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerBlockEntityRenderer(ModBlockEntities.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get()) { SidedScreenRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntities.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
     }
 
     val toolGunBindList = mutableMapOf<Control, KeyMapping?>()
