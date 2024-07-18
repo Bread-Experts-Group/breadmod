@@ -111,11 +111,12 @@ fun renderBlockModel(
     pBlockEntity: BlockEntity,
     pModel: BakedModel,
     pPackedLight: Int,
-    pPackedOverlay: Int
+    pPackedOverlay: Int,
+    renderType: RenderType = RenderType.solid()
 ) {
     Minecraft.getInstance().blockRenderer.modelRenderer.renderModel(
         pPoseStack.last(),
-        pBuffer.getBuffer(RenderType.solid()),
+        pBuffer.getBuffer(renderType),
         pBlockEntity.blockState,
         pModel,
         1f,
@@ -124,7 +125,7 @@ fun renderBlockModel(
         pPackedLight,
         pPackedOverlay,
         pBlockEntity.modelData,
-        RenderType.solid()
+        renderType
     )
 }
 

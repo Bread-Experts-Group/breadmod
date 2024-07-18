@@ -4,8 +4,8 @@
     "srcrgb": "srcalpha",
     "dstrgb": "1-srcalpha"
   },
-  "vertex": "breadmod:rendertype_bright_solid",
-  "fragment": "breadmod:rendertype_bright_solid",
+  "vertex": "breadmod:bloom",
+  "fragment": "breadmod:bloom",
   "attributes": [
     "Position",
     "Color",

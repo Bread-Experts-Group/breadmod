@@ -294,7 +294,8 @@ public class ImageFrame {
             byte[] data = General.mergeByteArrays(frameData.get(i));
             General.compressedWriteToImage(frame.image, data);
 
-            BufferedImage core = new BufferedImage(base.getWidth(), base.getHeight(), base.getType());
+            // TODO!! Type!!
+            BufferedImage core = new BufferedImage(base.getWidth(), base.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             core.getRaster().setRect(offsets.getLeft(), offsets.getRight(), frame.image.getRaster());
             frame.image = core;
         }

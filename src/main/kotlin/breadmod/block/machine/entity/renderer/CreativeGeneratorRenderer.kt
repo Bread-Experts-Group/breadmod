@@ -1,6 +1,7 @@
 package breadmod.block.machine.entity.renderer
 
-import breadmod.ModMain
+import breadmod.ClientModEventBus
+import breadmod.ModMain.modLocation
 import breadmod.block.machine.entity.CreativeGeneratorBlockEntity
 import breadmod.util.render.renderBlockModel
 import com.mojang.blaze3d.vertex.PoseStack
@@ -11,7 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraftforge.client.model.generators.ModelProvider
 
 class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntity> {
-    private val starModelLocation = ModMain.modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star")
+    private val starModelLocation = modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star")
 //    val angle = 0f
 
     override fun render(
@@ -30,6 +31,11 @@ class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntit
         pPoseStack.mulPose(Axis.YN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
         pPoseStack.mulPose(Axis.XN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
         pPoseStack.scale(0.95f, 0.95f, 0.95f)
-        renderBlockModel(pPoseStack, pBuffer, pBlockEntity, starModel, pPackedLight, pPackedOverlay)
+
+        renderBlockModel(
+            pPoseStack, pBuffer, pBlockEntity,
+            starModel, pPackedLight, pPackedOverlay,
+            ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png"))
+        )
     }
 }

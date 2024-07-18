@@ -22,11 +22,17 @@ import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.screen.ModMenuTypes
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import com.mojang.blaze3d.vertex.VertexFormat
+import net.minecraft.Util
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
@@ -38,6 +44,7 @@ import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import java.util.function.Function
 
 
 @Suppress("unused")
@@ -134,56 +141,44 @@ object ClientModEventBus {
         return toolGunBindList.values.mapNotNull { it }
     }
 
-    /*private lateinit var loadedShader: ShaderInstance
     @SubscribeEvent
     fun registerShaders(event: RegisterShadersEvent) {
-        event.registerShader(ShaderInstance(event.resourceProvider, modLocation("projector"), DefaultVertexFormat.NEW_ENTITY)) { shader ->
-            loadedShader = shader
+        event.registerShader(
+            ShaderInstance(
+                event.resourceProvider,
+                modLocation("bloom"),
+                DefaultVertexFormat.BLOCK
+            )
+        ) { shader ->
+            ModRenderTypes.bloomShader = shader
         }
     }
 
-    abstract class A(
-        pName: String,
-        pFormat: VertexFormat,
-        pMode: VertexFormat.Mode,
-        pBufferSize: Int,
-        pAffectsCrumbling: Boolean,
-        pSortOnUpload: Boolean,
-        pSetupState: Runnable,
-        pClearState: Runnable
-    ) : RenderType(pName, pFormat, pMode, pBufferSize, pAffectsCrumbling, pSortOnUpload, pSetupState, pClearState) {
-        companion object {
-            // Holds the object loaded via RegisterShadersEvent
-            private val brightSolidShader: ShaderInstance? = null
+    /* https://gist.github.com/gigaherz/b8756ff463541f07a644ef8f14cb10f5 */
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "INACCESSIBLE_TYPE")
+    object ModRenderTypes: RenderType(
+        null, null, null,
+        0, false, false,
+        null, null
+    ) {
+        lateinit var bloomShader: ShaderInstance
+        private val BLOOM_SHADER_STATE = ShaderStateShard { bloomShader }
 
-            // Shader state for use in the render type, the supplier ensures it updates automatically with resource reloads
-            private val RENDERTYPE_BRIGHT_SOLID_SHADER = ShaderStateShard { brightSolidShader }
+        val BLOOM: Function<ResourceLocation, RenderType> = Util.memoize(::bloom)
 
-            // The memoize caches the output value for each input, meaning the expensive registration process doesn't have to rerun
-            var BRIGHT_SOLID: Function<ResourceLocation, RenderType> = Util.memoize { locationIn: ResourceLocation ->
-                brightSolid(
-                    locationIn
-                )
-            }
+        private fun bloom(location: ResourceLocation): RenderType {
+            val cs = CompositeState.builder()
+                .setShaderState(BLOOM_SHADER_STATE)
+                .setTextureState(TextureStateShard(location, true, false))
+                .setTransparencyState(NO_TRANSPARENCY)
+                .setOverlayState(NO_OVERLAY)
+                .createCompositeState(false)
 
-            private fun brightSolid(locationIn: ResourceLocation): RenderType {
-                val `rendertype$state`: CompositeState = CompositeState.builder()
-                    .setShaderState(RENDERTYPE_BRIGHT_SOLID_SHADER)
-                    .setTextureState(TextureStateShard(locationIn, false, false))
-                    .setTransparencyState(NO_TRANSPARENCY)
-                    .setLightmapState(NO_LIGHTMAP)
-                    .setOverlayState(NO_OVERLAY)
-                    .createCompositeState(true)
-                return create(
-                    "gbook_bright_solid",
-                    DefaultVertexFormat.NEW_ENTITY,
-                    VertexFormat.Mode.QUADS,
-                    256,
-                    true,
-                    false,
-                    `rendertype$state`
-                )
-            }
+            return create(
+                "bloom",
+                DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256,
+                true, false, cs
+            )
         }
-    }*/
+    }
 }
