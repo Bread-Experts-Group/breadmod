@@ -9,12 +9,14 @@ import breadmod.block.machine.multiblock.farmer.FarmerOutputBlock
 import breadmod.block.machine.multiblock.generic.PowerInterfaceBlock
 import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT
+import breadmod.item.renderer.CreativeGeneratorItemRenderer
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.screen.ModCreativeTabs
 import breadmod.util.registerBlockItem
 import com.google.common.collect.ImmutableMap
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.data.loot.BlockLootSubProvider
@@ -38,10 +40,12 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
+import net.minecraftforge.client.extensions.common.IClientItemExtensions
 import net.minecraftforge.common.extensions.IForgeItem
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
+import java.util.function.Consumer
 
 object ModBlocks {
     internal val deferredRegister: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModMain.ID)
@@ -125,7 +129,11 @@ object ModBlocks {
         ModItems.deferredRegister,
         "creative_generator",
         { CreativeGeneratorBlock() },
-        Item.Properties()
+        { block -> object : BlockItem(block, Properties()) {
+            override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions{
+                override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = CreativeGeneratorItemRenderer()
+            })
+        }}
     )
 
     // Farmer Multiblock
