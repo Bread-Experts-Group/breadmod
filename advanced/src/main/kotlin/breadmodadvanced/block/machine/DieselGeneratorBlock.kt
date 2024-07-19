@@ -38,7 +38,7 @@ class DieselGeneratorBlock: BaseAbstractMachineBlock.Toggleable<DieselGeneratorB
         .lightLevel { state -> (if(state.getValue(BlockStateProperties.LIT)) 8 else 0) + state.getValue(BlockStateProperties.LEVEL) }
 ) {
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT, BlockStateProperties.LEVEL)
+        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT, BlockStateProperties.LEVEL, BlockStateProperties.OPEN)
     }
 
     @Deprecated("Deprecated in Java")
@@ -95,6 +95,7 @@ class DieselGeneratorBlock: BaseAbstractMachineBlock.Toggleable<DieselGeneratorB
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
             .setValue(BlockStateProperties.LIT, false)
             .setValue(BlockStateProperties.LEVEL, 0)
+            .setValue(BlockStateProperties.OPEN, false)
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<DieselGeneratorBlockEntity> =
         BlockEntityTicker { tLevel, pPos, tState, pBlockEntity -> pBlockEntity.tick(tLevel, pPos, tState, pBlockEntity) }
 }

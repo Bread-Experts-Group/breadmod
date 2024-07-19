@@ -90,11 +90,12 @@ fun renderItemModel(
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
     pPackedOverlay: Int,
-    pPackedLight: Int
+    pPackedLight: Int,
+    pRenderType: RenderType = RenderType.solid()
 ) {
     val glint = pStack.hasFoil()
     for(type in pModel.getRenderTypes(pStack, false)) {
-        val helper: RenderType = RenderTypeHelper.getEntityRenderType(type, false)
+        val helper: RenderType = if(pRenderType == RenderType.solid()) pRenderType else RenderTypeHelper.getEntityRenderType(type, false)
         val consumer = ItemRenderer.getFoilBuffer(pBuffer, helper, true, glint)
         pRenderer.renderModelLists(pModel, pStack, pPackedLight, pPackedOverlay, pPoseStack, consumer)
     }

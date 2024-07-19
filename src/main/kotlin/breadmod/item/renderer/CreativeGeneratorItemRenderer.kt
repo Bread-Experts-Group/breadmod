@@ -1,12 +1,13 @@
 package breadmod.item.renderer
 
-import breadmod.ModMain
+import breadmod.ModMain.modLocation
 import breadmod.util.render.renderItemModel
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.model.generators.ModelProvider
@@ -19,8 +20,8 @@ class CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
         val minecraft: Minecraft = Minecraft.getInstance()
     }
 
-    private val mainModelLocation = ModMain.modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator")
-    private val starModelLocation = ModMain.modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star")
+    private val mainModelLocation = modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator")
+    private val starModelLocation = modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star")
 
     override fun renderByItem(
         pStack: ItemStack,
@@ -38,7 +39,7 @@ class CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
         val mainModel = modelManager.getModel(mainModelLocation)
         val starModel = modelManager.getModel(starModelLocation)
 
-        renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight, RenderType.cutout())
         pPoseStack.translate(0.5, 0.5, 0.5)
         pPoseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + instance.partialTick))
         pPoseStack.mulPose(Axis.XN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + instance.partialTick))
