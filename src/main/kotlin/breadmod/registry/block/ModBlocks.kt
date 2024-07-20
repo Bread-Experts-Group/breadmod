@@ -167,7 +167,7 @@ object ModBlocks {
                 else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
             }
         }},
-        Item.Properties()
+        Item.Properties().rarity(Rarity.EPIC)
     )
 
     // Farmer Multiblock

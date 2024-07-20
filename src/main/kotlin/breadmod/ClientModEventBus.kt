@@ -15,6 +15,7 @@ import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.hud.ToolGunOverlay
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.armor.ArmorColor
+import breadmod.item.screen.CertificateScreen
 import breadmod.item.tool_gun.ToolGunItem.Companion.changeMode
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
@@ -64,6 +65,7 @@ object ClientModEventBus {
 
             MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
             MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle -> WheatCrusherScreen(pMenu,pInventory,pTitle) }
+            MenuScreens.register(ModMenuTypes.CERTIFICATE.get()) { pMenu, pInventory, pTitle -> CertificateScreen(pMenu, pInventory, pTitle) }
 
             // Power Generators
             //MenuScreens.register(ModMenuTypes.GENERATOR.get()) { pMenu, pInventory, pTitle -> GeneratorScreen(pMenu, pInventory, pTitle) }

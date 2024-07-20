@@ -45,6 +45,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         val doorOpen = pBlockEntity.blockState.getValue(BlockStateProperties.OPEN)
         val doorAxis = if(doorOpen) Axis.YN.rotationDegrees(120f) else Axis.YN.rotationDegrees(0f)
 
+        // todo animation when opening and closing door (side quest: door openness like with the chest renderer)
         // Door Rendering
         renderDoor(doorAxis, blockRotation, pPoseStack, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay)
 
