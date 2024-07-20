@@ -1,0 +1,10 @@
+{
+  "loader": "forge:obj",
+  "flip_v": true,
+  "model": "breadmod:models/block/niko/niko_block.obj",
+  "parent": "block/block",
+  "textures": {
+    "texture0": "breadmod:block/niko_block",
+    "particle": "minecraft:block/red_wool"
+  }
+}

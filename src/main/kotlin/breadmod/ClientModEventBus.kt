@@ -103,6 +103,8 @@ object ClientModEventBus {
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
+
+        event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/sphere"))
     }
 
     @SubscribeEvent

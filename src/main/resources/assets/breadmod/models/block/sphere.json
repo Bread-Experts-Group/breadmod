@@ -1,0 +1,8 @@
+{
+  "loader": "forge:obj",
+  "flip_v": false,
+  "model": "breadmod:models/block/sphere/sphere.obj",
+  "textures": {
+    "texture0": "breadmod:block/fish"
+  }
+}
