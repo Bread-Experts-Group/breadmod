@@ -8,9 +8,10 @@ import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.compat.projecte.BreadOrbItem
 import breadmod.item.tool_gun.ToolGunItem
-import breadmod.item.tools.BreadShieldItem
-import breadmod.item.tools.ToolTiers
+import breadmod.item.tool.BreadShieldItem
+import breadmod.item.tool.ToolTiers
 import breadmod.item.TieredBreadAmuletItem.BreadAmuletType
+import breadmod.item.tool.KnifeItem
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
@@ -116,6 +117,8 @@ object ModItems {
     val TOASTER_HEATING_ELEMENT: RegistryObject<Item> = deferredRegister.register("toaster_heating_element") { Item(Item.Properties()) }
 
     val CREATURE: RegistryObject<Item> = deferredRegister.register("creature") { Item(Item.Properties()) }
+
+    val CERTIFICATE: RegistryObject<Item> = deferredRegister.register("certificate") { CertificateItem() }
 
     val TEST_DISC: RegistryObject<RecordItem> = deferredRegister.register("music_disc_test") {
         RecordItem(15, ModSounds.TEST_SOUND, Item.Properties()

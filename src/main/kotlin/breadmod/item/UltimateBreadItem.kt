@@ -3,7 +3,7 @@ package breadmod.item
 import breadmod.registry.ModConfiguration
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.IRegisterSpecialCreativeTab
-import breadmod.registry.screen.ModCreativeTabs
+import breadmod.registry.menu.ModCreativeTabs
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.CreativeModeTab

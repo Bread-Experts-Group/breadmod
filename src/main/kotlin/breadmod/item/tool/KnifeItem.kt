@@ -1,4 +1,4 @@
-package breadmod.item
+package breadmod.item.tool
 
 import breadmod.datagen.tag.ModBlockTags
 import breadmod.datagen.tag.ModItemTags

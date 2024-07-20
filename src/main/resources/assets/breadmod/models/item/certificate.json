@@ -1,0 +1,20 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "breadmod:item/certificate_unsigned"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "breadmod:signed": 0.0
+      },
+      "model": "breadmod:item/certificate_unsigned"
+    },
+    {
+      "predicate": {
+        "breadmod:signed": 1.0
+      },
+      "model": "breadmod:item/certificate_signed"
+    }
+  ]
+}

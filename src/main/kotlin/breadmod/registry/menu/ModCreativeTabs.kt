@@ -1,4 +1,4 @@
-package breadmod.registry.screen
+package breadmod.registry.menu
 
 import breadmod.ModMain
 import breadmod.ModMain.modTranslatable

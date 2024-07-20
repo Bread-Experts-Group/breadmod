@@ -1,4 +1,4 @@
-package breadmod.item.colors
+package breadmod.item.armor
 
 import breadmod.item.IDyedTintableItem
 import breadmod.util.getColor

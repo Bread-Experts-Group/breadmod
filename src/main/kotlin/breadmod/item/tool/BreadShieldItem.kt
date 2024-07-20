@@ -1,4 +1,4 @@
-package breadmod.item.tools
+package breadmod.item.tool
 
 import breadmod.ModMain.modTranslatable
 import net.minecraft.ChatFormatting

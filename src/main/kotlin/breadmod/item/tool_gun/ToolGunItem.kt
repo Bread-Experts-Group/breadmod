@@ -10,7 +10,7 @@ import breadmod.item.tool_gun.render.ToolGunItemRenderer
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.tool_gun.ToolGunPacket
 import breadmod.registry.item.IRegisterSpecialCreativeTab
-import breadmod.registry.screen.ModCreativeTabs
+import breadmod.registry.menu.ModCreativeTabs
 import breadmod.util.MapIterator
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.ChatFormatting

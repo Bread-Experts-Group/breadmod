@@ -1,20 +1,18 @@
 package breadmod.block.machine
 
 import breadmod.block.machine.entity.DoughMachineBlockEntity
+import breadmod.block.util.handlePlayerFluidInteraction
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.util.capability.FluidContainer
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.sounds.SoundEvents
-import net.minecraft.sounds.SoundSource
 import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.item.FallingBlockEntity
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -29,11 +27,7 @@ import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.fluids.FluidStack
-import net.minecraftforge.fluids.FluidType
-import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.network.NetworkHooks
-import kotlin.jvm.optionals.getOrNull
 import kotlin.random.Random
 
 class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEntity>(
@@ -100,32 +94,18 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
         if(pLevel.isClientSide || pHand == InteractionHand.OFF_HAND) return InteractionResult.CONSUME
         val blockEntity = pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity ?: return InteractionResult.FAIL
         val handStack = pPlayer.getItemInHand(pHand)
-        val item = handStack.item
+        val handler = blockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return InteractionResult.FAIL
 
-        if(item is BucketItem) {
-            val handler = blockEntity.capabilityHolder.capability<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
-            val stack = FluidStack(item.fluid, FluidType.BUCKET_VOLUME)
+        val toReturn = handlePlayerFluidInteraction(
+            pPlayer, pLevel, pPos,
+            handStack, handler
+        )
 
-            val filled = handler.fill(stack, IFluidHandler.FluidAction.SIMULATE)
-            println(filled)
-            if (filled == FluidType.BUCKET_VOLUME) {
-                if (!pPlayer.isCreative) {
-                    handStack.shrink(1)
-                    pPlayer.inventory.placeItemBackInInventory(BucketItem.getEmptySuccessItem(handStack, pPlayer))
-                }
-                pLevel.playSound(
-                    null, pPos,
-                    item.fluid.pickupSound.getOrNull() ?: SoundEvents.BUCKET_EMPTY,
-                    SoundSource.BLOCKS, 1.0f, 1.0f
-                )
-                handler.fill(stack, IFluidHandler.FluidAction.EXECUTE)
-
-                return InteractionResult.SUCCESS
-            }
+        if(toReturn != null) return toReturn
+        else {
+            NetworkHooks.openScreen(pPlayer as ServerPlayer, blockEntity, pPos)
+            return InteractionResult.CONSUME
         }
-
-        NetworkHooks.openScreen(pPlayer as ServerPlayer, blockEntity, pPos)
-        return InteractionResult.CONSUME
     }
 
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<DoughMachineBlockEntity> =

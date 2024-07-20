@@ -1,6 +1,7 @@
 package breadmodadvanced.block.machine.entity
 
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.util.getBurnTime
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.StorageDirection
@@ -30,7 +31,7 @@ class DieselGeneratorBlockEntity(
 ) {
     init {
         capabilityHolder.capability<FluidContainer>(ForgeCapabilities.FLUID_HANDLER).insertFluidCheck = { stack, _ ->
-            ForgeHooks.getBurnTime(stack.fluid.bucket.defaultInstance, null) > 0
+            getBurnTime(stack.fluid.bucket.defaultInstance) > 0
         }
     }
 

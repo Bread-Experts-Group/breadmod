@@ -12,7 +12,7 @@ import breadmod.block.specialItem.UseBlockStateNBT
 import breadmod.item.renderer.CreativeGeneratorItemRenderer
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.IRegisterSpecialCreativeTab
-import breadmod.registry.screen.ModCreativeTabs
+import breadmod.registry.menu.ModCreativeTabs
 import breadmod.util.registerBlockItem
 import com.google.common.collect.ImmutableMap
 import net.minecraft.advancements.critereon.StatePropertiesPredicate

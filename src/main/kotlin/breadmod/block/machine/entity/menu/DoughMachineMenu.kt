@@ -3,7 +3,7 @@ package breadmod.block.machine.entity.menu
 import breadmod.block.machine.entity.DoughMachineBlockEntity
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
 import breadmod.registry.block.ModBlockEntities
-import breadmod.registry.screen.ModMenuTypes
+import breadmod.registry.menu.ModMenuTypes
 import breadmod.util.isTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.tags.FluidTags

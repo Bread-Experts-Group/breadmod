@@ -16,7 +16,7 @@ import breadmod.recipe.crafting.ToastedBreadSliceRecipe
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.recipe.ModRecipeTypes
-import breadmod.registry.screen.ModMenuTypes
+import breadmod.registry.menu.ModMenuTypes
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.*

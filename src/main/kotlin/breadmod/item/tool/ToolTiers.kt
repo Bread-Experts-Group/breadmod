@@ -1,4 +1,4 @@
-package breadmod.item.tools
+package breadmod.item.tool
 
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.Tier

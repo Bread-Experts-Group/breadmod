@@ -3,7 +3,7 @@ package breadmod.block.machine.entity.menu
 import breadmod.block.machine.entity.WheatCrusherBlockEntity
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
 import breadmod.registry.block.ModBlockEntities
-import breadmod.registry.screen.ModMenuTypes
+import breadmod.registry.menu.ModMenuTypes
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.Slot

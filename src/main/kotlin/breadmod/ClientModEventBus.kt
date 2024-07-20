@@ -14,14 +14,14 @@ import breadmod.entity.renderer.BreadBulletEntityRenderer
 import breadmod.entity.renderer.PrimedHappyBlockRenderer
 import breadmod.hud.ToolGunOverlay
 import breadmod.item.armor.BreadArmorItem
-import breadmod.item.colors.ArmorColor
+import breadmod.item.armor.ArmorColor
 import breadmod.item.tool_gun.ToolGunItem.Companion.changeMode
 import breadmod.registry.block.ModBlockEntities
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
-import breadmod.registry.screen.ModMenuTypes
+import breadmod.registry.menu.ModMenuTypes
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.Util
@@ -53,13 +53,14 @@ object ClientModEventBus {
     @SubscribeEvent
     fun onClientSetup(event: FMLClientSetupEvent) {
         ModMain.LOGGER.info("Client setup")
-        val blockingProperty = modLocation("blocking")
 
         event.enqueueWork {
             ItemProperties.register(
-                ModItems.BREAD_SHIELD.get(), blockingProperty) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
+                ModItems.BREAD_SHIELD.get(), modLocation("blocking")) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
                 if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1.0f else 0.0f
             }
+
+            ItemProperties.register(ModItems.CERTIFICATE.get(), modLocation("signed")) { a, b, c, d -> 1f }
 
             MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
             MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle -> WheatCrusherScreen(pMenu,pInventory,pTitle) }

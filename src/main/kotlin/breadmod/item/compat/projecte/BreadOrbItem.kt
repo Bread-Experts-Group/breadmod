@@ -2,7 +2,7 @@ package breadmod.item.compat.projecte
 
 import breadmod.ModMain.modTranslatable
 import breadmod.registry.item.IRegisterSpecialCreativeTab
-import breadmod.registry.screen.ModCreativeTabs
+import breadmod.registry.menu.ModCreativeTabs
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder
 import moze_intel.projecte.capability.EmcHolderItemCapabilityWrapper

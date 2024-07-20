@@ -8,7 +8,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
-import breadmod.registry.screen.ModCreativeTabs
+import breadmod.registry.menu.ModCreativeTabs
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike

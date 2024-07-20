@@ -1,6 +1,8 @@
 package breadmodadvanced.block.machine
 
 import breadmod.block.machine.BaseAbstractMachineBlock
+import breadmod.block.util.getBurnTime
+import breadmod.block.util.handlePlayerFluidInteraction
 import breadmod.block.util.smokeAtEdge
 import breadmod.util.capability.FluidContainer
 import breadmodadvanced.block.machine.entity.DieselGeneratorBlockEntity
@@ -8,12 +10,10 @@ import breadmodadvanced.registry.block.ModBlockEntitiesAdv
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -23,12 +23,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
-import net.minecraftforge.common.ForgeHooks
 import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.fluids.FluidStack
-import net.minecraftforge.fluids.FluidType
-import net.minecraftforge.fluids.capability.IFluidHandler
-import kotlin.jvm.optionals.getOrNull
 
 class DieselGeneratorBlock: BaseAbstractMachineBlock.Toggleable<DieselGeneratorBlockEntity>(
     ModBlockEntitiesAdv.DIESEL_GENERATOR,
@@ -52,31 +47,16 @@ class DieselGeneratorBlock: BaseAbstractMachineBlock.Toggleable<DieselGeneratorB
     ): InteractionResult {
         if(pLevel.isClientSide || pHand == InteractionHand.OFF_HAND) return InteractionResult.CONSUME
         val handStack = pPlayer.getItemInHand(pHand)
-        val item = handStack.item
 
-        if(item is BucketItem) {
-            val burnTime = ForgeHooks.getBurnTime(handStack, null)
-            if(burnTime > 0) {
-                val blockEntity = pLevel.getBlockEntity(pPos) as? DieselGeneratorBlockEntity ?: return InteractionResult.FAIL
-                val handler = blockEntity.capabilityHolder.capability<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
-                val stack = FluidStack(item.fluid, FluidType.BUCKET_VOLUME)
+        val burnTime = getBurnTime(handStack)
+        if(burnTime > 0) {
+            val blockEntity = pLevel.getBlockEntity(pPos) as? DieselGeneratorBlockEntity ?: return InteractionResult.FAIL
+            val handler = blockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return InteractionResult.FAIL
 
-                val filled = handler.fill(stack, IFluidHandler.FluidAction.SIMULATE)
-                if (filled == FluidType.BUCKET_VOLUME && blockEntity.addBurnTime(burnTime)) {
-                    if (!pPlayer.isCreative) {
-                        handStack.shrink(1)
-                        pPlayer.inventory.placeItemBackInInventory(BucketItem.getEmptySuccessItem(handStack, pPlayer))
-                    }
-                    pLevel.playSound(
-                        null, pPos,
-                        item.fluid.pickupSound.getOrNull() ?: SoundEvents.BUCKET_EMPTY,
-                        SoundSource.BLOCKS, 1.0f, 1.0f
-                    )
-                    handler.fill(stack, IFluidHandler.FluidAction.EXECUTE)
-
-                    return InteractionResult.SUCCESS
-                }
-            }
+            return handlePlayerFluidInteraction(
+                pPlayer, pLevel, pPos,
+                handStack, handler
+            ) { blockEntity.addBurnTime(burnTime) } ?: InteractionResult.FAIL
         }
         return InteractionResult.FAIL
     }
