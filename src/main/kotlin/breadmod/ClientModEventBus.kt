@@ -61,7 +61,9 @@ object ClientModEventBus {
                 if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1.0f else 0.0f
             }
 
-            ItemProperties.register(ModItems.CERTIFICATE.get(), modLocation("signed")) { a, b, c, d -> 1f }
+            ItemProperties.register(ModItems.CERTIFICATE.get(), modLocation("signed")) { stack, _, _, _ ->
+                if (stack.tag != null && stack.tag!!.contains("author")) 1f else 0f
+            }
 
             MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
             MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle -> WheatCrusherScreen(pMenu,pInventory,pTitle) }

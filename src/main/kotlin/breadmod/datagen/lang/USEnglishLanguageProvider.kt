@@ -93,7 +93,8 @@ class USEnglishLanguageProvider(
         add(ModBlocks.TOASTER)
         add(ModItems.TOASTER_HEATING_ELEMENT)
         add(ModBlocks.CREATIVE_GENERATOR)
-        add(ModBlocks.NIKO_BLOCK, "Niko Oneshot")
+        add(ModBlocks.NIKO_BLOCK, "Niko Tenshot")
+        add(ModBlocks.OMANEKO_BLOCK, "OMANEKO")
         add(ModItems.CERTIFICATE)
 
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
@@ -107,7 +108,7 @@ class USEnglishLanguageProvider(
         ////
         modAdd("Hell Naw Button",
             "block", "hell_naw")
-        modAdd("Needs blue dye.",
+        modAdd("Wouldn't be official without some light blue dye, would it?",
             "item", "certificate", "description"
         )
         modAdd(

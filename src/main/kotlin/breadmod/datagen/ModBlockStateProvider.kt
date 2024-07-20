@@ -75,6 +75,21 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/niko_block")
         )
 
+        horizontalBlock(ModBlocks.OMANEKO_BLOCK.get().block) {
+            val name = "breadmod:block/omaneko_block"
+
+            val model = models().singleTexture(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/omaneko_block"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/omaneko_block")
+            )
+
+            return@horizontalBlock model
+        }
+        simpleBlockItem(ModBlocks.OMANEKO_BLOCK.get().block,
+            models().getBuilder("breadmod:block/omaneko_block")
+        )
+
         horizontalBlock(ModBlocks.TOASTER.get().block) {
             val name = "breadmod:block/toaster"
 
