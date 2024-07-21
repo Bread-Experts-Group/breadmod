@@ -78,9 +78,8 @@ class ModBlockStateProvider(
         horizontalBlock(ModBlocks.OMANEKO_BLOCK.get().block) {
             val name = "breadmod:block/omaneko_block"
 
-            val model = models().singleTexture(
+            val model = models().withExistingParent(
                 name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/omaneko_block"),
                 modLoc("${ModelProvider.BLOCK_FOLDER}/omaneko_block")
             )
 

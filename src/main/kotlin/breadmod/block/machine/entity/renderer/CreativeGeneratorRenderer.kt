@@ -30,7 +30,7 @@ class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntit
 
         val builder = pBuffer.getBuffer(ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png")))
         pPoseStack.pushPose()
-        pPoseStack.translate(0f, 2f, 0f)
+        pPoseStack.translate(0.5f, 2f, 0.5f)
 //        pPoseStack.translate(0.5f, 0f, 0.5f)
         pPoseStack.mulPose(Axis.YN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
 //        pPoseStack.translate(-0.5f, 0f, -0.5f)

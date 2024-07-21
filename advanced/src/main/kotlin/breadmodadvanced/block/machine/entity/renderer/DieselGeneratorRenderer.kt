@@ -182,25 +182,25 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             Direction.SOUTH -> {
                 pPoseStack.translate(2f, 0.0625f, 1f)
                 when(pSlot) {
-                    DieselGeneratorUpgrades.FIRST_SLOT -> {}
-                    DieselGeneratorUpgrades.SECOND_SLOT -> {}
-                    DieselGeneratorUpgrades.THIRD_SLOT -> {}
+                    DieselGeneratorUpgrades.FIRST_SLOT -> pPoseStack.translate(-0.5f, 0f, -0.1f)
+                    DieselGeneratorUpgrades.SECOND_SLOT -> pPoseStack.translate(-0.375f, 0f, -0.1f)
+                    DieselGeneratorUpgrades.THIRD_SLOT -> pPoseStack.translate(-0.25f, 0f, -0.1f)
                 }
             }
             Direction.EAST -> {
                 pPoseStack.translate(1f, 0.0625f, -1f)
                 when(pSlot) {
-                    DieselGeneratorUpgrades.FIRST_SLOT -> {}
-                    DieselGeneratorUpgrades.SECOND_SLOT -> {}
-                    DieselGeneratorUpgrades.THIRD_SLOT -> {}
+                    DieselGeneratorUpgrades.FIRST_SLOT -> pPoseStack.translate(-0.1f, 0f, 0.5f)
+                    DieselGeneratorUpgrades.SECOND_SLOT -> pPoseStack.translate(-0.1f, 0f, 0.375f)
+                    DieselGeneratorUpgrades.THIRD_SLOT -> pPoseStack.translate(-0.1f, 0f, 0.25f)
                 }
             }
             Direction.WEST -> {
                 pPoseStack.translate(0f, 0.0625f, 2f)
                 when(pSlot) {
-                    DieselGeneratorUpgrades.FIRST_SLOT -> {}
-                    DieselGeneratorUpgrades.SECOND_SLOT -> {}
-                    DieselGeneratorUpgrades.THIRD_SLOT -> {}
+                    DieselGeneratorUpgrades.FIRST_SLOT -> pPoseStack.translate(0.1f, 0f, -0.5f)
+                    DieselGeneratorUpgrades.SECOND_SLOT -> pPoseStack.translate(0.1f, 0f, -0.375f)
+                    DieselGeneratorUpgrades.THIRD_SLOT -> pPoseStack.translate(0.1f, 0f, -0.25f)
                 }
             }
             else -> {}

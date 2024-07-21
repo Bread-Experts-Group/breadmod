@@ -14,7 +14,6 @@ import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 import net.minecraftforge.network.NetworkHooks
 
-// todo custom mod rarity with any color support
 class CertificateItem: Item(Properties().stacksTo(16).rarity(Rarity.RARE)), MenuProvider {
     override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = pPlayer.getItemInHand(pUsedHand)
