@@ -145,14 +145,12 @@ class ModBlockStateProvider(
                 1 -> "_one"; 2 -> "_two"; 3 -> "_three"; 4 -> "_four" else -> "" }
             val name = "breadmod:block/energy_storage$storedLevel"
 
-            val model = models().cube(
+            val model = models().orientableWithBottom(
                 name,
-                modLoc("$blockFolder/down"),
-                modLoc("$blockFolder/up"),
-                modLoc("$blockFolder/north$storedLevel"),
-                modLoc("$blockFolder/south"),
-                modLoc("$blockFolder/east"),
-                modLoc("$blockFolder/west")
+                modLoc("$blockFolder/side"),
+                modLoc("$blockFolder/front$storedLevel"),
+                modLoc("$blockFolder/bottom"),
+                modLoc("$blockFolder/top")
             )
             return@horizontalBlock model
         }

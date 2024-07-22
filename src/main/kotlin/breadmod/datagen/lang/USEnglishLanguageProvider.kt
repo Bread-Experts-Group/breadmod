@@ -93,6 +93,7 @@ class USEnglishLanguageProvider(
         add(ModBlocks.TOASTER)
         add(ModItems.TOASTER_HEATING_ELEMENT)
         add(ModBlocks.CREATIVE_GENERATOR)
+        add(ModBlocks.ENERGY_STORAGE_BLOCK)
 
         add(ModBlocks.NIKO_BLOCK, "Niko Tenshot")
         add(ModBlocks.OMANEKO_BLOCK, "OMANEKO")
