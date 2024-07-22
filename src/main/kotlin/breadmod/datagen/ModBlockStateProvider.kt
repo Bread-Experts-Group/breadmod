@@ -61,20 +61,9 @@ class ModBlockStateProvider(
             return@horizontalBlock model
         }
 
-        horizontalBlock(ModBlocks.NIKO_BLOCK.get().block) {
-            val name = "breadmod:block/niko_block"
-
-            val model = models().singleTexture(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/niko_block"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/niko_block")
-            )
-
-            return@horizontalBlock model
-        }
-        simpleBlockItem(ModBlocks.NIKO_BLOCK.get().block,
-            models().getBuilder("breadmod:block/niko_block")
-        )
+        addBlockItemWithSelfParent(ModBlocks.NIKO_BLOCK.get().block)
+        addBlockItemWithSelfParent(ModBlocks.RICARD_BLOCK.get().block)
+        addBlockItemWithSelfParent(ModBlocks.UNFUNNYLAD_BLOCK.get().block)
 
         horizontalBlock(ModBlocks.OMANEKO_BLOCK.get().block) {
             val name = "breadmod:block/omaneko_block"
@@ -321,6 +310,12 @@ class ModBlockStateProvider(
         simpleBlockItem(ModBlocks.KEYBOARD.get().block, models().getBuilder("breadmod:block/keyboard"))
         // // //
         blockTexture(ModFluids.BREAD_LIQUID.block.get())
+    }
+
+    private fun addBlockItemWithSelfParent(block: Block) {
+        val parent = modLoc("${ModelProvider.BLOCK_FOLDER}/${block.descriptionId.substringAfterLast('.')}")
+        horizontalBlock(block) { models().withExistingParent(parent.toString(), parent) }
+        simpleBlockItem(block, models().getBuilder(parent.toString()))
     }
 
     private fun blockWithItem(blockRegistryObject: Block) {

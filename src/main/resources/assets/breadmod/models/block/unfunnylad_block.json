@@ -1,0 +1,13 @@
+{
+  "loader": "forge:obj",
+  "flip_v": true,
+  "model": "breadmod:models/block/unfunnylad/unfunnylad_block.obj",
+  "parent": "block/block",
+  "textures": {
+    "hndl1": "breadmod:block/unfunnylad/hndl.001",
+    "hndl2": "breadmod:block/unfunnylad/hndl.002",
+    "hndl3": "breadmod:block/unfunnylad/hndl.003",
+    "hndl4": "breadmod:block/unfunnylad/hndl.004",
+    "particle": "minecraft:block/red_wool"
+  }
+}

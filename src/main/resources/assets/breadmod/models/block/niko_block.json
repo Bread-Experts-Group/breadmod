@@ -4,7 +4,8 @@
   "model": "breadmod:models/block/niko/niko_block.obj",
   "parent": "block/block",
   "textures": {
-    "texture0": "breadmod:block/niko_block",
+    "body": "breadmod:block/niko/body.001",
+    "emissive": "breadmod:block/niko/emissive.001",
     "particle": "minecraft:block/red_wool"
   }
 }

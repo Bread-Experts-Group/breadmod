@@ -200,6 +200,64 @@ object ModBlocks {
         Item.Properties().rarity(Rarity.EPIC)
     )
 
+    // the sillyest
+    val RICARD_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "ricard_block",
+        { object : Block(Properties.of().noOcclusion()) {
+            override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
+                pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
+            }
+
+            override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
+
+            @Deprecated("Deprecated in Java", ReplaceWith(
+                "super.getShape(pState, pLevel, pPos, pContext)",
+                "net.minecraft.world.level.block.Block"
+            ))
+            override fun getShape(
+                pState: BlockState,
+                pLevel: BlockGetter,
+                pPos: BlockPos,
+                pContext: CollisionContext
+            ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+                Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
+                else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
+            }
+        }},
+        Item.Properties().rarity(Rarity.EPIC)
+    )
+
+    // the sillyestier
+    val UNFUNNYLAD_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "unfunnylad_block",
+        { object : Block(Properties.of().noOcclusion()) {
+            override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
+                pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
+            }
+
+            override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
+
+            @Deprecated("Deprecated in Java", ReplaceWith(
+                "super.getShape(pState, pLevel, pPos, pContext)",
+                "net.minecraft.world.level.block.Block"
+            ))
+            override fun getShape(
+                pState: BlockState,
+                pLevel: BlockGetter,
+                pPos: BlockPos,
+                pContext: CollisionContext
+            ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+                Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
+                else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
+            }
+        }},
+        Item.Properties().rarity(Rarity.EPIC)
+    )
+
     // Storage Blocks
     val ENERGY_STORAGE_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
@@ -369,9 +427,14 @@ object ModBlocks {
             dropSelf(HELL_NAW.get().block)
             dropSelf(CREATIVE_GENERATOR.get().block)
             dropSelf(TOASTER.get().block)
+
             dropSelf(NIKO_BLOCK.get().block)
             dropSelf(OMANEKO_BLOCK.get().block)
+            dropSelf(RICARD_BLOCK.get().block)
+            dropSelf(UNFUNNYLAD_BLOCK.get().block)
+
             dropSelf(ENERGY_STORAGE_BLOCK.get().block)
+
             add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
             dropNone.forEach { add(it, noDrop()) }

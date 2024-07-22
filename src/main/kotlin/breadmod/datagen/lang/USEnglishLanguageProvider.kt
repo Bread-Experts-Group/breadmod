@@ -93,9 +93,14 @@ class USEnglishLanguageProvider(
         add(ModBlocks.TOASTER)
         add(ModItems.TOASTER_HEATING_ELEMENT)
         add(ModBlocks.CREATIVE_GENERATOR)
+
         add(ModBlocks.NIKO_BLOCK, "Niko Tenshot")
         add(ModBlocks.OMANEKO_BLOCK, "OMANEKO")
+        add(ModBlocks.RICARD_BLOCK)
+        add(ModBlocks.UNFUNNYLAD_BLOCK)
+
         add(ModItems.CERTIFICATE)
+        add(ModItems.WRENCH)
 
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
         add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")

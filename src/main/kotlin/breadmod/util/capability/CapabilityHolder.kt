@@ -1,9 +1,11 @@
 package breadmod.util.capability
 
 import breadmod.util.translateDirection
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
+import net.minecraft.world.level.Level
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.common.util.LazyOptional
@@ -113,4 +115,10 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContaine
 
     @Suppress("UNCHECKED_CAST")
     private fun <T: Tag> INBTSerializable<T>.deserializeNBT(tag: Tag?) { if(tag != null) this.deserializeNBT(tag as T) }
+
+    fun distribute(pLevel: Level, pPos: BlockPos, pFacing: Direction) {
+        capabilities.forEach { (_, actual) -> actual.first.ifPresent {
+            if(it is ICapabilityDistributable) it.distribute(pLevel, pPos, actual.second, pFacing)
+        } }
+    }
 }

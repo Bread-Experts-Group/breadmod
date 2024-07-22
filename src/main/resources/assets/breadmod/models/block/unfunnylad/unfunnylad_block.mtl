@@ -1,0 +1,40 @@
+newmtl unfunnylad_block_4
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl4
+map_Kd #hndl4
+map_d #hndl4
+
+newmtl unfunnylad_block_1
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl1
+map_Kd #hndl1
+map_d #hndl1
+
+newmtl unfunnylad_block_3
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl3
+map_Kd #hndl3
+map_d #hndl3
+
+newmtl unfunnylad_block_2
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl2
+map_Kd #hndl2
+map_d #hndl2
+

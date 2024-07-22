@@ -1,11 +1,13 @@
-# Made in Blockbench 4.10.4
-newmtl m_b45c6998-f2d8-7e7c-f0e7-1c7dd56d759e
-Ns 0.000000
-Ka 1.000000 1.000000 1.000000
+# Blender MTL File: 'niko.blend'
+# Material Count: 1
+
+newmtl Niko
+Ns 584.965602
+Ka 0.484871 0.484871 0.484871
+Kd 1.000000 1.000000 1.000000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
-Ni 1.500000
+Ni 1.000000
 d 1.000000
-illum 2
-map_Kd #texture0
-newmtl none
+illum 3
+map_Kd #body
