@@ -28,8 +28,6 @@ class EnergyStorageBlockEntity(
     ) {
         val energyLevel = pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY) ?: return
 
-        println(energyLevel.energyStored)
-
         when(energyLevel.energyStored) {
             250000 -> setStorageLevel(pState, pLevel, pPos, 1)
             500000 -> setStorageLevel(pState, pLevel, pPos, 2)

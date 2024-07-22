@@ -146,28 +146,7 @@ object ModBlocks {
     val NIKO_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "niko_block",
-        { object : Block(Properties.of().noOcclusion()) {
-            override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-                pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
-            }
-
-            override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
-
-            @Deprecated("Deprecated in Java", ReplaceWith(
-                "super.getShape(pState, pLevel, pPos, pContext)",
-                "net.minecraft.world.level.block.Block"
-            ))
-            override fun getShape(
-                pState: BlockState,
-                pLevel: BlockGetter,
-                pPos: BlockPos,
-                pContext: CollisionContext
-            ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
-                Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
-                else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
-            }
-        }},
+        { CharacterModelBlock() },
         Item.Properties().rarity(Rarity.EPIC)
     )
 
@@ -175,28 +154,7 @@ object ModBlocks {
     val OMANEKO_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "omaneko_block",
-        { object : Block(Properties.of().noOcclusion()) {
-            override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-                pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
-            }
-
-            override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
-
-            @Deprecated("Deprecated in Java", ReplaceWith(
-                "super.getShape(pState, pLevel, pPos, pContext)",
-                "net.minecraft.world.level.block.Block"
-            ))
-            override fun getShape(
-                pState: BlockState,
-                pLevel: BlockGetter,
-                pPos: BlockPos,
-                pContext: CollisionContext
-            ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
-                Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
-                else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
-            }
-        }},
+        { CharacterModelBlock() },
         Item.Properties().rarity(Rarity.EPIC)
     )
 
@@ -204,28 +162,7 @@ object ModBlocks {
     val RICARD_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "ricard_block",
-        { object : Block(Properties.of().noOcclusion()) {
-            override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-                pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
-            }
-
-            override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
-
-            @Deprecated("Deprecated in Java", ReplaceWith(
-                "super.getShape(pState, pLevel, pPos, pContext)",
-                "net.minecraft.world.level.block.Block"
-            ))
-            override fun getShape(
-                pState: BlockState,
-                pLevel: BlockGetter,
-                pPos: BlockPos,
-                pContext: CollisionContext
-            ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
-                Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
-                else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
-            }
-        }},
+        { CharacterModelBlock() },
         Item.Properties().rarity(Rarity.EPIC)
     )
 
@@ -233,28 +170,7 @@ object ModBlocks {
     val UNFUNNYLAD_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "unfunnylad_block",
-        { object : Block(Properties.of().noOcclusion()) {
-            override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-                pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
-            }
-
-            override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
-                .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
-
-            @Deprecated("Deprecated in Java", ReplaceWith(
-                "super.getShape(pState, pLevel, pPos, pContext)",
-                "net.minecraft.world.level.block.Block"
-            ))
-            override fun getShape(
-                pState: BlockState,
-                pLevel: BlockGetter,
-                pPos: BlockPos,
-                pContext: CollisionContext
-            ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
-                Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
-                else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
-            }
-        }},
+        { CharacterModelBlock() },
         Item.Properties().rarity(Rarity.EPIC)
     )
 
@@ -394,6 +310,29 @@ object ModBlocks {
             }
         } }
     )
+
+    internal class CharacterModelBlock: Block(Properties.of().noOcclusion()) {
+        override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
+            pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
+        }
+
+        override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
+            .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
+
+        @Deprecated("Deprecated in Java", ReplaceWith(
+            "super.getShape(pState, pLevel, pPos, pContext)",
+            "net.minecraft.world.level.block.Block"
+        ))
+        override fun getShape(
+            pState: BlockState,
+            pLevel: BlockGetter,
+            pPos: BlockPos,
+            pContext: CollisionContext
+        ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
+            else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
+        }
+    }
 
     internal class ModBlockLoot : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags()) {
         override fun getKnownBlocks(): Iterable<Block> {
