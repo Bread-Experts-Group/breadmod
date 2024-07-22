@@ -8,6 +8,7 @@ import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.block.machine.entity.renderer.CreativeGeneratorRenderer
 import breadmod.block.machine.entity.screen.DoughMachineScreen
 import breadmod.block.machine.entity.screen.WheatCrusherScreen
+import breadmod.block.storage.entity.renderer.EnergyBlockRenderer
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.entity.renderer.BreadBulletEntityRenderer
@@ -117,6 +118,7 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntities.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get()) { SidedScreenRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntities.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntities.ENERGY_STORAGE.get()) { EnergyBlockRenderer() }
     }
 
     val toolGunBindList = mutableMapOf<Control, KeyMapping?>()

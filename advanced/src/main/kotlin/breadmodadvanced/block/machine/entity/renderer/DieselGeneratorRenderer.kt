@@ -23,13 +23,14 @@ import org.joml.Quaternionf
 
 class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     private enum class DieselGeneratorUpgrades { BATTERY, CHARGING, TURBO, FIRST_SLOT, SECOND_SLOT, THIRD_SLOT }
-
     private val dieselGeneratorModels = "${ModelProvider.BLOCK_FOLDER}/diesel_generator"
 
     private val doorModelLocation = modLocation("$dieselGeneratorModels/diesel_generator_door")
     private val batteryUpgradeModelLoc = modLocation("$dieselGeneratorModels/diesel_generator_battery_upgrade")
     private val chargingUpgradeModelLoc = modLocation("$dieselGeneratorModels/diesel_generator_charging_upgrade")
     private val turboUpgradeModelLoc = modLocation("$dieselGeneratorModels/diesel_generator_turbo_upgrade")
+
+    private var doorRot = 0f
 
     override fun render(
         pBlockEntity: DieselGeneratorBlockEntity,
@@ -41,9 +42,16 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     ) {
         val instance = Minecraft.getInstance()
         val blockRotation = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+        val level = pBlockEntity.level ?: return
+
+        if(doorRot < 120f) {
+            doorRot = Math.floorMod(level.gameTime, 120).toFloat() + pPartialTick
+        } /*else {
+            doorRot = 0f
+        }*/
 
         val doorOpen = pBlockEntity.blockState.getValue(BlockStateProperties.OPEN)
-        val doorAxis = if(doorOpen) Axis.YN.rotationDegrees(120f) else Axis.YN.rotationDegrees(0f)
+        val doorAxis = if(doorOpen) Axis.YN.rotationDegrees(doorRot) else Axis.YN.rotationDegrees(0f)
 
         // todo animation when opening and closing door (side quest: door openness like with the chest renderer)
         // Door Rendering
@@ -170,7 +178,6 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
 
         pPoseStack.pushPose()
         when(pBlockRotation) {
-            // todo actually finish writing the translation code here
             Direction.NORTH -> {
                 pPoseStack.translate(-1f, 0.0625f, 0f)
                 when(pSlot) {

@@ -3,6 +3,7 @@ package breadmod.util.render
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.GameRenderer
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -180,4 +182,42 @@ fun drawQuad(
     drawVertex(pBuilder, pPoseStack, pX0, pY1, pZ1, pU0, pV1, pPackedLight, pColor)
     drawVertex(pBuilder, pPoseStack, pX1, pY1, pZ1, pU1, pV1, pPackedLight, pColor)
     drawVertex(pBuilder, pPoseStack, pX1, pY0, pZ0, pU1, pV0, pPackedLight, pColor)
+}
+
+/**
+ * Renders a given [Component] onto a [BlockEntityWithoutLevelRenderer] or [BlockEntityRenderer]
+ *
+ * @param pComponent The text as a [Component.literal] or [Component.translatable] to be rendered onto the target block or item.
+ * @param pColor The primary text color as an integer.
+ * @param pBackgroundColor Secondary text color as an integer, applies to the background
+ * @param pFontRenderer Draws the text onto the target block or item
+ * @param pPoseStack Positions the text onto the target block or item
+ * @param pDropShadow draws a drop shadow behind the text
+ *
+ * @see Font.drawInBatch
+ * @author Logan McLean
+ * @since 0.0.1
+ */
+fun renderText(
+    pComponent: Component,
+    pColor: Int,
+    pBackgroundColor: Int,
+    pFontRenderer: Font,
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pDropShadow: Boolean,
+    pPackedLight: Int
+) {
+    pFontRenderer.drawInBatch(
+        pComponent,
+        0f,
+        0f,
+        pColor,
+        pDropShadow,
+        pPoseStack.last().pose(),
+        pBuffer,
+        Font.DisplayMode.NORMAL,
+        pBackgroundColor,
+        pPackedLight
+    )
 }

@@ -7,6 +7,7 @@ import breadmod.block.machine.multiblock.farmer.entity.FarmerControllerBlockEnti
 import breadmod.block.machine.multiblock.farmer.entity.FarmerInputBlockEntity
 import breadmod.block.machine.multiblock.farmer.entity.FarmerOutputBlockEntity
 import breadmod.block.machine.multiblock.generic.entity.PowerInterfaceBlockEntity
+import breadmod.block.storage.entity.EnergyStorageBlockEntity
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK
 import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK
@@ -88,6 +89,14 @@ object ModBlockEntities {
         BlockEntityType.Builder.of(
             { pPos, pState -> CreativeGeneratorBlockEntity(pPos, pState) },
             ModBlocks.CREATIVE_GENERATOR.get().block
+        ).build(null)
+    }
+
+    // Storage
+    val ENERGY_STORAGE: RegistryObject<BlockEntityType<EnergyStorageBlockEntity>> = deferredRegister.register("energy_storage_entity") {
+        BlockEntityType.Builder.of(
+            { pPos, pState -> EnergyStorageBlockEntity(pPos, pState) },
+            ModBlocks.ENERGY_STORAGE_BLOCK.get().block,
         ).build(null)
     }
 }

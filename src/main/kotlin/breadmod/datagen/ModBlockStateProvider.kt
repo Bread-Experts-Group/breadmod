@@ -1,6 +1,7 @@
 package breadmod.datagen
 
 import breadmod.ModMain
+import breadmod.block.ModBlockStateProperties
 import breadmod.block.specialItem.OreBlock
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
@@ -147,6 +148,27 @@ class ModBlockStateProvider(
         simpleBlockItem(
             ModBlocks.WHEAT_CRUSHER_BLOCK.get().block,
             models().getBuilder("breadmod:block/wheat_crusher")
+        )
+
+        horizontalBlock(ModBlocks.ENERGY_STORAGE_BLOCK.get().block) { state ->
+            val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
+            val storedLevel = when(state.getValue(ModBlockStateProperties().storageLevel)) {
+                1 -> "_one"; 2 -> "_two"; 3 -> "_three"; 4 -> "_four" else -> "" }
+            val name = "breadmod:block/energy_storage$storedLevel"
+
+            val model = models().cube(
+                name,
+                modLoc("$blockFolder/down"),
+                modLoc("$blockFolder/up"),
+                modLoc("$blockFolder/north$storedLevel"),
+                modLoc("$blockFolder/south"),
+                modLoc("$blockFolder/east"),
+                modLoc("$blockFolder/west")
+            )
+            return@horizontalBlock model
+        }
+        simpleBlockItem(ModBlocks.ENERGY_STORAGE_BLOCK.get().block,
+            models().getBuilder("breadmod:block/energy_storage")
         )
 
         // Hell Naw button

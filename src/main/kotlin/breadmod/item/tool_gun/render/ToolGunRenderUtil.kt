@@ -1,9 +1,9 @@
 package breadmod.item.tool_gun.render
 
+import breadmod.util.render.renderText
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
@@ -18,44 +18,6 @@ private const val SCREEN_TINT = 0xFFFFFF
  * +Z moves text right on tool gun
  * -Z moves text left on tool gun
  */
-
-
-/**
- * Renders a given [Component] onto a [BlockEntityWithoutLevelRenderer]
- *
- * @param pComponent The text as a [Component.literal] or [Component.translatable] to be rendered onto the target model.
- * @param pColor The primary text color as an integer.
- * @param pBackgroundColor Secondary text color as an integer, applies to the background
- * @param pFontRenderer Draws the text onto the target model
- * @param pPoseStack Positions the text onto the target model
- * @param pBuffer see [MultiBufferSource]
- *
- * @see Font.drawInBatch
- * @author Logan McLean
- * @since 0.0.1
- */
-fun renderText(
-    pComponent: Component,
-    pColor: Int,
-    pBackgroundColor: Int,
-    pFontRenderer: Font,
-    pPoseStack: PoseStack,
-    pBuffer: MultiBufferSource,
-    pDropShadow: Boolean
-) {
-    pFontRenderer.drawInBatch(
-        pComponent,
-        0f,
-        0f,
-        pColor,
-        pDropShadow,
-        pPoseStack.last().pose(),
-        pBuffer,
-        Font.DisplayMode.NORMAL,
-        pBackgroundColor,
-        SCREEN_TINT
-    )
-}
 
 fun drawTextOnScreen(
     pComponent: Component,
@@ -76,7 +38,7 @@ fun drawTextOnScreen(
     pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
     pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
     pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
-    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow)
+    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, SCREEN_TINT)
     pPoseStack.popPose()
 }
 

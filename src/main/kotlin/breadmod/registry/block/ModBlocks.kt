@@ -7,6 +7,7 @@ import breadmod.block.machine.multiblock.farmer.FarmerControllerBlock
 import breadmod.block.machine.multiblock.farmer.FarmerInputBlock
 import breadmod.block.machine.multiblock.farmer.FarmerOutputBlock
 import breadmod.block.machine.multiblock.generic.PowerInterfaceBlock
+import breadmod.block.storage.EnergyStorageBlock
 import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT
 import breadmod.item.renderer.CreativeGeneratorItemRenderer
@@ -199,6 +200,14 @@ object ModBlocks {
         Item.Properties().rarity(Rarity.EPIC)
     )
 
+    // Storage Blocks
+    val ENERGY_STORAGE_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "energy_storage",
+        { EnergyStorageBlock() },
+        Item.Properties()
+    )
+
     // Farmer Multiblock
     val FARMER_CONTROLLER = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
@@ -362,6 +371,7 @@ object ModBlocks {
             dropSelf(TOASTER.get().block)
             dropSelf(NIKO_BLOCK.get().block)
             dropSelf(OMANEKO_BLOCK.get().block)
+            dropSelf(ENERGY_STORAGE_BLOCK.get().block)
             add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.
             dropNone.forEach { add(it, noDrop()) }
