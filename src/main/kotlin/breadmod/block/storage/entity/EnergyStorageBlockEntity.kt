@@ -2,7 +2,7 @@ package breadmod.block.storage.entity
 
 import breadmod.block.ModBlockStateProperties
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.util.capability.EnergyBattery
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.Level
@@ -14,7 +14,7 @@ class EnergyStorageBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : AbstractMachineBlockEntity<EnergyStorageBlockEntity>(
-    ModBlockEntities.ENERGY_STORAGE.get(),
+    ModBlockEntityTypes.ENERGY_STORAGE.get(),
     pPos,
     pBlockState,
     ForgeCapabilities.ENERGY to (EnergyBattery(1000000, 50000, 50000) to null)

@@ -2,7 +2,7 @@ package breadmod.block.machine.entity.menu
 
 import breadmod.block.machine.entity.DoughMachineBlockEntity
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.menu.ModMenuTypes
 import breadmod.util.isTag
 import net.minecraft.network.FriendlyByteBuf
@@ -28,7 +28,7 @@ class DoughMachineMenu(
 
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,
-        inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.DOUGH_MACHINE.get()).get()
+        inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.DOUGH_MACHINE.get()).get()
     )
 
     class DoughMachineBucketSlot(parent: DoughMachineBlockEntity) : Slot(parent.cManager, 2, 153, 7) {

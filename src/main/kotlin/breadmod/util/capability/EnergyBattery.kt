@@ -12,13 +12,13 @@ import kotlin.math.min
 
 class EnergyBattery(
     capacity: Int,
-    private var bMaxReceive: Int = Int.MAX_VALUE, var bMaxExtract: Int = Int.MAX_VALUE,
+    var bMaxReceive: Int = Int.MAX_VALUE, var bMaxExtract: Int = Int.MAX_VALUE,
     override var changed: (() -> Unit)? = null
 ) : IEnergyStorage, ICapabilitySavable<CompoundTag> {
     constructor(capacity: Int, bTransportLimit: Int = Int.MAX_VALUE, changed: (() -> Unit)? = null): this(capacity, bTransportLimit, bTransportLimit, changed)
 
     var stored: Int = 0
-    private var capacity: Int = capacity
+    var capacity: Int = capacity
         set(value) { stored = min(stored, value); field = value }
 
     override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = if(bMaxReceive > 0) {

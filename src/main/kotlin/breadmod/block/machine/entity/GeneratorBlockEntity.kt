@@ -2,7 +2,7 @@ package breadmod.block.machine.entity
 
 import breadmod.block.machine.CraftingManager
 import breadmod.registry.ModConfiguration
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.capability.StorageDirection
@@ -23,7 +23,7 @@ class GeneratorBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : AbstractMachineBlockEntity<GeneratorBlockEntity>(
-    ModBlockEntities.GENERATOR.get(),
+    ModBlockEntityTypes.GENERATOR.get(),
     pPos,
     pBlockState,
     ForgeCapabilities.ENERGY to (EnergyBattery(50000, 0, 2000) to mutableListOf(Direction.WEST, null)),

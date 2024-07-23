@@ -1,6 +1,6 @@
 package breadmod.block.machine.entity
 
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.util.capability.EnergyBattery
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -16,7 +16,7 @@ class CreativeGeneratorBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState,
 ) : AbstractMachineBlockEntity<CreativeGeneratorBlockEntity>(
-    ModBlockEntities.CREATIVE_GENERATOR.get(),
+    ModBlockEntityTypes.CREATIVE_GENERATOR.get(),
     pPos,
     pBlockState,
     ForgeCapabilities.ENERGY to (EnergyBattery(Int.MAX_VALUE, 0, Int.MAX_VALUE) to

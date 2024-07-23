@@ -1,7 +1,7 @@
 package breadmod.block.machine.multiblock.farmer.entity
 
 import breadmod.ModMain
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.util.deserialize
 import breadmod.util.serialize
 import net.minecraft.core.BlockPos
@@ -22,7 +22,7 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper
 class FarmerInputBlockEntity( // todo add menu and screen
     pPos: BlockPos,
     pBlockState: BlockState
-) : BlockEntity(ModBlockEntities.FARMER_INPUT.get(), pPos, pBlockState), WorldlyContainer {
+) : BlockEntity(ModBlockEntityTypes.FARMER_INPUT.get(), pPos, pBlockState), WorldlyContainer {
     private val storedItems = MutableList(4) { ItemStack.EMPTY }
 
     private val facing = this.blockState.getValue(DirectionalBlock.FACING)

@@ -10,6 +10,7 @@ import breadmod.block.machine.multiblock.generic.PowerInterfaceBlock
 import breadmod.block.storage.EnergyStorageBlock
 import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT
+import breadmod.block.storage.FluidStorageBlock
 import breadmod.item.renderer.CreativeGeneratorItemRenderer
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -179,6 +180,12 @@ object ModBlocks {
         ModItems.deferredRegister,
         "energy_storage",
         { EnergyStorageBlock() },
+        Item.Properties()
+    )
+    val FLUID_STORAGE_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "fluid_storage",
+        { FluidStorageBlock() },
         Item.Properties()
     )
 
@@ -373,6 +380,7 @@ object ModBlocks {
             dropSelf(UNFUNNYLAD_BLOCK.get().block)
 
             dropSelf(ENERGY_STORAGE_BLOCK.get().block)
+            dropSelf(FLUID_STORAGE_BLOCK.get().block)
 
             add(BREAD_DOOR.get().block, createDoorTable(BREAD_DOOR.get().block))
             // NOTICE: The below uses what I'd consider a hack (see: ModFluids.kt), but it works.

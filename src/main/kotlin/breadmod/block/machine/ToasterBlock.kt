@@ -3,7 +3,7 @@ package breadmod.block.machine
 import breadmod.ModMain
 import breadmod.block.machine.entity.ToasterBlockEntity
 import breadmod.datagen.tag.ModItemTags
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.util.capability.IndexableItemHandler
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
@@ -38,7 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 
 class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
-    ModBlockEntities.TOASTER,
+    ModBlockEntityTypes.TOASTER,
     Properties.of()
         .strength(1f, 1.0f)
         .mapColor(MapColor.TERRACOTTA_WHITE)

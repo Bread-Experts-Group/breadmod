@@ -1,7 +1,7 @@
 package breadmod.block.machine
 
 import breadmod.block.machine.entity.WheatCrusherBlockEntity
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.Containers
@@ -22,7 +22,7 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
 
 class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEntity>(
-    ModBlockEntities.WHEAT_CRUSHER,
+    ModBlockEntityTypes.WHEAT_CRUSHER,
     Properties.of()
         .strength(1f, 5.0f)
         .mapColor(MapColor.COLOR_GRAY)

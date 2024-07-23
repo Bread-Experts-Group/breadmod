@@ -8,6 +8,7 @@ import breadmod.block.machine.multiblock.farmer.entity.FarmerInputBlockEntity
 import breadmod.block.machine.multiblock.farmer.entity.FarmerOutputBlockEntity
 import breadmod.block.machine.multiblock.generic.entity.PowerInterfaceBlockEntity
 import breadmod.block.storage.entity.EnergyStorageBlockEntity
+import breadmod.block.storage.entity.FluidStorageBlockEntity
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.HEATING_ELEMENT_BLOCK
 import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK
@@ -17,7 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-object ModBlockEntities {
+object ModBlockEntityTypes {
     internal val deferredRegister: DeferredRegister<BlockEntityType<*>> = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ModMain.ID)
 
     val DOUGH_MACHINE: RegistryObject<BlockEntityType<DoughMachineBlockEntity>> = deferredRegister.register("dough_machine_entity") {
@@ -50,7 +51,6 @@ object ModBlockEntities {
             ModBlocks.TOASTER.get().block
         ).build(null)
     }
-
     val MULTIBLOCK_GENERIC_POWER: RegistryObject<BlockEntityType<PowerInterfaceBlockEntity>> = deferredRegister.register("generic_power_entity") {
         BlockEntityType.Builder.of(
             { pPos, pState -> PowerInterfaceBlockEntity(pPos, pState) },
@@ -96,7 +96,13 @@ object ModBlockEntities {
     val ENERGY_STORAGE: RegistryObject<BlockEntityType<EnergyStorageBlockEntity>> = deferredRegister.register("energy_storage_entity") {
         BlockEntityType.Builder.of(
             { pPos, pState -> EnergyStorageBlockEntity(pPos, pState) },
-            ModBlocks.ENERGY_STORAGE_BLOCK.get().block,
+            ModBlocks.ENERGY_STORAGE_BLOCK.get().block
+        ).build(null)
+    }
+    val FLUID_STORAGE: RegistryObject<BlockEntityType<FluidStorageBlockEntity>> = deferredRegister.register("fluid_storage_entity") {
+        BlockEntityType.Builder.of(
+            { pPos, pState -> FluidStorageBlockEntity(pPos, pState) },
+            ModBlocks.FLUID_STORAGE_BLOCK.get().block
         ).build(null)
     }
 }

@@ -1,6 +1,6 @@
 package breadmod.block.entity
 
-import breadmod.registry.block.ModBlockEntities.MONITOR
+import breadmod.registry.block.ModBlockEntityTypes.MONITOR
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState

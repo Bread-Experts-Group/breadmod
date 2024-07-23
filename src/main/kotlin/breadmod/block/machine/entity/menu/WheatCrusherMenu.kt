@@ -2,7 +2,7 @@ package breadmod.block.machine.entity.menu
 
 import breadmod.block.machine.entity.WheatCrusherBlockEntity
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.menu.ModMenuTypes
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
@@ -21,7 +21,7 @@ class WheatCrusherMenu(
 
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf) : this(
         pContainerId, inventory,
-        inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntities.WHEAT_CRUSHER.get()).get()
+        inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.WHEAT_CRUSHER.get()).get()
     )
 
     init {

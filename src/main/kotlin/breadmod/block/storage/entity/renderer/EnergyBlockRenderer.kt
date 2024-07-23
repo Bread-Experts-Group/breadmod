@@ -16,9 +16,11 @@ class EnergyBlockRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEn
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
+        val energyStored = energyHandler(pBlockEntity)?.energyStored
+        val maxEnergyStored = energyHandler(pBlockEntity)?.maxEnergyStored
 
         drawTextOnSide(
-            Component.literal("${getEnergyStored(pBlockEntity)} FE"),
+            Component.literal("$energyStored FE"),
             Color.GREEN.rgb,
             Color(0, 0, 0, 0).rgb,
             false,
@@ -34,7 +36,7 @@ class EnergyBlockRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEn
             0.0105f,0.095, 0.2
         )
         drawTextOnSide(
-            Component.literal("${getMaxEnergyStored(pBlockEntity)} FE"),
+            Component.literal("$maxEnergyStored FE"),
             Color.GREEN.rgb,
             Color(0, 0, 0, 0).rgb,
             false,

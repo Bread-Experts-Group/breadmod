@@ -2,7 +2,7 @@ package breadmod.block.machine
 
 import breadmod.block.machine.entity.GeneratorBlockEntity
 import breadmod.block.util.smokeAtEdge
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
@@ -25,7 +25,7 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.common.ForgeHooks
 
 class GeneratorBlock: BaseAbstractMachineBlock.Toggleable<GeneratorBlockEntity>(
-    ModBlockEntities.GENERATOR,
+    ModBlockEntityTypes.GENERATOR,
     Properties.of().noOcclusion()
         .strength(1.5f, 5.0f)
         .sound(SoundType.METAL)

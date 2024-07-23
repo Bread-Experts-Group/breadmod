@@ -18,7 +18,7 @@ import breadmod.item.armor.BreadArmorItem
 import breadmod.item.armor.ArmorColor
 import breadmod.item.screen.CertificateScreen
 import breadmod.item.tool_gun.ToolGunItem.Companion.changeMode
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
@@ -115,10 +115,10 @@ object ClientModEventBus {
 
     @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
-        event.registerBlockEntityRenderer(ModBlockEntities.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
-        event.registerBlockEntityRenderer(ModBlockEntities.MONITOR.get()) { SidedScreenRenderer() }
-        event.registerBlockEntityRenderer(ModBlockEntities.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
-        event.registerBlockEntityRenderer(ModBlockEntities.ENERGY_STORAGE.get()) { EnergyBlockRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get()) { SidedScreenRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get()) { EnergyBlockRenderer() }
     }
 
     val toolGunBindList = mutableMapOf<Control, KeyMapping?>()

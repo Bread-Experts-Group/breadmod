@@ -1,7 +1,7 @@
 package breadmod.block.machine.entity
 
 import breadmod.recipe.fluidEnergy.ToasterRecipe
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.capability.StorageDirection
@@ -20,7 +20,7 @@ class ToasterBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : AbstractMachineBlockEntity.Progressive<ToasterBlockEntity, ToasterRecipe>(
-    ModBlockEntities.TOASTER.get(),
+    ModBlockEntityTypes.TOASTER.get(),
     pPos,
     pBlockState,
     ModRecipeTypes.TOASTING,

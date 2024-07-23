@@ -1,7 +1,7 @@
 package breadmod.block.machine
 
 import breadmod.block.machine.entity.CreativeGeneratorBlockEntity
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 
 class CreativeGeneratorBlock: BaseAbstractMachineBlock.Powered<CreativeGeneratorBlockEntity>(
-    ModBlockEntities.CREATIVE_GENERATOR,
+    ModBlockEntityTypes.CREATIVE_GENERATOR,
     Properties.of().noOcclusion().lightLevel { 6 },
     false
 ) {

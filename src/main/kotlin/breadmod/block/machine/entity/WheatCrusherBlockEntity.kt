@@ -3,7 +3,7 @@ package breadmod.block.machine.entity
 import breadmod.ModMain.modTranslatable
 import breadmod.block.machine.entity.menu.WheatCrusherMenu
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.IndexableItemHandler
@@ -22,7 +22,7 @@ class WheatCrusherBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState
 ) : AbstractMachineBlockEntity.Progressive.Powered<WheatCrusherBlockEntity, WheatCrushingRecipe>(
-    ModBlockEntities.WHEAT_CRUSHER.get(),
+    ModBlockEntityTypes.WHEAT_CRUSHER.get(),
     pPos,
     pBlockState,
     ModRecipeTypes.WHEAT_CRUSHING,

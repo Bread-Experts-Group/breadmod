@@ -13,7 +13,7 @@ import breadmod.datagen.tag.ModPaintingTags
 import breadmod.datagen.texture_plane.ModTexturePlaneProvider
 import breadmod.datagen.tool_gun.ModToolGunModeProvider
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.worldgen.dimensions.ModBiomes
 import breadmod.registry.worldgen.dimensions.ModDimensions
@@ -90,7 +90,7 @@ object CommonModEventBus {
 
     @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
-        event.registerBlockEntityRenderer(ModBlockEntities.TOASTER.get()) { ToasterRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get()) { ToasterRenderer() }
     }
 
     @SubscribeEvent

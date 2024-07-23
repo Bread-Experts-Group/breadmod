@@ -52,6 +52,8 @@ class ModItemModelProvider(
         singleItem(ModItems.TOASTER_HEATING_ELEMENT)
         singleItem(ModItems.TOASTED_BREAD)
         handheldItem(ModItems.WRENCH)
+        singleItem(ModItems.BAGEL)
+        singleItem(ModItems.HALF_BAGEL)
 
         fenceInventory("bread_fence", modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"))
         ModItems.PROJECT_E?.also {

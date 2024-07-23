@@ -1,7 +1,7 @@
 package breadmod.block
 
 import breadmod.block.entity.HeatingElementBlockEntity
-import breadmod.registry.block.ModBlockEntities.HEATING_ELEMENT
+import breadmod.registry.block.ModBlockEntityTypes.HEATING_ELEMENT
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleTypes

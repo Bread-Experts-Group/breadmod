@@ -2,7 +2,7 @@ package breadmod.block.machine
 
 import breadmod.block.machine.entity.DoughMachineBlockEntity
 import breadmod.block.util.handlePlayerFluidInteraction
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.util.capability.FluidContainer
@@ -31,7 +31,7 @@ import net.minecraftforge.network.NetworkHooks
 import kotlin.random.Random
 
 class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEntity>(
-    ModBlockEntities.DOUGH_MACHINE,
+    ModBlockEntityTypes.DOUGH_MACHINE,
     Properties.of()
         .strength(1f, 5.0f)
         .mapColor(MapColor.COLOR_GRAY)

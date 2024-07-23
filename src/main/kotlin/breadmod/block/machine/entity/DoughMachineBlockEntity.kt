@@ -3,7 +3,7 @@ package breadmod.block.machine.entity
 import breadmod.ModMain.modTranslatable
 import breadmod.block.machine.entity.menu.DoughMachineMenu
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
@@ -29,7 +29,7 @@ class DoughMachineBlockEntity(
     pPos: BlockPos,
     pBlockState: BlockState,
 ) : AbstractMachineBlockEntity.Progressive.Powered<DoughMachineBlockEntity, DoughMachineRecipe>(
-    ModBlockEntities.DOUGH_MACHINE.get(),
+    ModBlockEntityTypes.DOUGH_MACHINE.get(),
     pPos,
     pBlockState,
     ModRecipeTypes.DOUGH_MACHINE,

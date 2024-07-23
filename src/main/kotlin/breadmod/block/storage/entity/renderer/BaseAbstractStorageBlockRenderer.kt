@@ -3,6 +3,7 @@ package breadmod.block.storage.entity.renderer
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
+import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.render.renderText
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -28,17 +29,15 @@ abstract class BaseAbstractStorageBlockRenderer<T: AbstractMachineBlockEntity<T>
         pBuffer: MultiBufferSource, pPackedLight: Int, pPackedOverlay: Int
     )
 
-    fun getEnergyStored(pBlockEntity: T): Int =
-        pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.energyStored ?: 0
-    fun getMaxEnergyStored(pBlockEntity: T): Int =
-        pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.maxEnergyStored ?: 0
-    fun getFluidStored(pBlockEntity: T, pTank: Int): Int =
-        pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.allTanks?.get(pTank)?.fluidAmount ?: 0
-    fun getMaxFluidStored(pBlockEntity: T, pTank: Int): Int =
-        pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.allTanks?.get(pTank)?.capacity ?: 0
+    fun energyHandler(pBlockEntity: T) =
+        pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)
+    fun fluidHandler(pBlockEntity: T) =
+        pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
+    fun itemHandler(pBlockEntity: T) =
+        pBlockEntity.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
     // todo item rendering function with display context
-//    fun itemRenderTest(pPoseStack: PoseStack) {
+//    fun renderItemOnSide(pPoseStack: PoseStack) {
 //        val itemRender = Minecraft.getInstance().itemRenderer
 //
 //        itemRender.renderStatic(Items.BREAD, ItemDisplayContext.GUI)

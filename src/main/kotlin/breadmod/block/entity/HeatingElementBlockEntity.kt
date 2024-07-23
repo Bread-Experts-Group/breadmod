@@ -5,7 +5,7 @@ import breadmod.capabilities.ModCapabilities
 import breadmod.capabilities.temperature.ITemperatureCapability
 import breadmod.capabilities.temperature.TemperatureImpl
 import breadmod.capabilities.temperature.TemperatureType
-import breadmod.registry.block.ModBlockEntities
+import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
@@ -25,7 +25,7 @@ import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 class HeatingElementBlockEntity(
     pPos: BlockPos,
     pState: BlockState,
-) : BlockEntity(ModBlockEntities.HEATING_ELEMENT.get(), pPos, pState) {
+) : BlockEntity(ModBlockEntityTypes.HEATING_ELEMENT.get(), pPos, pState) {
     private val energyHandlerOptional: LazyOptional<EnergyStorage> = LazyOptional.of {
         object : EnergyStorage(25000, 2000) {
             override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int {
