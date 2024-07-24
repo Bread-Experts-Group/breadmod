@@ -8,7 +8,7 @@ import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.block.machine.entity.renderer.CreativeGeneratorRenderer
 import breadmod.block.machine.entity.screen.DoughMachineScreen
 import breadmod.block.machine.entity.screen.WheatCrusherScreen
-import breadmod.block.storage.entity.renderer.EnergyBlockRenderer
+import breadmod.block.storage.entity.renderer.EnergyStorageRenderer
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.entity.renderer.BreadBulletEntityRenderer
@@ -105,7 +105,6 @@ object ClientModEventBus {
         event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
         event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/generator_on"))
-        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/textureplane/textureplane_test"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
@@ -118,7 +117,8 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntityTypes.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get()) { SidedScreenRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get()) { EnergyBlockRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get()) { EnergyStorageRenderer() }
+//        event.registerBlockEntityRenderer(ModBlockEntityTypes.FLUID_STORAGE.get()) { FluidStorageRenderer() }
     }
 
     val toolGunBindList = mutableMapOf<Control, KeyMapping?>()

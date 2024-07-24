@@ -13,12 +13,15 @@ import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import org.joml.Vector3f
+import java.awt.Color
 
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
@@ -164,24 +167,46 @@ fun drawVertex(
         .color(pColor)
         .uv(pU, pV)
         .uv2(pPackedLight)
-        .normal(1f, 0f, 0f)
+        .normal(0f, 1f, 0f)
         .endVertex()
 }
 
 fun drawQuad(
     pBuilder: VertexConsumer,
     pPoseStack: PoseStack,
+    pColor: Int,
     pX0: Float, pY0: Float, pZ0: Float,
     pX1: Float, pY1: Float, pZ1: Float,
     pU0: Float, pV0: Float,
     pU1: Float, pV1: Float,
     pPackedLight: Int,
-    pColor: Int
 ) {
     drawVertex(pBuilder, pPoseStack, pX0, pY0, pZ0, pU0, pV0, pPackedLight, pColor)
     drawVertex(pBuilder, pPoseStack, pX0, pY1, pZ1, pU0, pV1, pPackedLight, pColor)
     drawVertex(pBuilder, pPoseStack, pX1, pY1, pZ1, pU1, pV1, pPackedLight, pColor)
     drawVertex(pBuilder, pPoseStack, pX1, pY0, pZ0, pU1, pV0, pPackedLight, pColor)
+}
+
+fun drawTexturedQuad(
+    pTextureLocation: ResourceLocation,
+    pRenderType: RenderType,
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pPackedLight: Int,
+    pX0: Float = 0f, pY0: Float = 0f, pZ0: Float = 0f,
+    pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f,
+) {
+    val instance = Minecraft.getInstance()
+    val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pTextureLocation)
+    val spriteBuilder = pBuffer.getBuffer(pRenderType)
+    drawQuad(
+        spriteBuilder, pPoseStack, Color.WHITE.rgb,
+        pX0, pY0, pZ0,
+        pX1, pY1, pZ1,
+        sprite.u0, sprite.v0,
+        sprite.u1, sprite.v1,
+        pPackedLight
+    )
 }
 
 /**

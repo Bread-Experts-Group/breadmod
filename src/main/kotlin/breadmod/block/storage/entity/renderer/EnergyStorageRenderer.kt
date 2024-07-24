@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
 import java.awt.Color
 
-class EnergyBlockRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEntity>() {
+class EnergyStorageRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEntity>() {
 
     override fun render(
         pBlockEntity: EnergyStorageBlockEntity,
@@ -25,7 +25,7 @@ class EnergyBlockRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEn
             Color(0, 0, 0, 0).rgb,
             false,
             pPoseStack, pBuffer, pBlockEntity,
-            0.0105f,0.1, 0.14
+            0.0105f, 0.1, -0.125
         )
         drawTextOnSide(
             Component.literal("-------------"),
@@ -33,7 +33,7 @@ class EnergyBlockRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEn
             Color(0, 0, 0, 0).rgb,
             false,
             pPoseStack, pBuffer, pBlockEntity,
-            0.0105f,0.095, 0.2
+            0.0105f, 0.095, -0.185
         )
         drawTextOnSide(
             Component.literal("$maxEnergyStored FE"),
@@ -41,7 +41,7 @@ class EnergyBlockRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEn
             Color(0, 0, 0, 0).rgb,
             false,
             pPoseStack, pBuffer, pBlockEntity,
-            0.0105f,0.1, 0.26
+            0.0105f, 0.1, -0.245
         )
     }
 }
