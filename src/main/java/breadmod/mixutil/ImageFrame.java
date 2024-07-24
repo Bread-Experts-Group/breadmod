@@ -1,4 +1,4 @@
-package breadmod.mixinUtil;
+package breadmod.mixutil;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.NamedNodeMap;

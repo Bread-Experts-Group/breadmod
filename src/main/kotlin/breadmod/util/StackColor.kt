@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package breadmod.util
 
 import net.minecraft.world.item.ItemStack

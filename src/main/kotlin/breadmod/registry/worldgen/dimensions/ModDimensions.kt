@@ -35,7 +35,6 @@ object ModDimensions {
         ) to ResourceKey.create(Registries.DIMENSION, it)
     }
 
-    @Suppress("unused")
     val BREAD = register("bread", { _, _ ->
         DimensionType(
             OptionalLong.empty(),

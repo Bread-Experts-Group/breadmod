@@ -257,6 +257,8 @@ fun renderText(
     )
 }
 
+private const val TRANSLATE_OFFSET = 0.0001
+
 /**
  * [pPosX], [pPosY], [pPosZ] translates the [pPoseStack] on the facing side of the block. *(not required)*
  * ### translated [pPoseStack] starts at the top left of the facing side
@@ -274,11 +276,14 @@ fun translateOnBlockSide(
     pPoseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
     pPoseStack.translate(pPosX, pPosY, pPosZ)
     when(facing) {
-        Direction.NORTH -> pPoseStack.translate(-1.0, 1.0, 0.0001)
-        Direction.EAST -> pPoseStack.translate(-1.0, 1.0, 1.0001)
-        Direction.WEST -> pPoseStack.translate(0.0, 1.0, 0.0001)
-        Direction.SOUTH -> pPoseStack.translate(0.0, 1.0, 1.0001)
-        Direction.UP, Direction.DOWN -> { /* throw IllegalArgumentException("Cannot translate on up or down side") */ }
+        Direction.NORTH -> pPoseStack.translate(-1.0, 1.0, TRANSLATE_OFFSET)
+        Direction.EAST -> pPoseStack.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
+        Direction.WEST -> pPoseStack.translate(0.0, 1.0, TRANSLATE_OFFSET)
+        Direction.SOUTH -> pPoseStack.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
+        Direction.UP, Direction.DOWN -> {
+            pPoseStack.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
+            pPoseStack.mulPose(Axis.XN.rotationDegrees(90F))
+        }
     }
 }
 

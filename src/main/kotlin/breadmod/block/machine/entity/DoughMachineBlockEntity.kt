@@ -95,7 +95,7 @@ class DoughMachineBlockEntity(
         val itemHandle = getItemHandler() ?: return false
         val outputTank = fluidHandle.allTanks[1]
         return if(recipe.canFitResults(itemHandle to listOf(1), outputTank)) {
-            val assembled = recipe.assembleOutputs(cManager, pLevel)
+            val assembled = recipe.assembleOutputs(craftingManager, pLevel)
             assembled.first.forEach { stack -> itemHandle[1].let { slot -> if(slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count) } }
             assembled.second.forEach { stack ->  outputTank.fill(stack, IFluidHandler.FluidAction.EXECUTE) }
             true

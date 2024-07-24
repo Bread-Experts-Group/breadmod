@@ -220,26 +220,6 @@ class ModBlockStateProvider(
         simpleBlockItem(ModBlocks.GENERIC_POWER_INTERFACE.get().block,
             models().getBuilder("breadmod:block/farmer_power_block"))
         //// // // // TODO!
-        directionalBlock(ModBlocks.HEATING_ELEMENT_BLOCK.get().block) { _ ->
-            return@directionalBlock models().cubeColumn(
-                "breadmod:block/heating_element",
-                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_side" ),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/heating_element_cap"),
-            ).element()
-                .from(0F, 0F, 0F)
-                .to(16F, 16F, 16F)
-                .allFaces { d, u ->
-                    u.uvs(0F, 0F, 16F, 16F)
-                    u.texture(if(d.axis.isVertical) "#end" else "#side")
-                    u.tintindex(0)
-                }
-                .end()
-        }
-        simpleBlockItem(
-            ModBlocks.HEATING_ELEMENT_BLOCK.get().block,
-            models().getBuilder("breadmod:block/heating_element")
-        )
-        //// // // // TODO!
         getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.get().block).forAllStates { state ->
             val layer = state.getValue(BlockStateProperties.LAYERS)
             ConfiguredModel.builder()
@@ -320,7 +300,7 @@ class ModBlockStateProvider(
         simpleBlockWithItem(blockRegistryObject, cubeAll(blockRegistryObject))
     }
 
-    // Literally the vanilla button builder without the uv lock, cause the hell naw button's texture breaks with it
+    // Literally the vanilla button builder, without the uv lock, cause the hell naw button's texture breaks with it
     private fun modButtonBlock(block: ButtonBlock, button: ModelFile, buttonPressed: ModelFile) {
         getVariantBuilder(block).forAllStates { state: BlockState ->
             val facing = state.getValue(ButtonBlock.FACING)

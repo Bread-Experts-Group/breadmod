@@ -8,7 +8,6 @@ import net.minecraft.data.PackOutput
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.common.data.SoundDefinitionsProvider
 
-@Suppress("SpellCheckingInspection")
 class ModSoundDefinitionsProvider(
     packOutput: PackOutput,
     existingFileHelper: ExistingFileHelper

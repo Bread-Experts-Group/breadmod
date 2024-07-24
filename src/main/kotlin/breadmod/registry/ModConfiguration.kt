@@ -30,7 +30,7 @@ object ModConfiguration {
                 .define("decayChance", 120)
             EFFECT_DISTANCE_MULTIPLIER = builder
                 .comment("How many blocks does one amplification point on a potion effect extend in dopable armor?")
-                .define("dopedArmorDistanceMultipler", 1.5)
+                .define("dopedArmorDistanceMultiplier", 1.5)
             ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS = builder
                 .comment("How long the ultimate bread will give someone creative, in ticks")
                 .define("ultimateBreadMaxTicks", 20 * 20)

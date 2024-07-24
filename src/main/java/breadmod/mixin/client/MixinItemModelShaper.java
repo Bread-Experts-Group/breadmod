@@ -2,10 +2,15 @@ package breadmod.mixin.client;
 
 import breadmod.block.specialItem.UseBlockStateNBT;
 import net.minecraft.client.renderer.ItemModelShaper;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,12 +20,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemModelShaper.class)
 abstract class MixinItemModelShaper {
-    @Shadow @Final private ModelManager modelManager;
+    @Shadow
+    @Final
+    private ModelManager modelManager;
 
-    @Inject(method = "getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;", at = @At("HEAD"), cancellable = true)
-    private void getItemModel(ItemStack pStack, CallbackInfoReturnable<BakedModel> cir) {
-        if(pStack.getItem() instanceof BlockItem && pStack.getItem().getClass().isAnnotationPresent(UseBlockStateNBT.class)) {
-            cir.setReturnValue(this.modelManager.getBlockModelShaper().getBlockModel(UseBlockStateNBT.Companion.loadState(pStack.getOrCreateTag(), ((BlockItem) pStack.getItem()).getBlock())));
+    @Inject(
+            method = "getItemModel(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/client/resources/model/BakedModel;",
+            at = @At("HEAD"),
+            cancellable = true)
+    private void getItemModel(final ItemStack pStack, final CallbackInfoReturnable<? super BakedModel> cir) {
+        final Item item = pStack.getItem();
+        final Class<? extends Item> itemClass = item.getClass();
+
+        if (item instanceof BlockItem && itemClass.isAnnotationPresent(UseBlockStateNBT.class)) {
+            final BlockModelShaper blockModelShaper = this.modelManager.getBlockModelShaper();
+            final CompoundTag nbt = pStack.getOrCreateTag();
+            final Block block = ((BlockItem) item).getBlock();
+            final BlockState pState = UseBlockStateNBT.Companion.loadState(nbt, block);
+            final BakedModel blockModel = blockModelShaper.getBlockModel(pState);
+            cir.setReturnValue(blockModel);
         }
     }
 }

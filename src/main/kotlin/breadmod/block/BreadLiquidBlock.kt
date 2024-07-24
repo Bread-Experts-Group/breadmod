@@ -1,6 +1,6 @@
 package breadmod.block
 
-import breadmod.block.util.ILiquidCombustable
+import breadmod.block.util.ILiquidCombustible
 import breadmod.registry.fluid.ModFluids
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.state.StateDefinition
@@ -14,7 +14,7 @@ abstract class BreadLiquidBlock private constructor(): ForgeFlowingFluid(
     Properties({ ModFluids.BREAD_LIQUID.type.get() }, { ModFluids.BREAD_LIQUID.source.get() }, { ModFluids.BREAD_LIQUID.flowing.get() })
         .bucket { ModFluids.BREAD_LIQUID.bucket.get() }
         .explosionResistance(100F)
-), ILiquidCombustable {
+), ILiquidCombustible {
     object ClientExtensions: IClientFluidTypeExtensions {
         override fun getFlowingTexture(): ResourceLocation = ResourceLocation("block/water_flow")
         override fun getStillTexture(): ResourceLocation = ResourceLocation("block/water_still")

@@ -39,8 +39,9 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContaine
     }
 
     /**
-     * Retrieves the current sidedness list of the specified [capability] - if it's present.
-     * A returned value of null may indicate that either: the specified [capability] is not present, or it accepts any side, including internal.
+     * Retrieves the current sidedness list of the specified [capability] – if it is present.
+     * A returned value of null may indicate that either: the specified [capability] is not present,
+     * or it accepts any side, including internal.
      * @see CapabilityHolder
      */
     fun getSidedness(capability: Capability<*>): MutableList<Direction?>? = capabilities[capability]?.second
@@ -66,8 +67,9 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContaine
     }
 
     /**
-     * Retrieves a capability [T] for the specified [capability]. This method will not throw a [NullPointerException] if the capability
-     * does not exist at the time of calling, but will return null.
+     * Retrieves a capability [T] for the specified [capability].
+     * This method will not throw a [NullPointerException] if the capability doesn't exist at the time of calling,
+     * but will return null.
      * @param T The instance of type [T] to search for, as indexed by [capability]
      * @param capability The capability to search an instance of [T] for
      * @author Miko Elbrecht
@@ -81,7 +83,8 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContaine
     }
 
     /**
-     * Retrieves a capability [T] for the specified [capability]. If the capability is unavailable (does not exist at the time of calling),
+     * Retrieves a capability [T] for the specified [capability].
+     * If the capability is unavailable (doesn't exist at the time of calling),
      * this method will throw a [NullPointerException].
      * @param T The instance of type [T] to search for, as indexed by [capability]
      * @param capability The capability to search an instance of [T] for
@@ -97,7 +100,7 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContaine
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    fun invalidate() = capabilities.forEach { _, (optional) -> optional.invalidate() }
+    fun invalidate(): Unit = capabilities.forEach { _, (optional, _) -> optional.invalidate() }
 
     /**
      * Serializes this list of [INBTSerializable] capabilities into the specified [tag].

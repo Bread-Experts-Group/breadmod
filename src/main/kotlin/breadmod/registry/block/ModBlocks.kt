@@ -223,12 +223,6 @@ object ModBlocks {
     )
 
     ////
-    val HEATING_ELEMENT_BLOCK = deferredRegister.registerBlockItem(
-        ModItems.deferredRegister,
-        "heating_element",
-        { HeatingElementBlock() },
-        Item.Properties()
-    )
 
     val HAPPY_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
@@ -358,7 +352,6 @@ object ModBlocks {
             dropSelf(CHARCOAL_BLOCK.get().block)
             dropSelf(LOW_DENSITY_CHARCOAL_BLOCK.get().block)
             dropSelf(HAPPY_BLOCK.get().block)
-            dropSelf(HEATING_ELEMENT_BLOCK.get().block)
             dropSelf(BAUXITE_ORE.get().block)
             dropSelf(MONITOR.get().block)
             dropSelf(DOUGH_MACHINE_BLOCK.get().block)

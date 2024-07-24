@@ -15,11 +15,10 @@ internal class ToolGunPowerMode: IToolGunMode {
         pGunStack: ItemStack,
         pControl: BreadModToolGunModeProvider.Control
     ) {
-        // Really important. Do not let computerSD run on the server.
+        // Really important. Don't let computerSD run on the server.
         if(pLevel.isClientSide) {
             count++
-            println(count)
-            if(count < 5) return
+            if (count < 5) return
             //computerSD(true)
         }
     }

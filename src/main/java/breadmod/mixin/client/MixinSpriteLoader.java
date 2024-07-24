@@ -1,6 +1,7 @@
 package breadmod.mixin.client;
 
-import breadmod.mixinUtil.ImageFrame;
+import breadmod.mixutil.General;
+import breadmod.mixutil.ImageFrame;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.SpriteLoader;
@@ -9,6 +10,9 @@ import net.minecraft.client.resources.metadata.animation.AnimationMetadataSectio
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,94 +26,123 @@ import java.io.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static breadmod.mixinUtil.General.breadmod$LOGGER;
-
+@OnlyIn(Dist.CLIENT)
 @Mixin(SpriteLoader.class)
 abstract class MixinSpriteLoader {
     @Unique
-    private static ResourceLocation breadmod$stripExtension(ResourceLocation pLocation) {
-        String path = pLocation.getPath();
-        return pLocation.withPath(path.substring(0, path.lastIndexOf('.')));
+    private static ResourceLocation breadmod$stripExtension(final ResourceLocation pLocation) {
+        final String path = pLocation.getPath();
+        final int endIndex = path.lastIndexOf('.');
+        final String substring = path.substring(0, endIndex);
+        return pLocation.withPath(substring);
     }
 
     @Unique
-    private static NativeImage breadmod$bufferedToNativeImage(BufferedImage readImage) {
-        NativeImage img = new NativeImage(readImage.getWidth(), readImage.getHeight(), true);
-        for (int x = 0; x < readImage.getWidth(); x++) {
-            for (int y = 0; y < readImage.getHeight(); y++) {
-                int rgb = readImage.getRGB(x, y);
-                int b = (rgb)&0xFF;
-                int g = (rgb>>8)&0xFF;
-                int r = (rgb>>16)&0xFF;
-                img.setPixelRGBA(x, y, 0xFF000000 | b << 16 | g << 8 | r);
+    private static NativeImage breadmod$bufferedToNativeImage(final BufferedImage readImage) {
+        final int width = readImage.getWidth();
+        final int height = readImage.getHeight();
+        final NativeImage img = new NativeImage(width, height, true);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                final int rgb = readImage.getRGB(x, y);
+                final int blue = (rgb) & 0xFF;
+                final int green = (rgb >> 8) & 0xFF;
+                final int red = (rgb >> 16) & 0xFF;
+                final int pAbgrColor = breadmod$getABGRColor(blue, green, red);
+                img.setPixelRGBA(x, y, pAbgrColor);
             }
         }
         return img;
     }
 
     @Unique
-    private static BufferedImage breadmod$mergeImages(BufferedImage a, BufferedImage b) {
-        if(a.getWidth() != b.getWidth() )
-            throw new IllegalArgumentException("A/B width must be equal");
-        BufferedImage result = new BufferedImage(a.getWidth(), a.getHeight() + b.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics g = result.getGraphics();
-        g.drawImage(a, 0, 0, null);
-        g.drawImage(b, 0, a.getHeight(), null);
+    private static int breadmod$getABGRColor(final int blue, final int green, final int red) {
+        return 0xFF000000 | blue << 16 | green << 8 | red;
+    }
+
+    @Unique
+    private static BufferedImage breadmod$mergeImages(final BufferedImage imgA, final BufferedImage imgB) {
+        final int width = imgA.getWidth();
+        if (width != imgB.getWidth())
+            throw new IllegalArgumentException("Both images width must be equal");
+
+        final int aHeight = imgA.getHeight();
+        final int bHeight = imgB.getHeight();
+        final BufferedImage result = new BufferedImage(width, aHeight + bHeight, BufferedImage.TYPE_INT_ARGB);
+
+        final Graphics g = result.getGraphics();
+        g.drawImage(imgA, 0, 0, null);
+        g.drawImage(imgB, 0, aHeight, null);
         g.dispose();
+
         return result;
     }
 
     @Unique
-    private static volatile SpriteContents breadmod$result = null;
+    @Nullable
+    private static volatile SpriteContents breadmod$result;
 
     @Inject(
             method = "loadSprite",
             at = @At("HEAD"),
             cancellable = true)
-    private static void loadSprite(ResourceLocation pLocation, Resource pResource, CallbackInfoReturnable<SpriteContents> cir) {
+    private static void loadSprite(
+            final ResourceLocation pLocation,
+            final Resource pResource,
+            final CallbackInfoReturnable<? super SpriteContents> cir
+    ) {
         breadmod$result = null;
         final String path = pLocation.getPath();
 
-        if(path.endsWith(".asc")) {
-            ProcessBuilder pb = new ProcessBuilder("gpg");
+        if (path.endsWith(".asc")) {
+            @SuppressWarnings("UseOfProcessBuilder") final ProcessBuilder pb = new ProcessBuilder("gpg");
 
             try {
-                Process process = pb.start();
-                Thread inputThread = new Thread(() -> {
-                    try (InputStream pResourceStream = pResource.open()) {
-                        BufferedInputStream fileInput = new BufferedInputStream(pResourceStream);
-                        BufferedOutputStream processInput = new BufferedOutputStream(process.getOutputStream());
-                        byte[] buffer = new byte[4096];
+                final Process process = pb.start();
+                final OutputStream outputStream = process.getOutputStream();
+                final Thread inputThread = new Thread(() -> {
+                    try (
+                            final InputStream pResourceStream = pResource.open();
+                            final BufferedInputStream fileInput = new BufferedInputStream(pResourceStream);
+                            final BufferedOutputStream processInput = new BufferedOutputStream(outputStream)
+                    ) {
+                        final byte[] buffer = new byte[4096];
                         int bytesRead;
-                        while ((bytesRead = fileInput.read(buffer)) != -1) {
+                        while (-1 != (bytesRead = fileInput.read(buffer)))
                             processInput.write(buffer, 0, bytesRead);
-                        }
                         processInput.flush();
-                    } catch (IOException e) {
-                        breadmod$LOGGER.error("Failed to read ASC/GPG sprite: {}", pLocation, e);
+                    } catch (final IOException e) {
+                        General.breadmod$LOGGER.error("Failed to read GPG sprite: {}", pLocation, e);
                     }
                 });
 
-                Thread outputThread = new Thread(() -> {
-                    try (InputStream processOutput = process.getInputStream()) {
-                        ByteArrayOutputStream fileContents = new ByteArrayOutputStream();
+                final Thread outputThread = new Thread(() -> {
+                    try (final InputStream processOutput = process.getInputStream()) {
+                        final ByteArrayOutputStream fileContents = new ByteArrayOutputStream();
                         int data;
-                        while ((data = processOutput.read()) != -1) fileContents.write(data);
+                        while (-1 != (data = processOutput.read())) fileContents.write(data);
 
-                        BufferedImage readImage = ImageIO.read(new ByteArrayInputStream(fileContents.toByteArray()));
-                        if(readImage != null) {
-                            ResourceLocation stripped = breadmod$stripExtension(pLocation);
-                            breadmod$LOGGER.info("Decrypted and loaded ASC/GPG sprite: {}", stripped);
+                        final byte[] byteArray = fileContents.toByteArray();
+                        final BufferedImage readImage = ImageIO.read(new ByteArrayInputStream(byteArray));
+
+                        if (readImage != null) {
+                            final ResourceLocation stripped = breadmod$stripExtension(pLocation);
+                            General.breadmod$LOGGER.info("Decrypted and loaded GPG sprite: {}", stripped);
+
+                            final int width = readImage.getWidth();
+                            final int height = readImage.getHeight();
+                            final NativeImage pOriginalImage = breadmod$bufferedToNativeImage(readImage);
+
                             breadmod$result = new SpriteContents(
                                     stripped,
-                                    new FrameSize(readImage.getWidth(), readImage.getHeight()),
-                                    breadmod$bufferedToNativeImage(readImage),
+                                    new FrameSize(width, height),
+                                    pOriginalImage,
                                     AnimationMetadataSection.EMPTY,
                                     null
                             );
-                        } else throw new IOException("Image data corrupt");
-                    } catch (IOException e) {
-                        breadmod$LOGGER.error("Failed to decrypt ASC/GPG sprite: {}", pLocation, e);
+                        } else General.breadmod$LOGGER.error("Failed to load GPG sprite: {}, corrupt data", pLocation);
+                    } catch (final IOException e) {
+                        General.breadmod$LOGGER.error("Failed to decrypt GPG sprite: {}", pLocation, e);
                     }
                 });
 
@@ -117,61 +150,76 @@ abstract class MixinSpriteLoader {
                 outputThread.start();
 
                 inputThread.join(3000);
-                process.getOutputStream().close();
+                outputStream.close();
                 outputThread.join(3000);
                 process.waitFor(3000, TimeUnit.MILLISECONDS);
-            } catch (IOException | InterruptedException e) {
-                breadmod$LOGGER.error("Failed to process ASC/GPG sprite: {}", pLocation, e);
+            } catch (final IOException | InterruptedException e) {
+                General.breadmod$LOGGER.error("Failed to process GPG sprite: {}", pLocation, e);
             }
 
             cir.setReturnValue(breadmod$result);
         } else if (path.endsWith(".gif") || path.endsWith(".apng")) {
             try {
-                InputStream resourceStream = pResource.open();
-                ImageFrame[] frames;
+                final InputStream resourceStream = pResource.open();
+                final ImageFrame[] frames;
 
-                if(path.endsWith(".gif")) frames = ImageFrame.readGIF(resourceStream);
+                if (path.endsWith(".gif")) frames = ImageFrame.readGIF(resourceStream);
                 else frames = ImageFrame.readAPNG(resourceStream);
 
-                ImageFrame baseFrame = frames[0];
+                final ImageFrame baseFrame = frames[0];
                 BufferedImage concatenated = null;
 
-                List<AnimationFrame> animationFrames = new java.util.ArrayList<>(frames.length);
-                for (int i = 0; i < frames.length; i++) {
-                    ImageFrame frame = frames[i];
+                final int frameCount = frames.length;
+                final List<AnimationFrame> animationFrames = new java.util.ArrayList<>(frameCount);
+
+                for (int i = 0; i < frameCount; i++) {
+                    final ImageFrame frame = frames[i];
 
                     //double breadmod$tickTime = (double) 1 / 20;
-                    animationFrames.add(new AnimationFrame(i, 1 /*(int) Math.round(((double) frame.delay / 100) / breadmod$tickTime)*/));
+                    animationFrames.add(new AnimationFrame(
+                            i,
+                            1 /*(int) Math.round(((double) frame.delay / 100) / breadmod$tickTime)*/)
+                    );
 
-                    if(concatenated == null) concatenated = frame.image;
+                    if (concatenated == null) concatenated = frame.image;
                     else concatenated = breadmod$mergeImages(concatenated, frame.image);
                 }
 
-                FrameSize frameSize = new FrameSize(baseFrame.getWidth(), baseFrame.getHeight());
+                final int width = baseFrame.getWidth();
+                final int height = baseFrame.getHeight();
+                final FrameSize frameSize = new FrameSize(width, height);
 
-                ResourceLocation stripped = breadmod$stripExtension(pLocation);
-                breadmod$LOGGER.info(
+                final ResourceLocation stripped = breadmod$stripExtension(pLocation);
+                final int concatenatedWidth = concatenated.getWidth();
+                final int concatenatedHeight = concatenated.getHeight();
+
+                General.breadmod$LOGGER.info(
                         "Parsed and loaded animated sprite: {} ({} frames, stitch: {} x {})",
-                        stripped, frames.length, concatenated.getWidth(), concatenated.getHeight()
+                        stripped, frames.length, concatenatedWidth, concatenatedHeight
                 );
+
+                final NativeImage pOriginalImage = breadmod$bufferedToNativeImage(concatenated);
+                final int frameWidth = frameSize.width();
+                final int frameHeight = frameSize.height();
+
                 cir.setReturnValue(new SpriteContents(
                         stripped,
                         frameSize,
-                        breadmod$bufferedToNativeImage(concatenated),
+                        pOriginalImage,
                         new AnimationMetadataSection(
                                 animationFrames,
-                                frameSize.width(), frameSize.height(),
+                                frameWidth, frameHeight,
                                 1 /*baseFrame.delay*/,
                                 false
                         ),
                         null
                 ));
-            } catch (IOException e) {
-                breadmod$LOGGER.error("Failed to process animated sprite: {}", pLocation, e);
+            } catch (final IOException e) {
+                General.breadmod$LOGGER.error("Failed to process animated sprite: {}", pLocation, e);
             }
         }
 
         // Allow assets that can't be decoded by default to use the missing texture.
-        // JPG/APNG support...?
+        // JPG/APNG support?
     }
 }

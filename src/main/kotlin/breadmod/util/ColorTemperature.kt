@@ -35,7 +35,7 @@ fun getRGBFromK(temperature: Float): Color {
     // Used this: https://gist.github.com/paulkaplan/5184275 at the beginning
     // based on http://stackoverflow.com/questions/7229895/display-temperature-as-a-color-with-c
     // this answer: http://stackoverflow.com/a/24856307
-    // (so, just interpretation of pseudocode in Java)
+    // (so, interpretation of pseudocode in Java)
 
     val x = max(temperature / 1000.0, 40.0)
     return Color(
@@ -62,7 +62,6 @@ fun getRGBFromK(temperature: Float): Color {
 
 // Is there a JOML function for this, I wonder?
 fun poly(coefficients: DoubleArray, x: Double): Double {
-    println("BEEP BEEP BEEP")
     var result = coefficients[0]
     var xn = x
     for (i in 1 until coefficients.size) {

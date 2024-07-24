@@ -26,8 +26,8 @@ class EnergyStorageRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlock
             Color.GREEN.rgb,
             Color(0, 0, 0, 0).rgb,
             false,
-            pPoseStack, pBuffer, pBlockEntity.blockState, null,
-            0.0105f, 0.1, -0.125
+            pPoseStack, pBuffer, pBlockEntity.blockState,
+            pScale = 0.0105f, pPosX = 0.1, pPosY = -0.125
         )
         drawTextOnSide(
             fontRenderer,
@@ -35,8 +35,8 @@ class EnergyStorageRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlock
             Color.GREEN.rgb,
             Color(0, 0, 0, 0).rgb,
             false,
-            pPoseStack, pBuffer, pBlockEntity.blockState, null,
-            0.0105f, 0.095, -0.185
+            pPoseStack, pBuffer, pBlockEntity.blockState,
+            pScale = 0.0105f, pPosX = 0.095, pPosY = -0.185
         )
         drawTextOnSide(
             fontRenderer,
@@ -44,8 +44,8 @@ class EnergyStorageRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlock
             Color.GREEN.rgb,
             Color(0, 0, 0, 0).rgb,
             false,
-            pPoseStack, pBuffer, pBlockEntity.blockState, null,
-            0.0105f, 0.1, -0.245
+            pPoseStack, pBuffer, pBlockEntity.blockState,
+            pScale = 0.0105f, pPosX = 0.1, pPosY = -0.245
         )
     }
 }

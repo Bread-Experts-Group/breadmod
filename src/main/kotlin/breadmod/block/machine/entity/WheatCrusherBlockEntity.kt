@@ -63,7 +63,7 @@ class WheatCrusherBlockEntity(
     ): Boolean {
         val itemHandle = getItemHandler() ?: return false
         return if(recipe.canFitResults(itemHandle to listOf(1), null)) {
-            val assembled = recipe.assembleOutputs(cManager, pLevel)
+            val assembled = recipe.assembleOutputs(craftingManager, pLevel)
             assembled.first.forEach { stack -> itemHandle[1].let { slot -> if(slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count) } }
             true
         } else false

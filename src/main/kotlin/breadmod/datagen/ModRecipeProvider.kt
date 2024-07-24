@@ -147,15 +147,6 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requires(ModBlocks.CHARCOAL_BLOCK.get(), 1)
             .save(pWriter, modLocation("building_blocks", "charcoal_decompaction"))
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.HEATING_ELEMENT_BLOCK.get())
-            .unlockedBy("has_item", has(Items.COPPER_INGOT)) // TODO: Aluminum
-            .define('C', Items.COPPER_INGOT) // TODO: Aluminum String
-            .define('S', Items.STICK) // TODO: Metal rod
-            .pattern("CCC")
-            .pattern("CSC")
-            .pattern("CCC")
-            .save(pWriter, modLocation("heating_element"))
-
         ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, ModBlocks.FLOUR_BLOCK.get(), 1)
             .unlockedBy("has_item", has(ModBlocks.FLOUR_BLOCK.get()))
             .define('F', ModItems.FLOUR.get())

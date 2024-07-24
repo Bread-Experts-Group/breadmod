@@ -1,4 +1,4 @@
-package breadmod.mixinUtil;
+package breadmod.mixutil;
 
 import breadmod.ModMain;
 import org.apache.logging.log4j.Logger;

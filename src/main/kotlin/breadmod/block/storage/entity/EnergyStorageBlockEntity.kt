@@ -36,7 +36,7 @@ class EnergyStorageBlockEntity(
         }
 
         val holder = capabilityHolder.capabilities[ForgeCapabilities.ENERGY]
-        val battery = (holder!!.first.resolve().get() as EnergyBattery)
+        val battery = ((holder ?: return).first.resolve().get() as EnergyBattery)
 
         if(battery.stored > 0) {
             battery.distribute(

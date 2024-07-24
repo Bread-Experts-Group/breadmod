@@ -25,7 +25,7 @@ class WheatCrusherMenu(
     )
 
     init {
-        addSlot(Slot(parent.cManager, 0, 80, 15))
+        addSlot(Slot(parent.craftingManager, 0, 80, 15))
         addSlot(ResultSlot(1, 80, 87))
     }
 }

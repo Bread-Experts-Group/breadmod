@@ -29,7 +29,6 @@ class ModBlockTags(
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .add(ModBlocks.CHARCOAL_BLOCK,
                 ModBlocks.REINFORCED_BREAD_BLOCK,
-                ModBlocks.HEATING_ELEMENT_BLOCK,
                 ModBlocks.BAUXITE_ORE,
                 ModBlocks.MONITOR)
         tag(BlockTags.STONE_ORE_REPLACEABLES)

@@ -2,8 +2,6 @@ package breadmod
 
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
-import breadmod.block.color.BlackbodyBlockColor
-import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.block.machine.entity.renderer.CreativeGeneratorRenderer
 import breadmod.block.machine.entity.renderer.GenericMachineBlockEntityRenderer
@@ -77,10 +75,7 @@ object ClientModEventBus {
         }
     }
 
-    @SubscribeEvent
-    fun registerBlockColors(event: RegisterColorHandlersEvent.Block) {
-        event.register(BlackbodyBlockColor, ModBlocks.HEATING_ELEMENT_BLOCK.get().block)
-    }
+
     @SubscribeEvent
     fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
         event.register(ArmorColor, *ModItems.deferredRegister.entries.mapNotNull {
@@ -116,7 +111,6 @@ object ClientModEventBus {
 
     @SubscribeEvent
     fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.HEATING_ELEMENT.get()) { BlackbodyRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get()) { SidedScreenRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get()) { EnergyStorageRenderer() }

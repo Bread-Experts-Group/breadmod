@@ -62,7 +62,7 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
         val entity = pLevel.getBlockEntity(pPos) as DoughMachineBlockEntity
         if(pState.getValue(BlockStateProperties.POWERED)) {
             pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
-            val stack = entity.cManager.items[0]
+            val stack = entity.craftingManager.items[0]
             when(stack.item) {
                 ModItems.FLOUR.get() -> {
                     while(stack.count > 0) {
@@ -78,7 +78,7 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
             }
         }
 
-        Containers.dropContents(pLevel, pPos, entity.cManager)
+        Containers.dropContents(pLevel, pPos, entity.craftingManager)
         return super.onDestroyedByPlayer(pState, pLevel, pPos, pPlayer, pMovedByPiston, pFluid)
     }
 

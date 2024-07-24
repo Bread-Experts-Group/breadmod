@@ -1,8 +1,5 @@
 package breadmod.block.util
 
-import breadmod.util.translateDirection
-import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.math.Axis
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleOptions
@@ -15,8 +12,6 @@ import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.ForgeHooks
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.fluids.FluidStack
@@ -58,13 +53,13 @@ fun getBurnTime(stack: ItemStack): Int {
     return if(burnTime > 0) burnTime else {
         stack.item.let { i ->
             if(i is BucketItem) i.fluid.let { f ->
-                if(f is ILiquidCombustable) f.getBurnTime() else null }
+                if(f is ILiquidCombustible) f.getBurnTime() else null }
             else null
         } ?:
         stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).resolve().getOrNull()?.let {
             val drained = it.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE)
             drained.fluid.let { f -> if(drained.amount > 0) {
-                if(f is ILiquidCombustable) f.getBurnTime()
+                if(f is ILiquidCombustible) f.getBurnTime()
                 else ForgeHooks.getBurnTime(f.bucket.defaultInstance, null)
             } else 0 }
         } ?: 0

@@ -48,7 +48,7 @@ class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEnti
         pFluid: FluidState
     ): Boolean {
         val entity = (pLevel.getBlockEntity(pPos) as WheatCrusherBlockEntity)
-        Containers.dropContents(pLevel, pPos, entity.cManager)
+        Containers.dropContents(pLevel, pPos, entity.craftingManager)
         return super.onDestroyedByPlayer(pState, pLevel, pPos, pPlayer, pWillHarvest, pFluid)
     }
 

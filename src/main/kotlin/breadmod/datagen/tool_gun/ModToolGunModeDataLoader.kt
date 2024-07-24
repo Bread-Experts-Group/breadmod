@@ -72,28 +72,28 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
 
                     val loadedClass = Thread.currentThread().contextClassLoader.loadClass(dataObj.getAsJsonPrimitive(CLASS_KEY).asString).kotlin
                     if(loadedClass.isSubclassOf(IToolGunMode::class)) {
-                        val classConstructor = loadedClass.primaryConstructor!!
+                        val classConstructor = loadedClass.primaryConstructor ?: return@forEach
                         classConstructor.isAccessible = true
                         classSet[location.path.substringAfter("mode/")] = Triple(ToolgunMode(
-                            displayName = jsonToComponent(dataObj.getAsJsonObject(DISPLAY_NAME_KEY)),
-                            tooltip = jsonToComponent(dataObj.getAsJsonObject(TOOLTIP_KEY)),
-                            keyBinds = buildList {
-                                dataObj.getAsJsonArray(KEYBINDS_KEY).forEach {
-                                    val keybind = it.asJsonObject
-                                    val control = BreadModToolGunModeProvider.Control(
-                                        keybind.getAsJsonPrimitive(CONTROLS_ID_KEY).asString,
-                                        keybind.getAsJsonPrimitive(CONTROLS_NAME_TRANSLATION_KEY).asString,
-                                        keybind.getAsJsonPrimitive(CONTROLS_CATEGORY_TRANSLATION_KEY).asString,
-                                        jsonToComponent(keybind.getAsJsonObject(TOOLGUN_INFO_DISPLAY_KEY)),
-                                        { InputConstants.getKey(keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString) },
-                                        keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString?.let { mod -> KeyModifier.getModifier(InputConstants.getKey(mod)) }
-                                    )
-                                    toolGunBindList[control] = null
-                                    add(control)
-                                }
-                            },
-                            mode = classConstructor.call() as IToolGunMode
-                        ), location, dataObj.toString().encodeToByteArray())
+                                displayName = jsonToComponent(dataObj.getAsJsonObject(DISPLAY_NAME_KEY)),
+                                tooltip = jsonToComponent(dataObj.getAsJsonObject(TOOLTIP_KEY)),
+                                keyBinds = buildList {
+                                    dataObj.getAsJsonArray(KEYBINDS_KEY).forEach {
+                                        val keybind = it.asJsonObject
+                                        val control = BreadModToolGunModeProvider.Control(
+                                            keybind.getAsJsonPrimitive(CONTROLS_ID_KEY).asString,
+                                            keybind.getAsJsonPrimitive(CONTROLS_NAME_TRANSLATION_KEY).asString,
+                                            keybind.getAsJsonPrimitive(CONTROLS_CATEGORY_TRANSLATION_KEY).asString,
+                                            jsonToComponent(keybind.getAsJsonObject(TOOLGUN_INFO_DISPLAY_KEY)),
+                                            { InputConstants.getKey(keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString) },
+                                            keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString?.let { mod -> KeyModifier.getModifier(InputConstants.getKey(mod)) }
+                                        )
+                                        toolGunBindList[control] = null
+                                        add(control)
+                                    }
+                                },
+                                mode = classConstructor.call() as IToolGunMode
+                            ), location, dataObj.toString().encodeToByteArray())
                         classConstructor.isAccessible = false
                     } else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolGunMode::class.qualifiedName}")
                 } catch(e: ClassNotFoundException) {

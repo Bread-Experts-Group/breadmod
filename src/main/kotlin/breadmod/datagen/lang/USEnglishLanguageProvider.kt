@@ -64,7 +64,6 @@ class USEnglishLanguageProvider(
         add(ModBlocks.DOUGH_MACHINE_BLOCK)
         add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK, "Low-Density Charcoal Block")
         add(ModBlocks.HAPPY_BLOCK)
-        add(ModBlocks.HEATING_ELEMENT_BLOCK)
         add(ModItems.DOUGH)
         add(ModItems.FLOUR)
         add(ModBlocks.FLOUR_BLOCK)

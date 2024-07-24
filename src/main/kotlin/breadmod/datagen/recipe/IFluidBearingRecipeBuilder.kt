@@ -5,7 +5,6 @@ import net.minecraft.tags.TagKey
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.fluids.FluidStack
 
-@Suppress("unused")
 interface IFluidBearingRecipeBuilder: RecipeBuilder {
     val fluidsRequired: MutableList<FluidStack>
     val fluidsRequiredTagged: MutableList<Pair<TagKey<Fluid>, Int>>

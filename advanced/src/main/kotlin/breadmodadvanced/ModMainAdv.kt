@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.Mod
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
-import kotlin.reflect.full.functions
 
 @Mod(ModMainAdv.ID)
 internal object ModMainAdv {
@@ -21,9 +20,6 @@ internal object ModMainAdv {
             = Component.translatable("$type.$ID.${path.joinToString(".")}", *args.toTypedArray())
 
     init {
-        Thread.currentThread().contextClassLoader.loadClass("breadmod.util.GeneralKt").kotlin.functions.forEach {
-            println("HELP: ${it.name} ${it.parameters.joinToString()}")
-        }
         registerAll(MOD_BUS)
     }
 }

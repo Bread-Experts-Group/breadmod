@@ -62,7 +62,7 @@ class ToasterBlockEntity(
                         pLevel.playSound(null, pPos, SoundEvents.NOTE_BLOCK_BELL.get(), SoundSource.BLOCKS, 0.2f, 0.8f)
                     }
                 }, {
-                    val recipe = recipeDial.getRecipeFor(cManager, pLevel)
+                    val recipe = recipeDial.getRecipeFor(craftingManager, pLevel)
                     recipe.ifPresentOrElse({
                         currentRecipe = recipe
                         maxProgress = it.time
@@ -87,7 +87,7 @@ class ToasterBlockEntity(
         recipe.itemsRequired?.forEach { stack -> itemHandle[0].shrink(stack.count) }
         recipe.itemsRequiredTagged?.forEach { tag -> itemHandle[0].shrink(tag.second) }
         return if(recipe.canFitResults(itemHandle to listOf(0), null)) {
-            val assembled = recipe.assembleOutputs(cManager, pLevel)
+            val assembled = recipe.assembleOutputs(craftingManager, pLevel)
             assembled.first.forEach { stack -> itemHandle[0].let { slot -> if(slot.isEmpty) itemHandle[0] = stack.copy() else slot.grow(stack.count) } }
             true
         } else false

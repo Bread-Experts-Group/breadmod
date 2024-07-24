@@ -104,13 +104,15 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
     }
 
     /**
-     * Non-specific slot version of [insertItem]. Spreads the specified [stack] over all available slots.
-     * This method will not modify the provided [stack] in correspondence with [insertItem]. It will return a copy of the remainder.
+     * Non-specific slot version of [insertItem].
+     * Spreads the specified [stack] over all slots.
+     * This method will not modify the provided [stack] in correspondence with [insertItem].
+     * It will return a copy of the remainder.
      * @see insertItem
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    @Suppress("MemberVisibilityCanBePrivate", "unused")
+    @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
     fun insertItem(stack: ItemStack, simulate: Boolean): ItemStack = TODO("insert items 2")
 
     override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack {
@@ -132,8 +134,8 @@ open class IndexableItemHandler(private val slots: List<Pair<Int, StorageDirecti
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    @Suppress("MemberVisibilityCanBePrivate", "unused", "ReplaceNotNullAssertionWithElvisReturn")
-    fun extractItem(target: Item? = null, amount: Int, simulate: Boolean): ItemStack = TODO("extr items 2")
+    @Suppress("MemberVisibilityCanBePrivate", "unused")
+    fun extractItem(target: Item? = null, amount: Int, simulate: Boolean): ItemStack = TODO("extract items 2")
 
     override fun getSlotLimit(slot: Int): Int {
         val slotMax = slots[slot].first

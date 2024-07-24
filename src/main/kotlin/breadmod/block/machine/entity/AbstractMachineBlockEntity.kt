@@ -121,7 +121,14 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         ForgeCapabilities.ITEM_HANDLER to itemHandler,
         *additionalCapabilities
     ) {
-        val cManager = CraftingManager(
+        @Suppress("LeakingThis")
+                /**
+                 * Crafting manager for this progressive machine block entity.
+                 *
+                 * @author Miko Elbrecht
+                 * @since 1.0.0
+                 */
+        val craftingManager: CraftingManager<Progressive<T, R>> = CraftingManager(
             itemHandler.first,
             itemHandlerViewSlots,
             craftingWidthHeight.first, craftingWidthHeight.second,
@@ -147,7 +154,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                     progress = 0; maxProgress = 0
                 }
             }, {
-                currentRecipe = recipeDial.getRecipeFor(cManager, pLevel)
+                currentRecipe = recipeDial.getRecipeFor(craftingManager, pLevel)
             })
             postTick(pLevel, pPos, pState, pBlockEntity)
         }
@@ -202,7 +209,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                     val div = if (energyDivision == null) ((it.energy ?: 0) / max(
                         it.time,
                         1
-                    )).also { div -> energyDivision = div } else energyDivision!!
+                    )).also { div -> energyDivision = div } else energyDivision ?: return@ifPresentOrElse
 
                     recipeTickPrePower(pLevel, pPos, pState, pBlockEntity, it)
                     val cap = capabilityHolder.capability<IEnergyStorage>(ForgeCapabilities.ENERGY)
@@ -222,7 +229,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                         }
                     } else progress--
                 }, {
-                    val recipe = recipeDial.getRecipeFor(cManager, pLevel)
+                    val recipe = recipeDial.getRecipeFor(craftingManager, pLevel)
                     recipe.ifPresentOrElse({
                         if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) {
                             currentRecipe = recipe

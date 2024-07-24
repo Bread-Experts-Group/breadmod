@@ -82,14 +82,6 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         }
     }
 
-    fun toJsonR(to: JsonObject, recipe: FluidEnergyRecipe) = toJson(
-            to, recipe.id, recipe.time, recipe.energy,
-            recipe.fluidsRequired, recipe.fluidsRequiredTagged,
-            recipe.itemsRequired, recipe.itemsRequiredTagged,
-            recipe.itemsOutput, recipe.fluidsOutput
-        )
-    fun toJsonObject(recipe: FluidEnergyRecipe) = JsonObject().also { toJsonR(it, recipe) }
-
     override fun fromNetwork(p0: ResourceLocation, p1: FriendlyByteBuf): T =
         factory(
             ResourceLocation(p1.readUtf()),

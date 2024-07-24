@@ -31,14 +31,14 @@ class DoughMachineMenu(
         inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.DOUGH_MACHINE.get()).get()
     )
 
-    class DoughMachineBucketSlot(parent: DoughMachineBlockEntity) : Slot(parent.cManager, 2, 153, 7) {
+    class DoughMachineBucketSlot(parent: DoughMachineBlockEntity) : Slot(parent.craftingManager, 2, 153, 7) {
         override fun mayPlace(stack: ItemStack): Boolean =
             stack.item.let { it is BucketItem && it.fluid.isTag(FluidTags.WATER) } ||
             FluidUtil.getFluidHandler(stack).resolve().getOrNull().let { it?.drain(1, IFluidHandler.FluidAction.SIMULATE)?.let { drained -> drained.amount == 1 && drained.fluid.isTag(FluidTags.WATER) } == true }
     }
 
     init {
-        addSlot(Slot(parent.cManager, 0, 26, 34))
+        addSlot(Slot(parent.craftingManager, 0, 26, 34))
         addSlot(ResultSlot(1, 78, 35))
         addSlot(DoughMachineBucketSlot(parent))
     }

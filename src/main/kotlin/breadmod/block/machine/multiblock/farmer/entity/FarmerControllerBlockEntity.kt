@@ -8,5 +8,4 @@ import net.minecraft.world.level.block.state.BlockState
 class FarmerControllerBlockEntity( // todo.. everything
     pPos: BlockPos,
     pBlockState: BlockState
-) : BlockEntity(ModBlockEntityTypes.FARMER_CONTROLLER.get(), pPos, pBlockState) {
-}
+) : BlockEntity(ModBlockEntityTypes.FARMER_CONTROLLER.get(), pPos, pBlockState)
