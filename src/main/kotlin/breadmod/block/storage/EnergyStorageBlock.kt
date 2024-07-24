@@ -1,6 +1,6 @@
 package breadmod.block.storage
 
-import breadmod.block.ModBlockStateProperties
+import breadmod.block.util.ModBlockStateProperties
 import breadmod.block.machine.BaseAbstractMachineBlock
 import breadmod.block.storage.entity.EnergyStorageBlockEntity
 import breadmod.registry.block.ModBlockEntityTypes
@@ -18,13 +18,13 @@ class EnergyStorageBlock: BaseAbstractMachineBlock.Powered<EnergyStorageBlockEnt
     false
 ) {
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, ModBlockStateProperties().storageLevel)
+        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, ModBlockStateProperties.STORAGE_LEVEL)
     }
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
         defaultBlockState()
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
-            .setValue(ModBlockStateProperties().storageLevel, 0)
+            .setValue(ModBlockStateProperties.STORAGE_LEVEL, 0)
 
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<EnergyStorageBlockEntity> =
         BlockEntityTicker { tLevel, tPos, tState, tBlockEntity -> tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity) }

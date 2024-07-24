@@ -1,4 +1,4 @@
-package breadmod.block
+package breadmod.block.util
 
 /**
  * Prevents a block from being destroyed from fire.

@@ -1,5 +1,7 @@
 package breadmod.block
 
+import breadmod.block.util.ILightningStrikeAction
+import breadmod.block.util.ISpecialFireAction
 import breadmod.registry.worldgen.dimensions.ModDimensions
 import breadmod.registry.block.ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK
 import net.minecraft.core.BlockPos

@@ -1,4 +1,4 @@
-package breadmod.block
+package breadmod.block.util
 
 import net.minecraftforge.common.extensions.IForgeFluid
 

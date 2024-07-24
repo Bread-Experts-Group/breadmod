@@ -58,7 +58,7 @@ class CapabilityHolder(passedCapabilities: Map<Capability<*>, CapabilityContaine
      * @see capabilityOrNull
      */
     fun <T> capabilitySided(capability: Capability<T>, translateFor: Direction, side: Direction?): LazyOptional<T>? {
-        val translatedSide = translateDirection(translateFor, side)
+        val translatedSide = if(side != null) translateDirection(translateFor, side) else null
         capabilities.forEach { (myCapability, pair) ->
             if(myCapability == capability && (pair.second == null || (pair.second ?: return@forEach).contains(translatedSide))) return pair.first.cast()
         }

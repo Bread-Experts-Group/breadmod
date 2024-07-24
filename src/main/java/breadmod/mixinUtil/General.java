@@ -15,6 +15,8 @@ import java.util.zip.InflaterInputStream;
 public class General {
     public final static Logger breadmod$LOGGER = ModMain.INSTANCE.getLOGGER();
 
+    private General() {}
+
     public static byte[] mergeByteArrays(List<byte[]> byteArrayList) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         for (byte[] byteArray : byteArrayList) outputStream.write(byteArray);

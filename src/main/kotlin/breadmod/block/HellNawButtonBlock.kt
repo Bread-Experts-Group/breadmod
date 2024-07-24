@@ -1,5 +1,6 @@
 package breadmod.block
 
+import breadmod.block.util.ModBlockSetTypes
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.level.BlockGetter

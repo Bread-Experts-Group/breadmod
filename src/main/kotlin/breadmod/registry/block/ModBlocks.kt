@@ -10,6 +10,7 @@ import breadmod.block.machine.multiblock.generic.PowerInterfaceBlock
 import breadmod.block.storage.EnergyStorageBlock
 import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT
+import breadmod.block.util.ModBlockSetTypes
 import breadmod.block.storage.FluidStorageBlock
 import breadmod.item.renderer.CreativeGeneratorItemRenderer
 import breadmod.registry.item.ModItems
@@ -318,7 +319,7 @@ object ModBlocks {
         } }
     )
 
-    internal class CharacterModelBlock: Block(Properties.of().noOcclusion()) {
+    private class CharacterModelBlock: Block(Properties.of().noOcclusion()) {
         override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
             pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
         }

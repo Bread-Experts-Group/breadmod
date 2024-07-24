@@ -6,6 +6,7 @@ import breadmod.block.color.BlackbodyBlockColor
 import breadmod.block.entity.renderer.BlackbodyRenderer
 import breadmod.block.entity.renderer.SidedScreenRenderer
 import breadmod.block.machine.entity.renderer.CreativeGeneratorRenderer
+import breadmod.block.machine.entity.renderer.GenericMachineBlockEntityRenderer
 import breadmod.block.machine.entity.screen.DoughMachineScreen
 import breadmod.block.machine.entity.screen.WheatCrusherScreen
 import breadmod.block.storage.entity.renderer.EnergyStorageRenderer
@@ -32,6 +33,7 @@ import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.ShaderInstance
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.resources.ResourceLocation
@@ -119,6 +121,10 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntityTypes.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get()) { EnergyStorageRenderer() }
 //        event.registerBlockEntityRenderer(ModBlockEntityTypes.FLUID_STORAGE.get()) { FluidStorageRenderer() }
+
+        val genericMachineRenderer = { _: BlockEntityRendererProvider.Context -> GenericMachineBlockEntityRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.DOUGH_MACHINE.get(), genericMachineRenderer)
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.WHEAT_CRUSHER.get(), genericMachineRenderer)
     }
 
     val toolGunBindList = mutableMapOf<Control, KeyMapping?>()

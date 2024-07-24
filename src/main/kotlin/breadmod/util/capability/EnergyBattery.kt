@@ -65,7 +65,7 @@ class EnergyBattery(
 
     fun distribute(pLevel: Level, pPos: BlockPos, sides: List<Direction?>?, facing: Direction = Direction.NORTH) {
         val energies = (sides?.filterNotNull() ?: Direction.entries).mapNotNull {
-            val rotated = translateDirection(facing, it)!!.let { r -> if(r.axis == Direction.Axis.Z) r.opposite else r }
+            val rotated = translateDirection(facing, it).let { r -> if(r.axis == Direction.Axis.Z) r.opposite else r }
             pLevel.getBlockEntity(pPos.offset(rotated.normal))?.getCapability(
                 ForgeCapabilities.ENERGY,
                 rotated.opposite

@@ -1,11 +1,11 @@
 package breadmod.block.storage.entity.renderer
 
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
-import breadmod.block.util.translateOnBlockSide
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.render.renderText
+import breadmod.util.render.translateOnBlockSide
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
@@ -38,25 +38,4 @@ abstract class BaseAbstractStorageBlockRenderer<T: AbstractMachineBlockEntity<T>
 //
 //        itemRender.renderStatic(Items.BREAD, ItemDisplayContext.GUI)
 //    }
-
-    fun drawTextOnSide(
-        pComponent: Component,
-        pColor: Int,
-        pBackgroundColor: Int,
-        pDropShadow: Boolean,
-        pPoseStack: PoseStack,
-        pBuffer: MultiBufferSource,
-        pBlockEntity: T,
-        pScale: Float,
-        pPosX: Double,
-        pPosY: Double,
-        pPosZ: Double = 0.0
-    ) {
-        pPoseStack.pushPose()
-        translateOnBlockSide(pBlockEntity, pPoseStack, pPosX, pPosY, pPosZ)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-        pPoseStack.scale(pScale, pScale, pScale)
-        renderText(pComponent, pColor, pBackgroundColor, fontRenderer, pPoseStack, pBuffer, pDropShadow, Color(255, 255, 255, 0).rgb)
-        pPoseStack.popPose()
-    }
 }

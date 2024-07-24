@@ -3,7 +3,6 @@ package breadmod.block.machine.entity.renderer
 import breadmod.ClientModEventBus
 import breadmod.ModMain.modLocation
 import breadmod.block.machine.entity.CreativeGeneratorBlockEntity
-import breadmod.util.render.drawQuad
 import breadmod.util.render.renderBlockModel
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -28,7 +27,7 @@ class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntit
         val starModel = instance.modelManager.getModel(starModelLocation)
         val level = pBlockEntity.level ?: return
 
-        val builder = pBuffer.getBuffer(ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png")))
+//        val builder = pBuffer.getBuffer(ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png")))
         pPoseStack.pushPose()
         pPoseStack.translate(0.5f, 2f, 0.5f)
 //        pPoseStack.translate(0.5f, 0f, 0.5f)

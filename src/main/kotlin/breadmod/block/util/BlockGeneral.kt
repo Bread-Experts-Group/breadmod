@@ -1,6 +1,5 @@
 package breadmod.block.util
 
-import breadmod.block.ILiquidCombustable
 import breadmod.util.translateDirection
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -125,25 +124,4 @@ fun fluidFillCheck(handler: IFluidHandler, stack: ItemStack): FluidStack? {
 
     if(toMove.fluid.fluidType.isAir) return FluidStack.EMPTY
     return FluidStack(toMove.fluid, handler.fill(toMove, IFluidHandler.FluidAction.SIMULATE))
-}
-
-/**
- * [pPosX], [pPosY], [pPosZ] translates the [pPoseStack] on the facing side of the block. *(not required)*
- * ### translated [pPoseStack] starts at the top left of the facing side
- *
- * @see translateDirection
- */
-fun translateOnBlockSide(pBlockEntity: BlockEntity, pPoseStack: PoseStack, pPosX: Double = 0.0, pPosY: Double = 0.0, pPosZ: Double = 0.0) {
-    val facing = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING) ?: pBlockEntity.blockState.getValue(BlockStateProperties.FACING) ?: return
-    pPoseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
-    pPoseStack.translate(pPosX, pPosY, pPosZ)
-    when(facing) {
-        Direction.NORTH -> pPoseStack.translate(-1.0, 1.0, 0.0001)
-        Direction.EAST -> pPoseStack.translate(-1.0, 1.0, 1.0001)
-        Direction.WEST -> pPoseStack.translate(0.0, 1.0, 0.0001)
-        Direction.SOUTH -> pPoseStack.translate(0.0, 1.0, 1.0001)
-        Direction.UP -> {}
-        Direction.DOWN -> {}
-        //todo up and down translations
-    }
 }

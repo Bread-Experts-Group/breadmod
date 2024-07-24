@@ -1,7 +1,7 @@
 package breadmod.datagen
 
 import breadmod.ModMain
-import breadmod.block.ModBlockStateProperties
+import breadmod.block.util.ModBlockStateProperties
 import breadmod.block.specialItem.OreBlock
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
@@ -141,7 +141,7 @@ class ModBlockStateProvider(
 
         horizontalBlock(ModBlocks.ENERGY_STORAGE_BLOCK.get().block) { state ->
             val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
-            val storedLevel = when(state.getValue(ModBlockStateProperties().storageLevel)) {
+            val storedLevel = when(state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
                 1 -> "_one"; 2 -> "_two"; 3 -> "_three"; 4 -> "_four" else -> "" }
             val name = "breadmod:block/energy_storage$storedLevel"
 

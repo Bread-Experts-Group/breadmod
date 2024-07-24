@@ -1,5 +1,6 @@
 package breadmod.block
 
+import breadmod.block.util.ILiquidCombustable
 import breadmod.registry.fluid.ModFluids
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.state.StateDefinition

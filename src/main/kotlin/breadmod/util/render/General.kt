@@ -1,7 +1,9 @@
 package breadmod.util.render
 
+import breadmod.util.translateDirection
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
+import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
@@ -10,14 +12,17 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.entity.ItemRenderer
-import net.minecraft.client.renderer.texture.OverlayTexture
+import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import org.joml.Vector3f
@@ -144,7 +149,7 @@ fun renderStaticItem(pStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBuf
         pStack,
         ItemDisplayContext.FIXED,
         pPackedLight,
-        OverlayTexture.NO_OVERLAY,
+        NO_OVERLAY,
         pPoseStack,
         pBuffer,
         pBlockEntity.level,
@@ -161,11 +166,13 @@ fun drawVertex(
     pU: Float,
     pV: Float,
     pPackedLight: Int,
+    pPackedOverlay: Int,
     pColor: Int
 ) {
     pBuilder.vertex(pPoseStack.last().pose(), pX, pY, pZ)
         .color(pColor)
         .uv(pU, pV)
+        .overlayCoords(pPackedOverlay)
         .uv2(pPackedLight)
         .normal(0f, 1f, 0f)
         .endVertex()
@@ -180,11 +187,12 @@ fun drawQuad(
     pU0: Float, pV0: Float,
     pU1: Float, pV1: Float,
     pPackedLight: Int,
+    pPackedOverlay: Int
 ) {
-    drawVertex(pBuilder, pPoseStack, pX0, pY0, pZ0, pU0, pV0, pPackedLight, pColor)
-    drawVertex(pBuilder, pPoseStack, pX0, pY1, pZ1, pU0, pV1, pPackedLight, pColor)
-    drawVertex(pBuilder, pPoseStack, pX1, pY1, pZ1, pU1, pV1, pPackedLight, pColor)
-    drawVertex(pBuilder, pPoseStack, pX1, pY0, pZ0, pU1, pV0, pPackedLight, pColor)
+    drawVertex(pBuilder, pPoseStack, pX0, pY0, pZ0, pU0, pV0, pPackedLight, pColor, pPackedOverlay)
+    drawVertex(pBuilder, pPoseStack, pX0, pY1, pZ1, pU0, pV1, pPackedLight, pColor, pPackedOverlay)
+    drawVertex(pBuilder, pPoseStack, pX1, pY1, pZ1, pU1, pV1, pPackedLight, pColor, pPackedOverlay)
+    drawVertex(pBuilder, pPoseStack, pX1, pY0, pZ0, pU1, pV0, pPackedLight, pColor, pPackedOverlay)
 }
 
 fun drawTexturedQuad(
@@ -193,8 +201,9 @@ fun drawTexturedQuad(
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
     pPackedLight: Int,
+    pPackedOverlay: Int,
     pX0: Float = 0f, pY0: Float = 0f, pZ0: Float = 0f,
-    pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f,
+    pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f
 ) {
     val instance = Minecraft.getInstance()
     val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pTextureLocation)
@@ -205,7 +214,8 @@ fun drawTexturedQuad(
         pX1, pY1, pZ1,
         sprite.u0, sprite.v0,
         sprite.u1, sprite.v1,
-        pPackedLight
+        pPackedLight,
+        pPackedOverlay
     )
 }
 
@@ -245,4 +255,52 @@ fun renderText(
         pBackgroundColor,
         pPackedLight
     )
+}
+
+/**
+ * [pPosX], [pPosY], [pPosZ] translates the [pPoseStack] on the facing side of the block. *(not required)*
+ * ### translated [pPoseStack] starts at the top left of the facing side
+ *
+ * @see translateDirection
+ */
+fun translateOnBlockSide(
+    pBlockState: BlockState, pDirection: Direction? = null,
+    pPoseStack: PoseStack, pPosX: Double = 0.0, pPosY: Double = 0.0, pPosZ: Double = 0.0
+) {
+    var facing = pBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+        ?: throw IllegalArgumentException("Provided block state must have a HORIZONTAL_FACING property")
+    if(pDirection != null) facing = translateDirection(facing, pDirection)
+
+    pPoseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
+    pPoseStack.translate(pPosX, pPosY, pPosZ)
+    when(facing) {
+        Direction.NORTH -> pPoseStack.translate(-1.0, 1.0, 0.0001)
+        Direction.EAST -> pPoseStack.translate(-1.0, 1.0, 1.0001)
+        Direction.WEST -> pPoseStack.translate(0.0, 1.0, 0.0001)
+        Direction.SOUTH -> pPoseStack.translate(0.0, 1.0, 1.0001)
+        Direction.UP, Direction.DOWN -> { /* throw IllegalArgumentException("Cannot translate on up or down side") */ }
+    }
+}
+
+fun drawTextOnSide(
+    pFontRenderer: Font,
+    pComponent: Component,
+    pColor: Int,
+    pBackgroundColor: Int,
+    pDropShadow: Boolean,
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pBlockState: BlockState,
+    pDirection: Direction? = null,
+    pScale: Float,
+    pPosX: Double,
+    pPosY: Double,
+    pPosZ: Double = 0.0
+) {
+    pPoseStack.pushPose()
+    translateOnBlockSide(pBlockState, pDirection, pPoseStack, pPosX, pPosY, pPosZ)
+    pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
+    pPoseStack.scale(pScale, pScale, pScale)
+    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, Color(255, 255, 255, 0).rgb)
+    pPoseStack.popPose()
 }

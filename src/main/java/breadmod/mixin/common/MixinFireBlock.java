@@ -1,6 +1,6 @@
 package breadmod.mixin.common;
 
-import breadmod.block.ISpecialFireAction;
+import breadmod.block.util.ISpecialFireAction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;

@@ -1,4 +1,4 @@
-package breadmod.block
+package breadmod.block.util
 
 import breadmod.registry.sound.ModSounds
 import net.minecraft.sounds.SoundEvents

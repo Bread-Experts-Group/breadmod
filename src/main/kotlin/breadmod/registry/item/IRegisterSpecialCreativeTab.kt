@@ -4,7 +4,7 @@ import net.minecraft.world.item.CreativeModeTab
 import net.minecraftforge.registries.RegistryObject
 
 /**
- * Special creative tab registration. Meant to implemented by items.
+ * Special creative tab registration. Meant to be implemented by items.
  * @author Miko Elbrecht
  * @since 1.0.0
  */

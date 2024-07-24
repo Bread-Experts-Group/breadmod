@@ -1,6 +1,6 @@
 package breadmod.block.storage.entity
 
-import breadmod.block.ModBlockStateProperties
+import breadmod.block.util.ModBlockStateProperties
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.util.capability.EnergyBattery
@@ -51,5 +51,5 @@ class EnergyStorageBlockEntity(
         pLevel: Level,
         pPos: BlockPos,
         pValue: Int
-    ) = pLevel.setBlockAndUpdate(pPos, pState.setValue(ModBlockStateProperties().storageLevel, pValue))
+    ) = pLevel.setBlockAndUpdate(pPos, pState.setValue(ModBlockStateProperties.STORAGE_LEVEL, pValue))
 }

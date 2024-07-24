@@ -1,10 +1,10 @@
 package breadmodadvanced.block.machine.entity.renderer
 
-import breadmod.block.util.translateOnBlockSide
 import breadmod.util.capability.FluidContainer
 import breadmod.util.render.drawQuad
 import breadmod.util.render.drawTexturedQuad
 import breadmod.util.render.renderBlockModel
+import breadmod.util.render.translateOnBlockSide
 import breadmodadvanced.ModMainAdv.modLocation
 import breadmodadvanced.block.machine.entity.DieselGeneratorBlockEntity
 import com.mojang.blaze3d.vertex.PoseStack
@@ -26,12 +26,6 @@ import org.joml.Quaternionf
 
 class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     private enum class DieselGeneratorUpgrades { BATTERY, CHARGING, TURBO, FIRST_SLOT, SECOND_SLOT, THIRD_SLOT }
-    private val dieselGeneratorModels = "${ModelProvider.BLOCK_FOLDER}/diesel_generator"
-
-    private val doorModelLocation = modLocation("$dieselGeneratorModels/diesel_generator_door")
-    private val batteryUpgradeModelLoc = modLocation("$dieselGeneratorModels/diesel_generator_battery_upgrade")
-    private val chargingUpgradeModelLoc = modLocation("$dieselGeneratorModels/diesel_generator_charging_upgrade")
-    private val turboUpgradeModelLoc = modLocation("$dieselGeneratorModels/diesel_generator_turbo_upgrade")
 
     private var doorRot = 0f
 
@@ -69,12 +63,17 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
 
         // Textured quad testing
         pPoseStack.pushPose()
-        translateOnBlockSide(pBlockEntity, pPoseStack)
+        translateOnBlockSide(pBlockEntity.blockState, pPoseStack = pPoseStack)
         pPoseStack.mulPose(Axis.XN.rotationDegrees(-90f))
         pPoseStack.translate(0.25, 0.0, 0.25)
         pPoseStack.mulPose(Axis.YN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
         pPoseStack.translate(-0.25, 0.0, -0.25)
-        drawTexturedQuad(ResourceLocation("breadmod", "block/bread_block"), RenderType.solid(), pPoseStack, pBuffer, pPackedLight, 0f, 0f, 0f, 0.5f, 0.0f, 0.5f)
+        drawTexturedQuad(
+            modLocation("block", "bread_block"),
+            RenderType.solid(),
+            pPoseStack, pBuffer, pPackedLight, pPackedOverlay,
+            0f, 0f, 0f, 0.5f, 0.0f, 0.5f
+        )
         pPoseStack.popPose()
 
 
@@ -103,7 +102,12 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             if(tank.fluidAmount.toFloat() < tank.capacity.toFloat()) {
                 pPoseStack.pushPose()
                 rotateFluid(blockRotation, pPoseStack) // Rotate on East and West axis
-                drawQuad(builder, pPoseStack, fluidTint, 0.005f, fluidHeight, 0.27f, 0.995f, fluidHeight, 0.75f, fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1, pPackedLight)
+                drawQuad(
+                    builder, pPoseStack, fluidTint,
+                    0.005f, fluidHeight, 0.27f, 0.995f, fluidHeight, 0.75f,
+                    fluidSprite.u0, fluidSprite.v0, fluidSprite.u1, fluidSprite.v1,
+                    pPackedLight, pPackedOverlay
+                )
                 pPoseStack.popPose()
             }
 
@@ -112,7 +116,12 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             rotateFluid(blockRotation, pPoseStack)
             pPoseStack.mulPose(Axis.YP.rotationDegrees(90f))
             pPoseStack.translate(-1f, 0f, 0f)
-            drawQuad(builder, pPoseStack, fluidTint, 0.25f, 0.57f, 0.0005f, 0.73f, fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1, pPackedLight)
+            drawQuad(
+                builder, pPoseStack, fluidTint,
+                0.25f, 0.57f, 0.0005f, 0.73f,
+                fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1,
+                pPackedLight, pPackedOverlay
+            )
             pPoseStack.popPose()
 
             // East / Left
@@ -120,7 +129,12 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             rotateFluid(blockRotation, pPoseStack)
             pPoseStack.mulPose(Axis.YP.rotationDegrees(-90f))
             pPoseStack.translate(0f, 0f, -1f)
-            drawQuad(builder, pPoseStack, fluidTint, 0.27f, 0.57f, 0.005f, 0.75f, fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1, pPackedLight)
+            drawQuad(
+                builder, pPoseStack, fluidTint,
+                0.27f, 0.57f, 0.005f, 0.75f,
+                fluidHeight, 0.005f, fluidSprite.u0, fluidSprite.v0, u1, v1,
+                pPackedLight, pPackedOverlay
+            )
             pPoseStack.popPose()
         }
     }
@@ -228,5 +242,14 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         rotateModel(pPoseStack, pBlockRotation)
         renderBlockModel(pPoseStack, pBuffer, pBlockEntity, upgrade, pPackedLight, pPackedOverlay)
         pPoseStack.popPose()
+    }
+
+    private companion object {
+        const val DIESEL_GENERATOR_MODELS = "${ModelProvider.BLOCK_FOLDER}/diesel_generator"
+
+        val doorModelLocation = modLocation(DIESEL_GENERATOR_MODELS, "diesel_generator_door")
+        val batteryUpgradeModelLoc = modLocation(DIESEL_GENERATOR_MODELS, "diesel_generator_battery_upgrade")
+        val chargingUpgradeModelLoc = modLocation(DIESEL_GENERATOR_MODELS, "diesel_generator_charging_upgrade")
+        val turboUpgradeModelLoc = modLocation(DIESEL_GENERATOR_MODELS, "diesel_generator_turbo_upgrade")
     }
 }
