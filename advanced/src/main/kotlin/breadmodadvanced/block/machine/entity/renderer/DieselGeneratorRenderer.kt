@@ -69,9 +69,9 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         pPoseStack.mulPose(Axis.YN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
         pPoseStack.translate(-0.25, 0.0, -0.25)
         drawTexturedQuad(
-            modLocation("block", "bread_block"),
+            ResourceLocation("breadmod", "block/bread_block"),
             RenderType.solid(),
-            pPoseStack, pBuffer, pPackedLight, pPackedOverlay,
+            pPoseStack, pBuffer, pPackedLight, 0xFFFFFF,
             0f, 0f, 0f, 0.5f, 0.0f, 0.5f
         )
         pPoseStack.popPose()

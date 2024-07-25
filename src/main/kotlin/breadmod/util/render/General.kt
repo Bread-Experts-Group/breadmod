@@ -157,6 +157,60 @@ fun renderStaticItem(pStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBuf
     )
 }
 
+fun vertexTest(
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pRenderType: RenderType,
+    pX: Float,
+    pY: Float,
+    pZ: Float,
+    pU: Float,
+    pV: Float
+) {
+    val buffer = pBuffer.getBuffer(pRenderType)
+    buffer.vertex(pPoseStack.last().pose(), pX, pY, pZ)
+        .color(1f, 1f, 1f, 1f)
+        .uv(pU, pV)
+        .overlayCoords(NO_OVERLAY)
+        .uv2(0xFFFFFF)
+        .normal(0f, 1f, 0f)
+        .endVertex()
+}
+
+fun quadTest(
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pRenderType: RenderType,
+    pX0: Float, pY0: Float, pZ0: Float,
+    pX1: Float, pY1: Float, pZ1: Float,
+    pU0: Float, pV0: Float,
+    pU1: Float, pV1: Float
+) {
+    vertexTest(pPoseStack, pBuffer, pRenderType, pX0, pY0, pZ0, pU0, pV0)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pX0, pY1, pZ1, pU0, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pX1, pY1, pZ1, pU1, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pX1, pY0, pZ0, pU1, pV0)
+}
+
+fun texturedQuadTest(
+    pSprite: ResourceLocation,
+    pRenderType: RenderType,
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pX0: Float = 0f, pY0: Float = 0f, pZ0: Float = 0f,
+    pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f
+) {
+    val instance = Minecraft.getInstance()
+    val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
+    quadTest(
+        pPoseStack, pBuffer, pRenderType,
+        pX0, pY0, pZ0,
+        pX1, pY1, pZ1,
+        sprite.u0, sprite.v0,
+        sprite.u1, sprite.v1
+    )
+}
+
 fun drawVertex(
     pBuilder: VertexConsumer,
     pPoseStack: PoseStack,

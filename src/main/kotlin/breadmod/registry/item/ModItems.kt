@@ -13,10 +13,13 @@ import breadmod.item.tool.ToolTiers
 import breadmod.item.TieredBreadAmuletItem.BreadAmuletType
 import breadmod.item.tool.KnifeItem
 import moze_intel.projecte.gameObjs.items.ItemPE
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.Component
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
+import net.minecraft.world.level.Level
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
@@ -48,8 +51,17 @@ object ModItems {
     // todo textures, recipes
     val BAGEL: RegistryObject<Item> = deferredRegister.register("bagel") { Item(Item.Properties()
         .food(FoodProperties.Builder().nutrition(4).saturationMod(0.2f).build())) }
-    val HALF_BAGEL: RegistryObject<Item> = deferredRegister.register("half_bagel") { Item(Item.Properties()
-        .food(FoodProperties.Builder().nutrition(2).saturationMod(0.1f).fast().build())) }
+    val HALF_BAGEL: RegistryObject<Item> = deferredRegister.register("half_bagel") { object : Item(Properties()
+        .food(FoodProperties.Builder().nutrition(2).saturationMod(0.1f).fast().build())) {
+
+        override fun appendHoverText(
+            pStack: ItemStack, pLevel: Level?,
+            pTooltipComponents: MutableList<Component>, pIsAdvanced: TooltipFlag
+        ) {
+            pTooltipComponents.add(ModMain.modTranslatable("item", "half_bagel", "description")
+                .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
+        }
+    }}
 
     val ALUMINA: RegistryObject<Item> = deferredRegister.register("alumina") { Item(Item.Properties()) }
 

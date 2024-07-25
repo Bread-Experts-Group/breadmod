@@ -118,6 +118,9 @@ class USEnglishLanguageProvider(
         modAdd("Wouldn't be official without some light blue dye, would it?",
             "item", "certificate", "description"
         )
+        modAdd("What? you thought it was gonna be sliced like a normal bagel?",
+            "item", "half_bagel", "description"
+        )
         modAdd(
             "Feeds %s every %s",
             "item", "bread_amulet", "description"

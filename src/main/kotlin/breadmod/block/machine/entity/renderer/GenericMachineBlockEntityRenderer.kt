@@ -2,7 +2,7 @@ package breadmod.block.machine.entity.renderer
 
 import breadmod.ModMain.modLocation
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
-import breadmod.util.render.drawTexturedQuad
+import breadmod.util.render.texturedQuadTest
 import breadmod.util.render.translateOnBlockSide
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -58,10 +58,13 @@ class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBloc
             pPoseStack.mulPose(Axis.XN.rotationDegrees(-90F))
 
             // Figure out why cutoutMipped is fully transparent
-            drawTexturedQuad(
-                texture, RenderType.solid(), pPoseStack, pBuffer,
-                0xFFFFFF, 0xFFFFFF
-            )
+//            drawTexturedQuad(
+//                texture, RenderType.cutout(), pPoseStack, pBuffer,
+//                0xFFFFFF, 0xFFFFFF
+//            )
+
+            // IT FUCKING WORKS BABY WOOOOOO
+            texturedQuadTest(texture, RenderType.cutoutMipped(), pPoseStack, pBuffer)
             pPoseStack.popPose()
         }
     }
