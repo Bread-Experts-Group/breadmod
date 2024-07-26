@@ -4,7 +4,7 @@ import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.block.machine.entity.menu.DoughMachineMenu
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.network.VoidTankPacket
+import breadmod.network.server.VoidTankPacket
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.formatUnit

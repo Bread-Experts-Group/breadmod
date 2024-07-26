@@ -5,6 +5,7 @@ import breadmod.block.machine.entity.menu.WheatCrusherMenu
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.recipe.ModRecipeTypes
+import breadmod.util.capability.CapabilityHolder.Companion.ACCEPT_ALL
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.capability.StorageDirection
@@ -26,13 +27,15 @@ class WheatCrusherBlockEntity(
     pPos,
     pBlockState,
     ModRecipeTypes.WHEAT_CRUSHING,
-    IndexableItemHandler(listOf(
-        64 to StorageDirection.STORE_ONLY,
-        64 to StorageDirection.EMPTY_ONLY
-    )) to null,
+    IndexableItemHandler(
+        listOf(
+            64 to StorageDirection.STORE_ONLY,
+            64 to StorageDirection.EMPTY_ONLY
+        )
+    ) to ACCEPT_ALL,
     listOf(0),
     1 to 1,
-    EnergyBattery(50000, 2000) to null
+    EnergyBattery(50000, 2000) to ACCEPT_ALL
 ), MenuProvider {
     override fun getDisplayName(): Component = modTranslatable("block", "wheat_crusher")
 

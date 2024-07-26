@@ -26,8 +26,10 @@ class GeneratorBlockEntity(
     ModBlockEntityTypes.GENERATOR.get(),
     pPos,
     pBlockState,
-    ForgeCapabilities.ENERGY to (EnergyBattery(50000, 0, 2000) to mutableListOf(Direction.WEST, null)),
-    ForgeCapabilities.ITEM_HANDLER to (IndexableItemHandler(mutableListOf(64 to StorageDirection.STORE_ONLY)) to mutableListOf(Direction.UP, null))
+    ForgeCapabilities.ENERGY to
+            (EnergyBattery(50000, 0, 2000) to mutableListOf(Direction.WEST, null)),
+    ForgeCapabilities.ITEM_HANDLER to
+            (IndexableItemHandler(mutableListOf(64 to StorageDirection.STORE_ONLY)) to mutableListOf(Direction.UP, null))
 ) {
     init {
         capabilityHolder.capability<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER).insertItemCheck = { _, stack, _ ->

@@ -5,8 +5,8 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
-import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
+import breadmod.network.client.BeamPacket
 import breadmod.network.tool_gun.SDPacket
 import breadmod.util.RayMarchResult.Companion.rayMarchEntity
 import net.minecraft.ChatFormatting

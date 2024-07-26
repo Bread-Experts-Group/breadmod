@@ -1,8 +1,9 @@
 package breadmod.block.storage.entity
 
-import breadmod.block.util.ModBlockStateProperties
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.util.ModBlockStateProperties
 import breadmod.registry.block.ModBlockEntityTypes
+import breadmod.util.capability.CapabilityHolder.Companion.ACCEPT_ALL
 import breadmod.util.capability.EnergyBattery
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.Level
@@ -17,7 +18,9 @@ class EnergyStorageBlockEntity(
     ModBlockEntityTypes.ENERGY_STORAGE.get(),
     pPos,
     pBlockState,
-    ForgeCapabilities.ENERGY to (EnergyBattery(1000000, 50000, 50000) to null)
+    ForgeCapabilities.ENERGY to (EnergyBattery(
+        1000000, 50000, 50000
+    ) to ACCEPT_ALL)
 ) {
 
     override fun tick(

@@ -2,6 +2,11 @@ package breadmod.network
 
 import breadmod.ModMain.LOGGER
 import breadmod.ModMain.modLocation
+import breadmod.network.client.BeamPacket
+import breadmod.network.client.CapabilitySideDataPacket
+import breadmod.network.client.CapabilityTagDataPacket
+import breadmod.network.server.ToggleMachinePacket
+import breadmod.network.server.VoidTankPacket
 import breadmod.network.tool_gun.SDPacket
 import breadmod.network.tool_gun.ToolGunModeDataPacket
 import breadmod.network.tool_gun.ToolGunPacket
@@ -19,11 +24,16 @@ object PacketHandler {
     )
 
     private var idCounter = 0
+
     init {
         LOGGER.info("Registering packet message types")
         NETWORK.registerMessage(
-            idCounter++, CapabilityDataPacket::class.java,
-            CapabilityDataPacket::encodeBuf, CapabilityDataPacket::decodeBuf, CapabilityDataPacket::handle
+            idCounter++, CapabilityTagDataPacket::class.java,
+            CapabilityTagDataPacket::encodeBuf, CapabilityTagDataPacket::decodeBuf, CapabilityTagDataPacket::handle
+        )
+        NETWORK.registerMessage(
+            idCounter++, CapabilitySideDataPacket::class.java,
+            CapabilitySideDataPacket::encodeBuf, CapabilitySideDataPacket::decodeBuf, CapabilitySideDataPacket::handle
         )
         NETWORK.registerMessage(
             idCounter++, VoidTankPacket::class.java,

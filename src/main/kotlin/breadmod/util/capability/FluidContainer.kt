@@ -16,7 +16,8 @@ import net.minecraftforge.fluids.capability.templates.FluidTank
  * @since 1.0.0
  */
 @Suppress("UNUSED", "MemberVisibilityCanBePrivate", "Deprecation")
-class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>, override var changed: (() -> Unit)? = null): IFluidHandler, ICapabilitySavable<CompoundTag> {
+class FluidContainer(val tanks: MutableMap<FluidTank, StorageDirection>) : IFluidHandler, ICapabilitySavable<CompoundTag> {
+    override var changed: (() -> Unit)? = null
 
     /**
      * [FluidTank]s controlled by this [FluidContainer].

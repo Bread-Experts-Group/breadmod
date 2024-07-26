@@ -1,7 +1,9 @@
 package breadmod.util.render
 
+import breadmod.ModMain.modLocation
 import breadmod.util.translateDirection
-import com.mojang.blaze3d.vertex.*
+import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
@@ -36,86 +38,31 @@ val renderBuffer = mutableListOf<(RenderLevelStageEvent) -> Boolean>()
 
 /**
  * Draws a line from between [start] and [end], translated according to the current [net.minecraft.client.player.LocalPlayer]'s position.
- * BUG: Only works on X axis
- * @see breadmod.network.BeamPacket
+ * @see breadmod.network.client.BeamPacket
  * @author Miko Elbrecht
  * @since 1.0.0
  */
 fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add {
     val playerEyePos = (Minecraft.getInstance().player ?: return@add true).getEyePosition(it.partialTick)
-
-//    RenderSystem.enableBlend()
-//    RenderSystem.setShader { GameRenderer.getPositionColorTexShader() }
-//    RenderSystem.setShaderTexture(0, ModMain.modLocation("textures", "block", "bread_block.png"))
-
-
-//    val tessellator = Tesselator.getInstance()
     it.poseStack.pushPose()
     it.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
     val poseStack = it.poseStack
 
     val instance = Minecraft.getInstance()
-//    val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ResourceLocation("breadmod", "block/bread_block.png"))
     val bufferSource = instance.renderBuffers().bufferSource()
 
     if(thickness != null) {
         texturedQuadTest(
-            ResourceLocation("breadmod", "block/bread_block"),
+            modLocation("block", "bread_block"),
             RenderType.solid(),
             poseStack,
             bufferSource,
-            start.x, start.y, start.z + thickness,
-            end.x, end.y, end.z,
+            start,
+            end
         )
     }
 
-
     it.poseStack.popPose()
-//    println(sprite.atlasLocation()
-
-//    RenderSystem.setShaderTexture(0, ResourceLocation("minecraft", "block/grass_block"))
-//    RenderSystem.bindTexture(0)
-
-//    val builder = tessellator.builder
-//    builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX)
-//    // Q1
-//    if(thickness != null) {
-//        builder.vertex(poseStack, start.x, start.y, start.z)
-//            .uv(sprite.u0, sprite.v0)
-//            .color(1f,1f,1f,1f)
-//            .overlayCoords(NO_OVERLAY)
-//            .uv2(0xFFFFFF)
-//            .normal(0f, 0f, 1f)
-//            .endVertex()
-//        builder.vertex(poseStack, start.x, start.y, start.z + thickness)
-//            .uv(sprite.u0, sprite.v1)
-//            .color(1f,1f,1f,1f)
-//            .overlayCoords(NO_OVERLAY)
-//            .uv2(0xFFFFFF)
-//            .normal(0f, 1f, 0f)
-//            .endVertex()
-//        builder.vertex(poseStack, end.x, end.y, end.z)
-//            .uv(sprite.u1, sprite.v1)
-//            .color(1f,1f,1f,1f)
-//            .overlayCoords(NO_OVERLAY)
-//            .uv2(0xFFFFFF)
-//            .normal(0f, 1f, 0f)
-//            .endVertex()
-//
-//        builder.vertex(poseStack, start.x, start.y, start.z)
-//            .color(1f,1f,1f,1f)
-//            .uv(sprite.u1, sprite.v0)
-//            .overlayCoords(NO_OVERLAY)
-//            .uv2(0xFFFFFF)
-//            .normal(0f, 1f, 0f)
-//            .endVertex()
-//    }
-//
-//    tessellator.end()
-//    RenderSystem.defaultBlendFunc()
-//    RenderSystem.disableBlend()
-//    RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1f)
-
     return@add false
 }
 
@@ -191,7 +138,13 @@ fun renderBlockModel(
 /**
  * Renders a provided [pStack] onto a [BlockEntityRenderer]
  */
-fun renderStaticItem(pStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBufferSource, pBlockEntity: BlockEntity, pPackedLight: Int) {
+fun renderStaticItem(
+    pStack: ItemStack,
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pBlockEntity: BlockEntity,
+    pPackedLight: Int
+) {
     val itemRenderer = Minecraft.getInstance().itemRenderer
     itemRenderer.renderStatic(
         pStack,
@@ -229,15 +182,17 @@ fun quadTest(
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
     pRenderType: RenderType,
-    pX0: Float, pY0: Float, pZ0: Float,
-    pX1: Float, pY1: Float, pZ1: Float,
+    pVertex0: Vector3f,
+    pVertex1: Vector3f,
+    pVertex2: Vector3f,
+    pVertex3: Vector3f,
     pU0: Float, pV0: Float,
     pU1: Float, pV1: Float
 ) {
-    vertexTest(pPoseStack, pBuffer, pRenderType, pX0, pY0, pZ0, pU0, pV0)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pX0, pY1, pZ1, pU0, pV1)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pX1, pY1, pZ1, pU1, pV1)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pX1, pY0, pZ0, pU1, pV0)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex0.x, pVertex0.y, pVertex0.z, pU0, pV0)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex1.x, pVertex1.y, pVertex1.z, pU0, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex2.x, pVertex2.y, pVertex2.z, pU1, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex3.x, pVertex3.y, pVertex3.z, pU1, pV0)
 }
 
 fun texturedQuadTest(
@@ -245,15 +200,19 @@ fun texturedQuadTest(
     pRenderType: RenderType,
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
-    pX0: Float = 0f, pY0: Float = 0f, pZ0: Float = 0f,
-    pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f
+    pVertex0: Vector3f = Vector3f(0f, 0f, 0f),
+    pVertex1: Vector3f = Vector3f(1f, 0f, 1f),
+    pVertex2: Vector3f = Vector3f(1f, 0f, 0f),
+    pVertex3: Vector3f = Vector3f(0f, 0f, 1f)
 ) {
     val instance = Minecraft.getInstance()
     val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
     quadTest(
         pPoseStack, pBuffer, pRenderType,
-        pX0, pY0, pZ0,
-        pX1, pY1, pZ1,
+        pVertex0,
+        pVertex1,
+        pVertex2,
+        pVertex3,
         sprite.u0, sprite.v0,
         sprite.u1, sprite.v1
     )

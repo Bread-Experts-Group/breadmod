@@ -7,8 +7,8 @@ import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.item.tool_gun.render.drawTextOnScreen
 import breadmod.item.tool_gun.render.drawWrappedTextOnScreen
-import breadmod.network.BeamPacket
 import breadmod.network.PacketHandler.NETWORK
+import breadmod.network.client.BeamPacket
 import breadmod.util.RayMarchResult.Companion.rayMarchBlock
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
@@ -60,6 +60,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
             }
         }
     }
+
     override fun render(
         pGunStack: ItemStack,
         pPoseStack: PoseStack,

@@ -2,6 +2,7 @@ package breadmod.block.storage.entity
 
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
 import breadmod.registry.block.ModBlockEntityTypes
+import breadmod.util.capability.CapabilityHolder.Companion.ACCEPT_ALL
 import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.StorageDirection
 import net.minecraft.core.BlockPos
@@ -16,9 +17,11 @@ class FluidStorageBlockEntity(
     ModBlockEntityTypes.FLUID_STORAGE.get(),
     pPos,
     pBlockState,
-    ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(
-        FluidTank(50000) to StorageDirection.BIDIRECTIONAL
-    )) to null)
+    ForgeCapabilities.FLUID_HANDLER to (FluidContainer(
+        mutableMapOf(
+            FluidTank(50000) to StorageDirection.BIDIRECTIONAL
+        )
+    ) to ACCEPT_ALL)
 ) {
     fun fluidHandler() = capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
 }

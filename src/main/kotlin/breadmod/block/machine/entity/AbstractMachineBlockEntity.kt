@@ -1,8 +1,9 @@
 package breadmod.block.machine.entity
 
 import breadmod.block.machine.CraftingManager
-import breadmod.network.CapabilityDataPacket
 import breadmod.network.PacketHandler.NETWORK
+import breadmod.network.client.CapabilitySideDataPacket
+import breadmod.network.client.CapabilityTagDataPacket
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
 import breadmod.util.capability.*
 import net.minecraft.core.BlockPos
@@ -41,13 +42,21 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         this.capabilityHolder.capabilities.forEach { (_, u) ->
             u.first.ifPresent { it.changed = { setChanged() } }
         }
+        this.capabilityHolder.changed = { cap, _, _ ->
+            NETWORK.send(
+                PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
+                CapabilitySideDataPacket(blockPos, cap.name, capabilityHolder.capabilities[cap]?.second ?: emptyList())
+            )
+        }
     }
 
     final override fun <T : Any?> getCapability(cap: Capability<T>): LazyOptional<T> =
         getCapability(cap, null)
-    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T>
-        = capabilityHolder.capabilitySided(cap, blockState.getValue(BlockStateProperties.HORIZONTAL_FACING), side)
-        ?: super.getCapability(cap, side)
+
+    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> =
+        capabilityHolder.capabilitySided(cap, blockState.getValue(BlockStateProperties.HORIZONTAL_FACING), side)
+            ?: super.getCapability(cap, side)
+
     final override fun invalidateCaps() {
         capabilityHolder.invalidate()
         super.invalidateCaps()
@@ -55,6 +64,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
 
     final override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
         ClientboundBlockEntityDataPacket.create(this)
+
     final override fun getUpdateTag(): CompoundTag =
         CompoundTag().also { saveAdditional(it) }
 
@@ -88,7 +98,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         adjustChanged()
         if(level is ServerLevel) NETWORK.send(
             PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
-            CapabilityDataPacket(blockPos, updateTag)
+            CapabilityTagDataPacket(blockPos, updateTag)
         )
         super.setChanged()
     }
@@ -112,7 +122,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         pPos: BlockPos,
         pBlockState: BlockState,
         private val recipeType: RegistryObject<RecipeType<R>>,
-        itemHandler: Pair<IndexableItemHandler, MutableList<Direction?>?>,
+        itemHandler: Pair<IndexableItemHandler, List<Direction?>>,
         itemHandlerViewSlots: List<Int>,
         craftingWidthHeight: Pair<Int, Int>,
         vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
@@ -173,20 +183,33 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             maxProgress = pTag.getInt(MAX_PROGRESS_KEY)
         }
 
-        open fun noRecipeTick (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>) {}
-        open fun consumeRecipe(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T, R>, recipe: R): Boolean = true
-        open fun recipeTick   (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>, recipe: R) {}
-        open fun recipeDone   (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T,R>, recipe: R): Boolean = true
+        open fun noRecipeTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T, R>) {}
+        open fun consumeRecipe(
+            pLevel: Level,
+            pPos: BlockPos,
+            pState: BlockState,
+            pBlockEntity: Progressive<T, R>,
+            recipe: R
+        ): Boolean = true
+
+        open fun recipeTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T, R>, recipe: R) {}
+        open fun recipeDone(
+            pLevel: Level,
+            pPos: BlockPos,
+            pState: BlockState,
+            pBlockEntity: Progressive<T, R>,
+            recipe: R
+        ): Boolean = true
 
         abstract class Powered<T: AbstractMachineBlockEntity<T>, R: FluidEnergyRecipe>(
             pType: BlockEntityType<T>,
             pPos: BlockPos,
             pBlockState: BlockState,
             recipeType: RegistryObject<RecipeType<R>>,
-            itemHandler: Pair<IndexableItemHandler, MutableList<Direction?>?>,
+            itemHandler: Pair<IndexableItemHandler, List<Direction?>>,
             itemHandlerViewSlots: List<Int>,
             craftingWidthHeight: Pair<Int, Int>,
-            powerHandler: Pair<EnergyBattery, MutableList<Direction?>?>,
+            powerHandler: Pair<EnergyBattery, List<Direction?>>,
             vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
         ): Progressive<T,R>(
             pType,

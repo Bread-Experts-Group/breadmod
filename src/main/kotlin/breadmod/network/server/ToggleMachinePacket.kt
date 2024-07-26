@@ -1,4 +1,4 @@
-package breadmod.network
+package breadmod.network.server
 
 import breadmod.block.machine.entity.AbstractMachineBlockEntity
 import net.minecraft.core.BlockPos

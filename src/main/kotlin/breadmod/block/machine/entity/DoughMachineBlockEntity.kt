@@ -33,18 +33,21 @@ class DoughMachineBlockEntity(
     pPos,
     pBlockState,
     ModRecipeTypes.DOUGH_MACHINE,
-    IndexableItemHandler(listOf(
-        64 to StorageDirection.STORE_ONLY,
-        64 to StorageDirection.EMPTY_ONLY,
-        1 to StorageDirection.BIDIRECTIONAL
-    )) to mutableListOf(null, Direction.WEST, Direction.EAST, Direction.DOWN),
+    IndexableItemHandler(
+        listOf(
+            64 to StorageDirection.STORE_ONLY,
+            64 to StorageDirection.EMPTY_ONLY,
+            1 to StorageDirection.BIDIRECTIONAL
+        )
+    ) to mutableListOf(null, Direction.WEST, Direction.EAST, Direction.DOWN),
     listOf(0),
     1 to 1,
     EnergyBattery(50000, 2000) to mutableListOf(null, Direction.NORTH),
     ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(
         FluidTank(INPUT_TANK_CAPACITY) to StorageDirection.STORE_ONLY,
         FluidTank(OUTPUT_TANK_CAPACITY) to StorageDirection.EMPTY_ONLY
-    )) to mutableListOf(null,  Direction.UP))
+    )
+    ) to mutableListOf(null, Direction.UP))
 ), MenuProvider {
     companion object {
         const val INPUT_TANK_CAPACITY = 8000

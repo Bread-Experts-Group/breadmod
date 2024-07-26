@@ -3,6 +3,7 @@ package breadmod.block.machine.entity
 import breadmod.recipe.fluidEnergy.ToasterRecipe
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.recipe.ModRecipeTypes
+import breadmod.util.capability.CapabilityHolder.Companion.ACCEPT_ALL
 import breadmod.util.capability.IndexableItemHandler
 import breadmod.util.capability.StorageDirection
 import net.minecraft.core.BlockPos
@@ -24,9 +25,11 @@ class ToasterBlockEntity(
     pPos,
     pBlockState,
     ModRecipeTypes.TOASTING,
-    IndexableItemHandler(listOf(
-        2 to StorageDirection.STORE_ONLY
-    )) to null,
+    IndexableItemHandler(
+        listOf(
+            2 to StorageDirection.STORE_ONLY
+        )
+    ) to ACCEPT_ALL,
     listOf(0),
     1 to 1
 ) {

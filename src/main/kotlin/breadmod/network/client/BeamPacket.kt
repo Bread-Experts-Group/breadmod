@@ -1,4 +1,4 @@
-package breadmod.network
+package breadmod.network.client
 
 import breadmod.util.render.addBeamTask
 import net.minecraft.network.FriendlyByteBuf
@@ -9,7 +9,6 @@ import java.util.function.Supplier
 /**
  * Client-bound packet to draw a line between [pStart] and [pEnd].
  *
- * **TODO:** [thickness] doesn't do anything right now since we're rendering DEBUG_LINES, not QUADS.
  * @author Miko Elbrecht
  * @since 1.0.0
  */
