@@ -1,5 +1,6 @@
 package breadmod.util.render
 
+import breadmod.ModMain
 import breadmod.util.translateDirection
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
@@ -46,49 +47,128 @@ val renderBuffer = mutableListOf<(RenderLevelStageEvent) -> Boolean>()
 fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add {
     val playerEyePos = (Minecraft.getInstance().player ?: return@add true).getEyePosition(it.partialTick)
 
-    RenderSystem.enableBlend()
-    RenderSystem.defaultBlendFunc()
-    RenderSystem.setShader { GameRenderer.getPositionColorShader() }
+//    RenderSystem.enableBlend()
+//    RenderSystem.defaultBlendFunc()
+    RenderSystem.setShader { GameRenderer.getPositionColorTexShader() }
+    RenderSystem.setShaderTexture(0, ModMain.modLocation("textures", "block", "bread_block.png"))
+
 
     val tessellator = Tesselator.getInstance()
     it.poseStack.pushPose()
     it.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
-    val stack = it.poseStack.last().pose()
-    
+    val poseStack = it.poseStack.last().pose()
+
+    val instance = Minecraft.getInstance()
+    val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ResourceLocation("breadmod", "block/bread_block.png"))
+//    println(sprite.atlasLocation())
+
+//    RenderSystem.setShaderTexture(0, ResourceLocation("minecraft", "block/grass_block"))
+//    RenderSystem.bindTexture(0)
+
     val builder = tessellator.builder
-    builder.begin(if(thickness != null) VertexFormat.Mode.QUADS else VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR)
+    builder.begin(/*if(thickness != null) VertexFormat.Mode.QUADS else VertexFormat.Mode.DEBUG_LINES*/VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR)
     // Q1
-    builder.vertex(stack, start.x, start.y, start.z).color(0f,1f,1f,1f).endVertex()
-    builder.vertex(stack, end.x, end.y, end.z).color(0f,1f,1f,1f).endVertex()
     if(thickness != null) {
-        builder.vertex(stack, start.x + thickness, start.y, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + thickness, end.y, end.z).color(0f,1f,1f,1f).endVertex()
-        // Q2
-        builder.vertex(stack, start.x, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x, end.y + thickness, end.z).color(0f,1f,1f,1f) .endVertex()
+        builder.vertex(poseStack, start.x, start.y, start.z)
+            .color(1f,1f,1f,1f)
+            .uv(sprite.u0, sprite.v0)
+            .overlayCoords(NO_OVERLAY)
+            .uv2(0xFFFFFF)
+            .normal(0f, 1f, 0f)
+            .endVertex()
+        builder.vertex(poseStack, start.x, start.y, start.z + thickness)
+            .color(1f,1f,1f,1f)
+            .uv(sprite.u0, sprite.v0)
+            .overlayCoords(NO_OVERLAY)
+            .uv2(0xFFFFFF)
+            .normal(0f, 1f, 0f)
+            .endVertex()
+        builder.vertex(poseStack, end.x, end.y, end.z)
+            .color(1f,1f,1f,1f)
+            .uv(sprite.u0, sprite.v0)
+            .overlayCoords(NO_OVERLAY)
+            .uv2(0xFFFFFF)
+            .normal(0f, 1f, 0f)
+            .endVertex()
 
-        builder.vertex(stack, start.x + thickness, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + thickness, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
-        // Q3
-        builder.vertex(stack, start.x + thickness, start.y, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + thickness, end.y, end.z).color(0f,1f,1f,1f) .endVertex()
-
-        builder.vertex(stack, start.x + thickness, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x + thickness, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
-        // Q4
-        builder.vertex(stack, start.x, start.y, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x, end.y, end.z).color(0f,1f,1f,1f) .endVertex()
-
-        builder.vertex(stack, start.x, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
-        builder.vertex(stack, end.x, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
+        builder.vertex(poseStack, start.x, start.y, start.z)
+            .color(1f,1f,1f,1f)
+            .uv(sprite.u1, sprite.v1)
+            .overlayCoords(NO_OVERLAY)
+            .uv2(0xFFFFFF)
+            .normal(0f, 1f, 0f)
+            .endVertex()
+        builder.vertex(poseStack, end.x, end.y, end.z)
+            .color(1f,1f,1f,1f)
+            .uv(sprite.u1, sprite.v1)
+            .overlayCoords(NO_OVERLAY)
+            .uv2(0xFFFFFF)
+            .normal(0f, 1f, 0f)
+            .endVertex()
+        builder.vertex(poseStack, end.x, end.y, end.z - thickness)
+            .color(1f,1f,1f,1f)
+            .uv(sprite.u1, sprite.v1)
+            .overlayCoords(NO_OVERLAY)
+            .uv2(0xFFFFFF)
+            .normal(0f, 1f, 0f)
+            .endVertex()
     }
 
+//    builder.vertex(poseStack, start.x, start.y, start.z).color(1f,1f,1f,1f).endVertex()
+//    builder.vertex(poseStack, end.x - 1f, end.y - 1f, end.z - 1f).color(1f,1f,1f,1f).endVertex()
+//    builder.vertex(poseStack, start.x, start.y, start.z).color(1f,1f,1f,1f).endVertex()
+//    builder.end()
+//    builder.vertex(poseStack, end.x + 1.0f, end.y, end.z).color(1f,1f,1f,1f).uv(sprite.u1, sprite.v0).endVertex()
+
+//    if(thickness != null) {
+//        println(thickness)
+//        builder.vertex(poseStack, start.x + thickness, start.y, start.z).color(1f,1f,1f,1f).uv(sprite.u1, sprite.v1).endVertex()
+//        builder.vertex(poseStack, end.x + thickness, end.y, end.z).color(1f,1f,1f,1f).uv(sprite.u1, sprite.v0).endVertex()
+//        // Q2
+//        builder.vertex(poseStack, start.x, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+//        builder.vertex(poseStack, end.x, end.y + thickness, end.z).color(0f,1f,1f,1f) .endVertex()
+//
+//        builder.vertex(poseStack, start.x + thickness, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+//        builder.vertex(poseStack, end.x + thickness, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
+//        // Q3
+//        builder.vertex(poseStack, start.x + thickness, start.y, start.z).color(0f,1f,1f,1f).endVertex()
+//        builder.vertex(poseStack, end.x + thickness, end.y, end.z).color(0f,1f,1f,1f) .endVertex()
+//
+//        builder.vertex(poseStack, start.x + thickness, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+//        builder.vertex(poseStack, end.x + thickness, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
+//        // Q4
+//        builder.vertex(poseStack, start.x, start.y, start.z).color(0f,1f,1f,1f).endVertex()
+//        builder.vertex(poseStack, end.x, end.y, end.z).color(0f,1f,1f,1f) .endVertex()
+//
+//        builder.vertex(poseStack, start.x, start.y + thickness, start.z).color(0f,1f,1f,1f).endVertex()
+//        builder.vertex(poseStack, end.x, end.y + thickness, end.z).color(0f,1f,1f,1f).endVertex()
+//    }
+
     tessellator.end()
-    RenderSystem.disableBlend()
+//    RenderSystem.disableBlend()
     it.poseStack.popPose()
 
     return@add false
 }
+
+//fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) {
+//    val instance = Minecraft.getInstance()
+//    val playerEyePos = (Minecraft.getInstance().player ?: return).getEyePosition(instance.partialTick)
+//
+//    val bufferSource: MultiBufferSource = instance.renderBuffers().bufferSource()
+//    val poseStack = PoseStack()
+//
+//
+//    poseStack.pushPose()
+//    println("drawing quad")
+//    texturedQuadTest(
+//        ResourceLocation("breadmod", "block/bread_block"),
+//        RenderType.solid(),
+//        poseStack,
+//        bufferSource
+//    )
+//    poseStack.popPose()
+//}
 
 /**
  * Renders a provided [pModel] (as an item model) onto a [BlockEntityWithoutLevelRenderer]
