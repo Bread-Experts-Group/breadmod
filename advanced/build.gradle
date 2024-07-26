@@ -3,8 +3,8 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
 }
@@ -51,11 +51,8 @@ minecraft {
             workingDirectory file("run")
 
 //            println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
-            args = List.of(
-                    '--mod', thisModId,
-                    '--all', '--output', file('src/generated/resources/'),
-                    '--existing', file('src/main/resources')
-            )
+            args '--all', '--output', file('src/generated/resources/'),
+                    '--mod', thisModId, '--existing', file('src/main/resources')
 //            println(args)
         }
     }

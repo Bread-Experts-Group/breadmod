@@ -1,10 +1,7 @@
 package breadmodadvanced.block.machine.entity.renderer
 
 import breadmod.util.capability.FluidContainer
-import breadmod.util.render.drawQuad
-import breadmod.util.render.drawTexturedQuad
-import breadmod.util.render.renderBlockModel
-import breadmod.util.render.translateOnBlockSide
+import breadmod.util.render.*
 import breadmodadvanced.ModMainAdv.modLocation
 import breadmodadvanced.block.machine.entity.DieselGeneratorBlockEntity
 import com.mojang.blaze3d.vertex.PoseStack
@@ -23,6 +20,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import org.joml.Quaternionf
+import org.joml.Vector3f
 
 class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     private enum class DieselGeneratorUpgrades { BATTERY, CHARGING, TURBO, FIRST_SLOT, SECOND_SLOT, THIRD_SLOT }
@@ -68,11 +66,21 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         pPoseStack.translate(0.25, 0.0, 0.25)
         pPoseStack.mulPose(Axis.YN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
         pPoseStack.translate(-0.25, 0.0, -0.25)
-        drawTexturedQuad(
+//        drawTexturedQuad(
+//            ResourceLocation("breadmod", "block/bread_block"),
+//            RenderType.solid(),
+//            pPoseStack, pBuffer, pPackedLight, 0xFFFFFF,
+//            0f, 0f, 0f, 0.5f, 0.0f, 0.5f
+//        )
+        texturedQuadTest(
             ResourceLocation("breadmod", "block/bread_block"),
             RenderType.solid(),
-            pPoseStack, pBuffer, pPackedLight, 0xFFFFFF,
-            0f, 0f, 0f, 0.5f, 0.0f, 0.5f
+            pPoseStack,
+            pBuffer,
+            Vector3f(0f, 0f, 0f),
+            Vector3f(0f, 0f, 0.5f),
+            Vector3f(0.5f, 0f, 0.5f),
+            Vector3f(0.5f, 0f, 0f)
         )
         pPoseStack.popPose()
 

@@ -201,9 +201,9 @@ fun texturedQuadTest(
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
     pVertex0: Vector3f = Vector3f(0f, 0f, 0f),
-    pVertex1: Vector3f = Vector3f(1f, 0f, 1f),
-    pVertex2: Vector3f = Vector3f(1f, 0f, 0f),
-    pVertex3: Vector3f = Vector3f(0f, 0f, 1f)
+    pVertex1: Vector3f = Vector3f(0f, 0f, 1f),
+    pVertex2: Vector3f = Vector3f(1f, 0f, 1f),
+    pVertex3: Vector3f = Vector3f(1f, 0f, 0f)
 ) {
     val instance = Minecraft.getInstance()
     val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)

@@ -25,7 +25,7 @@ class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBloc
     ) {
         buildMap<Direction, MutableList<Capability<*>>> {
             pBlockEntity.capabilityHolder.capabilities.forEach { (capability, additional) ->
-                additional.second?.filterNotNull()?.forEach {
+                additional.second.filterNotNull().forEach {
                     val actual = when(pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
                         Direction.WEST, Direction.EAST -> it.opposite
                         else -> it

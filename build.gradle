@@ -3,8 +3,8 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.22'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
 }
@@ -161,11 +161,8 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', minimumLevel
 //                println("${file('src/main/resources/').absolutePath.replace('\\','/')}/")
-            args = List.of(
-                    '--mod', thisModId,
-                    '--all', '--output', file('src/generated/resources/'),
-                    '--existing', file('src/main/resources')
-            )
+            args '--all', '--output', file('src/generated/resources/'),
+                    '--mod', thisModId, '--existing', file('src/main/resources')
 //                println(args)
         }
     }
@@ -177,7 +174,8 @@ sourceSets.main.resources { srcDirs 'src/generated/resources/' }
 dependencies {
     minecraft "net.minecraftforge:forge:$minecraft_version-$forge_version"
     implementation "thedarkcolour:kotlinforforge:$kff_version"
-    runtimeOnly project(":advanced")
+//    runtimeOnly project(":advanced")
+    // todo leaving this commented out for now until a solution that DOESN'T involve erroring out refreshing gradle is found
 
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
