@@ -1,4 +1,4 @@
-# The Bread Mod (ultimate bread edition)
+# The Bread Mod (ultimate bread edition) *[now with bagels]*
 ## Priority todos
   - [ ] <s>Port mod to 1.21</s> (postponed until further notice)
     - remove mixin for dye able armor layers and items and replace with built-in methods
@@ -30,16 +30,12 @@
   - [X] Edible
   - [X] Custom charcoal block as a result of bread block being burned
   - [ ] Portal block that leads into the bread dimension
-- [ ] Heating Element
-  - [ ] make it work properly
-  - [ ] integrate into heating system
-  - [ ] actually make the heating system work (pneumaticcraft compat?)
 - [ ] Bread Dimension
   - [X] A dimension composed of bread blocks
   - [X] Nonflammable
   - [ ] Items inside the dimension will vanish from the players inventory when they leave, and come back when they reenter
-- [ ] Bread (Dough) Machine for turning flour into dough
-  - [ ] If the machine is broken during its operation, flour will be spread everywhere 
+- [ ] Dough Machine
+  - [X] If the machine is broken during its operation, flour will be spread everywhere 
   - [X] Flour/Dough
     - [X] Snow-like layer block (Very flammable)
       - Figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with manually written json files to start off with
@@ -48,9 +44,7 @@
     - [X] Data driven recipe and serializer
     - [ ] Create compat.
       - [ ] Mixing recipe for flour to dough (might already work with the item tags)
-    - [ ] Compat with fluid tank-like containers in the bucket slot
-  - [ ] Can be heated from the bottom (possible PneumaticCraft Compat?)
-    - [ ] Speed can be accelerated from external heat sources
+    - [X] Compat with fluid tank-like containers in the bucket slot
 - [X] Wheat Crusher
   - [X] Block model and textures (animated)
   - [X] Menu actually working
@@ -62,7 +56,7 @@
     - [X] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
   - [ ] actually work on recipes
   - [ ] Textures for tools, weapons, items, blocks
-  - [ ] Fix mixin refmaps not generating during mod build
+  - [X] Fix mixin refmaps not generating during mod build
   - [X] Recipe datagen
   - [X] Lang datagen
   - [X] Model datagen
@@ -78,39 +72,42 @@
   - [ ] Charcoal block compat with mekanism charcoal block
 - [ ] Pipes and cables that transport items, fluids, and power (important)
   - [ ] Blockstates or similar connecting system for the model to connect to each-other
+  - <b>https://www.mcjty.eu/docs/1.20/ep5#cable</b>
 - [ ] Fix up base mod generator (not the diesel one)
 - [ ] Decoration blocks
   - Pending ideas.
+  - - [X] Joke item: "the ultimate bread" just gives you creative mode lmao
+- [X] "Bread amulet" gives you 1 hunger point every 10 seconds
+  - Curios Compat.
+  - [ ] Different Tiers of bread amulet
+    - [ ] Standard (the one that already exists)
+    - [ ] Reinforced (has more durability)
+    - [ ] Indestructible (what it says on the tin)
+- [ ] "Godlike loaf" a monstrous combination of rare materials and a nether star to give you 10 full minutes of positive potion effects and a whole 10 absorption hearts
+- [X] "Farmhouse structure" a random house with a farm attached to it with a random amount of bread or wheat in loot chests
+- [X] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
 
 ### Tool gun (totally not from gmod)
   - [ ] Recoil and rapid coil spin animation when tool gun is used
     - [ ] timer-like system for the animations
   - [ ] Improve gui overlay, add mouse and key icons
-  - [ ] turn IToolGunMode into an api
-  - [ ] Tool gun modes
+  - [ ] <s>turn IToolGunMode into an api</s>
+  - [ ] Tool gun modes (creator, exploder, remover)
     - fix up and polish existing modes
     - tool gun displaying mode information and image accompanying said mode
 # BUGS
   - [X] items inputted into machines from their sides are voided out of existence
     - [X] items not saving on world save/load
-  - [ ] (minor) tool gun anim speeds up when you have multiple tool guns at once
   - [ ] Fluid texture on diesel machine needs to be normalized
   - [ ] (major) tool gun stacking up/absorbing clicks when not equipped
+  - [ ] Tool gun beam is scuffed
   - [ ] happy block explosion not actually exploding an area
   - [ ] (production specific) Tool gun action not triggering
   - [ ] BMExplosion causing crash
----
-- [X] Joke item: "the ultimate bread" just gives you creative mode lmao
-- [X] "Bread amulet" gives you 1 hunger point every 10 seconds
-  - Curios Compat.
-- [ ] "Godlike loaf" a monstrous combination of rare materials and a nether star to give you 10 full minutes of positive potion effects and a whole 10 absorption hearts
-- [X] "Farmhouse structure" a random house with a farm attached to it with a random amount of bread or wheat in loot chests
-- [X] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their Reinforced variant for a much stronger / longer lasting item\
----
 ## Advanced, Machines and stuff
-- [ ] Creative mode tab for advanced
+- [X] Creative mode tab for advanced
 - [ ] Diesel Generator
-  - [ ] Custom rendering (BER) / fluid rendering inside of model
+  - [X] Custom rendering (BER) / fluid rendering inside of model
   - [ ] Particles
   - [ ] logic
   - [ ] upgrades
@@ -135,7 +132,11 @@
   - [ ] Crushing recipes for the food-like items
 - [ ] JEI Integration
   - [ ] Recipe Categories
-    - Needs generators added to categories
+    - Figure out which of our machines don't have jei integration yet
   - [X] Custom recipe support
   - [ ] Item infos
   - [X] Recipe auto-fill support
+- [ ] WAILA-like compat
+  - Jade
+  - The One Probe
+  - some other waila mod that I forgot
