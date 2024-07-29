@@ -1,6 +1,6 @@
 package breadmod.block.machine
 
-import breadmod.block.machine.entity.DoughMachineBlockEntity
+import breadmod.block.entity.machine.DoughMachineBlockEntity
 import breadmod.block.util.handlePlayerFluidInteraction
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.block.ModBlocks

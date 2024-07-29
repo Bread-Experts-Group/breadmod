@@ -2,7 +2,7 @@ package breadmod.block.storage
 
 import breadmod.block.util.ModBlockStateProperties
 import breadmod.block.machine.BaseAbstractMachineBlock
-import breadmod.block.storage.entity.EnergyStorageBlockEntity
+import breadmod.block.entity.storage.EnergyStorageBlockEntity
 import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level

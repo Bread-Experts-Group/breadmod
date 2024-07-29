@@ -6,7 +6,7 @@ import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.tool_gun.mode.ToolGunNoMode
-import breadmod.item.tool_gun.render.ToolGunItemRenderer
+import breadmod.client.render.tool_gun.ToolGunItemRenderer
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.tool_gun.ToolGunPacket
 import breadmod.registry.item.IRegisterSpecialCreativeTab

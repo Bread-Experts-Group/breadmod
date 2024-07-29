@@ -2,13 +2,13 @@ package breadmod.registry.block
 
 import breadmod.ModMain
 import breadmod.block.entity.*
-import breadmod.block.machine.entity.*
-import breadmod.block.machine.multiblock.farmer.entity.FarmerControllerBlockEntity
-import breadmod.block.machine.multiblock.farmer.entity.FarmerInputBlockEntity
-import breadmod.block.machine.multiblock.farmer.entity.FarmerOutputBlockEntity
-import breadmod.block.machine.multiblock.generic.entity.PowerInterfaceBlockEntity
-import breadmod.block.storage.entity.EnergyStorageBlockEntity
-import breadmod.block.storage.entity.FluidStorageBlockEntity
+import breadmod.block.entity.machine.*
+import breadmod.block.entity.multiblock.farmer.FarmerControllerBlockEntity
+import breadmod.block.entity.multiblock.farmer.FarmerInputBlockEntity
+import breadmod.block.entity.multiblock.farmer.FarmerOutputBlockEntity
+import breadmod.block.entity.multiblock.generic.PowerInterfaceBlockEntity
+import breadmod.block.entity.storage.EnergyStorageBlockEntity
+import breadmod.block.entity.storage.FluidStorageBlockEntity
 import breadmod.registry.block.ModBlocks.DOUGH_MACHINE_BLOCK
 import breadmod.registry.block.ModBlocks.WHEAT_CRUSHER_BLOCK
 import net.minecraft.world.level.block.entity.BlockEntityType

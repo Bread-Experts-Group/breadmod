@@ -1,6 +1,6 @@
 package breadmod.network.server
 
-import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import breadmod.util.capability.FluidContainer
 import net.minecraft.core.BlockPos
 import net.minecraft.core.SectionPos

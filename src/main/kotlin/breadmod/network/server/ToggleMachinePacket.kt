@@ -1,6 +1,6 @@
 package breadmod.network.server
 
-import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.SectionPos
 import net.minecraft.network.FriendlyByteBuf

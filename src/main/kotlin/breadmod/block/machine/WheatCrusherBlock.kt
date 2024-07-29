@@ -1,6 +1,6 @@
 package breadmod.block.machine
 
-import breadmod.block.machine.entity.WheatCrusherBlockEntity
+import breadmod.block.entity.machine.WheatCrusherBlockEntity
 import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerPlayer

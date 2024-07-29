@@ -1,6 +1,6 @@
 package breadmod.block.machine
 
-import breadmod.block.machine.entity.GeneratorBlockEntity
+import breadmod.block.entity.machine.GeneratorBlockEntity
 import breadmod.block.util.smokeAtEdge
 import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.core.BlockPos

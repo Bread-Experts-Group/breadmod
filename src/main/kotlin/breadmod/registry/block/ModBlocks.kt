@@ -3,10 +3,10 @@ package breadmod.registry.block
 import breadmod.ModMain
 import breadmod.block.*
 import breadmod.block.machine.*
-import breadmod.block.machine.multiblock.farmer.FarmerControllerBlock
-import breadmod.block.machine.multiblock.farmer.FarmerInputBlock
-import breadmod.block.machine.multiblock.farmer.FarmerOutputBlock
-import breadmod.block.machine.multiblock.generic.PowerInterfaceBlock
+import breadmod.block.multiblock.farmer.FarmerControllerBlock
+import breadmod.block.multiblock.farmer.FarmerInputBlock
+import breadmod.block.multiblock.farmer.FarmerOutputBlock
+import breadmod.block.multiblock.generic.PowerInterfaceBlock
 import breadmod.block.storage.EnergyStorageBlock
 import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT

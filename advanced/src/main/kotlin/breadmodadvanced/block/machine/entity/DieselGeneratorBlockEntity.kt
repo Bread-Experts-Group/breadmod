@@ -1,6 +1,6 @@
 package breadmodadvanced.block.machine.entity
 
-import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import breadmod.block.util.getBurnTime
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer

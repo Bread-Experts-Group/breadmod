@@ -1,6 +1,6 @@
 package breadmod.item
 
-import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack

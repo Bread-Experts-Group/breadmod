@@ -1,7 +1,7 @@
 package breadmod
 
 import breadmod.ModMain.LOGGER
-import breadmod.block.machine.entity.renderer.ToasterRenderer
+import breadmod.client.render.ToasterRenderer
 import breadmod.compat.curios.ModCuriosSlotsProvider
 import breadmod.compat.projecte.ModEMCProvider
 import breadmod.datagen.*

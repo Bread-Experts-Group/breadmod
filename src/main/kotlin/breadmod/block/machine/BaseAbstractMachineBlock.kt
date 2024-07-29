@@ -1,6 +1,6 @@
 package breadmod.block.machine
 
-import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block

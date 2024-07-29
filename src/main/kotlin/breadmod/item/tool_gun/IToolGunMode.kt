@@ -1,6 +1,6 @@
 package breadmod.item.tool_gun
 
-import breadmod.item.tool_gun.render.ToolGunItemRenderer
+import breadmod.client.render.tool_gun.ToolGunItemRenderer
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.registry.sound.ModSounds
 import com.mojang.blaze3d.vertex.PoseStack

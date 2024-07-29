@@ -1,7 +1,7 @@
 package breadmod.block.storage
 
 import breadmod.block.machine.BaseAbstractMachineBlock
-import breadmod.block.storage.entity.FluidStorageBlockEntity
+import breadmod.block.entity.storage.FluidStorageBlockEntity
 import breadmod.block.util.ModBlockStateProperties
 import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.world.item.context.BlockPlaceContext

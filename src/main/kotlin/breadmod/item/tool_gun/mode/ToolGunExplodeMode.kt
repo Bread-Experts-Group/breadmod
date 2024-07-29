@@ -5,8 +5,8 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
-import breadmod.item.tool_gun.render.drawTextOnScreen
-import breadmod.item.tool_gun.render.drawWrappedTextOnScreen
+import breadmod.client.render.tool_gun.drawTextOnScreen
+import breadmod.client.render.tool_gun.drawWrappedTextOnScreen
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.client.BeamPacket
 import breadmod.util.RayMarchResult.Companion.rayMarchBlock

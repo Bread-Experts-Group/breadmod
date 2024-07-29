@@ -1,6 +1,6 @@
 package breadmod.block.machine
 
-import breadmod.block.machine.entity.CreativeGeneratorBlockEntity
+import breadmod.block.entity.machine.CreativeGeneratorBlockEntity
 import breadmod.registry.block.ModBlockEntityTypes
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents

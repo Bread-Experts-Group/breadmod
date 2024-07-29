@@ -1,6 +1,6 @@
 package breadmod.block.machine
 
-import breadmod.block.machine.entity.AbstractMachineBlockEntity
+import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import breadmod.util.capability.IndexableItemHandler
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.StackedContents

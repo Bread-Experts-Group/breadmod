@@ -3,7 +3,7 @@ package breadmod.datagen.lang
 import breadmod.ModMain
 import breadmod.ModMain.modAdd
 import breadmod.ModMain.modAddExt
-import breadmod.compat.jade.JadePlugin.Companion.TOOLTIP_RENDERER
+import breadmod.client.waila.jade.JadePlugin.Companion.TOOLTIP_RENDERER
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids

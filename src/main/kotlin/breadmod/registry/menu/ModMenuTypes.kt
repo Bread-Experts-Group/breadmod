@@ -1,8 +1,8 @@
 package breadmod.registry.menu
 
 import breadmod.ModMain
-import breadmod.block.machine.entity.menu.DoughMachineMenu
-import breadmod.block.machine.entity.menu.WheatCrusherMenu
+import breadmod.block.menu.machine.DoughMachineMenu
+import breadmod.block.menu.machine.WheatCrusherMenu
 import breadmod.item.menu.CertificateMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraftforge.common.extensions.IForgeMenuType

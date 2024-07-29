@@ -1,7 +1,7 @@
 package breadmod.block.machine
 
 import breadmod.ModMain
-import breadmod.block.machine.entity.ToasterBlockEntity
+import breadmod.block.entity.machine.ToasterBlockEntity
 import breadmod.datagen.tag.ModItemTags
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.util.capability.IndexableItemHandler
