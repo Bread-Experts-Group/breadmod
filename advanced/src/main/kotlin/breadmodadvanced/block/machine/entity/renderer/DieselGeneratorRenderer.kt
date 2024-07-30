@@ -21,6 +21,7 @@ import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import org.joml.Quaternionf
 import org.joml.Vector3f
+import org.joml.Vector4f
 
 class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     private enum class DieselGeneratorUpgrades { BATTERY, CHARGING, TURBO, FIRST_SLOT, SECOND_SLOT, THIRD_SLOT }
@@ -77,6 +78,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             RenderType.solid(),
             pPoseStack,
             pBuffer,
+            Vector4f(1f, 1f, 1f, 1f),
             Vector3f(0f, 0f, 0f),
             Vector3f(0f, 0f, 0.5f),
             Vector3f(0.5f, 0f, 0.5f),

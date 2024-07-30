@@ -13,6 +13,7 @@ import net.minecraft.core.Direction
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
+import org.joml.Vector4f
 
 class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBlockEntity<*>> {
     override fun render(
@@ -64,7 +65,8 @@ class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBloc
 //            )
 
             // IT FUCKING WORKS BABY WOOOOOO
-            texturedQuadTest(texture, RenderType.cutoutMipped(), pPoseStack, pBuffer)
+            texturedQuadTest(texture, RenderType.cutoutMipped(), pPoseStack,
+                pBuffer, Vector4f(1f, 1f, 1f, 1f))
             pPoseStack.popPose()
         }
     }

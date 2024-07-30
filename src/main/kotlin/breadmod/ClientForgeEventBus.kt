@@ -22,7 +22,7 @@ object ClientForgeEventBus {
     @SubscribeEvent
     fun onLevelRender(event: RenderLevelStageEvent) {
         if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
-        renderBuffer.removeIf { it.invoke(event) }
+        renderBuffer.removeIf { (mutableList, renderStageEvent) -> renderStageEvent.invoke(mutableList, event) }
     }
 
     @Suppress("UNUSED_PARAMETER")

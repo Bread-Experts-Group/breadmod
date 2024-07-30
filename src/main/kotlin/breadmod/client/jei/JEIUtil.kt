@@ -10,8 +10,11 @@ import mezz.jei.api.helpers.IGuiHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Block
+import net.minecraftforge.registries.ForgeRegistries
 
 /**
  * Helper functions to make building recipe categories easier
@@ -64,3 +67,12 @@ fun drawArrow(
  */
 fun recipeList(item: Item, multiplier: Int, pRepeatCount: Int): List<ItemStack> =
     List(pRepeatCount) { ItemStack(item, (it + 1) * multiplier) }
+
+/**
+ * Returns a list of the provided Item or Block Tag.
+ * Returns an empty list if tag does not exist.
+ */
+fun itemTagToList(itemTag: TagKey<Item>): List<ItemStack> =
+    ForgeRegistries.ITEMS.tags()?.getTag(itemTag)?.map { it.defaultInstance } ?: listOf()
+fun blockTagToList(blockTag: TagKey<Block>): List<ItemStack> =
+    ForgeRegistries.BLOCKS.tags()?.getTag(blockTag)?.map { it.asItem().defaultInstance } ?: listOf()

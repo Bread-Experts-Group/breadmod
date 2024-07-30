@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import org.joml.Vector3f
+import org.joml.Vector4f
 import java.awt.Color
 
 /**
@@ -34,7 +35,7 @@ import java.awt.Color
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-val renderBuffer = mutableListOf<(RenderLevelStageEvent) -> Boolean>()
+val renderBuffer = mutableListOf<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>()
 
 /**
  * Draws a line from between [start] and [end], translated according to the current [net.minecraft.client.player.LocalPlayer]'s position.
@@ -42,29 +43,34 @@ val renderBuffer = mutableListOf<(RenderLevelStageEvent) -> Boolean>()
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add {
-    val playerEyePos = (Minecraft.getInstance().player ?: return@add true).getEyePosition(it.partialTick)
-    it.poseStack.pushPose()
-    it.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
-    val poseStack = it.poseStack
+fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add(mutableListOf(1F) to { mutableList, levelStageEvent ->
+    val currentOpacity = mutableList[0]
+    val playerEyePos = (Minecraft.getInstance().player)?.getEyePosition(levelStageEvent.partialTick)
+    val level = Minecraft.getInstance().level
+    if (playerEyePos != null && level != null && currentOpacity > 0) {
+        levelStageEvent.poseStack.pushPose()
+        levelStageEvent.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
+        val poseStack = levelStageEvent.poseStack
+        val instance = Minecraft.getInstance()
+        val bufferSource = instance.renderBuffers().bufferSource()
 
-    val instance = Minecraft.getInstance()
-    val bufferSource = instance.renderBuffers().bufferSource()
+        if(thickness != null) {
+            texturedQuadTest(
+                modLocation("block", "bread_block"),
+                RenderType.translucent(),
+                poseStack,
+                bufferSource,
+                Vector4f(1f, 1f, 1f, currentOpacity),
+                start,
+                end
+            )
+        }
 
-    if(thickness != null) {
-        texturedQuadTest(
-            modLocation("block", "bread_block"),
-            RenderType.solid(),
-            poseStack,
-            bufferSource,
-            start,
-            end
-        )
-    }
-
-    it.poseStack.popPose()
-    return@add false
-}
+        levelStageEvent.poseStack.popPose()
+        mutableList[0] = currentOpacity - 0.1f * instance.partialTick
+        false
+    } else true
+})
 
 //fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) {
 //    val instance = Minecraft.getInstance()
@@ -162,6 +168,7 @@ fun vertexTest(
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
     pRenderType: RenderType,
+    pColor: Vector4f,
     pX: Float,
     pY: Float,
     pZ: Float,
@@ -170,7 +177,7 @@ fun vertexTest(
 ) {
     val buffer = pBuffer.getBuffer(pRenderType)
     buffer.vertex(pPoseStack.last().pose(), pX, pY, pZ)
-        .color(1f, 1f, 1f, 1f)
+        .color(pColor.x, pColor.y, pColor.z, pColor.w)
         .uv(pU, pV)
         .overlayCoords(NO_OVERLAY)
         .uv2(0xFFFFFF)
@@ -182,6 +189,7 @@ fun quadTest(
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
     pRenderType: RenderType,
+    pColor: Vector4f,
     pVertex0: Vector3f,
     pVertex1: Vector3f,
     pVertex2: Vector3f,
@@ -189,10 +197,10 @@ fun quadTest(
     pU0: Float, pV0: Float,
     pU1: Float, pV1: Float
 ) {
-    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex0.x, pVertex0.y, pVertex0.z, pU0, pV0)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex1.x, pVertex1.y, pVertex1.z, pU0, pV1)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex2.x, pVertex2.y, pVertex2.z, pU1, pV1)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pVertex3.x, pVertex3.y, pVertex3.z, pU1, pV0)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex0.x, pVertex0.y, pVertex0.z, pU0, pV0)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex1.x, pVertex1.y, pVertex1.z, pU0, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex2.x, pVertex2.y, pVertex2.z, pU1, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex3.x, pVertex3.y, pVertex3.z, pU1, pV0)
 }
 
 fun texturedQuadTest(
@@ -200,6 +208,7 @@ fun texturedQuadTest(
     pRenderType: RenderType,
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
+    pColor: Vector4f,
     pVertex0: Vector3f = Vector3f(0f, 0f, 0f),
     pVertex1: Vector3f = Vector3f(0f, 0f, 1f),
     pVertex2: Vector3f = Vector3f(1f, 0f, 1f),
@@ -208,7 +217,7 @@ fun texturedQuadTest(
     val instance = Minecraft.getInstance()
     val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
     quadTest(
-        pPoseStack, pBuffer, pRenderType,
+        pPoseStack, pBuffer, pRenderType, pColor,
         pVertex0,
         pVertex1,
         pVertex2,
