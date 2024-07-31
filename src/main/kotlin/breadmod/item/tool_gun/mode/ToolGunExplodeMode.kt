@@ -9,12 +9,14 @@ import breadmod.client.render.tool_gun.drawTextOnScreen
 import breadmod.client.render.tool_gun.drawWrappedTextOnScreen
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.client.BeamPacket
+import breadmod.network.tool_gun.ToolGunAnimationPacket
 import breadmod.util.RayMarchResult.Companion.rayMarchBlock
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -44,6 +46,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
 
                     pLevel.explode(pPlayer, it.endPosition.x, it.endPosition.y, it.endPosition.z, 20f, Level.ExplosionInteraction.MOB)
                 }
+                NETWORK.send(PacketDistributor.PLAYER.with { pPlayer as ServerPlayer }, ToolGunAnimationPacket(true))
             } else {
                 if(!pGunStack.orCreateTag.contains(pControl.categoryKey)) {
                     pGunStack.orCreateTag.put(pControl.categoryKey, CompoundTag().also {
@@ -81,31 +84,17 @@ internal class ToolGunExplodeMode: IToolGunMode {
             0.925, 0.0635, -0.036,
             10f, 0.0007f, 100
         )
-        if(hitFluid) {
-            drawTextOnScreen(
-                modTranslatable("tool_gun", "mode", "explode", "hit_fluid", "enabled"),
-                Color(35,189,0,255).rgb,
-                Color(0,0,0,0).rgb,
-                false,
-                fontRenderer,
-                pPoseStack,
-                pBuffer,
-                0.92, 0.052, -0.036,
-                0.0007f
-            )
-        } else {
-            drawTextOnScreen(
-                modTranslatable("tool_gun", "mode", "explode", "hit_fluid", "disabled"),
-                Color.RED.rgb,
-                Color(0,0,0,0).rgb,
-                false,
-                fontRenderer,
-                pPoseStack,
-                pBuffer,
-                0.92, 0.052, -0.036,
-                0.0007f
-            )
-        }
+        drawTextOnScreen(
+            modTranslatable("tool_gun", "mode", "explode", "hit_fluid", if(hitFluid) "enabled" else "disabled"),
+            if (hitFluid) Color(35,189,0,255).rgb else Color.RED.rgb,
+            Color(0,0,0,0).rgb,
+            false,
+            fontRenderer,
+            pPoseStack,
+            pBuffer,
+            0.92, 0.052, -0.036,
+            0.0007f
+        )
         super.render(pGunStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
     }
 }

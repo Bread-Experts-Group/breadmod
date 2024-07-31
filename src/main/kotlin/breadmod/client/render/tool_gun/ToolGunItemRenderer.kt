@@ -45,17 +45,19 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val renderer = instance.itemRenderer
         val fontRenderer = instance.font
         val modelManager = instance.modelManager
-        val level = instance.level ?: return
+//        val level = instance.level ?: return
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
 //        val testModel = modelManager.getModel(testModelLocation)
+
+        val rotation = ToolGunAnimationHandler.coilRotation
 
         pPoseStack.pushPose()
 //      // todo recoil and increased coil spin when using tool gun
 
 //        pPoseStack.translate(sin(angle.toDouble() / 30), 0.0, 0.0)
         renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + instance.partialTick) * 1.5f))
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
         renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
 //        pPoseStack.mulPose(Axis.YN.rotationDegrees(angle * 30))
 //        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
