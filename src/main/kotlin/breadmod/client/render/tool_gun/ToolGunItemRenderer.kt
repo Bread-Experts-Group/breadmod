@@ -55,25 +55,31 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //        pPoseStack.pushPose()
 //      // todo recoil
 
-        pPoseStack.translate(-recoil, 0.0f, 0.0f)
-        renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        if(pDisplayContext.firstPerson()) {
+            pPoseStack.translate(-recoil, 0.0f, 0.0f)
+            renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
 
-        drawTextOnScreen(
-            (toolGunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
-            Color.WHITE.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
-            0.923, 0.065, -0.038, 0.0007f
-        )
+            drawTextOnScreen(
+                (toolGunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
+                Color.WHITE.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
+                0.923, 0.065, -0.038, 0.0007f
+            )
 
-        drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
-            0.9, 0.0175, -0.040, 0.0007f
-        )
+            drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
+                0.9, 0.0175, -0.040, 0.0007f
+            )
 
-        toolGunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+            toolGunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
 
-        println(rotation)
-        animHandler.clientTick()
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(animHandler.coilRotation))
-        renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+            println(rotation)
+            animHandler.clientTick()
+            pPoseStack.mulPose(Axis.XN.rotationDegrees(animHandler.coilRotation))
+            renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        } else {
+            renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+            pPoseStack.mulPose(Axis.XN.rotationDegrees(animHandler.coilRotation))
+            renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+        }
 //        pPoseStack.popPose()
 
         // x, y, z after rotations
