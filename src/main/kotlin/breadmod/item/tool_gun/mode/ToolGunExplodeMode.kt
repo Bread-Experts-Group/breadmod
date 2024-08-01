@@ -1,6 +1,7 @@
 package breadmod.item.tool_gun.mode
 
 import breadmod.ModMain.modTranslatable
+import breadmod.client.render.tool_gun.ToolGunAnimationHandler
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
@@ -9,14 +10,12 @@ import breadmod.client.render.tool_gun.drawTextOnScreen
 import breadmod.client.render.tool_gun.drawWrappedTextOnScreen
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.client.BeamPacket
-import breadmod.network.tool_gun.ToolGunAnimationPacket
 import breadmod.util.RayMarchResult.Companion.rayMarchBlock
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -46,7 +45,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
 
                     pLevel.explode(pPlayer, it.endPosition.x, it.endPosition.y, it.endPosition.z, 20f, Level.ExplosionInteraction.MOB)
                 }
-                NETWORK.send(PacketDistributor.PLAYER.with { pPlayer as ServerPlayer }, ToolGunAnimationPacket(true))
+//                NETWORK.send(PacketDistributor.PLAYER.with { pPlayer as ServerPlayer }, ToolGunAnimationPacket(true))
             } else {
                 if(!pGunStack.orCreateTag.contains(pControl.categoryKey)) {
                     pGunStack.orCreateTag.put(pControl.categoryKey, CompoundTag().also {
@@ -61,7 +60,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
                 }
                 playModeSound(pLevel, pPlayer.blockPosition())
             }
-        }
+        } else ToolGunAnimationHandler.trigger()
     }
 
     override fun render(

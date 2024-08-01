@@ -5,29 +5,25 @@ import net.minecraft.util.RandomSource
 
 @Suppress("MemberVisibilityCanBePrivate")
 object ToolGunAnimationHandler {
-    private var coilSpinDelta: Float = 0f
     var coilRotation: Float = 0f
-    private var ticks: Int = 0
+    var coilDelta: Float = 0f
+
+    var recoil: Float = 0f
 
     private val random = RandomSource.create()
 
-    fun tick() {
+    fun clientTick() {
         val instance = Minecraft.getInstance()
         if(!instance.isPaused) {
-            ticks += (ticks + 1) % 1_728_000
-
-            if(coilSpinDelta > 0f) coilSpinDelta -= 0.1f * instance.partialTick else coilSpinDelta = 0f
-            coilRotation += coilSpinDelta // Choppy Rotation, look at WorldShaperItemRenderer to figure out how to smooth it
+            coilRotation += 2f * coilDelta
+            if(coilDelta > 0f) coilDelta -= 0.1f * instance.partialTick / 1.05f else coilDelta = 0f
+            if(recoil > 0f) recoil -= 0.05f * (instance.partialTick / 10) else recoil = 0f
             coilRotation %= 360
         }
     }
 
     fun trigger() {
-        coilSpinDelta = 8f + random.nextFloat()
-    }
-
-    fun getRenderTime(): Float {
-        val instance = Minecraft.getInstance()
-        return ticks + instance.frameTime
+        coilDelta = 4f + random.nextFloat()
+        recoil = 0.1f
     }
 }

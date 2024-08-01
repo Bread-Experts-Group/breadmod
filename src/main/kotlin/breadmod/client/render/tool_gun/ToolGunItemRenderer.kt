@@ -45,32 +45,18 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val renderer = instance.itemRenderer
         val fontRenderer = instance.font
         val modelManager = instance.modelManager
-//        val level = instance.level ?: return
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
-//        val testModel = modelManager.getModel(testModelLocation)
 
-        val rotation = ToolGunAnimationHandler.coilRotation
+        val animHandler = ToolGunAnimationHandler
+        val rotation = animHandler.coilRotation
+        val recoil = animHandler.recoil
 
-        pPoseStack.pushPose()
-//      // todo recoil and increased coil spin when using tool gun
+//        pPoseStack.pushPose()
+//      // todo recoil
 
-//        pPoseStack.translate(sin(angle.toDouble() / 30), 0.0, 0.0)
+        pPoseStack.translate(-recoil, 0.0f, 0.0f)
         renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
-        renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-//        pPoseStack.mulPose(Axis.YN.rotationDegrees(angle * 30))
-//        renderModel(testModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-        pPoseStack.popPose()
-        // x, y, z after rotations
-        // x: back and forward, y: up and down, z: left and right
-
-        // Tool gun mode specific rendering
-//        val byteArray = ByteArray(2)
-//        secureRandom.nextBytes(byteArray)
-//        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(25,25,25,0).rgb, fontRenderer, pPoseStack, pBuffer,
-//            0.9215, 0.0555, -0.028, 0.0035f
-//        )
 
         drawTextOnScreen(
             (toolGunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
@@ -82,8 +68,22 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
             0.9, 0.0175, -0.040, 0.0007f
         )
 
-        pPoseStack.pushPose()
         toolGunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
-        pPoseStack.popPose()
+
+        println(rotation)
+        animHandler.clientTick()
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(animHandler.coilRotation))
+        renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+//        pPoseStack.popPose()
+
+        // x, y, z after rotations
+        // x: back and forward, y: up and down, z: left and right
+
+        // Tool gun mode specific rendering
+//        val byteArray = ByteArray(2)
+//        secureRandom.nextBytes(byteArray)
+//        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(25,25,25,0).rgb, fontRenderer, pPoseStack, pBuffer,
+//            0.9215, 0.0555, -0.028, 0.0035f
+//        )
     }
 }

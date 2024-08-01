@@ -1,5 +1,6 @@
 package breadmod.item.tool_gun.mode
 
+import breadmod.client.render.tool_gun.ToolGunAnimationHandler
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.item.tool_gun.IToolGunMode
 import net.minecraft.world.entity.player.Player
@@ -17,6 +18,7 @@ internal class ToolGunPowerMode: IToolGunMode {
     ) {
         // Really important. Don't let computerSD run on the server.
         if(pLevel.isClientSide) {
+            ToolGunAnimationHandler.trigger()
             count++
             if (count < 5) return
             //computerSD(true)

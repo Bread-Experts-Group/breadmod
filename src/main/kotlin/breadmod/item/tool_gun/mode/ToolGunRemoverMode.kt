@@ -1,6 +1,7 @@
 package breadmod.item.tool_gun.mode
 
 import breadmod.ModMain.modTranslatable
+import breadmod.client.render.tool_gun.ToolGunAnimationHandler
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.IToolGunMode
@@ -44,6 +45,6 @@ internal class ToolGunRemoverMode: IToolGunMode {
                     pLevel.server.playerList.players.forEach { player -> player.sendSystemMessage(modTranslatable("item", TOOL_GUN_DEF, "entity_left_game", args = listOf(it.entity.name)).withStyle(ChatFormatting.YELLOW)) }
                 }
             }
-        }
+        } else ToolGunAnimationHandler.trigger()
     }
 }

@@ -8,7 +8,6 @@ import breadmod.network.client.CapabilityTagDataPacket
 import breadmod.network.server.ToggleMachinePacket
 import breadmod.network.server.VoidTankPacket
 import breadmod.network.tool_gun.SDPacket
-import breadmod.network.tool_gun.ToolGunAnimationPacket
 import breadmod.network.tool_gun.ToolGunModeDataPacket
 import breadmod.network.tool_gun.ToolGunPacket
 import net.minecraftforge.network.NetworkRegistry
@@ -57,11 +56,6 @@ object PacketHandler {
             idCounter++, SDPacket::class.java,
             SDPacket::encodeBuf, SDPacket::decodeBuf, SDPacket::handle
         )
-        NETWORK.registerMessage(
-            idCounter++, ToolGunAnimationPacket::class.java,
-            ToolGunAnimationPacket::encodeBuf, ToolGunAnimationPacket::decodeBuf, ToolGunAnimationPacket::handle
-        )
-
         NETWORK.registerMessage(
             idCounter++, ToggleMachinePacket::class.java,
             ToggleMachinePacket::encodeBuf, ToggleMachinePacket::decodeBuf, ToggleMachinePacket::handle
