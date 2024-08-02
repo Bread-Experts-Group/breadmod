@@ -45,7 +45,6 @@ internal class ToolGunExplodeMode: IToolGunMode {
 
                     pLevel.explode(pPlayer, it.endPosition.x, it.endPosition.y, it.endPosition.z, 20f, Level.ExplosionInteraction.MOB)
                 }
-//                NETWORK.send(PacketDistributor.PLAYER.with { pPlayer as ServerPlayer }, ToolGunAnimationPacket(true))
             } else {
                 if(!pGunStack.orCreateTag.contains(pControl.categoryKey)) {
                     pGunStack.orCreateTag.put(pControl.categoryKey, CompoundTag().also {
@@ -60,7 +59,11 @@ internal class ToolGunExplodeMode: IToolGunMode {
                 }
                 playModeSound(pLevel, pPlayer.blockPosition())
             }
-        } else ToolGunAnimationHandler.trigger()
+        } else if(pControl.id == "use") {
+            if(pLevel.isClientSide) {
+                ToolGunAnimationHandler.trigger()
+            }
+        }
     }
 
     override fun render(
@@ -94,6 +97,5 @@ internal class ToolGunExplodeMode: IToolGunMode {
             0.92, 0.052, -0.036,
             0.0007f
         )
-        super.render(pGunStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
     }
 }

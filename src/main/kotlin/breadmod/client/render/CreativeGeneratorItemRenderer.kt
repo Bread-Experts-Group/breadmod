@@ -1,4 +1,4 @@
-package breadmod.item.renderer
+package breadmod.client.render
 
 import breadmod.ModMain.modLocation
 import breadmod.util.render.renderItemModel

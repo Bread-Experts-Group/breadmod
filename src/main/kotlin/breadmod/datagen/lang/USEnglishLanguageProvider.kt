@@ -207,6 +207,10 @@ class USEnglishLanguageProvider(
             TOOL_GUN_DEF, "mode", "tooltip", "creator")
         modAdd("... to add an entity.",
             TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb")
+        modAdd("... to open the entity/block editor.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r")
+        modAdd("Save / Load",
+            TOOL_GUN_DEF, "creator", "save_load")
 
         modAdd("Create Entity",
             TOOL_GUN_DEF, "mode", "controls", "name", "creator", "rmb")

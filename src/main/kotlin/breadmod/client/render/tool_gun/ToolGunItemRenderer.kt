@@ -55,6 +55,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //        pPoseStack.pushPose()
 //      // todo recoil
 
+        animHandler.clientTick()
+
         if(pDisplayContext.firstPerson()) {
             pPoseStack.translate(-recoil, 0.0f, 0.0f)
             renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
@@ -71,13 +73,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
             toolGunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
 
-            println(rotation)
-            animHandler.clientTick()
-            pPoseStack.mulPose(Axis.XN.rotationDegrees(animHandler.coilRotation))
+            pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
             renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         } else {
             renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-            pPoseStack.mulPose(Axis.XN.rotationDegrees(animHandler.coilRotation))
+            pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
             renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         }
 //        pPoseStack.popPose()

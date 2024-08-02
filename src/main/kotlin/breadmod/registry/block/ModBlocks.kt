@@ -12,7 +12,7 @@ import breadmod.block.specialItem.OreBlock
 import breadmod.block.specialItem.UseBlockStateNBT
 import breadmod.block.util.ModBlockSetTypes
 import breadmod.block.storage.FluidStorageBlock
-import breadmod.item.renderer.CreativeGeneratorItemRenderer
+import breadmod.client.render.CreativeGeneratorItemRenderer
 import breadmod.registry.item.ModItems
 import breadmod.registry.item.IRegisterSpecialCreativeTab
 import breadmod.registry.menu.ModCreativeTabs

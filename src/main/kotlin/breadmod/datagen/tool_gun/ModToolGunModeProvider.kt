@@ -40,6 +40,13 @@ internal class ModToolGunModeProvider(
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb"),
                     { InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT) }
+                ),
+                Control(
+                    "screen",
+                    "${TOOL_GUN_DEF}.${ModMain.ID}.mode.controls.name.screen.r",
+                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
+                    modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
+                    { InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R) }
                 )
             ),
             ToolGunCreatorMode::class.java

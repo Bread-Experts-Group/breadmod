@@ -11,38 +11,40 @@ import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.player.LocalPlayer
+import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraftforge.client.gui.overlay.ForgeGui
-import net.minecraftforge.client.gui.overlay.IGuiOverlay
 import java.awt.Color
 
-class ToolGunOverlay: IGuiOverlay {
+class ToolGunOverlay: AbstractModGuiOverlay() {
     private val overlayTexture = modLocation("textures", "gui", "hud", "tool_gun_overlay.png")
     private val textColor = Color.WHITE.rgb
 
-    override fun render(
+    override fun renderOverlay(
         pGui: ForgeGui,
         pGuiGraphics: GuiGraphics,
         pPartialTick: Float,
         pScreenWidth: Int,
-        pScreenHeight: Int
+        pScreenHeight: Int,
+        pPoseStack: PoseStack,
+        pBuffer: MultiBufferSource,
+        pPlayer: LocalPlayer
     ) {
-        val pose = pGuiGraphics.pose()
         val x = pScreenWidth - (pScreenWidth - 3)
         val y = pScreenHeight - (pScreenHeight - 3)
-        val player = pGui.minecraft.player
-        val heldStack = player?.getItemInHand(InteractionHand.MAIN_HAND) ?: return
+        val handStack = pPlayer.getItemInHand(InteractionHand.MAIN_HAND) ?: return
+        val item = handStack.item
 
-        val item = heldStack.item
-        if(!pGui.minecraft.options.hideGui && item is ToolGunItem) {
+        if(!instance.options.hideGui && item is ToolGunItem) {
             pGui.setupOverlayRenderState(true, false)
-            renderBackground(pGuiGraphics, pose, x, y)
+            renderBackground(pGuiGraphics, pPoseStack, x, y)
 
-            val ensured = item.ensureCurrentMode(heldStack)
+            val ensured = item.ensureCurrentMode(handStack)
             renderMode(
-                ensured.getString(MODE_NAMESPACE_TAG), item.getCurrentMode(heldStack),
-                pGuiGraphics, pose, pGui, x, y
+                ensured.getString(MODE_NAMESPACE_TAG), item.getCurrentMode(handStack),
+                pGuiGraphics, pPoseStack, pGui, x, y
             )
         }
     }
@@ -63,17 +65,17 @@ class ToolGunOverlay: IGuiOverlay {
 
         // Action source
         drawScaledText(Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
-            pPose, pGuiGraphics, pGui, pX + 2, pY + 2, 0.8f, true
+            pPose, pGuiGraphics, pGui, pX + 2, pY + 2, textColor, 0.8f, true
         )
 
         // Action Name
         drawScaledText(
             (pMode?.displayName?.copy() ?: Component.literal("???")).withStyle(ChatFormatting.BOLD),
-            pPose, pGuiGraphics, pGui, pX - 1, pY + 4, 2.5f, false
+            pPose, pGuiGraphics, pGui, pX - 1, pY + 4, textColor, 2.5f, false
         )
         // Mode Tooltip
         drawScaledText((pMode?.tooltip?.copy() ?: modTranslatable(TOOL_GUN_DEF, "broken_tooltip")), pPose, pGuiGraphics, pGui,
-            pX + 13, pY + 43, 0.4f, true
+            pX + 13, pY + 43, textColor, 0.4f, true
         )
         // KeyBinds
         pMode?.keyBinds?.forEachIndexed { index, control ->
@@ -83,7 +85,7 @@ class ToolGunOverlay: IGuiOverlay {
                     .withStyle { it.withColor(ChatFormatting.GOLD).withItalic(true) }
                     .append(control.toolGunComponent.copy().withStyle(ChatFormatting.WHITE)),
                 pPose, pGuiGraphics, pGui,
-                pX + 10, pY + 43 + moved, 1f, true
+                pX + 10, pY + 43 + moved, textColor, 1f, true
             )
 //            toolGunBindList[control]?.key = InputConstants.getKey("key.mouse.right")
             when(toolGunBindList[control]?.key) {
@@ -105,20 +107,4 @@ class ToolGunOverlay: IGuiOverlay {
     }
 
     private fun getInput(input: String) = InputConstants.getKey(input)
-
-
-    private fun drawScaledText(pText: Component, pPose: PoseStack, pGuiGraphics: GuiGraphics, pGui: ForgeGui, pX: Int, pY: Int, pScale: Float, pDropShadow: Boolean) {
-        pPose.scaleFlat(pScale)
-        pGuiGraphics.drawString(
-            pGui.minecraft.font,
-            pText,
-            pX,
-            pY,
-            textColor,
-            pDropShadow
-        )
-        pPose.scaleFlat(1f)
-    }
-
-    private fun PoseStack.scaleFlat(scale: Float) = this.scale(scale, scale, scale)
 }

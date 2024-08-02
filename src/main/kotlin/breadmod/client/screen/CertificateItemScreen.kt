@@ -1,4 +1,4 @@
-package breadmod.item.screen
+package breadmod.client.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.item.menu.CertificateMenu
@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 
-class CertificateScreen(
+class CertificateItemScreen(
     pMenu: CertificateMenu,
     pPlayerInventory: Inventory,
     pTitle: Component,

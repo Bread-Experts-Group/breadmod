@@ -45,6 +45,10 @@ internal class ToolGunRemoverMode: IToolGunMode {
                     pLevel.server.playerList.players.forEach { player -> player.sendSystemMessage(modTranslatable("item", TOOL_GUN_DEF, "entity_left_game", args = listOf(it.entity.name)).withStyle(ChatFormatting.YELLOW)) }
                 }
             }
-        } else ToolGunAnimationHandler.trigger()
+        } else if(pControl.id == "use") {
+            if(pLevel.isClientSide) {
+                ToolGunAnimationHandler.trigger()
+            }
+        }
     }
 }
