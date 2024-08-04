@@ -20,11 +20,13 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Inventory
 import net.minecraftforge.registries.ForgeRegistries
 import java.awt.Color
 import kotlin.jvm.optionals.getOrNull
 
+@Suppress("Unused")
 class ToolGunCreatorScreen(
     pMenu: ToolGunCreatorMenu,
     pPlayerInventory: Inventory,
@@ -55,6 +57,8 @@ class ToolGunCreatorScreen(
     private val mainHandSlot = 98
     private val offHandSlot = 99
 
+    private var entityHealth: Float = 0f
+
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         entityType = getEntity(setEntity)
         renderBackground(pGuiGraphics)
@@ -65,17 +69,27 @@ class ToolGunCreatorScreen(
     }
 
     // renderBg is called after render
+    private var alpha = 1.0f
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
-        RenderSystem.setShader { GameRenderer.getPositionTexShader() }
+        RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
         RenderSystem.setShaderTexture(0, TEXTURE)
 
+//        println(alpha)
+//        if (alpha > 0f) {
+//            alpha -= 0.01f
+//        } else alpha = 1f
+
         val level = instance.level ?: return
-        val finalEntity = entityType?.create(level) ?: return
+        val finalEntity = entityType?.create(level) as LivingEntity
         val poseStack = pGuiGraphics.pose()
 
+        finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = 100.0
+        entityHealth = finalEntity.getAttributeBaseValue(Attributes.MAX_HEALTH).toFloat()
+        println(entityHealth)
+
 //        println("width: ${entity.type.width}, height: ${entity.type.height}")
-//        theEntity.customName = Component.literal("jim")
+        finalEntity.customName = Component.literal("jim")
 
         finalEntity.getSlot(helmetSlot).set(ModItems.BREAD_HELMET.get().defaultInstance)
 //            setEntity.getSlot(102).set(ModItems.BREAD_CHESTPLATE.get().defaultInstance)
@@ -89,7 +103,7 @@ class ToolGunCreatorScreen(
             pGuiGraphics, leftPos + entityX, topPos + entityY, entityScale,
             (leftPos + entityX) - pMouseX.toFloat(),
             (topPos + entityY - 50) - pMouseY.toFloat(),
-            finalEntity as LivingEntity
+            finalEntity
         )
 
         // really cursed
@@ -139,9 +153,14 @@ class ToolGunCreatorScreen(
         override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
 
         override fun onPress() {
-            if (pText.string == "+") {
-                entityScale += 1
-            } else entityScale -= 1
+            when(pText.string) {
+                "+" -> entityScale += 1
+                "++" -> entityScale += 10
+                "+++" -> entityScale += 100
+                "-" -> entityScale -= 1
+                "--" -> entityScale -= 10
+                "---" -> entityScale -= 100
+            }
         }
 
         override fun isFocused(): Boolean = false
@@ -163,7 +182,7 @@ class ToolGunCreatorScreen(
         pXTexStart, pYTexStart,
         0,
         pResourceLocation, pTextureWidth, pTextureHeight,
-        { setEntity = "spider" }
+        { setEntity = "skeleton" }
     )
 
     inner class MobSelector(

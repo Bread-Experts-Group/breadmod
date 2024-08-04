@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.monster.Zombie
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -37,6 +38,8 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
                 playToolGunSound(pLevel, pPlayer.blockPosition())
                 val entity = Zombie(EntityType.ZOMBIE, pLevel)
                 entity.getSlot(103).set(Items.DIAMOND_HELMET.defaultInstance)
+                entity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = 100.0
+                entity.health = entity.getAttributeBaseValue(Attributes.MAX_HEALTH).toFloat()
                 entity.setPos(Vec3(ray.endPosition.x, ray.endPosition.y + 0.5, ray.endPosition.z))
                 pLevel.addFreshEntity(entity)
             }
