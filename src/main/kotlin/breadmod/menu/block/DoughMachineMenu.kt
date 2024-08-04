@@ -1,4 +1,4 @@
-package breadmod.block.menu.machine
+package breadmod.menu.block
 
 import breadmod.block.entity.machine.DoughMachineBlockEntity
 import breadmod.recipe.fluidEnergy.DoughMachineRecipe

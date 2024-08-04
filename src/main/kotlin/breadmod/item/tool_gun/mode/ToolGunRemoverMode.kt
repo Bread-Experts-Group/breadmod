@@ -28,7 +28,7 @@ internal class ToolGunRemoverMode: IToolGunMode {
         pControl: BreadModToolGunModeProvider.Control
     ) {
         if(pLevel is ServerLevel) {
-            pLevel.rayMarchEntity(pPlayer, pPlayer.position(), Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)?.let {
+            pLevel.rayMarchEntity(pPlayer, pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)?.let {
                 fun rand() = (pPlayer.random.nextDouble() - 0.5)*1.2
                 pLevel.sendParticles(ParticleTypes.END_ROD, it.entity.x, it.entity.y, it.entity.z, 60, rand(), pPlayer.random.nextDouble(), rand(), 1.0)
                 playToolGunSound(pLevel, pPlayer.blockPosition())

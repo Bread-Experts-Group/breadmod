@@ -1,10 +1,10 @@
 package breadmod.registry.menu
 
 import breadmod.ModMain
-import breadmod.block.menu.machine.DoughMachineMenu
-import breadmod.block.menu.machine.WheatCrusherMenu
-import breadmod.item.menu.CertificateMenu
-import breadmod.item.tool_gun.mode.ToolGunCreatorMenu
+import breadmod.menu.block.DoughMachineMenu
+import breadmod.menu.block.WheatCrusherMenu
+import breadmod.menu.item.CertificateMenu
+import breadmod.menu.item.ToolGunCreatorMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraftforge.common.extensions.IForgeMenuType
 import net.minecraftforge.registries.DeferredRegister
@@ -23,7 +23,7 @@ object ModMenuTypes {
     }
 
     val CERTIFICATE: RegistryObject<MenuType<CertificateMenu>> = deferredRegister.register("certificate") {
-        IForgeMenuType.create { pContainerId, _, _ -> CertificateMenu(pContainerId) }
+        IForgeMenuType.create { pContainerId, pInventory, _ -> CertificateMenu(pContainerId, pInventory) }
     }
     val TOOL_GUN_CREATOR: RegistryObject<MenuType<ToolGunCreatorMenu>> = deferredRegister.register("tool_gun_creator_menu") {
         IForgeMenuType.create { pContainerId, pInventory, _ -> ToolGunCreatorMenu(pContainerId, pInventory) }

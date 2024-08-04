@@ -2,7 +2,7 @@ package breadmod.client.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
-import breadmod.block.menu.machine.DoughMachineMenu
+import breadmod.menu.block.DoughMachineMenu
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.server.VoidTankPacket
 import breadmod.util.capability.EnergyBattery

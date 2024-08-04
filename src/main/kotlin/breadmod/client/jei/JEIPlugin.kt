@@ -1,9 +1,9 @@
 package breadmod.client.jei
 
 import breadmod.ModMain
-import breadmod.block.menu.machine.DoughMachineMenu
+import breadmod.menu.block.DoughMachineMenu
 import breadmod.client.screen.DoughMachineScreen
-import breadmod.block.menu.machine.WheatCrusherMenu
+import breadmod.menu.block.WheatCrusherMenu
 import breadmod.client.screen.WheatCrusherScreen
 import breadmod.client.jei.category.DoughMachineRecipeCategory
 import breadmod.client.jei.category.ToasterRecipeCategory

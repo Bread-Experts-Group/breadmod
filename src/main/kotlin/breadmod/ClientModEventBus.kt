@@ -10,8 +10,8 @@ import breadmod.client.screen.WheatCrusherScreen
 import breadmod.client.render.storage.EnergyStorageRenderer
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
-import breadmod.entity.renderer.BreadBulletEntityRenderer
-import breadmod.entity.renderer.PrimedHappyBlockRenderer
+import breadmod.client.render.entity.BreadBulletEntityRenderer
+import breadmod.client.render.entity.PrimedHappyBlockRenderer
 import breadmod.client.hud.ToolGunOverlay
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.armor.ArmorColor

@@ -1,7 +1,7 @@
 package breadmod.block.entity.machine
 
 import breadmod.ModMain.modTranslatable
-import breadmod.block.menu.machine.WheatCrusherMenu
+import breadmod.menu.block.WheatCrusherMenu
 import breadmod.recipe.fluidEnergy.WheatCrushingRecipe
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.recipe.ModRecipeTypes

@@ -2,7 +2,7 @@ package breadmod.client.screen
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
-import breadmod.block.menu.machine.WheatCrusherMenu
+import breadmod.menu.block.WheatCrusherMenu
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.formatUnit
 import com.mojang.blaze3d.systems.RenderSystem

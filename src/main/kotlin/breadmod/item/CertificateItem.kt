@@ -1,7 +1,7 @@
 package breadmod.item
 
 import breadmod.ModMain.modTranslatable
-import breadmod.item.menu.CertificateMenu
+import breadmod.menu.item.CertificateMenu
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
@@ -35,7 +35,7 @@ class CertificateItem: Item(Properties().stacksTo(16).rarity(Rarity.RARE)), Menu
     }
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu =
-        CertificateMenu(pContainerId)
+        CertificateMenu(pContainerId, pPlayerInventory)
 
     override fun getDisplayName(): Component = modTranslatable("item", "gui", "certificate")
 

@@ -1,4 +1,4 @@
-package breadmod.entity.renderer
+package breadmod.client.render.entity
 
 import breadmod.ModMain
 import breadmod.entity.BreadBulletEntity
