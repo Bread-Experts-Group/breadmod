@@ -8,7 +8,7 @@ import breadmod.network.server.VoidTankPacket
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.formatUnit
-import breadmod.util.renderFluid
+import breadmod.util.render.renderFluid
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
@@ -162,5 +162,7 @@ class DoughMachineScreen(
         override fun onPress() {
             NETWORK.sendToServer(VoidTankPacket(menu.parent.blockPos, tankIndex))
         }
+
+        override fun isFocused(): Boolean = false
     }
 }

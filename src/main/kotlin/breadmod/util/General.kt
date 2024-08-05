@@ -6,11 +6,6 @@ import breadmod.item.tool_gun.mode.ToolGunPowerMode
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.*
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
@@ -23,7 +18,6 @@ import net.minecraft.network.chat.contents.LiteralContents
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
-import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -35,27 +29,21 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.fluids.capability.IFluidHandler
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.IForgeRegistry
 import net.minecraftforge.registries.RegistryObject
-import org.joml.Matrix4f
-import org.joml.Vector2f
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.times
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
-import java.awt.Color
 import java.nio.file.Files
-import java.util.*
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.writeBytes
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.ln
-import kotlin.math.min
 import kotlin.system.exitProcess
 
 val formatArray = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
@@ -100,62 +88,6 @@ fun formatUnit(pFrom: Int, pTo: Int, pUnit: String, pFormatShort: Boolean, pDeci
 private val logs = mutableMapOf<Double, Double>()
 fun isSquareOf(n: Double, p: Double) = logs.getOrPut(p) { ln(p) }.let { ((ceil(n) / it)) == floor(n / it) }
 fun isSquareOf(n: Int, p: Int) = isSquareOf(n.toDouble(), p.toDouble())
-
-fun GuiGraphics.renderFluid(
-    pX: Float, pY: Float, pWidth: Int, pHeight: Int,
-    pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH,
-) {
-    val atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-    val ext = IClientFluidTypeExtensions.of(pFluid)
-    val spriteDiff = if(pFlowing) {
-        val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
-        atlas.apply(ext.flowingTexture).let { val flowingWidth = it.contents().width(); it to if(flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F }
-    } else atlas.apply(ext.stillTexture) to 1F
-
-    val sprite = spriteDiff.first
-    val colors = FloatArray(4).also { Color(ext.tintColor).getComponents(it) }
-    val matrix4f: Matrix4f = this.pose().last().pose()
-    RenderSystem.setShaderTexture(0, sprite.atlasLocation())
-    RenderSystem.setShader { GameRenderer.getPositionColorTexShader() }
-    RenderSystem.enableBlend()
-    val bufferBuilder = Tesselator.getInstance().builder
-    bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX)
-
-    val pX2 = pX + pWidth
-
-    var remainingFluid = pHeight
-    while(remainingFluid > 0) {
-        // TODO: Make pY the TOP LEFT, instead of BOTTOM LEFT
-        val lpY = (pY - remainingFluid); val lpY2 = lpY + min(remainingFluid, pWidth)
-
-        // N  // E  // S  // W
-        // AB // CA // DC // BD
-        // CD // DB // BA // AC
-        // (pX, lpY2), (pX2, lpY2)
-        // (pX, lpY ), (pX2, lpY )
-        val rotated = listOf(Vector2f(pX, lpY), Vector2f(pX, lpY2), Vector2f(pX2, lpY2), Vector2f(pX2, lpY)).also {
-            Collections.rotate(
-                it,
-                when(pDirection) { Direction.EAST -> 1; Direction.SOUTH -> 2; Direction.WEST -> 3; else -> 0 }
-            )
-        }
-
-        val dv1 = (sprite.v1 - sprite.v0)
-        val v1 = if(remainingFluid < pWidth) (sprite.v0 + ((dv1 / pWidth) * remainingFluid)) else (sprite.v0 + (dv1 * spriteDiff.second))
-        val u1 = sprite.u0 + ((sprite.u1 - sprite.u0) * spriteDiff.second)
-
-        fun VertexConsumer.color() = this.color(colors[0], colors[1], colors[2], colors[3])
-        rotated[0].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1,        v1).endVertex() }
-        rotated[1].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1, sprite.v0).endVertex() }
-        rotated[2].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, sprite.v0).endVertex() }
-        rotated[3].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0,        v1).endVertex() }
-
-        remainingFluid -= pWidth
-    }
-
-    BufferUploader.drawWithShader(bufferBuilder.end())
-    RenderSystem.disableBlend()
-}
 
 const val ENTRY_ID_KEY = "id"
 const val ENTRY_AMOUNT_KEY = "amount"

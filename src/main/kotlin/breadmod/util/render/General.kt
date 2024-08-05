@@ -2,12 +2,14 @@ package breadmod.util.render
 
 import breadmod.ModMain.modLocation
 import breadmod.util.translateDirection
-import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.VertexConsumer
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.*
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
+import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
@@ -23,11 +25,17 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.event.RenderLevelStageEvent
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
+import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector4f
 import java.awt.Color
+import java.util.*
+import kotlin.math.min
 
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
@@ -72,24 +80,61 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
     } else true
 })
 
-//fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) {
-//    val instance = Minecraft.getInstance()
-//    val playerEyePos = (Minecraft.getInstance().player ?: return).getEyePosition(instance.partialTick)
-//
-//    val bufferSource: MultiBufferSource = instance.renderBuffers().bufferSource()
-//    val poseStack = PoseStack()
-//
-//
-//    poseStack.pushPose()
-//    println("drawing quad")
-//    texturedQuadTest(
-//        ResourceLocation("breadmod", "block/bread_block"),
-//        RenderType.solid(),
-//        poseStack,
-//        bufferSource
-//    )
-//    poseStack.popPose()
-//}
+fun GuiGraphics.renderFluid(
+    pX: Float, pY: Float, pWidth: Int, pHeight: Int,
+    pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH,
+) {
+    val atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+    val ext = IClientFluidTypeExtensions.of(pFluid)
+    val spriteDiff = if(pFlowing) {
+        val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
+        atlas.apply(ext.flowingTexture).let { val flowingWidth = it.contents().width(); it to if(flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F }
+    } else atlas.apply(ext.stillTexture) to 1F
+
+    val sprite = spriteDiff.first
+    val colors = FloatArray(4).also { Color(ext.tintColor).getComponents(it) }
+    val matrix4f: Matrix4f = this.pose().last().pose()
+    RenderSystem.setShaderTexture(0, sprite.atlasLocation())
+    RenderSystem.setShader { GameRenderer.getPositionColorTexShader() }
+    RenderSystem.enableBlend()
+    val bufferBuilder = Tesselator.getInstance().builder
+    bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX)
+
+    val pX2 = pX + pWidth
+
+    var remainingFluid = pHeight
+    while(remainingFluid > 0) {
+        // TODO: Make pY the TOP LEFT, instead of BOTTOM LEFT
+        val lpY = (pY - remainingFluid); val lpY2 = lpY + min(remainingFluid, pWidth)
+
+        // N  // E  // S  // W
+        // AB // CA // DC // BD
+        // CD // DB // BA // AC
+        // (pX, lpY2), (pX2, lpY2)
+        // (pX, lpY ), (pX2, lpY )
+        val rotated = listOf(Vector2f(pX, lpY), Vector2f(pX, lpY2), Vector2f(pX2, lpY2), Vector2f(pX2, lpY)).also {
+            Collections.rotate(
+                it,
+                when(pDirection) { Direction.EAST -> 1; Direction.SOUTH -> 2; Direction.WEST -> 3; else -> 0 }
+            )
+        }
+
+        val dv1 = (sprite.v1 - sprite.v0)
+        val v1 = if(remainingFluid < pWidth) (sprite.v0 + ((dv1 / pWidth) * remainingFluid)) else (sprite.v0 + (dv1 * spriteDiff.second))
+        val u1 = sprite.u0 + ((sprite.u1 - sprite.u0) * spriteDiff.second)
+
+        fun VertexConsumer.color() = this.color(colors[0], colors[1], colors[2], colors[3])
+        rotated[0].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1,        v1).endVertex() }
+        rotated[1].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1, sprite.v0).endVertex() }
+        rotated[2].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, sprite.v0).endVertex() }
+        rotated[3].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0,        v1).endVertex() }
+
+        remainingFluid -= pWidth
+    }
+
+    BufferUploader.drawWithShader(bufferBuilder.end())
+    RenderSystem.disableBlend()
+}
 
 /**
  * Renders a provided [pModel] (as an item model) onto a [BlockEntityWithoutLevelRenderer]
@@ -227,6 +272,7 @@ fun texturedQuadTest(
     )
 }
 
+// todo rename quad functions above to not have Test in their name and remove these functions below
 fun drawVertex(
     pBuilder: VertexConsumer,
     pPoseStack: PoseStack,
@@ -300,7 +346,6 @@ fun drawTexturedQuad(
  * @param pDropShadow draws a drop shadow behind the text
  *
  * @see Font.drawInBatch
- * @author Logan McLean
  * @since 0.0.1
  */
 fun renderText(

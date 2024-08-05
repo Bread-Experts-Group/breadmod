@@ -3,9 +3,11 @@ package breadmod.client.screen.tool_gun
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
+import breadmod.item.tool_gun.mode.creator.*
 import breadmod.menu.item.ToolGunCreatorMenu
-import breadmod.registry.item.ModItems
+import com.google.gson.JsonObject
 import com.mojang.blaze3d.systems.RenderSystem
+import moze_intel.projecte.gameObjs.registries.PEItems
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -18,86 +20,151 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.effect.MobEffect
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraftforge.registries.ForgeRegistries
 import java.awt.Color
-import kotlin.jvm.optionals.getOrNull
 
-@Suppress("Unused")
+@Suppress("Unused", "MemberVisibilityCanBePrivate")
 class ToolGunCreatorScreen(
     pMenu: ToolGunCreatorMenu,
     pPlayerInventory: Inventory,
     pTitle: Component
 ) : AbstractContainerScreen<ToolGunCreatorMenu>(pMenu, pPlayerInventory, pTitle) {
-
     companion object {
         val TEXTURE = modLocation("textures", "gui", "item", TOOL_GUN_DEF, "creator_mode.png")
         val TEXTURE_ASSETS = modLocation("textures", "gui", "item", TOOL_GUN_DEF, "creator_mode_assets.png")
         val instance: Minecraft = Minecraft.getInstance()
-        var entityScale = 32
-        var setEntity: String = "creeper"
+    }
+
+    private val entityX = 35
+    private val entityY = 94
+    private var entityScale = 32
+
+    var customEntityName: String? = null
+    var entityString: String = "zombie"
+    var entityType: EntityType<*>? = getEntityFromString(entityString)
+
+    var entityHealth: Double? = 20.0
+    var entitySpeed: Double? = 5.0
+
+    // First Int: Duration, Second Int: Amplifier
+    var entityEffect: List<Triple<MobEffect, Int, Int>>? = listOf(
+        Triple(MobEffects.HARM, 1000, 10),
+        Triple(MobEffects.JUMP, 1000, 10)
+    )
+
+    var helmetSlot: ItemStack? = Items.DIAMOND_HELMET.defaultInstance
+    var chestplateSlot: ItemStack? = Items.DIAMOND_CHESTPLATE.defaultInstance
+    var leggingsSlot: ItemStack? = Items.DIAMOND_LEGGINGS.defaultInstance
+    var bootsSlot: ItemStack? = Items.DIAMOND_BOOTS.defaultInstance
+
+    var mainHandSlot: ItemStack? = PEItems.RED_MATTER_AXE.get().defaultInstance
+    var offHandSlot: ItemStack? = null
+
+    val json = JsonObject().also {
+        it.addProperty("entity", ForgeRegistries.ENTITY_TYPES.getKey(entityType).toString())
+        if(customEntityName != null) { it.addProperty("customEntityName", customEntityName) }
+        if(entityHealth != null) { it.addProperty("entityHealth", entityHealth) }
+        if(entitySpeed != null) { it.addProperty("entitySpeed", entitySpeed) }
+        if(entityEffect != null) {
+            it.add("effects", JsonObject().also { effectObject ->
+                entityEffect?.forEach { (effect, duration, amplifier) ->
+                    effectObject.add(effectToString(effect), JsonObject().also { currentEffect ->
+                        currentEffect.addProperty("duration", duration)
+                        currentEffect.addProperty("amplifier", amplifier)
+                    })
+                }
+            })
+        }
+        if(helmetSlot != null) {
+            it.addProperty("helmet", helmetSlot?.item?.let { helmet -> itemToString(helmet) })
+        }
+        if(chestplateSlot != null) {
+            it.addProperty("chestplate", chestplateSlot?.item?.let { chestplate -> itemToString(chestplate) })
+        }
+        if(leggingsSlot != null) {
+            it.addProperty("leggings", leggingsSlot?.item?.let { leggings -> itemToString(leggings) })
+        }
+        if(bootsSlot != null) {
+            it.addProperty("boots", bootsSlot?.item?.let { boots -> itemToString(boots) })
+        }
+        if(mainHandSlot != null) {
+            it.addProperty("main_hand", mainHandSlot?.item?.let { mainHand -> itemToString(mainHand) })
+        }
+        if(offHandSlot != null) {
+            it.addProperty("off_hand", offHandSlot?.item?.let { offHand -> itemToString(offHand) })
+        }
     }
 
     init {
         imageWidth = 256
         imageHeight = 220
+        println(json)
     }
 
-    private val entityX = 35
-    private val entityY = 94
-    private var entityType: EntityType<*>? = getEntity(setEntity)
-
-    private val helmetSlot = 103
-    private val chestplateSlot = 102
-    private val leggingsSlot = 101
-    private val bootsSlot = 100
-    private val mainHandSlot = 98
-    private val offHandSlot = 99
-
-    private var entityHealth: Float = 0f
-
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-        entityType = getEntity(setEntity)
         renderBackground(pGuiGraphics)
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
 
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
-//        println(setEntity)
     }
 
-    // renderBg is called after render
     private var alpha = 1.0f
+    // todo set this up for a fading static texture
+    private fun alphaTick() = if (alpha > 0f) alpha -= 0.01f else alpha = 1f
+
+    // render >> renderBg
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
+        val level = instance.level ?: return
+        val poseStack = pGuiGraphics.pose()
+        val finalEntity = entityType?.create(level) as LivingEntity
+
+        // Setup gui rendering
         RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, alpha)
         RenderSystem.setShaderTexture(0, TEXTURE)
 
-//        println(alpha)
-//        if (alpha > 0f) {
-//            alpha -= 0.01f
-//        } else alpha = 1f
+        // Update the displayed entity
+        entityType = getEntityFromString(entityString)
 
-        val level = instance.level ?: return
-        val finalEntity = entityType?.create(level) as LivingEntity
-        val poseStack = pGuiGraphics.pose()
+        // Health
+        entityHealth?.let { health ->
+            finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = health
+            finalEntity.health = health.toFloat()
+        }
 
-        finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = 100.0
-        entityHealth = finalEntity.getAttributeBaseValue(Attributes.MAX_HEALTH).toFloat()
-        println(entityHealth)
+        // Speed
+        entitySpeed?.let {
+            finalEntity.getAttribute(Attributes.MOVEMENT_SPEED)?.baseValue = it
+            finalEntity.speed = it.toFloat()
+        }
 
-//        println("width: ${entity.type.width}, height: ${entity.type.height}")
-        finalEntity.customName = Component.literal("jim")
+        // Armor Slots
+        helmetSlot?.let { finalEntity.getSlot(HELMET_SLOT).set(it) }
+        chestplateSlot?.let { finalEntity.getSlot(CHESTPLATE_SLOT).set(it) }
+        leggingsSlot?.let { finalEntity.getSlot(LEGGINGS_SLOT).set(it) }
+        bootsSlot?.let { finalEntity.getSlot(BOOTS_SLOT).set(it) }
 
-        finalEntity.getSlot(helmetSlot).set(ModItems.BREAD_HELMET.get().defaultInstance)
-//            setEntity.getSlot(102).set(ModItems.BREAD_CHESTPLATE.get().defaultInstance)
-//            setEntity.getSlot(101).set(ModItems.BREAD_LEGGINGS.get().defaultInstance)
-//            setEntity.getSlot(100).set(ModItems.BREAD_BOOTS.get().defaultInstance)
-//            setEntity.getSlot(98).set(ModItems.TOOL_GUN.get().defaultInstance)
-//            setEntity.getSlot(99).set(Items.TNT.defaultInstance)
+        // Item Slots
+        mainHandSlot?.let { finalEntity.getSlot(MAINHAND_SLOT).set(it) }
+        offHandSlot?.let { finalEntity.getSlot(OFFHAND_SLOT).set(it) }
 
+        // Potion Effects
+        entityEffect?.let { it.forEach { (effect, duration, amplifier) ->
+            finalEntity.addEffect(MobEffectInstance(effect, duration, amplifier))
+        }}
+
+        customEntityName?.let { finalEntity.customName = Component.literal(it) }
+
+        // Actually rendering the gui elements
         pGuiGraphics.blit(TEXTURE_ASSETS, leftPos + 14, topPos + 24, 0, 0, 42, 75)
         InventoryScreen.renderEntityInInventoryFollowsMouse(
             pGuiGraphics, leftPos + entityX, topPos + entityY, entityScale,
@@ -105,8 +172,6 @@ class ToolGunCreatorScreen(
             (topPos + entityY - 50) - pMouseY.toFloat(),
             finalEntity
         )
-
-        // really cursed
         poseStack.translate(0.0, 0.0, 130.0)
         pGuiGraphics.drawString(
             font,
@@ -139,9 +204,6 @@ class ToolGunCreatorScreen(
         )
         addRenderableWidget(MobSelector(leftPos + 100, topPos + 100, 100, 15, Component.literal("mob")))
     }
-
-    private fun getEntity(string: String): EntityType<*>? =
-        ForgeRegistries.ENTITY_TYPES.getValue(EntityType.byString(string).getOrNull()?.let { EntityType.getKey(it) })
 
     inner class ScaleButton(
         pX: Int,
@@ -182,7 +244,7 @@ class ToolGunCreatorScreen(
         pXTexStart, pYTexStart,
         0,
         pResourceLocation, pTextureWidth, pTextureHeight,
-        { setEntity = "skeleton" }
+        { entityString = "skeleton" }
     )
 
     inner class MobSelector(
