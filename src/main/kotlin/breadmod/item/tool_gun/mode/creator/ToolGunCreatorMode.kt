@@ -35,7 +35,7 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
     private var entitySpeed: Double? = null
 
     // First Int: Duration, Second Int: Amplifier
-    private var entityEffect: List<Triple<MobEffect, Int, Int>>? = null
+    private var entityEffect: MutableList<Triple<MobEffect, Int, Int>>? = null
 
     private var helmetSlot: ItemStack? = null
     private var chestplateSlot: ItemStack? = null
