@@ -8,15 +8,22 @@ import breadmod.menu.item.ToolGunCreatorMenu
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.util.RayMarchResult.Companion.rayMarchBlock
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
+import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.util.GsonHelper
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.attributes.Attributes
+import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -24,26 +31,71 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.network.NetworkHooks
+import net.minecraftforge.registries.ForgeRegistries
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
-    private var customEntityName: String? = null
-    private var entityString: String = "zombie"
-    private var entityType: EntityType<*>? = getEntityFromString(entityString)
+    companion object {
+        val objects: MutableMap<ServerPlayer, String> = mutableMapOf()
+    }
 
-    private var entityHealth: Double? = null
-    private var entitySpeed: Double? = null
+    private fun LivingEntity.setEntitySlot(json: JsonElement, slot: Int, memberName: String) =
+        getSlot(slot).set(GsonHelper.convertToItem(json, memberName).defaultInstance)
 
-    // First Int: Duration, Second Int: Amplifier
-    private var entityEffect: MutableList<Triple<MobEffect, Int, Int>>? = null
+    private fun getMobEffect(location: String): MobEffect =
+        ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation(location)) ?: MobEffects.REGENERATION
 
-    private var helmetSlot: ItemStack? = null
-    private var chestplateSlot: ItemStack? = null
-    private var leggingsSlot: ItemStack? = null
-    private var bootsSlot: ItemStack? = null
+    private fun constructEntity(player: ServerPlayer, pLevel: Level, pos: Vec3): LivingEntity {
+        val data = objects[player] ?: return Pig(EntityType.PIG, pLevel).also {
+            it.setPos(Vec3(pos.x, pos.y, pos.z))
+            it.addTag("spawned_by_${player.name.string}")
+            player.sendSystemMessage(
+                Component.literal("WARNING: No creator mode data for ${player.name.string} found.")
+                    .withStyle(ChatFormatting.RED)
+            )
+            player.sendSystemMessage(
+                Component.literal("[Click here to crash]")
+                    .withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC, ChatFormatting.UNDERLINE)
+            )
+        }
+        val jsonData = Gson().fromJson(data, JsonObject::class.java)
+        val finalEntity = getEntityFromString(jsonData.get("entity").asString)?.create(pLevel) as LivingEntity
 
-    private var mainHandSlot: ItemStack? = null
-    private var offHandSlot: ItemStack? = null
+        finalEntity.addTag("spawned_by_${player.name.string}")
+
+        jsonData.asMap().forEach { (jsonKey, jsonValue) ->
+            when (jsonKey) {
+                "effects" -> {
+                    jsonValue.asJsonObject.asMap().forEach { (effectKey, effectValue) ->
+                        var duration = 0
+                        var amplifier = 0
+
+                        effectValue.asJsonObject.asMap().forEach { (key, value) ->
+                            when (key) {
+                                "duration" -> duration = value.asInt
+                                "amplifier" -> amplifier = value.asInt
+                            }
+                        }
+
+                        finalEntity.addEffect(MobEffectInstance(
+                            getMobEffect(effectKey.toString()),
+                            duration, amplifier
+                        ))
+                    }
+                }
+                "custom_entity_name" -> finalEntity.customName = Component.literal(jsonValue.asString)
+                "helmet" -> finalEntity.setEntitySlot(jsonValue, HELMET_SLOT, "helmet")
+                "chestplate" -> finalEntity.setEntitySlot(jsonValue, CHESTPLATE_SLOT, "chestplate")
+                "leggings" -> finalEntity.setEntitySlot(jsonValue, LEGGINGS_SLOT, "leggings")
+                "boots" -> finalEntity.setEntitySlot(jsonValue, BOOTS_SLOT, "boots")
+                "main_hand" -> finalEntity.setEntitySlot(jsonValue, MAINHAND_SLOT, "main_hand")
+                "off_hand" -> finalEntity.setEntitySlot(jsonValue, OFFHAND_SLOT, "off_hand")
+            }
+        }
+
+        finalEntity.setPos(Vec3(pos.x, pos.y, pos.z))
+        return finalEntity
+    }
 
     override fun action(
         pLevel: Level,
@@ -54,43 +106,19 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
         if(pControl.id == "screen" && !pLevel.isClientSide) {
             NetworkHooks.openScreen(pPlayer as ServerPlayer, this, pPlayer.blockPosition())
         } else if(pLevel is ServerLevel && pControl.id == "use") {
+            objects.forEach { (key, value) ->
+                println("key: $key, value: $value")
+            }
+
+
             println("added entity")
             pLevel.rayMarchBlock(pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 100.0, false)?.let { ray ->
-                val finalEntity = entityType?.create(pLevel) as LivingEntity
-
-                // Health
-                entityHealth?.let { health ->
-                    finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = health
-                    finalEntity.health = health.toFloat()
-                }
-
-                // Speed
-                entitySpeed?.let {
-                    finalEntity.getAttribute(Attributes.MOVEMENT_SPEED)?.baseValue = it
-                    finalEntity.speed = it.toFloat()
-                }
-
-                // Armor Slots
-                helmetSlot?.let { finalEntity.getSlot(HELMET_SLOT).set(it) }
-                chestplateSlot?.let { finalEntity.getSlot(CHESTPLATE_SLOT).set(it) }
-                leggingsSlot?.let { finalEntity.getSlot(LEGGINGS_SLOT).set(it) }
-                bootsSlot?.let { finalEntity.getSlot(BOOTS_SLOT).set(it) }
-
-                // Item Slots
-                mainHandSlot?.let { finalEntity.getSlot(MAINHAND_SLOT).set(it) }
-                offHandSlot?.let { finalEntity.getSlot(OFFHAND_SLOT).set(it) }
-
-                // Potion Effects
-                entityEffect?.let { it.forEach { (effect, duration, amplifier) ->
-                    finalEntity.addEffect(MobEffectInstance(effect, duration, amplifier))
-                }}
-
-                customEntityName?.let { finalEntity.customName = Component.literal(it) }
-
-                finalEntity.setPos(Vec3(ray.endPosition.x, ray.endPosition.y + 0.5, ray.endPosition.z))
-                finalEntity.addTag("spawned_by_${pPlayer.name.string}")
                 playToolGunSound(pLevel, pPlayer.blockPosition())
-                pLevel.addFreshEntity(finalEntity)
+                pLevel.addFreshEntity(
+                    constructEntity(pPlayer as ServerPlayer, pLevel, Vec3(
+                        ray.endPosition.x, ray.endPosition.y + 0.5, ray.endPosition.z)
+                    )
+                )
             }
         } else if (pLevel.isClientSide && pControl.id == "use") ToolGunAnimationHandler.trigger()
     }

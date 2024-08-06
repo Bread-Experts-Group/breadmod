@@ -13,6 +13,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.client.render.entity.BreadBulletEntityRenderer
 import breadmod.client.render.entity.PrimedHappyBlockRenderer
 import breadmod.client.hud.ToolGunOverlay
+import breadmod.client.render.ToasterRenderer
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.armor.ArmorColor
 import breadmod.client.screen.CertificateItemScreen
@@ -115,6 +116,7 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get()) { SidedScreenRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get()) { EnergyStorageRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get()) { ToasterRenderer() }
 //        event.registerBlockEntityRenderer(ModBlockEntityTypes.FLUID_STORAGE.get()) { FluidStorageRenderer() }
 
         val genericMachineRenderer = { _: BlockEntityRendererProvider.Context -> GenericMachineBlockEntityRenderer() }

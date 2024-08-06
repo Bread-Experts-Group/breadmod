@@ -1,7 +1,6 @@
 package breadmod
 
 import breadmod.ModMain.LOGGER
-import breadmod.client.render.ToasterRenderer
 import breadmod.compat.curios.ModCuriosSlotsProvider
 import breadmod.compat.projecte.ModEMCProvider
 import breadmod.datagen.*
@@ -12,7 +11,6 @@ import breadmod.datagen.tag.ModItemTags
 import breadmod.datagen.tag.ModPaintingTags
 import breadmod.datagen.tool_gun.ModToolGunModeProvider
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.worldgen.dimensions.ModBiomes
 import breadmod.registry.worldgen.dimensions.ModDimensions
@@ -24,7 +22,6 @@ import breadmod.registry.worldgen.structures.ModStructures
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
-import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -82,11 +79,6 @@ object CommonModEventBus {
             generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, existingFileHelper))
             generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
         }
-    }
-
-    @SubscribeEvent
-    fun registerBlockEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
-        event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get()) { ToasterRenderer() }
     }
 
     @SubscribeEvent

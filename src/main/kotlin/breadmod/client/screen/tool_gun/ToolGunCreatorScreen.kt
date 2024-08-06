@@ -5,9 +5,10 @@ import breadmod.ModMain.modTranslatable
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.mode.creator.*
 import breadmod.menu.item.ToolGunCreatorMenu
+import breadmod.network.PacketHandler
+import breadmod.network.tool_gun.ToolGunCreatorDataPacket
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.google.gson.stream.JsonReader
 import com.mojang.blaze3d.systems.RenderSystem
 import moze_intel.projecte.gameObjs.registries.PEItems
 import net.minecraft.ChatFormatting
@@ -31,112 +32,48 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.minecraftforge.fml.loading.FMLPaths
-import net.minecraftforge.registries.ForgeRegistries
 import java.awt.Color
-import java.io.FileReader
-import java.nio.file.Files
-import java.nio.file.Path
 
-@Suppress("Unused", "MemberVisibilityCanBePrivate")
+@Suppress("Unused")
 class ToolGunCreatorScreen(
     pMenu: ToolGunCreatorMenu,
     pPlayerInventory: Inventory,
     pTitle: Component
 ) : AbstractContainerScreen<ToolGunCreatorMenu>(pMenu, pPlayerInventory, pTitle) {
-    companion object {
+    private companion object {
         val TEXTURE = modLocation("textures", "gui", "item", TOOL_GUN_DEF, "creator_mode.png")
         val TEXTURE_ASSETS = modLocation("textures", "gui", "item", TOOL_GUN_DEF, "creator_mode_assets.png")
         val instance: Minecraft = Minecraft.getInstance()
+
+        var customEntityName: String? = "jim"
+        var entityString: String = "zombie"
+        var entityType: EntityType<*>? = getEntityFromString(entityString)
+
+        var entityHealth: Double = 20.0
+        var entitySpeed: Double = 5.0
+
+        // First Int: Duration, Second Int: Amplifier
+        var entityEffect: MutableList<Triple<MobEffect, Int, Int>> = mutableListOf(
+            Triple(MobEffects.HARM, 1000, 10),
+            Triple(MobEffects.JUMP, 500, 2)
+        )
+
+        var helmetSlot: ItemStack = Items.DIAMOND_HELMET.defaultInstance
+        var chestplateSlot: ItemStack = Items.DIAMOND_CHESTPLATE.defaultInstance
+        var leggingsSlot: ItemStack = Items.DIAMOND_LEGGINGS.defaultInstance
+        var bootsSlot: ItemStack = Items.DIAMOND_BOOTS.defaultInstance
+
+        var mainHandSlot: ItemStack = PEItems.RED_MATTER_AXE.get().defaultInstance
+        var offHandSlot: ItemStack = ItemStack.EMPTY
     }
 
     private val entityX = 35
     private val entityY = 94
     private var entityScale = 32
 
-    var customEntityName: String? = null
-    var entityString: String = "zombie"
-    var entityType: EntityType<*>? = getEntityFromString(entityString)
-
-    var entityHealth: Double? = 20.0
-    var entitySpeed: Double? = 5.0
-
-    // First Int: Duration, Second Int: Amplifier
-    var entityEffect: MutableList<Triple<MobEffect, Int, Int>>? = mutableListOf(
-        Triple(MobEffects.HARM, 1000, 10),
-        Triple(MobEffects.JUMP, 1000, 10)
-    )
-
-    var helmetSlot: ItemStack? = Items.DIAMOND_HELMET.defaultInstance
-    var chestplateSlot: ItemStack? = Items.DIAMOND_CHESTPLATE.defaultInstance
-    var leggingsSlot: ItemStack? = Items.DIAMOND_LEGGINGS.defaultInstance
-    var bootsSlot: ItemStack? = Items.DIAMOND_BOOTS.defaultInstance
-
-    var mainHandSlot: ItemStack? = PEItems.RED_MATTER_AXE.get().defaultInstance
-    var offHandSlot: ItemStack? = null
-
-    val json = JsonObject().also {
-        it.addProperty("entity", ForgeRegistries.ENTITY_TYPES.getKey(entityType).toString())
-        if(customEntityName != null) { it.addProperty("custom_entity_name", customEntityName) }
-        if(entityHealth != null) { it.addProperty("entity_health", entityHealth) }
-        if(entitySpeed != null) { it.addProperty("entity_speed", entitySpeed) }
-        if(entityEffect != null) {
-            it.add("effects", JsonObject().also { effectObject ->
-                entityEffect?.forEach { (effect, duration, amplifier) ->
-                    effectObject.add(effectToString(effect), JsonObject().also { currentEffect ->
-                        currentEffect.addProperty("duration", duration)
-                        currentEffect.addProperty("amplifier", amplifier)
-                    })
-                }
-            })
-        }
-        if(helmetSlot != null) {
-            it.addProperty("helmet", helmetSlot?.item?.let { helmet -> itemToString(helmet) })
-        }
-        if(chestplateSlot != null) {
-            it.addProperty("chestplate", chestplateSlot?.item?.let { chestplate -> itemToString(chestplate) })
-        }
-        if(leggingsSlot != null) {
-            it.addProperty("leggings", leggingsSlot?.item?.let { leggings -> itemToString(leggings) })
-        }
-        if(bootsSlot != null) {
-            it.addProperty("boots", bootsSlot?.item?.let { boots -> itemToString(boots) })
-        }
-        if(mainHandSlot != null) {
-            it.addProperty("main_hand", mainHandSlot?.item?.let { mainHand -> itemToString(mainHand) })
-        }
-        if(offHandSlot != null) {
-            it.addProperty("off_hand", offHandSlot?.item?.let { offHand -> itemToString(offHand) })
-        }
-    }
-
-    val jsonByteArray = json.toString().toByteArray()
-    val gson = Gson()
-    val filePath: Path = FMLPaths.GAMEDIR.get().resolve("breadmod/tool_gun/mob.json").toAbsolutePath()
-
-    val reader = JsonReader(FileReader(filePath.toFile()))
-    val data: JsonObject = gson.fromJson(reader, JsonObject::class.java)
-
     init {
         imageWidth = 256
         imageHeight = 220
-//        println(json)
-
-        if(!Files.exists(filePath)) Files.write(filePath, jsonByteArray)
-
-//        println(GsonHelper.parse(String(jsonByteArray, StandardCharsets.UTF_8)).get("effects"))
-
-        data.getAsJsonObject("effects").asMap().forEach { (key, value) ->
-            println("key: $key")
-            value.asJsonObject.asMap().forEach { (effectKey, valueInt) ->
-                println("key: $effectKey, valueInt: $valueInt")
-            }
-        }
-
-        // intentionally returns null to test non-existing entries in the object
-        if(data.getAsJsonObject("stinky") != null) {
-            println(data.getAsJsonObject("stinky"))
-        } else println("this is null!")
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
@@ -165,31 +102,27 @@ class ToolGunCreatorScreen(
         entityType = getEntityFromString(entityString)
 
         // Health
-        entityHealth?.let { health ->
-            finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = health
-            finalEntity.health = health.toFloat()
-        }
+        finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = entityHealth
+        finalEntity.health = entityHealth.toFloat()
 
         // Speed
-        entitySpeed?.let {
-            finalEntity.getAttribute(Attributes.MOVEMENT_SPEED)?.baseValue = it
-            finalEntity.speed = it.toFloat()
-        }
+        finalEntity.getAttribute(Attributes.MOVEMENT_SPEED)?.baseValue = entitySpeed
+        finalEntity.speed = entitySpeed.toFloat()
 
         // Armor Slots
-        helmetSlot?.let { finalEntity.getSlot(HELMET_SLOT).set(it) }
-        chestplateSlot?.let { finalEntity.getSlot(CHESTPLATE_SLOT).set(it) }
-        leggingsSlot?.let { finalEntity.getSlot(LEGGINGS_SLOT).set(it) }
-        bootsSlot?.let { finalEntity.getSlot(BOOTS_SLOT).set(it) }
+        finalEntity.getSlot(HELMET_SLOT).set(helmetSlot)
+        finalEntity.getSlot(CHESTPLATE_SLOT).set(chestplateSlot)
+        finalEntity.getSlot(LEGGINGS_SLOT).set(leggingsSlot)
+        finalEntity.getSlot(BOOTS_SLOT).set(bootsSlot)
 
         // Item Slots
-        mainHandSlot?.let { finalEntity.getSlot(MAINHAND_SLOT).set(it) }
-        offHandSlot?.let { finalEntity.getSlot(OFFHAND_SLOT).set(it) }
+        finalEntity.getSlot(MAINHAND_SLOT).set(mainHandSlot)
+        finalEntity.getSlot(OFFHAND_SLOT).set(offHandSlot)
 
         // Potion Effects
-        entityEffect?.let { it.forEach { (effect, duration, amplifier) ->
+        entityEffect.forEach { (effect, duration, amplifier) ->
             finalEntity.addEffect(MobEffectInstance(effect, duration, amplifier))
-        }}
+        }
 
         customEntityName?.let { finalEntity.customName = Component.literal(it) }
 
@@ -227,6 +160,9 @@ class ToolGunCreatorScreen(
             ScaleButton(leftPos + 100, topPos + 40, 10, 10, Component.literal("-"))
         )
         addRenderableWidget(
+            JsonButton(leftPos + 120, topPos + 30, 80, 10, Component.literal("send to server"))
+        )
+        addRenderableWidget(
             FunnyButton(leftPos + 200, topPos + 80, 20, 20,
                 0, 0, 20, 20,
                 modLocation("textures", "block", "fish.gif"))
@@ -255,6 +191,61 @@ class ToolGunCreatorScreen(
         }
 
         override fun isFocused(): Boolean = false
+    }
+
+    inner class JsonButton(
+        pX: Int,
+        pY: Int,
+        pWidth: Int,
+        pHeight: Int,
+        pText: Component
+    ): AbstractButton(pX, pY, pWidth, pHeight, pText) {
+        private val gson = Gson()
+
+        private fun writeJson(): JsonObject = JsonObject().also {
+//            it.addProperty("entity", ForgeRegistries.ENTITY_TYPES.getKey(entityType).toString())
+            it.addProperty("entity", entityString)
+            if(customEntityName != null) { it.addProperty("custom_entity_name", customEntityName) }
+            it.addProperty("entity_health", entityHealth)
+            it.addProperty("entity_speed", entitySpeed)
+            it.add("effects", JsonObject().also { effectObject ->
+                entityEffect.forEach { (effect, duration, amplifier) ->
+                    effectObject.add(effectToString(effect), JsonObject().also { currentEffect ->
+                        currentEffect.addProperty("duration", duration)
+                        currentEffect.addProperty("amplifier", amplifier)
+                    })
+                }
+            })
+            it.addProperty("helmet", itemToString(helmetSlot.item))
+            it.addProperty("chestplate", itemToString(chestplateSlot.item))
+            it.addProperty("leggings", itemToString(leggingsSlot.item))
+            it.addProperty("boots", itemToString(bootsSlot.item))
+            it.addProperty("main_hand", itemToString(mainHandSlot.item))
+            it.addProperty("off_hand", itemToString(offHandSlot.item))
+        }
+
+        override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
+
+        override fun onPress() {
+            val json = writeJson()
+
+            println("firing string to server")
+            println(json.toString())
+            PacketHandler.NETWORK.sendToServer(ToolGunCreatorDataPacket(json.toString()))
+
+            // todo this stuff below needs to be converted into a save/load system for storing on the player's computer
+//            val jsonByteArray = json.toString().encodeToByteArray()
+//
+//            val filePath: Path
+//            if(!Files.exists(FMLPaths.GAMEDIR.get().resolve("breadmod/tool_gun/mob.json").toAbsolutePath())) {
+//                Files.write(FMLPaths.GAMEDIR.get().resolve("breadmod/tool_gun/mob.json").toAbsolutePath(), jsonByteArray)
+//                println("wrote json file to path")
+//                return
+//            } else filePath = FMLPaths.GAMEDIR.get().resolve("breadmod/tool_gun/mob.json").toAbsolutePath()
+//
+//            val jsonReader = JsonReader(FileReader(filePath.toFile()))
+//            val jsonData: JsonObject = gson.fromJson(jsonReader, JsonObject::class.java)
+        }
     }
 
     inner class FunnyButton(
