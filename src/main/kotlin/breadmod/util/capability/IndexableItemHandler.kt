@@ -18,11 +18,8 @@ import kotlin.math.min
 open class IndexableItemHandler(
     private val slots: List<Pair<Int, StorageDirection>>,
     var slotChanged: ((index: Int, stack: ItemStack) -> Unit)? = null
-) : IItemHandler, ICapabilitySavable<CompoundTag>, ObservableList<ItemStack>(slots.size, slotChanged) {
+) : IItemHandler, ICapabilitySavable<CompoundTag>, ObservableList<ItemStack>(slots.size, { ItemStack.EMPTY }, slotChanged) {
     override var changed: (() -> Unit)? = { slotChanged?.invoke(0, ItemStack.EMPTY) }
-
-    private val stacks = MutableList(slots.size) { ItemStack.EMPTY }
-    override val size: Int = slots.size
 
     /**
      * Retrieves the number of slots in this [IndexableItemHandler].
@@ -41,15 +38,38 @@ open class IndexableItemHandler(
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    override fun getStackInSlot(slot: Int): ItemStack = stacks[slot].copy()
+    override fun getStackInSlot(slot: Int): ItemStack = this[slot].copy()
 
+    /**
+     * Conditional lambda to check if an item can be inserted into a slot.
+     *
+     * @see extractItemCheck
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
     var insertItemCheck: ((slot: Int, stack: ItemStack, simulate: Boolean) -> Boolean)? = { _, _, _ -> true }
+
+    /**
+     * Conditional lambda to check if an item can be extracted from a slot.
+     *
+     * @see extractItemCheck
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
     var extractItemCheck: ((slot: Int, amount: Int, simulate: Boolean) -> Boolean)? = { _, _, _ -> true }
 
+    /**
+     * Inserts an item into the specified [slot].
+     *
+     * @see insertItemCheck
+     * @see extractItem
+     * @author Maiko Elbrecht
+     * @since 1.0.0
+     */
     override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy().also {
         if(insertItemCheck?.invoke(slot, stack, simulate) != true) return it
         val reifiedSlot = slots[slot]
-        val reifiedStack = stacks[slot]
+        val reifiedStack = this[slot]
         val toMove = min(min(reifiedSlot.first, reifiedStack.maxStackSize) - reifiedStack.count, it.count)
 
         if(reifiedSlot.second != StorageDirection.EMPTY_ONLY
@@ -57,8 +77,8 @@ open class IndexableItemHandler(
             && (reifiedStack.isEmpty || stack.item == reifiedStack.item)
         ) {
             if(!simulate) {
-                if(reifiedStack.isEmpty) stacks[slot] = it.copyWithCount(toMove)
-                else stacks[slot].grow(toMove)
+                if (reifiedStack.isEmpty) this[slot] = it.copyWithCount(toMove)
+                else this[slot].grow(toMove)
             }
             it.shrink(toMove)
         } else return it
@@ -76,10 +96,18 @@ open class IndexableItemHandler(
     @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
     fun insertItem(stack: ItemStack, simulate: Boolean): ItemStack = TODO("insert items 2")
 
+    /**
+     * Extracts an item from the specified [slot].
+     *
+     * @see extractItemCheck
+     * @see insertItem
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
     override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack {
         if(extractItemCheck?.invoke(slot, amount, simulate) != true) return ItemStack.EMPTY
         val reifiedSlot = slots[slot]
-        val reifiedStack = stacks[slot]
+        val reifiedStack = this[slot]
         val toMove = min(reifiedStack.count, amount)
 
         return if(reifiedSlot.second != StorageDirection.STORE_ONLY && toMove > 0) {
@@ -98,9 +126,16 @@ open class IndexableItemHandler(
     @Suppress("MemberVisibilityCanBePrivate", "unused", "UNUSED_PARAMETER")
     fun extractItem(target: Item? = null, amount: Int, simulate: Boolean): ItemStack = TODO("extract items 2")
 
+
+    /**
+     * Retrieves the maximum stack size for the specified [slot].
+     *
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
     override fun getSlotLimit(slot: Int): Int {
         val slotMax = slots[slot].first
-        val slotActual = stacks[slot]
+        val slotActual = this[slot]
         return if(!slotActual.isEmpty) min(slotMax, slotActual.maxStackSize)
         else slotMax
     }
@@ -108,10 +143,10 @@ open class IndexableItemHandler(
     override fun isItemValid(slot: Int, stack: ItemStack): Boolean = true
 
     override fun serializeNBT(): CompoundTag = CompoundTag().also { tag ->
-        stacks.forEachIndexed { index, itemStack -> tag.put(index.toString(), itemStack.serializeNBT()) }
+        this.forEachIndexed { index, itemStack -> tag.put(index.toString(), itemStack.serializeNBT()) }
     }
 
     override fun deserializeNBT(nbt: CompoundTag) {
-        nbt.allKeys.forEach { stacks[it.toInt()] = ItemStack.of(nbt.getCompound(it)) }
+        nbt.allKeys.forEach { this[it.toInt()] = ItemStack.of(nbt.getCompound(it)) }
     }
 }

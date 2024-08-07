@@ -4,21 +4,21 @@ package breadmod.util
  * A list that can be observed for changes.
  *
  * @param E The type of elements in the list.
- * @param size The size of the list.
+ * @param listSize The size of the list.
  * @param listChanged The callback to be called when the list is changed.
  *
  * @author Miko Elbrecht
  * @since 1.0.0
  */
 open class ObservableList<E>(
-    override val size: Int,
+    listSize: Int,
+    initialization: (index: Int) -> E,
     var listChanged: ((index: Int, element: E) -> Unit)? = null
 ) : AbstractMutableList<E>() {
-    constructor(list: List<E>, changed: ((index: Int, element: E) -> Unit)? = null) : this(list.size, changed) {
-        this.list.addAll(list)
-    }
+    constructor(list: List<E>, changed: ((index: Int, element: E) -> Unit)? = null) : this(list.size, { list[it] }, changed)
 
-    private val list: MutableList<E> = mutableListOf()
+    private val list: MutableList<E> = MutableList(listSize, initialization)
+    override val size: Int = list.size
 
     override fun add(index: Int, element: E) {
         list.add(index, element)
