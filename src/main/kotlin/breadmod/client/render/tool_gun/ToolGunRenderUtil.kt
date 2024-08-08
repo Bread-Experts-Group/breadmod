@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 
-private const val SCREEN_TINT = 0xFFFFFF
+private const val SCREEN_TINT = 15728880
 /**
  * +X moves text forward on tool gun
  * -X moves text backward on tool gun

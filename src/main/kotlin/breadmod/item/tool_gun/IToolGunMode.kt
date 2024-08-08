@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
@@ -58,7 +59,14 @@ interface IToolGunMode {
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    fun render(pGunStack: ItemStack, pPoseStack: PoseStack, pBuffer: MultiBufferSource, pPackedLight: Int, pPackedOverlay: Int) {}
+    fun render(
+        pGunStack: ItemStack,
+        pDisplayContext: ItemDisplayContext,
+        pPoseStack: PoseStack,
+        pBuffer: MultiBufferSource,
+        pPackedLight: Int,
+        pPackedOverlay: Int
+    ) {}
 
     companion object {
         fun playToolGunSound(pLevel: Level, at: BlockPos) =

@@ -2,7 +2,6 @@
 ## Priority todos
   - [ ] <s>Port mod to 1.21</s> (postponed until further notice)
     - remove mixin for dye able armor layers and items and replace with built-in methods
-  - [X] Set up secondary mod for Bread Mod Advanced
   - [ ] Document functions and code to make it more understandable
 ## Standard, Base Mod
 - [X] Bread Armor
@@ -101,6 +100,7 @@
   - [ ] Fluid texture on diesel machine needs to be normalized
   - [ ] (major) tool gun stacking up/absorbing clicks when not equipped
   - [ ] Tool gun beam is scuffed
+  - [ ] Certain slots in block entity screens not showing any items on client
   - [ ] happy block explosion not actually exploding an area
   - [ ] (production specific) Tool gun action not triggering
   - [ ] BMExplosion causing crash

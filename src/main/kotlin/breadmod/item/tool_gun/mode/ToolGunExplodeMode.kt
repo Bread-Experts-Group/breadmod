@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
@@ -68,6 +69,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
 
     override fun render(
         pGunStack: ItemStack,
+        pDisplayContext: ItemDisplayContext,
         pPoseStack: PoseStack,
         pBuffer: MultiBufferSource,
         pPackedLight: Int,

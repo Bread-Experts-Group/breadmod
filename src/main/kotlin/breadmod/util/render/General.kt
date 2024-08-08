@@ -421,6 +421,6 @@ fun drawTextOnSide(
     translateOnBlockSide(pBlockState, pDirection, pPoseStack, pPosX, pPosY, pPosZ)
     pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
     pPoseStack.scale(pScale, pScale, pScale)
-    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, Color(255, 255, 255, 0).rgb)
+    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, 15728880)
     pPoseStack.popPose()
 }

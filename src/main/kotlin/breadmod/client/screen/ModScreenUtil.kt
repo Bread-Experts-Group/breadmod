@@ -9,6 +9,7 @@ import org.joml.Matrix4f
 import org.joml.Quaternionf
 import kotlin.math.atan
 
+// todo convert these functions from the inventory screen to accept non-living entities
 fun renderEntityInInventoryFollowsMouse(
     pGuiGraphics: GuiGraphics,
     pX: Int,

@@ -71,7 +71,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
                 0.9, 0.0175, -0.040, 0.0007f
             )
 
-            toolGunMode.mode.render(pStack, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+            toolGunMode.mode.render(pStack, pDisplayContext, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
 
             pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
             renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
