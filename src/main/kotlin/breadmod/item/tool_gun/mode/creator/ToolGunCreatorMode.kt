@@ -2,7 +2,7 @@ package breadmod.item.tool_gun.mode.creator
 
 import breadmod.ModMain
 import breadmod.client.render.tool_gun.ToolGunAnimationHandler
-import breadmod.client.screen.tool_gun.ToolGunCreatorScreen
+import breadmod.client.screen.tool_gun.creator.ToolGunCreatorScreen
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.menu.item.ToolGunCreatorMenu
