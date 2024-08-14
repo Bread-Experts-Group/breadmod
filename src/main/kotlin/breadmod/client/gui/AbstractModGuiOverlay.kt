@@ -1,5 +1,6 @@
-package breadmod.client.hud
+package breadmod.client.gui
 
+import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -45,8 +46,6 @@ abstract class AbstractModGuiOverlay: IGuiOverlay {
         pBuffer: MultiBufferSource,
         pPlayer: LocalPlayer
     )
-
-    fun PoseStack.scaleFlat(scale: Float) = this.scale(scale, scale, scale)
 
     fun drawScaledText(
         pText: Component,

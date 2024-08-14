@@ -211,6 +211,8 @@ class USEnglishLanguageProvider(
             TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r")
         modAdd("Save / Load",
             TOOL_GUN_DEF, "creator", "save_load")
+        modAdd("expected %s, got %s",
+            TOOL_GUN_DEF, "creator", "invalid_entity")
 
         modAdd("Create Entity",
             TOOL_GUN_DEF, "mode", "controls", "name", "creator", "rmb")

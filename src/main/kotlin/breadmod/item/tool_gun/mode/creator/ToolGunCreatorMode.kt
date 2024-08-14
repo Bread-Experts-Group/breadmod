@@ -2,7 +2,6 @@ package breadmod.item.tool_gun.mode.creator
 
 import breadmod.ModMain
 import breadmod.client.render.tool_gun.ToolGunAnimationHandler
-import breadmod.client.screen.tool_gun.creator.ToolGunCreatorScreen
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.menu.item.ToolGunCreatorMenu
@@ -12,9 +11,7 @@ import breadmod.util.RayMarchResult.Companion.rayMarchBlock
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
@@ -31,7 +28,6 @@ import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
@@ -135,17 +131,17 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
         } else if (pLevel.isClientSide && pControl.id == "use") ToolGunAnimationHandler.trigger()
     }
 
-    override fun render(
-        pGunStack: ItemStack,
-        pDisplayContext: ItemDisplayContext,
-        pPoseStack: PoseStack,
-        pBuffer: MultiBufferSource,
-        pPackedLight: Int,
-        pPackedOverlay: Int
-    ) {
-        val jsonData = Gson().fromJson(ToolGunCreatorScreen.finalData, JsonObject::class.java)
+//    override fun render(
+//        pGunStack: ItemStack,
+//        pDisplayContext: ItemDisplayContext,
+//        pPoseStack: PoseStack,
+//        pBuffer: MultiBufferSource,
+//        pPackedLight: Int,
+//        pPackedOverlay: Int
+//    ) {
+//        val jsonData = Gson().fromJson(ToolGunCreatorScreen.finalData, JsonObject::class.java)
 //        println(ToolGunCreatorScreen.finalData)
-    }
+//    }
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu =
         ToolGunCreatorMenu(pContainerId, pPlayerInventory)

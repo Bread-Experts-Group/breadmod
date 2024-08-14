@@ -1,5 +1,6 @@
 package breadmod.item.tool_gun.mode.creator
 
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Item
@@ -13,8 +14,12 @@ const val BOOTS_SLOT = 100
 const val MAINHAND_SLOT = 98
 const val OFFHAND_SLOT = 99
 
-fun getEntityFromString(string: String): EntityType<*>? =
-    ForgeRegistries.ENTITY_TYPES.getValue(EntityType.byString(string).getOrNull()?.let { EntityType.getKey(it) })
+/** Returns [EntityType.PIG] if provided [id] does not exist */
+fun getEntityFromString(id: String): EntityType<*>? =
+    ForgeRegistries.ENTITY_TYPES.getValue(EntityType.byString(id).getOrNull()?.let { EntityType.getKey(it) })
+/** Returns null if provided [id] and/or [namespace] does not exist */
+fun mobEffectFromString(namespace: String = "minecraft", id: String): MobEffect? =
+    ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation(namespace, id))
 
 fun itemToString(item: Item) = ForgeRegistries.ITEMS.getKey(item).toString()
 fun effectToString(effect: MobEffect) = ForgeRegistries.MOB_EFFECTS.getKey(effect).toString()

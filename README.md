@@ -98,7 +98,7 @@
   - [X] items inputted into machines from their sides are voided out of existence
     - [X] items not saving on world save/load
   - [ ] Fluid texture on diesel machine needs to be normalized
-  - [ ] (major) tool gun stacking up/absorbing clicks when not equipped
+  - [X] (major) tool gun stacking up/absorbing clicks when not equipped
   - [ ] Tool gun beam is scuffed
   - [ ] Certain slots in block entity screens not showing any items on client
   - [ ] happy block explosion not actually exploding an area

@@ -19,10 +19,10 @@ import net.minecraftforge.network.NetworkEvent
 import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
 
-data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl: BreadModToolGunModeProvider.Control? = null) {
+data class ToolGunPacket(val pModeSwitch: Boolean, val pControl: BreadModToolGunModeProvider.Control? = null) {
     companion object {
         fun encodeBuf(input: ToolGunPacket, buffer: FriendlyByteBuf) {
-            buffer.writeBoolean(input.pModeSwitch).writeInt(input.pSlot); buffer.writeNullable(input.pControl) { writer, value ->
+            buffer.writeBoolean(input.pModeSwitch); buffer.writeNullable(input.pControl) { writer, value ->
                 writer.writeUtf(value.id)
                 writer.writeUtf(value.nameKey)
                 writer.writeUtf(value.categoryKey)
@@ -31,7 +31,7 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
                 writer.writeNullable(value.modifier) { writer2, value2 -> writer2.writeUtf(value2.name) }
             } }
         fun decodeBuf(input: FriendlyByteBuf): ToolGunPacket =
-            ToolGunPacket(input.readBoolean(), input.readInt(), input.readNullable {
+            ToolGunPacket(input.readBoolean(), input.readNullable {
                 BreadModToolGunModeProvider.Control(
                     input.readUtf(),
                     input.readUtf(),
@@ -45,44 +45,47 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pSlot: Int, val pControl:
         fun handle(input: ToolGunPacket, ctx: Supplier<NetworkEvent.Context>): CompletableFuture<Void> = ctx.get().let {
             it.enqueueWork {
                 val player = it.sender ?: return@enqueueWork
-                val stack = player.inventory.items[input.pSlot]
+//                val stack = player.inventory.items[input.pSlot]
+                val stack = player.mainHandItem
                 val item = stack.item
-                if(!player.cooldowns.isOnCooldown(item) && item is ToolGunItem) {
-                    if(input.pModeSwitch) {
-                        val currentMode = item.ensureCurrentMode(stack)
-                        val namespaceIterator = MapIterator(ModToolGunModeDataLoader.modes)
-                        namespaceIterator.restoreState(currentMode.getInt(NAMESPACE_ITERATOR_STATE_TAG))
-                        val modeIterator = MapIterator(namespaceIterator.current().value)
-                        modeIterator.restoreState(currentMode.getInt(MODE_ITERATOR_STATE_TAG))
+                if(item is ToolGunItem) {
+                    if(!player.cooldowns.isOnCooldown(item)) {
+                        if(input.pModeSwitch) {
+                            val currentMode = item.ensureCurrentMode(stack)
+                            val namespaceIterator = MapIterator(ModToolGunModeDataLoader.modes)
+                            namespaceIterator.restoreState(currentMode.getInt(NAMESPACE_ITERATOR_STATE_TAG))
+                            val modeIterator = MapIterator(namespaceIterator.current().value)
+                            modeIterator.restoreState(currentMode.getInt(MODE_ITERATOR_STATE_TAG))
 
-                        val last = modeIterator.current().value.first
-                        when {
-                            modeIterator.hasNext() -> {
-                                currentMode.putString(MODE_NAME_TAG, modeIterator.next().key)
-                                currentMode.putInt(MODE_ITERATOR_STATE_TAG, modeIterator.saveState())
+                            val last = modeIterator.current().value.first
+                            when {
+                                modeIterator.hasNext() -> {
+                                    currentMode.putString(MODE_NAME_TAG, modeIterator.next().key)
+                                    currentMode.putInt(MODE_ITERATOR_STATE_TAG, modeIterator.saveState())
+                                }
+                                namespaceIterator.hasNext() -> {
+                                    currentMode.putString(MODE_NAMESPACE_TAG, namespaceIterator.next().key)
+                                    currentMode.putInt(NAMESPACE_ITERATOR_STATE_TAG, namespaceIterator.saveState())
+                                    currentMode.putInt(MODE_ITERATOR_STATE_TAG, 0)
+                                    currentMode.putString(MODE_NAME_TAG, modeIterator.current().key)
+                                }
+                                else -> {
+                                    currentMode.putInt(NAMESPACE_ITERATOR_STATE_TAG, 0)
+                                    currentMode.putString(MODE_NAMESPACE_TAG, namespaceIterator.current().key)
+                                    currentMode.putInt(MODE_ITERATOR_STATE_TAG, 0)
+                                    currentMode.putString(MODE_NAME_TAG, modeIterator.current().key)
+                                }
                             }
-                            namespaceIterator.hasNext() -> {
-                                currentMode.putString(MODE_NAMESPACE_TAG, namespaceIterator.next().key)
-                                currentMode.putInt(NAMESPACE_ITERATOR_STATE_TAG, namespaceIterator.saveState())
-                                currentMode.putInt(MODE_ITERATOR_STATE_TAG, 0)
-                                currentMode.putString(MODE_NAME_TAG, modeIterator.current().key)
-                            }
-                            else -> {
-                                currentMode.putInt(NAMESPACE_ITERATOR_STATE_TAG, 0)
-                                currentMode.putString(MODE_NAMESPACE_TAG, namespaceIterator.current().key)
-                                currentMode.putInt(MODE_ITERATOR_STATE_TAG, 0)
-                                currentMode.putString(MODE_NAME_TAG, modeIterator.current().key)
-                            }
+
+                            val level = player.level()
+                            last.mode.close(level, player, stack, modeIterator.current().value.first.mode)
+                            modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
+                            player.cooldowns.addCooldown(item, 10)
+                        } else {
+                            item.getCurrentMode(stack).mode.action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
                         }
-
-                        val level = player.level()
-                        last.mode.close(level, player, stack, modeIterator.current().value.first.mode)
-                        modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
-                        player.cooldowns.addCooldown(item, 10)
-                    } else {
-                        item.getCurrentMode(stack).mode.action(player.level(), player, stack, input.pControl ?: return@enqueueWork)
+                        it.packetHandled = true
                     }
-                    it.packetHandled = true
                 }
             }
         }

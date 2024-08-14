@@ -1,5 +1,6 @@
 package breadmod
 
+import breadmod.ClientForgeEventBus.changeMode
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
 import breadmod.client.render.SidedScreenRenderer
@@ -12,13 +13,12 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.client.render.entity.BreadBulletEntityRenderer
 import breadmod.client.render.entity.PrimedHappyBlockRenderer
-import breadmod.client.hud.ToolGunOverlay
+import breadmod.client.gui.ToolGunOverlay
 import breadmod.client.render.ToasterRenderer
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.armor.ArmorColor
 import breadmod.client.screen.CertificateItemScreen
 import breadmod.client.screen.tool_gun.ToolGunCreatorScreen
-import breadmod.item.tool_gun.ToolGunItem.Companion.changeMode
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY

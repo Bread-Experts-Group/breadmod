@@ -1,4 +1,4 @@
-package breadmod.client.hud
+package breadmod.client.gui
 
 import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.ModMain.modLocation
@@ -7,6 +7,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_NAMESPACE_TAG
+import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting

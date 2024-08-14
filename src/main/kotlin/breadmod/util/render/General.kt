@@ -209,6 +209,8 @@ fun renderStaticItem(
     )
 }
 
+fun PoseStack.scaleFlat(scale: Float) = this.scale(scale, scale, scale)
+
 fun vertexTest(
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
