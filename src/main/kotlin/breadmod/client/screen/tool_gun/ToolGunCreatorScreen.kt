@@ -2,6 +2,7 @@ package breadmod.client.screen.tool_gun
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
+import breadmod.client.gui.components.DraggableWidget
 import breadmod.client.gui.components.ScaledAbstractButton
 import breadmod.client.gui.components.ScaledAbstractWidget
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
@@ -179,12 +180,11 @@ class ToolGunCreatorScreen(
         poseStack.pushPose()
         poseStack.translate(0.0, 0.0, -130.0)
         renderBackground(pGuiGraphics)
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
         poseStack.translate(0.0, 0.0, 130.0)
         poseStack.popPose()
-        
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY)
 
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+        renderTooltip(pGuiGraphics, pMouseX, pMouseY)
     }
 
     // render >> renderBg
@@ -294,7 +294,7 @@ class ToolGunCreatorScreen(
         // make sure to flush duplicate renderable entries in the list after adding potion effect widgets
         clearWidgets()
         widgetMap.forEach { (key, value) ->
-            if(value is MobEffectGuiElement || value is ValueModifierButtonsWithGui) {
+            if(value is MobEffectGuiWidget || value is ValueModifierGuiWidget) {
                 addRenderableOnly(value)
             } else addRenderableWidget(value)
             if(currentTab == SignType.POTION && key.second != SignType.POTION) {
@@ -346,7 +346,11 @@ class ToolGunCreatorScreen(
         threeStageValueButtons("scale" to SignType.MAIN, leftPos + 38, topPos + 100, SignType.SUBTRACT)
 
         // Health modifier
-        ValueModifierButtonsWithGui("health" to SignType.MAIN, leftPos + 72, topPos + 12, 1.0)
+        ValueModifierGuiWidget("health" to SignType.MAIN, leftPos + 72, topPos + 12, 1.0,
+            ICONS, 52, 0, 9, 9)
+
+        addToWidgetMap("draggable" to SignType.MAIN,
+            DraggableWidget(leftPos + 20, topPos + 40, 40, 20, 0.5, Component.literal("drag")))
 
         // Potion Effects Tab //
 
@@ -376,7 +380,7 @@ class ToolGunCreatorScreen(
             GenericButton(leftPos + 150, topPos + 40, 80, 10, Component.literal("add effect")) {
                 if(mobEffectFromString(id = mobEffectString) != null) {
                     println(mobEffectFromString(id = mobEffectString))
-                    MobEffectGuiElement(mobEffectString to SignType.POTION, leftPos + 20, topPos + 30)
+                    MobEffectGuiWidget(mobEffectString to SignType.POTION, leftPos + 20, topPos + 30, 1.0)
                 } else {
                     println("mob effect is null!")
                 }
@@ -419,8 +423,10 @@ class ToolGunCreatorScreen(
 
     // todo could be turned into a gui dragging system? (strong maybe)
     override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
-//        println("mouse dragging: X:$pMouseX, y:$pMouseY")
-        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+        return if(focused != null) {
+            focused?.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+            true
+        } else super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
     }
 
     override fun shouldCloseOnEsc(): Boolean {
@@ -505,16 +511,23 @@ class ToolGunCreatorScreen(
     // todo add and remove buttons for deleting the mob effect instance (along with removing that instance from entityEffect)
     // todo convert to using scaling
 
-    inner class MobEffectGuiElement(
+    inner class MobEffectGuiWidget(
         private val pair: Pair<String, Enum<SignType>>,
         private val pX: Int,
-        private val pY: Int
-    ): AbstractWidget(pX, pY, 300, 50, Component.empty()) {
+        private val pY: Int,
+        private val pScale: Double
+    ): ScaledAbstractWidget(pX, pY, 50, 50, pScale, Component.empty()) {
         override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
+            val poseStack = pGuiGraphics.pose()
+
             if(visible) {
-                pGuiGraphics.fill(RenderType.endPortal(), pX, pY, pX + 100, pY + 50, Color.RED.rgb)
-                pGuiGraphics.drawText(pair.first, pX + 30, pY + 5, Color.RED.rgb)
+                poseStack.pushPose()
+                poseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
+                poseStack.scaleFlat(pScale.toFloat())
+                pGuiGraphics.fill(RenderType.endPortal(), 0, 0, width, height, Color.RED.rgb)
+                pGuiGraphics.drawText(pair.first, 30, 5, Color.RED.rgb)
+                poseStack.popPose()
             }
         }
 
@@ -631,11 +644,16 @@ class ToolGunCreatorScreen(
     /** Constructs a widget with 6 add/subtract buttons with a texture to signify what value it changes.
      *  Automatically adds itself to [widgetMap]
      */
-    inner class ValueModifierButtonsWithGui(
+    inner class ValueModifierGuiWidget(
         pair: Pair<String, Enum<SignType>>,
         private val pX: Int,
         private val pY: Int,
-        private val pScale: Double
+        private val pScale: Double,
+        private val pIconTexture: ResourceLocation,
+        private val pUOffset: Int,
+        private val pVOffset: Int,
+        private val pUWidth: Int,
+        private val pVHeight: Int
     ): ScaledAbstractWidget(pX, pY, 80, 25, pScale, Component.empty()) {
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
             val poseStack = pGuiGraphics.pose()
@@ -648,8 +666,7 @@ class ToolGunCreatorScreen(
             pGuiGraphics.drawCenteredString(font, entityHealth.toString(), 66, 28, Color.WHITE.rgb)
             poseStack.scaleFlat(pScale.toFloat() + 4f)
             poseStack.translate(0.8, -0.2, 0.0)
-            // todo parameters for choosing icons
-            pGuiGraphics.blit(ICONS, 8, 0, 52, 0, 9, 9)
+            pGuiGraphics.blit(pIconTexture, 8, 0, pUOffset, pVOffset, pUWidth, pVHeight)
             poseStack.popPose()
             // 52, 0, 61, 9
         }
