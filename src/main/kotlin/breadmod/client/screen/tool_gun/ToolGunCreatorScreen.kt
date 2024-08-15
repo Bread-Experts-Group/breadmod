@@ -2,7 +2,6 @@ package breadmod.client.screen.tool_gun
 
 import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
-import breadmod.client.gui.components.DraggableWidget
 import breadmod.client.gui.components.ScaledAbstractButton
 import breadmod.client.gui.components.ScaledAbstractWidget
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
@@ -76,6 +75,9 @@ class ToolGunCreatorScreen(
 
         /** holder for mob effects */
         val mobEffectInstanceMap: MutableMap<String, Triple<MobEffect, Int, Int>> = mutableMapOf()
+        // todo either figure out how to make a scrollable list that can hold gui elements
+        //  or make a system to have 4 effects in one tab, press a button to go to the next tab
+        //  (have a map holding those effects in that tab along with their slot identifier)
 
         /** holder for adding mob effect widgets */
         private var mobEffectString: String = ""
@@ -176,37 +178,31 @@ class ToolGunCreatorScreen(
     }
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-        val poseStack = pGuiGraphics.pose()
-        poseStack.pushPose()
-        poseStack.translate(0.0, 0.0, -130.0)
-        renderBackground(pGuiGraphics)
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
-        poseStack.translate(0.0, 0.0, 130.0)
-        poseStack.popPose()
-
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY)
-    }
-
-    // render >> renderBg
-    override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         val level = instance.level ?: return
         val entity = constructEntity(level)
         val formattedName = entity.name.copy().string.lowercase().replace(' ', '_')
+        /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
+        val guiWidthOffset = (width - 256) / 2
+        /** for scissor, subtract the height of your gui texture by the screen height and divide by 2 */
+        val guiHeightOffset = (height - 220) / 2
 
-        // Setup gui rendering
-        RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, staticAlpha)
-        RenderSystem.setShaderTexture(0, TEXTURE)
+//        poseStack.pushPose()
+//        poseStack.translate(0.0, 0.0, -130.0)
+        renderBackground(pGuiGraphics)
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+        pGuiGraphics.enableScissor(guiWidthOffset + 14, guiHeightOffset + 24,
+            guiWidthOffset + 56, guiHeightOffset + 99)
+        InventoryScreen.renderEntityInInventoryFollowsMouse(
+            pGuiGraphics, leftPos + entityX, topPos + entityY, entityScale,
+            (leftPos + entityX) - pMouseX.toFloat(),
+            (topPos + entityY - 50) - pMouseY.toFloat(),
+            entity
+        )
+        pGuiGraphics.disableScissor()
 
         if(currentTab == SignType.MAIN) {
             pGuiGraphics.blit(TEXTURE_ASSETS, leftPos + 14, topPos + 24, 0, 0, 42, 75)
-            InventoryScreen.renderEntityInInventoryFollowsMouse(
-                pGuiGraphics, leftPos + entityX, topPos + entityY, entityScale,
-                (leftPos + entityX) - pMouseX.toFloat(),
-                (topPos + entityY - 50) - pMouseY.toFloat(),
-                entity
-            )
-            pGuiGraphics.pose().translate(0.0, 0.0, 130.0)
+//            pGuiGraphics.pose().translate(0.0, 0.0, 130.0)
             pGuiGraphics.drawCenteredString(
                 font,
                 if(matchEntityTypeToString()) Component.translatable(entity.name.copy().string)
@@ -220,6 +216,16 @@ class ToolGunCreatorScreen(
         } else if(currentTab == SignType.POTION) {
             // todo Gui.java@448 (code that will be immensely useful in rendering mob effect icons)
         }
+
+        renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+    }
+
+    // render >> renderBg
+    override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
+        // Setup gui rendering
+        RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, staticAlpha)
+        RenderSystem.setShaderTexture(0, TEXTURE)
 
         pGuiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight)
     }
@@ -349,8 +355,8 @@ class ToolGunCreatorScreen(
         ValueModifierGuiWidget("health" to SignType.MAIN, leftPos + 72, topPos + 12, 1.0,
             ICONS, 52, 0, 9, 9)
 
-        addToWidgetMap("draggable" to SignType.MAIN,
-            DraggableWidget(leftPos + 20, topPos + 40, 40, 20, 0.5, Component.literal("drag")))
+//        addToWidgetMap("draggable" to SignType.MAIN,
+//            DraggableWidget(leftPos + 20, topPos + 40, 40, 20, 0.5, Component.literal("this is a really long drag")))
 
         // Potion Effects Tab //
 
@@ -377,10 +383,18 @@ class ToolGunCreatorScreen(
 //            })
 
         addToWidgetMap("add_mob_effect" to SignType.POTION,
-            GenericButton(leftPos + 150, topPos + 40, 80, 10, Component.literal("add effect")) {
+            GenericButton(leftPos + 155, topPos + 12, 23, 12, Component.literal("add")) {
                 if(mobEffectFromString(id = mobEffectString) != null) {
-                    println(mobEffectFromString(id = mobEffectString))
-                    MobEffectGuiWidget(mobEffectString to SignType.POTION, leftPos + 20, topPos + 30, 1.0)
+                    mobEffectFromString(id = mobEffectString)?.let {
+                        println(it.displayName)
+                        if(mobEffectInstanceMap[mobEffectString] == null) {
+                            mobEffectInstanceMap[mobEffectString] = Triple(it, 100, 1)
+                            MobEffectGuiWidget(mobEffectString to SignType.POTION, leftPos + 40, topPos + 30,
+                                1.0, it)
+                        } else {
+                            println("effect already exists in map!")
+                        }
+                    }
                 } else {
                     println("mob effect is null!")
                 }
@@ -389,7 +403,7 @@ class ToolGunCreatorScreen(
 
         // Potion effect adder box
         createEditBox(
-            leftPos + 50, topPos + 10, 100, 15,
+            leftPos + 72, topPos + 13, 80, 10,
             "mob_effect_edit_box" to SignType.POTION, ""
         ) { string ->
             mobEffectString = string.lowercase().replace(' ', '_')
@@ -490,7 +504,7 @@ class ToolGunCreatorScreen(
         { createPathAndFile() }
     )
 
-    // todo convert to be scalable using ScaledAbstractButton or ScaledButton (wip)
+    // todo convert to be scalable using ScaledAbstractButton
     inner class GenericButton(
         pX: Int,
         pY: Int,
@@ -515,18 +529,22 @@ class ToolGunCreatorScreen(
         private val pair: Pair<String, Enum<SignType>>,
         private val pX: Int,
         private val pY: Int,
-        private val pScale: Double
-    ): ScaledAbstractWidget(pX, pY, 50, 50, pScale, Component.empty()) {
+        private val pScale: Double,
+        private val effect: MobEffect
+    ): ScaledAbstractWidget(pX, pY, 80, 40, pScale, Component.empty()) {
         override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
             val poseStack = pGuiGraphics.pose()
+            val mobEffectTexture = instance.mobEffectTextures.get(effect)
 
             if(visible) {
                 poseStack.pushPose()
                 poseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
                 poseStack.scaleFlat(pScale.toFloat())
-                pGuiGraphics.fill(RenderType.endPortal(), 0, 0, width, height, Color.RED.rgb)
-                pGuiGraphics.drawText(pair.first, 30, 5, Color.RED.rgb)
+                pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
+                pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
+                pGuiGraphics.blit(20, 20, 0, 20, 20, mobEffectTexture)
+                pGuiGraphics.drawText(effect.displayName, 30, 5, effect.color)
                 poseStack.popPose()
             }
         }

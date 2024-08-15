@@ -49,7 +49,7 @@ class DraggableWidget(
 
     override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
         return if(visible && isFocused) {
-            println("hello :D")
+//            println("hello :D")
             dragX += pDragX
             dragY += pDragY
             true
