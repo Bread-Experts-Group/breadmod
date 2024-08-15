@@ -6,7 +6,6 @@ import breadmod.item.tool_gun.mode.creator.ToolGunCreatorMode
 import breadmod.item.tool_gun.mode.ToolGunExplodeMode
 import breadmod.item.tool_gun.mode.ToolGunPowerMode
 import breadmod.item.tool_gun.mode.ToolGunRemoverMode
-import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.data.PackOutput
 
 internal class ModToolGunModeProvider(
@@ -23,7 +22,7 @@ internal class ModToolGunModeProvider(
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.remover.rmb",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.remover",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "remover", "rmb"),
-                    { InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT) }
+                    "key.mouse.right"
                 )
             ),
             ToolGunRemoverMode::class.java
@@ -39,14 +38,14 @@ internal class ModToolGunModeProvider(
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.creator.rmb",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb"),
-                    { InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT) }
+                    "key.mouse.right"
                 ),
                 Control(
                     "screen",
                     "${TOOL_GUN_DEF}.${ModMain.ID}.mode.controls.name.screen.r",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
-                    { InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R) }
+                    "key.keyboard.r"
                 )
             ),
             ToolGunCreatorMode::class.java
@@ -62,7 +61,7 @@ internal class ModToolGunModeProvider(
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.power.rmb",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.power",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "power", "rmb"),
-                    { InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT) }
+                    "key.mouse.right"
                 )
             ),
             ToolGunPowerMode::class.java
@@ -78,14 +77,14 @@ internal class ModToolGunModeProvider(
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.explode.rmb",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.explode",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "rmb"),
-                    { InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT) }
+                    "key.mouse.right"
                 ),
                 Control(
                     "fluid_toggle",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.name.explode.mmb",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.explode",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off"),
-                    { InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_MIDDLE) }
+                    "key.mouse.middle"
                 )
             ),
             ToolGunExplodeMode::class.java

@@ -24,6 +24,7 @@ import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.menu.ModMenuTypes
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.Util
@@ -44,6 +45,7 @@ import net.minecraftforge.client.event.ModelEvent.RegisterAdditional
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.client.settings.KeyConflictContext
+import net.minecraftforge.client.settings.KeyModifier
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
@@ -136,15 +138,15 @@ object ClientModEventBus {
                 KeyMapping(
                     it.nameKey,
                     KeyConflictContext.IN_GAME,
-                    it.modifier,
-                    it.key(),
+                    KeyModifier.valueFromString(it.modifier),
+                    InputConstants.getKey(it.key),
                     it.categoryKey
                 )
             } else {
                 KeyMapping(
                     it.nameKey,
                     KeyConflictContext.IN_GAME,
-                    it.key(),
+                    InputConstants.getKey(it.key),
                     it.categoryKey
                 )
             }
