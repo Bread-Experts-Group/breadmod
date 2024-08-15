@@ -2,6 +2,7 @@ package breadmod.util.render
 
 import breadmod.ModMain.modLocation
 import breadmod.util.translateDirection
+import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import com.mojang.math.Axis
@@ -19,6 +20,8 @@ import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -29,13 +32,14 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
-import org.joml.Matrix4f
-import org.joml.Vector2f
-import org.joml.Vector3f
-import org.joml.Vector4f
+import org.joml.*
 import java.awt.Color
+import java.lang.Math
 import java.util.*
+import kotlin.math.atan
 import kotlin.math.min
+
+val minecraft: Minecraft = Minecraft.getInstance()
 
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
@@ -53,14 +57,13 @@ val renderBuffer = mutableListOf<Pair<MutableList<Float>, (MutableList<Float>, R
  */
 fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add(mutableListOf(1F) to { mutableList, levelStageEvent ->
     val currentOpacity = mutableList[0]
-    val playerEyePos = (Minecraft.getInstance().player)?.getEyePosition(levelStageEvent.partialTick)
-    val level = Minecraft.getInstance().level
+    val playerEyePos = (minecraft.player)?.getEyePosition(levelStageEvent.partialTick)
+    val level = minecraft.level
     if (playerEyePos != null && level != null && currentOpacity > 0) {
         levelStageEvent.poseStack.pushPose()
         levelStageEvent.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
         val poseStack = levelStageEvent.poseStack
-        val instance = Minecraft.getInstance()
-        val bufferSource = instance.renderBuffers().bufferSource()
+        val bufferSource = minecraft.renderBuffers().bufferSource()
 
         if(thickness != null) {
             texturedQuadTest(
@@ -75,7 +78,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
         }
 
         levelStageEvent.poseStack.popPose()
-        mutableList[0] = currentOpacity - 0.1f * instance.partialTick
+        mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
         false
     } else true
 })
@@ -84,7 +87,7 @@ fun GuiGraphics.renderFluid(
     pX: Float, pY: Float, pWidth: Int, pHeight: Int,
     pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH,
 ) {
-    val atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+    val atlas = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
     val ext = IClientFluidTypeExtensions.of(pFluid)
     val spriteDiff = if(pFlowing) {
         val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
@@ -171,7 +174,7 @@ fun renderBlockModel(
     pPackedOverlay: Int,
     renderType: RenderType = RenderType.solid()
 ) {
-    Minecraft.getInstance().blockRenderer.modelRenderer.renderModel(
+    minecraft.blockRenderer.modelRenderer.renderModel(
         pPoseStack.last(),
         pBuffer.getBuffer(renderType),
         pBlockEntity.blockState,
@@ -196,7 +199,7 @@ fun renderStaticItem(
     pBlockEntity: BlockEntity,
     pPackedLight: Int
 ) {
-    val itemRenderer = Minecraft.getInstance().itemRenderer
+    val itemRenderer = minecraft.itemRenderer
     itemRenderer.renderStatic(
         pStack,
         ItemDisplayContext.FIXED,
@@ -261,8 +264,7 @@ fun texturedQuadTest(
     pVertex2: Vector3f = Vector3f(1f, 0f, 1f),
     pVertex3: Vector3f = Vector3f(1f, 0f, 0f)
 ) {
-    val instance = Minecraft.getInstance()
-    val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
+    val sprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
     quadTest(
         pPoseStack, pBuffer, pRenderType, pColor,
         pVertex0,
@@ -323,8 +325,7 @@ fun drawTexturedQuad(
     pX0: Float = 0f, pY0: Float = 0f, pZ0: Float = 0f,
     pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f
 ) {
-    val instance = Minecraft.getInstance()
-    val sprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pTextureLocation)
+    val sprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pTextureLocation)
     val spriteBuilder = pBuffer.getBuffer(pRenderType)
     drawQuad(
         spriteBuilder, pPoseStack, Color.WHITE.rgb,
@@ -425,4 +426,88 @@ fun drawTextOnSide(
     pPoseStack.scale(pScale, pScale, pScale)
     renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, 15728880)
     pPoseStack.popPose()
+}
+
+fun renderEntityInInventoryFollowsMouse(
+    pGuiGraphics: GuiGraphics,
+    pX: Int,
+    pY: Int,
+    pScale: Int,
+    pMouseX: Float,
+    pMouseY: Float,
+    pEntity: Entity
+) {
+    val f = atan((pMouseX / 40.0f).toDouble()).toFloat()
+    val f1 = atan((pMouseY / 40.0f).toDouble()).toFloat()
+    renderEntityInInventoryFollowsAngle(pGuiGraphics, pX, pY, pScale, f, f1, pEntity)
+}
+
+fun renderEntityInInventoryFollowsAngle(
+    pGuiGraphics: GuiGraphics,
+    pX: Int,
+    pY: Int,
+    pScale: Int,
+    angleXComponent: Float,
+    angleYComponent: Float,
+    pEntity: Entity
+) {
+    val quaternionf = Quaternionf().rotateZ(Math.PI.toFloat())
+    val quaternionf1 = Quaternionf().rotateX(angleYComponent * 20.0f * (Math.PI.toFloat() / 180f))
+    quaternionf.mul(quaternionf1)
+    val f2 = if (pEntity is LivingEntity) pEntity.yBodyRot else 0f
+    val f3 = pEntity.yRot
+    val f4 = pEntity.xRot
+    val f5 = if (pEntity is LivingEntity) pEntity.yHeadRotO else 0f
+    val f6 = pEntity.yHeadRot
+    if (pEntity is LivingEntity) pEntity.yBodyRot = 180.0f + angleXComponent * 20.0f
+    pEntity.yRot = 180.0f + angleXComponent * 40.0f
+    pEntity.xRot = -angleYComponent * 20.0f
+    pEntity.yHeadRot = pEntity.yRot
+    if (pEntity is LivingEntity) pEntity.yHeadRotO = pEntity.yRot
+    renderEntityInInventory(pGuiGraphics, pX, pY, pScale, quaternionf, quaternionf1, pEntity)
+    pEntity.yRot = f3
+    pEntity.xRot = f4
+    pEntity.yHeadRot = f6
+    if (pEntity is LivingEntity) {
+        pEntity.yBodyRot = f2
+        pEntity.yHeadRotO = f5
+    }
+}
+
+fun renderEntityInInventory(
+    pGuiGraphics: GuiGraphics,
+    pX: Int,
+    pY: Int,
+    pScale: Int,
+    pPose: Quaternionf,
+    pCameraOrientation: Quaternionf,
+    pEntity: Entity
+) {
+    pGuiGraphics.pose().pushPose()
+    pGuiGraphics.pose().translate(pX.toDouble(), pY.toDouble(), 50.0)
+    pGuiGraphics.pose().mulPoseMatrix(Matrix4f().scaling(pScale.toFloat(), pScale.toFloat(), (-pScale).toFloat()))
+    pGuiGraphics.pose().mulPose(pPose)
+    Lighting.setupForEntityInInventory()
+    val entityRenderDispatcher = minecraft.entityRenderDispatcher
+    pCameraOrientation.conjugate()
+    entityRenderDispatcher.overrideCameraOrientation(pCameraOrientation)
+
+    entityRenderDispatcher.setRenderShadow(false)
+    RenderSystem.runAsFancy {
+        entityRenderDispatcher.render(
+            pEntity,
+            0.0,
+            0.0,
+            0.0,
+            0.0f,
+            1.0f,
+            pGuiGraphics.pose(),
+            pGuiGraphics.bufferSource(),
+            15728880
+        )
+    }
+    pGuiGraphics.flush()
+    entityRenderDispatcher.setRenderShadow(true)
+    pGuiGraphics.pose().popPose()
+    Lighting.setupFor3DItems()
 }

@@ -15,9 +15,11 @@ const val MAINHAND_SLOT = 98
 const val OFFHAND_SLOT = 99
 
 /** Returns [EntityType.PIG] if provided [id] does not exist */
-fun getEntityFromString(id: String): EntityType<*>? =
+fun getEntityFromString(id: String): EntityType<*> =
     ForgeRegistries.ENTITY_TYPES.getValue(EntityType.byString(id).getOrNull()?.let { EntityType.getKey(it) })
-/** Returns null if provided [id] and/or [namespace] does not exist */
+        ?: EntityType.PIG
+
+/** Returns null if provided [id] or [namespace] does not exist */
 fun mobEffectFromString(namespace: String = "minecraft", id: String): MobEffect? =
     ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation(namespace, id))
 

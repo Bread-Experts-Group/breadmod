@@ -6,12 +6,15 @@ import breadmod.client.gui.components.ScaledAbstractButton
 import breadmod.client.gui.components.ScaledAbstractWidget
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.mode.creator.*
+import breadmod.item.tool_gun.mode.creator.ToolGunCreatorMode.Companion.getDefaultPig
 import breadmod.menu.item.ToolGunCreatorMenu
 import breadmod.network.PacketHandler
 import breadmod.network.tool_gun.ToolGunCreatorDataPacket
+import breadmod.util.render.renderEntityInInventoryFollowsMouse
 import breadmod.util.render.scaleFlat
 import com.google.gson.JsonObject
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.PoseStack
 import moze_intel.projecte.gameObjs.registries.PEItems
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
@@ -20,7 +23,6 @@ import net.minecraft.client.gui.components.*
 import net.minecraft.client.gui.components.Button.CreateNarration
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
@@ -28,20 +30,23 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
+import net.minecraft.world.phys.Vec3
 import net.minecraftforge.fml.loading.FMLPaths
 import org.lwjgl.glfw.GLFW
 import java.awt.Color
 import java.nio.file.Files
 import java.util.function.Consumer
 
-/** A horrifying amalgamation of many inner classes and one gui (will have proper docs soon... maybe) */
+/** A horrifying amalgamation of many inner classes and one gui (will have proper docs soon, maybe) */
 class ToolGunCreatorScreen(
     pMenu: ToolGunCreatorMenu,
     pPlayerInventory: Inventory,
@@ -96,7 +101,9 @@ class ToolGunCreatorScreen(
     }
 
     private val instance: Minecraft = Minecraft.getInstance()
+
     enum class SignType { MAIN, POTION, ADD, SUBTRACT }
+
     private val entityX = 35
     private val entityY = 94
 
@@ -110,19 +117,32 @@ class ToolGunCreatorScreen(
     }
 
     private var staticAlpha = 1.0f
+
     // todo set this up for a fading static texture
-    private fun alphaTick() = if (staticAlpha > 0f) staticAlpha -= 0.01f else staticAlpha = 1f
+//    private fun alphaTick() = if (staticAlpha > 0f) staticAlpha -= 0.01f else staticAlpha = 1f
 
-    private fun constructEntity(pLevel: Level): LivingEntity {
-        val finalEntity = entityType?.create(pLevel) as LivingEntity
+    private fun constructEntity(pPlayer: Player, pLevel: Level, pPos: Vec3): Entity {
+        val finalEntity = entityType?.create(pLevel) ?: return getDefaultPig(pPlayer, pLevel, pPos).also {
+            pPlayer.sendSystemMessage(
+                Component.literal("Placeholder text...")
+                    .withStyle(ChatFormatting.RED)
+            )
+        }
 
-        // Health
-        finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = entityHealth
-        finalEntity.health = entityHealth.toFloat()
+        if (finalEntity is LivingEntity) {
+            // Health
+            finalEntity.getAttribute(Attributes.MAX_HEALTH)?.baseValue = entityHealth
+            finalEntity.health = entityHealth.toFloat()
 
-        // Speed
-        finalEntity.getAttribute(Attributes.MOVEMENT_SPEED)?.baseValue = entitySpeed
-        finalEntity.speed = entitySpeed.toFloat()
+            // Speed
+            finalEntity.getAttribute(Attributes.MOVEMENT_SPEED)?.baseValue = entitySpeed
+            finalEntity.speed = entitySpeed.toFloat()
+
+            // Potion Effects
+            entityEffects.forEach { (_, value) ->
+                finalEntity.addEffect(MobEffectInstance(value.first, value.second, value.third))
+            }
+        }
 
         // Armor Slots
         finalEntity.getSlot(HELMET_SLOT).set(helmetSlot)
@@ -134,29 +154,15 @@ class ToolGunCreatorScreen(
         finalEntity.getSlot(MAINHAND_SLOT).set(mainHandSlot)
         finalEntity.getSlot(OFFHAND_SLOT).set(offHandSlot)
 
-        // Potion Effects
-        entityEffects.forEach { (_, value) ->
-            finalEntity.addEffect(MobEffectInstance(value.first, value.second, value.third))
-        }
-
-        if(customEntityName != "") { finalEntity.customName = Component.literal(customEntityName) }
-
+        if (customEntityName.isNotEmpty()) finalEntity.customName = Component.literal(customEntityName)
         return finalEntity
-    }
-
-    private fun matchEntityTypeToString(): Boolean {
-        val level = instance.level ?: return false
-        val entity = constructEntity(level)
-        val formattedName = entity.name.string.lowercase().replace(' ', '_')
-//        return entity.name.string == entityString
-        return formattedName == entityString
     }
 
     /**
      * [pX] and [pY] start at the top left of the gui, [pColor] defaults to White
      */
-    private fun GuiGraphics.drawText(pText: String, pX: Int, pY: Int, pColor: Int = Color.WHITE.rgb, pDropShadow: Boolean = false) =
-        drawString(font, Component.literal(pText), pX,  pY, pColor, pDropShadow)
+//    private fun GuiGraphics.drawText(pText: String, pX: Int, pY: Int, pColor: Int = Color.WHITE.rgb, pDropShadow: Boolean = false) =
+//        drawString(font, Component.literal(pText), pX,  pY, pColor, pDropShadow)
     private fun GuiGraphics.drawText(pText: Component, pX: Int, pY: Int, pColor: Int = Color.WHITE.rgb, pDropShadow: Boolean = false) =
         drawString(font, pText, pX, pY, pColor, pDropShadow)
 
@@ -177,12 +183,16 @@ class ToolGunCreatorScreen(
         println(path.toString())
     }
 
+    // TODO Not perfect
+    private fun checkRequestedVsActual(): Boolean = entityType.toString().contains(entityString.substringAfter(":"))
+
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-        val level = instance.level ?: return
-        val entity = constructEntity(level)
-        val formattedName = entity.name.copy().string.lowercase().replace(' ', '_')
+        val player = instance.player ?: return
+        val entity = constructEntity(player, player.level(), player.position())
+
         /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
         val guiWidthOffset = (width - 256) / 2
+
         /** for scissor, subtract the height of your gui texture by the screen height and divide by 2 */
         val guiHeightOffset = (height - 220) / 2
 
@@ -192,7 +202,7 @@ class ToolGunCreatorScreen(
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
         pGuiGraphics.enableScissor(guiWidthOffset + 14, guiHeightOffset + 24,
             guiWidthOffset + 56, guiHeightOffset + 99)
-        InventoryScreen.renderEntityInInventoryFollowsMouse(
+        renderEntityInInventoryFollowsMouse(
             pGuiGraphics, leftPos + entityX, topPos + entityY, entityScale,
             (leftPos + entityX) - pMouseX.toFloat(),
             (topPos + entityY - 50) - pMouseY.toFloat(),
@@ -202,14 +212,13 @@ class ToolGunCreatorScreen(
 
         if(currentTab == SignType.MAIN) {
             pGuiGraphics.blit(TEXTURE_ASSETS, leftPos + 14, topPos + 24, 0, 0, 42, 75)
-//            pGuiGraphics.pose().translate(0.0, 0.0, 130.0)
+
+
             pGuiGraphics.drawCenteredString(
                 font,
-                if(matchEntityTypeToString()) Component.translatable(entity.name.copy().string)
-                    .withStyle(if(matchEntityTypeToString()) ChatFormatting.GOLD else ChatFormatting.RED) else
-                    modTranslatable(TOOL_GUN_DEF,"creator", "invalid_entity",
-                        args = listOf(entityString, formattedName)
-                    ).withStyle(if(matchEntityTypeToString()) ChatFormatting.GOLD else ChatFormatting.RED),
+                entity.name.copy().withStyle(
+                    if (checkRequestedVsActual()) ChatFormatting.GOLD else ChatFormatting.RED
+                ),
                 leftPos + 35, topPos + 14,
                 Color.WHITE.rgb
             )
@@ -264,19 +273,25 @@ class ToolGunCreatorScreen(
         when(mathType) {
             SignType.ADD -> {
                 addToWidgetMap("${pair.first}_plus_one" to pair.second,
-                    ValueModifierButton(pX, pY, 10, 10, 0.8, "+", pair.first, 1.0))
+                    ValueModifierButton(pX, pY, 10, 10, 0.8, "+", pair.first, 1.0)
+                )
                 addToWidgetMap("${pair.first}_plus_ten" to pair.second,
-                    ValueModifierButton(pX + 8, pY, 16, 10, 0.8, "++", pair.first, 10.0))
+                    ValueModifierButton(pX + 8, pY, 16, 10, 0.8, "++", pair.first, 10.0)
+                )
                 addToWidgetMap("${pair.first}_plus_hundred" to pair.second,
-                    ValueModifierButton(pX + 2, pY + 8, 21, 10, 0.8, "+++", pair.first, 100.0))
+                    ValueModifierButton(pX + 2, pY + 8, 21, 10, 0.8, "+++", pair.first, 100.0)
+                )
             }
             SignType.SUBTRACT -> {
                 addToWidgetMap("${pair.first}_minus_one" to pair.second,
-                    ValueModifierButton(pX, pY, 10, 10, 0.8, "-", pair.first, -1.0))
+                    ValueModifierButton(pX, pY, 10, 10, 0.8, "-", pair.first, -1.0)
+                )
                 addToWidgetMap("${pair.first}_minus_ten" to pair.second,
-                    ValueModifierButton(pX + 8, pY, 16, 10, 0.8, "--", pair.first, -10.0))
+                    ValueModifierButton(pX + 8, pY, 16, 10, 0.8, "--", pair.first, -10.0)
+                )
                 addToWidgetMap("${pair.first}_minus_hundred" to pair.second,
-                    ValueModifierButton(pX + 2, pY + 8, 21, 10, 0.8, "---", pair.first, -100.0))
+                    ValueModifierButton(pX + 2, pY + 8, 21, 10, 0.8, "---", pair.first, -100.0)
+                )
             }
         }
     }
@@ -294,7 +309,7 @@ class ToolGunCreatorScreen(
     }
 
     /** Only called during gui init and adding potion effects.
-     * Existing widgets are simply overridden when this function is called again. */
+     * Existing widgets are overridden when this function is called again. */
     private fun initWidgetMap() {
         println("initializing widgetMap")
         // make sure to flush duplicate renderable entries in the list after adding potion effect widgets
@@ -322,7 +337,7 @@ class ToolGunCreatorScreen(
         ) { string ->
             entityString = string.lowercase().replace(' ', '_')
             entityType = getEntityFromString(entityString)
-            matchEntityTypeToString()
+            checkRequestedVsActual()
 //            println(entityString)
         }
 
@@ -343,7 +358,8 @@ class ToolGunCreatorScreen(
         // Fire entity to server-side
         addToWidgetMap("json_button" to SignType.MAIN,
             JsonButton(leftPos + 169, topPos + 205, 82, 10,
-                Component.literal("send to server"))
+                Component.literal("send to server")
+            )
         )
 
 
@@ -384,13 +400,15 @@ class ToolGunCreatorScreen(
 
         addToWidgetMap("add_mob_effect" to SignType.POTION,
             GenericButton(leftPos + 155, topPos + 12, 23, 12, Component.literal("add")) {
-                if(mobEffectFromString(id = mobEffectString) != null) {
+                if (mobEffectFromString(id = mobEffectString) != null) {
                     mobEffectFromString(id = mobEffectString)?.let {
                         println(it.displayName)
-                        if(mobEffectInstanceMap[mobEffectString] == null) {
+                        if (mobEffectInstanceMap[mobEffectString] == null) {
                             mobEffectInstanceMap[mobEffectString] = Triple(it, 100, 1)
-                            MobEffectGuiWidget(mobEffectString to SignType.POTION, leftPos + 40, topPos + 30,
-                                1.0, it)
+                            MobEffectGuiWidget(
+                                mobEffectString to SignType.POTION, leftPos + 40, topPos + 30,
+                                1.0, it
+                            )
                         } else {
                             println("effect already exists in map!")
                         }
@@ -505,7 +523,7 @@ class ToolGunCreatorScreen(
     )
 
     // todo convert to be scalable using ScaledAbstractButton
-    inner class GenericButton(
+    class GenericButton(
         pX: Int,
         pY: Int,
         pWidth: Int,
@@ -525,6 +543,14 @@ class ToolGunCreatorScreen(
     // todo add and remove buttons for deleting the mob effect instance (along with removing that instance from entityEffect)
     // todo convert to using scaling
 
+    private fun AbstractWidget.scaleInternal(pGuiGraphics: GuiGraphics, pPoseStack: PoseStack, pX: Int, pY: Int, pScale: Double) {
+        pPoseStack.pushPose()
+        pPoseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
+        pPoseStack.scaleFlat(pScale.toFloat())
+        pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
+        pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
+    }
+
     inner class MobEffectGuiWidget(
         private val pair: Pair<String, Enum<SignType>>,
         private val pX: Int,
@@ -538,11 +564,7 @@ class ToolGunCreatorScreen(
             val mobEffectTexture = instance.mobEffectTextures.get(effect)
 
             if(visible) {
-                poseStack.pushPose()
-                poseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
-                poseStack.scaleFlat(pScale.toFloat())
-                pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
-                pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
+                scaleInternal(pGuiGraphics, poseStack, pX, pY, pScale)
                 pGuiGraphics.blit(20, 20, 0, 20, 20, mobEffectTexture)
                 pGuiGraphics.drawText(effect.displayName, 30, 5, effect.color)
                 poseStack.popPose()
@@ -583,7 +605,7 @@ class ToolGunCreatorScreen(
     }
 
     // todo custom button scale and textures
-    inner class JsonButton(
+    class JsonButton(
         pX: Int,
         pY: Int,
         pWidth: Int,
@@ -640,7 +662,7 @@ class ToolGunCreatorScreen(
     }
 
     // todo custom button scale (DONE) and textures (TODO)
-    inner class ValueModifierButton(
+    class ValueModifierButton(
         pX: Int,
         pY: Int,
         pWidth: Int,
@@ -659,7 +681,7 @@ class ToolGunCreatorScreen(
         }
     }
 
-    /** Constructs a widget with 6 add/subtract buttons with a texture to signify what value it changes.
+    /** Constructs a widget with six add/subtract buttons with a texture to signify what value it changes.
      *  Automatically adds itself to [widgetMap]
      */
     inner class ValueModifierGuiWidget(
@@ -675,11 +697,7 @@ class ToolGunCreatorScreen(
     ): ScaledAbstractWidget(pX, pY, 80, 25, pScale, Component.empty()) {
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
             val poseStack = pGuiGraphics.pose()
-            poseStack.pushPose()
-            poseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
-            poseStack.scaleFlat(pScale.toFloat())
-            pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
-            pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
+            scaleInternal(pGuiGraphics, poseStack, pX, pY, pScale)
             poseStack.scaleFlat(pScale.toFloat() - 0.4f)
             pGuiGraphics.drawCenteredString(font, entityHealth.toString(), 66, 28, Color.WHITE.rgb)
             poseStack.scaleFlat(pScale.toFloat() + 4f)
