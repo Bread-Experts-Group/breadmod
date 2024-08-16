@@ -66,8 +66,11 @@ class ToolGunCreatorScreen(
         private var entitySpeed: Double = 5.0
 
         // First Int: Duration, Second Int: Amplifier
+        /** holder for mob effects */
         private var entityEffects: MutableMap<String, Triple<MobEffect, Int, Int>> = mutableMapOf(
-            "jump" to Triple(MobEffects.JUMP, 500, 2)
+            "jump" to Triple(MobEffects.JUMP, 500, 2),
+            "wither" to Triple(MobEffects.WITHER, 200, 2),
+            "saturation" to Triple(MobEffects.SATURATION, 1000, 2)
         )
 
         private var helmetSlot: ItemStack = Items.DIAMOND_HELMET.defaultInstance
@@ -78,11 +81,8 @@ class ToolGunCreatorScreen(
         private var mainHandSlot: ItemStack = PEItems.RED_MATTER_AXE.get().defaultInstance
         private var offHandSlot: ItemStack = ItemStack.EMPTY
 
-        /** holder for mob effects */
-        val mobEffectInstanceMap: MutableMap<String, Triple<MobEffect, Int, Int>> = mutableMapOf()
-        // todo either figure out how to make a scrollable list that can hold gui elements
-        //  or make a system to have 4 effects in one tab, press a button to go to the next tab
-        //  (have a map holding those effects in that tab along with their slot identifier)
+        private val mobEffectWidgets: MutableList<MobEffectGuiWidget> = ArrayList(4)
+        private var mobEffectPages = 0
 
         /** holder for adding mob effect widgets */
         private var mobEffectString: String = ""
@@ -107,6 +107,12 @@ class ToolGunCreatorScreen(
     private val entityX = 35
     private val entityY = 94
 
+    /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
+    private val guiWidthOffset = (width - imageWidth) / 2
+
+    /** for scissor, subtract the height of your gui texture by the screen height and divide by 2 */
+    private val guiHeightOffset = (height - imageHeight) / 2
+
     init {
         imageWidth = 256
         imageHeight = 220
@@ -116,7 +122,7 @@ class ToolGunCreatorScreen(
         entityScale = 32
     }
 
-    private var staticAlpha = 1.0f
+//    private var staticAlpha = 1.0f
 
     // todo set this up for a fading static texture
 //    private fun alphaTick() = if (staticAlpha > 0f) staticAlpha -= 0.01f else staticAlpha = 1f
@@ -187,32 +193,35 @@ class ToolGunCreatorScreen(
     private fun checkRequestedVsActual(): Boolean = entityType.toString().contains(entityString.substringAfter(":"))
 
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
+        renderBackground(pGuiGraphics)
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+        renderTooltip(pGuiGraphics, pMouseX, pMouseY)
+    }
+
+    // render >> renderBg
+    override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         val player = instance.player ?: return
         val entity = constructEntity(player, player.level(), player.position())
 
-        /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
-        val guiWidthOffset = (width - 256) / 2
+        // Setup gui rendering
+        RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+        RenderSystem.setShaderTexture(0, TEXTURE)
 
-        /** for scissor, subtract the height of your gui texture by the screen height and divide by 2 */
-        val guiHeightOffset = (height - 220) / 2
-
-//        poseStack.pushPose()
-//        poseStack.translate(0.0, 0.0, -130.0)
-        renderBackground(pGuiGraphics)
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
-        pGuiGraphics.enableScissor(guiWidthOffset + 14, guiHeightOffset + 24,
-            guiWidthOffset + 56, guiHeightOffset + 99)
-        renderEntityInInventoryFollowsMouse(
-            pGuiGraphics, leftPos + entityX, topPos + entityY, entityScale,
-            (leftPos + entityX) - pMouseX.toFloat(),
-            (topPos + entityY - 50) - pMouseY.toFloat(),
-            entity
-        )
-        pGuiGraphics.disableScissor()
-
+        pGuiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight)
         if(currentTab == SignType.MAIN) {
-            pGuiGraphics.blit(TEXTURE_ASSETS, leftPos + 14, topPos + 24, 0, 0, 42, 75)
-
+            pGuiGraphics.blit(TEXTURE_ASSETS, leftPos + 13, topPos + 23, 0, 0, 44, 77)
+            pGuiGraphics.fill(RenderType.gui(), leftPos + 69, topPos + 11, leftPos + 70, topPos + 130, Color(26, 26, 26).rgb)
+            pGuiGraphics.enableScissor(guiWidthOffset + 14, guiHeightOffset + 24,
+                guiWidthOffset + 56, guiHeightOffset + 99
+            )
+            renderEntityInInventoryFollowsMouse(
+                pGuiGraphics, leftPos + entityX, topPos + entityY, entityScale,
+                (leftPos + entityX) - pMouseX.toFloat(),
+                (topPos + entityY - 50) - pMouseY.toFloat(),
+                entity
+            )
+            pGuiGraphics.disableScissor()
 
             pGuiGraphics.drawCenteredString(
                 font,
@@ -223,20 +232,10 @@ class ToolGunCreatorScreen(
                 Color.WHITE.rgb
             )
         } else if(currentTab == SignType.POTION) {
-            // todo Gui.java@448 (code that will be immensely useful in rendering mob effect icons)
+            // todo potion tab assets
+            pGuiGraphics.fill(RenderType.gui(), leftPos + 2, topPos + 25, leftPos + 254, topPos + 129, Color(26, 26, 26).rgb)
+            pGuiGraphics.fill(RenderType.gui(), leftPos + 3, topPos + 26, leftPos + 253, topPos + 128, Color(20, 20, 20).rgb)
         }
-
-        renderTooltip(pGuiGraphics, pMouseX, pMouseY)
-    }
-
-    // render >> renderBg
-    override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
-        // Setup gui rendering
-        RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, staticAlpha)
-        RenderSystem.setShaderTexture(0, TEXTURE)
-
-        pGuiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight)
     }
 
     override fun renderLabels(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int) {
@@ -310,10 +309,24 @@ class ToolGunCreatorScreen(
 
     /** Only called during gui init and adding potion effects.
      * Existing widgets are overridden when this function is called again. */
-    private fun initWidgetMap() {
+    private fun initWidgets() {
         println("initializing widgetMap")
         // make sure to flush duplicate renderable entries in the list after adding potion effect widgets
         clearWidgets()
+        mobEffectWidgets.clear()
+        entityEffects.forEach { (key, value) ->
+            val widget = MobEffectGuiWidget(key to SignType.POTION, 0, 0, 1.0, value.first)
+            addToWidgetMap(key to SignType.POTION, widget)
+            mobEffectWidgets.add(widget)
+        }
+
+        println(mobEffectWidgets.size)
+        for (i in 1..mobEffectWidgets.size) {
+            mobEffectWidgets.forEach { widget ->
+                widget.setPosition(leftPos + 20 * 2, topPos + 20 * 2)
+            }
+        }
+
         widgetMap.forEach { (key, value) ->
             if(value is MobEffectGuiWidget || value is ValueModifierGuiWidget) {
                 addRenderableOnly(value)
@@ -387,28 +400,18 @@ class ToolGunCreatorScreen(
             })
 
         // Add potion effect widget from edit box
-//        addToWidgetMap("add_mob_effect" to SignType.POTION,
-//            GenericButton(leftPos + 150, topPos + 20, 80, 10, Component.literal("add effect")) {
-//                if(mobEffectFromString(id = mobEffectString) != null) {
-//                    println(mobEffectFromString(id = mobEffectString))
-//                    MobEffectGuiElement(mobEffectString to SignType.POTION, leftPos + 20, topPos + 30)
-//                } else {
-//                    println("mob effect is null!")
-//                }
-//                mobEffectString = ""
-//            })
-
         addToWidgetMap("add_mob_effect" to SignType.POTION,
-            GenericButton(leftPos + 155, topPos + 12, 23, 12, Component.literal("add")) {
+            GenericButton(leftPos + 84, topPos + 12, 23, 12, Component.literal("add")) {
                 if (mobEffectFromString(id = mobEffectString) != null) {
                     mobEffectFromString(id = mobEffectString)?.let {
                         println(it.displayName)
-                        if (mobEffectInstanceMap[mobEffectString] == null) {
-                            mobEffectInstanceMap[mobEffectString] = Triple(it, 100, 1)
+                        if (entityEffects[mobEffectString] == null) {
+                            entityEffects[mobEffectString] = Triple(it, 100, 1)
                             MobEffectGuiWidget(
                                 mobEffectString to SignType.POTION, leftPos + 40, topPos + 30,
                                 1.0, it
                             )
+                            initWidgets()
                         } else {
                             println("effect already exists in map!")
                         }
@@ -419,14 +422,16 @@ class ToolGunCreatorScreen(
                 mobEffectString = ""
             })
 
-        // Potion effect adder box
+        // mob effect edit box (clearly)
         createEditBox(
-            leftPos + 72, topPos + 13, 80, 10,
+            leftPos + 2, topPos + 13, 80, 10,
             "mob_effect_edit_box" to SignType.POTION, ""
         ) { string ->
             mobEffectString = string.lowercase().replace(' ', '_')
 //            println(potionEffectString)
         }
+
+//        addToWidgetMap("potion_list" to SignType.POTION, MobEffectList())
 
 //        widgetMap["health" to SignType.MAIN] =
 //            ValueModifierButton.ValueModifierButtonsWithGui("health" to SignType.MAIN, 20, 10)
@@ -440,7 +445,7 @@ class ToolGunCreatorScreen(
 
 //        PotionEffectGuiElement("potion_test" to SignType.POTION, leftPos + 10, topPos + 30)
 
-        initWidgetMap()
+        initWidgets()
     }
 
     override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
@@ -543,13 +548,7 @@ class ToolGunCreatorScreen(
     // todo add and remove buttons for deleting the mob effect instance (along with removing that instance from entityEffect)
     // todo convert to using scaling
 
-    private fun AbstractWidget.scaleInternal(pGuiGraphics: GuiGraphics, pPoseStack: PoseStack, pX: Int, pY: Int, pScale: Double) {
-        pPoseStack.pushPose()
-        pPoseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
-        pPoseStack.scaleFlat(pScale.toFloat())
-        pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
-        pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
-    }
+    // todo AbstractScrollWidget (look into TelemetryEventWidget for insight)
 
     inner class MobEffectGuiWidget(
         private val pair: Pair<String, Enum<SignType>>,
@@ -600,8 +599,16 @@ class ToolGunCreatorScreen(
                     println("removing ${pair.first}")
                     removeThisWidget(pair)
                 })
-            initWidgetMap()
+//            initWidgets()
         }
+    }
+
+    private fun AbstractWidget.scaleInternal(pGuiGraphics: GuiGraphics, pPoseStack: PoseStack, pX: Int, pY: Int, pScale: Double) {
+        pPoseStack.pushPose()
+        pPoseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
+        pPoseStack.scaleFlat(pScale.toFloat())
+        pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
+        pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
     }
 
     // todo custom button scale and textures
