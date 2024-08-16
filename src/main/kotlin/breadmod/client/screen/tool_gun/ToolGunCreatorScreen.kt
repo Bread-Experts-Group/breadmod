@@ -107,12 +107,6 @@ class ToolGunCreatorScreen(
     private val entityX = 35
     private val entityY = 94
 
-    /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
-    private val guiWidthOffset = (width - imageWidth) / 2
-
-    /** for scissor, subtract the height of your gui texture by the screen height and divide by 2 */
-    private val guiHeightOffset = (height - imageHeight) / 2
-
     init {
         imageWidth = 256
         imageHeight = 220
@@ -202,6 +196,10 @@ class ToolGunCreatorScreen(
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         val player = instance.player ?: return
         val entity = constructEntity(player, player.level(), player.position())
+        /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
+        val guiWidthOffset = (width - imageWidth) / 2
+        /** for scissor, subtract the height of your gui texture by the screen height and divide by 2 */
+        val guiHeightOffset = (height - imageHeight) / 2
 
         // Setup gui rendering
         RenderSystem.setShader { GameRenderer.getRendertypeTranslucentShader() }
@@ -321,10 +319,8 @@ class ToolGunCreatorScreen(
         }
 
         println(mobEffectWidgets.size)
-        for (i in 1..mobEffectWidgets.size) {
-            mobEffectWidgets.forEach { widget ->
-                widget.setPosition(leftPos + 20 * 2, topPos + 20 * 2)
-            }
+        for (i in 0..<mobEffectWidgets.size) {
+            mobEffectWidgets[i].setPosition(leftPos + 20 * 2, topPos + 20 * 2)
         }
 
         widgetMap.forEach { (key, value) ->
