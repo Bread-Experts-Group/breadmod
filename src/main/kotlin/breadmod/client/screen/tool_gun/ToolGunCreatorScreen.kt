@@ -28,7 +28,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
-import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -66,11 +65,7 @@ class ToolGunCreatorScreen(
 
         // First Int: Duration, Second Int: Amplifier
         /** holder for mob effects */
-        private var entityEffects: MutableMap<String, Triple<MobEffect, Int, Int>> = mutableMapOf(
-            "jump" to Triple(MobEffects.JUMP, 500, 2),
-            "wither" to Triple(MobEffects.WITHER, 200, 2),
-            "saturation" to Triple(MobEffects.SATURATION, 1000, 2)
-        )
+        private var entityEffects: MutableMap<String, Triple<MobEffect, Int, Int>> = mutableMapOf()
 
         private var helmetSlot: ItemStack = Items.DIAMOND_HELMET.defaultInstance
         private var chestplateSlot: ItemStack = Items.DIAMOND_CHESTPLATE.defaultInstance
@@ -80,7 +75,9 @@ class ToolGunCreatorScreen(
         private var mainHandSlot: ItemStack = PEItems.RED_MATTER_AXE.get().defaultInstance
         private var offHandSlot: ItemStack = ItemStack.EMPTY
 
-        private val mobEffectWidgets: MutableList<MobEffectGuiWidget> = ArrayList(4)
+        private val mobEffectWidgets:
+                MutableList<Pair<String, Triple<MobEffect, Int, Int>>> = ArrayList(4)
+
         private var mobEffectPages = 0
 
         /** holder for adding mob effect widgets */
@@ -309,15 +306,20 @@ class ToolGunCreatorScreen(
         // make sure to flush duplicate renderable entries in the list after adding potion effect widgets
         clearWidgets()
         mobEffectWidgets.clear()
+
         entityEffects.forEach { (key, value) ->
-            val widget = MobEffectGuiWidget(key to SignType.POTION, 0, 0, 1.0, value.first)
-            addToWidgetMap(key to SignType.POTION, widget)
-            mobEffectWidgets.add(widget)
+            mobEffectWidgets.add(key to value)
         }
 
         println(mobEffectWidgets.size)
         for (i in 0..<mobEffectWidgets.size) {
-            mobEffectWidgets[i].setPosition(leftPos + 20 * 2, topPos + 20 * 2)
+            println(i)
+            val widget = MobEffectGuiWidget(
+                mobEffectWidgets[i].first to SignType.POTION, 1.0, mobEffectWidgets[i].second.first)
+            widget.setPosition(leftPos + 5 + 83 * (i % 3), topPos + 32 + 50 * (i / 3))
+            widget.initSubWidgets()
+            println(widget.x)
+//            addToWidgetMap(mobEffectWidgets[i].first to SignType.POTION, widget)
         }
 
         widgetMap.forEach { (key, value) ->
@@ -400,10 +402,8 @@ class ToolGunCreatorScreen(
                         println(it.displayName)
                         if (entityEffects[mobEffectString] == null) {
                             entityEffects[mobEffectString] = Triple(it, 100, 1)
-                            MobEffectGuiWidget(
-                                mobEffectString to SignType.POTION, leftPos + 40, topPos + 30,
-                                1.0, it
-                            )
+//                            MobEffectGuiWidget(mobEffectString to SignType.POTION,1.0, it)
+//                            mobEffectWidgets.add(mobEffectString to Triple(it, 100, 1))
                             initWidgets()
                         } else {
                             println("effect already exists in map!")
@@ -545,18 +545,22 @@ class ToolGunCreatorScreen(
 
     inner class MobEffectGuiWidget(
         private val pair: Pair<String, Enum<SignType>>,
-        private val pX: Int,
-        private val pY: Int,
         private val pScale: Double,
         private val effect: MobEffect
-    ): ScaledAbstractWidget(pX, pY, 80, 40, pScale, Component.empty()) {
+    ): ScaledAbstractWidget(0, 0, 80, 40, pScale, Component.empty()) {
+//        private val removeButton =
+//            GenericButton(x, y + 30, 20, 10, Component.literal("remove")) {
+//            println("removing ${pair.first}")
+//            removeThisWidget(pair)
+//        }
+
         override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
             val poseStack = pGuiGraphics.pose()
             val mobEffectTexture = breadmod.util.render.minecraft.mobEffectTextures.get(effect)
 
             if(visible) {
-                scaleInternal(pGuiGraphics, poseStack, pX, pY, pScale)
+                scaleInternal(pGuiGraphics, poseStack, x, y, pScale)
                 pGuiGraphics.blit(20, 20, 0, 20, 20, mobEffectTexture)
                 pGuiGraphics.drawText(effect.displayName, 30, 5, effect.color)
                 poseStack.popPose()
@@ -580,20 +584,34 @@ class ToolGunCreatorScreen(
             removeFromWidgetMap("${pair.first}_minus_ten" to pair.second)
             removeFromWidgetMap("${pair.first}_minus_hundred" to pair.second)
             removeFromWidgetMap("${pair.first}_remove" to pair.second)
+            mobEffectWidgets.remove(pair.first to Triple(effect, 100, 1))
+            entityEffects.remove(pair.first)
+            initWidgets()
         }
 
-        init {
+        fun initSubWidgets() {
             addToWidgetMap(pair, this)
-            threeStageValueButtons(pair, pX, pY, SignType.ADD)
-            threeStageValueButtons(pair, pX + 100, pY, SignType.SUBTRACT)
-            // todo convert to ScaledButton
+            threeStageValueButtons(pair, x, y, SignType.ADD)
+            threeStageValueButtons(pair, x + 58, y, SignType.SUBTRACT)
             addToWidgetMap("${pair.first}_remove" to pair.second,
-                GenericButton(pX, pY + 30, 20, 10, Component.literal("remove")) {
+                GenericButton(x, y + 30, 20, 10, Component.literal("remove")) {
                     println("removing ${pair.first}")
                     removeThisWidget(pair)
                 })
-//            initWidgets()
         }
+
+//        init {
+//            addToWidgetMap(pair, this)
+//            threeStageValueButtons(pair, x, y, SignType.ADD)
+//            threeStageValueButtons(pair, x + 58, y, SignType.SUBTRACT)
+//            // todo convert to ScaledButton
+//            addToWidgetMap("${pair.first}_remove" to pair.second,
+//                GenericButton(x, y + 30, 20, 10, Component.literal("remove")) {
+//                    println("removing ${pair.first}")
+//                    removeThisWidget(pair)
+//                })
+//            initWidgets()
+//        }
     }
 
     private fun AbstractWidget.scaleInternal(pGuiGraphics: GuiGraphics, pPoseStack: PoseStack, pX: Int, pY: Int, pScale: Double) {
