@@ -2,12 +2,12 @@ package breadmod.client.jei
 
 import breadmod.ModMain
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
+import breadmod.util.render.minecraft
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import mezz.jei.api.gui.drawable.IDrawableAnimated
 import mezz.jei.api.helpers.IGuiHelper
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
@@ -24,9 +24,7 @@ fun drawRecipeTime(pRecipe: FluidEnergyRecipe, pGuiGraphics: GuiGraphics, pX: In
     if(pRecipe.time > 0) {
         val recipeTimeSeconds = pRecipe.time / 20
         val timeString = ModMain.modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
-        val minecraft = Minecraft.getInstance()
-        val fontRenderer = minecraft.font
-        pGuiGraphics.drawString(fontRenderer, timeString, pX , pY, -8355712, false)
+        pGuiGraphics.drawString(minecraft.font, timeString, pX, pY, -8355712, false)
     }
 }
 

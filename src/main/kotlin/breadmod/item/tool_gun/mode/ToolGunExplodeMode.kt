@@ -2,17 +2,17 @@ package breadmod.item.tool_gun.mode
 
 import breadmod.ModMain.modTranslatable
 import breadmod.client.render.tool_gun.ToolGunAnimationHandler
+import breadmod.client.render.tool_gun.drawTextOnScreen
+import breadmod.client.render.tool_gun.drawWrappedTextOnScreen
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
-import breadmod.client.render.tool_gun.drawTextOnScreen
-import breadmod.client.render.tool_gun.drawWrappedTextOnScreen
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.client.BeamPacket
 import breadmod.util.RayMarchResult.Companion.rayMarchBlock
+import breadmod.util.render.minecraft
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
@@ -75,10 +75,8 @@ internal class ToolGunExplodeMode: IToolGunMode {
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val fontRenderer = Minecraft.getInstance().font
-
         drawWrappedTextOnScreen(
-            fontRenderer,
+            minecraft.font,
             modTranslatable("tool_gun", "mode", "explode", "hit_fluid"),
             pPoseStack,
             pBuffer,
@@ -93,7 +91,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
             if (hitFluid) Color(35,189,0,255).rgb else Color.RED.rgb,
             Color(0,0,0,0).rgb,
             false,
-            fontRenderer,
+            minecraft.font,
             pPoseStack,
             pBuffer,
             0.92, 0.052, -0.036,

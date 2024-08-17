@@ -1,30 +1,28 @@
 package breadmod
 
-import breadmod.ClientForgeEventBus.changeMode
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
-import breadmod.client.render.SidedScreenRenderer
+import breadmod.client.gui.ToolGunOverlay
 import breadmod.client.render.CreativeGeneratorRenderer
 import breadmod.client.render.GenericMachineBlockEntityRenderer
-import breadmod.client.screen.DoughMachineScreen
-import breadmod.client.screen.WheatCrusherScreen
-import breadmod.client.render.storage.EnergyStorageRenderer
-import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
-import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
+import breadmod.client.render.SidedScreenRenderer
+import breadmod.client.render.ToasterRenderer
 import breadmod.client.render.entity.BreadBulletEntityRenderer
 import breadmod.client.render.entity.PrimedHappyBlockRenderer
-import breadmod.client.gui.ToolGunOverlay
-import breadmod.client.render.ToasterRenderer
-import breadmod.item.armor.BreadArmorItem
-import breadmod.item.armor.ArmorColor
+import breadmod.client.render.storage.EnergyStorageRenderer
 import breadmod.client.screen.CertificateItemScreen
+import breadmod.client.screen.DoughMachineScreen
+import breadmod.client.screen.WheatCrusherScreen
 import breadmod.client.screen.tool_gun.ToolGunCreatorScreen
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
+import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
+import breadmod.item.armor.ArmorColor
+import breadmod.item.armor.BreadArmorItem
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.menu.ModMenuTypes
-import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.Util
@@ -40,12 +38,14 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.*
+import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.client.event.ModelEvent.RegisterAdditional
+import net.minecraftforge.client.event.RegisterColorHandlersEvent
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
+import net.minecraftforge.client.event.RegisterShadersEvent
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.client.settings.KeyConflictContext
-import net.minecraftforge.client.settings.KeyModifier
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
@@ -126,33 +126,28 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntityTypes.WHEAT_CRUSHER.get(), genericMachineRenderer)
     }
 
-    val toolGunBindList = mutableMapOf<Control, KeyMapping?>()
-    @SubscribeEvent
-    fun registerBindings(event: RegisterKeyMappingsEvent) {
-        event.register(changeMode)
-    }
-
-    fun createMappingsForControls(): List<KeyMapping> {
-        toolGunBindList.filter { it.value == null }.keys.forEach {
-            val mapping = if(it.modifier != null) {
+    val toolGunBindList = mutableMapOf<Control, KeyMapping>()
+    fun createMappingsForControls(prepared: List<Control>): List<KeyMapping> {
+        prepared.forEach {
+            val mapping = if (it.modifier != null) {
                 KeyMapping(
                     it.nameKey,
                     KeyConflictContext.IN_GAME,
-                    KeyModifier.valueFromString(it.modifier),
-                    InputConstants.getKey(it.key),
+                    it.modifier,
+                    it.key(),
                     it.categoryKey
                 )
             } else {
                 KeyMapping(
                     it.nameKey,
                     KeyConflictContext.IN_GAME,
-                    InputConstants.getKey(it.key),
+                    it.key(),
                     it.categoryKey
                 )
             }
             toolGunBindList[it] = mapping
         }
-        return toolGunBindList.values.mapNotNull { it }
+        return toolGunBindList.values.toList()
     }
 
     @SubscribeEvent

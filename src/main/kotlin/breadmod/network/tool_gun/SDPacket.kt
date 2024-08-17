@@ -4,12 +4,12 @@ import breadmod.ModMain.modTranslatable
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.util.computerSD
-import net.minecraft.client.Minecraft
+import breadmod.util.render.minecraft
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.InteractionHand
 import net.minecraftforge.network.NetworkEvent
 import net.minecraftforge.network.PacketDistributor
-import java.util.UUID
+import java.util.*
 import java.util.function.Supplier
 
 data class SDPacket(val playerUUID: UUID?) {
@@ -25,7 +25,6 @@ data class SDPacket(val playerUUID: UUID?) {
                     NETWORK.send(PacketDistributor.PLAYER.with { toDC }, SDPacket(null))
                 }
             } else {
-                val minecraft = Minecraft.getInstance()
                 minecraft.connection?.connection?.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))
                 computerSD(false)
             }

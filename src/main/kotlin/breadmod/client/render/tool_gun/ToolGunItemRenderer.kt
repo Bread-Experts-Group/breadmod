@@ -3,11 +3,11 @@ package breadmod.client.render.tool_gun
 import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
+import breadmod.util.render.minecraft
 import breadmod.util.render.renderItemModel
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.ChatFormatting
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.item.ItemDisplayContext
@@ -23,7 +23,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     minecraft.entityModels
 ) {
     private companion object {
-        val minecraft: Minecraft = Minecraft.getInstance()
         val secureRandom = SecureRandom()
     }
 
@@ -41,10 +40,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     ) {
         val toolGunItem = pStack.item as ToolGunItem
         val toolGunMode = toolGunItem.getCurrentMode(pStack)
-        val instance = Minecraft.getInstance()
-        val renderer = instance.itemRenderer
-        val fontRenderer = instance.font
-        val modelManager = instance.modelManager
+        val renderer = minecraft.itemRenderer
+        val fontRenderer = minecraft.font
+        val modelManager = minecraft.modelManager
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
 

@@ -1,9 +1,8 @@
 package breadmod.client.gui.components
 
+import breadmod.util.render.minecraft
 import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.systems.RenderSystem
-import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
@@ -21,7 +20,6 @@ class DraggableWidget(
 ) : AbstractWidget(pX, pY, pWidth, pHeight, pMessage) {
     private var dragX: Double = pX.toDouble()
     private var dragY: Double = pY.toDouble()
-    private val font: Font = Minecraft.getInstance().font
 
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
 
@@ -35,7 +33,7 @@ class DraggableWidget(
         poseStack.scaleFlat(pScale.toFloat())
         pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
         pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
-        pGuiGraphics.drawString(font, pMessage, 2, 1, Color.WHITE.rgb, true)
+        pGuiGraphics.drawString(minecraft.font, pMessage, 2, 1, Color.WHITE.rgb, true)
         poseStack.popPose()
     }
 

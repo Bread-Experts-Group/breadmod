@@ -1,10 +1,10 @@
 package breadmod.client.render
 
 import breadmod.ModMain.modLocation
+import breadmod.util.render.minecraft
 import breadmod.util.render.renderItemModel
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -16,10 +16,6 @@ class CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
     minecraft.blockEntityRenderDispatcher,
     minecraft.entityModels
 ) {
-    private companion object {
-        val minecraft: Minecraft = Minecraft.getInstance()
-    }
-
     private val mainModelLocation = modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator")
     private val starModelLocation = modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star")
 
@@ -31,18 +27,17 @@ class CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val instance = Minecraft.getInstance()
-        val renderer = instance.itemRenderer
-        val modelManager = instance.modelManager
-        val level = instance.level ?: return
+        val level = minecraft.level ?: return
+        val renderer = minecraft.itemRenderer
+        val modelManager = minecraft.modelManager
 
         val mainModel = modelManager.getModel(mainModelLocation)
         val starModel = modelManager.getModel(starModelLocation)
 
         renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight, RenderType.cutout())
         pPoseStack.translate(0.5, 0.5, 0.5)
-        pPoseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + instance.partialTick))
-        pPoseStack.mulPose(Axis.XN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + instance.partialTick))
+        pPoseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + minecraft.partialTick))
+        pPoseStack.mulPose(Axis.XN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + minecraft.partialTick))
         pPoseStack.scale(0.95f, 0.95f, 0.95f)
         renderItemModel(starModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
     }

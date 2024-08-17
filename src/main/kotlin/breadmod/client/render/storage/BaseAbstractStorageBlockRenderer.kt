@@ -4,8 +4,8 @@ import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import breadmod.util.capability.EnergyBattery
 import breadmod.util.capability.FluidContainer
 import breadmod.util.capability.IndexableItemHandler
+import breadmod.util.render.minecraft
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
@@ -13,8 +13,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 
 @Suppress("unused")
 abstract class BaseAbstractStorageBlockRenderer<T: AbstractMachineBlockEntity<T>>: BlockEntityRenderer<T> {
-    val instance: Minecraft = Minecraft.getInstance()
-    val fontRenderer: Font = instance.font
+    val fontRenderer: Font = minecraft.font
 
     abstract override fun render(
         pBlockEntity: T, pPartialTick: Float, pPoseStack: PoseStack,
@@ -30,7 +29,7 @@ abstract class BaseAbstractStorageBlockRenderer<T: AbstractMachineBlockEntity<T>
 
     // todo item rendering function with display context
 //    fun renderItemOnSide(pPoseStack: PoseStack) {
-//        val itemRender = Minecraft.getInstance().itemRenderer
+//        val itemRender = minecraft.itemRenderer
 //
 //        itemRender.renderStatic(Items.BREAD, ItemDisplayContext.GUI)
 //    }

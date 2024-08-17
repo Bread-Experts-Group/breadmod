@@ -17,7 +17,6 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import moze_intel.projecte.gameObjs.registries.PEItems
 import net.minecraft.ChatFormatting
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.*
 import net.minecraft.client.gui.components.Button.CreateNarration
@@ -100,8 +99,6 @@ class ToolGunCreatorScreen(
         private var entityScale = 32
     }
 
-    private val instance: Minecraft = Minecraft.getInstance()
-
     enum class SignType { MAIN, POTION, ADD, SUBTRACT }
 
     private val entityX = 35
@@ -124,7 +121,7 @@ class ToolGunCreatorScreen(
     private fun constructEntity(pPlayer: Player, pLevel: Level, pPos: Vec3): Entity {
         val finalEntity = entityType?.create(pLevel) ?: return getDefaultPig(pPlayer, pLevel, pPos).also {
             pPlayer.sendSystemMessage(
-                Component.literal("Placeholder text...")
+                Component.literal("Placeholder text... ${entityType?.descriptionId}")
                     .withStyle(ChatFormatting.RED)
             )
         }
@@ -194,7 +191,7 @@ class ToolGunCreatorScreen(
 
     // render >> renderBg
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
-        val player = instance.player ?: return
+        val player = breadmod.util.render.minecraft.player ?: return
         val entity = constructEntity(player, player.level(), player.position())
         /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
         val guiWidthOffset = (width - imageWidth) / 2
@@ -447,7 +444,7 @@ class ToolGunCreatorScreen(
     override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
         val box = activeEditBox ?: return super.keyPressed(pKeyCode, pScanCode, pModifiers)
         if (pKeyCode == GLFW.GLFW_KEY_ESCAPE && shouldCloseOnEsc()) {
-            instance.player?.closeContainer()
+            breadmod.util.render.minecraft.player?.closeContainer()
         }
 
         return !box.keyPressed(pKeyCode, pScanCode, pModifiers) &&
@@ -485,7 +482,7 @@ class ToolGunCreatorScreen(
     // todo custom texture and scale
     inner class CustomEditBox(
         pX: Int, pY: Int, pWidth: Int, pHeight: Int
-    ): EditBox(instance.font, pX, pY, pWidth, pHeight, Component.literal("A TEXT BOX")) {
+    ) : EditBox(breadmod.util.render.minecraft.font, pX, pY, pWidth, pHeight, Component.literal("A TEXT BOX")) {
 
         override fun tick() {
             super.tick()
@@ -556,7 +553,7 @@ class ToolGunCreatorScreen(
         override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
             val poseStack = pGuiGraphics.pose()
-            val mobEffectTexture = instance.mobEffectTextures.get(effect)
+            val mobEffectTexture = breadmod.util.render.minecraft.mobEffectTextures.get(effect)
 
             if(visible) {
                 scaleInternal(pGuiGraphics, poseStack, pX, pY, pScale)

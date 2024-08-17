@@ -1,34 +1,32 @@
 package breadmod.client.jei
 
 import breadmod.ModMain
-import breadmod.menu.block.DoughMachineMenu
-import breadmod.client.screen.DoughMachineScreen
-import breadmod.menu.block.WheatCrusherMenu
-import breadmod.client.screen.WheatCrusherScreen
 import breadmod.client.jei.category.DoughMachineRecipeCategory
 import breadmod.client.jei.category.ToasterRecipeCategory
 import breadmod.client.jei.category.WheatCrusherRecipeCategory
 import breadmod.client.jei.vanillaExtension.JEIArmorPotionCraftingExtension
 import breadmod.client.jei.vanillaExtension.JEISliceCraftingExtension
+import breadmod.client.screen.DoughMachineScreen
+import breadmod.client.screen.WheatCrusherScreen
+import breadmod.menu.block.DoughMachineMenu
+import breadmod.menu.block.WheatCrusherMenu
 import breadmod.recipe.crafting.ArmorPotionRecipe
 import breadmod.recipe.crafting.BreadSliceRecipe
 import breadmod.recipe.crafting.ToastedBreadSliceRecipe
 import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
-import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.registry.menu.ModMenuTypes
+import breadmod.registry.recipe.ModRecipeTypes
+import breadmod.util.render.minecraft
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.*
-import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Items
 
 @JeiPlugin @Suppress("unused")
 class JEIPlugin : IModPlugin {
-    val minecraft: Minecraft? = Minecraft.getInstance()
-
     override fun getPluginUid(): ResourceLocation = ResourceLocation(ModMain.ID, "jei_plugin")
 
     override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
@@ -61,7 +59,7 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
-        val recipeManager = minecraft?.level?.recipeManager ?: throw IllegalStateException()
+        val recipeManager = minecraft.level?.recipeManager ?: throw IllegalStateException()
         val doughMachineRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.DOUGH_MACHINE.get())
         val wheatCrusherRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.WHEAT_CRUSHING.get())
         val toasterRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.TOASTING.get())

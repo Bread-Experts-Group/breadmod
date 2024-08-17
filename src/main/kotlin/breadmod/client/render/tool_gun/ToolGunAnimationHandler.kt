@@ -1,6 +1,6 @@
 package breadmod.client.render.tool_gun
 
-import net.minecraft.client.Minecraft
+import breadmod.util.render.minecraft
 import net.minecraft.util.RandomSource
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -13,11 +13,10 @@ object ToolGunAnimationHandler {
     private val random = RandomSource.create()
 
     fun clientTick() {
-        val instance = Minecraft.getInstance()
-        if(!instance.isPaused) {
+        if (!minecraft.isPaused) {
             coilRotation += 2f * coilDelta
-            if(coilDelta > 0f) coilDelta -= 0.1f * instance.partialTick / 1.05f else coilDelta = 0f
-            if(recoil > 0f) recoil -= 0.05f * (instance.partialTick / 10) else recoil = 0f
+            if (coilDelta > 0f) coilDelta -= 0.1f * minecraft.partialTick / 1.05f else coilDelta = 0f
+            if (recoil > 0f) recoil -= 0.05f * (minecraft.partialTick / 10) else recoil = 0f
             coilRotation %= 360
         }
     }

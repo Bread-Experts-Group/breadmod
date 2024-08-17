@@ -112,8 +112,6 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
                     "off_hand" -> finalEntity.setEntitySlot(jsonValue, OFFHAND_SLOT, "off_hand")
                 }
             }
-
-//          println(finalEntity.brain.activeActivities)
         }
 
         finalEntity.setPos(Vec3(pPos.x, pPos.y, pPos.z))
@@ -126,15 +124,14 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
         pGunStack: ItemStack,
         pControl: BreadModToolGunModeProvider.Control
     ) {
-        if(pControl.id == "screen" && !pLevel.isClientSide) {
+        if (pControl.id == "screen" && !pLevel.isClientSide) {
             NetworkHooks.openScreen(pPlayer as ServerPlayer, this, pPlayer.blockPosition())
         } else if (pLevel is ServerLevel && pControl.id == "use") {
-            objects.forEach { (key, value) ->
-                println("key: $key, value: $value")
-            }
-
-            println("added entity")
-            pLevel.rayMarchBlock(pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 100.0, false)?.let { ray ->
+            pLevel.rayMarchBlock(
+                pPlayer.eyePosition,
+                Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot),
+                100.0, false
+            )?.let { ray ->
                 playToolGunSound(pLevel, pPlayer.blockPosition())
                 pLevel.addFreshEntity(
                     constructEntity(

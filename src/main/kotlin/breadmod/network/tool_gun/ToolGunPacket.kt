@@ -12,7 +12,9 @@ import breadmod.util.componentToJson
 import breadmod.util.jsonToComponent
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraftforge.client.settings.KeyModifier
 import net.minecraftforge.network.NetworkEvent
 import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
@@ -25,9 +27,11 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pControl: BreadModToolGun
                 writer.writeUtf(value.nameKey)
                 writer.writeUtf(value.categoryKey)
                 writer.writeUtf(componentToJson(value.toolGunComponent).toString())
-                writer.writeUtf(value.key)
-                writer.writeNullable(value.modifier) { writer2, value2 -> writer2.writeUtf(value2) }
-            } }
+                writer.writeUtf(value.key().name)
+                writer.writeNullable(value.modifier) { writer2, value2 -> writer2.writeUtf(value2.name) }
+            }
+        }
+
         fun decodeBuf(input: FriendlyByteBuf): ToolGunPacket =
             ToolGunPacket(input.readBoolean(), input.readNullable {
                 BreadModToolGunModeProvider.Control(
@@ -35,8 +39,8 @@ data class ToolGunPacket(val pModeSwitch: Boolean, val pControl: BreadModToolGun
                     input.readUtf(),
                     input.readUtf(),
                     jsonToComponent(Gson().fromJson(input.readUtf(), JsonObject::class.java)),
-                    input.readUtf(),
-                    input.readNullable { it.readUtf() },
+                    input.readUtf().let { { InputConstants.getKey(it) } },
+                    input.readNullable { KeyModifier.valueFromString(it.readUtf()) }
                 )
             })
 

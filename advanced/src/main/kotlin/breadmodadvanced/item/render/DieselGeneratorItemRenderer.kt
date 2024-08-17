@@ -1,9 +1,9 @@
 package breadmodadvanced.item.render
 
+import breadmod.util.render.minecraft
 import breadmod.util.render.renderItemModel
 import breadmodadvanced.ModMainAdv
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.item.ItemDisplayContext
@@ -14,10 +14,6 @@ class DieselGeneratorItemRenderer: BlockEntityWithoutLevelRenderer(
     minecraft.blockEntityRenderDispatcher,
     minecraft.entityModels
 ) {
-    private companion object {
-        val minecraft: Minecraft = Minecraft.getInstance()
-    }
-
     private val mainModelLocation = ModMainAdv.modLocation("${ModelProvider.BLOCK_FOLDER}/diesel_generator")
     private val doorModelLocation = ModMainAdv.modLocation("${ModelProvider.BLOCK_FOLDER}/diesel_generator/diesel_generator_door")
 
@@ -29,9 +25,8 @@ class DieselGeneratorItemRenderer: BlockEntityWithoutLevelRenderer(
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val instance = Minecraft.getInstance()
-        val modelManager = instance.modelManager
-        val renderer = instance.itemRenderer
+        val modelManager = minecraft.modelManager
+        val renderer = minecraft.itemRenderer
 
         val mainModel = modelManager.getModel(mainModelLocation)
         val doorModel = modelManager.getModel(doorModelLocation)

@@ -1,7 +1,7 @@
 package breadmod.datagen.tool_gun
 
+import breadmod.ClientForgeEventBus.changeMode
 import breadmod.ClientModEventBus
-import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CLASS_KEY
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CONTROLS_CATEGORY_TRANSLATION_KEY
@@ -16,14 +16,18 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOLTIP_K
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.util.jsonToComponent
+import breadmod.util.render.minecraft
 import com.google.gson.Gson
 import com.google.gson.JsonElement
-import net.minecraft.client.Minecraft
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.client.settings.KeyModifier
+import net.minecraftforge.fml.DistExecutor
 import org.apache.commons.lang3.ArrayUtils
 import org.jetbrains.annotations.ApiStatus.Internal
 import kotlin.reflect.full.isSubclassOf
@@ -52,15 +56,16 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         load(pObject)
         pProfiler.pop()
 
-        pProfiler.push("Load controls from toolgun data")
-        try {
-            loadKeys()
-        } catch(e: RuntimeException) {
-            ModMain.LOGGER.info("We're not on the client, so we're gonna skip over toolgun mode key maps.")
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT) {
+            Runnable {
+                pProfiler.push("Load controls from toolgun data")
+                loadKeys()
+                pProfiler.pop()
+            }
         }
-        pProfiler.pop()
     }
 
+    val keybindsToAdd: MutableList<BreadModToolGunModeProvider.Control> = mutableListOf()
     fun load(pObject: Map<ResourceLocation, JsonElement>) {
         pObject.forEach { (location, data) ->
             if(location.path.startsWith("mode/")) {
@@ -68,11 +73,13 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                     val dataObj = data.asJsonObject
                     val classSet = loadedModes.getOrPut(location.namespace) { mutableMapOf() }
 
-                    val loadedClass = Thread.currentThread().contextClassLoader.loadClass(dataObj.getAsJsonPrimitive(CLASS_KEY).asString).kotlin
-                    if(loadedClass.isSubclassOf(IToolGunMode::class)) {
+                    val loadedClass =
+                        Thread.currentThread().contextClassLoader.loadClass(dataObj.getAsJsonPrimitive(CLASS_KEY).asString).kotlin
+                    if (loadedClass.isSubclassOf(IToolGunMode::class)) {
                         val classConstructor = loadedClass.primaryConstructor ?: return@forEach
                         classConstructor.isAccessible = true
-                        classSet[location.path.substringAfter("mode/")] = Triple(ToolgunMode(
+                        classSet[location.path.substringAfter("mode/")] = Triple(
+                            ToolgunMode(
                                 displayName = jsonToComponent(dataObj.getAsJsonObject(DISPLAY_NAME_KEY)),
                                 tooltip = jsonToComponent(dataObj.getAsJsonObject(TOOLTIP_KEY)),
                                 keyBinds = buildList {
@@ -83,10 +90,14 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                                             keybind.getAsJsonPrimitive(CONTROLS_NAME_TRANSLATION_KEY).asString,
                                             keybind.getAsJsonPrimitive(CONTROLS_CATEGORY_TRANSLATION_KEY).asString,
                                             jsonToComponent(keybind.getAsJsonObject(TOOLGUN_INFO_DISPLAY_KEY)),
-                                            keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString,
-                                            keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString
+                                            { InputConstants.getKey(keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString) },
+                                            keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString?.let { mod ->
+                                                KeyModifier.getModifier(
+                                                    InputConstants.getKey(mod)
+                                                )
+                                            }
                                         )
-                                        toolGunBindList[control] = null
+                                        keybindsToAdd.add(control)
                                         add(control)
                                     }
                                 },
@@ -94,7 +105,7 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                             ), location, dataObj.toString().encodeToByteArray())
                         classConstructor.isAccessible = false
                     } else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolGunMode::class.qualifiedName}")
-                } catch(e: ClassNotFoundException) {
+                } catch (e: ClassNotFoundException) {
                     ModMain.LOGGER.error("Failed to load a tool-gun mode: ${e.stackTraceToString()}")
                 }
             }
@@ -102,11 +113,13 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
     }
 
     fun loadKeys() {
-        val options = Minecraft.getInstance().options
-        val keyMaps = ClientModEventBus.createMappingsForControls()
-        options.keyMappings = ArrayUtils.addAll(
-            options.keyMappings,
-            *keyMaps.filter { toolgunMap -> options.keyMappings.firstOrNull { it == toolgunMap } == null }.toTypedArray()
+        val keyMaps = ClientModEventBus.createMappingsForControls(keybindsToAdd)
+        minecraft.options.keyMappings = ArrayUtils.addAll(
+            minecraft.options.keyMappings,
+            changeMode,
+            *keyMaps
+                //.filter { toolgunMap -> minecraft.options.keyMappings.firstOrNull { it == toolgunMap } == null }
+                .toTypedArray()
         )
     }
 }

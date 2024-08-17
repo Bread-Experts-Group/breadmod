@@ -1,7 +1,7 @@
 package breadmod.network.client
 
 import breadmod.block.entity.machine.AbstractMachineBlockEntity
-import net.minecraft.client.Minecraft
+import breadmod.util.render.minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.FriendlyByteBuf
@@ -30,7 +30,7 @@ data class CapabilitySideDataPacket(val pPos: BlockPos, val pCapability: String,
             context.enqueueWork {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT) {
                     Runnable {
-                        (Minecraft.getInstance().level?.getBlockEntity(input.pPos) as? AbstractMachineBlockEntity<*>)
+                        (minecraft.level?.getBlockEntity(input.pPos) as? AbstractMachineBlockEntity<*>)
                             ?.capabilityHolder?.let {
                                 it.capabilities.keys.firstOrNull { c -> c.name == input.pCapability }?.let { cap ->
                                     it.capabilities[cap]?.second?.let { sides ->

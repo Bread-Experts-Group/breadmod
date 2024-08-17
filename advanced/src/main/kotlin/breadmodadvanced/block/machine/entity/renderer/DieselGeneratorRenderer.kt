@@ -36,7 +36,6 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val instance = Minecraft.getInstance()
         val blockRotation = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
         val level = pBlockEntity.level ?: return
 
@@ -96,7 +95,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             val fluidTypeExtensions = IClientFluidTypeExtensions.of(tank.fluid.fluid)
             val stillFluidTexture = fluidTypeExtensions.getStillTexture(tank.fluid)?: return
             val fluidState = tank.fluid.fluid.defaultFluidState()
-            val fluidSprite = instance.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
+            val fluidSprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
             val fluidTint = fluidTypeExtensions.getTintColor(fluidState, pBlockEntity.level, blockPos)
 
             // todo normalize texture size to not be squashed or stretched, refer to General#GuiGraphics.renderFluid for clues

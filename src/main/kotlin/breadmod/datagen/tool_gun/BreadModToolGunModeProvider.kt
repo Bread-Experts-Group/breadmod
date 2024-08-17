@@ -4,10 +4,12 @@ import breadmod.item.tool_gun.IToolGunMode
 import breadmod.util.componentToJson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
 import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.Component
+import net.minecraftforge.client.settings.KeyModifier
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -24,9 +26,10 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
         val nameKey: String,
         val categoryKey: String,
         val toolGunComponent: Component,
-        val key: String,
-        val modifier: String? = null
+        val key: () -> InputConstants.Key,
+        val modifier: KeyModifier? = null
     )
+
     private val addedModes: MutableMap<String, Triple<Pair<Component, Component>, List<Control>, Class<*>>> = mutableMapOf()
 
     final override fun run(p0: CachedOutput): CompletableFuture<*> {
@@ -42,8 +45,8 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
                             data.second.forEach {
                                 array.add(JsonObject().also { keyObj ->
                                     keyObj.addProperty(CONTROLS_ID_KEY, it.id)
-                                    keyObj.addProperty(KEY_ENTRY_KEY, it.key)
-                                    keyObj.addProperty(MODIFIER_ENTRY_KEY, it.modifier)
+                                    keyObj.addProperty(KEY_ENTRY_KEY, it.key().name)
+                                    keyObj.addProperty(MODIFIER_ENTRY_KEY, it.modifier?.name)
                                     keyObj.addProperty(CONTROLS_NAME_TRANSLATION_KEY, it.nameKey)
                                     keyObj.addProperty(CONTROLS_CATEGORY_TRANSLATION_KEY, it.categoryKey)
                                     keyObj.add(TOOLGUN_INFO_DISPLAY_KEY, componentToJson(it.toolGunComponent))

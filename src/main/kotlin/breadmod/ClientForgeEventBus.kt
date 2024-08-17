@@ -1,37 +1,29 @@
 package breadmod
 
-import breadmod.ClientModEventBus.createMappingsForControls
 import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.tool_gun.ToolGunPacket
+import breadmod.util.render.minecraft
 import breadmod.util.render.renderBuffer
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.Minecraft
-import net.minecraft.client.player.LocalPlayer
 import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.InputEvent
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.client.settings.KeyModifier
-import net.minecraftforge.event.TickEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import org.apache.commons.lang3.ArrayUtils
 
 @Suppress("unused")
 @Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = [Dist.CLIENT])
 object ClientForgeEventBus {
-    /**
-     * Level scene render event.
-     * @see renderBuffer
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
     @SubscribeEvent
     fun onLevelRender(event: RenderLevelStageEvent) {
         if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
@@ -41,11 +33,10 @@ object ClientForgeEventBus {
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
     fun myLogin(event: PlayerLoggedInEvent) {
-        val options = Minecraft.getInstance().options
-        options.keyMappings = ArrayUtils.removeElements(options.keyMappings, *createMappingsForControls().toTypedArray())
+        //val options = minecraft.options
+        //options.keyMappings = ArrayUtils.removeElements(options.keyMappings, *createMappingsForControls().toTypedArray())
     }
 
-//    val keyMap = KeyMapping("tool gun test", GLFW.GLFW_KEY_H, "breadmod")
     val changeMode = KeyMapping(
         "controls.${ModMain.ID}.$TOOL_GUN_DEF.change_mode",
         KeyConflictContext.IN_GAME,
@@ -54,115 +45,68 @@ object ClientForgeEventBus {
         "controls.${ModMain.ID}.category.$TOOL_GUN_DEF"
     )
 
-    @SubscribeEvent
-    fun keyInput(event: InputEvent.Key) {
-        val instance = Minecraft.getInstance()
-        val player: LocalPlayer = instance.player ?: return
-        val level = instance.level ?: return
-        val stack = player.mainHandItem
-        val item = stack.item
+    private fun modifierMatches(modifiers: Int, modifier: KeyModifier) = when (modifier) {
+        KeyModifier.SHIFT -> modifiers and 0x0001
+        KeyModifier.CONTROL -> modifiers and 0x0002
+        KeyModifier.ALT -> modifiers and 0x0004
+        KeyModifier.NONE -> 1
+    } != 0
 
-        if(item is ToolGunItem) {
-            val currentMode = item.getCurrentMode(stack)
-            if(player.isHolding(item) && changeMode.consumeClick() &&
-                event.action == InputConstants.PRESS) {
-                NETWORK.sendToServer(ToolGunPacket(true))
-                player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
-            } else {
-                currentMode.keyBinds.forEach {
-                    val bind = toolGunBindList[it] ?: return@forEach
-                    if(player.isHolding(item) && event.key == bind.key.value && event.action == InputConstants.PRESS) {
+    private fun handleInput(
+        player: Player,
+        itemHeld: ToolGunItem, stackHeld: ItemStack,
+        key: InputConstants.Key, modifiers: Int
+    ): Boolean {
+        val currentMode = itemHeld.getCurrentMode(stackHeld)
+
+        if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
+            NETWORK.sendToServer(ToolGunPacket(true))
+            player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
+            return true
+        } else {
+            currentMode.keyBinds.forEach {
+                toolGunBindList[it]?.let { bind ->
+                    if (key == bind.key && modifierMatches(modifiers, bind.keyModifier)) {
                         NETWORK.sendToServer(ToolGunPacket(false, it))
-                        println("firing action")
-                        currentMode.mode.action(level, player, stack, it)
+                        currentMode.mode.action(player.level(), player, stackHeld, it)
+                        return true
                     }
                 }
             }
         }
+        return false
     }
 
     @SubscribeEvent
-    fun mouseInput(event: InputEvent.MouseButton.Post) {
-        val instance = Minecraft.getInstance()
-        val player: LocalPlayer = instance.player ?: return
-        val level = instance.level ?: return
-        val stack = player.mainHandItem
-        val item = stack.item
+    fun keyInput(event: InputEvent.Key) {
+        if (event.action != InputConstants.RELEASE) return
 
-        if(item is ToolGunItem) {
-//            println(event.modifiers)
-            val currentMode = item.getCurrentMode(stack)
-            currentMode.keyBinds.forEach {
-                val bind = toolGunBindList[it] ?: return@forEach
-                if(player.isHolding(item) && event.button == bind.key.value
-                    && event.action == InputConstants.PRESS) {
-                    NETWORK.sendToServer(ToolGunPacket(false, it))
-                    println("firing action")
-                    currentMode.mode.action(level, player, stack, it)
-                }
-            }
-        }
+        val player = minecraft.player ?: return
+        val stackHeld = player.mainHandItem
+        val itemHeld = stackHeld.item
+
+        if (itemHeld is ToolGunItem) handleInput(
+            player,
+            itemHeld, stackHeld,
+            InputConstants.getKey(event.key, event.scanCode), event.modifiers
+        )
     }
 
     @SubscribeEvent
-    fun playerTick(event: TickEvent.ClientTickEvent) {
-        val instance = Minecraft.getInstance()
-        val player = instance.player ?: return
-        val level = instance.level ?: return
-        val stack = player.mainHandItem
-        val item = stack.item
+    fun mouseInput(event: InputEvent.MouseButton.Pre) {
+        if (event.action == InputConstants.PRESS) return
 
-        if(item is ToolGunItem) {
-            val currentMode = item.getCurrentMode(stack)
-            if(player.isHolding(item)) {
-                currentMode.mode.open(level, player, stack, null)
-            } else {
-                currentMode.mode.close(level, player, stack, null)
-            }
+        val player = minecraft.player ?: return
+        val stackHeld = player.mainHandItem
+        val itemHeld = stackHeld.item
+
+        if (itemHeld is ToolGunItem) {
+            if (handleInput(
+                    player,
+                    itemHeld, stackHeld,
+                    InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers
+                )
+            ) event.isCanceled = true
         }
     }
-
-//    @SubscribeEvent
-//    fun clientTick(event: TickEvent.ClientTickEvent) {
-//        if(event.phase != TickEvent.Phase.END) return
-//
-//        val instance = Minecraft.getInstance()
-//        val level = instance.level ?: return
-//        val player = instance.player ?: return
-//        val stack = player.mainHandItem
-//        val item = stack.item
-//
-//        if(item is ToolGunItem && player.isHolding(stack.item)) {
-//            val currentMode = item.getCurrentMode(stack)
-//            if(level.isClientSide) {
-//                if(!player.isHolding(item)) currentMode.mode.close(level, player, stack, null)
-//                else {
-//                    if(ToolGunItem.changeMode.consumeClick()) {
-//                        NETWORK.sendToServer(ToolGunPacket(true))
-//                        player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
-//                    } else {
-//                        currentMode.mode.open(level, player, stack, null)
-//                        currentMode.keyBinds.forEach {
-//                            val bind = toolGunBindList[it]
-//                            if(bind != null && bind.consumeClick()) {
-//                                NETWORK.sendToServer(ToolGunPacket(false, it))
-//                                currentMode.mode.action(level, player, stack, it)
-//                            }
-//                        }
-//                    }
-//                }
-//            } else {
-//                if(player.isHolding(item)) currentMode.mode.open(level, player, stack, null)
-//                else currentMode.mode.close(level, player, stack, null)
-//            }
-//        }
-//    }
-
-//    @Suppress("UNUSED_PARAMETER")
-//    @SubscribeEvent
-//    fun onTick(event: TickEvent.ClientTickEvent) {
-//        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) return
-//
-//        ToolGunAnimationHandler.tick()
-//    }
 }

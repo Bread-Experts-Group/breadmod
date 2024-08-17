@@ -7,6 +7,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_NAMESPACE_TAG
+import breadmod.util.render.minecraft
 import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
@@ -38,7 +39,7 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
         val handStack = pPlayer.getItemInHand(InteractionHand.MAIN_HAND) ?: return
         val item = handStack.item
 
-        if(!instance.options.hideGui && item is ToolGunItem) {
+        if (!minecraft.options.hideGui && item is ToolGunItem) {
             pGui.setupOverlayRenderState(true, false)
             renderBackground(pGuiGraphics, pPoseStack, x, y)
 
@@ -80,7 +81,7 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
         )
         // KeyBinds
         pMode?.keyBinds?.forEachIndexed { index, control ->
-            val moved = ((index+1) * 12) + 2
+            val moved = ((index + 1) * 12) + 2
             drawScaledText(
                 toolGunBindList[control]!!.translatedKeyMessage.copy()
                     .withStyle { it.withColor(ChatFormatting.GOLD).withItalic(true) }
@@ -93,13 +94,14 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
                 getInput("key.mouse.right") -> {
                     pPose.pushPose()
                     pPose.scaleFlat(0.68f)
-                    pGuiGraphics.blit(overlayTexture, pX , pY + 69 + moved, 240, 63, 16, 16)
+                    pGuiGraphics.blit(overlayTexture, pX, pY + 69 + moved, 240, 63, 16, 16)
                     pPose.popPose()
                 }
+
                 getInput("key.mouse.middle") -> {
                     pPose.pushPose()
                     pPose.scaleFlat(0.68f)
-                    pGuiGraphics.blit(overlayTexture, pX , pY + 73 + moved, 240, 47, 16, 16)
+                    pGuiGraphics.blit(overlayTexture, pX, pY + 73 + moved, 240, 47, 16, 16)
                     pPose.popPose()
                 }
             }

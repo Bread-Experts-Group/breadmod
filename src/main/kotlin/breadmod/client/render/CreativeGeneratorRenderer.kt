@@ -3,10 +3,10 @@ package breadmod.client.render
 import breadmod.ClientModEventBus
 import breadmod.ModMain.modLocation
 import breadmod.block.entity.machine.CreativeGeneratorBlockEntity
+import breadmod.util.render.minecraft
 import breadmod.util.render.renderBlockModel
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraftforge.client.model.generators.ModelProvider
@@ -23,8 +23,7 @@ class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntit
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val instance = Minecraft.getInstance()
-        val starModel = instance.modelManager.getModel(starModelLocation)
+        val starModel = minecraft.modelManager.getModel(starModelLocation)
         val level = pBlockEntity.level ?: return
 
 //        val builder = pBuffer.getBuffer(ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png")))
@@ -47,7 +46,7 @@ class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntit
 //        pPoseStack.translate(-1f, 0f, -1f)
 //        drawQuad(builder, pPoseStack, 1f, 0f, 1f, 0f, 1f, 1f, 0f, 0f, 0f, 0f, pPackedLight, pPackedOverlay)
         renderBlockModel(
-            pPoseStack, pBuffer, pBlockEntity, instance.modelManager.getModel(aLocation), pPackedLight, pPackedOverlay,
+            pPoseStack, pBuffer, pBlockEntity, minecraft.modelManager.getModel(aLocation), pPackedLight, pPackedOverlay,
            /* ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png"))*/
         )
         pPoseStack.popPose()
