@@ -63,8 +63,7 @@ class ToolGunCreatorScreen(
         private var entityHealth: Double = 20.0
         private var entitySpeed: Double = 5.0
 
-        // First Int: Duration, Second Int: Amplifier
-        /** holder for mob effects */
+        // todo remove this in favor of mobEffectWidgetHolder
         private var entityEffects: MutableMap<String, Triple<MobEffect, Int, Int>> = mutableMapOf()
 
         private var helmetSlot: ItemStack = Items.DIAMOND_HELMET.defaultInstance
@@ -75,10 +74,13 @@ class ToolGunCreatorScreen(
         private var mainHandSlot: ItemStack = PEItems.RED_MATTER_AXE.get().defaultInstance
         private var offHandSlot: ItemStack = ItemStack.EMPTY
 
-        private val mobEffectWidgets:
-                MutableList<Pair<String, Triple<MobEffect, Int, Int>>> = ArrayList(4)
+        // First Int: Duration, Second Int: Amplifier
+        /** holder for mob effects */
+        private val mobEffectWidgetHolder:
+                MutableMap<String, Pair<Triple<MobEffect, Int, Int>, MobEffectWidget>> = mutableMapOf()
 
         private var mobEffectPages = 0
+        private var currentMobEffectPage = 0
 
         /** holder for adding mob effect widgets */
         private var mobEffectString: String = ""
@@ -243,7 +245,6 @@ class ToolGunCreatorScreen(
         pY: Int,
         pWidth: Int,
         pHeight: Int,
-        pair: Pair<String, Enum<SignType>>,
         defaultValue: String,
         responder: Consumer<String>
     ): EditBox {
@@ -252,7 +253,6 @@ class ToolGunCreatorScreen(
         editBox.setMaxLength(50)
         editBox.value = if(defaultValue != "") defaultValue else ""
         editBox.setResponder(responder)
-        addToWidgetMap(pair, editBox)
         return editBox
     }
 
@@ -297,39 +297,68 @@ class ToolGunCreatorScreen(
                 it.visible = false
             }
         }
+        initWidgetsFromMap()
+    }
+
+    /**
+     * Sets widgets' visibility matching [id] (and widgets starting with [id]) in [widgetMap]
+     */
+    private fun setVisible(id: String, toggle: Boolean) {
+        val filteredMap = widgetMap.filter { (key, _) -> key.first.startsWith(id) }
+        filteredMap.forEach { (_, value) ->
+            value.visible = toggle
+        }
+    }
+
+    /**
+     * Removes [id] and it's associated children starting with [id] from [widgetMap]
+     */
+    private fun removeWidgetAndChildren(id: String) {
+        val filteredMap = widgetMap.filter { (key, _) -> key.first.startsWith(id) }
+        filteredMap.forEach { (key, value) ->
+            if (value is MobEffectWidget) {
+                entityEffects.remove(key.first)
+            }
+            value.visible = false
+            widgetMap.remove(key)
+        }
+        initWidgetsFromMap()
     }
 
     /** Only called during gui init and adding potion effects.
      * Existing widgets are overridden when this function is called again. */
-    private fun initWidgets() {
+    private fun initWidgetsFromMap() {
         println("initializing widgetMap")
         // make sure to flush duplicate renderable entries in the list after adding potion effect widgets
         clearWidgets()
-        mobEffectWidgets.clear()
+        mobEffectWidgetHolder.clear()
 
         entityEffects.forEach { (key, value) ->
-            mobEffectWidgets.add(key to value)
+            mobEffectWidgetHolder[key] = value to MobEffectWidget(
+                key to SignType.POTION, value.first, value.second, value.third
+            )
         }
 
-        println(mobEffectWidgets.size)
-        for (i in 0..<mobEffectWidgets.size) {
-            println(i)
-            val widget = MobEffectGuiWidget(
-                mobEffectWidgets[i].first to SignType.POTION, 1.0, mobEffectWidgets[i].second.first)
-            widget.setPosition(leftPos + 5 + 83 * (i % 3), topPos + 32 + 50 * (i / 3))
-            widget.initSubWidgets()
-            println(widget.x)
-//            addToWidgetMap(mobEffectWidgets[i].first to SignType.POTION, widget)
+        for (i in 0..<mobEffectWidgetHolder.size) {
+            val list = mobEffectWidgetHolder.entries.elementAt(i)
+
+            list.value.second.setPosition(leftPos + 5 + 83 * (i % 3), topPos + 32 + 50 * (i / 3))
+            list.value.second.initWidget()
         }
 
         widgetMap.forEach { (key, value) ->
-            if(value is MobEffectGuiWidget || value is ValueModifierGuiWidget) {
+            if(value is MobEffectWidget) {
+                value.initWidget()
+            }
+            if(value is ValueModifierWidget || value is MobEffectWidget) {
                 addRenderableOnly(value)
             } else addRenderableWidget(value)
             if(currentTab == SignType.POTION && key.second != SignType.POTION) {
-                value.visible = false
+                setVisible(key.first, false)
+//                value.visible = false
             } else if(currentTab == SignType.MAIN && key.second != SignType.MAIN) {
-                value.visible = false
+                setVisible(key.first, false)
+//                value.visible = false
             }
 //            println("key: $key, value: $value")
         }
@@ -340,14 +369,12 @@ class ToolGunCreatorScreen(
         // Main tab //
 
         createEditBox(
-            leftPos + 100, topPos + 100, 100, 15,
-            "mob_selector" to SignType.MAIN, entityString
+            leftPos + 100, topPos + 100, 100, 15, entityString
         ) { string ->
             entityString = string.lowercase().replace(' ', '_')
             entityType = getEntityFromString(entityString)
             checkRequestedVsActual()
-//            println(entityString)
-        }
+        }.also { addToWidgetMap("mob_selector" to SignType.MAIN, it) }
 
         addToWidgetMap("potion_tab_button" to SignType.MAIN,
             GenericButton(leftPos + 175, topPos, 80, 10, Component.literal("Potion Effects")) {
@@ -355,7 +382,6 @@ class ToolGunCreatorScreen(
                 widgetMap.forEach { (key, value) ->
                     value.visible = currentTab == SignType.POTION && key.second == SignType.POTION
                 }
-                println(currentTab)
             })
 
         addToWidgetMap("funny_button" to SignType.MAIN,
@@ -370,13 +396,12 @@ class ToolGunCreatorScreen(
             )
         )
 
-
         // Entity Scale
         threeStageValueButtons("scale" to SignType.MAIN, leftPos + 5, topPos + 100, SignType.ADD)
         threeStageValueButtons("scale" to SignType.MAIN, leftPos + 38, topPos + 100, SignType.SUBTRACT)
 
         // Health modifier
-        ValueModifierGuiWidget("health" to SignType.MAIN, leftPos + 72, topPos + 12, 1.0,
+        ValueModifierWidget("health" to SignType.MAIN, leftPos + 72, topPos + 12, 1.0,
             ICONS, 52, 0, 9, 9)
 
 //        addToWidgetMap("draggable" to SignType.MAIN,
@@ -391,7 +416,6 @@ class ToolGunCreatorScreen(
                 widgetMap.forEach { (key, value) ->
                     value.visible = currentTab == SignType.MAIN && key.second == SignType.MAIN
                 }
-//                println(currentTab)
             })
 
         // Add potion effect widget from edit box
@@ -399,12 +423,10 @@ class ToolGunCreatorScreen(
             GenericButton(leftPos + 84, topPos + 12, 23, 12, Component.literal("add")) {
                 if (mobEffectFromString(id = mobEffectString) != null) {
                     mobEffectFromString(id = mobEffectString)?.let {
-                        println(it.displayName)
+//                        println(it.displayName)
                         if (entityEffects[mobEffectString] == null) {
                             entityEffects[mobEffectString] = Triple(it, 100, 1)
-//                            MobEffectGuiWidget(mobEffectString to SignType.POTION,1.0, it)
-//                            mobEffectWidgets.add(mobEffectString to Triple(it, 100, 1))
-                            initWidgets()
+                            initWidgetsFromMap()
                         } else {
                             println("effect already exists in map!")
                         }
@@ -417,28 +439,12 @@ class ToolGunCreatorScreen(
 
         // mob effect edit box (clearly)
         createEditBox(
-            leftPos + 2, topPos + 13, 80, 10,
-            "mob_effect_edit_box" to SignType.POTION, ""
+            leftPos + 2, topPos + 13, 80, 10, ""
         ) { string ->
             mobEffectString = string.lowercase().replace(' ', '_')
-//            println(potionEffectString)
-        }
+        }.also { addToWidgetMap("mob_effect_edit_box" to SignType.POTION, it) }
 
-//        addToWidgetMap("potion_list" to SignType.POTION, MobEffectList())
-
-//        widgetMap["health" to SignType.MAIN] =
-//            ValueModifierButton.ValueModifierButtonsWithGui("health" to SignType.MAIN, 20, 10)
-
-//        widgetMap["test" to SignType.POTION] = PotionEffectGuiElement(50, 50)
-
-//        renderableMap.forEach { (key, value) ->
-//            addRenderableOnly(value)
-//            if(key.second == SignType.POTION) value.visible = false
-//        }
-
-//        PotionEffectGuiElement("potion_test" to SignType.POTION, leftPos + 10, topPos + 30)
-
-        initWidgets()
+        initWidgetsFromMap()
     }
 
     override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
@@ -465,7 +471,6 @@ class ToolGunCreatorScreen(
     }
 
     override fun containerTick() {
-        super.containerTick()
         widgetMap.forEach { (_, value) ->
             if(value is EditBox) value.tick()
         }
@@ -477,13 +482,20 @@ class ToolGunCreatorScreen(
         super.onClose()
     }
 
-    // Custom widget classes past here
+    private fun AbstractWidget.scaleInternal(pGuiGraphics: GuiGraphics, pPoseStack: PoseStack, pX: Int, pY: Int, pScale: Double) {
+        pPoseStack.pushPose()
+        pPoseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
+        pPoseStack.scaleFlat(pScale.toFloat())
+        pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
+        pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
+    }
+
+    // Custom widget classes past here //
 
     // todo custom texture and scale
     inner class CustomEditBox(
         pX: Int, pY: Int, pWidth: Int, pHeight: Int
-    ) : EditBox(breadmod.util.render.minecraft.font, pX, pY, pWidth, pHeight, Component.literal("A TEXT BOX")) {
-
+    ) : EditBox(breadmod.util.render.minecraft.font, pX, pY, pWidth, pHeight, Component.empty()) {
         override fun tick() {
             super.tick()
             if(this.isFocused) {
@@ -529,98 +541,6 @@ class ToolGunCreatorScreen(
         pText: Component,
         onPress: OnPress
     ): Button(pX, pY, pWidth, pHeight, pText, onPress, CreateNarration { it.get() })
-
-    // todo add parameters for automatically adding resize widgets and adding onto a future potion effects map
-    // todo rebuilding potion widgets from entityEffects after removing another potion widget
-
-    // todo automatically adding valid mob effect to mobEffectInstanceMap with mob effect name as id
-    // todo setting text color to mob effect color
-    // todo render calls for rendering the mob effect and bg of that effect instance (Gui.java@448)
-    // todo automatically adding created effect instance into entityEffect with a system in place for not allowing more than one instance of a potion effect
-    // todo show null error if entered mob effect doesn't exist
-    // todo add and remove buttons for deleting the mob effect instance (along with removing that instance from entityEffect)
-    // todo convert to using scaling
-
-    // todo AbstractScrollWidget (look into TelemetryEventWidget for insight)
-
-    inner class MobEffectGuiWidget(
-        private val pair: Pair<String, Enum<SignType>>,
-        private val pScale: Double,
-        private val effect: MobEffect
-    ): ScaledAbstractWidget(0, 0, 80, 40, pScale, Component.empty()) {
-//        private val removeButton =
-//            GenericButton(x, y + 30, 20, 10, Component.literal("remove")) {
-//            println("removing ${pair.first}")
-//            removeThisWidget(pair)
-//        }
-
-        override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
-        override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-            val poseStack = pGuiGraphics.pose()
-            val mobEffectTexture = breadmod.util.render.minecraft.mobEffectTextures.get(effect)
-
-            if(visible) {
-                scaleInternal(pGuiGraphics, poseStack, x, y, pScale)
-                pGuiGraphics.blit(20, 20, 0, 20, 20, mobEffectTexture)
-                pGuiGraphics.drawText(effect.displayName, 30, 5, effect.color)
-                poseStack.popPose()
-            }
-        }
-
-        // todo work on logic to remove this and any child widget matching pair.first
-        private fun removeThisWidget(pair: Pair<String, Enum<SignType>>) {
-//            widgetMap.forEach { (key, value) -> // todo throws ConcurrentModificationException
-//              if(pair.first in key.first) {
-//                    println("key: $key, value: $value")
-//                    widgetMap.remove(pair.first to pair.second)
-//                    removeWidget(value)
-//                }
-//            }
-            removeFromWidgetMap(pair)
-            removeFromWidgetMap("${pair.first}_plus_one" to pair.second)
-            removeFromWidgetMap("${pair.first}_plus_ten" to pair.second)
-            removeFromWidgetMap("${pair.first}_plus_hundred" to pair.second)
-            removeFromWidgetMap("${pair.first}_minus_one" to pair.second)
-            removeFromWidgetMap("${pair.first}_minus_ten" to pair.second)
-            removeFromWidgetMap("${pair.first}_minus_hundred" to pair.second)
-            removeFromWidgetMap("${pair.first}_remove" to pair.second)
-            mobEffectWidgets.remove(pair.first to Triple(effect, 100, 1))
-            entityEffects.remove(pair.first)
-            initWidgets()
-        }
-
-        fun initSubWidgets() {
-            addToWidgetMap(pair, this)
-            threeStageValueButtons(pair, x, y, SignType.ADD)
-            threeStageValueButtons(pair, x + 58, y, SignType.SUBTRACT)
-            addToWidgetMap("${pair.first}_remove" to pair.second,
-                GenericButton(x, y + 30, 20, 10, Component.literal("remove")) {
-                    println("removing ${pair.first}")
-                    removeThisWidget(pair)
-                })
-        }
-
-//        init {
-//            addToWidgetMap(pair, this)
-//            threeStageValueButtons(pair, x, y, SignType.ADD)
-//            threeStageValueButtons(pair, x + 58, y, SignType.SUBTRACT)
-//            // todo convert to ScaledButton
-//            addToWidgetMap("${pair.first}_remove" to pair.second,
-//                GenericButton(x, y + 30, 20, 10, Component.literal("remove")) {
-//                    println("removing ${pair.first}")
-//                    removeThisWidget(pair)
-//                })
-//            initWidgets()
-//        }
-    }
-
-    private fun AbstractWidget.scaleInternal(pGuiGraphics: GuiGraphics, pPoseStack: PoseStack, pX: Int, pY: Int, pScale: Double) {
-        pPoseStack.pushPose()
-        pPoseStack.translate(pX.toDouble(), pY.toDouble(), 0.0)
-        pPoseStack.scaleFlat(pScale.toFloat())
-        pGuiGraphics.fill(RenderType.gui(), 0, 0, width, height, Color(26, 26, 26).rgb)
-        pGuiGraphics.fill(RenderType.gui(), 1, 1, width - 1, height - 1, Color(51, 51, 51).rgb)
-    }
 
     // todo custom button scale and textures
     class JsonButton(
@@ -680,6 +600,8 @@ class ToolGunCreatorScreen(
     }
 
     // todo custom button scale (DONE) and textures (TODO)
+    // todo rework (left click increases, right click decreases, holding shift adds 10 multiplier, holding ctrl adds 100 multiplier)
+    // todo key/mouseinput.modifiers, KeyModifier.CTRL -> you get your result
     class ValueModifierButton(
         pX: Int,
         pY: Int,
@@ -699,10 +621,11 @@ class ToolGunCreatorScreen(
         }
     }
 
+    // todo convert widgets in init to values like in MobEffectWidget
     /** Constructs a widget with six add/subtract buttons with a texture to signify what value it changes.
      *  Automatically adds itself to [widgetMap]
      */
-    inner class ValueModifierGuiWidget(
+    inner class ValueModifierWidget(
         pair: Pair<String, Enum<SignType>>,
         private val pX: Int,
         private val pY: Int,
@@ -722,13 +645,98 @@ class ToolGunCreatorScreen(
             poseStack.translate(0.8, -0.2, 0.0)
             pGuiGraphics.blit(pIconTexture, 8, 0, pUOffset, pVOffset, pUWidth, pVHeight)
             poseStack.popPose()
-            // 52, 0, 61, 9
         }
 
         init {
             addToWidgetMap(pair, this)
             threeStageValueButtons(pair, pX + 2, pY + 4, SignType.ADD)
             threeStageValueButtons(pair, pX + 57, pY + 4, SignType.SUBTRACT)
+        }
+    }
+
+    // todo automatically adding created effect instance into entityEffect with a system in place for not allowing more than one instance of a potion effect
+    // todo show null error if entered mob effect doesn't exist
+    // todo add and remove buttons for deleting the mob effect instance (along with removing that instance from entityEffect)
+
+    inner class MobEffectWidget(
+        private val pair: Pair<String, Enum<SignType>>,
+        private val effect: MobEffect,
+        private val duration: Int,
+        private val amplifier: Int
+    ): AbstractWidget(0, 0, 80, 40, Component.empty()) {
+        private lateinit var removeButton: GenericButton
+        private lateinit var durationEditBox: EditBox
+        private lateinit var amplifierEditBox: EditBox
+
+        override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
+            defaultButtonNarrationText(pNarrationElementOutput)
+        }
+
+        fun initWidget() {
+
+            addToWidgetMap(pair, this)
+            durationEditBox =
+                createEditBox(x + 2, y + height - 12, 50, 10, entityEffects[pair.first]?.second.toString()) { string ->
+                    val number = try {
+                        Integer.valueOf(string)
+                    } catch (e: Exception) {
+                        100
+                    }
+                    entityEffects[pair.first] = Triple(effect, number, amplifier)
+                }
+            addToWidgetMap("${pair.first}_duration" to pair.second, durationEditBox)
+            amplifierEditBox =
+                createEditBox(x + 58, y + height - 12, 20, 10, entityEffects[pair.first]?.third.toString()) { string ->
+                    val number = try {
+                        Integer.valueOf(string)
+                    } catch (e: Exception) {
+                        1
+                    }
+                    entityEffects[pair.first] = Triple(effect, duration, number)
+                }
+            addToWidgetMap("${pair.first}_amplifier" to pair.second, amplifierEditBox)
+            removeButton = GenericButton(x + width - 11, y, 10, 10, Component.literal("x")) {
+                println("removing ${pair.first}")
+                removeWidgetAndChildren(pair.first)
+            }
+            addToWidgetMap("${pair.first}_remove" to pair.second, removeButton)
+        }
+
+        override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
+            val mobEffectTexture = breadmod.util.render.minecraft.mobEffectTextures.get(effect)
+
+            if(visible) {
+                pGuiGraphics.fill(RenderType.gui(), x, y, x + width, y + height, Color(26, 26, 26).rgb)
+                pGuiGraphics.fill(RenderType.gui(), x + 1, y + 1, x + width - 1, y + height - 1, Color(51, 51, 51).rgb)
+                pGuiGraphics.blit(x + 2, y, 0, 18, 18, mobEffectTexture)
+                pGuiGraphics.drawText(effect.displayName, x + 2, y + 19, effect.color)
+
+                removeButton.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+                durationEditBox.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+                amplifierEditBox.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+            }
+        }
+
+        override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+            return if (visible) {
+                if(durationEditBox.mouseClicked(pMouseX, pMouseY, pButton)) {
+                    true
+                } else if (amplifierEditBox.mouseClicked(pMouseX, pMouseY, pButton)) {
+                    true
+                } else if (removeButton.mouseClicked(pMouseX, pMouseY, pButton)) {
+                    true
+                } else false
+            } else false
+        }
+
+        override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
+            return if (visible) {
+                if(durationEditBox.keyPressed(pKeyCode, pScanCode, pModifiers)) {
+                    true
+                } else if (amplifierEditBox.keyPressed(pKeyCode, pScanCode, pModifiers)) {
+                    true
+                } else false
+            } else false
         }
     }
 }
