@@ -43,7 +43,7 @@ internal class ModToolGunModeProvider(
                 ),
                 Control(
                     "screen",
-                    "${TOOL_GUN_DEF}.${ModMain.ID}.mode.controls.name.screen.r",
+                    "${TOOL_GUN_DEF}.${ModMain.ID}.mode.controls.name.creator.r",
                     "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
                     { InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R) }

@@ -9,8 +9,8 @@ import breadmod.util.render.minecraft
 import breadmod.util.render.renderBuffer
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.InputEvent
@@ -53,22 +53,21 @@ object ClientForgeEventBus {
     } != 0
 
     private fun handleInput(
-        player: Player,
+        player: LocalPlayer,
         itemHeld: ToolGunItem, stackHeld: ItemStack,
         key: InputConstants.Key, modifiers: Int
     ): Boolean {
+        if (minecraft.screen != null) return false
         val currentMode = itemHeld.getCurrentMode(stackHeld)
 
-        if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier) &&
-            !player.hasContainerOpen()) {
+        if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
             NETWORK.sendToServer(ToolGunPacket(true))
             player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
             return true
         } else {
             currentMode.keyBinds.forEach {
                 toolGunBindList[it]?.let { bind ->
-                    if (key == bind.key && modifierMatches(modifiers, bind.keyModifier) &&
-                        !player.hasContainerOpen()) {
+                    if (key == bind.key && modifierMatches(modifiers, bind.keyModifier)) {
                         NETWORK.sendToServer(ToolGunPacket(false, it))
                         currentMode.mode.action(player.level(), player, stackHeld, it)
                         return true
