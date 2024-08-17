@@ -59,14 +59,16 @@ object ClientForgeEventBus {
     ): Boolean {
         val currentMode = itemHeld.getCurrentMode(stackHeld)
 
-        if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
+        if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier) &&
+            !player.hasContainerOpen()) {
             NETWORK.sendToServer(ToolGunPacket(true))
             player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
             return true
         } else {
             currentMode.keyBinds.forEach {
                 toolGunBindList[it]?.let { bind ->
-                    if (key == bind.key && modifierMatches(modifiers, bind.keyModifier)) {
+                    if (key == bind.key && modifierMatches(modifiers, bind.keyModifier) &&
+                        !player.hasContainerOpen()) {
                         NETWORK.sendToServer(ToolGunPacket(false, it))
                         currentMode.mode.action(player.level(), player, stackHeld, it)
                         return true
