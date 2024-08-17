@@ -205,17 +205,22 @@ class USEnglishLanguageProvider(
             TOOL_GUN_DEF, "mode", "display_name", "creator")
         modAdd("Add entities/blocks with right click.",
             TOOL_GUN_DEF, "mode", "tooltip", "creator")
+        modAdd(
+            "Create Entity",
+            TOOL_GUN_DEF, "mode", "controls", "name", "creator", "rmb"
+        )
         modAdd("... to add an entity.",
             TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb")
+        modAdd(
+            "Open Entity Menu",
+            TOOL_GUN_DEF, "mode", "controls", "name", "creator", "r"
+        )
         modAdd("... to open the entity/block editor.",
             TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r")
         modAdd("Save / Load",
             TOOL_GUN_DEF, "creator", "save_load")
         modAdd("expected %s, got %s",
             TOOL_GUN_DEF, "creator", "invalid_entity")
-
-        modAdd("Create Entity",
-            TOOL_GUN_DEF, "mode", "controls", "name", "creator", "rmb")
         modAdd("Toolgun: Creator",
             TOOL_GUN_DEF, "mode", "controls", "category", "creator")
 
@@ -242,7 +247,8 @@ class USEnglishLanguageProvider(
         modAdd("... to target fluids.",
             TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off")
         modAdd("... to not target fluids.",
-            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "on") // TODO
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "on"
+        )
 
         modAdd("Explode",
             TOOL_GUN_DEF, "mode", "controls", "name", "explode", "rmb")
