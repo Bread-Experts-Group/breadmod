@@ -18,8 +18,10 @@ import net.minecraftforge.client.event.RenderLevelStageEvent
 import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.client.settings.KeyModifier
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
+import org.apache.commons.lang3.ArrayUtils
 
 @Suppress("unused")
 @Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = [Dist.CLIENT])
@@ -30,13 +32,6 @@ object ClientForgeEventBus {
         renderBuffer.removeIf { (mutableList, renderStageEvent) -> renderStageEvent.invoke(mutableList, event) }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    @SubscribeEvent
-    fun myLogin(event: PlayerLoggedInEvent) {
-        //val options = minecraft.options
-        //options.keyMappings = ArrayUtils.removeElements(options.keyMappings, *createMappingsForControls().toTypedArray())
-    }
-
     val changeMode = KeyMapping(
         "controls.${ModMain.ID}.$TOOL_GUN_DEF.change_mode",
         KeyConflictContext.IN_GAME,
@@ -44,6 +39,35 @@ object ClientForgeEventBus {
         InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
         "controls.${ModMain.ID}.category.$TOOL_GUN_DEF"
     )
+
+    val openGuiEditor = KeyMapping(
+        "controls.${ModMain.ID}.gui_editor",
+        KeyConflictContext.UNIVERSAL,
+        KeyModifier.SHIFT,
+        InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F1),
+        "controls.${ModMain.ID}"
+    )
+
+    var createdMappings = listOf<KeyMapping>()
+
+    @Suppress("UNUSED_PARAMETER")
+    @SubscribeEvent
+    fun logout(event: PlayerLoggedOutEvent) {
+        minecraft.options.keyMappings = ArrayUtils.removeElements(
+            minecraft.options.keyMappings,
+            *createdMappings.toTypedArray()
+        )
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    @SubscribeEvent
+    fun login(event: PlayerLoggedInEvent) {
+        minecraft.options.keyMappings = ArrayUtils.removeElements(
+            minecraft.options.keyMappings,
+            openGuiEditor
+        )
+    }
+
 
     private fun modifierMatches(modifiers: Int, modifier: KeyModifier) = when (modifier) {
         KeyModifier.SHIFT -> modifiers and 0x0001
@@ -79,31 +103,37 @@ object ClientForgeEventBus {
 
     @SubscribeEvent
     fun keyInput(event: InputEvent.Key) {
-        if (event.action != InputConstants.RELEASE || minecraft.screen != null) return
+        if (event.action != InputConstants.RELEASE) return
+        val player = minecraft.player
+        if (player == null) {
 
-        val player = minecraft.player ?: return
-        val stackHeld = player.mainHandItem
-        val itemHeld = stackHeld.item
+        } else if (minecraft.screen == null) {
+            val stackHeld = player.mainHandItem
+            val itemHeld = stackHeld.item
 
-        if (itemHeld is ToolGunItem) handleToolgunInput(
-            player,
-            itemHeld, stackHeld,
-            InputConstants.getKey(event.key, event.scanCode), event.modifiers
-        )
+            if (itemHeld is ToolGunItem) handleToolgunInput(
+                player,
+                itemHeld, stackHeld,
+                InputConstants.getKey(event.key, event.scanCode), event.modifiers
+            )
+        }
     }
 
     @SubscribeEvent
     fun mouseInput(event: InputEvent.MouseButton.Post) {
-        if (event.action != InputConstants.RELEASE || minecraft.screen != null) return
+        if (event.action != InputConstants.RELEASE) return
+        val player = minecraft.player
+        if (player == null) {
 
-        val player = minecraft.player ?: return
-        val stackHeld = player.mainHandItem
-        val itemHeld = stackHeld.item
+        } else if (minecraft.screen == null) {
+            val stackHeld = player.mainHandItem
+            val itemHeld = stackHeld.item
 
-        if (itemHeld is ToolGunItem) handleToolgunInput(
-            player,
-            itemHeld, stackHeld,
-            InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers
-        )
+            if (itemHeld is ToolGunItem) handleToolgunInput(
+                player,
+                itemHeld, stackHeld,
+                InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers
+            )
+        }
     }
 }

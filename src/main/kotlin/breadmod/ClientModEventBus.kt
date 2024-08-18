@@ -1,5 +1,8 @@
 package breadmod
 
+import breadmod.ClientForgeEventBus.changeMode
+import breadmod.ClientForgeEventBus.createdMappings
+import breadmod.ClientForgeEventBus.openGuiEditor
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
 import breadmod.client.gui.ToolGunOverlay
@@ -38,11 +41,8 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.EntityRenderersEvent
+import net.minecraftforge.client.event.*
 import net.minecraftforge.client.event.ModelEvent.RegisterAdditional
-import net.minecraftforge.client.event.RegisterColorHandlersEvent
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
-import net.minecraftforge.client.event.RegisterShadersEvent
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.client.settings.KeyConflictContext
@@ -126,6 +126,12 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntityTypes.WHEAT_CRUSHER.get(), genericMachineRenderer)
     }
 
+    @SubscribeEvent
+    fun registerKeyMappings(event: RegisterKeyMappingsEvent) {
+        event.register(changeMode)
+        event.register(openGuiEditor)
+    }
+
     val toolGunBindList = mutableMapOf<Control, KeyMapping>()
     fun createMappingsForControls(prepared: List<Control>): List<KeyMapping> {
         prepared.forEach {
@@ -147,7 +153,8 @@ object ClientModEventBus {
             }
             toolGunBindList[it] = mapping
         }
-        return toolGunBindList.values.toList()
+        createdMappings = toolGunBindList.values.toList()
+        return createdMappings
     }
 
     @SubscribeEvent

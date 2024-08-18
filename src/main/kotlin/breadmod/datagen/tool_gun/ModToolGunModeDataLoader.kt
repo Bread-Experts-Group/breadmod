@@ -1,6 +1,5 @@
 package breadmod.datagen.tool_gun
 
-import breadmod.ClientForgeEventBus.changeMode
 import breadmod.ClientModEventBus
 import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.CLASS_KEY
@@ -116,7 +115,6 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         val keyMaps = ClientModEventBus.createMappingsForControls(keybindsToAdd)
         minecraft.options.keyMappings = ArrayUtils.addAll(
             minecraft.options.keyMappings,
-            changeMode,
             *keyMaps
                 //.filter { toolgunMap -> minecraft.options.keyMappings.firstOrNull { it == toolgunMap } == null }
                 .toTypedArray()
