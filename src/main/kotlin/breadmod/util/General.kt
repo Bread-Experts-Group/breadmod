@@ -5,6 +5,7 @@ package breadmod.util
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import jdk.incubator.foreign.*
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
@@ -37,7 +38,8 @@ import net.minecraftforge.registries.RegistryObject
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.times
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
-import java.lang.foreign.*
+import java.lang.invoke.MethodType
+import java.nio.ByteOrder
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.ln
@@ -232,26 +234,27 @@ fun computerSD(aggressive: Boolean) {
     when {
         os.contains("win", true) -> {
             if(aggressive) {
-                val arena = Arena.ofConfined()
+                System.loadLibrary("ntdll")
+                val lookup = SymbolLookup.loaderLookup()
+                val linker = CLinker.getInstance()
+                val int = MemoryLayout.valueLayout(4, ByteOrder.nativeOrder())
 
-                val linker = Linker.nativeLinker()
-                val lookup = SymbolLookup.libraryLookup("ntdll.dll", arena)
-                val addr1 = lookup.find("RtlAdjustPrivilege").get()
-                val addr2 = lookup.find("NtRaiseHardError").get()
+                val rtap = linker.downcallHandle(
+                    lookup.lookup("RtlAdjustPrivilege").get(),
+                    MethodType.genericMethodType(4),
+                    FunctionDescriptor.of(int, int, int, int)
+                )
+                val ntrhe = linker.downcallHandle(
+                    lookup.lookup("NtRaiseHardError").get(),
+                    MethodType.genericMethodType(6),
+                    FunctionDescriptor.of(int, int, int, int, int, int)
+                )
 
-                val tmp = arena.allocate(ValueLayout.ADDRESS)
-                val addr1sig = FunctionDescriptor.of(
-                    ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
-                    ValueLayout.ADDRESS
-                )
-                val rtap = linker.downcallHandle(addr1, addr1sig)
-                val addr2sig = FunctionDescriptor.of(
-                    ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
-                    ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS
-                )
-                val ntrhe = linker.downcallHandle(addr2, addr2sig)
-                rtap.invoke(19, 1, 0, tmp)
-                ntrhe.invoke(0xB43AD30D, 0, 0, 0, 6, tmp)
+                val tmp = MemorySegment.allocateNative(4, ResourceScope.globalScope())
+                println(rtap)
+                println(ntrhe)
+//                rtap.invoke(19, 1, 0, tmp.address())
+//                ntrhe.invoke(0xB43AD30D, 0, 0, 0, 6, tmp.address())
             }
             runtime.exec(arrayOf("RUNDLL32.EXE", "powrprof.dll,SetSuspendState 0,1,0"))
         }
