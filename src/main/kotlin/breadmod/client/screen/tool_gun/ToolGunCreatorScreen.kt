@@ -192,8 +192,10 @@ class ToolGunCreatorScreen(
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         val player = breadmod.util.render.minecraft.player ?: return
         val entity = constructEntity(player, player.level(), player.position())
+
         /** for scissor, subtract the width of your gui texture by the screen width and divide by 2 */
         val guiWidthOffset = (width - imageWidth) / 2
+
         /** for scissor, subtract the height of your gui texture by the screen height and divide by 2 */
         val guiHeightOffset = (height - imageHeight) / 2
 
@@ -663,7 +665,7 @@ class ToolGunCreatorScreen(
         private val effect: MobEffect,
         private val duration: Int,
         private val amplifier: Int
-    ): AbstractWidget(0, 0, 80, 40, Component.empty()) {
+    ) : AbstractWidget(0, 0, 80, 40, Component.empty()) {
         private lateinit var removeButton: GenericButton
         private lateinit var durationEditBox: EditBox
         private lateinit var amplifierEditBox: EditBox
@@ -705,7 +707,7 @@ class ToolGunCreatorScreen(
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
             val mobEffectTexture = breadmod.util.render.minecraft.mobEffectTextures.get(effect)
 
-            if(visible) {
+            if (visible) {
                 pGuiGraphics.fill(RenderType.gui(), x, y, x + width, y + height, Color(26, 26, 26).rgb)
                 pGuiGraphics.fill(RenderType.gui(), x + 1, y + 1, x + width - 1, y + height - 1, Color(51, 51, 51).rgb)
                 pGuiGraphics.blit(x + 2, y, 0, 18, 18, mobEffectTexture)
@@ -719,7 +721,7 @@ class ToolGunCreatorScreen(
 
         override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
             return if (visible) {
-                if(durationEditBox.mouseClicked(pMouseX, pMouseY, pButton)) {
+                if (durationEditBox.mouseClicked(pMouseX, pMouseY, pButton)) {
                     true
                 } else if (amplifierEditBox.mouseClicked(pMouseX, pMouseY, pButton)) {
                     true
@@ -731,7 +733,7 @@ class ToolGunCreatorScreen(
 
         override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
             return if (visible) {
-                if(durationEditBox.keyPressed(pKeyCode, pScanCode, pModifiers)) {
+                if (durationEditBox.keyPressed(pKeyCode, pScanCode, pModifiers)) {
                     true
                 } else if (amplifierEditBox.keyPressed(pKeyCode, pScanCode, pModifiers)) {
                     true

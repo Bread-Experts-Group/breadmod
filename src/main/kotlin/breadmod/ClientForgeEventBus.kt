@@ -52,12 +52,11 @@ object ClientForgeEventBus {
         KeyModifier.NONE -> 1
     } != 0
 
-    private fun handleInput(
+    private fun handleToolgunInput(
         player: LocalPlayer,
         itemHeld: ToolGunItem, stackHeld: ItemStack,
         key: InputConstants.Key, modifiers: Int
     ): Boolean {
-        if (minecraft.screen != null) return false
         val currentMode = itemHeld.getCurrentMode(stackHeld)
 
         if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
@@ -80,13 +79,13 @@ object ClientForgeEventBus {
 
     @SubscribeEvent
     fun keyInput(event: InputEvent.Key) {
-        if (event.action != InputConstants.RELEASE) return
+        if (event.action != InputConstants.RELEASE || minecraft.screen != null) return
 
         val player = minecraft.player ?: return
         val stackHeld = player.mainHandItem
         val itemHeld = stackHeld.item
 
-        if (itemHeld is ToolGunItem) handleInput(
+        if (itemHeld is ToolGunItem) handleToolgunInput(
             player,
             itemHeld, stackHeld,
             InputConstants.getKey(event.key, event.scanCode), event.modifiers
@@ -94,20 +93,17 @@ object ClientForgeEventBus {
     }
 
     @SubscribeEvent
-    fun mouseInput(event: InputEvent.MouseButton.Pre) {
-        if (event.action == InputConstants.PRESS) return
+    fun mouseInput(event: InputEvent.MouseButton.Post) {
+        if (event.action != InputConstants.RELEASE || minecraft.screen != null) return
 
         val player = minecraft.player ?: return
         val stackHeld = player.mainHandItem
         val itemHeld = stackHeld.item
 
-        if (itemHeld is ToolGunItem) {
-            if (handleInput(
-                    player,
-                    itemHeld, stackHeld,
-                    InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers
-                )
-            ) event.isCanceled = true
-        }
+        if (itemHeld is ToolGunItem) handleToolgunInput(
+            player,
+            itemHeld, stackHeld,
+            InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers
+        )
     }
 }
