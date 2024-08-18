@@ -33,8 +33,8 @@ base { archivesName = mod_id }
 String thisModId = getProperty("mod_id")
 
 allprojects {
-    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-    compileKotlin { kotlinOptions.jvmTarget = "17" }
+    java.toolchain.languageVersion = JavaLanguageVersion.of(22)
+    compileKotlin { kotlinOptions.jvmTarget = "22" }
 
     repositories {
         maven {
