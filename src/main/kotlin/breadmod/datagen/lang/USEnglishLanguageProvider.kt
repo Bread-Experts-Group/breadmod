@@ -182,6 +182,10 @@ class USEnglishLanguageProvider(
         // Tool Gun
         modAdd("Toolgun",
             "controls", "category", TOOL_GUN_DEF)
+        modAdd(
+            "BreadMod",
+            "controls", "category"
+        )
         modAdd("Switch Mode",
             "controls", TOOL_GUN_DEF, "change_mode")
         modAdd(

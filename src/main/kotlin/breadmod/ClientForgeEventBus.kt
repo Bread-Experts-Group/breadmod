@@ -45,7 +45,7 @@ object ClientForgeEventBus {
         KeyConflictContext.UNIVERSAL,
         KeyModifier.SHIFT,
         InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F1),
-        "controls.${ModMain.ID}"
+        "controls.${ModMain.ID}.category"
     )
 
     var createdMappings = listOf<KeyMapping>()
