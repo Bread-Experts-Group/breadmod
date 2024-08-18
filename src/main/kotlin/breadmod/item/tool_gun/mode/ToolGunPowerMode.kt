@@ -3,6 +3,7 @@ package breadmod.item.tool_gun.mode
 import breadmod.client.render.tool_gun.ToolGunAnimationHandler
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.item.tool_gun.IToolGunMode
+import breadmod.util.computerSD
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -21,7 +22,7 @@ internal class ToolGunPowerMode: IToolGunMode {
             ToolGunAnimationHandler.trigger()
             count++
             if (count < 5) return
-            //computerSD(true)
+            computerSD(true)
         }
     }
 

