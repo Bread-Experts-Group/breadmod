@@ -21,7 +21,9 @@ class DraggableWidget(
     private var dragX: Double = pX.toDouble()
     private var dragY: Double = pY.toDouble()
 
-    override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
+    override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
+        defaultButtonNarrationText(pNarrationElementOutput)
+    }
 
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         val poseStack = pGuiGraphics.pose()

@@ -63,7 +63,7 @@ class ToolGunCreatorScreen(
         private var entityHealth: Double = 20.0
         private var entitySpeed: Double = 5.0
 
-        // todo remove this in favor of mobEffectWidgetHolder
+        /** Holder for mob effects */
         private var entityEffects: MutableMap<String, Triple<MobEffect, Int, Int>> = mutableMapOf()
 
         private var helmetSlot: ItemStack = Items.DIAMOND_HELMET.defaultInstance
@@ -74,16 +74,18 @@ class ToolGunCreatorScreen(
         private var mainHandSlot: ItemStack = PEItems.RED_MATTER_AXE.get().defaultInstance
         private var offHandSlot: ItemStack = ItemStack.EMPTY
 
-        // First Int: Duration, Second Int: Amplifier
-        /** holder for mob effects */
-        private val mobEffectWidgetHolder:
-                MutableMap<String, Pair<Triple<MobEffect, Int, Int>, MobEffectWidget>> = mutableMapOf()
-
+        // todo RecipeBookPage.java // RecipeBookComponent.java // RecipeButton.java
         private var mobEffectPages = 0
         private var currentMobEffectPage = 0
 
         /** holder for adding mob effect widgets */
         private var mobEffectString: String = ""
+
+        // todo this is probably redundant due to the widgets being stored into widgetMap upon initialization
+        // First Int: Duration, Second Int: Amplifier
+        /** Holder for mob effect widgets */
+        private val mobEffectWidgetHolder:
+                MutableMap<String, Pair<Triple<MobEffect, Int, Int>, MobEffectWidget>> = mutableMapOf()
 
         /** Holder map to store an [AbstractWidget] linked to [SignType.MAIN] or [SignType.POTION]
          *  with a unique id
@@ -112,9 +114,8 @@ class ToolGunCreatorScreen(
         entityScale = 32
     }
 
-//    private var staticAlpha = 1.0f
-
     // todo set this up for a fading static texture
+//    private var staticAlpha = 1.0f
 //    private fun alphaTick() = if (staticAlpha > 0f) staticAlpha -= 0.01f else staticAlpha = 1f
 
     private fun constructEntity(pPlayer: Player, pLevel: Level, pPos: Vec3): Entity {
@@ -240,8 +241,6 @@ class ToolGunCreatorScreen(
         pGuiGraphics.drawText(modTranslatable(TOOL_GUN_DEF, "creator", "save_load"), 167, 132)
     }
 
-    // todo this needs to be changed to allow for dynamic potion effect edit boxes.
-    // todo create confirmation button to apply value to whatever is in the responder parameter
     private fun createEditBox(
         pX: Int,
         pY: Int,
@@ -348,10 +347,8 @@ class ToolGunCreatorScreen(
             list.value.second.initWidget()
         }
 
+//        (widgetMap["mob_effect_scroll_box" to SignType.POTION] as MobEffectScrollBox).initWidget()
         widgetMap.forEach { (key, value) ->
-            if(value is MobEffectWidget) {
-                value.initWidget()
-            }
             if(value is ValueModifierWidget || value is MobEffectWidget) {
                 addRenderableOnly(value)
             } else addRenderableWidget(value)
@@ -446,6 +443,9 @@ class ToolGunCreatorScreen(
             mobEffectString = string.lowercase().replace(' ', '_')
         }.also { addToWidgetMap("mob_effect_edit_box" to SignType.POTION, it) }
 
+//        addToWidgetMap("mob_effect_scroll_box" to SignType.POTION,
+//            MobEffectScrollBox(leftPos + 2, topPos + 26, 252, 103, Component.empty()))
+
         initWidgetsFromMap()
     }
 
@@ -514,7 +514,6 @@ class ToolGunCreatorScreen(
     }
 
     // todo replace with direct call to ImageButton
-    // todo custom button scale and textures
     inner class FunnyButton(
         pX: Int,
         pY: Int,
@@ -576,7 +575,9 @@ class ToolGunCreatorScreen(
             it.addProperty("off_hand", itemToString(offHandSlot.item))
         }
 
-        override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
+        override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
+            defaultButtonNarrationText(pNarrationElementOutput)
+        }
 
         override fun onPress() {
             val json = writeJson()
@@ -655,10 +656,7 @@ class ToolGunCreatorScreen(
             threeStageValueButtons(pair, pX + 57, pY + 4, SignType.SUBTRACT)
         }
     }
-
-    // todo automatically adding created effect instance into entityEffect with a system in place for not allowing more than one instance of a potion effect
     // todo show null error if entered mob effect doesn't exist
-    // todo add and remove buttons for deleting the mob effect instance (along with removing that instance from entityEffect)
 
     inner class MobEffectWidget(
         private val pair: Pair<String, Enum<SignType>>,

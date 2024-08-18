@@ -13,7 +13,9 @@ abstract class ScaledAbstractWidget(
     private val pScale: Double,
     pMessage: Component
 ) : AbstractWidget(pX, pY, pWidth, pHeight, pMessage) {
-    override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
+    override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
+        defaultButtonNarrationText(pNarrationElementOutput)
+    }
 
     // todo look into converting clicked, isMouseOver, and renderWidget into using doubles for their positioning instead of using the superclass positioning
 
