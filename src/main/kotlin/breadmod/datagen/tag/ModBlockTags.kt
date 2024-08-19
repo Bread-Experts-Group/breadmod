@@ -15,7 +15,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import java.util.concurrent.CompletableFuture
 
-class ModBlockTags(
+internal class ModBlockTags(
     output: PackOutput,
     lookupProvider: CompletableFuture<HolderLookup.Provider>,
     existingFileHelper: ExistingFileHelper,

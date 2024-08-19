@@ -16,8 +16,7 @@ import net.minecraftforge.common.data.LanguageProvider
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.registries.RegistryObject
 
-@Suppress("SpellCheckingInspection")
-class USEnglishLanguageProvider(
+internal class USEnglishLanguageProvider(
     packOutput: PackOutput,
     locale: String
 ) : LanguageProvider(packOutput, ModMain.ID, locale) {
@@ -25,15 +24,20 @@ class USEnglishLanguageProvider(
         this.split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
 
     // Transforms type.mod_id.example_object into Example Object
-    private fun String.addTransformed(override: String? = null) = add(this, override ?: this.substringAfterLast('.').joinUnderscoreWithCaps())
+    private fun String.addTransformed(override: String? = null) =
+        add(this, override ?: this.substringAfterLast('.').joinUnderscoreWithCaps())
 
-    private inline fun <reified T> add(obj: RegistryObject<T>, override: String? = null) = when(val entry = obj.get()) {
+    private inline fun <reified T> add(obj: RegistryObject<T>, override: String? = null) = when (val entry = obj.get()) {
         is ItemLike -> entry.asItem().descriptionId.addTransformed(override)
         is FluidType -> entry.descriptionId.addTransformed(override)
         is CreativeModeTab -> add("itemGroup.${ModMain.ID}.${obj.id.path}", override ?: obj.id.path.joinUnderscoreWithCaps())
         else -> throw IllegalArgumentException("Object provided, ${T::class.qualifiedName}, cannot be added")
     }
 
+    /**
+     * Adds US English text translations.
+     * @since 1.0.0
+     */
     override fun addTranslations() {
         add(ModBlocks.BREAD_BLOCK)
         add(ModItems.TEST_DISC, "Test Music Disc")
@@ -113,27 +117,34 @@ class USEnglishLanguageProvider(
         add(ModBlocks.FARMER_OUTPUT_BLOCK, "Farmer Output")
         add(ModBlocks.GENERIC_POWER_INTERFACE)
         ////
-        modAdd("Hell Naw Button",
-            "block", "hell_naw")
-        modAdd("Wouldn't be official without some light blue dye, would it?",
+        modAdd(
+            "Hell Naw Button",
+            "block", "hell_naw"
+        )
+        modAdd(
+            "Wouldn't be official without some light blue dye, would it?",
             "item", "certificate", "description"
         )
-        modAdd("What? you thought it was gonna be sliced like a normal bagel?",
+        modAdd(
+            "What? you thought it was gonna be sliced like a normal bagel?",
             "item", "half_bagel", "description"
         )
         modAdd(
             "Feeds %s every %s",
             "item", "bread_amulet", "description"
         )
-        modAdd("%ss",
-            "jei","generic","recipe_time"
+        modAdd(
+            "%ss",
+            "jei", "generic", "recipe_time"
         )
         modAdd(
             "(stacking!)",
             "item", "bread_amulet", "stacks"
         )
-        modAdd("I wouldn't cook charcoal in it..",
-            "toaster", "tooltip")
+        modAdd(
+            "I wouldn't cook charcoal in it..",
+            "toaster", "tooltip"
+        )
 
         modAdd(
             "Effect Range: %s %s",
@@ -147,7 +158,7 @@ class USEnglishLanguageProvider(
 
         modAdd(
             "Music Disc Description",
-            "item", "music_disc_test", "desc" // TODO... make our own record. :3
+            "item", "music_disc_test", "desc"
         )
         modAdd(
             "Identical to bread on the outside - tumors on the inside.",
@@ -162,125 +173,206 @@ class USEnglishLanguageProvider(
             "item", "doped_bread", "tooltip"
         )
 
-        modAdd("His name is jeff",
-            "painting", "painting_test", "title")
-        modAdd("gchris123",
-            "painting", "painting_test", "author")
-        modAdd("dubious creature",
-            "painting", "devil_pupp", "title")
-        modAdd("https://twitter.com/devil_pupp",
-            "painting", "devil_pupp", "author")
-        modAdd("FISH",
-            "painting", "fish", "title")
-        modAdd("FISH ARTIST",
-            "painting", "fish", "author")
+        modAdd(
+            "His name is jeff",
+            "painting", "painting_test", "title"
+        )
+        modAdd(
+            "gchris123",
+            "painting", "painting_test", "author"
+        )
+        modAdd(
+            "dubious creature",
+            "painting", "devil_pupp", "title"
+        )
+        modAdd(
+            "https://twitter.com/devil_pupp",
+            "painting", "devil_pupp", "author"
+        )
+        modAdd(
+            "FISH",
+            "painting", "fish", "title"
+        )
+        modAdd(
+            "FISH ARTIST",
+            "painting", "fish", "author"
+        )
 
         modAdd("Energy", path = arrayOf("energy"))
         modAdd("Input", path = arrayOf("input"))
         modAdd("Output", path = arrayOf("output"))
 
         // Tool Gun
-        modAdd("Toolgun",
-            "controls", "category", TOOL_GUN_DEF)
         modAdd(
-            "BreadMod",
+            "Toolgun",
+            "controls", "category", TOOL_GUN_DEF
+        )
+        modAdd(
+            "Bread Mod",
             "controls", "category"
         )
-        modAdd("Switch Mode",
-            "controls", TOOL_GUN_DEF, "change_mode")
+        modAdd(
+            "Switch Mode",
+            "controls", TOOL_GUN_DEF, "change_mode"
+        )
         modAdd(
             "Open BM-GUI Editor",
             "controls", "gui_editor"
         )
-        modAdd("Mode is in a broken state. Run /data get entity @s and report this as a bug.",
-            TOOL_GUN_DEF, "broken_tooltip")
+        modAdd(
+            "Mode is in a broken state. Run /data get entity @s and report this as a bug.",
+            TOOL_GUN_DEF, "broken_tooltip"
+        )
 
         // Remover Action
-        modAdd("Remover",
-            TOOL_GUN_DEF, "mode", "display_name", "remover")
-        modAdd("Remove entities with right click.",
-            TOOL_GUN_DEF, "mode", "tooltip", "remover")
-        modAdd("... to remove the entity you're looking at.",
-            TOOL_GUN_DEF, "mode", "key_tooltip", "remover", "rmb")
+        modAdd(
+            "Remover",
+            TOOL_GUN_DEF, "mode", "display_name", "remover"
+        )
+        modAdd(
+            "Remove entities with right click.",
+            TOOL_GUN_DEF, "mode", "tooltip", "remover"
+        )
+        modAdd(
+            "... to remove the entity you're looking at.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "remover", "rmb"
+        )
 
-        modAdd("Remove Entity",
-            TOOL_GUN_DEF, "mode", "controls", "name", "remover", "rmb")
-        modAdd("Toolgun: Remover",
-            TOOL_GUN_DEF, "mode", "controls", "category", "remover")
+        modAdd(
+            "Remove Entity",
+            TOOL_GUN_DEF, "mode", "controls", "name", "remover", "rmb"
+        )
+        modAdd(
+            "Toolgun: Remover",
+            TOOL_GUN_DEF, "mode", "controls", "category", "remover"
+        )
 
         // Creator action
-        modAdd("Creator",
-            TOOL_GUN_DEF, "mode", "display_name", "creator")
-        modAdd("Add entities/blocks with right click.",
-            TOOL_GUN_DEF, "mode", "tooltip", "creator")
+        modAdd(
+            "Creator",
+            TOOL_GUN_DEF, "mode", "display_name", "creator"
+        )
+        modAdd(
+            "Add entities/blocks with right click.",
+            TOOL_GUN_DEF, "mode", "tooltip", "creator"
+        )
         modAdd(
             "Create Entity",
             TOOL_GUN_DEF, "mode", "controls", "name", "creator", "rmb"
         )
-        modAdd("... to add an entity.",
-            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb")
+        modAdd(
+            "... to add an entity.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb"
+        )
         modAdd(
             "Open Entity Menu",
             TOOL_GUN_DEF, "mode", "controls", "name", "creator", "r"
         )
-        modAdd("... to open the entity/block editor.",
-            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r")
-        modAdd("Save / Load",
-            TOOL_GUN_DEF, "creator", "save_load")
-        modAdd("expected %s, got %s",
-            TOOL_GUN_DEF, "creator", "invalid_entity")
-        modAdd("Toolgun: Creator",
-            TOOL_GUN_DEF, "mode", "controls", "category", "creator")
+        modAdd(
+            "... to open the entity/block editor.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"
+        )
+        modAdd(
+            "Save / Load",
+            TOOL_GUN_DEF, "creator", "save_load"
+        )
+        modAdd(
+            "expected %s, got %s",
+            TOOL_GUN_DEF, "creator", "invalid_entity"
+        )
+        modAdd(
+            "Toolgun: Creator",
+            TOOL_GUN_DEF, "mode", "controls", "category", "creator"
+        )
 
         // Power action
-        modAdd("Power",
-            TOOL_GUN_DEF, "mode", "display_name", "power")
-        modAdd("Turns off the \"power.\"",
-            TOOL_GUN_DEF, "mode", "tooltip", "power")
-        modAdd("... to turn off the \"power.\"",
-            TOOL_GUN_DEF, "mode", "key_tooltip", "power", "rmb")
+        modAdd(
+            "Power",
+            TOOL_GUN_DEF, "mode", "display_name", "power"
+        )
+        modAdd(
+            "Turns off the \"power.\"",
+            TOOL_GUN_DEF, "mode", "tooltip", "power"
+        )
+        modAdd(
+            "... to turn off the \"power.\"",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "power", "rmb"
+        )
 
-        modAdd("Power Off (5 Times)",
-            TOOL_GUN_DEF, "mode", "controls", "name", "power", "rmb")
-        modAdd("Toolgun: Power",
-            TOOL_GUN_DEF, "mode", "controls", "category", "power")
+        modAdd(
+            "Power Off (5 Times)",
+            TOOL_GUN_DEF, "mode", "controls", "name", "power", "rmb"
+        )
+        modAdd(
+            "Toolgun: Power",
+            TOOL_GUN_DEF, "mode", "controls", "category", "power"
+        )
 
         // Explode action
-        modAdd("Exploder",
-            TOOL_GUN_DEF, "mode", "display_name", "explode")
-        modAdd("Explodes whatever surface you're pointing at.",
-            TOOL_GUN_DEF, "mode", "tooltip", "explode")
-        modAdd("... to explode the block you're looking at.",
-            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "rmb")
-        modAdd("... to target fluids.",
-            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off")
-        modAdd("... to not target fluids.",
+        modAdd(
+            "Exploder",
+            TOOL_GUN_DEF, "mode", "display_name", "explode"
+        )
+        modAdd(
+            "Explodes whatever surface you're pointing at.",
+            TOOL_GUN_DEF, "mode", "tooltip", "explode"
+        )
+        modAdd(
+            "... to explode the block you're looking at.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "rmb"
+        )
+        modAdd(
+            "... to target fluids.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off"
+        )
+        modAdd(
+            "... to not target fluids.",
             TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "on"
         )
 
-        modAdd("Explode",
-            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "rmb")
-        modAdd("Target Fluids",
-            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "mmb")
-        modAdd("Toolgun: Exploder",
-            TOOL_GUN_DEF, "mode", "controls", "category", "explode")
+        modAdd(
+            "Explode",
+            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "rmb"
+        )
+        modAdd(
+            "Target Fluids",
+            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "mmb"
+        )
+        modAdd(
+            "Toolgun: Exploder",
+            TOOL_GUN_DEF, "mode", "controls", "category", "explode"
+        )
 
-        modAdd("Targeting Fluids:",
-            TOOL_GUN_DEF, "mode", "explode", "hit_fluid")
-        modAdd("Enabled",
-            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "enabled")
-        modAdd("Disabled",
-            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "disabled")
+        modAdd(
+            "Targeting Fluids:",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid"
+        )
+        modAdd(
+            "Enabled",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "enabled"
+        )
+        modAdd(
+            "Disabled",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "disabled"
+        )
 
         // Misc
-        modAdd("%s left the game",
-            "item", TOOL_GUN_DEF, "entity_left_game")
-        modAdd("Disconnect: Client 0 overflowed reliable channel.",
-            "item", TOOL_GUN_DEF, "player_left_game")
-        modAdd("Current Mode: ",
-            "item", TOOL_GUN_DEF, "tooltip", "current_mode")
-        modAdd(" to switch modes",
-            "item", TOOL_GUN_DEF, "tooltip", "mode_switch")
+        modAdd(
+            "%s left the game",
+            "item", TOOL_GUN_DEF, "entity_left_game"
+        )
+        modAdd(
+            "Disconnect: Client 0 overflowed reliable channel.",
+            "item", TOOL_GUN_DEF, "player_left_game"
+        )
+        modAdd(
+            "Current Mode: ",
+            "item", TOOL_GUN_DEF, "tooltip", "current_mode"
+        )
+        modAdd(
+            " to switch modes",
+            "item", TOOL_GUN_DEF, "tooltip", "mode_switch"
+        )
         // Compat
         // JEI
         modAdd(
