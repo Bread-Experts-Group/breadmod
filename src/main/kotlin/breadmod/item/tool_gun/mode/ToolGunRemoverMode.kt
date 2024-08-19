@@ -9,7 +9,7 @@ import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.client.BeamPacket
 import breadmod.network.tool_gun.SDPacket
-import breadmod.util.RayMarchResult.Companion.rayMarchEntity
+import breadmod.util.RaycastResult.Companion.entityRaycast
 import net.minecraft.ChatFormatting
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel
@@ -28,7 +28,8 @@ internal class ToolGunRemoverMode: IToolGunMode {
         pControl: BreadModToolGunModeProvider.Control
     ) {
         if(pLevel is ServerLevel) {
-            pLevel.rayMarchEntity(pPlayer, pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)?.let {
+            pLevel.entityRaycast(pPlayer, pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)
+                ?.let {
                 fun rand() = (pPlayer.random.nextDouble() - 0.5)*1.2
                 pLevel.sendParticles(ParticleTypes.END_ROD, it.entity.x, it.entity.y, it.entity.z, 60, rand(), pPlayer.random.nextDouble(), rand(), 1.0)
                 playToolGunSound(pLevel, pPlayer.blockPosition())

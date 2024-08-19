@@ -10,7 +10,7 @@ import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.client.BeamPacket
-import breadmod.util.RayMarchResult.Companion.rayMarchBlock
+import breadmod.util.RaycastResult.Companion.blockRaycast
 import breadmod.util.render.minecraft
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
@@ -37,7 +37,12 @@ internal class ToolGunExplodeMode: IToolGunMode {
             if(pControl.id == "use") {
                 val settings = pGunStack.orCreateTag.getCompound(pControl.categoryKey)
 
-                pLevel.rayMarchBlock(pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0, settings.getBoolean("hitFluid"))?.let {
+                pLevel.blockRaycast(
+                    pPlayer.eyePosition,
+                    Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot),
+                    1000.0,
+                    settings.getBoolean("hitFluid")
+                )?.let {
                     NETWORK.send(
                         PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(pPlayer.blockPosition()) },
                         BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 1.0f)
