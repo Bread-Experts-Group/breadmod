@@ -55,33 +55,34 @@ val renderBuffer = mutableListOf<Pair<MutableList<Float>, (MutableList<Float>, R
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add(mutableListOf(1F) to { mutableList, levelStageEvent ->
-    val currentOpacity = mutableList[0]
-    val playerEyePos = (minecraft.player)?.getEyePosition(levelStageEvent.partialTick)
-    val level = minecraft.level
-    if (playerEyePos != null && level != null && currentOpacity > 0) {
-        levelStageEvent.poseStack.pushPose()
-        levelStageEvent.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
-        val poseStack = levelStageEvent.poseStack
-        val bufferSource = minecraft.renderBuffers().bufferSource()
+fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
+    renderBuffer.add(mutableListOf(1F) to { mutableList, levelStageEvent ->
+        val currentOpacity = mutableList[0]
+        val playerEyePos = (minecraft.player)?.getEyePosition(levelStageEvent.partialTick)
+        val level = minecraft.level
+        if (playerEyePos != null && level != null && currentOpacity > 0) {
+            levelStageEvent.poseStack.pushPose()
+            levelStageEvent.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
+            val poseStack = levelStageEvent.poseStack
+            val bufferSource = minecraft.renderBuffers().bufferSource()
 
-        if(thickness != null) {
-            texturedQuadTest(
-                modLocation("block", "bread_block"),
-                RenderType.translucent(),
-                poseStack,
-                bufferSource,
-                Vector4f(1f, 1f, 1f, currentOpacity),
-                start,
-                end
-            )
-        }
+            if (thickness != null) {
+                texturedQuadTest(
+                    modLocation("block", "bread_block"),
+                    RenderType.translucent(),
+                    poseStack,
+                    bufferSource,
+                    Vector4f(1f, 1f, 1f, currentOpacity),
+                    start,
+                    end
+                )
+            }
 
-        levelStageEvent.poseStack.popPose()
-        mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
-        false
-    } else true
-})
+            levelStageEvent.poseStack.popPose()
+            mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
+            false
+        } else true
+    })
 
 fun GuiGraphics.renderFluid(
     pX: Float, pY: Float, pWidth: Int, pHeight: Int,
@@ -89,9 +90,11 @@ fun GuiGraphics.renderFluid(
 ) {
     val atlas = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
     val ext = IClientFluidTypeExtensions.of(pFluid)
-    val spriteDiff = if(pFlowing) {
+    val spriteDiff = if (pFlowing) {
         val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
-        atlas.apply(ext.flowingTexture).let { val flowingWidth = it.contents().width(); it to if(flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F }
+        atlas.apply(ext.flowingTexture).let {
+            val flowingWidth = it.contents().width(); it to if (flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F
+        }
     } else atlas.apply(ext.stillTexture) to 1F
 
     val sprite = spriteDiff.first
@@ -106,9 +109,10 @@ fun GuiGraphics.renderFluid(
     val pX2 = pX + pWidth
 
     var remainingFluid = pHeight
-    while(remainingFluid > 0) {
+    while (remainingFluid > 0) {
         // TODO: Make pY the TOP LEFT, instead of BOTTOM LEFT
-        val lpY = (pY - remainingFluid); val lpY2 = lpY + min(remainingFluid, pWidth)
+        val lpY = (pY - remainingFluid)
+        val lpY2 = lpY + min(remainingFluid, pWidth)
 
         // N  // E  // S  // W
         // AB // CA // DC // BD
@@ -118,19 +122,22 @@ fun GuiGraphics.renderFluid(
         val rotated = listOf(Vector2f(pX, lpY), Vector2f(pX, lpY2), Vector2f(pX2, lpY2), Vector2f(pX2, lpY)).also {
             Collections.rotate(
                 it,
-                when(pDirection) { Direction.EAST -> 1; Direction.SOUTH -> 2; Direction.WEST -> 3; else -> 0 }
+                when (pDirection) {
+                    Direction.EAST -> 1; Direction.SOUTH -> 2; Direction.WEST -> 3; else -> 0
+                }
             )
         }
 
         val dv1 = (sprite.v1 - sprite.v0)
-        val v1 = if(remainingFluid < pWidth) (sprite.v0 + ((dv1 / pWidth) * remainingFluid)) else (sprite.v0 + (dv1 * spriteDiff.second))
+        val v1 =
+            if (remainingFluid < pWidth) (sprite.v0 + ((dv1 / pWidth) * remainingFluid)) else (sprite.v0 + (dv1 * spriteDiff.second))
         val u1 = sprite.u0 + ((sprite.u1 - sprite.u0) * spriteDiff.second)
 
         fun VertexConsumer.color() = this.color(colors[0], colors[1], colors[2], colors[3])
-        rotated[0].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1,        v1).endVertex() }
-        rotated[1].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(       u1, sprite.v0).endVertex() }
+        rotated[0].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(u1, v1).endVertex() }
+        rotated[1].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(u1, sprite.v0).endVertex() }
         rotated[2].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, sprite.v0).endVertex() }
-        rotated[3].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0,        v1).endVertex() }
+        rotated[3].let { bufferBuilder.vertex(matrix4f, it.x, it.y, 0F).color().uv(sprite.u0, v1).endVertex() }
 
         remainingFluid -= pWidth
     }
@@ -153,8 +160,9 @@ fun renderItemModel(
     pRenderType: RenderType = RenderType.glint()
 ) {
     val glint = pStack.hasFoil()
-    for(type in pModel.getRenderTypes(pStack, false)) {
-        val helper: RenderType = if(pRenderType != RenderType.glint()) pRenderType else RenderTypeHelper.getEntityRenderType(type, false)
+    for (type in pModel.getRenderTypes(pStack, false)) {
+        val helper: RenderType =
+            if (pRenderType != RenderType.glint()) pRenderType else RenderTypeHelper.getEntityRenderType(type, false)
         val consumer = ItemRenderer.getFoilBuffer(pBuffer, helper, true, glint)
         pRenderer.renderModelLists(pModel, pStack, pPackedLight, pPackedOverlay, pPoseStack, consumer)
     }
@@ -389,11 +397,11 @@ fun translateOnBlockSide(
 ) {
     var facing = pBlockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
         ?: throw IllegalArgumentException("Provided block state must have a HORIZONTAL_FACING property")
-    if(pDirection != null) facing = translateDirection(facing, pDirection)
+    if (pDirection != null) facing = translateDirection(facing, pDirection)
 
     pPoseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
     pPoseStack.translate(pPosX, pPosY, pPosZ)
-    when(facing) {
+    when (facing) {
         Direction.NORTH -> pPoseStack.translate(-1.0, 1.0, TRANSLATE_OFFSET)
         Direction.EAST -> pPoseStack.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
         Direction.WEST -> pPoseStack.translate(0.0, 1.0, TRANSLATE_OFFSET)
