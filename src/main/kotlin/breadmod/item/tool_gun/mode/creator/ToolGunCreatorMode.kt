@@ -7,7 +7,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.menu.item.ToolGunCreatorMenu
-import breadmod.util.RayMarchResult.Companion.rayMarchBlock
+import breadmod.util.RaycastResult.Companion.blockRaycast
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -127,7 +127,7 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
         if (pControl.id == "screen" && !pLevel.isClientSide) {
             NetworkHooks.openScreen(pPlayer as ServerPlayer, this, pPlayer.blockPosition())
         } else if (pLevel is ServerLevel && pControl.id == "use") {
-            pLevel.rayMarchBlock(
+            pLevel.blockRaycast(
                 pPlayer.eyePosition,
                 Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot),
                 100.0, false

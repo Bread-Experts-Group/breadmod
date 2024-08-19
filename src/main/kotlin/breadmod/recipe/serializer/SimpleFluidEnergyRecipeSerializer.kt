@@ -41,7 +41,7 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         val requiredItems = inputs.getAsJsonObject(ITEMS_KEY)
         val outputs = p1.getAsJsonObject(OUTPUT_KEY)
         return factory(
-            ResourceLocation(p1.get(ENTRY_ID_KEY).asString),
+            ResourceLocation(p1.get(ENTRY_ID).asString),
             p1.get(TIME_KEY).asInt,
             inputs.get(ENERGY_KEY)?.asInt,
             requiredFluids?.getAsJsonArray(CERTAIN_KEY)?.extractJsonFluidList(),
@@ -59,7 +59,7 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         itemsRequired: List<ItemStack>?, itemsRequiredTagged: List<Pair<TagKey<T>, Int>>?,
         itemsOutput: List<ItemStack>?, fluidsOutput: List<FluidStack>?
     ) = to.also {
-        it.addProperty(ENTRY_ID_KEY, id.toString())
+        it.addProperty(ENTRY_ID, id.toString())
         it.addProperty(TIME_KEY, time)
         it.add(INPUT_KEY, JsonObject().also { required ->
             if(energy != null) required.addProperty(ENERGY_KEY, energy)
