@@ -4,6 +4,7 @@ import breadmod.ModMain.modLocation
 import breadmod.ModMain.modTranslatable
 import breadmod.client.gui.components.ScaledAbstractButton
 import breadmod.client.gui.components.ScaledAbstractWidget
+import breadmod.client.gui.components.TestButton
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.mode.creator.*
 import breadmod.item.tool_gun.mode.creator.ToolGunCreatorMode.Companion.getDefaultPig
@@ -75,13 +76,12 @@ class ToolGunCreatorScreen(
         private var offHandSlot: ItemStack = ItemStack.EMPTY
 
         // todo RecipeBookPage.java // RecipeBookComponent.java // RecipeButton.java
-        private var mobEffectPages = 0
-        private var currentMobEffectPage = 0
+        private var mobEffectPages = 1
+        private var currentMobEffectPage = 1
 
         /** holder for adding mob effect widgets */
         private var mobEffectString: String = ""
 
-        // todo this is probably redundant due to the widgets being stored into widgetMap upon initialization
         // First Int: Duration, Second Int: Amplifier
         /** Holder for mob effect widgets */
         private val mobEffectWidgetHolder:
@@ -332,13 +332,17 @@ class ToolGunCreatorScreen(
         println("initializing widgetMap")
         // make sure to flush duplicate renderable entries in the list after adding potion effect widgets
         clearWidgets()
-        mobEffectWidgetHolder.clear()
+//        mobEffectWidgetHolder.clear()
+
 
         entityEffects.forEach { (key, value) ->
+//            mobEffectPages = if (entityEffects.isEmpty()) 1 else ceil(entityEffects.size/ 6.0).toInt()
             mobEffectWidgetHolder[key] = value to MobEffectWidget(
                 key to SignType.POTION, value.first, value.second, value.third
             )
+            println(key)
         }
+        println("total pages: $mobEffectPages")
 
         for (i in 0..<mobEffectWidgetHolder.size) {
             val list = mobEffectWidgetHolder.entries.elementAt(i)
@@ -408,6 +412,24 @@ class ToolGunCreatorScreen(
 
         // Potion Effects Tab //
 
+        addToWidgetMap("page_button" to SignType.POTION,
+            GenericButton(leftPos + 100, topPos + 10, 30, 10, Component.literal("page")) {
+                if (mobEffectPages <= currentMobEffectPage) {
+                    currentMobEffectPage = 1
+                    initWidgetsFromMap()
+                } else {
+                    currentMobEffectPage++
+                    initWidgetsFromMap()
+                }
+                println("current page: $currentMobEffectPage")
+            })
+
+        addToWidgetMap("clear_effects" to SignType.POTION,
+            GenericButton(leftPos + 140, topPos + 10, 30, 10, Component.literal("clear")) {
+                entityEffects.clear()
+                initWidgetsFromMap()
+            })
+
         // Main tab button
         addToWidgetMap("main_tab_button" to SignType.POTION,
             GenericButton(leftPos + 130, topPos, 30, 10, Component.literal("Main")) {
@@ -422,7 +444,6 @@ class ToolGunCreatorScreen(
             GenericButton(leftPos + 84, topPos + 12, 23, 12, Component.literal("add")) {
                 if (mobEffectFromString(id = mobEffectString) != null) {
                     mobEffectFromString(id = mobEffectString)?.let {
-//                        println(it.displayName)
                         if (entityEffects[mobEffectString] == null) {
                             entityEffects[mobEffectString] = Triple(it, 100, 1)
                             initWidgetsFromMap()
@@ -445,6 +466,10 @@ class ToolGunCreatorScreen(
 
 //        addToWidgetMap("mob_effect_scroll_box" to SignType.POTION,
 //            MobEffectScrollBox(leftPos + 2, topPos + 26, 252, 103, Component.empty()))
+        addToWidgetMap("test" to SignType.MAIN, TestButton(10, 10, 50, 20).also {
+            it.addChild(TestButton(10, 20, 60, 20), "test_2")
+            it.move(0, 30)
+        })
 
         initWidgetsFromMap()
     }
@@ -673,7 +698,6 @@ class ToolGunCreatorScreen(
         }
 
         fun initWidget() {
-
             addToWidgetMap(pair, this)
             durationEditBox =
                 createEditBox(x + 2, y + height - 12, 50, 10, entityEffects[pair.first]?.second.toString()) { string ->
