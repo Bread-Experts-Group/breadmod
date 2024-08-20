@@ -1,6 +1,7 @@
 package breadmod.client.gui.components
 
 import breadmod.ModMain.LOGGER
+import breadmod.util.render.minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.network.chat.Component
@@ -33,15 +34,39 @@ abstract class CustomAbstractWidget(
         } else LOGGER.error("Child widget with id: $id does not exist!")
     }
 
+    /**
+     * Clears the [children] map of all child widgets
+     */
+    fun removeAllChildren() = children.clear()
+
     private fun checkWidgetIdExists(id: String): Boolean = children[id] != null
 
-    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+    fun nestedMouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): CustomAbstractWidget? {
         for (i in 0..<children.size) {
-            val list = children.entries.elementAt(i)
-            return list.value.mouseClicked(pMouseX, pMouseY, pButton)
+            val list = children.entries.elementAt(i).value
+            val result = list.nestedMouseClicked(pMouseX, pMouseY, pButton)
+            if (result != null) return result
         }
-        return super.mouseClicked(pMouseX, pMouseY, pButton)
+        if (active && visible && isValidClickButton(pButton) && clicked(pMouseX, pMouseY)) {
+            playDownSound(minecraft.soundManager)
+            onClick(pMouseX, pMouseY)
+            return this
+        }
+        return null
     }
+
+    final override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean =
+        nestedMouseClicked(pMouseX, pMouseY, pButton) != null
+
+//    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+//        for (i in 0..<children.size) {
+//            val list = children.entries.elementAt(i)
+//            return if (list.value.isValidClickButton(pButton)) {
+//                list.value.mouseClicked(pMouseX, pMouseY, pButton)
+//            } else false
+//        }
+//        return super.mouseClicked(pMouseX, pMouseY, pButton)
+//    }
 
     override fun onDrag(pMouseX: Double, pMouseY: Double, pDragX: Double, pDragY: Double) {
         children.forEach { child -> child.value.onDrag(pMouseX, pMouseY, pDragX, pDragY) }
