@@ -1,5 +1,6 @@
 package breadmod.util.render
 
+import breadmod.ModMain
 import breadmod.ModMain.modLocation
 import breadmod.util.translateDirection
 import com.mojang.blaze3d.platform.Lighting
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -39,7 +41,7 @@ import java.util.*
 import kotlin.math.atan
 import kotlin.math.min
 
-val minecraft: Minecraft = Minecraft.getInstance()
+internal val minecraft: Minecraft = Minecraft.getInstance()
 
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
@@ -48,6 +50,7 @@ val minecraft: Minecraft = Minecraft.getInstance()
  * @since 1.0.0
  */
 val renderBuffer = mutableListOf<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>()
+private var angle = 0f
 
 /**
  * Draws a line from between [start] and [end], translated according to the current [net.minecraft.client.player.LocalPlayer]'s position.
@@ -59,26 +62,101 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
     val currentOpacity = mutableList[0]
     val playerEyePos = (minecraft.player)?.getEyePosition(levelStageEvent.partialTick)
     val level = minecraft.level
+    val player = minecraft.player
     if (playerEyePos != null && level != null && currentOpacity > 0) {
         levelStageEvent.poseStack.pushPose()
         levelStageEvent.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
+        player?.let { levelStageEvent.poseStack.mulPose(Axis.ZP.rotationDegrees(0f)) }
         val poseStack = levelStageEvent.poseStack
         val bufferSource = minecraft.renderBuffers().bufferSource()
 
+        val origin = BlockPos(0, 0, 0)
+//        levelStageEvent // todo get world origin or camera from this?
+        poseStack.translate(origin.x.toDouble(), origin.y.toDouble(), origin.z.toDouble())
+
         if(thickness != null) {
+            // South
             texturedQuadTest(
                 modLocation("block", "bread_block"),
                 RenderType.translucent(),
                 poseStack,
                 bufferSource,
                 Vector4f(1f, 1f, 1f, currentOpacity),
-                start,
-                end
+                Vector3f(start.x - 1f, start.y, start.z),
+                Vector3f(start.x - 3f, start.y, start.z),
+                Vector3f(end.x - 3f, end.y, end.z),
+                Vector3f(end.x - 1f, end.y, end.z)
+            )
+//            poseStack.translate(2f, 0f, 0f)
+            // East
+            texturedQuadTest(
+                modLocation("block", "bread_block"),
+                RenderType.translucent(),
+                poseStack,
+                bufferSource,
+                Vector4f(1f, 1f, 1f, currentOpacity),
+                Vector3f(start.x - 1f, start.y, start.z - 2f),
+                Vector3f(start.x - 1f, start.y, start.z),
+                Vector3f(end.x - 1f, end.y, end.z),
+                Vector3f(end.x - 1f, end.y, end.z - 2f)
+            )
+            // West
+            texturedQuadTest(
+                modLocation("block", "bread_block"),
+                RenderType.translucent(),
+                poseStack,
+                bufferSource,
+                Vector4f(1f, 1f, 1f, currentOpacity),
+                Vector3f(start.x - 3f, start.y, start.z),
+                Vector3f(start.x - 3f, start.y, start.z - 2f),
+                Vector3f(end.x - 3f, end.y, end.z - 2f),
+                Vector3f(end.x - 3f, end.y, end.z)
+            )
+            // North
+            texturedQuadTest(
+                modLocation("block", "bread_block"),
+                RenderType.translucent(),
+                poseStack,
+                bufferSource,
+                Vector4f(1f, 1f, 1f, currentOpacity),
+                Vector3f(start.x - 3f, start.y, start.z - 2f),
+                Vector3f(start.x - 1f, start.y, start.z - 2f),
+                Vector3f(end.x - 1f, end.y, end.z - 2f),
+                Vector3f(end.x - 3f, end.y, end.z - 2f)
+            )
+            if (angle >= 0f) {
+                angle -= 0.1f
+            } else angle = 360f
+//            poseStack.mulPose(Axis.YN.rotationDegrees(angle)) // todo get quad rotations relative to their location, not world 0,0
+
+            // Start
+            texturedQuadTest(
+                modLocation("block", "bread_block"),
+                RenderType.translucent(),
+                poseStack,
+                bufferSource,
+                Vector4f(1f, 1f, 1f, currentOpacity),
+                Vector3f(start.x - 3f , start.y, start.z - 2f),
+                Vector3f(start.x - 3f, start.y, start.z),
+                Vector3f(start.x - 1f, start.y, start.z),
+                Vector3f(start.x - 1f, start.y, start.z - 2f)
+            )
+            // End
+            texturedQuadTest(
+                modLocation("block", "bread_block"),
+                RenderType.translucent(),
+                poseStack,
+                bufferSource,
+                Vector4f(1f, 1f, 1f, currentOpacity),
+                Vector3f(end.x - 3f , end.y, end.z - 2f),
+                Vector3f(end.x - 1f, end.y, end.z - 2f),
+                Vector3f(end.x - 1f, end.y, end.z),
+                Vector3f(end.x - 3f, end.y, end.z)
             )
         }
 
         levelStageEvent.poseStack.popPose()
-        mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
+//        mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
         false
     } else true
 })
@@ -451,9 +529,9 @@ fun renderEntityInInventoryFollowsAngle(
     angleYComponent: Float,
     pEntity: Entity
 ) {
-    val quaternionf = Quaternionf().rotateZ(Math.PI.toFloat())
-    val quaternionf1 = Quaternionf().rotateX(angleYComponent * 20.0f * (Math.PI.toFloat() / 180f))
-    quaternionf.mul(quaternionf1)
+    val quaternionF = Quaternionf().rotateZ(Math.PI.toFloat())
+    val quaternionF1 = Quaternionf().rotateX(angleYComponent * 20.0f * (Math.PI.toFloat() / 180f))
+    quaternionF.mul(quaternionF1)
     val f2 = if (pEntity is LivingEntity) pEntity.yBodyRot else 0f
     val f3 = pEntity.yRot
     val f4 = pEntity.xRot
@@ -464,7 +542,7 @@ fun renderEntityInInventoryFollowsAngle(
     pEntity.xRot = -angleYComponent * 20.0f
     pEntity.yHeadRot = pEntity.yRot
     if (pEntity is LivingEntity) pEntity.yHeadRotO = pEntity.yRot
-    renderEntityInInventory(pGuiGraphics, pX, pY, pScale, quaternionf, quaternionf1, pEntity)
+    renderEntityInInventory(pGuiGraphics, pX, pY, pScale, quaternionF, quaternionF1, pEntity)
     pEntity.yRot = f3
     pEntity.xRot = f4
     pEntity.yHeadRot = f6
