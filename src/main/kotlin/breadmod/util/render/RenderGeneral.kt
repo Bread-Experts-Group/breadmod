@@ -39,7 +39,7 @@ import java.util.*
 import kotlin.math.atan
 import kotlin.math.min
 
-internal val minecraft: Minecraft = Minecraft.getInstance()
+val minecraft: Minecraft = Minecraft.getInstance()
 internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>
 
 /**
