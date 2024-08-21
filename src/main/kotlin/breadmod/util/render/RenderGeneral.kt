@@ -1,6 +1,5 @@
 package breadmod.util.render
 
-import breadmod.ModMain
 import breadmod.ModMain.modLocation
 import breadmod.util.translateDirection
 import com.mojang.blaze3d.platform.Lighting
@@ -18,7 +17,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.model.BakedModel
-import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -71,15 +69,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
         val poseStack = levelStageEvent.poseStack
         val bufferSource = minecraft.renderBuffers().bufferSource()
 
-//        println("${-camera.position.x}, ${-camera.position.y}, ${-camera.position.z}")
-
-        if (angle >= 0f) {
-            angle -= (1.1f * minecraft.partialTick)
-        } else angle = 360f
-
-        poseStack.mulPose(Axis.YN.rotationDegrees(angle))
-
-        println(minecraft.partialTick)
+        poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + levelStageEvent.partialTick))
 
         if(thickness != null) {
             // South

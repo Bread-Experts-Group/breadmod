@@ -7,6 +7,11 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.network.chat.Component
 
+/**
+ * Custom implementation of [AbstractWidget] with child widget support
+ * ### Todo: some proper documentation of this class
+ */
+@Suppress("MemberVisibilityCanBePrivate", "Unused")
 abstract class CustomAbstractWidget(
     pX: Int,
     pY: Int,
@@ -16,28 +21,56 @@ abstract class CustomAbstractWidget(
     val pId: String,
     pMessage: Component
 ) : AbstractWidget(pX, pY, pWidth, pHeight, pMessage) {
+    /**
+     * Holder map for child widgets.
+     * Each child is labelled with A unique id to allow for manipulating certain widgets.
+     */
     protected val children: MutableMap<String, CustomAbstractWidget> = mutableMapOf()
-    protected var relativeX: Int = pX
-    protected var relativeY: Int = pY
 
+    /**
+     * @param pChangeX Moves this widget and it's children along the X coordinate
+     * @param pChangeY Moves this widget and it's children along the Y coordinate
+     * @see moveChild
+     */
     fun move(pChangeX: Int, pChangeY: Int) {
         x += pChangeX; y += pChangeY
-        relativeX += pChangeX
-        relativeY += pChangeY
         children.forEach { child -> child.value.move(pChangeX, pChangeY) }
     }
 
-    fun addChild(element: CustomAbstractWidget, id: String) {
+    /**
+     * Moves a specific child widget along the X and Y coordinate
+     * @see move
+     */
+    fun moveChild(pChangeX: Int, pChangeY: Int, id: String) = children[id]?.move(pChangeX, pChangeY)
+
+    /**
+     * Adds a child [element] by [id] to this widget.
+     *
+     *  @return true if [element] was added and [id] didn't exist.
+     *  Otherwise, returns false if [id] already exists
+     */
+    fun addChild(element: CustomAbstractWidget, id: String): Boolean =
         if (!checkWidgetIdExists(id)) {
             children["${pId}_$id"] = element
-        } else LOGGER.error("Child widget with id: $id already exists!")
-    }
+            true
+        } else {
+            LOGGER.error("Child widget with id: $id already exists!")
+            false
+        }
 
-    fun removeChild(id: String) {
+    /**
+     * Removes a child widget by [id] from [children].
+     *
+     * @return true if [id] was removed, otherwise returns false if [id] doesn't exist.
+     */
+    fun removeChild(id: String): Boolean =
         if (checkWidgetIdExists(id)) {
             children.remove("${pId}_$id")
-        } else LOGGER.error("Child widget with id: $id does not exist!")
-    }
+            true
+        } else {
+            LOGGER.error("Child widget with id: $id does not exist!")
+            false
+        }
 
     /**
      * Clears the [children] map of all child widgets
@@ -46,6 +79,11 @@ abstract class CustomAbstractWidget(
 
     private fun checkWidgetIdExists(id: String): Boolean = children[id] != null
 
+    /**
+     * Custom implementation of [mouseClicked] with child widget support.
+     *
+     * *[pButton] supports: Mouse Left, Right, and Middle.*
+     */
     open fun nestedMouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): CustomAbstractWidget? {
         for (i in 0..<children.size) {
             val list = children.entries.elementAt(i).value
@@ -60,10 +98,16 @@ abstract class CustomAbstractWidget(
         return null
     }
 
+    /**
+     * [isValidClickButton] with added support for Middle and Right mouse buttons
+     */
     override fun isValidClickButton(pButton: Int): Boolean =
         pButton == InputConstants.MOUSE_BUTTON_LEFT || pButton == InputConstants.MOUSE_BUTTON_RIGHT ||
                 pButton == InputConstants.MOUSE_BUTTON_MIDDLE
 
+    /**
+     * @return true if [nestedMouseClicked] is not null, otherwise false.
+     */
     final override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean =
         nestedMouseClicked(pMouseX, pMouseY, pButton) != null
 
@@ -106,6 +150,13 @@ abstract class CustomAbstractWidget(
         return super.charTyped(pCodePoint, pModifiers)
     }
 
+    /**
+     * Renders the graphical user interface (GUI) element.
+     * @param pGuiGraphics the GuiGraphics object used for rendering.
+     * @param pMouseX the x-coordinate of the mouse cursor.
+     * @param pMouseY the y-coordinate of the mouse cursor.
+     * @param pPartialTick the partial tick time.
+     */
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         if (this.visible) {
             this.isHovered = pMouseX >= x && pMouseY >= y && pMouseX < x + width && pMouseY < y + height
