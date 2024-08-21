@@ -41,7 +41,7 @@ abstract class CustomAbstractWidget(
      * Moves a specific child widget along the X and Y coordinate
      * @see move
      */
-    fun moveChild(pChangeX: Int, pChangeY: Int, id: String) = children[id]?.move(pChangeX, pChangeY)
+    fun moveChild(pChangeX: Int, pChangeY: Int, id: String) = children["${pId}_$id"]?.move(pChangeX, pChangeY)
 
     /**
      * Adds a child [element] by [id] to this widget.
@@ -50,7 +50,7 @@ abstract class CustomAbstractWidget(
      *  Otherwise, returns false if [id] already exists
      */
     fun addChild(element: CustomAbstractWidget, id: String): Boolean =
-        if (!checkWidgetIdExists(id)) {
+        if (!checkWidgetIdExists("${pId}_$id")) {
             children["${pId}_$id"] = element
             true
         } else {
@@ -64,7 +64,7 @@ abstract class CustomAbstractWidget(
      * @return true if [id] was removed, otherwise returns false if [id] doesn't exist.
      */
     fun removeChild(id: String): Boolean =
-        if (checkWidgetIdExists(id)) {
+        if (checkWidgetIdExists("${pId}_$id")) {
             children.remove("${pId}_$id")
             true
         } else {
@@ -77,7 +77,7 @@ abstract class CustomAbstractWidget(
      */
     fun removeAllChildren() = children.clear()
 
-    private fun checkWidgetIdExists(id: String): Boolean = children[id] != null
+    private fun checkWidgetIdExists(id: String): Boolean = children["${pId}_$id"] != null
 
     /**
      * Custom implementation of [mouseClicked] with child widget support.
