@@ -113,22 +113,8 @@ abstract class CustomAbstractWidget(
 
     override fun isMouseOver(pMouseX: Double, pMouseY: Double): Boolean {
         children.forEach { child -> child.value.isMouseOver(pMouseX, pMouseY) }
-//        for (i in 0..<children.size) {
-//            val list = children.entries.elementAt(i).value
-//            return list.isMouseOver(pMouseX, pMouseY)
-//        }
         return super.isMouseOver(pMouseX, pMouseY)
     }
-
-//    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
-//        for (i in 0..<children.size) {
-//            val list = children.entries.elementAt(i)
-//            return if (list.value.isValidClickButton(pButton)) {
-//                list.value.mouseClicked(pMouseX, pMouseY, pButton)
-//            } else false
-//        }
-//        return super.mouseClicked(pMouseX, pMouseY, pButton)
-//    }
 
     override fun onDrag(pMouseX: Double, pMouseY: Double, pDragX: Double, pDragY: Double) {
         children.forEach { child -> child.value.onDrag(pMouseX, pMouseY, pDragX, pDragY) }
