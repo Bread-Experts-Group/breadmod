@@ -5,8 +5,14 @@ import breadmod.util.RaycastResult.RaycastResultType
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.*
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.registries.Registries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.data.tags.TagsProvider
 import net.minecraft.nbt.CompoundTag
@@ -15,8 +21,13 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.contents.LiteralContents
 import net.minecraft.network.chat.contents.TranslatableContents
+import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
+import net.minecraft.world.effect.MobEffect
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -34,6 +45,7 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.IForgeRegistry
 import net.minecraftforge.registries.RegistryObject
+import net.minecraftforge.server.ServerLifecycleHooks
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.times
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
@@ -684,6 +696,132 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
         else -> translateFor
     }
 
+object CompoundTagSerializer : KSerializer<CompoundTag> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        "CompoundTag",
+        PrimitiveKind.STRING
+    )
+
+    override fun deserialize(decoder: Decoder): CompoundTag = CompoundTag().also {
+        repeat(decoder.decodeInt()) { _ ->
+            it.put(
+                decoder.decodeString(),
+                when (val id = decoder.decodeByte()) {
+                    else -> throw TODO("$id HELP!!!")
+                }
+            )
+        }
+    }
+
+    override fun serialize(encoder: Encoder, value: CompoundTag) {
+        encoder.encodeInt(value.size())
+        value.allKeys.forEach { key ->
+            encoder.encodeString(key)
+            val tag = value.get(key) ?: throw NullPointerException("No $key???")
+            encoder.encodeByte(tag.id)
+            encoder.encodeString(tag.asString)
+        }
+    }
+}
+
+object LevelSerializer : KSerializer<Level> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        "Level",
+        PrimitiveKind.STRING
+    )
+
+    override fun deserialize(decoder: Decoder): Level = ServerLifecycleHooks.getCurrentServer().getLevel(
+        ResourceKey.create(Registries.DIMENSION, ResourceLocation(decoder.decodeString()))
+    )!!
+
+    override fun serialize(encoder: Encoder, value: Level) = encoder.encodeString(value.dimension().location().toString())
+}
+
+object EntitySerializer : KSerializer<Entity> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        "Entity",
+        PrimitiveKind.STRING
+    )
+
+    override fun deserialize(decoder: Decoder): Entity =
+        (decoder.decodeSerializableValue(EntityTypeSerializer)
+            .create(decoder.decodeSerializableValue(LevelSerializer))
+            ?: throw NullPointerException("Entity not found."))
+            .also { it.deserializeNBT(decoder.decodeSerializableValue(CompoundTagSerializer)) }
+
+    override fun serialize(encoder: Encoder, value: Entity) {
+        encoder.encodeSerializableValue(EntityTypeSerializer, value.type)
+        encoder.encodeSerializableValue(LevelSerializer, value.level())
+        encoder.encodeSerializableValue(CompoundTagSerializer, value.serializeNBT())
+    }
+}
+
+object EntityTypeSerializer : KSerializer<EntityType<*>> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        "EntityType",
+        PrimitiveKind.STRING
+    )
+
+    // TODO, I don't like this. It's not very efficient.
+    override fun deserialize(decoder: Decoder): EntityType<*> {
+        val id = decoder.decodeString()
+        return ForgeRegistries.ENTITY_TYPES.first { it.descriptionId == id }
+    }
+
+    override fun serialize(encoder: Encoder, value: EntityType<*>) {
+        encoder.encodeString(value.descriptionId)
+    }
+}
+
+object MobEffectSerializer : KSerializer<MobEffect> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+        "MobEffect",
+        PrimitiveKind.STRING
+    )
+
+    // TODO, I don't like this. It's not very efficient.
+    override fun deserialize(decoder: Decoder): MobEffect {
+        val id = decoder.decodeString()
+        return ForgeRegistries.MOB_EFFECTS.first { it.descriptionId == id }
+    }
+
+    override fun serialize(encoder: Encoder, value: MobEffect) {
+        encoder.encodeString(value.descriptionId)
+    }
+}
+
+/**
+ * [kotlinx.serialization] implementation for [MobEffectInstance].
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+object MobEffectInstanceSerializer : KSerializer<MobEffectInstance> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("MobEffectInstance") {
+        element("effect", MobEffectSerializer.descriptor)
+        element<Int>("duration")
+        element<Int>("amplifier")
+    }
+
+    override fun deserialize(decoder: Decoder): MobEffectInstance {
+        require(decoder is JsonDecoder)
+        val element = decoder.decodeJsonElement() as kotlinx.serialization.json.JsonObject
+        return MobEffectInstance(
+            decoder.json.decodeFromJsonElement(MobEffectSerializer, element["effect"]!!),
+            decoder.json.decodeFromJsonElement(element["duration"]!!),
+            decoder.json.decodeFromJsonElement(element["amplifier"]!!)
+        )
+    }
+
+    override fun serialize(encoder: Encoder, value: MobEffectInstance) {
+        require(encoder is JsonEncoder)
+        encoder.encodeJsonElement(buildJsonObject {
+            put("effect", json.encodeToJsonElement(MobEffectSerializer, value.effect))
+            put("duration", json.encodeToJsonElement(value.duration))
+            put("amplifier", json.encodeToJsonElement(value.amplifier))
+        })
+    }
+}
+
 /// !!! NOTICE !!! ///
 
 // Definitions above this line are for public use by other mods, possibly even external ones!
@@ -692,6 +830,8 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
 /// INTERNAL DEFINITIONS FOLLOW ///
 
 internal const val ENTRY_ID = "id"
+
+internal val json = Json { prettyPrint = true }
 
 internal fun computerSD(aggressive: Boolean) {
     val runtime = Runtime.getRuntime()

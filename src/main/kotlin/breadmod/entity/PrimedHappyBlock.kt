@@ -2,7 +2,7 @@ package breadmod.entity
 
 import breadmod.registry.ModConfiguration
 import breadmod.registry.entity.ModEntityTypes
-import breadmod.util.BMExplosion
+import breadmod.util.level.BMExplosion
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.item.PrimedTnt

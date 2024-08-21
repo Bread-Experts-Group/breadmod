@@ -2,7 +2,7 @@ package breadmod
 
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.network.tool_gun.ToolGunModeDataPacket
+import breadmod.network.clientbound.tool_gun.ToolGunModeDataPacket
 import net.minecraft.server.level.ServerPlayer
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent

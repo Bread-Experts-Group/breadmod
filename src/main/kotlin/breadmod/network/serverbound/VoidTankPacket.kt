@@ -1,4 +1,4 @@
-package breadmod.network.server
+package breadmod.network.serverbound
 
 import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import breadmod.util.capability.FluidContainer
@@ -16,7 +16,7 @@ import java.util.function.Supplier
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-data class VoidTankPacket(
+internal data class VoidTankPacket(
     /**
      * Block position of the [AbstractMachineBlockEntity] to drain the tank from.
      *

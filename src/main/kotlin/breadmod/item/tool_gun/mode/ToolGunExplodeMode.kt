@@ -9,7 +9,7 @@ import breadmod.item.tool_gun.IToolGunMode
 import breadmod.item.tool_gun.IToolGunMode.Companion.playModeSound
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.network.client.BeamPacket
+import breadmod.network.clientbound.BeamPacket
 import breadmod.util.RaycastResult.Companion.blockRaycast
 import breadmod.util.render.minecraft
 import com.mojang.blaze3d.vertex.PoseStack

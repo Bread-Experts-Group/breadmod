@@ -1,7 +1,7 @@
 package breadmod.mixin.client;
 
 import breadmod.item.armor.BreadArmorItem;
-import breadmod.util.StackColorKt;
+import breadmod.util.render.StackColorKt;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
@@ -24,11 +24,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HumanoidArmorLayer.class)
 abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends HumanoidModel<T>, A extends HumanoidModel<T>> extends RenderLayer<T, M> {
-    public MixinHumanoidArmorLayer(RenderLayerParent<T, M> pRenderer) {
+    protected MixinHumanoidArmorLayer(final RenderLayerParent<T, M> pRenderer) {
         super(pRenderer);
     }
 
-    @Invoker(value = "setPartVisibility")
+    @Invoker("setPartVisibility")
     abstract void iSetPartVisibility(A pModel, EquipmentSlot pSlot);
     @Invoker(value = "getArmorModelHook", remap = false)
     abstract Model iGetArmorModelHook(T entity, ItemStack itemStack, EquipmentSlot slot, A model);
@@ -38,21 +38,22 @@ abstract class MixinHumanoidArmorLayer<T extends LivingEntity, M extends Humanoi
     abstract void iRenderModel(PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, ArmorItem pArmorItem, Model pModel, boolean pWithGlint, float pRed, float pGreen, float pBlue, ResourceLocation armorResource);
     @Invoker(value = "getArmorResource", remap = false)
     abstract ResourceLocation iGetArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type);
-    @Invoker(value = "usesInnerModel")
+
+    @Invoker("usesInnerModel")
     abstract boolean iUsesInnerModel(EquipmentSlot pSlot);
 
     @Inject(method = "renderArmorPiece", at = @At("HEAD"), cancellable = true)
-    private void renderArmorPiece(PoseStack pPoseStack, MultiBufferSource pBuffer, T pLivingEntity, EquipmentSlot pSlot, int pPackedLight, A pModel, CallbackInfo callbackInfo) {
-        ItemStack itemStack = pLivingEntity.getItemBySlot(pSlot);
-        Item item = itemStack.getItem();
+    private void renderArmorPiece(final PoseStack pPoseStack, final MultiBufferSource pBuffer, final T pLivingEntity, final EquipmentSlot pSlot, final int pPackedLight, final A pModel, final CallbackInfo callbackInfo) {
+        final ItemStack itemStack = pLivingEntity.getItemBySlot(pSlot);
+        final Item item = itemStack.getItem();
         // TODO: Better way to write this
         if(item instanceof BreadArmorItem && ((BreadArmorItem) item).getEquipmentSlot() == pSlot) {
             this.getParentModel().copyPropertiesTo(pModel);
             this.iSetPartVisibility(pModel, pSlot);
-            Model model = iGetArmorModelHook(pLivingEntity, itemStack, pSlot, pModel);
-            boolean flag = this.iUsesInnerModel(pSlot);
+            final Model model = this.iGetArmorModelHook(pLivingEntity, itemStack, pSlot, pModel);
+            final boolean flag = this.iUsesInnerModel(pSlot);
 
-            float[] components = StackColorKt.getColor(itemStack, BreadArmorItem.Companion.getBREAD_COLOR()).getRGBComponents(null);
+            final float[] components = StackColorKt.getColor(itemStack, BreadArmorItem.Companion.getBREAD_COLOR()).getRGBComponents(null);
             this.iRenderModel(
                     pPoseStack, pBuffer, pPackedLight, (BreadArmorItem) item, model, flag, components[0], components[1], components[2],
                     this.iGetArmorResource(pLivingEntity, itemStack, pSlot, null)

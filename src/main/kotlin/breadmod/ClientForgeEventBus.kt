@@ -4,9 +4,8 @@ import breadmod.ClientModEventBus.toolGunBindList
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.network.tool_gun.ToolGunPacket
+import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
 import breadmod.util.render.minecraft
-import breadmod.util.render.pushRenderBuffer
 import breadmod.util.render.renderBuffer
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.KeyMapping
@@ -30,10 +29,6 @@ object ClientForgeEventBus {
     @SubscribeEvent
     fun onLevelRender(event: RenderLevelStageEvent) {
         if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
-        if(pushRenderBuffer.size > 0) {
-            renderBuffer.addAll(pushRenderBuffer)
-            pushRenderBuffer.clear()
-        }
         renderBuffer.removeIf { (mutableList, renderStageEvent) -> renderStageEvent.invoke(mutableList, event) }
     }
 
@@ -89,14 +84,14 @@ object ClientForgeEventBus {
         val currentMode = itemHeld.getCurrentMode(stackHeld)
 
         if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
-            NETWORK.sendToServer(ToolGunPacket(true))
+            NETWORK.sendToServer(ToolGunConfigurationPacket(true))
             player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
             return true
         } else {
             currentMode.keyBinds.forEach {
                 toolGunBindList[it]?.let { bind ->
                     if (key == bind.key && modifierMatches(modifiers, bind.keyModifier)) {
-                        NETWORK.sendToServer(ToolGunPacket(false, it))
+                        NETWORK.sendToServer(ToolGunConfigurationPacket(false, it))
                         currentMode.mode.action(player.level(), player, stackHeld, it)
                         return true
                     }

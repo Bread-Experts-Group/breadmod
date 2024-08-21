@@ -1,4 +1,4 @@
-package breadmod.network.client
+package breadmod.network.clientbound
 
 import breadmod.util.render.minecraft
 import net.minecraft.core.BlockPos
@@ -9,7 +9,7 @@ import net.minecraftforge.fml.DistExecutor
 import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
 
-data class CapabilityTagDataPacket(val pPos: BlockPos, val tag: CompoundTag?) {
+internal data class CapabilityTagDataPacket(val pPos: BlockPos, val tag: CompoundTag?) {
     companion object {
         fun encodeBuf(input: CapabilityTagDataPacket, buffer: FriendlyByteBuf) {
             buffer.writeBlockPos(input.pPos).writeNbt(input.tag)

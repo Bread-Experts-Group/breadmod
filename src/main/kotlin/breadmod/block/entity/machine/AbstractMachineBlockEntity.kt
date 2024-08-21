@@ -2,8 +2,8 @@ package breadmod.block.entity.machine
 
 import breadmod.block.machine.CraftingManager
 import breadmod.network.PacketHandler.NETWORK
-import breadmod.network.client.CapabilitySideDataPacket
-import breadmod.network.client.CapabilityTagDataPacket
+import breadmod.network.clientbound.CapabilitySideDataPacket
+import breadmod.network.clientbound.CapabilityTagDataPacket
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
 import breadmod.util.capability.*
 import net.minecraft.core.BlockPos

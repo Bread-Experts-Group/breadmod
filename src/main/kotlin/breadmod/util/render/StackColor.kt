@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package breadmod.util
+package breadmod.util.render
 
 import net.minecraft.world.item.ItemStack
 import java.awt.Color

@@ -1,4 +1,4 @@
-package breadmod.util
+package breadmod.util.level
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes

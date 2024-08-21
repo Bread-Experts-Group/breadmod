@@ -246,6 +246,14 @@ internal class USEnglishLanguageProvider(
             "Toolgun: Remover",
             TOOL_GUN_DEF, "mode", "controls", "category", "remover"
         )
+        modAdd(
+            "%s left the game",
+            "item", TOOL_GUN_DEF, "remover", "entity_left_game"
+        )
+        modAdd(
+            "BreadMod: Disconnect: Client 0 overflowed reliable channel.",
+            "item", TOOL_GUN_DEF, "remover", "player_left_game"
+        )
 
         // Creator action
         modAdd(
@@ -283,6 +291,14 @@ internal class USEnglishLanguageProvider(
         modAdd(
             "Toolgun: Creator",
             TOOL_GUN_DEF, "mode", "controls", "category", "creator"
+        )
+        modAdd(
+            "BreadMod: Bad creator data packet timing",
+            "item", TOOL_GUN_DEF, "creator", "bad_timing"
+        )
+        modAdd(
+            "BreadMod: No creator data packet",
+            "item", TOOL_GUN_DEF, "creator", "no_data"
         )
 
         // Power action
@@ -357,14 +373,6 @@ internal class USEnglishLanguageProvider(
         )
 
         // Misc
-        modAdd(
-            "%s left the game",
-            "item", TOOL_GUN_DEF, "entity_left_game"
-        )
-        modAdd(
-            "Disconnect: Client 0 overflowed reliable channel.",
-            "item", TOOL_GUN_DEF, "player_left_game"
-        )
         modAdd(
             "Current Mode: ",
             "item", TOOL_GUN_DEF, "tooltip", "current_mode"

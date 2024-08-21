@@ -1,4 +1,4 @@
-package breadmod.util
+package breadmod.util.render
 
 import org.joml.Math.clamp
 import java.awt.Color

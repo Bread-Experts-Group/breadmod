@@ -1,4 +1,4 @@
-package breadmod.network.server
+package breadmod.network.serverbound
 
 import breadmod.block.entity.machine.AbstractMachineBlockEntity
 import net.minecraft.core.BlockPos
@@ -15,7 +15,7 @@ import java.util.function.Supplier
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-class ToggleMachinePacket(
+internal class ToggleMachinePacket(
     /**
      * Block position of the [AbstractMachineBlockEntity] to toggle.
      *

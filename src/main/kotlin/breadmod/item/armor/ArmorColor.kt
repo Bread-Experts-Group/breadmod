@@ -1,7 +1,7 @@
 package breadmod.item.armor
 
 import breadmod.item.IDyedTintableItem
-import breadmod.util.getColor
+import breadmod.util.render.getColor
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.world.item.ItemStack
 import java.awt.Color

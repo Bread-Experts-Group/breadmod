@@ -1,5 +1,6 @@
 package breadmod.item.tool_gun
 
+import breadmod.ModMain
 import breadmod.client.render.tool_gun.ToolGunItemRenderer
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.registry.sound.ModSounds
@@ -12,6 +13,8 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraftforge.fml.loading.FMLPaths
+import java.nio.file.Path
 
 interface IToolGunMode {
     /**
@@ -66,11 +69,15 @@ interface IToolGunMode {
         pBuffer: MultiBufferSource,
         pPackedLight: Int,
         pPackedOverlay: Int
-    ) {}
+    ) {
+    }
 
     companion object {
+        val BASE_TOOL_GUN_DATA_PATH: Path = FMLPaths.CONFIGDIR.get().resolve("${ModMain.ID}/tool_gun")
+
         fun playToolGunSound(pLevel: Level, at: BlockPos) =
             pLevel.playSound(null, at, ModSounds.TOOL_GUN.get(), SoundSource.PLAYERS, 2.0f, 1f)
+
         fun playModeSound(pLevel: Level, at: BlockPos) =
             pLevel.playSound(null, at, SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 2.0f, 1f)
     }

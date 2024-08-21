@@ -2,7 +2,7 @@ package breadmod.recipe.crafting
 
 import breadmod.item.armor.BreadArmorItem
 import breadmod.registry.recipe.ModRecipeSerializers
-import breadmod.util.applyColor
+import breadmod.util.render.applyColor
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffectInstance

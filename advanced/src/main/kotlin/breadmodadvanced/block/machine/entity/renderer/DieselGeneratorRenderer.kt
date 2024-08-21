@@ -23,7 +23,7 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 import org.joml.Vector4f
 
-class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
+class DieselGeneratorRenderer : BlockEntityRenderer<DieselGeneratorBlockEntity> {
     private enum class DieselGeneratorUpgrades { BATTERY, CHARGING, TURBO, FIRST_SLOT, SECOND_SLOT, THIRD_SLOT }
 
     private var doorRot = 0f
@@ -39,25 +39,31 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         val blockRotation = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
         val level = pBlockEntity.level ?: return
 
-        if(doorRot < 120f) {
+        if (doorRot < 120f) {
             doorRot = Math.floorMod(level.gameTime, 120).toFloat() + pPartialTick
         } /*else {
             doorRot = 0f
         }*/
 
         val doorOpen = pBlockEntity.blockState.getValue(BlockStateProperties.OPEN)
-        val doorAxis = if(doorOpen) Axis.YN.rotationDegrees(doorRot) else Axis.YN.rotationDegrees(0f)
+        val doorAxis = if (doorOpen) Axis.YN.rotationDegrees(doorRot) else Axis.YN.rotationDegrees(0f)
 
         // todo animation when opening and closing door (side quest: door openness like with the chest renderer)
         // Door Rendering
         renderDoor(doorAxis, blockRotation, pPoseStack, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay)
 
-        renderUpgrade(DieselGeneratorUpgrades.CHARGING, DieselGeneratorUpgrades.FIRST_SLOT,
-            pPoseStack, blockRotation, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay)
-        renderUpgrade(DieselGeneratorUpgrades.BATTERY, DieselGeneratorUpgrades.SECOND_SLOT,
-            pPoseStack, blockRotation, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay)
-        renderUpgrade(DieselGeneratorUpgrades.TURBO, DieselGeneratorUpgrades.THIRD_SLOT,
-            pPoseStack, blockRotation, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay)
+        renderUpgrade(
+            DieselGeneratorUpgrades.CHARGING, DieselGeneratorUpgrades.FIRST_SLOT,
+            pPoseStack, blockRotation, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay
+        )
+        renderUpgrade(
+            DieselGeneratorUpgrades.BATTERY, DieselGeneratorUpgrades.SECOND_SLOT,
+            pPoseStack, blockRotation, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay
+        )
+        renderUpgrade(
+            DieselGeneratorUpgrades.TURBO, DieselGeneratorUpgrades.THIRD_SLOT,
+            pPoseStack, blockRotation, pBuffer, pBlockEntity, pPackedLight, pPackedOverlay
+        )
 
         // Textured quad testing
         pPoseStack.pushPose()
@@ -89,11 +95,11 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         // Fluid Tank Rendering
         pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
             val tank = it.allTanks[0]
-            if(tank.isEmpty) return
+            if (tank.isEmpty) return
 
             val blockPos = pBlockEntity.blockPos
             val fluidTypeExtensions = IClientFluidTypeExtensions.of(tank.fluid.fluid)
-            val stillFluidTexture = fluidTypeExtensions.getStillTexture(tank.fluid)?: return
+            val stillFluidTexture = fluidTypeExtensions.getStillTexture(tank.fluid) ?: return
             val fluidState = tank.fluid.fluid.defaultFluidState()
             val fluidSprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
             val fluidTint = fluidTypeExtensions.getTintColor(fluidState, pBlockEntity.level, blockPos)
@@ -108,7 +114,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
             val u1 = fluidSprite.u0 + ((fluidSprite.u1 - fluidSprite.u0) * 0.8F)
 
             // Top / pX0 = Right, pX1 = left, pZ0 = Front, pZ1 = Back
-            if(tank.fluidAmount.toFloat() < tank.capacity.toFloat()) {
+            if (tank.fluidAmount.toFloat() < tank.capacity.toFloat()) {
                 pPoseStack.pushPose()
                 rotateFluid(blockRotation, pPoseStack) // Rotate on East and West axis
                 drawQuad(
@@ -149,18 +155,27 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     }
 
     private fun rotateFluid(pBlockRotation: Direction, pPoseStack: PoseStack) {
-        if(pBlockRotation == Direction.WEST || pBlockRotation == Direction.EAST) {
+        if (pBlockRotation == Direction.WEST || pBlockRotation == Direction.EAST) {
             pPoseStack.mulPose(Axis.YN.rotationDegrees(90f))
             pPoseStack.translate(0f, 0f, -1f)
         }
     }
 
     private fun rotateModel(pPoseStack: PoseStack, blockRotation: Direction) {
-        when(blockRotation) {
+        when (blockRotation) {
             Direction.NORTH -> {}
-            Direction.SOUTH -> { pPoseStack.mulPose(Axis.YN.rotationDegrees(180f)) }
-            Direction.WEST -> { pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f)) }
-            Direction.EAST -> { pPoseStack.mulPose(Axis.YN.rotationDegrees(90f)) }
+            Direction.SOUTH -> {
+                pPoseStack.mulPose(Axis.YN.rotationDegrees(180f))
+            }
+
+            Direction.WEST -> {
+                pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
+            }
+
+            Direction.EAST -> {
+                pPoseStack.mulPose(Axis.YN.rotationDegrees(90f))
+            }
+
             else -> println("invalid rotation")
         }
     }
@@ -176,7 +191,7 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
     ) {
         val doorModel = Minecraft.getInstance().modelManager.getModel(doorModelLocation)
         pPoseStack.pushPose()
-        when(blockRotation) {
+        when (blockRotation) {
             Direction.NORTH -> pPoseStack.translate(0.625, 0.063, 0.0)
             Direction.SOUTH -> pPoseStack.translate(0.375, 0.0625, 1.0)
             Direction.WEST -> pPoseStack.translate(0.0, 0.0628, 0.375)
@@ -199,13 +214,13 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        if(!pBlockEntity.blockState.getValue(BlockStateProperties.OPEN)) return
+        if (!pBlockEntity.blockState.getValue(BlockStateProperties.OPEN)) return
         val instance = Minecraft.getInstance()
         val modelManager = instance.modelManager
         val batteryUpgrade = modelManager.getModel(batteryUpgradeModelLoc)
         val chargingUpgrade = modelManager.getModel(chargingUpgradeModelLoc)
         val turboUpgrade = modelManager.getModel(turboUpgradeModelLoc)
-        val upgrade: BakedModel = when(pUpgrade) {
+        val upgrade: BakedModel = when (pUpgrade) {
             DieselGeneratorUpgrades.BATTERY -> batteryUpgrade
             DieselGeneratorUpgrades.CHARGING -> chargingUpgrade
             DieselGeneratorUpgrades.TURBO -> turboUpgrade
@@ -213,39 +228,43 @@ class DieselGeneratorRenderer: BlockEntityRenderer<DieselGeneratorBlockEntity> {
         }
 
         pPoseStack.pushPose()
-        when(pBlockRotation) {
+        when (pBlockRotation) {
             Direction.NORTH -> {
                 pPoseStack.translate(-1f, 0.0625f, 0f)
-                when(pSlot) {
+                when (pSlot) {
                     DieselGeneratorUpgrades.FIRST_SLOT -> pPoseStack.translate(0.5f, 0f, 0.1f)
                     DieselGeneratorUpgrades.SECOND_SLOT -> pPoseStack.translate(0.375f, 0f, 0.1f)
                     DieselGeneratorUpgrades.THIRD_SLOT -> pPoseStack.translate(0.25f, 0f, 0.1f)
                 }
             }
+
             Direction.SOUTH -> {
                 pPoseStack.translate(2f, 0.0625f, 1f)
-                when(pSlot) {
+                when (pSlot) {
                     DieselGeneratorUpgrades.FIRST_SLOT -> pPoseStack.translate(-0.5f, 0f, -0.1f)
                     DieselGeneratorUpgrades.SECOND_SLOT -> pPoseStack.translate(-0.375f, 0f, -0.1f)
                     DieselGeneratorUpgrades.THIRD_SLOT -> pPoseStack.translate(-0.25f, 0f, -0.1f)
                 }
             }
+
             Direction.EAST -> {
                 pPoseStack.translate(1f, 0.0625f, -1f)
-                when(pSlot) {
+                when (pSlot) {
                     DieselGeneratorUpgrades.FIRST_SLOT -> pPoseStack.translate(-0.1f, 0f, 0.5f)
                     DieselGeneratorUpgrades.SECOND_SLOT -> pPoseStack.translate(-0.1f, 0f, 0.375f)
                     DieselGeneratorUpgrades.THIRD_SLOT -> pPoseStack.translate(-0.1f, 0f, 0.25f)
                 }
             }
+
             Direction.WEST -> {
                 pPoseStack.translate(0f, 0.0625f, 2f)
-                when(pSlot) {
+                when (pSlot) {
                     DieselGeneratorUpgrades.FIRST_SLOT -> pPoseStack.translate(0.1f, 0f, -0.5f)
                     DieselGeneratorUpgrades.SECOND_SLOT -> pPoseStack.translate(0.1f, 0f, -0.375f)
                     DieselGeneratorUpgrades.THIRD_SLOT -> pPoseStack.translate(0.1f, 0f, -0.25f)
                 }
             }
+
             else -> {}
         }
         rotateModel(pPoseStack, pBlockRotation)
