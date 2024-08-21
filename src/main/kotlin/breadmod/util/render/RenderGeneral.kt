@@ -42,6 +42,7 @@ import kotlin.math.atan
 import kotlin.math.min
 
 internal val minecraft: Minecraft = Minecraft.getInstance()
+internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>
 
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
@@ -49,7 +50,8 @@ internal val minecraft: Minecraft = Minecraft.getInstance()
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-val renderBuffer = mutableListOf<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>()
+internal val renderBuffer: RenderBuffer = mutableListOf()
+internal val pushRenderBuffer: RenderBuffer = mutableListOf()
 private var angle = 0f
 
 /**
@@ -60,19 +62,24 @@ private var angle = 0f
  */
 fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffer.add(mutableListOf(1F) to { mutableList, levelStageEvent ->
     val currentOpacity = mutableList[0]
-    val playerEyePos = (minecraft.player)?.getEyePosition(levelStageEvent.partialTick)
     val level = minecraft.level
     val player = minecraft.player
-    if (playerEyePos != null && level != null && currentOpacity > 0) {
+    val camera = levelStageEvent.camera
+    if (level != null && currentOpacity > 0 && player != null) {
         levelStageEvent.poseStack.pushPose()
-        levelStageEvent.poseStack.translate(-playerEyePos.x, -playerEyePos.y, -playerEyePos.z)
-        player?.let { levelStageEvent.poseStack.mulPose(Axis.ZP.rotationDegrees(0f)) }
+        levelStageEvent.poseStack.translate(-camera.position.x, -camera.position.y, -camera.position.z)
         val poseStack = levelStageEvent.poseStack
         val bufferSource = minecraft.renderBuffers().bufferSource()
 
-        val origin = BlockPos(0, 0, 0)
-//        levelStageEvent // todo get world origin or camera from this?
-        poseStack.translate(origin.x.toDouble(), origin.y.toDouble(), origin.z.toDouble())
+//        println("${-camera.position.x}, ${-camera.position.y}, ${-camera.position.z}")
+
+        if (angle >= 0f) {
+            angle -= (1.1f * minecraft.partialTick)
+        } else angle = 360f
+
+        poseStack.mulPose(Axis.YN.rotationDegrees(angle))
+
+        println(minecraft.partialTick)
 
         if(thickness != null) {
             // South
@@ -82,10 +89,10 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
                 poseStack,
                 bufferSource,
                 Vector4f(1f, 1f, 1f, currentOpacity),
-                Vector3f(start.x - 1f, start.y, start.z),
-                Vector3f(start.x - 3f, start.y, start.z),
-                Vector3f(end.x - 3f, end.y, end.z),
-                Vector3f(end.x - 1f, end.y, end.z)
+                Vector3f(start.x + 1f, start.y, start.z + 1f),
+                Vector3f(start.x - 1f, start.y, start.z + 1f),
+                Vector3f(end.x - 1f, end.y, end.z + 1f),
+                Vector3f(end.x + 1f, end.y, end.z + 1f)
             )
 //            poseStack.translate(2f, 0f, 0f)
             // East
@@ -95,10 +102,10 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
                 poseStack,
                 bufferSource,
                 Vector4f(1f, 1f, 1f, currentOpacity),
-                Vector3f(start.x - 1f, start.y, start.z - 2f),
-                Vector3f(start.x - 1f, start.y, start.z),
-                Vector3f(end.x - 1f, end.y, end.z),
-                Vector3f(end.x - 1f, end.y, end.z - 2f)
+                Vector3f(start.x + 1f, start.y, start.z - 1f),
+                Vector3f(start.x + 1f, start.y, start.z + 1f),
+                Vector3f(end.x + 1f, end.y, end.z + 1f),
+                Vector3f(end.x + 1f, end.y, end.z - 1f)
             )
             // West
             texturedQuadTest(
@@ -107,10 +114,10 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
                 poseStack,
                 bufferSource,
                 Vector4f(1f, 1f, 1f, currentOpacity),
-                Vector3f(start.x - 3f, start.y, start.z),
-                Vector3f(start.x - 3f, start.y, start.z - 2f),
-                Vector3f(end.x - 3f, end.y, end.z - 2f),
-                Vector3f(end.x - 3f, end.y, end.z)
+                Vector3f(start.x - 1f, start.y, start.z + 1f),
+                Vector3f(start.x - 1f, start.y, start.z - 1f),
+                Vector3f(end.x - 1f, end.y, end.z - 1f),
+                Vector3f(end.x - 1f, end.y, end.z + 1f)
             )
             // North
             texturedQuadTest(
@@ -119,15 +126,11 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
                 poseStack,
                 bufferSource,
                 Vector4f(1f, 1f, 1f, currentOpacity),
-                Vector3f(start.x - 3f, start.y, start.z - 2f),
-                Vector3f(start.x - 1f, start.y, start.z - 2f),
-                Vector3f(end.x - 1f, end.y, end.z - 2f),
-                Vector3f(end.x - 3f, end.y, end.z - 2f)
+                Vector3f(start.x - 1f, start.y, start.z - 1f),
+                Vector3f(start.x + 1f, start.y, start.z - 1f),
+                Vector3f(end.x + 1f, end.y, end.z - 1f),
+                Vector3f(end.x - 1f, end.y, end.z - 1f)
             )
-            if (angle >= 0f) {
-                angle -= 0.1f
-            } else angle = 360f
-//            poseStack.mulPose(Axis.YN.rotationDegrees(angle)) // todo get quad rotations relative to their location, not world 0,0
 
             // Start
             texturedQuadTest(
@@ -136,10 +139,10 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
                 poseStack,
                 bufferSource,
                 Vector4f(1f, 1f, 1f, currentOpacity),
-                Vector3f(start.x - 3f , start.y, start.z - 2f),
-                Vector3f(start.x - 3f, start.y, start.z),
-                Vector3f(start.x - 1f, start.y, start.z),
-                Vector3f(start.x - 1f, start.y, start.z - 2f)
+                Vector3f(start.x - 1f , start.y, start.z - 1f),
+                Vector3f(start.x - 1f, start.y, start.z + 1f),
+                Vector3f(start.x + 1f, start.y, start.z + 1f),
+                Vector3f(start.x + 1f, start.y, start.z - 1f)
             )
             // End
             texturedQuadTest(
@@ -148,10 +151,10 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) = renderBuffe
                 poseStack,
                 bufferSource,
                 Vector4f(1f, 1f, 1f, currentOpacity),
-                Vector3f(end.x - 3f , end.y, end.z - 2f),
-                Vector3f(end.x - 1f, end.y, end.z - 2f),
-                Vector3f(end.x - 1f, end.y, end.z),
-                Vector3f(end.x - 3f, end.y, end.z)
+                Vector3f(end.x - 1f , end.y, end.z - 1f),
+                Vector3f(end.x + 1f, end.y, end.z - 1f),
+                Vector3f(end.x + 1f, end.y, end.z + 1f),
+                Vector3f(end.x - 1f, end.y, end.z + 1f)
             )
         }
 

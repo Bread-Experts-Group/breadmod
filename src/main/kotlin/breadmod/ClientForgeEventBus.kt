@@ -6,6 +6,7 @@ import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.tool_gun.ToolGunPacket
 import breadmod.util.render.minecraft
+import breadmod.util.render.pushRenderBuffer
 import breadmod.util.render.renderBuffer
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.KeyMapping
@@ -29,6 +30,10 @@ object ClientForgeEventBus {
     @SubscribeEvent
     fun onLevelRender(event: RenderLevelStageEvent) {
         if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
+        if(pushRenderBuffer.size > 0) {
+            renderBuffer.addAll(pushRenderBuffer)
+            pushRenderBuffer.clear()
+        }
         renderBuffer.removeIf { (mutableList, renderStageEvent) -> renderStageEvent.invoke(mutableList, event) }
     }
 

@@ -468,7 +468,7 @@ class ToolGunCreatorScreen(
 //            MobEffectScrollBox(leftPos + 2, topPos + 26, 252, 103, Component.empty()))
         addToWidgetMap("test" to SignType.MAIN, TestButton(10, 10, 50, 20).also {
             it.addChild(TestButton(10, 20, 60, 20), "test_2")
-            it.move(0, 30)
+//            it.move(0, 30)
         })
 
         initWidgetsFromMap()
