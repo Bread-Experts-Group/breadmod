@@ -1,6 +1,7 @@
 package breadmod.client.gui.components
 
 import breadmod.util.render.minecraft
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.renderer.RenderType
@@ -19,10 +20,10 @@ class TestButton(
     }
 
     override fun onClick(pMouseX: Double, pMouseY: Double) {
-        println("old: $x, $y")
-        println("move")
-        move(50, 50)
-        println("new: $x, $y")
+//        println("old: $x, $y")
+//        println("move")
+//        move(50, 50)
+//        println("new: $x, $y")
     }
 
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
