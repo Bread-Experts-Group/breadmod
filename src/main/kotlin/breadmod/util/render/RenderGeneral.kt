@@ -67,11 +67,11 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
         val camera = levelStageEvent.camera
         if (level != null && currentOpacity > 0 && player != null) {
             levelStageEvent.poseStack.pushPose()
-            levelStageEvent.poseStack.translate(-camera.position.x, -camera.position.y, -camera.position.z)
+            levelStageEvent.poseStack.translate(-camera.position.x, -camera.position.y - 1f, -camera.position.z)
             val poseStack = levelStageEvent.poseStack
             val bufferSource = minecraft.renderBuffers().bufferSource()
 
-            poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + levelStageEvent.partialTick))
+//            poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + levelStageEvent.partialTick))
 
             if (thickness != null) {
                 // South
@@ -151,7 +151,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
             }
 
             levelStageEvent.poseStack.popPose()
-//        mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
+        mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
             false
         } else true
     })

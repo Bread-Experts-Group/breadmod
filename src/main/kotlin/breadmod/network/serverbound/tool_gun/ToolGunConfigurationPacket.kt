@@ -1,5 +1,6 @@
 package breadmod.network.serverbound.tool_gun
 
+import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.tool_gun.ToolGunItem
@@ -51,12 +52,14 @@ internal data class ToolGunConfigurationPacket(
             ctx.get().let {
                 it.enqueueWork {
                     val player = it.sender ?: return@enqueueWork
+                    ModMain.LOGGER.info("ToolGunConfigurationPacket: receiving packet from ${player.name.string}")
 //                val stack = player.inventory.items[input.pSlot]
                     val stack = player.mainHandItem
                     val item = stack.item
                     if (item is ToolGunItem) {
                         if (!player.cooldowns.isOnCooldown(item)) {
                             if (input.pModeSwitch) {
+                                ModMain.LOGGER.info("ToolGunConfigurationPacket: executing tool gun mode switch")
                                 val currentMode = item.ensureCurrentMode(stack)
                                 val namespaceIterator = MapIterator(ModToolGunModeDataLoader.modes)
                                 namespaceIterator.restoreState(currentMode.getInt(NAMESPACE_ITERATOR_STATE_TAG))
@@ -90,6 +93,7 @@ internal data class ToolGunConfigurationPacket(
                                 modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
                                 player.cooldowns.addCooldown(item, 10)
                             } else {
+                                ModMain.LOGGER.info("ToolGunConfigurationPacket: executing tool gun action")
                                 item.getCurrentMode(stack).mode.action(
                                     player.level(),
                                     player,

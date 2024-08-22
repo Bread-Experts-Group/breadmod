@@ -1,5 +1,6 @@
 package breadmod.util
 
+import breadmod.ModMain
 import breadmod.natives.windows.ACrasherWindows
 import breadmod.util.RaycastResult.RaycastResultType
 import com.google.gson.JsonArray
@@ -35,6 +36,7 @@ import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
@@ -567,15 +569,20 @@ sealed class RaycastResult(
             countFluid: Boolean
         ): Block? {
             var distance = 0.0
+            ModMain.LOGGER.info("blockRaycast function parameters: $origin, $direction, $length, $countFluid")
+            ModMain.LOGGER.info("blockRaycast: start loop")
             while (true) {
                 val position = origin + (direction * distance)
                 val state = this.getBlockState(BlockPos(position.toVec3i()))
+                ModMain.LOGGER.info("blockRaycast state: $state")
+                ModMain.LOGGER.info("blockRaycast position: $position")
                 if (!state.isAir && (countFluid || state.fluidState.fluidType.isAir)) return Block(
                     state,
                     origin,
                     position,
                     direction
                 )
+                setBlockAndUpdate(BlockPos(position.toVec3i()), Blocks.WHITE_WOOL.defaultBlockState())
                 if (distance > length) return null
                 distance += 0.1
             }

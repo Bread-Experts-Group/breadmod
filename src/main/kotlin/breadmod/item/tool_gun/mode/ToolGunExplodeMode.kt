@@ -1,5 +1,6 @@
 package breadmod.item.tool_gun.mode
 
+import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.client.render.tool_gun.ToolGunAnimationHandler
 import breadmod.client.render.tool_gun.drawTextOnScreen
@@ -34,23 +35,40 @@ internal class ToolGunExplodeMode: IToolGunMode {
         pControl: BreadModToolGunModeProvider.Control
     ) {
         if(pLevel is ServerLevel) {
+            ModMain.LOGGER.info("ToolGunExplodeMode: triggering explode action on server side")
+            ModMain.LOGGER.info("ToolGunExplodeMode: Control key is $pControl")
             if(pControl.id == "use") {
                 val settings = pGunStack.orCreateTag.getCompound(pControl.categoryKey)
 
+                ModMain.LOGGER.info("ToolGunExplodeMode: before blockRaycast")
                 pLevel.blockRaycast(
                     pPlayer.eyePosition,
                     Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot),
                     1000.0,
                     settings.getBoolean("hitFluid")
                 )?.let {
+                    ModMain.LOGGER.info("ToolGunExplodeMode: sending blockRayCast to server")
                     NETWORK.send(
                         PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(pPlayer.blockPosition()) },
                         BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 1.0f)
                     )
                     playToolGunSound(pLevel, pPlayer.blockPosition())
-
                     pLevel.explode(pPlayer, it.endPosition.x, it.endPosition.y, it.endPosition.z, 20f, Level.ExplosionInteraction.MOB)
                 }
+                // just keep this code here for now, it might be useful later
+//                playToolGunSound(pLevel, pPlayer.blockPosition())
+//
+//                val start = pPlayer.position().add(0.0, pPlayer.eyeHeight.toDouble(), 0.0)
+//                val range = pPlayer.lookAngle.scale(1000.0)
+//                val raytrace = pLevel.clip(ClipContext(start, start.add(range), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, pPlayer))
+//                val rtPosition = raytrace.blockPos
+//
+//                NETWORK.send(
+//                        PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(pPlayer.blockPosition()) },
+//                        BeamPacket(start.toVector3f(), rtPosition.toVector3f(), 1.0f)
+//                    )
+//
+//                pLevel.explode(pPlayer, rtPosition.x.toDouble(), rtPosition.y.toDouble(), rtPosition.z.toDouble(), 20f, Level.ExplosionInteraction.MOB)
             } else {
                 if(!pGunStack.orCreateTag.contains(pControl.categoryKey)) {
                     pGunStack.orCreateTag.put(pControl.categoryKey, CompoundTag().also {

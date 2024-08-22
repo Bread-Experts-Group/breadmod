@@ -7,6 +7,8 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.network.chat.Component
 
+// todo work on more functionality
+
 /**
  * Custom implementation of [AbstractWidget] with child widget support
  * ### Todo: some proper documentation of this class
