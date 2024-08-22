@@ -1,11 +1,12 @@
 package breadmod.network.common.tool_gun.creator
 
 import breadmod.ModMain.modTranslatable
-import breadmod.client.screen.tool_gun.ToolGunCreatorScreen.Companion.loadedEntity
+import breadmod.client.screen.tool_gun.creator.ToolGunCreatorSpawnMenuFactory.loadedEntity
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.mode.creator.ToolGunCreatorMode
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.util.json
+import breadmod.util.removeWhitespace
 import kotlinx.serialization.encodeToString
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraftforge.network.NetworkEvent
@@ -44,7 +45,7 @@ internal class ToolGunCreatorDataRequestPacket(val savedHash: Int, val json: Str
                 } else player.connection.disconnect(modTranslatable("item", TOOL_GUN_DEF, "creator", "bad_timing"))
             } else {
                 // Client
-                val encoded = json.encodeToString(loadedEntity)
+                val encoded = json.encodeToString(loadedEntity).removeWhitespace()
                 NETWORK.sendToServer(
                     ToolGunCreatorDataRequestPacket(
                         0,

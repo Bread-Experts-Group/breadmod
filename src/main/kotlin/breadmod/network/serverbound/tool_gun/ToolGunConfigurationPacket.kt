@@ -22,11 +22,13 @@ import java.util.function.Supplier
 
 internal data class ToolGunConfigurationPacket(
     val pModeSwitch: Boolean,
-    val pControl: BreadModToolGunModeProvider.Control? = null
+    val pControl: BreadModToolGunModeProvider.Control? = null,
+    val early: Boolean = false
 ) {
     companion object {
         fun encodeBuf(input: ToolGunConfigurationPacket, buffer: FriendlyByteBuf) {
-            buffer.writeBoolean(input.pModeSwitch); buffer.writeNullable(input.pControl) { writer, value ->
+            buffer.writeBoolean(input.pModeSwitch)
+            buffer.writeNullable(input.pControl) { writer, value ->
                 writer.writeUtf(value.id)
                 writer.writeUtf(value.nameKey)
                 writer.writeUtf(value.categoryKey)
@@ -34,6 +36,7 @@ internal data class ToolGunConfigurationPacket(
                 writer.writeUtf(value.key().name)
                 writer.writeNullable(value.modifier) { writer2, value2 -> writer2.writeUtf(value2.name) }
             }
+            buffer.writeBoolean(input.early)
         }
 
         fun decodeBuf(input: FriendlyByteBuf): ToolGunConfigurationPacket =
@@ -46,7 +49,7 @@ internal data class ToolGunConfigurationPacket(
                     input.readUtf().let { { InputConstants.getKey(it) } },
                     input.readNullable { KeyModifier.valueFromString(it.readUtf()) }
                 )
-            })
+            }, input.readBoolean())
 
         fun handle(input: ToolGunConfigurationPacket, ctx: Supplier<NetworkEvent.Context>): CompletableFuture<Void> =
             ctx.get().let {
@@ -94,7 +97,8 @@ internal data class ToolGunConfigurationPacket(
                                 player.cooldowns.addCooldown(item, 10)
                             } else {
                                 ModMain.LOGGER.info("ToolGunConfigurationPacket: executing tool gun action")
-                                item.getCurrentMode(stack).mode.action(
+                                val mode = item.getCurrentMode(stack).mode
+                                (if (input.early) mode::actionEarly else mode::action)(
                                     player.level(),
                                     player,
                                     stack,

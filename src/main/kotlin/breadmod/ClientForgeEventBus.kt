@@ -5,6 +5,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
+import breadmod.util.gui.IHoldScreen
 import breadmod.util.render.minecraft
 import breadmod.util.render.renderBuffer
 import com.mojang.blaze3d.platform.InputConstants
@@ -79,11 +80,12 @@ object ClientForgeEventBus {
     private fun handleToolgunInput(
         player: LocalPlayer,
         itemHeld: ToolGunItem, stackHeld: ItemStack,
-        key: InputConstants.Key, modifiers: Int
+        key: InputConstants.Key, modifiers: Int,
+        early: Boolean
     ): Boolean {
         val currentMode = itemHeld.getCurrentMode(stackHeld)
 
-        if (key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
+        if (!early && key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
             NETWORK.sendToServer(ToolGunConfigurationPacket(true))
             player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
             return true
@@ -91,8 +93,10 @@ object ClientForgeEventBus {
             currentMode.keyBinds.forEach {
                 toolGunBindList[it]?.let { bind ->
                     if (key == bind.key && modifierMatches(modifiers, bind.keyModifier)) {
-                        NETWORK.sendToServer(ToolGunConfigurationPacket(false, it))
-                        currentMode.mode.action(player.level(), player, stackHeld, it)
+                        NETWORK.sendToServer(ToolGunConfigurationPacket(false, it, early))
+
+                        val mode = currentMode.mode
+                        (if (early) mode::actionEarly else mode::action)(player.level(), player, stackHeld, it)
                         return true
                     }
                 }
@@ -103,36 +107,40 @@ object ClientForgeEventBus {
 
     @SubscribeEvent
     fun keyInput(event: InputEvent.Key) {
-        if (event.action != InputConstants.RELEASE) return
         val player = minecraft.player
-        if (player == null) {
+        val screen = minecraft.screen
 
-        } else if (minecraft.screen == null) {
+        if (event.action == InputConstants.RELEASE) {
+            if (screen is IHoldScreen && screen.shouldClose) screen.onClose()
+            else if (player == null) {
+            } // TODO Gui editor
+        } else if (player != null && screen == null) {
             val stackHeld = player.mainHandItem
             val itemHeld = stackHeld.item
 
             if (itemHeld is ToolGunItem) handleToolgunInput(
                 player,
                 itemHeld, stackHeld,
-                InputConstants.getKey(event.key, event.scanCode), event.modifiers
+                InputConstants.getKey(event.key, event.scanCode), event.modifiers,
+                event.action == InputConstants.PRESS
             )
         }
     }
 
     @SubscribeEvent
     fun mouseInput(event: InputEvent.MouseButton.Post) {
-        if (event.action != InputConstants.RELEASE) return
         val player = minecraft.player
         if (player == null) {
-
-        } else if (minecraft.screen == null) {
+        } // TODO Gui editor
+        else if (minecraft.screen == null) {
             val stackHeld = player.mainHandItem
             val itemHeld = stackHeld.item
 
             if (itemHeld is ToolGunItem) handleToolgunInput(
                 player,
                 itemHeld, stackHeld,
-                InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers
+                InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
+                event.action == InputConstants.PRESS
             )
         }
     }

@@ -16,7 +16,7 @@ import breadmod.client.render.storage.EnergyStorageRenderer
 import breadmod.client.screen.CertificateItemScreen
 import breadmod.client.screen.DoughMachineScreen
 import breadmod.client.screen.WheatCrusherScreen
-import breadmod.client.screen.tool_gun.ToolGunCreatorScreen
+import breadmod.client.screen.tool_gun.creator.ToolGunCreatorSpawnMenuFactory
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
 import breadmod.item.armor.ArmorColor
@@ -61,7 +61,8 @@ object ClientModEventBus {
 
         event.enqueueWork {
             ItemProperties.register(
-                ModItems.BREAD_SHIELD.get(), modLocation("blocking")) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
+                ModItems.BREAD_SHIELD.get(), modLocation("blocking")
+            ) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
                 if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1.0f else 0.0f
             }
 
@@ -69,10 +70,34 @@ object ClientModEventBus {
                 if (stack.tag != null && stack.tag!!.contains("author")) 1f else 0f
             }
 
-            MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle -> DoughMachineScreen(pMenu,pInventory,pTitle) }
-            MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle -> WheatCrusherScreen(pMenu,pInventory,pTitle) }
-            MenuScreens.register(ModMenuTypes.CERTIFICATE.get()) { pMenu, pInventory, pTitle -> CertificateItemScreen(pMenu, pInventory, pTitle) }
-            MenuScreens.register(ModMenuTypes.TOOL_GUN_CREATOR.get()) { pMenu, pInventory, pTitle -> ToolGunCreatorScreen(pMenu, pInventory, pTitle) }
+            MenuScreens.register(ModMenuTypes.DOUGH_MACHINE.get()) { pMenu, pInventory, pTitle ->
+                DoughMachineScreen(
+                    pMenu,
+                    pInventory,
+                    pTitle
+                )
+            }
+            MenuScreens.register(ModMenuTypes.WHEAT_CRUSHER.get()) { pMenu, pInventory, pTitle ->
+                WheatCrusherScreen(
+                    pMenu,
+                    pInventory,
+                    pTitle
+                )
+            }
+            MenuScreens.register(ModMenuTypes.CERTIFICATE.get()) { pMenu, pInventory, pTitle ->
+                CertificateItemScreen(
+                    pMenu,
+                    pInventory,
+                    pTitle
+                )
+            }
+            MenuScreens.register(ModMenuTypes.TOOL_GUN_CREATOR.get()) { pMenu, pInventory, pTitle ->
+                ToolGunCreatorSpawnMenuFactory.create(
+                    pMenu,
+                    pInventory,
+                    pTitle
+                )
+            }
 
             // Power Generators
             //MenuScreens.register(ModMenuTypes.GENERATOR.get()) { pMenu, pInventory, pTitle -> GeneratorScreen(pMenu, pInventory, pTitle) }
@@ -84,16 +109,18 @@ object ClientModEventBus {
     fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
         event.register(ArmorColor, *ModItems.deferredRegister.entries.mapNotNull {
             val armorItem = it.get()
-            if(armorItem is BreadArmorItem) armorItem else null
+            if (armorItem is BreadArmorItem) armorItem else null
         }.toTypedArray())
     }
 
     @SubscribeEvent
     fun registerRenders(event: EntityRenderersEvent.RegisterRenderers) {
         event.registerEntityRenderer(HAPPY_BLOCK_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
-            PrimedHappyBlockRenderer(pContext) }
+            PrimedHappyBlockRenderer(pContext)
+        }
         event.registerEntityRenderer(BREAD_BULLET_ENTITY.get()) { pContext: EntityRendererProvider.Context ->
-            BreadBulletEntityRenderer(pContext) }
+            BreadBulletEntityRenderer(pContext)
+        }
     }
 
     @SubscribeEvent
@@ -103,7 +130,7 @@ object ClientModEventBus {
 
     @SubscribeEvent
     fun registerCustomModels(event: RegisterAdditional) { // ModelEvent
-        event.register(modLocation( "${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
+        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
         event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/generator_on"))
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
@@ -172,7 +199,7 @@ object ClientModEventBus {
 
     /* https://gist.github.com/gigaherz/b8756ff463541f07a644ef8f14cb10f5 */
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "INACCESSIBLE_TYPE")
-    object ModRenderTypes: RenderType(
+    object ModRenderTypes : RenderType(
         null, null, null,
         0, false, false,
         null, null

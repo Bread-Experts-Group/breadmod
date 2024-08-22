@@ -1,9 +1,10 @@
 package breadmod.item.tool_gun
 
-import breadmod.ModMain
+import breadmod.ModMain.DATA_DIR
 import breadmod.client.render.tool_gun.ToolGunItemRenderer
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.registry.sound.ModSounds
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.core.BlockPos
@@ -13,18 +14,29 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraftforge.fml.loading.FMLPaths
 import java.nio.file.Path
 
 interface IToolGunMode {
     /**
      * An action carried out by this [IToolGunMode].
-     * This will be executed whenever the player uses a key as defined by [BreadModToolGunModeProvider].
+     * This will be executed whenever the player uses a key as defined by [BreadModToolGunModeProvider], on
+     * the [InputConstants.RELEASE] stage of a key.
      *
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    fun action(pLevel: Level, pPlayer: Player, pGunStack: ItemStack, pControl: BreadModToolGunModeProvider.Control)
+    fun action(pLevel: Level, pPlayer: Player, pGunStack: ItemStack, pControl: BreadModToolGunModeProvider.Control) {}
+
+    /**
+     * An action carried out by this [IToolGunMode].
+     * This will be executed whenever the player uses a key as defined by [BreadModToolGunModeProvider], on
+     * the [InputConstants.PRESS] stage of a key.
+     *
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    fun actionEarly(pLevel: Level, pPlayer: Player, pGunStack: ItemStack, pControl: BreadModToolGunModeProvider.Control) {}
+
 
     /**
      * Function to run whenever this action is closed
@@ -73,7 +85,7 @@ interface IToolGunMode {
     }
 
     companion object {
-        val BASE_TOOL_GUN_DATA_PATH: Path = FMLPaths.CONFIGDIR.get().resolve("${ModMain.ID}/tool_gun")
+        val BASE_TOOL_GUN_DATA_PATH: Path = DATA_DIR.resolve("tool_gun")
 
         fun playToolGunSound(pLevel: Level, at: BlockPos) =
             pLevel.playSound(null, at, ModSounds.TOOL_GUN.get(), SoundSource.PLAYERS, 2.0f, 1f)

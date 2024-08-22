@@ -2,22 +2,18 @@ package breadmod.item.tool_gun.mode.creator
 
 import breadmod.ModMain.modTranslatable
 import breadmod.client.render.tool_gun.ToolGunAnimationHandler
-import breadmod.client.screen.tool_gun.ToolGunCreatorScreen.Companion.ENTITY_FILE
-import breadmod.client.screen.tool_gun.ToolGunCreatorScreen.Companion.lastSaved
-import breadmod.client.screen.tool_gun.ToolGunCreatorScreen.Companion.loadedEntity
+import breadmod.client.screen.tool_gun.creator.ToolGunCreatorSpawnMenuFactory.ENTITY_PATH
+import breadmod.client.screen.tool_gun.creator.ToolGunCreatorSpawnMenuFactory.lastSaved
+import breadmod.client.screen.tool_gun.creator.ToolGunCreatorSpawnMenuFactory.loadedEntity
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.IToolGunMode
-import breadmod.item.tool_gun.IToolGunMode.Companion.BASE_TOOL_GUN_DATA_PATH
 import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.menu.item.ToolGunCreatorMenu
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.common.tool_gun.creator.ToolGunCreatorDataRequestPacket
-import breadmod.util.EntitySerializer
-import breadmod.util.EntityTypeSerializer
-import breadmod.util.MobEffectInstanceSerializer
+import breadmod.util.*
 import breadmod.util.RaycastResult.Companion.blockRaycast
-import breadmod.util.json
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import net.minecraft.network.chat.Component
@@ -38,14 +34,10 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import net.minecraftforge.network.NetworkHooks
 import net.minecraftforge.network.PacketDistributor
-import java.io.FileOutputStream
-import java.nio.file.Path
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
     companion object {
-        val DATA_PATH: Path = BASE_TOOL_GUN_DATA_PATH.resolve("creator")
-
         fun constructEntity(data: CreatorEntity, level: Level): Entity =
             (data.type.create(level) ?: Pig(EntityType.PIG, level)).also {
                 data.customName?.let { name -> it.customName = Component.literal(name) }
@@ -81,45 +73,57 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
         pGunStack: ItemStack,
         pControl: BreadModToolGunModeProvider.Control
     ) {
-        if (pLevel is ServerLevel) {
-            if (pControl.id == "screen") {
-                NetworkHooks.openScreen(pPlayer as ServerPlayer, this, pPlayer.blockPosition())
-            } else if (pControl.id == "use") {
-                pLevel.blockRaycast(
-                    pPlayer.eyePosition,
-                    Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot),
-                    100.0, false
-                )?.let { ray ->
-                    val player = pPlayer as ServerPlayer
+        if (pLevel is ServerLevel && pControl.id == "use") {
+            pLevel.blockRaycast(
+                pPlayer.eyePosition,
+                Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot),
+                100.0, false
+            )?.let { ray ->
+                val player = pPlayer as ServerPlayer
 
-                    ToolGunCreatorDataRequestPacket.requested[pPlayer.uuid] = { data ->
-                        playToolGunSound(pLevel, pPlayer.blockPosition())
+                ToolGunCreatorDataRequestPacket.requested[pPlayer.uuid] = { data ->
+                    playToolGunSound(pLevel, pPlayer.blockPosition())
 
-                        val newEntity = constructEntity(data, pLevel)
-                        newEntity.setPos(ray.endPosition)
-                        newEntity.addTag("spawned_by_${pPlayer.gameProfile.name}")
-                        newEntity.addTag("spawned_by_tool_gun")
-                        pLevel.addFreshEntity(newEntity)
-                    }
-
-                    val data = ToolGunCreatorDataRequestPacket.data[pPlayer.uuid]
-                    NETWORK.send(
-                        PacketDistributor.PLAYER.with { player },
-                        ToolGunCreatorDataRequestPacket(if (data != null) json.encodeToString(data).hashCode() else 0, null)
+                    val newEntity = constructEntity(data, pLevel)
+                    newEntity.setPos(
+                        ray.endPosition.add(
+                            0.0,
+                            newEntity.getDimensions(newEntity.pose).height.toDouble(),
+                            0.0
+                        )
                     )
+                    newEntity.addTag("spawned_by_${pPlayer.gameProfile.name}")
+                    newEntity.addTag("spawned_by_tool_gun")
+                    pLevel.addFreshEntity(newEntity)
                 }
+
+                val data = ToolGunCreatorDataRequestPacket.data[pPlayer.uuid]
+                NETWORK.send(
+                    PacketDistributor.PLAYER.with { player },
+                    ToolGunCreatorDataRequestPacket(
+                        if (data != null) json.encodeToString(data).removeWhitespace().hashCode() else 0,
+                        null
+                    )
+                )
             }
         } else if (pControl.id == "use") {
             ToolGunAnimationHandler.trigger()
-            val toSave = json.encodeToString(loadedEntity)
+            val toSave = json.encodeToString(loadedEntity).removeWhitespace()
             if (toSave != lastSaved) {
-                FileOutputStream(ENTITY_FILE).also {
-                    it.write(toSave.encodeToByteArray())
-                    it.close()
-                }
+                ENTITY_PATH.writeText(toSave)
                 lastSaved = toSave
             }
         }
+    }
+
+    override fun actionEarly(
+        pLevel: Level,
+        pPlayer: Player,
+        pGunStack: ItemStack,
+        pControl: BreadModToolGunModeProvider.Control
+    ) {
+        if (pLevel is ServerLevel && pControl.id == "screen")
+            NetworkHooks.openScreen(pPlayer as ServerPlayer, this, pPlayer.blockPosition())
     }
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu =

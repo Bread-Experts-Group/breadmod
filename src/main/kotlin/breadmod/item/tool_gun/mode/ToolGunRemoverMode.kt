@@ -28,35 +28,39 @@ internal class ToolGunRemoverMode : IToolGunMode {
         pControl: BreadModToolGunModeProvider.Control
     ) {
         if (pLevel is ServerLevel) {
-            pLevel.entityRaycast(pPlayer, pPlayer.eyePosition, Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot), 1000.0)
-                ?.let {
-                    fun rand() = (pPlayer.random.nextDouble() - 0.5) * 1.2
-                    pLevel.sendParticles(
-                        ParticleTypes.END_ROD,
-                        it.entity.x, it.entity.y, it.entity.z, 60,
-                        rand(), pPlayer.random.nextDouble(), rand(), 1.0
-                    )
-                    playToolGunSound(pLevel, pPlayer.blockPosition())
-                    NETWORK.send(
-                        PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(it.entity.blockPosition()) },
-                        BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 0.1f)
-                    )
+            pLevel.entityRaycast(
+                pPlayer,
+                pPlayer.position().add(0.0, pPlayer.eyeHeight.toDouble(), 0.0),
+                Vec3.directionFromRotation(pPlayer.xRot, pPlayer.yRot),
+                1000.0
+            )?.let {
+                fun rand() = (pPlayer.random.nextDouble() - 0.5) * 1.2
+                pLevel.sendParticles(
+                    ParticleTypes.END_ROD,
+                    it.entity.x, it.entity.y, it.entity.z, 60,
+                    rand(), pPlayer.random.nextDouble(), rand(), 1.0
+                )
+                playToolGunSound(pLevel, pPlayer.blockPosition())
+                NETWORK.send(
+                    PacketDistributor.TRACKING_CHUNK.with { pLevel.getChunkAt(it.entity.blockPosition()) },
+                    BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 0.1f)
+                )
 
-                    if (it.entity is ServerPlayer) {
-                        NETWORK.send(PacketDistributor.PLAYER.with { it.entity }, ToolGunRemoverSDPacket(null))
-                        it.entity.connection.disconnect(modTranslatable("item", TOOL_GUN_DEF, "remover", "player_left_game"))
-                    } else {
-                        it.entity.discard()
-                        pLevel.server.playerList.players.forEach { player ->
-                            player.sendSystemMessage(
-                                modTranslatable(
-                                    "item", TOOL_GUN_DEF, "remover", "entity_left_game",
-                                    args = listOf(it.entity.name)
-                                ).withStyle(ChatFormatting.YELLOW)
-                            )
-                        }
+                if (it.entity is ServerPlayer) {
+                    NETWORK.send(PacketDistributor.PLAYER.with { it.entity }, ToolGunRemoverSDPacket(null))
+                    it.entity.connection.disconnect(modTranslatable("item", TOOL_GUN_DEF, "remover", "player_left_game"))
+                } else {
+                    it.entity.discard()
+                    pLevel.server.playerList.players.forEach { player ->
+                        player.sendSystemMessage(
+                            modTranslatable(
+                                "item", TOOL_GUN_DEF, "remover", "entity_left_game",
+                                args = listOf(it.entity.name)
+                            ).withStyle(ChatFormatting.YELLOW)
+                        )
                     }
                 }
+            }
         } else if (pControl.id == "use") {
             if (pLevel.isClientSide) {
                 ToolGunAnimationHandler.trigger()
