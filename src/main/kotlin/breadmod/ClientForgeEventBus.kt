@@ -10,6 +10,7 @@ import breadmod.util.render.minecraft
 import breadmod.util.render.renderBuffer
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.ItemStack
@@ -105,15 +106,23 @@ object ClientForgeEventBus {
         return false
     }
 
-    @SubscribeEvent
-    fun keyInput(event: InputEvent.Key) {
-        val player = minecraft.player
-        val screen = minecraft.screen
+    private fun <T> handleHoldScreenInput(
+        holdScreen: T,
+        key: InputConstants.Key,
+        action: Int,
+        modifiers: Int
+    ) where T : Screen, T : IHoldScreen {
+        if (
+            action == InputConstants.RELEASE &&
+            key == holdScreen.keyCheck.key &&
+            modifierMatches(modifiers, holdScreen.keyCheck.keyModifier)
+        ) holdScreen.onClose()
+    }
 
-        if (event.action == InputConstants.RELEASE) {
-            if (screen is IHoldScreen && screen.shouldClose) screen.onClose()
-            else if (player == null) {
-            } // TODO Gui editor
+    private fun handleInput(action: Int, key: InputConstants.Key, modifiers: Int, player: LocalPlayer?, screen: Screen?) {
+        if (action == InputConstants.REPEAT) return
+        if (screen is IHoldScreen) {
+            handleHoldScreenInput(screen, key, action, modifiers)
         } else if (player != null && screen == null) {
             val stackHeld = player.mainHandItem
             val itemHeld = stackHeld.item
@@ -121,27 +130,25 @@ object ClientForgeEventBus {
             if (itemHeld is ToolGunItem) handleToolgunInput(
                 player,
                 itemHeld, stackHeld,
-                InputConstants.getKey(event.key, event.scanCode), event.modifiers,
-                event.action == InputConstants.PRESS
+                key, modifiers,
+                action == InputConstants.PRESS
             )
         }
     }
 
     @SubscribeEvent
-    fun mouseInput(event: InputEvent.MouseButton.Post) {
-        val player = minecraft.player
-        if (player == null) {
-        } // TODO Gui editor
-        else if (minecraft.screen == null) {
-            val stackHeld = player.mainHandItem
-            val itemHeld = stackHeld.item
+    fun keyInput(event: InputEvent.Key) {
+        handleInput(
+            event.action, InputConstants.getKey(event.key, event.scanCode), event.modifiers,
+            minecraft.player, minecraft.screen
+        )
+    }
 
-            if (itemHeld is ToolGunItem) handleToolgunInput(
-                player,
-                itemHeld, stackHeld,
-                InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
-                event.action == InputConstants.PRESS
-            )
-        }
+    @SubscribeEvent
+    fun mouseInput(event: InputEvent.MouseButton.Post) {
+        handleInput(
+            event.action, InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
+            minecraft.player, minecraft.screen
+        )
     }
 }

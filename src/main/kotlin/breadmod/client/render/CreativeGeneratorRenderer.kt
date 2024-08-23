@@ -1,6 +1,5 @@
 package breadmod.client.render
 
-import breadmod.ClientModEventBus
 import breadmod.ModMain.modLocation
 import breadmod.block.entity.machine.CreativeGeneratorBlockEntity
 import breadmod.util.render.minecraft
@@ -56,10 +55,10 @@ class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntit
         pPoseStack.mulPose(Axis.XN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
         pPoseStack.scale(0.95f, 0.95f, 0.95f)
 
-        renderBlockModel(
-            pPoseStack, pBuffer, pBlockEntity,
-            starModel, pPackedLight, pPackedOverlay,
-            ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png"))
-        )
+//        renderBlockModel(
+//            pPoseStack, pBuffer, pBlockEntity,
+//            starModel, pPackedLight, pPackedOverlay,
+//            ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png"))
+//        )
     }
 }

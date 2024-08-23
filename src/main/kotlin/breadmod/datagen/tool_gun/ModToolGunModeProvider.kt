@@ -12,6 +12,16 @@ import net.minecraft.data.PackOutput
 internal class ModToolGunModeProvider(
     output: PackOutput
 ): BreadModToolGunModeProvider(output, ModMain.ID) {
+    companion object {
+        val SCREEN_CONTROL = Control(
+            "screen",
+            "${TOOL_GUN_DEF}.${ModMain.ID}.mode.controls.name.creator.r",
+            "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
+            modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
+            { InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R) }
+        )
+    }
+
     override fun addModes() {
         addMode(
             "remover",
@@ -41,13 +51,7 @@ internal class ModToolGunModeProvider(
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb"),
                     { InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT) }
                 ),
-                Control(
-                    "screen",
-                    "${TOOL_GUN_DEF}.${ModMain.ID}.mode.controls.name.creator.r",
-                    "$TOOL_GUN_DEF.${ModMain.ID}.mode.controls.category.creator",
-                    modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
-                    { InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R) }
-                )
+                SCREEN_CONTROL
             ),
             ToolGunCreatorMode::class.java
         )

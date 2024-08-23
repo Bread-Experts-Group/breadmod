@@ -62,7 +62,6 @@ internal data class ToolGunConfigurationPacket(
                     if (item is ToolGunItem) {
                         if (!player.cooldowns.isOnCooldown(item)) {
                             if (input.pModeSwitch) {
-                                ModMain.LOGGER.info("ToolGunConfigurationPacket: executing tool gun mode switch")
                                 val currentMode = item.ensureCurrentMode(stack)
                                 val namespaceIterator = MapIterator(ModToolGunModeDataLoader.modes)
                                 namespaceIterator.restoreState(currentMode.getInt(NAMESPACE_ITERATOR_STATE_TAG))
@@ -96,7 +95,6 @@ internal data class ToolGunConfigurationPacket(
                                 modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
                                 player.cooldowns.addCooldown(item, 10)
                             } else {
-                                ModMain.LOGGER.info("ToolGunConfigurationPacket: executing tool gun action")
                                 val mode = item.getCurrentMode(stack).mode
                                 (if (input.early) mode::actionEarly else mode::action)(
                                     player.level(),

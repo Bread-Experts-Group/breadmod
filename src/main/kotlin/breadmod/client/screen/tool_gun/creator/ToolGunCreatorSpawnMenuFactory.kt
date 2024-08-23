@@ -5,10 +5,13 @@ import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tool_gun.mode.creator.ToolGunCreatorMode
 import breadmod.menu.item.ToolGunCreatorMenu
 import breadmod.util.gui.SerializedScreenFactory
+import breadmod.util.gui.widget.BackgroundWidget
 import breadmod.util.gui.widget.ContainerWidget
+import breadmod.util.gui.widget.TextWidget
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Inventory
+import java.awt.Color
 
 /**
  * Factory to create the spawn menu for the [ToolGunItem]'s [ToolGunCreatorMode].
@@ -34,7 +37,20 @@ object ToolGunCreatorSpawnMenuFactory : SerializedScreenFactory<ToolGunCreatorMe
         200, 100,
         0, 0,
         Component.literal("Test"),
-        mutableMapOf()
+        mutableMapOf(
+            BackgroundWidget.SolidColorBackgroundWidget(
+                0, 0,
+                200, 32,
+                Color(0f, 0f, 0f, 0.5f)
+            ) to -0.1,
+            TextWidget(
+                0, 0,
+                200, 32,
+                Component.literal("TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"),
+                Color(0f, 0f, 0f, 1f), Color(0f, 0f, 0f, 0f),
+                TextWidget.CenteringType.CENTER_LINE, TextWidget.WrappingType.WRAP_VERTICAL
+            ) to 0.0
+        )
     )
 
     override fun create(pMenu: ToolGunCreatorMenu, pInventory: Inventory, pTitle: Component): ToolGunCreatorSerializedScreen =

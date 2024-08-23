@@ -26,30 +26,26 @@ import breadmod.registry.entity.ModEntityTypes.BREAD_BULLET_ENTITY
 import breadmod.registry.entity.ModEntityTypes.HAPPY_BLOCK_ENTITY
 import breadmod.registry.item.ModItems
 import breadmod.registry.menu.ModMenuTypes
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.VertexFormat
-import net.minecraft.Util
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.item.ItemProperties
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.event.*
+import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.client.event.ModelEvent.RegisterAdditional
+import net.minecraftforge.client.event.RegisterColorHandlersEvent
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
-import java.util.function.Function
 
 
 @Suppress("unused")
@@ -186,44 +182,44 @@ object ClientModEventBus {
         return createdMappings
     }
 
-    @SubscribeEvent
-    fun registerShaders(event: RegisterShadersEvent) {
-        event.registerShader(
-            ShaderInstance(
-                event.resourceProvider,
-                modLocation("bloom"),
-                DefaultVertexFormat.BLOCK
-            )
-        ) { shader ->
-            ModRenderTypes.bloomShader = shader
-        }
-    }
-
-    /* https://gist.github.com/gigaherz/b8756ff463541f07a644ef8f14cb10f5 */
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "INACCESSIBLE_TYPE")
-    object ModRenderTypes : RenderType(
-        null, null, null,
-        0, false, false,
-        null, null
-    ) {
-        lateinit var bloomShader: ShaderInstance
-        private val BLOOM_SHADER_STATE = ShaderStateShard { bloomShader }
-
-        val BLOOM: Function<ResourceLocation, RenderType> = Util.memoize(::bloom)
-
-        private fun bloom(location: ResourceLocation): RenderType {
-            val cs = CompositeState.builder()
-                .setShaderState(BLOOM_SHADER_STATE)
-                .setTextureState(TextureStateShard(location, true, false))
-                .setTransparencyState(NO_TRANSPARENCY)
-                .setOverlayState(NO_OVERLAY)
-                .createCompositeState(false)
-
-            return create(
-                "bloom",
-                DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256,
-                true, false, cs
-            )
-        }
-    }
+//    @SubscribeEvent
+//    fun registerShaders(event: RegisterShadersEvent) {
+//        event.registerShader(
+//            ShaderInstance(
+//                event.resourceProvider,
+//                modLocation("gui_blur"),
+//                DefaultVertexFormat.POSITION_COLOR
+//            )
+//        ) { shader ->
+//            ModRenderTypes.guiBlurShader = shader
+//        }
+//    }
+//
+//    /* https://gist.github.com/gigaherz/b8756ff463541f07a644ef8f14cb10f5 */
+//    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "INACCESSIBLE_TYPE")
+//    object ModRenderTypes : RenderType(
+//        null, null, null,
+//        0, false, false,
+//        null, null
+//    ) {
+//        lateinit var guiBlurShader: ShaderInstance
+//        private val GUI_BLUR_SHADER_STATE = ShaderStateShard { guiBlurShader }
+//
+//        //val GUI_BLUR: Function<ResourceLocation, RenderType> = Util.memoize(::guiBlur)
+//        val GUI_BLUR = guiBlur()
+//
+//        private fun guiBlur(): RenderType {
+//            val cs = CompositeState.builder()
+//                .setShaderState(GUI_BLUR_SHADER_STATE)
+//                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+//                .setDepthTestState(LEQUAL_DEPTH_TEST)
+//                .createCompositeState(false)
+//
+//            return create(
+//                "gui_blur",
+//                DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256,
+//                true, false, cs
+//            )
+//        }
+//    }
 }
