@@ -28,6 +28,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
     private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
+    private val altModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt")
 //    private val testModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/textureplane/textureplane_test")
 
     override fun renderByItem(
@@ -45,6 +46,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val modelManager = minecraft.modelManager
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
+        val altModel = modelManager.getModel(altModelLocation)
 
         val animHandler = ToolGunAnimationHandler
         val rotation = animHandler.coilRotation
@@ -52,28 +54,31 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
 //        pPoseStack.pushPose()
 //      // todo recoil
+        // todo import the model from gmod
 
         animHandler.clientTick()
 
         if(pDisplayContext.firstPerson()) {
             pPoseStack.translate(-recoil, 0.0f, 0.0f)
-            renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
-
-            drawTextOnScreen(
-                (toolGunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
-                Color.WHITE.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
-                0.923, 0.065, -0.038, 0.0007f
-            )
-
-            drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
-                0.9, 0.0175, -0.040, 0.0007f
-            )
-
-            toolGunMode.mode.render(pStack, pDisplayContext, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
-
-            pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
-            renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+            renderItemModel(altModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+//            renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
+//
+//            drawTextOnScreen(
+//                (toolGunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
+//                Color.WHITE.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
+//                0.923, 0.065, -0.038, 0.0007f
+//            )
+//
+//            drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
+//                0.9, 0.0175, -0.040, 0.0007f
+//            )
+//
+//            toolGunMode.mode.render(pStack, pDisplayContext, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)
+//
+//            pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
+//            renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
         } else {
+            renderItemModel(altModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
             renderItemModel(mainModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
             pPoseStack.mulPose(Axis.XN.rotationDegrees(rotation))
             renderItemModel(coilModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)

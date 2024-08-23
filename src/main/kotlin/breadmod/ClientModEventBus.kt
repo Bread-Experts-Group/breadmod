@@ -126,6 +126,7 @@ object ClientModEventBus {
     @SubscribeEvent
     fun registerGuiOverlays(event: RegisterGuiOverlaysEvent) {
         event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "tool_gun_overlay", ToolGunOverlay())
+//        event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "war_overlay", WarOverlay())
     }
 
     @SubscribeEvent
@@ -138,6 +139,7 @@ object ClientModEventBus {
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
 
         event.register(modLocation("${ModelProvider.BLOCK_FOLDER}/sphere"))
+        event.register(modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
     }
 
     @SubscribeEvent
