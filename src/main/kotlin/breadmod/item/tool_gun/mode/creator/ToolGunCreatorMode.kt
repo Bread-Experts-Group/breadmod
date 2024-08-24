@@ -1,5 +1,6 @@
 package breadmod.item.tool_gun.mode.creator
 
+import breadmod.ModMain
 import breadmod.ModMain.modTranslatable
 import breadmod.client.render.tool_gun.ToolGunAnimationHandler
 import breadmod.client.screen.tool_gun.creator.ToolGunCreatorSpawnMenuFactory.ENTITY_PATH
@@ -110,8 +111,12 @@ internal class ToolGunCreatorMode : IToolGunMode, MenuProvider {
             ToolGunAnimationHandler.trigger()
             val toSave = json.encodeToString(loadedEntity).removeWhitespace()
             if (toSave != lastSaved) {
-                ENTITY_PATH.writeText(toSave)
-                lastSaved = toSave
+                try {
+                    ENTITY_PATH.writeText(toSave)
+                    lastSaved = toSave
+                } catch (e: Exception) {
+                    ModMain.LOGGER.error(e)
+                }
             }
         }
     }

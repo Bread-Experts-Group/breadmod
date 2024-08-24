@@ -21,6 +21,7 @@ object ModConfiguration {
         val HAPPY_BLOCK_SPREAD_RADIUS: ConfigValue<Double>
         val GENERATOR_MAX_BURN_TIME_TICKS: ConfigValue<Int>
         val GENERATOR_RF_PER_TICK: ConfigValue<Int>
+        val ALT_TOOLGUN_MODEL: ConfigValue<Boolean>
 
         init {
             builder.push("common")
@@ -55,6 +56,9 @@ object ModConfiguration {
             GENERATOR_RF_PER_TICK = builder
                 .comment("How much RF the generator will produce per tick")
                 .define("generatorRfPerTick", 64)
+            ALT_TOOLGUN_MODEL = builder
+                .comment("Toggle for the alternative tool gun model")
+                .define("useAltToolgunModel", false)
 
             builder.pop()
         }

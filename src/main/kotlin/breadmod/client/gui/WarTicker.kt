@@ -10,8 +10,8 @@ object WarTicker {
     var increasingTimer = 0
     var active = false
 
-    var scroll = 0f
-    var lastScroll = 0f
+    var scroll = -110f
+    var lastScroll = -110f
 
     fun tick() {
         val player = rgMinecraft.player ?: return
