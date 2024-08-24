@@ -6,6 +6,8 @@ import breadmod.ClientForgeEventBus.openGuiEditor
 import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
 import breadmod.client.gui.ToolGunOverlay
+import breadmod.client.gui.WarOverlay
+import breadmod.client.gui.WarTicker
 import breadmod.client.render.CreativeGeneratorRenderer
 import breadmod.client.render.GenericMachineBlockEntityRenderer
 import breadmod.client.render.SidedScreenRenderer
@@ -122,7 +124,7 @@ object ClientModEventBus {
     @SubscribeEvent
     fun registerGuiOverlays(event: RegisterGuiOverlaysEvent) {
         event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "tool_gun_overlay", ToolGunOverlay())
-//        event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "war_overlay", WarOverlay())
+        event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "war_overlay", WarOverlay())
     }
 
     @SubscribeEvent

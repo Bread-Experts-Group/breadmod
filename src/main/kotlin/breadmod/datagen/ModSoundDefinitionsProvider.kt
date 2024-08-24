@@ -54,5 +54,15 @@ class ModSoundDefinitionsProvider(
                 .subtitle("sound.${ModMain.ID}.hell_naw")
                 .with(sound(modLocation("hell_naw")).volume(1f))
         )
+        this.add(
+            ModSounds.WAR_TIMER, definition()
+                .subtitle("sound.${ModMain.ID}.war_timer")
+                .with(sound(modLocation("war_timer")).volume(1f))
+        )
+        this.add(
+            ModSounds.WAR_TIMER_UP, definition()
+                .subtitle("sound.${ModMain.ID}.war_timer_up")
+                .with(sound(modLocation("war_timer_up")).volume(0.8f))
+        )
     }
 }

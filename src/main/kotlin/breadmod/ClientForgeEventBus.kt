@@ -1,6 +1,7 @@
 package breadmod
 
 import breadmod.ClientModEventBus.toolGunBindList
+import breadmod.client.gui.WarTicker
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
@@ -9,16 +10,23 @@ import breadmod.util.gui.IHoldScreen
 import breadmod.util.render.minecraft
 import breadmod.util.render.renderBuffer
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.StringReader
+import com.mojang.brigadier.arguments.ArgumentType
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.player.LocalPlayer
+import net.minecraft.commands.Commands
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.InputEvent
+import net.minecraftforge.client.event.RegisterClientCommandsEvent
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import net.minecraftforge.client.settings.KeyConflictContext
 import net.minecraftforge.client.settings.KeyModifier
+import net.minecraftforge.event.TickEvent.ClientTickEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -150,5 +158,58 @@ object ClientForgeEventBus {
             event.action, InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
             minecraft.player, minecraft.screen
         )
+    }
+
+    @SubscribeEvent
+    fun registerClientCommands(event: RegisterClientCommandsEvent) {
+        // todo it would probably be ideal to have each sub command be their own class for cleanness sakes
+        // CommandMek.java
+        event.dispatcher.register(Commands.literal("breadmod")
+            .then(Commands.literal("increase_timer")
+                .then(Commands.argument("amount", WarTimerArgument())
+                    .executes { amount ->
+                        try {
+                            val arg = amount.getArgument("amount", Int::class.java)
+                            WarTicker.increaseTimer(arg)
+                        } catch (e: Exception) {
+                            ModMain.LOGGER.error(e)
+                        }
+                        return@executes Command.SINGLE_SUCCESS
+                    }
+                )
+            )
+            .then(Commands.literal("reset_timer")
+                .executes {
+                    WarTicker.reset()
+                    return@executes Command.SINGLE_SUCCESS
+                }
+            )
+            .then(Commands.literal("start_timer")
+                .executes {
+                    WarTicker.active = true
+                    return@executes Command.SINGLE_SUCCESS
+                }
+            )
+            .then(Commands.literal("end_timer")
+                .executes {
+                    WarTicker.active = false
+                    return@executes Command.SINGLE_SUCCESS
+                }
+            )
+        )
+    }
+
+    private class WarTimerArgument: ArgumentType<Int> {
+        override fun parse(reader: StringReader): Int {
+            return reader.readInt()
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    @SubscribeEvent
+    fun onTick(event: ClientTickEvent) {
+        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) return
+
+        WarTicker.tick()
     }
 }
