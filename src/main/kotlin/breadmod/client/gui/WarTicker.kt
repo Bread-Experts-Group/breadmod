@@ -13,7 +13,6 @@ object WarTicker {
 
     var scroll = 0f
     var lastScroll = 0f
-    var lerpScroll = Mth.lerp(minecraft.partialTick, lastScroll, scroll)/* % -109.0*/
 
     fun tick() {
         val player = minecraft.player ?: return
@@ -32,8 +31,6 @@ object WarTicker {
             } else isIncreasing = false
         }
         if (!minecraft.isPaused) {
-            println(lerpScroll)
-            println(scroll)
             lastScroll = scroll // hell code until I figure out proper smooth like anims from minecraft's code
             if (scroll > -110.0 && !active) {
                 scroll -= (1f * 0.5f) * 4.0f
