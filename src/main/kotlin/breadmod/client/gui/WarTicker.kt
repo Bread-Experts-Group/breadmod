@@ -2,13 +2,18 @@ package breadmod.client.gui
 
 import breadmod.registry.sound.ModSounds
 import breadmod.util.render.minecraft
+import net.minecraft.util.Mth
 
 object WarTicker {
-    var timer = 200
+    var timer = 30
     var ticker = 41
     var isIncreasing = false
     var increasingTimer = 0
     var active = false
+
+    var scroll = 0f
+    var lastScroll = 0f
+    var lerpScroll = Mth.lerp(minecraft.partialTick, lastScroll, scroll)/* % -109.0*/
 
     fun tick() {
         val player = minecraft.player ?: return
@@ -25,6 +30,16 @@ object WarTicker {
                 timer++
                 ticker = 41
             } else isIncreasing = false
+        }
+        if (!minecraft.isPaused) {
+            println(lerpScroll)
+            println(scroll)
+            lastScroll = scroll // hell code until I figure out proper smooth like anims from minecraft's code
+            if (scroll > -110.0 && !active) {
+                scroll -= (1f * 0.5f) * 4.0f
+            } else if (scroll < 0.0 && active) {
+                scroll += (1f * 0.5f) * 4.0f
+            }
         }
     }
 
