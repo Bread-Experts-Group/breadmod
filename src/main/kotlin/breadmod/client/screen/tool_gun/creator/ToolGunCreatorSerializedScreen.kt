@@ -7,7 +7,6 @@ import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
 import net.minecraft.client.KeyMapping
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 
 /**
@@ -28,16 +27,15 @@ class ToolGunCreatorSerializedScreen(
 
     override fun init() {
         super.init()
-        println("!")
-        try {
-            println("G")
-            breadmod.util.render.minecraft.gameRenderer.loadEffect(ResourceLocation("shaders/post/antialias.json"))
-            println("B")
-        } catch (e: Throwable) {
-            println(e.stackTraceToString())
-        }
+        //breadmod.util.render.minecraft.gameRenderer.loadEffect(modLocation("shaders/post/gui_blur.json"))
+        breadmod.util.render.minecraft.gameRenderer.cycleEffect()
     }
 
+    /**
+     * Event to run when this screen is closed.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
     override fun onClose() {
         super.onClose()
         breadmod.util.render.minecraft.gameRenderer.togglePostEffect()
