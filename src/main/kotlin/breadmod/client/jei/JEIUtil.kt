@@ -2,7 +2,7 @@ package breadmod.client.jei
 
 import breadmod.ModMain
 import breadmod.recipe.fluidEnergy.FluidEnergyRecipe
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
@@ -24,7 +24,7 @@ fun drawRecipeTime(pRecipe: FluidEnergyRecipe, pGuiGraphics: GuiGraphics, pX: In
     if(pRecipe.time > 0) {
         val recipeTimeSeconds = pRecipe.time / 20
         val timeString = ModMain.modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
-        pGuiGraphics.drawString(minecraft.font, timeString, pX, pY, -8355712, false)
+        pGuiGraphics.drawString(rgMinecraft.font, timeString, pX, pY, -8355712, false)
     }
 }
 

@@ -41,7 +41,7 @@ import kotlin.math.atan
 import kotlin.math.min
 
 @Internal
-val minecraft: Minecraft = Minecraft.getInstance()
+val rgMinecraft: Minecraft = Minecraft.getInstance()
 internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>
 
 /**
@@ -62,14 +62,14 @@ private var angle = 0f
 fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
     renderBuffer.add(mutableListOf(1F) to { mutableList, levelStageEvent ->
         val currentOpacity = mutableList[0]
-        val level = minecraft.level
-        val player = minecraft.player
+        val level = rgMinecraft.level
+        val player = rgMinecraft.player
         val camera = levelStageEvent.camera
         if (level != null && currentOpacity > 0 && player != null) {
             levelStageEvent.poseStack.pushPose()
             levelStageEvent.poseStack.translate(-camera.position.x, -camera.position.y - 1f, -camera.position.z)
             val poseStack = levelStageEvent.poseStack
-            val bufferSource = minecraft.renderBuffers().bufferSource()
+            val bufferSource = rgMinecraft.renderBuffers().bufferSource()
 
 //            poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + levelStageEvent.partialTick))
 
@@ -151,7 +151,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
             }
 
             levelStageEvent.poseStack.popPose()
-        mutableList[0] = currentOpacity - 0.1f * minecraft.partialTick
+            mutableList[0] = currentOpacity - 0.1f * rgMinecraft.partialTick
             false
         } else true
     })
@@ -160,7 +160,7 @@ fun GuiGraphics.renderFluid(
     pX: Float, pY: Float, pWidth: Int, pHeight: Int,
     pFluid: Fluid, pFlowing: Boolean, pDirection: Direction = Direction.NORTH,
 ) {
-    val atlas = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+    val atlas = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
     val ext = IClientFluidTypeExtensions.of(pFluid)
     val spriteDiff = if (pFlowing) {
         val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
@@ -254,7 +254,7 @@ fun renderBlockModel(
     pPackedOverlay: Int,
     renderType: RenderType = RenderType.solid()
 ) {
-    minecraft.blockRenderer.modelRenderer.renderModel(
+    rgMinecraft.blockRenderer.modelRenderer.renderModel(
         pPoseStack.last(),
         pBuffer.getBuffer(renderType),
         pBlockEntity.blockState,
@@ -279,7 +279,7 @@ fun renderStaticItem(
     pBlockEntity: BlockEntity,
     pPackedLight: Int
 ) {
-    val itemRenderer = minecraft.itemRenderer
+    val itemRenderer = rgMinecraft.itemRenderer
     itemRenderer.renderStatic(
         pStack,
         ItemDisplayContext.FIXED,
@@ -344,7 +344,7 @@ fun texturedQuadTest(
     pVertex2: Vector3f = Vector3f(1f, 0f, 1f),
     pVertex3: Vector3f = Vector3f(1f, 0f, 0f)
 ) {
-    val sprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
+    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
     quadTest(
         pPoseStack, pBuffer, pRenderType, pColor,
         pVertex0,
@@ -405,7 +405,7 @@ fun drawTexturedQuad(
     pX0: Float = 0f, pY0: Float = 0f, pZ0: Float = 0f,
     pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f
 ) {
-    val sprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pTextureLocation)
+    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pTextureLocation)
     val spriteBuilder = pBuffer.getBuffer(pRenderType)
     drawQuad(
         spriteBuilder, pPoseStack, Color.WHITE.rgb,
@@ -568,7 +568,7 @@ fun renderEntityInInventory(
     pGuiGraphics.pose().mulPoseMatrix(Matrix4f().scaling(pScale.toFloat(), pScale.toFloat(), (-pScale).toFloat()))
     pGuiGraphics.pose().mulPose(pPose)
     Lighting.setupForEntityInInventory()
-    val entityRenderDispatcher = minecraft.entityRenderDispatcher
+    val entityRenderDispatcher = rgMinecraft.entityRenderDispatcher
     pCameraOrientation.conjugate()
     entityRenderDispatcher.overrideCameraOrientation(pCameraOrientation)
 

@@ -1,7 +1,6 @@
 package breadmod.util.gui.widget
 
-import breadmod.util.render.minecraft
-import com.mojang.blaze3d.systems.RenderSystem
+import breadmod.util.render.rgMinecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratedElementType
@@ -21,7 +20,8 @@ import java.awt.Color
  * @param pBackgroundColor The color of the background.
  * @param pCentering The centering method to use when rendering the text.
  * @param pWrapping The wrapping method to use when rendering the text.
- * @param pNoScissor If true, the text will be rendered without scissoring, allowing it to be rendered outside the widget's bounds.
+ * @param pNoScissor If true, the text will be rendered without scissoring,
+ * allowing it to be rendered outside the widget's bounds.
  * @author Miko Elbrecht
  * @since 1.0.0
  */
@@ -30,8 +30,8 @@ class TextWidget(
     pWidth: Int, pHeight: Int,
 
     pMessage: Component,
-    private val pMessageColor: Color,
-    private val pBackgroundColor: Color,
+    private val pMessageColor: Color = Color.WHITE,
+    private val pBackgroundColor: Color? = null,
 
     private val pCentering: CenteringType = CenteringType.CENTER_LINE,
     private val pWrapping: WrappingType = WrappingType.SCROLL_HORIZONTAL,
@@ -100,7 +100,7 @@ class TextWidget(
         NONE
     }
 
-    private fun getCenterForFont() = ((y + height) / 2) - (minecraft.font.lineHeight / 2)
+    private val getCenterForFont = (height / 2) - (rgMinecraft.font.lineHeight / 2)
 
     /**
      * Renders this [TextWidget].
@@ -109,44 +109,32 @@ class TextWidget(
      */
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         if (!pNoScissor) pGuiGraphics.enableScissor(x, y, x + width, y + height)
-        val shaderInitColor = RenderSystem.getShaderColor()
-        if (pBackgroundColor.alpha > 0) {
-            RenderSystem.setShaderColor(
-                pBackgroundColor.red / 255f, pBackgroundColor.green / 255f, pBackgroundColor.blue / 255f,
-                pBackgroundColor.alpha / 255f
-            )
-            pGuiGraphics.fill(x, y, x + width, y + height, Color.WHITE.rgb)
-        }
+        if (pBackgroundColor != null && pBackgroundColor.alpha > 0)
+            pGuiGraphics.fill(0, 0, width, height, pBackgroundColor.rgb)
 
         if (pMessageColor.alpha > 0) {
-            RenderSystem.setShaderColor(
-                pMessageColor.red / 255f, pMessageColor.green / 255f, pMessageColor.blue / 255f,
-                pMessageColor.alpha / 255f
-            )
-
-            val tooBig = minecraft.font.width(message) > width
+            val tooBig = rgMinecraft.font.width(message) > width
             when {
                 tooBig && pWrapping == WrappingType.SCROLL_HORIZONTAL -> renderScrollingString(
-                    pGuiGraphics, minecraft.font, message,
-                    0, 0, width, if (pCentering == CenteringType.CENTER_LINE) minecraft.font.lineHeight else height,
-                    Color.WHITE.rgb
+                    pGuiGraphics, rgMinecraft.font, message,
+                    0, 0, width, if (pCentering == CenteringType.CENTER_LINE) rgMinecraft.font.lineHeight else height,
+                    pMessageColor.rgb
                 )
 
                 tooBig && pWrapping == WrappingType.WRAP_VERTICAL ->
-                    pGuiGraphics.drawWordWrap(minecraft.font, message, x, y, width, Color.WHITE.rgb)
+                    pGuiGraphics.drawWordWrap(rgMinecraft.font, message, 0, 0, width, pMessageColor.rgb)
 
                 pCentering != CenteringType.NONE -> {
-                    val position = Vector2i((x + width) / 2, 0)
-                    if (pCentering == CenteringType.CENTER_RECT) position.add(0, getCenterForFont())
+                    val position = Vector2i(width / 2, 0)
+                    if (pCentering == CenteringType.CENTER_RECT) position.add(0, getCenterForFont)
 
-                    pGuiGraphics.drawCenteredString(minecraft.font, message, position.x, position.y, Color.WHITE.rgb)
+                    pGuiGraphics.drawCenteredString(rgMinecraft.font, message, position.x, position.y, pMessageColor.rgb)
                 }
 
-                else -> pGuiGraphics.drawString(minecraft.font, message, x, y, Color.WHITE.rgb)
+                else -> pGuiGraphics.drawString(rgMinecraft.font, message, 0, 0, pMessageColor.rgb)
             }
         }
 
-        RenderSystem.setShaderColor(shaderInitColor[0], shaderInitColor[1], shaderInitColor[2], shaderInitColor[3])
         if (!pNoScissor) pGuiGraphics.disableScissor()
     }
 

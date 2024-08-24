@@ -14,6 +14,7 @@ import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratedElementType
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
+import org.joml.Matrix4f
 
 /**
  * A widget that can contain other widgets.
@@ -29,6 +30,7 @@ import net.minecraft.network.chat.Component
 class ContainerWidget(
     pWidth: Int, pHeight: Int,
     pX: Int, pY: Int,
+    private val pTilt: Float,
     pComponent: Component,
     private val childrenWidgets: MutableMap<AbstractWidget, Double>
 ) : AbstractWidget(pWidth, pHeight, pX, pY, pComponent) {
@@ -38,6 +40,7 @@ class ContainerWidget(
             element<Int>("height")
             element<Int>("x")
             element<Int>("y")
+            element<Int>("tilt")
             element<Component>("component")
             element<List<AbstractWidget>>("widgets")
         }
@@ -50,6 +53,7 @@ class ContainerWidget(
                 decoder.json.decodeFromJsonElement(element["height"]!!),
                 decoder.json.decodeFromJsonElement(element["x"]!!),
                 decoder.json.decodeFromJsonElement(element["y"]!!),
+                decoder.json.decodeFromJsonElement(element["tilt"]!!),
                 decoder.json.decodeFromJsonElement(element["component"]!!),
                 decoder.json.decodeFromJsonElement(element["widgets"]!!),
             )
@@ -85,6 +89,7 @@ class ContainerWidget(
         childrenWidgets.forEach { (widget, z) ->
             pose.pushPose()
             pose.translate(widget.x.toDouble(), widget.y.toDouble(), z)
+            pose.mulPoseMatrix(Matrix4f().rotateZ(pTilt))
             widget.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
             pose.popPose()
         }

@@ -12,7 +12,7 @@ import breadmod.item.tool_gun.IToolGunMode.Companion.playToolGunSound
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.clientbound.BeamPacket
 import breadmod.util.RaycastResult.Companion.blockRaycast
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
@@ -99,7 +99,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
         pPackedOverlay: Int
     ) {
         drawWrappedTextOnScreen(
-            minecraft.font,
+            rgMinecraft.font,
             modTranslatable("tool_gun", "mode", "explode", "hit_fluid"),
             pPoseStack,
             pBuffer,
@@ -114,7 +114,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
             if (hitFluid) Color(35,189,0,255).rgb else Color.RED.rgb,
             Color(0,0,0,0).rgb,
             false,
-            minecraft.font,
+            rgMinecraft.font,
             pPoseStack,
             pBuffer,
             0.92, 0.052, -0.036,

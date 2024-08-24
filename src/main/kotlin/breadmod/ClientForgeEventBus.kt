@@ -7,8 +7,8 @@ import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
 import breadmod.util.gui.IHoldScreen
-import breadmod.util.render.minecraft
 import breadmod.util.render.renderBuffer
+import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.StringReader
@@ -63,8 +63,8 @@ object ClientForgeEventBus {
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
     fun logout(event: PlayerLoggedOutEvent) {
-        minecraft.options.keyMappings = ArrayUtils.removeElements(
-            minecraft.options.keyMappings,
+        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
+            rgMinecraft.options.keyMappings,
             *createdMappings.toTypedArray()
         )
     }
@@ -72,8 +72,8 @@ object ClientForgeEventBus {
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
     fun login(event: PlayerLoggedInEvent) {
-        minecraft.options.keyMappings = ArrayUtils.removeElements(
-            minecraft.options.keyMappings,
+        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
+            rgMinecraft.options.keyMappings,
             openGuiEditor
         )
     }
@@ -148,7 +148,7 @@ object ClientForgeEventBus {
     fun keyInput(event: InputEvent.Key) {
         handleInput(
             event.action, InputConstants.getKey(event.key, event.scanCode), event.modifiers,
-            minecraft.player, minecraft.screen
+            rgMinecraft.player, rgMinecraft.screen
         )
     }
 
@@ -156,7 +156,7 @@ object ClientForgeEventBus {
     fun mouseInput(event: InputEvent.MouseButton.Post) {
         handleInput(
             event.action, InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
-            minecraft.player, minecraft.screen
+            rgMinecraft.player, rgMinecraft.screen
         )
     }
 

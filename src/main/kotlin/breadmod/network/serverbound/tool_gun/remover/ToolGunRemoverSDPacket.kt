@@ -4,7 +4,7 @@ import breadmod.ModMain.modTranslatable
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.util.computerSD
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.InteractionHand
 import net.minecraftforge.network.NetworkEvent
@@ -28,7 +28,7 @@ internal data class ToolGunRemoverSDPacket(val playerUUID: UUID?) {
                     NETWORK.send(PacketDistributor.PLAYER.with { toDC }, ToolGunRemoverSDPacket(null))
                 }
             } else {
-                minecraft.connection?.connection?.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))
+                rgMinecraft.connection?.connection?.disconnect(modTranslatable("item", "tool_gun", "player_left_game"))
                 computerSD(false)
             }
             it.packetHandled = true

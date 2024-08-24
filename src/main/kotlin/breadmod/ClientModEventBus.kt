@@ -7,7 +7,6 @@ import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
 import breadmod.client.gui.ToolGunOverlay
 import breadmod.client.gui.WarOverlay
-import breadmod.client.gui.WarTicker
 import breadmod.client.render.CreativeGeneratorRenderer
 import breadmod.client.render.GenericMachineBlockEntityRenderer
 import breadmod.client.render.SidedScreenRenderer
@@ -53,6 +52,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 @Suppress("unused")
 @Mod.EventBusSubscriber(modid = ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
 object ClientModEventBus {
+    //val BLURRED_RENDER_TARGET = TextureTarget(rgMinecraft.window.width, rgMinecraft.window.height, true, Minecraft.ON_OSX)
+
     @SubscribeEvent
     fun onClientSetup(event: FMLClientSetupEvent) {
         ModMain.LOGGER.info("Client setup")

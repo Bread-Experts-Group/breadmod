@@ -42,6 +42,7 @@ internal object ModMain {
     fun LanguageProvider.modAddExt(value: String, vararg path: String) = add(path.joinToString("."), value)
 
     init {
+        LOGGER.info(LOGGER.javaClass.canonicalName)
         LOGGER.info("Mod object initialized!")
         registerAll(MOD_BUS)
     }

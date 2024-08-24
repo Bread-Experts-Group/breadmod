@@ -1,6 +1,6 @@
 package breadmod.client.gui
 
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.GuiGraphics
@@ -16,10 +16,10 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay
 
 @Suppress("MemberVisibilityCanBePrivate", "Unused")
 abstract class AbstractModGuiOverlay: IGuiOverlay {
-    val entityRenderer: EntityRenderDispatcher = minecraft.entityRenderDispatcher
-    val itemRenderer: ItemRenderer = minecraft.itemRenderer
-    val blockRenderer: BlockRenderDispatcher = minecraft.blockRenderer
-    val blockEntityRenderer: BlockEntityRenderDispatcher = minecraft.blockEntityRenderDispatcher
+    val entityRenderer: EntityRenderDispatcher = rgMinecraft.entityRenderDispatcher
+    val itemRenderer: ItemRenderer = rgMinecraft.itemRenderer
+    val blockRenderer: BlockRenderDispatcher = rgMinecraft.blockRenderer
+    val blockEntityRenderer: BlockEntityRenderDispatcher = rgMinecraft.blockEntityRenderDispatcher
 
     final override fun render(
         gui: ForgeGui,

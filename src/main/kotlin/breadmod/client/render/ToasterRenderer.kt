@@ -2,9 +2,9 @@ package breadmod.client.render
 
 import breadmod.ModMain
 import breadmod.block.entity.machine.ToasterBlockEntity
-import breadmod.util.render.minecraft
 import breadmod.util.render.renderBlockModel
 import breadmod.util.render.renderStaticItem
+import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
@@ -25,7 +25,7 @@ class ToasterRenderer: BlockEntityRenderer<ToasterBlockEntity> {
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
-        val handleModel = minecraft.modelManager.getModel(handleModelLocation)
+        val handleModel = rgMinecraft.modelManager.getModel(handleModelLocation)
         val blockRotation = pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
         val triggered = pBlockEntity.blockState.getValue(BlockStateProperties.TRIGGERED)
 

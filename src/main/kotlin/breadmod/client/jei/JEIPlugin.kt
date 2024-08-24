@@ -17,7 +17,7 @@ import breadmod.registry.block.ModBlocks
 import breadmod.registry.item.ModItems
 import breadmod.registry.menu.ModMenuTypes
 import breadmod.registry.recipe.ModRecipeTypes
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.*
@@ -59,7 +59,7 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
-        val recipeManager = minecraft.level?.recipeManager ?: throw IllegalStateException()
+        val recipeManager = rgMinecraft.level?.recipeManager ?: throw IllegalStateException()
         val doughMachineRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.DOUGH_MACHINE.get())
         val wheatCrusherRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.WHEAT_CRUSHING.get())
         val toasterRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.TOASTING.get())

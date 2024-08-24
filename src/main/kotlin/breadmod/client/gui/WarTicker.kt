@@ -1,8 +1,7 @@
 package breadmod.client.gui
 
 import breadmod.registry.sound.ModSounds
-import breadmod.util.render.minecraft
-import net.minecraft.util.Mth
+import breadmod.util.render.rgMinecraft
 
 object WarTicker {
     var timer = 30
@@ -15,8 +14,8 @@ object WarTicker {
     var lastScroll = 0f
 
     fun tick() {
-        val player = minecraft.player ?: return
-        if (!minecraft.isPaused && active) {
+        val player = rgMinecraft.player ?: return
+        if (!rgMinecraft.isPaused && active) {
             if (!isIncreasing) {
                 if (ticker == 0 && timer > 0) { // Tick timer down by one
                     player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 1f)
@@ -30,7 +29,7 @@ object WarTicker {
                 ticker = 41
             } else isIncreasing = false
         }
-        if (!minecraft.isPaused) {
+        if (!rgMinecraft.isPaused) {
             lastScroll = scroll // hell code until I figure out proper smooth like anims from minecraft's code
             if (scroll > -110.0 && !active) {
                 scroll -= (1f * 0.5f) * 4.0f
@@ -46,7 +45,7 @@ object WarTicker {
     }
 
     fun increaseTimer(pAmount: Int = 41) {
-        val player = minecraft.player ?: return
+        val player = rgMinecraft.player ?: return
         player.playSound(ModSounds.WAR_TIMER_UP.get(), 1f, 1f)
         increasingTimer += pAmount
         isIncreasing = true

@@ -7,7 +7,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tool_gun.ToolGunItem.Companion.MODE_NAMESPACE_TAG
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
@@ -39,7 +39,7 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
         val handStack = pPlayer.getItemInHand(InteractionHand.MAIN_HAND) ?: return
         val item = handStack.item
 
-        if (!minecraft.options.hideGui && item is ToolGunItem) {
+        if (!rgMinecraft.options.hideGui && item is ToolGunItem) {
             pGui.setupOverlayRenderState(true, false)
             renderBackground(pGuiGraphics, pPoseStack, x, y)
 

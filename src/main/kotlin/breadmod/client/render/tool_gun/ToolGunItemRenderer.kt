@@ -3,24 +3,21 @@ package breadmod.client.render.tool_gun
 import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
-import breadmod.util.render.minecraft
 import breadmod.util.render.renderItemModel
+import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
-import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.client.model.generators.ModelProvider
-import java.awt.Color
 import java.security.SecureRandom
-import kotlin.math.round
 
 
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
-    minecraft.blockEntityRenderDispatcher,
-    minecraft.entityModels
+    rgMinecraft.blockEntityRenderDispatcher,
+    rgMinecraft.entityModels
 ) {
     private companion object {
         val secureRandom = SecureRandom()
@@ -41,9 +38,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     ) {
         val toolGunItem = pStack.item as ToolGunItem
         val toolGunMode = toolGunItem.getCurrentMode(pStack)
-        val renderer = minecraft.itemRenderer
-        val fontRenderer = minecraft.font
-        val modelManager = minecraft.modelManager
+        val renderer = rgMinecraft.itemRenderer
+        val fontRenderer = rgMinecraft.font
+        val modelManager = rgMinecraft.modelManager
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
         val altModel = modelManager.getModel(altModelLocation)

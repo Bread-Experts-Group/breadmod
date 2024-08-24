@@ -101,7 +101,7 @@ class DieselGeneratorRenderer : BlockEntityRenderer<DieselGeneratorBlockEntity> 
             val fluidTypeExtensions = IClientFluidTypeExtensions.of(tank.fluid.fluid)
             val stillFluidTexture = fluidTypeExtensions.getStillTexture(tank.fluid) ?: return
             val fluidState = tank.fluid.fluid.defaultFluidState()
-            val fluidSprite = minecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
+            val fluidSprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillFluidTexture)
             val fluidTint = fluidTypeExtensions.getTintColor(fluidState, pBlockEntity.level, blockPos)
 
             // todo normalize texture size to not be squashed or stretched, refer to General#GuiGraphics.renderFluid for clues

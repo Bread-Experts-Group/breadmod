@@ -15,7 +15,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOLTIP_K
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.IToolGunMode
 import breadmod.util.jsonToComponent
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.mojang.blaze3d.platform.InputConstants
@@ -113,8 +113,8 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
 
     fun loadKeys() {
         val keyMaps = ClientModEventBus.createMappingsForControls(keybindsToAdd)
-        minecraft.options.keyMappings = ArrayUtils.addAll(
-            minecraft.options.keyMappings,
+        rgMinecraft.options.keyMappings = ArrayUtils.addAll(
+            rgMinecraft.options.keyMappings,
             *keyMaps
                 //.filter { toolgunMap -> minecraft.options.keyMappings.firstOrNull { it == toolgunMap } == null }
                 .toTypedArray()

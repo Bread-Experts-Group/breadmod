@@ -1,6 +1,6 @@
 package breadmod.network.clientbound
 
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
@@ -23,7 +23,7 @@ internal data class CapabilityTagDataPacket(val pPos: BlockPos, val tag: Compoun
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT) {
                     Runnable {
                         if (input.tag != null)
-                            minecraft.level?.let { level -> level.getBlockEntity(input.pPos)?.load(input.tag) }
+                            rgMinecraft.level?.let { level -> level.getBlockEntity(input.pPos)?.load(input.tag) }
                     }
                 }
             }

@@ -51,7 +51,7 @@ abstract class BackgroundWidget private constructor(
          * @since 1.0.0
          */
         override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-            pGuiGraphics.fill(pRenderType, x, y, x + width, y + height, pColor.rgb)
+            pGuiGraphics.fill(pRenderType, 0, 0, width, height, pColor.rgb)
         }
     }
 }

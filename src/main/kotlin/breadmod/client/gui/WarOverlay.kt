@@ -4,7 +4,7 @@ import breadmod.ModMain.modLocation
 import breadmod.client.gui.WarTicker.lastScroll
 import breadmod.client.gui.WarTicker.scroll
 import breadmod.util.ModFonts
-import breadmod.util.render.minecraft
+import breadmod.util.render.rgMinecraft
 import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.GuiGraphics
@@ -38,7 +38,7 @@ class WarOverlay: AbstractModGuiOverlay() {
 
         pPoseStack.pushPose()
         pPoseStack.scaleFlat(0.5f)
-        pPoseStack.translate(0.0, Mth.lerp(minecraft.partialTick, lastScroll, scroll).toDouble(), 0.0)
+        pPoseStack.translate(0.0, Mth.lerp(rgMinecraft.partialTick, lastScroll, scroll).toDouble(), 0.0)
         pPoseStack.translate(pScreenWidth - (pScreenWidth / 2).toDouble(), 0.0, 0.0)
         pGuiGraphics.blit(overlayTexture, 0, 0, 0, 0, 163, 89)
         pGuiGraphics.blit(overlayTexture, 163, 0, 0, 90, 166, 111)
@@ -47,7 +47,7 @@ class WarOverlay: AbstractModGuiOverlay() {
         pPoseStack.translate(60.0, 0.0, 0.0)
         pGuiGraphics.setColor(colorPair.first, colorPair.second, colorPair.third, 1f)
         pGuiGraphics.drawString(
-            minecraft.font,
+            rgMinecraft.font,
             Component.literal("$formattedMinutes:$formattedSeconds").withStyle(ModFonts.WARTIMER_INFILL),
             0,
             12,
