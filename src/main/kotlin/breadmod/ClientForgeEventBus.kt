@@ -44,7 +44,7 @@ object ClientForgeEventBus {
 
     val changeMode = KeyMapping(
         "controls.${ModMain.ID}.$TOOL_GUN_DEF.change_mode",
-        KeyConflictContext.IN_GAME,
+        KeyConflictContext.GUI,
         KeyModifier.SHIFT,
         InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
         "controls.${ModMain.ID}.category.$TOOL_GUN_DEF"

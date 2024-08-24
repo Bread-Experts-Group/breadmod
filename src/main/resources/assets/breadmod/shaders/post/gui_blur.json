@@ -4,41 +4,51 @@
   ],
   "passes": [
     {
-      "name": "breadmod:gui_blur",
+      "name": "color_convolve",
       "intarget": "minecraft:main",
       "outtarget": "swap",
       "uniforms": [
         {
-          "name": "BlurDir",
+          "name": "RedMatrix",
           "values": [
-            1.0,
+            0.0,
+            0.0,
             0.0
           ]
         },
         {
-          "name": "Radius",
+          "name": "GreenMatrix",
           "values": [
-            20.0
+            0.3,
+            0.59,
+            0.11
+          ]
+        },
+        {
+          "name": "BlueMatrix",
+          "values": [
+            0.0,
+            0.0,
+            0.0
           ]
         }
       ]
     },
     {
-      "name": "breadmod:gui_blur",
+      "name": "bits",
       "intarget": "swap",
       "outtarget": "minecraft:main",
       "uniforms": [
         {
-          "name": "BlurDir",
+          "name": "Resolution",
           "values": [
-            0.0,
-            1.0
+            16.0
           ]
         },
         {
-          "name": "Radius",
+          "name": "MosaicSize",
           "values": [
-            20.0
+            4.0
           ]
         }
       ]
