@@ -27,7 +27,8 @@ class FarmerOutputBlockEntity( // todo add menu and screen
 
     private val facing = this.blockState.getValue(DirectionalBlock.FACING)
     private var handlers: Array<out LazyOptional<IItemHandlerModifiable>> = SidedInvWrapper.create(
-        this, facing)
+        this, facing
+    )
 
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
         return when {
@@ -61,12 +62,16 @@ class FarmerOutputBlockEntity( // todo add menu and screen
     override fun getItem(pSlot: Int): ItemStack = storedItems[pSlot]
     override fun removeItem(pSlot: Int, pAmount: Int): ItemStack = storedItems[pSlot].split(pAmount)
     override fun removeItemNoUpdate(pSlot: Int): ItemStack = storedItems[pSlot].copyAndClear()
-    override fun setItem(pSlot: Int, pStack: ItemStack) { storedItems[pSlot] = pStack}
+    override fun setItem(pSlot: Int, pStack: ItemStack) {
+        storedItems[pSlot] = pStack
+    }
+
     override fun stillValid(pPlayer: Player): Boolean = true
-    override fun getSlotsForFace(pSide: Direction): IntArray = when(pSide) {
-        facing -> intArrayOf(0,1,2,3)
+    override fun getSlotsForFace(pSide: Direction): IntArray = when (pSide) {
+        facing -> intArrayOf(0, 1, 2, 3)
         else -> intArrayOf()
     }
+
     override fun canPlaceItemThroughFace(pIndex: Int, pItemStack: ItemStack, pDirection: Direction?): Boolean = false
     override fun canTakeItemThroughFace(pIndex: Int, pStack: ItemStack, pDirection: Direction): Boolean =
         getSlotsForFace(pDirection).contains(pIndex)

@@ -11,8 +11,14 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.RegistryObject
 
 object ModCreativeTabs {
-    internal val deferredRegister: DeferredRegister<CreativeModeTab> = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModMain.ID)
-    private fun constructTab(name: String, general: Boolean, constructor: CreativeModeTab.Builder.() -> Unit): RegistryObject<CreativeModeTab> {
+    internal val deferredRegister: DeferredRegister<CreativeModeTab> =
+        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ModMain.ID)
+
+    private fun constructTab(
+        name: String,
+        general: Boolean,
+        constructor: CreativeModeTab.Builder.() -> Unit
+    ): RegistryObject<CreativeModeTab> {
         val builder = CreativeModeTab.builder()
         val registryObject = deferredRegister.register(name) { builder.build() }
         builder
@@ -22,7 +28,8 @@ object ModCreativeTabs {
                     val item = it.get()
                     when {
                         item is IRegisterSpecialCreativeTab -> if (item.creativeModeTabs.contains(registryObject))
-                            if(item.displayInCreativeTab(pParameters, pOutput)) pOutput.accept(item.defaultInstance)
+                            if (item.displayInCreativeTab(pParameters, pOutput)) pOutput.accept(item.defaultInstance)
+
                         general -> pOutput.accept(item.defaultInstance)
                     }
                 }

@@ -29,7 +29,8 @@ class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEnti
         .sound(SoundType.METAL),
     true
 ) {
-    override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean = !player.isCreative
+    override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =
+        !player.isCreative
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState? =
         defaultBlockState()
@@ -38,12 +39,12 @@ class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEnti
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
         pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
     }
-    
+
     override fun onDestroyedByPlayer(
         pState: BlockState,
         pLevel: Level,
         pPos: BlockPos,
-        pPlayer: Player, 
+        pPlayer: Player,
         pWillHarvest: Boolean,
         pFluid: FluidState
     ): Boolean {
@@ -61,7 +62,7 @@ class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEnti
         pHand: InteractionHand,
         pHit: BlockHitResult
     ): InteractionResult {
-        if(!pLevel.isClientSide) {
+        if (!pLevel.isClientSide) {
             val entity = (pLevel.getBlockEntity(pPos) as? WheatCrusherBlockEntity) ?: return InteractionResult.FAIL
             NetworkHooks.openScreen(pPlayer as ServerPlayer, entity, pPos)
         }
@@ -69,5 +70,12 @@ class WheatCrusherBlock : BaseAbstractMachineBlock.Powered<WheatCrusherBlockEnti
     }
 
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<WheatCrusherBlockEntity> =
-        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity -> tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity) }
+        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
+            tBlockEntity.tick(
+                tLevel,
+                tPos,
+                tState,
+                tBlockEntity
+            )
+        }
 }

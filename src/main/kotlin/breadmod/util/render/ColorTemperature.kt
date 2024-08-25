@@ -39,19 +39,22 @@ fun getRGBFromK(temperature: Float): Color {
 
     val x = max(temperature / 1000.0, 40.0)
     return Color(
-        clamp(0.0, 1.0,
+        clamp(
+            0.0, 1.0,
             if (temperature < 6527) 1.0
             else poly(redPoly, x)
         ).toFloat(),
 
-        clamp(0.0, 1.0,
-            if(temperature < 850) 0.0
-            else if(temperature <= 6600) poly(greenPoly.first, x)
+        clamp(
+            0.0, 1.0,
+            if (temperature < 850) 0.0
+            else if (temperature <= 6600) poly(greenPoly.first, x)
             else poly(greenPoly.second, x)
         ).toFloat(),
 
-        clamp(0.0, 1.0,
-            if(temperature < 1900) 0.0
+        clamp(
+            0.0, 1.0,
+            if (temperature < 1900) 0.0
             else if (temperature < 6600) poly(bluePoly, x)
             else 1.0
         ).toFloat(),

@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 
 @Suppress("unused")
-abstract class BaseAbstractStorageBlockRenderer<T: AbstractMachineBlockEntity<T>>: BlockEntityRenderer<T> {
+abstract class BaseAbstractStorageBlockRenderer<T : AbstractMachineBlockEntity<T>> : BlockEntityRenderer<T> {
     val fontRenderer: Font = rgMinecraft.font
 
     abstract override fun render(
@@ -22,8 +22,10 @@ abstract class BaseAbstractStorageBlockRenderer<T: AbstractMachineBlockEntity<T>
 
     fun energyHandler(pBlockEntity: T) =
         pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)
+
     fun fluidHandler(pBlockEntity: T) =
         pBlockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
+
     fun itemHandler(pBlockEntity: T) =
         pBlockEntity.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 

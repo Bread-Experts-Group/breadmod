@@ -18,7 +18,8 @@ import kotlin.math.min
 open class IndexableItemHandler(
     private val slots: List<Pair<Int, StorageDirection>>,
     var slotChanged: ((index: Int, stack: ItemStack) -> Unit)? = null
-) : IItemHandler, ICapabilitySavable<CompoundTag>, ObservableList<ItemStack>(slots.size, { ItemStack.EMPTY }, slotChanged) {
+) : IItemHandler, ICapabilitySavable<CompoundTag>,
+    ObservableList<ItemStack>(slots.size, { ItemStack.EMPTY }, slotChanged) {
     override var changed: (() -> Unit)? = { slotChanged?.invoke(0, ItemStack.EMPTY) }
 
     /**
@@ -67,16 +68,16 @@ open class IndexableItemHandler(
      * @since 1.0.0
      */
     override fun insertItem(slot: Int, stack: ItemStack, simulate: Boolean): ItemStack = stack.copy().also {
-        if(insertItemCheck?.invoke(slot, stack, simulate) != true) return it
+        if (insertItemCheck?.invoke(slot, stack, simulate) != true) return it
         val reifiedSlot = slots[slot]
         val reifiedStack = this[slot]
         val toMove = min(min(reifiedSlot.first, reifiedStack.maxStackSize) - reifiedStack.count, it.count)
 
-        if(reifiedSlot.second != StorageDirection.EMPTY_ONLY
+        if (reifiedSlot.second != StorageDirection.EMPTY_ONLY
             && toMove > 0
             && (reifiedStack.isEmpty || stack.item == reifiedStack.item)
         ) {
-            if(!simulate) {
+            if (!simulate) {
                 if (reifiedStack.isEmpty) this[slot] = it.copyWithCount(toMove)
                 else this[slot].grow(toMove)
             }
@@ -105,14 +106,14 @@ open class IndexableItemHandler(
      * @since 1.0.0
      */
     override fun extractItem(slot: Int, amount: Int, simulate: Boolean): ItemStack {
-        if(extractItemCheck?.invoke(slot, amount, simulate) != true) return ItemStack.EMPTY
+        if (extractItemCheck?.invoke(slot, amount, simulate) != true) return ItemStack.EMPTY
         val reifiedSlot = slots[slot]
         val reifiedStack = this[slot]
         val toMove = min(reifiedStack.count, amount)
 
-        return if(reifiedSlot.second != StorageDirection.STORE_ONLY && toMove > 0) {
+        return if (reifiedSlot.second != StorageDirection.STORE_ONLY && toMove > 0) {
             val extracted = reifiedStack.copy().also { it.count = toMove }
-            if(!simulate) reifiedStack.shrink(toMove)
+            if (!simulate) reifiedStack.shrink(toMove)
             extracted
         } else ItemStack.EMPTY
     }
@@ -136,7 +137,7 @@ open class IndexableItemHandler(
     override fun getSlotLimit(slot: Int): Int {
         val slotMax = slots[slot].first
         val slotActual = this[slot]
-        return if(!slotActual.isEmpty) min(slotMax, slotActual.maxStackSize)
+        return if (!slotActual.isEmpty) min(slotMax, slotActual.maxStackSize)
         else slotMax
     }
 

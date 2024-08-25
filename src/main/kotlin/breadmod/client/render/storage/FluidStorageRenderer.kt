@@ -4,7 +4,7 @@ import breadmod.block.entity.storage.FluidStorageBlockEntity
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 
-class FluidStorageRenderer: BaseAbstractStorageBlockRenderer<FluidStorageBlockEntity>() {
+class FluidStorageRenderer : BaseAbstractStorageBlockRenderer<FluidStorageBlockEntity>() {
     override fun render(
         pBlockEntity: FluidStorageBlockEntity,
         pPartialTick: Float,

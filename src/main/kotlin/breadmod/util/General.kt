@@ -186,14 +186,15 @@ fun JsonArray.extractJsonFluidList(): List<FluidStack> = this.map { entryObject 
  * @since 1.0.0
  * @see extractJsonFluidList
  */
-fun List<FluidStack>.jsonifyFluidList(into: JsonArray = JsonArray(), propertyName: String = ENTRY_ID): JsonArray = into.also {
-    this.forEach { stack ->
-        it.add(JsonObject().also { obj ->
-            obj.addProperty(propertyName, ForgeRegistries.FLUIDS.getKey(stack.fluid).toString())
-            if (stack.amount > 1) obj.addProperty("amount", stack.amount)
-        })
+fun List<FluidStack>.jsonifyFluidList(into: JsonArray = JsonArray(), propertyName: String = ENTRY_ID): JsonArray =
+    into.also {
+        this.forEach { stack ->
+            it.add(JsonObject().also { obj ->
+                obj.addProperty(propertyName, ForgeRegistries.FLUIDS.getKey(stack.fluid).toString())
+                if (stack.amount > 1) obj.addProperty("amount", stack.amount)
+            })
+        }
     }
-}
 
 /**
  * Reads a [List] of [ItemStack]s from this [JsonArray].
@@ -217,14 +218,15 @@ fun JsonArray.extractJsonItemList(): List<ItemStack> = this.map { entryObject ->
  * @since 1.0.0
  * @see extractJsonItemList
  */
-fun List<ItemStack>.jsonifyItemList(into: JsonArray = JsonArray(), propertyName: String = ENTRY_ID): JsonArray = into.also {
-    this.forEach { stack ->
-        it.add(JsonObject().also { obj ->
-            obj.addProperty(propertyName, ForgeRegistries.ITEMS.getKey(stack.item).toString())
-            if (stack.count > 1) obj.addProperty("amount", stack.count)
-        })
+fun List<ItemStack>.jsonifyItemList(into: JsonArray = JsonArray(), propertyName: String = ENTRY_ID): JsonArray =
+    into.also {
+        this.forEach { stack ->
+            it.add(JsonObject().also { obj ->
+                obj.addProperty(propertyName, ForgeRegistries.ITEMS.getKey(stack.item).toString())
+                if (stack.count > 1) obj.addProperty("amount", stack.count)
+            })
+        }
     }
-}
 
 /**
  * Reads a [List] of [Pair]s containing a [TagKey] of type [T] (associated with an [IForgeRegistry])
@@ -252,7 +254,10 @@ fun <T> JsonArray.extractJsonTagList(registry: IForgeRegistry<T>): List<Pair<Tag
  * @since 1.0.0
  * @see extractJsonTagList
  */
-fun List<Pair<TagKey<*>, Int>>.jsonifyTagList(into: JsonArray = JsonArray(), propertyName: String = ENTRY_ID): JsonArray =
+fun List<Pair<TagKey<*>, Int>>.jsonifyTagList(
+    into: JsonArray = JsonArray(),
+    propertyName: String = ENTRY_ID
+): JsonArray =
     into.also {
         this.forEach { (tag, count) ->
             it.add(JsonObject().also { obj ->
@@ -270,7 +275,8 @@ fun List<Pair<TagKey<*>, Int>>.jsonifyTagList(into: JsonArray = JsonArray(), pro
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun <T> IForgeRegistry<T>.createTagKey(path: String): TagKey<T> = TagKey.create(this.registryKey, ResourceLocation(path))
+fun <T> IForgeRegistry<T>.createTagKey(path: String): TagKey<T> =
+    TagKey.create(this.registryKey, ResourceLocation(path))
 
 /**
  * Reads a [List] of [FluidStack]s from this [FriendlyByteBuf].
@@ -734,7 +740,8 @@ object LevelSerializer : KSerializer<Level> {
         ResourceKey.create(Registries.DIMENSION, ResourceLocation(decoder.decodeString()))
     )!!
 
-    override fun serialize(encoder: Encoder, value: Level): Unit = encoder.encodeString(value.dimension().location().toString())
+    override fun serialize(encoder: Encoder, value: Level): Unit =
+        encoder.encodeString(value.dimension().location().toString())
 }
 
 object EntitySerializer : KSerializer<Entity> {

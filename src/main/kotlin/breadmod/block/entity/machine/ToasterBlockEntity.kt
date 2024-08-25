@@ -35,7 +35,8 @@ class ToasterBlockEntity(
 ) {
     private val triggered = BlockStateProperties.TRIGGERED
 
-    private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
+    private fun getItemHandler() =
+        capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
     override fun tick(
         pLevel: Level,
@@ -44,19 +45,26 @@ class ToasterBlockEntity(
         pBlockEntity: Progressive<ToasterBlockEntity, ToasterRecipe>
     ) {
         val triggeredState = pBlockEntity.blockState.getValue(triggered)
-        if(triggeredState) {
+        if (triggeredState) {
             preTick(pLevel, pPos, pState, pBlockEntity)
             // the toaster does NOT like charcoal
-            if(getItemHandler()?.getStackInSlot(0)?.`is`(Items.CHARCOAL) == true) {
+            if (getItemHandler()?.getStackInSlot(0)?.`is`(Items.CHARCOAL) == true) {
                 maxProgress = 60
-                progress ++
-                if(progress == 35) pLevel.playSound(null, pPos, SoundEvents.TNT_PRIMED, SoundSource.BLOCKS)
-                if(progress >= 60) {
-                    pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 3f, Level.ExplosionInteraction.BLOCK)
+                progress++
+                if (progress == 35) pLevel.playSound(null, pPos, SoundEvents.TNT_PRIMED, SoundSource.BLOCKS)
+                if (progress >= 60) {
+                    pLevel.explode(
+                        null,
+                        pPos.x.toDouble(),
+                        pPos.y.toDouble(),
+                        pPos.z.toDouble(),
+                        3f,
+                        Level.ExplosionInteraction.BLOCK
+                    )
                 }
             } else {
                 currentRecipe.ifPresentOrElse({
-                    progress ++
+                    progress++
                     recipeTick(pLevel, pPos, pState, pBlockEntity, it)
                     if (progress >= it.time && recipeDone(pLevel, pPos, pState, pBlockEntity, it)) {
                         currentRecipe = Optional.empty()
@@ -89,16 +97,20 @@ class ToasterBlockEntity(
         val itemHandle = getItemHandler() ?: return false
         recipe.itemsRequired?.forEach { stack -> itemHandle[0].shrink(stack.count) }
         recipe.itemsRequiredTagged?.forEach { tag -> itemHandle[0].shrink(tag.second) }
-        return if(recipe.canFitResults(itemHandle to listOf(0), null)) {
+        return if (recipe.canFitResults(itemHandle to listOf(0), null)) {
             val assembled = recipe.assembleOutputs(craftingManager, pLevel)
-            assembled.first.forEach { stack -> itemHandle[0].let { slot -> if(slot.isEmpty) itemHandle[0] = stack.copy() else slot.grow(stack.count) } }
+            assembled.first.forEach { stack ->
+                itemHandle[0].let { slot ->
+                    if (slot.isEmpty) itemHandle[0] = stack.copy() else slot.grow(stack.count)
+                }
+            }
             true
         } else false
     }
 
     fun getRenderStack(): ItemStack {
         val item = getItemHandler()
-        return if(item?.getStackInSlot(0)?.isEmpty == false) {
+        return if (item?.getStackInSlot(0)?.isEmpty == false) {
             item.getStackInSlot(0)
         } else ItemStack.EMPTY
     }

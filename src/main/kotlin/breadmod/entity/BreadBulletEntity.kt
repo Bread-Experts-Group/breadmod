@@ -22,8 +22,16 @@ class BreadBulletEntity(pEntityType: EntityType<BreadBulletEntity>, pLevel: Leve
 
     override fun tick() {
         val level = this.level()
-        if(level.isClientSide) level.addParticle(ParticleTypes.FIREWORK, x, y, z, random.nextGaussian() * 0.05, -random.nextGaussian() * 0.05, random.nextGaussian() * 0.05)
-        if(deltaMovement.length() < 0.1) this.discard()
+        if (level.isClientSide) level.addParticle(
+            ParticleTypes.FIREWORK,
+            x,
+            y,
+            z,
+            random.nextGaussian() * 0.05,
+            -random.nextGaussian() * 0.05,
+            random.nextGaussian() * 0.05
+        )
+        if (deltaMovement.length() < 0.1) this.discard()
         super.tick()
     }
 
@@ -31,9 +39,17 @@ class BreadBulletEntity(pEntityType: EntityType<BreadBulletEntity>, pLevel: Leve
         super.onHitEntity(pResult)
 
         val level = this.level()
-        if(level is ServerLevel && pResult.entity != owner) {
-            pResult.entity.playSound(ModSounds.SCREAM.get(), 1.0f, random.nextFloat()-0.5F)
-            level.explode(this.effectSource, pResult.location.x, pResult.location.y, pResult.location.z, 10.0f, true, Level.ExplosionInteraction.NONE)
+        if (level is ServerLevel && pResult.entity != owner) {
+            pResult.entity.playSound(ModSounds.SCREAM.get(), 1.0f, random.nextFloat() - 0.5F)
+            level.explode(
+                this.effectSource,
+                pResult.location.x,
+                pResult.location.y,
+                pResult.location.z,
+                10.0f,
+                true,
+                Level.ExplosionInteraction.NONE
+            )
             this.discard()
         }
     }

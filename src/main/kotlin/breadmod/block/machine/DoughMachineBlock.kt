@@ -36,17 +36,20 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
         .strength(1f, 5.0f)
         .mapColor(MapColor.COLOR_GRAY)
         .sound(SoundType.METAL)
-        .lightLevel { pState -> if(pState.getValue(BlockStateProperties.POWERED)) 5 else 0 }
+        .lightLevel { pState -> if (pState.getValue(BlockStateProperties.POWERED)) 5 else 0 }
         .emissiveRendering { pState, _, _ -> pState.getValue(BlockStateProperties.POWERED) },
     true
 ) {
     override fun canHarvestBlock(pState: BlockState, pLevel: BlockGetter, pPos: BlockPos, pPlayer: Player): Boolean =
         !pPlayer.isCreative
+
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
         defaultBlockState()
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
+
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING) }
+        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
+    }
 
     private val rand: Double
         get() = (Random.nextDouble() - 0.5) * 2
@@ -60,14 +63,22 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
         pFluid: FluidState
     ): Boolean {
         val entity = pLevel.getBlockEntity(pPos) as DoughMachineBlockEntity
-        if(pState.getValue(BlockStateProperties.POWERED)) {
-            pLevel.explode(null, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 5f, Level.ExplosionInteraction.NONE)
+        if (pState.getValue(BlockStateProperties.POWERED)) {
+            pLevel.explode(
+                null,
+                pPos.x.toDouble(),
+                pPos.y.toDouble(),
+                pPos.z.toDouble(),
+                5f,
+                Level.ExplosionInteraction.NONE
+            )
             val stack = entity.craftingManager.items[0]
-            when(stack.item) {
+            when (stack.item) {
                 ModItems.FLOUR.get() -> {
-                    while(stack.count > 0) {
+                    while (stack.count > 0) {
                         val toSubtract = pLevel.random.nextInt(1, 4)
-                        val state = ModBlocks.FLOUR_LAYER_BLOCK.get().block.defaultBlockState().setValue(BlockStateProperties.LAYERS, toSubtract)
+                        val state = ModBlocks.FLOUR_LAYER_BLOCK.get().block.defaultBlockState()
+                            .setValue(BlockStateProperties.LAYERS, toSubtract)
                         val fallingFlour = FallingBlockEntity.fall(pLevel, pPos.atY(pPos.y + 2), state)
                         fallingFlour.deltaMovement = Vec3(rand, rand, rand)
                         fallingFlour.dropItem = false
@@ -91,17 +102,18 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
         pHand: InteractionHand,
         pHit: BlockHitResult,
     ): InteractionResult {
-        if(pLevel.isClientSide || pHand == InteractionHand.OFF_HAND) return InteractionResult.CONSUME
+        if (pLevel.isClientSide || pHand == InteractionHand.OFF_HAND) return InteractionResult.CONSUME
         val blockEntity = pLevel.getBlockEntity(pPos) as? DoughMachineBlockEntity ?: return InteractionResult.FAIL
         val handStack = pPlayer.getItemInHand(pHand)
-        val handler = blockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER) ?: return InteractionResult.FAIL
+        val handler = blockEntity.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
+            ?: return InteractionResult.FAIL
 
         val toReturn = handlePlayerFluidInteraction(
             pPlayer, pLevel, pPos,
             handStack, handler
         )
 
-        if(toReturn != null) return toReturn
+        if (toReturn != null) return toReturn
         else {
             NetworkHooks.openScreen(pPlayer as ServerPlayer, blockEntity, pPos)
             return InteractionResult.CONSUME
@@ -109,5 +121,12 @@ class DoughMachineBlock : BaseAbstractMachineBlock.Powered<DoughMachineBlockEnti
     }
 
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<DoughMachineBlockEntity> =
-        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity -> tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity) }
+        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
+            tBlockEntity.tick(
+                tLevel,
+                tPos,
+                tState,
+                tBlockEntity
+            )
+        }
 }

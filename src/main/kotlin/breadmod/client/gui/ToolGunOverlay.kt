@@ -20,7 +20,7 @@ import net.minecraft.world.InteractionHand
 import net.minecraftforge.client.gui.overlay.ForgeGui
 import java.awt.Color
 
-class ToolGunOverlay: AbstractModGuiOverlay() {
+class ToolGunOverlay : AbstractModGuiOverlay() {
     private val overlayTexture = modLocation("textures", "gui", "hud", "tool_gun_overlay.png")
     private val textColor = Color.WHITE.rgb
 
@@ -58,7 +58,15 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
         pPose.popPose()
     }
 
-    private fun renderMode(namespace: String, pMode: ModToolGunModeDataLoader.ToolgunMode?, pGuiGraphics: GuiGraphics, pPose: PoseStack, pGui: ForgeGui, pX: Int, pY: Int) {
+    private fun renderMode(
+        namespace: String,
+        pMode: ModToolGunModeDataLoader.ToolgunMode?,
+        pGuiGraphics: GuiGraphics,
+        pPose: PoseStack,
+        pGui: ForgeGui,
+        pX: Int,
+        pY: Int
+    ) {
         pPose.pushPose()
         // Icon renders
         pGuiGraphics.blit(overlayTexture, pX + 1, pY + 33, 0, 41, 8, 8)
@@ -66,7 +74,8 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
         // start rendering key (with the key letter on them) and mouse icons, fix positioning on description and controls, set up 9 sliced key texture for wider keys
 
         // Action source
-        drawScaledText(Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
+        drawScaledText(
+            Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
             pPose, pGuiGraphics, pGui, pX + 2, pY + 2, textColor, 0.8f, true
         )
 
@@ -76,7 +85,8 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
             pPose, pGuiGraphics, pGui, pX - 1, pY + 4, textColor, 2.5f, false
         )
         // Mode Tooltip
-        drawScaledText((pMode?.tooltip?.copy() ?: modTranslatable(TOOL_GUN_DEF, "broken_tooltip")), pPose, pGuiGraphics, pGui,
+        drawScaledText(
+            (pMode?.tooltip?.copy() ?: modTranslatable(TOOL_GUN_DEF, "broken_tooltip")), pPose, pGuiGraphics, pGui,
             pX + 13, pY + 43, textColor, 0.4f, true
         )
         // KeyBinds
@@ -90,7 +100,7 @@ class ToolGunOverlay: AbstractModGuiOverlay() {
                 pX + 10, pY + 43 + moved, textColor, 1f, true
             )
 //            toolGunBindList[control]?.key = InputConstants.getKey("key.mouse.right")
-            when(toolGunBindList[control]?.key) {
+            when (toolGunBindList[control]?.key) {
                 getInput("key.mouse.right") -> {
                     pPose.pushPose()
                     pPose.scaleFlat(0.68f)

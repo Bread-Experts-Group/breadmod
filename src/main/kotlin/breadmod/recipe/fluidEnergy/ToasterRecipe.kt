@@ -15,7 +15,13 @@ class ToasterRecipe(
     itemsRequired: List<ItemStack>? = null,
     itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>? = null,
     itemsOutput: List<ItemStack>? = null,
-) : FluidEnergyRecipe(pId, time, itemsRequired = itemsRequired, itemsRequiredTagged = itemsRequiredTagged, itemsOutput = itemsOutput) {
+) : FluidEnergyRecipe(
+    pId,
+    time,
+    itemsRequired = itemsRequired,
+    itemsRequiredTagged = itemsRequiredTagged,
+    itemsOutput = itemsOutput
+) {
     override fun getType(): RecipeType<*> = ModRecipeTypes.TOASTING.get()
     override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.TOASTER.get()
 }

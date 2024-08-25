@@ -30,12 +30,12 @@ import net.minecraftforge.registries.RegistryObject
 import java.util.*
 import kotlin.math.max
 
-abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
+abstract class AbstractMachineBlockEntity<T : AbstractMachineBlockEntity<T>>(
     pType: BlockEntityType<T>,
     pPos: BlockPos,
     pBlockState: BlockState,
     vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
-): BlockEntity(pType, pPos, pBlockState) {
+) : BlockEntity(pType, pPos, pBlockState) {
     val capabilityHolder = CapabilityHolder(mapOf(*additionalCapabilities))
 
     init {
@@ -96,7 +96,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
     open fun adjustChanged() {}
     final override fun setChanged() {
         adjustChanged()
-        if(level is ServerLevel) NETWORK.send(
+        if (level is ServerLevel) NETWORK.send(
             PacketDistributor.TRACKING_CHUNK.with { (level as ServerLevel).getChunkAt(blockPos) },
             CapabilityTagDataPacket(blockPos, updateTag)
         )
@@ -109,7 +109,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         }
     }
 
-    open fun preTick (pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}
+    open fun preTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}
     open fun postTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}
 
     open fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {
@@ -117,7 +117,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         postTick(pLevel, pPos, pState, pBlockEntity)
     }
 
-    abstract class Progressive<T: AbstractMachineBlockEntity<T>, R: FluidEnergyRecipe>(
+    abstract class Progressive<T : AbstractMachineBlockEntity<T>, R : FluidEnergyRecipe>(
         pType: BlockEntityType<T>,
         pPos: BlockPos,
         pBlockState: BlockState,
@@ -126,7 +126,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
         itemHandlerViewSlots: List<Int>,
         craftingWidthHeight: Pair<Int, Int>,
         vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
-    ): AbstractMachineBlockEntity<T>(
+    ) : AbstractMachineBlockEntity<T>(
         pType, pPos, pBlockState,
         ForgeCapabilities.ITEM_HANDLER to itemHandler,
         *additionalCapabilities
@@ -144,7 +144,11 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             craftingWidthHeight.first, craftingWidthHeight.second,
             this
         )
-        protected val recipeDial: RecipeManager.CachedCheck<CraftingContainer, R> by lazy { RecipeManager.createCheck(recipeType.get()) }
+        protected val recipeDial: RecipeManager.CachedCheck<CraftingContainer, R> by lazy {
+            RecipeManager.createCheck(
+                recipeType.get()
+            )
+        }
 
         var currentRecipe: Optional<R> = Optional.empty()
             protected set
@@ -192,7 +196,15 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             recipe: R
         ): Boolean = true
 
-        open fun recipeTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T, R>, recipe: R) {}
+        open fun recipeTick(
+            pLevel: Level,
+            pPos: BlockPos,
+            pState: BlockState,
+            pBlockEntity: Progressive<T, R>,
+            recipe: R
+        ) {
+        }
+
         open fun recipeDone(
             pLevel: Level,
             pPos: BlockPos,
@@ -201,7 +213,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             recipe: R
         ): Boolean = true
 
-        abstract class Powered<T: AbstractMachineBlockEntity<T>, R: FluidEnergyRecipe>(
+        abstract class Powered<T : AbstractMachineBlockEntity<T>, R : FluidEnergyRecipe>(
             pType: BlockEntityType<T>,
             pPos: BlockPos,
             pBlockState: BlockState,
@@ -211,7 +223,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             craftingWidthHeight: Pair<Int, Int>,
             powerHandler: Pair<EnergyBattery, List<Direction?>>,
             vararg additionalCapabilities: Pair<Capability<*>, CapabilityContainer>
-        ): Progressive<T, R>(
+        ) : Progressive<T, R>(
             pType,
             pPos,
             pBlockState,
@@ -222,10 +234,21 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
             ForgeCapabilities.ENERGY to powerHandler,
             *additionalCapabilities
         ) {
-            open fun recipeTickPrePower(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T, R>, recipe: R) {}
+            open fun recipeTickPrePower(
+                pLevel: Level,
+                pPos: BlockPos,
+                pState: BlockState,
+                pBlockEntity: Progressive<T, R>,
+                recipe: R
+            ) {}
 
             private var energyDivision: Int? = null
-            final override fun tick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: Progressive<T, R>) {
+            final override fun tick(
+                pLevel: Level,
+                pPos: BlockPos,
+                pState: BlockState,
+                pBlockEntity: Progressive<T, R>
+            ) {
                 preTick(pLevel, pPos, pState, pBlockEntity)
                 currentRecipe.ifPresentOrElse({
                     preTick(pLevel, pPos, pState, pBlockEntity)
@@ -259,7 +282,7 @@ abstract class AbstractMachineBlockEntity<T: AbstractMachineBlockEntity<T>>(
                             maxProgress = it.time
                         }
                     }, {
-                        if(pState.getValue(BlockStateProperties.POWERED))
+                        if (pState.getValue(BlockStateProperties.POWERED))
                             pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, false))
                         noRecipeTick(pLevel, pPos, pState, pBlockEntity)
                     })

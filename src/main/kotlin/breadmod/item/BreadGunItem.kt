@@ -16,19 +16,19 @@ import net.minecraft.world.item.Vanishable
 import net.minecraft.world.level.Level
 import java.util.function.Predicate
 
-class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(9000)), Vanishable {
+class BreadGunItem : ProjectileWeaponItem(Properties().stacksTo(1).durability(9000)), Vanishable {
     private var fire = false
     override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val flag = pPlayer.abilities.instabuild
         val itemStack = pPlayer.getProjectile(pPlayer.getItemInHand(pUsedHand))
         val pStack = pPlayer.getItemInHand(pUsedHand)
-        if(itemStack.isEmpty) return InteractionResultHolder.fail(pStack)
+        if (itemStack.isEmpty) return InteractionResultHolder.fail(pStack)
 
-        if(pLevel is ServerLevel && (!itemStack.isEmpty || flag)) {
+        if (pLevel is ServerLevel && (!itemStack.isEmpty || flag)) {
             fire = true
-            if(!flag) {
+            if (!flag) {
                 itemStack.shrink(1)
-                if(itemStack.isEmpty) pPlayer.inventory.removeItem(itemStack)
+                if (itemStack.isEmpty) pPlayer.inventory.removeItem(itemStack)
             }
             pPlayer.cooldowns.addCooldown(this, 80)
         }
@@ -38,15 +38,15 @@ class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(900
 
     private var fireTimes = 0
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
-        if(pEntity is LivingEntity) {
-            if(fire) {
+        if (pEntity is LivingEntity) {
+            if (fire) {
                 pLevel.playSound(null, pEntity.blockPosition(), ModSounds.MINIGUN.get(), SoundSource.PLAYERS)
                 fireTimes = 15
                 fire = false
             }
-            if(!pLevel.isClientSide && fireTimes > 0) {
+            if (!pLevel.isClientSide && fireTimes > 0) {
                 val bullet = ModEntityTypes.BREAD_BULLET_ENTITY.get().create(pLevel)
-                if(bullet != null) {
+                if (bullet != null) {
                     pStack.hurtAndBreak(1, pEntity) { event -> event.broadcastBreakEvent(pEntity.usedItemHand) }
 
                     bullet.shootFromRotation(pEntity, pEntity.xRot, pEntity.yRot, 0.0F, 1f, 0f)
@@ -60,6 +60,8 @@ class BreadGunItem: ProjectileWeaponItem(Properties().stacksTo(1).durability(900
         }
     }
 
-    override fun getAllSupportedProjectiles(): Predicate<ItemStack> = Predicate { stack -> stack.`is`(ModItems.BREAD_BULLET_ITEM.get()) }
+    override fun getAllSupportedProjectiles(): Predicate<ItemStack> =
+        Predicate { stack -> stack.`is`(ModItems.BREAD_BULLET_ITEM.get()) }
+
     override fun getDefaultProjectileRange(): Int = 50
 }

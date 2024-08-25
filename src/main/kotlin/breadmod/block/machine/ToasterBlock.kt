@@ -53,11 +53,13 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
 
     override fun canHarvestBlock(pState: BlockState, pLevel: BlockGetter, pPos: BlockPos, pPlayer: Player): Boolean =
         !pPlayer.isCreative
+
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
         defaultBlockState()
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
             .setValue(triggered, false)
             .setValue(BlockStateProperties.WATERLOGGED, false)
+
     override fun adjustBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
         pBuilder.add(
             BlockStateProperties.HORIZONTAL_FACING,
@@ -73,7 +75,7 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
         pPos: BlockPos,
         pContext: CollisionContext
     ): VoxelShape {
-        return when(pState.getValue(facing)) {
+        return when (pState.getValue(facing)) {
             Direction.NORTH, Direction.SOUTH -> aabbX
             else -> aabbZ
         }
@@ -88,29 +90,39 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
         pHand: InteractionHand,
         pHit: BlockHitResult
     ): InteractionResult {
-        if(!pLevel.isClientSide) {
+        if (!pLevel.isClientSide) {
             val triggeredState = pState.getValue(triggered)
             val entity = (pLevel.getBlockEntity(pPos) as? ToasterBlockEntity) ?: return InteractionResult.FAIL
-            val itemHandler = entity.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER) ?: return InteractionResult.FAIL
+            val itemHandler =
+                entity.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
+                    ?: return InteractionResult.FAIL
             val itemHandlerSlot = itemHandler.getStackInSlot(0)
             val stack = pPlayer.getItemInHand(pHand)
             val item = stack.item
 
-            if(pPlayer.isCrouching && pHand != InteractionHand.OFF_HAND && entity.progress == 0) {
-                if(triggeredState && entity.progress == 0) {
+            if (pPlayer.isCrouching && pHand != InteractionHand.OFF_HAND && entity.progress == 0) {
+                if (triggeredState && entity.progress == 0) {
                     updateState(pLevel, pPos, pState, triggered, false)
-                } else if(!triggeredState && entity.progress == 0) {
+                } else if (!triggeredState && entity.progress == 0) {
                     updateState(pLevel, pPos, pState, triggered, true)
                 }
             }
 
-            if(!pPlayer.isCrouching && !triggeredState && entity.progress == 0 &&
-                !stack.isEmpty && itemHandlerSlot.count != 2 && stack.`is`(ModItemTags.TOASTABLE)) {
-                if(!pPlayer.isCreative) stack.shrink(1)
+            if (!pPlayer.isCrouching && !triggeredState && entity.progress == 0 &&
+                !stack.isEmpty && itemHandlerSlot.count != 2 && stack.`is`(ModItemTags.TOASTABLE)
+            ) {
+                if (!pPlayer.isCreative) stack.shrink(1)
                 itemHandler.insertItem(0, ItemStack(item, 1), false)
-                pLevel.playSound(null, pPos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.2f, random.nextFloat()-0.3f)
+                pLevel.playSound(
+                    null,
+                    pPos,
+                    SoundEvents.ITEM_PICKUP,
+                    SoundSource.BLOCKS,
+                    0.2f,
+                    random.nextFloat() - 0.3f
+                )
                 entity.setChanged()
-            } else if(!pPlayer.isCrouching && !triggeredState && entity.progress == 0) {
+            } else if (!pPlayer.isCrouching && !triggeredState && entity.progress == 0) {
                 Containers.dropContents(pLevel, pPos, entity.craftingManager)
                 entity.setChanged()
             }
@@ -121,7 +133,8 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
 
     override fun animateTick(pState: BlockState, pLevel: Level, pPos: BlockPos, pRandom: RandomSource) {
         val entity = pLevel.getBlockEntity(pPos) as? ToasterBlockEntity ?: return
-        val itemHandler = entity.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER) ?: return
+        val itemHandler =
+            entity.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER) ?: return
         val itemHandlerSlot = itemHandler.getStackInSlot(0)
         val posX = pPos.x + 0.4
         val posY = pPos.y + 0.5
@@ -130,23 +143,23 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
         val direction = pState.getValue(facing)
         val axis = direction.axis
         val d1 = pRandom.nextDouble() * 0.6 - 0.3
-        val d4 = if(axis == Direction.Axis.X) direction.stepZ * 0.52 else d1 // X
+        val d4 = if (axis == Direction.Axis.X) direction.stepZ * 0.52 else d1 // X
         val d3 = pRandom.nextDouble() * 0.6 / 16.0 // Y
-        val d2 = if(axis == Direction.Axis.Z) direction.stepX * 0.52 else d1 // Z
-        if(pState.getValue(triggered)) {
-            if(itemHandlerSlot.`is`(Items.CHARCOAL)) {
+        val d2 = if (axis == Direction.Axis.Z) direction.stepX * 0.52 else d1 // Z
+        if (pState.getValue(triggered)) {
+            if (itemHandlerSlot.`is`(Items.CHARCOAL)) {
                 pLevel.addParticle(
                     ParticleTypes.LAVA,
                     posX + d2,
                     posY + d3,
-                    posZ + d4 + if(axis == Direction.Axis.X) -0.1 else 0.0,
+                    posZ + d4 + if (axis == Direction.Axis.X) -0.1 else 0.0,
                     0.0, 0.0, 0.0
                 )
                 pLevel.addParticle(
                     ParticleTypes.LAVA,
                     posX + d2 + 0.2,
                     posY + d3,
-                    posZ + d4 + if(axis == Direction.Axis.X) 0.1 else 0.0,
+                    posZ + d4 + if (axis == Direction.Axis.X) 0.1 else 0.0,
                     0.0, 0.0, 0.0
                 )
             } else {
@@ -154,14 +167,14 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
                     ParticleTypes.SMOKE,
                     posX + d2,
                     posY + d3,
-                    posZ + d4 + if(axis == Direction.Axis.X) -0.1 else 0.0,
+                    posZ + d4 + if (axis == Direction.Axis.X) -0.1 else 0.0,
                     0.0, 0.0, 0.0
                 )
                 pLevel.addParticle(
                     ParticleTypes.SMOKE,
                     posX + d2 + 0.2,
                     posY + d3,
-                    posZ + d4 + if(axis == Direction.Axis.X) 0.1 else 0.0,
+                    posZ + d4 + if (axis == Direction.Axis.X) 0.1 else 0.0,
                     0.0, 0.0, 0.0
                 )
             }
@@ -177,10 +190,12 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
         pTooltip.add(1, ModMain.modTranslatable("toaster", "tooltip").withStyle(ChatFormatting.RED))
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)",
-        "net.minecraft.world.level.block.Block"
-    ))
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston)",
+            "net.minecraft.world.level.block.Block"
+        )
+    )
     override fun onRemove(
         pState: BlockState,
         pLevel: Level,
@@ -188,7 +203,7 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
         pNewState: BlockState,
         pMovedByPiston: Boolean
     ) {
-        if(!pState.`is`(pNewState.block)) {
+        if (!pState.`is`(pNewState.block)) {
             val entity = (pLevel.getBlockEntity(pPos) as? ToasterBlockEntity) ?: return
             Containers.dropContents(pLevel, pPos, entity.craftingManager)
         }
@@ -197,13 +212,20 @@ class ToasterBlock : BaseAbstractMachineBlock.Powered<ToasterBlockEntity>(
     }
 
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<ToasterBlockEntity> =
-        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity -> tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity) }
-    
-    private fun <T: Comparable<T>, V:T> updateState(
-        pLevel: Level, 
-        pPos: BlockPos, 
-        pState: BlockState, 
-        pValue: Property<T>, 
+        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
+            tBlockEntity.tick(
+                tLevel,
+                tPos,
+                tState,
+                tBlockEntity
+            )
+        }
+
+    private fun <T : Comparable<T>, V : T> updateState(
+        pLevel: Level,
+        pPos: BlockPos,
+        pState: BlockState,
+        pValue: Property<T>,
         boolean: V
     ) = pLevel.setBlockAndUpdate(pPos, pState.setValue(pValue, boolean))
 }

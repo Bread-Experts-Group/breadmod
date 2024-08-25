@@ -165,7 +165,8 @@ fun GuiGraphics.renderFluid(
     val spriteDiff = if (pFlowing) {
         val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
         atlas.apply(ext.flowingTexture).let {
-            val flowingWidth = it.contents().width(); it to if (flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F
+            val flowingWidth =
+                it.contents().width(); it to if (flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F
         }
     } else atlas.apply(ext.stillTexture) to 1F
 

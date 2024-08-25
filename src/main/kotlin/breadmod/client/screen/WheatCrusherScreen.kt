@@ -35,13 +35,14 @@ class WheatCrusherScreen(
         renderEnergyMeter(pGuiGraphics)
     }
 
-    private var step: Int = -32; private var timer: Int = 20
+    private var step: Int = -32
+    private var timer: Int = 20
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, delta: Float) {
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, delta)
 
         val showShort = !minecraft!!.options.keyShift.isDown
-        if(this.isHovering(151,14, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+        if (this.isHovering(151, 14, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
             menu.parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let {
                 pGuiGraphics.renderComponentTooltip(
                     this.font,
@@ -56,15 +57,15 @@ class WheatCrusherScreen(
             }
         }
 
-        if(menu.isCrafting()) { // The timer might be irrelevant in this since the code runs every tick, but I'm not sure yet
+        if (menu.isCrafting()) { // The timer might be irrelevant in this since the code runs every tick, but I'm not sure yet
             // Left crushing wheel
             pGuiGraphics.blit(texture, leftPos + 51, topPos + 38, 176, step, 32, 32)
             // Right crushing wheel
             pGuiGraphics.blit(texture, leftPos + 92, topPos + 38, 208, step, 32, 32)
-            if(timer <= 0) {
+            if (timer <= 0) {
                 timer = 40
-                if(step < 32) step += 32 else step = -32
-            } else timer -=2
+                if (step < 32) step += 32 else step = -32
+            } else timer -= 2
         } else step = -32
 
         renderTooltip(pGuiGraphics, pMouseX, pMouseY)
@@ -77,7 +78,7 @@ class WheatCrusherScreen(
     }
 
     private fun renderProgressArrow(pGuiGraphics: GuiGraphics) {
-        if(menu.isCrafting()) {
+        if (menu.isCrafting()) {
             pGuiGraphics.blit(texture, leftPos + 83, topPos + 32, 192, 64, 9, menu.getScaledProgress())
         }
     }

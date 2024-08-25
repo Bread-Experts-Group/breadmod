@@ -53,22 +53,24 @@ class EnergyBattery(
      * @since 1.0.0
      */
     var capacity: Int = capacity
-        set(value) { stored = min(stored, value); field = value }
+        set(value) {
+            stored = min(stored, value); field = value
+        }
 
-    override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = if(maxInputPerOp > 0) {
+    override fun receiveEnergy(maxReceive: Int, simulate: Boolean): Int = if (maxInputPerOp > 0) {
         val toReceive = min(maxReceive, maxInputPerOp)
         val newStore = stored + min(maxReceive, maxInputPerOp)
-        val delta = if(newStore > capacity) min(capacity - stored, newStore) else toReceive
-        if(!simulate && delta != 0) {
+        val delta = if (newStore > capacity) min(capacity - stored, newStore) else toReceive
+        if (!simulate && delta != 0) {
             stored += delta
             changed?.invoke()
         }
         delta
     } else 0
 
-    override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = if(maxOutputPerOp > 0) {
+    override fun extractEnergy(maxExtract: Int, simulate: Boolean): Int = if (maxOutputPerOp > 0) {
         val delta = min(stored, min(maxExtract, maxOutputPerOp))
-        if(!simulate && delta != 0) {
+        if (!simulate && delta != 0) {
             stored -= delta
             changed?.invoke()
         }
@@ -99,7 +101,7 @@ class EnergyBattery(
 
     fun distribute(pLevel: Level, pPos: BlockPos, sides: List<Direction?>?, facing: Direction = Direction.NORTH) {
         val energies = (sides?.filterNotNull() ?: Direction.entries).mapNotNull {
-            val rotated = translateDirection(facing, it).let { r -> if(r.axis == Direction.Axis.Z) r.opposite else r }
+            val rotated = translateDirection(facing, it).let { r -> if (r.axis == Direction.Axis.Z) r.opposite else r }
             pLevel.getBlockEntity(pPos.offset(rotated.normal))?.getCapability(
                 ForgeCapabilities.ENERGY,
                 rotated.opposite

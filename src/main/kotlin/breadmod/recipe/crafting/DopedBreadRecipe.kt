@@ -17,13 +17,14 @@ import net.minecraft.world.level.Level
 
 class DopedBreadRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory) : CustomRecipe(pId, pCategory) {
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
-        var hasPotion = false; var hasBread = false
+        var hasPotion = false
+        var hasBread = false
         pContainer.items.forEach {
-            if(!it.isEmpty)
-                if(it.item is PotionItem) {
-                    if(!hasPotion) hasPotion = true
+            if (!it.isEmpty)
+                if (it.item is PotionItem) {
+                    if (!hasPotion) hasPotion = true
                     else return false
-                } else if(it.`is`(Items.BREAD)) hasBread = true
+                } else if (it.`is`(Items.BREAD)) hasBread = true
                 else return false
         }
 
@@ -35,11 +36,12 @@ class DopedBreadRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory) :
         var potionStack = ItemStack.EMPTY
 
         pContainer.items.forEach {
-            if(it.`is`(Items.BREAD)) itemStack.grow(1)
-            else if(it.item is PotionItem) potionStack = it
+            if (it.`is`(Items.BREAD)) itemStack.grow(1)
+            else if (it.item is PotionItem) potionStack = it
         }
 
-        val effects = PotionUtils.getMobEffects(potionStack).map { MobEffectInstance(it.effect, it.duration / itemStack.count) }
+        val effects =
+            PotionUtils.getMobEffects(potionStack).map { MobEffectInstance(it.effect, it.duration / itemStack.count) }
         PotionUtils.setCustomEffects(itemStack, effects)
         return itemStack
     }

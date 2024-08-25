@@ -29,12 +29,16 @@ class GeneratorBlockEntity(
     ForgeCapabilities.ENERGY to
             (EnergyBattery(50000, 0, 2000) to mutableListOf(Direction.WEST, null)),
     ForgeCapabilities.ITEM_HANDLER to
-            (IndexableItemHandler(mutableListOf(64 to StorageDirection.STORE_ONLY)) to mutableListOf(Direction.UP, null))
+            (IndexableItemHandler(mutableListOf(64 to StorageDirection.STORE_ONLY)) to mutableListOf(
+                Direction.UP,
+                null
+            ))
 ) {
     init {
-        capabilityHolder.capability<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER).insertItemCheck = { _, stack, _ ->
-            stack.item !is BucketItem && ForgeHooks.getBurnTime(stack, null) > 0
-        }
+        capabilityHolder.capability<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER).insertItemCheck =
+            { _, stack, _ ->
+                stack.item !is BucketItem && ForgeHooks.getBurnTime(stack, null) > 0
+            }
     }
 
     val cManager = CraftingManager(
@@ -47,7 +51,7 @@ class GeneratorBlockEntity(
 
     fun addBurnTime(ticks: Int): Boolean {
         val new = burnTime + ticks
-        if(ticks == 0 || new > MAX_BURN_TIME.get()) return false
+        if (ticks == 0 || new > MAX_BURN_TIME.get()) return false
         level?.playSound(
             null,
             worldPosition, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS,
@@ -58,8 +62,13 @@ class GeneratorBlockEntity(
         return true
     }
 
-    override fun adjustSaveAdditional(pTag: CompoundTag) { pTag.putInt("BurnTime", burnTime) }
-    override fun adjustLoad(pTag: CompoundTag) { burnTime = pTag.getInt("BurnTime") }
+    override fun adjustSaveAdditional(pTag: CompoundTag) {
+        pTag.putInt("BurnTime", burnTime)
+    }
+
+    override fun adjustLoad(pTag: CompoundTag) {
+        burnTime = pTag.getInt("BurnTime")
+    }
 
     override fun preTick(
         pLevel: Level,
@@ -68,7 +77,7 @@ class GeneratorBlockEntity(
         pBlockEntity: AbstractMachineBlockEntity<GeneratorBlockEntity>
     ) {
         capabilityHolder.capability<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER).let {
-            if(burnTime < MAX_BURN_TIME.get() && addBurnTime(ForgeHooks.getBurnTime(it[0], null)))
+            if (burnTime < MAX_BURN_TIME.get() && addBurnTime(ForgeHooks.getBurnTime(it[0], null)))
                 it[0].shrink(1)
         }
     }
@@ -85,7 +94,7 @@ class GeneratorBlockEntity(
         val battery = (holder!!.first.resolve().get() as EnergyBattery)
 
         val rfTick = RF_PER_TICK.get()
-        if(burnTime > 0 && battery.stored < battery.maxEnergyStored - rfTick) {
+        if (burnTime > 0 && battery.stored < battery.maxEnergyStored - rfTick) {
             isLit = true
             battery.stored += rfTick
             burnTime--

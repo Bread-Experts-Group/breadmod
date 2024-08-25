@@ -20,13 +20,15 @@ import net.minecraftforge.fml.ModList
 import net.minecraftforge.registries.RegistryObject
 import kotlin.math.min
 
-class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper, IRegisterSpecialCreativeTab {
+class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItemEmcHolder, IBarHelper,
+    IRegisterSpecialCreativeTab {
     private val emcAmount = 45000
+
     init {
         this.addItemCapability { EmcHolderItemCapabilityWrapper() }
-        if(ModList.get().isLoaded("curios")) {
+        if (ModList.get().isLoaded("curios")) {
             this.addItemCapability("curios", IntegrationHelper.CURIO_CAP_SUPPLIER)
-        // Just hook into ProjectE's curios implementation since this item needs ProjectE to exist
+            // Just hook into ProjectE's curios implementation since this item needs ProjectE to exist
         }
     }
 
@@ -36,6 +38,7 @@ class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItem
         // Divides currently stored EMC by max EMC and subtracts by 1
         return if (itemEmc == 0L) 1.0f else (1.0 - itemEmc.toDouble() / emcAmount).toFloat()
     }
+
     override fun getBarWidth(pStack: ItemStack): Int = getScaledBarWidth(pStack)
 
     override fun insertEmc(pStack: ItemStack, pLong: Long, pEmcAction: IEmcStorage.EmcAction?): Long {
@@ -65,7 +68,7 @@ class BreadOrbItem : ItemPE(Properties().stacksTo(1).rarity(Rarity.RARE)), IItem
         pTooltipComponents: MutableList<Component>,
         pIsAdvanced: TooltipFlag
     ) {
-        pTooltipComponents.add(modTranslatable("item","bread_orb", "tooltip").withStyle(ChatFormatting.GOLD))
+        pTooltipComponents.add(modTranslatable("item", "bread_orb", "tooltip").withStyle(ChatFormatting.GOLD))
     }
 
     override fun getStoredEmc(pStack: ItemStack): Long = getEmc(pStack)

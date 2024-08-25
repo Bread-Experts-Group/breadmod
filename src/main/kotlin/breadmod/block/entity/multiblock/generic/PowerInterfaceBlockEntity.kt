@@ -8,7 +8,8 @@ import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 
-class PowerInterfaceBlockEntity(pPos: BlockPos, pBlockState: BlockState) : AbstractMachineBlockEntity<PowerInterfaceBlockEntity>(
-    ModBlockEntityTypes.MULTIBLOCK_GENERIC_POWER.get(), pPos, pBlockState,
-    ForgeCapabilities.ENERGY to (EnergyBattery(750000, 1000) to ACCEPT_ALL)
-)
+class PowerInterfaceBlockEntity(pPos: BlockPos, pBlockState: BlockState) :
+    AbstractMachineBlockEntity<PowerInterfaceBlockEntity>(
+        ModBlockEntityTypes.MULTIBLOCK_GENERIC_POWER.get(), pPos, pBlockState,
+        ForgeCapabilities.ENERGY to (EnergyBattery(750000, 1000) to ACCEPT_ALL)
+    )

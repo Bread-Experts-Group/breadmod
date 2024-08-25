@@ -20,7 +20,7 @@ class CertificateItemScreen(
 
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F)
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         RenderSystem.setShaderTexture(0, TEXTURE)
         titleLabelY = 3
         inventoryLabelY = 999

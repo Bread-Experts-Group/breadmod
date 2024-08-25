@@ -127,7 +127,13 @@ object ClientForgeEventBus {
         ) holdScreen.onClose()
     }
 
-    private fun handleInput(action: Int, key: InputConstants.Key, modifiers: Int, player: LocalPlayer?, screen: Screen?) {
+    private fun handleInput(
+        action: Int,
+        key: InputConstants.Key,
+        modifiers: Int,
+        player: LocalPlayer?,
+        screen: Screen?
+    ) {
         if (action == InputConstants.REPEAT) return
         if (screen is IHoldScreen) {
             handleHoldScreenInput(screen, key, action, modifiers)
@@ -199,7 +205,7 @@ object ClientForgeEventBus {
         )
     }
 
-    private class WarTimerArgument: ArgumentType<Int> {
+    private class WarTimerArgument : ArgumentType<Int> {
         override fun parse(reader: StringReader): Int {
             return reader.readInt()
         }
@@ -208,7 +214,7 @@ object ClientForgeEventBus {
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
     fun onTick(event: ClientTickEvent) {
-        if(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) return
+        if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) return
 
         WarTicker.tick()
     }

@@ -17,35 +17,38 @@ import java.lang.Math.random
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()), IRegisterSpecialCreativeTab {
+class UltimateBreadItem : Item(Properties().stacksTo(1).fireResistant()), IRegisterSpecialCreativeTab {
     private fun getTimeLeft(pStack: ItemStack): Long {
-        if(pStack.orCreateTag.contains(TIME_LEFT_NBT)) return pStack.orCreateTag.getLong(TIME_LEFT_NBT)
+        if (pStack.orCreateTag.contains(TIME_LEFT_NBT)) return pStack.orCreateTag.getLong(TIME_LEFT_NBT)
         else {
             val max = MAX_TIME_CONFIG.get()
             setTimeLeft(pStack, max)
             return max
         }
     }
+
     fun setTimeLeft(pStack: ItemStack, ticks: Long) = pStack.orCreateTag.putLong(TIME_LEFT_NBT, ticks)
 
     override fun getBarColor(pStack: ItemStack): Int = Color.HSBtoRGB(
         MAX_TIME_CONFIG.get().let { min(it, getTimeLeft(pStack)).toFloat() / it },
         1.0f, 1.0f
     )
-    override fun getBarWidth(pStack: ItemStack): Int = (13F * (getTimeLeft(pStack) / MAX_TIME_CONFIG.get())).roundToInt()
+
+    override fun getBarWidth(pStack: ItemStack): Int =
+        (13F * (getTimeLeft(pStack) / MAX_TIME_CONFIG.get())).roundToInt()
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
-        if(pEntity is ServerPlayer) {
-            if(pIsSelected) {
+        if (pEntity is ServerPlayer) {
+            if (pIsSelected) {
                 val randomIndex = (random() * pEntity.inventory.items.size).roundToInt()
                 val randomStack = pEntity.inventory.getItem(randomIndex).copyAndClear()
                 pEntity.inventory.setItem(randomIndex, pStack)
                 pEntity.inventory.setItem(pSlotId, randomStack)
             }
 
-            if(pEntity.inventory.countItem(ModItems.ULTIMATE_BREAD.get()) > 1) {
+            if (pEntity.inventory.countItem(ModItems.ULTIMATE_BREAD.get()) > 1) {
                 pEntity.setGameMode(GameType.DEFAULT_MODE)
-                pEntity.inventory.items.forEach { if(it.`is`(ModItems.ULTIMATE_BREAD.get())) it.count = 0 }
+                pEntity.inventory.items.forEach { if (it.`is`(ModItems.ULTIMATE_BREAD.get())) it.count = 0 }
                 pLevel.explode(pEntity, pEntity.x, pEntity.y, pEntity.z, 5.0f, Level.ExplosionInteraction.MOB)
             }
 
@@ -54,7 +57,7 @@ class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()), IRegist
                 pEntity.setGameMode(GameType.DEFAULT_MODE)
                 pStack.count = 0
             } else {
-                if(!pEntity.gameMode.isCreative) pEntity.setGameMode(GameType.CREATIVE)
+                if (!pEntity.gameMode.isCreative) pEntity.setGameMode(GameType.CREATIVE)
                 setTimeLeft(pStack, timeLeft - 1)
             }
         }
@@ -67,7 +70,12 @@ class UltimateBreadItem: Item(Properties().stacksTo(1).fireResistant()), IRegist
         pParameters: CreativeModeTab.ItemDisplayParameters,
         pOutput: CreativeModeTab.Output,
     ): Boolean {
-        pOutput.accept(ItemStack(this).also { this.setTimeLeft(it, ModConfiguration.COMMON.ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS.get()) })
+        pOutput.accept(ItemStack(this).also {
+            this.setTimeLeft(
+                it,
+                ModConfiguration.COMMON.ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS.get()
+            )
+        })
         pOutput.accept(ItemStack(this).also { this.setTimeLeft(it, Long.MAX_VALUE) })
         return false
     }

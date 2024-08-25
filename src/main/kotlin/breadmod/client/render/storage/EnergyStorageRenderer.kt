@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
 import java.awt.Color
 
-class EnergyStorageRenderer: BaseAbstractStorageBlockRenderer<EnergyStorageBlockEntity>() {
+class EnergyStorageRenderer : BaseAbstractStorageBlockRenderer<EnergyStorageBlockEntity>() {
 
     override fun render(
         pBlockEntity: EnergyStorageBlockEntity,

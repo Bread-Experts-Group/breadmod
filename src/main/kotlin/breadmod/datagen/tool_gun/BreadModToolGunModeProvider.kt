@@ -20,7 +20,8 @@ import java.util.concurrent.CompletableFuture
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, private val modID: String): DataProvider {
+abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, private val modID: String) :
+    DataProvider {
     data class Control(
         val id: String,
         val nameKey: String,
@@ -30,11 +31,13 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
         val modifier: KeyModifier? = null
     )
 
-    private val addedModes: MutableMap<String, Triple<Pair<Component, Component>, List<Control>, Class<*>>> = mutableMapOf()
+    private val addedModes: MutableMap<String, Triple<Pair<Component, Component>, List<Control>, Class<*>>> =
+        mutableMapOf()
 
     final override fun run(p0: CachedOutput): CompletableFuture<*> {
         addModes()
-        val dataLocation = packOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(modID).resolve(TOOL_GUN_DEF).resolve("mode")
+        val dataLocation =
+            packOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(modID).resolve(TOOL_GUN_DEF).resolve("mode")
         return CompletableFuture.allOf(
             *buildList {
                 addedModes.forEach { (name, data) ->
@@ -62,13 +65,13 @@ abstract class BreadModToolGunModeProvider(private val packOutput: PackOutput, p
 
     abstract fun addModes()
 
-    fun <T: IToolGunMode> addMode(
+    fun <T : IToolGunMode> addMode(
         name: String,
         displayName: Component, tooltip: Component,
         keyActions: List<Control>,
         actionClass: Class<T>
     ) {
-        if(addedModes.containsKey(name)) throw IllegalStateException("There already exists a tool gun mode for $modID/$name!")
+        if (addedModes.containsKey(name)) throw IllegalStateException("There already exists a tool gun mode for $modID/$name!")
         addedModes[name] = Triple(displayName to tooltip, keyActions, actionClass)
     }
 

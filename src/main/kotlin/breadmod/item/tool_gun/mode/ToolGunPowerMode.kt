@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-internal class ToolGunPowerMode: IToolGunMode {
+internal class ToolGunPowerMode : IToolGunMode {
     var count = 0
 
     override fun action(
@@ -18,7 +18,7 @@ internal class ToolGunPowerMode: IToolGunMode {
         pControl: BreadModToolGunModeProvider.Control
     ) {
         // Really important. Don't let computerSD run on the server.
-        if(pLevel.isClientSide) {
+        if (pLevel.isClientSide) {
             ToolGunAnimationHandler.trigger()
             count++
             if (count < 5) return

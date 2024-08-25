@@ -15,7 +15,11 @@ open class ObservableList<E>(
     initialization: (index: Int) -> E,
     var listChanged: ((index: Int, element: E) -> Unit)? = null
 ) : AbstractMutableList<E>() {
-    constructor(list: List<E>, changed: ((index: Int, element: E) -> Unit)? = null) : this(list.size, { list[it] }, changed)
+    constructor(list: List<E>, changed: ((index: Int, element: E) -> Unit)? = null) : this(
+        list.size,
+        { list[it] },
+        changed
+    )
 
     private val list: MutableList<E> = MutableList(listSize, initialization)
     override val size: Int = list.size

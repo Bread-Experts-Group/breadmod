@@ -23,18 +23,20 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 class BreadBlock : FlammableBlock(
     Properties.copy(Blocks.HAY_BLOCK)
         .strength(0.5f)
-        .lightLevel { state -> if(state.getValue(BlockStateProperties.POWERED)) 8 else 0 }
+        .lightLevel { state -> if (state.getValue(BlockStateProperties.POWERED)) 8 else 0 }
 ), ILightningStrikeAction {
     init {
-        this.registerDefaultState(this.defaultBlockState()
-            .setValue(BlockStateProperties.POWERED, false)
+        this.registerDefaultState(
+            this.defaultBlockState()
+                .setValue(BlockStateProperties.POWERED, false)
         )
     }
 
     override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean =
         !(state.getValue(BlockStateProperties.POWERED) || (level is ServerLevel && level.dimensionType() == ModDimensions.BREAD.first.dimensionType.second))
-    override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int
-            = 120
+
+    override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int =
+        120
 
     override fun onCaughtFire(
         state: BlockState,
@@ -53,7 +55,15 @@ class BreadBlock : FlammableBlock(
                 if (pLevel.dimensionType() === ModDimensions.BREAD.first.dimensionType.second) Level.OVERWORLD
                 else ModDimensions.BREAD.second
             pEntity.changeDimension(pLevel.server.getLevel(resourceKey) ?: return)
-            pLevel.explode(pEntity, pPos.x.toDouble(), pPos.y.toDouble(), pPos.z.toDouble(), 8.0F, true, Level.ExplosionInteraction.BLOCK)
+            pLevel.explode(
+                pEntity,
+                pPos.x.toDouble(),
+                pPos.y.toDouble(),
+                pPos.z.toDouble(),
+                8.0F,
+                true,
+                Level.ExplosionInteraction.BLOCK
+            )
         }
     }
 

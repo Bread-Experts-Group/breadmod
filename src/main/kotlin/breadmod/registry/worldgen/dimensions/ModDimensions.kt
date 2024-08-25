@@ -78,6 +78,7 @@ object ModDimensions {
 
     fun bootstrapDimensionTypes(ctx: BootstrapContext<DimensionType>) =
         ModDimensionEntry.entries.forEach { ctx.register(it.dimensionType.first, it.dimensionType.second) }
+
     fun bootstrapLevelStems(ctx: BootstrapContext<LevelStem>) {
         val noiseSettings = ctx.lookup(Registries.NOISE_SETTINGS)
         val mnbspList = ctx.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
@@ -85,23 +86,26 @@ object ModDimensions {
         val biomeGetter = ctx.lookup(Registries.BIOME)
 
         ModDimensionEntry.entries.forEach {
-            ctx.register(it.levelStemKey, LevelStem(
-                holderGetter.getOrThrow(it.dimensionType.first),
-                NoiseBasedChunkGenerator(
-                    it.climateParameterListBuilder.let { builder ->
-                        if (builder != null) MultiNoiseBiomeSource.createFromList(builder(biomeGetter))
-                        else MultiNoiseBiomeSource.createFromPreset(
-                            mnbspList.getOrThrow(
-                                MultiNoiseBiomeSourceParameterLists.OVERWORLD
+            ctx.register(
+                it.levelStemKey, LevelStem(
+                    holderGetter.getOrThrow(it.dimensionType.first),
+                    NoiseBasedChunkGenerator(
+                        it.climateParameterListBuilder.let { builder ->
+                            if (builder != null) MultiNoiseBiomeSource.createFromList(builder(biomeGetter))
+                            else MultiNoiseBiomeSource.createFromPreset(
+                                mnbspList.getOrThrow(
+                                    MultiNoiseBiomeSourceParameterLists.OVERWORLD
+                                )
                             )
-                        )
-                    },
-                    noiseSettings.getOrThrow(it.noiseSettings)
+                        },
+                        noiseSettings.getOrThrow(it.noiseSettings)
+                    )
                 )
-            )
             )
         }
     }
 
-    init { ModDimensionEntry.frozen = true }
+    init {
+        ModDimensionEntry.frozen = true
+    }
 }

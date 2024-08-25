@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class KeyboardBlock: Block(Properties.copy(Blocks.IRON_BLOCK).noOcclusion()), SimpleWaterloggedBlock {
+class KeyboardBlock : Block(Properties.copy(Blocks.IRON_BLOCK).noOcclusion()), SimpleWaterloggedBlock {
     init {
         this.registerDefaultState(
             stateDefinition.any()
@@ -34,7 +34,9 @@ class KeyboardBlock: Block(Properties.copy(Blocks.IRON_BLOCK).noOcclusion()), Si
     }
 
     override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.WATERLOGGED) }
+        pBuilder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.WATERLOGGED)
+    }
+
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
         defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.nearestLookingDirection.opposite)
 }

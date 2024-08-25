@@ -15,13 +15,15 @@ object ModStructureSets {
 
     private val RANDOM = Random(39245)
     private val FARMHOUSE: ResourceKey<StructureSet> = createKey("farmhouse")
-    
+
     fun bootstrap(pContext: BootstapContext<StructureSet>) {
         val structureHolder = pContext.lookup(Registries.STRUCTURE)
         pContext.register(
-            FARMHOUSE, StructureSet(structureHolder.getOrThrow(ModStructures.FARMHOUSE), RandomSpreadStructurePlacement(
-                34, 8, RandomSpreadType.LINEAR, RANDOM.nextInt().absoluteValue
-            ))
+            FARMHOUSE, StructureSet(
+                structureHolder.getOrThrow(ModStructures.FARMHOUSE), RandomSpreadStructurePlacement(
+                    34, 8, RandomSpreadType.LINEAR, RANDOM.nextInt().absoluteValue
+                )
+            )
         )
     }
 }

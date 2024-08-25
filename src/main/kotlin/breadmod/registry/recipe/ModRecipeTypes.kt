@@ -10,7 +10,8 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 
 object ModRecipeTypes {
-    internal val deferredRegister: DeferredRegister<RecipeType<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<RecipeType<*>> =
+        DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ModMain.ID)
 
     val DOUGH_MACHINE = deferredRegister.registerType<DoughMachineRecipe>("dough_machine")
     val WHEAT_CRUSHING = deferredRegister.registerType<WheatCrushingRecipe>("wheat_crusher")

@@ -128,7 +128,13 @@ class TextWidget(
                     val position = Vector2i(width / 2, 0)
                     if (pCentering == CenteringType.CENTER_RECT) position.add(0, getCenterForFont)
 
-                    pGuiGraphics.drawCenteredString(rgMinecraft.font, message, position.x, position.y, pMessageColor.rgb)
+                    pGuiGraphics.drawCenteredString(
+                        rgMinecraft.font,
+                        message,
+                        position.x,
+                        position.y,
+                        pMessageColor.rgb
+                    )
                 }
 
                 else -> pGuiGraphics.drawString(rgMinecraft.font, message, 0, 0, pMessageColor.rgb)

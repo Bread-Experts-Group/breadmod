@@ -25,10 +25,12 @@ import net.minecraft.world.item.ItemStack
 import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.registries.ForgeRegistries
 
-class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergyRecipeCategory<DoughMachineRecipe>(guiHelper) {
-    val texture = modLocation("textures","gui","jei","gui_dough_machine.png")
-    private val recipeTime : Int = 0
-    private val cachedArrows = createCachedArrows(guiHelper, 24, texture, 147, 0, 24, 17, IDrawableAnimated.StartDirection.LEFT, false)
+class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) :
+    FluidEnergyRecipeCategory<DoughMachineRecipe>(guiHelper) {
+    val texture = modLocation("textures", "gui", "jei", "gui_dough_machine.png")
+    private val recipeTime: Int = 0
+    private val cachedArrows =
+        createCachedArrows(guiHelper, 24, texture, 147, 0, 24, 17, IDrawableAnimated.StartDirection.LEFT, false)
 
     override fun getTitle(): Component = Component.translatable(ModBlocks.DOUGH_MACHINE_BLOCK.get().descriptionId)
     override fun getBackground(): IDrawable = guiHelper.createDrawable(texture, 0, 0, 147, 55)
@@ -52,25 +54,28 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergy
             .addItemStacks(buildList {
                 recipe.itemsRequired?.forEach { add(it) }
                 recipe.itemsRequiredTagged?.forEach { (tagKey, amount) ->
-                    ForgeRegistries.ITEMS.filter { it.defaultInstance.`is`(tagKey) }.forEach { item -> add(ItemStack(item, amount)) }
+                    ForgeRegistries.ITEMS.filter { it.defaultInstance.`is`(tagKey) }
+                        .forEach { item -> add(ItemStack(item, amount)) }
                 }
             })
 
         val buckets = mutableListOf<ItemStack>()
-        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 123,23)
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 123, 23)
             .addIngredients(ForgeTypes.FLUID_STACK, buildList {
                 recipe.fluidsRequired?.forEach { add(it) }
                 recipe.fluidsRequiredTagged?.forEach { (tagKey, amount) ->
-                    ForgeRegistries.FLUIDS.filter { it.isTag(tagKey) }.forEach { fluid -> add(FluidStack(fluid, amount)); buckets.add(fluid.bucket.defaultInstance) }
+                    ForgeRegistries.FLUIDS.filter { it.isTag(tagKey) }
+                        .forEach { fluid -> add(FluidStack(fluid, amount)); buckets.add(fluid.bucket.defaultInstance) }
                 }
             })
             .setFluidRenderer(INPUT_TANK_CAPACITY.toLong(), true, 16, 28)
         builder.addSlot(RecipeIngredientRole.INPUT, 8, 0).addItemStacks(buckets)
 
         recipe.itemsOutput?.let { builder.addSlot(RecipeIngredientRole.OUTPUT, 60, 19).addItemStacks(it) }
-        recipe.fluidsOutput?.let { builder.addSlot(RecipeIngredientRole.OUTPUT, 123,4)
-            .addIngredients(ForgeTypes.FLUID_STACK, it)
-            .setFluidRenderer(OUTPUT_TANK_CAPACITY.toLong(), true, 16, 16)
+        recipe.fluidsOutput?.let {
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 123, 4)
+                .addIngredients(ForgeTypes.FLUID_STACK, it)
+                .setFluidRenderer(OUTPUT_TANK_CAPACITY.toLong(), true, 16, 16)
         }
     }
 }

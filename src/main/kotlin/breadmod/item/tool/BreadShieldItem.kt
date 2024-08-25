@@ -20,7 +20,8 @@ class BreadShieldItem : ShieldItem(Properties().stacksTo(1).durability(250)) {
         pTooltip: MutableList<Component>,
         pFlag: TooltipFlag
     ) {
-        pTooltip.add(1,
+        pTooltip.add(
+            1,
             modTranslatable("item", "bread_shield", "tooltip")
                 .withStyle(ChatFormatting.AQUA)
         )

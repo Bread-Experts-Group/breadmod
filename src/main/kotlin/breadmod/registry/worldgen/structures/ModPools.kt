@@ -21,6 +21,7 @@ object ModPools {
                 templateHolder,
                 listOf(Pair.of(StructurePoolElement.single("breadmod:farmhouse"), 50)),
                 StructureTemplatePool.Projection.RIGID
-            ))
+            )
+        )
     }
 }

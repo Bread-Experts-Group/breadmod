@@ -79,7 +79,11 @@ object ToolGunCreatorSpawnMenuFactory : SerializedScreenFactory<ToolGunCreatorMe
         )
     )
 
-    override fun create(pMenu: ToolGunCreatorMenu, pInventory: Inventory, pTitle: Component): ToolGunCreatorSerializedScreen =
+    override fun create(
+        pMenu: ToolGunCreatorMenu,
+        pInventory: Inventory,
+        pTitle: Component
+    ): ToolGunCreatorSerializedScreen =
         ToolGunCreatorSerializedScreen(
             pMenu,
             pInventory,

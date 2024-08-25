@@ -64,7 +64,8 @@ object ModBlocks {
         "bread_block",
         { BreadBlock() },
         Item.Properties().also {
-            val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null) ?: throw IllegalStateException("Bread has no food properties???")
+            val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null)
+                ?: throw IllegalStateException("Bread has no food properties???")
             it.food(
                 FoodProperties.Builder()
                     .nutrition(breadFoodStats.nutrition * 9)
@@ -87,7 +88,7 @@ object ModBlocks {
         { MonitorBlock() },
         Item.Properties()
     )
-    
+
     val KEYBOARD = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "keyboard",
@@ -99,17 +100,21 @@ object ModBlocks {
         ModItems.deferredRegister,
         "charcoal_block",
         { FlammableBlock(BlockBehaviour.Properties.copy(Blocks.COAL_BLOCK)) },
-        { block -> object : BlockItem(block, Properties()), IForgeItem {
-            override fun getBurnTime(itemStack: ItemStack?, recipeType: RecipeType<*>?): Int = 1600 * 9
-        } }
+        { block ->
+            object : BlockItem(block, Properties()), IForgeItem {
+                override fun getBurnTime(itemStack: ItemStack?, recipeType: RecipeType<*>?): Int = 1600 * 9
+            }
+        }
     )
     val LOW_DENSITY_CHARCOAL_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "ld_charcoal_block",
         { FlammableBlock(BlockBehaviour.Properties.copy(Blocks.BLACK_WOOL)) },
-        { block -> object : BlockItem(block, Properties()), IForgeItem {
-            override fun getBurnTime(itemStack: ItemStack?, recipeType: RecipeType<*>?): Int = 1600 * 4
-        } }
+        { block ->
+            object : BlockItem(block, Properties()), IForgeItem {
+                override fun getBurnTime(itemStack: ItemStack?, recipeType: RecipeType<*>?): Int = 1600 * 4
+            }
+        }
     )
 
     val DOUGH_MACHINE_BLOCK = deferredRegister.registerBlockItem(
@@ -137,11 +142,15 @@ object ModBlocks {
         ModItems.deferredRegister,
         "creative_generator",
         { CreativeGeneratorBlock() },
-        { block -> object : BlockItem(block, Properties()) {
-            override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions{
-                override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = CreativeGeneratorItemRenderer()
-            })
-        }}
+        { block ->
+            object : BlockItem(block, Properties()) {
+                override fun initializeClient(consumer: Consumer<IClientItemExtensions>) =
+                    consumer.accept(object : IClientItemExtensions {
+                        override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+                            CreativeGeneratorItemRenderer()
+                    })
+            }
+        }
     )
 
     // the silly
@@ -241,11 +250,31 @@ object ModBlocks {
     val FLOUR_BLOCK = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "flour_block",
-        { object : FallingBlock(Properties.of().ignitedByLava().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.SNOW)) {
-            override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
-            override fun getFlammability(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int = 100
-            override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int = 150
-        } },
+        {
+            object :
+                FallingBlock(Properties.of().ignitedByLava().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.SNOW)) {
+                override fun isFlammable(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Boolean = true
+
+                override fun getFlammability(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Int = 100
+
+                override fun getFireSpreadSpeed(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Int = 150
+            }
+        },
         Item.Properties()
     )
 
@@ -259,28 +288,51 @@ object ModBlocks {
     val BREAD_FENCE = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "bread_fence",
-        { object : FenceBlock(Properties.of()
-            .forceSolidOn()
-            .sound(SoundType.GRASS)
-            .strength(1.0F)
-        ) {
-            override fun getFireSpreadSpeed(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int = 100
-            override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
-        } },
+        {
+            object : FenceBlock(
+                Properties.of()
+                    .forceSolidOn()
+                    .sound(SoundType.GRASS)
+                    .strength(1.0F)
+            ) {
+                override fun getFireSpreadSpeed(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Int = 100
+
+                override fun isFlammable(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Boolean = true
+            }
+        },
         Item.Properties()
     )
 
     val BREAD_DOOR = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "bread_door",
-        { object : DoorBlock(Properties.of()
-            .mapColor(MapColor.WOOD)
-            .strength(1.0F)
-            .pushReaction(PushReaction.DESTROY)
-            .noOcclusion(),
-            ModBlockSetTypes.BREAD) { //todo create item texture
-            override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean = true
-        } },
+        {
+            object : DoorBlock(
+                Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(1.0F)
+                    .pushReaction(PushReaction.DESTROY)
+                    .noOcclusion(),
+                ModBlockSetTypes.BREAD
+            ) { //todo create item texture
+                override fun isFlammable(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Boolean = true
+            }
+        },
         Item.Properties()
     )
 
@@ -295,25 +347,30 @@ object ModBlocks {
         ModItems.deferredRegister,
         "bauxite_ore",
         { OreBlock() },
-        { block -> object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
-            override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.MAIN_TAB)
+        { block ->
+            object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
+                override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.MAIN_TAB)
 
-            override fun displayInCreativeTab(
-                pParameters: CreativeModeTab.ItemDisplayParameters,
-                pOutput: CreativeModeTab.Output
-            ): Boolean {
-                OreBlock.Companion.OreTypes.entries.forEach { type ->
-                    pOutput.accept(ItemStack(block).also {
-                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                        UseBlockStateNBT.saveState(it.orCreateTag, BlockState(block, ImmutableMap.copyOf(mapOf(OreBlock.ORE_TYPE to type)), null))
-                    })
+                override fun displayInCreativeTab(
+                    pParameters: CreativeModeTab.ItemDisplayParameters,
+                    pOutput: CreativeModeTab.Output
+                ): Boolean {
+                    OreBlock.Companion.OreTypes.entries.forEach { type ->
+                        pOutput.accept(ItemStack(block).also {
+                            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                            UseBlockStateNBT.saveState(
+                                it.orCreateTag,
+                                BlockState(block, ImmutableMap.copyOf(mapOf(OreBlock.ORE_TYPE to type)), null)
+                            )
+                        })
+                    }
+                    return false
                 }
-                return false
             }
-        } }
+        }
     )
 
-    private class CharacterModelBlock: Block(Properties.of().noOcclusion()) {
+    private class CharacterModelBlock : Block(Properties.of().noOcclusion()) {
         override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
             pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
         }
@@ -321,16 +378,18 @@ object ModBlocks {
         override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
 
-        @Deprecated("Deprecated in Java", ReplaceWith(
-            "super.getShape(pState, pLevel, pPos, pContext)",
-            "net.minecraft.world.level.block.Block"
-        ))
+        @Deprecated(
+            "Deprecated in Java", ReplaceWith(
+                "super.getShape(pState, pLevel, pPos, pContext)",
+                "net.minecraft.world.level.block.Block"
+            )
+        )
         override fun getShape(
             pState: BlockState,
             pLevel: BlockGetter,
             pPos: BlockPos,
             pContext: CollisionContext
-        ): VoxelShape = when(pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+        ): VoxelShape = when (pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
             Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
             else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
         }
@@ -388,30 +447,38 @@ object ModBlocks {
                 )
             )
             // TODO: All stolen from snow loot table. Remake in the future?
-            add(FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
-                LootPool.lootPool().`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
-                    .add(
-                        AlternativesEntry.alternatives(AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
-                            LootItem.lootTableItem(ModItems.FLOUR.get()).`when`(
-                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block).setProperties(
-                                    StatePropertiesPredicate.Builder.properties().hasProperty(
-                                        SnowLayerBlock.LAYERS, pValue
-                                    )
-                                )
-                            ).apply(SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2)))
-                        }.`when`(HAS_NO_SILK_TOUCH), AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
-                            (if (pValue == 8)
-                                LootItem.lootTableItem(FLOUR_BLOCK.get().block)
-                            else LootItem.lootTableItem(ModItems.FLOUR.get()).apply(
-                                SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2))
-                            ).`when`(
-                                LootItemBlockStatePropertyCondition.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block).setProperties(
-                                    StatePropertiesPredicate.Builder.properties().hasProperty(SnowLayerBlock.LAYERS, pValue)
-                                )
-                            )) as LootPoolEntryContainer.Builder<*>
-                        })
-                    )
-            ))
+            add(
+                FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
+                    LootPool.lootPool()
+                        .`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
+                        .add(
+                            AlternativesEntry.alternatives(
+                                AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
+                                    LootItem.lootTableItem(ModItems.FLOUR.get()).`when`(
+                                        LootItemBlockStatePropertyCondition.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block)
+                                            .setProperties(
+                                                StatePropertiesPredicate.Builder.properties().hasProperty(
+                                                    SnowLayerBlock.LAYERS, pValue
+                                                )
+                                            )
+                                    ).apply(SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2)))
+                                }.`when`(HAS_NO_SILK_TOUCH),
+                                AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
+                                    (if (pValue == 8)
+                                        LootItem.lootTableItem(FLOUR_BLOCK.get().block)
+                                    else LootItem.lootTableItem(ModItems.FLOUR.get()).apply(
+                                        SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2))
+                                    ).`when`(
+                                        LootItemBlockStatePropertyCondition.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block)
+                                            .setProperties(
+                                                StatePropertiesPredicate.Builder.properties()
+                                                    .hasProperty(SnowLayerBlock.LAYERS, pValue)
+                                            )
+                                    )) as LootPoolEntryContainer.Builder<*>
+                                })
+                        )
+                )
+            )
         }
 
         companion object {

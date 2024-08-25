@@ -26,7 +26,7 @@ data class ModDimensionEntry(
     }
 
     init {
-        if(frozen) throw IllegalStateException("Dimension registered after entry list froze")
+        if (frozen) throw IllegalStateException("Dimension registered after entry list froze")
         entries.add(this)
     }
 }

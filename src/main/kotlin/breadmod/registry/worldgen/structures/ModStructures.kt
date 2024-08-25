@@ -30,14 +30,19 @@ object ModStructures {
         step: GenerationStep.Decoration = GenerationStep.Decoration.SURFACE_STRUCTURES,
         adjustment: TerrainAdjustment = TerrainAdjustment.NONE
     ): StructureSettings = StructureSettings(biomes, spawnOverrides, step, adjustment)
+
     fun bootstrap(pContext: BootstapContext<Structure>) {
         val biomeHolder = pContext.lookup(Registries.BIOME)
         val templateHolder = pContext.lookup(Registries.TEMPLATE_POOL)
         pContext.register(
             FARMHOUSE, JigsawStructure(
-            structure(biomeHolder.getOrThrow(BiomeTags.HAS_VILLAGE_PLAINS), adjustment = TerrainAdjustment.BEARD_THIN),
-            templateHolder.getOrThrow(FARMHOUSE_POOL), 1, ConstantHeight.of(VerticalAnchor.absolute(0)), false,
-            Heightmap.Types.WORLD_SURFACE_WG
-        ))
+                structure(
+                    biomeHolder.getOrThrow(BiomeTags.HAS_VILLAGE_PLAINS),
+                    adjustment = TerrainAdjustment.BEARD_THIN
+                ),
+                templateHolder.getOrThrow(FARMHOUSE_POOL), 1, ConstantHeight.of(VerticalAnchor.absolute(0)), false,
+                Heightmap.Types.WORLD_SURFACE_WG
+            )
+        )
     }
 }

@@ -13,10 +13,11 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.material.MapColor
 
-class PowerInterfaceBlock: DirectionalBlock(Properties.of()
-    .strength(2.0f, 6.0f)
-    .mapColor(MapColor.COLOR_BROWN)
-    .sound(SoundType.COPPER)
+class PowerInterfaceBlock : DirectionalBlock(
+    Properties.of()
+        .strength(2.0f, 6.0f)
+        .mapColor(MapColor.COLOR_BROWN)
+        .sound(SoundType.COPPER)
 ), EntityBlock {
     init {
         this.registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH))
@@ -30,5 +31,6 @@ class PowerInterfaceBlock: DirectionalBlock(Properties.of()
         pBuilder.add(FACING)
     }
 
-    override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity = PowerInterfaceBlockEntity(pPos, pState)
+    override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity =
+        PowerInterfaceBlockEntity(pPos, pState)
 }

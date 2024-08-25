@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3
 import net.minecraftforge.network.PacketDistributor
 import java.awt.Color
 
-internal class ToolGunExplodeMode: IToolGunMode {
+internal class ToolGunExplodeMode : IToolGunMode {
     private var hitFluid = false
 
     override fun action(
@@ -34,10 +34,10 @@ internal class ToolGunExplodeMode: IToolGunMode {
         pGunStack: ItemStack,
         pControl: BreadModToolGunModeProvider.Control
     ) {
-        if(pLevel is ServerLevel) {
+        if (pLevel is ServerLevel) {
             ModMain.LOGGER.info("ToolGunExplodeMode: triggering explode action on server side")
             ModMain.LOGGER.info("ToolGunExplodeMode: Control key is $pControl")
-            if(pControl.id == "use") {
+            if (pControl.id == "use") {
                 val settings = pGunStack.orCreateTag.getCompound(pControl.categoryKey)
 
                 ModMain.LOGGER.info("ToolGunExplodeMode: before blockRaycast")
@@ -53,7 +53,14 @@ internal class ToolGunExplodeMode: IToolGunMode {
                         BeamPacket(it.startPosition.toVector3f(), it.endPosition.toVector3f(), 1.0f)
                     )
                     playToolGunSound(pLevel, pPlayer.blockPosition())
-                    pLevel.explode(pPlayer, it.endPosition.x, it.endPosition.y, it.endPosition.z, 20f, Level.ExplosionInteraction.MOB)
+                    pLevel.explode(
+                        pPlayer,
+                        it.endPosition.x,
+                        it.endPosition.y,
+                        it.endPosition.z,
+                        20f,
+                        Level.ExplosionInteraction.MOB
+                    )
                 }
                 // just keep this code here for now, it might be useful later
 //                playToolGunSound(pLevel, pPlayer.blockPosition())
@@ -70,7 +77,7 @@ internal class ToolGunExplodeMode: IToolGunMode {
 //
 //                pLevel.explode(pPlayer, rtPosition.x.toDouble(), rtPosition.y.toDouble(), rtPosition.z.toDouble(), 20f, Level.ExplosionInteraction.MOB)
             } else {
-                if(!pGunStack.orCreateTag.contains(pControl.categoryKey)) {
+                if (!pGunStack.orCreateTag.contains(pControl.categoryKey)) {
                     pGunStack.orCreateTag.put(pControl.categoryKey, CompoundTag().also {
                         it.putBoolean("hitFluid", false)
                         hitFluid = false
@@ -83,8 +90,8 @@ internal class ToolGunExplodeMode: IToolGunMode {
                 }
                 playModeSound(pLevel, pPlayer.blockPosition())
             }
-        } else if(pControl.id == "use") {
-            if(pLevel.isClientSide) {
+        } else if (pControl.id == "use") {
+            if (pLevel.isClientSide) {
                 ToolGunAnimationHandler.trigger()
             }
         }
@@ -104,15 +111,15 @@ internal class ToolGunExplodeMode: IToolGunMode {
             pPoseStack,
             pBuffer,
             Color.BLACK.rgb,
-            Color(0,0,0,0).rgb,
+            Color(0, 0, 0, 0).rgb,
             false,
             0.925, 0.0635, -0.036,
             10f, 0.0007f, 100
         )
         drawTextOnScreen(
-            modTranslatable("tool_gun", "mode", "explode", "hit_fluid", if(hitFluid) "enabled" else "disabled"),
-            if (hitFluid) Color(35,189,0,255).rgb else Color.RED.rgb,
-            Color(0,0,0,0).rgb,
+            modTranslatable("tool_gun", "mode", "explode", "hit_fluid", if (hitFluid) "enabled" else "disabled"),
+            if (hitFluid) Color(35, 189, 0, 255).rgb else Color.RED.rgb,
+            Color(0, 0, 0, 0).rgb,
             false,
             rgMinecraft.font,
             pPoseStack,

@@ -17,10 +17,11 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.material.MapColor
 
-class FarmerOutputBlock: Block(Properties.of()
-    .strength(2.0f, 6.0f)
-    .mapColor(MapColor.COLOR_BROWN)
-    .sound(SoundType.COPPER)
+class FarmerOutputBlock : Block(
+    Properties.of()
+        .strength(2.0f, 6.0f)
+        .mapColor(MapColor.COLOR_BROWN)
+        .sound(SoundType.COPPER)
 ), EntityBlock {
 
     init {
@@ -30,7 +31,8 @@ class FarmerOutputBlock: Block(Properties.of()
         )
     }
 
-    override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean = !player.isCreative
+    override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =
+        !player.isCreative
 
     @Deprecated("Deprecated in Java")
     override fun onRemove(
@@ -40,7 +42,7 @@ class FarmerOutputBlock: Block(Properties.of()
         pNewState: BlockState,
         pMovedByPiston: Boolean
     ) {
-        if(!pState.`is`(pNewState.block)) {
+        if (!pState.`is`(pNewState.block)) {
             val entity = (pLevel.getBlockEntity(pPos) as? FarmerOutputBlockEntity) ?: return
             Containers.dropContents(pLevel, pPos, entity)
         }

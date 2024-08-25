@@ -54,13 +54,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val rotation = animHandler.coilRotation
         val recoil = animHandler.recoil
 
-//        pPoseStack.pushPose()
-//      // todo recoil
-        // todo import the model from gmod
+        // todo recoil
 
         animHandler.clientTick()
 
-        if(pDisplayContext.firstPerson()) {
+        if (pDisplayContext.firstPerson()) {
             pPoseStack.translate(-recoil, 0.0f, 0.0f)
             if (useAltModel.get()) {
                 renderItemModel(altModel, renderer, pStack, pPoseStack, pBuffer, pPackedOverlay, pPackedLight)
@@ -69,12 +67,22 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
                 drawTextOnScreen(
                     (toolGunItem.getCurrentMode(pStack).displayName.copy()).withStyle(ChatFormatting.BOLD),
-                    Color.WHITE.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
+                    Color.WHITE.rgb, Color(0, 0, 0, 0).rgb, false, fontRenderer, pPoseStack, pBuffer,
                     0.923, 0.065, -0.038, 0.0007f
                 )
 
-                drawTextOnScreen("CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs", Color.RED.rgb, Color(0,0,0,0).rgb, false, fontRenderer, pPoseStack, pBuffer,
-                    0.9, 0.0175, -0.040, 0.0007f
+                drawTextOnScreen(
+                    "CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs",
+                    Color.RED.rgb,
+                    Color(0, 0, 0, 0).rgb,
+                    false,
+                    fontRenderer,
+                    pPoseStack,
+                    pBuffer,
+                    0.9,
+                    0.0175,
+                    -0.040,
+                    0.0007f
                 )
 
                 toolGunMode.mode.render(pStack, pDisplayContext, pPoseStack, pBuffer, pPackedLight, pPackedOverlay)

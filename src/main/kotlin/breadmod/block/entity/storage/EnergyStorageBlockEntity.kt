@@ -29,9 +29,10 @@ class EnergyStorageBlockEntity(
         pState: BlockState,
         pBlockEntity: AbstractMachineBlockEntity<EnergyStorageBlockEntity>
     ) {
-        val energyLevel = pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY) ?: return
+        val energyLevel =
+            pBlockEntity.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY) ?: return
 
-        when(energyLevel.energyStored) {
+        when (energyLevel.energyStored) {
             250000 -> setStorageLevel(pState, pLevel, pPos, 1)
             500000 -> setStorageLevel(pState, pLevel, pPos, 2)
             750000 -> setStorageLevel(pState, pLevel, pPos, 3)
@@ -41,7 +42,7 @@ class EnergyStorageBlockEntity(
         val holder = capabilityHolder.capabilities[ForgeCapabilities.ENERGY]
         val battery = ((holder ?: return).first.resolve().get() as EnergyBattery)
 
-        if(battery.stored > 0) {
+        if (battery.stored > 0) {
             battery.distribute(
                 pLevel, pPos, holder.second,
                 pState.getValue(BlockStateProperties.HORIZONTAL_FACING).opposite

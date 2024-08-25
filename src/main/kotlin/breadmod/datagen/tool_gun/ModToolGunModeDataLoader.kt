@@ -42,7 +42,8 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
         val mode: IToolGunMode
     )
 
-    private val loadedModes: MutableMap<String, MutableMap<String, Triple<ToolgunMode, ResourceLocation, ByteArray>>> = mutableMapOf()
+    private val loadedModes: MutableMap<String, MutableMap<String, Triple<ToolgunMode, ResourceLocation, ByteArray>>> =
+        mutableMapOf()
     val modes: Map<String, Map<String, Triple<ToolgunMode, ResourceLocation, ByteArray>>>
         get() = loadedModes
 
@@ -67,7 +68,7 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
     val keybindsToAdd: MutableList<BreadModToolGunModeProvider.Control> = mutableListOf()
     fun load(pObject: Map<ResourceLocation, JsonElement>) {
         pObject.forEach { (location, data) ->
-            if(location.path.startsWith("mode/")) {
+            if (location.path.startsWith("mode/")) {
                 try {
                     val dataObj = data.asJsonObject
                     val classSet = loadedModes.getOrPut(location.namespace) { mutableMapOf() }
@@ -101,7 +102,8 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                                     }
                                 },
                                 mode = classConstructor.call() as IToolGunMode
-                            ), location, dataObj.toString().encodeToByteArray())
+                            ), location, dataObj.toString().encodeToByteArray()
+                        )
                         classConstructor.isAccessible = false
                     } else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolGunMode::class.qualifiedName}")
                 } catch (e: ClassNotFoundException) {

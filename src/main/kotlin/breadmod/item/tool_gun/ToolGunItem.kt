@@ -25,7 +25,7 @@ import net.minecraftforge.registries.RegistryObject
 import java.util.function.Consumer
 
 
-internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
+internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
     override fun appendHoverText(
         pStack: ItemStack,
         pLevel: Level?,
@@ -34,15 +34,19 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     ) {
         pTooltipComponents.add(
             modTranslatable("item", TOOL_GUN_DEF, "tooltip", "current_mode")
-                .append((getCurrentMode(pStack).displayName.copy() ?: Component.literal("???")).withStyle(ChatFormatting.GOLD))
+                .append(
+                    (getCurrentMode(pStack).displayName.copy()
+                        ?: Component.literal("???")).withStyle(ChatFormatting.GOLD)
+                )
         )
         pTooltipComponents.add(
-            changeMode.translatedKeyMessage.copy().withStyle(ChatFormatting.GREEN).append(modTranslatable("item", TOOL_GUN_DEF, "tooltip", "mode_switch"))
+            changeMode.translatedKeyMessage.copy().withStyle(ChatFormatting.GREEN)
+                .append(modTranslatable("item", TOOL_GUN_DEF, "tooltip", "mode_switch"))
         )
     }
 
     internal fun ensureCurrentMode(pStack: ItemStack): CompoundTag {
-        if(!pStack.orCreateTag.contains(CURRENT_MODE_TAG)) {
+        if (!pStack.orCreateTag.contains(CURRENT_MODE_TAG)) {
             val nextNamespace = MapIterator(ModToolGunModeDataLoader.modes).next()
             val nextMode = MapIterator(nextNamespace.value).next()
 
@@ -64,7 +68,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
                 ModToolGunModeDataLoader.modes[it.getString(MODE_NAMESPACE_TAG)]?.get(it.getString(MODE_NAME_TAG))?.first
                     ?: ToolGunNoMode
             }
-        } catch(e: NoSuchElementException) {
+        } catch (e: NoSuchElementException) {
             ToolGunNoMode
         }
     }
@@ -72,16 +76,17 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
     override val creativeModeTabs: List<RegistryObject<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
     override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
-        if(pEntity is Player) {
+        if (pEntity is Player) {
             val currentMode = getCurrentMode(pStack)
 
-            if(pIsSelected) currentMode.mode.open(pLevel, pEntity, pStack, null)
+            if (pIsSelected) currentMode.mode.open(pLevel, pEntity, pStack, null)
             else currentMode.mode.close(pLevel, pEntity, pStack, null)
         }
     }
 
-    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) = consumer.accept(object : IClientItemExtensions {
-        override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
+    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) =
+        consumer.accept(object : IClientItemExtensions {
+            override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
 //        override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose {
 //            val armPose = IArmPoseTransformer { model, entity, arm ->
 //                if(entity.isHolding(this@ToolGunItem)) {
@@ -91,7 +96,7 @@ internal class ToolGunItem: Item(Properties().stacksTo(1)), IRegisterSpecialCrea
 //            }
 //            return ArmPose.create("tool_gun", false, armPose)
 //        }
-    })
+        })
 
     internal companion object {
         const val CURRENT_MODE_TAG = "currentMode"

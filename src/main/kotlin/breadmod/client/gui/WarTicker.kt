@@ -19,12 +19,12 @@ object WarTicker {
             if (!isIncreasing) {
                 if (ticker == 0 && timer > 0) { // Tick timer down by one
                     player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 1f)
-                    timer --
+                    timer--
                     ticker = 41
-                } else if (timer > 0) ticker -- // Tick down ticker
+                } else if (timer > 0) ticker-- // Tick down ticker
             }
             if (increasingTimer > 0) { // Increase timer
-                increasingTimer --
+                increasingTimer--
                 timer++
                 ticker = 41
             } else isIncreasing = false

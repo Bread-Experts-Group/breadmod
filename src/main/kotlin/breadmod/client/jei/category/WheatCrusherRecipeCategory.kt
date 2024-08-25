@@ -21,17 +21,20 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.registries.ForgeRegistries
 
-class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCategory<WheatCrushingRecipe> {
-    val texture = modLocation("textures","gui","jei","gui_wheat_crusher.png")
-    private val recipeTime : Int = 0
-    private val cachedArrows = createCachedArrows(guiHelper, 48, texture, 193, 0, 48, 9, IDrawableAnimated.StartDirection.LEFT, false)
+class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<WheatCrushingRecipe> {
+    val texture = modLocation("textures", "gui", "jei", "gui_wheat_crusher.png")
+    private val recipeTime: Int = 0
+    private val cachedArrows =
+        createCachedArrows(guiHelper, 48, texture, 193, 0, 48, 9, IDrawableAnimated.StartDirection.LEFT, false)
 
     override fun getRecipeType(): RecipeType<WheatCrushingRecipe> = ModJEIRecipeTypes.wheatCrusherRecipeType
     override fun getTitle(): Component = Component.translatable(ModBlocks.WHEAT_CRUSHER_BLOCK.get().descriptionId)
     override fun getBackground(): IDrawable = guiHelper.createDrawable(texture, 0, 0, 161, 65)
-    override fun getIcon(): IDrawable = guiHelper.createDrawableItemStack(ModBlocks.WHEAT_CRUSHER_BLOCK.get().defaultInstance)
+    override fun getIcon(): IDrawable =
+        guiHelper.createDrawableItemStack(ModBlocks.WHEAT_CRUSHER_BLOCK.get().defaultInstance)
 
-    private var step: Int = -32; private var timer: Int = 20
+    private var step: Int = -32
+    private var timer: Int = 20
     override fun draw(
         recipe: WheatCrushingRecipe,
         recipeSlotsView: IRecipeSlotsView,
@@ -45,9 +48,9 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCate
         guiGraphics.blit(texture, 142, 9, 193, 9, 16, 47)
 
         guiGraphics.blit(texture, 6, 16, 161, step, 32, 32)
-        if(timer <= 0) {
+        if (timer <= 0) {
             timer = 40
-            if(step < 32) step += 32 else step = -32
+            if (step < 32) step += 32 else step = -32
         } else timer -= 2
     }
 
@@ -56,7 +59,8 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper): IRecipeCate
             .addItemStacks(buildList {
                 recipe.itemsRequired?.forEach { add(it) }
                 recipe.itemsRequiredTagged?.forEach { (tagKey, amount) ->
-                    ForgeRegistries.ITEMS.filter { it.defaultInstance.`is`(tagKey) }.forEach { item -> add(ItemStack(item, amount)) }
+                    ForgeRegistries.ITEMS.filter { it.defaultInstance.`is`(tagKey) }
+                        .forEach { item -> add(ItemStack(item, amount)) }
                 }
             })
 

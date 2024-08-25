@@ -16,18 +16,24 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest
 
 typealias PlacedFeatureBuilder = (configuredFeaturesHolder: HolderGetter<ConfiguredFeature<*, *>>) -> PlacedFeature
-typealias ConfiguredFeatureBuilder = () -> ConfiguredFeature<*,*>
+typealias ConfiguredFeatureBuilder = () -> ConfiguredFeature<*, *>
 
 object ModFeatures {
     private val entries = Pair(
         mutableListOf<Pair<ResourceKey<PlacedFeature>, PlacedFeatureBuilder>>(),
         mutableListOf<Pair<ResourceKey<ConfiguredFeature<*, *>>, ConfiguredFeatureBuilder>>()
     )
-    private fun registerPlacedFeature(name: String, builder: PlacedFeatureBuilder): ResourceKey<PlacedFeature> = ResourceKey.create(
-        Registries.PLACED_FEATURE,
-        ModMain.modLocation(name)
-    ).also { entries.first.add(it to builder) }
-    private fun registerConfiguredFeature(name: String, builder: ConfiguredFeatureBuilder): ResourceKey<ConfiguredFeature<*, *>> = ResourceKey.create(
+
+    private fun registerPlacedFeature(name: String, builder: PlacedFeatureBuilder): ResourceKey<PlacedFeature> =
+        ResourceKey.create(
+            Registries.PLACED_FEATURE,
+            ModMain.modLocation(name)
+        ).also { entries.first.add(it to builder) }
+
+    private fun registerConfiguredFeature(
+        name: String,
+        builder: ConfiguredFeatureBuilder
+    ): ResourceKey<ConfiguredFeature<*, *>> = ResourceKey.create(
         Registries.CONFIGURED_FEATURE,
         ModMain.modLocation(name)
     ).also { entries.second.add(it to builder) }
@@ -60,6 +66,7 @@ object ModFeatures {
     fun bootstrapConfiguredFeatures(ctx: BootstrapContext<ConfiguredFeature<*, *>>) {
         entries.second.forEach { ctx.register(it.first, it.second()) }
     }
+
     fun bootstrapPlacedFeatures(ctx: BootstrapContext<PlacedFeature>) {
         val cfHolder = ctx.lookup(Registries.CONFIGURED_FEATURE)
         entries.first.forEach { ctx.register(it.first, it.second(cfHolder)) }

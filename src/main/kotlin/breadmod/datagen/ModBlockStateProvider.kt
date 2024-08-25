@@ -33,7 +33,7 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
 
         horizontalBlock(ModBlocks.GENERATOR.get().block) { state ->
-            val machineOn = if(state.getValue(BlockStateProperties.LIT)) "_on" else ""
+            val machineOn = if (state.getValue(BlockStateProperties.LIT)) "_on" else ""
             val name = "breadmod:block/generator$machineOn"
 
             val model = models().singleTexture(
@@ -75,7 +75,8 @@ class ModBlockStateProvider(
 
             return@horizontalBlock model
         }
-        simpleBlockItem(ModBlocks.OMANEKO_BLOCK.get().block,
+        simpleBlockItem(
+            ModBlocks.OMANEKO_BLOCK.get().block,
             models().getBuilder("breadmod:block/omaneko_block")
         )
 
@@ -95,24 +96,26 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/toaster")
         )
 
-        doorBlockWithRenderType(ModBlocks.BREAD_DOOR.get().block as DoorBlock,
+        doorBlockWithRenderType(
+            ModBlocks.BREAD_DOOR.get().block as DoorBlock,
             modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
             modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top"),
             "minecraft:cutout"
         )
 
-        fenceBlockWithRenderType(ModBlocks.BREAD_FENCE.get().block as FenceBlock,
+        fenceBlockWithRenderType(
+            ModBlocks.BREAD_FENCE.get().block as FenceBlock,
             modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"),
             "minecraft:cutout"
         )
 
         horizontalBlock(ModBlocks.DOUGH_MACHINE_BLOCK.get().block) { state ->
-            val machineOn = if(state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+            val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
             val name = "breadmod:block/dough_machine$machineOn"
 
             val model = models().orientable(
                 name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_side" ),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_side"),
                 modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
                 modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_top")
             )
@@ -123,7 +126,7 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/dough_machine")
         )
         horizontalBlock(ModBlocks.WHEAT_CRUSHER_BLOCK.get().block) { state ->
-            val machineOn = if(state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+            val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
             val name = "breadmod:block/wheat_crusher$machineOn"
 
             val model = models().orientable(
@@ -141,8 +144,10 @@ class ModBlockStateProvider(
 
         horizontalBlock(ModBlocks.ENERGY_STORAGE_BLOCK.get().block) { state ->
             val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
-            val storedLevel = when(state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
-                1 -> "_one"; 2 -> "_two"; 3 -> "_three"; 4 -> "_four" else -> "" }
+            val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
+                1 -> "_one"; 2 -> "_two"; 3 -> "_three"; 4 -> "_four"
+                else -> ""
+            }
             val name = "breadmod:block/energy_storage$storedLevel"
 
             val model = models().orientableWithBottom(
@@ -154,14 +159,17 @@ class ModBlockStateProvider(
             )
             return@horizontalBlock model
         }
-        simpleBlockItem(ModBlocks.ENERGY_STORAGE_BLOCK.get().block,
+        simpleBlockItem(
+            ModBlocks.ENERGY_STORAGE_BLOCK.get().block,
             models().getBuilder("breadmod:block/energy_storage")
         )
 
         // Hell Naw button
         val button = ModBlocks.HELL_NAW.get().block as ButtonBlock
-        val buttonModel = ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/hell_naw"), existingFileHelper)
-        val buttonPressedModel = ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/hell_naw_pressed"), existingFileHelper)
+        val buttonModel =
+            ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/hell_naw"), existingFileHelper)
+        val buttonPressedModel =
+            ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/hell_naw_pressed"), existingFileHelper)
         modButtonBlock(button, buttonModel, buttonPressedModel)
         simpleBlockItem(
             ModBlocks.HELL_NAW.get().block,
@@ -171,7 +179,7 @@ class ModBlockStateProvider(
         // Farmer Multiblock
         blockWithItem(ModBlocks.FARMER_BASE_BLOCK.get().block)
         horizontalBlock(ModBlocks.FARMER_CONTROLLER.get().block) { state ->
-            val machineOn = if(state.getValue(BlockStateProperties.TRIGGERED)) "_on" else ""
+            val machineOn = if (state.getValue(BlockStateProperties.TRIGGERED)) "_on" else ""
             val name = "breadmod:block/farmer_controller$machineOn"
 
             val model = models().orientable(
@@ -195,8 +203,10 @@ class ModBlockStateProvider(
                 modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_input_block")
             )
         }
-        simpleBlockItem(ModBlocks.FARMER_INPUT_BLOCK.get().block,
-            models().getBuilder("breadmod:block/farmer_input_block"))
+        simpleBlockItem(
+            ModBlocks.FARMER_INPUT_BLOCK.get().block,
+            models().getBuilder("breadmod:block/farmer_input_block")
+        )
 
         directionalBlock(ModBlocks.FARMER_OUTPUT_BLOCK.get().block) { _ ->
             val name = "breadmod:block/farmer_output_block"
@@ -206,8 +216,10 @@ class ModBlockStateProvider(
                 modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_output_block")
             )
         }
-        simpleBlockItem(ModBlocks.FARMER_OUTPUT_BLOCK.get().block,
-            models().getBuilder("breadmod:block/farmer_output_block"))
+        simpleBlockItem(
+            ModBlocks.FARMER_OUTPUT_BLOCK.get().block,
+            models().getBuilder("breadmod:block/farmer_output_block")
+        )
 
         directionalBlock(ModBlocks.GENERIC_POWER_INTERFACE.get().block) { _ ->
             val name = "breadmod:block/farmer_power_block"
@@ -217,27 +229,31 @@ class ModBlockStateProvider(
                 modLoc("${ModelProvider.BLOCK_FOLDER}/farmer_power_block")
             )
         }
-        simpleBlockItem(ModBlocks.GENERIC_POWER_INTERFACE.get().block,
-            models().getBuilder("breadmod:block/farmer_power_block"))
+        simpleBlockItem(
+            ModBlocks.GENERIC_POWER_INTERFACE.get().block,
+            models().getBuilder("breadmod:block/farmer_power_block")
+        )
         //// // // // TODO!
         getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.get().block).forAllStates { state ->
             val layer = state.getValue(BlockStateProperties.LAYERS)
             ConfiguredModel.builder()
                 .modelFile(
                     models().getBuilder("breadmod:block/flour_layer_${layer}")
-                        .parent(models().withExistingParent(
-                            ModBlocks.getLocation(ModBlocks.FLOUR_LAYER_BLOCK.get().block)!!.path,
-                            mcLoc("${ModelProvider.BLOCK_FOLDER}/thin_block")
-                        ))
+                        .parent(
+                            models().withExistingParent(
+                                ModBlocks.getLocation(ModBlocks.FLOUR_LAYER_BLOCK.get().block)!!.path,
+                                mcLoc("${ModelProvider.BLOCK_FOLDER}/thin_block")
+                            )
+                        )
                         .texture("texture", modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
                         .texture("particle", modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
                         .element()
                         .from(0F, 0F, 0F)
                         .to(16F, 2F * layer, 16F)
                         .allFaces { d, u ->
-                            u.uvs(0F, if(d.axis.isVertical) 0F else 16F - (2 * layer), 16F, 16F)
+                            u.uvs(0F, if (d.axis.isVertical) 0F else 16F - (2 * layer), 16F, 16F)
                             u.texture("#texture")
-                            if(d != Direction.UP) u.cullface(d)
+                            if (d != Direction.UP) u.cullface(d)
                         }
                         .end()
                 )
@@ -250,7 +266,8 @@ class ModBlockStateProvider(
         )
 
         fun getOreModels(state: BlockState): Array<out ConfiguredModel> {
-            val path = "${ModBlocks.getLocation(state.block)!!.path}_${state.getValue(OreBlock.ORE_TYPE).serializedName}"
+            val path =
+                "${ModBlocks.getLocation(state.block)!!.path}_${state.getValue(OreBlock.ORE_TYPE).serializedName}"
 
             return models().cubeAll(
                 path,
@@ -307,9 +324,9 @@ class ModBlockStateProvider(
             val face = state.getValue(ButtonBlock.FACE)
             val powered = state.getValue(ButtonBlock.POWERED)
             ConfiguredModel.builder()
-                .modelFile(if(powered) buttonPressed else button)
-                .rotationX(if(face == AttachFace.FLOOR) 0 else if(face == AttachFace.WALL) 90 else 180)
-                .rotationY((if(face == AttachFace.CEILING) facing else facing.opposite).toYRot().toInt())
+                .modelFile(if (powered) buttonPressed else button)
+                .rotationX(if (face == AttachFace.FLOOR) 0 else if (face == AttachFace.WALL) 90 else 180)
+                .rotationY((if (face == AttachFace.CEILING) facing else facing.opposite).toYRot().toInt())
                 .build()
         }
     }

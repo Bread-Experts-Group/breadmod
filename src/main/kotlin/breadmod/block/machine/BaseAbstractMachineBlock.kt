@@ -14,10 +14,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.registries.RegistryObject
 
-abstract class BaseAbstractMachineBlock<T: AbstractMachineBlockEntity<T>> private constructor(
+abstract class BaseAbstractMachineBlock<T : AbstractMachineBlockEntity<T>> private constructor(
     private val blockEntityType: RegistryObject<BlockEntityType<T>>,
     properties: Properties
-): Block(properties), EntityBlock {
+) : Block(properties), EntityBlock {
     init {
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.ENABLED, true))
     }
@@ -31,27 +31,29 @@ abstract class BaseAbstractMachineBlock<T: AbstractMachineBlockEntity<T>> privat
         pBuilder.add(BlockStateProperties.ENABLED)
     }
 
-    final override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity? = blockEntityType.get().create(pPos, pState)
+    final override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity? =
+        blockEntityType.get().create(pPos, pState)
+
     override fun <R : BlockEntity> getTicker(
         pLevel: Level,
         pState: BlockState,
         pBlockEntityType: BlockEntityType<R>
     ): BlockEntityTicker<R>? {
-        return if(pBlockEntityType == blockEntityType.get()) {
+        return if (pBlockEntityType == blockEntityType.get()) {
             @Suppress("UNCHECKED_CAST")
-            val ticker = (if(pLevel.isClientSide) getClientTicker(pLevel, pState)
+            val ticker = (if (pLevel.isClientSide) getClientTicker(pLevel, pState)
             else getServerTicker(pLevel, pState)) as BlockEntityTicker<R>?
-            if(ticker != null) return BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
-                if(tState.getValue(BlockStateProperties.ENABLED)) ticker.tick(tLevel, tPos, tState, tBlockEntity)
+            if (ticker != null) return BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
+                if (tState.getValue(BlockStateProperties.ENABLED)) ticker.tick(tLevel, tPos, tState, tBlockEntity)
             } else null
         } else null
     }
 
-    abstract class Powered<T: AbstractMachineBlockEntity<T>>(
+    abstract class Powered<T : AbstractMachineBlockEntity<T>>(
         blockEntityType: RegistryObject<BlockEntityType<T>>,
         properties: Properties,
         private val requiresPower: Boolean
-    ): BaseAbstractMachineBlock<T>(blockEntityType, properties) {
+    ) : BaseAbstractMachineBlock<T>(blockEntityType, properties) {
         init {
             registerDefaultState(defaultBlockState().setValue(BlockStateProperties.POWERED, false))
         }
@@ -66,7 +68,7 @@ abstract class BaseAbstractMachineBlock<T: AbstractMachineBlockEntity<T>> privat
             pState: BlockState,
             pBlockEntityType: BlockEntityType<R>
         ): BlockEntityTicker<R>? = super.getTicker(pLevel, pState, pBlockEntityType)?.let {
-            if(requiresPower) {
+            if (requiresPower) {
                 BlockEntityTicker { pLevel, pPos, pState, pBlockEntity ->
                     pBlockEntity.getCapability(ForgeCapabilities.ENERGY).ifPresent { battery ->
                         if (battery.energyStored > 0) it.tick(pLevel, pPos, pState, pBlockEntity)
@@ -76,13 +78,18 @@ abstract class BaseAbstractMachineBlock<T: AbstractMachineBlockEntity<T>> privat
         }
     }
 
-    abstract class Toggleable<T: AbstractMachineBlockEntity<T>>(
+    abstract class Toggleable<T : AbstractMachineBlockEntity<T>>(
         blockEntityType: RegistryObject<BlockEntityType<T>>,
         properties: Properties
-    ): BaseAbstractMachineBlock<T>(blockEntityType, properties) {
+    ) : BaseAbstractMachineBlock<T>(blockEntityType, properties) {
         final override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) =
             super.createBlockStateDefinition(pBuilder)
-        final override fun <R : BlockEntity> getTicker(pLevel: Level, pState: BlockState, pBlockEntityType: BlockEntityType<R>): BlockEntityTicker<R>? =
+
+        final override fun <R : BlockEntity> getTicker(
+            pLevel: Level,
+            pState: BlockState,
+            pBlockEntityType: BlockEntityType<R>
+        ): BlockEntityTicker<R>? =
             super.getTicker(pLevel, pState, pBlockEntityType)
     }
 }

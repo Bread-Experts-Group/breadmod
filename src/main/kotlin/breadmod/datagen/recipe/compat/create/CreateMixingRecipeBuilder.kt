@@ -27,16 +27,20 @@ class CreateMixingRecipeBuilder(
     private val itemResults: List<ItemStack> = listOf(),
     private val fluidResults: List<FluidStack> = listOf()
 ) : CraftingRecipeBuilder(), IItemBearingRecipeBuilder, IFluidBearingRecipeBuilder {
-    constructor(result: ItemStack): this(itemResults = listOf(result))
-    constructor(result: ItemLike, count: Int = 1): this(ItemStack(result, count))
-    constructor(result: FluidStack): this(fluidResults = listOf(result))
-    constructor(result: Fluid, count: Int = 1): this(FluidStack(result, count))
-    constructor(itemResult: ItemStack, fluidResult: FluidStack): this(listOf(itemResult), listOf(fluidResult))
-    constructor(itemResult: ItemStack, fluidsResult: List<FluidStack>): this(listOf(itemResult), fluidsResult)
-    constructor(itemsResult: List<ItemStack>, fluidResult: FluidStack): this(itemsResult, listOf(fluidResult))
+    constructor(result: ItemStack) : this(itemResults = listOf(result))
+    constructor(result: ItemLike, count: Int = 1) : this(ItemStack(result, count))
+    constructor(result: FluidStack) : this(fluidResults = listOf(result))
+    constructor(result: Fluid, count: Int = 1) : this(FluidStack(result, count))
+    constructor(itemResult: ItemStack, fluidResult: FluidStack) : this(listOf(itemResult), listOf(fluidResult))
+    constructor(itemResult: ItemStack, fluidsResult: List<FluidStack>) : this(listOf(itemResult), fluidsResult)
+    constructor(itemsResult: List<ItemStack>, fluidResult: FluidStack) : this(itemsResult, listOf(fluidResult))
 
     private val advancement = Advancement.Builder.recipeAdvancement()
-    override fun unlockedBy(pCriterionName: String, pCriterionTrigger: CriterionTriggerInstance): CreateMixingRecipeBuilder = this
+    override fun unlockedBy(
+        pCriterionName: String,
+        pCriterionTrigger: CriterionTriggerInstance
+    ): CreateMixingRecipeBuilder = this
+
     override fun group(pGroupName: String?): CreateMixingRecipeBuilder = this
 
     enum class HeatRequirement {
@@ -63,7 +67,7 @@ class CreateMixingRecipeBuilder(
     override fun save(pFinishedRecipeConsumer: Consumer<FinishedRecipe>, pRecipeId: ResourceLocation) {
         pFinishedRecipeConsumer.accept(object : FinishedRecipe {
             override fun serializeRecipeData(pJson: JsonObject) {
-                if(heatRequirement != null) pJson.addProperty("heatRequirement", heatRequirement)
+                if (heatRequirement != null) pJson.addProperty("heatRequirement", heatRequirement)
                 pJson.add("ingredients", JsonArray().also {
                     itemsRequired.jsonifyItemList(it, "item")
                     fluidsRequired.jsonifyFluidList(it, "fluid")

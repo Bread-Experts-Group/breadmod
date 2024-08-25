@@ -21,7 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries
  */
 
 fun drawRecipeTime(pRecipe: FluidEnergyRecipe, pGuiGraphics: GuiGraphics, pX: Int, pY: Int) {
-    if(pRecipe.time > 0) {
+    if (pRecipe.time > 0) {
         val recipeTimeSeconds = pRecipe.time / 20
         val timeString = ModMain.modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
         pGuiGraphics.drawString(rgMinecraft.font, timeString, pX, pY, -8355712, false)
@@ -42,9 +42,10 @@ fun createCachedArrows(
     pStartDirection: IDrawableAnimated.StartDirection,
     pInverted: Boolean
 ): LoadingCache<Int, IDrawableAnimated> =
-    CacheBuilder.newBuilder().maximumSize(pMaxSize).build( object : CacheLoader<Int, IDrawableAnimated>() {
+    CacheBuilder.newBuilder().maximumSize(pMaxSize).build(object : CacheLoader<Int, IDrawableAnimated>() {
         override fun load(recipeTime: Int): IDrawableAnimated =
-            pGuiHelper.drawableBuilder(pTexture, pU, pV, pWidth, pHeight).buildAnimated(recipeTime, pStartDirection, pInverted)
+            pGuiHelper.drawableBuilder(pTexture, pU, pV, pWidth, pHeight)
+                .buildAnimated(recipeTime, pStartDirection, pInverted)
     })
 
 /**
@@ -56,7 +57,7 @@ fun drawArrow(
     pCachedArrows: LoadingCache<Int, IDrawableAnimated>
 ): IDrawableAnimated {
     var recipeTime = pRecipe.time
-    if(recipeTime <= 0) recipeTime = pRecipeTime
+    if (recipeTime <= 0) recipeTime = pRecipeTime
     return pCachedArrows.getUnchecked(recipeTime)
 }
 
@@ -72,5 +73,6 @@ fun recipeList(item: Item, multiplier: Int, pRepeatCount: Int): List<ItemStack> 
  */
 fun itemTagToList(itemTag: TagKey<Item>): List<ItemStack> =
     ForgeRegistries.ITEMS.tags()?.getTag(itemTag)?.map { it.defaultInstance } ?: listOf()
+
 fun blockTagToList(blockTag: TagKey<Block>): List<ItemStack> =
     ForgeRegistries.BLOCKS.tags()?.getTag(blockTag)?.map { it.asItem().defaultInstance } ?: listOf()

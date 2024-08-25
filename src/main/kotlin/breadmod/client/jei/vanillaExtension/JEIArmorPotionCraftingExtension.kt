@@ -10,7 +10,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.alchemy.PotionUtils
 import net.minecraftforge.registries.ForgeRegistries
 
-class JEIArmorPotionCraftingExtension(val recipe: ArmorPotionRecipe): ICraftingCategoryExtension {
+class JEIArmorPotionCraftingExtension(val recipe: ArmorPotionRecipe) : ICraftingCategoryExtension {
     override fun getWidth(): Int = 2
     override fun getHeight(): Int = 1
 

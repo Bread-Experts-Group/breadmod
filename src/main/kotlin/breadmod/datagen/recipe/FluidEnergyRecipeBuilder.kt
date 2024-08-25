@@ -18,14 +18,14 @@ import java.util.function.Consumer
 class FluidEnergyRecipeBuilder(
     val itemResults: List<ItemStack> = listOf(),
     val fluidResults: List<FluidStack> = listOf()
-): IItemBearingRecipeBuilder, IFluidBearingRecipeBuilder, ITimedRecipeBuilder, IPoweredRecipeBuilder {
-    constructor(result: ItemStack): this(itemResults = listOf(result))
-    constructor(result: ItemLike, count: Int = 1): this(ItemStack(result, count))
-    constructor(result: FluidStack): this(fluidResults = listOf(result))
-    constructor(result: Fluid, count: Int = 1): this(FluidStack(result, count))
-    constructor(itemResult: ItemStack, fluidResult: FluidStack): this(listOf(itemResult), listOf(fluidResult))
-    constructor(itemResult: ItemStack, fluidsResult: List<FluidStack>): this(listOf(itemResult), fluidsResult)
-    constructor(itemsResult: List<ItemStack>, fluidResult: FluidStack): this(itemsResult, listOf(fluidResult))
+) : IItemBearingRecipeBuilder, IFluidBearingRecipeBuilder, ITimedRecipeBuilder, IPoweredRecipeBuilder {
+    constructor(result: ItemStack) : this(itemResults = listOf(result))
+    constructor(result: ItemLike, count: Int = 1) : this(ItemStack(result, count))
+    constructor(result: FluidStack) : this(fluidResults = listOf(result))
+    constructor(result: Fluid, count: Int = 1) : this(FluidStack(result, count))
+    constructor(itemResult: ItemStack, fluidResult: FluidStack) : this(listOf(itemResult), listOf(fluidResult))
+    constructor(itemResult: ItemStack, fluidsResult: List<FluidStack>) : this(listOf(itemResult), fluidsResult)
+    constructor(itemsResult: List<ItemStack>, fluidResult: FluidStack) : this(itemsResult, listOf(fluidResult))
 
     override fun unlockedBy(pCriterionName: String, pCriterionTrigger: CriterionTriggerInstance): RecipeBuilder = this
     override fun group(pGroupName: String?): RecipeBuilder = this
@@ -52,7 +52,7 @@ class FluidEnergyRecipeBuilder(
     fun setSerializer(newSerializer: SimpleFluidEnergyRecipeSerializer<*>) = this.also { serializer = newSerializer }
 
     override fun save(pFinishedRecipeConsumer: Consumer<FinishedRecipe>, pRecipeId: ResourceLocation) {
-        pFinishedRecipeConsumer.accept(object: FinishedRecipe {
+        pFinishedRecipeConsumer.accept(object : FinishedRecipe {
             override fun serializeRecipeData(pJson: JsonObject) {
                 type.toJson(
                     pJson, pRecipeId,
@@ -64,7 +64,8 @@ class FluidEnergyRecipeBuilder(
             }
 
             override fun getId(): ResourceLocation = pRecipeId
-            override fun getType(): SimpleFluidEnergyRecipeSerializer<*> = serializer ?: throw IllegalArgumentException("You must provide a serializer.")
+            override fun getType(): SimpleFluidEnergyRecipeSerializer<*> =
+                serializer ?: throw IllegalArgumentException("You must provide a serializer.")
 
             override fun serializeAdvancement(): JsonObject? = null
             override fun getAdvancementId(): ResourceLocation? = null

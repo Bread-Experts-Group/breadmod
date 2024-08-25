@@ -15,14 +15,15 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise
 
 typealias NoiseGeneratorBuilder = (HolderGetter<DensityFunction>, HolderGetter<NormalNoise.NoiseParameters>) -> NoiseGeneratorSettings
 
-object ModNoiseGenerators: NoiseRouterData() {
+object ModNoiseGenerators : NoiseRouterData() {
     private val entries = mutableListOf<Pair<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorBuilder>>()
-    fun register(name: String, builder: NoiseGeneratorBuilder): ResourceKey<NoiseGeneratorSettings> = ResourceKey.create(
-        Registries.NOISE_SETTINGS,
-        ModMain.modLocation(name)
-    ).also {
-        entries.add(it to builder)
-    }
+    fun register(name: String, builder: NoiseGeneratorBuilder): ResourceKey<NoiseGeneratorSettings> =
+        ResourceKey.create(
+            Registries.NOISE_SETTINGS,
+            ModMain.modLocation(name)
+        ).also {
+            entries.add(it to builder)
+        }
 
     private val BREAD_FLOATING_ISLANDS_NOISE: NoiseSettings = NoiseSettings(0, 512, 2, 1)
     val BREAD_FLOATING_ISLANDS = register("bread_floating_islands") { densityFunctionHolderGetter, noiseHolderGetter ->

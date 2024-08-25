@@ -27,12 +27,17 @@ internal class USEnglishLanguageProvider(
     private fun String.addTransformed(override: String? = null) =
         add(this, override ?: this.substringAfterLast('.').joinUnderscoreWithCaps())
 
-    private inline fun <reified T> add(obj: RegistryObject<T>, override: String? = null) = when (val entry = obj.get()) {
-        is ItemLike -> entry.asItem().descriptionId.addTransformed(override)
-        is FluidType -> entry.descriptionId.addTransformed(override)
-        is CreativeModeTab -> add("itemGroup.${ModMain.ID}.${obj.id.path}", override ?: obj.id.path.joinUnderscoreWithCaps())
-        else -> throw IllegalArgumentException("Object provided, ${T::class.qualifiedName}, cannot be added")
-    }
+    private inline fun <reified T> add(obj: RegistryObject<T>, override: String? = null) =
+        when (val entry = obj.get()) {
+            is ItemLike -> entry.asItem().descriptionId.addTransformed(override)
+            is FluidType -> entry.descriptionId.addTransformed(override)
+            is CreativeModeTab -> add(
+                "itemGroup.${ModMain.ID}.${obj.id.path}",
+                override ?: obj.id.path.joinUnderscoreWithCaps()
+            )
+
+            else -> throw IllegalArgumentException("Object provided, ${T::class.qualifiedName}, cannot be added")
+        }
 
     /**
      * Adds US English text translations.

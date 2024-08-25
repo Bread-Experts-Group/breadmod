@@ -39,13 +39,15 @@ class KnifeItem(
         val blockState = level.getBlockState(clickedPos)
         val facing = pContext.clickedFace
 
-        return if(blockState.block == Blocks.PUMPKIN && handStack.`is`(ModItemTags.KNIVES)) {
+        return if (blockState.block == Blocks.PUMPKIN && handStack.`is`(ModItemTags.KNIVES)) {
             val player = pContext.player
-            if(player != null && !level.isClientSide) {
-                val direction = if(facing.axis == Direction.Axis.Y) player.direction.opposite else facing
+            if (player != null && !level.isClientSide) {
+                val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
                 level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
-                level.setBlockAndUpdate(clickedPos,
-                    Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction))
+                level.setBlockAndUpdate(
+                    clickedPos,
+                    Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction)
+                )
 
                 val itemEntity = createItemEntity(Items.PUMPKIN_SEEDS, 4, level, clickedPos, direction)
                 itemEntity.setDeltaMovement(
@@ -59,10 +61,10 @@ class KnifeItem(
             }
 
             InteractionResult.sidedSuccess(level.isClientSide)
-        } else if(blockState.block == ModBlocks.BREAD_BLOCK.get().block && handStack.`is`(ModItemTags.KNIVES)) {
+        } else if (blockState.block == ModBlocks.BREAD_BLOCK.get().block && handStack.`is`(ModItemTags.KNIVES)) {
             val player = pContext.player
-            if(player != null && !level.isClientSide) {
-                val direction = if(facing.axis == Direction.Axis.Y) player.direction.opposite else facing
+            if (player != null && !level.isClientSide) {
+                val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
                 level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
                 level.setBlockAndUpdate(clickedPos, Blocks.AIR.defaultBlockState())
 

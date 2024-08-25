@@ -10,7 +10,11 @@ import net.minecraftforge.fml.DistExecutor
 import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
 
-internal data class CapabilitySideDataPacket(val pPos: BlockPos, val pCapability: String, val pSides: List<Direction?>) {
+internal data class CapabilitySideDataPacket(
+    val pPos: BlockPos,
+    val pCapability: String,
+    val pSides: List<Direction?>
+) {
     companion object {
         fun encodeBuf(input: CapabilitySideDataPacket, buffer: FriendlyByteBuf) {
             buffer.writeBlockPos(input.pPos).writeUtf(input.pCapability).writeInt(input.pSides.size)

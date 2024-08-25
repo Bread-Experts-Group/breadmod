@@ -32,7 +32,7 @@ class DoughMachineScreen(
 
     override fun renderBg(pGuiGraphics: GuiGraphics, pPartialTick: Float, pMouseX: Int, pMouseY: Int) {
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F)
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
         RenderSystem.setShaderTexture(0, texture)
 
         pGuiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight)
@@ -42,7 +42,7 @@ class DoughMachineScreen(
     }
 
     private fun renderProgressArrow(pGuiGraphics: GuiGraphics) {
-        if(menu.isCrafting())
+        if (menu.isCrafting())
             pGuiGraphics.blit(texture, leftPos + 46, topPos + 35, 176, 0, menu.getScaledProgress(), 17)
     }
 
@@ -59,20 +59,20 @@ class DoughMachineScreen(
         menu.parent.capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)?.let {
             it.allTanks[0].let { tank ->
                 val fluid = tank.fluid.fluid
-                if(tank.fluidAmount > 0) {
+                if (tank.fluidAmount > 0) {
                     val percentage = (tank.fluidAmount.toFloat() / tank.capacity) * 28
                     pGuiGraphics.renderFluid(
-                        pX         = leftPos + 153F,
-                        pY         = (topPos + 75F),
-                        pWidth     = 16,
-                        pHeight    = percentage.toInt(),
-                        pFluid     = fluid,
-                        pFlowing   = false,
+                        pX = leftPos + 153F,
+                        pY = (topPos + 75F),
+                        pWidth = 16,
+                        pHeight = percentage.toInt(),
+                        pFluid = fluid,
+                        pFlowing = false,
                         pDirection = Direction.SOUTH
                     )
                 }
 
-                if(this.isHovering(153,46, 16, 28, pMouseX.toDouble(), pMouseY.toDouble())) {
+                if (this.isHovering(153, 46, 16, 28, pMouseX.toDouble(), pMouseY.toDouble())) {
                     pGuiGraphics.renderComponentTooltip(
                         this.font,
                         listOf(
@@ -87,7 +87,17 @@ class DoughMachineScreen(
                                         .withColor(IClientFluidTypeExtensions.of(fluid).tintColor)
                                         .withItalic(!fluid.fluidType.isAir)
                                 }),
-                            Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1, FluidType.BUCKET_VOLUME))
+                            Component.literal(
+                                formatUnit(
+                                    tank.fluidAmount,
+                                    tank.capacity,
+                                    "B",
+                                    showShort,
+                                    2,
+                                    -1,
+                                    FluidType.BUCKET_VOLUME
+                                )
+                            )
                         ),
                         pMouseX, pMouseY
                     )
@@ -96,20 +106,20 @@ class DoughMachineScreen(
 
             it.allTanks[1].let { tank ->
                 val fluid = tank.fluid.fluid
-                if(tank.fluidAmount > 0) {
+                if (tank.fluidAmount > 0) {
                     val percentage = (tank.fluidAmount.toFloat() / tank.capacity) * 16
                     pGuiGraphics.renderFluid(
-                        pX         = leftPos + 153F,
-                        pY         = (topPos + 44F),
-                        pWidth     = 16,
-                        pHeight    = percentage.toInt(),
-                        pFluid     = fluid,
-                        pFlowing   = false,
+                        pX = leftPos + 153F,
+                        pY = (topPos + 44F),
+                        pWidth = 16,
+                        pHeight = percentage.toInt(),
+                        pFluid = fluid,
+                        pFlowing = false,
                         pDirection = Direction.SOUTH
                     )
                 }
 
-                if(this.isHovering(153,28, 16, 16, pMouseX.toDouble(), pMouseY.toDouble())) {
+                if (this.isHovering(153, 28, 16, 16, pMouseX.toDouble(), pMouseY.toDouble())) {
                     pGuiGraphics.renderComponentTooltip(
                         this.font,
                         listOf(
@@ -124,7 +134,17 @@ class DoughMachineScreen(
                                         .withColor(IClientFluidTypeExtensions.of(fluid).tintColor)
                                         .withItalic(fluid.fluidType.isAir)
                                 }),
-                            Component.literal(formatUnit(tank.fluidAmount, tank.capacity, "B", showShort, 2, -1, FluidType.BUCKET_VOLUME))
+                            Component.literal(
+                                formatUnit(
+                                    tank.fluidAmount,
+                                    tank.capacity,
+                                    "B",
+                                    showShort,
+                                    2,
+                                    -1,
+                                    FluidType.BUCKET_VOLUME
+                                )
+                            )
                         ),
                         pMouseX, pMouseY
                     )
@@ -132,7 +152,7 @@ class DoughMachineScreen(
             }
         }
 
-        if(this.isHovering(132,28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
+        if (this.isHovering(132, 28, 16, 47, pMouseX.toDouble(), pMouseY.toDouble())) {
             menu.parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let {
                 pGuiGraphics.renderComponentTooltip(
                     this.font,
@@ -156,7 +176,8 @@ class DoughMachineScreen(
         addRenderableWidget(VoidTankButton(9, 121, 66, 0))
     }
 
-    inner class VoidTankButton(pSize: Int, pX: Int, pY: Int, private val tankIndex: Int): AbstractButton(leftPos + pX, topPos + pY, pSize, pSize, Component.literal("x")) {
+    inner class VoidTankButton(pSize: Int, pX: Int, pY: Int, private val tankIndex: Int) :
+        AbstractButton(leftPos + pX, topPos + pY, pSize, pSize, Component.literal("x")) {
         override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
 
         override fun onPress() {

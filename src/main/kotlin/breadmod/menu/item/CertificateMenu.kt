@@ -19,5 +19,6 @@ class CertificateMenu(
 //    }
 
     override fun quickMoveStack(pPlayer: Player, pIndex: Int): ItemStack = ItemStack.EMPTY
-    override fun stillValid(pPlayer: Player): Boolean = pPlayer.inventory.contains(ModItems.CERTIFICATE.get().defaultInstance)
+    override fun stillValid(pPlayer: Player): Boolean =
+        pPlayer.inventory.contains(ModItems.CERTIFICATE.get().defaultInstance)
 }

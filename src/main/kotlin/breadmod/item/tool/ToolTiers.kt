@@ -12,13 +12,17 @@ enum class ToolTiers(
     private val getEnchantmentValue: Int,
     private val getRepairIngredient: Ingredient
 ) : Tier {
-    BREAD(100,3f,0.0f,0,10, Ingredient.of(Items.BREAD)),
-    RF_BREAD(1500,8f,3f,3,17, Ingredient.of(Items.NETHERITE_INGOT)); // Reinforced
+    BREAD(100, 3f, 0.0f, 0, 10, Ingredient.of(Items.BREAD)),
+    RF_BREAD(1500, 8f, 3f, 3, 17, Ingredient.of(Items.NETHERITE_INGOT)); // Reinforced
 
     override fun getUses(): Int = getUses
     override fun getSpeed(): Float = getSpeed
     override fun getAttackDamageBonus(): Float = getAttackDamageBonus
-    @Deprecated("FORGE: Use TierSortingRegistry to define which tiers are better than others", ReplaceWith("TierSortingRegistry"))
+
+    @Deprecated(
+        "FORGE: Use TierSortingRegistry to define which tiers are better than others",
+        ReplaceWith("TierSortingRegistry")
+    )
     override fun getLevel(): Int = getLevel
     override fun getEnchantmentValue(): Int = getEnchantmentValue
     override fun getRepairIngredient(): Ingredient = getRepairIngredient

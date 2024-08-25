@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 
-class FluidStorageBlock: BaseAbstractMachineBlock.Powered<FluidStorageBlockEntity>(
+class FluidStorageBlock : BaseAbstractMachineBlock.Powered<FluidStorageBlockEntity>(
     ModBlockEntityTypes.FLUID_STORAGE,
     Properties.of(),
     false

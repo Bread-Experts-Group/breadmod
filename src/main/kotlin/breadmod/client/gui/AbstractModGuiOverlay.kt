@@ -15,7 +15,7 @@ import net.minecraftforge.client.gui.overlay.ForgeGui
 import net.minecraftforge.client.gui.overlay.IGuiOverlay
 
 @Suppress("MemberVisibilityCanBePrivate", "Unused")
-abstract class AbstractModGuiOverlay: IGuiOverlay {
+abstract class AbstractModGuiOverlay : IGuiOverlay {
     val entityRenderer: EntityRenderDispatcher = rgMinecraft.entityRenderDispatcher
     val itemRenderer: ItemRenderer = rgMinecraft.itemRenderer
     val blockRenderer: BlockRenderDispatcher = rgMinecraft.blockRenderer

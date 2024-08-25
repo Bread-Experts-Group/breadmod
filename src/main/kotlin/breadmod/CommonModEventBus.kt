@@ -43,36 +43,42 @@ object CommonModEventBus {
 
         generator.addProvider(true, ModToolGunModeProvider(packOutput))
 
-        if(event.includeServer()) {
+        if (event.includeServer()) {
             LOGGER.info("Server data-gen")
             generator.addProvider(true, constructLootProvider(ModBlocks.ModBlockLoot(), packOutput))
             generator.addProvider(true, ModRecipeProvider(packOutput))
             generator.addProvider(true, ModEMCProvider(packOutput, lookupProvider))
 
-            val blockTagGenerator = generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
-            generator.addProvider(true, ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper))
+            val blockTagGenerator =
+                generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
+            generator.addProvider(
+                true,
+                ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper)
+            )
             generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
             generator.addProvider(true, ModFluidTags(packOutput, lookupProvider, existingFileHelper))
             generator.addProvider(true, ModCuriosSlotsProvider(packOutput, existingFileHelper, lookupProvider))
 
-            generator.addProvider(true, DatapackBuiltinEntriesProvider(
-                packOutput, lookupProvider, RegistrySetBuilder()
-                    .add(Registries.TEMPLATE_POOL, ModPools::bootstrap)
-                    .add(Registries.STRUCTURE, ModStructures::bootstrap)
-                    .add(Registries.STRUCTURE_SET, ModStructureSets::bootstrap)
+            generator.addProvider(
+                true, DatapackBuiltinEntriesProvider(
+                    packOutput, lookupProvider, RegistrySetBuilder()
+                        .add(Registries.TEMPLATE_POOL, ModPools::bootstrap)
+                        .add(Registries.STRUCTURE, ModStructures::bootstrap)
+                        .add(Registries.STRUCTURE_SET, ModStructureSets::bootstrap)
 
-                    .add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
+                        .add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
 
-                    .add(Registries.CONFIGURED_FEATURE, ModFeatures::bootstrapConfiguredFeatures)
-                    .add(Registries.PLACED_FEATURE, ModFeatures::bootstrapPlacedFeatures)
+                        .add(Registries.CONFIGURED_FEATURE, ModFeatures::bootstrapConfiguredFeatures)
+                        .add(Registries.PLACED_FEATURE, ModFeatures::bootstrapPlacedFeatures)
 
-                    .add(Registries.BIOME, ModBiomes::bootstrapBiomes)
-                    .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
-                    .add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems),
-                setOf(ModMain.ID))
+                        .add(Registries.BIOME, ModBiomes::bootstrapBiomes)
+                        .add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
+                        .add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems),
+                    setOf(ModMain.ID)
+                )
             )
         }
-        if(event.includeClient()) {
+        if (event.includeClient()) {
             LOGGER.info("Client data-gen")
             generator.addProvider(true, USEnglishLanguageProvider(packOutput, "en_us"))
             generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))

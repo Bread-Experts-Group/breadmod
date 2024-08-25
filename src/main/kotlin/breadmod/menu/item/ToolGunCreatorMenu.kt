@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack
 class ToolGunCreatorMenu(
     pContainerId: Int,
     val inventory: Inventory,
-): AbstractModContainerMenu(
+) : AbstractModContainerMenu(
     ModMenuTypes.TOOL_GUN_CREATOR.get(),
     pContainerId
 ) {

@@ -8,10 +8,11 @@ import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.EnumProperty
 
 @UseBlockStateNBT
-class OreBlock(property: Properties = Properties.copy(Blocks.STONE)): Block(property) {
+class OreBlock(property: Properties = Properties.copy(Blocks.STONE)) : Block(property) {
     init {
-        this.registerDefaultState(this.defaultBlockState()
-            .setValue(ORE_TYPE, OreTypes.STONE)
+        this.registerDefaultState(
+            this.defaultBlockState()
+                .setValue(ORE_TYPE, OreTypes.STONE)
         )
     }
 
@@ -21,12 +22,13 @@ class OreBlock(property: Properties = Properties.copy(Blocks.STONE)): Block(prop
     }
 
     companion object {
-        enum class OreTypes: StringRepresentable {
+        enum class OreTypes : StringRepresentable {
             BREAD,
             STONE;
 
             override fun getSerializedName(): String = this.name.lowercase()
         }
+
         val ORE_TYPE = object : EnumProperty<OreTypes>("ore_type", OreTypes::class.java, OreTypes.entries) {}
     }
 }

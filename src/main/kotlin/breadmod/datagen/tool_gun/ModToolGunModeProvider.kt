@@ -11,7 +11,7 @@ import net.minecraft.data.PackOutput
 
 internal class ModToolGunModeProvider(
     output: PackOutput
-): BreadModToolGunModeProvider(output, ModMain.ID) {
+) : BreadModToolGunModeProvider(output, ModMain.ID) {
     companion object {
         val SCREEN_CONTROL = Control(
             "screen",

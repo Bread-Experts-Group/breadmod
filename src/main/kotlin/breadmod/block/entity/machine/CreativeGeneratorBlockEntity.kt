@@ -33,7 +33,7 @@ class CreativeGeneratorBlockEntity(
         }
 //        println(pLevel.gameTime % 80.0)
 
-        if(pLevel.gameTime % 80.0 == 0.0) {
+        if (pLevel.gameTime % 80.0 == 0.0) {
             // todo toggleable state that plays the beacon deactivate and activate beacon
             pLevel.playSound(null, pPos, SoundEvents.BEACON_AMBIENT, SoundSource.BLOCKS, 1.0f, 1.0f)
         }

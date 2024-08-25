@@ -10,7 +10,7 @@ annotation class UseBlockStateNBT {
     companion object {
         fun saveState(nbt: CompoundTag, blockState: BlockState) = CompoundTag().also {
             blockState.values.forEach { (_, data) ->
-                when(data) {
+                when (data) {
                     is OreBlock.Companion.OreTypes -> it.putString("oreType", data.name)
                 }
             }
@@ -23,7 +23,7 @@ annotation class UseBlockStateNBT {
 
             return BlockState(block, ImmutableMap.copyOf(buildMap {
                 bsTag.allKeys.forEach {
-                    when(it) {
+                    when (it) {
                         "oreType" -> this[ORE_TYPE] = OreBlock.Companion.OreTypes.valueOf(bsTag.getString(it))
                     }
                 }

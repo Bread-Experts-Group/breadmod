@@ -20,10 +20,11 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.registries.ForgeRegistries
 
-class ToasterRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergyRecipeCategory<ToasterRecipe>(guiHelper) {
-    val texture = modLocation("textures","gui","jei","gui_toaster.png")
+class ToasterRecipeCategory(private val guiHelper: IGuiHelper) : FluidEnergyRecipeCategory<ToasterRecipe>(guiHelper) {
+    val texture = modLocation("textures", "gui", "jei", "gui_toaster.png")
     private val recipeTime: Int = 0
-    private val cachedArrows = createCachedArrows(guiHelper, 22, texture, 66, 0, 29, 22, IDrawableAnimated.StartDirection.TOP, false)
+    private val cachedArrows =
+        createCachedArrows(guiHelper, 22, texture, 66, 0, 29, 22, IDrawableAnimated.StartDirection.TOP, false)
 
     override fun getRecipeType(): RecipeType<ToasterRecipe> = ModJEIRecipeTypes.toasterRecipeType
     override fun getTitle(): Component = Component.translatable(ModBlocks.TOASTER.get().descriptionId)
@@ -48,7 +49,8 @@ class ToasterRecipeCategory(private val guiHelper: IGuiHelper): FluidEnergyRecip
             .addItemStacks(buildList {
                 recipe.itemsRequired?.forEach { add(it) }
                 recipe.itemsRequiredTagged?.forEach { (tagKey, amount) ->
-                    ForgeRegistries.ITEMS.filter { it.defaultInstance.`is`(tagKey) }.forEach { item -> add(ItemStack(item, amount)) }
+                    ForgeRegistries.ITEMS.filter { it.defaultInstance.`is`(tagKey) }
+                        .forEach { item -> add(ItemStack(item, amount)) }
                 }
             })
 

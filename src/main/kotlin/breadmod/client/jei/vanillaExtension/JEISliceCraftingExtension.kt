@@ -16,7 +16,7 @@ class JEISliceCraftingExtension(
     private val pInputRepeatCount: Int,
     private val pOutputMultiplier: Int,
     private val pOutputRepeatCount: Int
-): ICraftingCategoryExtension {
+) : ICraftingCategoryExtension {
     override fun getWidth(): Int = 2
     override fun getHeight(): Int = 1
     override fun setRecipe(

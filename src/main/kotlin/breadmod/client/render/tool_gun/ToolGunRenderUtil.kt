@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
 
 private const val SCREEN_TINT = 15728880
+
 /**
  * +X moves text forward on tool gun
  * -X moves text backward on tool gun
@@ -123,7 +124,7 @@ fun drawWrappedTextOnScreen(
     pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
     pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
     var split: Float = pSplitY
-    for(formattedCharSequence: FormattedCharSequence in componentSplit(pText, pLineWidth, pFont)) {
+    for (formattedCharSequence: FormattedCharSequence in componentSplit(pText, pLineWidth, pFont)) {
         pFont.drawInBatch(
             formattedCharSequence,
             0f,

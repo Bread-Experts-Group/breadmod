@@ -16,9 +16,7 @@ import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3
-import thedarkcolour.kotlinforforge.forge.vectorutil.v3d.toVec3i
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
     private fun BlockPos.adjust() = this.toVec3() + Vec3(0.5, 0.0, 0.5)
@@ -49,13 +47,23 @@ class HappyBlock : TntBlock(Properties.copy(Blocks.TNT)) {
 
     override fun wasExploded(pLevel: Level, pPos: BlockPos, pExplosion: Explosion) {
         if (!pLevel.isClientSide) {
-            val primedHappyBlock = PrimedHappyBlock(pLevel, pPos.adjust(), owner = pExplosion.indirectSourceEntity, shouldSpread = true)
+            val primedHappyBlock =
+                PrimedHappyBlock(pLevel, pPos.adjust(), owner = pExplosion.indirectSourceEntity, shouldSpread = true)
             primedHappyBlock.fuse -= ((primedHappyBlock.fuse - 10.0) * (1.0 / (1.0 + pExplosion.position.distanceTo(pPos.toVec3())))).roundToInt()
             pLevel.addFreshEntity(primedHappyBlock)
         }
     }
 
-    override fun isFlammable(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Boolean = true
-    override fun getFlammability(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Int = 15
-    override fun getFireSpreadSpeed(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Int = 30
+    override fun isFlammable(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Boolean =
+        true
+
+    override fun getFlammability(state: BlockState?, level: BlockGetter?, pos: BlockPos?, direction: Direction?): Int =
+        15
+
+    override fun getFireSpreadSpeed(
+        state: BlockState?,
+        level: BlockGetter?,
+        pos: BlockPos?,
+        direction: Direction?
+    ): Int = 30
 }

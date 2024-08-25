@@ -91,12 +91,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("BAB")
             .pattern(" B ")
             .save(pWriter, modLocation("misc", "bread_amulet"))
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_amulet"),
             ModItems.BASIC_BREAD_AMULET.get(),
             ModItems.REINFORCED_BREAD_AMULET.get(),
             RecipeCategory.MISC,
-            ModItems.BASIC_BREAD_AMULET.get())
+            ModItems.BASIC_BREAD_AMULET.get()
+        )
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.INDESTRUCTIBLE_BREAD_AMULET.get())
             .unlockedBy("has_item", has(ModItems.REINFORCED_BREAD_AMULET.get()))
             .define('S', Items.NETHER_STAR)
@@ -201,12 +203,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("FFF")
             .save(pWriter, modLocation("food", "dough"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_block_smithing"),
             ModBlocks.BREAD_BLOCK.get(),
             ModBlocks.REINFORCED_BREAD_BLOCK.get(),
             RecipeCategory.BUILDING_BLOCKS,
-            ModBlocks.BREAD_BLOCK.get())
+            ModBlocks.BREAD_BLOCK.get()
+        )
 
         // Bread Sword
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_SWORD.get(), 1)
@@ -218,12 +222,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("combat", "bread_sword"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_sword_smithing"),
             ModItems.BREAD_SWORD.get(),
             ModItems.RF_BREAD_SWORD.get(),
             RecipeCategory.COMBAT,
-            ModItems.BREAD_SWORD.get())
+            ModItems.BREAD_SWORD.get()
+        )
 
         // Bread Shovel
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_SHOVEL.get(), 1)
@@ -235,12 +241,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_shovel"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_shovel_smithing"),
             ModItems.BREAD_SHOVEL.get(),
             ModItems.RF_BREAD_SHOVEL.get(),
             RecipeCategory.TOOLS,
-            ModItems.BREAD_SHOVEL.get())
+            ModItems.BREAD_SHOVEL.get()
+        )
 
         // Bread Axe
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_AXE.get(), 1)
@@ -252,12 +260,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_axe"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_axe_smithing"),
             ModItems.BREAD_AXE.get(),
             ModItems.RF_BREAD_AXE.get(),
             RecipeCategory.TOOLS,
-            ModItems.BREAD_AXE.get())
+            ModItems.BREAD_AXE.get()
+        )
 
         // Bread Pickaxe
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_PICKAXE.get(), 1)
@@ -269,12 +279,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_pickaxe"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_pickaxe_smithing"),
             ModItems.BREAD_PICKAXE.get(),
             ModItems.RF_BREAD_PICKAXE.get(),
             RecipeCategory.TOOLS,
-            ModItems.BREAD_PICKAXE.get())
+            ModItems.BREAD_PICKAXE.get()
+        )
 
         // Bread Hoe
         ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.BREAD_HOE.get(), 1)
@@ -286,12 +298,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern(" S ")
             .save(pWriter, modLocation("tools", "bread_hoe"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_hoe_smithing"),
             ModItems.BREAD_HOE.get(),
             ModItems.RF_BREAD_HOE.get(),
             RecipeCategory.TOOLS,
-            ModItems.BREAD_HOE.get())
+            ModItems.BREAD_HOE.get()
+        )
 
         //// Armor
         // Bread Helmet
@@ -302,12 +316,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("B B")
             .save(pWriter, modLocation("combat", "bread_helmet"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_helmet_smithing"),
             ModItems.BREAD_HELMET.get(),
             ModItems.RF_BREAD_HELMET.get(),
             RecipeCategory.COMBAT,
-            ModItems.BREAD_HELMET.get())
+            ModItems.BREAD_HELMET.get()
+        )
 
         // Bread Chestplate
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_CHESTPLATE.get())
@@ -318,12 +334,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("BBB")
             .save(pWriter, modLocation("combat", "bread_chestplate"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_chestplate_smithing"),
             ModItems.BREAD_CHESTPLATE.get(),
             ModItems.RF_BREAD_CHESTPLATE.get(),
             RecipeCategory.COMBAT,
-            ModItems.BREAD_CHESTPLATE.get())
+            ModItems.BREAD_CHESTPLATE.get()
+        )
 
         // Bread Leggings
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_LEGGINGS.get())
@@ -334,12 +352,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("B B")
             .save(pWriter, modLocation("combat", "bread_leggings"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_leggings_smithing"),
             ModItems.BREAD_LEGGINGS.get(),
             ModItems.RF_BREAD_LEGGINGS.get(),
             RecipeCategory.COMBAT,
-            ModItems.BREAD_LEGGINGS.get())
+            ModItems.BREAD_LEGGINGS.get()
+        )
 
         // Bread Boots
         ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.BREAD_BOOTS.get())
@@ -349,12 +369,14 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .pattern("B B")
             .save(pWriter, modLocation("combat", "bread_boots"))
 
-        modNetheriteSmithing(pWriter,
+        modNetheriteSmithing(
+            pWriter,
             modLocation("smithing", "reinforced_bread_boots_smithing"),
             ModItems.BREAD_BOOTS.get(),
             ModItems.RF_BREAD_BOOTS.get(),
             RecipeCategory.COMBAT,
-            ModItems.BREAD_BOOTS.get())
+            ModItems.BREAD_BOOTS.get()
+        )
 
 
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.FLOUR_LAYER_BLOCK.get(), 6)
@@ -427,7 +449,10 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
             .requiresFluid(FluidTags.WATER, 250)
             .setSerializer(ModRecipeSerializers.DOUGH_MACHINE.get())
             .save(pWriter, modLocation("special", "machine", "flour_to_dough"))
-        FluidEnergyRecipeBuilder(ItemStack(ModItems.ULTIMATE_BREAD.get()), FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME))
+        FluidEnergyRecipeBuilder(
+            ItemStack(ModItems.ULTIMATE_BREAD.get()),
+            FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME)
+        )
             .setTimeRequired(20 * 5)
             .setRFRequired(5000)
             .requiresItem(Items.BREAD, 5)
@@ -516,7 +541,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
 
         // // Compat
         // Create
-        if(ModList.get().isLoaded("create")) {
+        if (ModList.get().isLoaded("create")) {
             CreateMixingRecipeBuilder(ModBlocks.BREAD_BLOCK.get(), 2)
                 .heatRequirement(CreateMixingRecipeBuilder.HeatRequirement.HEATED)
                 .requiresItem(Items.BREAD, 1)
@@ -525,7 +550,7 @@ class ModRecipeProvider(pOutput: PackOutput) : RecipeProvider(pOutput) {
         }
 
         // Mekanism
-        if(ModList.get().isLoaded("mekanism")) {
+        if (ModList.get().isLoaded("mekanism")) {
             ItemStackToItemStackRecipeBuilder.crushing(
                 IngredientCreatorAccess.item().from(ModBlocks.BREAD_BLOCK.get()),
                 ItemStack(MekanismItems.BIO_FUEL.get(), 63)

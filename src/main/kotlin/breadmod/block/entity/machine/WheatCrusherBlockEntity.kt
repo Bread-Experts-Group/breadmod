@@ -42,7 +42,8 @@ class WheatCrusherBlockEntity(
     override fun createMenu(pContainerId: Int, pInventory: Inventory, pPlayer: Player): AbstractContainerMenu =
         WheatCrusherMenu(pContainerId, pInventory, this)
 
-    private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
+    private fun getItemHandler() =
+        capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
 
     override fun consumeRecipe(
         pLevel: Level,
@@ -65,9 +66,13 @@ class WheatCrusherBlockEntity(
         recipe: WheatCrushingRecipe
     ): Boolean {
         val itemHandle = getItemHandler() ?: return false
-        return if(recipe.canFitResults(itemHandle to listOf(1), null)) {
+        return if (recipe.canFitResults(itemHandle to listOf(1), null)) {
             val assembled = recipe.assembleOutputs(craftingManager, pLevel)
-            assembled.first.forEach { stack -> itemHandle[1].let { slot -> if(slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count) } }
+            assembled.first.forEach { stack ->
+                itemHandle[1].let { slot ->
+                    if (slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count)
+                }
+            }
             true
         } else false
     }

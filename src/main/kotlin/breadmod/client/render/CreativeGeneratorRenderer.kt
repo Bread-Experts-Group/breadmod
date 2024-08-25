@@ -10,8 +10,9 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraftforge.client.model.generators.ModelProvider
 
-class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntity> {
-    private val starModelLocation = modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star")
+class CreativeGeneratorRenderer : BlockEntityRenderer<CreativeGeneratorBlockEntity> {
+    private val starModelLocation =
+        modLocation("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star")
     private val aLocation = modLocation("${ModelProvider.BLOCK_FOLDER}/sphere")
 
     override fun render(
@@ -45,8 +46,13 @@ class CreativeGeneratorRenderer: BlockEntityRenderer<CreativeGeneratorBlockEntit
 //        pPoseStack.translate(-1f, 0f, -1f)
 //        drawQuad(builder, pPoseStack, 1f, 0f, 1f, 0f, 1f, 1f, 0f, 0f, 0f, 0f, pPackedLight, pPackedOverlay)
         renderBlockModel(
-            pPoseStack, pBuffer, pBlockEntity, rgMinecraft.modelManager.getModel(aLocation), pPackedLight, pPackedOverlay,
-           /* ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png"))*/
+            pPoseStack,
+            pBuffer,
+            pBlockEntity,
+            rgMinecraft.modelManager.getModel(aLocation),
+            pPackedLight,
+            pPackedOverlay,
+            /* ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png"))*/
         )
         pPoseStack.popPose()
 

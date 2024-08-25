@@ -25,17 +25,26 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Items
 
-@JeiPlugin @Suppress("unused")
+@JeiPlugin
+@Suppress("unused")
 class JEIPlugin : IModPlugin {
     override fun getPluginUid(): ResourceLocation = ResourceLocation(ModMain.ID, "jei_plugin")
 
     override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
-        registration.craftingCategory.addCategoryExtension(ArmorPotionRecipe::class.java) { JEIArmorPotionCraftingExtension(it) }
-        registration.craftingCategory.addCategoryExtension(BreadSliceRecipe::class.java) { JEISliceCraftingExtension(
-            Items.BREAD, ModItems.BREAD_SLICE.get(), 1, 8, 8, 8)
+        registration.craftingCategory.addCategoryExtension(ArmorPotionRecipe::class.java) {
+            JEIArmorPotionCraftingExtension(
+                it
+            )
         }
-        registration.craftingCategory.addCategoryExtension(ToastedBreadSliceRecipe::class.java) { JEISliceCraftingExtension(
-            ModItems.TOASTED_BREAD.get(), ModItems.TOAST_SLICE.get(), 1, 8, 8, 8)
+        registration.craftingCategory.addCategoryExtension(BreadSliceRecipe::class.java) {
+            JEISliceCraftingExtension(
+                Items.BREAD, ModItems.BREAD_SLICE.get(), 1, 8, 8, 8
+            )
+        }
+        registration.craftingCategory.addCategoryExtension(ToastedBreadSliceRecipe::class.java) {
+            JEISliceCraftingExtension(
+                ModItems.TOASTED_BREAD.get(), ModItems.TOAST_SLICE.get(), 1, 8, 8, 8
+            )
         }
     }
 
@@ -49,10 +58,12 @@ class JEIPlugin : IModPlugin {
     }
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
-        registration.addRecipeCatalyst(ModBlocks.DOUGH_MACHINE_BLOCK.get().defaultInstance,
+        registration.addRecipeCatalyst(
+            ModBlocks.DOUGH_MACHINE_BLOCK.get().defaultInstance,
             ModJEIRecipeTypes.doughMachineRecipeType
         )
-        registration.addRecipeCatalyst(ModBlocks.WHEAT_CRUSHER_BLOCK.get().defaultInstance,
+        registration.addRecipeCatalyst(
+            ModBlocks.WHEAT_CRUSHER_BLOCK.get().defaultInstance,
             ModJEIRecipeTypes.wheatCrusherRecipeType
         )
         registration.addRecipeCatalyst(ModBlocks.TOASTER.get().defaultInstance, ModJEIRecipeTypes.toasterRecipeType)
@@ -65,7 +76,10 @@ class JEIPlugin : IModPlugin {
         val toasterRecipeList = recipeManager.getAllRecipesFor(ModRecipeTypes.TOASTING.get())
 
         registration.addItemStackInfo(ModBlocks.BREAD_BLOCK.get().defaultInstance, Component.literal("FUCK"))
-        registration.addItemStackInfo(ModBlocks.TOASTER.get().defaultInstance, Component.literal("DON'T LISTEN TO THE TOOLTIP COOK CHARCOAL IN IT!!"))
+        registration.addItemStackInfo(
+            ModBlocks.TOASTER.get().defaultInstance,
+            Component.literal("DON'T LISTEN TO THE TOOLTIP COOK CHARCOAL IN IT!!")
+        )
         registration.addRecipes(ModJEIRecipeTypes.doughMachineRecipeType, doughMachineRecipeList)
         registration.addRecipes(ModJEIRecipeTypes.wheatCrusherRecipeType, wheatCrusherRecipeList)
         registration.addRecipes(ModJEIRecipeTypes.toasterRecipeType, toasterRecipeList)
@@ -85,9 +99,11 @@ class JEIPlugin : IModPlugin {
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
         registration.addRecipeTransferHandler(
             DoughMachineMenu::class.java, ModMenuTypes.DOUGH_MACHINE.get(), ModJEIRecipeTypes.doughMachineRecipeType,
-            0, 3, 3, 36)
+            0, 3, 3, 36
+        )
         registration.addRecipeTransferHandler(
             WheatCrusherMenu::class.java, ModMenuTypes.WHEAT_CRUSHER.get(), ModJEIRecipeTypes.wheatCrusherRecipeType,
-            0, 2, 2, 36)
+            0, 2, 2, 36
+        )
     }
 }

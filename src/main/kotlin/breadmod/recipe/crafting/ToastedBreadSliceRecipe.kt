@@ -16,13 +16,14 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.Level
 import kotlin.math.min
 
-class ToastedBreadSliceRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory): CustomRecipe(pId, pCategory) {
+class ToastedBreadSliceRecipe(pId: ResourceLocation, pCategory: CraftingBookCategory) : CustomRecipe(pId, pCategory) {
     override fun matches(pContainer: CraftingContainer, pLevel: Level): Boolean {
-        var hasToast = false; var hasSword = false
+        var hasToast = false
+        var hasSword = false
         pContainer.items.forEach {
-            if(!it.isEmpty) {
-                if(it.item == ModItems.TOASTED_BREAD.get()) hasToast = true
-                else if(it.`is`(ItemTags.SWORDS) && !hasSword) hasSword = true
+            if (!it.isEmpty) {
+                if (it.item == ModItems.TOASTED_BREAD.get()) hasToast = true
+                else if (it.`is`(ItemTags.SWORDS) && !hasSword) hasSword = true
                 else return false
             }
         }
@@ -38,19 +39,21 @@ class ToastedBreadSliceRecipe(pId: ResourceLocation, pCategory: CraftingBookCate
         for (slot in 0 until pContainer.containerSize) {
             var shouldBreak = false
             pContainer.getItem(slot).also { stack ->
-                if(!stack.isEmpty)
-                    if(stack.`is`(ModItems.TOASTED_BREAD.get()))
-                        if(((toastToCut.size + 1) * 8) <= toastSliceItem.getMaxStackSize(toastSliceItem.defaultInstance)) toastToCut.add(stack)
+                if (!stack.isEmpty)
+                    if (stack.`is`(ModItems.TOASTED_BREAD.get()))
+                        if (((toastToCut.size + 1) * 8) <= toastSliceItem.getMaxStackSize(toastSliceItem.defaultInstance)) toastToCut.add(
+                            stack
+                        )
                         else shouldBreak = true
-                    else if(stack.`is`(ItemTags.SWORDS)) {
-                        if(swordItem.isEmpty) swordItem = stack
+                    else if (stack.`is`(ItemTags.SWORDS)) {
+                        if (swordItem.isEmpty) swordItem = stack
                         else valid = false
                     }
             }
-            if(shouldBreak || !valid) break
+            if (shouldBreak || !valid) break
         }
 
-        return if(swordItem.isEmpty || swordItem.item !is SwordItem || !valid) swordItem
+        return if (swordItem.isEmpty || swordItem.item !is SwordItem || !valid) swordItem
         else ItemStack(
             toastSliceItem,
             min(
@@ -61,20 +64,22 @@ class ToastedBreadSliceRecipe(pId: ResourceLocation, pCategory: CraftingBookCate
     }
 
     private val toastHurtSource: RandomSource = RandomSource.create(46234821)
-    override fun getRemainingItems(pContainer: CraftingContainer): NonNullList<ItemStack> = NonNullList.withSize(pContainer.containerSize, ItemStack.EMPTY).also {
-        var bread = 0; var sword = ItemStack.EMPTY
-        for (slot in 0 until it.size) {
-            val stack = pContainer.getItem(slot).copy()
-            if(stack.`is`(ItemTags.SWORDS)) {
-                it[slot] = stack
-                sword = stack
-            } else if(stack.`is`(ModItems.TOASTED_BREAD.get())) bread += 1
+    override fun getRemainingItems(pContainer: CraftingContainer): NonNullList<ItemStack> =
+        NonNullList.withSize(pContainer.containerSize, ItemStack.EMPTY).also {
+            var bread = 0
+            var sword = ItemStack.EMPTY
+            for (slot in 0 until it.size) {
+                val stack = pContainer.getItem(slot).copy()
+                if (stack.`is`(ItemTags.SWORDS)) {
+                    it[slot] = stack
+                    sword = stack
+                } else if (stack.`is`(ModItems.TOASTED_BREAD.get())) bread += 1
+            }
+            if (sword.hurt(bread, toastHurtSource, null)) {
+                sword.shrink(1)
+                sword.damageValue = 0
+            }
         }
-        if(sword.hurt(bread, toastHurtSource, null)) {
-            sword.shrink(1)
-            sword.damageValue = 0
-        }
-    }
 
     override fun canCraftInDimensions(pWidth: Int, pHeight: Int): Boolean = (pWidth * pHeight) >= 2
     override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.TOAST_TO_TOAST_SLICE.get()

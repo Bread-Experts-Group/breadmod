@@ -13,7 +13,7 @@ import net.minecraft.world.level.material.PushReaction
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class HellNawButtonBlock: ButtonBlock(
+class HellNawButtonBlock : ButtonBlock(
     Properties.of()
         .noCollission()
         .strength(0.5f)
@@ -34,10 +34,12 @@ class HellNawButtonBlock: ButtonBlock(
     private val eastAABB = Block.box(0.0, 5.0, 5.0, 1.4, 11.0, 11.0)
     private val eastPressedAABB = Block.box(0.0, 5.0, 5.0, 0.9, 11.0, 11.0)
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "super.getShape(pState, pLevel, pPos, pContext)",
-        "net.minecraft.world.level.block.ButtonBlock"
-    ))
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "super.getShape(pState, pLevel, pPos, pContext)",
+            "net.minecraft.world.level.block.ButtonBlock"
+        )
+    )
     override fun getShape(
         pState: BlockState,
         pLevel: BlockGetter,
@@ -46,15 +48,15 @@ class HellNawButtonBlock: ButtonBlock(
     ): VoxelShape {
         val direction = pState.getValue(FACING)
         val flag = pState.getValue(POWERED)
-        return when(pState.getValue(FACE) as AttachFace) {
-            AttachFace.FLOOR -> if(flag) floorPressedAABB else floorAABB
-            AttachFace.CEILING -> if(flag) ceilingPressedAABB else ceilingAABB
+        return when (pState.getValue(FACE) as AttachFace) {
+            AttachFace.FLOOR -> if (flag) floorPressedAABB else floorAABB
+            AttachFace.CEILING -> if (flag) ceilingPressedAABB else ceilingAABB
             AttachFace.WALL -> {
-                val voxelShape = when(direction) {
-                    Direction.EAST -> if(flag) eastPressedAABB else eastAABB
-                    Direction.WEST -> if(flag) westPressedAABB else westAABB
-                    Direction.SOUTH -> if(flag) southPressedAABB else southAABB
-                    Direction.DOWN, Direction.UP, Direction.NORTH -> if(flag) northPressedAABB else northAABB
+                val voxelShape = when (direction) {
+                    Direction.EAST -> if (flag) eastPressedAABB else eastAABB
+                    Direction.WEST -> if (flag) westPressedAABB else westAABB
+                    Direction.SOUTH -> if (flag) southPressedAABB else southAABB
+                    Direction.DOWN, Direction.UP, Direction.NORTH -> if (flag) northPressedAABB else northAABB
                     else -> throw RuntimeException("invalid direction")
                 }
                 return voxelShape

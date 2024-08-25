@@ -3,15 +3,12 @@ package breadmod.item
 import breadmod.ModMain.modTranslatable
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import net.minecraft.world.phys.BlockHitResult
-import net.minecraft.world.phys.EntityHitResult
 
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).rarity(Rarity.EPIC)) {
 //    override fun finishUsingItem(pStack: ItemStack, pLevel: Level, pLivingEntity: LivingEntity): ItemStack {
@@ -33,7 +30,8 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
         pTooltipComponents: MutableList<Component>,
         pIsAdvanced: TooltipFlag
     ) {
-        pTooltipComponents.add(1,
+        pTooltipComponents.add(
+            1,
             modTranslatable("item", "test_bread", "tooltip")
                 .withStyle(ChatFormatting.GOLD)
         )

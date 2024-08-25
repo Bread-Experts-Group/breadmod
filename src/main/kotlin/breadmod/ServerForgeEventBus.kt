@@ -15,8 +15,9 @@ import net.minecraftforge.network.PacketDistributor
 object ServerForgeEventBus {
     @SubscribeEvent
     fun onPlayerJoin(event: PlayerLoggedInEvent) {
-        val list = buildList { ModToolGunModeDataLoader.modes.forEach { it.value.forEach { p -> add(p.value) } } }.iterator()
-        while(list.hasNext()) {
+        val list =
+            buildList { ModToolGunModeDataLoader.modes.forEach { it.value.forEach { p -> add(p.value) } } }.iterator()
+        while (list.hasNext()) {
             val next = list.next()
             NETWORK.send(
                 PacketDistributor.PLAYER.with { event.entity as ServerPlayer },

@@ -43,10 +43,11 @@ class DoughMachineBlockEntity(
     listOf(0),
     1 to 1,
     EnergyBattery(50000, 2000) to mutableListOf(null, Direction.NORTH),
-    ForgeCapabilities.FLUID_HANDLER to (FluidContainer(mutableMapOf(
-        FluidTank(INPUT_TANK_CAPACITY) to StorageDirection.STORE_ONLY,
-        FluidTank(OUTPUT_TANK_CAPACITY) to StorageDirection.EMPTY_ONLY
-    )
+    ForgeCapabilities.FLUID_HANDLER to (FluidContainer(
+        mutableMapOf(
+            FluidTank(INPUT_TANK_CAPACITY) to StorageDirection.STORE_ONLY,
+            FluidTank(OUTPUT_TANK_CAPACITY) to StorageDirection.EMPTY_ONLY
+        )
     ) to mutableListOf(null, Direction.UP))
 ), MenuProvider {
     companion object {
@@ -54,7 +55,9 @@ class DoughMachineBlockEntity(
         const val OUTPUT_TANK_CAPACITY = 4000
     }
 
-    private fun getItemHandler() = capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
+    private fun getItemHandler() =
+        capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
+
     private fun getFluidHandler() = capabilityHolder.capabilityOrNull<FluidContainer>(ForgeCapabilities.FLUID_HANDLER)
 
     init {
@@ -81,7 +84,13 @@ class DoughMachineBlockEntity(
         val itemHandle = getItemHandler() ?: return false
         val inputTank = fluidHandle.allTanks[0]
         recipe.fluidsRequired?.forEach { stack -> inputTank.drain(stack, IFluidHandler.FluidAction.EXECUTE) }
-        recipe.fluidsRequiredTagged?.forEach { (tag, amount) -> inputTank.drain(tag, amount, IFluidHandler.FluidAction.EXECUTE) }
+        recipe.fluidsRequiredTagged?.forEach { (tag, amount) ->
+            inputTank.drain(
+                tag,
+                amount,
+                IFluidHandler.FluidAction.EXECUTE
+            )
+        }
         recipe.itemsRequired?.forEach { stack -> itemHandle[0].shrink(stack.count) }
         recipe.itemsRequiredTagged?.forEach { tag -> itemHandle[0].shrink(tag.second) }
         return true
@@ -97,10 +106,14 @@ class DoughMachineBlockEntity(
         val fluidHandle = getFluidHandler() ?: return false
         val itemHandle = getItemHandler() ?: return false
         val outputTank = fluidHandle.allTanks[1]
-        return if(recipe.canFitResults(itemHandle to listOf(1), outputTank)) {
+        return if (recipe.canFitResults(itemHandle to listOf(1), outputTank)) {
             val assembled = recipe.assembleOutputs(craftingManager, pLevel)
-            assembled.first.forEach { stack -> itemHandle[1].let { slot -> if(slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count) } }
-            assembled.second.forEach { stack ->  outputTank.fill(stack, IFluidHandler.FluidAction.EXECUTE) }
+            assembled.first.forEach { stack ->
+                itemHandle[1].let { slot ->
+                    if (slot.isEmpty) itemHandle[1] = stack.copy() else slot.grow(stack.count)
+                }
+            }
+            assembled.second.forEach { stack -> outputTank.fill(stack, IFluidHandler.FluidAction.EXECUTE) }
             true
         } else false
     }

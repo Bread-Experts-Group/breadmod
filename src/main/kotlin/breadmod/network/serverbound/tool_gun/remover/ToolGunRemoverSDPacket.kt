@@ -24,7 +24,8 @@ internal data class ToolGunRemoverSDPacket(val playerUUID: UUID?) {
             val sender = it.sender
             if (sender != null) {
                 if (sender.getItemInHand(InteractionHand.MAIN_HAND).item is ToolGunItem) {
-                    val toDC = sender.server.playerList.players.firstOrNull { p -> p.uuid == input.playerUUID } ?: return
+                    val toDC =
+                        sender.server.playerList.players.firstOrNull { p -> p.uuid == input.playerUUID } ?: return
                     NETWORK.send(PacketDistributor.PLAYER.with { toDC }, ToolGunRemoverSDPacket(null))
                 }
             } else {

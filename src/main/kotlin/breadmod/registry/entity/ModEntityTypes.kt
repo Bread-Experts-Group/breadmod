@@ -11,7 +11,8 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 
 object ModEntityTypes {
-    internal val deferredRegister: DeferredRegister<EntityType<*>> = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ModMain.ID)
+    internal val deferredRegister: DeferredRegister<EntityType<*>> =
+        DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ModMain.ID)
 
     val HAPPY_BLOCK_ENTITY: RegistryObject<EntityType<PrimedHappyBlock>> = deferredRegister.register("happy_block") {
         EntityType.Builder.of({ _, pLevel -> PrimedHappyBlock(pLevel, shouldSpread = true) }, MobCategory.AMBIENT)
@@ -22,7 +23,7 @@ object ModEntityTypes {
     }
 
     val BREAD_BULLET_ENTITY: RegistryObject<EntityType<BreadBulletEntity>> = deferredRegister.register("bread_bullet") {
-        EntityType.Builder.of({ pEntityType, pLevel -> BreadBulletEntity(pEntityType, pLevel)}, MobCategory.MISC)
+        EntityType.Builder.of({ pEntityType, pLevel -> BreadBulletEntity(pEntityType, pLevel) }, MobCategory.MISC)
             .sized(0.5f, 0.5f)
             .clientTrackingRange(4)
             .updateInterval(20)

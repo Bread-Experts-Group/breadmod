@@ -22,10 +22,11 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.energy.EnergyStorage
 
-class FarmerControllerBlock: Block(Properties.of()
-    .strength(2.0f, 6.0f)
-    .mapColor(MapColor.COLOR_BROWN)
-    .sound(SoundType.COPPER)
+class FarmerControllerBlock : Block(
+    Properties.of()
+        .strength(2.0f, 6.0f)
+        .mapColor(MapColor.COLOR_BROWN)
+        .sound(SoundType.COPPER)
 ) {
 
     init {
@@ -36,7 +37,8 @@ class FarmerControllerBlock: Block(Properties.of()
         )
     }
 
-    override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean = !player.isCreative
+    override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =
+        !player.isCreative
 
     override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState? =
         defaultBlockState()
@@ -55,19 +57,33 @@ class FarmerControllerBlock: Block(Properties.of()
         pHand: InteractionHand,
         pHit: BlockHitResult
     ): InteractionResult {
-        val aabb = AABB(pPos.offset(-1, 0, 0), pPos.offset(1,2,2))
+        val aabb = AABB(pPos.offset(-1, 0, 0), pPos.offset(1, 2, 2))
 //        println("blockstate AABB")
 //        println(pLevel.getBlockStates(aabb).map { it.block }.toList())
 
         println("cursed block entity fetcher")
         BlockPos.betweenClosedStream(aabb).forEach { subPos ->
-            if(pLevel.getBlockState(subPos).`is`(ModBlocks.GENERIC_POWER_INTERFACE.get().block)) {
+            if (pLevel.getBlockState(subPos).`is`(ModBlocks.GENERIC_POWER_INTERFACE.get().block)) {
                 val entity = pLevel.getBlockEntity(BlockPos(subPos.x, subPos.y, subPos.z)) as? PowerInterfaceBlockEntity
                     ?: return@forEach
                 println(entity.capabilityHolder.capabilityOrNull<EnergyStorage>(ForgeCapabilities.ENERGY)?.energyStored)
             }
 
-            println("Block and pos: ${BlockPos(subPos.x, subPos.y, subPos.z)}, Relative to controller: ${BlockPos(subPos.x - pPos.x, subPos.y - pPos.y, subPos.z - pPos.z)} : ${pLevel.getBlockState(subPos).block}")
+            println(
+                "Block and pos: ${
+                    BlockPos(
+                        subPos.x,
+                        subPos.y,
+                        subPos.z
+                    )
+                }, Relative to controller: ${
+                    BlockPos(
+                        subPos.x - pPos.x,
+                        subPos.y - pPos.y,
+                        subPos.z - pPos.z
+                    )
+                } : ${pLevel.getBlockState(subPos).block}"
+            )
         }
         return InteractionResult.PASS
     }

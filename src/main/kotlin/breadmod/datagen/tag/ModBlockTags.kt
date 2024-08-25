@@ -27,10 +27,12 @@ internal class ModBlockTags(
         tag(BlockTags.MINEABLE_WITH_HOE)
             .add(ModBlocks.BREAD_BLOCK, ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK)
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-            .add(ModBlocks.CHARCOAL_BLOCK,
+            .add(
+                ModBlocks.CHARCOAL_BLOCK,
                 ModBlocks.REINFORCED_BREAD_BLOCK,
                 ModBlocks.BAUXITE_ORE,
-                ModBlocks.MONITOR)
+                ModBlocks.MONITOR
+            )
         tag(BlockTags.STONE_ORE_REPLACEABLES)
             .add(ModBlocks.BREAD_BLOCK)
         tag(BlockTags.MINEABLE_WITH_SHOVEL)

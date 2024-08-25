@@ -48,7 +48,14 @@ internal class ToolGunRemoverMode : IToolGunMode {
 
                 if (it.entity is ServerPlayer) {
                     NETWORK.send(PacketDistributor.PLAYER.with { it.entity }, ToolGunRemoverSDPacket(null))
-                    it.entity.connection.disconnect(modTranslatable("item", TOOL_GUN_DEF, "remover", "player_left_game"))
+                    it.entity.connection.disconnect(
+                        modTranslatable(
+                            "item",
+                            TOOL_GUN_DEF,
+                            "remover",
+                            "player_left_game"
+                        )
+                    )
                 } else {
                     it.entity.discard()
                     pLevel.server.playerList.players.forEach { player ->

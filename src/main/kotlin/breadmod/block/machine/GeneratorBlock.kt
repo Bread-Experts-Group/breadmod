@@ -24,12 +24,12 @@ import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.common.ForgeHooks
 
-class GeneratorBlock: BaseAbstractMachineBlock.Toggleable<GeneratorBlockEntity>(
+class GeneratorBlock : BaseAbstractMachineBlock.Toggleable<GeneratorBlockEntity>(
     ModBlockEntityTypes.GENERATOR,
     Properties.of().noOcclusion()
         .strength(1.5f, 5.0f)
         .sound(SoundType.METAL)
-        .lightLevel { state -> if(state.getValue(BlockStateProperties.LIT)) 8 else 0 }
+        .lightLevel { state -> if (state.getValue(BlockStateProperties.LIT)) 8 else 0 }
 ) {
     // todo convert generator model to a base texture-less generator model and have
     //  the lit and unlit generator models use it
@@ -48,14 +48,14 @@ class GeneratorBlock: BaseAbstractMachineBlock.Toggleable<GeneratorBlockEntity>(
         pHand: InteractionHand,
         pHit: BlockHitResult
     ): InteractionResult {
-        if(pLevel.isClientSide || pHand == InteractionHand.OFF_HAND) return InteractionResult.CONSUME
+        if (pLevel.isClientSide || pHand == InteractionHand.OFF_HAND) return InteractionResult.CONSUME
         val handStack = pPlayer.getItemInHand(pHand)
         val burnTime = ForgeHooks.getBurnTime(handStack, null)
 
-        return if(handStack.item !is BucketItem && burnTime > 0) {
+        return if (handStack.item !is BucketItem && burnTime > 0) {
             val blockEntity = pLevel.getBlockEntity(pPos) as? GeneratorBlockEntity ?: return InteractionResult.FAIL
-            if(blockEntity.addBurnTime(burnTime)) {
-                if(!pPlayer.isCreative) handStack.shrink(1)
+            if (blockEntity.addBurnTime(burnTime)) {
+                if (!pPlayer.isCreative) handStack.shrink(1)
                 InteractionResult.SUCCESS
             } else InteractionResult.FAIL
         } else InteractionResult.FAIL
@@ -87,6 +87,14 @@ class GeneratorBlock: BaseAbstractMachineBlock.Toggleable<GeneratorBlockEntity>(
         defaultBlockState()
             .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
             .setValue(BlockStateProperties.LIT, false)
+
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<GeneratorBlockEntity> =
-        BlockEntityTicker { tLevel, pPos, tState, pBlockEntity -> pBlockEntity.tick(tLevel, pPos, tState, pBlockEntity) }
+        BlockEntityTicker { tLevel, pPos, tState, pBlockEntity ->
+            pBlockEntity.tick(
+                tLevel,
+                pPos,
+                tState,
+                pBlockEntity
+            )
+        }
 }

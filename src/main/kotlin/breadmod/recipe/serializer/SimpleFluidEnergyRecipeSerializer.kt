@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.FluidStack
 import net.minecraftforge.registries.ForgeRegistries
 
 @Suppress("MemberVisibilityCanBePrivate")
-class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
+class SimpleFluidEnergyRecipeSerializer<T : FluidEnergyRecipe>(
     val factory: (
         cId: ResourceLocation, cTime: Int, cEnergy: Int?,
         cFluidsRequired: List<FluidStack>?, cFluidTagsRequired: List<Pair<TagKey<Fluid>, Int>>?,
@@ -53,7 +53,7 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         )
     }
 
-    fun <T: ItemLike> toJson(
+    fun <T : ItemLike> toJson(
         to: JsonObject, id: ResourceLocation, time: Int, energy: Int?,
         fluidsRequired: List<FluidStack>?, fluidsRequiredTagged: List<Pair<TagKey<Fluid>, Int>>?,
         itemsRequired: List<ItemStack>?, itemsRequiredTagged: List<Pair<TagKey<T>, Int>>?,
@@ -62,18 +62,18 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
         it.addProperty(ENTRY_ID, id.toString())
         it.addProperty(TIME_KEY, time)
         it.add(INPUT_KEY, JsonObject().also { required ->
-            if(energy != null) required.addProperty(ENERGY_KEY, energy)
+            if (energy != null) required.addProperty(ENERGY_KEY, energy)
             JsonObject().also { obj ->
-                if(!fluidsRequired.isNullOrEmpty()) obj.add(CERTAIN_KEY, fluidsRequired.jsonifyFluidList())
-                if(!fluidsRequiredTagged.isNullOrEmpty()) obj.add(TAGGED_KEY, fluidsRequiredTagged.jsonifyTagList())
-                if(obj.size() > 0) required.add(FLUIDS_KEY, obj)
+                if (!fluidsRequired.isNullOrEmpty()) obj.add(CERTAIN_KEY, fluidsRequired.jsonifyFluidList())
+                if (!fluidsRequiredTagged.isNullOrEmpty()) obj.add(TAGGED_KEY, fluidsRequiredTagged.jsonifyTagList())
+                if (obj.size() > 0) required.add(FLUIDS_KEY, obj)
             }
             JsonObject().also { obj ->
-                if(!itemsRequired.isNullOrEmpty()) obj.add(CERTAIN_KEY, itemsRequired.jsonifyItemList())
-                if(!itemsRequiredTagged.isNullOrEmpty()) obj.add(TAGGED_KEY, itemsRequiredTagged.jsonifyTagList())
-                if(obj.size() > 0) required.add(ITEMS_KEY, obj)
+                if (!itemsRequired.isNullOrEmpty()) obj.add(CERTAIN_KEY, itemsRequired.jsonifyItemList())
+                if (!itemsRequiredTagged.isNullOrEmpty()) obj.add(TAGGED_KEY, itemsRequiredTagged.jsonifyTagList())
+                if (obj.size() > 0) required.add(ITEMS_KEY, obj)
             }
-            if(required.size() == 0) throw IllegalArgumentException("Not enough inputs")
+            if (required.size() == 0) throw IllegalArgumentException("Not enough inputs")
         })
         JsonObject().also { outputs ->
             if (!fluidsOutput.isNullOrEmpty()) outputs.add(FLUIDS_KEY, fluidsOutput.jsonifyFluidList())
@@ -88,7 +88,7 @@ class SimpleFluidEnergyRecipeSerializer<T: FluidEnergyRecipe>(
             p1.readInt(),
             p1.readNullable { p1.readInt() },
             p1.readNullable { p1.readFluidList() }, p1.readNullable { p1.readTagList(ForgeRegistries.FLUIDS) },
-            p1.readNullable { p1.readItemList () }, p1.readNullable { p1.readTagList(ForgeRegistries.ITEMS) },
+            p1.readNullable { p1.readItemList() }, p1.readNullable { p1.readTagList(ForgeRegistries.ITEMS) },
             p1.readNullable { p1.readFluidList() }, p1.readNullable { p1.readItemList() }
         )
 

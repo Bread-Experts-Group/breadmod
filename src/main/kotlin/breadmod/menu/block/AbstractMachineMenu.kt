@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import kotlin.jvm.optionals.getOrNull
 
-abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,R>, R : FluidEnergyRecipe>(
+abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T, R>, R : FluidEnergyRecipe>(
     pMenuType: MenuType<*>,
     pContainerId: Int,
     protected val inventory: Inventory,
@@ -22,13 +22,20 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
     hotBarY: Int,
     inventoryY: Int
 ) : AbstractModContainerMenu(pMenuType, pContainerId) {
-    open fun getScaledProgress(): Int = parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 14).toInt() } ?: 0
-    open fun getEnergyStoredScaled(): Int = parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
+    open fun getScaledProgress(): Int =
+        parent.currentRecipe.getOrNull()?.let { ((parent.progress.toFloat() / it.time) * 14).toInt() } ?: 0
+
+    open fun getEnergyStoredScaled(): Int =
+        parent.capabilityHolder.capabilityOrNull<EnergyBattery>(ForgeCapabilities.ENERGY)
+            ?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
+
     fun isCrafting(): Boolean = parent.progress > 0
     protected fun isEnabled(): Boolean = parent.blockState.getValue(BlockStateProperties.ENABLED)
 
-    inner class ResultSlot(id: Int, x: Int, y: Int) : Slot(parent.craftingManager, id, x, y) { override fun mayPlace(pStack: ItemStack): Boolean = false }
-    
+    inner class ResultSlot(id: Int, x: Int, y: Int) : Slot(parent.craftingManager, id, x, y) {
+        override fun mayPlace(pStack: ItemStack): Boolean = false
+    }
+
     init {
 //        repeat(9) { addSlot(Slot(inventory, it, 8 + it * 18, hotBarY)) }
 //        repeat(3) { y -> repeat(9) { x -> addSlot(Slot(inventory, x + y * 9 + 9, 8 + x * 18, inventoryY + y * 18)) } }
@@ -51,10 +58,22 @@ abstract class AbstractMachineMenu<T : AbstractMachineBlockEntity.Progressive<T,
         // Check if the slot clicked is one of the vanilla container slots
         if (pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
             // This is a vanilla container slot so merge the stack into the tile inventory
-            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + containerSlotCount, false)) return ItemStack.EMPTY // EMPTY_ITEM
+            if (!moveItemStackTo(
+                    sourceStack,
+                    TE_INVENTORY_FIRST_SLOT_INDEX,
+                    TE_INVENTORY_FIRST_SLOT_INDEX + containerSlotCount,
+                    false
+                )
+            ) return ItemStack.EMPTY // EMPTY_ITEM
         } else if (pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + containerSlotCount) {
             // This is a BE slot so merge the stack into the player's inventory
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) return ItemStack.EMPTY
+            if (!moveItemStackTo(
+                    sourceStack,
+                    VANILLA_FIRST_SLOT_INDEX,
+                    VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT,
+                    false
+                )
+            ) return ItemStack.EMPTY
         } else return ItemStack.EMPTY
         // If stack size == 0 (the entire stack was moved) set slot contents to null
         if (sourceStack.count == 0) {

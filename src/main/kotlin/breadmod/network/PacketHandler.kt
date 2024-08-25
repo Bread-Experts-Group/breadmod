@@ -34,12 +34,18 @@ internal object PacketHandler {
                 LOGGER.info("Registering clientbound message types")
                 // Clientbound //
                 NETWORK.registerMessage(
-                    1_000, CapabilityTagDataPacket::class.java,
-                    CapabilityTagDataPacket::encodeBuf, CapabilityTagDataPacket::decodeBuf, CapabilityTagDataPacket::handle
+                    1_000,
+                    CapabilityTagDataPacket::class.java,
+                    CapabilityTagDataPacket::encodeBuf,
+                    CapabilityTagDataPacket::decodeBuf,
+                    CapabilityTagDataPacket::handle
                 )
                 NETWORK.registerMessage(
-                    1_001, CapabilitySideDataPacket::class.java,
-                    CapabilitySideDataPacket::encodeBuf, CapabilitySideDataPacket::decodeBuf, CapabilitySideDataPacket::handle
+                    1_001,
+                    CapabilitySideDataPacket::class.java,
+                    CapabilitySideDataPacket::encodeBuf,
+                    CapabilitySideDataPacket::decodeBuf,
+                    CapabilitySideDataPacket::handle
                 )
                 NETWORK.registerMessage(
                     2_000, BeamPacket::class.java,
@@ -63,8 +69,11 @@ internal object PacketHandler {
             ToggleMachinePacket::encodeBuf, ToggleMachinePacket::decodeBuf, ToggleMachinePacket::handle
         )
         NETWORK.registerMessage(
-            3_001, ToolGunConfigurationPacket::class.java,
-            ToolGunConfigurationPacket::encodeBuf, ToolGunConfigurationPacket::decodeBuf, ToolGunConfigurationPacket::handle
+            3_001,
+            ToolGunConfigurationPacket::class.java,
+            ToolGunConfigurationPacket::encodeBuf,
+            ToolGunConfigurationPacket::decodeBuf,
+            ToolGunConfigurationPacket::handle
         )
         NETWORK.registerMessage(
             3_002, ToolGunRemoverSDPacket::class.java,

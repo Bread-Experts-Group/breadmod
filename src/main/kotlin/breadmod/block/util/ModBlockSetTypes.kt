@@ -7,7 +7,8 @@ import net.minecraft.world.level.block.state.properties.BlockSetType
 
 object ModBlockSetTypes {
     val BREAD: BlockSetType = BlockSetType.register(
-        BlockSetType("bread",
+        BlockSetType(
+            "bread",
             true,
             SoundType.GRASS,
             SoundEvents.GRASS_BREAK,
@@ -21,7 +22,8 @@ object ModBlockSetTypes {
         )
     )
     val HELL_NAW: BlockSetType = BlockSetType.register(
-        BlockSetType("hell_naw",
+        BlockSetType(
+            "hell_naw",
             false,
             SoundType.METAL,
             SoundEvents.METAL_BREAK,

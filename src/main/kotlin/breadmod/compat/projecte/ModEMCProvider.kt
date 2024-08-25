@@ -7,7 +7,8 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import java.util.concurrent.CompletableFuture
 
-class ModEMCProvider(packOutput: PackOutput, lookupProvider: CompletableFuture<HolderLookup.Provider>
+class ModEMCProvider(
+    packOutput: PackOutput, lookupProvider: CompletableFuture<HolderLookup.Provider>
 ) : CustomConversionProvider(packOutput, lookupProvider) {
     override fun addCustomConversions(pWriter: HolderLookup.Provider) {
         createConversionBuilder(modLocation("defaults"))

@@ -15,7 +15,7 @@ import net.minecraft.util.Mth
 import net.minecraftforge.client.gui.overlay.ForgeGui
 import java.awt.Color
 
-class WarOverlay: AbstractModGuiOverlay() {
+class WarOverlay : AbstractModGuiOverlay() {
     private val overlayTexture = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
 
     override fun renderOverlay(
@@ -33,7 +33,7 @@ class WarOverlay: AbstractModGuiOverlay() {
         val formattedSeconds = if (seconds < 10) "0$seconds" else seconds
         val formattedMinutes = if (minutes < 10) "0$minutes" else minutes
         val colorPair: Triple<Float, Float, Float> =
-            if (WarTicker.isIncreasing) Triple(0.376f,0.91f,0.471f)
+            if (WarTicker.isIncreasing) Triple(0.376f, 0.91f, 0.471f)
             else Triple(0.973f, 0f, 0f)
 
         if (scroll > -110f) {

@@ -59,14 +59,39 @@ class ModItemModelProvider(
         ModItems.PROJECT_E?.also {
             singleItem(it.BREAD_ORB_ITEM)
         }
-        multiLayeredTexture("breadmod:bread_boots", mcLoc("item/generated"), modLoc("item/bread_boots"), modLoc("item/bread_boots_overlay"))
-        multiLayeredTexture("breadmod:bread_leggings", mcLoc("item/generated"), modLoc("item/bread_leggings"), modLoc("item/bread_leggings_overlay"))
-        multiLayeredTexture("breadmod:bread_chestplate", mcLoc("item/generated"), modLoc("item/bread_chestplate"), modLoc("item/bread_chestplate_overlay"))
-        multiLayeredTexture("breadmod:bread_helmet", mcLoc("item/generated"), modLoc("item/bread_helmet"), modLoc("item/bread_helmet_overlay"))
-        multiLayeredTexture("breadmod:doped_bread", mcLoc("item/generated"), modLoc("item/doped_bread"), modLoc("item/doped_bread_overlay"))
+        multiLayeredTexture(
+            "breadmod:bread_boots",
+            mcLoc("item/generated"),
+            modLoc("item/bread_boots"),
+            modLoc("item/bread_boots_overlay")
+        )
+        multiLayeredTexture(
+            "breadmod:bread_leggings",
+            mcLoc("item/generated"),
+            modLoc("item/bread_leggings"),
+            modLoc("item/bread_leggings_overlay")
+        )
+        multiLayeredTexture(
+            "breadmod:bread_chestplate",
+            mcLoc("item/generated"),
+            modLoc("item/bread_chestplate"),
+            modLoc("item/bread_chestplate_overlay")
+        )
+        multiLayeredTexture(
+            "breadmod:bread_helmet",
+            mcLoc("item/generated"),
+            modLoc("item/bread_helmet"),
+            modLoc("item/bread_helmet_overlay")
+        )
+        multiLayeredTexture(
+            "breadmod:doped_bread",
+            mcLoc("item/generated"),
+            modLoc("item/doped_bread"),
+            modLoc("item/doped_bread_overlay")
+        )
     }
 
-    private fun <T: Item> singleItem(item: RegistryObject<T>) {
+    private fun <T : Item> singleItem(item: RegistryObject<T>) {
         withExistingParent(
             item.id.path,
             ResourceLocation("item/generated")
@@ -76,7 +101,7 @@ class ModItemModelProvider(
         )
     }
 
-    private fun <T: Item> handheldItem(item: RegistryObject<T>) {
+    private fun <T : Item> handheldItem(item: RegistryObject<T>) {
         withExistingParent(
             item.id.path,
             ResourceLocation("item/handheld")

@@ -46,17 +46,19 @@ class ModItemTags(
             .add(ModItems.DOUGH)
 
         tag(TOASTABLE)
-            .add(Items.BREAD,
+            .add(
+                Items.BREAD,
                 ModItems.BREAD_SLICE.get(),
                 ModItems.TOAST_SLICE.get(),
                 ModItems.TOASTED_BREAD.get(),
-                Items.CHARCOAL)
+                Items.CHARCOAL
+            )
 
         tag(KNIVES)
             .add(ModItems.KNIFE)
 
         // Curios
-        if(ModList.get().isLoaded("curios")) {
+        if (ModList.get().isLoaded("curios")) {
             tag(ItemTags.create(ResourceLocation("curios", "necklace")))
                 .addOptional(ModItems.BASIC_BREAD_AMULET.id)
                 .addOptional(ModItems.REINFORCED_BREAD_AMULET.id)

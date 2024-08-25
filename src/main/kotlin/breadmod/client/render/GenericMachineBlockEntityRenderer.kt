@@ -15,7 +15,7 @@ import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import org.joml.Vector4f
 
-class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBlockEntity<*>> {
+class GenericMachineBlockEntityRenderer : BlockEntityRenderer<AbstractMachineBlockEntity<*>> {
     override fun render(
         pBlockEntity: AbstractMachineBlockEntity<*>,
         pPartialTick: Float,
@@ -27,13 +27,13 @@ class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBloc
         buildMap<Direction, MutableList<Capability<*>>> {
             pBlockEntity.capabilityHolder.capabilities.forEach { (capability, additional) ->
                 additional.second.filterNotNull().forEach {
-                    val actual = when(pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+                    val actual = when (pBlockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
                         Direction.WEST, Direction.EAST -> it.opposite
                         else -> it
                     }
 
                     val list = get(actual)
-                    if(list == null) set(actual, mutableListOf(capability))
+                    if (list == null) set(actual, mutableListOf(capability))
                     else list.add(capability)
                 }
             }
@@ -65,8 +65,10 @@ class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBloc
 //            )
 
             // IT FUCKING WORKS BABY WOOOOOO
-            texturedQuadTest(texture, RenderType.cutoutMipped(), pPoseStack,
-                pBuffer, Vector4f(1f, 1f, 1f, 1f))
+            texturedQuadTest(
+                texture, RenderType.cutoutMipped(), pPoseStack,
+                pBuffer, Vector4f(1f, 1f, 1f, 1f)
+            )
             pPoseStack.popPose()
         }
     }
@@ -76,11 +78,11 @@ class GenericMachineBlockEntityRenderer: BlockEntityRenderer<AbstractMachineBloc
 
         val ITEM_FLUID_ENERGY_SLOT = modLocation("block", "machine_slot", "item_fluid_energy")
 
-        val ENERGY_SLOT       = modLocation("block", "machine_slot", "energy")
+        val ENERGY_SLOT = modLocation("block", "machine_slot", "energy")
         val FLUID_ENERGY_SLOT = modLocation("block", "machine_slot", "fluid_energy")
-        val ITEM_ENERGY_SLOT  = modLocation("block", "machine_slot", "item_energy")
+        val ITEM_ENERGY_SLOT = modLocation("block", "machine_slot", "item_energy")
 
-        val ITEM_SLOT       = modLocation("block", "machine_slot", "item")
+        val ITEM_SLOT = modLocation("block", "machine_slot", "item")
         val FLUID_ITEM_SLOT = modLocation("block", "machine_slot", "item_fluid")
 
         val FLUID_SLOT = modLocation("block", "machine_slot", "fluid")

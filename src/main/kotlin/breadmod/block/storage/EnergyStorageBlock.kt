@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 
-class EnergyStorageBlock: BaseAbstractMachineBlock.Powered<EnergyStorageBlockEntity>(
+class EnergyStorageBlock : BaseAbstractMachineBlock.Powered<EnergyStorageBlockEntity>(
     ModBlockEntityTypes.ENERGY_STORAGE,
     Properties.of(),
     false
@@ -27,5 +27,12 @@ class EnergyStorageBlock: BaseAbstractMachineBlock.Powered<EnergyStorageBlockEnt
             .setValue(ModBlockStateProperties.STORAGE_LEVEL, 0)
 
     override fun getServerTicker(pLevel: Level, pState: BlockState): BlockEntityTicker<EnergyStorageBlockEntity> =
-        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity -> tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity) }
+        BlockEntityTicker { tLevel, tPos, tState, tBlockEntity ->
+            tBlockEntity.tick(
+                tLevel,
+                tPos,
+                tState,
+                tBlockEntity
+            )
+        }
 }
