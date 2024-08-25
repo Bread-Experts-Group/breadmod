@@ -57,7 +57,7 @@ object ModConfiguration {
                 .comment("How much RF the generator will produce per tick")
                 .define("generatorRfPerTick", 64)
             ALT_TOOLGUN_MODEL = builder
-                .comment("Toggle for the alternative tool gun model")
+                .comment("Toggle for the alternative tool gun model - !!Experimental!!")
                 .define("useAltToolgunModel", false)
 
             builder.pop()

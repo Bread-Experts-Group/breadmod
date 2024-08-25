@@ -6,6 +6,7 @@ import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
+import breadmod.registry.ModConfiguration
 import breadmod.util.gui.IHoldScreen
 import breadmod.util.render.renderBuffer
 import breadmod.util.render.rgMinecraft
@@ -172,14 +173,10 @@ object ClientForgeEventBus {
         // CommandMek.java
         event.dispatcher.register(Commands.literal("breadmod")
             .then(Commands.literal("increase_timer")
-                .then(Commands.argument("amount", WarTimerArgument())
+                .then(Commands.argument("amount", IntArgument())
                     .executes { amount ->
-                        try {
-                            val arg = amount.getArgument("amount", Int::class.java)
-                            WarTicker.increaseTimer(arg)
-                        } catch (e: Exception) {
-                            ModMain.LOGGER.error(e)
-                        }
+                        val arg = amount.getArgument("amount", Int::class.java)
+                        WarTicker.increaseTimer(arg)
                         return@executes Command.SINGLE_SUCCESS
                     }
                 )
@@ -202,13 +199,23 @@ object ClientForgeEventBus {
                     return@executes Command.SINGLE_SUCCESS
                 }
             )
+            .then(Commands.literal("alt_toolgun_model")
+                .then(Commands.argument("value", BooleanArgument())
+                    .executes { value ->
+                        val arg = value.getArgument("value", Boolean::class.java)
+                        ModConfiguration.COMMON.ALT_TOOLGUN_MODEL.set(arg)
+                        return@executes Command.SINGLE_SUCCESS
+                    }
+                )
+            )
         )
     }
 
-    private class WarTimerArgument : ArgumentType<Int> {
-        override fun parse(reader: StringReader): Int {
-            return reader.readInt()
-        }
+    private class IntArgument : ArgumentType<Int> {
+        override fun parse(reader: StringReader): Int = reader.readInt()
+    }
+    private class BooleanArgument : ArgumentType<Boolean> {
+        override fun parse(reader: StringReader): Boolean = reader.readBoolean()
     }
 
     @Suppress("UNUSED_PARAMETER")
