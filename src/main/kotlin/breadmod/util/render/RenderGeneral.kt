@@ -3,6 +3,8 @@ package breadmod.util.render
 import breadmod.ModMain.modLocation
 import breadmod.util.translateDirection
 import com.mojang.blaze3d.platform.Lighting
+import com.mojang.blaze3d.preprocessor.GlslPreprocessor
+import com.mojang.blaze3d.shaders.Program
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.*
 import com.mojang.math.Axis
@@ -35,6 +37,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.*
 import java.awt.Color
+import java.io.InputStream
 import java.lang.Math
 import java.util.*
 import kotlin.math.atan
@@ -44,6 +47,9 @@ import kotlin.math.min
 val rgMinecraft: Minecraft = Minecraft.getInstance()
 internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>
 
+internal val shaderPreCompilation =
+    mutableMapOf<String, (Program.Type, String, InputStream, String, GlslPreprocessor) -> Unit>()
+
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
  * @see breadmod.ClientForgeEventBus.onLevelRender
@@ -51,7 +57,6 @@ internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableL
  * @since 1.0.0
  */
 internal val renderBuffer: RenderBuffer = mutableListOf()
-private var angle = 0f
 
 /**
  * Draws a line from between [start] and [end], translated according to the current [net.minecraft.client.player.LocalPlayer]'s position.

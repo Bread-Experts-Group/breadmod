@@ -8,6 +8,7 @@ import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
 import breadmod.util.render.PostProcessingRegistry
 import breadmod.util.render.rgMinecraft
+import breadmod.util.render.shaderPreCompilation
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.renderer.PostChain
 import net.minecraft.network.chat.Component
@@ -29,17 +30,24 @@ class ToolGunCreatorSerializedScreen(
     override val keyCheck: KeyMapping = rgMinecraft.options.keyMappings.first { it.name == SCREEN_CONTROL.nameKey }
 
     private companion object {
-        val blurChain = PostChain(
-            rgMinecraft.textureManager, rgMinecraft.resourceManager,
-            rgMinecraft.mainRenderTarget, modLocation("shaders/post/gui_blur.json")
-        )
-
+        val blurChainLoc = modLocation("shaders/post/gui_blur.json")
+        var blurChain: PostChain? = null
         const val POST_PROCESSING_ENTRY_BLUR_NAME = "ToolGun Creator Mode GUI Blur"
     }
 
     override fun init() {
         super.init()
-        PostProcessingRegistry.addProcessor(POST_PROCESSING_ENTRY_BLUR_NAME, blurChain)
+        if (blurChain == null) {
+            shaderPreCompilation[blurChainLoc.toString()] = { _, _, _, _, _ ->
+                TODO("Figure it out. https://ktstephano.github.io/rendering/opengl/ssbos")
+            }
+
+            blurChain = PostChain(
+                rgMinecraft.textureManager, rgMinecraft.resourceManager,
+                rgMinecraft.mainRenderTarget, blurChainLoc
+            )
+        }
+        PostProcessingRegistry.addProcessor(POST_PROCESSING_ENTRY_BLUR_NAME, blurChain!!)
     }
 
     /**

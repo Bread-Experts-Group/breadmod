@@ -16,6 +16,7 @@
     "client.MixinGameRenderer",
     "client.MixinHumanoidArmorLayer",
     "client.MixinItemModelShaper",
+    "client.MixinProgram",
     "client.MixinSpriteLoader"
   ],
   "refmap": "breadmod.refmap.json",
