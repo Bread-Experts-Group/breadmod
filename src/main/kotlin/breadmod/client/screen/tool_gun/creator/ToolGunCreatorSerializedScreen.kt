@@ -6,8 +6,10 @@ import breadmod.menu.item.ToolGunCreatorMenu
 import breadmod.util.gui.IHoldScreen
 import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
+import breadmod.util.render.PostProcessingRegistry
 import breadmod.util.render.rgMinecraft
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.renderer.PostChain
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 
@@ -26,9 +28,18 @@ class ToolGunCreatorSerializedScreen(
     override var shouldClose: Boolean = true
     override val keyCheck: KeyMapping = rgMinecraft.options.keyMappings.first { it.name == SCREEN_CONTROL.nameKey }
 
+    private companion object {
+        val blurChain = PostChain(
+            rgMinecraft.textureManager, rgMinecraft.resourceManager,
+            rgMinecraft.mainRenderTarget, modLocation("shaders/post/gui_blur.json")
+        )
+
+        const val POST_PROCESSING_ENTRY_BLUR_NAME = "ToolGun Creator Mode GUI Blur"
+    }
+
     override fun init() {
         super.init()
-        rgMinecraft.gameRenderer.loadEffect(modLocation("shaders/post/gui_blur.json"))
+        PostProcessingRegistry.addProcessor(POST_PROCESSING_ENTRY_BLUR_NAME, blurChain)
     }
 
     /**
@@ -38,6 +49,6 @@ class ToolGunCreatorSerializedScreen(
      */
     override fun onClose() {
         super.onClose()
-        rgMinecraft.gameRenderer.togglePostEffect()
+        PostProcessingRegistry.removeProcessor(POST_PROCESSING_ENTRY_BLUR_NAME)
     }
 }

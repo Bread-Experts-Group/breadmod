@@ -6,17 +6,16 @@
   "mixins": [
     "accessors.common.IAccessorEntity",
     "common.MixinFireBlock",
-    "common.MixinLightningBolt",
-    "common.MixinLogger"
+    "common.MixinLightningBolt"
   ],
   "client": [
     "accessors.client.IAccessorDirectoryLister",
     "accessors.client.IAccessorProgramType",
     "client.MixinDirectoryLister",
     "client.MixinFontManager",
+    "client.MixinGameRenderer",
     "client.MixinHumanoidArmorLayer",
     "client.MixinItemModelShaper",
-    "client.MixinProgram",
     "client.MixinSpriteLoader"
   ],
   "refmap": "breadmod.refmap.json",
