@@ -30,16 +30,14 @@ internal class SoundBlockSerializedScreen(
 
     override fun init() {
         super.init()
-        rootWidget.x = (width / 2) - (rootWidget.width / 2)
-        rootWidget.y = (height / 2) - (rootWidget.height / 2)
+        rootWidget.x = width / 2
+        rootWidget.y = height / 2
     }
 
     init {
-        repeat(4) { rI ->
-            repeat(9) { cI ->
-                val linear = rI * 9 + cI
-                rootWidget.addWidget(SlotWidget(cI * 16, rI * 16, pInventory.getItem(linear)), 0.0)
-            }
+        for (rI in 3 downTo 0) repeat(9) { cI ->
+            val linear = rI * 9 + cI
+            rootWidget.addWidget(SlotWidget(cI * 16, rI * 16, pInventory.getItem(linear)), 0.0)
         }
     }
 }

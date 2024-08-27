@@ -5,15 +5,15 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.DirectionalBlock
 import net.minecraft.world.level.block.EntityBlock
-import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.material.MapColor
 
-class PowerInterfaceBlock : HorizontalDirectionalBlock(
+class PowerInterfaceBlock : DirectionalBlock(
     Properties.of()
         .strength(2.0f, 6.0f)
         .mapColor(MapColor.COLOR_BROWN)
