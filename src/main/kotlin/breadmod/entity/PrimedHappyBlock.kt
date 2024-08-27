@@ -1,14 +1,21 @@
 package breadmod.entity
 
 import breadmod.registry.ModConfiguration
+import breadmod.registry.block.ModBlocks
 import breadmod.registry.entity.ModEntityTypes
 import breadmod.util.level.BMExplosion
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.item.PrimedTnt
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
+import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
+import net.minecraftforge.network.NetworkHooks
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -51,4 +58,13 @@ class PrimedHappyBlock(
         shouldSpread = pCompound.getBoolean("shouldSpread")
         super.load(pCompound)
     }
+
+    override fun getAddEntityPacket(): Packet<ClientGamePacketListener> =
+        NetworkHooks.getEntitySpawningPacket(this)
+
+    override fun getType(): EntityType<*> =
+        ModEntityTypes.HAPPY_BLOCK_ENTITY.get()
+
+    override fun getPickedResult(target: HitResult?): ItemStack =
+        ModBlocks.HAPPY_BLOCK.get().block.asItem().defaultInstance
 }

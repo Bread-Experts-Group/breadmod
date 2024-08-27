@@ -15,7 +15,7 @@ object ModEntityTypes {
         DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ModMain.ID)
 
     val HAPPY_BLOCK_ENTITY: RegistryObject<EntityType<PrimedHappyBlock>> = deferredRegister.register("happy_block") {
-        EntityType.Builder.of({ _, pLevel -> PrimedHappyBlock(pLevel, shouldSpread = true) }, MobCategory.AMBIENT)
+        EntityType.Builder.of({ _, pLevel -> PrimedHappyBlock(pLevel, shouldSpread = true) }, MobCategory.MISC)
             .sized(0.98f, 0.98f)
             .clientTrackingRange(10)
             .updateInterval(10)

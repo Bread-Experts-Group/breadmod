@@ -11,6 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.narration.NarratedElementType
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
@@ -92,6 +93,13 @@ class ContainerWidget(
             pose.mulPoseMatrix(Matrix4f().rotateZ(pTilt))
             widget.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
             pose.popPose()
+        }
+    }
+
+    // does this run every game tick or frame tick??
+    fun tick() {
+        childrenWidgets.forEach { (widget, _) ->
+            if (widget is EditBox) widget.tick()
         }
     }
 

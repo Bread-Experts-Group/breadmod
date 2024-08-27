@@ -24,6 +24,10 @@ internal class SoundBlockSerializedScreen(
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
     }
 
+    override fun tick() {
+        rootWidget.tick()
+    }
+
     override fun init() {
         super.init()
         rootWidget.x = (width / 2) - (rootWidget.width / 2)

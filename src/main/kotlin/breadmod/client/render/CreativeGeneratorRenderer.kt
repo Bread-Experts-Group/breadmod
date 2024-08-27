@@ -7,6 +7,7 @@ import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraftforge.client.model.generators.ModelProvider
 
@@ -61,10 +62,10 @@ class CreativeGeneratorRenderer : BlockEntityRenderer<CreativeGeneratorBlockEnti
         pPoseStack.mulPose(Axis.XN.rotationDegrees((Math.floorMod(level.gameTime, 360).toFloat() + pPartialTick)))
         pPoseStack.scale(0.95f, 0.95f, 0.95f)
 
-//        renderBlockModel(
-//            pPoseStack, pBuffer, pBlockEntity,
-//            starModel, pPackedLight, pPackedOverlay,
-//            ClientModEventBus.ModRenderTypes.BLOOM.apply(modLocation("shaders/white.png"))
-//        )
+        renderBlockModel(
+            pPoseStack, pBuffer, pBlockEntity,
+            starModel, pPackedLight, pPackedOverlay,
+            RenderType.solid()
+        )
     }
 }
