@@ -20,7 +20,7 @@ import net.minecraftforge.client.model.generators.ModelFile
 import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 
-class ModBlockStateProvider(
+class ModBlockStateAndModelProvider(
     packOutput: PackOutput,
     private val existingFileHelper: ExistingFileHelper
 ) : BlockStateProvider(packOutput, ModMain.ID, existingFileHelper) {
@@ -31,6 +31,7 @@ class ModBlockStateProvider(
         blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.get().block)
         blockWithItem(ModBlocks.HAPPY_BLOCK.get().block)
         blockWithItem(ModBlocks.FLOUR_BLOCK.get().block)
+        blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.get().block)
 
         horizontalBlock(ModBlocks.GENERATOR.get().block) { state ->
             val machineOn = if (state.getValue(BlockStateProperties.LIT)) "_on" else ""

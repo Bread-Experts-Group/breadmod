@@ -109,4 +109,11 @@ object ModBlockEntityTypes {
                 ModBlocks.FLUID_STORAGE_BLOCK.get().block
             ).build(null)
         }
+    val SOUND_BLOCK: RegistryObject<BlockEntityType<SoundBlockEntity>> =
+        deferredRegister.register("sound_block_entity") {
+            BlockEntityType.Builder.of(
+                { pPos, pState -> SoundBlockEntity(pPos, pState) },
+                ModBlocks.SOUND_BLOCK.get().block
+            ).build(null)
+        }
 }

@@ -26,7 +26,11 @@ class ToolGunCreatorSerializedScreen(
     pTitle: Component,
     rootWidget: ContainerWidget
 ) : SerializedScreen<ToolGunCreatorMenu>(pMenu, pInventory, pTitle, rootWidget), IHoldScreen {
-    override var shouldClose: Boolean = true
+    /**
+     * Prevents this screen from closing if an edit box is currently focused.
+     */
+    var hasActiveEditBox: Boolean = false
+    override var shouldClose: Boolean = !hasActiveEditBox
     override val keyCheck: KeyMapping = rgMinecraft.options.keyMappings.first { it.name == SCREEN_CONTROL.nameKey }
 
     private companion object {

@@ -81,7 +81,7 @@ object CommonModEventBus {
         if (event.includeClient()) {
             LOGGER.info("Client data-gen")
             generator.addProvider(true, USEnglishLanguageProvider(packOutput, "en_us"))
-            generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))
+            generator.addProvider(true, ModBlockStateAndModelProvider(packOutput, existingFileHelper))
             generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, existingFileHelper))
             generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
         }

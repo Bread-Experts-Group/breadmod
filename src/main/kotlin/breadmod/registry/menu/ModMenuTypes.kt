@@ -2,6 +2,7 @@ package breadmod.registry.menu
 
 import breadmod.ModMain
 import breadmod.menu.block.DoughMachineMenu
+import breadmod.menu.block.SoundBlockMenu
 import breadmod.menu.block.WheatCrusherMenu
 import breadmod.menu.item.CertificateMenu
 import breadmod.menu.item.ToolGunCreatorMenu
@@ -24,7 +25,6 @@ object ModMenuTypes {
             )
         }
     }
-
     val WHEAT_CRUSHER: RegistryObject<MenuType<WheatCrusherMenu>> = deferredRegister.register("wheat_crusher_menu") {
         IForgeMenuType.create { pContainerId, pInventory, extraData ->
             WheatCrusherMenu(
@@ -34,7 +34,15 @@ object ModMenuTypes {
             )
         }
     }
-
+    val SOUND_BLOCK: RegistryObject<MenuType<SoundBlockMenu>> = deferredRegister.register("sound_block_menu") {
+        IForgeMenuType.create { pContainerId, pInventory, extraData ->
+            SoundBlockMenu(
+                pContainerId,
+                pInventory,
+                extraData
+            )
+        }
+    }
     val CERTIFICATE: RegistryObject<MenuType<CertificateMenu>> = deferredRegister.register("certificate") {
         IForgeMenuType.create { pContainerId, pInventory, _ -> CertificateMenu(pContainerId, pInventory) }
     }

@@ -370,6 +370,22 @@ object ModBlocks {
         }
     )
 
+    // plays a specific sound
+     val SOUND_BLOCK = deferredRegister.registerBlockItem(
+         ModItems.deferredRegister,
+         "sound_block",
+        { SoundBlock() },
+         Item.Properties()
+     )
+
+    // plays a random sound
+    val RANDOM_SOUND_BLOCK = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "random_sound_block",
+        { RandomSoundBlock() },
+        Item.Properties().rarity(Rarity.UNCOMMON)
+    )
+
     private class CharacterModelBlock : Block(Properties.of().noOcclusion()) {
         override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
             pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
@@ -426,6 +442,8 @@ object ModBlocks {
             dropSelf(HELL_NAW.get().block)
             dropSelf(CREATIVE_GENERATOR.get().block)
             dropSelf(TOASTER.get().block)
+            dropSelf(RANDOM_SOUND_BLOCK.get().block)
+            dropSelf(SOUND_BLOCK.get().block)
 
             dropSelf(NIKO_BLOCK.get().block)
             dropSelf(OMANEKO_BLOCK.get().block)
