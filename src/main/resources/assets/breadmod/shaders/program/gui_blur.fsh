@@ -1,5 +1,4 @@
 #version 430
-#define M_PI 3.1415926535897932384626433832795
 
 uniform sampler2D DiffuseSampler;
 
@@ -15,8 +14,6 @@ in vec2 oneTexel;
 out vec4 fragColor;
 
 void main() {
-    vec4 color = texture (DiffuseSampler, texCoord);
-
     for (int X = 0; X < DataBuffer.kernelSize.x; ++X) {
         for (int Y = 0; Y < DataBuffer.kernelSize.y; ++Y) {
             int gaussianLinear = X + (Y * DataBuffer.kernelSize.x);

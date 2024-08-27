@@ -1,5 +1,6 @@
 package breadmod
 
+import breadmod.logging.ConsoleColorAppender
 import breadmod.registry.registerAll
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -9,6 +10,9 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.loading.FMLPaths
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.apache.logging.log4j.core.LoggerContext
+import org.apache.logging.log4j.core.config.ConfigurationFactory
+import org.apache.logging.log4j.core.config.Configurator
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 
 @Mod(ModMain.ID)
@@ -44,7 +48,14 @@ internal object ModMain {
     fun LanguageProvider.modAddExt(value: String, vararg path: String) = add(path.joinToString("."), value)
 
     init {
-        LOGGER.info(LOGGER.javaClass.canonicalName)
+        val ctx = LogManager.getContext(false) as LoggerContext
+        val uri = this::class.java.getResource("/log4j2.xml")?.toURI() ?: throw IllegalStateException("Failed to load log4j2.xml")
+        val cfg = ConfigurationFactory.getInstance().getConfiguration(ctx, ctx.name, uri, null)
+
+        val clrApd = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
+        cfg.addAppender(clrApd)
+        Configurator.reconfigure(cfg)
+
         LOGGER.info("Mod object initialized!")
         registerAll(MOD_BUS)
     }
