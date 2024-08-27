@@ -3,7 +3,7 @@ package breadmod.client.render.tool_gun
 import breadmod.ModMain.modLocation
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
-import breadmod.registry.ModConfiguration.COMMON
+import breadmod.registry.ModConfiguration.CLIENT
 import breadmod.util.render.renderItemModel
 import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
@@ -30,8 +30,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     private val mainModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item")
     private val coilModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil")
     private val altModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt")
-    private val useAltModel = COMMON.ALT_TOOLGUN_MODEL
-//    private val testModelLocation = modLocation("${ModelProvider.ITEM_FOLDER}/textureplane/textureplane_test")
+    private val useAltModel = CLIENT.ALT_TOOLGUN_MODEL
 
     override fun renderByItem(
         pStack: ItemStack,

@@ -1,16 +1,33 @@
 package breadmod.registry
 
 import net.minecraftforge.common.ForgeConfigSpec
+import net.minecraftforge.common.ForgeConfigSpec.Builder
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue
 import org.apache.commons.lang3.tuple.Pair
 
 @Suppress("PropertyName")
 object ModConfiguration {
-    val COMMON_SPECIFICATION: Pair<Common, ForgeConfigSpec> = ForgeConfigSpec.Builder().configure { Common(it) }
+    val COMMON_SPECIFICATION: Pair<Common, ForgeConfigSpec> = Builder().configure { Common(it) }
+    val CLIENT_SPECIFICATION: Pair<Client, ForgeConfigSpec> = Builder().configure { Client(it) }
 
     val COMMON: Common = COMMON_SPECIFICATION.left
+    val CLIENT: Client = CLIENT_SPECIFICATION.left
 
-    class Common(builder: ForgeConfigSpec.Builder) {
+    class Client(builder: Builder) {
+        val ALT_TOOLGUN_MODEL: ConfigValue<Boolean>
+
+        init {
+            builder.push("client")
+
+            ALT_TOOLGUN_MODEL = builder
+                .comment("Toggle for the alternative tool gun model")
+                .define("useAltToolgunModel", false)
+
+            builder.pop()
+        }
+    }
+
+    class Common(builder: Builder) {
         val DECAY_CHANCE_PER_TICK: ConfigValue<Int>
         val EFFECT_DISTANCE_MULTIPLIER: ConfigValue<Double>
         val ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS: ConfigValue<Long>
@@ -21,7 +38,6 @@ object ModConfiguration {
         val HAPPY_BLOCK_SPREAD_RADIUS: ConfigValue<Double>
         val GENERATOR_MAX_BURN_TIME_TICKS: ConfigValue<Int>
         val GENERATOR_RF_PER_TICK: ConfigValue<Int>
-        val ALT_TOOLGUN_MODEL: ConfigValue<Boolean>
 
         init {
             builder.push("common")
@@ -56,9 +72,6 @@ object ModConfiguration {
             GENERATOR_RF_PER_TICK = builder
                 .comment("How much RF the generator will produce per tick")
                 .define("generatorRfPerTick", 64)
-            ALT_TOOLGUN_MODEL = builder
-                .comment("Toggle for the alternative tool gun model - !!Experimental!!")
-                .define("useAltToolgunModel", false)
 
             builder.pop()
         }

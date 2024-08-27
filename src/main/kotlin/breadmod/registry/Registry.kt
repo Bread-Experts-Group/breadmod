@@ -34,6 +34,7 @@ val registerList = setOf(
 fun registerConfigs() = ModLoadingContext.get().let {
     LOGGER.info("Registering configs")
     it.registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPECIFICATION.right, "breadmod-common.toml")
+    it.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPECIFICATION.right, "breadmod-client.toml")
 }
 
 fun registerAll(bus: IEventBus) {

@@ -203,7 +203,7 @@ object ClientForgeEventBus {
                 .then(Commands.argument("value", BooleanArgument())
                     .executes { value ->
                         val arg = value.getArgument("value", Boolean::class.java)
-                        ModConfiguration.COMMON.ALT_TOOLGUN_MODEL.set(arg)
+                        ModConfiguration.CLIENT.ALT_TOOLGUN_MODEL.set(arg)
                         return@executes Command.SINGLE_SUCCESS
                     }
                 )
