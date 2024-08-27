@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import java.awt.Color
 
-object SoundBlockScreenFactory : SerializedScreenFactory<SoundBlockMenu>(
+internal object SoundBlockScreenFactory : SerializedScreenFactory<SoundBlockMenu>(
     DATA_DIR.resolve("sound_block_screen.json")
 ) {
     override fun default(): ContainerWidget = ContainerWidget(

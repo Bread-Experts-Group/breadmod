@@ -19,7 +19,7 @@ import java.awt.Color
  * @author Miko Elbrecht, Logan McLean (first iteration)
  * @since 1.0.0
  */
-object ToolGunCreatorSpawnMenuFactory : SerializedScreenFactory<ToolGunCreatorMenu>(
+internal object ToolGunCreatorSpawnMenuFactory : SerializedScreenFactory<ToolGunCreatorMenu>(
     BASE_TOOL_GUN_DATA_PATH.resolve("creator/screens/spawn_menu.json")
 ) {
     internal val ENTITY_PATH = BASE_TOOL_GUN_DATA_PATH.resolve("creator/entity.json").toFile()

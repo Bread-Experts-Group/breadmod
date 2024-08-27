@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Inventory
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-class ToolGunCreatorSerializedScreen(
+internal class ToolGunCreatorSerializedScreen(
     pMenu: ToolGunCreatorMenu,
     pInventory: Inventory,
     pTitle: Component,

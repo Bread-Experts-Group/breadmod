@@ -88,7 +88,7 @@ class ContainerWidget(
         val pose = pGuiGraphics.pose()
         childrenWidgets.forEach { (widget, z) ->
             pose.pushPose()
-            pose.translate(widget.x.toDouble(), widget.y.toDouble(), z)
+            pose.translate(this.x + widget.x.toDouble(), this.y + widget.y.toDouble(), z)
             pose.mulPoseMatrix(Matrix4f().rotateZ(pTilt))
             widget.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
             pose.popPose()
