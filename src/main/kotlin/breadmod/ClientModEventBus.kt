@@ -16,8 +16,8 @@ import breadmod.client.render.entity.PrimedHappyBlockRenderer
 import breadmod.client.render.storage.EnergyStorageRenderer
 import breadmod.client.screen.CertificateItemScreen
 import breadmod.client.screen.DoughMachineScreen
-import breadmod.client.screen.SoundBlockScreen
 import breadmod.client.screen.WheatCrusherScreen
+import breadmod.client.screen.sound_block.SoundBlockScreenFactory
 import breadmod.client.screen.tool_gun.creator.ToolGunCreatorSpawnMenuFactory
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Control
@@ -99,7 +99,7 @@ object ClientModEventBus {
                 )
             }
             MenuScreens.register(ModMenuTypes.SOUND_BLOCK.get()) { pMenu, pInventory, pTitle ->
-                SoundBlockScreen(
+                SoundBlockScreenFactory.create(
                     pMenu,
                     pInventory,
                     pTitle

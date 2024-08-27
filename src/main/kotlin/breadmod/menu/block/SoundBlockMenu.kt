@@ -13,7 +13,10 @@ class SoundBlockMenu(
     pContainerId: Int,
     pInventory: Inventory,
     val parent: SoundBlockEntity
-) : AbstractModContainerMenu(ModMenuTypes.SOUND_BLOCK.get(), pContainerId) {
+) : AbstractModContainerMenu(
+    ModMenuTypes.SOUND_BLOCK.get(),
+    pContainerId
+) {
     constructor(pContainerId: Int, inventory: Inventory, byteBuf: FriendlyByteBuf): this(
         pContainerId, inventory,
         inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.SOUND_BLOCK.get()).get()
