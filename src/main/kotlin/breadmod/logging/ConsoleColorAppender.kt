@@ -58,6 +58,9 @@ class ConsoleColorAppender(
         // const val MAGENTA = 5
         const val CYAN = 6
         const val WHITE = 7
+
+        private val threadColors = mutableMapOf<String, Pair<String, List<Int>>>()
+        private var lastThreadColor: String? = null
     }
 
     private val colors = mapOf(
@@ -82,6 +85,50 @@ class ConsoleColorAppender(
         return new
     }
 
+    private fun String.getColorForString(): String {
+        val color = threadColors[this]
+        if (color != null) return color.first
+        else {
+            val last = threadColors[lastThreadColor]
+            lastThreadColor = this
+
+            val new =
+                if (last == null)
+                    (((ESC + (FOREGROUND + RED) + END) + this) + ESC + RESET + END) to mutableListOf(FOREGROUND + RED)
+                else {
+                    val newLast = last.second.toMutableList()
+                    newLast[0] += 1
+                    for (index in 0..newLast.size) {
+                        val current = newLast.getOrNull(index) ?: break
+
+                        if (current >= (FOREGROUND + BRIGHT + WHITE)) {
+                            newLast[index] = FOREGROUND + RED
+                            if (newLast.size == index + 1) newLast.add(FOREGROUND + RED)
+                            else newLast[index + 1] += 1
+                        } else if (current < (FOREGROUND + BRIGHT + RED) && current >= (FOREGROUND + WHITE)) {
+                            newLast[index] = FOREGROUND + BRIGHT + RED
+                            if (newLast.size == index + 1) newLast.add(FOREGROUND + RED)
+                            else newLast[index + 1] += 1
+                        } else break
+                    }
+
+                    var newStr = ""
+                    for (index in this.indices) {
+                        val localColor = newLast.getOrNull(index)
+                        if (localColor != null) newStr += ESC + localColor + END + this[index]
+                        else {
+                            newStr += this.slice(index..<this.length)
+                            break
+                        }
+                    }
+                    (newStr + ESC + RESET + END) to newLast
+                }
+
+            threadColors[this] = new
+            return new.first
+        }
+    }
+
     /**
      * Acts upon a given [LogEvent] for colorization.
      * @author Miko Elbrecht
@@ -98,8 +145,7 @@ class ConsoleColorAppender(
 
             val prepend = "[${ESC + (FOREGROUND + BRIGHT + BLUE) + END}${formattedTime}${ESC + RESET + END}" +
                     "/${colors[event.level.standardLevel]}${event.level.toString().padEnd(5)}${ESC + RESET + END}] " +
-                    "[${ESC + (FOREGROUND + GREEN) + END}${event.threadName}${ESC + RESET + END}/" +
-                    "${ESC + (FOREGROUND + CYAN) + END}${event.loggerName}${ESC + RESET + END}]"
+                    "[${event.threadName.getColorForString()}/" + "${event.loggerName.getColorForString()}]"
 
             event.thrownProxy.let {
                 val prependStrippedLength = prepend.replace(Regex("\u001B\\[.+?m"), "").length

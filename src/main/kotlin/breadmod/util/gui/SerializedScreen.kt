@@ -1,5 +1,6 @@
 package breadmod.util.gui
 
+import breadmod.ModMain.LOGGER
 import breadmod.util.gui.widget.ContainerWidget
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.MenuAccess
@@ -50,4 +51,24 @@ open class SerializedScreen<T : AbstractContainerMenu>(
      * @since 1.0.0
      */
     override fun getMenu(): T = pMenu
+
+    /**
+     * Pushes mouse inputs to the provided [rootWidget].
+     * @param pMouseX The X position of the mouse.
+     * @param pMouseY The Y position of the mouse.
+     * @param pButton The button on the mouse that was clicked.
+     * @return Whether the mouse click was handled by the [rootWidget].
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+        LOGGER.info("Mouse clicked at $pMouseX, $pMouseY with button $pButton")
+        LOGGER.info("Root widget at ${rootWidget.x}, ${rootWidget.y} with size ${rootWidget.width}, ${rootWidget.height}")
+
+        if (
+            pMouseX >= rootWidget.x && pMouseY >= rootWidget.y &&
+            pMouseX <= (rootWidget.width + rootWidget.x) && pMouseY <= (rootWidget.height + rootWidget.y)
+        ) return rootWidget.mouseClicked(pMouseX, pMouseY, pButton)
+        return false
+    }
 }

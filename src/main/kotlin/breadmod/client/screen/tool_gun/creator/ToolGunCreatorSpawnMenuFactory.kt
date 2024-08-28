@@ -35,8 +35,8 @@ internal object ToolGunCreatorSpawnMenuFactory : SerializedScreenFactory<ToolGun
     internal var lastSaved: String? = null
 
     override fun default(): ContainerWidget = ContainerWidget(
-        600, 600,
         0, 0,
+        600, 600,
         0f,
         Component.empty(),
         mutableMapOf(
@@ -64,18 +64,18 @@ internal object ToolGunCreatorSpawnMenuFactory : SerializedScreenFactory<ToolGun
                 28, 28,
                 304, 144,
                 Color(0f, 0f, 0f, 0.1f)
-            ) to 0.0,
+            ) to (0.0 to null),
             BackgroundWidget.SolidColorBackgroundWidget(
                 29, 29,
                 302, 142,
                 Color(0f, 0f, 0f, 0.1f)
-            ) to 0.1,
+            ) to (0.1 to null),
             TextWidget(
                 31, 31,
                 300, rgMinecraft.font.lineHeight,
                 Component.literal("Test"),
                 pCentering = TextWidget.CenteringType.NONE
-            ) to 0.2
+            ) to (0.2 to null)
         )
     )
 
