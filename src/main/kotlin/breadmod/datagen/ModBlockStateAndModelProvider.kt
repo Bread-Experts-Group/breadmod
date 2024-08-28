@@ -62,6 +62,23 @@ class ModBlockStateAndModelProvider(
             return@horizontalBlock model
         }
 
+        horizontalBlock(ModBlocks.SOUND_BLOCK.get().block) {
+            val name = "breadmod:block/sound_block"
+
+            val model = models().orientable(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side")
+            )
+
+            return@horizontalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.SOUND_BLOCK.get().block,
+            models().getBuilder("breadmod:block/sound_block")
+        )
+
         addBlockItemWithSelfParent(ModBlocks.NIKO_BLOCK.get().block)
         addBlockItemWithSelfParent(ModBlocks.RICARD_BLOCK.get().block)
         addBlockItemWithSelfParent(ModBlocks.UNFUNNYLAD_BLOCK.get().block)
