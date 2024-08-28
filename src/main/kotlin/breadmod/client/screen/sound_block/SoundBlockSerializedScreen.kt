@@ -1,5 +1,6 @@
 package breadmod.client.screen.sound_block
 
+import breadmod.ModMain.modLocation
 import breadmod.menu.block.SoundBlockMenu
 import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
@@ -14,6 +15,10 @@ internal class SoundBlockSerializedScreen(
     pTitle: Component,
     rootWidget: ContainerWidget
 ) : SerializedScreen<SoundBlockMenu>(pMenu, pInventory, pTitle, rootWidget) {
+    private val texture = modLocation("textures", "gui", "container", "sound_block.png")
+    private val imageWidth = 176
+    private val imageHeight = 166
+
     /**
      * Renders this [SoundBlockSerializedScreen].
      * @author Logan McLean (implementation), Miko Elbrecht (javadoc)
@@ -21,6 +26,7 @@ internal class SoundBlockSerializedScreen(
      */
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         renderBackground(pGuiGraphics)
+        pGuiGraphics.blit(texture, rootWidget.x, rootWidget.y, 0, 0, 176, 166)
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
     }
 
@@ -30,8 +36,8 @@ internal class SoundBlockSerializedScreen(
 
     override fun init() {
         super.init()
-        rootWidget.x = width / 2
-        rootWidget.y = height / 2
+        rootWidget.x = (width - imageWidth) / 2
+        rootWidget.y = (height - imageHeight) / 2
     }
 
     init {
