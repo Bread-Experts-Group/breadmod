@@ -20,7 +20,7 @@ class InventoryWidget(
     private fun addSlotWidget(c: Int, r: Int, yOffset: Int = 0) {
         val linear = (r * 9) + c
         this.addWidget(
-            SlotWidget(c * 9, (r * 9) + yOffset, pInventory.getItem(linear)),
+            SlotWidget(c * 9, (r * 9) + yOffset, pInventory, linear),
             0.0, "slot$linear"
         )
     }

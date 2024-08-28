@@ -7,20 +7,22 @@ import net.minecraft.client.gui.narration.NarratedElementType
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
-import net.minecraft.world.item.ItemStack
+import net.minecraft.world.entity.player.Inventory
 import java.awt.Color
 
 /**
  * A widget that renders an item slot.
  * @param pX The X position this slot will render at.
  * @param pY The Y position this slot will render at.
- * @param stack The [ItemStack] this widget renders.
+ * @param pInventory The [Inventory] this slot attaches to.
+ * @param slot The slot index in the [pInventory].
  * @author Miko Elbrecht
  * @since 1.0.0
  */
 class SlotWidget(
     pX: Int, pY: Int,
-    private val stack: ItemStack
+    private val pInventory: Inventory,
+    private val slot: Int
 ) : AbstractWidget(pX, pY, 16, 16, Component.empty()) {
     private val hoverColor = Color(1f, 1f, 1f, 0.5f).rgb
 
@@ -30,6 +32,7 @@ class SlotWidget(
      * @since 1.0.0
      */
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
+        val stack = pInventory.getItem(slot)
         val notEmpty = !stack.isEmpty
         if (notEmpty) {
             pGuiGraphics.renderItem(stack, x, y)
@@ -47,6 +50,7 @@ class SlotWidget(
      * @since 1.0.0
      */
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
+        val stack = pInventory.getItem(slot)
         pNarrationElementOutput.add(NarratedElementType.HINT, stack.hoverName)
     }
 }

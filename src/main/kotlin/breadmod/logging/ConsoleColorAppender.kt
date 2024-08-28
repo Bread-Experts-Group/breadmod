@@ -101,12 +101,12 @@ class ConsoleColorAppender(
                     for (index in 0..newLast.size) {
                         val current = newLast.getOrNull(index) ?: break
 
-                        if (current >= (FOREGROUND + BRIGHT + WHITE)) {
+                        /*if (current >= (FOREGROUND + BRIGHT + WHITE)) {
                             newLast[index] = FOREGROUND + RED
                             if (newLast.size == index + 1) newLast.add(FOREGROUND + RED)
                             else newLast[index + 1] += 1
-                        } else if (current < (FOREGROUND + BRIGHT + RED) && current >= (FOREGROUND + WHITE)) {
-                            newLast[index] = FOREGROUND + BRIGHT + RED
+                        } else */ if (/* current < (FOREGROUND + BRIGHT + RED) && */ current >= (FOREGROUND + WHITE)) {
+                            newLast[index] = FOREGROUND /*+ BRIGHT*/ + RED
                             if (newLast.size == index + 1) newLast.add(FOREGROUND + RED)
                             else newLast[index + 1] += 1
                         } else break
