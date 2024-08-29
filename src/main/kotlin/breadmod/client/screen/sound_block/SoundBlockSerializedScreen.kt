@@ -6,6 +6,7 @@ import breadmod.util.gui.widget.ContainerWidget
 import breadmod.util.gui.widget.InventoryWidget
 import breadmod.util.gui.widget.TextWidget
 import breadmod.util.render.rgMinecraft
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
@@ -25,6 +26,15 @@ internal class SoundBlockSerializedScreen(
     override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         renderBackground(pGuiGraphics)
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+    }
+
+    override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
+        val mouseKey = InputConstants.getKey(pKeyCode, pScanCode)
+        return if (pKeyCode == InputConstants.KEY_ESCAPE ||
+            rgMinecraft.options.keyInventory.isActiveAndMatches(mouseKey) && shouldCloseOnEsc()) {
+            onClose()
+            true
+        } else super.keyPressed(pKeyCode, pScanCode, pModifiers)
     }
 
     override fun init() {
