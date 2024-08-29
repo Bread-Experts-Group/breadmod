@@ -8,6 +8,7 @@ import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
 import breadmod.registry.ModConfiguration
 import breadmod.util.gui.IHoldScreen
+import breadmod.util.render.modifierMatches
 import breadmod.util.render.renderBuffer
 import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.platform.InputConstants
@@ -78,14 +79,6 @@ object ClientForgeEventBus {
             openGuiEditor
         )
     }
-
-
-    private fun modifierMatches(modifiers: Int, modifier: KeyModifier) = when (modifier) {
-        KeyModifier.SHIFT -> modifiers and 0x0001
-        KeyModifier.CONTROL -> modifiers and 0x0002
-        KeyModifier.ALT -> modifiers and 0x0004
-        KeyModifier.NONE -> 1
-    } != 0
 
     private fun handleToolgunInput(
         player: LocalPlayer,

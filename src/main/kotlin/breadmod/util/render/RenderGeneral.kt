@@ -34,6 +34,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.RenderTypeHelper
 import net.minecraftforge.client.event.RenderLevelStageEvent
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
+import net.minecraftforge.client.settings.KeyModifier
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.*
 import java.awt.Color
@@ -49,6 +50,20 @@ internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableL
 
 internal val shaderPreCompilation =
     mutableMapOf<String, (Program.Type, String, InputStream, String, GlslPreprocessor) -> Unit>()
+
+val mouseGuiX: Double
+    get() = rgMinecraft.mouseHandler.xpos() * rgMinecraft.window.guiScaledWidth.toDouble() /
+            rgMinecraft.window.screenWidth.toDouble()
+val mouseGuiY: Double
+    get() = rgMinecraft.mouseHandler.ypos() * rgMinecraft.window.guiScaledHeight.toDouble() /
+            rgMinecraft.window.screenHeight.toDouble()
+
+fun modifierMatches(modifiers: Int, modifier: KeyModifier) = when (modifier) {
+    KeyModifier.SHIFT -> modifiers and 0x0001
+    KeyModifier.CONTROL -> modifiers and 0x0002
+    KeyModifier.ALT -> modifiers and 0x0004
+    KeyModifier.NONE -> 1
+} != 0
 
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.

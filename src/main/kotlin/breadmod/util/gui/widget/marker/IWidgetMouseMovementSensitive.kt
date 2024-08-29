@@ -1,4 +1,4 @@
-package breadmod.util.gui.widget
+package breadmod.util.gui.widget.marker
 
 /**
  * A marker interface for widgets that are sensitive to mouse movement.

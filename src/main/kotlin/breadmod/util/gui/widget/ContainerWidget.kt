@@ -1,6 +1,12 @@
 package breadmod.util.gui.widget
 
+import breadmod.util.gui.widget.marker.IWidgetKeySensitive
+import breadmod.util.gui.widget.marker.IWidgetMouseClickSensitive
+import breadmod.util.gui.widget.marker.IWidgetMouseDragSensitive
+import breadmod.util.gui.widget.marker.IWidgetMouseMovementSensitive
 import breadmod.util.json
+import breadmod.util.render.mouseGuiX
+import breadmod.util.render.mouseGuiY
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -171,6 +177,50 @@ open class ContainerWidget(
         val rx = this.iterateLowHigh(pMouseX, pMouseY, IWidgetMouseMovementSensitive::class)
         rx?.first?.mouseMoved(rx.second.first, rx.second.second)
     }
+
+    /**
+     * Handles a mouse dragging event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * @param pMouseX The X position of the mouse.
+     * @param pMouseY The Y position of the mouse.
+     * @param pButton The button on the mouse that was clicked.
+     * @param pDragX The X distance of the mouse drag.
+     * @param pDragY The Y distance of the mouse drag.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
+        val rx = this.iterateLowHigh(pMouseX, pMouseY, IWidgetMouseDragSensitive::class)
+        return rx?.first?.mouseDragged(rx.second.first, rx.second.second, pButton, pDragX, pDragY) ?: false
+    }
+
+    private fun getKeyableWidget() =
+        this.iterateLowHigh(
+            mouseGuiX,
+            mouseGuiY,
+            IWidgetKeySensitive::class
+        )
+
+    /**
+     * Handles a key press event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * @param pButton The button on the keyboard that was pressed.
+     * @param pScanCode The scan code of the key that was pressed.
+     * @param pModifiers The bit-mapped modifiers that were active when the key was pressed.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun keyPressed(pButton: Int, pScanCode: Int, pModifiers: Int): Boolean =
+        getKeyableWidget()?.first?.keyPressed(pButton, pScanCode, pModifiers) ?: false
+
+    /**
+     * Handles a key press event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * @param pButton The button on the keyboard that was pressed.
+     * @param pScanCode The scan code of the key that was pressed.
+     * @param pModifiers The bit-mapped modifiers that were active when the key was pressed.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun keyReleased(pButton: Int, pScanCode: Int, pModifiers: Int): Boolean =
+        getKeyableWidget()?.first?.keyReleased(pButton, pScanCode, pModifiers) ?: false
 
     /**
      * Updates the narration output of this [ContainerWidget]. (By default, nothing is added.)

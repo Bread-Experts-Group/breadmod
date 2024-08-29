@@ -1,6 +1,11 @@
 package breadmod.util.gui.widget
 
+import breadmod.util.gui.widget.marker.IWidgetKeySensitive
+import breadmod.util.gui.widget.marker.IWidgetMouseClickSensitive
+import breadmod.util.gui.widget.marker.IWidgetMouseDragSensitive
+import breadmod.util.render.modifierMatches
 import breadmod.util.render.rgMinecraft
+import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratedElementType
@@ -9,6 +14,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.world.Container
 import net.minecraft.world.inventory.ClickType
+import net.minecraftforge.client.settings.KeyModifier
 import java.awt.Color
 
 /**
@@ -24,14 +30,10 @@ class SlotWidget(
     pX: Int, pY: Int,
     val pParent: ItemContainerWidget,
     val slot: Int
-) : AbstractWidget(pX, pY, 16, 16, Component.empty()), IWidgetMouseClickSensitive {
+) : AbstractWidget(pX, pY, 16, 16, Component.empty()), IWidgetMouseClickSensitive, IWidgetMouseDragSensitive,
+    IWidgetKeySensitive {
     private val hoverColor = Color(1f, 1f, 1f, 0.5f).rgb
 
-    /**
-     * Renders this [SlotWidget].
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         val stack = pParent.pContainer.getItem(slot)
         val notEmpty = !stack.isEmpty
@@ -49,15 +51,6 @@ class SlotWidget(
         }
     }
 
-    /**
-     * Handles mouse clicks on this [SlotWidget].
-     * @param pMouseX The X position of the mouse.
-     * @param pMouseY The Y position of the mouse.
-     * @param pButton The button on the mouse that was clicked.
-     * @return Whether the click was handled by this widget and should be consumed.
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
         rgMinecraft.gameMode?.let {
             val player = rgMinecraft.player ?: return false
@@ -66,11 +59,33 @@ class SlotWidget(
         return true
     }
 
-    /**
-     * Updates the narration output of this [SlotWidget].
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
+    override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
+        return if (!pParent.pContainerMenu.carried.isEmpty) {
+            rgMinecraft.gameMode?.let {
+                // TODO drag logic
+            }
+            true
+        } else false
+    }
+
+    override fun keyPressed(pKeyCode: Int, pScanCode: Int, pModifiers: Int): Boolean {
+        val stack = pParent.pContainer.getItem(slot)
+        return if (!stack.isEmpty) {
+            val key = InputConstants.getKey(pKeyCode, pScanCode)
+            if (rgMinecraft.options.keyDrop.isActiveAndMatches(key)) {
+                rgMinecraft.gameMode?.let {
+                    val player = rgMinecraft.player ?: return false
+                    it.handleInventoryMouseClick(
+                        pParent.pContainerMenu.containerId, slot,
+                        if (modifierMatches(pModifiers, KeyModifier.CONTROL)) 1 else 0,
+                        ClickType.THROW, player
+                    )
+                }
+                true
+            } else false
+        } else false
+    }
+
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {
         val stack = pParent.pContainer.getItem(slot)
         pNarrationElementOutput.add(NarratedElementType.HINT, stack.hoverName)
