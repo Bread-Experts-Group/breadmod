@@ -4,9 +4,11 @@ import breadmod.menu.block.SoundBlockMenu
 import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
 import breadmod.util.gui.widget.InventoryWidget
+import breadmod.util.gui.widget.TextWidget
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import java.awt.Color
 
 internal class SoundBlockSerializedScreen(
     pMenu: SoundBlockMenu,
@@ -30,6 +32,10 @@ internal class SoundBlockSerializedScreen(
         rootWidget.x = (width - image.width) / 2
         rootWidget.y = (height - image.height) / 2
 
-        rootWidget.addWidget(InventoryWidget(4, 35, pInventory), 0.0, "inventory")
+        rootWidget.addWidget(InventoryWidget(4, 35, pInventory), 0.2, "inventory")
+        rootWidget.addWidget( // todo WHY DOES IT NOT RENDER?????
+            TextWidget(2, 2, 20, 10, Component.literal("A TEST"), Color.BLACK),
+            0.3, "title"
+        )
     }
 }

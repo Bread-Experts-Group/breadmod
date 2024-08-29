@@ -6,6 +6,8 @@ import breadmod.menu.block.SoundBlockMenu
 import breadmod.util.gui.SerializedScreenFactory
 import breadmod.util.gui.widget.BackgroundWidget
 import breadmod.util.gui.widget.ContainerWidget
+import breadmod.util.render.rgMinecraft
+import net.minecraft.client.gui.components.EditBox
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 
@@ -22,7 +24,17 @@ internal object SoundBlockScreenFactory : SerializedScreenFactory<SoundBlockMenu
                 0, 0,
                 176, 166,
                 modLocation("textures", "gui", "container", "sound_block.png")
-            ) to (0.0 to "background")
+            ) to (0.0 to "background"),
+            EditBox(
+                rgMinecraft.font, 4, 7,
+                160, 10,
+                Component.empty()
+            ).also { editBox ->
+                editBox.value = "sound input WIP"
+                editBox.setResponder {
+                    println(editBox.value)
+                }
+            } to (0.1 to null)
         )
     )
 

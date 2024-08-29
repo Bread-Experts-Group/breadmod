@@ -21,6 +21,7 @@ internal class ToolGunModeDataPacket(val location: ResourceLocation, val data: B
         fun handle(input: ToolGunModeDataPacket, ctx: Supplier<NetworkEvent.Context>) = ctx.get().let {
             it.enqueueWork {
                 if (it.sender == null) {
+                    println(input.data.decodeToString())
                     toLoad[input.location] = gson.fromJson(input.data.decodeToString(), JsonObject::class.java)
                     if (input.done) {
                         ModToolGunModeDataLoader.load(toLoad)
