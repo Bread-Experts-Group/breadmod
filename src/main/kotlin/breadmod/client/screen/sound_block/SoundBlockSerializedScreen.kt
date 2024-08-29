@@ -36,6 +36,6 @@ internal class SoundBlockSerializedScreen(
             TextWidget(2, 2, 20, 10, Component.literal("A TEST"), Color(0f, 0f, 0f, 0f)),
             0.3, "title"
         )
-        rootWidget.addWidget(InventoryWidget(8, 88, pInventory), 0.0, "inventory")
+        rootWidget.addWidget(InventoryWidget(8, 88, pInventory, pMenu), 0.0, "inventory")
     }
 }

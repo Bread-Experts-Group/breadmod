@@ -1,7 +1,7 @@
 package breadmod.util.gui.widget
 
-import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.inventory.AbstractContainerMenu
 
 /**
  * A widget that renders a given [Inventory].
@@ -13,16 +13,12 @@ import net.minecraft.world.entity.player.Inventory
  */
 class InventoryWidget(
     pX: Int, pY: Int,
-    private val pInventory: Inventory
-) : ContainerWidget(
-    pX, pY, 160, 74, 0f, Component.empty(), mutableMapOf()
-) {
+    pInventory: Inventory,
+    pContainerMenu: AbstractContainerMenu
+) : ItemContainerWidget(pX, pY, 160, 74, pInventory, pContainerMenu) {
     private fun addSlotWidget(c: Int, r: Int, yOffset: Int = 0) {
         val linear = (r * 9) + c
-        this.addWidget(
-            SlotWidget(c * 18, (r * 18) + yOffset, pInventory, linear),
-            0.0, "slot$linear"
-        )
+        SlotWidget(c * 18, (r * 18) + yOffset, this, linear)
     }
 
     init {
