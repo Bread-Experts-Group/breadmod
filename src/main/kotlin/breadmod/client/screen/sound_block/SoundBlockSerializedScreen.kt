@@ -32,10 +32,10 @@ internal class SoundBlockSerializedScreen(
         rootWidget.x = (width - image.width) / 2
         rootWidget.y = (height - image.height) / 2
 
-        rootWidget.addWidget(InventoryWidget(4, 35, pInventory), 0.2, "inventory")
-        rootWidget.addWidget( // todo WHY DOES IT NOT RENDER?????
-            TextWidget(2, 2, 20, 10, Component.literal("A TEST"), Color.BLACK),
+        rootWidget.addWidget(
+            TextWidget(2, 2, 20, 10, Component.literal("A TEST"), Color(0f, 0f, 0f, 0f)),
             0.3, "title"
         )
+        rootWidget.addWidget(InventoryWidget(8, 88, pInventory), 0.0, "inventory")
     }
 }

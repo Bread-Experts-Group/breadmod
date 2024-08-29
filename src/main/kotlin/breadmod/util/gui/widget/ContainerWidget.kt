@@ -14,7 +14,8 @@ import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 import org.joml.Matrix4f
-import kotlin.math.roundToInt
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 /**
  * A widget that can contain other widgets.
@@ -91,25 +92,91 @@ open class ContainerWidget(
         associationMap[pTag] = pWidget
     }
 
-    fun getTaggedWidget(pTag: String) = associationMap[pTag] ?: throw NoSuchElementException("No widget with tag $pTag")
+    /**
+     * Gets a widget by its tag.
+     * @param pTag The tag of the widget to get.
+     * @return The widget with the given tag.
+     * @throws NoSuchElementException If no widget with the given tag exists in this container.
+     * @author Miko Elbrecht
+     * @since 1.0
+     */
+    fun getTaggedWidget(pTag: String): AbstractWidget = associationMap[pTag]
+        ?: throw NoSuchElementException("No widget with tag $pTag")
 
+    /**
+     * Renders this [ContainerWidget] along with its children.
+     * @param pGuiGraphics The graphics context to render with.
+     * @param pMouseX The X position of the mouse.
+     * @param pMouseY The Y position of the mouse.
+     * @param pPartialTick The partial tick amount to render with.
+     * @author Miko Elbrecht
+     * @since 1.0
+     */
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         val pose = pGuiGraphics.pose()
-
+        pose.pushPose()
+        if (this.x > 0 && this.y > 0) pose.translate(this.x.toDouble(), this.y.toDouble(), 0.0)
+        pose.mulPoseMatrix(Matrix4f().rotateX(pTilt))
         childrenWidgets.forEach { (widget, pair) ->
             pose.pushPose()
-            val translateX = this.x + widget.x.toDouble()
-            val translateY = this.y + widget.y.toDouble()
-            pose.translate(translateX, translateY, pair.first)
-            pose.mulPoseMatrix(Matrix4f().rotateZ(pTilt))
-            val mouseX = (pMouseX - translateX).roundToInt()
-            val mouseY = (pMouseY - translateY).roundToInt()
-
-            widget.render(pGuiGraphics, mouseX, mouseY, pPartialTick)
-
+            // NOTE: This code is quite messy. We should probably clean it up later.
+            if (widget !is ContainerWidget) pose.translate(widget.x.toDouble(), widget.y.toDouble(), pair.first)
+            widget.render(
+                pGuiGraphics,
+                pMouseX - this.x,
+                pMouseY - this.y,
+                pPartialTick
+            )
             pose.popPose()
+        }
+        pose.popPose()
+    }
+
+    private fun ContainerWidget.iterateLowHigh(
+        pMouseX: Double, pMouseY: Double,
+        pInterface: KClass<*>,
+        pX: Int = this.x, pY: Int = this.y
+    ): Pair<AbstractWidget, Pair<Double, Double>>? {
+        return this.childrenWidgets.keys.firstNotNullOfOrNull { widget ->
+            if (widget is ContainerWidget)
+                widget.iterateLowHigh(pMouseX, pMouseY, pInterface, pX + widget.x, pY + widget.y)
+            else if (widget::class.isSubclassOf(pInterface) && widget.isMouseOver(pMouseX - pX, pMouseY - pY))
+                widget to (pMouseX - pX to pMouseY - pY)
+            else null
         }
     }
 
+    /**
+     * Handles a mouse click event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * @param pMouseX The X position of the mouse.
+     * @param pMouseY The Y position of the mouse.
+     * @param pButton The button on the mouse that was clicked.
+     * @return Whether the click was handled by a widget and should be consumed.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+        val rx = this.iterateLowHigh(pMouseX, pMouseY, IWidgetMouseClickSensitive::class)
+        return rx?.first?.mouseClicked(rx.second.first, rx.second.second, pButton) ?: false
+    }
+
+    /**
+     * Handles a mouse movement event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * @param pMouseX The X position of the mouse.
+     * @param pMouseY The Y position of the mouse.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun mouseMoved(pMouseX: Double, pMouseY: Double) {
+        val rx = this.iterateLowHigh(pMouseX, pMouseY, IWidgetMouseMovementSensitive::class)
+        rx?.first?.mouseMoved(rx.second.first, rx.second.second)
+    }
+
+    /**
+     * Updates the narration output of this [ContainerWidget]. (By default, nothing is added.)
+     * @param pNarrationElementOutput The narration output to update.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
 }

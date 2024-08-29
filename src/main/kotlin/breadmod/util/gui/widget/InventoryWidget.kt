@@ -15,18 +15,18 @@ class InventoryWidget(
     pX: Int, pY: Int,
     private val pInventory: Inventory
 ) : ContainerWidget(
-    pX, pY, 90, 45, 0f, Component.empty(), mutableMapOf()
+    pX, pY, 160, 74, 0f, Component.empty(), mutableMapOf()
 ) {
     private fun addSlotWidget(c: Int, r: Int, yOffset: Int = 0) {
         val linear = (r * 9) + c
         this.addWidget(
-            SlotWidget(c * 9, (r * 9) + yOffset, pInventory, linear),
+            SlotWidget(c * 18, (r * 18) + yOffset, pInventory, linear),
             0.0, "slot$linear"
         )
     }
 
     init {
-        for (rI in 3 downTo 1) repeat(9) { cI -> addSlotWidget(cI, rI) }
-        repeat(9) { cI -> addSlotWidget(cI, 0, 38) }
+        for (rI in 3 downTo 1) repeat(9) { cI -> addSlotWidget(cI, rI, -18) }
+        repeat(9) { cI -> addSlotWidget(cI, 0, 58) }
     }
 }
