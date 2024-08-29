@@ -48,6 +48,10 @@ abstract class AbstractMachineBlockEntity<T : AbstractMachineBlockEntity<T>>(
                 CapabilitySideDataPacket(blockPos, cap.name, capabilityHolder.capabilities[cap]?.second ?: emptyList())
             )
         }
+
+        capabilityHolder.capabilities.forEach {
+            (capabilityHolder.capability(it.key) as ICapabilitySavable<*>).changed = ::setChanged
+        }
     }
 
     final override fun <T : Any?> getCapability(cap: Capability<T>): LazyOptional<T> =
@@ -101,12 +105,6 @@ abstract class AbstractMachineBlockEntity<T : AbstractMachineBlockEntity<T>>(
             CapabilityTagDataPacket(blockPos, updateTag)
         )
         super.setChanged()
-    }
-
-    init {
-        capabilityHolder.capabilities.forEach {
-            (capabilityHolder.capability(it.key) as ICapabilitySavable<*>).changed = ::setChanged
-        }
     }
 
     open fun preTick(pLevel: Level, pPos: BlockPos, pState: BlockState, pBlockEntity: AbstractMachineBlockEntity<T>) {}

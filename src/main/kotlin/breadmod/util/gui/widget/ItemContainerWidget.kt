@@ -10,6 +10,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu
  * A widget that supports a given [Container].
  * @param pX The X position this widget will render at.
  * @param pY The Y position this widget will render at.
+ * @param pWidth The width of this widget.
+ * @param pHeight The height of this widget.
  * @param pContainer The [Container] to attach to.
  * @param pContainerMenu The [AbstractContainerMenu] to attach to.
  * @author Miko Elbrecht
