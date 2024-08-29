@@ -7,10 +7,7 @@ import breadmod.ModMain.ID
 import breadmod.ModMain.modLocation
 import breadmod.client.gui.ToolGunOverlay
 import breadmod.client.gui.WarOverlay
-import breadmod.client.render.CreativeGeneratorRenderer
-import breadmod.client.render.GenericMachineBlockEntityRenderer
-import breadmod.client.render.SidedScreenRenderer
-import breadmod.client.render.ToasterRenderer
+import breadmod.client.render.*
 import breadmod.client.render.entity.BreadBulletEntityRenderer
 import breadmod.client.render.entity.PrimedHappyBlockRenderer
 import breadmod.client.render.storage.EnergyStorageRenderer
@@ -157,6 +154,7 @@ object ClientModEventBus {
         event.registerBlockEntityRenderer(ModBlockEntityTypes.CREATIVE_GENERATOR.get()) { CreativeGeneratorRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get()) { EnergyStorageRenderer() }
         event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get()) { ToasterRenderer() }
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.SOUND_BLOCK.get()) { SoundBlockRenderer() }
 //        event.registerBlockEntityRenderer(ModBlockEntityTypes.FLUID_STORAGE.get()) { FluidStorageRenderer() }
 
         val genericMachineRenderer = { _: BlockEntityRendererProvider.Context -> GenericMachineBlockEntityRenderer() }

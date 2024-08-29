@@ -22,6 +22,7 @@ import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.inventory.InventoryMenu
@@ -453,7 +454,7 @@ fun drawTexturedQuad(
  * @since 0.0.1
  */
 fun renderText(
-    pComponent: Component,
+    pComponent: FormattedCharSequence,
     pColor: Int,
     pBackgroundColor: Int,
     pFontRenderer: Font,
@@ -506,26 +507,64 @@ fun translateOnBlockSide(
     }
 }
 
+val TRANSPARENT = Color(0f, 0f, 0f, 0f).rgb
+
 fun drawTextOnSide(
     pFontRenderer: Font,
     pComponent: Component,
-    pColor: Int,
-    pBackgroundColor: Int,
-    pDropShadow: Boolean,
+
+    pPosX: Double,
+    pPosY: Double,
+    pPosZ: Double = 0.0,
+
     pPoseStack: PoseStack,
     pBuffer: MultiBufferSource,
     pBlockState: BlockState,
+
+    pColor: Int = Color.WHITE.rgb,
+    pBackgroundColor: Int = TRANSPARENT,
+    pDropShadow: Boolean = false,
     pDirection: Direction? = null,
-    pScale: Float,
-    pPosX: Double,
-    pPosY: Double,
-    pPosZ: Double = 0.0
+    pScale: Float = 1f
 ) {
     pPoseStack.pushPose()
     translateOnBlockSide(pBlockState, pDirection, pPoseStack, pPosX, pPosY, pPosZ)
     pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-    pPoseStack.scale(pScale, pScale, pScale)
-    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, 15728880)
+    pPoseStack.scaleFlat(pScale)
+    renderText(pComponent.visualOrderText, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, 15728880)
+    pPoseStack.popPose()
+}
+
+fun drawCenteredTextOnSide(
+    pFontRenderer: Font,
+    pComponent: Component,
+
+    pPosX: Double,
+    pPosY: Double,
+    pPosZ: Double = 0.0,
+
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pBlockState: BlockState,
+
+    pColor: Int = Color.WHITE.rgb,
+    pBackgroundColor: Int = TRANSPARENT,
+    pDropShadow: Boolean = false,
+    pDirection: Direction? = null,
+    pScale: Float = 1f
+) {
+    pPoseStack.pushPose()
+    translateOnBlockSide(
+        pBlockState, pDirection, pPoseStack,
+        pPosX - rgMinecraft.font.width(pComponent.visualOrderText) / 2,
+        pPosY, pPosZ
+    )
+    pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
+    pPoseStack.scaleFlat(pScale)
+    renderText(
+        pComponent.visualOrderText, pColor, pBackgroundColor, pFontRenderer,
+        pPoseStack, pBuffer, pDropShadow, 15728880
+    )
     pPoseStack.popPose()
 }
 

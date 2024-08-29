@@ -1,6 +1,7 @@
 package breadmod.client.render.tool_gun
 
 import breadmod.util.render.renderText
+import breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
@@ -12,6 +13,15 @@ import net.minecraft.util.FormattedCharSequence
 
 private const val SCREEN_TINT = 15728880
 
+private fun initialTranslations(pPoseStack: PoseStack, pPosX: Double, pPosY: Double, pPosZ: Double, pScale: Float) {
+    pPoseStack.pushPose()
+    pPoseStack.translate(pPosX, pPosY, pPosZ)
+    pPoseStack.scaleFlat(pScale)
+    pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
+    pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
+    pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
+}
+
 /**
  * +X moves text forward on tool gun
  * -X moves text backward on tool gun
@@ -19,7 +29,6 @@ private const val SCREEN_TINT = 15728880
  * +Z moves text right on tool gun
  * -Z moves text left on tool gun
  */
-
 fun drawTextOnScreen(
     pComponent: Component,
     pColor: Int,
@@ -33,13 +42,12 @@ fun drawTextOnScreen(
     pPosZ: Double,
     pScale: Float
 ) {
-    pPoseStack.pushPose()
-    pPoseStack.translate(pPosX, pPosY, pPosZ)
-    pPoseStack.scale(pScale, pScale, pScale)
-    pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-    pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
-    pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
-    renderText(pComponent, pColor, pBackgroundColor, pFontRenderer, pPoseStack, pBuffer, pDropShadow, SCREEN_TINT)
+    initialTranslations(pPoseStack, pPosX, pPosY, pPosZ, pScale)
+    renderText(
+        pComponent.visualOrderText, pColor, pBackgroundColor, pFontRenderer,
+        pPoseStack, pBuffer,
+        pDropShadow, SCREEN_TINT
+    )
     pPoseStack.popPose()
 }
 
@@ -117,12 +125,7 @@ fun drawWrappedTextOnScreen(
     pScale: Float,
     pLineWidth: Int
 ) {
-    pPoseStack.pushPose()
-    pPoseStack.translate(pPosX, pPosY, pPosZ)
-    pPoseStack.scale(pScale, pScale, pScale)
-    pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-    pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
-    pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
+    initialTranslations(pPoseStack, pPosX, pPosY, pPosZ, pScale)
     var split: Float = pSplitY
     for (formattedCharSequence: FormattedCharSequence in componentSplit(pText, pLineWidth, pFont)) {
         pFont.drawInBatch(

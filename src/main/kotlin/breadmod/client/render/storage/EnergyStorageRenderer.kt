@@ -7,8 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
 import java.awt.Color
 
-class EnergyStorageRenderer : BaseAbstractStorageBlockRenderer<EnergyStorageBlockEntity>() {
-
+internal class EnergyStorageRenderer : BaseAbstractStorageBlockRenderer<EnergyStorageBlockEntity>() {
     override fun render(
         pBlockEntity: EnergyStorageBlockEntity,
         pPartialTick: Float,
@@ -23,29 +22,29 @@ class EnergyStorageRenderer : BaseAbstractStorageBlockRenderer<EnergyStorageBloc
         drawTextOnSide(
             fontRenderer,
             Component.literal("$energyStored FE"),
-            Color.GREEN.rgb,
-            Color(0, 0, 0, 0).rgb,
-            false,
-            pPoseStack, pBuffer, pBlockEntity.blockState,
-            pScale = 0.0105f, pPosX = 0.1, pPosY = -0.125
+            0.1, -0.125,
+            pPoseStack = pPoseStack, pBuffer = pBuffer,
+            pBlockState = pBlockEntity.blockState,
+            pColor = Color.GREEN.rgb,
+            pScale = 0.0105f
         )
         drawTextOnSide(
             fontRenderer,
             Component.literal("-------------"),
-            Color.GREEN.rgb,
-            Color(0, 0, 0, 0).rgb,
-            false,
-            pPoseStack, pBuffer, pBlockEntity.blockState,
-            pScale = 0.0105f, pPosX = 0.095, pPosY = -0.185
+            0.095, -0.185,
+            pPoseStack = pPoseStack, pBuffer = pBuffer,
+            pBlockState = pBlockEntity.blockState,
+            pColor = Color.GREEN.rgb,
+            pScale = 0.0105f
         )
         drawTextOnSide(
             fontRenderer,
             Component.literal("$maxEnergyStored FE"),
-            Color.GREEN.rgb,
-            Color(0, 0, 0, 0).rgb,
-            false,
-            pPoseStack, pBuffer, pBlockEntity.blockState,
-            pScale = 0.0105f, pPosX = 0.1, pPosY = -0.245
+            0.1, pPosY = -0.245,
+            pPoseStack = pPoseStack, pBuffer = pBuffer,
+            pBlockState = pBlockEntity.blockState,
+            pColor = Color.GREEN.rgb,
+            pScale = 0.0105f
         )
     }
 }
