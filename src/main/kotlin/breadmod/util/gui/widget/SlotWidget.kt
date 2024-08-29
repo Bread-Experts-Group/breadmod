@@ -59,20 +59,9 @@ class SlotWidget(
      * @since 1.0.0
      */
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
-        if (pParent.pContainerMenu.carried.isEmpty) {
-            rgMinecraft.gameMode?.handleInventoryMouseClick(
-                pParent.pContainerMenu.containerId,
-                slot, pButton,
-                ClickType.PICKUP,
-                rgMinecraft.player!!
-            )
-        } else {
-            rgMinecraft.gameMode?.handleInventoryMouseClick(
-                pParent.pContainerMenu.containerId,
-                slot, pButton,
-                ClickType.PICKUP,
-                rgMinecraft.player!!
-            )
+        rgMinecraft.gameMode?.let {
+            val player = rgMinecraft.player ?: return false
+            it.handleInventoryMouseClick(pParent.pContainerMenu.containerId, slot, pButton, ClickType.PICKUP, player)
         }
         return true
     }
