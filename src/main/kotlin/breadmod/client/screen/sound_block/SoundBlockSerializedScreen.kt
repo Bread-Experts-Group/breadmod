@@ -5,6 +5,7 @@ import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
 import breadmod.util.gui.widget.InventoryWidget
 import breadmod.util.gui.widget.TextWidget
+import breadmod.util.render.rgMinecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
@@ -33,9 +34,16 @@ internal class SoundBlockSerializedScreen(
         rootWidget.y = (height - image.height) / 2
 
         rootWidget.addWidget(
-            TextWidget(2, 2, 20, 10, Component.literal("A TEST"), Color(0f, 0f, 0f, 0f)),
-            0.3, "title"
+            TextWidget(
+                0, 3,
+                image.width, rgMinecraft.font.lineHeight,
+                pMenu.parent.displayName, Color.DARK_GRAY,
+                pNoScissor = true
+            ),
+            200.0
+        ).addWidget(
+            InventoryWidget(8, 88, pInventory, pMenu),
+            0.0
         )
-        rootWidget.addWidget(InventoryWidget(8, 88, pInventory, pMenu), 0.0, "inventory")
     }
 }

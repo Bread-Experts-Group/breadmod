@@ -1,11 +1,13 @@
 package breadmod.util.gui.widget
 
 import breadmod.util.render.rgMinecraft
+import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratedElementType
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.FormattedText
 import org.joml.Vector2i
 import java.awt.Color
 
@@ -31,6 +33,7 @@ class TextWidget(
 
     pMessage: Component,
     private val pMessageColor: Color = Color.WHITE,
+    private val pDropShadow: Boolean = false,
     private val pBackgroundColor: Color? = null,
 
     private val pCentering: CenteringType = CenteringType.CENTER_LINE,
@@ -100,7 +103,20 @@ class TextWidget(
         NONE
     }
 
-    private val getCenterForFont = (height / 2) - (rgMinecraft.font.lineHeight / 2)
+    private val centerForFont = (height / 2) - (rgMinecraft.font.lineHeight / 2)
+
+    private fun GuiGraphics.drawLWordWrap(pFont: Font, pText: FormattedText, pX: Int, pY: Int, pLineWidth: Int, pColor: Int) {
+        var rY = pY
+        for (formattedCS in pFont.split(pText, pLineWidth)) {
+            this.drawString(pFont, formattedCS, pX, rY, pColor, pDropShadow)
+            rY += 9
+        }
+    }
+
+    private fun GuiGraphics.drawLCenteredString(pFont: Font, pText: Component, pX: Int, pY: Int, pColor: Int) {
+        val formattedCS = pText.visualOrderText
+        this.drawString(pFont, formattedCS, pX - pFont.width(formattedCS) / 2, pY, pColor, pDropShadow)
+    }
 
     /**
      * Renders this [TextWidget].
@@ -115,6 +131,7 @@ class TextWidget(
         if (pMessageColor.alpha > 0) {
             val tooBig = rgMinecraft.font.width(message) > width
             when {
+                // TODO Shadow
                 tooBig && pWrapping == WrappingType.SCROLL_HORIZONTAL -> renderScrollingString(
                     pGuiGraphics, rgMinecraft.font, message,
                     0, 0, width, if (pCentering == CenteringType.CENTER_LINE) rgMinecraft.font.lineHeight else height,
@@ -122,13 +139,13 @@ class TextWidget(
                 )
 
                 tooBig && pWrapping == WrappingType.WRAP_VERTICAL ->
-                    pGuiGraphics.drawWordWrap(rgMinecraft.font, message, 0, 0, width, pMessageColor.rgb)
+                    pGuiGraphics.drawLWordWrap(rgMinecraft.font, message, 0, 0, width, pMessageColor.rgb)
 
                 pCentering != CenteringType.NONE -> {
                     val position = Vector2i(width / 2, 0)
-                    if (pCentering == CenteringType.CENTER_RECT) position.add(0, getCenterForFont)
+                    if (pCentering == CenteringType.CENTER_RECT) position.add(0, centerForFont)
 
-                    pGuiGraphics.drawCenteredString(
+                    pGuiGraphics.drawLCenteredString(
                         rgMinecraft.font,
                         message,
                         position.x,
@@ -137,7 +154,7 @@ class TextWidget(
                     )
                 }
 
-                else -> pGuiGraphics.drawString(rgMinecraft.font, message, 0, 0, pMessageColor.rgb)
+                else -> pGuiGraphics.drawString(rgMinecraft.font, message, 0, 0, pMessageColor.rgb, pDropShadow)
             }
         }
 

@@ -93,9 +93,9 @@ open class ContainerWidget(
      * @author Miko Elbrecht
      * @since 1.0
      */
-    fun addWidget(pWidget: AbstractWidget, pZIndex: Double, pTag: String): ContainerWidget = this.also {
+    fun addWidget(pWidget: AbstractWidget, pZIndex: Double, pTag: String? = null): ContainerWidget = this.also {
         childrenWidgets[pWidget] = pZIndex to pTag
-        associationMap[pTag] = pWidget
+        if (pTag != null) associationMap[pTag] = pWidget
     }
 
     /**
