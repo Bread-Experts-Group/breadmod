@@ -27,9 +27,10 @@ open class ItemContainerWidget(
             if (!it.isEmpty) {
                 val pose = pGuiGraphics.pose()
                 pose.pushPose()
-                pose.translate(0.0f, 0.0f, 232.0f)
-                pGuiGraphics.renderItem(it, pMouseX, pMouseY)
-                pGuiGraphics.renderItemDecorations(rgMinecraft.font, it, pMouseX, pMouseY)
+                val pMx = pMouseX - 8
+                val pMy = pMouseY - 8
+                pGuiGraphics.renderItem(it, pMx, pMy)
+                pGuiGraphics.renderItemDecorations(rgMinecraft.font, it, pMx, pMy)
                 pose.popPose()
             }
         }
