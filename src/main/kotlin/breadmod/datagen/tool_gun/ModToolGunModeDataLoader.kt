@@ -18,14 +18,12 @@ import breadmod.util.jsonToComponent
 import breadmod.util.render.rgMinecraft
 import com.google.gson.Gson
 import com.google.gson.JsonElement
-import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.settings.KeyModifier
 import net.minecraftforge.fml.DistExecutor
 import org.apache.commons.lang3.ArrayUtils
 import org.jetbrains.annotations.ApiStatus.Internal
@@ -90,12 +88,8 @@ internal object ModToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson
                                             keybind.getAsJsonPrimitive(CONTROLS_NAME_TRANSLATION_KEY).asString,
                                             keybind.getAsJsonPrimitive(CONTROLS_CATEGORY_TRANSLATION_KEY).asString,
                                             jsonToComponent(keybind.getAsJsonObject(TOOLGUN_INFO_DISPLAY_KEY)),
-                                            { InputConstants.getKey(keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString) },
-                                            keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString?.let { mod ->
-                                                KeyModifier.getModifier(
-                                                    InputConstants.getKey(mod)
-                                                )
-                                            }
+                                            keybind.getAsJsonPrimitive(KEY_ENTRY_KEY).asString,
+                                            keybind.getAsJsonPrimitive(MODIFIER_ENTRY_KEY)?.asString
                                         )
                                         keybindsToAdd.add(control)
                                         add(control)

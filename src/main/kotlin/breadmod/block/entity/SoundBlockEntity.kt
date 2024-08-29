@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -27,7 +28,7 @@ class SoundBlockEntity(
     pPos,
     pBlockState
 ), MenuProvider {
-    var currentSound: String? = null
+    var currentSound: String? = SoundEvents.BELL_BLOCK.location.path
 
     override fun saveAdditional(pTag: CompoundTag) {
         currentSound?.let { pTag.putString("current_sound", it) }

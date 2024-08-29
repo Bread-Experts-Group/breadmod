@@ -8,6 +8,7 @@ import breadmod.client.jei.vanillaExtension.JEIArmorPotionCraftingExtension
 import breadmod.client.jei.vanillaExtension.JEISliceCraftingExtension
 import breadmod.client.screen.DoughMachineScreen
 import breadmod.client.screen.WheatCrusherScreen
+import breadmod.client.screen.sound_block.SoundBlockSerializedScreen
 import breadmod.menu.block.DoughMachineMenu
 import breadmod.menu.block.WheatCrusherMenu
 import breadmod.recipe.crafting.ArmorPotionRecipe
@@ -20,7 +21,10 @@ import breadmod.registry.recipe.ModRecipeTypes
 import breadmod.util.render.rgMinecraft
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
+import mezz.jei.api.gui.handlers.IGuiProperties
+import mezz.jei.api.gui.handlers.IScreenHandler
 import mezz.jei.api.registration.*
+import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Items
@@ -32,9 +36,7 @@ class JEIPlugin : IModPlugin {
 
     override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
         registration.craftingCategory.addCategoryExtension(ArmorPotionRecipe::class.java) {
-            JEIArmorPotionCraftingExtension(
-                it
-            )
+            JEIArmorPotionCraftingExtension(it)
         }
         registration.craftingCategory.addCategoryExtension(BreadSliceRecipe::class.java) {
             JEISliceCraftingExtension(
@@ -94,6 +96,39 @@ class JEIPlugin : IModPlugin {
             WheatCrusherScreen::class.java, 84, 34, 7, 48,
             ModJEIRecipeTypes.wheatCrusherRecipeType
         )
+
+        registration.addGuiScreenHandler(SoundBlockSerializedScreen::class.java, SoundBlockScreenHandler())
+    }
+
+    private class SoundBlockScreenHandler: IScreenHandler<SoundBlockSerializedScreen> {
+        override fun apply(guiScreen: SoundBlockSerializedScreen): IGuiProperties =
+            GuiProperties(
+                guiScreen,
+                (guiScreen.width - 176) / 2,
+                (guiScreen.height - 166) / 2,
+                176,
+                166,
+                guiScreen.width,
+                guiScreen.height
+            )
+    }
+
+    private class GuiProperties(
+        private val pClass: Screen,
+        private val pLeftPos: Int,
+        private val pTopPos: Int,
+        private val pWidth: Int,
+        private val pHeight: Int,
+        private val pScreenWidth: Int,
+        private val pScreenHeight: Int
+    ): IGuiProperties {
+        override fun getScreenClass(): Class<out Screen> = pClass.javaClass
+        override fun getGuiLeft(): Int = pLeftPos
+        override fun getGuiTop(): Int = pTopPos
+        override fun getGuiXSize(): Int = pWidth
+        override fun getGuiYSize(): Int = pHeight
+        override fun getScreenWidth(): Int = pScreenWidth
+        override fun getScreenHeight(): Int = pScreenHeight
     }
 
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
