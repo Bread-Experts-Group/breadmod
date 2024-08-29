@@ -238,7 +238,8 @@ abstract class AbstractMachineBlockEntity<T : AbstractMachineBlockEntity<T>>(
                 pState: BlockState,
                 pBlockEntity: Progressive<T, R>,
                 recipe: R
-            ) {}
+            ) {
+            }
 
             private var energyDivision: Int? = null
             final override fun tick(
