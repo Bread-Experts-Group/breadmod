@@ -3,15 +3,15 @@ package breadmod.registry.item
 import breadmod.ModMain
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.*
-import breadmod.registry.sound.ModSounds
+import breadmod.item.TieredBreadAmuletItem.BreadAmuletType
 import breadmod.item.armor.ArmorTiers
 import breadmod.item.armor.BreadArmorItem
 import breadmod.item.compat.projecte.BreadOrbItem
-import breadmod.item.tool_gun.ToolGunItem
 import breadmod.item.tool.BreadShieldItem
-import breadmod.item.tool.ToolTiers
-import breadmod.item.TieredBreadAmuletItem.BreadAmuletType
 import breadmod.item.tool.KnifeItem
+import breadmod.item.tool.ToolTiers
+import breadmod.item.tool_gun.ToolGunItem
+import breadmod.registry.sound.ModSounds
 import moze_intel.projecte.gameObjs.items.ItemPE
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
@@ -50,6 +50,7 @@ object ModItems {
     }
     val FLOUR: RegistryObject<Item> = deferredRegister.register("flour") { Item(Item.Properties()) }
     val DOUGH: RegistryObject<Item> = deferredRegister.register("dough") { Item(Item.Properties()) }
+    val DIE: RegistryObject<Item> = deferredRegister.register("die") { Item(Item.Properties()) }
 
     // todo better knife texture
     val KNIFE: RegistryObject<KnifeItem> = deferredRegister.register("knife") {

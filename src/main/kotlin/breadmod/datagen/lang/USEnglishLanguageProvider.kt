@@ -104,6 +104,7 @@ internal class USEnglishLanguageProvider(
         add(ModBlocks.ENERGY_STORAGE_BLOCK)
         add(ModItems.BAGEL)
         add(ModItems.HALF_BAGEL)
+        add(ModItems.DIE)
         add(ModBlocks.SOUND_BLOCK)
         add(ModBlocks.RANDOM_SOUND_BLOCK, "Random Sound Generator")
         modAdd("Harnesses the power of a pair of dice to make the most incomprehensible sounds imaginable.",
