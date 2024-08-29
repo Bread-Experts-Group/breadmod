@@ -107,7 +107,8 @@ internal class USEnglishLanguageProvider(
         add(ModItems.DIE)
         add(ModBlocks.SOUND_BLOCK)
         add(ModBlocks.RANDOM_SOUND_BLOCK, "Random Sound Generator")
-        modAdd("Harnesses the power of a pair of dice to make the most incomprehensible sounds imaginable.",
+        modAdd(
+            "Harnesses the power of a pair of dice to make the most incomprehensible sounds imaginable.",
             "sound_block", "tooltip"
         )
 
