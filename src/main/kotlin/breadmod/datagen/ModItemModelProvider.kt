@@ -13,7 +13,7 @@ import net.minecraftforge.client.model.generators.ModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.registries.RegistryObject
 
-class ModItemModelProvider(
+internal class ModItemModelProvider(
     packOutput: PackOutput,
     existingFileHelper: ExistingFileHelper
 ) : ItemModelProvider(packOutput, ModMain.ID, existingFileHelper) {
@@ -34,6 +34,7 @@ class ModItemModelProvider(
         singleItem(ModItems.TEST_DISC)
         singleItem(ModItems.DOUGH)
         singleItem(ModItems.FLOUR)
+        singleItem(ModItems.DIE)
         singleItem(ModItems.ULTIMATE_BREAD)
         singleItem(ModFluids.BREAD_LIQUID.bucket)
         singleItem(ModItems.BASIC_BREAD_AMULET)
