@@ -11,8 +11,6 @@ import breadmod.network.serverbound.ToggleMachinePacket
 import breadmod.network.serverbound.VoidTankPacket
 import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
 import breadmod.network.serverbound.tool_gun.remover.ToolGunRemoverSDPacket
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.fml.DistExecutor
 import net.minecraftforge.network.NetworkRegistry
 import net.minecraftforge.network.simple.SimpleChannel
 
@@ -29,34 +27,30 @@ internal object PacketHandler {
     )
 
     init {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT) {
-            Runnable {
-                LOGGER.info("Registering clientbound message types")
-                // Clientbound //
-                NETWORK.registerMessage(
-                    1_000,
-                    CapabilityTagDataPacket::class.java,
-                    CapabilityTagDataPacket::encodeBuf,
-                    CapabilityTagDataPacket::decodeBuf,
-                    CapabilityTagDataPacket::handle
-                )
-                NETWORK.registerMessage(
-                    1_001,
-                    CapabilitySideDataPacket::class.java,
-                    CapabilitySideDataPacket::encodeBuf,
-                    CapabilitySideDataPacket::decodeBuf,
-                    CapabilitySideDataPacket::handle
-                )
-                NETWORK.registerMessage(
-                    2_000, BeamPacket::class.java,
-                    BeamPacket::encodeBuf, BeamPacket::decodeBuf, BeamPacket::handle
-                )
-                NETWORK.registerMessage(
-                    3_000, ToolGunModeDataPacket::class.java,
-                    ToolGunModeDataPacket::encodeBuf, ToolGunModeDataPacket::decodeBuf, ToolGunModeDataPacket::handle
-                )
-            }
-        }
+        LOGGER.info("Registering clientbound message types")
+        // Clientbound //
+        NETWORK.registerMessage(
+            1_000,
+            CapabilityTagDataPacket::class.java,
+            CapabilityTagDataPacket::encodeBuf,
+            CapabilityTagDataPacket::decodeBuf,
+            CapabilityTagDataPacket::handle
+        )
+        NETWORK.registerMessage(
+            1_001,
+            CapabilitySideDataPacket::class.java,
+            CapabilitySideDataPacket::encodeBuf,
+            CapabilitySideDataPacket::decodeBuf,
+            CapabilitySideDataPacket::handle
+        )
+        NETWORK.registerMessage(
+            2_000, BeamPacket::class.java,
+            BeamPacket::encodeBuf, BeamPacket::decodeBuf, BeamPacket::handle
+        )
+        NETWORK.registerMessage(
+            3_000, ToolGunModeDataPacket::class.java,
+            ToolGunModeDataPacket::encodeBuf, ToolGunModeDataPacket::decodeBuf, ToolGunModeDataPacket::handle
+        )
 
         LOGGER.info("Registering serverbound message types")
         // Serverbound //
