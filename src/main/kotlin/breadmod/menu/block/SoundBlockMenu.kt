@@ -4,10 +4,13 @@ import breadmod.block.entity.SoundBlockEntity
 import breadmod.menu.AbstractModContainerMenu
 import breadmod.registry.block.ModBlockEntityTypes
 import breadmod.registry.menu.ModMenuTypes
+import breadmod.util.capability.IndexableItemHandler
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ContainerLevelAccess
+import net.minecraft.world.inventory.Slot
+import net.minecraftforge.common.capabilities.ForgeCapabilities
 
 class SoundBlockMenu(
     pContainerId: Int,
@@ -23,7 +26,9 @@ class SoundBlockMenu(
     )
 
     init {
+        val cap = parent.capabilityHolder.capabilityOrNull<IndexableItemHandler>(ForgeCapabilities.ITEM_HANDLER)
         addInventorySlots(pInventory, 8, 142, 84)
+        addSlot(Slot(TODO(), 1, 0, 0))
     }
 
     override fun stillValid(pPlayer: Player): Boolean = stillValid(
