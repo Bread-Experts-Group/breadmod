@@ -68,6 +68,20 @@ open class SerializedScreen<T : AbstractContainerMenu>(
         else false
 
     /**
+     * Pushes mouse release inputs to the provided [rootWidget].
+     * @param pMouseX The X position of the mouse.
+     * @param pMouseY The Y position of the mouse.
+     * @param pButton The button on the mouse that was clicked.
+     * @return Whether the mouse click was handled by the [rootWidget].
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun mouseReleased(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean =
+        if (!rootWidget.isMouseOver(pMouseX, pMouseY) || !rootWidget.mouseReleased(pMouseX, pMouseY, pButton))
+            super.mouseReleased(pMouseX, pMouseY, pButton)
+        else false
+
+    /**
      * Pushes mouse movement inputs to the provided [rootWidget].
      * @param pMouseX The X position of the mouse.
      * @param pMouseY The Y position of the mouse.

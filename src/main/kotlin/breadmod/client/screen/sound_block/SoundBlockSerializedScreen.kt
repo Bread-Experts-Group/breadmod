@@ -1,15 +1,12 @@
 package breadmod.client.screen.sound_block
 
 import breadmod.menu.block.SoundBlockMenu
-import breadmod.network.serverbound.SoundBlockPacket
 import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.*
 import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.Component
-import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.player.Inventory
 import java.awt.Color
 
@@ -44,13 +41,15 @@ internal class SoundBlockSerializedScreen(
         rootWidget.x = (width - image.width) / 2
         rootWidget.y = (height - image.height) / 2
 
+        val title = TextWidget(
+            0, 3,
+            image.width, rgMinecraft.font.lineHeight,
+            pMenu.parent.displayName, Color.DARK_GRAY,
+            pNoScissor = true
+        )
+
         rootWidget.addWidget(
-            TextWidget(
-                0, 3,
-                image.width, rgMinecraft.font.lineHeight,
-                pMenu.parent.displayName, Color.DARK_GRAY,
-                pNoScissor = true
-            ),
+            title,
             200.0
         ).addWidget(
             InventoryWidget(8, 88, pInventory, pMenu),
@@ -60,18 +59,39 @@ internal class SoundBlockSerializedScreen(
                 it.addWidget(SlotWidget(0, 0, it, 36), 0.0)
             }, 0.0
         ).addWidget(
-            TestButton(0, 0, 20, 10) {
-                println("clicked!")
-                SoundBlockPacket(menu.parent.blockPos, SoundEvents.SHIELD_BLOCK.location.path)
-            }, 0.0
+            ListContainerWidget(
+                image.x + 7, title.y + title.height, image.width - 14, 70, 6,
+                {
+                    mutableMapOf(
+                        BackgroundWidget.SolidColorBackgroundWidget(
+                            0, 0, it.width, it.height,
+                            Color.DARK_GRAY
+                        ) to (1.0 to null),
+                        BackgroundWidget.SolidColorBackgroundWidget(
+                            2, 2, it.width, it.height - 4,
+                            Color.BLACK
+                        ) to (2.0 to null)
+                    )
+                }, {
+                    mutableMapOf(
+                        BackgroundWidget.SolidColorBackgroundWidget(
+                            0, 0, it.width, it.height,
+                            Color.DARK_GRAY
+                        ) to (3.0 to null),
+                        BackgroundWidget.SolidColorBackgroundWidget(
+                            1, 2, it.width - 3, it.height - 4,
+                            Color.BLACK
+                        ) to (4.0 to null),
+                        ScrollBarWidget(it) to (0.0 to "scrollbar")
+                    )
+                }
+            ), 0.0, "list"
         )
-    }
 
-    private class TestButton(
-        pX: Int,
-        pY: Int,
-        pWidth: Int,
-        pHeight: Int,
-        pOnPress: OnPress
-    ): Button(pX, pY, pWidth, pHeight, Component.empty(), pOnPress, null)
+        val list = rootWidget.getTaggedWidget("list") as ListContainerWidget
+        val newRow = RowContainerWidget(0, 0, rgMinecraft.font.lineHeight + 2)
+        newRow.addWidget(BackgroundWidget.SolidColorBackgroundWidget(0, 0, list.width, newRow.height, Color.BLUE), 10000.0)
+
+        list.addWidget(newRow, 300.0)
+    }
 }

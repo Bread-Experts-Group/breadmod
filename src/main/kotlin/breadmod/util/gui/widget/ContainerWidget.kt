@@ -1,9 +1,6 @@
 package breadmod.util.gui.widget
 
-import breadmod.util.gui.widget.marker.IWidgetKeySensitive
-import breadmod.util.gui.widget.marker.IWidgetMouseClickSensitive
-import breadmod.util.gui.widget.marker.IWidgetMouseDragSensitive
-import breadmod.util.gui.widget.marker.IWidgetMouseMovementSensitive
+import breadmod.util.gui.widget.marker.*
 import breadmod.util.json
 import breadmod.util.render.mouseGuiX
 import breadmod.util.render.mouseGuiY
@@ -42,7 +39,7 @@ open class ContainerWidget(
     private val pTilt: Float,
     pComponent: Component,
     private val childrenWidgets: ContainedWidgets
-) : AbstractWidget(pX, pY, pWidth, pHeight, pComponent) {
+) : AbstractWidget(pX, pY, pWidth, pHeight, pComponent), IWidgetOffsetAware {
     private val associationMap: MutableMap<String, AbstractWidget> = mutableMapOf()
 
     internal object Serializer : KSerializer<ContainerWidget> {
@@ -123,12 +120,22 @@ open class ContainerWidget(
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         val pose = pGuiGraphics.pose()
         pose.pushPose()
+        var aX = absoluteX + this.x
+        var aY = absoluteY + this.y
         if (this.x > 0 && this.y > 0) pose.translate(this.x.toDouble(), this.y.toDouble(), 0.0)
         pose.mulPoseMatrix(Matrix4f().rotateX(pTilt))
         childrenWidgets.forEach { (widget, pair) ->
             pose.pushPose()
             // NOTE: This code is quite messy. We should probably clean it up later.
-            if (widget !is ContainerWidget) pose.translate(widget.x.toDouble(), widget.y.toDouble(), pair.first)
+            if (widget !is ContainerWidget) {
+                aX += widget.x
+                aY += widget.y
+                pose.translate(widget.x.toDouble(), widget.y.toDouble(), pair.first)
+            }
+            if (widget is IWidgetOffsetAware) {
+                widget.absoluteX = aX
+                widget.absoluteY = aY
+            }
             widget.render(
                 pGuiGraphics,
                 pMouseX - this.x,
@@ -154,6 +161,13 @@ open class ContainerWidget(
         }
     }
 
+    private fun getClickableWidget() =
+        this.iterateLowHigh(
+            mouseGuiX,
+            mouseGuiY,
+            IWidgetMouseClickSensitive::class
+        )
+
     /**
      * Handles a mouse click event, distributing the event to [IWidgetMouseClickSensitive] widgets.
      * @param pMouseX The X position of the mouse.
@@ -164,12 +178,26 @@ open class ContainerWidget(
      * @since 1.0.0
      */
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
-        val rx = this.iterateLowHigh(pMouseX, pMouseY, IWidgetMouseClickSensitive::class)
+        val rx = getClickableWidget()
         return rx?.first?.mouseClicked(rx.second.first, rx.second.second, pButton) ?: false
     }
 
     /**
-     * Handles a mouse movement event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * Handles a mouse release event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * @param pMouseX The X position of the mouse.
+     * @param pMouseY The Y position of the mouse.
+     * @param pButton The button on the mouse that was clicked.
+     * @return Whether the click was handled by a widget and should be consumed.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun mouseReleased(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
+        val rx = getClickableWidget()
+        return rx?.first?.mouseReleased(rx.second.first, rx.second.second, pButton) ?: false
+    }
+
+    /**
+     * Handles a mouse movement event, distributing the event to [IWidgetMouseMovementSensitive] widgets.
      * @param pMouseX The X position of the mouse.
      * @param pMouseY The Y position of the mouse.
      * @author Miko Elbrecht
@@ -181,7 +209,7 @@ open class ContainerWidget(
     }
 
     /**
-     * Handles a mouse dragging event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * Handles a mouse dragging event, distributing the event to [IWidgetMouseDragSensitive] widgets.
      * @param pMouseX The X position of the mouse.
      * @param pMouseY The Y position of the mouse.
      * @param pButton The button on the mouse that was clicked.
@@ -203,7 +231,7 @@ open class ContainerWidget(
         )
 
     /**
-     * Handles a key press event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * Handles a key press event, distributing the event to [IWidgetKeySensitive] widgets.
      * @param pButton The button on the keyboard that was pressed.
      * @param pScanCode The scan code of the key that was pressed.
      * @param pModifiers The bit-mapped modifiers that were active when the key was pressed.
@@ -214,7 +242,7 @@ open class ContainerWidget(
         getKeyableWidget()?.first?.keyPressed(pButton, pScanCode, pModifiers) ?: false
 
     /**
-     * Handles a key press event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * Handles a key press event, distributing the event to [IWidgetKeySensitive] widgets.
      * @param pButton The button on the keyboard that was pressed.
      * @param pScanCode The scan code of the key that was pressed.
      * @param pModifiers The bit-mapped modifiers that were active when the key was pressed.
@@ -231,4 +259,6 @@ open class ContainerWidget(
      * @since 1.0.0
      */
     override fun updateWidgetNarration(pNarrationElementOutput: NarrationElementOutput) {}
+    override var absoluteX: Int = 0
+    override var absoluteY: Int = 0
 }
