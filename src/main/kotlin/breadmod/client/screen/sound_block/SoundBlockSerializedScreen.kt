@@ -3,11 +3,7 @@ package breadmod.client.screen.sound_block
 import breadmod.menu.block.SoundBlockMenu
 import breadmod.network.serverbound.SoundBlockPacket
 import breadmod.util.gui.SerializedScreen
-import breadmod.util.gui.widget.ContainerWidget
-import breadmod.util.gui.widget.InventoryWidget
-import breadmod.util.gui.widget.ItemContainerWidget
-import breadmod.util.gui.widget.SlotWidget
-import breadmod.util.gui.widget.TextWidget
+import breadmod.util.gui.widget.*
 import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
@@ -60,9 +56,7 @@ internal class SoundBlockSerializedScreen(
             InventoryWidget(8, 88, pInventory, pMenu),
             0.0
         ).addWidget(
-            ItemContainerWidget(0, 0, 16, 16, pMenu.slots[36].container, menu).also {
-                it.x = 10
-                it.y = 10
+            ItemContainerWidget(10, 10, 16, 16, pMenu.slots[36].container, pMenu).also {
                 it.addWidget(SlotWidget(0, 0, it, 36), 0.0)
             }, 0.0
         ).addWidget(

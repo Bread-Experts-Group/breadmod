@@ -23,6 +23,8 @@ import org.joml.Matrix4f
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
+typealias ContainedWidgets = MutableMap<AbstractWidget, Pair<Double, String?>>
+
 /**
  * A widget that can contain other widgets.
  * @param pWidth The width of the widget.
@@ -39,7 +41,7 @@ open class ContainerWidget(
     pWidth: Int, pHeight: Int,
     private val pTilt: Float,
     pComponent: Component,
-    private val childrenWidgets: MutableMap<AbstractWidget, Pair<Double, String?>>
+    private val childrenWidgets: ContainedWidgets
 ) : AbstractWidget(pX, pY, pWidth, pHeight, pComponent) {
     private val associationMap: MutableMap<String, AbstractWidget> = mutableMapOf()
 

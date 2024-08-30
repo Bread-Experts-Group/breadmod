@@ -35,7 +35,7 @@ class SlotWidget(
     private val hoverColor = Color(1f, 1f, 1f, 0.5f).rgb
 
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
-        val stack = pParent.pContainer.getItem(slot)
+        val stack = pParent.pContainerMenu.getSlot(slot).item
         val notEmpty = !stack.isEmpty
 
         if (notEmpty) {
