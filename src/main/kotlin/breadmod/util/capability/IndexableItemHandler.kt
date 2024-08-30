@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.items.IItemHandler
+import net.minecraftforge.items.IItemHandlerModifiable
 import kotlin.math.min
 
 /**
@@ -18,7 +19,7 @@ import kotlin.math.min
 open class IndexableItemHandler(
     private val slots: List<Pair<Int, StorageDirection>>,
     var slotChanged: ((index: Int, stack: ItemStack) -> Unit)? = null
-) : IItemHandler, ICapabilitySavable<CompoundTag>,
+) : IItemHandlerModifiable, ICapabilitySavable<CompoundTag>,
     ObservableList<ItemStack>(slots.size, { ItemStack.EMPTY }, slotChanged) {
     override var changed: (() -> Unit)? = { slotChanged?.invoke(0, ItemStack.EMPTY) }
 
@@ -142,6 +143,9 @@ open class IndexableItemHandler(
     }
 
     override fun isItemValid(slot: Int, stack: ItemStack): Boolean = true
+    override fun setStackInSlot(slot: Int, stack: ItemStack) {
+        this[slot] = stack
+    }
 
     override fun serializeNBT(): CompoundTag = CompoundTag().also { tag ->
         this.forEachIndexed { index, itemStack -> tag.put(index.toString(), itemStack.serializeNBT()) }
