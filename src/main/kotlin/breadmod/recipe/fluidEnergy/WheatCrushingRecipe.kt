@@ -8,29 +8,21 @@ import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeType
-import net.minecraft.world.level.material.Fluid
-import net.minecraftforge.fluids.FluidStack
 
 class WheatCrushingRecipe(
     pId: ResourceLocation,
     time: Int = 0,
     energy: Int? = null,
-    fluidsRequired: List<FluidStack>? = null,
-    fluidsRequiredTagged: List<Pair<TagKey<Fluid>, Int>>? = null,
     itemsRequired: List<ItemStack>? = null,
     itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>? = null,
-    fluidsOutput: List<FluidStack>? = null,
     itemsOutput: List<ItemStack>? = null,
 ) : FluidEnergyRecipe(
     pId,
     time,
-    energy,
-    fluidsRequired,
-    fluidsRequiredTagged,
-    itemsRequired,
-    itemsRequiredTagged,
-    fluidsOutput,
-    itemsOutput
+    energy = energy,
+    itemsRequired = itemsRequired,
+    itemsRequiredTagged = itemsRequiredTagged,
+    itemsOutput = itemsOutput
 ) {
     override fun getType(): RecipeType<*> = ModRecipeTypes.WHEAT_CRUSHING.get()
     override fun getSerializer(): SimpleFluidEnergyRecipeSerializer<*> = ModRecipeSerializers.WHEAT_CRUSHER.get()

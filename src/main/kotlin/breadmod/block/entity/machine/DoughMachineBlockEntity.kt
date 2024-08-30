@@ -40,7 +40,7 @@ class DoughMachineBlockEntity(
             1 to StorageDirection.BIDIRECTIONAL
         )
     ) to mutableListOf(null, Direction.WEST, Direction.EAST, Direction.DOWN),
-    listOf(0),
+    listOf(0, 1, 2),
     1 to 1,
     EnergyBattery(50000, 2000) to mutableListOf(null, Direction.NORTH),
     ForgeCapabilities.FLUID_HANDLER to (FluidContainer(

@@ -45,9 +45,9 @@ object ModRecipeSerializers {
         }
     val WHEAT_CRUSHER: RegistryObject<SimpleFluidEnergyRecipeSerializer<WheatCrushingRecipe>> =
         deferredRegister.register("wheat_crusher") {
-            SimpleFluidEnergyRecipeSerializer { pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut ->
+            SimpleFluidEnergyRecipeSerializer { pId, pTime, pEnergy, _, _, pItems, pItemsTagged, _, pItemsOut ->
                 WheatCrushingRecipe(
-                    pId, pTime, pEnergy, pFluids, pFluidsTagged, pItems, pItemsTagged, pFluidsOut, pItemsOut
+                    pId, pTime, pEnergy, pItems, pItemsTagged
                 )
             }
         }
