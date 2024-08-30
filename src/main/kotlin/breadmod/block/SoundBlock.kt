@@ -14,15 +14,22 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraftforge.network.NetworkHooks
 import net.minecraftforge.registries.ForgeRegistries
 
-class SoundBlock: BaseEntityBlock(Properties.of()) {
+class SoundBlock: BaseEntityBlock(Properties.of()
+    .strength(4f, 6f)
+    .mapColor(MapColor.COLOR_GRAY)
+    .requiresCorrectToolForDrops()
+    .sound(SoundType.METAL)
+) {
     override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity =
         SoundBlockEntity(pPos, pState)
 

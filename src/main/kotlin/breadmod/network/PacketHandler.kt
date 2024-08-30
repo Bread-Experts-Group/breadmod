@@ -7,6 +7,7 @@ import breadmod.network.clientbound.CapabilitySideDataPacket
 import breadmod.network.clientbound.CapabilityTagDataPacket
 import breadmod.network.clientbound.tool_gun.ToolGunModeDataPacket
 import breadmod.network.common.tool_gun.creator.ToolGunCreatorDataRequestPacket
+import breadmod.network.serverbound.SoundBlockPacket
 import breadmod.network.serverbound.ToggleMachinePacket
 import breadmod.network.serverbound.VoidTankPacket
 import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
@@ -61,6 +62,10 @@ internal object PacketHandler {
         NETWORK.registerMessage(
             1_003, ToggleMachinePacket::class.java,
             ToggleMachinePacket::encodeBuf, ToggleMachinePacket::decodeBuf, ToggleMachinePacket::handle
+        )
+        NETWORK.registerMessage(
+            1_004, SoundBlockPacket::class.java,
+            SoundBlockPacket::encodeBuf, SoundBlockPacket::decodeBuf, SoundBlockPacket::handle
         )
         NETWORK.registerMessage(
             3_001,

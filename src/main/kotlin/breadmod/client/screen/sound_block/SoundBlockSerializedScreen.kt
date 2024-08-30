@@ -1,14 +1,19 @@
 package breadmod.client.screen.sound_block
 
 import breadmod.menu.block.SoundBlockMenu
+import breadmod.network.serverbound.SoundBlockPacket
 import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
 import breadmod.util.gui.widget.InventoryWidget
+import breadmod.util.gui.widget.ItemContainerWidget
+import breadmod.util.gui.widget.SlotWidget
 import breadmod.util.gui.widget.TextWidget
 import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.Component
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.player.Inventory
 import java.awt.Color
 
@@ -54,6 +59,25 @@ internal class SoundBlockSerializedScreen(
         ).addWidget(
             InventoryWidget(8, 88, pInventory, pMenu),
             0.0
+        ).addWidget(
+            ItemContainerWidget(0, 0, 16, 16, pMenu.slots[36].container, menu).also {
+                it.x = 10
+                it.y = 10
+                it.addWidget(SlotWidget(0, 0, it, 36), 0.0)
+            }, 0.0
+        ).addWidget(
+            TestButton(0, 0, 20, 10) {
+                println("clicked!")
+                SoundBlockPacket(menu.parent.blockPos, SoundEvents.SHIELD_BLOCK.location.path)
+            }, 0.0
         )
     }
+
+    private class TestButton(
+        pX: Int,
+        pY: Int,
+        pWidth: Int,
+        pHeight: Int,
+        pOnPress: OnPress
+    ): Button(pX, pY, pWidth, pHeight, Component.empty(), pOnPress, null)
 }

@@ -47,7 +47,7 @@ class SoundBlockEntity(
         ForgeCapabilities.ITEM_HANDLER to (
                 IndexableItemHandler(
                     listOf(
-                        1 to StorageDirection.STORE_ONLY
+                        1 to StorageDirection.BIDIRECTIONAL
                     )
                 ) to ACCEPT_ALL
         )
