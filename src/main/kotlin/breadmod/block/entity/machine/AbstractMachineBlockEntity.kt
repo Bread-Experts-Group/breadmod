@@ -274,11 +274,20 @@ abstract class AbstractMachineBlockEntity<T : AbstractMachineBlockEntity<T>>(
                         }
                     } else progress--
                 }, {
+                    println("before getting recipe")
                     val recipe = recipeDial.getRecipeFor(craftingManager, pLevel)
                     recipe.ifPresentOrElse({
                         if (consumeRecipe(pLevel, pPos, pState, pBlockEntity, it)) {
                             currentRecipe = recipe
                             maxProgress = it.time
+                            try {
+                                println("after getting recipe: $recipe")
+                                println("recipe id: ${recipe.get().id.path}")
+                                println("item requirement: ${recipe.get().itemsRequired}")
+                                println("time required: ${recipe.get().time}")
+                            } catch (e: Exception) {
+                                println(e)
+                            }
                         }
                     }, {
                         if (pState.getValue(BlockStateProperties.POWERED))

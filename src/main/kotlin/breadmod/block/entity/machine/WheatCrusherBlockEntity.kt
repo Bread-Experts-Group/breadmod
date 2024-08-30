@@ -33,7 +33,7 @@ class WheatCrusherBlockEntity(
             64 to StorageDirection.EMPTY_ONLY
         )
     ) to ACCEPT_ALL,
-    listOf(0),
+    listOf(0, 1),
     1 to 1,
     EnergyBattery(50000, 2000) to ACCEPT_ALL
 ), MenuProvider {
