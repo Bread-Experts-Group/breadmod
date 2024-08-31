@@ -6,10 +6,9 @@ import breadmod.menu.item.ToolGunCreatorMenu
 import breadmod.util.gui.IHoldScreen
 import breadmod.util.gui.SerializedScreen
 import breadmod.util.gui.widget.ContainerWidget
-import breadmod.util.render.PostProcessingRegistry
 import breadmod.util.render.rgMinecraft
-import breadmod.util.render.shaderPreCompilation
 import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.PostChain
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
@@ -39,19 +38,26 @@ internal class ToolGunCreatorSerializedScreen(
         const val POST_PROCESSING_ENTRY_BLUR_NAME = "ToolGun Creator Mode GUI Blur"
     }
 
+    override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
+        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
+    }
+
     override fun init() {
         super.init()
-        if (blurChain == null) {
-            shaderPreCompilation[blurChainLoc.toString()] = { _, _, _, _, _ ->
-                TODO("Figure it out. https://ktstephano.github.io/rendering/opengl/ssbos")
-            }
+        rootWidget.x = (width - rootWidget.width) / 2
+        rootWidget.y = (height - rootWidget.height) / 2
 
-            blurChain = PostChain(
-                rgMinecraft.textureManager, rgMinecraft.resourceManager,
-                rgMinecraft.mainRenderTarget, blurChainLoc
-            )
-        }
-        PostProcessingRegistry.addProcessor(POST_PROCESSING_ENTRY_BLUR_NAME, blurChain!!)
+//        if (blurChain == null) {
+//            shaderPreCompilation[blurChainLoc.toString()] = { _, _, _, _, _ ->
+//                TODO("Figure it out. https://ktstephano.github.io/rendering/opengl/ssbos")
+//            }
+//
+//            blurChain = PostChain(
+//                rgMinecraft.textureManager, rgMinecraft.resourceManager,
+//                rgMinecraft.mainRenderTarget, blurChainLoc
+//            )
+//        }
+//        PostProcessingRegistry.addProcessor(POST_PROCESSING_ENTRY_BLUR_NAME, blurChain!!)
     }
 
     /**
@@ -61,6 +67,6 @@ internal class ToolGunCreatorSerializedScreen(
      */
     override fun onClose() {
         super.onClose()
-        PostProcessingRegistry.removeProcessor(POST_PROCESSING_ENTRY_BLUR_NAME)
+//        PostProcessingRegistry.removeProcessor(POST_PROCESSING_ENTRY_BLUR_NAME)
     }
 }
