@@ -9,8 +9,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(net.minecraft.client.renderer.GameRenderer.class)
 abstract class MixinGameRenderer {
-    @Inject(method = "render", at = @At(value = "INVOKE", target = " net.minecraft.client.renderer.LevelRenderer.doEntityOutline()V"))
-    void processRegistryShaders(float pPartialTicks, long pNanoTime, boolean pRenderLevel, CallbackInfo ci) {
+    @SuppressWarnings({"MethodMayBeStatic", "ChainedMethodCall", "NestedMethodCall"})
+    @Inject(
+            method = "render", at = @At(value = "INVOKE",
+            target = "net.minecraft.client.renderer.LevelRenderer.doEntityOutline()V")
+    )
+    private void processRegistryShaders(
+            final float pPartialTicks,
+            final long pNanoTime,
+            final boolean pRenderLevel,
+            final CallbackInfo ci
+    ) {
         RenderSystem.disableBlend();
         RenderSystem.disableDepthTest();
         RenderSystem.resetTextureMatrix();

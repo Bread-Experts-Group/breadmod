@@ -22,18 +22,9 @@ internal object SoundBlockScreenFactory : SerializedScreenFactory<SoundBlockMenu
                 0, 0,
                 176, 166,
                 modLocation("textures", "gui", "container", "sound_block.png")
-            ) to (0.0 to "background"),
-//            EditBox(
-//                rgMinecraft.font, 4, 7,
-//                160, 10,
-//                Component.empty()
-//            ).also { editBox ->
-//                editBox.value = "sound input WIP"
-//                editBox.setResponder {
-//                    println(editBox.value)
-//                }
-//            } to (0.1 to null)
-        )
+            ) to (0.0 to "background")
+        ),
+        true
     )
 
     override fun create(

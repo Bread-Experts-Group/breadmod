@@ -1,5 +1,7 @@
-package breadmod.util.gui.widget
+package breadmod.util.gui.widget.ready
 
+import breadmod.util.gui.widget.ItemContainerWidget
+import breadmod.util.gui.widget.SlotWidget
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
 

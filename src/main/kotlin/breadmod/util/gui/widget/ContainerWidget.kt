@@ -20,6 +20,11 @@ import org.joml.Matrix4f
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
+/**
+ * A map of widgets usually contained in a [ContainerWidget].
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
 typealias ContainedWidgets = MutableMap<AbstractWidget, Pair<Double, String?>>
 
 /**
@@ -38,7 +43,8 @@ open class ContainerWidget(
     pWidth: Int, pHeight: Int,
     private val pTilt: Float,
     pComponent: Component,
-    private val childrenWidgets: ContainedWidgets
+    private val childrenWidgets: ContainedWidgets,
+    private val rootWidget: Boolean = false
 ) : AbstractWidget(pX, pY, pWidth, pHeight, pComponent), IWidgetOffsetAware {
     private val associationMap: MutableMap<String, AbstractWidget> = mutableMapOf()
 
@@ -92,7 +98,7 @@ open class ContainerWidget(
      * @author Miko Elbrecht
      * @since 1.0
      */
-    open fun addWidget(pWidget: AbstractWidget, pZIndex: Double, pTag: String? = null): ContainerWidget = this.also {
+    open fun addWidget(pWidget: AbstractWidget, pZIndex: Double = 0.0, pTag: String? = null): ContainerWidget = this.also {
         childrenWidgets[pWidget] = pZIndex to pTag
         if (pTag != null) associationMap[pTag] = pWidget
     }
@@ -109,6 +115,36 @@ open class ContainerWidget(
         ?: throw NoSuchElementException("No widget with tag $pTag")
 
     /**
+     * Facilitates the rendering of this [ContainerWidget].
+     * @see renderWidget
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    override fun render(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
+        if (this.visible) {
+            val pose = pGuiGraphics.pose()
+            pose.pushPose()
+
+            pose.mulPoseMatrix(Matrix4f().rotateX(pTilt))
+            if (rootWidget) {
+                pose.translate(x.toDouble(), y.toDouble(), 1.0)
+                absoluteX = x
+                absoluteY = y
+            } else pose.translate(0.0, 0.0, 1.0)
+
+            isHovered = (pMouseX >= x) &&
+                    (pMouseY >= y) &&
+                    (pMouseX < x + width) &&
+                    (pMouseY < y + height)
+
+            renderWidget(pGuiGraphics, pMouseX - x, pMouseY - y, pPartialTick)
+            updateTooltip()
+
+            pose.popPose()
+        }
+    }
+
+    /**
      * Renders this [ContainerWidget] along with its children.
      * @param pGuiGraphics The graphics context to render with.
      * @param pMouseX The X position of the mouse.
@@ -119,32 +155,18 @@ open class ContainerWidget(
      */
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         val pose = pGuiGraphics.pose()
-        pose.pushPose()
-        var aX = absoluteX + this.x
-        var aY = absoluteY + this.y
-        if (this.x > 0 && this.y > 0) pose.translate(this.x.toDouble(), this.y.toDouble(), 0.0)
-        pose.mulPoseMatrix(Matrix4f().rotateX(pTilt))
         childrenWidgets.forEach { (widget, pair) ->
             pose.pushPose()
-            // NOTE: This code is quite messy. We should probably clean it up later.
-            if (widget !is ContainerWidget) {
-                aX += widget.x
-                aY += widget.y
-                pose.translate(widget.x.toDouble(), widget.y.toDouble(), pair.first)
-            }
+            pose.translate(widget.x.toDouble(), widget.y.toDouble(), pair.first)
+
             if (widget is IWidgetOffsetAware) {
-                widget.absoluteX = aX
-                widget.absoluteY = aY
+                widget.absoluteX = absoluteX + widget.x
+                widget.absoluteY = absoluteY + widget.y
             }
-            widget.render(
-                pGuiGraphics,
-                pMouseX - this.x,
-                pMouseY - this.y,
-                pPartialTick
-            )
+
+            widget.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick)
             pose.popPose()
         }
-        pose.popPose()
     }
 
     private fun ContainerWidget.iterateLowHigh(

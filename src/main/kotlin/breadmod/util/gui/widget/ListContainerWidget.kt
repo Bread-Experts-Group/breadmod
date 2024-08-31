@@ -5,6 +5,7 @@ import breadmod.util.gui.widget.marker.IWidgetOffsetAware
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.network.chat.Component
+import java.awt.Color
 import kotlin.math.max
 
 /**
@@ -66,38 +67,30 @@ class ListContainerWidget(
             throw UnsupportedOperationException("ListContainerWidget only supports RowContainerWidgets")
         pWidget.width = width
         scrollContentsContainer.height += pWidget.height
+        pWidget.y = scrollContentsContainer.height
         scrollBar.height = scrollBarContainer.height *
                 (scrollBarContainer.height / max(scrollContentsContainer.height, scrollBarContainer.height))
-        return scrollContentsContainer.addWidget(pWidget, pZIndex, pTag)
+        return this
     }
 
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         val pose = pGuiGraphics.pose()
-        pose.pushPose()
-        pose.translate(x.toDouble(), y.toDouble(), 0.0)
-        val pMx = pMouseX - x
-        val pMy = pMouseX - x
 
-        fun positioning(widget: ContainerWidget, localZ: Double) {
+        fun positioning(widget: ContainerWidget) {
             pose.pushPose()
-            pose.translate(widget.x.toDouble(), widget.y.toDouble(), localZ)
-            widget.render(pGuiGraphics, pMx - widget.x, pMy - widget.y, pPartialTick)
+            pose.translate(widget.x.toDouble(), widget.y.toDouble(), 0.0)
+            widget.render(
+                pGuiGraphics,
+                pMouseX, pMouseX,
+                pPartialTick
+            )
+            pGuiGraphics.fill(0, 0, widget.width, widget.height, Color(0.5f, 0f, 0f, 0.5f).rgb)
             pose.popPose()
         }
 
-        positioning(scrollContentsBackgroundContainer, 1.0)
-
-        val sccAbsX = absoluteX + scrollContentsContainer.x
-        val sccAbsY = absoluteY + scrollContentsContainer.y
-//        pGuiGraphics.enableScissor(
-//            sccAbsX, sccAbsY,
-//            sccAbsX + scrollContentsContainer.width, sccAbsY + scrollContentsContainer.height
-//        )
-        positioning(scrollContentsContainer, 2.0)
-//        pGuiGraphics.disableScissor()
-
-        positioning(scrollBarContainer, 3.0)
-        pose.popPose()
+        positioning(scrollContentsBackgroundContainer)
+        positioning(scrollContentsContainer)
+        positioning(scrollBarContainer)
     }
 
     init {
@@ -109,8 +102,11 @@ class ListContainerWidget(
             scrollContentsBackgroundContainer.addWidget(widget, pair.first, pair.second)
         }
 
+        @Suppress("RedundantValueArgument")
         super.addWidget(scrollContentsBackgroundContainer, 0.0, "background")
+        @Suppress("RedundantValueArgument")
         super.addWidget(scrollContentsContainer, 0.0, "contents")
+        @Suppress("RedundantValueArgument")
         super.addWidget(scrollBarContainer, 0.0, "scroll")
     }
 
