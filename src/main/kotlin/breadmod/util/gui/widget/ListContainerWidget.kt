@@ -7,6 +7,7 @@ import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.network.chat.Component
 import java.awt.Color
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * A widget that renders a list of [RowContainerWidget]s.
@@ -68,28 +69,29 @@ class ListContainerWidget(
         pWidget.width = width
         scrollContentsContainer.height += pWidget.height
         pWidget.y = scrollContentsContainer.height
-        scrollBar.height = scrollBarContainer.height *
-                (scrollBarContainer.height / max(scrollContentsContainer.height, scrollBarContainer.height))
+        scrollBar.height = (scrollBarContainer.height *
+                (scrollBarContainer.height.toDouble() / max(scrollContentsContainer.height, scrollBarContainer.height)))
+            .roundToInt()
         return this
     }
 
     override fun renderWidget(pGuiGraphics: GuiGraphics, pMouseX: Int, pMouseY: Int, pPartialTick: Float) {
         val pose = pGuiGraphics.pose()
 
-        fun positioning(widget: ContainerWidget) {
+        fun positioning(widget: ContainerWidget, localZ: Double = 0.0) {
             pose.pushPose()
-            pose.translate(widget.x.toDouble(), widget.y.toDouble(), 0.0)
+            pose.translate(widget.x.toDouble(), widget.y.toDouble(), localZ)
             widget.render(
                 pGuiGraphics,
                 pMouseX, pMouseX,
                 pPartialTick
             )
-            pGuiGraphics.fill(0, 0, widget.width, widget.height, Color(0.5f, 0f, 0f, 0.5f).rgb)
+            pGuiGraphics.fill(0, 0, widget.width, widget.height, Color(255, 0, 0, 50).rgb)
             pose.popPose()
         }
 
         positioning(scrollContentsBackgroundContainer)
-        positioning(scrollContentsContainer)
+        positioning(scrollContentsContainer, 100.0)
         positioning(scrollBarContainer)
     }
 
@@ -104,8 +106,7 @@ class ListContainerWidget(
 
         @Suppress("RedundantValueArgument")
         super.addWidget(scrollContentsBackgroundContainer, 0.0, "background")
-        @Suppress("RedundantValueArgument")
-        super.addWidget(scrollContentsContainer, 0.0, "contents")
+        super.addWidget(scrollContentsContainer, 100.0, "contents")
         @Suppress("RedundantValueArgument")
         super.addWidget(scrollBarContainer, 0.0, "scroll")
     }

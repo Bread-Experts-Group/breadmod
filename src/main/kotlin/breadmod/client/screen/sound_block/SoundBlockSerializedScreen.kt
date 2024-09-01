@@ -91,7 +91,7 @@ internal class SoundBlockSerializedScreen(
         val list = rootWidget.getTaggedWidget("list") as ListContainerWidget
         val random = Random()
 
-        repeat(30) {
+        repeat(300) {
             val newRow = RowContainerWidget(0, 0, rgMinecraft.font.lineHeight + 2)
             newRow.addWidget(
                 BackgroundWidget.SolidColorBackgroundWidget(

@@ -63,9 +63,13 @@ open class SerializedScreen<T : AbstractContainerMenu>(
      * @since 1.0.0
      */
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean =
-        if (!rootWidget.isMouseOver(pMouseX, pMouseY) || !rootWidget.mouseClicked(pMouseX, pMouseY, pButton))
-            super.mouseClicked(pMouseX, pMouseY, pButton)
-        else false
+        if (!holdingClick && rootWidget.isMouseOver(pMouseX, pMouseY)) {
+            holdingClick = rootWidget.mouseClicked(pMouseX, pMouseY, pButton)
+            holdingClick
+        } else if (holdingClick) false
+        else super.mouseClicked(pMouseX, pMouseY, pButton)
+
+    private var holdingClick = false
 
     /**
      * Pushes mouse release inputs to the provided [rootWidget].
@@ -77,9 +81,10 @@ open class SerializedScreen<T : AbstractContainerMenu>(
      * @since 1.0.0
      */
     override fun mouseReleased(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean =
-        if (!rootWidget.isMouseOver(pMouseX, pMouseY) || !rootWidget.mouseReleased(pMouseX, pMouseY, pButton))
-            super.mouseReleased(pMouseX, pMouseY, pButton)
-        else false
+        if (holdingClick) {
+            holdingClick = false
+            rootWidget.mouseReleased(pMouseX, pMouseY, pButton)
+        } else super.mouseReleased(pMouseX, pMouseY, pButton)
 
     /**
      * Pushes mouse movement inputs to the provided [rootWidget].
@@ -105,12 +110,14 @@ open class SerializedScreen<T : AbstractContainerMenu>(
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean =
-        if (
-            !rootWidget.isMouseOver(mouseGuiX, mouseGuiY) ||
-            !rootWidget.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
-        ) super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
-        else false
+    override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
+        if (pipingDrag || rootWidget.isMouseOver(mouseGuiX, mouseGuiY))
+            pipingDrag = rootWidget.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+        return if (!pipingDrag) super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+        else true
+    }
+
+    private var pipingDrag: Boolean = false
 
     /**
      * Pushes key presses to the provided [rootWidget].

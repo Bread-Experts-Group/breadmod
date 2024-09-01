@@ -175,10 +175,10 @@ open class ContainerWidget(
         pX: Int = this.x, pY: Int = this.y
     ): Pair<AbstractWidget, Pair<Double, Double>>? {
         return this.childrenWidgets.keys.firstNotNullOfOrNull { widget ->
-            if (widget is ContainerWidget)
-                widget.iterateLowHigh(pMouseX, pMouseY, pInterface, pX + widget.x, pY + widget.y)
-            else if (widget::class.isSubclassOf(pInterface) && widget.isMouseOver(pMouseX - pX, pMouseY - pY))
+            if (widget::class.isSubclassOf(pInterface) && widget.isMouseOver(pMouseX - pX, pMouseY - pY))
                 widget to (pMouseX - pX to pMouseY - pY)
+            else if (widget is ContainerWidget)
+                widget.iterateLowHigh(pMouseX, pMouseY, pInterface, pX + widget.x, pY + widget.y)
             else null
         }
     }
@@ -201,11 +201,17 @@ open class ContainerWidget(
      */
     override fun mouseClicked(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
         val rx = getClickableWidget()
-        return rx?.first?.mouseClicked(rx.second.first, rx.second.second, pButton) ?: false
+        return if (rx != null && rx.first.mouseClicked(rx.second.first, rx.second.second, pButton)) {
+            clickFocused = rx.first
+            true
+        } else {
+            clickFocused = null
+            false
+        }
     }
 
     /**
-     * Handles a mouse release event, distributing the event to [IWidgetMouseClickSensitive] widgets.
+     * Handles a mouse release event, distributing the event to the previously clicked widget.
      * @param pMouseX The X position of the mouse.
      * @param pMouseY The Y position of the mouse.
      * @param pButton The button on the mouse that was clicked.
@@ -213,10 +219,14 @@ open class ContainerWidget(
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    override fun mouseReleased(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean {
-        val rx = getClickableWidget()
-        return rx?.first?.mouseReleased(rx.second.first, rx.second.second, pButton) ?: false
-    }
+    override fun mouseReleased(pMouseX: Double, pMouseY: Double, pButton: Int): Boolean =
+        if (clickFocused != null) {
+            val state = clickFocused!!.mouseReleased(pMouseX, pMouseY, pButton)
+            clickFocused = null
+            state
+        } else false
+
+    private var clickFocused: AbstractWidget? = null
 
     /**
      * Handles a mouse movement event, distributing the event to [IWidgetMouseMovementSensitive] widgets.
@@ -241,9 +251,22 @@ open class ContainerWidget(
      * @since 1.0.0
      */
     override fun mouseDragged(pMouseX: Double, pMouseY: Double, pButton: Int, pDragX: Double, pDragY: Double): Boolean {
-        val rx = this.iterateLowHigh(pMouseX, pMouseY, IWidgetMouseDragSensitive::class)
-        return rx?.first?.mouseDragged(rx.second.first, rx.second.second, pButton, pDragX, pDragY) ?: false
+        return if (dragFocused != null) {
+            val shouldContinue = dragFocused!!.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)
+            if (!shouldContinue) {
+                dragFocused = null
+                false
+            } else true
+        } else {
+            val rx = this.iterateLowHigh(pMouseX, pMouseY, IWidgetMouseDragSensitive::class)
+            if (rx != null && rx.first.mouseDragged(rx.second.first, rx.second.second, pButton, pDragX, pDragY)) {
+                dragFocused = rx.first
+                true
+            } else false
+        }
     }
+
+    private var dragFocused: AbstractWidget? = null
 
     private fun getKeyableWidget() =
         this.iterateLowHigh(
