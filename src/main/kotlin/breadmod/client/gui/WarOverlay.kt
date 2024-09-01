@@ -1,8 +1,8 @@
 package breadmod.client.gui
 
 import breadmod.ModMain.modLocation
-import breadmod.client.gui.WarTicker.lastScroll
-import breadmod.client.gui.WarTicker.scroll
+import breadmod.client.gui.WarTickerClient.lastScroll
+import breadmod.client.gui.WarTickerClient.scroll
 import breadmod.util.ModFonts
 import breadmod.util.render.rgMinecraft
 import breadmod.util.render.scaleFlat
@@ -28,12 +28,12 @@ class WarOverlay : AbstractModGuiOverlay() {
         pBuffer: MultiBufferSource,
         pPlayer: LocalPlayer
     ) {
-        val seconds = WarTicker.timer % 60
-        val minutes = WarTicker.timer / 60
+        val seconds = WarTickerClient.timer % 60
+        val minutes = WarTickerClient.timer / 60
         val formattedSeconds = if (seconds < 10) "0$seconds" else seconds
         val formattedMinutes = if (minutes < 10) "0$minutes" else minutes
         val colorPair: Triple<Float, Float, Float> =
-            if (WarTicker.isIncreasing) Triple(0.376f, 0.91f, 0.471f)
+            if (WarTickerClient.isIncreasing) Triple(0.376f, 0.91f, 0.471f)
             else Triple(0.973f, 0f, 0f)
 
         if (scroll > -110f) {

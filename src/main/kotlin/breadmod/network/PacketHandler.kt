@@ -6,6 +6,9 @@ import breadmod.network.clientbound.BeamPacket
 import breadmod.network.clientbound.CapabilitySideDataPacket
 import breadmod.network.clientbound.CapabilityTagDataPacket
 import breadmod.network.clientbound.tool_gun.ToolGunModeDataPacket
+import breadmod.network.clientbound.war_timer.WarTimerIncrementPacket
+import breadmod.network.clientbound.war_timer.WarTimerSynchronizationPacket
+import breadmod.network.clientbound.war_timer.WarTimerTogglePacket
 import breadmod.network.common.tool_gun.creator.ToolGunCreatorDataRequestPacket
 import breadmod.network.serverbound.SoundBlockPacket
 import breadmod.network.serverbound.ToggleMachinePacket
@@ -51,6 +54,20 @@ internal object PacketHandler {
         NETWORK.registerMessage(
             3_000, ToolGunModeDataPacket::class.java,
             ToolGunModeDataPacket::encodeBuf, ToolGunModeDataPacket::decodeBuf, ToolGunModeDataPacket::handle
+        )
+        NETWORK.registerMessage(
+            4_000, WarTimerTogglePacket::class.java,
+            WarTimerTogglePacket::encodeBuf, WarTimerTogglePacket::decodeBuf, WarTimerTogglePacket::handle
+        )
+        NETWORK.registerMessage(
+            4_001, WarTimerSynchronizationPacket::class.java,
+            WarTimerSynchronizationPacket::encodeBuf, WarTimerSynchronizationPacket::decodeBuf,
+            WarTimerSynchronizationPacket::handle
+        )
+        NETWORK.registerMessage(
+            4_002, WarTimerIncrementPacket::class.java,
+            WarTimerIncrementPacket::encodeBuf, WarTimerIncrementPacket::decodeBuf,
+            WarTimerIncrementPacket::handle
         )
 
         LOGGER.info("Registering serverbound message types")
