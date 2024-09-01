@@ -1,20 +1,17 @@
 package breadmod
 
 import breadmod.ClientModEventBus.toolGunBindList
-import breadmod.client.gui.WarTicker
+import breadmod.client.gui.WarTickerClient
+import breadmod.commands.client.AltToolGunModelCommand
 import breadmod.datagen.tool_gun.BreadModToolGunModeProvider.Companion.TOOL_GUN_DEF
 import breadmod.item.tool_gun.ToolGunItem
 import breadmod.network.PacketHandler.NETWORK
 import breadmod.network.serverbound.tool_gun.ToolGunConfigurationPacket
-import breadmod.registry.ModConfiguration
 import breadmod.util.gui.IHoldScreen
 import breadmod.util.render.modifierMatches
 import breadmod.util.render.renderBuffer
 import breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.platform.InputConstants
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.StringReader
-import com.mojang.brigadier.arguments.ArgumentType
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
@@ -162,53 +159,9 @@ object ClientForgeEventBus {
 
     @SubscribeEvent
     fun registerClientCommands(event: RegisterClientCommandsEvent) {
-        // todo it would probably be ideal to have each sub command be their own class for cleanness sakes
-        // CommandMek.java
         event.dispatcher.register(Commands.literal("breadmod")
-            .then(Commands.literal("increase_timer")
-                .then(Commands.argument("amount", IntArgument())
-                    .executes { amount ->
-                        val arg = amount.getArgument("amount", Int::class.java)
-                        WarTicker.increaseTimer(arg)
-                        return@executes Command.SINGLE_SUCCESS
-                    }
-                )
-            )
-            .then(Commands.literal("reset_timer")
-                .executes {
-                    WarTicker.reset()
-                    return@executes Command.SINGLE_SUCCESS
-                }
-            )
-            .then(Commands.literal("start_timer")
-                .executes {
-                    WarTicker.active = true
-                    return@executes Command.SINGLE_SUCCESS
-                }
-            )
-            .then(Commands.literal("end_timer")
-                .executes {
-                    WarTicker.active = false
-                    return@executes Command.SINGLE_SUCCESS
-                }
-            )
-            .then(Commands.literal("alt_toolgun_model")
-                .then(Commands.argument("value", BooleanArgument())
-                    .executes { value ->
-                        val arg = value.getArgument("value", Boolean::class.java)
-                        ModConfiguration.CLIENT.ALT_TOOLGUN_MODEL.set(arg)
-                        return@executes Command.SINGLE_SUCCESS
-                    }
-                )
-            )
+            .then(AltToolGunModelCommand.register())
         )
-    }
-
-    private class IntArgument : ArgumentType<Int> {
-        override fun parse(reader: StringReader): Int = reader.readInt()
-    }
-    private class BooleanArgument : ArgumentType<Boolean> {
-        override fun parse(reader: StringReader): Boolean = reader.readBoolean()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -216,6 +169,6 @@ object ClientForgeEventBus {
     fun onTick(event: ClientTickEvent) {
         if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) return
 
-        WarTicker.tick()
+        WarTickerClient.tick()
     }
 }
