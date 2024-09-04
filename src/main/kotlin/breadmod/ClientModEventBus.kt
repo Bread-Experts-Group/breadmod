@@ -132,7 +132,7 @@ object ClientModEventBus {
     @SubscribeEvent
     fun registerGuiOverlays(event: RegisterGuiOverlaysEvent) {
         event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "tool_gun_overlay", ToolGunOverlay())
-        event.registerBelow(VanillaGuiOverlay.DEBUG_TEXT.id(), "war_overlay", WarOverlay())
+        event.registerAboveAll("war_overlay", WarOverlay())
     }
 
     @SubscribeEvent

@@ -2,19 +2,14 @@ package breadmod.mixin.client;
 
 import breadmod.util.ModFonts;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Map;
 
 /**
  * This mixin is not seriously used by us at the moment.
@@ -23,14 +18,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Mixin(net.minecraft.client.gui.font.FontManager.class)
-abstract class MixinFontManager {
-    @Final
-    @Shadow
-    private Map<ResourceLocation, FontSet> fontSets;
-
-    @Final
-    @Shadow
-    private FontSet missingFontSet;
+abstract class MixinFontManager implements IFontManagerAccessor {
 
     @Invoker("getActualId")
     abstract ResourceLocation iGetID(ResourceLocation pId);
@@ -47,7 +35,7 @@ abstract class MixinFontManager {
                         final Style publicSansRegular = ModFonts.getPUBLIC_SANS_REGULAR();
                         final ResourceLocation font = publicSansRegular.getFont();
                         final ResourceLocation key = this.iGetID(font);
-                        return this.fontSets.getOrDefault(key, this.missingFontSet);
+                        return iGetFontSets().getOrDefault(key, iGetMissingFontSet());
                     },
                     false
             ));

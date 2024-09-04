@@ -343,6 +343,13 @@ object ModBlocks {
         Item.Properties()
     )
 
+    val WAR_TERMINAL = deferredRegister.registerBlockItem(
+        ModItems.deferredRegister,
+        "war_terminal",
+        { WarTerminalBlock() },
+        Item.Properties()
+    )
+
     val BAUXITE_ORE = deferredRegister.registerBlockItem(
         ModItems.deferredRegister,
         "bauxite_ore",
@@ -444,6 +451,7 @@ object ModBlocks {
             dropSelf(TOASTER.get().block)
             dropSelf(RANDOM_SOUND_BLOCK.get().block)
             dropSelf(SOUND_BLOCK.get().block)
+            dropSelf(WAR_TERMINAL.get().block)
 
             dropSelf(NIKO_BLOCK.get().block)
             dropSelf(OMANEKO_BLOCK.get().block)

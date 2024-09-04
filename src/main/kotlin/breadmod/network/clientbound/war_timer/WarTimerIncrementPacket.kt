@@ -20,9 +20,9 @@ class WarTimerIncrementPacket(val isIncreasing: Boolean, val increaseTimer: Int)
         fun handle(input: WarTimerIncrementPacket, ctx: Supplier<NetworkEvent.Context>) = ctx.get().let {
             it.enqueueWork {
                 val player = rgMinecraft.player ?: return@enqueueWork
-                WarTickerClient.isIncreasing = input.isIncreasing
+                WarTickerClient.isTimerIncreasing = input.isIncreasing
                 WarTickerClient.increasingTimer = input.increaseTimer
-                player.playSound(ModSounds.WAR_TIMER_UP.get(), 0.8f, 1.0f)
+                player.playSound(ModSounds.WAR_TIMER_UP.get(), 0.7f, 1.0f)
             }
         }
     }

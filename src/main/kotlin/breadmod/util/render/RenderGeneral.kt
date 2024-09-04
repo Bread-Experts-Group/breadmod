@@ -1,6 +1,7 @@
 package breadmod.util.render
 
 import breadmod.ModMain.modLocation
+import breadmod.client.gui.WarTickerClient
 import breadmod.util.translateDirection
 import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.preprocessor.GlslPreprocessor
@@ -12,6 +13,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
+import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -175,6 +177,23 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
             mutableList[0] = currentOpacity - 0.1f * rgMinecraft.partialTick
             false
         } else true
+    })
+
+var skyColorMixinActive = false
+fun skyTest() =
+    renderBuffer.add(mutableListOf(1F) to { mutableList, levelStageEvent ->
+        if (WarTickerClient.timerActive) {
+            println(RenderSystem.getShaderFogStart())
+            println(RenderSystem.getShaderFogEnd())
+            RenderSystem.setShaderFogColor(1f, 0f, 0f, 1f)
+            FogRenderer.setupFog(levelStageEvent.camera, FogRenderer.FogMode.FOG_SKY, 256f, false, 256f)
+            FogRenderer.setupFog(levelStageEvent.camera, FogRenderer.FogMode.FOG_TERRAIN, 256f, false, 256f)
+            skyColorMixinActive = true
+            false
+        } else {
+            skyColorMixinActive = false
+            true
+        }
     })
 
 fun GuiGraphics.renderFluid(

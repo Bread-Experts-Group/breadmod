@@ -1,11 +1,11 @@
-package breadmod.mixin.accessors.client;
+package breadmod.mixin.client;
 
 import net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(DirectoryLister.class)
-public interface IAccessorDirectoryLister {
+interface IAccessorDirectoryLister {
     @Accessor("sourcePath")
     String getSourcePath();
 

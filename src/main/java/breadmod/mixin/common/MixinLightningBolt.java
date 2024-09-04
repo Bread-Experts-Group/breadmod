@@ -1,7 +1,6 @@
 package breadmod.mixin.common;
 
 import breadmod.block.util.ILightningStrikeAction;
-import breadmod.mixin.accessors.common.IAccessorEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.block.state.BlockState;

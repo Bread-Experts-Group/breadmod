@@ -1,6 +1,5 @@
 package breadmod.mixin.client;
 
-import breadmod.mixin.accessors.client.IAccessorDirectoryLister;
 import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister;
 import net.minecraft.resources.ResourceLocation;

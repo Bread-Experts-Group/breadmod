@@ -8,7 +8,9 @@ import net.minecraft.Util
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth.lerp
+import net.minecraftforge.registries.ForgeRegistries
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -22,7 +24,12 @@ internal class SoundBlockRenderer : BlockEntityRenderer<SoundBlockEntity> {
         pPackedLight: Int,
         pPackedOverlay: Int
     ) {
+        val soundString = pBlockEntity.currentSound ?: return
+        val sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation(soundString))?.location ?: return
+        val convertedString = if (sound.namespace == "minecraft") "subtitles." + sound.path else sound.path
+
         // TODO split into render general
+        // TODO fix the scrolling not working properly
         val pText = Component.literal("dummydummydummydummy")
         val pMinX = 0
         val pMaxX = 12
@@ -61,5 +68,13 @@ internal class SoundBlockRenderer : BlockEntityRenderer<SoundBlockEntity> {
                 pScale = 0.0105f
             )
         }
+
+        drawTextOnSide(
+            rgMinecraft.font, Component.translatable(convertedString),
+            0.1, -0.1,
+            pPoseStack = pPoseStack, pBuffer = pBuffer,
+            pBlockState = pBlockEntity.blockState,
+            pScale = 0.0105f
+        )
     }
 }

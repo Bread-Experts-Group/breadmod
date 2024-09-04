@@ -20,7 +20,7 @@ class WarTimerSynchronizationPacket(val timeLeft: Int) {
             it.enqueueWork {
                 if (it.sender == null) {
                     val player = rgMinecraft.player ?: return@enqueueWork
-                    WarTickerClient.timer = input.timeLeft
+                    WarTickerClient.timeLeft = input.timeLeft
                     player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 1f)
                 }
             }

@@ -11,10 +11,10 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraftforge.network.PacketDistributor
 
-object WarTimerServerCommand {
+object WarTimerCommand {
     fun register(): ArgumentBuilder<CommandSourceStack, *> =
         Commands.literal("warTimer")
-            .then(Commands.argument("player", EntityArgument.player())
+            .then(Commands.argument("player", EntityArgument.players())
                 .then(toggle())
                 .then(add())
                 .then(increase())
@@ -23,20 +23,22 @@ object WarTimerServerCommand {
     fun toggle(): ArgumentBuilder<CommandSourceStack, *> =
         Commands.literal("toggle")
             .executes { ctx ->
-                val target = EntityArgument.getPlayer(ctx, "player")
-                warTimerMap[target]?.let {
-                    if (!it.second.first) {
-                        warTimerMap.put(target, it.first to (true to it.second.second))
-                        PacketHandler.NETWORK.send(
-                            PacketDistributor.PLAYER.with { target },
-                            WarTimerTogglePacket(true)
-                        )
-                    } else {
-                        warTimerMap.put(target, it.first to (false to it.second.second))
-                        PacketHandler.NETWORK.send(
-                            PacketDistributor.PLAYER.with { target },
-                            WarTimerTogglePacket(false)
-                        )
+                val target = EntityArgument.getPlayers(ctx, "player")
+                target.forEach { player ->
+                    warTimerMap[player]?.let {
+                        if (!it.second.first) {
+                            warTimerMap.put(player, it.first to (true to it.second.second))
+                            PacketHandler.NETWORK.send(
+                                PacketDistributor.PLAYER.with { player },
+                                WarTimerTogglePacket(true)
+                            )
+                        } else {
+                            warTimerMap.put(player, it.first to (false to it.second.second))
+                            PacketHandler.NETWORK.send(
+                                PacketDistributor.PLAYER.with { player },
+                                WarTimerTogglePacket(false)
+                            )
+                        }
                     }
                 }
                 return@executes Command.SINGLE_SUCCESS
@@ -45,8 +47,10 @@ object WarTimerServerCommand {
     fun add(): ArgumentBuilder<CommandSourceStack, *> =
         Commands.literal("add")
             .executes{ ctx ->
-                val target = EntityArgument.getPlayer(ctx, "player")
-                warTimerMap[target] = Triple(30, 41, 0) to (false to false)
+                val target = EntityArgument.getPlayers(ctx, "player")
+                target.forEach { player ->
+                    warTimerMap[player] = Triple(30, 41, 0) to (false to false)
+                }
                 return@executes Command.SINGLE_SUCCESS
             }
 
@@ -55,14 +59,16 @@ object WarTimerServerCommand {
     fun increase(): ArgumentBuilder<CommandSourceStack, *> =
         Commands.literal("increase")
             .executes{ ctx ->
-                val target = EntityArgument.getPlayer(ctx, "player")
-                warTimerMap[target]?.let {
-                    val increase = it.first.third + 30
-                    warTimerMap.put(target, Triple(it.first.first, 41, increase) to (it.second.first to true))
-                    PacketHandler.NETWORK.send(
-                        PacketDistributor.PLAYER.with { target },
-                        WarTimerIncrementPacket(true, increase)
-                    )
+                val target = EntityArgument.getPlayers(ctx, "player")
+                target.forEach { player ->
+                    warTimerMap[player]?.let {
+                        val increase = it.first.third + 30
+                        warTimerMap.put(player, Triple(it.first.first, 41, increase) to (it.second.first to true))
+                        PacketHandler.NETWORK.send(
+                            PacketDistributor.PLAYER.with { player },
+                            WarTimerIncrementPacket(true, increase)
+                        )
+                    }
                 }
                 return@executes Command.SINGLE_SUCCESS
             }

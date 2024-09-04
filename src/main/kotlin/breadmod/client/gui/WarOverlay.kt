@@ -1,8 +1,8 @@
 package breadmod.client.gui
 
 import breadmod.ModMain.modLocation
-import breadmod.client.gui.WarTickerClient.lastScroll
-import breadmod.client.gui.WarTickerClient.scroll
+import breadmod.client.gui.WarTickerClient.lastTimerPosition
+import breadmod.client.gui.WarTickerClient.timerPosition
 import breadmod.util.ModFonts
 import breadmod.util.render.rgMinecraft
 import breadmod.util.render.scaleFlat
@@ -28,18 +28,18 @@ class WarOverlay : AbstractModGuiOverlay() {
         pBuffer: MultiBufferSource,
         pPlayer: LocalPlayer
     ) {
-        val seconds = WarTickerClient.timer % 60
-        val minutes = WarTickerClient.timer / 60
+        val seconds = WarTickerClient.timeLeft % 60
+        val minutes = WarTickerClient.timeLeft / 60
         val formattedSeconds = if (seconds < 10) "0$seconds" else seconds
         val formattedMinutes = if (minutes < 10) "0$minutes" else minutes
         val colorPair: Triple<Float, Float, Float> =
-            if (WarTickerClient.isIncreasing) Triple(0.376f, 0.91f, 0.471f)
+            if (WarTickerClient.isTimerIncreasing) Triple(0.376f, 0.91f, 0.471f)
             else Triple(0.973f, 0f, 0f)
 
-        if (scroll > -110f) {
+        if (timerPosition > -110f) {
             pPoseStack.pushPose()
             pPoseStack.scaleFlat(0.5f)
-            pPoseStack.translate(0.0, Mth.lerp(rgMinecraft.partialTick, lastScroll, scroll).toDouble(), 0.0)
+            pPoseStack.translate(0.0, Mth.lerp(rgMinecraft.partialTick, lastTimerPosition, timerPosition).toDouble(), 0.0)
             pPoseStack.translate(pScreenWidth - (pScreenWidth / 2).toDouble(), 0.0, 0.0)
             pGuiGraphics.blit(overlayTexture, 0, 0, 0, 0, 163, 89)
             pGuiGraphics.blit(overlayTexture, 163, 0, 0, 90, 166, 111)

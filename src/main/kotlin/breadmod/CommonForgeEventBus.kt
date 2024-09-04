@@ -1,6 +1,6 @@
 package breadmod
 
-import breadmod.commands.server.WarTimerServerCommand
+import breadmod.commands.server.WarTimerCommand
 import breadmod.datagen.tool_gun.ModToolGunModeDataLoader
 import breadmod.network.PacketHandler
 import breadmod.network.clientbound.war_timer.WarTimerSynchronizationPacket
@@ -75,7 +75,7 @@ object CommonForgeEventBus {
     @SubscribeEvent
     fun registerCommands(event: RegisterCommandsEvent) {
         event.dispatcher.register(Commands.literal("breadmod")
-            .then(WarTimerServerCommand.register())
+            .then(WarTimerCommand.register())
         )
     }
 }

@@ -4,13 +4,15 @@
   "package": "breadmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "accessors.common.IAccessorEntity",
+    "common.IAccessorEntity",
     "common.MixinFireBlock",
     "common.MixinLightningBolt"
   ],
   "client": [
-    "accessors.client.IAccessorDirectoryLister",
-    "accessors.client.IAccessorProgramType",
+    "client.ClientLevelMixin",
+    "client.IAccessorDirectoryLister",
+    "client.IAccessorProgramType",
+    "client.IFontManagerAccessor",
     "client.MixinDirectoryLister",
     "client.MixinFontManager",
     "client.MixinGameRenderer",

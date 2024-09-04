@@ -1,4 +1,4 @@
-package breadmod.mixin.accessors.client;
+package breadmod.mixin.client;
 
 import com.mojang.blaze3d.shaders.Program;
 import org.spongepowered.asm.mixin.Mixin;
