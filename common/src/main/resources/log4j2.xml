@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="bread.mod.breadmod.logging">
+    <!-- Appenders are done in breadmod.ModMain -->
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="ConsoleColorAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
