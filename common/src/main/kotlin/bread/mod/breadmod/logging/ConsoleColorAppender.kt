@@ -11,6 +11,9 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute
 import org.apache.logging.log4j.core.config.plugins.PluginElement
 import org.apache.logging.log4j.core.config.plugins.PluginFactory
 import org.apache.logging.log4j.spi.StandardLevel
+import java.io.FileDescriptor
+import java.io.FileOutputStream
+import java.io.PrintStream
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -61,6 +64,8 @@ class ConsoleColorAppender(
 
         private val threadColors = mutableMapOf<String, Pair<String, List<Int>>>()
         private var lastThreadColor: String? = null
+
+        private val DEFAULT_OUT = PrintStream(FileOutputStream(FileDescriptor.out))
     }
 
     private val colors = mapOf(
@@ -134,7 +139,6 @@ class ConsoleColorAppender(
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    @Suppress("ReplacePrintlnWithLogging")
     override fun append(event: LogEvent?) {
         if (event != null && event.level.isMoreSpecificThan(Level.INFO)) {
             val formattedTime = LocalDateTime.ofEpochSecond(
@@ -149,8 +153,8 @@ class ConsoleColorAppender(
 
             event.thrownProxy.let {
                 val prependStrippedLength = prepend.replace(Regex("\u001B\\[.+?m"), "").length
-                println("$prepend ${event.message.formattedMessage.prepend(prependStrippedLength)}")
-                if (it != null) println(it.extendedStackTraceAsString.prepend(prependStrippedLength))
+                DEFAULT_OUT.println("$prepend ${event.message.formattedMessage.prepend(prependStrippedLength)}")
+                if (it != null) DEFAULT_OUT.println(it.extendedStackTraceAsString.prepend(prependStrippedLength))
             }
         }
     }
