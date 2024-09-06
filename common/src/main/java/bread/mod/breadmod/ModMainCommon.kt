@@ -1,9 +1,13 @@
-package bread.mod.breadmod;
+package bread.mod.breadmod
 
-public final class Main {
-    public static final String MOD_ID = "breadmod";
+import bread.mod.breadmod.registry.Registry
 
-    public static void init() {
+object ModMainCommon {
+    const val MOD_ID: String = "breadmod"
+
+    fun init() {
         // Write common init code here.
+
+        Registry.registerAll()
     }
 }

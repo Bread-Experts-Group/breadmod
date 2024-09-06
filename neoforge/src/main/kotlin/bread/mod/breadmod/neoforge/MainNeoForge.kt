@@ -1,12 +1,12 @@
 package bread.mod.breadmod.neoforge
 
-import bread.mod.breadmod.Main
+import bread.mod.breadmod.ModMainCommon
 import net.neoforged.fml.common.Mod
 
-@Mod(Main.MOD_ID)
+@Mod(ModMainCommon.MOD_ID)
 class MainNeoForge {
     init {
         // Run our common setup.
-        Main.init()
+        ModMainCommon.init()
     }
 }

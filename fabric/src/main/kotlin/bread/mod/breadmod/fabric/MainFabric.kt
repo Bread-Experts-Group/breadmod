@@ -1,6 +1,6 @@
 package bread.mod.breadmod.fabric
 
-import bread.mod.breadmod.Main
+import bread.mod.breadmod.ModMainCommon
 import net.fabricmc.api.ModInitializer
 
 class MainFabric : ModInitializer {
@@ -11,6 +11,6 @@ class MainFabric : ModInitializer {
 
         // Run our common setup.
 
-        Main.init()
+        ModMainCommon.init()
     }
 }
