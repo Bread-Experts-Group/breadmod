@@ -9,10 +9,10 @@
     "common.MixinLightningBolt"
   ],
   "client": [
-    "client.ClientLevelMixin",
     "client.IAccessorDirectoryLister",
     "client.IAccessorProgramType",
     "client.IFontManagerAccessor",
+    "client.LevelRendererMixin",
     "client.MixinDirectoryLister",
     "client.MixinFontManager",
     "client.MixinGameRenderer",

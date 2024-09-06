@@ -49,7 +49,7 @@ object WarTimerCommand {
             .executes{ ctx ->
                 val target = EntityArgument.getPlayers(ctx, "player")
                 target.forEach { player ->
-                    warTimerMap[player] = Triple(30, 41, 0) to (false to false)
+                    warTimerMap[player] = Triple(Triple(30, 40, false), 40, 0) to (false to false)
                 }
                 return@executes Command.SINGLE_SUCCESS
             }
@@ -63,7 +63,7 @@ object WarTimerCommand {
                 target.forEach { player ->
                     warTimerMap[player]?.let {
                         val increase = it.first.third + 30
-                        warTimerMap.put(player, Triple(it.first.first, 41, increase) to (it.second.first to true))
+                        warTimerMap.put(player, Triple(it.first.first, 40, increase) to (it.second.first to true))
                         PacketHandler.NETWORK.send(
                             PacketDistributor.PLAYER.with { player },
                             WarTimerIncrementPacket(true, increase)

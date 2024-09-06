@@ -11,13 +11,24 @@ import breadmod.util.gui.IHoldScreen
 import breadmod.util.render.modifierMatches
 import breadmod.util.render.renderBuffer
 import breadmod.util.render.rgMinecraft
+import breadmod.util.render.skyColorMixinActive
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.BufferUploader
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import com.mojang.blaze3d.vertex.Tesselator
+import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.math.Axis
+import net.minecraft.Util
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.player.LocalPlayer
+import net.minecraft.client.renderer.FogRenderer
+import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.commands.Commands
 import net.minecraft.sounds.SoundEvents
+import net.minecraft.util.Mth.clamp
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.InputEvent
@@ -31,6 +42,9 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import org.apache.commons.lang3.ArrayUtils
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.sin
 
 @Suppress("unused")
 @Mod.EventBusSubscriber(modid = ModMain.ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = [Dist.CLIENT])
@@ -75,6 +89,65 @@ object ClientForgeEventBus {
             rgMinecraft.options.keyMappings,
             openGuiEditor
         )
+    }
+
+    var redness = 0f
+
+    @SubscribeEvent
+    fun renderStageEvent(event: RenderLevelStageEvent) {
+        if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarTickerClient.timerActive) {
+            val poseStack = event.poseStack
+            val bufferBuilder = Tesselator.getInstance().builder
+            val millis = Util.getMillis()
+
+            RenderSystem.setShader { GameRenderer.getPositionColorShader() }
+            RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+            RenderSystem.enableBlend()
+            poseStack.pushPose()
+            poseStack.mulPose(Axis.XP.rotationDegrees(-17f))
+            val matrix = poseStack.last().pose()
+            bufferBuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
+            bufferBuilder.vertex(matrix, 0f, 100f, 0f).color(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f)).endVertex()
+
+            for (j: Int in 0..16) {
+                val f1 = j * (Math.PI.toFloat() * 2f) / 16f
+                val f2: Float = sin(f1)
+                val f3: Float = cos(f1)
+                bufferBuilder.vertex(matrix, f2, -1f, -f3).color(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f)).endVertex()
+            }
+
+            val shaderFogColor = RenderSystem.getShaderFogColor()
+            RenderSystem.setShaderFogColor(
+                shaderFogColor[0] + redness,
+                shaderFogColor[1] - redness,
+                shaderFogColor[2] - redness,
+                1f
+            )
+            FogRenderer.setupFog(
+                event.camera,
+                FogRenderer.FogMode.FOG_SKY,
+                256f,
+                true,
+                event.partialTick
+            )
+            FogRenderer.setupFog(
+                event.camera,
+                FogRenderer.FogMode.FOG_TERRAIN,
+                max(256f, 32f),
+                true,
+                event.partialTick
+            )
+
+            redness = clamp((sin(millis.toFloat() / 1800) + 1) / 2, 0f, 1f)
+            skyColorMixinActive = true
+
+            BufferUploader.drawWithShader(bufferBuilder.end())
+            RenderSystem.disableBlend()
+            poseStack.popPose()
+        } else if (!WarTickerClient.timerActive) {
+            redness = 0.0f
+            skyColorMixinActive = false
+        }
     }
 
     private fun handleToolgunInput(

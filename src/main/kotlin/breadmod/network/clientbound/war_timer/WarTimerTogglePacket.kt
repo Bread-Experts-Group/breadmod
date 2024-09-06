@@ -1,7 +1,6 @@
 package breadmod.network.clientbound.war_timer
 
 import breadmod.client.gui.WarTickerClient
-import breadmod.util.render.skyTest
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
@@ -19,7 +18,6 @@ class WarTimerTogglePacket(val isActive: Boolean) {
             it.enqueueWork {
                 if (it.sender == null) {
                     WarTickerClient.timerActive = input.isActive
-                    if (input.isActive) skyTest()
                 }
             }
             it.packetHandled = true

@@ -50,6 +50,22 @@ class ModBlockStateAndModelProvider(
             models().getBuilder("breadmod:block/generator")
         )
 
+        horizontalBlock(ModBlocks.WAR_TERMINAL.get().block) {
+            val name = "breadmod:block/war_terminal"
+
+            val model = models().singleTexture(
+                name,
+                modLoc("${ModelProvider.BLOCK_FOLDER}/war_terminal"),
+                modLoc("${ModelProvider.BLOCK_FOLDER}/war_terminal")
+            )
+
+            return@horizontalBlock model
+        }
+        simpleBlockItem(
+            ModBlocks.WAR_TERMINAL.get().block,
+            models().getBuilder("breadmod:/block/war_terminal")
+        )
+
         horizontalBlock(ModBlocks.CREATIVE_GENERATOR.get().block) {
             val name = "breadmod:block/creative_generator"
 

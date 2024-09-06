@@ -9,6 +9,7 @@ import breadmod.registry.block.ModBlocks
 import breadmod.registry.fluid.ModFluids
 import breadmod.registry.item.ModItems
 import breadmod.registry.menu.ModCreativeTabs
+import breadmod.util.ModDamageTypes
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike
@@ -105,8 +106,10 @@ internal class USEnglishLanguageProvider(
         add(ModItems.BAGEL)
         add(ModItems.HALF_BAGEL)
         add(ModItems.DIE)
+        add(ModBlocks.WAR_TERMINAL)
         add(ModBlocks.SOUND_BLOCK)
         add(ModBlocks.RANDOM_SOUND_BLOCK, "Random Sound Generator")
+        add(ModDamageTypes.TIMER_RAN_OUT.translationKey(), "%1\$s ran out of time!")
         modAdd(
             "Harnesses the power of a pair of dice to make the most incomprehensible sounds imaginable.",
             "sound_block", "tooltip"
