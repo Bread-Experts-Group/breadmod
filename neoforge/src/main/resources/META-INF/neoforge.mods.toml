@@ -11,6 +11,7 @@ authors = "2!!!"
 description = '''
 the breadmod...
 '''
+side = "BOTH"
 #logoFile = ""
 
 [[dependencies.breadmod]]

@@ -10,7 +10,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 internal data class WarTimerSynchronization(val time: Int?) : CustomPacketPayload {
     companion object {
         val TYPE: CustomPacketPayload.Type<WarTimerSynchronization> =
-            CustomPacketPayload.createType(ModMainCommon.MOD_ID + ":war_timer_sync")
+            CustomPacketPayload.createType(ModMainCommon.MOD_ID + "_war_timer_sync")
 
         val STREAM_CODEC: StreamCodec<ByteBuf, WarTimerSynchronization> = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,

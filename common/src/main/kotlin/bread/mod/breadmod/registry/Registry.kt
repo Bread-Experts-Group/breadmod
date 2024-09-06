@@ -5,9 +5,6 @@ import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
 
 internal object Registry {
-    // TODO something about configs..
-    fun registerConfigs() {}
-
     fun registerAll() {
         ModBlocks.BLOCK_REGISTRY.register()
         ModItems.ITEM_REGISTRY.register()
