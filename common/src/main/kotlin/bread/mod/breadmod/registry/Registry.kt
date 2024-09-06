@@ -1,20 +1,16 @@
 package bread.mod.breadmod.registry
 
+import bread.mod.breadmod.networking.Networking.registerNetworking
 import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
 
-object Registry {
-    val registerList = setOf(
-        ModBlocks.deferredRegister,
-        ModItems.deferredRegister
-    )
-
+internal object Registry {
     // TODO something about configs..
     fun registerConfigs() {}
 
     fun registerAll() {
-        registerList.forEach {
-            it.register()
-        }
+        ModBlocks.BLOCK_REGISTRY.register()
+        ModItems.ITEM_REGISTRY.register()
+        registerNetworking()
     }
 }

@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter
     category = Core.CATEGORY_NAME,
     elementType = Appender.ELEMENT_TYPE
 )
-internal class ConsoleColorAppender(
+class ConsoleColorAppender(
     name: String,
     filter: Filter?
 ) : AbstractAppender(name, filter, null, false, null) {
