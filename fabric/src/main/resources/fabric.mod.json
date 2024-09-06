@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "breadmod",
+  "version": "${version}",
+  "name": "Bread Mod",
+  "description": "the breadmod...",
+  "authors": [
+    "2!!!"
+  ],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/breadmod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "adapter": "kotlin",
+        "value": "bread.mod.breadmod.fabric.MainFabric"
+      }
+    ],
+    "client": [
+      {
+        "adapter": "kotlin",
+        "value": "bread.mod.breadmod.fabric.client.MainFabricClient"
+      }
+    ]
+  },
+  "mixins": [
+    "breadmod.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+
+    "architectury": ">=13.0.6",
+
+    "fabric-api": "*",
+    "fabricloader": ">=0.16.4",
+    "fabric-language-kotlin": ">=1.12.1+kotlin.2.0.20"
+  },
+  "suggests": {  }
+}
