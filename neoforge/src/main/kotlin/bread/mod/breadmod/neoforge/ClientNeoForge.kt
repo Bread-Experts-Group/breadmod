@@ -16,6 +16,5 @@ class ClientNeoForge(container: ModContainer) {
             IConfigScreenFactory::class.java,
             IConfigScreenFactory { mod: ModContainer, parent: Screen -> ConfigurationScreen(mod, parent) }
         )
-        println("A")
     }
 }

@@ -8,6 +8,25 @@ architectury {
     neoForge()
 }
 
+//noinspection GroovyAssignabilityCheck
+File generatedResources = file("src/generated")
+
+sourceSets {
+    main {
+        resources.srcDir generatedResources
+    }
+}
+//
+loom {
+    runs {
+        runData {
+            data()
+            programArgs "--all", "--mod", "breadmod"
+            programArgs "--output", generatedResources.absolutePath
+        }
+    }
+}
+
 configurations {
     common {
         canBeResolved = true

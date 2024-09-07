@@ -15,7 +15,7 @@ object ModItems {
         id: String,
         block: () -> Block,
         properties: Item.Properties
-    ): RegistrySupplier<Block> = this.register(id, block).also { blockSupply ->
+    ): RegistrySupplier<BlockItem> = this.register(id, block).let { blockSupply ->
         ITEM_REGISTRY.register(id) { BlockItem(blockSupply.get(), properties) }
     }
 }

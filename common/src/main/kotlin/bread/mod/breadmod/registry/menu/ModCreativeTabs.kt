@@ -2,6 +2,7 @@ package bread.mod.breadmod.registry.menu
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modTranslatable
+import bread.mod.breadmod.datagen.DataGenerateLanguage
 import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
 import dev.architectury.registry.registries.DeferredRegister
@@ -48,6 +49,7 @@ object ModCreativeTabs {
 //        }
 //    }
 
+    @DataGenerateLanguage("en_us", "The Bread Mod")
     val MAIN_TAB: RegistrySupplier<CreativeModeTab> = constructTab("main", true) {
         icon { ModBlocks.BREAD_BLOCK.get().asItem().defaultInstance }
     }

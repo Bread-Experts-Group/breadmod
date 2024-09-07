@@ -11,6 +11,5 @@ class MainNeoForge(container: ModContainer) {
     init {
         container.registerConfig(ModConfig.Type.COMMON, SPECIFICATION)
         ModMainCommon.init()
-        println("B")
     }
 }

@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
 
 @Suppress("unused")
 @EventBusSubscriber(modid = ModMainCommon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
-object ClientModEventBus {
+internal object ClientModEventBus {
     @SubscribeEvent
     fun registerOverlays(event: RegisterGuiLayersEvent) {
         event.registerAboveAll(ModMainCommon.modLocation("war_overlay"), WarOverlay())
