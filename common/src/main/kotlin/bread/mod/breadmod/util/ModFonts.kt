@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Style
  * @author Miko Elbrecht, Logan McLean
  * @since 1.0.0
  */
-object ModFonts {
+internal object ModFonts {
     /**
      * Filled-in variant of the war timer font.
      * @author Logan McLean (this property), Miko Elbrecht (translation of sprites into font), Tour De Pizza (sprites)

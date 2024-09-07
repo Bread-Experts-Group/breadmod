@@ -23,64 +23,9 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
+// todo register the other client stuff later
 @Suppress("unused")
-@EventBusSubscriber(modid = ModMainCommon.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
+//@EventBusSubscriber(modid = ModMainCommon.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 object ClientForgeEventBus {
 
-    @SubscribeEvent
-    fun renderStageEvent(event: RenderLevelStageEvent) {
-        if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {
-            val poseStack = event.poseStack
-            val tesselator = Tesselator.getInstance()
-            val bufferBuilder = tesselator.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
-            val millis = Util.getMillis()
-
-            RenderSystem.setShader { GameRenderer.getPositionColorShader() }
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-            RenderSystem.enableBlend()
-            poseStack.pushPose()
-            poseStack.mulPose(Axis.XP.rotationDegrees(-17f))
-            val matrix = poseStack.last().pose()
-            bufferBuilder.addVertex(matrix, 0f, 100f, 0f).setColor(0.9f, 0f, 0.1f, Mth.clamp(redness - 0.2f, 0f, 1f))
-
-            for (j: Int in 0..16) {
-                val f1 = j * (Math.PI.toFloat() * 2f) / 16f
-                val f2: Float = sin(f1)
-                val f3: Float = cos(f1)
-                bufferBuilder.addVertex(matrix, f2, -1f, -f3).setColor(0.9f, 0f, 0.1f, Mth.clamp(redness - 0.2f, 0f, 1f))
-            }
-
-            val shaderFogColor = RenderSystem.getShaderFogColor()
-            RenderSystem.setShaderFogColor(
-                shaderFogColor[0] + redness,
-                shaderFogColor[1] - redness,
-                shaderFogColor[2] - redness,
-                1f
-            )
-            FogRenderer.setupFog(
-                event.camera,
-                FogRenderer.FogMode.FOG_SKY,
-                256f,
-                true,
-                event.partialTick.realtimeDeltaTicks
-            )
-            FogRenderer.setupFog(
-                event.camera,
-                FogRenderer.FogMode.FOG_TERRAIN,
-                max(256f, 32f),
-                true,
-                event.partialTick.realtimeDeltaTicks
-            )
-
-            redness = clamp((sin(millis.toFloat() / 1800) + 1) / 2, 0f, 1f)
-            skyColorMixinActive = true
-
-            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
-            RenderSystem.disableBlend()
-            poseStack.popPose()
-        } else if (!WarOverlay.timerActive) {
-            redness = 0f
-            skyColorMixinActive = false
-        }
-    }
 }

@@ -9,7 +9,7 @@ import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.damagesource.DamageType
 import net.minecraft.world.level.Level
 
-data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaustion: Float) {
+internal data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaustion: Float) {
     private constructor(name: String) : this(name, 0f)
     private constructor(name: String, exhaustion: Float) : this(ResourceKey.create(Registries.DAMAGE_TYPE, modLocation(name)), exhaustion)
 
