@@ -1,6 +1,6 @@
 package bread.mod.breadmod.reflection
 
-import bread.mod.breadmod.datagen.DataGenerateLanguage
+import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.jetbrains.annotations.ApiStatus

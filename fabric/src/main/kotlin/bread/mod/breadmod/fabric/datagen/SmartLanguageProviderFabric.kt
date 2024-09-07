@@ -1,7 +1,7 @@
 package bread.mod.breadmod.fabric.datagen
 
-import bread.mod.breadmod.datagen.DataGenerateLanguage
-import bread.mod.breadmod.datagen.SmartLanguageProvider
+import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.language.SmartLanguageProvider
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider
 import net.minecraft.core.HolderLookup

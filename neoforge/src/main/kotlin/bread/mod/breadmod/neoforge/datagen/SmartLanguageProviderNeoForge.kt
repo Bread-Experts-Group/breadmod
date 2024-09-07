@@ -1,7 +1,7 @@
 package bread.mod.breadmod.neoforge.datagen
 
-import bread.mod.breadmod.datagen.DataGenerateLanguage
-import bread.mod.breadmod.datagen.SmartLanguageProvider
+import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.language.SmartLanguageProvider
 import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
 

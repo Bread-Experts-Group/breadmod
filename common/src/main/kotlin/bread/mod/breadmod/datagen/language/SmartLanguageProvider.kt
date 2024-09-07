@@ -1,5 +1,6 @@
-package bread.mod.breadmod.datagen
+package bread.mod.breadmod.datagen.language
 
+import bread.mod.breadmod.datagen.DataProviderScanner
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike

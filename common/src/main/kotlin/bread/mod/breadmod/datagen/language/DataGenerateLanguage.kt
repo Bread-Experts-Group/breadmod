@@ -1,4 +1,4 @@
-package bread.mod.breadmod.datagen
+package bread.mod.breadmod.datagen.language
 
 import kotlin.annotation.AnnotationTarget.FIELD
 

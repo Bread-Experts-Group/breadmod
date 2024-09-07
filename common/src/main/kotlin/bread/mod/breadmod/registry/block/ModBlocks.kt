@@ -2,7 +2,7 @@ package bread.mod.breadmod.registry.block
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.block.BreadBlock
-import bread.mod.breadmod.datagen.DataGenerateLanguage
+import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.registry.item.ModItems.registerBlockItem
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
