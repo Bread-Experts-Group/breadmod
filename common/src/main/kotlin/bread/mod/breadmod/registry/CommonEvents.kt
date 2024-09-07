@@ -46,7 +46,7 @@ internal object CommonEvents {
                         value.ticker = 20
                     } else if (!value.gracePeriodActive && value.ticker != 0) {
                         value.ticker--
-                    } else if (value.timeLeft <= 0 && !value.gracePeriodActive) {
+                    } else if (value.timeLeft <= 0 && !value.gracePeriodActive && value.gracePeriod != 0) {
                         value.gracePeriodActive = true
                         NetworkManager.sendToPlayer(player, WarTimerSynchronization(value.timeLeft))
                     } else if (value.gracePeriod > 0) {

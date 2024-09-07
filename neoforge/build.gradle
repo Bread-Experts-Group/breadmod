@@ -9,7 +9,7 @@ architectury {
 }
 
 //noinspection GroovyAssignabilityCheck
-File generatedResources = file("src/generated")
+File generatedResources = project(':common').file('src/main/generated')
 
 sourceSets {
     main {
