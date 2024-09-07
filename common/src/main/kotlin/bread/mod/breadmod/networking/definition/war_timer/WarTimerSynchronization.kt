@@ -1,13 +1,16 @@
 package bread.mod.breadmod.networking.definition.war_timer
 
 import bread.mod.breadmod.ModMainCommon.modLocation
+import bread.mod.breadmod.client.gui.WarOverlay
+import bread.mod.breadmod.registry.sound.ModSounds
+import bread.mod.breadmod.util.render.rgMinecraft
 import dev.architectury.networking.NetworkManager.NetworkReceiver
 import io.netty.buffer.ByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 
-internal data class WarTimerSynchronization(val time: Int?) : CustomPacketPayload {
+internal data class WarTimerSynchronization(val time: Int) : CustomPacketPayload {
     companion object {
         val TYPE: CustomPacketPayload.Type<WarTimerSynchronization> =
             CustomPacketPayload.Type(modLocation("war_timer_sync"))
@@ -18,7 +21,9 @@ internal data class WarTimerSynchronization(val time: Int?) : CustomPacketPayloa
         ) { WarTimerSynchronization(it) }
 
         val RECEIVER = NetworkReceiver<WarTimerSynchronization> { value, context ->
-            println("Packet received, ${value.time}, ${context.player}")
+            val player = rgMinecraft.player ?: return@NetworkReceiver
+            WarOverlay.timeLeft = value.time
+            player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 1f)
         }
     }
 

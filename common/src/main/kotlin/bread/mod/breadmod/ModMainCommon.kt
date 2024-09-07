@@ -6,12 +6,14 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.config.ConfigurationFactory
 import org.apache.logging.log4j.core.config.Configurator
 
 object ModMainCommon {
     const val MOD_ID: String = "breadmod"
+    val LOGGER: Logger = LogManager.getLogger(MOD_ID)
 
     fun modLocation(vararg path: String, override: Boolean = false): ResourceLocation =
         path.toMutableList().let {

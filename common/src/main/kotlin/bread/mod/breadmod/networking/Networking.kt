@@ -1,6 +1,8 @@
 package bread.mod.breadmod.networking
 
+import bread.mod.breadmod.networking.definition.war_timer.WarTimerIncrement
 import bread.mod.breadmod.networking.definition.war_timer.WarTimerSynchronization
+import bread.mod.breadmod.networking.definition.war_timer.WarTimerToggle
 import dev.architectury.networking.NetworkManager
 import dev.architectury.networking.NetworkManager.NetworkReceiver
 import dev.architectury.platform.Platform
@@ -27,6 +29,14 @@ internal object Networking {
         registerS2CWithReceiver(
             WarTimerSynchronization.TYPE, WarTimerSynchronization.STREAM_CODEC,
             WarTimerSynchronization.RECEIVER
+        )
+        registerS2CWithReceiver(
+            WarTimerIncrement.TYPE, WarTimerIncrement.STREAM_CODEC,
+            WarTimerIncrement.RECEIVER
+        )
+        registerS2CWithReceiver(
+            WarTimerToggle.TYPE, WarTimerToggle.STREAM_CODEC,
+            WarTimerToggle.RECEIVER
         )
     }
 }

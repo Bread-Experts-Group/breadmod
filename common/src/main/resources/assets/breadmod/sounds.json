@@ -1,0 +1,71 @@
+{
+  "happy_block_fuse": {
+    "sounds": [
+      "breadmod:happy_block_fuse"
+    ],
+    "subtitle": "sound.breadmod.happy_block_fuse"
+  },
+  "hell_naw": {
+    "sounds": [
+      "breadmod:hell_naw"
+    ],
+    "subtitle": "sound.breadmod.hell_naw"
+  },
+  "minigun": {
+    "sounds": [
+      "breadmod:minigun"
+    ],
+    "subtitle": "sound.breadmod.minigun"
+  },
+  "pow": {
+    "sounds": [
+      "breadmod:pow"
+    ],
+    "subtitle": "sound.breadmod.pow"
+  },
+  "scream": {
+    "sounds": [
+      "breadmod:scream"
+    ],
+    "subtitle": "sound.breadmod.scream"
+  },
+  "test_sound": {
+    "sounds": [
+      {
+        "name": "breadmod:test_sound",
+        "stream": true
+      }
+    ],
+    "subtitle": "sound.breadmod.test_sound"
+  },
+  "tool_gun": {
+    "sounds": [
+      "breadmod:tool_gun_one",
+      "breadmod:tool_gun_two"
+    ],
+    "subtitle": "sound.breadmod.tool_gun"
+  },
+  "ultramarine": {
+    "sounds": [
+      {
+        "name": "breadmod:ultramarine",
+        "stream": true
+      }
+    ]
+  },
+  "war_timer": {
+    "sounds": [
+      "breadmod:war_timer"
+    ],
+    "subtitle": "sound.breadmod.war_timer"
+  },
+  "war_timer_up": {
+    "sounds": [
+      {
+        "name": "breadmod:war_timer_up",
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "sound.breadmod.war_timer_up"
+  }
+}

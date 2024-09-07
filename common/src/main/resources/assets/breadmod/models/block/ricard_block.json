@@ -1,0 +1,10 @@
+{
+  "loader": "forge:obj",
+  "flip_v": true,
+  "model": "breadmod:models/block/ricard/ricard_block.obj",
+  "parent": "block/block",
+  "textures": {
+    "body": "breadmod:block/ricard/body.001",
+    "particle": "minecraft:block/red_wool"
+  }
+}

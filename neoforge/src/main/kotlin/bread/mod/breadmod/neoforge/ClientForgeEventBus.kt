@@ -2,7 +2,7 @@ package bread.mod.breadmod.neoforge
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.util.render.redness
-import bread.mod.breadmod.client.WarTickerClient
+import bread.mod.breadmod.client.gui.WarOverlay
 import bread.mod.breadmod.util.render.skyColorMixinActive
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferUploader
@@ -29,7 +29,7 @@ object ClientForgeEventBus {
 
     @SubscribeEvent
     fun renderStageEvent(event: RenderLevelStageEvent) {
-        if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarTickerClient.timerActive) {
+        if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {
             val poseStack = event.poseStack
             val tesselator = Tesselator.getInstance()
             val bufferBuilder = tesselator.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
@@ -78,7 +78,7 @@ object ClientForgeEventBus {
             BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
             RenderSystem.disableBlend()
             poseStack.popPose()
-        } else if (!WarTickerClient.timerActive) {
+        } else if (!WarOverlay.timerActive) {
             redness = 0f
             skyColorMixinActive = false
         }
