@@ -68,7 +68,7 @@ object CommonEvents {
                                 key.hurt(ModDamageTypes.TIMER_RAN_OUT.source(key.level()), 1000f)
                             }
                             NetworkManager.sendToPlayer(key, WarTimerToggle(false))
-                            warTimerMap.remove(key)
+//                            warTimerMap.remove(key)
                         }
                     }
                     if (increaseTime > 0 && isIncreasing) {
