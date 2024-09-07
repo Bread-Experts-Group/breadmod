@@ -53,4 +53,10 @@ object ModCreativeTabs {
     val MAIN_TAB: RegistrySupplier<CreativeModeTab> = constructTab("main", true) {
         icon { ModBlocks.BREAD_BLOCK.get().asItem().defaultInstance }
     }
+
+    @DataGenerateLanguage("en_us", "Bread Mod: Specials")
+    @DataGenerateLanguage("es_es", "Bread Mod: Especiales")
+    val SPECIALS_TAB: RegistrySupplier<CreativeModeTab> = constructTab("specials", true) {
+        icon { ModBlocks.BREAD_BLOCK.get().asItem().defaultInstance }
+    }
 }

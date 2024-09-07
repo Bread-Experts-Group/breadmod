@@ -9,17 +9,17 @@ architectury {
 }
 
 //noinspection GroovyAssignabilityCheck
-File generatedResources = project(':common').file('src/main/generated')
+File generatedResources = file('src/main/generated')
 
 sourceSets {
     main {
         resources.srcDir generatedResources
     }
 }
-//
+
 loom {
     runs {
-        runData {
+        datagen {
             data()
             programArgs "--all", "--mod", "breadmod"
             programArgs "--output", generatedResources.absolutePath

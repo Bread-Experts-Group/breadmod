@@ -8,7 +8,7 @@ architectury {
     fabric()
 }
 //noinspection GroovyAssignabilityCheck
-File generatedResources = project(':common').file('src/main/generated')
+File generatedResources = file('src/main/generated')
 
 sourceSets {
     main {
@@ -20,9 +20,9 @@ loom {
     runs {
         datagen {
             inherit server
-            name "Data Generation"
+            name "Minecraft Run Data"
             vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${project(':common').file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.output-dir=${generatedResources}"
             vmArg "-Dfabric-api.datagen.modid=breadmod"
             runDir "build/datagen"
         }
