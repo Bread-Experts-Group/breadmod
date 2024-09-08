@@ -6,10 +6,12 @@ import bread.mod.breadmod.block.RandomSoundBlock
 import bread.mod.breadmod.block.SoundBlock
 import bread.mod.breadmod.block.WarTerminalBlock
 import bread.mod.breadmod.block.util.FlammableBlock
-import bread.mod.breadmod.datagen.DataGenerateCustomModel
+import bread.mod.breadmod.datagen.model.block.DataGenerateCustomBlockModel
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.model.block.BlockModelType
 import bread.mod.breadmod.datagen.model.block.DataGenerateBlockAndItemModel
-import bread.mod.breadmod.datagen.model.block.ModelType
+import bread.mod.breadmod.datagen.tag.DataGenerateTags
+import bread.mod.breadmod.datagen.tag.TagTypes
 import bread.mod.breadmod.item.util.FuelItem
 import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
 import bread.mod.breadmod.registry.item.ModItems.registerBlockItem
@@ -49,6 +51,7 @@ object ModBlocks {
      */
     val BLOCK_REGISTRY: DeferredRegister<Block> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.BLOCK)
 
+    @DataGenerateTags(TagTypes.MINEABLE_WITH_HOE)
     @FlammableBlock(30, 60)
     @DataGenerateBlockAndItemModel
     @DataGenerateLanguage("en_us", "Bread Block")
@@ -74,30 +77,31 @@ object ModBlocks {
         Item.Properties()
     )
 
-    @DataGenerateCustomModel(true)
+    @DataGenerateCustomBlockModel(true)
     @DataGenerateLanguage("en_us", "OMANEKO")
     val OMANEKO_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "omaneko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-    @DataGenerateCustomModel(true)
+    @DataGenerateCustomBlockModel(true)
     @DataGenerateLanguage("en_us", "Niko Tenshot")
     val NIKO_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "niko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-    @DataGenerateCustomModel(true)
+    @DataGenerateCustomBlockModel(true)
     @DataGenerateLanguage("en_us", "Ricardetex-Infinious")
     val RICARD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "ricard_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-    @DataGenerateCustomModel(true)
+    @DataGenerateCustomBlockModel(true)
     @DataGenerateLanguage("en_us", "Unfunnylad")
     val UNFUNNYLAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "unfunnylad_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
+    @DataGenerateTags(TagTypes.MINEABLE_WITH_PICKAXE)
     @FuelItem((80 * 20) * 4)
     @DataGenerateBlockAndItemModel
     @DataGenerateLanguage("en_us", "Charcoal Block")
@@ -109,7 +113,7 @@ object ModBlocks {
     )
 
     // todo need single texture rotatable block generation
-    @DataGenerateCustomModel(true, ModelType.HORIZONTAL_FACING)
+    @DataGenerateCustomBlockModel(true, BlockModelType.HORIZONTAL_FACING)
     @DataGenerateLanguage("en_us", "War Terminal")
     val WAR_TERMINAL = BLOCK_REGISTRY.registerBlockItem(
         "war_terminal", { WarTerminalBlock() }, Item.Properties())
@@ -120,7 +124,7 @@ object ModBlocks {
         "random_sound_block", { RandomSoundBlock() }, Item.Properties()
     )
 
-    @DataGenerateCustomModel(false, ModelType.ORIENTABLE)
+    @DataGenerateCustomBlockModel(false, BlockModelType.ORIENTABLE)
     @DataGenerateLanguage("en_us", "Sound Block")
     val SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "sound_block", { SoundBlock() }, { block ->

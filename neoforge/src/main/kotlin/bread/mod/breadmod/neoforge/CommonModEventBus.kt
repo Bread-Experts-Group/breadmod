@@ -33,5 +33,11 @@ internal object CommonModEventBus {
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)
+
+        // todo uncomment after fixing
+//        SmartBlockTagsProviderNeoForge(
+//            ModMainCommon.MOD_ID,
+//            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+//        ).generateTags(event)
     }
 }

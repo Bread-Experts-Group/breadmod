@@ -1,6 +1,5 @@
 package bread.mod.breadmod.datagen.model.block
 
-import bread.mod.breadmod.datagen.DataGenerateCustomModel
 import bread.mod.breadmod.datagen.DataProviderScanner
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.level.block.Block
@@ -26,7 +25,7 @@ abstract class SmartBlockModelProvider<T>(
         listOf(
             *scanner.getObjectPropertiesAnnotatedWith<DataGenerateBlockModel>().toTypedArray(),
             *scanner.getObjectPropertiesAnnotatedWith<DataGenerateBlockAndItemModel>().toTypedArray(),
-            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateCustomModel>().toTypedArray()
+            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateCustomBlockModel>().toTypedArray()
         ).forEach { (value, annotations) -> this[value.get().getBlock()] = annotations[0] }
     }
 }

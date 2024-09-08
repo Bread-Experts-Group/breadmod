@@ -1,5 +1,8 @@
 package bread.mod.breadmod.util
 
+import net.minecraft.core.Registry
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import kotlin.system.exitProcess
 
 internal val formatArray: List<String> = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
@@ -92,6 +95,12 @@ fun formatUnit(
     pUnitMax: Int = 1000
 ): String =
     formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
+
+/**
+ * TODO javadoc
+ */
+fun <T> Registry<T>.createTagKey(path: String): TagKey<T> =
+    TagKey.create(this.key(), ResourceLocation.parse(path))
 
 /// !!! NOTICE !!! ///
 

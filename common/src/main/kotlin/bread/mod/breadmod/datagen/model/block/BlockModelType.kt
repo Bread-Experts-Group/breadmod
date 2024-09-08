@@ -1,5 +1,5 @@
 package bread.mod.breadmod.datagen.model.block
 
-enum class ModelType {
+enum class BlockModelType {
     HORIZONTAL_FACING, SIMPLE, ORIENTABLE
 }

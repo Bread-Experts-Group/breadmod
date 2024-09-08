@@ -9,4 +9,4 @@ import kotlin.annotation.AnnotationTarget.FIELD
  * @since 1.0.0
  */
 @Target(FIELD)
-annotation class DataGenerateItemModel
+annotation class DataGenerateItemModel(val type: ItemModelType = ItemModelType.STANDARD)
