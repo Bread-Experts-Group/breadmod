@@ -9,8 +9,9 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider
 import net.minecraft.data.models.BlockModelGenerators
 import net.minecraft.data.models.ItemModelGenerators
-import net.minecraft.data.models.model.ModelTemplates
+import net.minecraft.data.models.model.*
 import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.block.Block
 
 
 /**
@@ -43,7 +44,18 @@ class SmartModelProviderFabric(
             object : FabricModelProvider(dataOutput) {
                 override fun generateBlockStateModels(p0: BlockModelGenerators) = getBlockModelMap().forEach { (value, annotation) ->
                     when (annotation) {
-                        is DataGenerateBlockModel, is DataGenerateBlockAndItemModel -> p0.createGenericCube(value)
+                        is DataGenerateBlockModel, is DataGenerateBlockAndItemModel -> {
+                            val mapping = TextureMapping().put(
+                                TextureSlot.ALL,
+                                ModelLocationUtils.getModelLocation(value)
+                            )
+                            p0.blockStateOutput.accept(
+                                BlockModelGenerators.createSimpleBlock(
+                                    value,
+                                    ModelTemplates.CUBE_ALL.create(value, mapping, p0.modelOutput)
+                                )
+                            )
+                        }
                         else -> throw UnsupportedOperationException(annotation::class.simpleName)
                     }
                 }
@@ -55,10 +67,9 @@ class SmartModelProviderFabric(
                     }.forEach { (value, annotation) ->
                         when (annotation) {
                             is DataGenerateBlockModel,
-                            is DataGenerateBlockAndItemModel,
-                            is DataGenerateItemModel -> p0.generateFlatItem(
-                                value.asItem(),
-                                ModelTemplates.FLAT_ITEM
+                            is DataGenerateBlockAndItemModel -> p0.output.accept(
+                                ModelLocationUtils.getModelLocation(value.asItem()),
+                                DelegatedModel(ModelLocationUtils.getModelLocation(value as Block))
                             )
                             else -> throw UnsupportedOperationException(annotation::class.simpleName)
                         }

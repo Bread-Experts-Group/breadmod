@@ -1,10 +1,10 @@
 package bread.mod.breadmod.registry.block
 
 import bread.mod.breadmod.ModMainCommon
+import bread.mod.breadmod.block.BreadBlock
 import bread.mod.breadmod.block.RandomSoundBlock
 import bread.mod.breadmod.block.SoundBlock
 import bread.mod.breadmod.block.WarTerminalBlock
-import bread.mod.breadmod.block.BreadBlock
 import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.block.DataGenerateBlockAndItemModel
@@ -69,7 +69,6 @@ object ModBlocks {
         Item.Properties()
     )
 
-    @DataGenerateCustomModel(ModelType.HORIZONTAL)
     @DataGenerateLanguage("en_us", "War Terminal")
     val WAR_TERMINAL = BLOCK_REGISTRY.registerBlockItem(
         "war_terminal", { WarTerminalBlock() }, Item.Properties())

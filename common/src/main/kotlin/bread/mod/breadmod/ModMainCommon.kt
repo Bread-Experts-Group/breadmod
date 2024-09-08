@@ -1,14 +1,10 @@
 package bread.mod.breadmod
 
 import bread.mod.breadmod.logging.ConsoleColorAppender
-import bread.mod.breadmod.registry.block.ModBlocks
-import bread.mod.breadmod.registry.registerAll
-import dev.architectury.platform.Platform
+import bread.mod.breadmod.registry.Registry
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.FireBlock
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.LoggerContext
