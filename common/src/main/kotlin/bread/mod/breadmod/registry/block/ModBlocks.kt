@@ -3,6 +3,8 @@ package bread.mod.breadmod.registry.block
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.block.BreadBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.model.block.DataGenerateBlockModel
+import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.registry.item.ModItems.registerBlockItem
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
@@ -24,6 +26,8 @@ object ModBlocks {
      */
     val BLOCK_REGISTRY: DeferredRegister<Block> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.BLOCK)
 
+    @DataGenerateItemModel
+    @DataGenerateBlockModel
     @DataGenerateLanguage("en_us", "Bread Block")
     @DataGenerateLanguage("es_es", "Bloque De Pan")
     val BREAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(

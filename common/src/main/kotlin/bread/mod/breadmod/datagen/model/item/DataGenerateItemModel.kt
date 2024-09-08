@@ -8,6 +8,5 @@ import kotlin.annotation.AnnotationTarget.FIELD
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-@Repeatable
 @Target(FIELD)
 annotation class DataGenerateItemModel
