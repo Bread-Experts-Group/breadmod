@@ -28,7 +28,7 @@ class SmartItemModelProviderNeoForge(
             forEvent.generator.addProvider(
                 true,
                 object : ItemModelProvider(forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
-                    override fun registerModels() = getModelMap().forEach { (item, _) ->
+                    override fun registerModels() = getItemModelMap().forEach { (item, _) ->
                         basicItem(item)
                     }
                 }

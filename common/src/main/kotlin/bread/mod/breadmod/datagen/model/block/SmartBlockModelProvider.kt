@@ -19,7 +19,7 @@ abstract class SmartBlockModelProvider<T>(
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    protected fun getModelMap(): Map<Block, Annotation> = buildMap {
+    protected fun getBlockModelMap(): Map<Block, Annotation> = buildMap {
         fun Any?.getBlock() = if (this is BlockItem) this.block else this as Block
 
         listOf(

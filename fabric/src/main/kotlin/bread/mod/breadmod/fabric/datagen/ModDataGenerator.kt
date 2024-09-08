@@ -13,7 +13,7 @@ internal class ModDataGenerator : DataGeneratorEntrypoint {
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(pack)
 
-        SmartBlockModelProviderFabric(
+        SmartModelProviderFabric(
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(pack)

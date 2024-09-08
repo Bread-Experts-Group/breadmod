@@ -18,7 +18,7 @@ abstract class SmartItemModelProvider<T>(
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    protected fun getModelMap(): Map<Item, DataGenerateItemModel> = buildMap {
+    protected fun getItemModelMap(): Map<Item, DataGenerateItemModel> = buildMap {
         scanner.getObjectPropertiesAnnotatedWith<DataGenerateItemModel>().forEach { (value, annotations) ->
             this[value as Item] = annotations[0]
         }

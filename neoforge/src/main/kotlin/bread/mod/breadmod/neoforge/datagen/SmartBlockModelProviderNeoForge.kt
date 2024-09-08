@@ -13,6 +13,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
  * @property modID The mod ID to save block model definitions for.
  *
  * @see DataGenerateBlockModel
+ * @see DataGenerateBlockAndItemModel
  * @author Miko Elbrecht
  * @since 1.0.0
  */
@@ -20,7 +21,8 @@ class SmartBlockModelProviderNeoForge(
     modID: String, forClassLoader: ClassLoader, forPackage: Package
 ) : SmartBlockModelProvider<GatherDataEvent>(modID, forClassLoader, forPackage) {
     /**
-     * Generates block model definition files according to [DataGenerateBlockModel] use in the specified package.
+     * Generates block model definition files according to [DataGenerateBlockModel] and [DataGenerateBlockAndItemModel]
+     * use in the specified package.
      * @author Miko Elbrecht
      * @since 1.0.0
      */
@@ -29,7 +31,7 @@ class SmartBlockModelProviderNeoForge(
             forEvent.generator.addProvider(
                 true,
                 object : BlockStateProvider(forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
-                    override fun registerStatesAndModels() = getModelMap().forEach { (block, annotation) ->
+                    override fun registerStatesAndModels() = getBlockModelMap().forEach { (block, annotation) ->
                         when (annotation) {
                             is DataGenerateBlockModel -> simpleBlock(block)
                             is DataGenerateBlockAndItemModel -> simpleBlockWithItem(block, cubeAll(block))
