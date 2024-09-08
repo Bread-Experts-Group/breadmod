@@ -24,7 +24,8 @@ abstract class SmartBlockModelProvider<T>(
 
         listOf(
             *scanner.getObjectPropertiesAnnotatedWith<DataGenerateBlockModel>().toTypedArray(),
-            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateBlockAndItemModel>().toTypedArray()
+            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateBlockAndItemModel>().toTypedArray(),
+            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateCustomModel>().toTypedArray()
         ).forEach { (value, annotations) -> this[value.getBlock()] = annotations[0] }
     }
 }

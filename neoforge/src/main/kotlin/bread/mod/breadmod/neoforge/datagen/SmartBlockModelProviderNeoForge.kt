@@ -1,9 +1,13 @@
 package bread.mod.breadmod.neoforge.datagen
 
+import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.datagen.model.block.DataGenerateBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.DataGenerateBlockModel
+import bread.mod.breadmod.datagen.model.block.DataGenerateCustomModel
+import bread.mod.breadmod.datagen.model.block.ModelType
 import bread.mod.breadmod.datagen.model.block.SmartBlockModelProvider
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider
+import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
 
 
@@ -35,6 +39,24 @@ class SmartBlockModelProviderNeoForge(
                         when (annotation) {
                             is DataGenerateBlockModel -> simpleBlock(block)
                             is DataGenerateBlockAndItemModel -> simpleBlockWithItem(block, cubeAll(block))
+                            is DataGenerateCustomModel -> {
+                                // todo this is really bad and cursed...
+                                val correctedPath = modLocation(block.name.string.replace("block.breadmod.", "block/"))
+                                val id = block.name.string.replace("block.breadmod.", "")
+                                if (annotation.type == ModelType.HORIZONTAL) {
+                                    horizontalBlock(block) {
+                                        return@horizontalBlock models().singleTexture(
+                                            correctedPath.toString(),
+                                            modLoc("${ModelProvider.BLOCK_FOLDER}/$id"),
+                                            modLoc("${ModelProvider.BLOCK_FOLDER}/$id")
+                                        )
+                                    }
+                                    simpleBlockItem(
+                                        block,
+                                        models().getBuilder(correctedPath.toString())
+                                    )
+                                }
+                            }
                             else -> throw UnsupportedOperationException(annotation.toString())
                         }
                     }

@@ -1,8 +1,8 @@
 package bread.mod.breadmod
 
 import bread.mod.breadmod.logging.ConsoleColorAppender
-import bread.mod.breadmod.registry.Registry
 import bread.mod.breadmod.registry.block.ModBlocks
+import bread.mod.breadmod.registry.registerAll
 import dev.architectury.platform.Platform
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -38,7 +38,8 @@ object ModMainCommon {
 
         val fireBlock = Blocks.FIRE as FireBlock
 
-        Registry.registerAll()
+        // Register all our mod contents
+        registerAll()
 
 //        FuelRegistry.register(1600 * 9, ModBlocks.CHARCOAL_BLOCK.get())
 
