@@ -3,10 +3,10 @@ package bread.mod.breadmod.registry.menu
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modTranslatable
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
-import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.CreativeModeTab.Row
@@ -51,12 +51,12 @@ object ModCreativeTabs {
 
     @DataGenerateLanguage("en_us", "The Bread Mod")
     val MAIN_TAB: RegistrySupplier<CreativeModeTab> = constructTab("main", true) {
-        icon { ModBlocks.BREAD_BLOCK.get().asItem().defaultInstance }
+        icon { BuiltInRegistries.BLOCK.get(ModMainCommon.modLocation("bread_block")).asItem().defaultInstance }
     }
 
     @DataGenerateLanguage("en_us", "Bread Mod: Specials")
     @DataGenerateLanguage("es_es", "Bread Mod: Especiales")
     val SPECIALS_TAB: RegistrySupplier<CreativeModeTab> = constructTab("specials", true) {
-        icon { ModBlocks.BREAD_BLOCK.get().asItem().defaultInstance }
+        icon { BuiltInRegistries.BLOCK.get(ModMainCommon.modLocation("bread_block")).asItem().defaultInstance }
     }
 }

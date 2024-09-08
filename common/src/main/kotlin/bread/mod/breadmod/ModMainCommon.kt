@@ -2,9 +2,13 @@ package bread.mod.breadmod
 
 import bread.mod.breadmod.logging.ConsoleColorAppender
 import bread.mod.breadmod.registry.Registry
+import bread.mod.breadmod.registry.block.ModBlocks
+import dev.architectury.platform.Platform
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.FireBlock
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.LoggerContext
@@ -32,6 +36,16 @@ object ModMainCommon {
         cfg.addAppender(clrApd)
         Configurator.reconfigure(cfg)
 
+        val fireBlock = Blocks.FIRE as FireBlock
+
         Registry.registerAll()
+
+//        FuelRegistry.register(1600 * 9, ModBlocks.CHARCOAL_BLOCK.get())
+
+        if (Platform.isFabric()) {
+            fireBlock.setFlammable(ModBlocks.CHARCOAL_BLOCK.get().block, 30, 15)
+        } else {
+            // todo figure out why forge is throwing registry object not present here
+        }
     }
 }
