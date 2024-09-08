@@ -4,6 +4,7 @@ import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.neoforge.datagen.SmartBlockModelProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartItemModelProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartLanguageProviderNeoForge
+import bread.mod.breadmod.neoforge.datagen.SmartSoundProviderNeoForge
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.data.event.GatherDataEvent
@@ -24,6 +25,11 @@ internal object CommonModEventBus {
         ).generate(event)
 
         SmartBlockModelProviderNeoForge(
+            ModMainCommon.MOD_ID,
+            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+        ).generate(event)
+
+        SmartSoundProviderNeoForge(
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)

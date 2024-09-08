@@ -2,6 +2,8 @@ package bread.mod.breadmod.registry.sound
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
+import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.sound.DataGenerateSound
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
@@ -20,6 +22,8 @@ object ModSounds {
 //    val TOOL_GUN: RegistrySupplier<SoundEvent> = registerSoundEvents(TOOL_GUN_DEF)
     val HELL_NAW: RegistrySupplier<SoundEvent> = registerSoundEvents("hell_naw")
     val WAR_TIMER: RegistrySupplier<SoundEvent> = registerSoundEvents("war_timer")
+    @DataGenerateSound("war_timer_up",1f)
+    @DataGenerateLanguage("en_us", "War Timer increases")
     val WAR_TIMER_UP: RegistrySupplier<SoundEvent> = registerSoundEvents("war_timer_up")
 
     private fun registerSoundEvents(name: String): RegistrySupplier<SoundEvent> {

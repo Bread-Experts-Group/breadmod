@@ -17,5 +17,10 @@ internal class ModDataGenerator : DataGeneratorEntrypoint {
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(pack)
+
+        SmartSoundProviderFabric(
+            ModMainCommon.MOD_ID,
+            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+        ).generate(pack)
     }
 }
