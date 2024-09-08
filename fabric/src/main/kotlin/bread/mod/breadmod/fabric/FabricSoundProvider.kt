@@ -27,15 +27,14 @@ abstract class FabricSoundProvider(
             val soundJson = JsonObject()
 
             soundMap.forEach { (key, value) ->
-                val soundLoc = key.second.location
                 soundJson.add(key.first, JsonObject().also { json ->
                     json.add("sounds", JsonObject().also { sounds ->
-                        sounds.addProperty("name", "${soundLoc.namespace}:${soundLoc.path}")
+                        sounds.addProperty("name", key.first)
                         sounds.addProperty("volume", value.first)
                         sounds.addProperty("pitch", value.second)
                         sounds.addProperty("stream", value.third)
                     })
-                    json.addProperty("subtitle", "sound.${ModMainCommon.MOD_ID}.${value.first}")
+                    json.addProperty("subtitle", "sound.${ModMainCommon.MOD_ID}.${key.first}")
                 })
             }
 
@@ -45,7 +44,7 @@ abstract class FabricSoundProvider(
 
     private fun getSoundPath() =
         dataOutput
-            .createPathProvider(PackOutput.Target.RESOURCE_PACK, "sound")
+            .createPathProvider(PackOutput.Target.RESOURCE_PACK, "sounds")
             .json(ResourceLocation.fromNamespaceAndPath(dataOutput.modId, "sounds.json"))
 
     fun add(name: String, sound: SoundEvent, volume: Float, pitch: Float, stream: Boolean) =
