@@ -2,6 +2,7 @@ package bread.mod.breadmod.neoforge.datagen
 
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.model.item.SmartItemModelProvider
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
 
 
@@ -23,6 +24,15 @@ class SmartItemModelProviderNeoForge(
      * @since 1.0.0
      */
     override fun generate(forEvent: GatherDataEvent) {
-
+        if (forEvent.includeClient()) {
+            forEvent.generator.addProvider(
+                true,
+                object : ItemModelProvider(forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
+                    override fun registerModels() = getModelMap().forEach { (item, _) ->
+                        basicItem(item)
+                    }
+                }
+            )
+        }
     }
 }

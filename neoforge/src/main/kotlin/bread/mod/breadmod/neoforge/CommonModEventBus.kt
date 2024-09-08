@@ -1,6 +1,8 @@
 package bread.mod.breadmod.neoforge
 
 import bread.mod.breadmod.ModMainCommon
+import bread.mod.breadmod.neoforge.datagen.SmartBlockModelProviderNeoForge
+import bread.mod.breadmod.neoforge.datagen.SmartItemModelProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartLanguageProviderNeoForge
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
@@ -12,6 +14,16 @@ internal object CommonModEventBus {
     @SubscribeEvent
     fun gatherData(event: GatherDataEvent) {
         SmartLanguageProviderNeoForge(
+            ModMainCommon.MOD_ID,
+            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+        ).generate(event)
+
+        SmartItemModelProviderNeoForge(
+            ModMainCommon.MOD_ID,
+            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+        ).generate(event)
+
+        SmartBlockModelProviderNeoForge(
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)

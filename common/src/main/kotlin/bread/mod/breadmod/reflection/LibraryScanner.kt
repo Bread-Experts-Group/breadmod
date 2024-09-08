@@ -1,6 +1,5 @@
 package bread.mod.breadmod.reflection
 
-import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.jetbrains.annotations.ApiStatus
@@ -91,7 +90,7 @@ class LibraryScanner(val pForLoader: ClassLoader, val pForPackage: Package) {
         }.forEach {
             it.memberProperties.forEach { f ->
                 val annotationsRaw = f.javaField?.annotations?.firstOrNull { a ->
-                    a.annotationClass.qualifiedName?.contains(DataGenerateLanguage::class.simpleName!!) == true
+                    a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
                 }
                 if (annotationsRaw != null) {
                     val value = (f.call(it.objectInstance) as Supplier<*>).get()
@@ -99,10 +98,10 @@ class LibraryScanner(val pForLoader: ClassLoader, val pForPackage: Package) {
                     @Suppress("UNCHECKED_CAST")
                     val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
                     else annotationsRaw.annotationClass.java.declaredMethods
-                        .first { m -> m.name == "value" }
-                        .invoke(annotationsRaw) as Array<T>
+                        .firstOrNull { m -> m.name == "value" }
+                        ?.invoke(annotationsRaw) as Array<T>?
 
-                    add(value to annotations)
+                    if (annotations != null) add(value to annotations)
                 }
             }
         }
