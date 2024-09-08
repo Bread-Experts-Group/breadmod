@@ -18,4 +18,12 @@ object ModItems {
     ): RegistrySupplier<BlockItem> = this.register(id, block).let { blockSupply ->
         ITEM_REGISTRY.register(id) { BlockItem(blockSupply.get(), properties) }
     }
+
+    internal fun DeferredRegister<Block>.registerBlockItem(
+        id: String,
+        block: () -> Block,
+        item: (block: Block) -> BlockItem
+    ): RegistrySupplier<BlockItem> = this.register(id, block).let { blockSupply ->
+        ITEM_REGISTRY.register(id) { item(blockSupply.get()) }
+    }
 }

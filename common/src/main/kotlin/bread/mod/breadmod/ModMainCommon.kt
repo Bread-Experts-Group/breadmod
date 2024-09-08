@@ -1,8 +1,8 @@
 package bread.mod.breadmod
 
 import bread.mod.breadmod.logging.ConsoleColorAppender
-import bread.mod.breadmod.registry.Registry
 import bread.mod.breadmod.registry.block.ModBlocks
+import bread.mod.breadmod.registry.registerAll
 import dev.architectury.platform.Platform
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent

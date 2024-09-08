@@ -49,7 +49,7 @@ internal object WarTimerCommand {
                 target.forEach { player ->
                     val check = warTimerMap[player]
                     if (check != null) {
-                        check.increaseTime += 20
+                        check.increaseTime += 30
                         NetworkManager.sendToPlayer(player, WarTimerIncrement(true, check.increaseTime))
                     } else reset(player)
                 }

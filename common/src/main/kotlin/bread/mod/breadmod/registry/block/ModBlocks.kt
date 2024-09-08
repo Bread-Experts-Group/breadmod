@@ -1,6 +1,9 @@
 package bread.mod.breadmod.registry.block
 
 import bread.mod.breadmod.ModMainCommon
+import bread.mod.breadmod.block.RandomSoundBlock
+import bread.mod.breadmod.block.SoundBlock
+import bread.mod.breadmod.block.WarTerminalBlock
 import bread.mod.breadmod.block.BreadBlock
 import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
@@ -64,5 +67,22 @@ object ModBlocks {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK).ignitedByLava())
         },
         Item.Properties()
+    )
+
+    @DataGenerateCustomModel(ModelType.HORIZONTAL)
+    @DataGenerateLanguage("en_us", "War Terminal")
+    val WAR_TERMINAL = BLOCK_REGISTRY.registerBlockItem(
+        "war_terminal", { WarTerminalBlock() }, Item.Properties())
+
+    @DataGenerateBlockAndItemModel
+    @DataGenerateLanguage("en_us", "Random Sound Generator")
+    val RANDOM_SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "random_sound_block", { RandomSoundBlock() }, Item.Properties()
+    )
+
+    @DataGenerateBlockAndItemModel
+    @DataGenerateLanguage("en_us", "Sound Block")
+    val SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "sound_block", { SoundBlock() }, Item.Properties()
     )
 }

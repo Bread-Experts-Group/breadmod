@@ -5,6 +5,7 @@ import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.item.util.FuelItem
 import bread.mod.breadmod.networking.Networking.registerNetworking
 import bread.mod.breadmod.reflection.LibraryScanner
+import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
@@ -92,6 +93,7 @@ internal object Registry {
         ModCreativeTabs.CREATIVE_TAB_REGISTRY.register()
         ModSounds.SOUND_REGISTRY.register()
         ModItems.ITEM_REGISTRY.register()
+        ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
         registerNetworking()
         CommonEvents.registerServerTickEvent()
         CommonEvents.registerCommands()
