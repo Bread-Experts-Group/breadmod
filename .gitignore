@@ -1,7 +1,5 @@
 # User-specific stuff
 .idea/
-common/src/main/generated
-neoforge/src/generated
 
 *.iml
 *.ipr
@@ -118,3 +116,6 @@ run/
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
+/.kotlin/
+/fabric/src/main/generated/
+/neoforge/src/main/generated/
