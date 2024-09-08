@@ -2,6 +2,7 @@ package bread.mod.breadmod.datagen.language
 
 import bread.mod.breadmod.datagen.DataProviderScanner
 import net.minecraft.network.chat.contents.TranslatableContents
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike
 
@@ -31,6 +32,7 @@ abstract class SmartLanguageProvider<T>(
                         val contents = value.displayName.contents
                         if (contents is TranslatableContents) localeMap[contents.key] = a.translation
                     }
+                    is SoundEvent -> localeMap[value.location.toLanguageKey()] = a.translation
 
                     null -> throw NullPointerException()
                     else -> throw UnsupportedOperationException("Unsupported type (pls add): ${value::class.qualifiedName}")
