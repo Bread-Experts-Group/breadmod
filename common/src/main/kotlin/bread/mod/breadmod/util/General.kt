@@ -96,11 +96,9 @@ fun formatUnit(
 /// !!! NOTICE !!! ///
 
 // Definitions above this line are for public use by other mods, possibly even external ones!
-// Make sure to write good java-doc for them!
+// Make sure to write good Javadoc for them!
 
 /// INTERNAL DEFINITIONS FOLLOW ///
-
-//internal val json = Json { prettyPrint = true }
 
 internal fun computerSD(aggressive: Boolean) {
     val runtime = Runtime.getRuntime()
