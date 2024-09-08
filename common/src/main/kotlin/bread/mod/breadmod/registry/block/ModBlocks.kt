@@ -8,9 +8,13 @@ import bread.mod.breadmod.registry.item.ModItems.registerBlockItem
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
+import net.minecraft.world.food.FoodProperties
+import net.minecraft.world.food.Foods
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.state.BlockBehaviour
 
 /**
  * Blocks for the base bread mod.
@@ -29,6 +33,36 @@ object ModBlocks {
     @DataGenerateLanguage("en_us", "Bread Block")
     @DataGenerateLanguage("es_es", "Bloque De Pan")
     val BREAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "bread_block", { BreadBlock() }, Item.Properties()
+        "bread_block", { BreadBlock() }, Item.Properties().food(
+            FoodProperties.Builder()
+                .nutrition(Foods.BREAD.nutrition * 9)
+                .saturationModifier(Foods.BREAD.saturation * 9)
+                .build()
+        )
+    )
+
+    @DataGenerateBlockAndItemModel
+    @DataGenerateLanguage("en_us", "Reinforced Bread Block")
+    val REINFORCED_BREAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "reinforced_bread_block",
+        { Block(BlockBehaviour.Properties.ofFullCopy(
+            Blocks.NETHERITE_BLOCK).strength(25f, 1200f))
+        },
+        Item.Properties()
+    )
+
+    // todo port
+//    val MONITOR
+
+    // todo port horizontal facing model gen
+//    val KEYBOARD
+
+    @DataGenerateBlockAndItemModel
+    @DataGenerateLanguage("en_us", "Charcoal Block")
+    val CHARCOAL_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "charcoal_block", {
+            Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK).ignitedByLava())
+        },
+        Item.Properties()
     )
 }
