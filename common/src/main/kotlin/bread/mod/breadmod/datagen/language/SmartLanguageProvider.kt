@@ -25,17 +25,16 @@ abstract class SmartLanguageProvider<T>(
         scanner.getObjectPropertiesAnnotatedWith<DataGenerateLanguage>().forEach { (value, annotations) ->
             annotations.forEach { a ->
                 val localeMap = getOrPut(a.locale) { mutableMapOf() }
-
-                when (value) {
-                    is ItemLike -> localeMap[value.asItem().descriptionId] = a.translation
+                when (val actual = value.get()) {
+                    is ItemLike -> localeMap[actual.asItem().descriptionId] = a.translation
                     is CreativeModeTab -> {
-                        val contents = value.displayName.contents
+                        val contents = actual.displayName.contents
                         if (contents is TranslatableContents) localeMap[contents.key] = a.translation
                     }
-                    is SoundEvent -> localeMap[value.location.toLanguageKey("sound")] = a.translation
+                    is SoundEvent -> localeMap[actual.location.toLanguageKey("sound")] = a.translation
 
                     null -> throw NullPointerException()
-                    else -> throw UnsupportedOperationException("Unsupported type (pls add): ${value::class.qualifiedName}")
+                    else -> throw UnsupportedOperationException("Unsupported type (pls add): ${actual::class.qualifiedName}")
                 }
             }
         }

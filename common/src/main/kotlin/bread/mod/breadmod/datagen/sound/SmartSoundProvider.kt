@@ -8,7 +8,7 @@ abstract class SmartSoundProvider<T> (
 ): DataProviderScanner<T>(modID, forClassLoader, forPackage) {
     protected fun getSoundMap(): Map<SoundEvent, Array<DataGenerateSound>> = buildMap {
         scanner.getObjectPropertiesAnnotatedWith<DataGenerateSound>().forEach { (value, annotations) ->
-            this[value as SoundEvent] = annotations
+            this[value.get() as SoundEvent] = annotations
         }
     }
 }

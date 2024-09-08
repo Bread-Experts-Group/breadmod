@@ -20,7 +20,7 @@ abstract class SmartItemModelProvider<T>(
      */
     protected fun getItemModelMap(): Map<Item, DataGenerateItemModel> = buildMap {
         scanner.getObjectPropertiesAnnotatedWith<DataGenerateItemModel>().forEach { (value, annotations) ->
-            this[value as Item] = annotations[0]
+            this[value.get() as Item] = annotations[0]
         }
     }
 }

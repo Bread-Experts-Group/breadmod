@@ -36,16 +36,6 @@ object ModMainCommon {
         cfg.addAppender(clrApd)
         Configurator.reconfigure(cfg)
 
-        val fireBlock = Blocks.FIRE as FireBlock
-
         Registry.registerAll()
-
-//        FuelRegistry.register(1600 * 9, ModBlocks.CHARCOAL_BLOCK.get())
-
-        if (Platform.isFabric()) {
-            fireBlock.setFlammable(ModBlocks.CHARCOAL_BLOCK.get().block, 30, 15)
-        } else {
-            // todo figure out why forge is throwing registry object not present here
-        }
     }
 }

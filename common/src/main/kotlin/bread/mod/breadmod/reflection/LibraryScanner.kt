@@ -28,7 +28,7 @@ import kotlin.reflect.jvm.javaField
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-class LibraryScanner(val pForLoader: ClassLoader, val pForPackage: Package) {
+class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackage: Package) {
     companion object {
         /**
          * [Logger] for [LibraryScanner] operations.
@@ -78,7 +78,7 @@ class LibraryScanner(val pForLoader: ClassLoader, val pForPackage: Package) {
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): List<Pair<*, Array<T>>> = buildList {
+    inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): List<Pair<Supplier<*>, Array<T>>> = buildList {
         packageClasses.filter {
             try {
                 it.objectInstance != null
@@ -93,7 +93,7 @@ class LibraryScanner(val pForLoader: ClassLoader, val pForPackage: Package) {
                     a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
                 }
                 if (annotationsRaw != null) {
-                    val value = (f.call(it.objectInstance) as Supplier<*>).get()
+                    val value = (f.call(it.objectInstance) as Supplier<*>)
 
                     @Suppress("UNCHECKED_CAST")
                     val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
