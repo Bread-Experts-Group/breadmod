@@ -6,20 +6,35 @@ import bread.mod.breadmod.block.RandomSoundBlock
 import bread.mod.breadmod.block.SoundBlock
 import bread.mod.breadmod.block.WarTerminalBlock
 import bread.mod.breadmod.block.util.FlammableBlock
+import bread.mod.breadmod.datagen.DataGenerateCustomModel
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.block.DataGenerateBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.ModelType
 import bread.mod.breadmod.item.util.FuelItem
+import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
 import bread.mod.breadmod.registry.item.ModItems.registerBlockItem
+import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.food.Foods
 import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.Rarity
+import net.minecraft.world.item.context.BlockPlaceContext
+import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.StateDefinition
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.VoxelShape
 
 /**
  * Blocks for the base bread mod.
@@ -59,6 +74,30 @@ object ModBlocks {
         Item.Properties()
     )
 
+    @DataGenerateCustomModel(true)
+    @DataGenerateLanguage("en_us", "OMANEKO")
+    val OMANEKO_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "omaneko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
+    )
+
+    @DataGenerateCustomModel(true)
+    @DataGenerateLanguage("en_us", "Niko Tenshot")
+    val NIKO_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "niko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
+    )
+
+    @DataGenerateCustomModel(true)
+    @DataGenerateLanguage("en_us", "Ricardetex-Infinious")
+    val RICARD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "ricard_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
+    )
+
+    @DataGenerateCustomModel(true)
+    @DataGenerateLanguage("en_us", "Unfunnylad")
+    val UNFUNNYLAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "unfunnylad_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
+    )
+
     @FuelItem((80 * 20) * 4)
     @DataGenerateBlockAndItemModel
     @DataGenerateLanguage("en_us", "Charcoal Block")
@@ -69,6 +108,8 @@ object ModBlocks {
         Item.Properties()
     )
 
+    // todo need single texture rotatable block generation
+    @DataGenerateCustomModel(true, ModelType.HORIZONTAL_FACING)
     @DataGenerateLanguage("en_us", "War Terminal")
     val WAR_TERMINAL = BLOCK_REGISTRY.registerBlockItem(
         "war_terminal", { WarTerminalBlock() }, Item.Properties())
@@ -79,9 +120,38 @@ object ModBlocks {
         "random_sound_block", { RandomSoundBlock() }, Item.Properties()
     )
 
-    @DataGenerateBlockAndItemModel
+    @DataGenerateCustomModel(false, ModelType.ORIENTABLE)
     @DataGenerateLanguage("en_us", "Sound Block")
     val SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
-        "sound_block", { SoundBlock() }, Item.Properties()
+        "sound_block", { SoundBlock() }, { block ->
+            object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
+                override val creativeModeTabs: List<RegistrySupplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
+            }
+        }
     )
+
+    private class CharacterModelBlock : Block(Properties.of().noOcclusion()) {
+        override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
+            pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
+        }
+
+        override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState = defaultBlockState()
+            .setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection)
+
+        @Deprecated(
+            "Deprecated in Java", ReplaceWith(
+                "super.getShape(pState, pLevel, pPos, pContext)",
+                "net.minecraft.world.level.block.Block"
+            )
+        )
+        override fun getShape(
+            pState: BlockState,
+            pLevel: BlockGetter,
+            pPos: BlockPos,
+            pContext: CollisionContext
+        ): VoxelShape = when (pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            Direction.NORTH, Direction.SOUTH -> box(0.0, 0.0, 3.0, 16.0, 20.0, 13.0)
+            else -> box(3.0, 0.0, 0.0, 13.0, 20.0, 16.0)
+        }
+    }
 }

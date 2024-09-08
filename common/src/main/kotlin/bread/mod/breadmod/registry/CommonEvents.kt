@@ -19,7 +19,6 @@ internal object CommonEvents {
             )
         }
 
-    // TODO this should probably be redone
     /**
      * A map holding a war timer for every player on the server.
      *

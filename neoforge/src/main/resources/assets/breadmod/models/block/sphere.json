@@ -1,5 +1,5 @@
 {
-  "loader": "forge:obj",
+  "loader": "neoforge:obj",
   "flip_v": false,
   "model": "breadmod:models/block/sphere/sphere.obj",
   "textures": {

@@ -1,6 +1,7 @@
 package bread.mod.breadmod.registry
 
 import bread.mod.breadmod.ModMainCommon
+import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.item.util.FuelItem
 import bread.mod.breadmod.networking.Networking.registerNetworking
@@ -10,9 +11,14 @@ import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.sound.ModSounds
+import dev.architectury.event.events.common.LifecycleEvent
 import dev.architectury.registry.fuel.FuelRegistry
+import dev.architectury.registry.item.ItemPropertiesRegistry
 import dev.architectury.registry.registries.RegistrySupplier
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
@@ -88,6 +94,17 @@ internal object Registry {
             }
     }
 
+    private fun runLifecycleSetupStage() {
+        LifecycleEvent.SETUP.register {
+            ItemPropertiesRegistry.register(ModItems.BREAD_SHIELD.get(), modLocation("blocking")) {
+                    itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
+                if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1f else 0f
+            }
+
+            runAnnotations()
+        }
+    }
+
     fun registerAll() {
         ModBlocks.BLOCK_REGISTRY.register()
         ModCreativeTabs.CREATIVE_TAB_REGISTRY.register()
@@ -98,7 +115,5 @@ internal object Registry {
         CommonEvents.registerServerTickEvent()
         CommonEvents.registerCommands()
 //        registerClientTick()
-
-        runAnnotations()
     }
 }

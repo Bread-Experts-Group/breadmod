@@ -1,5 +1,6 @@
 package bread.mod.breadmod.fabric.datagen
 
+import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.datagen.model.block.DataGenerateBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.DataGenerateBlockModel
 import bread.mod.breadmod.datagen.model.block.SmartBlockModelProvider
@@ -10,6 +11,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider
 import net.minecraft.data.models.BlockModelGenerators
 import net.minecraft.data.models.ItemModelGenerators
 import net.minecraft.data.models.model.*
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Block
 
@@ -55,6 +57,7 @@ class SmartModelProviderFabric(
                                     ModelTemplates.CUBE_ALL.create(value, mapping, p0.modelOutput)
                                 )
                             )
+                            // todo set up DataGenerateCustomModel
                         }
                         else -> throw UnsupportedOperationException(annotation::class.simpleName)
                     }
@@ -77,4 +80,10 @@ class SmartModelProviderFabric(
             }
         }
     }
+
+    private fun modLoc(name: String) =
+        ResourceLocation.fromNamespaceAndPath(ModMainCommon.MOD_ID, name)
+
+    private fun mcLoc(name: String) =
+        ResourceLocation.parse(name)
 }

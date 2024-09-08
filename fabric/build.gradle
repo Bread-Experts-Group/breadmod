@@ -10,6 +10,8 @@ architectury {
 //noinspection GroovyAssignabilityCheck
 File generatedResources = file('src/main/generated')
 
+tasks.withType(Copy).configureEach { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
+
 sourceSets {
     main {
         resources.srcDir generatedResources

@@ -57,7 +57,7 @@ open class WarOverlay: AbstractModGuiOverlay() {
         if (timerPosition > -110f) {
             poseStack.pushPose()
             poseStack.scaleFlat(0.5f)
-            poseStack.translate(0.0, timerPosition.toDouble(), 0.0)
+            poseStack.translate(0.0, timerPosition.toDouble(), 3600.0)
             poseStack.translate(screenWidth - (screenWidth / 2).toDouble(), 0.0, 0.0)
             guiGraphics.blit(overlayTexture, 0, 0, 0, 0, 163, 89)
             guiGraphics.blit(overlayTexture, 163, 0, 0, 90, 166, 111)

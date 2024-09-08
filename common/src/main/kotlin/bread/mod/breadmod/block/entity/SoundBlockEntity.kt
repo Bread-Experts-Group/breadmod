@@ -91,7 +91,6 @@ class SoundBlockEntity(
         BlockItem.setBlockEntityData(stack, type, saveWithFullMetadata(registries))
     }
 
-
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =
         CompoundTag().also { saveAdditional(it, registries) }
 

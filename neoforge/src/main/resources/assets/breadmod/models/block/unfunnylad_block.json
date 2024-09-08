@@ -1,5 +1,5 @@
 {
-  "loader": "forge:obj",
+  "loader": "neoforge:obj",
   "flip_v": true,
   "model": "breadmod:models/block/unfunnylad/unfunnylad_block.obj",
   "parent": "block/block",

@@ -1,7 +1,9 @@
 package bread.mod.breadmod
 
 import bread.mod.breadmod.logging.ConsoleColorAppender
-import bread.mod.breadmod.registry.Registry
+import bread.mod.breadmod.registry.ClientEvents
+import bread.mod.breadmod.registry.CommonEvents
+import bread.mod.breadmod.registry.Registry.registerAll
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
@@ -32,6 +34,12 @@ object ModMainCommon {
         cfg.addAppender(clrApd)
         Configurator.reconfigure(cfg)
 
-        Registry.registerAll()
+        // Register all our mod contents
+        registerAll()
+    }
+
+    fun initClient() {
+        ClientEvents.registerOverlays()
+        CommonEvents.registerServerTickEvent()
     }
 }
