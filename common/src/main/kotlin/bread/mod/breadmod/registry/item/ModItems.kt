@@ -5,20 +5,26 @@ import bread.mod.breadmod.ModMainCommon.modTranslatable
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
+import bread.mod.breadmod.item.BreadGunItem
 import bread.mod.breadmod.item.BreadShieldItem
 import bread.mod.breadmod.item.DopedBreadItem
 import bread.mod.breadmod.item.TestBreadItem
+import bread.mod.breadmod.item.TieredBreadAmuletItem
+import bread.mod.breadmod.item.TieredBreadAmuletItem.BreadAmuletType
 import bread.mod.breadmod.item.UltimateBreadItem
+import bread.mod.breadmod.item.WrenchItem
+import bread.mod.breadmod.item.armor.ArmorMaterials
+import bread.mod.breadmod.item.armor.BreadArmorItem
 import bread.mod.breadmod.item.tool.KnifeItem
 import bread.mod.breadmod.item.tool.ToolTiers
-import bread.mod.breadmod.registry.item.armor.ArmorMaterials
-import bread.mod.breadmod.registry.item.armor.BreadArmorItem
 import bread.mod.breadmod.registry.tag.RecordTags
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.ChatFormatting
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ArmorItem
 import net.minecraft.world.item.ArmorItem.Type
@@ -28,27 +34,33 @@ import net.minecraft.world.item.HoeItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.PickaxeItem
+import net.minecraft.world.item.ProjectileWeaponItem
+import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.ShovelItem
 import net.minecraft.world.item.SwordItem
 import net.minecraft.world.item.Tiers
 import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.UseAnim
 import net.minecraft.world.level.block.Block
 
 @Suppress("unused")
 object ModItems {
     val ITEM_REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.ITEM)
 
+    // todo port over features
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Test Bread")
-    val TEST_BREAD: RegistrySupplier<Item> = ITEM_REGISTRY.register("test_bread") { TestBreadItem() }
+    val TEST_BREAD: RegistrySupplier<TestBreadItem> = ITEM_REGISTRY.register("test_bread") { TestBreadItem() }
 
+    // todo port over features
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Ultimate Bread")
-    val ULTIMATE_BREAD: RegistrySupplier<Item> = ITEM_REGISTRY.register("ultimate_bread") { UltimateBreadItem() }
+    val ULTIMATE_BREAD: RegistrySupplier<UltimateBreadItem> = ITEM_REGISTRY.register("ultimate_bread") { UltimateBreadItem() }
 
     @DataGenerateLanguage("en_us", "Bread Shield")
     val BREAD_SHIELD: RegistrySupplier<BreadShieldItem> = ITEM_REGISTRY.register("bread_shield") { BreadShieldItem() }
 
+    // todo port over features
     //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
     @DataGenerateLanguage("en_us", "Doped Bread")
     val DOPED_BREAD: RegistrySupplier<DopedBreadItem> = ITEM_REGISTRY.register("doped_bread") { DopedBreadItem() }
@@ -126,8 +138,25 @@ object ModItems {
         Item(Item.Properties().jukeboxPlayable(RecordTags.TEST_SOUND))
     }
 
-    // todo bread amulets go here eventually
+    // todo port over features (when config exists)
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "Bread Amulet")
+    val BASIC_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("bread_amulet") {
+        TieredBreadAmuletItem(BreadAmuletType.NORMAL, 500)
+    }
 
+    @DataGenerateLanguage("en_us", "Reinforced Bread Amulet")
+    val REINFORCED_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("reinforced_bread_amulet") {
+        TieredBreadAmuletItem(BreadAmuletType.REINFORCED, 2500)
+    }
+
+    @DataGenerateLanguage("en_us", "Indestructible Bread Amulet")
+    val INDESTRUCTIBLE_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> =
+        ITEM_REGISTRY.register("indestructible_bread_amulet") {
+            TieredBreadAmuletItem(BreadAmuletType.INDESTRUCTIBLE, 0)
+        }
+
+    // todo port over features (applies to all 4 bread armors)
 //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Helmet")
@@ -238,6 +267,39 @@ object ModItems {
     @DataGenerateLanguage("en_us", "Reinforced Bread Sword")
     val RF_BREAD_SWORD: RegistrySupplier<SwordItem> = ITEM_REGISTRY.register("reinforced_bread_sword") {
         SwordItem(ToolTiers.RF_BREAD, Item.Properties().stacksTo(1))
+    }
+
+    // todo port over features
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "Wrench")
+    val WRENCH: RegistrySupplier<WrenchItem> = ITEM_REGISTRY.register("wrench") { WrenchItem() }
+
+    @DataGenerateLanguage("en_us", "Bread Bullet")
+    val BREAD_BULLET_ITEM: RegistrySupplier<Item> = ITEM_REGISTRY.register("bread_bullet") { Item(Item.Properties()) }
+
+    // todo shootProjectile exists now, fix up this item to work again
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "Bread Gun")
+    val BREAD_GUN_ITEM: RegistrySupplier<ProjectileWeaponItem> = ITEM_REGISTRY.register("bread_gun") { BreadGunItem() }
+
+    // todo tool gun goes here
+
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "Caprispin")
+    val CAPRISPIN: RegistrySupplier<Item> = ITEM_REGISTRY.register("caprispin") {
+        object : Item(
+            Properties()
+                .food(
+                    FoodProperties.Builder()
+                        .alwaysEdible()
+                        .nutrition(20)
+                        .effect(MobEffectInstance(MobEffects.LEVITATION, 100, 20), 1f)
+                        .build()
+                )
+                .rarity(Rarity.EPIC)
+        ) {
+            override fun getUseAnimation(pStack: ItemStack): UseAnim = UseAnim.DRINK
+        }
     }
 
     internal fun DeferredRegister<Block>.registerBlockItem(

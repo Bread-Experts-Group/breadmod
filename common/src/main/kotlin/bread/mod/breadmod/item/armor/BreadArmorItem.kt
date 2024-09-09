@@ -1,4 +1,4 @@
-package bread.mod.breadmod.registry.item.armor
+package bread.mod.breadmod.item.armor
 
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.ArmorItem

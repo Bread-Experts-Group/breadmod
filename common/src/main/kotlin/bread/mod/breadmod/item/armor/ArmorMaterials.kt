@@ -1,4 +1,4 @@
-package bread.mod.breadmod.registry.item.armor
+package bread.mod.breadmod.item.armor
 
 import bread.mod.breadmod.ModMainCommon.MOD_ID
 import bread.mod.breadmod.ModMainCommon.modLocation

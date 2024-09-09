@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack
 
 class UltimateBreadItem : Item(Properties().stacksTo(1).fireResistant()), IRegisterSpecialCreativeTab {
 
+    // todo replace with item component system
 //    fun setTimeLeft(stack: ItemStack, ticks: Long) = stack.orCreateTag.putLong(TIME_LEFT_NBT, ticks)
 
     override val creativeModeTabs: List<RegistrySupplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)

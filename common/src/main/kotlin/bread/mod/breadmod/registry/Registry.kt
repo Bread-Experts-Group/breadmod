@@ -9,7 +9,7 @@ import bread.mod.breadmod.reflection.LibraryScanner
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
-import bread.mod.breadmod.registry.item.armor.ArmorMaterials
+import bread.mod.breadmod.item.armor.ArmorMaterials
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.sound.ModSounds
 import dev.architectury.event.events.common.LifecycleEvent
