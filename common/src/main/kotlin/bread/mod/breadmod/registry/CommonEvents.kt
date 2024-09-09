@@ -28,21 +28,22 @@ internal object CommonEvents {
 
     data class WarTimerData(
         var timeLeft: Int = 30,
-        var gracePeriod: Int = 20,
-        var ticker: Int = 20,
+        var gracePeriod: Int = 40,
+        var ticker: Int = 40,
         var increaseTime: Int = 0,
         var gracePeriodActive: Boolean = false,
         var active: Boolean = true
     )
 
+    // todo figure out why this is firing twice as fast as it should (40 tps instead of 20)
     fun registerServerTickEvent() =
-        TickEvent.Server.SERVER_POST.register {
+        TickEvent.Server.SERVER_PRE.register {
             warTimerMap.forEach { (player, value) ->
                 if (value.active && value.increaseTime == 0) {
                     if (value.ticker == 0 && value.timeLeft > 0 && !value.gracePeriodActive) {
                         value.timeLeft--
                         NetworkManager.sendToPlayer(player, WarTimerSynchronization(value.timeLeft))
-                        value.ticker = 20
+                        value.ticker = 40
                     } else if (!value.gracePeriodActive && value.ticker != 0) {
                         value.ticker--
                     } else if (value.timeLeft <= 0 && !value.gracePeriodActive && value.gracePeriod != 0) {
@@ -60,8 +61,8 @@ internal object CommonEvents {
                 } else if (value.increaseTime > 0 && value.active) {
                     value.increaseTime--
                     value.timeLeft++
-                    value.ticker = 20
-                    value.gracePeriod = 20
+                    value.ticker = 50
+                    value.gracePeriod = 40
                     value.gracePeriodActive = false
                 }
             }

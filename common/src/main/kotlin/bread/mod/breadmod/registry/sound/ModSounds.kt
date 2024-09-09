@@ -9,11 +9,12 @@ import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
 import net.minecraft.sounds.SoundEvent
 
+@Suppress("unused")
 object ModSounds {
     internal val SOUND_REGISTRY: DeferredRegister<SoundEvent> =
         DeferredRegister.create(ModMainCommon.MOD_ID, Registries.SOUND_EVENT)
 
-    @DataGenerateSound("test_sound")
+    @DataGenerateSound("test_sound", stream = true)
     @DataGenerateLanguage("en_us", "Test")
     val TEST_SOUND: RegistrySupplier<SoundEvent> = registerSoundEvents("test_sound")
 
@@ -21,7 +22,7 @@ object ModSounds {
     @DataGenerateLanguage("en_us", "HAPPY HAPPY HAPPY")
     val HAPPY_BLOCK_FUSE: RegistrySupplier<SoundEvent> = registerSoundEvents("happy_block_fuse")
 
-    @DataGenerateSound("ultramarine")
+    @DataGenerateSound("ultramarine", stream = true)
     @DataGenerateLanguage("en_us", "Ultramarine plays")
     val ULTRAMARINE: RegistrySupplier<SoundEvent> = registerSoundEvents("ultramarine")
 
@@ -30,7 +31,7 @@ object ModSounds {
     val POW: RegistrySupplier<SoundEvent> = registerSoundEvents("pow")
 
     @DataGenerateSound("scream")
-    @DataGenerateLanguage("en_us", "TODO CHRIS FILL THIS IN")
+    @DataGenerateLanguage("en_us", "AAAAAAAAAAAAAAA-")
     val SCREAM: RegistrySupplier<SoundEvent> = registerSoundEvents("scream")
 
     @DataGenerateSound("minigun")

@@ -15,6 +15,8 @@ import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.food.Foods
 import net.minecraft.world.item.BlockItem
@@ -50,6 +52,9 @@ object ModBlocks {
                 FoodProperties.Builder()
                     .nutrition(Foods.BREAD.nutrition * 9)
                     .saturationModifier(Foods.BREAD.saturation * 9)
+                    .`arch$effect`({ MobEffectInstance(
+                        MobEffects.LUCK, 500, 1, true, true
+                    )}, 100f)
                     .build()
             )
     )

@@ -9,6 +9,7 @@ import bread.mod.breadmod.reflection.LibraryScanner
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
+import bread.mod.breadmod.registry.item.armor.ArmorMaterials
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.sound.ModSounds
 import dev.architectury.event.events.common.LifecycleEvent
@@ -111,11 +112,13 @@ internal object Registry {
         ModSounds.SOUND_REGISTRY.register()
         ModItems.ITEM_REGISTRY.register()
         ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
+        ArmorMaterials.ARMOR_REGISTRY.register()
         registerNetworking()
         CommonEvents.registerServerTickEvent()
         CommonEvents.registerCommands()
 //        registerClientTick()
 
         runAnnotations()
+        runLifecycleSetupStage()
     }
 }
