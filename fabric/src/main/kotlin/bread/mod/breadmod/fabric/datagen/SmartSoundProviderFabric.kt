@@ -37,7 +37,7 @@ class SmartSoundProviderFabric(
                     if (it.pitch != 1.0f) soundObj.addProperty("pitch", it.pitch)
                     if (it.weight != 1) soundObj.addProperty("weight", it.weight)
                     if (it.stream) soundObj.addProperty("stream", true)
-                    if (it.attenuation_distance != 16) soundObj.addProperty("attenuation_distance", it.attenuation_distance)
+                    if (it.attenuationDistance != 16) soundObj.addProperty("attenuation_distance", it.attenuationDistance)
                     if (it.preload) soundObj.addProperty("preload", true)
 
                     if (soundObj.size() == 1) sounds.add(soundObj.getAsJsonPrimitive("name").asString)

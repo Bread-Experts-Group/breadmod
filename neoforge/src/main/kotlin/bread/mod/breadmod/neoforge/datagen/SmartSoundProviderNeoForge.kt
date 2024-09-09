@@ -25,7 +25,7 @@ class SmartSoundProviderNeoForge(
                             .pitch(it.pitch)
                             .weight(it.weight)
                             .stream(it.stream)
-                            .attenuationDistance(it.attenuation_distance)
+                            .attenuationDistance(it.attenuationDistance)
                             .preload(it.preload)
                     )
                 }

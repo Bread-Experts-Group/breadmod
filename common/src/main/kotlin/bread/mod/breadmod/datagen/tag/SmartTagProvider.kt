@@ -1,20 +1,30 @@
 package bread.mod.breadmod.datagen.tag
 
 import bread.mod.breadmod.datagen.DataProviderScanner
-import net.minecraft.world.item.Item
-import net.minecraft.world.level.block.Block
+import dev.architectury.registry.registries.RegistrySupplier
+import kotlin.reflect.KProperty1
 
-abstract class SmartTagProvider<T> (
+/**
+ * Abstract class for [SmartTagProvider]s.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+abstract class SmartTagProvider<T>(
     modID: String, forClassLoader: ClassLoader, forPackage: Package
 ) : DataProviderScanner<T>(modID, forClassLoader, forPackage) {
-    protected fun getBlockTags(): Map<Block, DataGenerateTags> = buildMap {
-        scanner.getObjectPropertiesAnnotatedWith<DataGenerateTags>().forEach { (value, annotation) ->
-            this[value.get() as Block] = annotation[0]
-        }
-    }
-    protected fun getItemTags(): Map<Item, DataGenerateTags> = buildMap {
-        scanner.getObjectPropertiesAnnotatedWith<DataGenerateTags>().forEach { (value, annotation) ->
-            this[value.get() as Item] = annotation[0]
+    /**
+     * The main function of the [SmartTagProvider].
+     * Reads off all properties tagged with annotations in [bread.mod.breadmod.datagen.tag].
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    protected fun getTagMap(): Map<RegistrySupplier<*>, Pair<Array<DataGenerateTag>, KProperty1<*, *>>> = buildMap {
+        listOf(scanner.getObjectPropertiesAnnotatedWith<DataGenerateTag>()).forEach {
+            it.forEach { (property, data) ->
+                val supplier = data.first
+                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException("${property.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
+                put(supplier, Pair(data.second, property))
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package bread.mod.breadmod.datagen.language
 
 import bread.mod.breadmod.datagen.DataProviderScanner
+import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.CreativeModeTab
@@ -22,10 +23,13 @@ abstract class SmartLanguageProvider<T>(
      * @since 1.0.0
      */
     protected fun getTranslationMap(): Map<String, MutableMap<String, String>> = buildMap {
-        scanner.getObjectPropertiesAnnotatedWith<DataGenerateLanguage>().forEach { (value, annotations) ->
-            annotations.forEach { a ->
+        scanner.getObjectPropertiesAnnotatedWith<DataGenerateLanguage>().forEach { (property, data) ->
+            data.second.forEach { a ->
                 val localeMap = getOrPut(a.locale) { mutableMapOf() }
-                when (val actual = value.get()) {
+                val supplier = data.first
+                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException("${property.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
+
+                when (val actual = supplier.get()) {
                     is ItemLike -> localeMap[actual.asItem().descriptionId] = a.translation
                     is CreativeModeTab -> {
                         val contents = actual.displayName.contents

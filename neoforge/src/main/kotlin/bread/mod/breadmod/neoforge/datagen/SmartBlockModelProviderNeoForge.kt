@@ -1,14 +1,19 @@
 package bread.mod.breadmod.neoforge.datagen
 
-import bread.mod.breadmod.datagen.model.block.DataGenerateCustomBlockModel
-import bread.mod.breadmod.datagen.model.block.BlockModelType
-import bread.mod.breadmod.datagen.model.block.DataGenerateBlockAndItemModel
-import bread.mod.breadmod.datagen.model.block.DataGenerateBlockModel
+import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.SmartBlockModelProvider
+import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockModel
+import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockModel
+import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockModel
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
+import kotlin.reflect.jvm.javaField
 
 
 /**
@@ -16,8 +21,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
  *
  * @property modID The mod ID to save block model definitions for.
  *
- * @see DataGenerateBlockModel
- * @see DataGenerateBlockAndItemModel
+ * @see bread.mod.breadmod.datagen.model.block
  * @author Miko Elbrecht
  * @since 1.0.0
  */
@@ -25,7 +29,7 @@ class SmartBlockModelProviderNeoForge(
     modID: String, forClassLoader: ClassLoader, forPackage: Package
 ) : SmartBlockModelProvider<GatherDataEvent>(modID, forClassLoader, forPackage) {
     /**
-     * Generates block model definition files according to [DataGenerateBlockModel] and [DataGenerateBlockAndItemModel]
+     * Generates block model definition files according to annotations in [bread.mod.breadmod.datagen.model.block]
      * use in the specified package.
      * @author Miko Elbrecht
      * @since 1.0.0
@@ -35,51 +39,36 @@ class SmartBlockModelProviderNeoForge(
             forEvent.generator.addProvider(
                 true,
                 object : BlockStateProvider(forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
-                    override fun registerStatesAndModels() = getBlockModelMap().forEach { (block, annotation) ->
-                        fun addBlockItemWithSelfParent(block: Block) {
-                            val parent = modLoc("${ModelProvider.BLOCK_FOLDER}/${block.descriptionId.substringAfterLast('.')}")
-                            horizontalBlock(block) { models().withExistingParent(parent.toString(), parent) }
-                            simpleBlockItem(block, models().getBuilder(parent.toString()))
+                    override fun registerStatesAndModels() = getBlockModelMap().forEach { (register, data) ->
+                        val actual = when (val rx = register.get()) {
+                            is Block -> rx
+                            is BlockItem -> rx.block
+                            else -> throw IllegalArgumentException("${data.second.name} must be of type ${Block::class.qualifiedName} or ${BlockItem::class.qualifiedName}.")
                         }
 
-                        when (annotation) {
-                            is DataGenerateBlockModel -> simpleBlock(block)
-                            is DataGenerateBlockAndItemModel -> simpleBlockWithItem(block, cubeAll(block))
-                            // todo this needs to be replicated to fabric as well (unfortunately)
-                            // todo separate into a single texture or multiple texture, but selectable model type (ex: horizontal, directional, orientable)
-                            is DataGenerateCustomBlockModel -> if (!annotation.existingParent) {
-                                val parent = modLoc("${ModelProvider.BLOCK_FOLDER}/${block.descriptionId.substringAfterLast('.')}")
-                                val parentName = parent.path.substringAfterLast('/')
-                                when (annotation.type) {
-                                    BlockModelType.HORIZONTAL_FACING -> {
-                                        horizontalBlock(block) {
-                                            return@horizontalBlock models().singleTexture(
-                                                parent.toString(),
-                                                modLoc("${ModelProvider.BLOCK_FOLDER}/$parentName"),
-                                                modLoc("${ModelProvider.BLOCK_FOLDER}/$parentName")
-                                            )
-                                        }
-                                        simpleBlockItem(block, models().getBuilder(parent.toString()))
-                                    }
-                                    BlockModelType.SIMPLE -> simpleBlockWithItem(block, cubeAll(block))
-                                    BlockModelType.ORIENTABLE -> {
-                                        horizontalBlock(block) {
-                                            // todo figuring out side textures for blocks with same textures on all sides except front
-                                            return@horizontalBlock models().orientable(
-                                                parent.toString(),
-                                                modLoc("${ModelProvider.BLOCK_FOLDER}/${parentName}_side"),
-                                                modLoc("${ModelProvider.BLOCK_FOLDER}/${parentName}"),
-                                                modLoc("${ModelProvider.BLOCK_FOLDER}/${parentName}_side")
-                                            )
-                                        }
-                                        simpleBlockItem(block, models().getBuilder(parent.toString()))
-                                    }
-                                }
-                            } else {
-                                addBlockItemWithSelfParent(block)
-                            }
-                            else -> throw UnsupportedOperationException(annotation.toString())
+                        val location = modLoc("${ModelProvider.BLOCK_FOLDER}/${register.id.path}")
+
+                        val model = when (data.first) {
+                            is DataGenerateCubeAllBlockModel, is DataGenerateCubeAllBlockAndItemModel -> cubeAll(actual)
+
+                            is DataGenerateSingleTextureBlockModel, is DataGenerateSingleTextureBlockAndItemModel ->
+                                models().singleTexture(location.path, location, location)
+
+                            is DataGenerateWithExistingParentBlockModel, is DataGenerateWithExistingParentBlockAndItemModel ->
+                                models().withExistingParent(location.path, location)
+
+                            else -> throw UnsupportedOperationException(data.first.toString())
                         }
+
+                        val orientable = data.second.javaField!!.getAnnotation(Orientable::class.java)
+                        if (orientable != null) {
+                            when (orientable.type) {
+                                Orientable.Type.HORIZONTAL -> horizontalBlock(actual, model)
+                                Orientable.Type.ALL_AXIS -> directionalBlock(actual, model)
+                            }
+                        } else simpleBlock(actual, model)
+
+                        if (data.first.annotationClass.qualifiedName!!.endsWith("AndItemModel")) simpleBlockItem(actual, model)
                     }
                 }
             )

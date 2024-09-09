@@ -8,10 +8,10 @@ import java.nio.file.FileSystem
 import java.nio.file.FileSystemNotFoundException
 import java.nio.file.FileSystems
 import java.nio.file.Files
-import java.util.function.Supplier
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.javaField
 
@@ -78,7 +78,8 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): List<Pair<Supplier<*>, Array<T>>> = buildList {
+    @Suppress("UNCHECKED_CAST")
+    inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): Map<KProperty1<*, *>, Pair<*, Array<T>>> = buildMap {
         packageClasses.filter {
             try {
                 it.objectInstance != null
@@ -93,15 +94,12 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
                     a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
                 }
                 if (annotationsRaw != null) {
-                    val value = (f.call(it.objectInstance) as Supplier<*>)
-
-                    @Suppress("UNCHECKED_CAST")
                     val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
                     else annotationsRaw.annotationClass.java.declaredMethods
                         .firstOrNull { m -> m.name == "value" }
                         ?.invoke(annotationsRaw) as Array<T>?
 
-                    if (annotations != null) add(value to annotations)
+                    if (annotations != null) this[f] = f.call(it.objectInstance) to annotations
                 }
             }
         }

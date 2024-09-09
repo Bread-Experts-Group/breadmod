@@ -1,10 +1,7 @@
 package bread.mod.breadmod.neoforge
 
 import bread.mod.breadmod.ModMainCommon
-import bread.mod.breadmod.neoforge.datagen.SmartBlockModelProviderNeoForge
-import bread.mod.breadmod.neoforge.datagen.SmartItemModelProviderNeoForge
-import bread.mod.breadmod.neoforge.datagen.SmartLanguageProviderNeoForge
-import bread.mod.breadmod.neoforge.datagen.SmartSoundProviderNeoForge
+import bread.mod.breadmod.neoforge.datagen.*
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.data.event.GatherDataEvent
@@ -19,12 +16,17 @@ internal object CommonModEventBus {
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)
 
+        SmartBlockModelProviderNeoForge(
+            ModMainCommon.MOD_ID,
+            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+        ).generate(event)
+
         SmartItemModelProviderNeoForge(
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)
 
-        SmartBlockModelProviderNeoForge(
+        SmartTagProviderNeoForge(
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)
@@ -33,11 +35,5 @@ internal object CommonModEventBus {
             ModMainCommon.MOD_ID,
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)
-
-        // todo uncomment after fixing
-//        SmartBlockTagsProviderNeoForge(
-//            ModMainCommon.MOD_ID,
-//            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
-//        ).generateTags(event)
     }
 }

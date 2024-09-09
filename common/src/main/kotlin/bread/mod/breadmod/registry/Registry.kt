@@ -28,15 +28,16 @@ internal object Registry {
     private fun runAnnotations() {
         LibraryScanner(ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`)
             .getObjectPropertiesAnnotatedWith<FlammableBlock>()
-            .forEach { (value, annotation) ->
-                if (value !is RegistrySupplier<*>) throw IllegalArgumentException(
+            .forEach { (_, data) ->
+                val supplier = data.first
+                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException(
                     String.format(
                         "Values annotated with %s must be of type %s",
                         FlammableBlock::class.qualifiedName, RegistrySupplier::class.qualifiedName
                     )
                 )
 
-                val first = annotation.first()
+                val first = data.second.first()
                 if (first.flammability < 0 || first.encouragement < 0) throw IllegalArgumentException(
                     String.format(
                         "Values annotated with %s cannot have a negative flammability or encouragement value",
@@ -44,7 +45,7 @@ internal object Registry {
                     )
                 )
 
-                value.listen {
+                supplier.listen {
                     val actual = when (it) {
                         is Block -> it
                         is BlockItem -> it.block
@@ -62,15 +63,16 @@ internal object Registry {
 
         LibraryScanner(ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`)
             .getObjectPropertiesAnnotatedWith<FuelItem>()
-            .forEach { (value, annotation) ->
-                if (value !is RegistrySupplier<*>) throw IllegalArgumentException(
+            .forEach { (_, data) ->
+                val supplier = data.first
+                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException(
                     String.format(
                         "Values annotated with %s must be of type %s",
                         FuelItem::class.qualifiedName, RegistrySupplier::class.qualifiedName
                     )
                 )
 
-                val first = annotation.first()
+                val first = data.second.first()
                 if (first.burnTime < 0) throw IllegalArgumentException(
                     String.format(
                         "Values annotated with %s cannot have a negative burn time",
@@ -78,7 +80,7 @@ internal object Registry {
                     )
                 )
 
-                value.listen {
+                supplier.listen {
                     val actual = when (it) {
                         is ItemLike -> it
                         else -> throw IllegalArgumentException(
@@ -100,8 +102,6 @@ internal object Registry {
                     itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
                 if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1f else 0f
             }
-
-            runAnnotations()
         }
     }
 
@@ -115,5 +115,7 @@ internal object Registry {
         CommonEvents.registerServerTickEvent()
         CommonEvents.registerCommands()
 //        registerClientTick()
+
+        runAnnotations()
     }
 }

@@ -12,7 +12,7 @@ annotation class DataGenerateSound(
     val pitch: Float = 1f,
     val weight: Int = 1,
     val stream: Boolean = false,
-    @Suppress("PropertyName") val attenuation_distance: Int = 16,
+    val attenuationDistance: Int = 16,
     val preload: Boolean = false
 ) {
     enum class Type {

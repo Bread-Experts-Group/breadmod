@@ -4,7 +4,6 @@ import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modTranslatable
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
-import bread.mod.breadmod.datagen.model.item.ItemModelType
 import bread.mod.breadmod.item.BreadShieldItem
 import bread.mod.breadmod.item.DopedBreadItem
 import bread.mod.breadmod.item.TestBreadItem
@@ -16,11 +15,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.food.FoodProperties
-import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Tiers
-import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.*
 import net.minecraft.world.level.block.Block
 
 @Suppress("unused")
@@ -38,7 +33,7 @@ object ModItems {
     @DataGenerateLanguage("en_us", "Bread Shield")
     val BREAD_SHIELD: RegistrySupplier<BreadShieldItem> = ITEM_REGISTRY.register("bread_shield") { BreadShieldItem() }
 
-    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
     @DataGenerateLanguage("en_us", "Doped Bread")
     val DOPED_BREAD: RegistrySupplier<DopedBreadItem> = ITEM_REGISTRY.register("doped_bread") { DopedBreadItem() }
 
@@ -74,7 +69,7 @@ object ModItems {
     @DataGenerateLanguage("en_us", "Die")
     val DIE: RegistrySupplier<Item> = ITEM_REGISTRY.register("die") { Item(Item.Properties()) }
 
-    @DataGenerateItemModel(ItemModelType.HANDHELD)
+    //    @DataGenerateItemModel(ItemModelType.HANDHELD)
     @DataGenerateLanguage("en_us", "Knife")
     val KNIFE: RegistrySupplier<KnifeItem> = ITEM_REGISTRY.register("knife") { KnifeItem(Tiers.IRON) }
 

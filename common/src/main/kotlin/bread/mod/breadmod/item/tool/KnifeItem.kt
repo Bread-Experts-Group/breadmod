@@ -1,7 +1,8 @@
 package bread.mod.breadmod.item.tool
 
-import bread.mod.breadmod.datagen.tag.ModTags
 import bread.mod.breadmod.registry.block.ModBlocks
+import bread.mod.breadmod.registry.tag.BlockTags.MINEABLE_WITH_KNIFE
+import bread.mod.breadmod.registry.tag.ItemTags.KNIVES
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.sounds.SoundEvents
@@ -11,11 +12,7 @@ import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.DiggerItem
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
-import net.minecraft.world.item.Tier
+import net.minecraft.world.item.*
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
@@ -24,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState
 
 class KnifeItem(
     tier: Tier,
-) : DiggerItem(tier, ModTags.MINEABLE_WITH_KNIFE, Properties()) {
+) : DiggerItem(tier, MINEABLE_WITH_KNIFE, Properties()) {
     override fun canAttackBlock(state: BlockState, level: Level, pos: BlockPos, player: Player): Boolean =
         !player.isCreative
 
@@ -33,14 +30,14 @@ class KnifeItem(
         return true
     }
 
-    override fun useOn(context: UseOnContext): InteractionResult? {
+    override fun useOn(context: UseOnContext): InteractionResult {
         val level = context.level
         val handStack = context.itemInHand
         val clickedPos = context.clickedPos
         val blockState = level.getBlockState(clickedPos)
         val facing = context.clickedFace
 
-        return if (blockState.block == Blocks.PUMPKIN && handStack.`is`(ModTags.KNIVES)) {
+        return if (blockState.block == Blocks.PUMPKIN && handStack.`is`(KNIVES)) {
             val player = context.player
             if (player != null && !level.isClientSide) {
                 val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
@@ -62,7 +59,7 @@ class KnifeItem(
             }
 
             InteractionResult.sidedSuccess(level.isClientSide)
-        } else if (blockState.block == ModBlocks.BREAD_BLOCK.get().block && handStack.`is`(ModTags.KNIVES)) {
+        } else if (blockState.block == ModBlocks.BREAD_BLOCK.get().block && handStack.`is`(KNIVES)) {
             val player = context.player
             if (player != null && !level.isClientSide) {
                 val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing

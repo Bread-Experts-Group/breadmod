@@ -10,5 +10,6 @@ import net.minecraft.world.level.ItemLike
  * @author Miko Elbrecht
  * @since 1.0.0
  */
+@MustBeDocumented
 @Target(AnnotationTarget.FIELD)
 annotation class FuelItem(val burnTime: Int)

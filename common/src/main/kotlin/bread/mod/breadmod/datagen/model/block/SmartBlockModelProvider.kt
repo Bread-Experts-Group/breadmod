@@ -1,11 +1,15 @@
 package bread.mod.breadmod.datagen.model.block
 
 import bread.mod.breadmod.datagen.DataProviderScanner
-import net.minecraft.world.item.BlockItem
-import net.minecraft.world.level.block.Block
+import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockModel
+import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockModel
+import dev.architectury.registry.registries.RegistrySupplier
+import kotlin.reflect.KProperty1
 
 /**
- * Abstract class for [SmartBlockModelProvider]s, reading and assorting locales to description IDs and translations.
+ * Abstract class for [SmartBlockModelProvider]s.
  * @author Miko Elbrecht
  * @since 1.0.0
  */
@@ -14,18 +18,23 @@ abstract class SmartBlockModelProvider<T>(
 ) : DataProviderScanner<T>(modID, forClassLoader, forPackage) {
     /**
      * The main function of the [SmartBlockModelProvider].
-     * Reads off all properties tagged with [DataGenerateBlockModel], assorting them into
-     * locale -> description ID, translation groups.
+     * Reads off all properties tagged with annotations in [bread.mod.breadmod.datagen.model.block].
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    protected fun getBlockModelMap(): Map<Block, Annotation> = buildMap {
-        fun Any?.getBlock() = if (this is BlockItem) this.block else this as Block
-
+    protected fun getBlockModelMap(): Map<RegistrySupplier<*>, Pair<Annotation, KProperty1<*, *>>> = buildMap {
         listOf(
-            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateBlockModel>().toTypedArray(),
-            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateBlockAndItemModel>().toTypedArray(),
-            *scanner.getObjectPropertiesAnnotatedWith<DataGenerateCustomBlockModel>().toTypedArray()
-        ).forEach { (value, annotations) -> this[value.get().getBlock()] = annotations[0] }
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateCubeAllBlockModel>(),
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateCubeAllBlockAndItemModel>(),
+
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateWithExistingParentBlockModel>(),
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateWithExistingParentBlockAndItemModel>()
+        ).forEach {
+            it.forEach { (property, data) ->
+                val supplier = data.first
+                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException("${property.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
+                put(supplier, Pair(data.second.first(), property))
+            }
+        }
     }
 }
