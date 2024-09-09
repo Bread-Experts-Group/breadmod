@@ -13,6 +13,7 @@ import bread.mod.breadmod.item.tool.KnifeItem
 import bread.mod.breadmod.item.tool.ToolTiers
 import bread.mod.breadmod.registry.item.armor.ArmorMaterials
 import bread.mod.breadmod.registry.item.armor.BreadArmorItem
+import bread.mod.breadmod.registry.tag.RecordTags
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.ChatFormatting
@@ -114,6 +115,15 @@ object ModItems {
                     .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
             }
         }
+    }
+
+    @DataGenerateLanguage("en_us", "Alumina")
+    val ALUMINA: RegistrySupplier<Item> = ITEM_REGISTRY.register("alumina") { Item(Item.Properties()) }
+
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "Test Music Disc")
+    val TEST_RECORD: RegistrySupplier<Item> = ITEM_REGISTRY.register("music_disc_test") {
+        Item(Item.Properties().jukeboxPlayable(RecordTags.TEST_SOUND))
     }
 
     // todo bread amulets go here eventually

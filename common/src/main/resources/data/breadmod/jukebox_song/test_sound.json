@@ -1,0 +1,8 @@
+{
+  "comparator_output": 15,
+  "description": {
+    "translate": "jukebox_song.breadmod.test_sound"
+  },
+  "length_in_seconds": 7900.0,
+  "sound_event": "breadmod:test_sound"
+}
