@@ -2,7 +2,6 @@ package bread.mod.breadmod.registry.entity
 
 import bread.mod.breadmod.ModMainCommon.MOD_ID
 import bread.mod.breadmod.ModMainCommon.modLocation
-import bread.mod.breadmod.entity.BreadBulletEntity
 import bread.mod.breadmod.entity.PrimedHappyBlock
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
@@ -21,11 +20,13 @@ object ModEntityTypes {
             .build(modLocation("happy_block").toString())
     }
 
-    val BREAD_BULLET_ENTITY: RegistrySupplier<EntityType<BreadBulletEntity>> = ENTITY_REGISTRY.register("bread_bullet") {
-        EntityType.Builder.of({ pEntityType, pLevel -> BreadBulletEntity(pEntityType, pLevel) }, MobCategory.MISC)
-            .sized(0.5f, 0.5f)
-            .clientTrackingRange(4)
-            .updateInterval(20)
-            .build(modLocation("bread_bullet").toString())
-    }
+// --Commented out by Inspection START (9/10/2024 03:53):
+//    val BREAD_BULLET_ENTITY: RegistrySupplier<EntityType<BreadBulletEntity>> = ENTITY_REGISTRY.register("bread_bullet") {
+//        EntityType.Builder.of({ pEntityType, pLevel -> BreadBulletEntity(pEntityType, pLevel) }, MobCategory.MISC)
+//            .sized(0.5f, 0.5f)
+//            .clientTrackingRange(4)
+//            .updateInterval(20)
+//            .build(modLocation("bread_bullet").toString())
+//    }
+// --Commented out by Inspection STOP (9/10/2024 03:53)
 }

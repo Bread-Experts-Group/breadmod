@@ -59,6 +59,7 @@ class ConsoleColorAppender(
         const val BLUE = 4
 
         // const val MAGENTA = 5
+        @Suppress("unused")
         const val CYAN = 6
         const val WHITE = 7
 

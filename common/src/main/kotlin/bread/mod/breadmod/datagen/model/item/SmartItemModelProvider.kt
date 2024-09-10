@@ -1,6 +1,7 @@
 package bread.mod.breadmod.datagen.model.item
 
 import bread.mod.breadmod.datagen.DataProviderScanner
+import bread.mod.breadmod.util.ensureRegistrySupplierAndValue
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.world.item.Item
 import kotlin.reflect.KProperty1
@@ -24,13 +25,7 @@ abstract class SmartItemModelProvider<T>(
             scanner.getObjectPropertiesAnnotatedWith<DataGenerateItemModel>()
         ).forEach {
             it.forEach { (property, data) ->
-                val supplier = data.first
-                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException("${property.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
-                val rx = supplier.get()
-                if (rx !is Item) throw IllegalArgumentException("${supplier.id} must supply type ${Item::class.qualifiedName}.")
-
-                @Suppress("UNCHECKED_CAST")
-                put(supplier as RegistrySupplier<Item>, Pair(data.second.first(), property))
+                put(data.first.ensureRegistrySupplierAndValue<Item>(property), Pair(data.second.first(), property))
             }
         }
     }

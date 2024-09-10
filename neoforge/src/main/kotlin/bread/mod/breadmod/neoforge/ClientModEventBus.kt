@@ -7,7 +7,6 @@ import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.client.event.ModelEvent
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 
 @Suppress("unused")
@@ -15,10 +14,10 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider
 internal object ClientModEventBus {
     const val TOOL_GUN_DEF = "tool_gun"
 
-    @SubscribeEvent
-    fun registerOverlays(event: RegisterGuiLayersEvent) {
+//    @SubscribeEvent
+//    fun registerOverlays(event: RegisterGuiLayersEvent) {
 //        event.registerAboveAll(ModMainCommon.modLocation("war_overlay"), WarOverlay())
-    }
+//    }
 
     @SubscribeEvent
     fun registerAdditionalModels(event: ModelEvent.RegisterAdditional) {

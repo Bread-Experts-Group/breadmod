@@ -1,4 +1,4 @@
-package bread.mod.breadmod.datagen.model.block.singleTexture
+package bread.mod.breadmod.datagen.model.block.withExistingParent
 
 import dev.architectury.registry.registries.RegistrySupplier
 import kotlin.annotation.AnnotationTarget.FIELD

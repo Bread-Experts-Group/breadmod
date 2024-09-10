@@ -8,9 +8,15 @@ import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.entity.decoration.PaintingVariant
 
+/**
+ * Painting variants for The Bread Mod.
+ * @author Logan McLean
+ * @since 1.0.0
+ */
 @Suppress("unused")
 object ModPainting {
-    internal val  PAINTING_VARIANT_REGISTRY: DeferredRegister<PaintingVariant> = DeferredRegister.create(MOD_ID, Registries.PAINTING_VARIANT)
+    val PAINTING_VARIANT_REGISTRY: DeferredRegister<PaintingVariant> =
+        DeferredRegister.create(MOD_ID, Registries.PAINTING_VARIANT)
 
     @DataGenerateTag("minecraft:placeable", "minecraft:placeable")
     val PAINTING_TEST: RegistrySupplier<PaintingVariant> = PAINTING_VARIANT_REGISTRY.register("painting_test") {

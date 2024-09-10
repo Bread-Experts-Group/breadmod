@@ -1,4 +1,4 @@
-package bread.mod.breadmod.networking.definition.war_timer
+package bread.mod.breadmod.networking.definition.warTimer
 
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.client.gui.WarOverlay
@@ -20,10 +20,11 @@ internal data class WarTimerIncrement(val increasing: Boolean, val increaseTimer
             ByteBufCodecs.INT, WarTimerIncrement::increaseTimer
         ) { increasing, timer -> WarTimerIncrement(increasing, timer) }
 
-        val RECEIVER = NetworkManager.NetworkReceiver<WarTimerIncrement> { value, context ->
+        val RECEIVER = NetworkManager.NetworkReceiver<WarTimerIncrement> { (increasing, increaseTimer), _ ->
+            WarOverlay.isTimerIncreasing = increasing
+            WarOverlay.increasingTimer = increaseTimer
+
             val player = rgMinecraft.player ?: return@NetworkReceiver
-            WarOverlay.isTimerIncreasing = value.increasing
-            WarOverlay.increasingTimer = value.increaseTimer
             player.playSound(ModSounds.WAR_TIMER_UP.get(), 0.7f, 1.0f)
         }
     }

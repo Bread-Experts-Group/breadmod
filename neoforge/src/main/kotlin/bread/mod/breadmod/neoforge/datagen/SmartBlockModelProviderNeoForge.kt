@@ -6,8 +6,8 @@ import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAnd
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockModel
-import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockAndItemModel
-import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockModel
+import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockModel
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider
@@ -39,11 +39,17 @@ class SmartBlockModelProviderNeoForge(
             forEvent.generator.addProvider(
                 true,
                 object : BlockStateProvider(forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
+                    @Suppress("ReplaceNotNullAssertionWithElvisReturn")
                     override fun registerStatesAndModels() = getBlockModelMap().forEach { (register, data) ->
                         val actual = when (val rx = register.get()) {
                             is Block -> rx
                             is BlockItem -> rx.block
-                            else -> throw IllegalArgumentException("${data.second.name} must be of type ${Block::class.qualifiedName} or ${BlockItem::class.qualifiedName}.")
+                            else -> throw IllegalArgumentException(
+                                String.format(
+                                    "%s must be of type %s or %s.",
+                                    data.second.name, Block::class.qualifiedName, BlockItem::class.qualifiedName
+                                )
+                            )
                         }
 
                         val location = modLoc("${ModelProvider.BLOCK_FOLDER}/${register.id.path}")

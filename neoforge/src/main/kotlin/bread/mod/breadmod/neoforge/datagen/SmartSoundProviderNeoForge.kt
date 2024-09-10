@@ -12,7 +12,8 @@ class SmartSoundProviderNeoForge(
 ) : SmartSoundProvider<GatherDataEvent>(modID, forClassLoader, forPackage) {
     override fun generate(forEvent: GatherDataEvent) {
         forEvent.generator.addProvider(true, object : SoundDefinitionsProvider(
-            forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
+            forEvent.generator.packOutput, modID, forEvent.existingFileHelper
+        ) {
             override fun registerSounds() = getSoundMap().forEach { (event, annotations) ->
                 val definition = SoundDefinition.definition()
                     .subtitle(event.location.toLanguageKey("sound"))

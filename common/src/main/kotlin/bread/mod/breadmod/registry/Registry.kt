@@ -99,8 +99,10 @@ internal object Registry {
 
     private fun runLifecycleSetupStage() {
         LifecycleEvent.SETUP.register {
-            ItemPropertiesRegistry.register(ModItems.BREAD_SHIELD.get(), modLocation("blocking")) {
-                    itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
+            ItemPropertiesRegistry.register(
+                ModItems.BREAD_SHIELD.get(),
+                modLocation("blocking")
+            ) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
                 if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1f else 0f
             }
         }

@@ -6,7 +6,7 @@ import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
-import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockAndItemModel
 import bread.mod.breadmod.datagen.recipe.shaped.DataGenerateShapedRecipeThis
 import bread.mod.breadmod.datagen.recipe.shapeless.DataGenerateShapelessRecipeExternal
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
@@ -64,26 +64,32 @@ object ModBlocks {
     @DataGenerateLanguage("en_us", "Bread Block")
     @DataGenerateLanguage("es_es", "Bloque De Pan")
     @FlammableBlock(30, 60)
-    val BREAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val BREAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "bread_block", { BreadBlock() },
         Item.Properties()
             .food(
                 FoodProperties.Builder()
                     .nutrition(Foods.BREAD.nutrition * 9)
                     .saturationModifier(Foods.BREAD.saturation * 9)
-                    .`arch$effect`({ MobEffectInstance(
-                        MobEffects.LUCK, 500, 1, true, true
-                    )}, 100f)
+                    .`arch$effect`({
+                        MobEffectInstance(
+                            MobEffects.LUCK, 500, 1, true, true
+                        )
+                    }, 100f)
                     .build()
             )
     )
 
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Reinforced Bread Block")
-    val REINFORCED_BREAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val REINFORCED_BREAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "reinforced_bread_block",
-        { Block(BlockBehaviour.Properties.ofFullCopy(
-            Blocks.NETHERITE_BLOCK).strength(25f, 1200f))
+        {
+            Block(
+                BlockBehaviour.Properties.ofFullCopy(
+                    Blocks.NETHERITE_BLOCK
+                ).strength(25f, 1200f)
+            )
         },
         Item.Properties()
     )
@@ -91,28 +97,28 @@ object ModBlocks {
     @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "OMANEKO")
-    val OMANEKO_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val OMANEKO_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "omaneko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
     @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "Niko Tenshot")
-    val NIKO_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val NIKO_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "niko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
     @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "Ricardetex-Infinious")
-    val RICARD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val RICARD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ricard_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
     @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "Unfunnylad")
-    val UNFUNNYLAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val UNFUNNYLAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "unfunnylad_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
@@ -120,7 +126,7 @@ object ModBlocks {
     @FuelItem(1600 * 9)
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Charcoal Block")
-    val CHARCOAL_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "charcoal_block", {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK).ignitedByLava())
         },
@@ -130,7 +136,7 @@ object ModBlocks {
     @FuelItem(1600 * 4)
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
-    val LOW_DENSITY_CHARCOAL_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val LOW_DENSITY_CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ld_charcoal_block", {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL))
         },
@@ -140,18 +146,19 @@ object ModBlocks {
     @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "War Terminal")
-    val WAR_TERMINAL = BLOCK_REGISTRY.registerBlockItem(
-        "war_terminal", { WarTerminalBlock() }, Item.Properties())
+    val WAR_TERMINAL: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "war_terminal", { WarTerminalBlock() }, Item.Properties()
+    )
 
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Random Sound Generator")
-    val RANDOM_SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val RANDOM_SOUND_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "random_sound_block", { RandomSoundBlock() }, Item.Properties()
     )
 
     @Orientable(Orientable.Type.ALL_AXIS)
     @DataGenerateLanguage("en_us", "Sound Block")
-    val SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val SOUND_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "sound_block", { SoundBlock() }, { block ->
             object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
                 override val creativeModeTabs: List<RegistrySupplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)

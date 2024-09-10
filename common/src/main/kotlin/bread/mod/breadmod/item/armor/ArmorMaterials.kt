@@ -11,7 +11,7 @@ import net.minecraft.world.item.ArmorItem
 import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
-import java.util.EnumMap
+import java.util.*
 
 object ArmorMaterials {
     internal val ARMOR_REGISTRY: DeferredRegister<ArmorMaterial> = DeferredRegister.create(
@@ -21,11 +21,11 @@ object ArmorMaterials {
     val BREAD: Holder<ArmorMaterial> = ARMOR_REGISTRY.register("bread") {
         ArmorMaterial(
             Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
-                map.put(ArmorItem.Type.BOOTS, 2)
-                map.put(ArmorItem.Type.LEGGINGS, 3)
-                map.put(ArmorItem.Type.CHESTPLATE, 4)
-                map.put(ArmorItem.Type.HELMET, 2)
-                map.put(ArmorItem.Type.BODY, 2)
+                map[ArmorItem.Type.BOOTS] = 2
+                map[ArmorItem.Type.LEGGINGS] = 3
+                map[ArmorItem.Type.CHESTPLATE] = 4
+                map[ArmorItem.Type.HELMET] = 2
+                map[ArmorItem.Type.BODY] = 2
             },
             20, // Enchantability
             SoundEvents.ARMOR_EQUIP_LEATHER,
@@ -42,11 +42,11 @@ object ArmorMaterials {
     val RF_BREAD: Holder<ArmorMaterial> = ARMOR_REGISTRY.register("rf_bread") {
         ArmorMaterial(
             Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
-                map.put(ArmorItem.Type.BOOTS, 4)
-                map.put(ArmorItem.Type.LEGGINGS, 6)
-                map.put(ArmorItem.Type.CHESTPLATE, 8)
-                map.put(ArmorItem.Type.HELMET, 4)
-                map.put(ArmorItem.Type.BODY, 6)
+                map[ArmorItem.Type.BOOTS] = 4
+                map[ArmorItem.Type.LEGGINGS] = 6
+                map[ArmorItem.Type.CHESTPLATE] = 8
+                map[ArmorItem.Type.HELMET] = 4
+                map[ArmorItem.Type.BODY] = 6
             },
             20, // Enchantability
             SoundEvents.ARMOR_EQUIP_LEATHER,

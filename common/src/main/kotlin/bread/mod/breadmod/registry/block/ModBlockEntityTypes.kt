@@ -12,10 +12,11 @@ object ModBlockEntityTypes {
     internal val BLOCK_ENTITY_TYPE_REGISTRY: DeferredRegister<BlockEntityType<*>> =
         DeferredRegister.create(ModMainCommon.MOD_ID, Registries.BLOCK_ENTITY_TYPE)
 
-    val SOUND_BLOCK: RegistrySupplier<BlockEntityType<SoundBlockEntity>> = BLOCK_ENTITY_TYPE_REGISTRY.register("sound_block_entity") {
-        BlockEntityType.Builder.of(
-            { pos, state -> SoundBlockEntity(pos, state) },
-            ModBlocks.SOUND_BLOCK.get().block
-        ).build(null)
-    }
+    val SOUND_BLOCK: RegistrySupplier<BlockEntityType<SoundBlockEntity>> =
+        BLOCK_ENTITY_TYPE_REGISTRY.register("sound_block_entity") {
+            BlockEntityType.Builder.of(
+                { pos, state -> SoundBlockEntity(pos, state) },
+                ModBlocks.SOUND_BLOCK.get().block
+            ).build(null)
+        }
 }

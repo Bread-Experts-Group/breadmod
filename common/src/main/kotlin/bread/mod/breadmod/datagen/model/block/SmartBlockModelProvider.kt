@@ -3,8 +3,9 @@ package bread.mod.breadmod.datagen.model.block
 import bread.mod.breadmod.datagen.DataProviderScanner
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockModel
-import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockAndItemModel
-import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockModel
+import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockModel
+import bread.mod.breadmod.util.ensureRegistrySupplier
 import dev.architectury.registry.registries.RegistrySupplier
 import kotlin.reflect.KProperty1
 
@@ -31,9 +32,7 @@ abstract class SmartBlockModelProvider<T>(
             scanner.getObjectPropertiesAnnotatedWith<DataGenerateWithExistingParentBlockAndItemModel>()
         ).forEach {
             it.forEach { (property, data) ->
-                val supplier = data.first
-                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException("${property.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
-                put(supplier, Pair(data.second.first(), property))
+                put(data.first.ensureRegistrySupplier(property), Pair(data.second.first(), property))
             }
         }
     }

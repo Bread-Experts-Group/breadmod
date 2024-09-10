@@ -1,4 +1,4 @@
-package bread.mod.breadmod.networking.definition.war_timer
+package bread.mod.breadmod.networking.definition.warTimer
 
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.client.gui.WarOverlay
@@ -17,8 +17,8 @@ internal data class WarTimerToggle(val active: Boolean) : CustomPacketPayload {
             ByteBufCodecs.BOOL, WarTimerToggle::active
         ) { WarTimerToggle(it) }
 
-        val RECEIVER = NetworkReceiver<WarTimerToggle> { value, context ->
-            WarOverlay.timerActive = value.active
+        val RECEIVER = NetworkReceiver<WarTimerToggle> { (active), _ ->
+            WarOverlay.timerActive = active
         }
     }
 

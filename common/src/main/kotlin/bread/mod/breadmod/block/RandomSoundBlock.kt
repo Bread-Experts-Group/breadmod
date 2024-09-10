@@ -18,20 +18,20 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.SoundType
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 
-class RandomSoundBlock: Block(Properties.of()
-    .strength(4f, 6f)
-    .mapColor(MapColor.COLOR_GRAY)
-    .requiresCorrectToolForDrops()
-    .sound(SoundType.METAL)
+class RandomSoundBlock : Block(
+    Properties.of()
+        .strength(4f, 6f)
+        .mapColor(MapColor.COLOR_GRAY)
+        .requiresCorrectToolForDrops()
+        .sound(SoundType.METAL)
 ) {
-    val random = RandomSource.create()
+    val random: RandomSource = RandomSource.create()
 
     init {
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.POWERED, false))
@@ -52,10 +52,7 @@ class RandomSoundBlock: Block(Properties.of()
         player: Player,
         hitResult: BlockHitResult
     ): InteractionResult {
-        if (player.usedItemHand == InteractionHand.MAIN_HAND && !level.isClientSide) {
-            println("playing sound")
-            playRandomSound(pos, level)
-        }
+        if (player.usedItemHand == InteractionHand.MAIN_HAND && !level.isClientSide) playRandomSound(pos, level)
         return InteractionResult.sidedSuccess(level.isClientSide)
     }
 
@@ -81,10 +78,12 @@ class RandomSoundBlock: Block(Properties.of()
         pLevel.blockEvent(pPos, this, 0, 0)
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "super.triggerEvent(pState, pLevel, pPos, pId, pParam)",
-        "net.minecraft.world.level.block.Block"
-    ))
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "super.triggerEvent(pState, pLevel, pPos, pId, pParam)",
+            "net.minecraft.world.level.block.Block"
+        )
+    )
     override fun triggerEvent(pState: BlockState, pLevel: Level, pPos: BlockPos, pId: Int, pParam: Int): Boolean {
         pLevel.addParticle(
             ParticleTypes.NOTE,

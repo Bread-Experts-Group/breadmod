@@ -63,18 +63,18 @@ class SoundBlockEntity(
     var currentSound: SoundEvent? = ModSounds.WAR_TIMER.get()
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-/*        capabilityHolder.capabilities.forEach { (cap, list) ->
-            list.first.ifPresent { pTag.put(cap.name, it.serializeNBT()) }
-        }*/
+        /*        capabilityHolder.capabilities.forEach { (cap, list) ->
+                    list.first.ifPresent { pTag.put(cap.name, it.serializeNBT()) }
+                }*/
         // todo figure out how to turn a sound even into string then back to sound event when loading
         currentSound?.let { tag.putString("current_sound", it.location.toLanguageKey()) }
         super.saveAdditional(tag, registries)
     }
 
     override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-/*        capabilityHolder.capabilities.forEach { (cap, list) ->
-            list.first.ifPresent { it.deserializeNBT(pTag.get(cap.name)) }
-        }*/
+        /*        capabilityHolder.capabilities.forEach { (cap, list) ->
+                    list.first.ifPresent { it.deserializeNBT(pTag.get(cap.name)) }
+                }*/
         if (currentSound != null) tag.getCompound("current_sound")
         super.loadAdditional(tag, registries)
     }

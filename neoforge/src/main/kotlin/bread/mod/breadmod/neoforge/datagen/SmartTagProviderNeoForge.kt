@@ -5,6 +5,7 @@ import bread.mod.breadmod.datagen.tag.SmartTagProvider
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.Registry
+import net.minecraft.core.registries.Registries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
@@ -38,7 +39,12 @@ class SmartTagProviderNeoForge(
         getTagMap().forEach { (register, data) ->
             data.first.forEach { a ->
                 registryMap
-                    .getOrPut(ResourceKey.createRegistryKey<Any>(ResourceLocation.parse(a.registryName))) { mutableListOf() }
+                    .getOrPut(
+                        ResourceKey.create(
+                            Registries.PAINTING_VARIANT,
+                            ResourceLocation.parse(a.registryName)
+                        )
+                    ) { mutableListOf() }
                     .add(a to register)
             }
         }

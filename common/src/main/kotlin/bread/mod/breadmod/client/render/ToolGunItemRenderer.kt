@@ -2,9 +2,9 @@ package bread.mod.breadmod.client.render
 
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.command.client.AltToolGunModelCommand.useAltModel
-import bread.mod.breadmod.item.tool_gun.ToolGunAnimationHandler
-import bread.mod.breadmod.item.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
-import bread.mod.breadmod.item.tool_gun.drawTextOnScreen
+import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
+import bread.mod.breadmod.item.toolGun.ToolGunItem.Companion.TOOL_GUN_DEF
+import bread.mod.breadmod.item.toolGun.drawTextOnScreen
 import bread.mod.breadmod.util.render.renderItemModel
 import bread.mod.breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
@@ -27,43 +27,49 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val secureRandom = SecureRandom()
     }
 
-    private val mainModelLocation = ModelResourceLocation( modLocation("item/$TOOL_GUN_DEF/item"), "standalone")
+    private val mainModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/item"), "standalone")
     private val coilModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/coil"), "standalone")
     private val altModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"), "standalone")
-//    private val useAltModel = CLIENT.ALT_TOOLGUN_MODEL
+
+    //    private val useAltModel = CLIENT.ALT_TOOLGUN_MODEL
     override fun renderByItem(
-    stack: ItemStack,
-    displayContext: ItemDisplayContext,
-    poseStack: PoseStack,
-    buffer: MultiBufferSource,
-    packedLight: Int,
-    packedOverlay: Int
+        stack: ItemStack,
+        displayContext: ItemDisplayContext,
+        poseStack: PoseStack,
+        buffer: MultiBufferSource,
+        packedLight: Int,
+        packedOverlay: Int
     ) {
 //    val toolGunItem = stack.item as ToolGunItem
 //      val toolGunMode = toolGunItem.getCurrentMode(stack)
-    val renderer = rgMinecraft.itemRenderer
-    val fontRenderer = rgMinecraft.font
-    val modelManager = rgMinecraft.modelManager
-    val mainModel = modelManager.getModel(mainModelLocation)
-    val coilModel = modelManager.getModel(coilModelLocation)
-    val altModel = modelManager.getModel(altModelLocation)
+        val renderer = rgMinecraft.itemRenderer
+        val fontRenderer = rgMinecraft.font
+        val modelManager = rgMinecraft.modelManager
+        val mainModel = modelManager.getModel(mainModelLocation)
+        val coilModel = modelManager.getModel(coilModelLocation)
+        val altModel = modelManager.getModel(altModelLocation)
 
-    val animHandler = ToolGunAnimationHandler
-    val rotation = animHandler.coilRotation
-    val recoil = animHandler.recoil
+        val animHandler = ToolGunAnimationHandler
+        val rotation = animHandler.coilRotation
+        val recoil = animHandler.recoil
 
-    // todo recoil
+        fun rotateCoilAndRender() {
+            poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
+            renderer.renderItemModel(coilModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+        }
 
-    animHandler.clientTick()
+        // todo recoil
 
-    if (displayContext.firstPerson()) {
-        poseStack.translate(-recoil, 0.0f, 0.0f)
-        if (useAltModel) {
+        animHandler.clientTick()
+
+        if (displayContext.firstPerson()) {
+            poseStack.translate(-recoil, 0.0f, 0.0f)
+            if (useAltModel) {
 //                renderItemModel(altModel, renderer, stack, poseStack, buffer, packedOverlay, packedLight)
-            renderer.renderItemModel(altModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
-        } else {
+                renderer.renderItemModel(altModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+            } else {
 //                renderModel(mainModel, renderer, stack, poseStack, buffer, packedOverlay, packedLight)
-            renderer.renderItemModel(mainModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+                renderer.renderItemModel(mainModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
 //            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, mainModel)
 //            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, mainModel)
 
@@ -72,47 +78,45 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //                    Color.WHITE.rgb, Color(0, 0, 0, 0).rgb, false, fontRenderer, poseStack, buffer,
 //                    0.923, 0.065, -0.038, 0.0007f
 //                )
-            drawTextOnScreen(
-                Component.literal("THE FUNNY"),
-                Color.WHITE.rgb, Color(0, 0, 0, 0).rgb, false, fontRenderer, poseStack, buffer,
-                0.923, 0.065, -0.038, 0.0007f
-            )
+                drawTextOnScreen(
+                    Component.literal("THE FUNNY"),
+                    Color.WHITE.rgb, Color(0, 0, 0, 0).rgb, false, fontRenderer, poseStack, buffer,
+                    0.923, 0.065, -0.038, 0.0007f
+                )
 
-            drawTextOnScreen(
-                "CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs",
-                Color.RED.rgb,
-                Color(0, 0, 0, 0).rgb,
-                false,
-                fontRenderer,
-                poseStack,
-                buffer,
-                0.9,
-                0.0175,
-                -0.040,
-                0.0007f
-            )
+                drawTextOnScreen(
+                    "CASEOH: ${round(secureRandom.nextDouble() * 5000).toUInt()}lbs",
+                    Color.RED.rgb,
+                    Color(0, 0, 0, 0).rgb,
+                    false,
+                    fontRenderer,
+                    poseStack,
+                    buffer,
+                    0.9,
+                    0.0175,
+                    -0.040,
+                    0.0007f
+                )
 
 //                toolGunMode.mode.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
 
-            poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
-            renderer.renderItemModel(coilModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+                rotateCoilAndRender()
 //            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, coilModel)
-        }
-    } else {
-        if (useAltModel) {
-            renderer.renderItemModel(altModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+            }
         } else {
-            renderer.renderItemModel(mainModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
-            poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
-            renderer.renderItemModel(coilModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+            if (useAltModel) {
+                renderer.renderItemModel(altModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+            } else {
+                renderer.renderItemModel(mainModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+                rotateCoilAndRender()
+            }
         }
-    }
 //        pPoseStack.popPose()
 
-    // x, y, z after rotations
-    // x: back and forward, y: up and down, z: left and right
+        // x, y, z after rotations
+        // x: back and forward, y: up and down, z: left and right
 
-    // Tool gun mode specific rendering
+        // Tool gun mode specific rendering
 //        val byteArray = ByteArray(2)
 //        secureRandom.nextBytes(byteArray)
 //        drawTextOnScreen(byteArray.decodeToString(), Color.BLACK.rgb, Color(25,25,25,0).rgb, fontRenderer, pPoseStack, pBuffer,

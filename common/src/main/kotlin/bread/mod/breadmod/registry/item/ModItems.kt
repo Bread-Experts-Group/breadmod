@@ -5,21 +5,13 @@ import bread.mod.breadmod.ModMainCommon.modTranslatable
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
-import bread.mod.breadmod.item.BreadGunItem
-import bread.mod.breadmod.item.BreadShieldItem
-import bread.mod.breadmod.item.CertificateItem
-import bread.mod.breadmod.item.DopedBreadItem
-import bread.mod.breadmod.item.TestBreadItem
-import bread.mod.breadmod.item.TieredBreadAmuletItem
-import bread.mod.breadmod.item.TieredBreadAmuletItem.BreadAmuletType
-import bread.mod.breadmod.item.UltimateBreadItem
-import bread.mod.breadmod.item.WrenchItem
+import bread.mod.breadmod.item.*
 import bread.mod.breadmod.item.armor.ArmorMaterials
 import bread.mod.breadmod.item.armor.BreadArmorItem
 import bread.mod.breadmod.item.tool.KnifeItem
 import bread.mod.breadmod.item.tool.ToolTiers
-import bread.mod.breadmod.item.tool_gun.ToolGunItem
-import bread.mod.breadmod.item.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import bread.mod.breadmod.item.toolGun.ToolGunItem
+import bread.mod.breadmod.item.toolGun.ToolGunItem.Companion.TOOL_GUN_DEF
 import bread.mod.breadmod.registry.tag.RecordTags
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
@@ -29,25 +21,11 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties
-import net.minecraft.world.item.ArmorItem
+import net.minecraft.world.item.*
 import net.minecraft.world.item.ArmorItem.Type
-import net.minecraft.world.item.AxeItem
-import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.HoeItem
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.PickaxeItem
-import net.minecraft.world.item.ProjectileWeaponItem
-import net.minecraft.world.item.Rarity
-import net.minecraft.world.item.ShovelItem
-import net.minecraft.world.item.SwordItem
-import net.minecraft.world.item.Tiers
-import net.minecraft.world.item.TooltipFlag
-import net.minecraft.world.item.UseAnim
 import net.minecraft.world.level.block.Block
 
 // todo port item tags
-@Suppress("unused")
 object ModItems {
     val ITEM_REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.ITEM)
 
@@ -72,8 +50,10 @@ object ModItems {
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Toasted Bread")
     val TOASTED_BREAD: RegistrySupplier<Item> = ITEM_REGISTRY.register("toasted_bread") {
-        Item(Item.Properties().food(
-            FoodProperties.Builder().nutrition(7).saturationModifier(0.8f).build())
+        Item(
+            Item.Properties().food(
+                FoodProperties.Builder().nutrition(7).saturationModifier(0.8f).build()
+            )
         )
     }
 
@@ -127,8 +107,10 @@ object ModItems {
                 tooltipComponents: MutableList<Component>,
                 tooltipFlag: TooltipFlag
             ) {
-                tooltipComponents.add(modTranslatable("item", "half_bagel", "description")
-                    .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
+                tooltipComponents.add(
+                    modTranslatable("item", "half_bagel", "description")
+                        .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                )
             }
         }
     }
@@ -146,18 +128,18 @@ object ModItems {
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Bread Amulet")
     val BASIC_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("bread_amulet") {
-        TieredBreadAmuletItem(BreadAmuletType.NORMAL, 500)
+        TieredBreadAmuletItem(500)
     }
 
     @DataGenerateLanguage("en_us", "Reinforced Bread Amulet")
     val REINFORCED_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("reinforced_bread_amulet") {
-        TieredBreadAmuletItem(BreadAmuletType.REINFORCED, 2500)
+        TieredBreadAmuletItem(2500)
     }
 
     @DataGenerateLanguage("en_us", "Indestructible Bread Amulet")
     val INDESTRUCTIBLE_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> =
         ITEM_REGISTRY.register("indestructible_bread_amulet") {
-            TieredBreadAmuletItem(BreadAmuletType.INDESTRUCTIBLE, 0)
+            TieredBreadAmuletItem(0)
         }
 
     // todo port over features (applies to all 4 bread armors)
@@ -168,21 +150,21 @@ object ModItems {
         BreadArmorItem(Type.HELMET)
     }
 
-//    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Chestplate")
     val BREAD_CHESTPLATE: RegistrySupplier<BreadArmorItem> = ITEM_REGISTRY.register("bread_chestplate") {
         BreadArmorItem(Type.CHESTPLATE)
     }
 
-//    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Leggings")
     val BREAD_LEGGINGS: RegistrySupplier<BreadArmorItem> = ITEM_REGISTRY.register("bread_leggings") {
         BreadArmorItem(Type.LEGGINGS)
     }
 
-//    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Boots")
     val BREAD_BOOTS: RegistrySupplier<BreadArmorItem> = ITEM_REGISTRY.register("bread_boots") {

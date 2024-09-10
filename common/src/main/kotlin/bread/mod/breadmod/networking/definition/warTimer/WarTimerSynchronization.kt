@@ -1,4 +1,4 @@
-package bread.mod.breadmod.networking.definition.war_timer
+package bread.mod.breadmod.networking.definition.warTimer
 
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.client.gui.WarOverlay
@@ -20,9 +20,10 @@ internal data class WarTimerSynchronization(val time: Int) : CustomPacketPayload
             WarTimerSynchronization::time
         ) { WarTimerSynchronization(it) }
 
-        val RECEIVER = NetworkReceiver<WarTimerSynchronization> { value, context ->
+        val RECEIVER = NetworkReceiver<WarTimerSynchronization> { (time), _ ->
+            WarOverlay.timeLeft = time
+
             val player = rgMinecraft.player ?: return@NetworkReceiver
-            WarOverlay.timeLeft = value.time
             player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 1f)
         }
     }

@@ -2,7 +2,6 @@ package bread.mod.breadmod.entity
 
 import bread.mod.breadmod.registry.entity.ModEntityTypes
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.item.PrimedTnt
 import net.minecraft.world.level.Level
@@ -12,7 +11,6 @@ class PrimedHappyBlock(
     pLevel: Level,
     pPos: Vec3 = Vec3.ZERO,
     pDelta: Vec3 = Vec3.ZERO,
-    private val owner: Entity? = null,
     private var shouldSpread: Boolean = false
 ) : PrimedTnt(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), pLevel) {
     init {

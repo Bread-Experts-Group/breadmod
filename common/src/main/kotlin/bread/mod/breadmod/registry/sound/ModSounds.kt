@@ -9,7 +9,6 @@ import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
 import net.minecraft.sounds.SoundEvent
 
-@Suppress("unused")
 object ModSounds {
     internal val SOUND_REGISTRY: DeferredRegister<SoundEvent> =
         DeferredRegister.create(ModMainCommon.MOD_ID, Registries.SOUND_EVENT)

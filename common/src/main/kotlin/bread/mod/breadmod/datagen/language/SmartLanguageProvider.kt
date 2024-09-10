@@ -1,7 +1,7 @@
 package bread.mod.breadmod.datagen.language
 
 import bread.mod.breadmod.datagen.DataProviderScanner
-import dev.architectury.registry.registries.RegistrySupplier
+import bread.mod.breadmod.util.ensureRegistrySupplierAndValue
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.CreativeModeTab
@@ -26,15 +26,13 @@ abstract class SmartLanguageProvider<T>(
         scanner.getObjectPropertiesAnnotatedWith<DataGenerateLanguage>().forEach { (property, data) ->
             data.second.forEach { a ->
                 val localeMap = getOrPut(a.locale) { mutableMapOf() }
-                val supplier = data.first
-                if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException("${property.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
-
-                when (val actual = supplier.get()) {
+                when (val actual = data.first.ensureRegistrySupplierAndValue<Any>(property).get()) {
                     is ItemLike -> localeMap[actual.asItem().descriptionId] = a.translation
                     is CreativeModeTab -> {
                         val contents = actual.displayName.contents
                         if (contents is TranslatableContents) localeMap[contents.key] = a.translation
                     }
+
                     is SoundEvent -> localeMap[actual.location.toLanguageKey("sound")] = a.translation
 
                     null -> throw NullPointerException()

@@ -1,4 +1,4 @@
-package bread.mod.breadmod.item.tool_gun
+package bread.mod.breadmod.item.toolGun
 
 import bread.mod.breadmod.util.render.renderText
 import bread.mod.breadmod.util.render.scaleFlat
@@ -6,10 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.Style
-import net.minecraft.util.FormattedCharSequence
 
 private const val SCREEN_TINT = 15728880
 
@@ -66,7 +63,7 @@ fun drawTextOnScreen(
     pPosY: Double,
     pPosZ: Double,
     pScale: Float
-) = drawTextOnScreen(
+): Unit = drawTextOnScreen(
     Component.literal(pText),
     pColor, pBackgroundColor, pDropShadow, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
 )
@@ -110,41 +107,40 @@ fun drawTextOnScreen(
 //    pPoseStack.popPose()
 //}
 
-fun drawWrappedTextOnScreen(
-    font: Font,
-    text: Component,
-    poseStack: PoseStack,
-    buffer: MultiBufferSource,
-    color: Int,
-    backgroundColor: Int,
-    dropShadow: Boolean,
-    posX: Double,
-    posY: Double,
-    posZ: Double,
-    splitY: Float,
-    scale: Float,
-    lineWidth: Int
-) {
-    initialTranslations(poseStack, posX, posY, posZ, scale)
-    var split: Float = splitY
-    for (formattedCharSequence: FormattedCharSequence in componentSplit(text, lineWidth, font)) {
-        font.drawInBatch(
-            formattedCharSequence,
-            0f,
-            split,
-            color,
-            dropShadow,
-            poseStack.last().pose(),
-            buffer,
-            Font.DisplayMode.NORMAL,
-            backgroundColor,
-            SCREEN_TINT
-        )
-        split += 9f
-    }
-    poseStack.popPose()
-}
+// --Commented out by Inspection START (9/10/2024 03:55):
+//fun drawWrappedTextOnScreen(
+//    font: Font,
+//    text: Component,
+//    poseStack: PoseStack,
+//    buffer: MultiBufferSource,
+//    color: Int,
+//    backgroundColor: Int,
+//    dropShadow: Boolean,
+//    posX: Double,
+//    posY: Double,
+//    posZ: Double,
+//    splitY: Float,
+//    scale: Float,
+//    lineWidth: Int
+//) {
+//    initialTranslations(poseStack, posX, posY, posZ, scale)
+//    var split: Float = splitY
+//    for (formattedCharSequence: FormattedCharSequence in componentSplit(text, lineWidth, font)) {
+//        font.drawInBatch(
+//            formattedCharSequence,
+//            0f,
+//            split,
+//            color,
+//            dropShadow,
+//            poseStack.last().pose(),
+//            buffer,
+//            Font.DisplayMode.NORMAL,
+//            backgroundColor,
+//            SCREEN_TINT
+//        )
+//        split += 9f
+//    }
+//    poseStack.popPose()
+//}
+// --Commented out by Inspection STOP (9/10/2024 03:55)
 
-// Font.split() converted to take in a Component instead of a FormattedCharSequence
-fun componentSplit(text: Component, maxWidth: Int, font: Font): MutableList<FormattedCharSequence> =
-    Language.getInstance().getVisualOrder(font.splitter.splitLines(text, maxWidth, Style.EMPTY))

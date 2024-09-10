@@ -30,30 +30,33 @@ class SmartModelProviderFabric(
      * @since 1.0.0
      */
     override fun generate(forEvent: FabricDataGenerator.Pack) {
-        val associateItemModelProvider = object : SmartItemModelProvider<FabricDataGenerator.Pack>(modID, forClassLoader, forPackage) {
-            override fun generate(forEvent: FabricDataGenerator.Pack) = throw UnsupportedOperationException("!")
-            fun expose() = getItemModelMap()
-        }
+        val associateItemModelProvider =
+            object : SmartItemModelProvider<FabricDataGenerator.Pack>(modID, forClassLoader, forPackage) {
+                override fun generate(forEvent: FabricDataGenerator.Pack) = throw UnsupportedOperationException("!")
+                fun expose() = getItemModelMap()
+            }
 
         forEvent.addProvider { dataOutput, _ ->
             object : FabricModelProvider(dataOutput) {
-                override fun generateBlockStateModels(p0: BlockModelGenerators) = getBlockModelMap().forEach { (value, annotation) ->
-                    when (annotation) {
-                        is DataGenerateCubeAllBlockModel, is DataGenerateCubeAllBlockAndItemModel -> {
-                            val mapping = TextureMapping().put(
-                                TextureSlot.ALL,
-                                ModelLocationUtils.getModelLocation(value)
-                            )
-                            p0.blockStateOutput.accept(
-                                BlockModelGenerators.createSimpleBlock(
-                                    value,
-                                    ModelTemplates.CUBE_ALL.create(value, mapping, p0.modelOutput)
+                override fun generateBlockStateModels(p0: BlockModelGenerators) =
+                    getBlockModelMap().forEach { (value, annotation) ->
+                        when (annotation) {
+                            is DataGenerateCubeAllBlockModel, is DataGenerateCubeAllBlockAndItemModel -> {
+                                val mapping = TextureMapping().put(
+                                    TextureSlot.ALL,
+                                    ModelLocationUtils.getModelLocation(value)
                                 )
-                            )
+                                p0.blockStateOutput.accept(
+                                    BlockModelGenerators.createSimpleBlock(
+                                        value,
+                                        ModelTemplates.CUBE_ALL.create(value, mapping, p0.modelOutput)
+                                    )
+                                )
+                            }
+
+                            else -> throw UnsupportedOperationException(annotation::class.simpleName)
                         }
-                        else -> throw UnsupportedOperationException(annotation::class.simpleName)
                     }
-                }
 
                 override fun generateItemModels(p0: ItemModelGenerators) =
                     mutableMapOf<ItemLike, Annotation>().also {
@@ -66,6 +69,7 @@ class SmartModelProviderFabric(
                                 ModelLocationUtils.getModelLocation(value.asItem()),
                                 DelegatedModel(ModelLocationUtils.getModelLocation(value as Block))
                             )
+
                             else -> throw UnsupportedOperationException(annotation::class.simpleName)
                         }
                     }

@@ -34,9 +34,20 @@ class SmartRecipeProvider(
                     ).forEach {
                         it.forEach { (property, data) ->
                             val supplier = data.first
-                            if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException("${property.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
+                            if (supplier !is RegistrySupplier<*>) throw IllegalArgumentException(
+                                String.format(
+                                    "%s must be of type %s.",
+                                    property.name, RegistrySupplier::class.qualifiedName
+                                )
+                            )
+
                             val actual = supplier.get()
-                            if (actual !is ItemLike) throw IllegalArgumentException("${property.name} must be of type ${ItemLike::class.qualifiedName}.")
+                            if (actual !is ItemLike) throw IllegalArgumentException(
+                                String.format(
+                                    "%s must supply type %s.",
+                                    property.name, ItemLike::class.qualifiedName
+                                )
+                            )
 
                             when (val annotation = data.second.first()) {
                                 is DataGenerateShapedRecipeThis -> {

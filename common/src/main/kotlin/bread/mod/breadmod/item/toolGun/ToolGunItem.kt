@@ -1,4 +1,4 @@
-package bread.mod.breadmod.item.tool_gun
+package bread.mod.breadmod.item.toolGun
 
 import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
@@ -6,7 +6,6 @@ import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 
@@ -58,11 +57,17 @@ internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCre
 
     internal companion object {
         const val TOOL_GUN_DEF = "tool_gun"
-        const val CURRENT_MODE_TAG = "currentMode"
-        const val MODE_NAMESPACE_TAG = "namespace"
-        const val MODE_NAME_TAG = "name"
 
-        const val NAMESPACE_ITERATOR_STATE_TAG = "namespaceIteratorState"
-        const val MODE_ITERATOR_STATE_TAG = "modeIteratorState"
+        // --Commented out by Inspection START (9/10/2024 03:55):
+//        // --Commented out by Inspection (9/10/2024 03:55):// --Commented out by Inspection (9/10/2024 03:55):const
+//        val CURRENT_MODE_TAG = "currentMode"
+//        // --Commented out by Inspection (9/10/2024 03:55):const val MODE_NAMESPACE_TAG = "namespace"
+// --Commented out by Inspection STOP (9/10/2024 03:55)
+//        const val MODE_NAME_TAG = "name"
+
+// --Commented out by Inspection START (9/10/2024 03:55):
+//        const val NAMESPACE_ITERATOR_STATE_TAG = "namespaceIteratorState"
+//        const val MODE_ITERATOR_STATE_TAG = "modeIteratorState"
+// --Commented out by Inspection STOP (9/10/2024 03:55)
     }
 }

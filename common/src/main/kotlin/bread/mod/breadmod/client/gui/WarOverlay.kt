@@ -4,37 +4,23 @@ import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.util.ModFonts
 import bread.mod.breadmod.util.render.rgMinecraft
 import bread.mod.breadmod.util.render.scaleFlat
-import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.Util
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.player.LocalPlayer
-import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import java.awt.Color
 
-open class WarOverlay: AbstractModGuiOverlay() {
-    private val overlayTexture = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
-    var timerPosition = -110f
-//    var lastTimerPosition = -110f
-    var lastTick = 0
-    
-    override fun renderOverlay(
-        guiGraphics: GuiGraphics,
-        partialTick: Float,
-        deltaTracker: DeltaTracker,
-        screenWidth: Int,
-        screenHeight: Int,
-        poseStack: PoseStack,
-        buffer: MultiBufferSource,
-        player: LocalPlayer
-    ) {
+open class WarOverlay : LayeredDraw.Layer {
+    val overlayTexture: ResourceLocation = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
+    var timerPosition: Float = -110f
+    var lastTick: Int = 0
+    //    var lastTimerPosition = -110f
+
+    override fun render(guiGraphics: GuiGraphics, deltaTracker: DeltaTracker) {
         val guiTicks = rgMinecraft.gui.guiTicks
-        val seconds = timeLeft % 60
-        val minutes = timeLeft / 60
-        val formattedSeconds = if (seconds < 10) "0$seconds" else seconds
-        val formattedMinutes = if (minutes < 10) "0$minutes" else minutes
         val colorPair: Triple<Float, Float, Float> =
             if (isTimerIncreasing) Triple(0.376f, 0.91f, 0.471f)
             else Triple(0.973f, 0f, 0f)
@@ -55,6 +41,9 @@ open class WarOverlay: AbstractModGuiOverlay() {
         }
 
         if (timerPosition > -110f) {
+            val poseStack = guiGraphics.pose()
+            val screenWidth = rgMinecraft.window.screenWidth
+
             poseStack.pushPose()
             poseStack.scaleFlat(0.5f)
             poseStack.translate(0.0, timerPosition.toDouble(), 3600.0)
@@ -67,7 +56,9 @@ open class WarOverlay: AbstractModGuiOverlay() {
             guiGraphics.setColor(colorPair.first, colorPair.second, colorPair.third, 1f)
             guiGraphics.drawString(
                 rgMinecraft.font,
-                Component.literal("$formattedMinutes:$formattedSeconds").withStyle(ModFonts.WARTIMER_INFILL),
+                Component
+                    .literal("${(timeLeft / 60).toString().padStart(2)}:${(timeLeft % 60).toString().padStart(2)}")
+                    .withStyle(ModFonts.WARTIMER_INFILL),
                 0,
                 12,
                 Color.WHITE.rgb
@@ -78,9 +69,9 @@ open class WarOverlay: AbstractModGuiOverlay() {
     }
 
     companion object {
-        var timeLeft = 30
-        var isTimerIncreasing = false
-        var increasingTimer = 0
-        var timerActive = false
+        var timeLeft: Int = 30
+        var isTimerIncreasing: Boolean = false
+        var increasingTimer: Int = 0
+        var timerActive: Boolean = false
     }
 }

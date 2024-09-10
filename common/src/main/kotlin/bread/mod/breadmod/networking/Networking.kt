@@ -1,8 +1,8 @@
 package bread.mod.breadmod.networking
 
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerIncrement
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerSynchronization
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerToggle
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerIncrement
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerSynchronization
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerToggle
 import dev.architectury.networking.NetworkManager
 import dev.architectury.networking.NetworkManager.NetworkReceiver
 import dev.architectury.platform.Platform

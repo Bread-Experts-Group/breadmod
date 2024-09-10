@@ -1,23 +1,16 @@
 package bread.mod.breadmod.util
 
-import com.google.gson.JsonObject
+import bread.mod.breadmod.util.RaycastResult.RaycastResultType
+import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
-import net.minecraft.core.Registry
 import net.minecraft.core.Vec3i
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.MutableComponent
-import net.minecraft.network.chat.contents.PlainTextContents.LiteralContents
-import net.minecraft.network.chat.contents.TranslatableContents
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
 import net.minecraft.util.Mth
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import kotlin.system.exitProcess
+import kotlin.reflect.KProperty1
 
 internal val formatArray: List<String> = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
 
@@ -94,52 +87,58 @@ fun formatUnit(
     }
 }
 
-/**
- * [formatUnit] for integers.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun formatUnit(
-    pFrom: Int,
-    pTo: Int,
-    pUnit: String,
-    pFormatShort: Boolean,
-    pDecimals: Int,
-    pUnitOffset: Int = 0,
-    pUnitMax: Int = 1000
-): String =
-    formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
+// --Commented out by Inspection START (9/10/2024 03:52):
+///**
+// * [formatUnit] for integers.
+// * @author Miko Elbrecht
+// * @since 1.0.0
+// */
+//fun formatUnit(
+//    pFrom: Int,
+//    pTo: Int,
+//    pUnit: String,
+//    pFormatShort: Boolean,
+//    pDecimals: Int,
+//    pUnitOffset: Int = 0,
+//    pUnitMax: Int = 1000
+//): String =
+//    formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
+// --Commented out by Inspection STOP (9/10/2024 03:52)
 
-/**
- * Translates a [Direction] to a side relative to another [Direction].
- * @return The relativized [Direction].
- * @param translateFor The [Direction] to translate for.
- * @param side The side to translate in relation to.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun translateDirection(translateFor: Direction, side: Direction): Direction =
-    if (side.axis == Direction.Axis.Y) side
-    else when (translateFor) {
-        Direction.NORTH -> side.opposite
-        Direction.SOUTH -> side
-        Direction.EAST -> side.clockWise
-        Direction.WEST -> side.counterClockWise
-        else -> translateFor
-    }
+///**
+// * Translates a [Direction] to a side relative to another [Direction].
+// * @return The relativized [Direction].
+// * @param translateFor The [Direction] to translate for.
+// * @param side The side to translate in relation to.
+// * @author Miko Elbrecht
+// * @since 1.0.0
+// */
+//fun translateDirection(translateFor: Direction, side: Direction): Direction =
+//    if (side.axis == Direction.Axis.Y) side
+//    else when (translateFor) {
+//        Direction.NORTH -> side.opposite
+//        Direction.SOUTH -> side
+//        Direction.EAST -> side.clockWise
+//        Direction.WEST -> side.counterClockWise
+//        else -> translateFor
+//    }
 
-/**
- * Removes all whitespace from this string.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun String.removeWhitespace(): String = this.replace(Regex("\\s+"), "")
+// --Commented out by Inspection START (9/10/2024 03:52):
+///**
+// * Removes all whitespace from this string.
+// * @author Miko Elbrecht
+// * @since 1.0.0
+// */
+//fun String.removeWhitespace(): String = this.replace(Regex("\\s+"), "")
+// --Commented out by Inspection STOP (9/10/2024 03:52)
 
-/**
- * TODO javadoc
- */
-fun <T> Registry<T>.createTagKey(path: String): TagKey<T> =
-    TagKey.create(this.key(), ResourceLocation.parse(path))
+// --Commented out by Inspection START (9/10/2024 03:52):
+///**
+// * TODO javadoc
+// */
+//fun <T> Registry<T>.createTagKey(path: String): TagKey<T> =
+//    TagKey.create(this.key(), ResourceLocation.parse(path))
+// --Commented out by Inspection STOP (9/10/2024 03:52)
 
 /**
  * A result of a raycast operation.
@@ -246,16 +245,13 @@ sealed class RaycastResult(
         ): Entity? {
             var distance = 0.0
             while (true) {
-                val positionX = origin.x + (direction.x * distance)
-                val positionY = origin.y + (direction.y * distance)
-                val positionZ = origin.z + (direction.z * distance)
-                val mathPos = Vec3(positionX, positionY, positionZ)
-                val entities = this.getEntities(exclude, AABB.ofSize(mathPos, 10.0, 10.0, 10.0))
+                val position = origin + (direction * distance)
+                val entities = this.getEntities(exclude, AABB.ofSize(position, 10.0, 10.0, 10.0))
                 if (entities.isNotEmpty()) entities.forEach {
-                    if (it.getDimensions(it.pose).makeBoundingBox(it.position()).contains(mathPos)) return Entity(
+                    if (it.getDimensions(it.pose).makeBoundingBox(it.position()).contains(position)) return Entity(
                         it,
                         origin,
-                        mathPos,
+                        position,
                         direction
                     )
                 }
@@ -285,15 +281,12 @@ sealed class RaycastResult(
         ): Block? {
             var distance = 0.0
             while (true) {
-                val positionX = origin.x + (direction.x * distance)
-                val positionY = origin.y + (direction.y * distance)
-                val positionZ = origin.z + (direction.z * distance)
-                val mathPos = Vec3(positionX, positionY, positionZ)
-                val state = this.getBlockState(BlockPos(mathPos.toVec3i()))
+                val position = origin + (direction * distance)
+                val state = this.getBlockState(BlockPos(position.toVec3i()))
                 if (!state.isAir && (countFluid || state.fluidState.type != Fluids.EMPTY)) return Block(
                     state,
                     origin,
-                    mathPos,
+                    position,
                     direction
                 )
                 if (distance > length) return null
@@ -305,49 +298,71 @@ sealed class RaycastResult(
 
 fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(x), Mth.floor(y), Mth.floor(z))
 
+// --Commented out by Inspection START (9/10/2024 03:52):
+///**
+// * Writes a [Component] into a new [JsonObject].
+// * @return The [JsonObject] containing the [Component].
+// * @param component The [Component] to write into the [JsonObject].
+// * @throws NotImplementedError If the [Component] contains contents not yet supported by this function.
+// * @author Miko Elbrecht
+// * @since 1.0.0
+// */
+//fun componentToJson(component: Component): JsonObject = JsonObject().also {
+//    when (val contents = component.contents) {
+//        is TranslatableContents -> {
+//            it.addProperty("type", "translate")
+//            it.addProperty("key", contents.key)
+//            it.addProperty("fallback", contents.fallback)
+//            if (contents.args.isNotEmpty())
+//                throw NotImplementedError("Arguments not supposed for jsonifying translatable contents - sorry!")
+//        }
+//
+//        is LiteralContents -> {
+//            it.addProperty("type", "literal")
+//            it.addProperty("text", contents.text)
+//        }
+//
+//        else -> throw NotImplementedError("Unknown contents: ${contents::class.qualifiedName}")
+//    }
+//}
+// --Commented out by Inspection STOP (9/10/2024 03:52)
+
+// --Commented out by Inspection START (9/10/2024 03:52):
+///**
+// * Reads a [MutableComponent] from the given [JsonObject].
+// * @return The [MutableComponent] given by this [JsonObject].
+// * @param json The [JsonObject] to read the [MutableComponent] from.
+// * @author Miko Elbrecht
+// * @since 1.0.0
+// */
+//fun jsonToComponent(json: JsonObject): MutableComponent = when (val type = json.getAsJsonPrimitive("type").asString) {
+//    "translate" -> Component.translatableWithFallback(
+//        json.getAsJsonPrimitive("key").asString,
+//        json.get("fallback")?.let { if (it.isJsonNull) null else it.asString }
+//    )
+//
+//    "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
+//    else -> throw IllegalArgumentException("Illegal component type: $type")
+//}
+// --Commented out by Inspection STOP (9/10/2024 03:52)
+
 /**
- * Writes a [Component] into a new [JsonObject].
- * @return The [JsonObject] containing the [Component].
- * @param component The [Component] to write into the [JsonObject].
- * @throws NotImplementedError If the [Component] contains contents not yet supported by this function.
+ * Adds a [Vec3] to this [Vec3].
+ * @return The sum of this [Vec3] and [other].
+ * @param other The [Vec3] to add to this [Vec3].
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun componentToJson(component: Component): JsonObject = JsonObject().also {
-    when (val contents = component.contents) {
-        is TranslatableContents -> {
-            it.addProperty("type", "translate")
-            it.addProperty("key", contents.key)
-            it.addProperty("fallback", contents.fallback)
-            if (contents.args.isNotEmpty())
-                throw NotImplementedError("Arguments not supposed for jsonifying translatable contents - sorry!")
-        }
-
-        is LiteralContents -> {
-            it.addProperty("type", "literal")
-            it.addProperty("text", contents.text)
-        }
-
-        else -> throw NotImplementedError("Unknown contents: ${contents::class.qualifiedName}")
-    }
-}
+operator fun Vec3.plus(other: Vec3): Vec3 = Vec3(x + other.x, y + other.y, z + other.z)
 
 /**
- * Reads a [MutableComponent] from the given [JsonObject].
- * @return The [MutableComponent] given by this [JsonObject].
- * @param json The [JsonObject] to read the [MutableComponent] from.
+ * Scales this [Vec3] by the specified factor.
+ * @return The scaled [Vec3].
+ * @param scale The factor to scale this [Vec3] by.
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun jsonToComponent(json: JsonObject): MutableComponent = when (val type = json.getAsJsonPrimitive("type").asString) {
-    "translate" -> Component.translatableWithFallback(
-        json.getAsJsonPrimitive("key").asString,
-        json.get("fallback")?.let { if (it.isJsonNull) null else it.asString }
-    )
-
-    "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
-    else -> throw IllegalArgumentException("Illegal component type: $type")
-}
+operator fun Vec3.times(scale: Double): Vec3 = this.scale(scale)
 
 /// !!! NOTICE !!! ///
 
@@ -356,29 +371,46 @@ fun jsonToComponent(json: JsonObject): MutableComponent = when (val type = json.
 
 /// INTERNAL DEFINITIONS FOLLOW ///
 
-internal fun computerSD(aggressive: Boolean) {
-    val runtime = Runtime.getRuntime()
-    val os = System.getProperty("os.name")
-    when {
-        os.contains("win", true) -> {
-//            if (aggressive) ACrasherWindows.run()
-            runtime.exec(arrayOf("RUNDLL32.EXE", "powrprof.dll,SetSuspendState 0,1,0"))
-        }
+// --Commented out by Inspection START (9/10/2024 03:51):
+//internal fun computerSD(aggressive: Boolean) {
+//    val runtime = Runtime.getRuntime()
+//    val os = System.getProperty("os.name")
+//    when {
+//        os.contains("win", true) -> {
+////            if (aggressive) ACrasherWindows.run()
+//            runtime.exec(arrayOf("RUNDLL32.EXE", "powrprof.dll,SetSuspendState 0,1,0"))
+//        }
+//
+//        os.contains("mac", true) -> {
+//            runtime.exec(arrayOf("pmset", "sleepnow"))
+//        }
+//
+//        os.contains("nix", true) || os.contains("nux", true) || os.contains("aix", true) -> {
+//            if (aggressive) runtime.exec(arrayOf("shutdown", "0"))
+//            runtime.exec(arrayOf("systemctl", "suspend"))
+//        }
+//
+//        else -> if (aggressive) throw IllegalStateException("Screw you! You're no fun.")
+//    }
+//
+//    if (aggressive) {
+//        Thread.sleep(5000)
+//        exitProcess(0)
+//    }
+// --Commented out by Inspection STOP (9/10/2024 03:51)
+//}
 
-        os.contains("mac", true) -> {
-            runtime.exec(arrayOf("pmset", "sleepnow"))
-        }
+internal inline fun <reified T> Any?.ensureRegistrySupplierAndValue(forProperty: KProperty1<*, *>): RegistrySupplier<T> {
+    val value = this.ensureRegistrySupplier(forProperty).get()
+    if (value !is T)
+        throw IllegalArgumentException("${forProperty.name} must supply type ${T::class.qualifiedName}")
 
-        os.contains("nix", true) || os.contains("nux", true) || os.contains("aix", true) -> {
-            if (aggressive) runtime.exec(arrayOf("shutdown", "0"))
-            runtime.exec(arrayOf("systemctl", "suspend"))
-        }
+    @Suppress("UNCHECKED_CAST")
+    return this as RegistrySupplier<T>
+}
 
-        else -> if (aggressive) throw IllegalStateException("Screw you! You're no fun.")
-    }
-
-    if (aggressive) {
-        Thread.sleep(5000)
-        exitProcess(0)
-    }
+internal fun Any?.ensureRegistrySupplier(forProperty: KProperty1<*, *>): RegistrySupplier<*> {
+    if (this !is RegistrySupplier<*>)
+        throw IllegalArgumentException("${forProperty.name} must be of type ${RegistrySupplier::class.qualifiedName}.")
+    return this
 }

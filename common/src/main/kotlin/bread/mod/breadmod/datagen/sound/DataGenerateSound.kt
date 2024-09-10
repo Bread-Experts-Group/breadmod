@@ -15,6 +15,7 @@ annotation class DataGenerateSound(
     val attenuationDistance: Int = 16,
     val preload: Boolean = false
 ) {
+    @Suppress("unused")
     enum class Type {
         FILE,
         EVENT

@@ -7,14 +7,12 @@ import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
-import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ProjectileWeaponItem
 import net.minecraft.world.level.Level
 import java.util.function.Predicate
 
 class BreadGunItem : ProjectileWeaponItem(Properties().stacksTo(1).durability(9000)) {
-    private var fire = false
     override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val flag = pPlayer.abilities.instabuild
         val itemStack = pPlayer.getProjectile(pPlayer.getItemInHand(pUsedHand))
@@ -22,7 +20,6 @@ class BreadGunItem : ProjectileWeaponItem(Properties().stacksTo(1).durability(90
         if (itemStack.isEmpty) return InteractionResultHolder.fail(pStack)
 
         if (pLevel is ServerLevel && (!itemStack.isEmpty || flag)) {
-            fire = true
             if (!flag) {
                 itemStack.shrink(1)
                 if (itemStack.isEmpty) pPlayer.inventory.removeItem(itemStack)
@@ -33,7 +30,6 @@ class BreadGunItem : ProjectileWeaponItem(Properties().stacksTo(1).durability(90
         return InteractionResultHolder.consume(pPlayer.getItemInHand(pUsedHand))
     }
 
-    private var fireTimes = 0
     // todo use shootProjectile to fire the bullet instead
 //    override fun inventoryTick(pStack: ItemStack, pLevel: Level, pEntity: Entity, pSlotId: Int, pIsSelected: Boolean) {
 //        if (pEntity is LivingEntity) {

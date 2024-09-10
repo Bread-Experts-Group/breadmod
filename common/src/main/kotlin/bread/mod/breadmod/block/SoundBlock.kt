@@ -15,18 +15,18 @@ import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 
-class SoundBlock: Block(Properties.of()
-    .strength(4f, 6f)
-    .mapColor(MapColor.COLOR_GRAY)
-    .requiresCorrectToolForDrops()
-    .sound(SoundType.METAL)
+class SoundBlock : Block(
+    Properties.of()
+        .strength(4f, 6f)
+        .mapColor(MapColor.COLOR_GRAY)
+        .requiresCorrectToolForDrops()
+        .sound(SoundType.METAL)
 ), EntityBlock {
     override fun newBlockEntity(pPos: BlockPos, pState: BlockState): BlockEntity =
         SoundBlockEntity(pPos, pState)
@@ -40,12 +40,14 @@ class SoundBlock: Block(Properties.of()
     }
 
     init {
-        registerDefaultState(stateDefinition.any()
-            .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
+        registerDefaultState(
+            stateDefinition.any()
+                .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
         )
     }
 
-    @Deprecated("Deprecated in Java",
+    @Deprecated(
+        "Deprecated in Java",
         ReplaceWith("RenderShape.MODEL", "net.minecraft.world.level.block.RenderShape")
     )
     override fun getRenderShape(pState: BlockState): RenderShape = RenderShape.MODEL
@@ -56,17 +58,23 @@ class SoundBlock: Block(Properties.of()
         pos: BlockPos,
         player: Player,
         hitResult: BlockHitResult
-    ): InteractionResult? {
+    ): InteractionResult {
         if (!level.isClientSide) {
             val entity = (level.getBlockEntity(pos) as SoundBlockEntity)
             if (player.isShiftKeyDown) {
                 // todo figure this out later
-/*                entity.currentSound?.let {
-                    val sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.fromNamespaceAndPath(it)) ?: return InteractionResult.PASS
-                    pLevel.playSound(null, pPos, sound, SoundSource.BLOCKS, 1f, 1f)
-                }*/
+                /*                entity.currentSound?.let {
+                                    val sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.fromNamespaceAndPath(it)) ?:
+                                    return InteractionResult.PASS
+                                    pLevel.playSound(null, pPos, sound, SoundSource.BLOCKS, 1f, 1f)
+                                }*/
                 entity.currentSound?.let {
-                    val sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.fromNamespaceAndPath(it.location.namespace, it.location.path))
+                    val sound = BuiltInRegistries.SOUND_EVENT.get(
+                        ResourceLocation.fromNamespaceAndPath(
+                            it.location.namespace,
+                            it.location.path
+                        )
+                    )
                     if (sound != null) {
                         level.playSound(null, pos, sound, SoundSource.BLOCKS, 1f, 1f)
                     }

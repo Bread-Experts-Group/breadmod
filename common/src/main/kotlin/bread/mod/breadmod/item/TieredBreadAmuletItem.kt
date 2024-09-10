@@ -1,15 +1,13 @@
 package bread.mod.breadmod.item
 
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.Item.Properties
-import java.text.DecimalFormat
 
 // todo port over config and features using data components
 class TieredBreadAmuletItem(
-    private val pType: Enum<BreadAmuletType>,
     pDurability: Int
-) : Item(Properties()
-    .durability(if(pDurability > 0) pDurability else Int.MAX_VALUE)
+) : Item(
+    Properties()
+        .durability(if (pDurability > 0) pDurability else Int.MAX_VALUE)
 ) {
 
     companion object {
@@ -17,9 +15,9 @@ class TieredBreadAmuletItem(
 //        private val feedAmt = COMMON.BREAD_AMULET_FEED_AMOUNT
 //        private val feedStacks = COMMON.BREAD_AMULET_STACKS
 
-        private val decimalFormat = DecimalFormat("0.#")
-        data class PlayerData(var timeLeft: Int, var lastExec: Int)
-        private val timers = mutableMapOf<String,PlayerData>()
+        // --Commented out by Inspection (9/10/2024 03:55):private val decimalFormat = DecimalFormat("0.#")
+//        data class PlayerData(var timeLeft: Int, var lastExec: Int)
+        // --Commented out by Inspection (9/10/2024 03:55):private val timers = mutableMapOf<String,PlayerData>()
     }
 
     // todo item durability not lowering on item trigger, possibly due to multiple amulets in the same inventory
@@ -39,7 +37,7 @@ class TieredBreadAmuletItem(
 //    }
 
 //    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) =
-//        if(entity is ServerPlayer) playerFood(entity, entity.getEquipmentSlotForItem(ItemStack(this))) else {}
+//        if (entity is ServerPlayer) playerFood(entity, entity.getEquipmentSlotForItem(ItemStack(this))) else {}
 
 //    override fun appendHoverText(
 //        stack: ItemStack,
@@ -77,5 +75,4 @@ class TieredBreadAmuletItem(
 //            })
 //        } else null
 
-    enum class BreadAmuletType { NORMAL, REINFORCED, INDESTRUCTIBLE }
 }

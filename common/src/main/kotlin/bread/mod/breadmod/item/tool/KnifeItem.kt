@@ -31,52 +31,52 @@ class KnifeItem(
     }
 
     override fun useOn(context: UseOnContext): InteractionResult {
+        val player = context.player ?: return InteractionResult.FAIL
+
         val level = context.level
         val handStack = context.itemInHand
         val clickedPos = context.clickedPos
         val blockState = level.getBlockState(clickedPos)
         val facing = context.clickedFace
 
-        return if (blockState.block == Blocks.PUMPKIN && handStack.`is`(KNIVES)) {
-            val player = context.player
-            if (player != null && !level.isClientSide) {
-                val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
-                level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
-                level.setBlockAndUpdate(
-                    clickedPos,
-                    Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction)
-                )
+        fun getDirectionAndCarve(): Direction {
+            level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
+            return if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
+        }
 
-                val itemEntity = createItemEntity(Items.PUMPKIN_SEEDS, 4, level, clickedPos, direction)
-                itemEntity.setDeltaMovement(
-                    0.05 * direction.stepX + level.random.nextDouble() * 0.02,
-                    0.05,
-                    0.05 * direction.stepZ + level.random.nextDouble() * 0.02
-                )
+        fun ItemEntity.spawnInWorld() {
+            // There is probably a utility function for this
+            this.setDeltaMovement(
+                0.05 * direction.stepX + getRandomX(0.02),
+                0.05,
+                0.05 * direction.stepZ + getRandomZ(0.02)
+            )
+            this.setPickUpDelay(20)
+            level.addFreshEntity(this)
+        }
 
-                level.addFreshEntity(itemEntity)
-                handStack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND)
+        return if (!level.isClientSide && handStack.`is`(KNIVES)) {
+            when (blockState.block) {
+                Blocks.PUMPKIN -> {
+                    val direction = getDirectionAndCarve()
+                    level.setBlockAndUpdate(
+                        clickedPos,
+                        Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction)
+                    )
+                }
+
+                ModBlocks.BREAD_BLOCK.get().block -> {
+                    val direction = getDirectionAndCarve()
+                    level.setBlockAndUpdate(clickedPos, Blocks.AIR.defaultBlockState())
+
+                    createItemEntity(Items.BREAD, 9, level, clickedPos, direction).spawnInWorld()
+                    handStack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND)
+                }
+
+                else -> return InteractionResult.PASS
             }
 
-            InteractionResult.sidedSuccess(level.isClientSide)
-        } else if (blockState.block == ModBlocks.BREAD_BLOCK.get().block && handStack.`is`(KNIVES)) {
-            val player = context.player
-            if (player != null && !level.isClientSide) {
-                val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
-                level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
-                level.setBlockAndUpdate(clickedPos, Blocks.AIR.defaultBlockState())
-
-                val itemEntity = createItemEntity(Items.BREAD, 9, level, clickedPos, direction)
-                itemEntity.setDeltaMovement(
-                    0.05 * direction.stepX + level.random.nextDouble() * 0.02,
-                    0.05,
-                    0.05 * direction.stepZ + level.random.nextDouble() * 0.02
-                )
-
-                level.addFreshEntity(itemEntity)
-                handStack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND)
-            }
-            InteractionResult.sidedSuccess(level.isClientSide)
+            InteractionResult.SUCCESS
         } else InteractionResult.PASS
     }
 

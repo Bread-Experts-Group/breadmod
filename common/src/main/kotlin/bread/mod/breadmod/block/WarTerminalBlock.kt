@@ -1,9 +1,8 @@
 package bread.mod.breadmod.block
 
 import bread.mod.breadmod.ModMainCommon
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerIncrement
+import bread.mod.breadmod.command.server.WarTimerCommand.increaseTime
 import bread.mod.breadmod.registry.CommonEvents.warTimerMap
-import dev.architectury.networking.NetworkManager
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
@@ -15,8 +14,6 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Block.box
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -26,27 +23,27 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.util.stream.Stream
 
-class WarTerminalBlock: Block(Properties.of()) {
-    val northAABB = Stream.of(
+class WarTerminalBlock : Block(Properties.of()) {
+    val northAABB: VoxelShape = Stream.of(
         box(0.0, 6.0, 0.0, 16.0, 7.0, 1.0),
         box(0.0, 0.0, 1.0, 16.0, 7.0, 5.0),
         box(0.0, 0.0, 5.0, 16.0, 16.0, 16.0)
-    ).reduce{ v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-    val southAABB = Stream.of(
+    ).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+    val southAABB: VoxelShape = Stream.of(
         box(0.0, 6.0, 15.0, 16.0, 7.0, 16.0),
         box(0.0, 0.0, 11.0, 16.0, 7.0, 15.0),
         box(0.0, 0.0, 0.0, 16.0, 16.0, 11.0)
-    ).reduce{ v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-    val eastAABB = Stream.of(
+    ).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+    val eastAABB: VoxelShape = Stream.of(
         box(15.0, 6.0, 0.0, 16.0, 7.0, 16.0),
         box(11.0, 0.0, 0.0, 15.0, 7.0, 16.0),
         box(0.0, 0.0, 0.0, 11.0, 16.0, 16.0)
-    ).reduce{ v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-    val westAABB = Stream.of(
+    ).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+    val westAABB: VoxelShape = Stream.of(
         box(0.0, 6.0, 0.0, 1.0, 7.0, 16.0),
         box(1.0, 0.0, 0.0, 5.0, 7.0, 16.0),
         box(5.0, 0.0, 0.0, 16.0, 16.0, 16.0)
-    ).reduce{ v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+    ).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
 
     init {
         registerDefaultState(defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH))
@@ -59,16 +56,13 @@ class WarTerminalBlock: Block(Properties.of()) {
         pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
     }
 
-    override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
-        val server = level.server ?: return super.playerWillDestroy(level, pos, state, player)
+    override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, thisPlayer: Player): BlockState {
+        val server = level.server ?: return super.playerWillDestroy(level, pos, state, thisPlayer)
         server.playerList.players.forEach { player ->
             val check = warTimerMap[player]
-            if (check != null) {
-                check.increaseTime += 30
-                NetworkManager.sendToPlayer(player, WarTimerIncrement(true, check.increaseTime))
-            }
+            if (check != null) increaseTime(player, check)
         }
-        return super.playerWillDestroy(level, pos, state, player)
+        return super.playerWillDestroy(level, pos, state, thisPlayer)
     }
 
     @Deprecated(

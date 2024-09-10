@@ -1,11 +1,10 @@
-package bread.mod.breadmod.item.tool_gun
+package bread.mod.breadmod.item.toolGun
 
 import bread.mod.breadmod.util.render.rgMinecraft
 import net.minecraft.util.RandomSource
 
 // todo convert this to use millis and merge into the renderer (look in WarOverlay for reference)
-@Suppress("MemberVisibilityCanBePrivate")
-object ToolGunAnimationHandler {
+internal object ToolGunAnimationHandler {
     var coilRotation: Float = 0f
     var coilDelta: Float = 0f
 

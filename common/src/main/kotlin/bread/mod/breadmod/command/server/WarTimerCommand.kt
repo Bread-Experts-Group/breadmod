@@ -1,7 +1,7 @@
 package bread.mod.breadmod.command.server
 
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerIncrement
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerToggle
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerIncrement
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerToggle
 import bread.mod.breadmod.registry.CommonEvents
 import bread.mod.breadmod.registry.CommonEvents.warTimerMap
 import com.mojang.brigadier.Command
@@ -16,9 +16,10 @@ import kotlin.collections.set
 internal object WarTimerCommand {
     fun register(): ArgumentBuilder<CommandSourceStack, *> =
         Commands.literal("warTimer")
-            .then(Commands.argument("player", EntityArgument.players())
-                .then(toggle())
-                .then(increase())
+            .then(
+                Commands.argument("player", EntityArgument.players())
+                    .then(toggle())
+                    .then(increase())
             )
 
     private fun reset(player: ServerPlayer) {
@@ -40,18 +41,21 @@ internal object WarTimerCommand {
                 Command.SINGLE_SUCCESS
             }
 
+    internal fun increaseTime(player: ServerPlayer, data: CommonEvents.WarTimerData) {
+        data.increaseTime += 30
+        NetworkManager.sendToPlayer(player, WarTimerIncrement(true, data.increaseTime))
+    }
+
     // todo figure out how to make an argument command to work alongside the player argument command
     // todo spamming this command slightly de-syncs client timer from server, corrected on next sync packet
     fun increase(): ArgumentBuilder<CommandSourceStack, *> =
         Commands.literal("increase")
-            .executes{ ctx ->
+            .executes { ctx ->
                 val target = EntityArgument.getPlayers(ctx, "player")
                 target.forEach { player ->
                     val check = warTimerMap[player]
-                    if (check != null) {
-                        check.increaseTime += 30
-                        NetworkManager.sendToPlayer(player, WarTimerIncrement(true, check.increaseTime))
-                    } else reset(player)
+                    if (check != null) increaseTime(player, check)
+                    else reset(player)
                 }
                 Command.SINGLE_SUCCESS
             }

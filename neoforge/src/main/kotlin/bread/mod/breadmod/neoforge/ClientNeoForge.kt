@@ -8,7 +8,6 @@ import net.neoforged.fml.common.Mod
 import net.neoforged.neoforge.client.gui.ConfigurationScreen
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory
 
-@Suppress("unused")
 @Mod(ModMainCommon.MOD_ID, dist = [Dist.CLIENT])
 class ClientNeoForge(container: ModContainer) {
     init {

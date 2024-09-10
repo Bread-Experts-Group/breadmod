@@ -9,7 +9,7 @@ import dev.architectury.event.events.client.ClientCommandRegistrationEvent.argum
 
 object AltToolGunModelCommand {
     // todo replace with config
-    var useAltModel = false
+    var useAltModel: Boolean = false
 
     fun register(): ArgumentBuilder<ClientCommandSourceStack, *> =
         LiteralArgumentBuilder.literal<ClientCommandSourceStack>("altToolgunModel")

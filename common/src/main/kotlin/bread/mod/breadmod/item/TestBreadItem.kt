@@ -5,7 +5,6 @@ import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
@@ -14,7 +13,8 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
 //    override fun finishUsingItem(pStack: ItemStack, pLevel: Level, pLivingEntity: LivingEntity): ItemStack {
 //        when(val hit = raycast(pLivingEntity, 40, false)) {
 //            is BlockHitResult -> {
-//                pLevel.explode(pLivingEntity, hit.blockPos.x.toDouble(), hit.blockPos.y.toDouble(), hit.blockPos.z.toDouble(), 50f, true, Level.ExplosionInteraction.TNT)
+//                pLevel.explode(pLivingEntity, hit.blockPos.x.toDouble(), hit.blockPos.y.toDouble(), hit.blockPos.z.toDouble(),
+    //                50f, true, Level.ExplosionInteraction.TNT)
 //            }
 //            is EntityHitResult -> {
 //                hit.entity.kill()

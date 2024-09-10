@@ -1,8 +1,8 @@
 package bread.mod.breadmod.registry
 
 import bread.mod.breadmod.command.server.WarTimerCommand
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerSynchronization
-import bread.mod.breadmod.networking.definition.war_timer.WarTimerToggle
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerSynchronization
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerToggle
 import bread.mod.breadmod.util.ModDamageTypes
 import dev.architectury.event.events.common.CommandRegistrationEvent
 import dev.architectury.event.events.common.TickEvent
@@ -22,7 +22,7 @@ internal object CommonEvents {
     /**
      * A map holding a war timer for every player on the server.
      *
-     * TODO CHRIS uPDATE THIS AND ADD JAVADOC TO [WarTimerData]
+     * TODO CHRIS UPDATE THIS AND ADD JAVADOC TO [WarTimerData]
      */
     val warTimerMap: MutableMap<ServerPlayer, WarTimerData> = mutableMapOf()
 

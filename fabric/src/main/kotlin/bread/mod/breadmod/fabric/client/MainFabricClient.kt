@@ -14,7 +14,7 @@ class MainFabricClient : ClientModInitializer {
         ModelLoadingPlugin.register(AdditionalModelLoader())
     }
 
-    private class AdditionalModelLoader: ModelLoadingPlugin {
+    private class AdditionalModelLoader : ModelLoadingPlugin {
         private val toolGunDef = "tool_gun"
 
         override fun onInitializeModelLoader(context: ModelLoadingPlugin.Context) {

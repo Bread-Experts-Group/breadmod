@@ -8,22 +8,17 @@ import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.Item.Properties
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
-import net.minecraft.world.item.Rarity
-import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 
-class CertificateItem: Item(Properties().stacksTo(16).rarity(Rarity.RARE)), MenuProvider {
+class CertificateItem : Item(Properties().stacksTo(16).rarity(Rarity.RARE)), MenuProvider {
     override fun use(pLevel: Level, pPlayer: Player, pUsedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = pPlayer.getItemInHand(pUsedHand)
-        if(pLevel.isClientSide) return InteractionResultHolder.pass(stack)
-        val dyeSlot = pPlayer.inventory.findSlotMatchingItem(DYE)
-        if(dyeSlot > 0 || pPlayer.isCreative) {
+//        if (pLevel.isClientSide) return InteractionResultHolder.pass(stack)
+//        val dyeSlot = pPlayer.inventory.findSlotMatchingItem(DYE)
+//        if (dyeSlot > 0 || pPlayer.isCreative) {
 //            NetworkHooks.openScreen(pPlayer as ServerPlayer, this, pPlayer.blockPosition())
-        }
+//        }
         return InteractionResultHolder.fail(stack)
     }
 
@@ -38,11 +33,12 @@ class CertificateItem: Item(Properties().stacksTo(16).rarity(Rarity.RARE)), Menu
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu =
 //        CertificateMenu(pContainerId, pPlayerInventory)
-        TODO()
+        TODO("Certificate menu, one day")
 
     override fun getDisplayName(): Component = modTranslatable("item", "gui", "certificate")
 
     companion object {
-        val DYE = ItemStack(Items.BLUE_DYE)
+        @Suppress("unused") // TODO: use it.
+        val DYE: ItemStack = ItemStack(Items.BLUE_DYE)
     }
 }
