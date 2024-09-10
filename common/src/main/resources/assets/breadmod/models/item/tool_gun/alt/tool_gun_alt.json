@@ -1,5 +1,5 @@
 {
-  "loader": "forge:obj",
+  "loader": "neoforge:obj",
   "flip_v": true,
   "model": "breadmod:models/item/tool_gun/alt/tool_gun.obj",
   "textures": {

@@ -24,6 +24,34 @@ class BreadBlock: Block(
         )
     }
 
+//    override fun onCaughtFire(
+//        state: BlockState,
+//        pLevel: Level,
+//        pPos: BlockPos,
+//        direction: Direction?,
+//        igniter: LivingEntity?,
+//    ) {
+//        pLevel.setBlockAndUpdate(pPos, LOW_DENSITY_CHARCOAL_BLOCK.get().block.defaultBlockState())
+//    }
+
+//    override fun entityInside(state: BlockState, level: Level, pos: BlockPos, entity: Entity) {
+//        if (level is ServerLevel && entity.canChangeDimensions()) {
+//            val resourceKey =
+//                if (level.dimensionType() === ModDimensions.BREAD.first.dimensionType.second) Level.OVERWORLD
+//                else ModDimensions.BREAD.second
+//            pEntity.changeDimension(level.server.getLevel(resourceKey) ?: return)
+//            level.explode(
+//                entity,
+//                pos.x.toDouble(),
+//                pos.y.toDouble(),
+//                pos.z.toDouble(),
+//                8.0F,
+//                true,
+//                Level.ExplosionInteraction.BLOCK
+//            )
+//        }
+//    }
+
     override fun onLightningStruck(pLevel: Level, pPos: BlockPos, pState: BlockState) {
         pLevel.playSound(null, pPos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 2.0F, 1.0F)
         pLevel.setBlockAndUpdate(pPos, pState.setValue(BlockStateProperties.POWERED, true))

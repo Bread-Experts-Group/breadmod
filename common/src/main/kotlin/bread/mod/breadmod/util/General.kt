@@ -1,5 +1,6 @@
 package bread.mod.breadmod.util
 
+import net.minecraft.core.Direction
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
@@ -95,6 +96,24 @@ fun formatUnit(
     pUnitMax: Int = 1000
 ): String =
     formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
+
+/**
+ * Translates a [Direction] to a side relative to another [Direction].
+ * @return The relativized [Direction].
+ * @param translateFor The [Direction] to translate for.
+ * @param side The side to translate in relation to.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun translateDirection(translateFor: Direction, side: Direction): Direction =
+    if (side.axis == Direction.Axis.Y) side
+    else when (translateFor) {
+        Direction.NORTH -> side.opposite
+        Direction.SOUTH -> side
+        Direction.EAST -> side.clockWise
+        Direction.WEST -> side.counterClockWise
+        else -> translateFor
+    }
 
 /**
  * TODO javadoc

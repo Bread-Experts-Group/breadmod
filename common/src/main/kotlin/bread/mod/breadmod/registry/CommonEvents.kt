@@ -28,8 +28,8 @@ internal object CommonEvents {
 
     data class WarTimerData(
         var timeLeft: Int = 30,
-        var gracePeriod: Int = 40,
-        var ticker: Int = 40,
+        var gracePeriod: Int = 20,
+        var ticker: Int = 20,
         var increaseTime: Int = 0,
         var gracePeriodActive: Boolean = false,
         var active: Boolean = true
@@ -43,7 +43,7 @@ internal object CommonEvents {
                     if (value.ticker == 0 && value.timeLeft > 0 && !value.gracePeriodActive) {
                         value.timeLeft--
                         NetworkManager.sendToPlayer(player, WarTimerSynchronization(value.timeLeft))
-                        value.ticker = 40
+                        value.ticker = 20
                     } else if (!value.gracePeriodActive && value.ticker != 0) {
                         value.ticker--
                     } else if (value.timeLeft <= 0 && !value.gracePeriodActive && value.gracePeriod != 0) {
@@ -61,8 +61,8 @@ internal object CommonEvents {
                 } else if (value.increaseTime > 0 && value.active) {
                     value.increaseTime--
                     value.timeLeft++
-                    value.ticker = 50
-                    value.gracePeriod = 40
+                    value.ticker = 20
+                    value.gracePeriod = 20
                     value.gracePeriodActive = false
                 }
             }

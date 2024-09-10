@@ -30,6 +30,9 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockBehaviour
 
+
+// todo port the rest of the blocks and machines
+// todo port over block tags
 /**
  * Blocks for the base bread mod.
  * @author Miko Elbrecht, Logan McLean
@@ -43,6 +46,7 @@ object ModBlocks {
      */
     val BLOCK_REGISTRY: DeferredRegister<Block> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.BLOCK)
 
+    // todo dimension change
     @DataGenerateShapedRecipeThis(
         "bread_block_compression", RecipeCategory.BUILDING_BLOCKS,
         [
@@ -60,7 +64,7 @@ object ModBlocks {
     @DataGenerateLanguage("en_us", "Bread Block")
     @DataGenerateLanguage("es_es", "Bloque De Pan")
     @FlammableBlock(30, 60)
-    val BREAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+    val BREAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "bread_block", { BreadBlock() },
         Item.Properties()
             .food(
@@ -113,12 +117,22 @@ object ModBlocks {
     )
 
     @DataGenerateTag("minecraft:block", "minecraft:mineable/pickaxe")
-    @FuelItem((80 * 20) * 4)
+    @FuelItem(1600 * 9)
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Charcoal Block")
     val CHARCOAL_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "charcoal_block", {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK).ignitedByLava())
+        },
+        Item.Properties()
+    )
+
+    @FuelItem(1600 * 4)
+    @DataGenerateCubeAllBlockAndItemModel
+    @DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
+    val LOW_DENSITY_CHARCOAL_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+        "ld_charcoal_block", {
+            Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL))
         },
         Item.Properties()
     )

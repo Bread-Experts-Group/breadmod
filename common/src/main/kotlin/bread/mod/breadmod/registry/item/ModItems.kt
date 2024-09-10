@@ -7,6 +7,7 @@ import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
 import bread.mod.breadmod.item.BreadGunItem
 import bread.mod.breadmod.item.BreadShieldItem
+import bread.mod.breadmod.item.CertificateItem
 import bread.mod.breadmod.item.DopedBreadItem
 import bread.mod.breadmod.item.TestBreadItem
 import bread.mod.breadmod.item.TieredBreadAmuletItem
@@ -17,6 +18,8 @@ import bread.mod.breadmod.item.armor.ArmorMaterials
 import bread.mod.breadmod.item.armor.BreadArmorItem
 import bread.mod.breadmod.item.tool.KnifeItem
 import bread.mod.breadmod.item.tool.ToolTiers
+import bread.mod.breadmod.item.tool_gun.ToolGunItem
+import bread.mod.breadmod.item.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import bread.mod.breadmod.registry.tag.RecordTags
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
@@ -43,6 +46,7 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.UseAnim
 import net.minecraft.world.level.block.Block
 
+// todo port item tags
 @Suppress("unused")
 object ModItems {
     val ITEM_REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.ITEM)
@@ -282,7 +286,9 @@ object ModItems {
     @DataGenerateLanguage("en_us", "Bread Gun")
     val BREAD_GUN_ITEM: RegistrySupplier<ProjectileWeaponItem> = ITEM_REGISTRY.register("bread_gun") { BreadGunItem() }
 
-    // todo tool gun goes here
+    // todo re-implementation of features
+    @DataGenerateLanguage("en_us", "Tool Gun")
+    val TOOL_GUN: RegistrySupplier<Item> = ITEM_REGISTRY.register(TOOL_GUN_DEF) { ToolGunItem() }
 
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Caprispin")
@@ -301,6 +307,19 @@ object ModItems {
             override fun getUseAnimation(pStack: ItemStack): UseAnim = UseAnim.DRINK
         }
     }
+
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "Toaster Heating Element")
+    val TOASTER_HEATING_ELEMENT: RegistrySupplier<Item> =
+        ITEM_REGISTRY.register("toaster_heating_element") { Item(Item.Properties()) }
+
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "THE CREATURE")
+    val CREATURE: RegistrySupplier<Item> = ITEM_REGISTRY.register("creature") { Item(Item.Properties()) }
+
+    // todo port over screen and menu
+    @DataGenerateLanguage("en_us", "Certificate")
+    val CERTIFICATE: RegistrySupplier<Item> = ITEM_REGISTRY.register("certificate") { CertificateItem() }
 
     internal fun DeferredRegister<Block>.registerBlockItem(
         id: String,

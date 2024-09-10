@@ -3,13 +3,14 @@ package bread.mod.breadmod.registry
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.block.util.FlammableBlock
+import bread.mod.breadmod.item.armor.ArmorMaterials
 import bread.mod.breadmod.item.util.FuelItem
 import bread.mod.breadmod.networking.Networking.registerNetworking
 import bread.mod.breadmod.reflection.LibraryScanner
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
+import bread.mod.breadmod.registry.entity.ModPainting
 import bread.mod.breadmod.registry.item.ModItems
-import bread.mod.breadmod.item.armor.ArmorMaterials
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.sound.ModSounds
 import dev.architectury.event.events.common.LifecycleEvent
@@ -113,6 +114,7 @@ internal object Registry {
         ModItems.ITEM_REGISTRY.register()
         ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
         ArmorMaterials.ARMOR_REGISTRY.register()
+        ModPainting.PAINTING_VARIANT_REGISTRY.register()
         registerNetworking()
         CommonEvents.registerServerTickEvent()
         CommonEvents.registerCommands()

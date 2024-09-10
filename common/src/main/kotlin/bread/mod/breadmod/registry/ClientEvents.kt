@@ -2,12 +2,25 @@ package bread.mod.breadmod.registry
 
 import bread.mod.breadmod.client.gui.AbstractModGuiOverlay
 import bread.mod.breadmod.client.gui.WarOverlay
+import bread.mod.breadmod.command.client.AltToolGunModelCommand
 import bread.mod.breadmod.util.render.rgMinecraft
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import dev.architectury.event.events.client.ClientCommandRegistrationEvent
+import dev.architectury.event.events.client.ClientCommandRegistrationEvent.ClientCommandSourceStack
 import dev.architectury.event.events.client.ClientGuiEvent
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 
 object ClientEvents {
+    fun registerClientCommands() {
+        ClientCommandRegistrationEvent.EVENT.register { dispatcher, sourceStack ->
+            dispatcher.register(
+                LiteralArgumentBuilder.literal<ClientCommandSourceStack>("breadmod")
+                    .then(AltToolGunModelCommand.register())
+            )
+        }
+    }
+
     fun registerOverlays() {
         registerOverlay(WarOverlay())
     }
