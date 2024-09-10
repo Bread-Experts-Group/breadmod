@@ -1,23 +1,33 @@
 package bread.mod.breadmod.util.render
 
+import bread.mod.breadmod.ModMainCommon.modLocation
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ItemBlockRenderTypes
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect
+import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.jetbrains.annotations.ApiStatus.Internal
+import org.joml.Vector3f
+import org.joml.Vector4f
 
 @Internal
 val rgMinecraft: Minecraft = Minecraft.getInstance()
+internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, PoseStack, Camera) -> Boolean>>
 
 var skyColorMixinActive: Boolean = false
 var redness: Float = 1f
@@ -32,6 +42,116 @@ var redness: Float = 1f
 //    get() = rgMinecraft.mouseHandler.ypos() * rgMinecraft.window.guiScaledHeight.toDouble() /
 //            rgMinecraft.window.screenHeight.toDouble()
 // --Commented out by Inspection STOP (9/10/2024 03:54)
+
+/**
+ * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
+ * TODO update javadoc
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+val renderBuffer: RenderBuffer = mutableListOf()
+
+// todo fix inverted beam quads
+/**
+ * Draws a line from between [start] and [end], translated according to the current [LocalPlayer]'s position.
+// * @see breadmod.network.clientbound.BeamPacket
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
+    renderBuffer.add(mutableListOf(1F) to { mutableList, poseStack, camera ->
+        val currentOpacity = mutableList[0]
+        val level = rgMinecraft.level
+        val player = rgMinecraft.player
+        if (level != null && currentOpacity > 0 && player != null) {
+            poseStack.pushPose()
+            poseStack.translate(-camera.position.x, -camera.position.y - 1f, -camera.position.z)
+            val bufferSource = rgMinecraft.renderBuffers().bufferSource()
+
+//            poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + levelStageEvent.partialTick))
+
+            if (thickness != null) {
+                // South
+                texturedQuadTest(
+                    modLocation("block", "bread_block"),
+                    RenderType.translucent(),
+                    poseStack,
+                    bufferSource,
+                    Vector4f(1f, 1f, 1f, currentOpacity),
+                    Vector3f(start.x + 1f, start.y, start.z + 1f),
+                    Vector3f(start.x - 1f, start.y, start.z + 1f),
+                    Vector3f(end.x - 1f, end.y, end.z + 1f),
+                    Vector3f(end.x + 1f, end.y, end.z + 1f)
+                )
+//            poseStack.translate(2f, 0f, 0f)
+                // East
+                texturedQuadTest(
+                    modLocation("block", "bread_block"),
+                    RenderType.translucent(),
+                    poseStack,
+                    bufferSource,
+                    Vector4f(1f, 1f, 1f, currentOpacity),
+                    Vector3f(start.x + 1f, start.y, start.z - 1f),
+                    Vector3f(start.x + 1f, start.y, start.z + 1f),
+                    Vector3f(end.x + 1f, end.y, end.z + 1f),
+                    Vector3f(end.x + 1f, end.y, end.z - 1f)
+                )
+                // West
+                texturedQuadTest(
+                    modLocation("block", "bread_block"),
+                    RenderType.translucent(),
+                    poseStack,
+                    bufferSource,
+                    Vector4f(1f, 1f, 1f, currentOpacity),
+                    Vector3f(start.x - 1f, start.y, start.z + 1f),
+                    Vector3f(start.x - 1f, start.y, start.z - 1f),
+                    Vector3f(end.x - 1f, end.y, end.z - 1f),
+                    Vector3f(end.x - 1f, end.y, end.z + 1f)
+                )
+                // North
+                texturedQuadTest(
+                    modLocation("block", "bread_block"),
+                    RenderType.translucent(),
+                    poseStack,
+                    bufferSource,
+                    Vector4f(1f, 1f, 1f, currentOpacity),
+                    Vector3f(start.x - 1f, start.y, start.z - 1f),
+                    Vector3f(start.x + 1f, start.y, start.z - 1f),
+                    Vector3f(end.x + 1f, end.y, end.z - 1f),
+                    Vector3f(end.x - 1f, end.y, end.z - 1f)
+                )
+
+                // Start
+                texturedQuadTest(
+                    modLocation("block", "bread_block"),
+                    RenderType.translucent(),
+                    poseStack,
+                    bufferSource,
+                    Vector4f(1f, 1f, 1f, currentOpacity),
+                    Vector3f(start.x - 1f, start.y, start.z - 1f),
+                    Vector3f(start.x - 1f, start.y, start.z + 1f),
+                    Vector3f(start.x + 1f, start.y, start.z + 1f),
+                    Vector3f(start.x + 1f, start.y, start.z - 1f)
+                )
+                // End
+                texturedQuadTest(
+                    modLocation("block", "bread_block"),
+                    RenderType.translucent(),
+                    poseStack,
+                    bufferSource,
+                    Vector4f(1f, 1f, 1f, currentOpacity),
+                    Vector3f(end.x - 1f, end.y, end.z - 1f),
+                    Vector3f(end.x + 1f, end.y, end.z - 1f),
+                    Vector3f(end.x + 1f, end.y, end.z + 1f),
+                    Vector3f(end.x - 1f, end.y, end.z + 1f)
+                )
+            }
+
+            poseStack.popPose()
+//            mutableList[0] = currentOpacity - 0.1f * rgMinecraft.timer.realtimeDeltaTicks
+            false
+        } else true
+    })
 
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
 
@@ -131,69 +251,67 @@ fun ItemRenderer.renderItemModel(
 //}
 // --Commented out by Inspection STOP (9/10/2024 03:54)
 
-//// todo test to see if these works
-//fun vertexTest(
-//    poseStack: PoseStack,
-//    pBuffer: MultiBufferSource,
-//    renderType: RenderType,
-//    color: Vector4f,
-//    x: Float,
-//    y: Float,
-//    z: Float,
-//    u: Float,
-//    v: Float
-//) {
-//    val buffer = pBuffer.getBuffer(renderType)
-//    buffer.addVertex(poseStack.last().pose(), x, y, z)
-//        .setColor(color.x, color.y, color.z, color.w)
-//        .setUv(u, v)
-//        .setOverlay(NO_OVERLAY)
-//        .setLight(0xFFFFFF)
-//        .setNormal(0f, 1f, 0f)
-//}
+//// todo vertexes are inverted (probably only on tool gun beam, look into)
+fun vertexTest(
+    poseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    renderType: RenderType,
+    color: Vector4f,
+    x: Float,
+    y: Float,
+    z: Float,
+    u: Float,
+    v: Float
+) {
+    val buffer = pBuffer.getBuffer(renderType)
+    buffer.addVertex(poseStack.last().pose(), x, y, z)
+        .setColor(color.x, color.y, color.z, color.w)
+        .setUv(u, v)
+        .setOverlay(NO_OVERLAY)
+        .setLight(0xFFFFFF)
+        .setNormal(0f, 1f, 0f)
+}
 
-//fun quadTest(
-//    pPoseStack: PoseStack,
-//    pBuffer: MultiBufferSource,
-//    pRenderType: RenderType,
-//    pColor: Vector4f,
-//    pVertex0: Vector3f,
-//    pVertex1: Vector3f,
-//    pVertex2: Vector3f,
-//    pVertex3: Vector3f,
-//    pU0: Float, pV0: Float,
-//    pU1: Float, pV1: Float
-//) {
-//    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex0.x, pVertex0.y, pVertex0.z, pU0, pV0)
-//    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex1.x, pVertex1.y, pVertex1.z, pU0, pV1)
-//    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex2.x, pVertex2.y, pVertex2.z, pU1, pV1)
-//    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex3.x, pVertex3.y, pVertex3.z, pU1, pV0)
-//}
+fun quadTest(
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pRenderType: RenderType,
+    pColor: Vector4f,
+    pVertex0: Vector3f,
+    pVertex1: Vector3f,
+    pVertex2: Vector3f,
+    pVertex3: Vector3f,
+    pU0: Float, pV0: Float,
+    pU1: Float, pV1: Float
+) {
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex0.x, pVertex0.y, pVertex0.z, pU0, pV0)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex1.x, pVertex1.y, pVertex1.z, pU0, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex2.x, pVertex2.y, pVertex2.z, pU1, pV1)
+    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex3.x, pVertex3.y, pVertex3.z, pU1, pV0)
+}
 
-// --Commented out by Inspection START (9/10/2024 03:54):
-//fun texturedQuadTest(
-//    pSprite: ResourceLocation,
-//    pRenderType: RenderType,
-//    pPoseStack: PoseStack,
-//    pBuffer: MultiBufferSource,
-//    pColor: Vector4f,
-//    pVertex0: Vector3f = Vector3f(0f, 0f, 0f),
-//    pVertex1: Vector3f = Vector3f(0f, 0f, 1f),
-//    pVertex2: Vector3f = Vector3f(1f, 0f, 1f),
-//    pVertex3: Vector3f = Vector3f(1f, 0f, 0f)
-//) {
-//    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
-//    quadTest(
-//        pPoseStack, pBuffer, pRenderType, pColor,
-//        pVertex0,
-//        pVertex1,
-//        pVertex2,
-//        pVertex3,
-//        sprite.u0, sprite.v0,
-//        sprite.u1, sprite.v1
-//    )
-//}
-// --Commented out by Inspection STOP (9/10/2024 03:54)
+fun texturedQuadTest(
+    pSprite: ResourceLocation,
+    pRenderType: RenderType,
+    pPoseStack: PoseStack,
+    pBuffer: MultiBufferSource,
+    pColor: Vector4f,
+    pVertex0: Vector3f = Vector3f(0f, 0f, 0f),
+    pVertex1: Vector3f = Vector3f(0f, 0f, 1f),
+    pVertex2: Vector3f = Vector3f(1f, 0f, 1f),
+    pVertex3: Vector3f = Vector3f(1f, 0f, 0f)
+) {
+    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
+    quadTest(
+        pPoseStack, pBuffer, pRenderType, pColor,
+        pVertex0,
+        pVertex1,
+        pVertex2,
+        pVertex3,
+        sprite.u0, sprite.v0,
+        sprite.u1, sprite.v1
+    )
+}
 
 
 //fun drawVertex(

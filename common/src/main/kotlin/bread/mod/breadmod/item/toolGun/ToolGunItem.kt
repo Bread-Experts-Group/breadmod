@@ -2,12 +2,23 @@ package bread.mod.breadmod.item.toolGun
 
 import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
+import bread.mod.breadmod.util.RaycastResult.Companion.entityRaycast
+import bread.mod.breadmod.util.plus
+import bread.mod.breadmod.util.render.addBeamTask
 import dev.architectury.registry.registries.RegistrySupplier
+import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.level.Level
+import net.minecraft.world.phys.Vec3
+import org.apache.logging.log4j.LogManager
 
 // todo complete re-implementation of tool gun features
 internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
@@ -28,6 +39,31 @@ internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCre
 //            changeMode.translatedKeyMessage.copy().withStyle(ChatFormatting.GREEN)
 //                .append(modTranslatable("item", TOOL_GUN_DEF, "tooltip", "mode_switch"))
 //        )
+    }
+
+    override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
+        val stack = player.getItemInHand(usedHand)
+        if (level is ServerLevel) {
+            level.entityRaycast(
+                player,
+                player.position().add(0.0, player.eyeHeight.toDouble(), 0.0),
+                Vec3.directionFromRotation(player.xRot, player.yRot),
+                1000.0
+            )?.let {
+                val logger = LogManager.getLogger()
+                fun rand() = (player.random.nextDouble() - 0.5) * 1.2
+
+                logger.info("an entity was found: ${it.entity}")
+                level.sendParticles(
+                    ParticleTypes.END_ROD,
+                    it.entity.x, it.entity.y, it.entity.z, 60,
+                    rand(), player.random.nextDouble(), rand(), 1.0
+                )
+            }
+        } else if (level.isClientSide) {
+            addBeamTask(player.position().toVector3f(), player.position().plus(Vec3(0.0, 5.0, 0.0)).toVector3f(), 1.0f)
+        }
+        return InteractionResultHolder.fail(stack)
     }
 
     override val creativeModeTabs: List<RegistrySupplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)

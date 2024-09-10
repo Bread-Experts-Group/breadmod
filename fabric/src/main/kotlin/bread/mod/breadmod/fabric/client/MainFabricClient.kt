@@ -2,8 +2,10 @@ package bread.mod.breadmod.fabric.client
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
+import bread.mod.breadmod.util.render.renderBuffer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
 
 class MainFabricClient : ClientModInitializer {
 
@@ -12,6 +14,13 @@ class MainFabricClient : ClientModInitializer {
         ModMainCommon.initClient()
 
         ModelLoadingPlugin.register(AdditionalModelLoader())
+
+        WorldRenderEvents.END.register { renderContext ->
+            val poseStack = renderContext.matrixStack() ?: return@register
+            val camera = renderContext.camera()
+
+            renderBuffer.removeIf { (mutableList, renderEvent) -> renderEvent.invoke(mutableList, poseStack, camera) }
+        }
     }
 
     private class AdditionalModelLoader : ModelLoadingPlugin {

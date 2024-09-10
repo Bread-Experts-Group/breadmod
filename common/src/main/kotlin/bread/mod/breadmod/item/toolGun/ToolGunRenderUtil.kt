@@ -6,7 +6,10 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
+import net.minecraft.util.FormattedCharSequence
 
 private const val SCREEN_TINT = 15728880
 
@@ -144,3 +147,7 @@ fun drawTextOnScreen(
 //}
 // --Commented out by Inspection STOP (9/10/2024 03:55)
 
+@Suppress("unused")
+// Font.split() converted to take in a Component instead of a FormattedCharSequence
+fun componentSplit(text: Component, maxWidth: Int, font: Font): MutableList<FormattedCharSequence> =
+    Language.getInstance().getVisualOrder(font.splitter.splitLines(text, maxWidth, Style.EMPTY))

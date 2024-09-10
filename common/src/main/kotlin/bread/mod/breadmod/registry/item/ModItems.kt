@@ -6,6 +6,7 @@ import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
 import bread.mod.breadmod.item.*
+import bread.mod.breadmod.item.TieredBreadAmuletItem.BreadAmuletType
 import bread.mod.breadmod.item.armor.ArmorMaterials
 import bread.mod.breadmod.item.armor.BreadArmorItem
 import bread.mod.breadmod.item.tool.KnifeItem
@@ -26,6 +27,7 @@ import net.minecraft.world.item.ArmorItem.Type
 import net.minecraft.world.level.block.Block
 
 // todo port item tags
+@Suppress("unused")
 object ModItems {
     val ITEM_REGISTRY: DeferredRegister<Item> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.ITEM)
 
@@ -128,18 +130,18 @@ object ModItems {
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Bread Amulet")
     val BASIC_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("bread_amulet") {
-        TieredBreadAmuletItem(500)
+        TieredBreadAmuletItem(BreadAmuletType.NORMAL, 500)
     }
 
     @DataGenerateLanguage("en_us", "Reinforced Bread Amulet")
     val REINFORCED_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("reinforced_bread_amulet") {
-        TieredBreadAmuletItem(2500)
+        TieredBreadAmuletItem(BreadAmuletType.REINFORCED, 2500)
     }
 
     @DataGenerateLanguage("en_us", "Indestructible Bread Amulet")
     val INDESTRUCTIBLE_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> =
         ITEM_REGISTRY.register("indestructible_bread_amulet") {
-            TieredBreadAmuletItem(0)
+            TieredBreadAmuletItem(BreadAmuletType.INDESTRUCTIBLE, 0)
         }
 
     // todo port over features (applies to all 4 bread armors)

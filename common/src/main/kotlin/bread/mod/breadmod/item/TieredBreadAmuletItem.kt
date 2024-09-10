@@ -1,9 +1,12 @@
 package bread.mod.breadmod.item
 
+import bread.mod.breadmod.item.TieredBreadAmuletItem.BreadAmuletType
 import net.minecraft.world.item.Item
 
 // todo port over config and features using data components
 class TieredBreadAmuletItem(
+    @Suppress("unused")
+    private val pType: BreadAmuletType,
     pDurability: Int
 ) : Item(
     Properties()
@@ -74,5 +77,7 @@ class TieredBreadAmuletItem(
 //                }
 //            })
 //        } else null
+
+    enum class BreadAmuletType { NORMAL, REINFORCED, INDESTRUCTIBLE }
 
 }

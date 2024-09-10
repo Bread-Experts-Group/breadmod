@@ -3,7 +3,6 @@ package bread.mod.breadmod.registry
 import bread.mod.breadmod.client.gui.WarOverlay
 import bread.mod.breadmod.command.client.AltToolGunModelCommand
 import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
-import bread.mod.breadmod.item.toolGun.ToolGunItem
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import dev.architectury.event.EventResult
@@ -37,9 +36,8 @@ object ClientEvents {
 
     fun registerMouseEvent() {
         ClientRawInputEvent.MOUSE_CLICKED_POST.register { client, button, action, mods ->
-            val player = client.player ?: return@register null
-            val item = player.useItem.item
-            if (button == InputConstants.MOUSE_BUTTON_RIGHT && action == InputConstants.PRESS && item is ToolGunItem) {
+            // todo uhh.. tool gun functionality yes
+            if (button == InputConstants.MOUSE_BUTTON_RIGHT && action == InputConstants.PRESS) {
                 ToolGunAnimationHandler.trigger()
             }
 
