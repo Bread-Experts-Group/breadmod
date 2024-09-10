@@ -7,6 +7,8 @@ import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateWithExistingParentBlockAndItemModel
+import bread.mod.breadmod.datagen.recipe.shaped.DataGenerateShapedRecipeThis
+import bread.mod.breadmod.datagen.recipe.shapeless.DataGenerateShapelessRecipeExternal
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
 import bread.mod.breadmod.item.util.FuelItem
 import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -15,6 +17,7 @@ import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
+import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties
@@ -40,6 +43,18 @@ object ModBlocks {
      */
     val BLOCK_REGISTRY: DeferredRegister<Block> = DeferredRegister.create(ModMainCommon.MOD_ID, Registries.BLOCK)
 
+    @DataGenerateShapedRecipeThis(
+        "bread_block_compression", RecipeCategory.BUILDING_BLOCKS,
+        [
+            "BB",
+            "BB"
+        ], 1, ['B'], ["minecraft:bread"]
+    )
+    @DataGenerateShapelessRecipeExternal(
+        "bread_block_decompression",
+        "minecraft:bread", RecipeCategory.FOOD,
+        4
+    )
     @DataGenerateTag("minecraft:block", "minecraft:mineable/hoe")
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Bread Block")
