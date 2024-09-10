@@ -40,5 +40,7 @@ object ModMainCommon {
     fun initClient() {
         ClientEvents.registerOverlays()
         ClientEvents.registerClientCommands()
+//        ClientEvents.registerKeyEvent()
+        ClientEvents.registerMouseEvent()
     }
 }

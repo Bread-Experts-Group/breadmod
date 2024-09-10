@@ -9,7 +9,6 @@ import bread.mod.breadmod.networking.Networking.registerNetworking
 import bread.mod.breadmod.reflection.LibraryScanner
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
-import bread.mod.breadmod.registry.entity.ModPainting
 import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.sound.ModSounds
@@ -114,7 +113,8 @@ internal object Registry {
         ModItems.ITEM_REGISTRY.register()
         ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
         ArmorMaterials.ARMOR_REGISTRY.register()
-        ModPainting.PAINTING_VARIANT_REGISTRY.register()
+        // todo figure this out later (PaintingVariants.class)
+//        ModPainting.PAINTING_VARIANT_REGISTRY.register()
         registerNetworking()
         CommonEvents.registerServerTickEvent()
         CommonEvents.registerCommands()

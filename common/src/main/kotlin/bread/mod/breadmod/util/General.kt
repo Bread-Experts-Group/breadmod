@@ -1,9 +1,22 @@
 package bread.mod.breadmod.util
 
+import com.google.gson.JsonObject
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Registry
+import net.minecraft.core.Vec3i
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.contents.PlainTextContents.LiteralContents
+import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
+import net.minecraft.util.Mth
+import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.Fluids
+import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.Vec3
 import kotlin.system.exitProcess
 
 internal val formatArray: List<String> = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
@@ -116,10 +129,225 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
     }
 
 /**
+ * Removes all whitespace from this string.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun String.removeWhitespace(): String = this.replace(Regex("\\s+"), "")
+
+/**
  * TODO javadoc
  */
 fun <T> Registry<T>.createTagKey(path: String): TagKey<T> =
     TagKey.create(this.key(), ResourceLocation.parse(path))
+
+/**
+ * A result of a raycast operation.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+sealed class RaycastResult(
+    /**
+     * The type of the result; either [RaycastResultType.ENTITY] or [RaycastResultType.BLOCK].
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     * @see RaycastResultType
+     */
+    val type: RaycastResultType,
+    /**
+     * The [Vec3] this raycast started at.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    val startPosition: Vec3,
+    /**
+     * The [Vec3] this raycast ended at (either by missing or hitting something).
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    val endPosition: Vec3,
+    /**
+     * The unit direction this raycast was aimed towards.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    val direction: Vec3
+) {
+    /**
+     * The type of the result; either [RaycastResultType.ENTITY] or [RaycastResultType.BLOCK].
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    enum class RaycastResultType {
+        /**
+         * The result was for detecting an [Entity].
+         * @author Miko Elbrecht
+         * @since 1.0.0
+         */
+        ENTITY,
+
+        /**
+         * The result was for detecting [Block]s.
+         * @author Miko Elbrecht
+         * @since 1.0.0
+         */
+        BLOCK
+    }
+
+    /**
+     * A result of a raycast operation for [Block]s.
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    class Block(
+        /**
+         * The [BlockState] this raycast operation hit in a [Level].
+         * @author Miko Elbrecht
+         * @since 1.0.0
+         */
+        val blockState: BlockState,
+        startPosition: Vec3, endPosition: Vec3, direction: Vec3
+    ) : RaycastResult(RaycastResultType.BLOCK, startPosition, endPosition, direction)
+
+    /**
+     * A result of a raycast operation for an [Entity].
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    class Entity(
+        /**
+         * The [Entity] this raycast operation hit in a [Level].
+         * @author Miko Elbrecht
+         * @since 1.0.0
+         */
+        val entity: net.minecraft.world.entity.Entity,
+        startPosition: Vec3, endPosition: Vec3, direction: Vec3
+    ) : RaycastResult(RaycastResultType.ENTITY, startPosition, endPosition, direction)
+
+    companion object {
+        /**
+         * Raycasts from [origin] in [direction] for [length] in a [Level],
+         * returning the first [Entity] hit (if any).
+         * @return The [Entity] hit by this raycast, or `null` if no [Entity] was hit.
+         * @param exclude The [Entity] to exclude from the raycast.
+         * @param origin The [Vec3] to start the raycast from.
+         * @param direction The unit direction to raycast in.
+         * @param length The maximum length of the raycast.
+         * @author Miko Elbrecht
+         * @since 1.0.0
+         * @see blockRaycast
+         * @see Entity
+         */
+        fun Level.entityRaycast(
+            exclude: net.minecraft.world.entity.Entity?,
+            origin: Vec3,
+            direction: Vec3,
+            length: Double
+        ): Entity? {
+            var distance = 0.0
+            while (true) {
+                val positionX = origin.x + (direction.x * distance)
+                val positionY = origin.y + (direction.y * distance)
+                val positionZ = origin.z + (direction.z * distance)
+                val mathPos = Vec3(positionX, positionY, positionZ)
+                val entities = this.getEntities(exclude, AABB.ofSize(mathPos, 10.0, 10.0, 10.0))
+                if (entities.isNotEmpty()) entities.forEach {
+                    if (it.getDimensions(it.pose).makeBoundingBox(it.position()).contains(mathPos)) return Entity(
+                        it,
+                        origin,
+                        mathPos,
+                        direction
+                    )
+                }
+                if (distance > length) return null
+                distance += 0.1
+            }
+        }
+
+        /**
+         * Raycasts from [origin] in [direction] for [length] in a [Level],
+         * returning the first [Block] hit (if any).
+         * @return The [Block] hit by this raycast, or `null` if no [Block] was hit.
+         * @param origin The [Vec3] to start the raycast from.
+         * @param direction The unit direction to raycast in.
+         * @param length The maximum length of the raycast.
+         * @param countFluid If fluids should be counted as hits.
+         * @author Miko Elbrecht
+         * @since 1.0.0
+         * @see entityRaycast
+         * @see Block
+         */
+        fun Level.blockRaycast(
+            origin: Vec3,
+            direction: Vec3,
+            length: Double,
+            countFluid: Boolean
+        ): Block? {
+            var distance = 0.0
+            while (true) {
+                val positionX = origin.x + (direction.x * distance)
+                val positionY = origin.y + (direction.y * distance)
+                val positionZ = origin.z + (direction.z * distance)
+                val mathPos = Vec3(positionX, positionY, positionZ)
+                val state = this.getBlockState(BlockPos(mathPos.toVec3i()))
+                if (!state.isAir && (countFluid || state.fluidState.type != Fluids.EMPTY)) return Block(
+                    state,
+                    origin,
+                    mathPos,
+                    direction
+                )
+                if (distance > length) return null
+                distance += 0.1
+            }
+        }
+    }
+}
+
+fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(x), Mth.floor(y), Mth.floor(z))
+
+/**
+ * Writes a [Component] into a new [JsonObject].
+ * @return The [JsonObject] containing the [Component].
+ * @param component The [Component] to write into the [JsonObject].
+ * @throws NotImplementedError If the [Component] contains contents not yet supported by this function.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun componentToJson(component: Component): JsonObject = JsonObject().also {
+    when (val contents = component.contents) {
+        is TranslatableContents -> {
+            it.addProperty("type", "translate")
+            it.addProperty("key", contents.key)
+            it.addProperty("fallback", contents.fallback)
+            if (contents.args.isNotEmpty())
+                throw NotImplementedError("Arguments not supposed for jsonifying translatable contents - sorry!")
+        }
+
+        is LiteralContents -> {
+            it.addProperty("type", "literal")
+            it.addProperty("text", contents.text)
+        }
+
+        else -> throw NotImplementedError("Unknown contents: ${contents::class.qualifiedName}")
+    }
+}
+
+/**
+ * Reads a [MutableComponent] from the given [JsonObject].
+ * @return The [MutableComponent] given by this [JsonObject].
+ * @param json The [JsonObject] to read the [MutableComponent] from.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun jsonToComponent(json: JsonObject): MutableComponent = when (val type = json.getAsJsonPrimitive("type").asString) {
+    "translate" -> Component.translatableWithFallback(
+        json.getAsJsonPrimitive("key").asString,
+        json.get("fallback")?.let { if (it.isJsonNull) null else it.asString }
+    )
+
+    "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
+    else -> throw IllegalArgumentException("Illegal component type: $type")
+}
 
 /// !!! NOTICE !!! ///
 
