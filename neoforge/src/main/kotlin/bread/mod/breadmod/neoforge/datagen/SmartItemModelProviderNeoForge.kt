@@ -12,7 +12,6 @@ import net.minecraft.data.models.model.TextureMapping
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
-import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
 
@@ -28,7 +27,6 @@ import java.util.concurrent.CompletableFuture
 class SmartItemModelProviderNeoForge(
     modID: String, forClassLoader: ClassLoader, forPackage: Package
 ) : SmartItemModelProvider<GatherDataEvent>(modID, forClassLoader, forPackage) {
-    private val logger = LogManager.getLogger()
 
     /**
      * Generates block model definition files according to annotations in [bread.mod.breadmod.datagen.model.block]
