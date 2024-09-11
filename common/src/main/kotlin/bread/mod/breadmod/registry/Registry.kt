@@ -13,9 +13,11 @@ import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.sound.ModSounds
 import dev.architectury.event.events.common.LifecycleEvent
+import dev.architectury.platform.Platform
 import dev.architectury.registry.fuel.FuelRegistry
 import dev.architectury.registry.item.ItemPropertiesRegistry
 import dev.architectury.registry.registries.RegistrySupplier
+import dev.architectury.utils.Env
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.BlockItem
@@ -99,11 +101,13 @@ internal object Registry {
 
     private fun runLifecycleSetupStage() {
         LifecycleEvent.SETUP.register {
-            ItemPropertiesRegistry.register(
-                ModItems.BREAD_SHIELD.get(),
-                modLocation("blocking")
-            ) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
-                if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1f else 0f
+            if (Platform.getEnvironment() == Env.CLIENT) {
+                ItemPropertiesRegistry.register(
+                    ModItems.BREAD_SHIELD.get(),
+                    modLocation("blocking")
+                ) { itemStack: ItemStack, _: ClientLevel?, livingEntity: LivingEntity?, _: Int ->
+                    if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1f else 0f
+                }
             }
         }
     }

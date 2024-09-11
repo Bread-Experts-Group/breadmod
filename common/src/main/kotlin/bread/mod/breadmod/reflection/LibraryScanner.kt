@@ -89,18 +89,22 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
                 false
             }
         }.forEach {
-            it.memberProperties.forEach { f ->
-                val annotationsRaw = f.javaField?.annotations?.firstOrNull { a ->
-                    a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
-                }
-                if (annotationsRaw != null) {
-                    val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
-                    else annotationsRaw.annotationClass.java.declaredMethods
-                        .firstOrNull { m -> m.name == "value" }
-                        ?.invoke(annotationsRaw) as Array<T>?
+            try {
+                it.memberProperties.forEach { f ->
+                    val annotationsRaw = f.javaField?.annotations?.firstOrNull { a ->
+                        a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
+                    }
+                    if (annotationsRaw != null) {
+                        val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
+                        else annotationsRaw.annotationClass.java.declaredMethods
+                            .firstOrNull { m -> m.name == "value" }
+                            ?.invoke(annotationsRaw) as Array<T>?
 
-                    if (annotations != null) this[f] = f.call(it.objectInstance) to annotations
+                        if (annotations != null) this[f] = f.call(it.objectInstance) to annotations
+                    }
                 }
+            } catch (e: Exception) {
+                LOGGER.error("Failure when reading annotations off ${it.qualifiedName}: $e")
             }
         }
     }
