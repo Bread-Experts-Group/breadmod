@@ -1,14 +1,19 @@
 package bread.mod.breadmod.neoforge.datagen
 
-import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.datagen.model.item.DataGenerateHandheldItemModel
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.model.item.SmartItemModelProvider
-import dev.architectury.registry.registries.RegistrySupplier
+import com.google.gson.JsonElement
+import net.minecraft.data.CachedOutput
+import net.minecraft.data.DataProvider
+import net.minecraft.data.PackOutput
+import net.minecraft.data.models.model.ModelTemplates.FLAT_HANDHELD_ITEM
+import net.minecraft.data.models.model.TextureMapping
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.item.Item
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
+import org.apache.logging.log4j.LogManager
+import java.util.concurrent.CompletableFuture
 
 
 /**
@@ -23,6 +28,8 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
 class SmartItemModelProviderNeoForge(
     modID: String, forClassLoader: ClassLoader, forPackage: Package
 ) : SmartItemModelProvider<GatherDataEvent>(modID, forClassLoader, forPackage) {
+    private val logger = LogManager.getLogger()
+
     /**
      * Generates block model definition files according to annotations in [bread.mod.breadmod.datagen.model.block]
      * use in the specified package.
@@ -34,22 +41,31 @@ class SmartItemModelProviderNeoForge(
             forEvent.generator.addProvider(
                 true,
                 object : ItemModelProvider(forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
-                    fun handheldItem(item: RegistrySupplier<Item>) {
-                        withExistingParent(
-                            item.id.path,
-                            ResourceLocation.fromNamespaceAndPath("minecraft", "item/handheld")
-                        ).texture(
-                            "layer0",
-                            modLocation("item/" + item.id.path)
-                        )
-                    }
+                    private val modelTemplated = mutableMapOf<ResourceLocation, JsonElement>()
 
                     override fun registerModels() = getItemModelMap().forEach { (register, annotation) ->
                         when (annotation.first) {
                             is DataGenerateItemModel -> basicItem(register.get())
-                            is DataGenerateHandheldItemModel -> handheldItem(register)
+                            is DataGenerateHandheldItemModel -> FLAT_HANDHELD_ITEM.create(
+                                register.id, TextureMapping.layer0(register.get())
+                            ) { a, b -> modelTemplated[a] = b.get() }
                         }
                     }
+
+                    override fun run(cachedOutput: CachedOutput): CompletableFuture<*> = CompletableFuture.allOf(
+                        super.run(cachedOutput),
+                        *modelTemplated.map { (target, model) ->
+                            DataProvider.saveStable(
+                                cachedOutput, model,
+                                output
+                                    .getOutputFolder(PackOutput.Target.RESOURCE_PACK)
+                                    .resolve(target.namespace)
+                                    .resolve("models")
+                                    .resolve("item")
+                                    .resolve("${target.path}.json")
+                            )
+                        }.toTypedArray()
+                    )
                 }
             )
         }
