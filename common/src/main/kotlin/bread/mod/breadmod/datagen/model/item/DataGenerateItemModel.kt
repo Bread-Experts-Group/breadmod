@@ -9,4 +9,10 @@ import kotlin.annotation.AnnotationTarget.FIELD
  * @since 1.0.0
  */
 @Target(FIELD)
-annotation class DataGenerateItemModel
+annotation class DataGenerateItemModel(val type: Type = Type.BASIC) {
+    enum class Type {
+        BASIC,
+        HANDHELD,
+        DOUBLE_LAYERED
+    }
+}

@@ -21,11 +21,7 @@ abstract class SmartItemModelProvider<T>(
      * @since 1.0.0
      */
     protected fun getItemModelMap(): Map<RegistrySupplier<Item>, Pair<Annotation, KProperty1<*, *>>> = buildMap {
-        listOf(
-            // todo need handheld and layered items
-            scanner.getObjectPropertiesAnnotatedWith<DataGenerateItemModel>(),
-            scanner.getObjectPropertiesAnnotatedWith<DataGenerateHandheldItemModel>()
-        ).forEach {
+        listOf(scanner.getObjectPropertiesAnnotatedWith<DataGenerateItemModel>()).forEach {
             it.forEach { (property, data) ->
                 put(data.first.ensureRegistrySupplierAndValue<Item>(property), Pair(data.second.first(), property))
             }

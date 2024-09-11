@@ -3,7 +3,6 @@ package bread.mod.breadmod.registry.item
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modTranslatable
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
-import bread.mod.breadmod.datagen.model.item.DataGenerateHandheldItemModel
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
 import bread.mod.breadmod.item.*
@@ -46,7 +45,7 @@ object ModItems {
     val BREAD_SHIELD: RegistrySupplier<BreadShieldItem> = ITEM_REGISTRY.register("bread_shield") { BreadShieldItem() }
 
     // todo port over features
-    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    @DataGenerateItemModel(DataGenerateItemModel.Type.DOUBLE_LAYERED)
     @DataGenerateLanguage("en_us", "Doped Bread")
     val DOPED_BREAD: RegistrySupplier<DopedBreadItem> = ITEM_REGISTRY.register("doped_bread") { DopedBreadItem() }
 
@@ -84,7 +83,7 @@ object ModItems {
     @DataGenerateLanguage("en_us", "Die")
     val DIE: RegistrySupplier<Item> = ITEM_REGISTRY.register("die") { Item(Item.Properties()) }
 
-    //    @DataGenerateItemModel(ItemModelType.HANDHELD)
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Knife")
     val KNIFE: RegistrySupplier<KnifeItem> = ITEM_REGISTRY.register("knife") { KnifeItem(Tiers.IRON) }
 
@@ -118,6 +117,7 @@ object ModItems {
         }
     }
 
+    @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Alumina")
     val ALUMINA: RegistrySupplier<Item> = ITEM_REGISTRY.register("alumina") { Item(Item.Properties()) }
 
@@ -130,44 +130,33 @@ object ModItems {
     // todo port over features (when config exists)
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Bread Amulet")
-    val BASIC_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("bread_amulet") {
+    val BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("bread_amulet") {
         TieredBreadAmuletItem(BreadAmuletType.NORMAL, 500)
     }
 
-    @DataGenerateLanguage("en_us", "Reinforced Bread Amulet")
-    val REINFORCED_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("reinforced_bread_amulet") {
-        TieredBreadAmuletItem(BreadAmuletType.REINFORCED, 2500)
-    }
-
-    @DataGenerateLanguage("en_us", "Indestructible Bread Amulet")
-    val INDESTRUCTIBLE_BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> =
-        ITEM_REGISTRY.register("indestructible_bread_amulet") {
-            TieredBreadAmuletItem(BreadAmuletType.INDESTRUCTIBLE, 0)
-        }
-
     // todo port over features (applies to all 4 bread armors)
-//    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    @DataGenerateItemModel(DataGenerateItemModel.Type.DOUBLE_LAYERED)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Helmet")
     val BREAD_HELMET: RegistrySupplier<BreadArmorItem> = ITEM_REGISTRY.register("bread_helmet") {
         BreadArmorItem(Type.HELMET)
     }
 
-    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    @DataGenerateItemModel(DataGenerateItemModel.Type.DOUBLE_LAYERED)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Chestplate")
     val BREAD_CHESTPLATE: RegistrySupplier<BreadArmorItem> = ITEM_REGISTRY.register("bread_chestplate") {
         BreadArmorItem(Type.CHESTPLATE)
     }
 
-    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    @DataGenerateItemModel(DataGenerateItemModel.Type.DOUBLE_LAYERED)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Leggings")
     val BREAD_LEGGINGS: RegistrySupplier<BreadArmorItem> = ITEM_REGISTRY.register("bread_leggings") {
         BreadArmorItem(Type.LEGGINGS)
     }
 
-    //    @DataGenerateItemModel(ItemModelType.WITH_OVERLAY)
+    @DataGenerateItemModel(DataGenerateItemModel.Type.DOUBLE_LAYERED)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     @DataGenerateLanguage("en_us", "Bread Boots")
     val BREAD_BOOTS: RegistrySupplier<BreadArmorItem> = ITEM_REGISTRY.register("bread_boots") {
@@ -198,76 +187,76 @@ object ModItems {
         ArmorItem(ArmorMaterials.RF_BREAD, Type.BOOTS, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Bread Pickaxe")
     val BREAD_PICKAXE: RegistrySupplier<PickaxeItem> = ITEM_REGISTRY.register("bread_pickaxe") {
         PickaxeItem(ToolTiers.BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Bread Shovel")
     val BREAD_SHOVEL: RegistrySupplier<ShovelItem> = ITEM_REGISTRY.register("bread_shovel") {
         ShovelItem(ToolTiers.BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Bread Axe")
     val BREAD_AXE: RegistrySupplier<AxeItem> = ITEM_REGISTRY.register("bread_axe") {
         AxeItem(ToolTiers.BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Bread Hoe")
     val BREAD_HOE: RegistrySupplier<HoeItem> = ITEM_REGISTRY.register("bread_hoe") {
         HoeItem(ToolTiers.BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Bread Sword")
     val BREAD_SWORD: RegistrySupplier<SwordItem> = ITEM_REGISTRY.register("bread_sword") {
         SwordItem(ToolTiers.BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Reinforced Bread Pickaxe")
     val RF_BREAD_PICKAXE: RegistrySupplier<PickaxeItem> = ITEM_REGISTRY.register("reinforced_bread_pickaxe") {
         PickaxeItem(ToolTiers.RF_BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Reinforced Bread Shovel")
     val RF_BREAD_SHOVEL: RegistrySupplier<ShovelItem> = ITEM_REGISTRY.register("reinforced_bread_shovel") {
         ShovelItem(ToolTiers.RF_BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Reinforced Bread Axe")
     val RF_BREAD_AXE: RegistrySupplier<AxeItem> = ITEM_REGISTRY.register("reinforced_bread_axe") {
         AxeItem(ToolTiers.RF_BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Reinforced Bread Hoe")
     val RF_BREAD_HOE: RegistrySupplier<HoeItem> = ITEM_REGISTRY.register("reinforced_bread_hoe") {
         HoeItem(ToolTiers.RF_BREAD, Item.Properties().stacksTo(1))
     }
 
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Reinforced Bread Sword")
     val RF_BREAD_SWORD: RegistrySupplier<SwordItem> = ITEM_REGISTRY.register("reinforced_bread_sword") {
         SwordItem(ToolTiers.RF_BREAD, Item.Properties().stacksTo(1))
     }
 
-    // todo port over features
-    @DataGenerateHandheldItemModel
+    @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)
     @DataGenerateLanguage("en_us", "Wrench")
     val WRENCH: RegistrySupplier<WrenchItem> = ITEM_REGISTRY.register("wrench") { WrenchItem() }
 
+    @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Bread Bullet")
     val BREAD_BULLET_ITEM: RegistrySupplier<Item> = ITEM_REGISTRY.register("bread_bullet") { Item(Item.Properties()) }
 
     // todo shootProjectile exists now, fix up this item to work again
-//    @DataGenerateItemModel
+    @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Bread Gun")
     val BREAD_GUN_ITEM: RegistrySupplier<ProjectileWeaponItem> = ITEM_REGISTRY.register("bread_gun") { BreadGunItem() }
 

@@ -1,13 +1,12 @@
 package bread.mod.breadmod.neoforge.datagen
 
-import bread.mod.breadmod.datagen.model.item.DataGenerateHandheldItemModel
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.model.item.SmartItemModelProvider
 import com.google.gson.JsonElement
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
 import net.minecraft.data.PackOutput
-import net.minecraft.data.models.model.ModelTemplates.FLAT_HANDHELD_ITEM
+import net.minecraft.data.models.model.ModelTemplates
 import net.minecraft.data.models.model.TextureMapping
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
@@ -42,11 +41,23 @@ class SmartItemModelProviderNeoForge(
                     private val modelTemplated = mutableMapOf<ResourceLocation, JsonElement>()
 
                     override fun registerModels() = getItemModelMap().forEach { (register, annotation) ->
-                        when (annotation.first) {
-                            is DataGenerateItemModel -> basicItem(register.get())
-                            is DataGenerateHandheldItemModel -> FLAT_HANDHELD_ITEM.create(
+                        val dgAnnotation = (annotation.first) as DataGenerateItemModel
+                        when (dgAnnotation.type) {
+                            DataGenerateItemModel.Type.BASIC -> basicItem(register.get())
+
+                            DataGenerateItemModel.Type.HANDHELD -> ModelTemplates.FLAT_HANDHELD_ITEM.create(
                                 register.id, TextureMapping.layer0(register.get())
-                            ) { a, b -> modelTemplated[a] = b.get() }
+                            ) { location, asJson -> modelTemplated[location] = asJson.get() }
+
+                            DataGenerateItemModel.Type.DOUBLE_LAYERED -> {
+                                val itemTexture = TextureMapping.getItemTexture(register.get())
+                                ModelTemplates.TWO_LAYERED_ITEM.create(
+                                    register.id, TextureMapping.layered(
+                                        itemTexture,
+                                        itemTexture.withSuffix("_overlay")
+                                    )
+                                ) { location, asJson -> modelTemplated[location] = asJson.get() }
+                            }
                         }
                     }
 
