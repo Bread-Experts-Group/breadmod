@@ -1,6 +1,12 @@
 package bread.mod.breadmod.neoforge.datagen
 
+import bread.mod.breadmod.ModMainCommon.modLocation
+import bread.mod.breadmod.datagen.model.item.DataGenerateHandheldItemModel
+import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.model.item.SmartItemModelProvider
+import dev.architectury.registry.registries.RegistrySupplier
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.Item
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
 
@@ -28,8 +34,21 @@ class SmartItemModelProviderNeoForge(
             forEvent.generator.addProvider(
                 true,
                 object : ItemModelProvider(forEvent.generator.packOutput, modID, forEvent.existingFileHelper) {
-                    override fun registerModels() = getItemModelMap().forEach { (register, _) ->
-                        basicItem(register.get())
+                    fun handheldItem(item: RegistrySupplier<Item>) {
+                        withExistingParent(
+                            item.id.path,
+                            ResourceLocation.fromNamespaceAndPath("minecraft", "item/handheld")
+                        ).texture(
+                            "layer0",
+                            modLocation("item/" + item.id.path)
+                        )
+                    }
+
+                    override fun registerModels() = getItemModelMap().forEach { (register, annotation) ->
+                        when (annotation.first) {
+                            is DataGenerateItemModel -> basicItem(register.get())
+                            is DataGenerateHandheldItemModel -> handheldItem(register)
+                        }
                     }
                 }
             )

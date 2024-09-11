@@ -60,6 +60,13 @@ dependencies {
 
     modImplementation "com.terraformersmc:modmenu:11.0.2"
 
+    // compile against the JEI API but do not include it at runtime
+    modCompileOnlyApi("mezz.jei:jei-1.21.1-fabric-api:19.10.0.126")
+    // at runtime, use the full JEI jar for Fabric
+    modRuntimeOnly("mezz.jei:jei-1.21.1-fabric:19.10.0.126")
+
+    modImplementation "curse.maven:jade-324717:5706164"
+
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"

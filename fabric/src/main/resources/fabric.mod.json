@@ -37,6 +37,9 @@
         "adapter": "kotlin",
         "value": "bread.mod.breadmod.fabric.ModMenuIntegration"
       }
+    ],
+    "jade": [
+      "bread.mod.breadmod.client.waila.jade.JadePlugin"
     ]
   },
   "mixins": [

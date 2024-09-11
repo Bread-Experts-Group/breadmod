@@ -115,6 +115,8 @@ internal object Registry {
         ModItems.ITEM_REGISTRY.register()
         ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
         ArmorMaterials.ARMOR_REGISTRY.register()
+        // todo later.
+//        ModRecipeSerializers.RECIPE_SERIALIZER_REGISTRY.register()
         // todo figure this out later (PaintingVariants.class)
 //        ModPainting.PAINTING_VARIANT_REGISTRY.register()
         registerNetworking()
