@@ -28,6 +28,7 @@ import kotlin.reflect.jvm.javaField
  * @author Miko Elbrecht
  * @since 1.0.0
  */
+// TODO: Cache.
 class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackage: Package) {
     companion object {
         /**
