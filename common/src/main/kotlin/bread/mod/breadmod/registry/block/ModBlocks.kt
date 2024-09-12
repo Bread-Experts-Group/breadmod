@@ -165,4 +165,8 @@ object ModBlocks {
             }
         }
     )
+
+    val TOASTER = BLOCK_REGISTRY.registerBlockItem(
+        "toaster", { ToasterBlock() }, Item.Properties()
+    )
 }

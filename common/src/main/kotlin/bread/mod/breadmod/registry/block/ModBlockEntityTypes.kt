@@ -2,6 +2,7 @@ package bread.mod.breadmod.registry.block
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.block.entity.SoundBlockEntity
+import bread.mod.breadmod.block.entity.ToasterBlockEntity
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
@@ -17,6 +18,14 @@ object ModBlockEntityTypes {
             BlockEntityType.Builder.of(
                 { pos, state -> SoundBlockEntity(pos, state) },
                 ModBlocks.SOUND_BLOCK.get().block
+            ).build(null)
+        }
+
+    val TOASTER: RegistrySupplier<BlockEntityType<ToasterBlockEntity>> =
+        BLOCK_ENTITY_TYPE_REGISTRY.register("toaster_block_entity") {
+            BlockEntityType.Builder.of(
+                { pos, state -> ToasterBlockEntity(pos, state) },
+                ModBlocks.TOASTER.get().block
             ).build(null)
         }
 }

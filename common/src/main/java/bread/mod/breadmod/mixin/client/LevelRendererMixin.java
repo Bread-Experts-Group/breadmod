@@ -77,8 +77,8 @@ class LevelRendererMixin {
 
             for (int i = 0; i <= 16; ++i) {
                 final float f1 = (float) i * ((float) Math.PI * 2.0f) / 16.0f;
-                final float f2 = (float) Math.sin((double) f1);
-                final float f3 = (float) Math.cos((double) f1);
+                final float f2 = (float) Math.sin(f1);
+                final float f3 = (float) Math.cos(f1);
                 bufferBuilder
                         .addVertex(matrix, f2, -1.0f, -f3)
                         .setColor(0.9f, 0.0f, 0.1f, clampedRedness);
@@ -109,7 +109,7 @@ class LevelRendererMixin {
                     partialTick
             );
 
-            final double sin = Math.sin((double) ((float) millis / 1800.0F));
+            final double sin = Math.sin((float) millis / 1800.0F);
             final float rednessClamped = Math.clamp((float) (sin + 1.0) / 2.0f, 0.0f, 1.0f);
             RenderGeneralKt.setRedness(rednessClamped);
             RenderGeneralKt.setSkyColorMixinActive(true);

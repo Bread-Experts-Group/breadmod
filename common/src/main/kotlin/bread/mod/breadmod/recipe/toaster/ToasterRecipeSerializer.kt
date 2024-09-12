@@ -13,12 +13,7 @@ class ToasterRecipeSerializer : RecipeSerializer<ToasterRecipe> {
             inst.group(
                 ItemStack.CODEC.fieldOf("ingredient").forGetter(ToasterRecipe::inputItem),
                 ItemStack.CODEC.fieldOf("result").forGetter(ToasterRecipe::result)
-            ).apply(inst) { ingredient, result ->
-                ToasterRecipe(
-                    ingredient,
-                    result,
-                )
-            }
+            ).apply(inst) { ingredient, result -> ToasterRecipe(ingredient, result) }
         }
 
         val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToasterRecipe> = StreamCodec.composite(
