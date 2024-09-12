@@ -3,6 +3,8 @@ package bread.mod.breadmod.datagen.recipe
 import bread.mod.breadmod.datagen.recipe.shaped.DataGenerateShapedRecipeThis
 import bread.mod.breadmod.datagen.recipe.shapeless.DataGenerateShapelessRecipeExternal
 import bread.mod.breadmod.datagen.recipe.shapeless.DataGenerateShapelessRecipeThis
+import bread.mod.breadmod.datagen.recipe.special.DataGenerateToastingRecipe
+import bread.mod.breadmod.recipe.toaster.ToasterRecipeBuilder
 import bread.mod.breadmod.reflection.LibraryScanner
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.HolderLookup
@@ -13,6 +15,7 @@ import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapedRecipeBuilder
 import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ItemLike
 import java.util.concurrent.CompletableFuture
 
@@ -30,7 +33,10 @@ class SmartRecipeProvider(
                         scanner.getObjectPropertiesAnnotatedWith<DataGenerateShapelessRecipeThis>(),
 
                         // External
-                        scanner.getObjectPropertiesAnnotatedWith<DataGenerateShapelessRecipeExternal>()
+                        scanner.getObjectPropertiesAnnotatedWith<DataGenerateShapelessRecipeExternal>(),
+
+                        // Special
+                        scanner.getObjectPropertiesAnnotatedWith<DataGenerateToastingRecipe>()
                     ).forEach {
                         it.forEach { (property, data) ->
                             val supplier = data.first
@@ -73,6 +79,15 @@ class SmartRecipeProvider(
 
                                 is DataGenerateShapelessRecipeExternal ->
                                     getOrPut(annotation.name) { mutableListOf() }.add(actual to annotation)
+
+                                is DataGenerateToastingRecipe -> {
+                                    val recipe = ToasterRecipeBuilder(
+                                        ItemStack(BuiltInRegistries.ITEM[ResourceLocation.parse(annotation.required)], annotation.count),
+                                        ItemStack(actual.asItem(), annotation.count)
+                                    )
+                                    recipe.unlockedBy("has_item", has(actual))
+                                        .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(modID, annotation.name))
+                                }
 
                                 else -> throw UnsupportedOperationException(annotation.annotationClass.qualifiedName)
                             }

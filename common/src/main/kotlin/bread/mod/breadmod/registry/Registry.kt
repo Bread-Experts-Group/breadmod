@@ -11,6 +11,8 @@ import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
+import bread.mod.breadmod.registry.recipe.ModRecipeSerializers
+import bread.mod.breadmod.registry.recipe.ModRecipeTypes
 import bread.mod.breadmod.registry.sound.ModSounds
 import dev.architectury.event.events.common.LifecycleEvent
 import dev.architectury.platform.Platform
@@ -119,8 +121,8 @@ internal object Registry {
         ModItems.ITEM_REGISTRY.register()
         ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
         ArmorMaterials.ARMOR_REGISTRY.register()
-        // todo later.
-//        ModRecipeSerializers.RECIPE_SERIALIZER_REGISTRY.register()
+        ModRecipeSerializers.RECIPE_SERIALIZER_REGISTRY.register()
+        ModRecipeTypes.RECIPE_TYPE_REGISTRY.register()
         // todo figure this out later (PaintingVariants.class)
 //        ModPainting.PAINTING_VARIANT_REGISTRY.register()
         registerNetworking()

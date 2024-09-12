@@ -14,6 +14,12 @@ internal object ClientNeoForgeEventBus {
     @SubscribeEvent
     fun registerStageRender(event: RenderLevelStageEvent) {
         if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
-        renderBuffer.removeIf { (mutableList, renderEvent) -> renderEvent.invoke(mutableList, event.poseStack, event.camera) }
+        renderBuffer.removeIf { (mutableList, renderEvent) ->
+            renderEvent.invoke(
+                mutableList,
+                event.poseStack,
+                event.camera
+            )
+        }
     }
 }

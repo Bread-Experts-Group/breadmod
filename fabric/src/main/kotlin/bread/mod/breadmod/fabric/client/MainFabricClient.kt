@@ -15,7 +15,7 @@ class MainFabricClient : ClientModInitializer {
 
         ModelLoadingPlugin.register(AdditionalModelLoader())
 
-        WorldRenderEvents.END.register { renderContext ->
+        WorldRenderEvents.AFTER_TRANSLUCENT.register { renderContext ->
             val poseStack = renderContext.matrixStack() ?: return@register
             val camera = renderContext.camera()
 
@@ -29,7 +29,7 @@ class MainFabricClient : ClientModInitializer {
         override fun onInitializeModelLoader(context: ModelLoadingPlugin.Context) {
             context.addModels(
                 modLocation("item/$toolGunDef/item"),
-                modLocation("item/$toolGunDef/item"),
+                modLocation("item/$toolGunDef/coil"),
                 modLocation("block/generator_on"),
                 modLocation("block/toaster/handle"),
                 modLocation("block/creative_generator/creative_generator_star"),

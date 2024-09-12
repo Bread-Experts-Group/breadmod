@@ -1,10 +1,14 @@
 package bread.mod.breadmod.util
 
 import bread.mod.breadmod.util.RaycastResult.RaycastResultType
+import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Vec3i
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluids
@@ -139,6 +143,23 @@ fun formatUnit(
 //fun <T> Registry<T>.createTagKey(path: String): TagKey<T> =
 //    TagKey.create(this.key(), ResourceLocation.parse(path))
 // --Commented out by Inspection STOP (9/10/2024 03:52)
+
+/**
+ * Registers a [name]d [RecipeType] under the requisite [DeferredRegister].
+ * @param name The name of the [RecipeType] to register.
+ * @return The [RegistrySupplier] containing the registered [RecipeType].
+ * @param T The type of the [Recipe] this [RecipeType] is for.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun <T : Recipe<*>> DeferredRegister<RecipeType<*>>.registerType(name: ResourceLocation): RegistrySupplier<RecipeType<T>> {
+    val string = name.toString()
+    return this.register(name) {
+        object : RecipeType<T> {
+            override fun toString(): String = string
+        }
+    }
+}
 
 /**
  * A result of a raycast operation.

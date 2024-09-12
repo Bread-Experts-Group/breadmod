@@ -9,6 +9,7 @@ import bread.mod.breadmod.util.render.renderItemModel
 import bread.mod.breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
+import dev.architectury.platform.Platform
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.resources.model.ModelResourceLocation
@@ -27,9 +28,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
         val secureRandom = SecureRandom()
     }
 
-    private val mainModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/item"), "standalone")
-    private val coilModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/coil"), "standalone")
-    private val altModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"), "standalone")
+    private val platformId = if (Platform.isFabric()) "fabric_resource" else "standalone"
+
+    private val mainModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/item"), platformId)
+    private val coilModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/coil"), platformId)
+    private val altModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"), platformId)
 
     //    private val useAltModel = CLIENT.ALT_TOOLGUN_MODEL
     override fun renderByItem(
@@ -55,7 +58,16 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
         fun rotateCoilAndRender() {
             poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
-            renderer.renderItemModel(coilModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+            renderer.renderItemModel(
+                coilModel,
+                stack,
+                displayContext,
+                false,
+                poseStack,
+                buffer,
+                packedOverlay,
+                packedLight
+            )
         }
 
         // todo recoil
@@ -66,10 +78,28 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
             poseStack.translate(-recoil, 0.0f, 0.0f)
             if (useAltModel) {
 //                renderItemModel(altModel, renderer, stack, poseStack, buffer, packedOverlay, packedLight)
-                renderer.renderItemModel(altModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+                renderer.renderItemModel(
+                    altModel,
+                    stack,
+                    displayContext,
+                    false,
+                    poseStack,
+                    buffer,
+                    packedOverlay,
+                    packedLight
+                )
             } else {
 //                renderModel(mainModel, renderer, stack, poseStack, buffer, packedOverlay, packedLight)
-                renderer.renderItemModel(mainModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+                renderer.renderItemModel(
+                    mainModel,
+                    stack,
+                    displayContext,
+                    false,
+                    poseStack,
+                    buffer,
+                    packedOverlay,
+                    packedLight
+                )
 //            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, mainModel)
 //            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, mainModel)
 
@@ -105,9 +135,27 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
             }
         } else {
             if (useAltModel) {
-                renderer.renderItemModel(altModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+                renderer.renderItemModel(
+                    altModel,
+                    stack,
+                    displayContext,
+                    false,
+                    poseStack,
+                    buffer,
+                    packedOverlay,
+                    packedLight
+                )
             } else {
-                renderer.renderItemModel(mainModel, stack, displayContext, false, poseStack, buffer, packedOverlay, packedLight)
+                renderer.renderItemModel(
+                    mainModel,
+                    stack,
+                    displayContext,
+                    false,
+                    poseStack,
+                    buffer,
+                    packedOverlay,
+                    packedLight
+                )
                 rotateCoilAndRender()
             }
         }

@@ -1,10 +1,12 @@
 package bread.mod.breadmod.util.render
 
 import bread.mod.breadmod.ModMainCommon.modLocation
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ItemBlockRenderTypes
@@ -154,6 +156,36 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
     })
 
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
+
+fun setupOverlayRenderState(useBlend: Boolean, useDepthTest: Boolean) {
+    if (useBlend) {
+        RenderSystem.enableBlend()
+        RenderSystem.defaultBlendFunc()
+    } else RenderSystem.disableBlend()
+    if (useDepthTest) RenderSystem.enableDepthTest() else RenderSystem.disableDepthTest()
+}
+
+fun drawScaledText(
+    pText: Component,
+    pPose: PoseStack,
+    pGuiGraphics: GuiGraphics,
+    pX: Int,
+    pY: Int,
+    pColor: Int,
+    pScale: Float,
+    pDropShadow: Boolean
+) {
+    pPose.scaleFlat(pScale)
+    pGuiGraphics.drawString(
+        rgMinecraft.font,
+        pText,
+        pX,
+        pY,
+        pColor,
+        pDropShadow
+    )
+    pPose.scaleFlat(1f)
+}
 
 ///**
 // * Renders a provided [model] (as an item model) onto a [BlockEntityWithoutLevelRenderer]

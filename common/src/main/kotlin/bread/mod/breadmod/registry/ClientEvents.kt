@@ -1,5 +1,6 @@
 package bread.mod.breadmod.registry
 
+import bread.mod.breadmod.client.gui.ToolGunOverlay
 import bread.mod.breadmod.client.gui.WarOverlay
 import bread.mod.breadmod.command.client.AltToolGunModelCommand
 import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
@@ -47,6 +48,7 @@ object ClientEvents {
 
     fun registerOverlays() {
         registerOverlay(WarOverlay())
+        registerOverlay(ToolGunOverlay())
     }
 
     // todo some way to register overlays on a certain z-level?
