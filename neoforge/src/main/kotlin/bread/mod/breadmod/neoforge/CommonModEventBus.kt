@@ -8,6 +8,7 @@ import bread.mod.breadmod.neoforge.datagen.SmartItemModelProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartLanguageProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartSoundProviderNeoForge
 import bread.mod.breadmod.neoforge.util.EnergyStorageWrapper
+import bread.mod.breadmod.neoforge.util.FluidStackWrapper
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
 import net.minecraft.world.inventory.CraftingContainer
@@ -58,7 +59,6 @@ internal object CommonModEventBus {
         )
     }
 
-    // todo need to figure out capability invalidation
     @SubscribeEvent
     fun registerCaps(event: RegisterCapabilitiesEvent) {
         event.registerBlock(
@@ -68,15 +68,17 @@ internal object CommonModEventBus {
             }, ModBlocks.TOASTER.get().block
         )
 
-        // todo this is busted
         event.registerBlock(
             Capabilities.EnergyStorage.BLOCK,
             { level, pos, state, blockEntity, side ->
-                EnergyStorageWrapper(
-                    ModBlockEntityTypes.TOASTER.get().getBlockEntity(level, pos) as CraftingContainer,
-                    level,
-                    pos
-                )
+                EnergyStorageWrapper(level, pos)
+            }, ModBlocks.TOASTER.get().block
+        )
+
+        event.registerBlock(
+            Capabilities.FluidHandler.BLOCK,
+            { level, pos, state, blockEntity, side ->
+                FluidStackWrapper(level, pos)
             }, ModBlocks.TOASTER.get().block
         )
     }
