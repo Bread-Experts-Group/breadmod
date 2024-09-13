@@ -36,6 +36,8 @@ class ToasterBlockEntity(
 
     var progress = 0
     var maxProgress = 0
+    var stored = 0
+    var maxStored = 100000
 
     val recipeDial: RecipeManager.CachedCheck<ToasterInput, ToasterRecipe> by lazy {
         RecipeManager.createCheck(ModRecipeTypes.TOASTING.get())
@@ -101,11 +103,26 @@ class ToasterBlockEntity(
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
+        tag.put("energy", CompoundTag().also { energyTag ->
+            energyTag.putInt("energyStored", stored)
+            energyTag.putInt("maxEnergyStored", maxStored)
+        })
+        tag.put("recipeProgress", CompoundTag().also { progressTag ->
+            progressTag.putInt("progress", progress)
+            progressTag.putInt("maxProgress", maxProgress)
+        })
         ContainerHelper.saveAllItems(tag, items, registries)
     }
 
     override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.loadAdditional(tag, registries)
+        val energyTag = tag.getCompound("energy")
+        val progressTag = tag.getCompound("progress")
+        
+        stored = energyTag.getInt("energyStored")
+        maxStored = energyTag.getInt("maxEnergyStored")
+        progress = progressTag.getInt("progress")
+        maxProgress = progressTag.getInt("maxProgress")
         items = NonNullList.withSize(containerSize, ItemStack.EMPTY)
         ContainerHelper.loadAllItems(tag, items, registries)
     }
@@ -155,9 +172,6 @@ class ToasterBlockEntity(
         setChanged()
         return 1000
     }
-
-    var stored = 0
-    var maxStored = 100000
 
     override fun getEnergyStored(): Int = stored
     override fun getMaxEnergyStored(): Int = maxStored
