@@ -1,9 +1,12 @@
 package bread.mod.breadmod.registry
 
+import bread.mod.breadmod.block.entity.ToasterBlockEntity
 import bread.mod.breadmod.client.gui.ToolGunOverlay
 import bread.mod.breadmod.client.gui.WarOverlay
+import bread.mod.breadmod.client.render.ToasterRenderer
 import bread.mod.breadmod.command.client.AltToolGunModelCommand
 import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
+import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import dev.architectury.event.EventResult
@@ -11,9 +14,13 @@ import dev.architectury.event.events.client.ClientCommandRegistrationEvent
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent.ClientCommandSourceStack
 import dev.architectury.event.events.client.ClientGuiEvent
 import dev.architectury.event.events.client.ClientRawInputEvent
+import dev.architectury.event.events.common.LifecycleEvent
+import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 
 object ClientEvents {
     fun registerClientCommands() {
@@ -22,6 +29,18 @@ object ClientEvents {
                 LiteralArgumentBuilder.literal<ClientCommandSourceStack>("breadmod")
                     .then(AltToolGunModelCommand.register())
             )
+        }
+    }
+
+    fun registerBlockEntityRenderers() {
+        LifecycleEvent.SETUP.register {
+            // todo this needs to be turned into a helper function for registering block entity renderers
+            BlockEntityRendererRegistry.register<ToasterBlockEntity>(
+                ModBlockEntityTypes.TOASTER.get(),
+                object : BlockEntityRendererProvider<ToasterBlockEntity> {
+                    override fun create(context: BlockEntityRendererProvider.Context): BlockEntityRenderer<ToasterBlockEntity> =
+                        ToasterRenderer(context)
+                })
         }
     }
 

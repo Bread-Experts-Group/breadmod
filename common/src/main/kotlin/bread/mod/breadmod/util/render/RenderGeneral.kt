@@ -23,6 +23,7 @@ import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.entity.BlockEntity
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Vector3f
 import org.joml.Vector4f
@@ -187,28 +188,9 @@ fun drawScaledText(
     pPose.scaleFlat(1f)
 }
 
-///**
-// * Renders a provided [model] (as an item model) onto a [BlockEntityWithoutLevelRenderer]
-// */
-//fun renderItemModel(
-//    model: BakedModel,
-//    renderer: ItemRenderer,
-//    stack: ItemStack,
-//    poseStack: PoseStack,
-//    buffer: MultiBufferSource,
-//    packedOverlay: Int,
-//    packedLight: Int,
-//    renderType: RenderType = RenderType.glint()
-//) {
-//    val glint = stack.hasFoil()
-//    for (type in model.getRenderTypes(stack, false)) {
-//        val helper: RenderType =
-//            if (renderType != RenderType.glint()) renderType else RenderTypeHelper.getEntityRenderType(type, false)
-//        val consumer = ItemRenderer.getFoilBuffer(buffer, helper, true, glint)
-//        renderer.renderModelLists(model, stack, packedLight, packedOverlay, poseStack, consumer)
-//    }
-//}
-
+/**
+ * Renders a provided [model] (as an item model) onto a [BlockEntityWithoutLevelRenderer]
+ */
 fun ItemRenderer.renderItemModel(
     model: BakedModel,
     stack: ItemStack,
@@ -228,60 +210,56 @@ fun ItemRenderer.renderItemModel(
 }
 
 // todo test to see if this works
-// --Commented out by Inspection START (9/10/2024 03:54):
-///**
-// * Renders a provided [pModel] (as a block model) onto a [BlockEntityRenderer]
-// *
-// * *Note that the [pModel] does not rotate with the block*
-// */
-//fun renderBlockModel(
-//    pPoseStack: PoseStack,
-//    pBuffer: MultiBufferSource,
-//    pBlockEntity: BlockEntity,
-//    pModel: BakedModel,
-//    pPackedLight: Int,
-//    pPackedOverlay: Int,
-//    renderType: RenderType = RenderType.solid()
-//) {
-//    rgMinecraft.blockRenderer.modelRenderer.renderModel(
-//        pPoseStack.last(),
-//        pBuffer.getBuffer(renderType),
-//        pBlockEntity.blockState,
-//        pModel,
-//        1f,
-//        1f,
-//        1f,
-//        pPackedLight,
-//        pPackedOverlay
-//    )
-//}
-// --Commented out by Inspection STOP (9/10/2024 03:54)
+// todo it's busted, needs fixing
+/**
+ * Renders a provided [model] (as a block model) onto a [BlockEntityRenderer]
+ *
+ * *Note that the [model] does not rotate with the block*
+ */
+fun renderBlockModel(
+    poseStack: PoseStack,
+    bufferSource: MultiBufferSource,
+    blockEntity: BlockEntity,
+    model: BakedModel,
+    packedLight: Int,
+    packedOverlay: Int,
+    renderType: RenderType = RenderType.solid()
+) {
+    rgMinecraft.blockRenderer.modelRenderer.renderModel(
+        poseStack.last(),
+        bufferSource.getBuffer(renderType),
+        blockEntity.blockState,
+        model,
+        1f,
+        1f,
+        1f,
+        packedLight,
+        packedOverlay
+    )
+}
 
-
-// --Commented out by Inspection START (9/10/2024 03:54):
-///**
-// * Renders a provided [stack] onto a [BlockEntityRenderer]
-// */
-//fun renderStaticItem(
-//    stack: ItemStack,
-//    poseStack: PoseStack,
-//    buffer: MultiBufferSource,
-//    blockEntity: BlockEntity,
-//    packedLight: Int
-//) {
-//    val itemRenderer = rgMinecraft.itemRenderer
-//    itemRenderer.renderStatic(
-//        stack,
-//        ItemDisplayContext.FIXED,
-//        packedLight,
-//        NO_OVERLAY,
-//        poseStack,
-//        buffer,
-//        blockEntity.level,
-//        1
-//    )
-//}
-// --Commented out by Inspection STOP (9/10/2024 03:54)
+/**
+ * Renders a provided [stack] onto a [BlockEntityRenderer]
+ */
+fun renderStaticItem(
+    stack: ItemStack,
+    poseStack: PoseStack,
+    buffer: MultiBufferSource,
+    blockEntity: BlockEntity,
+    packedLight: Int
+) {
+    val itemRenderer = rgMinecraft.itemRenderer
+    itemRenderer.renderStatic(
+        stack,
+        ItemDisplayContext.FIXED,
+        packedLight,
+        NO_OVERLAY,
+        poseStack,
+        buffer,
+        blockEntity.level,
+        1
+    )
+}
 
 //// todo vertexes are inverted (probably only on tool gun beam, look into)
 fun vertexTest(

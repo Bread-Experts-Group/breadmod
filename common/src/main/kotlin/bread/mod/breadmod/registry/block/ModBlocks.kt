@@ -6,6 +6,7 @@ import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockAndItemModel
 import bread.mod.breadmod.datagen.recipe.shaped.DataGenerateShapedRecipeThis
 import bread.mod.breadmod.datagen.recipe.shapeless.DataGenerateShapelessRecipeExternal
@@ -144,7 +145,8 @@ object ModBlocks {
     )
 
     @Orientable(Orientable.Type.HORIZONTAL)
-    @DataGenerateWithExistingParentBlockAndItemModel
+//    @DataGenerateWithExistingParentBlockAndItemModel
+    @DataGenerateSingleTextureBlockAndItemModel
     @DataGenerateLanguage("en_us", "War Terminal")
     val WAR_TERMINAL: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "war_terminal", { WarTerminalBlock() }, Item.Properties()
@@ -161,12 +163,16 @@ object ModBlocks {
     val SOUND_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "sound_block", { SoundBlock() }, { block ->
             object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
-                override val creativeModeTabs: List<RegistrySupplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
+                override val creativeModeTabs: List<RegistrySupplier<CreativeModeTab>> =
+                    listOf(ModCreativeTabs.SPECIALS_TAB)
             }
         }
     )
 
-    val TOASTER = BLOCK_REGISTRY.registerBlockItem(
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateSingleTextureBlockAndItemModel
+    @DataGenerateLanguage("en_us", "Toaster")
+    val TOASTER: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "toaster", { ToasterBlock() }, Item.Properties()
     )
 }

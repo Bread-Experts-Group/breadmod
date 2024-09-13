@@ -72,6 +72,7 @@ dependencies {
     implementation "thedarkcolour:kotlinforforge-neoforge:5.5.0" exclude group: 'net.neoforged.fancymodloader', module: 'loader'
 
     compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    implementation "maven.modrinth:midnightlib:1.6.3-neoforge"
 
     // If you want to test/use Mekanism & its modules during `runClient` invocation, use the following
     runtimeOnly("mekanism:Mekanism:${mekanism_version}") // Mekanism

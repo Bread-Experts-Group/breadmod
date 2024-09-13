@@ -13,7 +13,8 @@ import net.minecraft.world.item.ItemStack
 
 class ToasterRecipeBuilder(
     val input: ItemStack,
-    val itemResult: ItemStack
+    val itemResult: ItemStack,
+    val time: Int
 ) : RecipeBuilder {
     var group: String? = null
     val criteria: MutableMap<String, Criterion<*>> = hashMapOf()
@@ -39,7 +40,8 @@ class ToasterRecipeBuilder(
     ) {
         val recipe = ToasterRecipe(
             input.copyWithCount(2),
-            itemResult.copyWithCount(2)
+            itemResult.copyWithCount(2),
+            time
         )
         val advancement: Advancement.Builder = recipeOutput.advancement()
             .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))

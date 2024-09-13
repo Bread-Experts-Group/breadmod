@@ -6,5 +6,6 @@ import kotlin.annotation.AnnotationTarget.FIELD
 annotation class DataGenerateToastingRecipe(
     val name: String,
     val required: String,
+    val time: Int = 100,
     val count: Int = 2,
 )

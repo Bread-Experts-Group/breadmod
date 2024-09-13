@@ -51,7 +51,8 @@ object ModItems {
     @DataGenerateLanguage("en_us", "Doped Bread")
     val DOPED_BREAD: RegistrySupplier<DopedBreadItem> = ITEM_REGISTRY.register("doped_bread") { DopedBreadItem() }
 
-    @DataGenerateToastingRecipe("bread_toasting", "minecraft:bread")
+    @DataGenerateTag("minecraft:item", "breadmod:toastable")
+    @DataGenerateToastingRecipe("bread_toasting", "minecraft:bread", time = 160)
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Toasted Bread")
     val TOASTED_BREAD: RegistrySupplier<Item> = ITEM_REGISTRY.register("toasted_bread") {
@@ -62,12 +63,14 @@ object ModItems {
         )
     }
 
+    @DataGenerateTag("minecraft:item", "breadmod:toastable")
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Bread Slice")
     val BREAD_SLICE: RegistrySupplier<Item> = ITEM_REGISTRY.register("bread_slice") {
         Item(Item.Properties().food(FoodProperties.Builder().nutrition(2).fast().build()))
     }
 
+    @DataGenerateTag("minecraft:item", "breadmod:toastable")
     @DataGenerateToastingRecipe("slice_toasting", "breadmod:bread_slice")
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Toast Slice")

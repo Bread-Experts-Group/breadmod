@@ -7,4 +7,5 @@ import net.minecraft.world.item.Item
 
 object ItemTags {
     val KNIVES: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
+    val TOASTABLE: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
 }

@@ -83,7 +83,8 @@ class SmartRecipeProvider(
                                 is DataGenerateToastingRecipe -> {
                                     val recipe = ToasterRecipeBuilder(
                                         ItemStack(BuiltInRegistries.ITEM[ResourceLocation.parse(annotation.required)], annotation.count),
-                                        ItemStack(actual.asItem(), annotation.count)
+                                        ItemStack(actual.asItem(), annotation.count),
+                                        annotation.time
                                     )
                                     recipe.unlockedBy("has_item", has(actual))
                                         .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(modID, annotation.name))

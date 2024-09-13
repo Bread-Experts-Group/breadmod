@@ -40,5 +40,6 @@ object ModMainCommon {
         ClientEvents.registerClientCommands()
 //        ClientEvents.registerKeyEvent()
         ClientEvents.registerMouseEvent()
+        ClientEvents.registerBlockEntityRenderers()
     }
 }

@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 
 class ToasterRecipe(
-    val inputItem: ItemStack, val result: ItemStack
+    val inputItem: ItemStack, val result: ItemStack, val time: Int
 ) : Recipe<ToasterInput> {
     override fun getIngredients(): NonNullList<Ingredient> {
         val list: NonNullList<Ingredient> = NonNullList.create()
@@ -24,7 +24,7 @@ class ToasterRecipe(
         input: ToasterInput,
         level: Level
     ): Boolean =
-        Ingredient.of(inputItem).test(input.stack)
+        Ingredient.of(inputItem).test(input.stack) && time >= 0
 
     override fun assemble(
         input: ToasterInput,
