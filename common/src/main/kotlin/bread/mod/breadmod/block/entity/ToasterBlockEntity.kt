@@ -7,6 +7,7 @@ import bread.mod.breadmod.registry.recipe.ModRecipeTypes
 import bread.mod.breadmod.util.ArchEnergyHandler
 import bread.mod.breadmod.util.ArchFluidHandler
 import dev.architectury.fluid.FluidStack
+import dev.architectury.hooks.fluid.FluidStackHooks
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
@@ -26,6 +27,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.material.Fluids
 import java.util.Optional
 import kotlin.math.min
 
@@ -116,6 +118,13 @@ class ToasterBlockEntity(
             progressTag.putInt("progress", progress)
             progressTag.putInt("maxProgress", maxProgress)
         })
+        tag.put("fluid", CompoundTag().also { fluidTag ->
+            if (fluid.fluid != Fluids.EMPTY) {
+                println("WRITE FLUID: ${FluidStackHooks.write(registries, fluid, fluidTag)}")
+                FluidStackHooks.write(registries, fluid, fluidTag)
+            }
+            fluidTag.putInt("fluidCapacity", fluidCapacity)
+        })
         ContainerHelper.saveAllItems(tag, items, registries)
     }
 
@@ -123,11 +132,30 @@ class ToasterBlockEntity(
         super.loadAdditional(tag, registries)
         val energyTag = tag.getCompound("energy")
         val progressTag = tag.getCompound("progress")
+        val fluidTag = tag.getCompound("fluid")
 
         powerStored = energyTag.getInt("energyStored")
         maxPowerStored = energyTag.getInt("maxEnergyStored")
         progress = progressTag.getInt("progress")
         maxProgress = progressTag.getInt("maxProgress")
+        println("FLUID TAG: $fluidTag")
+        try {
+            println("READ FLUID: ${FluidStackHooks.readOptional(registries, fluidTag)}")
+        } catch (e: Exception) {
+            println(e)
+        }
+        if (fluid.fluid != Fluids.EMPTY) {
+            println(
+                "FLUID HOOK READ: ${
+                    FluidStackHooks.readOptional(
+                        registries,
+                        fluidTag
+                    ).fluid.`arch$registryName`()
+                }"
+            )
+            fluid = FluidStackHooks.readOptional(registries, fluidTag)
+        }
+        fluidCapacity = fluidTag.getInt("fluidCapacity")
         items = NonNullList.withSize(containerSize, ItemStack.EMPTY)
         ContainerHelper.loadAllItems(tag, items, registries)
     }
@@ -199,7 +227,6 @@ class ToasterBlockEntity(
 
     override fun getTankCapacity(tank: Int): Int = fluidCapacity
 
-    // todo uhh...
     override fun isFluidValid(stack: FluidStack): Boolean = true
 
     override fun fill(
