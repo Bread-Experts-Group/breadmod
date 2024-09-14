@@ -4,6 +4,7 @@ import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.block.*
 import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.loot.DataGenerateLoot
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
@@ -60,6 +61,7 @@ object ModBlocks {
         "minecraft:bread", RecipeCategory.FOOD,
         4
     )
+    @DataGenerateLoot
     @DataGenerateTag("minecraft:block", "minecraft:mineable/hoe")
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Bread Block")

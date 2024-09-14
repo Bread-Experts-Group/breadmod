@@ -80,33 +80,34 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
      * @since 1.0.0
      */
     @Suppress("UNCHECKED_CAST")
-    inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): Map<KProperty1<*, *>, Pair<*, Array<T>>> = buildMap {
-        packageClasses.filter {
-            try {
-                it.objectInstance != null
-            } catch (e: Exception) {
-                // NOTE: This is quite inefficient. Look into fixes in the future?
-                LOGGER.warn("Failure when getting objectInstance: $e")
-                false
-            }
-        }.forEach {
-            try {
-                it.memberProperties.forEach { f ->
-                    val annotationsRaw = f.javaField?.annotations?.firstOrNull { a ->
-                        a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
-                    }
-                    if (annotationsRaw != null) {
-                        val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
-                        else annotationsRaw.annotationClass.java.declaredMethods
-                            .firstOrNull { m -> m.name == "value" }
-                            ?.invoke(annotationsRaw) as Array<T>?
-
-                        if (annotations != null) this[f] = f.call(it.objectInstance) to annotations
-                    }
+    inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): Map<KProperty1<*, *>, Pair<*, Array<T>>> =
+        buildMap {
+            packageClasses.filter {
+                try {
+                    it.objectInstance != null
+                } catch (e: Exception) {
+                    // NOTE: This is quite inefficient. Look into fixes in the future?
+                    LOGGER.warn("Failure when getting objectInstance: $e")
+                    false
                 }
-            } catch (e: Exception) {
-                LOGGER.error("Failure when reading annotations off ${it.qualifiedName}: $e")
+            }.forEach {
+                try {
+                    it.memberProperties.forEach { f ->
+                        val annotationsRaw = f.javaField?.annotations?.firstOrNull { a ->
+                            a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
+                        }
+                        if (annotationsRaw != null) {
+                            val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
+                            else annotationsRaw.annotationClass.java.declaredMethods
+                                .firstOrNull { m -> m.name == "value" }
+                                ?.invoke(annotationsRaw) as Array<T>?
+
+                            if (annotations != null) this[f] = f.call(it.objectInstance) to annotations
+                        }
+                    }
+                } catch (e: Exception) {
+                    LOGGER.error("Failure when reading annotations off ${it.qualifiedName}: $e")
+                }
             }
         }
-    }
 }

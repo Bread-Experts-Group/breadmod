@@ -57,6 +57,15 @@ internal object CommonModEventBus {
                 ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
             ).getProvider(event.generator.packOutput, event.lookupProvider)
         )
+
+//        event.generator.addProvider(
+//            true, constructLootProvider(
+//                SmartBlockLootProvider(
+//                    ModMainCommon.MOD_ID,
+//                    ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+//                ).getProvider(event.lookupProvider.get()), event.generator.packOutput, event.lookupProvider
+//            )
+//        )
     }
 
     @SubscribeEvent

@@ -15,8 +15,6 @@ architectury {
 File generatedResources = file('src/main/generated')
 File commonResources = project(':common').file('src/main/resources')
 
-tasks.withType(Copy).configureEach { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
-
 sourceSets {
     main {
         resources.srcDirs generatedResources

@@ -57,24 +57,33 @@ class SmartRecipeProvider(
 
                             when (val annotation = data.second.first()) {
                                 is DataGenerateShapedRecipeThis -> {
-                                    val recipe = ShapedRecipeBuilder.shaped(annotation.category, actual, annotation.count)
+                                    val recipe =
+                                        ShapedRecipeBuilder.shaped(annotation.category, actual, annotation.count)
                                     annotation.rows.forEach { r -> recipe.pattern(r) }
                                     annotation.definitions.forEachIndexed { i, d ->
-                                        val item = BuiltInRegistries.ITEM[ResourceLocation.parse(annotation.resolution[i])]
+                                        val item =
+                                            BuiltInRegistries.ITEM[ResourceLocation.parse(annotation.resolution[i])]
                                         recipe.define(d, item)
                                         recipe.unlockedBy("has_item", has(item))
                                     }
-                                    recipe.save(recipeOutput, ResourceLocation.fromNamespaceAndPath(modID, annotation.name))
+                                    recipe.save(
+                                        recipeOutput,
+                                        ResourceLocation.fromNamespaceAndPath(modID, annotation.name)
+                                    )
                                 }
 
                                 is DataGenerateShapelessRecipeThis -> {
-                                    val recipe = ShapelessRecipeBuilder.shapeless(annotation.category, actual, annotation.count)
+                                    val recipe =
+                                        ShapelessRecipeBuilder.shapeless(annotation.category, actual, annotation.count)
                                     annotation.types.forEachIndexed { i, d ->
                                         val item = BuiltInRegistries.ITEM[ResourceLocation.parse(d)]
                                         recipe.requires(item, annotation.counts[i])
                                         recipe.unlockedBy("has_item", has(item))
                                     }
-                                    recipe.save(recipeOutput, ResourceLocation.fromNamespaceAndPath(modID, annotation.name))
+                                    recipe.save(
+                                        recipeOutput,
+                                        ResourceLocation.fromNamespaceAndPath(modID, annotation.name)
+                                    )
                                 }
 
                                 is DataGenerateShapelessRecipeExternal ->
@@ -82,12 +91,18 @@ class SmartRecipeProvider(
 
                                 is DataGenerateToastingRecipe -> {
                                     val recipe = ToasterRecipeBuilder(
-                                        ItemStack(BuiltInRegistries.ITEM[ResourceLocation.parse(annotation.required)], annotation.count),
+                                        ItemStack(
+                                            BuiltInRegistries.ITEM[ResourceLocation.parse(annotation.required)],
+                                            annotation.count
+                                        ),
                                         ItemStack(actual.asItem(), annotation.count),
                                         annotation.time
                                     )
                                     recipe.unlockedBy("has_item", has(actual))
-                                        .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(modID, annotation.name))
+                                        .save(
+                                            recipeOutput,
+                                            ResourceLocation.fromNamespaceAndPath(modID, annotation.name)
+                                        )
                                 }
 
                                 else -> throw UnsupportedOperationException(annotation.annotationClass.qualifiedName)
@@ -99,7 +114,11 @@ class SmartRecipeProvider(
                         is DataGenerateShapelessRecipeExternal -> {
                             val forItem = BuiltInRegistries.ITEM[ResourceLocation.parse(initialAnnotation.forItem)]
                             val recipe =
-                                ShapelessRecipeBuilder.shapeless(initialAnnotation.category, forItem, initialAnnotation.count)
+                                ShapelessRecipeBuilder.shapeless(
+                                    initialAnnotation.category,
+                                    forItem,
+                                    initialAnnotation.count
+                                )
                             data.forEach { (actual, annotation) ->
                                 recipe.requires(actual, (annotation as DataGenerateShapelessRecipeExternal).neededCount)
                                 recipe.unlockedBy("has_item", has(actual))
