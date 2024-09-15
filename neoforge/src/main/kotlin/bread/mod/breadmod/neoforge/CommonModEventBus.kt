@@ -3,6 +3,7 @@ package bread.mod.breadmod.neoforge
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.datagen.recipe.SmartRecipeProvider
 import bread.mod.breadmod.datagen.tag.SmartTagProvider
+import bread.mod.breadmod.neoforge.datagen.SmartBlockLootProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartBlockModelProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartItemModelProviderNeoForge
 import bread.mod.breadmod.neoforge.datagen.SmartLanguageProviderNeoForge
@@ -58,14 +59,10 @@ internal object CommonModEventBus {
             ).getProvider(event.generator.packOutput, event.lookupProvider)
         )
 
-//        event.generator.addProvider(
-//            true, constructLootProvider(
-//                SmartBlockLootProvider(
-//                    ModMainCommon.MOD_ID,
-//                    ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
-//                ).getProvider(event.lookupProvider.get()), event.generator.packOutput, event.lookupProvider
-//            )
-//        )
+        SmartBlockLootProviderNeoForge(
+            ModMainCommon.MOD_ID,
+            ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
+        ).generate(event)
     }
 
     @SubscribeEvent

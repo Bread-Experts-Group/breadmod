@@ -9,8 +9,6 @@ import bread.mod.breadmod.datagen.loot.DataGenerateLoot
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
-import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
-import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockAndItemModel
 import bread.mod.breadmod.datagen.recipe.shaped.DataGenerateShapedRecipeThis
 import bread.mod.breadmod.datagen.recipe.shapeless.DataGenerateShapelessRecipeExternal
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
@@ -65,6 +63,7 @@ object ModBlocks {
     )
     @DataGenerateLoot
     @DataGenerateTag("minecraft:block", "minecraft:mineable/hoe")
+    @DataGenerateTag("minecraft:block", "breadmod:mineable/knife")
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Bread Block")
     @DataGenerateLanguage("es_es", "Bloque De Pan")
@@ -85,6 +84,7 @@ object ModBlocks {
             )
     )
 
+    @DataGenerateLoot
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Reinforced Bread Block")
     val REINFORCED_BREAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
@@ -99,29 +99,29 @@ object ModBlocks {
         Item.Properties()
     )
 
-    @Orientable(Orientable.Type.HORIZONTAL)
-    @DataGenerateWithExistingParentBlockAndItemModel
+//    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateLoot
     @DataGenerateLanguage("en_us", "OMANEKO")
     val OMANEKO_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "omaneko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-    @Orientable(Orientable.Type.HORIZONTAL)
-    @DataGenerateWithExistingParentBlockAndItemModel
+//    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Niko Tenshot")
     val NIKO_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "niko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-    @Orientable(Orientable.Type.HORIZONTAL)
-    @DataGenerateWithExistingParentBlockAndItemModel
+//    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Ricardetex-Infinious")
     val RICARD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ricard_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-    @Orientable(Orientable.Type.HORIZONTAL)
-    @DataGenerateWithExistingParentBlockAndItemModel
+//    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Unfunnylad")
     val UNFUNNYLAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "unfunnylad_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
@@ -129,6 +129,7 @@ object ModBlocks {
 
     @DataGenerateTag("minecraft:block", "minecraft:mineable/pickaxe")
     @FuelItem(1600 * 9)
+    @DataGenerateLoot
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Charcoal Block")
     val CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
@@ -140,6 +141,7 @@ object ModBlocks {
 
     @FuelItem(1600 * 4)
     @DataGenerateCubeAllBlockAndItemModel
+    @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
     val LOW_DENSITY_CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ld_charcoal_block", {
@@ -148,11 +150,10 @@ object ModBlocks {
         Item.Properties()
     )
 
-    @Orientable(Orientable.Type.HORIZONTAL)
-//    @DataGenerateWithExistingParentBlockAndItemModel
-    @DataGenerateSingleTextureBlockAndItemModel
+//    @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateLanguage("en_us", "War Terminal")
     @DataGenerateTooltipLang("en_us", "Prolongs the inevitable.")
+    @DataGenerateLoot
     val WAR_TERMINAL: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "war_terminal", { WarTerminalBlock() }, Item.Properties()
     )
@@ -160,6 +161,7 @@ object ModBlocks {
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Random Sound Generator")
     @DataGenerateTooltipLang("en_us", "Uses the power of a die to make random noises")
+    @DataGenerateLoot
     val RANDOM_SOUND_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "random_sound_block", { RandomSoundBlock() }, Item.Properties()
     )
@@ -167,6 +169,7 @@ object ModBlocks {
     @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateOrientableBlockAndItemModel("_side", top = "_side")
     @DataGenerateLanguage("en_us", "Sound Block")
+    @DataGenerateLoot
     val SOUND_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "sound_block", { SoundBlock() }, { block ->
             object : BlockItem(block, Properties()), IRegisterSpecialCreativeTab {
@@ -176,10 +179,10 @@ object ModBlocks {
         }
     )
 
-    @Orientable(Orientable.Type.HORIZONTAL)
-    @DataGenerateSingleTextureBlockAndItemModel
+//    @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateLanguage("en_us", "Toaster")
     @DataGenerateTooltipLang("en_us", "I wouldn't cook charcoal in it.")
+    @DataGenerateLoot
     val TOASTER: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "toaster", { ToasterBlock() }, Item.Properties()
     )

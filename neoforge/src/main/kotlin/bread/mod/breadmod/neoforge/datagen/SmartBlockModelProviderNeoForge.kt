@@ -18,6 +18,8 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
 import kotlin.reflect.jvm.javaField
 
 
+// todo important, support blockbench models to only generate items and *not* models
+//  (they'll cause a parent loop on client run and not load at all)
 /**
  * An annotation-based block model provider.
  *

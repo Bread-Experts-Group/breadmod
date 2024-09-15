@@ -44,6 +44,7 @@ class SmartModelProviderFabric(
                 fun expose() = getItemModelMap()
             }
 
+        // todo update for new annotations
         forEvent.addProvider { dataOutput, _ ->
             object : FabricModelProvider(dataOutput) {
                 override fun generateBlockStateModels(p0: BlockModelGenerators) =
