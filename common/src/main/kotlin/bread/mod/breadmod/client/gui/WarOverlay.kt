@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import java.awt.Color
 
+// todo overlay position is messed up in production
+// todo overlay numbers are not padded in production (no 0 in front of timer positions under 10)
 open class WarOverlay : LayeredDraw.Layer {
     val overlayTexture: ResourceLocation = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
     var timerPosition: Float = -110f

@@ -136,7 +136,7 @@ class ToasterBlock : BaseEntityBlock(
         tooltipComponents: MutableList<Component>,
         tooltipFlag: TooltipFlag
     ) {
-        tooltipComponents.add(modTranslatable("toaster", "tooltip").withStyle(ChatFormatting.RED))
+        tooltipComponents.add(modTranslatable("block", "toaster", "tooltip").withStyle(ChatFormatting.RED))
     }
 
     override fun codec(): MapCodec<out BaseEntityBlock> = codec

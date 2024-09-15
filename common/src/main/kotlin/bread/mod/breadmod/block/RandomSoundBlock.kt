@@ -104,7 +104,7 @@ class RandomSoundBlock : Block(
         tooltipFlag: TooltipFlag
     ) {
         tooltipComponents.add(
-            modTranslatable("sound_block", "tooltip")
+            modTranslatable("block", "random_sound_block", "tooltip")
                 .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         )
     }

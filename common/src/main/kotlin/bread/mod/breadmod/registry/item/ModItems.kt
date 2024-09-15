@@ -3,6 +3,7 @@ package bread.mod.breadmod.registry.item
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modTranslatable
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.language.DataGenerateTooltipLang
 import bread.mod.breadmod.datagen.model.item.DataGenerateItemModel
 import bread.mod.breadmod.datagen.recipe.special.DataGenerateToastingRecipe
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
@@ -35,6 +36,7 @@ object ModItems {
     // todo port over features
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Test Bread")
+    @DataGenerateTooltipLang("en_us", "Identical to bread on the outside - tumors on the inside.")
     val TEST_BREAD: RegistrySupplier<TestBreadItem> = ITEM_REGISTRY.register("test_bread") { TestBreadItem() }
 
     // todo port over features
@@ -44,11 +46,13 @@ object ModItems {
         ITEM_REGISTRY.register("ultimate_bread") { UltimateBreadItem() }
 
     @DataGenerateLanguage("en_us", "Bread Shield")
+    @DataGenerateTooltipLang("en_us", "How is this supposed to protect against anything?")
     val BREAD_SHIELD: RegistrySupplier<BreadShieldItem> = ITEM_REGISTRY.register("bread_shield") { BreadShieldItem() }
 
     // todo port over features
     @DataGenerateItemModel(DataGenerateItemModel.Type.DOUBLE_LAYERED)
     @DataGenerateLanguage("en_us", "Doped Bread")
+    @DataGenerateTooltipLang("en_us", "Contains trace amounts of neurotoxin")
     val DOPED_BREAD: RegistrySupplier<DopedBreadItem> = ITEM_REGISTRY.register("doped_bread") { DopedBreadItem() }
 
     @DataGenerateTag("minecraft:item", "breadmod:toastable")
@@ -105,6 +109,7 @@ object ModItems {
 
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Half Bagel")
+    @DataGenerateTooltipLang("en_us", "What? you thought it was gonna be sliced like a normal bagel?")
     val HALF_BAGEL: RegistrySupplier<Item> = ITEM_REGISTRY.register("half_bagel") {
         object : Item(
             Properties()
@@ -117,7 +122,7 @@ object ModItems {
                 tooltipFlag: TooltipFlag
             ) {
                 tooltipComponents.add(
-                    modTranslatable("item", "half_bagel", "description")
+                    modTranslatable("item", "half_bagel", "tooltip")
                         .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                 )
             }
@@ -301,6 +306,7 @@ object ModItems {
 
     // todo port over screen and menu
     @DataGenerateLanguage("en_us", "Certificate")
+    @DataGenerateTooltipLang("en_us", "Wouldn't be official without some light blue dye, would it?")
     val CERTIFICATE: RegistrySupplier<Item> = ITEM_REGISTRY.register("certificate") { CertificateItem() }
 
     internal fun DeferredRegister<Block>.registerBlockItem(

@@ -3,6 +3,7 @@ package bread.mod.breadmod.block
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.command.server.WarTimerCommand.increaseTime
 import bread.mod.breadmod.registry.CommonEvents.warTimerMap
+import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
@@ -90,7 +91,7 @@ class WarTerminalBlock : Block(Properties.of()) {
         tooltipFlag: TooltipFlag
     ) {
         tooltipComponents.add(
-            ModMainCommon.modTranslatable("war_terminal", "tooltip")
+            ModMainCommon.modTranslatable("block", "war_terminal", "tooltip").withStyle(ChatFormatting.RED)
         )
     }
 }

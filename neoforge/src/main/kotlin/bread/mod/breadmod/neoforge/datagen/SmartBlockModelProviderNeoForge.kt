@@ -2,6 +2,8 @@ package bread.mod.breadmod.neoforge.datagen
 
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.SmartBlockModelProvider
+import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
@@ -62,6 +64,22 @@ class SmartBlockModelProviderNeoForge(
 
                             is DataGenerateWithExistingParentBlockModel, is DataGenerateWithExistingParentBlockAndItemModel ->
                                 models().withExistingParent(location.path, location)
+
+                            is DataGenerateOrientableBlockModel ->
+                                models().orientable(
+                                    location.path,
+                                    modLoc(location.path + (data.first as DataGenerateOrientableBlockModel).side),
+                                    modLoc(location.path + (data.first as DataGenerateOrientableBlockModel).front),
+                                    modLoc(location.path + (data.first as DataGenerateOrientableBlockModel).top)
+                                )
+
+                            is DataGenerateOrientableBlockAndItemModel ->
+                                models().orientable(
+                                    location.path,
+                                    modLoc(location.path + (data.first as DataGenerateOrientableBlockAndItemModel).side),
+                                    modLoc(location.path + (data.first as DataGenerateOrientableBlockAndItemModel).front),
+                                    modLoc(location.path + (data.first as DataGenerateOrientableBlockAndItemModel).top)
+                                )
 
                             else -> throw UnsupportedOperationException(data.first.toString())
                         }

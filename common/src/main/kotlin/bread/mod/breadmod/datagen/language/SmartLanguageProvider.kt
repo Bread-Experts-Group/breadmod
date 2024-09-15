@@ -27,7 +27,10 @@ abstract class SmartLanguageProvider<T>(
             data.second.forEach { a ->
                 val localeMap = getOrPut(a.locale) { mutableMapOf() }
                 when (val actual = data.first.ensureRegistrySupplierAndValue<Any>(property).get()) {
-                    is ItemLike -> localeMap[actual.asItem().descriptionId] = a.translation
+                    is ItemLike -> {
+                        localeMap[actual.asItem().descriptionId] = a.translation
+                    }
+
                     is CreativeModeTab -> {
                         val contents = actual.displayName.contents
                         if (contents is TranslatableContents) localeMap[contents.key] = a.translation
@@ -37,6 +40,20 @@ abstract class SmartLanguageProvider<T>(
 
                     null -> throw NullPointerException()
                     else -> throw UnsupportedOperationException("Unsupported type (pls add): ${actual::class.qualifiedName}")
+                }
+            }
+        }
+        scanner.getObjectPropertiesAnnotatedWith<DataGenerateTooltipLang>().forEach { (property, data) ->
+            data.second.forEach { a ->
+                val localeMap = getOrPut(a.locale) { mutableMapOf() }
+                when (val actual = data.first.ensureRegistrySupplierAndValue<Any>(property).get()) {
+                    is ItemLike -> {
+                        localeMap[actual.asItem().descriptionId + ".tooltip"] = a.translation
+                    }
+
+                    is SoundEvent -> {
+                        localeMap["jukebox_song." + actual.location.toLanguageKey()] = a.translation
+                    }
                 }
             }
         }

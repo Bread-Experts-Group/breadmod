@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.energy.IEnergyStorage
 
-// todo it "works" but it voids all energy inserted
 class EnergyStorageWrapper(
     level: Level,
     pos: BlockPos

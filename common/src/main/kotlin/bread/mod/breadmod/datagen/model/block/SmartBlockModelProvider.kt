@@ -1,6 +1,8 @@
 package bread.mod.breadmod.datagen.model.block
 
 import bread.mod.breadmod.datagen.DataProviderScanner
+import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
@@ -31,7 +33,11 @@ abstract class SmartBlockModelProvider<T>(
 
             scanner.getObjectPropertiesAnnotatedWith<DataGenerateWithExistingParentBlockModel>(),
             scanner.getObjectPropertiesAnnotatedWith<DataGenerateWithExistingParentBlockAndItemModel>(),
-            scanner.getObjectPropertiesAnnotatedWith<DataGenerateSingleTextureBlockAndItemModel>()
+
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateSingleTextureBlockAndItemModel>(),
+
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateOrientableBlockModel>(),
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateOrientableBlockAndItemModel>()
         ).forEach {
             it.forEach { (property, data) ->
                 put(data.first.ensureRegistrySupplier(property), Pair(data.second.first(), property))

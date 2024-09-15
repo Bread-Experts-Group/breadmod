@@ -28,7 +28,7 @@ class CertificateItem : Item(Properties().stacksTo(16).rarity(Rarity.RARE)), Men
         tooltipComponents: MutableList<Component>,
         tooltipFlag: TooltipFlag
     ) {
-        tooltipComponents.add(modTranslatable("item", "certificate", "description"))
+        tooltipComponents.add(modTranslatable("item", "certificate", "tooltip"))
     }
 
     override fun createMenu(pContainerId: Int, pPlayerInventory: Inventory, pPlayer: Player): AbstractContainerMenu =

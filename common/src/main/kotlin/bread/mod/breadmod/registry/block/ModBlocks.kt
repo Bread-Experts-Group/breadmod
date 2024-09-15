@@ -4,8 +4,10 @@ import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.block.*
 import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.language.DataGenerateTooltipLang
 import bread.mod.breadmod.datagen.loot.DataGenerateLoot
 import bread.mod.breadmod.datagen.model.block.Orientable
+import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockAndItemModel
@@ -150,17 +152,20 @@ object ModBlocks {
 //    @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateSingleTextureBlockAndItemModel
     @DataGenerateLanguage("en_us", "War Terminal")
+    @DataGenerateTooltipLang("en_us", "Prolongs the inevitable.")
     val WAR_TERMINAL: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "war_terminal", { WarTerminalBlock() }, Item.Properties()
     )
 
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Random Sound Generator")
+    @DataGenerateTooltipLang("en_us", "Uses the power of a die to make random noises")
     val RANDOM_SOUND_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "random_sound_block", { RandomSoundBlock() }, Item.Properties()
     )
 
-    @Orientable(Orientable.Type.ALL_AXIS)
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateOrientableBlockAndItemModel("_side", top = "_side")
     @DataGenerateLanguage("en_us", "Sound Block")
     val SOUND_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "sound_block", { SoundBlock() }, { block ->
@@ -174,6 +179,7 @@ object ModBlocks {
     @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateSingleTextureBlockAndItemModel
     @DataGenerateLanguage("en_us", "Toaster")
+    @DataGenerateTooltipLang("en_us", "I wouldn't cook charcoal in it.")
     val TOASTER: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "toaster", { ToasterBlock() }, Item.Properties()
     )

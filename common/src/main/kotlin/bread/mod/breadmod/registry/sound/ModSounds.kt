@@ -3,6 +3,7 @@ package bread.mod.breadmod.registry.sound
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.datagen.language.DataGenerateTooltipLang
 import bread.mod.breadmod.datagen.sound.DataGenerateSound
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
@@ -15,6 +16,7 @@ object ModSounds {
 
     @DataGenerateSound("test_sound", stream = true)
     @DataGenerateLanguage("en_us", "Test")
+    @DataGenerateTooltipLang("en_us", "ClascyJitto - Secret Hoppin'")
     val TEST_SOUND: RegistrySupplier<SoundEvent> = registerSoundEvents("test_sound")
 
     @DataGenerateSound("happy_block_fuse")

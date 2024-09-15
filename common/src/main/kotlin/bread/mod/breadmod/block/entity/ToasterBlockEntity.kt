@@ -108,6 +108,7 @@ class ToasterBlockEntity(
             items[0]
         } else ItemStack.EMPTY
 
+    // todo find out why fluid saving and loading is just busted
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
         tag.put("energy", CompoundTag().also { energyTag ->
@@ -121,9 +122,10 @@ class ToasterBlockEntity(
         tag.put("fluid", CompoundTag().also { fluidTag ->
             if (fluid.fluid != Fluids.EMPTY) {
                 println("WRITE FLUID: ${FluidStackHooks.write(registries, fluid, fluidTag)}")
-                FluidStackHooks.write(registries, fluid, fluidTag)
+//                FluidStackHooks.write(registries, fluid, fluidTag)
             }
             fluidTag.putInt("fluidCapacity", fluidCapacity)
+            println(fluidTag)
         })
         ContainerHelper.saveAllItems(tag, items, registries)
     }
@@ -140,21 +142,19 @@ class ToasterBlockEntity(
         maxProgress = progressTag.getInt("maxProgress")
         println("FLUID TAG: $fluidTag")
         try {
-            println("READ FLUID: ${FluidStackHooks.readOptional(registries, fluidTag)}")
+            println("READ RAW FLUID: ${FluidStackHooks.readOptional(registries, fluidTag)}")
+            println(
+                "FLUID TYPE READ: ${FluidStackHooks.readOptional(registries, fluidTag).fluid.`arch$registryName`()}"
+            )
         } catch (e: Exception) {
             println(e)
         }
-        if (fluid.fluid != Fluids.EMPTY) {
-            println(
-                "FLUID HOOK READ: ${
-                    FluidStackHooks.readOptional(
-                        registries,
-                        fluidTag
-                    ).fluid.`arch$registryName`()
-                }"
-            )
-            fluid = FluidStackHooks.readOptional(registries, fluidTag)
-        }
+//        if (fluid.fluid != Fluids.EMPTY) {
+//            println(
+//                "FLUID HOOK READ: ${FluidStackHooks.readOptional(registries, fluidTag).fluid.`arch$registryName`()}"
+//            )
+//            fluid = FluidStackHooks.readOptional(registries, fluidTag)
+//        }
         fluidCapacity = fluidTag.getInt("fluidCapacity")
         items = NonNullList.withSize(containerSize, ItemStack.EMPTY)
         ContainerHelper.loadAllItems(tag, items, registries)
