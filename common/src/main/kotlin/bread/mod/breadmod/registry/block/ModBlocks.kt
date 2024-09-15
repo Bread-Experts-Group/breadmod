@@ -183,4 +183,6 @@ object ModBlocks {
     val TOASTER: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "toaster", { ToasterBlock() }, Item.Properties()
     )
+
+    // todo import the machine blocks
 }

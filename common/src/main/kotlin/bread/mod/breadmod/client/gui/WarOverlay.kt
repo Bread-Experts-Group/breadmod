@@ -17,9 +17,7 @@ import java.awt.Color
 // todo overlay numbers are not padded in production (no 0 in front of timer positions under 10)
 open class WarOverlay : LayeredDraw.Layer {
     val overlayTexture: ResourceLocation = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
-    var timerPosition: Float = -110f
     var lastTick: Int = 0
-    //    var lastTimerPosition = -110f
 
     override fun render(guiGraphics: GuiGraphics, deltaTracker: DeltaTracker) {
         val guiTicks = rgMinecraft.gui.guiTicks
@@ -36,20 +34,19 @@ open class WarOverlay : LayeredDraw.Layer {
             } else isTimerIncreasing = false
         }
 
-        if (timerPosition > -110.0 && !timerActive) {
-            timerPosition -= Mth.clamp(millis / 2700f, 0f, 1f)
+        if (timerPosition > -60.0 && !timerActive) {
+            timerPosition -= Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
         } else if (timerPosition < -1.0 && timerActive) {
-            timerPosition += Mth.clamp(millis / 2700f, 0f, 1f)
+            timerPosition += Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
         }
 
-        if (timerPosition > -110f) {
+        if (timerPosition > -60f) {
             val poseStack = guiGraphics.pose()
-            val screenWidth = rgMinecraft.window.screenWidth
+            val scaledWidth = rgMinecraft.window.guiScaledWidth
 
             poseStack.pushPose()
+            poseStack.translate(scaledWidth.toDouble() / 3.3, timerPosition.toDouble(), 0.0)
             poseStack.scaleFlat(0.5f)
-            poseStack.translate(0.0, timerPosition.toDouble(), 3600.0)
-            poseStack.translate(screenWidth - (screenWidth / 2).toDouble(), 0.0, 0.0)
             guiGraphics.blit(overlayTexture, 0, 0, 0, 0, 163, 89)
             guiGraphics.blit(overlayTexture, 163, 0, 0, 90, 166, 111)
 
@@ -59,7 +56,7 @@ open class WarOverlay : LayeredDraw.Layer {
             guiGraphics.drawString(
                 rgMinecraft.font,
                 Component
-                    .literal("${(timeLeft / 60).toString().padStart(2)}:${(timeLeft % 60).toString().padStart(2)}")
+                    .literal("${(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}")
                     .withStyle(ModFonts.WARTIMER_INFILL),
                 0,
                 12,
@@ -71,6 +68,7 @@ open class WarOverlay : LayeredDraw.Layer {
     }
 
     companion object {
+        var timerPosition: Float = -60f
         var timeLeft: Int = 30
         var isTimerIncreasing: Boolean = false
         var increasingTimer: Int = 0

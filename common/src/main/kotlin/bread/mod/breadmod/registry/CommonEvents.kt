@@ -35,7 +35,7 @@ internal object CommonEvents {
         var active: Boolean = true
     )
 
-    // todo figure out why this is firing twice as fast as it should (40 tps instead of 20)
+
     fun registerServerTickEvent() =
         TickEvent.Server.SERVER_PRE.register {
             warTimerMap.forEach { (player, value) ->
