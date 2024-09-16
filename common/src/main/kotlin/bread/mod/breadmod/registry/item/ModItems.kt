@@ -136,7 +136,7 @@ object ModItems {
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Test Music Disc")
     val TEST_RECORD: RegistrySupplier<Item> = ITEM_REGISTRY.register("music_disc_test") {
-        Item(Item.Properties().jukeboxPlayable(RecordTags.TEST_SOUND))
+        Item(Item.Properties().jukeboxPlayable(RecordTags.TEST_SOUND).stacksTo(1))
     }
 
     // todo port over features (when config exists)

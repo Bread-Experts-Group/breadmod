@@ -12,6 +12,7 @@ import bread.mod.breadmod.util.ensureRegistrySupplier
 import dev.architectury.registry.registries.RegistrySupplier
 import kotlin.reflect.KProperty1
 
+// todo find a way to generate only item models for blockbench models
 /**
  * Abstract class for [SmartBlockModelProvider]s.
  * @author Miko Elbrecht

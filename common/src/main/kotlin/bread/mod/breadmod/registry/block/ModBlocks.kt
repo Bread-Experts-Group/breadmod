@@ -9,6 +9,7 @@ import bread.mod.breadmod.datagen.loot.DataGenerateLoot
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
+import bread.mod.breadmod.datagen.model.block.withExistingParent.DataGenerateWithExistingParentBlockAndItemModel
 import bread.mod.breadmod.datagen.recipe.shaped.DataGenerateShapedRecipeThis
 import bread.mod.breadmod.datagen.recipe.shapeless.DataGenerateShapelessRecipeExternal
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
@@ -99,28 +100,32 @@ object ModBlocks {
         Item.Properties()
     )
 
-//    @Orientable(Orientable.Type.HORIZONTAL)
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLoot
     @DataGenerateLanguage("en_us", "OMANEKO")
     val OMANEKO_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "omaneko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-//    @Orientable(Orientable.Type.HORIZONTAL)
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Niko Tenshot")
     val NIKO_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "niko_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-//    @Orientable(Orientable.Type.HORIZONTAL)
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Ricardetex-Infinious")
     val RICARD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ricard_block", { CharacterModelBlock() }, Item.Properties().rarity(Rarity.EPIC)
     )
 
-//    @Orientable(Orientable.Type.HORIZONTAL)
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Unfunnylad")
     val UNFUNNYLAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
@@ -150,7 +155,8 @@ object ModBlocks {
         Item.Properties()
     )
 
-//    @Orientable(Orientable.Type.HORIZONTAL)
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "War Terminal")
     @DataGenerateTooltipLang("en_us", "Prolongs the inevitable.")
     @DataGenerateLoot
@@ -179,7 +185,8 @@ object ModBlocks {
         }
     )
 
-//    @Orientable(Orientable.Type.HORIZONTAL)
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "Toaster")
     @DataGenerateTooltipLang("en_us", "I wouldn't cook charcoal in it.")
     @DataGenerateLoot
