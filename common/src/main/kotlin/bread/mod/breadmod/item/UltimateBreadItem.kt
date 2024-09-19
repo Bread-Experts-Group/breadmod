@@ -14,10 +14,10 @@ class UltimateBreadItem : Item(Properties().stacksTo(1).fireResistant()), IRegis
 
     override val creativeModeTabs: List<RegistrySupplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
     override fun displayInCreativeTab(
-        pParameters: CreativeModeTab.ItemDisplayParameters,
-        pOutput: CreativeModeTab.Output,
+        parameters: CreativeModeTab.ItemDisplayParameters,
+        output: CreativeModeTab.Output,
     ): Boolean {
-        pOutput.accept(ItemStack(this))/*.also {
+        output.accept(ItemStack(this))/*.also {
             this.setTimeLeft(
                 it,
                 1000 // todo replace with config when it's available

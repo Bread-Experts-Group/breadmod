@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 object ModBlockEntityTypes {
-    internal val BLOCK_ENTITY_TYPE_REGISTRY: DeferredRegister<BlockEntityType<*>> =
+    val BLOCK_ENTITY_TYPE_REGISTRY: DeferredRegister<BlockEntityType<*>> =
         DeferredRegister.create(ModMainCommon.MOD_ID, Registries.BLOCK_ENTITY_TYPE)
 
     val SOUND_BLOCK: RegistrySupplier<BlockEntityType<SoundBlockEntity>> =

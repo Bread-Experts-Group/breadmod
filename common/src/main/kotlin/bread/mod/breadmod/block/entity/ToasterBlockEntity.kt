@@ -4,10 +4,10 @@ import bread.mod.breadmod.recipe.toaster.ToasterInput
 import bread.mod.breadmod.recipe.toaster.ToasterRecipe
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.recipe.ModRecipeTypes
-import bread.mod.breadmod.util.ArchEnergyHandler
-import bread.mod.breadmod.util.ArchFluidHandler
-import dev.architectury.fluid.FluidStack
-import dev.architectury.hooks.fluid.FluidStackHooks
+import bread.mod.breadmod.util.CapabilityTypes
+import bread.mod.breadmod.util.ForgeCapableObject
+import bread.mod.breadmod.util.handler.ArchEnergyStorage
+import bread.mod.breadmod.util.handler.ArchFluidStorage
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
@@ -27,24 +27,18 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.material.Fluids
 import java.util.Optional
-import kotlin.math.min
 
 class ToasterBlockEntity(
     pos: BlockPos,
     state: BlockState,
-) : BlockEntity(ModBlockEntityTypes.TOASTER.get(), pos, state), CraftingContainer, ArchEnergyHandler, ArchFluidHandler {
+) : BlockEntity(ModBlockEntityTypes.TOASTER.get(), pos, state), CraftingContainer, ForgeCapableObject {
     var currentRecipe: Optional<RecipeHolder<ToasterRecipe>> = Optional.empty()
     var items: NonNullList<ItemStack> = NonNullList.withSize(1, ItemStack.EMPTY)
     private val triggered = BlockStateProperties.TRIGGERED
 
     var progress = 0
     var maxProgress = 0
-    var powerStored = 0
-    var maxPowerStored = 100000
-    var fluidCapacity = 10000
-    var fluid: FluidStack = FluidStack.empty()
 
     val recipeDial: RecipeManager.CachedCheck<ToasterInput, ToasterRecipe> by lazy {
         RecipeManager.createCheck(ModRecipeTypes.TOASTING.get())
@@ -108,25 +102,51 @@ class ToasterBlockEntity(
             items[0]
         } else ItemStack.EMPTY
 
+    val energyHandler: ArchEnergyStorage by lazy {
+        object : ArchEnergyStorage(100000) {
+            override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
+                setChanged()
+                return super.receiveEnergy(toReceive, simulate)
+            }
+        }
+    }
+
+    val fluidHandler: ArchFluidStorage by lazy {
+        object : ArchFluidStorage(10000) {
+            override fun onContentsChanged() {
+                super.onContentsChanged()
+                setChanged()
+            }
+        }
+    }
+
+    override fun addCapability(): Map<CapabilityTypes, Any?> = buildMap {
+        this[CapabilityTypes.ENERGY] = energyHandler
+        this[CapabilityTypes.FLUID] = fluidHandler
+    }
+
     // todo find out why fluid saving and loading is just busted
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
         tag.put("energy", CompoundTag().also { energyTag ->
-            energyTag.putInt("energyStored", powerStored)
-            energyTag.putInt("maxEnergyStored", maxPowerStored)
+            energyTag.putInt("energyStored", energyHandler.energy)
+            energyTag.putInt("maxEnergyStored", energyHandler.capacity)
         })
         tag.put("recipeProgress", CompoundTag().also { progressTag ->
             progressTag.putInt("progress", progress)
             progressTag.putInt("maxProgress", maxProgress)
         })
-        tag.put("fluid", CompoundTag().also { fluidTag ->
-            if (fluid.fluid != Fluids.EMPTY) {
-                println("WRITE FLUID: ${FluidStackHooks.write(registries, fluid, fluidTag)}")
-//                FluidStackHooks.write(registries, fluid, fluidTag)
-            }
-            fluidTag.putInt("fluidCapacity", fluidCapacity)
-            println(fluidTag)
-        })
+//        tag.put("fluid", CompoundTag().also { fluidTag ->
+//            if (fluid.fluid != Fluids.EMPTY) {
+////                println("WRITE FLUID: ${FluidStackHooks.write(registries, fluid, fluidTag)}")
+////                FluidStackHooks.write(registries, fluid, fluidTag)
+//            }
+//            fluidTag.putInt("fluidCapacity", fluidCapacity)
+//            println(fluidTag)
+//        })
+//        if (fluid.fluid != Fluids.EMPTY) {
+//            tag.put("fluid", serializeFluid(registries))
+//        }
         ContainerHelper.saveAllItems(tag, items, registries)
     }
 
@@ -134,28 +154,29 @@ class ToasterBlockEntity(
         super.loadAdditional(tag, registries)
         val energyTag = tag.getCompound("energy")
         val progressTag = tag.getCompound("progress")
-        val fluidTag = tag.getCompound("fluid")
+//        val fluidTag = tag.getCompound("fluid")
 
-        powerStored = energyTag.getInt("energyStored")
-        maxPowerStored = energyTag.getInt("maxEnergyStored")
+        energyHandler.energy = energyTag.getInt("energyStored")
+        energyHandler.capacity = energyTag.getInt("maxEnergyStored")
         progress = progressTag.getInt("progress")
         maxProgress = progressTag.getInt("maxProgress")
-        println("FLUID TAG: $fluidTag")
-        try {
-            println("READ RAW FLUID: ${FluidStackHooks.readOptional(registries, fluidTag)}")
-            println(
-                "FLUID TYPE READ: ${FluidStackHooks.readOptional(registries, fluidTag).fluid.`arch$registryName`()}"
-            )
-        } catch (e: Exception) {
-            println(e)
-        }
+//        deserializeFluid(registries, tag)
+//        println("FLUID TAG: $fluidTag")
+//        try {
+//            println("READ RAW FLUID: ${FluidStackHooks.readOptional(registries, fluidTag)}")
+//            println(
+//                "FLUID TYPE READ: ${FluidStackHooks.readOptional(registries, fluidTag).fluid.`arch$registryName`()}"
+//            )
+//        } catch (e: Exception) {
+//            println(e)
+//        }
 //        if (fluid.fluid != Fluids.EMPTY) {
 //            println(
 //                "FLUID HOOK READ: ${FluidStackHooks.readOptional(registries, fluidTag).fluid.`arch$registryName`()}"
 //            )
 //            fluid = FluidStackHooks.readOptional(registries, fluidTag)
 //        }
-        fluidCapacity = fluidTag.getInt("fluidCapacity")
+//        fluidCapacity = fluidTag.getInt("fluidCapacity")
         items = NonNullList.withSize(containerSize, ItemStack.EMPTY)
         ContainerHelper.loadAllItems(tag, items, registries)
     }
@@ -194,93 +215,5 @@ class ToasterBlockEntity(
         for (stack: ItemStack in items) {
             contents.accountSimpleStack(stack)
         }
-    }
-
-    val maxInput = Int.MAX_VALUE
-    val maxOutput = Int.MAX_VALUE
-    override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int = if (maxInput > 0) {
-        val toReceive = min(toReceive, maxInput)
-        val newStore = powerStored + min(toReceive, maxInput)
-        val delta = if (newStore > maxPowerStored) min(maxPowerStored - powerStored, newStore) else toReceive
-        if (!simulate && delta != 0) {
-            powerStored += delta
-            setChanged()
-        }
-        delta
-    } else 0
-
-    override fun extractEnergy(toExtract: Int, simulate: Boolean): Int = if (maxOutput > 0) {
-        val delta = min(powerStored, min(toExtract, maxOutput))
-        if (!simulate && delta != 0) {
-            powerStored -= delta
-            setChanged()
-        }
-        delta
-    } else 0
-
-    override fun getEnergyStored(): Int = powerStored
-    override fun getMaxEnergyStored(): Int = maxPowerStored
-
-    override fun getTanks(): Int = 1
-
-    override fun getFluidInTank(tank: Int): FluidStack = fluid
-
-    override fun getTankCapacity(tank: Int): Int = fluidCapacity
-
-    override fun isFluidValid(stack: FluidStack): Boolean = true
-
-    override fun fill(
-        resource: FluidStack,
-        action: ArchFluidHandler.Action
-    ): Int {
-        if (resource.isEmpty || !isFluidValid(resource)) {
-            return 0
-        }
-        if (action.simulate()) {
-            if (fluid.isEmpty) {
-                return minOf(fluidCapacity, resource.amount.toInt())
-            }
-            return minOf(fluidCapacity - fluid.amount.toInt(), resource.amount.toInt())
-        }
-        if (fluid.isEmpty) {
-            fluid = resource.copyWithAmount(minOf(fluidCapacity, resource.amount.toInt()).toLong())
-            setChanged()
-            return fluid.amount.toInt()
-        }
-        var filled = fluidCapacity - fluid.amount
-        if (resource.amount < filled) {
-            fluid.grow(resource.amount)
-            filled = resource.amount
-        } else {
-            fluid.amount = fluidCapacity.toLong()
-        }
-        if (filled > 0) {
-            setChanged()
-        }
-        return filled.toInt()
-    }
-
-    override fun drain(
-        resource: FluidStack,
-        action: ArchFluidHandler.Action
-    ): FluidStack {
-        return if (resource.isEmpty) FluidStack.empty()
-        else drain(resource.amount.toInt(), action)
-    }
-
-    override fun drain(
-        maxDrain: Int,
-        action: ArchFluidHandler.Action
-    ): FluidStack {
-        var drained = maxDrain
-        if (fluid.amount < drained) {
-            drained = fluid.amount.toInt()
-        }
-        val stack = fluid.copyWithAmount(drained.toLong())
-        if (action.execute() && drained > 0) {
-            fluid.shrink(drained.toLong())
-            setChanged()
-        }
-        return stack
     }
 }

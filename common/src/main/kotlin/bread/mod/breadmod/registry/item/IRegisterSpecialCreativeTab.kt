@@ -22,5 +22,8 @@ interface IRegisterSpecialCreativeTab {
      * @since 1.0.0
      * @return true if the default item stack should also be registered.
      */
-    fun displayInCreativeTab(pParameters: CreativeModeTab.ItemDisplayParameters, pOutput: CreativeModeTab.Output): Boolean = true
+    fun displayInCreativeTab(
+        parameters: CreativeModeTab.ItemDisplayParameters,
+        output: CreativeModeTab.Output
+    ): Boolean = true
 }

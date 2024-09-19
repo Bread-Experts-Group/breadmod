@@ -61,7 +61,7 @@ internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCre
                 )
             }
         } else if (level.isClientSide) {
-            addBeamTask(player.position().toVector3f(), player.position().plus(Vec3(0.0, 5.0, 0.0)).toVector3f(), 1.0f)
+            addBeamTask(player.position().toVector3f(), player.position().plus(Vec3(0.0, -5.0, 0.0)).toVector3f(), 1.0f)
         }
         return InteractionResultHolder.fail(stack)
     }

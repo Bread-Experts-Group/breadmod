@@ -17,6 +17,7 @@ import bread.mod.breadmod.item.util.FuelItem
 import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
 import bread.mod.breadmod.registry.item.ModItems.registerBlockItem
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
+import com.mojang.serialization.MapCodec
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
@@ -31,7 +32,10 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.FallingBlock
+import net.minecraft.world.level.block.SnowLayerBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.material.MapColor
 
 
 // todo port the rest of the blocks and machines
@@ -192,6 +196,49 @@ object ModBlocks {
     @DataGenerateLoot
     val TOASTER: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "toaster", { ToasterBlock() }, Item.Properties()
+    )
+
+    @DataGenerateWithExistingParentBlockAndItemModel
+    @DataGenerateLanguage("en_us", "Hell Naw Button")
+    @DataGenerateLoot
+    val HELL_NAW_BUTTON: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "hell_naw_button", { HellNawButtonBlock() }, Item.Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "Happy Block")
+    @DataGenerateCubeAllBlockAndItemModel
+    @DataGenerateLoot
+    @FlammableBlock(20, 40)
+    val HAPPY_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "happy_block", { HappyBlock() }, Item.Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "Flour Block")
+    @DataGenerateCubeAllBlockAndItemModel
+    @DataGenerateLoot
+    @FlammableBlock(40, 60)
+    val FLOUR_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "flour_block", { FlourBlock() }, Item.Properties()
+    )
+
+    private class FlourBlock : FallingBlock(Properties.of()) {
+        val codec: MapCodec<FlourBlock> = simpleCodec { this }
+        override fun codec(): MapCodec<out FallingBlock> = codec
+    }
+
+    // todo snow layer-like loot table and model gen
+    @DataGenerateLanguage("en_us", "Flour Layer")
+//    @DataGenerateCubeAllBlockAndItemModel
+//    @DataGenerateLoot
+    @FlammableBlock(40, 50)
+    val FLOUR_LAYER_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "flour_layer", {
+            SnowLayerBlock(
+                BlockBehaviour.Properties.ofFullCopy(Blocks.SNOW)
+                    .ignitedByLava()
+                    .mapColor(MapColor.COLOR_YELLOW)
+            )
+        }, Item.Properties()
     )
 
     // todo import the machine blocks

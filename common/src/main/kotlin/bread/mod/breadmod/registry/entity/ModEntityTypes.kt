@@ -10,7 +10,8 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
 
 object ModEntityTypes {
-    internal val ENTITY_REGISTRY: DeferredRegister<EntityType<*>> = DeferredRegister.create(MOD_ID, Registries.ENTITY_TYPE)
+    internal val ENTITY_REGISTRY: DeferredRegister<EntityType<*>> =
+        DeferredRegister.create(MOD_ID, Registries.ENTITY_TYPE)
 
     val HAPPY_BLOCK_ENTITY: RegistrySupplier<EntityType<PrimedHappyBlock>> = ENTITY_REGISTRY.register("happy_block") {
         EntityType.Builder.of({ _, pLevel -> PrimedHappyBlock(pLevel, shouldSpread = true) }, MobCategory.MISC)

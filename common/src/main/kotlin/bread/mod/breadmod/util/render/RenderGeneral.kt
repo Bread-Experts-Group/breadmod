@@ -54,7 +54,6 @@ var redness: Float = 1f
  */
 val renderBuffer: RenderBuffer = mutableListOf()
 
-// todo fix inverted beam quads
 /**
  * Draws a line from between [start] and [end], translated according to the current [LocalPlayer]'s position.
 // * @see breadmod.network.clientbound.BeamPacket

@@ -1,7 +1,6 @@
 package bread.mod.breadmod.registry
 
 import bread.mod.breadmod.ModMainCommon
-import bread.mod.breadmod.ModMainCommon.MOD_ID
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.item.armor.ArmorMaterials
@@ -21,7 +20,6 @@ import dev.architectury.registry.fuel.FuelRegistry
 import dev.architectury.registry.item.ItemPropertiesRegistry
 import dev.architectury.registry.registries.RegistrySupplier
 import dev.architectury.utils.Env
-import eu.midnightdust.lib.config.MidnightConfig
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.BlockItem
@@ -117,7 +115,6 @@ internal object Registry {
     }
 
     fun registerAll() {
-        MidnightConfig.init(MOD_ID, ModConfiguration::class.java)
         ModBlocks.BLOCK_REGISTRY.register()
         ModCreativeTabs.CREATIVE_TAB_REGISTRY.register()
         ModSounds.SOUND_REGISTRY.register()

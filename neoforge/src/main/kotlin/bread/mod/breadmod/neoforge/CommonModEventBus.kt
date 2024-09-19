@@ -1,6 +1,7 @@
 package bread.mod.breadmod.neoforge
 
 import bread.mod.breadmod.ModMainCommon
+import bread.mod.breadmod.block.entity.ToasterBlockEntity
 import bread.mod.breadmod.datagen.recipe.SmartRecipeProvider
 import bread.mod.breadmod.datagen.tag.SmartTagProvider
 import bread.mod.breadmod.neoforge.datagen.SmartBlockLootProviderNeoForge
@@ -12,6 +13,9 @@ import bread.mod.breadmod.neoforge.util.EnergyStorageWrapper
 import bread.mod.breadmod.neoforge.util.FluidStackWrapper
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
+import bread.mod.breadmod.util.CapabilityTypes
+import bread.mod.breadmod.util.handler.ArchEnergyStorage
+import bread.mod.breadmod.util.handler.ArchFluidStorage
 import net.minecraft.world.inventory.CraftingContainer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
@@ -77,14 +81,18 @@ internal object CommonModEventBus {
         event.registerBlock(
             Capabilities.EnergyStorage.BLOCK,
             { level, pos, state, blockEntity, side ->
-                EnergyStorageWrapper(level, pos)
+                val entity = level.getBlockEntity(pos) as? ToasterBlockEntity ?: throw NullPointerException()
+                val energy = entity.addCapability()[CapabilityTypes.ENERGY] as ArchEnergyStorage
+                EnergyStorageWrapper(energy)
             }, ModBlocks.TOASTER.get().block
         )
 
         event.registerBlock(
             Capabilities.FluidHandler.BLOCK,
             { level, pos, state, blockEntity, side ->
-                FluidStackWrapper(level, pos)
+                val entity = level.getBlockEntity(pos) as? ToasterBlockEntity ?: throw NullPointerException()
+                val fluid = entity.addCapability()[CapabilityTypes.FLUID] as ArchFluidStorage
+                FluidStackWrapper(fluid)
             }, ModBlocks.TOASTER.get().block
         )
     }

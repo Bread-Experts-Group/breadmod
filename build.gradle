@@ -22,10 +22,6 @@ allprojects {
             name = "Terraformers"
             url = "https://maven.terraformersmc.com/"
         }
-
-        maven {
-            url = "https://api.modrinth.com/maven"
-        }
     }
 }
 

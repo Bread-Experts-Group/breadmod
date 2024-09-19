@@ -1,4 +1,4 @@
-package bread.mod.breadmod.util
+package bread.mod.breadmod.util.handler
 
 /**
  * Bridge interface for NeoForge's energy capability.
@@ -14,7 +14,7 @@ interface ArchEnergyHandler {
 
     fun getMaxEnergyStored(): Int
 
-    fun canExtract(): Boolean = true
+    fun canExtract(): Boolean
 
-    fun canReceive(): Boolean = true
+    fun canReceive(): Boolean
 }

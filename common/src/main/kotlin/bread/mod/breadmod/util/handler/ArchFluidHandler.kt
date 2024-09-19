@@ -1,4 +1,4 @@
-package bread.mod.breadmod.util
+package bread.mod.breadmod.util.handler
 
 import dev.architectury.fluid.FluidStack
 
