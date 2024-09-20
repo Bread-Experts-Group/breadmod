@@ -229,7 +229,7 @@ object ModBlocks {
     // todo snow layer-like loot table and model gen
     @DataGenerateLanguage("en_us", "Flour Layer")
 //    @DataGenerateCubeAllBlockAndItemModel
-//    @DataGenerateLoot
+    @DataGenerateLoot
     @FlammableBlock(40, 50)
     val FLOUR_LAYER_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "flour_layer", {

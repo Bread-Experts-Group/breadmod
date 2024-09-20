@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "breadmod:block/bread_block"
+    },
+    "lit=true": {
+      "model": "breadmod:block/big_bread_block"
+    }
+  }
+}
