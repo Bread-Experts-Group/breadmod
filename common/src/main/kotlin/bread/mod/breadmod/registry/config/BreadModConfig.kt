@@ -17,14 +17,13 @@ import kotlin.io.path.pathString
  *
  * @author Logan McLean
  */
-object BreadModConfig {
-    val configFolder = Platform.getConfigFolder()
-    val valueList = mutableListOf<ConfigValue<*>>()
-    var json: JsonObject = JsonObject()
+abstract class BreadModConfig {
+    protected var json: JsonObject = JsonObject()
+    protected val configFolder = Platform.getConfigFolder()
 
-    lateinit var TEST_VALUE: ConfigValue<Boolean>
-    lateinit var TEST_INT: ConfigValue<Int>
-    lateinit var TEST_STRING: ConfigValue<String>
+    companion object {
+        val valueList = mutableListOf<ConfigValue<*>>()
+    }
 
     /**
      * Attempts to retrieve the provided [name] from the config json.
@@ -69,7 +68,20 @@ object BreadModConfig {
         }
     }
 
-    fun configLocation(): Path = Path("${configFolder.pathString}/breadmod-config.json")
+    /**
+     * Overwrites the current [value] with [newValue].
+     * * Config file automatically updates upon calling this function
+     *
+     * @author Logan McLean
+     */
+    fun <T> setConfigValue(value: ConfigValue<T>, newValue: T) {
+        value.value = newValue
+        valueList.remove(value)
+        valueList.add(value)
+        saveConfig()
+    }
+
+    fun configLocation(): Path = Path("${configFolder.pathString}/${fileName()}.json")
 
     fun configExists(): Boolean = Files.exists(configLocation())
 
@@ -93,7 +105,7 @@ object BreadModConfig {
      * @author Logan McLean
      */
     fun saveConfig() {
-        LogManager.getLogger().info("writing config file")
+        LogManager.getLogger().info("Writing config: ${fileName()}")
         valueList.forEach { value ->
             json.add(value.name, JsonObject().also { valObj ->
                 when (value.value) {
@@ -120,31 +132,14 @@ object BreadModConfig {
         )
     }
 
+    abstract fun registerValues()
+
+    abstract fun fileName(): String
+
     fun initialize() {
+        valueList.clear()
         json = readConfig()
-
-        TEST_VALUE = getOrDefault(
-            "test_value", json,
-            ConfigValue.Builder<Boolean>()
-                .define(true, "test_value")
-                .defaultValue(false)
-                .comment("this is a test")
-        )
-        TEST_INT = getOrDefault(
-            "test_int", json,
-            ConfigValue.Builder<Int>()
-                .define(69, "test_int")
-                .defaultValue(420)
-                .comment("test int")
-        )
-        TEST_STRING = getOrDefault(
-            "test_string", json,
-            ConfigValue.Builder<String>()
-                .define("test string value", "test_string")
-                .defaultValue("meow")
-                .comment("a test string")
-        )
-
+        registerValues()
         saveConfig()
     }
 }

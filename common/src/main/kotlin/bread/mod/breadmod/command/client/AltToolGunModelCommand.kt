@@ -1,7 +1,8 @@
 package bread.mod.breadmod.command.client
 
 import bread.mod.breadmod.command.CommandArguments.BooleanArgument
-import bread.mod.breadmod.registry.config.BreadModConfig.TEST_VALUE
+import bread.mod.breadmod.registry.config.ClientConfig
+import bread.mod.breadmod.registry.config.ClientConfig.ALT_TOOLGUN_MODEL
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -14,7 +15,7 @@ object AltToolGunModelCommand {
             .then(argument("value", BooleanArgument())
                 .executes { value ->
                     val arg = value.getArgument("value", Boolean::class.java)
-                    TEST_VALUE.setNewValue(arg)
+                    ClientConfig.setConfigValue(ALT_TOOLGUN_MODEL, arg)
                     return@executes Command.SINGLE_SUCCESS
                 }
             )

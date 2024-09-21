@@ -3,6 +3,9 @@ package bread.mod.breadmod
 import bread.mod.breadmod.logging.ConsoleColorAppender
 import bread.mod.breadmod.registry.ClientEvents
 import bread.mod.breadmod.registry.Registry.registerAll
+import bread.mod.breadmod.registry.config.ClientConfig
+import dev.architectury.platform.Platform
+import dev.architectury.utils.Env
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
@@ -23,19 +26,22 @@ object ModMainCommon {
         Component.translatable("$type.$MOD_ID.${path.joinToString(".")}", *args.toTypedArray())
 
     fun init() {
-        val ctx = LogManager.getContext(false) as LoggerContext
-        val uri = this::class.java.getResource("/log4j2.xml")?.toURI() ?: throw IllegalStateException("Failed to load log4j2.xml")
-        val cfg = ConfigurationFactory.getInstance().getConfiguration(ctx, ctx.name, uri, null)
+        if (Platform.isDevelopmentEnvironment() || Platform.getEnvironment() == Env.SERVER) {
+            val ctx = LogManager.getContext(false) as LoggerContext
+            val uri = this::class.java.getResource("/log4j2.xml")?.toURI() ?: throw IllegalStateException("Failed to load log4j2.xml")
+            val cfg = ConfigurationFactory.getInstance().getConfiguration(ctx, ctx.name, uri, null)
 
-        val clrApd = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
-        cfg.addAppender(clrApd)
-        Configurator.reconfigure(cfg)
+            val clrApd = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
+            cfg.addAppender(clrApd)
+            Configurator.reconfigure(cfg)
+        }
 
         // Register all our mod contents
         registerAll()
     }
 
     fun initClient() {
+        ClientConfig.initialize()
         ClientEvents.registerOverlays()
         ClientEvents.registerClientCommands()
 //        ClientEvents.registerKeyEvent()
