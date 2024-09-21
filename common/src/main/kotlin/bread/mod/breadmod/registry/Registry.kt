@@ -9,6 +9,7 @@ import bread.mod.breadmod.networking.Networking.registerNetworking
 import bread.mod.breadmod.reflection.LibraryScanner
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
+import bread.mod.breadmod.registry.config.BreadModConfig
 import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.recipe.ModRecipeSerializers
@@ -115,6 +116,7 @@ internal object Registry {
     }
 
     fun registerAll() {
+        BreadModConfig.initialize()
         ModBlocks.BLOCK_REGISTRY.register()
         ModCreativeTabs.CREATIVE_TAB_REGISTRY.register()
         ModSounds.SOUND_REGISTRY.register()

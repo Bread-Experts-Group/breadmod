@@ -1,6 +1,7 @@
 package bread.mod.breadmod.command.client
 
 import bread.mod.breadmod.command.CommandArguments.BooleanArgument
+import bread.mod.breadmod.registry.config.BreadModConfig.TEST_VALUE
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
@@ -8,16 +9,12 @@ import dev.architectury.event.events.client.ClientCommandRegistrationEvent.Clien
 import dev.architectury.event.events.client.ClientCommandRegistrationEvent.argument
 
 object AltToolGunModelCommand {
-    // todo replace with config
-    var useAltModel: Boolean = false
-
     fun register(): ArgumentBuilder<ClientCommandSourceStack, *> =
         LiteralArgumentBuilder.literal<ClientCommandSourceStack>("altToolgunModel")
             .then(argument("value", BooleanArgument())
                 .executes { value ->
                     val arg = value.getArgument("value", Boolean::class.java)
-//                    ModConfiguration.CLIENT.ALT_TOOLGUN_MODEL.set(arg)
-                    useAltModel = arg
+                    TEST_VALUE.setNewValue(arg)
                     return@executes Command.SINGLE_SUCCESS
                 }
             )

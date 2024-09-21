@@ -1,10 +1,10 @@
 package bread.mod.breadmod.client.render
 
 import bread.mod.breadmod.ModMainCommon.modLocation
-import bread.mod.breadmod.command.client.AltToolGunModelCommand.useAltModel
 import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
 import bread.mod.breadmod.item.toolGun.ToolGunItem.Companion.TOOL_GUN_DEF
 import bread.mod.breadmod.item.toolGun.drawTextOnScreen
+import bread.mod.breadmod.registry.config.BreadModConfig.TEST_VALUE
 import bread.mod.breadmod.util.render.renderItemModel
 import bread.mod.breadmod.util.render.rgMinecraft
 import com.mojang.blaze3d.vertex.PoseStack
@@ -76,7 +76,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
         if (displayContext.firstPerson()) {
             poseStack.translate(-recoil, 0.0f, 0.0f)
-            if (useAltModel) {
+            if (TEST_VALUE.valueOrThrow()) {
 //                renderItemModel(altModel, renderer, stack, poseStack, buffer, packedOverlay, packedLight)
                 renderer.renderItemModel(
                     altModel,
@@ -134,7 +134,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, coilModel)
             }
         } else {
-            if (useAltModel) {
+            if (TEST_VALUE.valueOrThrow()) {
                 renderer.renderItemModel(
                     altModel,
                     stack,
