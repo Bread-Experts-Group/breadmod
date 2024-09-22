@@ -34,7 +34,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     private val coilModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/coil"), platformId)
     private val altModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"), platformId)
 
-    //    private val useAltModel = CLIENT.ALT_TOOLGUN_MODEL
+    val useAltModel = ClientConfig.ALT_TOOLGUN_MODEL
     override fun renderByItem(
         stack: ItemStack,
         displayContext: ItemDisplayContext,
@@ -76,8 +76,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
         if (displayContext.firstPerson()) {
             poseStack.translate(-recoil, 0.0f, 0.0f)
-            if (ClientConfig.ALT_TOOLGUN_MODEL.valueOrThrow()) {
-//                renderItemModel(altModel, renderer, stack, poseStack, buffer, packedOverlay, packedLight)
+            if (useAltModel.valueOrThrow()) {
                 renderer.renderItemModel(
                     altModel,
                     stack,
@@ -89,7 +88,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
                     packedLight
                 )
             } else {
-//                renderModel(mainModel, renderer, stack, poseStack, buffer, packedOverlay, packedLight)
                 renderer.renderItemModel(
                     mainModel,
                     stack,
@@ -100,8 +98,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
                     packedOverlay,
                     packedLight
                 )
-//            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, mainModel)
-//            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, mainModel)
 
 //                drawTextOnScreen(
 //                    (toolGunItem.getCurrentMode(stack).displayName.copy()).withStyle(ChatFormatting.BOLD),
@@ -134,7 +130,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, coilModel)
             }
         } else {
-            if (ClientConfig.ALT_TOOLGUN_MODEL.valueOrThrow()) {
+            if (useAltModel.valueOrThrow()) {
                 renderer.renderItemModel(
                     altModel,
                     stack,

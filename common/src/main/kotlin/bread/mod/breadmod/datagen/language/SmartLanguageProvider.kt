@@ -4,6 +4,7 @@ import bread.mod.breadmod.datagen.DataProviderScanner
 import bread.mod.breadmod.util.ensureRegistrySupplierAndValue
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.sounds.SoundEvent
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike
 
@@ -37,6 +38,12 @@ abstract class SmartLanguageProvider<T>(
                     }
 
                     is SoundEvent -> localeMap[actual.location.toLanguageKey("sound")] = a.translation
+
+                    // todo why is this not working..
+                    is EntityType<*> -> {
+                        println("THE ENTITY TYPE: ${actual.descriptionId}")
+                        localeMap[actual.descriptionId] = a.translation
+                    }
 
                     null -> throw NullPointerException()
                     else -> throw UnsupportedOperationException("Unsupported type (pls add): ${actual::class.qualifiedName}")

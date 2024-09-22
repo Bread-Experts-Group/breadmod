@@ -1,22 +1,25 @@
 package bread.mod.breadmod.registry.config
 
+import bread.mod.breadmod.ModMainCommon.MOD_ID
+
 object CommonConfig : BreadModConfig() {
-    lateinit var TEST_INT: ConfigValue<Int>
-    lateinit var TEST_STRING: ConfigValue<String>
-    override fun fileName(): String = "breadmod-common"
+    lateinit var HAPPY_BLOCK_SPREAD_RADIUS: ConfigValue<Double>
+    lateinit var HAPPY_BLOCK_DIVISIONS: ConfigValue<Int>
+
+    override fun fileName(): String = "$MOD_ID-common"
 
     override fun registerValues() {
-        TEST_INT = getOrDefault(
-            "test_int", json,
+        HAPPY_BLOCK_DIVISIONS = getOrDefault(
+            "happy_block_div",
             ConfigValue.Builder<Int>()
-                .define(69, "test_int")
-                .comment("test int")
+                .define(8, "happy_block_div")
+                .comment("How many happy blocks will be created after the first explosion")
         )
-        TEST_STRING = getOrDefault(
-            "test_string", json,
-            ConfigValue.Builder<String>()
-                .define("test string value", "test_string")
-                .comment("a test string")
+        HAPPY_BLOCK_SPREAD_RADIUS = getOrDefault(
+            "happy_block_rng",
+            ConfigValue.Builder<Double>()
+                .define(0.5, "happy_block_rng")
+                .comment("How far the happy block will spread it's divided blocks")
         )
     }
 }

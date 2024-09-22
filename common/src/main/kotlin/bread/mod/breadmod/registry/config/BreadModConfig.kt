@@ -13,27 +13,23 @@ import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
 /**
- * Helper functions for adding and modifying config values for Bread Mod
+ * Abstract helper class for registering config values.
  *
  * @author Logan McLean
  */
 abstract class BreadModConfig {
-    protected var json: JsonObject = JsonObject()
+    var json: JsonObject = JsonObject()
     protected val configFolder = Platform.getConfigFolder()
-
-    companion object {
-        val valueList = mutableListOf<ConfigValue<*>>()
-    }
+    val valueList = mutableListOf<ConfigValue<*>>()
 
     /**
-     * Attempts to retrieve the provided [name] from the config json.
+     * Attempts to retrieve the provided [name] from the config file.
      *
      * @return the value if it exists in file, else builds a default value
      * @author Logan McLean
      */
     inline fun <reified T> getOrDefault(
         name: String,
-        json: JsonObject,
         builder: ConfigValue.Builder<T>
     ): ConfigValue<T> {
         val jsonValue = json.getAsJsonObject(name)
@@ -45,6 +41,7 @@ abstract class BreadModConfig {
                 Boolean::class -> jValue.asBoolean
                 Int::class -> jValue.asInt
                 String::class -> jValue.asString
+                Double::class -> jValue.asDouble
                 else -> throw UnsupportedOperationException(T::class.qualifiedName)
             }
 
@@ -53,18 +50,22 @@ abstract class BreadModConfig {
                 Boolean::class -> jDefaultValue.asBoolean
                 Int::class -> jDefaultValue.asInt
                 String::class -> jDefaultValue.asString
+                Double::class -> jDefaultValue.asDouble
                 else -> throw UnsupportedOperationException(T::class.qualifiedName)
             }
-
-            ConfigValue<T>(
+            val configValue = ConfigValue<T>(
                 name,
                 cValue as T,
                 cDefaultValue as T,
                 jsonValue.get("comment").asString
             )
+            valueList.add(configValue)
+            configValue
         } else {
             logger.error("$name does not exist in config, creating default.")
-            builder.build()
+            val builder = builder.build()
+            valueList.add(builder)
+            builder
         }
     }
 
@@ -91,7 +92,7 @@ abstract class BreadModConfig {
      * @return [JsonObject]
      * @author Logan McLean
      */
-    fun readConfig(): JsonObject =
+    protected fun readConfig(): JsonObject =
         if (configExists()) {
             val inputFile: FileInputStream = FileInputStream(File(configLocation().toString()))
             val inputFileString: String = inputFile.readBytes().decodeToString()
@@ -100,11 +101,11 @@ abstract class BreadModConfig {
         } else JsonObject()
 
     /**
-     * Flushes the current config values to disk.
+     * Writes the current config values to disk under the specified [fileName].
      *
      * @author Logan McLean
      */
-    fun saveConfig() {
+    protected fun saveConfig() {
         LogManager.getLogger().info("Writing config: ${fileName()}")
         valueList.forEach { value ->
             json.add(value.name, JsonObject().also { valObj ->
@@ -112,11 +113,13 @@ abstract class BreadModConfig {
                     is String -> valObj.addProperty("value", value.value as String)
                     is Boolean -> valObj.addProperty("value", value.value as Boolean)
                     is Int -> valObj.addProperty("value", value.value as Int)
+                    is Double -> valObj.addProperty("value", value.value as Double)
                 }
                 when (value.defaultValue) {
                     is String -> valObj.addProperty("default_value", value.defaultValue)
                     is Boolean -> valObj.addProperty("default_value", value.defaultValue)
                     is Int -> valObj.addProperty("default_value", value.defaultValue)
+                    is Double -> valObj.addProperty("default_value", value.defaultValue)
                 }
                 valObj.addProperty("comment", value.comment)
             })
@@ -132,12 +135,15 @@ abstract class BreadModConfig {
         )
     }
 
-    abstract fun registerValues()
+    protected abstract fun registerValues()
 
-    abstract fun fileName(): String
+    protected abstract fun fileName(): String
 
+    /**
+     * Initializes each config value defined in [registerValues].
+     * #### This should only be called during the mod's initialization stage.
+     */
     fun initialize() {
-        valueList.clear()
         json = readConfig()
         registerValues()
         saveConfig()

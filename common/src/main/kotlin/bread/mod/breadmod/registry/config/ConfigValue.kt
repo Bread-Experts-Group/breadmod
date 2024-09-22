@@ -17,6 +17,16 @@ class ConfigValue<T>(
      */
     fun valueOrThrow(): T = if (value != null) value!! else throw NullPointerException(this::class.qualifiedName)
 
+    /**
+     * Attempts to retrieve the current [defaultValue].
+     *
+     * @return [defaultValue]
+     * @throws NullPointerException if [defaultValue] is null
+     * @author Logan McLean
+     */
+    fun defaultValueOrThrow(): T =
+        if (defaultValue != null) defaultValue else throw NullPointerException(this::class.qualifiedName)
+
     class Builder<T> {
         lateinit var name: String
         var value: T? = null
@@ -31,9 +41,7 @@ class ConfigValue<T>(
         fun build(): ConfigValue<T> {
             Objects.requireNonNull(value, "value cannot be null.")
             Objects.requireNonNull(defaultValue, "default value cannot be null.")
-            val configValue = ConfigValue(name, value, defaultValue, comment)
-            BreadModConfig.valueList.add(configValue)
-            return configValue
+            return ConfigValue(name, value, defaultValue, comment)
         }
     }
 }

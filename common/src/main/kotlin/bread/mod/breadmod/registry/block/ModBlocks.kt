@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.FallingBlock
 import net.minecraft.world.level.block.SnowLayerBlock
+import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.MapColor
 
@@ -69,6 +70,8 @@ object ModBlocks {
     @DataGenerateLoot
     @DataGenerateTag("minecraft:block", "minecraft:mineable/hoe")
     @DataGenerateTag("minecraft:block", "breadmod:mineable/knife")
+    @DataGenerateTag("minecraft:block", "breadmod:mineable/stone_ore_replaceables")
+    @DataGenerateTag("minecraft:block", "neoforge:storage_blocks/bread")
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Bread Block")
     @DataGenerateLanguage("es_es", "Bloque De Pan")
@@ -92,6 +95,8 @@ object ModBlocks {
     @DataGenerateLoot
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Reinforced Bread Block")
+    @DataGenerateTag("minecraft:block", "minecraft:mineable/pickaxe")
+    @DataGenerateTag("minecraft:block", "minecraft:beacon_base_blocks")
     val REINFORCED_BREAD_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "reinforced_bread_block",
         {
@@ -141,6 +146,8 @@ object ModBlocks {
     @DataGenerateLoot
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Charcoal Block")
+    @DataGenerateTag("minecraft:block", "minecraft:mineable/pickaxe")
+    @DataGenerateTag("minecraft:block", "neoforge:storage_blocks/charcoal")
     val CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "charcoal_block", {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK).ignitedByLava())
@@ -152,6 +159,8 @@ object ModBlocks {
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
+    @DataGenerateTag("minecraft:block", "minecraft:mineable/hoe")
+    @DataGenerateTag("minecraft:block", "neoforge:storage_blocks/low_density_charcoal")
     val LOW_DENSITY_CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ld_charcoal_block", {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL))
@@ -198,7 +207,8 @@ object ModBlocks {
         "toaster", { ToasterBlock() }, Item.Properties()
     )
 
-    @DataGenerateWithExistingParentBlockAndItemModel
+    // todo needs model generator for a button block
+//    @DataGenerateSingleTextureBlockAndItemModel
     @DataGenerateLanguage("en_us", "Hell Naw Button")
     @DataGenerateLoot
     val HELL_NAW_BUTTON: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
@@ -214,6 +224,7 @@ object ModBlocks {
     )
 
     @DataGenerateLanguage("en_us", "Flour Block")
+    @DataGenerateTag("minecraft:block", "minecraft:mineable/shovel")
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLoot
     @FlammableBlock(40, 60)
@@ -221,13 +232,15 @@ object ModBlocks {
         "flour_block", { FlourBlock() }, Item.Properties()
     )
 
-    private class FlourBlock : FallingBlock(Properties.of()) {
+    private class FlourBlock :
+        FallingBlock(Properties.of().sound(SoundType.SNOW).ignitedByLava().mapColor(MapColor.COLOR_YELLOW)) {
         val codec: MapCodec<FlourBlock> = simpleCodec { this }
         override fun codec(): MapCodec<out FallingBlock> = codec
     }
 
     // todo snow layer-like loot table and model gen
     @DataGenerateLanguage("en_us", "Flour Layer")
+    @DataGenerateTag("minecraft:block", "minecraft:mineable/shovel")
 //    @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLoot
     @FlammableBlock(40, 50)

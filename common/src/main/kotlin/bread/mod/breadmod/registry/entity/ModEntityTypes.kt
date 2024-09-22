@@ -2,6 +2,7 @@ package bread.mod.breadmod.registry.entity
 
 import bread.mod.breadmod.ModMainCommon.MOD_ID
 import bread.mod.breadmod.ModMainCommon.modLocation
+import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.entity.PrimedHappyBlock
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
@@ -13,6 +14,7 @@ object ModEntityTypes {
     internal val ENTITY_REGISTRY: DeferredRegister<EntityType<*>> =
         DeferredRegister.create(MOD_ID, Registries.ENTITY_TYPE)
 
+    @DataGenerateLanguage("en_us", "Happy Block (but primed)")
     val HAPPY_BLOCK_ENTITY: RegistrySupplier<EntityType<PrimedHappyBlock>> = ENTITY_REGISTRY.register("happy_block") {
         EntityType.Builder.of({ _, pLevel -> PrimedHappyBlock(pLevel, shouldSpread = true) }, MobCategory.MISC)
             .sized(0.98f, 0.98f)

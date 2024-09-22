@@ -48,7 +48,7 @@ var redness: Float = 1f
 
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
- * TODO update javadoc
+ *
  * @author Miko Elbrecht
  * @since 1.0.0
  */
@@ -74,7 +74,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
 
             if (thickness != null) {
                 // South
-                texturedQuadTest(
+                drawTexturedQuad(
                     modLocation("block", "bread_block"),
                     RenderType.translucent(),
                     poseStack,
@@ -87,7 +87,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
                 )
 //            poseStack.translate(2f, 0f, 0f)
                 // East
-                texturedQuadTest(
+                drawTexturedQuad(
                     modLocation("block", "bread_block"),
                     RenderType.translucent(),
                     poseStack,
@@ -99,7 +99,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
                     Vector3f(end.x + 1f, end.y, end.z - 1f)
                 )
                 // West
-                texturedQuadTest(
+                drawTexturedQuad(
                     modLocation("block", "bread_block"),
                     RenderType.translucent(),
                     poseStack,
@@ -111,7 +111,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
                     Vector3f(end.x - 1f, end.y, end.z + 1f)
                 )
                 // North
-                texturedQuadTest(
+                drawTexturedQuad(
                     modLocation("block", "bread_block"),
                     RenderType.translucent(),
                     poseStack,
@@ -124,7 +124,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
                 )
 
                 // Start
-                texturedQuadTest(
+                drawTexturedQuad(
                     modLocation("block", "bread_block"),
                     RenderType.translucent(),
                     poseStack,
@@ -136,7 +136,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
                     Vector3f(start.x + 1f, start.y, start.z - 1f)
                 )
                 // End
-                texturedQuadTest(
+                drawTexturedQuad(
                     modLocation("block", "bread_block"),
                     RenderType.translucent(),
                     poseStack,
@@ -150,7 +150,7 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
             }
 
             poseStack.popPose()
-//            mutableList[0] = currentOpacity - 0.1f * rgMinecraft.timer.realtimeDeltaTicks
+            mutableList[0] = currentOpacity - 0.1f * rgMinecraft.timer.realtimeDeltaTicks
             false
         } else true
     })
@@ -166,25 +166,25 @@ fun setupOverlayRenderState(useBlend: Boolean, useDepthTest: Boolean) {
 }
 
 fun drawScaledText(
-    pText: Component,
-    pPose: PoseStack,
-    pGuiGraphics: GuiGraphics,
-    pX: Int,
-    pY: Int,
-    pColor: Int,
-    pScale: Float,
-    pDropShadow: Boolean
+    text: Component,
+    poseStack: PoseStack,
+    guiGraphics: GuiGraphics,
+    x: Int,
+    y: Int,
+    color: Int,
+    scale: Float,
+    dropShadow: Boolean
 ) {
-    pPose.scaleFlat(pScale)
-    pGuiGraphics.drawString(
+    poseStack.scaleFlat(scale)
+    guiGraphics.drawString(
         rgMinecraft.font,
-        pText,
-        pX,
-        pY,
-        pColor,
-        pDropShadow
+        text,
+        x,
+        y,
+        color,
+        dropShadow
     )
-    pPose.scaleFlat(1f)
+    poseStack.scaleFlat(1f)
 }
 
 /**
@@ -208,8 +208,6 @@ fun ItemRenderer.renderItemModel(
     renderModelLists(model, stack, packedLight, packedOverlay, poseStack, vertexConsumer)
 }
 
-// todo test to see if this works
-// todo it's busted, needs fixing
 /**
  * Renders a provided [model] (as a block model) onto a [BlockEntityRenderer]
  *
@@ -260,8 +258,7 @@ fun renderStaticItem(
     )
 }
 
-//// todo vertexes are inverted (probably only on tool gun beam, look into)
-fun vertexTest(
+fun drawVertex(
     poseStack: PoseStack,
     pBuffer: MultiBufferSource,
     renderType: RenderType,
@@ -281,42 +278,42 @@ fun vertexTest(
         .setNormal(0f, 1f, 0f)
 }
 
-fun quadTest(
-    pPoseStack: PoseStack,
-    pBuffer: MultiBufferSource,
-    pRenderType: RenderType,
-    pColor: Vector4f,
-    pVertex0: Vector3f,
-    pVertex1: Vector3f,
-    pVertex2: Vector3f,
-    pVertex3: Vector3f,
-    pU0: Float, pV0: Float,
-    pU1: Float, pV1: Float
+fun drawQuad(
+    poseStack: PoseStack,
+    buffer: MultiBufferSource,
+    renderType: RenderType,
+    color: Vector4f,
+    vertex0: Vector3f,
+    vertex1: Vector3f,
+    vertex2: Vector3f,
+    vertex3: Vector3f,
+    u0: Float, v0: Float,
+    u1: Float, v1: Float
 ) {
-    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex0.x, pVertex0.y, pVertex0.z, pU0, pV0)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex1.x, pVertex1.y, pVertex1.z, pU0, pV1)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex2.x, pVertex2.y, pVertex2.z, pU1, pV1)
-    vertexTest(pPoseStack, pBuffer, pRenderType, pColor, pVertex3.x, pVertex3.y, pVertex3.z, pU1, pV0)
+    drawVertex(poseStack, buffer, renderType, color, vertex0.x, vertex0.y, vertex0.z, u0, v0)
+    drawVertex(poseStack, buffer, renderType, color, vertex1.x, vertex1.y, vertex1.z, u0, v1)
+    drawVertex(poseStack, buffer, renderType, color, vertex2.x, vertex2.y, vertex2.z, u1, v1)
+    drawVertex(poseStack, buffer, renderType, color, vertex3.x, vertex3.y, vertex3.z, u1, v0)
 }
 
-fun texturedQuadTest(
-    pSprite: ResourceLocation,
-    pRenderType: RenderType,
-    pPoseStack: PoseStack,
-    pBuffer: MultiBufferSource,
-    pColor: Vector4f,
-    pVertex0: Vector3f = Vector3f(0f, 0f, 0f),
-    pVertex1: Vector3f = Vector3f(0f, 0f, 1f),
-    pVertex2: Vector3f = Vector3f(1f, 0f, 1f),
-    pVertex3: Vector3f = Vector3f(1f, 0f, 0f)
+fun drawTexturedQuad(
+    textureLocation: ResourceLocation,
+    renderType: RenderType,
+    poseStack: PoseStack,
+    buffer: MultiBufferSource,
+    color: Vector4f,
+    vertex0: Vector3f = Vector3f(0f, 0f, 0f),
+    vertex1: Vector3f = Vector3f(0f, 0f, 1f),
+    vertex2: Vector3f = Vector3f(1f, 0f, 1f),
+    vertex3: Vector3f = Vector3f(1f, 0f, 0f)
 ) {
-    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pSprite)
-    quadTest(
-        pPoseStack, pBuffer, pRenderType, pColor,
-        pVertex0,
-        pVertex1,
-        pVertex2,
-        pVertex3,
+    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(textureLocation)
+    drawQuad(
+        poseStack, buffer, renderType, color,
+        vertex0,
+        vertex1,
+        vertex2,
+        vertex3,
         sprite.u0, sprite.v0,
         sprite.u1, sprite.v1
     )

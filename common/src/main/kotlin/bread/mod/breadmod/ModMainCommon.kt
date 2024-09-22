@@ -44,6 +44,7 @@ object ModMainCommon {
         ClientConfig.initialize()
         ClientEvents.registerOverlays()
         ClientEvents.registerClientCommands()
+        ClientEvents.registerEntityRenderers()
 //        ClientEvents.registerKeyEvent()
         ClientEvents.registerMouseEvent()
         ClientEvents.registerBlockEntityRenderers()

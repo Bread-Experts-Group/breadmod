@@ -10,6 +10,7 @@ import bread.mod.breadmod.reflection.LibraryScanner
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.registry.config.CommonConfig
+import bread.mod.breadmod.registry.entity.ModEntityTypes
 import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.registry.recipe.ModRecipeSerializers
@@ -121,6 +122,7 @@ internal object Registry {
         ModCreativeTabs.CREATIVE_TAB_REGISTRY.register()
         ModSounds.SOUND_REGISTRY.register()
         ModItems.ITEM_REGISTRY.register()
+        ModEntityTypes.ENTITY_REGISTRY.register()
         ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
         ArmorMaterials.ARMOR_REGISTRY.register()
         ModRecipeSerializers.RECIPE_SERIALIZER_REGISTRY.register()
