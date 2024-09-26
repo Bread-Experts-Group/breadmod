@@ -1,10 +1,10 @@
 package bread.mod.breadmod.item.toolGun
 
+import bread.mod.breadmod.entity.FakePlayer
 import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.util.RaycastResult.Companion.entityRaycast
-import bread.mod.breadmod.util.plus
-import bread.mod.breadmod.util.render.addBeamTask
+import bread.mod.breadmod.util.render.playerRenderTest
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
@@ -43,6 +43,11 @@ internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCre
 
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(usedHand)
+        val fakePlayerEntity = FakePlayer(level, player.x, player.y, player.z, player)
+        fakePlayerEntity.owner = player
+        fakePlayerEntity.yRot = player.yRot
+        fakePlayerEntity.yHeadRot = player.yHeadRot
+        level.addFreshEntity(fakePlayerEntity)
         if (level is ServerLevel) {
             level.entityRaycast(
                 player,
@@ -61,7 +66,18 @@ internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCre
                 )
             }
         } else if (level.isClientSide) {
-            addBeamTask(player.position().toVector3f(), player.position().plus(Vec3(0.0, -5.0, 0.0)).toVector3f(), 1.0f)
+//            addBeamTask(player.position().toVector3f(), player.position().plus(Vec3(0.0, -5.0, 0.0)).toVector3f(), 1.0f)
+            playerRenderTest(
+                player,
+                player.x,
+                player.y,
+                player.z,
+                -player.rotationVector.y,
+                player.walkAnimation.position(),
+//                        entity.getViewYRot(partialTick),
+//                        entity.getViewXRot(partialTick),
+//                        random.nextBoolean()
+            )
         }
         return InteractionResultHolder.fail(stack)
     }

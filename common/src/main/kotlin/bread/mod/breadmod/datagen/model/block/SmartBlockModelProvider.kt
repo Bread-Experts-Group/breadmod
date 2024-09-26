@@ -38,7 +38,10 @@ abstract class SmartBlockModelProvider<T>(
             scanner.getObjectPropertiesAnnotatedWith<DataGenerateSingleTextureBlockAndItemModel>(),
 
             scanner.getObjectPropertiesAnnotatedWith<DataGenerateOrientableBlockModel>(),
-            scanner.getObjectPropertiesAnnotatedWith<DataGenerateOrientableBlockAndItemModel>()
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateOrientableBlockAndItemModel>(),
+
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateButtonBlock>(),
+            scanner.getObjectPropertiesAnnotatedWith<DataGenerateLayerBlock>()
         ).forEach {
             it.forEach { (property, data) ->
                 put(data.first.ensureRegistrySupplier(property), Pair(data.second.first(), property))

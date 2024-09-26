@@ -3,12 +3,14 @@ package bread.mod.breadmod.registry.entity
 import bread.mod.breadmod.ModMainCommon.MOD_ID
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
+import bread.mod.breadmod.entity.FakePlayer
 import bread.mod.breadmod.entity.PrimedHappyBlock
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
+import net.minecraft.world.entity.player.Player
 
 object ModEntityTypes {
     internal val ENTITY_REGISTRY: DeferredRegister<EntityType<*>> =
@@ -21,6 +23,17 @@ object ModEntityTypes {
             .clientTrackingRange(10)
             .updateInterval(10)
             .build(modLocation("happy_block").toString())
+    }
+
+    @DataGenerateLanguage("en_us", "Fake Player")
+    val FAKE_PLAYER: RegistrySupplier<EntityType<FakePlayer>> = ENTITY_REGISTRY.register("fake_player") {
+        EntityType.Builder.of({ type, level -> FakePlayer(type, level) }, MobCategory.MISC)
+            .sized(0.6f, 1.8f)
+            .eyeHeight(1.62f)
+            .vehicleAttachment(Player.DEFAULT_VEHICLE_ATTACHMENT)
+            .clientTrackingRange(32)
+            .updateInterval(2)
+            .build(modLocation("fake_player").toString())
     }
 
 // --Commented out by Inspection START (9/10/2024 03:53):

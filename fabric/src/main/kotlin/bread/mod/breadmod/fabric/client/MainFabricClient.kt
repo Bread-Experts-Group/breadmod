@@ -3,6 +3,7 @@ package bread.mod.breadmod.fabric.client
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.util.render.renderBuffer
+import bread.mod.breadmod.util.render.rgMinecraft
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
@@ -18,8 +19,18 @@ class MainFabricClient : ClientModInitializer {
         WorldRenderEvents.AFTER_TRANSLUCENT.register { renderContext ->
             val poseStack = renderContext.matrixStack() ?: return@register
             val camera = renderContext.camera()
+            val partialTick = rgMinecraft.timer.realtimeDeltaTicks
+            val levelRenderer = renderContext.worldRenderer()
 
-            renderBuffer.removeIf { (mutableList, renderEvent) -> renderEvent.invoke(mutableList, poseStack, camera) }
+            renderBuffer.removeIf { (mutableList, renderEvent) ->
+                renderEvent.invoke(
+                    mutableList,
+                    poseStack,
+                    camera,
+                    partialTick,
+                    levelRenderer
+                )
+            }
         }
     }
 

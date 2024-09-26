@@ -18,7 +18,9 @@ internal object ClientNeoForgeEventBus {
             renderEvent.invoke(
                 mutableList,
                 event.poseStack,
-                event.camera
+                event.camera,
+                event.partialTick.realtimeDeltaTicks,
+                event.levelRenderer
             )
         }
     }

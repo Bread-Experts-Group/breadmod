@@ -6,19 +6,23 @@ import bread.mod.breadmod.util.plus
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundSource
 import net.minecraft.stats.Stats
+import net.minecraft.tags.BlockTags
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.monster.piglin.PiglinAi
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.TntBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.gameevent.GameEvent
+import net.minecraft.world.level.gameevent.GameEvent.Context
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 
@@ -35,7 +39,7 @@ class HappyBlock : TntBlock(Properties.ofFullCopy(Blocks.TNT)) {
         }
     }
 
-    // having to make my own explosion function because I can't transform the existing explosion function :angry:
+    // having to make my own explosion function because the superclass function is static :angry:
     private fun explodeHappyBlock(
         level: Level,
         pos: BlockPos,
@@ -58,6 +62,36 @@ class HappyBlock : TntBlock(Properties.ofFullCopy(Blocks.TNT)) {
         }
     }
 
+    private fun explodeHappyBlock(level: Level, pos: BlockPos) = explodeHappyBlock(level, pos, null)
+
+    override fun neighborChanged(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        neighborBlock: Block,
+        neighborPos: BlockPos,
+        movedByPiston: Boolean
+    ) {
+        if (level.hasNeighborSignal(pos)) {
+            explodeHappyBlock(level, pos)
+            level.removeBlock(pos, false)
+        }
+    }
+
+    override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
+        if (!level.isClientSide && !player.isCreative && state.getValue(UNSTABLE)) {
+            explodeHappyBlock(level, pos)
+        }
+
+        spawnDestroyParticles(level, player, pos, state)
+        if (state.`is`(BlockTags.GUARDED_BY_PIGLINS)) {
+            PiglinAi.angerNearbyPiglins(player, false)
+        }
+
+        level.gameEvent(GameEvent.BLOCK_DESTROY, pos, Context.of(player, state))
+        return state
+    }
+
     override fun useItemOn(
         stack: ItemStack,
         state: BlockState,
@@ -68,7 +102,7 @@ class HappyBlock : TntBlock(Properties.ofFullCopy(Blocks.TNT)) {
         hitResult: BlockHitResult
     ): ItemInteractionResult =
         if (!stack.`is`(Items.FLINT_AND_STEEL) && !stack.`is`(Items.FIRE_CHARGE)) {
-            super.useItemOn(stack, state, level, pos, player, hand, hitResult)
+            ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
         } else {
             explodeHappyBlock(level, pos, player)
             level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState())

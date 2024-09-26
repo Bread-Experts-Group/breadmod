@@ -9,7 +9,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler
 class FluidStackWrapper(
     val fluidHandler: ArchFluidStorage
 ) : IFluidHandler {
-
     fun translateAction(action: IFluidHandler.FluidAction): ArchFluidHandler.Action =
         if (action.execute()) ArchFluidHandler.Action.EXECUTE else ArchFluidHandler.Action.SIMULATE
 

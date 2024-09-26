@@ -6,6 +6,8 @@ import bread.mod.breadmod.block.util.FlammableBlock
 import bread.mod.breadmod.datagen.language.DataGenerateLanguage
 import bread.mod.breadmod.datagen.language.DataGenerateTooltipLang
 import bread.mod.breadmod.datagen.loot.DataGenerateLoot
+import bread.mod.breadmod.datagen.model.block.DataGenerateButtonBlock
+import bread.mod.breadmod.datagen.model.block.DataGenerateLayerBlock
 import bread.mod.breadmod.datagen.model.block.Orientable
 import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
@@ -46,6 +48,7 @@ import net.minecraft.world.level.material.MapColor
  * @author Miko Elbrecht, Logan McLean
  * @since 1.0.0
  */
+@Suppress("unused")
 object ModBlocks {
     /**
      * The deferred register for blocks.
@@ -207,8 +210,7 @@ object ModBlocks {
         "toaster", { ToasterBlock() }, Item.Properties()
     )
 
-    // todo needs model generator for a button block
-//    @DataGenerateSingleTextureBlockAndItemModel
+    @DataGenerateButtonBlock
     @DataGenerateLanguage("en_us", "Hell Naw Button")
     @DataGenerateLoot
     val HELL_NAW_BUTTON: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
@@ -238,11 +240,10 @@ object ModBlocks {
         override fun codec(): MapCodec<out FallingBlock> = codec
     }
 
-    // todo snow layer-like loot table and model gen
     @DataGenerateLanguage("en_us", "Flour Layer")
     @DataGenerateTag("minecraft:block", "minecraft:mineable/shovel")
-//    @DataGenerateCubeAllBlockAndItemModel
-    @DataGenerateLoot
+    @DataGenerateLayerBlock
+    @DataGenerateLoot(DataGenerateLoot.Type.SNOW_LAYER, "breadmod:flour_block", "breadmod:flour")
     @FlammableBlock(40, 50)
     val FLOUR_LAYER_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "flour_layer", {

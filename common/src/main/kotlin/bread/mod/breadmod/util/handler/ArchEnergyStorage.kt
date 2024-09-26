@@ -2,6 +2,8 @@ package bread.mod.breadmod.util.handler
 
 import kotlin.math.min
 
+// todo energy sources that push out Int.MAX_VALUE cause the energy buffer in our block to rapidly flip flop from being empty to holding MAX_VALUE,
+//  maybe use the extract/receive logic from NeoForge's energy storage?
 /**
  * Mirrored implementation of NeoForge's Energy Storage in common
  */
@@ -12,6 +14,8 @@ open class ArchEnergyStorage(
     var energy: Int
 ) : ArchEnergyHandler {
     constructor(capacity: Int) : this(capacity, capacity, capacity, 0)
+    constructor(capacity: Int, maxReceive: Int) : this(capacity, maxReceive, capacity, 0)
+    constructor(capacity: Int, maxReceive: Int, maxExtract: Int) : this(capacity, maxReceive, maxExtract, 0)
 
     override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int = if (canReceive()) {
         val toReceive = min(toReceive, maxReceive)

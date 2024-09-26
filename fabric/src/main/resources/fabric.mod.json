@@ -45,12 +45,11 @@
   "mixins": [
     "breadmod.mixins.json"
   ],
+  "accessWidener": "breadmod.accesswidener",
   "depends": {
     "minecraft": "~1.21.1",
     "java": ">=21",
-
     "architectury": ">=13.0.6",
-
     "fabric-api": "*",
     "fabricloader": ">=0.16.4",
     "fabric-language-kotlin": ">=1.12.1+kotlin.2.0.20"

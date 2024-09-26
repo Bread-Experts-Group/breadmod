@@ -13,7 +13,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import java.util.*
 
-object ArmorMaterials {
+object ModArmorMaterials {
     internal val ARMOR_REGISTRY: DeferredRegister<ArmorMaterial> = DeferredRegister.create(
         MOD_ID, Registries.ARMOR_MATERIAL
     )

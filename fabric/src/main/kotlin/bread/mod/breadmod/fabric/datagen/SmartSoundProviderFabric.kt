@@ -1,5 +1,6 @@
 package bread.mod.breadmod.fabric.datagen
 
+import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.datagen.sound.DataGenerateSound
 import bread.mod.breadmod.datagen.sound.SmartSoundProvider
 import com.google.common.hash.HashCode
@@ -25,8 +26,6 @@ class SmartSoundProviderFabric(
             val obj = JsonObject()
             soundStore.forEach { (event, data) ->
                 val subObj = JsonObject()
-                subObj.addProperty("subtitle", event.location.toLanguageKey("sound"))
-
                 val sounds = JsonArray()
                 data.forEach {
                     val soundObj = JsonObject()
@@ -45,11 +44,13 @@ class SmartSoundProviderFabric(
                 }
                 subObj.add("sounds", sounds)
 
+                subObj.addProperty("subtitle", event.location.toLanguageKey("sound"))
+
                 obj.add(event.location.path, subObj)
             }
 
             output.writeIfNeeded(
-                dataOutput.outputFolder.resolve("sounds.json"),
+                dataOutput.outputFolder.resolve("assets/${ModMainCommon.MOD_ID}/sounds.json"),
                 GsonBuilder().setPrettyPrinting().create().toJson(obj).encodeToByteArray(),
                 HashCode.fromInt(Gson().toJson(obj).encodeToByteArray().contentHashCode())
             )

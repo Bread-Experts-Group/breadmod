@@ -3,7 +3,7 @@ package bread.mod.breadmod.registry
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.block.util.FlammableBlock
-import bread.mod.breadmod.item.armor.ArmorMaterials
+import bread.mod.breadmod.item.armor.ModArmorMaterials
 import bread.mod.breadmod.item.util.FuelItem
 import bread.mod.breadmod.networking.Networking.registerNetworking
 import bread.mod.breadmod.reflection.LibraryScanner
@@ -118,13 +118,13 @@ internal object Registry {
 
     fun registerAll() {
         CommonConfig.initialize()
+        ModSounds.SOUND_REGISTRY.register()
         ModBlocks.BLOCK_REGISTRY.register()
         ModCreativeTabs.CREATIVE_TAB_REGISTRY.register()
-        ModSounds.SOUND_REGISTRY.register()
         ModItems.ITEM_REGISTRY.register()
         ModEntityTypes.ENTITY_REGISTRY.register()
         ModBlockEntityTypes.BLOCK_ENTITY_TYPE_REGISTRY.register()
-        ArmorMaterials.ARMOR_REGISTRY.register()
+        ModArmorMaterials.ARMOR_REGISTRY.register()
         ModRecipeSerializers.RECIPE_SERIALIZER_REGISTRY.register()
         ModRecipeTypes.RECIPE_TYPE_REGISTRY.register()
         // todo figure this out later (PaintingVariants.class)
@@ -132,6 +132,7 @@ internal object Registry {
         registerNetworking()
         CommonEvents.registerServerTickEvent()
         CommonEvents.registerCommands()
+        CommonEvents.registerEntityAttributes()
 //        registerClientTick()
 
         runAnnotations()

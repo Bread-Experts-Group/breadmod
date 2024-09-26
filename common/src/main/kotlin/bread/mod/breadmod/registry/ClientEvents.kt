@@ -4,8 +4,10 @@ import bread.mod.breadmod.block.entity.ToasterBlockEntity
 import bread.mod.breadmod.client.gui.ToolGunOverlay
 import bread.mod.breadmod.client.gui.WarOverlay
 import bread.mod.breadmod.client.render.ToasterRenderer
+import bread.mod.breadmod.client.render.entity.FakePlayerRenderer
 import bread.mod.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import bread.mod.breadmod.command.client.AltToolGunModelCommand
+import bread.mod.breadmod.entity.FakePlayer
 import bread.mod.breadmod.entity.PrimedHappyBlock
 import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
@@ -40,7 +42,15 @@ object ClientEvents {
         EntityRendererRegistry.register<PrimedHappyBlock>(ModEntityTypes.HAPPY_BLOCK_ENTITY) { context ->
             PrimedHappyBlockRenderer(context)
         }
+        EntityRendererRegistry.register<FakePlayer>(ModEntityTypes.FAKE_PLAYER) { context ->
+            FakePlayerRenderer(context)
+        }
     }
+
+    // todo probably won't need this
+//    fun registerEntityModelLayers() {
+//        EntityModelLayerRegistry.register(ChefHatModel.HAT_LAYER) { ChefHatModel.createLayerDefinition() }
+//    }
 
     fun registerBlockEntityRenderers() {
         LifecycleEvent.SETUP.register {

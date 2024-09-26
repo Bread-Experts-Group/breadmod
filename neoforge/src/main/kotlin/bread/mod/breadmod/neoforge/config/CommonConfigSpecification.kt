@@ -3,6 +3,7 @@ package bread.mod.breadmod.neoforge.config
 import net.neoforged.neoforge.common.ModConfigSpec
 
 
+@Deprecated("use BreadModConfig instead.")
 object CommonConfigSpecification {
     private val BUILDER = ModConfigSpec.Builder()
     val SPECIFICATION: ModConfigSpec

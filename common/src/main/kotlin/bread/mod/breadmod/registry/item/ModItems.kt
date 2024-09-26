@@ -9,8 +9,9 @@ import bread.mod.breadmod.datagen.recipe.special.DataGenerateToastingRecipe
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
 import bread.mod.breadmod.item.*
 import bread.mod.breadmod.item.TieredBreadAmuletItem.BreadAmuletType
-import bread.mod.breadmod.item.armor.ArmorMaterials
+import bread.mod.breadmod.item.armor.ModArmorMaterials
 import bread.mod.breadmod.item.armor.BreadArmorItem
+import bread.mod.breadmod.item.armor.ChefHatItem
 import bread.mod.breadmod.item.tool.KnifeItem
 import bread.mod.breadmod.item.tool.ToolTiers
 import bread.mod.breadmod.item.toolGun.ToolGunItem
@@ -146,6 +147,8 @@ object ModItems {
         TieredBreadAmuletItem(BreadAmuletType.NORMAL, 500)
     }
 
+    val CHEF_HAT: RegistrySupplier<ArmorItem> = ITEM_REGISTRY.register("chef_hat") { ChefHatItem() }
+
     // todo port over features (applies to all 4 bread armors)
     @DataGenerateItemModel(DataGenerateItemModel.Type.DOUBLE_LAYERED)
     @DataGenerateTag("minecraft:item", "minecraft:dyeable")
@@ -178,26 +181,26 @@ object ModItems {
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Reinforced Bread Helmet")
     val REINFORCED_BREAD_HELMET: RegistrySupplier<ArmorItem> = ITEM_REGISTRY.register("reinforced_bread_helmet") {
-        ArmorItem(ArmorMaterials.RF_BREAD, Type.HELMET, Item.Properties().stacksTo(1))
+        ArmorItem(ModArmorMaterials.RF_BREAD, Type.HELMET, Item.Properties().stacksTo(1))
     }
 
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Reinforced Bread Chestplate")
     val REINFORCED_BREAD_CHESTPLATE: RegistrySupplier<ArmorItem> =
         ITEM_REGISTRY.register("reinforced_bread_chestplate") {
-            ArmorItem(ArmorMaterials.RF_BREAD, Type.CHESTPLATE, Item.Properties().stacksTo(1))
+            ArmorItem(ModArmorMaterials.RF_BREAD, Type.CHESTPLATE, Item.Properties().stacksTo(1))
         }
 
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Reinforced Bread Leggings")
     val REINFORCED_BREAD_LEGGINGS: RegistrySupplier<ArmorItem> = ITEM_REGISTRY.register("reinforced_bread_leggings") {
-        ArmorItem(ArmorMaterials.RF_BREAD, Type.LEGGINGS, Item.Properties().stacksTo(1))
+        ArmorItem(ModArmorMaterials.RF_BREAD, Type.LEGGINGS, Item.Properties().stacksTo(1))
     }
 
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Reinforced Bread Boots")
     val REINFORCED_BREAD_BOOTS: RegistrySupplier<ArmorItem> = ITEM_REGISTRY.register("reinforced_bread_boots") {
-        ArmorItem(ArmorMaterials.RF_BREAD, Type.BOOTS, Item.Properties().stacksTo(1))
+        ArmorItem(ModArmorMaterials.RF_BREAD, Type.BOOTS, Item.Properties().stacksTo(1))
     }
 
     @DataGenerateItemModel(DataGenerateItemModel.Type.HANDHELD)

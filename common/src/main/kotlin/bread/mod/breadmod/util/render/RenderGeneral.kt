@@ -3,23 +3,30 @@ package bread.mod.breadmod.util.render
 import bread.mod.breadmod.ModMainCommon.modLocation
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Axis
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.model.PlayerModel
+import net.minecraft.client.model.geom.ModelLayers
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ItemBlockRenderTypes
+import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect
+import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
+import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -27,10 +34,12 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Vector3f
 import org.joml.Vector4f
+import java.awt.Color
+import java.lang.Math.clamp
 
 @Internal
 val rgMinecraft: Minecraft = Minecraft.getInstance()
-internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, PoseStack, Camera) -> Boolean>>
+internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, PoseStack, Camera, Float, LevelRenderer) -> Boolean>>
 
 var skyColorMixinActive: Boolean = false
 var redness: Float = 1f
@@ -46,6 +55,16 @@ var redness: Float = 1f
 //            rgMinecraft.window.screenHeight.toDouble()
 // --Commented out by Inspection STOP (9/10/2024 03:54)
 
+/* millis info
+    val millis = Util.getMillis()
+
+    // clamped decimal millis //
+    println(clamp((millis.toFloat() / 300f % 2), 0f, 2f))
+
+    // constant millis divided by a number //
+    Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
+ */
+
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
  *
@@ -54,6 +73,81 @@ var redness: Float = 1f
  */
 val renderBuffer: RenderBuffer = mutableListOf()
 
+fun playerRenderTest(
+    player: Player,
+    x: Double,
+    y: Double,
+    z: Double,
+    yRot: Float,
+    limbSwing: Float,
+//    headYaw: Float,
+//    headPitch: Float
+) = renderBuffer.add(
+    mutableListOf(
+        0.8F,
+        0F,
+        1F
+    ) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
+        val currentOpacity = mutableList[0]
+        val redValue = mutableList[1]
+        val greenValue = mutableList[2]
+        val connection = rgMinecraft.connection!!
+        val playerInfo = connection.getPlayerInfo(player.uuid)!!
+        val playerSkin = playerInfo.skin
+        val texture = playerSkin.texture
+        val modelType = playerSkin.model
+        val playerModel = PlayerModel<Player>(
+            rgMinecraft.entityModels.bakeLayer(
+                if (modelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
+            ),
+            modelType == PlayerSkin.Model.SLIM
+        )
+        val consumer = rgMinecraft.renderBuffers().bufferSource().getBuffer(RenderType.entityTranslucent(texture))
+        val packedOverlay = LivingEntityRenderer.getOverlayCoords(player, 0f)
+
+        if (currentOpacity > 0) {
+            poseStack.pushPose()
+            poseStack.mulPose(Axis.YN.rotationDegrees(-yRot))
+            poseStack.translate(0.0, 0.0, -0.3)
+            poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
+            poseStack.translate(-camera.position.x + x, -camera.position.y + y, -camera.position.z + z)
+            poseStack.translate(0.0, 1.4, 0.0)
+            poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+            poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
+            poseStack.scaleFlat(0.9375f)
+            playerModel.setupAnim(
+                player,
+                limbSwing,
+                0.55f,
+                -1f, 0f, 0f
+//        (headYaw - headYaw) + player.getViewYRot(partialTick),
+//        (headPitch - headPitch) + player.getViewXRot(partialTick)
+            )
+
+            // clamp((millis.toFloat() / 300f) % 2f, 0f, 2f)
+
+            mutableList[1] = clamp(redValue + 0.05f, 0f, 1f)
+            mutableList[2] = clamp(greenValue - 0.05f, 0f, 1f)
+
+            playerModel.young = false
+            playerModel.renderToBuffer(
+                poseStack,
+                consumer,
+                15728880,
+                packedOverlay,
+                Color(
+                    redValue,
+                    greenValue,
+                    0.1f,
+                    clamp(currentOpacity, 0f, 1f)
+                ).rgb
+            )
+            poseStack.popPose()
+            mutableList[0] = currentOpacity - 0.1f * rgMinecraft.timer.realtimeDeltaTicks
+            false
+        } else true
+    })
+
 /**
  * Draws a line from between [start] and [end], translated according to the current [LocalPlayer]'s position.
 // * @see breadmod.network.clientbound.BeamPacket
@@ -61,7 +155,7 @@ val renderBuffer: RenderBuffer = mutableListOf()
  * @since 1.0.0
  */
 fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
-    renderBuffer.add(mutableListOf(1F) to { mutableList, poseStack, camera ->
+    renderBuffer.add(mutableListOf(1F) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
         val currentOpacity = mutableList[0]
         val level = rgMinecraft.level
         val player = rgMinecraft.player

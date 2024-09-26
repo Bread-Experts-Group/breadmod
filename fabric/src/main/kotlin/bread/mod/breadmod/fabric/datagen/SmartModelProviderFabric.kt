@@ -1,6 +1,9 @@
 package bread.mod.breadmod.fabric.datagen
 
+import bread.mod.breadmod.datagen.model.block.DataGenerateButtonBlock
+import bread.mod.breadmod.datagen.model.block.DataGenerateLayerBlock
 import bread.mod.breadmod.datagen.model.block.SmartBlockModelProvider
+import bread.mod.breadmod.datagen.model.block.orientable.DataGenerateOrientableBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockAndItemModel
 import bread.mod.breadmod.datagen.model.block.simple.DataGenerateCubeAllBlockModel
 import bread.mod.breadmod.datagen.model.block.singleTexture.DataGenerateSingleTextureBlockAndItemModel
@@ -75,6 +78,22 @@ class SmartModelProviderFabric(
                                 )
                             }
 
+                            is DataGenerateButtonBlock -> {
+                                p0.blockStateOutput.accept(
+                                    BlockModelGenerators.createButton(
+                                        actual.block,
+                                        ModelLocationUtils.getModelLocation(actual.block),
+                                        ModelLocationUtils.getModelLocation(actual.block, "_pressed")
+                                    )
+                                )
+                            }
+
+                            // todo do this later
+                            is DataGenerateLayerBlock -> null
+
+                            // todo do this later
+                            is DataGenerateOrientableBlockAndItemModel -> null
+
                             else -> throw UnsupportedOperationException(data.first.annotationClass.qualifiedName)
                         }
                     }
@@ -118,7 +137,8 @@ class SmartModelProviderFabric(
                             }
 
                             is DataGenerateCubeAllBlockModel, is DataGenerateWithExistingParentBlockModel,
-                            is DataGenerateSingleTextureBlockModel -> null
+                            is DataGenerateSingleTextureBlockModel, is DataGenerateOrientableBlockAndItemModel,
+                            is DataGenerateButtonBlock, is DataGenerateLayerBlock -> null
 
                             else -> throw UnsupportedOperationException(data.first.annotationClass.qualifiedName)
                         }

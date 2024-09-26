@@ -1,12 +1,15 @@
 package bread.mod.breadmod.registry
 
 import bread.mod.breadmod.command.server.WarTimerCommand
+import bread.mod.breadmod.entity.FakePlayer
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerSynchronization
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerToggle
+import bread.mod.breadmod.registry.entity.ModEntityTypes
 import bread.mod.breadmod.util.ModDamageTypes
 import dev.architectury.event.events.common.CommandRegistrationEvent
 import dev.architectury.event.events.common.TickEvent
 import dev.architectury.networking.NetworkManager
+import dev.architectury.registry.level.entity.EntityAttributeRegistry
 import net.minecraft.commands.Commands
 import net.minecraft.server.level.ServerPlayer
 
@@ -18,6 +21,10 @@ internal object CommonEvents {
                     .then(WarTimerCommand.register())
             )
         }
+
+    fun registerEntityAttributes() {
+        EntityAttributeRegistry.register(ModEntityTypes.FAKE_PLAYER) { FakePlayer.createAttributes() }
+    }
 
     /**
      * A map holding a war timer for every player on the server.

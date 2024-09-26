@@ -53,6 +53,18 @@ object ModSounds {
     @DataGenerateLanguage("en_us", "War Timer increases")
     val WAR_TIMER_UP: RegistrySupplier<SoundEvent> = registerSoundEvents("war_timer_up")
 
+    @DataGenerateSound("mach_one")
+    val MACH_ONE: RegistrySupplier<SoundEvent> = registerSoundEvents("mach_one")
+
+    @DataGenerateSound("mach_two")
+    val MACH_TWO: RegistrySupplier<SoundEvent> = registerSoundEvents("mach_two")
+
+    @DataGenerateSound("mach_three")
+    val MACH_THREE: RegistrySupplier<SoundEvent> = registerSoundEvents("mach_three")
+
+    @DataGenerateSound("mach_four")
+    val MACH_FOUR: RegistrySupplier<SoundEvent> = registerSoundEvents("mach_four")
+
     private fun registerSoundEvents(name: String): RegistrySupplier<SoundEvent> {
         return SOUND_REGISTRY.register(name) {
             SoundEvent.createVariableRangeEvent(modLocation(name))

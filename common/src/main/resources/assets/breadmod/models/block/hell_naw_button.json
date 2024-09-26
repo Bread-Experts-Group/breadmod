@@ -3,8 +3,8 @@
 	"texture_size": [32, 32],
 	"parent": "block/block",
 	"textures": {
-		"0": "breadmod:block/hell_naw",
-		"particle": "breadmod:block/hell_naw"
+		"0": "breadmod:block/hell_naw_button",
+		"particle": "breadmod:block/hell_naw_button"
 	},
 	"elements": [
 		{

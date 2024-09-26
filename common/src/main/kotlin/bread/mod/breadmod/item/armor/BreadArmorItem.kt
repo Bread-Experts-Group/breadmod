@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager
 import java.awt.Color
 
 class BreadArmorItem(type: Type) : ArmorItem(
-    ArmorMaterials.BREAD, type, Properties()
+    ModArmorMaterials.BREAD, type, Properties()
         .component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
         .component(DataComponents.DYED_COLOR, DyedItemColor(Color(216, 196, 170).rgb, false))
         .stacksTo(1)
@@ -16,14 +16,14 @@ class BreadArmorItem(type: Type) : ArmorItem(
     private val logger = LogManager.getLogger()
 
     // todo potion effects can be added and read with components, just gotta figure out how
-    init {
+//    init {
 //        ItemStack(this).set(DataComponents.POTION_CONTENTS, PotionContents(Potions.LUCK))
 //        PotionContents.createItemStack(this, Potions.LUCK)
 
-        this.components().forEach {
-            logger.info("Component listing: ${it.type}, ${it.value}")
-        }
-    }
+//        this.components().forEach {
+//            logger.info("Component listing: ${it.type}, ${it.value}")
+//        }
+//    }
 
     // todo go through all this and update it to work
     /*
