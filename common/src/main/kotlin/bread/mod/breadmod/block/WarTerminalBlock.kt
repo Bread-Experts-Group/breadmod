@@ -2,7 +2,7 @@ package bread.mod.breadmod.block
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.command.server.WarTimerCommand.increaseTime
-import bread.mod.breadmod.registry.CommonEvents.warTimerMap
+import bread.mod.breadmod.registry.CommonEventRegistry.warTimerMap
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction

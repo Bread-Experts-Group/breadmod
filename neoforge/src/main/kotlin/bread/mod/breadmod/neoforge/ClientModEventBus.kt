@@ -2,12 +2,24 @@ package bread.mod.breadmod.neoforge
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
+import bread.mod.breadmod.client.model.ChefHatArmorLayer
+import bread.mod.breadmod.registry.item.ModItems
+import bread.mod.breadmod.util.render.rgMinecraft
+import net.minecraft.client.model.EntityModel
+import net.minecraft.client.renderer.entity.LivingEntityRenderer
+import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.client.resources.model.ModelResourceLocation
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.component.DyedItemColor
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.client.event.ModelEvent
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent
 import net.neoforged.neoforge.client.model.generators.ModelProvider
+import java.awt.Color
 
 @Suppress("unused")
 @EventBusSubscriber(modid = ModMainCommon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = [Dist.CLIENT])
@@ -29,6 +41,55 @@ internal object ClientModEventBus {
         event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
         event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/sphere"))
         event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
+    }
+
+    @SubscribeEvent
+    fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
+        event.register(
+            { stack, i ->
+                if (i > 0) -1 else DyedItemColor.getOrDefault(
+                    stack,
+                    Color.WHITE.rgb
+                )
+            },
+            ModItems.CHEF_HAT.get()
+        )
+    }
+
+    @SubscribeEvent
+    fun registerEntityLayers(event: EntityRenderersEvent.AddLayers) {
+        val dispatcher = rgMinecraft.entityRenderDispatcher
+
+        for (skin: PlayerSkin.Model in event.skins) {
+            val entity: LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>? =
+                event.getSkin(skin)
+
+            entity?.addLayer(ChefHatArmorLayer(entity))
+        }
+
+//    val test = event.getRenderer(EntityType.FOX) as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+
+        addHatLayer(EntityType.ZOMBIE, event)
+        addHatLayer(EntityType.ARMOR_STAND, event)
+        addHatLayer(EntityType.FOX, event)
+
+//        for (renderer: EntityRenderer<*> in dispatcher.renderers.values) {
+//            if (renderer !is LivingEntityRenderer<*, *>) return
+//            if (renderer.model !is AgeableListModel) return
+//            println(renderer)
+//
+//            val livingEntity = renderer as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+//            livingEntity.addLayer(ChefHatArmorLayer(livingEntity))
+//        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun addHatLayer(type: EntityType<*>, event: EntityRenderersEvent.AddLayers) {
+        if (event.getRenderer(type) is LivingEntityRenderer<*, *>) {
+            val renderer = event.getRenderer(type) as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+//        val renderer = dispatcher.renderers[type] as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+            renderer.addLayer(ChefHatArmorLayer(renderer))
+        }
     }
 
     private fun modModelLoc(id: String) =

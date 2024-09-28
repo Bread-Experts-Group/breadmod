@@ -1,4 +1,4 @@
-package bread.mod.breadmod.util.handler
+package bread.mod.breadmod.util.forge_handlers.fluid
 
 import dev.architectury.fluid.FluidStack
 import dev.architectury.hooks.fluid.FluidStackHooks

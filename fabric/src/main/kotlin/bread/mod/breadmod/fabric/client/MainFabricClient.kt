@@ -2,14 +2,34 @@ package bread.mod.breadmod.fabric.client
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
+import bread.mod.breadmod.client.model.ChefHatArmorLayer
+import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.util.render.renderBuffer
 import bread.mod.breadmod.util.render.rgMinecraft
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents
+import net.minecraft.client.model.EntityModel
+import net.minecraft.client.renderer.entity.LivingEntityRenderer
+import net.minecraft.client.renderer.entity.layers.RenderLayer
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.animal.Fox
+import net.minecraft.world.entity.decoration.ArmorStand
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.component.DyedItemColor
+import java.awt.Color
 
+/**
+ * Mod Client initializer for Fabric.
+ */
+@Suppress("UNCHECKED_CAST")
 class MainFabricClient : ClientModInitializer {
 
+    /**
+     * Initializes all client mod classes for breadmod.
+     */
     override fun onInitializeClient() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
         ModMainCommon.initClient()
@@ -32,6 +52,32 @@ class MainFabricClient : ClientModInitializer {
                 )
             }
         }
+
+        // Register model layers
+        LivingEntityFeatureRendererRegistrationCallback.EVENT.register { _, renderer, event, _ ->
+            addHatLayer<Player>(renderer, event)
+            addHatLayer<ArmorStand>(renderer, event)
+            addHatLayer<Fox>(renderer, event)
+        }
+
+        // Register item colors
+        ColorProviderRegistry.ITEM.register(
+            { stack, i ->
+                if (i > 0) -1 else DyedItemColor.getOrDefault(
+                    stack,
+                    Color.WHITE.rgb
+                )
+            },
+            ModItems.CHEF_HAT.get()
+        )
+    }
+
+    private fun <T : LivingEntity> addHatLayer(
+        renderer: LivingEntityRenderer<*, *>,
+        event: LivingEntityFeatureRendererRegistrationCallback.RegistrationHelper
+    ) {
+        val livingRenderer = renderer as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+        event.register(ChefHatArmorLayer(livingRenderer) as RenderLayer<T, EntityModel<T>>)
     }
 
     private class AdditionalModelLoader : ModelLoadingPlugin {

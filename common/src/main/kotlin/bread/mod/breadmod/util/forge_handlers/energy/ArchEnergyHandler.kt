@@ -1,4 +1,4 @@
-package bread.mod.breadmod.util.handler
+package bread.mod.breadmod.util.forge_handlers.energy
 
 /**
  * Bridge interface for NeoForge's energy capability.

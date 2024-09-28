@@ -4,6 +4,7 @@ import bread.mod.breadmod.ModMainCommon.modLocation
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.damagesource.DamageType
 import net.minecraft.world.level.Level
@@ -17,14 +18,17 @@ internal data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaust
 
     fun source(level: Level) = source(level.registryAccess())
 
-    fun source(registryAccess: RegistryAccess): DamageSource =
+    private fun source(registryAccess: RegistryAccess): DamageSource =
         DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key))
 
-//    fun registryName(): ResourceLocation = key.location()
-//    fun msgID(): String = registryName().namespace + "." + registryName().path
-//    fun translationKey(): String = "death.attack." + msgID()
+    fun registryName(): ResourceLocation = key.location()
+    fun msgID(): String = registryName().namespace + "." + registryName().path
+    fun translationKey(): String = "death.attack." + msgID()
 
     companion object {
+        // todo java.lang.IllegalArgumentException: TIMER_RAN_OUT must be of type dev.architectury.registry.registries.RegistrySupplier.
+        // todo support for different types of values
+//        @DataGenerateLanguage("en_us", "%1\$s ran out of time!")
         val TIMER_RAN_OUT: ModDamageTypes = ModDamageTypes("timer")
     }
 }

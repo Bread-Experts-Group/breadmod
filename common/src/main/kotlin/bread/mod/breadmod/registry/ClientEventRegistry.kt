@@ -1,14 +1,11 @@
 package bread.mod.breadmod.registry
 
-import bread.mod.breadmod.block.entity.ToasterBlockEntity
 import bread.mod.breadmod.client.gui.ToolGunOverlay
 import bread.mod.breadmod.client.gui.WarOverlay
 import bread.mod.breadmod.client.render.ToasterRenderer
 import bread.mod.breadmod.client.render.entity.FakePlayerRenderer
 import bread.mod.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import bread.mod.breadmod.command.client.AltToolGunModelCommand
-import bread.mod.breadmod.entity.FakePlayer
-import bread.mod.breadmod.entity.PrimedHappyBlock
 import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.entity.ModEntityTypes
@@ -25,10 +22,9 @@ import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 
-object ClientEvents {
+internal object ClientEventRegistry {
+    // todo fix commands being broken on fabric (alternative: separate command registration for both platforms)
     fun registerClientCommands() {
         ClientCommandRegistrationEvent.EVENT.register { dispatcher, sourceStack ->
             dispatcher.register(
@@ -39,27 +35,13 @@ object ClientEvents {
     }
 
     fun registerEntityRenderers() {
-        EntityRendererRegistry.register<PrimedHappyBlock>(ModEntityTypes.HAPPY_BLOCK_ENTITY) { context ->
-            PrimedHappyBlockRenderer(context)
-        }
-        EntityRendererRegistry.register<FakePlayer>(ModEntityTypes.FAKE_PLAYER) { context ->
-            FakePlayerRenderer(context)
-        }
+        EntityRendererRegistry.register(ModEntityTypes.HAPPY_BLOCK_ENTITY) { context -> PrimedHappyBlockRenderer(context) }
+        EntityRendererRegistry.register(ModEntityTypes.FAKE_PLAYER) { context -> FakePlayerRenderer(context) }
     }
-
-    // todo probably won't need this
-//    fun registerEntityModelLayers() {
-//        EntityModelLayerRegistry.register(ChefHatModel.HAT_LAYER) { ChefHatModel.createLayerDefinition() }
-//    }
 
     fun registerBlockEntityRenderers() {
         LifecycleEvent.SETUP.register {
-            BlockEntityRendererRegistry.register<ToasterBlockEntity>(
-                ModBlockEntityTypes.TOASTER.get(),
-                object : BlockEntityRendererProvider<ToasterBlockEntity> {
-                    override fun create(context: BlockEntityRendererProvider.Context): BlockEntityRenderer<ToasterBlockEntity> =
-                        ToasterRenderer(context)
-                })
+            BlockEntityRendererRegistry.register(ModBlockEntityTypes.TOASTER.get()) { context -> ToasterRenderer(context) }
         }
     }
 

@@ -1,7 +1,7 @@
 package bread.mod.breadmod.neoforge.util
 
-import bread.mod.breadmod.util.handler.ArchFluidHandler
-import bread.mod.breadmod.util.handler.ArchFluidStorage
+import bread.mod.breadmod.util.forge_handlers.fluid.ArchFluidHandler
+import bread.mod.breadmod.util.forge_handlers.fluid.ArchFluidStorage
 import dev.architectury.hooks.fluid.forge.FluidStackHooksForge
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler

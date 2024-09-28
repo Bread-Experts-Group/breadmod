@@ -1,8 +1,9 @@
 package bread.mod.breadmod
 
 import bread.mod.breadmod.logging.ConsoleColorAppender
-import bread.mod.breadmod.registry.ClientEvents
+import bread.mod.breadmod.registry.ClientEventRegistry
 import bread.mod.breadmod.registry.Registry.registerAll
+import bread.mod.breadmod.registry.Registry.runAnnotations
 import bread.mod.breadmod.registry.config.ClientConfig
 import dev.architectury.platform.Platform
 import dev.architectury.utils.Env
@@ -25,6 +26,9 @@ object ModMainCommon {
     fun modTranslatable(type: String = "misc", vararg path: String, args: List<Any> = listOf()): MutableComponent =
         Component.translatable("$type.$MOD_ID.${path.joinToString(".")}", *args.toTypedArray())
 
+    /**
+     * Initializes all common specific classes.
+     */
     fun init() {
         if (Platform.isDevelopmentEnvironment() || Platform.getEnvironment() == Env.SERVER) {
             val ctx = LogManager.getContext(false) as LoggerContext
@@ -40,13 +44,18 @@ object ModMainCommon {
         registerAll()
     }
 
+    /**
+     * Initializes all client specific classes.
+     */
     fun initClient() {
         ClientConfig.initialize()
-        ClientEvents.registerOverlays()
-        ClientEvents.registerClientCommands()
-        ClientEvents.registerEntityRenderers()
+        ClientEventRegistry.registerOverlays()
+        ClientEventRegistry.registerClientCommands()
+        ClientEventRegistry.registerEntityRenderers()
 //        ClientEvents.registerKeyEvent()
-        ClientEvents.registerMouseEvent()
-        ClientEvents.registerBlockEntityRenderers()
+        ClientEventRegistry.registerMouseEvent()
+        ClientEventRegistry.registerBlockEntityRenderers()
+
+        runAnnotations()
     }
 }

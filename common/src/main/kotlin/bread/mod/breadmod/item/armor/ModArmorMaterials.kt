@@ -58,4 +58,20 @@ object ModArmorMaterials {
             0.5f // Knockback Resistance
         )
     }
+
+    val CHEF: Holder<ArmorMaterial> = ARMOR_REGISTRY.register("chef") {
+        ArmorMaterial(
+            Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
+                map[ArmorItem.Type.HELMET] = 2
+            },
+            5,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            { Ingredient.of(Items.LEATHER) },
+            listOf(
+                ArmorMaterial.Layer(modLocation("chef"), "", true)
+            ),
+            1f,
+            1f
+        )
+    }
 }

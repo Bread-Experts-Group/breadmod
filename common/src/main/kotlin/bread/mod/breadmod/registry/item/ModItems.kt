@@ -9,9 +9,9 @@ import bread.mod.breadmod.datagen.recipe.special.DataGenerateToastingRecipe
 import bread.mod.breadmod.datagen.tag.DataGenerateTag
 import bread.mod.breadmod.item.*
 import bread.mod.breadmod.item.TieredBreadAmuletItem.BreadAmuletType
-import bread.mod.breadmod.item.armor.ModArmorMaterials
 import bread.mod.breadmod.item.armor.BreadArmorItem
 import bread.mod.breadmod.item.armor.ChefHatItem
+import bread.mod.breadmod.item.armor.ModArmorMaterials
 import bread.mod.breadmod.item.tool.KnifeItem
 import bread.mod.breadmod.item.tool.ToolTiers
 import bread.mod.breadmod.item.toolGun.ToolGunItem
@@ -140,13 +140,17 @@ object ModItems {
         Item(Item.Properties().jukeboxPlayable(RecordTags.TEST_SOUND).stacksTo(1))
     }
 
-    // todo port over features (when config exists)
+    // todo port over features (config exists now)
     @DataGenerateItemModel
     @DataGenerateLanguage("en_us", "Bread Amulet")
     val BREAD_AMULET: RegistrySupplier<TieredBreadAmuletItem> = ITEM_REGISTRY.register("bread_amulet") {
         TieredBreadAmuletItem(BreadAmuletType.NORMAL, 500)
     }
 
+    @DataGenerateItemModel
+    @DataGenerateLanguage("en_us", "Chef Hat")
+    @DataGenerateTooltipLang("en_us", "IS THAT A PIZZA TOWER REFERENCE???")
+    @DataGenerateTag("minecraft:item", "minecraft:dyeable")
     val CHEF_HAT: RegistrySupplier<ArmorItem> = ITEM_REGISTRY.register("chef_hat") { ChefHatItem() }
 
     // todo port over features (applies to all 4 bread armors)

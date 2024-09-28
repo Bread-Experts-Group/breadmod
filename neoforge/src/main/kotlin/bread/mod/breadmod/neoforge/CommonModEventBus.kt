@@ -13,9 +13,9 @@ import bread.mod.breadmod.neoforge.util.EnergyStorageWrapper
 import bread.mod.breadmod.neoforge.util.FluidStackWrapper
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.block.ModBlocks
-import bread.mod.breadmod.util.CapabilityTypes
-import bread.mod.breadmod.util.handler.ArchEnergyStorage
-import bread.mod.breadmod.util.handler.ArchFluidStorage
+import bread.mod.breadmod.util.forge_handlers.CapabilityTypes
+import bread.mod.breadmod.util.forge_handlers.energy.ArchEnergyStorage
+import bread.mod.breadmod.util.forge_handlers.fluid.ArchFluidStorage
 import net.minecraft.world.inventory.CraftingContainer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber

@@ -1,6 +1,6 @@
 package bread.mod.breadmod.neoforge.util
 
-import bread.mod.breadmod.util.handler.ArchEnergyStorage
+import bread.mod.breadmod.util.forge_handlers.energy.ArchEnergyStorage
 import net.neoforged.neoforge.energy.IEnergyStorage
 
 class EnergyStorageWrapper(

@@ -1,24 +1,52 @@
 package bread.mod.breadmod.item.armor
 
+import bread.mod.breadmod.ModMainCommon.modTranslatable
+import bread.mod.breadmod.client.model.ChefHatArmorLayer
+import bread.mod.breadmod.client.model.ChefHatModel
 import bread.mod.breadmod.client.sound.MachSoundInstance
 import bread.mod.breadmod.registry.sound.ModSounds
 import bread.mod.breadmod.util.render.playerRenderTest
 import bread.mod.breadmod.util.render.rgMinecraft
 import dev.architectury.platform.Platform
+import net.minecraft.ChatFormatting
 import net.minecraft.client.player.LocalPlayer
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.ArmorItem
-import net.minecraft.world.item.ArmorMaterials
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 
-// todo model and texture, colorable armor type
-class ChefHatItem : ArmorItem(ArmorMaterials.IRON, Type.HELMET, Properties()) {
-    var sprintTimer = 0
+// todo currently using ArmorItem with an empty texture to be able to dye and wear the item (hacky solution tbh).
+//  Needs to be a generic Equipable item that allows dyeing and not render a texture onto the player head since this item uses a custom model.
 
+/**
+ * Chef Hat, inspired from the game Pizza Tower by Tour De Pizza.
+ *
+ * @author Logan Mclean
+ * @since 1.0.0
+ * @see ChefHatArmorLayer
+ * @see ChefHatModel
+ */
+class ChefHatItem : ArmorItem(ModArmorMaterials.CHEF, Type.HELMET, Properties().stacksTo(1)) {
+    private var sprintTimer = 0
+
+    override fun appendHoverText(
+        stack: ItemStack,
+        context: TooltipContext,
+        tooltipComponents: MutableList<Component>,
+        tooltipFlag: TooltipFlag
+    ) {
+        tooltipComponents.add(
+            modTranslatable("item", "chef_hat", "tooltip")
+                .withStyle(ChatFormatting.LIGHT_PURPLE)
+        )
+    }
+
+    // todo needs a complete rewrite for speed and sound logic, also rendering. (causes disconnect on server too)
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
         val platformSlot = if (Platform.isForgeLike()) 39 else 3
         if (!level.isClientSide && slotId == platformSlot) {
@@ -59,7 +87,7 @@ class ChefHatItem : ArmorItem(ArmorMaterials.IRON, Type.HELMET, Properties()) {
                     soundManager.play(machFourSound)
                 } else if (sprintTimer > 71) machThreeSound.allowedToLoop = false
                 if (sprintTimer >= 20) {
-                    val partialTick = rgMinecraft.timer.realtimeDeltaTicks
+//                    val partialTick = rgMinecraft.timer.realtimeDeltaTicks
 //                    val random = RandomSource.create()
                     playerRenderTest(
                         entity,

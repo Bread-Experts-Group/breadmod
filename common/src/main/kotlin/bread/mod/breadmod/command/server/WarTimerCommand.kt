@@ -2,8 +2,8 @@ package bread.mod.breadmod.command.server
 
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerIncrement
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerToggle
-import bread.mod.breadmod.registry.CommonEvents
-import bread.mod.breadmod.registry.CommonEvents.warTimerMap
+import bread.mod.breadmod.registry.CommonEventRegistry
+import bread.mod.breadmod.registry.CommonEventRegistry.warTimerMap
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.ArgumentBuilder
 import dev.architectury.networking.NetworkManager
@@ -23,7 +23,7 @@ internal object WarTimerCommand {
             )
 
     private fun reset(player: ServerPlayer) {
-        warTimerMap[player] = CommonEvents.WarTimerData()
+        warTimerMap[player] = CommonEventRegistry.WarTimerData()
         NetworkManager.sendToPlayer(player, WarTimerToggle(true))
     }
 
@@ -41,7 +41,7 @@ internal object WarTimerCommand {
                 Command.SINGLE_SUCCESS
             }
 
-    internal fun increaseTime(player: ServerPlayer, data: CommonEvents.WarTimerData) {
+    internal fun increaseTime(player: ServerPlayer, data: CommonEventRegistry.WarTimerData) {
         data.increaseTime += 30
         NetworkManager.sendToPlayer(player, WarTimerIncrement(true, data.increaseTime))
     }

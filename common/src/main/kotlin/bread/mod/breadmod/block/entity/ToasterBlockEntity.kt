@@ -4,10 +4,10 @@ import bread.mod.breadmod.recipe.toaster.ToasterInput
 import bread.mod.breadmod.recipe.toaster.ToasterRecipe
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
 import bread.mod.breadmod.registry.recipe.ModRecipeTypes
-import bread.mod.breadmod.util.CapabilityTypes
-import bread.mod.breadmod.util.ForgeCapableObject
-import bread.mod.breadmod.util.handler.ArchEnergyStorage
-import bread.mod.breadmod.util.handler.ArchFluidStorage
+import bread.mod.breadmod.util.forge_handlers.CapabilityTypes
+import bread.mod.breadmod.util.forge_handlers.ForgeCapableObject
+import bread.mod.breadmod.util.forge_handlers.energy.ArchEnergyStorage
+import bread.mod.breadmod.util.forge_handlers.fluid.ArchFluidStorage
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList

@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.FireBlock
 
 internal object Registry {
-    private fun runAnnotations() {
+    fun runAnnotations() {
         LibraryScanner(ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`)
             .getObjectPropertiesAnnotatedWith<FlammableBlock>()
             .forEach { (_, data) ->
@@ -130,12 +130,11 @@ internal object Registry {
         // todo figure this out later (PaintingVariants.class)
 //        ModPainting.PAINTING_VARIANT_REGISTRY.register()
         registerNetworking()
-        CommonEvents.registerServerTickEvent()
-        CommonEvents.registerCommands()
-        CommonEvents.registerEntityAttributes()
+        CommonEventRegistry.registerServerTickEvent()
+        CommonEventRegistry.registerCommands()
+        CommonEventRegistry.registerEntityAttributes()
 //        registerClientTick()
 
-        runAnnotations()
         runLifecycleSetupStage()
     }
 }

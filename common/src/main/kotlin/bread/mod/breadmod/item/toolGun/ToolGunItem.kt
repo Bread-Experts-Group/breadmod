@@ -2,6 +2,7 @@ package bread.mod.breadmod.item.toolGun
 
 import bread.mod.breadmod.entity.FakePlayer
 import bread.mod.breadmod.registry.item.IRegisterSpecialCreativeTab
+import bread.mod.breadmod.registry.item.ModItems
 import bread.mod.breadmod.registry.menu.ModCreativeTabs
 import bread.mod.breadmod.util.RaycastResult.Companion.entityRaycast
 import bread.mod.breadmod.util.render.playerRenderTest
@@ -11,6 +12,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
@@ -47,6 +49,7 @@ internal class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCre
         fakePlayerEntity.owner = player
         fakePlayerEntity.yRot = player.yRot
         fakePlayerEntity.yHeadRot = player.yHeadRot
+        fakePlayerEntity.setItemSlot(EquipmentSlot.HEAD, ModItems.CHEF_HAT.get().defaultInstance)
         level.addFreshEntity(fakePlayerEntity)
         if (level is ServerLevel) {
             level.entityRaycast(

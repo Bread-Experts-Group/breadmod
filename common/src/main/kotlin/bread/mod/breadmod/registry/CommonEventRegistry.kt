@@ -13,7 +13,8 @@ import dev.architectury.registry.level.entity.EntityAttributeRegistry
 import net.minecraft.commands.Commands
 import net.minecraft.server.level.ServerPlayer
 
-internal object CommonEvents {
+internal object CommonEventRegistry {
+    // todo fix commands being broken on fabric (alternative: separate command registration for both platforms)
     fun registerCommands() =
         CommandRegistrationEvent.EVENT.register { dispatcher, _, _ ->
             dispatcher.register(

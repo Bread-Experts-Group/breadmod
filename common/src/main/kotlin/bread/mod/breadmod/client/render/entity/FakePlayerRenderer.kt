@@ -14,7 +14,7 @@ import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.resources.ResourceLocation
 
 class FakePlayerRenderer(
-    val context: EntityRendererProvider.Context,
+    context: EntityRendererProvider.Context,
 ) : LivingEntityRenderer<FakePlayer, PlayerModel<FakePlayer>>(
     context,
     PlayerModel<FakePlayer>(
@@ -23,7 +23,7 @@ class FakePlayerRenderer(
     ), 0.5f
 ) {
     companion object {
-        var useSlimModel = false
+        private var useSlimModel: Boolean = true
     }
 
 //    override fun render(
@@ -73,7 +73,7 @@ class FakePlayerRenderer(
         buffer: MultiBufferSource,
         packedLight: Int
     ) {
-        useSlimModel = isOwnerModelSlim(entity)
+//        model.body.translateAndRotate(poseStack)
 //        val level = rgMinecraft.level ?: return
 //        try {
 //            val owner = level.getEntity(entity.getOwnerID())
@@ -96,6 +96,6 @@ class FakePlayerRenderer(
     }
 
     override fun getTextureLocation(entity: FakePlayer): ResourceLocation =
-        if (getPlayerInfo(entity) != null) getPlayerInfo(entity)!!.skin!!.texture
+        if (getPlayerInfo(entity) != null) getPlayerInfo(entity)!!.skin.texture
         else DefaultPlayerSkin.get(entity.getOwnerUUID()).texture
 }
