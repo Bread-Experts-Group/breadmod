@@ -1,9 +1,0 @@
-{
-  "loader": "neoforge:obj",
-  "flip_v": true,
-  "model": "breadmod:models/block/big_bread_block/big_bread_block.obj",
-  "parent": "block/block",
-  "textures": {
-    "bread": "breadmod:block/bread_block"
-  }
-}
