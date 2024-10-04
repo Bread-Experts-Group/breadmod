@@ -12,11 +12,12 @@ import dev.architectury.networking.NetworkManager
 import dev.architectury.registry.level.entity.EntityAttributeRegistry
 import net.minecraft.commands.Commands
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.level.Level
 
 internal object CommonEventRegistry {
     // todo fix commands being broken on fabric (alternative: separate command registration for both platforms)
     fun registerCommands() =
-        CommandRegistrationEvent.EVENT.register { dispatcher, _, _ ->
+        CommandRegistrationEvent.EVENT.register { dispatcher, context, _ ->
             dispatcher.register(
                 Commands.literal("breadmod")
                     .then(WarTimerCommand.register())
@@ -46,32 +47,43 @@ internal object CommonEventRegistry {
 
     fun registerServerTickEvent() =
         TickEvent.Server.SERVER_PRE.register {
-            warTimerMap.forEach { (player, value) ->
-                if (value.active && value.increaseTime == 0) {
-                    if (value.ticker == 0 && value.timeLeft > 0 && !value.gracePeriodActive) {
-                        value.timeLeft--
-                        NetworkManager.sendToPlayer(player, WarTimerSynchronization(value.timeLeft))
-                        value.ticker = 20
-                    } else if (!value.gracePeriodActive && value.ticker != 0) {
-                        value.ticker--
-                    } else if (value.timeLeft <= 0 && !value.gracePeriodActive && value.gracePeriod != 0) {
-                        value.gracePeriodActive = true
-                        NetworkManager.sendToPlayer(player, WarTimerSynchronization(value.timeLeft))
-                    } else if (value.gracePeriod > 0) {
-                        value.gracePeriod--
-                    } else if (value.timeLeft <= 0 && value.gracePeriod == 0) {
+            warTimerMap.forEach { (player, data) ->
+                if (data.active && data.increaseTime == 0) {
+                    if (data.ticker == 0 && data.timeLeft > 0 && !data.gracePeriodActive) {
+                        data.timeLeft--
+                        NetworkManager.sendToPlayer(player, WarTimerSynchronization(data.timeLeft))
+                        data.ticker = 20
+                    } else if (!data.gracePeriodActive && data.ticker != 0) {
+                        data.ticker--
+                    } else if (data.timeLeft <= 0 && !data.gracePeriodActive && data.gracePeriod != 0) {
+                        data.gracePeriodActive = true
+                        NetworkManager.sendToPlayer(player, WarTimerSynchronization(data.timeLeft))
+                    } else if (data.gracePeriod > 0) {
+                        data.gracePeriod--
+                    } else if (data.timeLeft <= 0 && data.gracePeriod == 0) {
                         if (!player.isCreative) {
                             player.hurt(ModDamageTypes.TIMER_RAN_OUT.source(player.level()), Float.MAX_VALUE)
+                            player.level().explode(
+                                null,
+                                player.x,
+                                player.y,
+                                player.z,
+                                4f,
+                                false,
+                                Level.ExplosionInteraction.TNT
+                            )
+                            data.active = false
+                            data.timeLeft = 30
                         }
                         NetworkManager.sendToPlayer(player, WarTimerToggle(false))
-                        value.gracePeriodActive = !value.gracePeriodActive
+                        data.gracePeriodActive = !data.gracePeriodActive
                     }
-                } else if (value.increaseTime > 0 && value.active) {
-                    value.increaseTime--
-                    value.timeLeft++
-                    value.ticker = 20
-                    value.gracePeriod = 20
-                    value.gracePeriodActive = false
+                } else if (data.increaseTime > 0 && data.active) {
+                    data.increaseTime--
+                    data.timeLeft++
+                    data.ticker = 20
+                    data.gracePeriod = 20
+                    data.gracePeriodActive = false
                 }
             }
         }

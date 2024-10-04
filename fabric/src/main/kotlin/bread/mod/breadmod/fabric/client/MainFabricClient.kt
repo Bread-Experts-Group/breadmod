@@ -2,8 +2,9 @@ package bread.mod.breadmod.fabric.client
 
 import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.ModMainCommon.modLocation
-import bread.mod.breadmod.client.model.ChefHatArmorLayer
+import bread.mod.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import bread.mod.breadmod.registry.item.ModItems
+import bread.mod.breadmod.util.render.itemColor
 import bread.mod.breadmod.util.render.renderBuffer
 import bread.mod.breadmod.util.render.rgMinecraft
 import net.fabricmc.api.ClientModInitializer
@@ -18,8 +19,6 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.animal.Fox
 import net.minecraft.world.entity.decoration.ArmorStand
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.component.DyedItemColor
-import java.awt.Color
 
 /**
  * Mod Client initializer for Fabric.
@@ -61,17 +60,15 @@ class MainFabricClient : ClientModInitializer {
         }
 
         // Register item colors
-        ColorProviderRegistry.ITEM.register(
-            { stack, i ->
-                if (i > 0) -1 else DyedItemColor.getOrDefault(
-                    stack,
-                    Color.WHITE.rgb
-                )
-            },
-            ModItems.CHEF_HAT.get()
-        )
+        ColorProviderRegistry.ITEM.register(itemColor, ModItems.CHEF_HAT.get())
     }
 
+    /**
+     * Adds the chef hat armor layer to any living entity renderer
+     *
+     * @author Logan Mclean
+     * @since 1.0.0
+     */
     private fun <T : LivingEntity> addHatLayer(
         renderer: LivingEntityRenderer<*, *>,
         event: LivingEntityFeatureRendererRegistrationCallback.RegistrationHelper

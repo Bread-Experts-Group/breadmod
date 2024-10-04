@@ -65,6 +65,12 @@ object ModSounds {
     @DataGenerateSound("mach_four")
     val MACH_FOUR: RegistrySupplier<SoundEvent> = registerSoundEvents("mach_four")
 
+    @DataGenerateSound("kill_enemy")
+    val KILL_ENEMY: RegistrySupplier<SoundEvent> = registerSoundEvents("kill_enemy")
+
+    @DataGenerateSound("punch")
+    val PUNCH: RegistrySupplier<SoundEvent> = registerSoundEvents("punch")
+
     private fun registerSoundEvents(name: String): RegistrySupplier<SoundEvent> {
         return SOUND_REGISTRY.register(name) {
             SoundEvent.createVariableRangeEvent(modLocation(name))

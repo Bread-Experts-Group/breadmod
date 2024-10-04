@@ -4,11 +4,7 @@ import bread.mod.breadmod.ModMainCommon
 import bread.mod.breadmod.block.entity.ToasterBlockEntity
 import bread.mod.breadmod.datagen.recipe.SmartRecipeProvider
 import bread.mod.breadmod.datagen.tag.SmartTagProvider
-import bread.mod.breadmod.neoforge.datagen.SmartBlockLootProviderNeoForge
-import bread.mod.breadmod.neoforge.datagen.SmartBlockModelProviderNeoForge
-import bread.mod.breadmod.neoforge.datagen.SmartItemModelProviderNeoForge
-import bread.mod.breadmod.neoforge.datagen.SmartLanguageProviderNeoForge
-import bread.mod.breadmod.neoforge.datagen.SmartSoundProviderNeoForge
+import bread.mod.breadmod.neoforge.datagen.*
 import bread.mod.breadmod.neoforge.util.EnergyStorageWrapper
 import bread.mod.breadmod.neoforge.util.FluidStackWrapper
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
@@ -68,6 +64,11 @@ internal object CommonModEventBus {
             ModMainCommon::class.java.classLoader, ModMainCommon::class.java.`package`
         ).generate(event)
     }
+
+    // todo can possibly use an arch event to call invalidateCapabilities from common?
+//    @SubscribeEvent
+//    fun levelTick(event: LevelTickEvent.Pre) {
+//    }
 
     @SubscribeEvent
     fun registerCaps(event: RegisterCapabilitiesEvent) {

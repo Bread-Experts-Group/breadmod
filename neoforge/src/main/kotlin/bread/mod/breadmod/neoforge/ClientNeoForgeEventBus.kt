@@ -13,7 +13,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 internal object ClientNeoForgeEventBus {
     @SubscribeEvent
     fun registerStageRender(event: RenderLevelStageEvent) {
-        if (event.stage != RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS) return
+        if (event.stage != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) return
         renderBuffer.removeIf { (mutableList, renderEvent) ->
             renderEvent.invoke(
                 mutableList,

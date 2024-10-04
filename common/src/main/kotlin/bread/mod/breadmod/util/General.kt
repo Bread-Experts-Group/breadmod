@@ -4,6 +4,7 @@ import bread.mod.breadmod.util.RaycastResult.RaycastResultType
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.Vec3i
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
@@ -109,40 +110,30 @@ fun formatUnit(
 //    formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
 // --Commented out by Inspection STOP (9/10/2024 03:52)
 
-///**
-// * Translates a [Direction] to a side relative to another [Direction].
-// * @return The relativized [Direction].
-// * @param translateFor The [Direction] to translate for.
-// * @param side The side to translate in relation to.
-// * @author Miko Elbrecht
-// * @since 1.0.0
-// */
-//fun translateDirection(translateFor: Direction, side: Direction): Direction =
-//    if (side.axis == Direction.Axis.Y) side
-//    else when (translateFor) {
-//        Direction.NORTH -> side.opposite
-//        Direction.SOUTH -> side
-//        Direction.EAST -> side.clockWise
-//        Direction.WEST -> side.counterClockWise
-//        else -> translateFor
-//    }
+/**
+ * Translates a [Direction] to a side relative to another [Direction].
+ * @return The relativized [Direction].
+ * @param translateFor The [Direction] to translate for.
+ * @param side The side to translate in relation to.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun translateDirection(translateFor: Direction, side: Direction): Direction =
+    if (side.axis == Direction.Axis.Y) side
+    else when (translateFor) {
+        Direction.NORTH -> side.opposite
+        Direction.SOUTH -> side
+        Direction.EAST -> side.clockWise
+        Direction.WEST -> side.counterClockWise
+        else -> translateFor
+    }
 
-// --Commented out by Inspection START (9/10/2024 03:52):
-///**
-// * Removes all whitespace from this string.
-// * @author Miko Elbrecht
-// * @since 1.0.0
-// */
-//fun String.removeWhitespace(): String = this.replace(Regex("\\s+"), "")
-// --Commented out by Inspection STOP (9/10/2024 03:52)
-
-// --Commented out by Inspection START (9/10/2024 03:52):
-///**
-// * TODO javadoc
-// */
-//fun <T> Registry<T>.createTagKey(path: String): TagKey<T> =
-//    TagKey.create(this.key(), ResourceLocation.parse(path))
-// --Commented out by Inspection STOP (9/10/2024 03:52)
+/**
+ * Removes all whitespace from this string.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun String.removeWhitespace(): String = this.replace(Regex("\\s+"), "")
 
 /**
  * Registers a [name]d [RecipeType] under the requisite [DeferredRegister].

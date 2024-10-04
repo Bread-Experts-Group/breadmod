@@ -1,4 +1,4 @@
-package bread.mod.breadmod.client.render
+package bread.mod.breadmod.client.render.block
 
 import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.block.entity.ToasterBlockEntity

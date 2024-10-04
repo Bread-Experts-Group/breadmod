@@ -1,28 +1,32 @@
 package bread.mod.breadmod.util.render
 
 import bread.mod.breadmod.ModMainCommon.modLocation
-import com.mojang.blaze3d.systems.RenderSystem
+import bread.mod.breadmod.client.model.ChefHatModel
+import bread.mod.breadmod.item.armor.ChefHatItem
+import bread.mod.breadmod.util.MachTrailData
+import bread.mod.breadmod.util.translateDirection
+import com.mojang.authlib.GameProfile
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
+import dev.architectury.platform.Platform
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
+import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.model.PlayerModel
 import net.minecraft.client.model.geom.ModelLayers
 import net.minecraft.client.player.LocalPlayer
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
-import net.minecraft.client.renderer.ItemBlockRenderTypes
-import net.minecraft.client.renderer.LevelRenderer
-import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.*
+import net.minecraft.client.renderer.block.ModelBlockRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect
-import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.client.resources.model.ModelResourceLocation
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
@@ -30,19 +34,32 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Vector3f
 import org.joml.Vector4f
 import java.awt.Color
 import java.lang.Math.clamp
 
+/**
+ * Main minecraft instance
+ */
 @Internal
 val rgMinecraft: Minecraft = Minecraft.getInstance()
 internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, PoseStack, Camera, Float, LevelRenderer) -> Boolean>>
 
-var skyColorMixinActive: Boolean = false
-var redness: Float = 1f
+internal var skyColorMixinActive: Boolean = false
+internal var redness: Float = 1f
+
+/**
+ * Color getter for ItemStacks. Used in the NeoForge/Fabric color events.
+ */
+val itemColor: ItemColor = ItemColor { stack: ItemStack, i: Int ->
+    if (i > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE.rgb)
+}
 
 // --Commented out by Inspection START (9/10/2024 03:54):
 //val mouseGuiX: Double
@@ -55,14 +72,14 @@ var redness: Float = 1f
 //            rgMinecraft.window.screenHeight.toDouble()
 // --Commented out by Inspection STOP (9/10/2024 03:54)
 
-/* millis info
-    val millis = Util.getMillis()
+/** millis info
+val millis = Util.getMillis()
 
-    // clamped decimal millis //
-    println(clamp((millis.toFloat() / 300f % 2), 0f, 2f))
+// clamped decimal millis //
+println(clamp((millis.toFloat() / 300f % 2), 0f, 2f))
 
-    // constant millis divided by a number //
-    Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
+// constant millis divided by a number //
+Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
  */
 
 /**
@@ -73,80 +90,118 @@ var redness: Float = 1f
  */
 val renderBuffer: RenderBuffer = mutableListOf()
 
-fun playerRenderTest(
-    player: Player,
-    x: Double,
-    y: Double,
-    z: Double,
-    yRot: Float,
-    limbSwing: Float,
-//    headYaw: Float,
-//    headPitch: Float
-) = renderBuffer.add(
-    mutableListOf(
-        0.8F,
-        0F,
-        1F
-    ) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
-        val currentOpacity = mutableList[0]
-        val redValue = mutableList[1]
-        val greenValue = mutableList[2]
-        val connection = rgMinecraft.connection!!
-        val playerInfo = connection.getPlayerInfo(player.uuid)!!
-        val playerSkin = playerInfo.skin
-        val texture = playerSkin.texture
-        val modelType = playerSkin.model
-        val playerModel = PlayerModel<Player>(
-            rgMinecraft.entityModels.bakeLayer(
-                if (modelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
-            ),
-            modelType == PlayerSkin.Model.SLIM
-        )
-        val consumer = rgMinecraft.renderBuffers().bufferSource().getBuffer(RenderType.entityTranslucent(texture))
-        val packedOverlay = LivingEntityRenderer.getOverlayCoords(player, 0f)
+// todo rendering for identifying a block in the multiblock AABB
+fun renderMultiblockIdentifier() {
+    renderBuffer.add(mutableListOf(1F) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
 
-        if (currentOpacity > 0) {
-            poseStack.pushPose()
-            poseStack.mulPose(Axis.YN.rotationDegrees(-yRot))
-            poseStack.translate(0.0, 0.0, -0.3)
-            poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
-            poseStack.translate(-camera.position.x + x, -camera.position.y + y, -camera.position.z + z)
-            poseStack.translate(0.0, 1.4, 0.0)
-            poseStack.mulPose(Axis.XN.rotationDegrees(180f))
-            poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
-            poseStack.scaleFlat(0.9375f)
-            playerModel.setupAnim(
-                player,
-                limbSwing,
-                0.55f,
-                -1f, 0f, 0f
+        false
+    })
+}
+
+/**
+ * A map holding mach trail data for each player currently running with the chef hat.
+ */
+val machTrailMap: MutableMap<GameProfile, MachTrailData> = mutableMapOf()
+
+// todo head rotations
+/**
+ * Renders a single instance of the mach trail behind the player.
+ *
+ * @author Logan McLean
+ * @see MachTrailData
+ * @see ChefHatItem
+ */
+fun renderMachTrail(playerProfile: GameProfile) {
+    val playerId = playerProfile.id
+    val level = rgMinecraft.level ?: return
+    val player = level.getPlayerByUUID(playerId) ?: return
+    val x = player.x
+    val y = player.y
+    val z = player.z
+    val yRot = -player.rotationVector.y
+    val limbSwing = player.walkAnimation.position()
+    val connection = rgMinecraft.connection!!
+    val playerInfo = connection.getPlayerInfo(playerId)!!
+    val playerSkin = playerInfo.skin
+    val texture = playerSkin.texture
+    val modelType = playerSkin.model
+    val entityModels = rgMinecraft.entityModels
+    val chefHatModel = ChefHatModel(rgMinecraft.entityModels)
+    val bufferSource = rgMinecraft.renderBuffers().bufferSource()
+    val playerModel = PlayerModel<Player>(
+        entityModels.bakeLayer(
+            if (modelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
+        ),
+        modelType == PlayerSkin.Model.SLIM
+    )
+
+//    try {
+//        val renderDispatcher = rgMinecraft.entityRenderDispatcher
+//        val playerRenderer = renderDispatcher.getRenderer(player) as PlayerRenderer
+//        val renderer = renderDispatcher.renderers[ModEntityTypes.FAKE_PLAYER.get()]
+//        if (renderer is LivingEntityRenderer<*, *>) {
+//            val livingRenderer = renderer as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+//            LogManager.getLogger().info(livingRenderer.model)
+//        }
+//        println(playerRenderer.model)
+//
+//    } catch (e: Exception) {
+//        LogManager.getLogger().error(e)
+//    }
+
+    playerModel.young = false
+    renderBuffer.add(
+        mutableListOf(
+            0.8F,
+            0F,
+            1F
+        ) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
+            val currentOpacity = mutableList[0]
+            val redValue = mutableList[1]
+            val greenValue = mutableList[2]
+            val currentColor = Color(
+                redValue,
+                greenValue,
+                0.1f,
+                clamp(currentOpacity, 0f, 1f)
+            ).rgb
+
+            if (currentOpacity > 0) {
+                poseStack.pushPose()
+                poseStack.mulPose(Axis.YN.rotationDegrees(-yRot))
+                poseStack.translate(0.0, 0.0, -0.3)
+                poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
+                poseStack.translate(-camera.position.x + x, -camera.position.y + y, -camera.position.z + z)
+                poseStack.translate(0.0, 1.4, 0.0)
+                poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+                poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
+                poseStack.scaleFlat(0.9375f)
+                // todo move the model rendering here to MachTrailModel
+                playerModel.setupAnim(
+                    player,
+                    limbSwing,
+                    0.6f,
+                    -1f, 0f, 0f
 //        (headYaw - headYaw) + player.getViewYRot(partialTick),
 //        (headPitch - headPitch) + player.getViewXRot(partialTick)
-            )
+                )
 
-            // clamp((millis.toFloat() / 300f) % 2f, 0f, 2f)
+                // clamp((millis.toFloat() / 300f) % 2f, 0f, 2f)
 
-            mutableList[1] = clamp(redValue + 0.05f, 0f, 1f)
-            mutableList[2] = clamp(greenValue - 0.05f, 0f, 1f)
+                val playerModelBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(texture))
+                playerModel.renderToBuffer(poseStack, playerModelBuffer, 15728880, NO_OVERLAY, currentColor)
 
-            playerModel.young = false
-            playerModel.renderToBuffer(
-                poseStack,
-                consumer,
-                15728880,
-                packedOverlay,
-                Color(
-                    redValue,
-                    greenValue,
-                    0.1f,
-                    clamp(currentOpacity, 0f, 1f)
-                ).rgb
-            )
-            poseStack.popPose()
-            mutableList[0] = currentOpacity - 0.1f * rgMinecraft.timer.realtimeDeltaTicks
-            false
-        } else true
-    })
+                poseStack.translate(0.0, -0.5, 0.0)
+                chefHatModel.render(poseStack, 15728880, NO_OVERLAY, currentColor)
+                poseStack.popPose()
+
+                mutableList[1] = clamp(redValue + 0.05f, 0f, 1f)
+                mutableList[2] = clamp(greenValue - 0.05f, 0f, 1f)
+                mutableList[0] = currentOpacity - 0.1f * partialTick
+                false
+            } else true
+        })
+}
 
 /**
  * Draws a line from between [start] and [end], translated according to the current [LocalPlayer]'s position.
@@ -154,15 +209,16 @@ fun playerRenderTest(
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
+fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) {
+    val level = rgMinecraft.level
+    val player = rgMinecraft.player
+    val bufferSource = rgMinecraft.renderBuffers().bufferSource()
+
     renderBuffer.add(mutableListOf(1F) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
         val currentOpacity = mutableList[0]
-        val level = rgMinecraft.level
-        val player = rgMinecraft.player
         if (level != null && currentOpacity > 0 && player != null) {
             poseStack.pushPose()
             poseStack.translate(-camera.position.x, -camera.position.y - 1f, -camera.position.z)
-            val bufferSource = rgMinecraft.renderBuffers().bufferSource()
 
 //            poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + levelStageEvent.partialTick))
 
@@ -244,21 +300,20 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) =
             }
 
             poseStack.popPose()
-            mutableList[0] = currentOpacity - 0.1f * rgMinecraft.timer.realtimeDeltaTicks
+            mutableList[0] = currentOpacity - 0.1f * partialTick
             false
         } else true
     })
-
-fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
-
-fun setupOverlayRenderState(useBlend: Boolean, useDepthTest: Boolean) {
-    if (useBlend) {
-        RenderSystem.enableBlend()
-        RenderSystem.defaultBlendFunc()
-    } else RenderSystem.disableBlend()
-    if (useDepthTest) RenderSystem.enableDepthTest() else RenderSystem.disableDepthTest()
 }
 
+/**
+ * Scales the [PoseStack] uniformly on the X, Y, and Z axis.
+ */
+fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
+
+/**
+ * Draws scaled [text] in a Screen or Overlay
+ */
 fun drawScaledText(
     text: Component,
     poseStack: PoseStack,
@@ -282,27 +337,6 @@ fun drawScaledText(
 }
 
 /**
- * Renders a provided [model] (as an item model) onto a [BlockEntityWithoutLevelRenderer]
- */
-fun ItemRenderer.renderItemModel(
-    model: BakedModel,
-    stack: ItemStack,
-    displayContext: ItemDisplayContext,
-    leftHand: Boolean,
-    poseStack: PoseStack,
-    buffer: MultiBufferSource,
-    packedOverlay: Int,
-    packedLight: Int,
-//    renderType: RenderType = RenderType.glint()
-) {
-//    val renderType = if (renderType != RenderType.glint()) ItemBlockRenderTypes.getRenderType(stack, false) else renderType
-    val renderType = ItemBlockRenderTypes.getRenderType(stack, false)
-    val vertexConsumer = getFoilBufferDirect(buffer, renderType, true, stack.hasFoil())
-    model.transforms.getTransform(displayContext).apply(leftHand, poseStack)
-    renderModelLists(model, stack, packedLight, packedOverlay, poseStack, vertexConsumer)
-}
-
-/**
  * Renders a provided [model] (as a block model) onto a [BlockEntityRenderer]
  *
  * *Note that the [model] does not rotate with the block*
@@ -314,20 +348,81 @@ fun renderBlockModel(
     model: BakedModel,
     packedLight: Int,
     packedOverlay: Int,
-    renderType: RenderType = RenderType.solid()
+    renderType: RenderType = RenderType.solid(),
+    red: Float = 1f,
+    green: Float = 1f,
+    blue: Float = 1f
 ) {
     rgMinecraft.blockRenderer.modelRenderer.renderModel(
         poseStack.last(),
         bufferSource.getBuffer(renderType),
         blockEntity.blockState,
         model,
-        1f,
-        1f,
-        1f,
+        red,
+        green,
+        blue,
         packedLight,
         packedOverlay
     )
 }
+
+/**
+ * Renders a specified [BlockState] onto a [BlockEntityWithoutLevelRenderer] or [BlockEntityRenderer]
+ */
+fun ModelBlockRenderer.renderBlockModel(
+    lastPose: PoseStack.Pose,
+    buffer: MultiBufferSource,
+    blockState: BlockState,
+    packedLight: Int,
+    packedOverlay: Int,
+    renderType: RenderType = RenderType.solid(),
+    red: Float = 1f,
+    green: Float = 1f,
+    blue: Float = 1f
+) {
+    val blockModel = rgMinecraft.modelManager.blockModelShaper.getBlockModel(blockState)
+    renderModel(
+        lastPose,
+        buffer.getBuffer(renderType),
+        blockState,
+        blockModel,
+        red,
+        green,
+        blue,
+        packedLight,
+        packedOverlay
+    )
+}
+
+/**
+ * Renders a provided [model] (as an item model) onto this [BlockEntityWithoutLevelRenderer]
+ */
+fun ItemRenderer.renderItemModel(
+    model: BakedModel,
+    stack: ItemStack,
+    displayContext: ItemDisplayContext,
+    leftHand: Boolean,
+    poseStack: PoseStack,
+    buffer: MultiBufferSource,
+    packedOverlay: Int,
+    packedLight: Int,
+) {
+    val renderType = ItemBlockRenderTypes.getRenderType(stack, false)
+    val vertexConsumer = getFoilBufferDirect(buffer, renderType, true, stack.hasFoil())
+    model.transforms.getTransform(displayContext).apply(leftHand, poseStack)
+    renderModelLists(model, stack, packedLight, packedOverlay, poseStack, vertexConsumer)
+}
+
+/**
+ * NeoForge/Fabric [ModelResourceLocation] variant ids.
+ */
+val platformId: String = if (Platform.isFabric()) "fabric_resource" else "standalone"
+
+/**
+ * [ModelResourceLocation] with [modLocation] and [platformId] present.
+ */
+fun modelLocation(location: String): ModelResourceLocation =
+    ModelResourceLocation(modLocation(location), platformId)
 
 /**
  * Renders a provided [stack] onto a [BlockEntityRenderer]
@@ -352,6 +447,12 @@ fun renderStaticItem(
     )
 }
 
+/**
+ * Draws a vertex.
+ *
+ * @author Logan McLean
+ * @see drawQuad
+ */
 fun drawVertex(
     poseStack: PoseStack,
     pBuffer: MultiBufferSource,
@@ -372,6 +473,12 @@ fun drawVertex(
         .setNormal(0f, 1f, 0f)
 }
 
+/**
+ * Draws a quad.
+ *
+ * @author Logan McLean
+ * @see drawTexturedQuad
+ */
 fun drawQuad(
     poseStack: PoseStack,
     buffer: MultiBufferSource,
@@ -390,6 +497,11 @@ fun drawQuad(
     drawVertex(poseStack, buffer, renderType, color, vertex3.x, vertex3.y, vertex3.z, u1, v0)
 }
 
+/**
+ * Draws a quad with a provided [textureLocation].
+ *
+ * @author Logan McLean
+ */
 fun drawTexturedQuad(
     textureLocation: ResourceLocation,
     renderType: RenderType,
@@ -512,100 +624,96 @@ fun renderText(
     )
 }
 
-//private const val TRANSLATE_OFFSET = 0.0001
+private const val TRANSLATE_OFFSET = 0.0001
 
-///**
-// * [posX], [posY], [posZ] translates the [poseStack] on the facing side of the block. *(not required)*
-// * ### translated [poseStack] starts at the top left of the facing side
-// *
-// * @see translateDirection
-// */
-//fun translateOnBlockSide(
-//    blockState: BlockState, direction: Direction? = null,
-//    poseStack: PoseStack, posX: Double = 0.0, posY: Double = 0.0, posZ: Double = 0.0
-//) {
-//    var facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
-//        ?: throw IllegalArgumentException("Provided block state must have a HORIZONTAL_FACING property")
-//    if (direction != null) facing = translateDirection(facing, direction)
-//
-//    poseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
-//    poseStack.translate(posX, posY, posZ)
-//    when (facing) {
-//        Direction.NORTH -> poseStack.translate(-1.0, 1.0, TRANSLATE_OFFSET)
-//        Direction.EAST -> poseStack.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
-//        Direction.WEST -> poseStack.translate(0.0, 1.0, TRANSLATE_OFFSET)
-//        Direction.SOUTH -> poseStack.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
-//        Direction.UP, Direction.DOWN -> {
-//            poseStack.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
-//            poseStack.mulPose(Axis.XN.rotationDegrees(90F))
-//        }
-//    }
-//}
+/**
+ * [posX], [posY], [posZ] translates the [poseStack] on the facing side of the block. *(not required)*
+ * ### translated [poseStack] starts at the top left of the facing side
+ *
+ * @see translateDirection
+ */
+fun translateOnBlockSide(
+    blockState: BlockState, direction: Direction? = null,
+    poseStack: PoseStack, posX: Double = 0.0, posY: Double = 0.0, posZ: Double = 0.0
+) {
+    var facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+        ?: throw IllegalArgumentException("Provided block state must have a HORIZONTAL_FACING property")
+    if (direction != null) facing = translateDirection(facing, direction)
 
-//val TRANSPARENT: Int = Color(0f, 0f, 0f, 0f).rgb
+    poseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
+    poseStack.translate(posX, posY, posZ)
+    when (facing) {
+        Direction.NORTH -> poseStack.translate(-1.0, 1.0, TRANSLATE_OFFSET)
+        Direction.EAST -> poseStack.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
+        Direction.WEST -> poseStack.translate(0.0, 1.0, TRANSLATE_OFFSET)
+        Direction.SOUTH -> poseStack.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
+        Direction.UP, Direction.DOWN -> {
+            poseStack.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
+            poseStack.mulPose(Axis.XN.rotationDegrees(90F))
+        }
+    }
+}
 
-// --Commented out by Inspection START (9/10/2024 03:54):
-//fun drawTextOnSide(
-//    fontRenderer: Font,
-//    component: Component,
-//
-//    posX: Double,
-//    posY: Double,
-//    posZ: Double = 0.0,
-//
-//    poseStack: PoseStack,
-//    buffer: MultiBufferSource,
-//    blockState: BlockState,
-//
-//    color: Int = Color.WHITE.rgb,
-//    backgroundColor: Int = TRANSPARENT,
-//    dropShadow: Boolean = false,
-//    direction: Direction? = null,
-//    scale: Float = 1f
-//) {
-//    poseStack.pushPose()
-//    translateOnBlockSide(blockState, direction, poseStack, posX, posY, posZ)
-//    poseStack.mulPose(Axis.XN.rotationDegrees(180f))
-//    poseStack.scaleFlat(scale)
-//    renderText(component.visualOrderText, color, backgroundColor, fontRenderer, poseStack, buffer, dropShadow, 15728880)
-//    poseStack.popPose()
-//}
-// --Commented out by Inspection STOP (9/10/2024 03:54)
+val TRANSPARENT: Int = Color(0f, 0f, 0f, 0f).rgb
 
-// --Commented out by Inspection START (9/10/2024 03:54):
-//fun drawCenteredTextOnSide(
-//    fontRenderer: Font,
-//    component: Component,
-//
-//    posX: Double,
-//    posY: Double,
-//    posZ: Double = 0.0,
-//
-//    poseStack: PoseStack,
-//    buffer: MultiBufferSource,
-//    blockState: BlockState,
-//
-//    color: Int = Color.WHITE.rgb,
-//    backgroundColor: Int = TRANSPARENT,
-//    dropShadow: Boolean = false,
-//    direction: Direction? = null,
-//    scale: Float = 1f
-//) {
-//    poseStack.pushPose()
-//    translateOnBlockSide(
-//        blockState, direction, poseStack,
-//        posX - rgMinecraft.font.width(component.visualOrderText) / 2,
-//        posY, posZ
-//    )
-//    poseStack.mulPose(Axis.XN.rotationDegrees(180f))
-//    poseStack.scaleFlat(scale)
-//    renderText(
-//        component.visualOrderText, color, backgroundColor, fontRenderer,
-//        poseStack, buffer, dropShadow, 15728880
-//    )
-//    poseStack.popPose()
-//}
-// --Commented out by Inspection STOP (9/10/2024 03:54)
+fun drawTextOnSide(
+    fontRenderer: Font,
+    component: Component,
+
+    posX: Double,
+    posY: Double,
+    posZ: Double = 0.0,
+
+    poseStack: PoseStack,
+    buffer: MultiBufferSource,
+    blockState: BlockState,
+
+    color: Int = Color.WHITE.rgb,
+    backgroundColor: Int = TRANSPARENT,
+    dropShadow: Boolean = false,
+    direction: Direction? = null,
+    scale: Float = 1f
+) {
+    poseStack.pushPose()
+    translateOnBlockSide(blockState, direction, poseStack, posX, posY, posZ)
+    poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+    poseStack.scaleFlat(scale)
+    renderText(component.visualOrderText, color, backgroundColor, fontRenderer, poseStack, buffer, dropShadow, 15728880)
+    poseStack.popPose()
+}
+
+fun drawCenteredTextOnSide(
+    fontRenderer: Font,
+    component: Component,
+
+    posX: Double,
+    posY: Double,
+    posZ: Double = 0.0,
+
+    poseStack: PoseStack,
+    buffer: MultiBufferSource,
+    blockState: BlockState,
+
+    color: Int = Color.WHITE.rgb,
+    backgroundColor: Int = TRANSPARENT,
+    dropShadow: Boolean = false,
+    direction: Direction? = null,
+    scale: Float = 1f
+) {
+    poseStack.pushPose()
+    translateOnBlockSide(
+        blockState, direction, poseStack,
+        posX - rgMinecraft.font.width(component.visualOrderText) / 2,
+        posY, posZ
+    )
+    poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+    poseStack.scaleFlat(scale)
+    renderText(
+        component.visualOrderText, color, backgroundColor, fontRenderer,
+        poseStack, buffer, dropShadow, 15728880
+    )
+    poseStack.popPose()
+}
 
 //fun renderEntityInInventoryFollowsMouse(
 //    pGuiGraphics: GuiGraphics,

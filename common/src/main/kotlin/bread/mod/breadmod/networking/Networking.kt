@@ -1,6 +1,8 @@
 package bread.mod.breadmod.networking
 
+import bread.mod.breadmod.networking.definition.MachTrailPacket
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerIncrement
+import bread.mod.breadmod.networking.definition.warTimer.WarTimerSet
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerSynchronization
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerToggle
 import dev.architectury.networking.NetworkManager
@@ -27,16 +29,29 @@ internal object Networking {
 
     fun registerNetworking() {
         registerS2CWithReceiver(
-            WarTimerSynchronization.TYPE, WarTimerSynchronization.STREAM_CODEC,
+            WarTimerSynchronization.TYPE,
+            WarTimerSynchronization.STREAM_CODEC,
             WarTimerSynchronization.RECEIVER
         )
         registerS2CWithReceiver(
-            WarTimerIncrement.TYPE, WarTimerIncrement.STREAM_CODEC,
+            WarTimerIncrement.TYPE,
+            WarTimerIncrement.STREAM_CODEC,
             WarTimerIncrement.RECEIVER
         )
         registerS2CWithReceiver(
-            WarTimerToggle.TYPE, WarTimerToggle.STREAM_CODEC,
+            WarTimerToggle.TYPE,
+            WarTimerToggle.STREAM_CODEC,
             WarTimerToggle.RECEIVER
+        )
+        registerS2CWithReceiver(
+            WarTimerSet.TYPE,
+            WarTimerSet.STREAM_CODEC,
+            WarTimerSet.RECEIVER
+        )
+        registerS2CWithReceiver(
+            MachTrailPacket.TYPE,
+            MachTrailPacket.STREAM_CODEC,
+            MachTrailPacket.RECEIVER
         )
     }
 }

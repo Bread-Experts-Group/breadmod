@@ -13,21 +13,21 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import java.awt.Color
 
-// todo overlay position is messed up in production
-// todo overlay numbers are not padded in production (no 0 in front of timer positions under 10)
-open class WarOverlay : LayeredDraw.Layer {
-    val overlayTexture: ResourceLocation = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
-    var lastTick: Int = 0
+internal class WarOverlay : LayeredDraw.Layer {
+    private val overlayTexture: ResourceLocation = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
+    private var lastTick: Int = 0
 
     override fun render(guiGraphics: GuiGraphics, deltaTracker: DeltaTracker) {
         val guiTicks = rgMinecraft.gui.guiTicks
         val colorPair: Triple<Float, Float, Float> =
             if (isTimerIncreasing) Triple(0.376f, 0.91f, 0.471f)
+            else if (setTimer > 0) Triple(0.922f, 0.353f, 0f)
             else Triple(0.973f, 0f, 0f)
         val millis = Util.getMillis()
 
         if (lastTick != guiTicks) {
             lastTick = guiTicks
+            if (setTimer > 0) setTimer--
             if (increasingTimer > 0) { // Increase timer
                 increasingTimer--
                 timeLeft++
@@ -56,7 +56,11 @@ open class WarOverlay : LayeredDraw.Layer {
             guiGraphics.drawString(
                 rgMinecraft.font,
                 Component
-                    .literal("${(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')}")
+                    .literal(
+                        "${(timeLeft / 60).toString().padStart(2, '0')}:${
+                            (timeLeft % 60).toString().padStart(2, '0')
+                        }"
+                    )
                     .withStyle(ModFonts.WARTIMER_INFILL),
                 0,
                 12,
@@ -73,5 +77,6 @@ open class WarOverlay : LayeredDraw.Layer {
         var isTimerIncreasing: Boolean = false
         var increasingTimer: Int = 0
         var timerActive: Boolean = false
+        var setTimer: Int = 0
     }
 }

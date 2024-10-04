@@ -27,7 +27,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import java.util.Optional
+import java.util.*
 
 class ToasterBlockEntity(
     pos: BlockPos,
@@ -103,7 +103,7 @@ class ToasterBlockEntity(
         } else ItemStack.EMPTY
 
     val energyHandler: ArchEnergyStorage by lazy {
-        object : ArchEnergyStorage(100000) {
+        object : ArchEnergyStorage(1000000) {
             override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
                 setChanged()
                 return super.receiveEnergy(toReceive, simulate)
@@ -120,6 +120,7 @@ class ToasterBlockEntity(
         }
     }
 
+    // todo re-evaluate this..
     override fun addCapability(): Map<CapabilityTypes, Any?> = buildMap {
         this[CapabilityTypes.ENERGY] = energyHandler
         this[CapabilityTypes.FLUID] = fluidHandler

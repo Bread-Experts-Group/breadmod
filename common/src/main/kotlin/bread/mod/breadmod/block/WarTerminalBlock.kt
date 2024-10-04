@@ -61,7 +61,7 @@ class WarTerminalBlock : Block(Properties.of()) {
         val server = level.server ?: return super.playerWillDestroy(level, pos, state, thisPlayer)
         server.playerList.players.forEach { player ->
             val check = warTimerMap[player]
-            if (check != null) increaseTime(player, check)
+            if (check != null) increaseTime(player, check, 30)
         }
         return super.playerWillDestroy(level, pos, state, thisPlayer)
     }

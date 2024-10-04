@@ -32,11 +32,7 @@ import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Rarity
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.FallingBlock
-import net.minecraft.world.level.block.SnowLayerBlock
-import net.minecraft.world.level.block.SoundType
+import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.MapColor
 
@@ -74,7 +70,7 @@ object ModBlocks {
     @DataGenerateTag("minecraft:block", "minecraft:mineable/hoe")
     @DataGenerateTag("minecraft:block", "breadmod:mineable/knife")
     @DataGenerateTag("minecraft:block", "breadmod:mineable/stone_ore_replaceables")
-    @DataGenerateTag("minecraft:block", "neoforge:storage_blocks/bread")
+    @DataGenerateTag("minecraft:block", "c:storage_blocks/bread")
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Bread Block")
     @DataGenerateLanguage("es_es", "Bloque De Pan")
@@ -150,7 +146,7 @@ object ModBlocks {
     @DataGenerateCubeAllBlockAndItemModel
     @DataGenerateLanguage("en_us", "Charcoal Block")
     @DataGenerateTag("minecraft:block", "minecraft:mineable/pickaxe")
-    @DataGenerateTag("minecraft:block", "neoforge:storage_blocks/charcoal")
+    @DataGenerateTag("minecraft:block", "c:storage_blocks/charcoal")
     val CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "charcoal_block", {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK).ignitedByLava())
@@ -163,7 +159,7 @@ object ModBlocks {
     @DataGenerateLoot
     @DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
     @DataGenerateTag("minecraft:block", "minecraft:mineable/hoe")
-    @DataGenerateTag("minecraft:block", "neoforge:storage_blocks/low_density_charcoal")
+    @DataGenerateTag("minecraft:block", "c:storage_blocks/low_density_charcoal")
     val LOW_DENSITY_CHARCOAL_BLOCK: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ld_charcoal_block", {
             Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL))

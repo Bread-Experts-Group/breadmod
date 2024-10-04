@@ -1,40 +1,34 @@
-package bread.mod.breadmod.client.render
+package bread.mod.breadmod.client.render.item
 
-import bread.mod.breadmod.ModMainCommon.modLocation
 import bread.mod.breadmod.item.toolGun.ToolGunAnimationHandler
 import bread.mod.breadmod.item.toolGun.ToolGunItem.Companion.TOOL_GUN_DEF
 import bread.mod.breadmod.item.toolGun.drawTextOnScreen
 import bread.mod.breadmod.registry.config.ClientConfig
-import bread.mod.breadmod.util.render.renderItemModel
-import bread.mod.breadmod.util.render.rgMinecraft
+import bread.mod.breadmod.util.render.*
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
-import dev.architectury.platform.Platform
+import net.minecraft.Util
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Blocks
 import java.awt.Color
 import java.security.SecureRandom
 import kotlin.math.round
 
-class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
-    rgMinecraft.blockEntityRenderDispatcher,
-    rgMinecraft.entityModels
-) {
+class ToolGunItemRenderer :
+    BlockEntityWithoutLevelRenderer(rgMinecraft.blockEntityRenderDispatcher, rgMinecraft.entityModels) {
     private companion object {
         val secureRandom = SecureRandom()
     }
 
-    private val platformId = if (Platform.isFabric()) "fabric_resource" else "standalone"
+    private val mainModelLocation = modelLocation("item/$TOOL_GUN_DEF/item")
+    private val coilModelLocation = modelLocation("item/$TOOL_GUN_DEF/coil")
+    private val altModelLocation = modelLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
+    private val useAltModel = ClientConfig.ALT_TOOLGUN_MODEL
 
-    private val mainModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/item"), platformId)
-    private val coilModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/coil"), platformId)
-    private val altModelLocation = ModelResourceLocation(modLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"), platformId)
-
-    val useAltModel = ClientConfig.ALT_TOOLGUN_MODEL
     override fun renderByItem(
         stack: ItemStack,
         displayContext: ItemDisplayContext,
@@ -45,9 +39,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
     ) {
 //    val toolGunItem = stack.item as ToolGunItem
 //      val toolGunMode = toolGunItem.getCurrentMode(stack)
-        val renderer = rgMinecraft.itemRenderer
-        val fontRenderer = rgMinecraft.font
         val modelManager = rgMinecraft.modelManager
+        val itemRenderer = rgMinecraft.itemRenderer
+        val blockModelRenderer = rgMinecraft.blockRenderer.modelRenderer
+        val font = rgMinecraft.font
+
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)
         val altModel = modelManager.getModel(altModelLocation)
@@ -58,7 +54,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 
         fun rotateCoilAndRender() {
             poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
-            renderer.renderItemModel(
+            itemRenderer.renderItemModel(
                 coilModel,
                 stack,
                 displayContext,
@@ -70,14 +66,31 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
             )
         }
 
-        // todo recoil
+        val millis = Util.getMillis()
+
+        poseStack.pushPose()
+        poseStack.translate(1.1 - recoil, 0.06, -0.05)
+        poseStack.scaleFlat(0.08f)
+        poseStack.translate(0.5, 0.0, 0.5)
+        poseStack.mulPose(Axis.YP.rotationDegrees((millis.toFloat() / 50f) % 360f))
+        poseStack.translate(-0.5, 0.0, -0.5)
+        blockModelRenderer.renderBlockModel(
+            poseStack.last(),
+            buffer,
+            Blocks.HAY_BLOCK.defaultBlockState(),
+            packedLight,
+            packedOverlay
+        )
+        poseStack.popPose()
+
+        // todo proper recoil
 
         animHandler.clientTick()
 
         if (displayContext.firstPerson()) {
             poseStack.translate(-recoil, 0.0f, 0.0f)
             if (useAltModel.valueOrThrow()) {
-                renderer.renderItemModel(
+                itemRenderer.renderItemModel(
                     altModel,
                     stack,
                     displayContext,
@@ -88,7 +101,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
                     packedLight
                 )
             } else {
-                renderer.renderItemModel(
+                itemRenderer.renderItemModel(
                     mainModel,
                     stack,
                     displayContext,
@@ -106,7 +119,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //                )
                 drawTextOnScreen(
                     Component.literal("THE FUNNY"),
-                    Color.WHITE.rgb, Color(0, 0, 0, 0).rgb, false, fontRenderer, poseStack, buffer,
+                    Color.WHITE.rgb, Color(0, 0, 0, 0).rgb, false, font, poseStack, buffer,
                     0.923, 0.065, -0.038, 0.0007f
                 )
 
@@ -115,7 +128,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
                     Color.RED.rgb,
                     Color(0, 0, 0, 0).rgb,
                     false,
-                    fontRenderer,
+                    font,
                     poseStack,
                     buffer,
                     0.9,
@@ -127,11 +140,10 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 //                toolGunMode.mode.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
 
                 rotateCoilAndRender()
-//            renderer.render(stack, displayContext, false, poseStack, buffer, packedLight, packedOverlay, coilModel)
             }
         } else {
             if (useAltModel.valueOrThrow()) {
-                renderer.renderItemModel(
+                itemRenderer.renderItemModel(
                     altModel,
                     stack,
                     displayContext,
@@ -142,7 +154,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
                     packedLight
                 )
             } else {
-                renderer.renderItemModel(
+                itemRenderer.renderItemModel(
                     mainModel,
                     stack,
                     displayContext,

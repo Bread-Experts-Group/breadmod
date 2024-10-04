@@ -1,7 +1,9 @@
-package bread.mod.breadmod.client.model
+package bread.mod.breadmod.client.render.entity.layers
 
+import bread.mod.breadmod.client.model.ChefHatModel
 import bread.mod.breadmod.client.model.ChefHatModel.Companion.HAT_TEXTURE
 import bread.mod.breadmod.item.armor.ChefHatItem
+import bread.mod.breadmod.util.render.rgMinecraft
 import bread.mod.breadmod.util.render.scaleFlat
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.EntityModel
@@ -29,6 +31,7 @@ import java.awt.Color
 class ChefHatArmorLayer(
     renderer: RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
 ) : RenderLayer<LivingEntity, EntityModel<LivingEntity>>(renderer) {
+    private val chefHatModel = ChefHatModel(rgMinecraft.entityModels)
 
     override fun render(
         poseStack: PoseStack,
@@ -76,7 +79,7 @@ class ChefHatArmorLayer(
         color: Int
     ) {
         poseStack.scaleFlat(1.05f)
-        ChefHatModel().renderToBuffer(
+        chefHatModel.renderToBuffer(
             poseStack,
             buffer.getBuffer(RenderType.entitySolid(HAT_TEXTURE)),
             packedLight,

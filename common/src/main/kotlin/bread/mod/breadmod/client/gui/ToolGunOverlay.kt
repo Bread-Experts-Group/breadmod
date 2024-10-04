@@ -6,7 +6,7 @@ import bread.mod.breadmod.item.toolGun.ToolGunItem
 import bread.mod.breadmod.item.toolGun.ToolGunItem.Companion.TOOL_GUN_DEF
 import bread.mod.breadmod.util.render.drawScaledText
 import bread.mod.breadmod.util.render.rgMinecraft
-import bread.mod.breadmod.util.render.setupOverlayRenderState
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.DeltaTracker
@@ -34,7 +34,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
         val item = handStack.item
 
         if (!rgMinecraft.options.hideGui && item is ToolGunItem) {
-            setupOverlayRenderState(true, false)
+            RenderSystem.enableBlend()
             renderBackground(guiGraphics, poseStack, x, y)
 
 //            val ensured = item.ensureCurrentMode(handStack)
@@ -42,6 +42,8 @@ class ToolGunOverlay : LayeredDraw.Layer {
                 /*ensured.getString(MODE_NAMESPACE_TAG)*/ "breadmod", /*item.getCurrentMode(handStack)*/
                 guiGraphics, poseStack, x, y
             )
+
+            RenderSystem.disableBlend()
         }
     }
 
