@@ -19,7 +19,7 @@ import kotlin.io.path.pathString
  */
 abstract class BreadModConfig {
     var json: JsonObject = JsonObject()
-    protected val configFolder = Platform.getConfigFolder()
+    private val configFolder = Platform.getConfigFolder()
     val valueList = mutableListOf<ConfigValue<*>>()
 
     /**
@@ -30,7 +30,7 @@ abstract class BreadModConfig {
      */
     inline fun <reified T> getOrDefault(
         name: String,
-        builder: ConfigValue.Builder<T>
+        configBuilder: ConfigValue.Builder<T>
     ): ConfigValue<T> {
         val jsonValue = json.getAsJsonObject(name)
         val logger = LogManager.getLogger()
@@ -42,6 +42,7 @@ abstract class BreadModConfig {
                 Int::class -> jValue.asInt
                 String::class -> jValue.asString
                 Double::class -> jValue.asDouble
+                Float::class -> jValue.asFloat
                 else -> throw UnsupportedOperationException(T::class.qualifiedName)
             }
 
@@ -51,9 +52,10 @@ abstract class BreadModConfig {
                 Int::class -> jDefaultValue.asInt
                 String::class -> jDefaultValue.asString
                 Double::class -> jDefaultValue.asDouble
+                Float::class -> jDefaultValue.asFloat
                 else -> throw UnsupportedOperationException(T::class.qualifiedName)
             }
-            val configValue = ConfigValue<T>(
+            val configValue = ConfigValue(
                 name,
                 cValue as T,
                 cDefaultValue as T,
@@ -63,7 +65,7 @@ abstract class BreadModConfig {
             configValue
         } else {
             logger.error("$name does not exist in config, creating default.")
-            val builder = builder.build()
+            val builder = configBuilder.build()
             valueList.add(builder)
             builder
         }
@@ -94,7 +96,7 @@ abstract class BreadModConfig {
      */
     protected fun readConfig(): JsonObject =
         if (configExists()) {
-            val inputFile: FileInputStream = FileInputStream(File(configLocation().toString()))
+            val inputFile = FileInputStream(File(configLocation().toString()))
             val inputFileString: String = inputFile.readBytes().decodeToString()
             inputFile.close()
             Gson().fromJson(inputFileString, JsonObject::class.java)
@@ -114,12 +116,14 @@ abstract class BreadModConfig {
                     is Boolean -> valObj.addProperty("value", value.value as Boolean)
                     is Int -> valObj.addProperty("value", value.value as Int)
                     is Double -> valObj.addProperty("value", value.value as Double)
+                    is Float -> valObj.addProperty("value", value.value as Float)
                 }
                 when (value.defaultValue) {
                     is String -> valObj.addProperty("default_value", value.defaultValue)
                     is Boolean -> valObj.addProperty("default_value", value.defaultValue)
                     is Int -> valObj.addProperty("default_value", value.defaultValue)
                     is Double -> valObj.addProperty("default_value", value.defaultValue)
+                    is Float -> valObj.addProperty("default_value", value.defaultValue)
                 }
                 valObj.addProperty("comment", value.comment)
             })

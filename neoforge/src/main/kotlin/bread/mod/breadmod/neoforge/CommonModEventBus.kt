@@ -65,11 +65,6 @@ internal object CommonModEventBus {
         ).generate(event)
     }
 
-    // todo can possibly use an arch event to call invalidateCapabilities from common?
-//    @SubscribeEvent
-//    fun levelTick(event: LevelTickEvent.Pre) {
-//    }
-
     @SubscribeEvent
     fun registerCaps(event: RegisterCapabilitiesEvent) {
         event.registerBlock(

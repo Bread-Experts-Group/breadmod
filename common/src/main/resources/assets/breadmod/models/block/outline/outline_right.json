@@ -1,0 +1,6 @@
+{
+  "parent": "breadmod:block/outline/outline",
+  "textures": {
+    "texture": "breadmod:block/outline/outline_right"
+  }
+}

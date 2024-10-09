@@ -39,6 +39,8 @@ internal object ClientModEventBus {
         event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
         event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/sphere"))
         event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
+        event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/outline/outline_wrong"))
+        event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/outline/outline_right"))
     }
 
     @SubscribeEvent

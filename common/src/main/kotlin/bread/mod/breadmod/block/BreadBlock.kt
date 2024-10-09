@@ -1,6 +1,7 @@
 package bread.mod.breadmod.block
 
 import bread.mod.breadmod.block.util.ILightningStrikeAction
+import bread.mod.breadmod.util.render.addMultiblockIdentifier
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.sounds.SoundEvents
@@ -34,6 +35,7 @@ class BreadBlock : Block(
     private fun centerAABB(pos: BlockPos): AABB = AABB(pos.center, pos.center)
     private fun AABB.threeByThree(): AABB = inflate(1.0, 1.0, 1.0)
     private fun threeByThreeAABB(pos: BlockPos) = centerAABB(pos).threeByThree()
+    private var blockCount = 0
 
     // todo model 3x3x3 bread block "multiblock" and figure out placing logic and interaction logic (DoorBlock for reference)
     /* https://github.com/Commoble/jumbo-furnace/blob/main/src/main/java/net/commoble/jumbofurnace/jumbo_furnace/JumboFurnaceBlock.java */
@@ -53,23 +55,27 @@ class BreadBlock : Block(
                 Direction.SOUTH -> threeByThreeAABB(pos).move(0.0, 0.0, -1.0)
                 Direction.WEST -> threeByThreeAABB(pos).move(1.0, 0.0, 0.0)
                 Direction.EAST -> threeByThreeAABB(pos).move(-1.0, 0.0, 0.0)
+                else -> null
+            }
+            if (aabb == null) return InteractionResult.FAIL
+
+//            level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, true))
+            if (level.isClientSide) {
+                BlockPos.betweenClosedStream(aabb).forEach { subPos ->
+                    addMultiblockIdentifier(blockCount, subPos, level.getBlockState(subPos))
+                    blockCount++
+                }
+                blockCount = 0
             }
 
-
-            level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.LIT, true))
-
-            BlockPos.betweenClosedStream(aabb).forEach { subPos ->
-//                if (level.getBlockState(subPos).`is`(ModBlocks.BREAD_BLOCK.get().block)) {
+            level.getBlockStates(aabb).forEach { subState ->
+//                LogManager.getLogger().info("$blockCount, ${it.block}")
+//                if (level.isClientSide) {
 //
 //                }
-//                level.setBlockAndUpdate(subPos, Blocks.GOLD_BLOCK.defaultBlockState())
             }
 
-            level.getBlockStates(aabb).forEach {
-                println(it.block)
-            }
-
-            println(aabb)
+//            println(aabb)
         }
 
         return InteractionResult.sidedSuccess(level.isClientSide)

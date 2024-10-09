@@ -1,5 +1,6 @@
 package bread.mod.breadmod.block
 
+import bread.mod.breadmod.CommonUtils.invalidateCaps
 import bread.mod.breadmod.ModMainCommon.modTranslatable
 import bread.mod.breadmod.block.entity.ToasterBlockEntity
 import bread.mod.breadmod.registry.block.ModBlockEntityTypes
@@ -155,12 +156,12 @@ class ToasterBlock : BaseEntityBlock(
         val triggeredState = state.getValue(triggered)
         val entity = (level.getBlockEntity(pos) as? ToasterBlockEntity) ?: return ItemInteractionResult.FAIL
         val itemHandler = entity.getItem(0)
-        val stack = player.getItemInHand(hand)
+        val handStack = player.getItemInHand(hand)
 
-        if (!triggeredState && entity.progress == 0 && itemHandler.count != 2 && stack.`is`(ItemTags.TOASTABLE)) {
-            if (!player.isCreative) stack.shrink(1)
+        if (!triggeredState && entity.progress == 0 && itemHandler.count != 2 && handStack.`is`(ItemTags.TOASTABLE)) {
+            if (!player.isCreative) handStack.shrink(1)
             // todo actual item inserting
-            entity.setItem(0, ItemStack(stack.item, 2))
+            entity.setItem(0, ItemStack(handStack.item, 2))
             level.playSound(
                 null,
                 pos,
@@ -210,6 +211,8 @@ class ToasterBlock : BaseEntityBlock(
             val entity = (level.getBlockEntity(pos) as? ToasterBlockEntity) ?: return
             Containers.dropContents(level, pos, entity.items)
         }
+        // actual working block invalidation????
+        level.invalidateCaps(pos)
         super.onRemove(state, level, pos, newState, movedByPiston)
     }
 

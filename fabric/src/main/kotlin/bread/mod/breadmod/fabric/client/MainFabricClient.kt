@@ -88,7 +88,8 @@ class MainFabricClient : ClientModInitializer {
                 modLocation("block/toaster/handle"),
                 modLocation("block/creative_generator/creative_generator_star"),
                 modLocation("block/creative_generator"),
-                modLocation("block/sphere"),
+                modLocation("block/outline/outline_wrong"),
+                modLocation("block/outline/outline_right")
                 // todo need to figure out how to register objs on fabric
 //                modLocation("item/$toolGunDef/alt/tool_gun_alt")
             )

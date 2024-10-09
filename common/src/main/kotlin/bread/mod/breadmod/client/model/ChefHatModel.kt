@@ -14,6 +14,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition
 import net.minecraft.client.model.geom.builders.MeshDefinition
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
+import bread.mod.breadmod.client.render.entity.layers.ChefHatArmorLayer
 
 /**
  * Model data for the Chef Hat.
@@ -23,7 +24,7 @@ import net.minecraft.resources.ResourceLocation
  * @author Logan McLean
  * @since 1.0.0
  */
-class ChefHatModel() : Model(RenderType::entitySolid) {
+class ChefHatModel() : Model(RenderType::entityTranslucent) {
     constructor(modelSet: EntityModelSet) : this() {
         modelSet.bakeLayer(HAT_LAYER)
     }

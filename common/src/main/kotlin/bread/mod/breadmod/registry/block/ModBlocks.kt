@@ -198,6 +198,22 @@ object ModBlocks {
     )
 
     @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateOrientableBlockAndItemModel("_side", "_front", "_top")
+    @DataGenerateLanguage("en_us", "Dough Machine")
+    @DataGenerateLoot
+    val DOUGH_MACHINE: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "dough_machine", { DoughMachineBlock() }, Item.Properties()
+    )
+
+    @Orientable(Orientable.Type.HORIZONTAL)
+    @DataGenerateOrientableBlockAndItemModel("_side", "_front", "_top")
+    @DataGenerateLanguage("en_us", "Wheat Crusher")
+    @DataGenerateLoot
+    val WHEAT_CRUSHER: RegistrySupplier<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "wheat_crusher", { WheatCrusherBlock() }, Item.Properties()
+    )
+
+    @Orientable(Orientable.Type.HORIZONTAL)
     @DataGenerateWithExistingParentBlockAndItemModel
     @DataGenerateLanguage("en_us", "Toaster")
     @DataGenerateTooltipLang("en_us", "I wouldn't cook charcoal in it.")

@@ -1,8 +1,9 @@
 package bread.mod.breadmod.util.render
 
 import bread.mod.breadmod.ModMainCommon.modLocation
-import bread.mod.breadmod.client.model.ChefHatModel
+import bread.mod.breadmod.client.model.MachTrailModel
 import bread.mod.breadmod.item.armor.ChefHatItem
+import bread.mod.breadmod.registry.block.ModBlocks
 import bread.mod.breadmod.util.MachTrailData
 import bread.mod.breadmod.util.translateDirection
 import com.mojang.authlib.GameProfile
@@ -14,8 +15,6 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.model.PlayerModel
-import net.minecraft.client.model.geom.ModelLayers
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.block.ModelBlockRenderer
@@ -23,18 +22,18 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer.getFoilBufferDirect
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
-import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelResourceLocation
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.DyedItemColor
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -119,43 +118,14 @@ fun renderMachTrail(playerProfile: GameProfile) {
     val y = player.y
     val z = player.z
     val yRot = -player.rotationVector.y
-    val limbSwing = player.walkAnimation.position()
-    val connection = rgMinecraft.connection!!
-    val playerInfo = connection.getPlayerInfo(playerId)!!
-    val playerSkin = playerInfo.skin
-    val texture = playerSkin.texture
-    val modelType = playerSkin.model
-    val entityModels = rgMinecraft.entityModels
-    val chefHatModel = ChefHatModel(rgMinecraft.entityModels)
-    val bufferSource = rgMinecraft.renderBuffers().bufferSource()
-    val playerModel = PlayerModel<Player>(
-        entityModels.bakeLayer(
-            if (modelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
-        ),
-        modelType == PlayerSkin.Model.SLIM
-    )
+    val machTrailModel = MachTrailModel(playerProfile, 0)
 
-//    try {
-//        val renderDispatcher = rgMinecraft.entityRenderDispatcher
-//        val playerRenderer = renderDispatcher.getRenderer(player) as PlayerRenderer
-//        val renderer = renderDispatcher.renderers[ModEntityTypes.FAKE_PLAYER.get()]
-//        if (renderer is LivingEntityRenderer<*, *>) {
-//            val livingRenderer = renderer as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
-//            LogManager.getLogger().info(livingRenderer.model)
-//        }
-//        println(playerRenderer.model)
-//
-//    } catch (e: Exception) {
-//        LogManager.getLogger().error(e)
-//    }
-
-    playerModel.young = false
     renderBuffer.add(
         mutableListOf(
             0.8F,
             0F,
             1F
-        ) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
+        ) to { mutableList, poseStack, camera, partialTick, _ ->
             val currentOpacity = mutableList[0]
             val redValue = mutableList[1]
             val greenValue = mutableList[2]
@@ -165,34 +135,21 @@ fun renderMachTrail(playerProfile: GameProfile) {
                 0.1f,
                 clamp(currentOpacity, 0f, 1f)
             ).rgb
+            machTrailModel.currentColor = currentColor
 
             if (currentOpacity > 0) {
                 poseStack.pushPose()
                 poseStack.mulPose(Axis.YN.rotationDegrees(-yRot))
                 poseStack.translate(0.0, 0.0, -0.3)
                 poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
-                poseStack.translate(-camera.position.x + x, -camera.position.y + y, -camera.position.z + z)
+                poseStack.initialTranslate(camera)
+                poseStack.translate(x, y, z)
                 poseStack.translate(0.0, 1.4, 0.0)
                 poseStack.mulPose(Axis.XN.rotationDegrees(180f))
                 poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
-                poseStack.scaleFlat(0.9375f)
-                // todo move the model rendering here to MachTrailModel
-                playerModel.setupAnim(
-                    player,
-                    limbSwing,
-                    0.6f,
-                    -1f, 0f, 0f
-//        (headYaw - headYaw) + player.getViewYRot(partialTick),
-//        (headPitch - headPitch) + player.getViewXRot(partialTick)
-                )
 
-                // clamp((millis.toFloat() / 300f) % 2f, 0f, 2f)
+                machTrailModel.render(poseStack)
 
-                val playerModelBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(texture))
-                playerModel.renderToBuffer(poseStack, playerModelBuffer, 15728880, NO_OVERLAY, currentColor)
-
-                poseStack.translate(0.0, -0.5, 0.0)
-                chefHatModel.render(poseStack, 15728880, NO_OVERLAY, currentColor)
                 poseStack.popPose()
 
                 mutableList[1] = clamp(redValue + 0.05f, 0f, 1f)
@@ -201,6 +158,52 @@ fun renderMachTrail(playerProfile: GameProfile) {
                 false
             } else true
         })
+}
+
+fun addMultiblockIdentifier(
+    id: Int,
+    pos: BlockPos,
+    state: BlockState
+) {
+    val x = pos.x.toDouble()
+    val y = pos.y.toDouble()
+    val z = pos.z.toDouble()
+    val modelManager = rgMinecraft.modelManager
+    val wrongModel = modelManager.getModel(modelLocation("block/outline/outline_wrong"))
+    val rightModel = modelManager.getModel(modelLocation("block/outline/outline_right"))
+    val stateCheck: BakedModel = if (state.`is`(ModBlocks.BREAD_BLOCK.get().block)) rightModel else wrongModel
+    renderBuffer.add(mutableListOf(1f) to { mutableList, poseStack, camera, partialTick, levelRenderer ->
+        poseStack.pushPose()
+        poseStack.initialTranslate(camera)
+        poseStack.translate(x, y, z)
+        rgMinecraft.blockRenderer.modelRenderer.renderModel(
+            poseStack.last(),
+            rgMinecraft.renderBuffers().bufferSource().getBuffer(RenderType.translucent()),
+            Blocks.AIR.defaultBlockState(),
+            stateCheck,
+            1f,
+            1f,
+            1f,
+            15728880,
+            NO_OVERLAY
+        )
+        poseStack.translate(0.75, 0.75, 0.5)
+        poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+        poseStack.mulPose(Axis.YN.rotationDegrees(180f))
+        poseStack.scaleFlat(0.05f)
+        renderText(
+            Component.literal(id.toString()).visualOrderText,
+            Color.WHITE.rgb,
+            Color(0f, 0f, 0f, 0.5f).rgb,
+            rgMinecraft.font,
+            poseStack,
+            rgMinecraft.renderBuffers().bufferSource(),
+            false,
+            15728880
+        )
+        poseStack.popPose()
+        false
+    })
 }
 
 /**
@@ -218,7 +221,8 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) {
         val currentOpacity = mutableList[0]
         if (level != null && currentOpacity > 0 && player != null) {
             poseStack.pushPose()
-            poseStack.translate(-camera.position.x, -camera.position.y - 1f, -camera.position.z)
+            poseStack.initialTranslate(camera)
+            poseStack.translate(0.0, -1.0, 0.0)
 
 //            poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360).toFloat() + levelStageEvent.partialTick))
 
@@ -310,6 +314,13 @@ fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) {
  * Scales the [PoseStack] uniformly on the X, Y, and Z axis.
  */
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
+
+/**
+ * Translates the [PoseStack] of the added [renderBuffer] to the player's camera.
+ * Used for initial model positions in-world.
+ */
+fun PoseStack.initialTranslate(camera: Camera) =
+    this.translate(-camera.position.x, -camera.position.y, -camera.position.z)
 
 /**
  * Draws scaled [text] in a Screen or Overlay
@@ -410,7 +421,7 @@ fun ItemRenderer.renderItemModel(
     val renderType = ItemBlockRenderTypes.getRenderType(stack, false)
     val vertexConsumer = getFoilBufferDirect(buffer, renderType, true, stack.hasFoil())
     model.transforms.getTransform(displayContext).apply(leftHand, poseStack)
-    renderModelLists(model, stack, packedLight, packedOverlay, poseStack, vertexConsumer)
+    this.renderModelLists(model, stack, packedLight, packedOverlay, poseStack, vertexConsumer)
 }
 
 /**
