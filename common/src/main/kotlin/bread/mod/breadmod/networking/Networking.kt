@@ -1,5 +1,6 @@
 package bread.mod.breadmod.networking
 
+import bread.mod.breadmod.networking.definition.ConfigValueTestPacket
 import bread.mod.breadmod.networking.definition.MachTrailPacket
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerIncrement
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerSet
@@ -52,6 +53,11 @@ internal object Networking {
             MachTrailPacket.TYPE,
             MachTrailPacket.STREAM_CODEC,
             MachTrailPacket.RECEIVER
+        )
+        registerS2CWithReceiver(
+            ConfigValueTestPacket.TYPE,
+            ConfigValueTestPacket.STREAM_CODEC,
+            ConfigValueTestPacket.RECEIVER
         )
     }
 }

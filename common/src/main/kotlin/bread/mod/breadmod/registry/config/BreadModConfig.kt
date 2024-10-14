@@ -74,6 +74,7 @@ abstract class BreadModConfig {
     /**
      * Overwrites the current [value] with [newValue].
      * * Config file automatically updates upon calling this function
+     * todo need to make a separate set function that doesn't update the config file (use for setting values when joining a server)
      *
      * @author Logan McLean
      */

@@ -1,6 +1,11 @@
 package bread.mod.breadmod.registry.config
 
-import java.util.Objects
+import com.mojang.serialization.Codec
+import com.mojang.serialization.codecs.RecordCodecBuilder
+import io.netty.buffer.ByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
+import java.util.*
 
 class ConfigValue<T>(
     val name: String,
@@ -8,6 +13,29 @@ class ConfigValue<T>(
     val defaultValue: T?,
     val comment: String
 ) {
+    // todo figure out codecs..
+    // todo proof of concept for a ConfigValue codec is here now,
+    //  but we need a generic solution to support all types a ConfigValue can hold so we don't just spam vals for each type
+    /* https://docs.neoforged.net/docs/networking/streamcodecs/#using-stream-codecs */
+    /* https://docs.neoforged.net/docs/datastorage/codecs/#using-codecs */
+    companion object {
+        val CODEC_INT: Codec<ConfigValue<Int>> = RecordCodecBuilder.create { instance ->
+            instance.group(
+                Codec.STRING.fieldOf("name").forGetter(ConfigValue<Int>::name),
+                Codec.INT.fieldOf("value").forGetter(ConfigValue<Int>::value),
+                Codec.INT.fieldOf("default_value").forGetter(ConfigValue<Int>::defaultValue),
+                Codec.STRING.fieldOf("comment").forGetter(ConfigValue<Int>::comment),
+            ).apply(instance) { name, value, default, comment -> ConfigValue(name, value, default, comment) }
+        }
+
+        val STREAM_CODEC_INT : StreamCodec<ByteBuf, ConfigValue<Int>> = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8, ConfigValue<Int>::name,
+            ByteBufCodecs.INT, ConfigValue<Int>::value,
+            ByteBufCodecs.INT, ConfigValue<Int>::defaultValue,
+            ByteBufCodecs.STRING_UTF8, ConfigValue<Int>::comment
+        ) { name, value, default, comment -> ConfigValue(name, value, default, comment) }
+    }
+
     /**
      * Attempts to retrieve the current [value].
      *
@@ -15,7 +43,7 @@ class ConfigValue<T>(
      * @throws NullPointerException if [value] is null
      * @author Logan McLean
      */
-    fun valueOrThrow(): T = if (value != null) value!! else throw NullPointerException(this::class.qualifiedName)
+    fun valueOrThrow(): T = value ?: throw NullPointerException(this::class.qualifiedName)
 
     /**
      * Attempts to retrieve the current [defaultValue].
@@ -24,8 +52,7 @@ class ConfigValue<T>(
      * @throws NullPointerException if [defaultValue] is null
      * @author Logan McLean
      */
-    fun defaultValueOrThrow(): T =
-        if (defaultValue != null) defaultValue else throw NullPointerException(this::class.qualifiedName)
+    fun defaultValueOrThrow(): T = defaultValue ?: throw NullPointerException(this::class.qualifiedName)
 
     class Builder<T> {
         lateinit var name: String

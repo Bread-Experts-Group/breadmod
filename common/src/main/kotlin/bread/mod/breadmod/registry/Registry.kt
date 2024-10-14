@@ -133,6 +133,7 @@ internal object Registry {
         CommonEventRegistry.registerServerTickEvent()
         CommonEventRegistry.registerCommands()
         CommonEventRegistry.registerEntityAttributes()
+        CommonEventRegistry.registerPlayerConnectionEvents()
 //        registerClientTick()
 
         runLifecycleSetupStage()

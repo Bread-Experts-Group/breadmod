@@ -2,11 +2,14 @@ package bread.mod.breadmod.registry
 
 import bread.mod.breadmod.command.server.WarTimerCommand
 import bread.mod.breadmod.entity.FakePlayer
+import bread.mod.breadmod.networking.definition.ConfigValueTestPacket
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerSynchronization
 import bread.mod.breadmod.networking.definition.warTimer.WarTimerToggle
+import bread.mod.breadmod.registry.config.CommonConfig
 import bread.mod.breadmod.registry.entity.ModEntityTypes
 import bread.mod.breadmod.util.ModDamageTypes
 import dev.architectury.event.events.common.CommandRegistrationEvent
+import dev.architectury.event.events.common.PlayerEvent
 import dev.architectury.event.events.common.TickEvent
 import dev.architectury.networking.NetworkManager
 import dev.architectury.registry.level.entity.EntityAttributeRegistry
@@ -26,6 +29,17 @@ internal object CommonEventRegistry {
 
     fun registerEntityAttributes() {
         EntityAttributeRegistry.register(ModEntityTypes.FAKE_PLAYER) { FakePlayer.createAttributes() }
+    }
+
+    fun registerPlayerConnectionEvents() {
+
+        PlayerEvent.PLAYER_JOIN.register { serverPlayer ->
+            NetworkManager.sendToPlayer(serverPlayer, ConfigValueTestPacket(CommonConfig.HAPPY_BLOCK_DIVISIONS))
+        }
+
+//        PlayerEvent.PLAYER_QUIT.register { serverPlayer ->
+//
+//        }
     }
 
     /**

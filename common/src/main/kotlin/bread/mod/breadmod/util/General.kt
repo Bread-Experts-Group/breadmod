@@ -1,5 +1,6 @@
 package bread.mod.breadmod.util
 
+import bread.mod.breadmod.registry.config.ConfigValue
 import bread.mod.breadmod.util.RaycastResult.RaycastResultType
 import dev.architectury.registry.registries.DeferredRegister
 import dev.architectury.registry.registries.RegistrySupplier
@@ -18,6 +19,12 @@ import net.minecraft.world.phys.Vec3
 import kotlin.reflect.KProperty1
 
 internal val formatArray: List<String> = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
+
+/**
+ * Used for setting common values on clientside when joining/leaving a server
+ * - Left side is the old value on client, right side is the new value applied.
+ */
+internal val configValuesMap: MutableMap<ConfigValue<*>, ConfigValue<*>> = mutableMapOf()
 
 /**
  * Limits a number to 1000, and provides a keyword describing it in a shortened format.

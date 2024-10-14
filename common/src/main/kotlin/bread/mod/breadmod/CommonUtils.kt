@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager
  * @author Logan McLean
  * @since 1.0.0
  */
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "UnusedReceiverParameter")
 object CommonUtils {
     private val logger = LogManager.getLogger()
 
