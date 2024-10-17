@@ -52,7 +52,7 @@ class ConfigValue<T>(
      * @throws NullPointerException if [defaultValue] is null
      * @author Logan McLean
      */
-    fun defaultValueOrThrow(): T = defaultValue ?: throw NullPointerException(this::class.qualifiedName)
+    fun defaultOrThrow(): T = defaultValue ?: throw NullPointerException(this::class.qualifiedName)
 
     class Builder<T> {
         lateinit var name: String

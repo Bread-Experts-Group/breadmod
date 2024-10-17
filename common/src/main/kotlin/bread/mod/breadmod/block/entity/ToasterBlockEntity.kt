@@ -12,9 +12,11 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
-import net.minecraft.world.Container
 import net.minecraft.world.ContainerHelper
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.StackedContents
@@ -44,7 +46,10 @@ class ToasterBlockEntity(
         RecipeManager.createCheck(ModRecipeTypes.TOASTING.get())
     }
 
+    // todo ticking logic needs improvement, items relating to this need to be added to their proper tags
     fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: ToasterBlockEntity) {
+//        LogManager.getLogger().info(fluidHandler.fluid.name.string)
+
         val triggeredState = state.getValue(triggered)
         if (triggeredState) {
             if (items[0].`is`(Items.CHARCOAL)) {
@@ -97,6 +102,7 @@ class ToasterBlockEntity(
         setItem(0, assemble)
     }
 
+    // todo figure out why this isn't syncing to other players (maybe it's the interaction logic?)
     fun getRenderStack(): ItemStack =
         if (!items[0].isEmpty) {
             items[0]
@@ -113,20 +119,17 @@ class ToasterBlockEntity(
 
     val fluidHandler: ArchFluidStorage by lazy {
         object : ArchFluidStorage(10000) {
-            override fun onContentsChanged() {
-                super.onContentsChanged()
-                setChanged()
-            }
+            override fun onContentsChanged() = setChanged()
         }
     }
 
-    // todo re-evaluate this..
+    // todo re-evaluate this...
+    //  nightmare
     override fun addCapability(): Map<CapabilityTypes, Any?> = buildMap {
         this[CapabilityTypes.ENERGY] = energyHandler
         this[CapabilityTypes.FLUID] = fluidHandler
     }
 
-    // todo find out why fluid saving and loading is just busted
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
         tag.put("energy", CompoundTag().also { energyTag ->
@@ -137,17 +140,10 @@ class ToasterBlockEntity(
             progressTag.putInt("progress", progress)
             progressTag.putInt("maxProgress", maxProgress)
         })
-//        tag.put("fluid", CompoundTag().also { fluidTag ->
-//            if (fluid.fluid != Fluids.EMPTY) {
-////                println("WRITE FLUID: ${FluidStackHooks.write(registries, fluid, fluidTag)}")
-////                FluidStackHooks.write(registries, fluid, fluidTag)
-//            }
-//            fluidTag.putInt("fluidCapacity", fluidCapacity)
-//            println(fluidTag)
-//        })
-//        if (fluid.fluid != Fluids.EMPTY) {
-//            tag.put("fluid", serializeFluid(registries))
-//        }
+
+        val fluid = fluidHandler.getFluidInTank(0)
+        fluidHandler.serializeFluid(registries, tag, fluid)
+
         ContainerHelper.saveAllItems(tag, items, registries)
     }
 
@@ -155,38 +151,26 @@ class ToasterBlockEntity(
         super.loadAdditional(tag, registries)
         val energyTag = tag.getCompound("energy")
         val progressTag = tag.getCompound("progress")
-//        val fluidTag = tag.getCompound("fluid")
 
         energyHandler.energy = energyTag.getInt("energyStored")
         energyHandler.capacity = energyTag.getInt("maxEnergyStored")
         progress = progressTag.getInt("progress")
         maxProgress = progressTag.getInt("maxProgress")
-//        deserializeFluid(registries, tag)
-//        println("FLUID TAG: $fluidTag")
-//        try {
-//            println("READ RAW FLUID: ${FluidStackHooks.readOptional(registries, fluidTag)}")
-//            println(
-//                "FLUID TYPE READ: ${FluidStackHooks.readOptional(registries, fluidTag).fluid.`arch$registryName`()}"
-//            )
-//        } catch (e: Exception) {
-//            println(e)
-//        }
-//        if (fluid.fluid != Fluids.EMPTY) {
-//            println(
-//                "FLUID HOOK READ: ${FluidStackHooks.readOptional(registries, fluidTag).fluid.`arch$registryName`()}"
-//            )
-//            fluid = FluidStackHooks.readOptional(registries, fluidTag)
-//        }
-//        fluidCapacity = fluidTag.getInt("fluidCapacity")
+
+        fluidHandler.deserializeFluid(registries, tag)
+
         items = NonNullList.withSize(containerSize, ItemStack.EMPTY)
         ContainerHelper.loadAllItems(tag, items, registries)
     }
+
+    override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
+        ClientboundBlockEntityDataPacket.create(this)
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =
         super.getUpdateTag(registries).also { saveAdditional(it, registries) }
 
     override fun getContainerSize(): Int = 1
-    override fun isEmpty(): Boolean = items.count() == 0
+    override fun isEmpty(): Boolean = items.isEmpty()
     override fun getItem(slot: Int): ItemStack = items[slot]
 
     override fun removeItem(slot: Int, amount: Int): ItemStack =
@@ -204,8 +188,8 @@ class ToasterBlockEntity(
 
     override fun setChanged() = super.setChanged()
 
-    override fun stillValid(player: Player): Boolean =
-        Container.stillValidBlockEntity(this, player)
+    override fun stillValid(player: Player): Boolean = true
+//        Container.stillValidBlockEntity(this, player)
 
     override fun getWidth(): Int = 1
     override fun getHeight(): Int = 1

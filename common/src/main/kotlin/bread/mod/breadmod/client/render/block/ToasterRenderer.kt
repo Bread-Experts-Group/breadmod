@@ -23,6 +23,7 @@ class ToasterRenderer(
     private val mainModelLocation = ModelResourceLocation(modLocation("block/toaster/handle"), platformId)
     private var triggeredOffset = 0.0
 
+    // todo model rotations on fabric are inverted or just broken (because of course they are.), works fine on NeoForge
     override fun render(
         blockEntity: ToasterBlockEntity,
         partialTick: Float,

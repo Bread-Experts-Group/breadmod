@@ -4,9 +4,11 @@ import dev.architectury.fluid.FluidStack
 import dev.architectury.hooks.fluid.FluidStackHooks
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.level.material.Fluids
 import java.util.function.Predicate
 
 // todo still a work in progress..
+//  that means there needs to be support for multiple fluid tanks, each with their own fluid
 /**
  * Work in progress implementation of NeoForge's Fluid Tank in common
  */
@@ -16,7 +18,7 @@ open class ArchFluidStorage(
 ) : ArchFluidHandler {
     constructor(capacity: Int) : this(capacity, { true })
 
-    protected var fluid = FluidStack.empty()
+    var fluid = FluidStack.empty()
 
     override fun getTanks(): Int = 1
 
@@ -93,18 +95,19 @@ open class ArchFluidStorage(
         return stack
     }
 
-    fun serializeFluid(registries: HolderLookup.Provider): CompoundTag {
-        val tag = CompoundTag()
-        tag.putInt("fluidCapacity", capacity)
-        FluidStackHooks.write(registries, fluid, tag)
-
-        return tag
+    fun serializeFluid(registries: HolderLookup.Provider, tag: CompoundTag, fluid: FluidStack) {
+        if (getFluidInTank(0).fluid != Fluids.EMPTY) {
+            tag.putInt("fluid_capacity", capacity)
+            tag.put("fluid", FluidStackHooks.write(registries, fluid, tag))
+//            LogManager.getLogger().info("saveAdditional fluid: ${fluid.name.string}")
+//            LogManager.getLogger().info(tag.getCompound("saveAdditional test: ${tag.getCompound("fluid")}"))
+        }
     }
 
     protected open fun onContentsChanged() {}
 
     fun deserializeFluid(registries: HolderLookup.Provider, tag: CompoundTag) {
-        capacity = tag.getInt("fluidCapacity")
-        fluid = FluidStackHooks.readOptional(registries, tag)
+        setCapacity(tag.getInt("fluid_capacity"))
+        fluid = FluidStackHooks.readOptional(registries, tag.getCompound("fluid"))
     }
 }

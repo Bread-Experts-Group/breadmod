@@ -144,6 +144,7 @@ class ToasterBlock : BaseEntityBlock(
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
+    // todo rest of the inserting logic ported from the 1.20 branch, items to be added to the toastable tag
     override fun useItemOn(
         stack: ItemStack,
         state: BlockState,
@@ -161,6 +162,8 @@ class ToasterBlock : BaseEntityBlock(
         if (!triggeredState && entity.progress == 0 && itemHandler.count != 2 && handStack.`is`(ItemTags.TOASTABLE)) {
             if (!player.isCreative) handStack.shrink(1)
             // todo actual item inserting
+            //  side quest: item handler bridge from neoforge so we can use it's functions?
+//            entity.items.add(ItemStack(handStack.item, 1)) // Crashed and burned
             entity.setItem(0, ItemStack(handStack.item, 2))
             level.playSound(
                 null,
@@ -176,6 +179,7 @@ class ToasterBlock : BaseEntityBlock(
         return ItemInteractionResult.sidedSuccess(level.isClientSide)
     }
 
+    // todo same story here with the method above this one (except it's just trigger logic this time)
     override fun useWithoutItem(
         state: BlockState,
         level: Level,
