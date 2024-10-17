@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level
 import org.apache.logging.log4j.LogManager
 
 /**
- * Helper methods for NeoForge specific actions.
+ * Helper methods for platform specific actions.
  *
  * @author Logan McLean
  * @since 1.0.0
