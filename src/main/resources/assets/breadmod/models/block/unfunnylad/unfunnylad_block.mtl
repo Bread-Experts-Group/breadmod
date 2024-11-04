@@ -1,0 +1,42 @@
+# Blender 4.2.0 MTL File: 'None'
+# www.blender.org
+
+newmtl Handle1Mtl
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl1
+map_Kd #hndl1
+map_d #hndl1
+
+newmtl Handle2Mtl
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl2
+map_Kd #hndl2
+map_d #hndl2
+
+newmtl Handle3Mtl
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl3
+map_Kd #hndl3
+map_d #hndl3
+
+newmtl Handle4Mtl
+Ka 1 1 1
+Kd 1 1 1
+Ks 0.0627451 0.0627451 0.0627451
+d 1
+Ns 0
+map_Ka #hndl4
+map_Kd #hndl4
+map_d #hndl4

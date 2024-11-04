@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.bread_experts_group.breadmod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "breadmod_neoforge.refmap.json",
+  "mixins": [
+    "common.IAccessorEntity",
+    "common.MixinLightningBolt"
+  ],
+  "client": [
+    "client.IAccessorDirectoryLister",
+    "client.MixinDirectoryListener",
+    "client.MixinSpriteResourceLoader"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "parent": "breadmod:item/bread_shield",
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [45, 135, 0],
+			"translation": [0.51, -5.8, -2.5]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [45, 135, 0],
+			"translation": [2.51, -6.6, -1]
+		},
+		"firstperson_righthand": {
+			"rotation": [2, 180, -7.5],
+			"translation": [-5.8, -8, 2],
+			"scale": [1.25, 1.25, 1.25]
+		},
+		"firstperson_lefthand": {
+			"rotation": [1, 180, -5],
+			"translation": [-1.5, -9.2, 2],
+			"scale": [1.25, 1.25, 1.25]
+		}
+	}
+}
