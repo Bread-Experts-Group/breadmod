@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.BlockHitResult
 import org.bread_experts_group.breadmod.block.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
@@ -44,13 +43,11 @@ class WheatCrusherBlock : BaseEntityBlock(Properties.of()) {
         player: Player,
         hitResult: BlockHitResult
     ): InteractionResult {
-        val entity = level.getBlockEntity(pos) as? WheatCrusherBlockEntity ?: return InteractionResult.FAIL
-        if (level.isClientSide) {
-            return InteractionResult.SUCCESS
-        } else {
+        if (!level.isClientSide) {
+            val entity = level.getBlockEntity(pos) as? WheatCrusherBlockEntity ?: return InteractionResult.FAIL
             player.openMenu(entity, pos)
         }
-        return super.useWithoutItem(state, level, pos, player, hitResult)
+        return InteractionResult.sidedSuccess(level.isClientSide)
     }
 
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
@@ -67,7 +64,7 @@ class WheatCrusherBlock : BaseEntityBlock(Properties.of()) {
     ) {
         if (!state.`is`(newState.block)) {
             val entity = (level.getBlockEntity(pos) as WheatCrusherBlockEntity)
-            Containers.dropContents(level, pos, entity.items)
+            Containers.dropContents(level, pos, entity)
         }
         level.invalidateCapabilities(pos)
         super.onRemove(state, level, pos, newState, movedByPiston)

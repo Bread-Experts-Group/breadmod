@@ -3,8 +3,6 @@ package org.bread_experts_group.breadmod
 import net.minecraft.core.Direction
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
@@ -14,13 +12,11 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
 import net.neoforged.neoforge.items.wrapper.InvWrapper
-import net.neoforged.neoforge.items.wrapper.SidedInvWrapper
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.Level
 import org.bread_experts_group.breadmod.Breadmod.Companion.LOGGER
 import org.bread_experts_group.breadmod.block.entity.SoundBlockEntity
-import org.bread_experts_group.breadmod.block.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.datagen.*
 import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider.Companion.constructLootProvider
 import org.bread_experts_group.breadmod.datagen.lang.EnglishUSLangProvider
@@ -155,17 +151,17 @@ internal object CommonModEventBus {
     fun registerCapabilities(event: RegisterCapabilitiesEvent) {
         event.registerBlock(
             Capabilities.ItemHandler.BLOCK,
-            { _, _, _, entity, _ -> InvWrapper(entity as SoundBlockEntity) },
+            { _, _, _, entity, _: Direction? -> InvWrapper(entity as SoundBlockEntity) },
             ModBlocks.SOUND_BLOCK.asBlock()
         )
 
         event.registerBlockEntity(
             Capabilities.EnergyStorage.BLOCK,
             ModBlockEntityTypes.WHEAT_CRUSHER.get(),
-        ) { entity, _ -> entity.energyHandler }
+        ) { entity, _: Direction? -> entity.energyHandler }
         event.registerBlockEntity(
             Capabilities.ItemHandler.BLOCK,
             ModBlockEntityTypes.WHEAT_CRUSHER.get()
-        ) { entity, side -> /*InvWrapper(entity)*/  SidedInvWrapper(entity, side) }
+        ) { entity, _: Direction? -> entity.sidedInvWrapper }
     }
 }
