@@ -56,13 +56,14 @@ class WheatCrusherBlockEntity(
 
     val energyHandler: EnergyStorage by lazy {
         object : EnergyStorage(100000) {
+            // todo there's gotta be a better way to sync the energy every receive and extract cause this just seems hacky
             override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
                 syncToClients()
                 return super.receiveEnergy(toReceive, simulate)
             }
 
             override fun extractEnergy(toExtract: Int, simulate: Boolean): Int {
-                syncToClients()
+//                syncToClients()
                 return super.extractEnergy(toExtract, simulate)
             }
         }
@@ -76,12 +77,14 @@ class WheatCrusherBlockEntity(
     private fun syncToClients() = level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_CLIENTS)
 
     // todo CHECKLIST
-    //  Recipe ticking and assembling works, tick current does not account for the input being removed mid recipe
+    //  Recipe ticking and assembling works, tick current does not account for the input being removed mid recipe (an alternative would be to shrink the input slot by 1 every recipe cycle)
     //  recipe does not account for the max stack size in the output and will continue growing the stack infinitely (need a canFitResults for the recipe logic)
     //  automation is able to insert and remove items from every side of the block without taking/placing to and from the wrong slots
-    //  energy (utilizing syncToClients() in receive and extract) and items (automatic) are synced to the client, but progress and maxProgress are not at the moment
-    //  energy meter is missing translation key and the stored amount is rapidly switching from full to the div amount (basically changing really fast)
-    //  screen gui doesn't have a working progress bar and the graphic for the crushing wheels does not play either (due to progress/maxProgress not being synced to client)
+    //  energy (utilizing syncToClients() in receive and extract), items (automatic) and recipe progress/maxProgress is properly synced to the client
+    //  energy meter is missing translation key and the stored amount is rapidly switching from full to the div amount (basically it's really jittery)
+
+    // todo having syncToClients() not be present in extract and receive in the energy handler stops it from syncing every time it handles energy
+    //  then the energy is only updated when tick() updates the block on client
 
     fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: WheatCrusherBlockEntity) {
         currentRecipe.ifPresentOrElse({ activeRecipe ->
@@ -100,8 +103,8 @@ class WheatCrusherBlockEntity(
                     currentRecipe = Optional.empty()
                     progress = 0; maxProgress = 0
                 } else if (progress != maxProgress) {
-                    println(progress)
-                    println(maxProgress)
+//                    println(progress)
+//                    println(maxProgress)
                     progress++
                     level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
                 }
@@ -139,21 +142,18 @@ class WheatCrusherBlockEntity(
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
         tag.put("energy", energyHandler.serializeNBT(registries))
-        tag.put("recipeProgress", CompoundTag().also { progressTag ->
-            progressTag.putInt("progress", progress)
-            progressTag.putInt("maxProgress", maxProgress)
-        })
+        tag.putInt("progress", progress)
+        tag.putInt("maxProgress", maxProgress)
 
         ContainerHelper.saveAllItems(tag, itemSlots, registries)
     }
 
     override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.loadAdditional(tag, registries)
-        val progressTag = tag.getCompound("progress")
 
         energyHandler.deserializeNBT(registries, tag.get("energy") ?: return)
-        progress = progressTag.getInt("progress")
-        maxProgress = progressTag.getInt("maxProgress")
+        progress = tag.getInt("progress")
+        maxProgress = tag.getInt("maxProgress")
 
         itemSlots = NonNullList.withSize(2, ItemStack.EMPTY)
         ContainerHelper.loadAllItems(tag, itemSlots, registries)
@@ -192,7 +192,7 @@ class WheatCrusherBlockEntity(
     override fun getItems(): MutableList<ItemStack> = itemSlots
 
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =
-        CompoundTag().also { saveAdditional(it, registries) }
+        super.getUpdateTag(registries).also { saveAdditional(it, registries) }
 
     override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
         ClientboundBlockEntityDataPacket.create(this)

@@ -20,6 +20,8 @@ class WheatCrusherMenu(
         inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.WHEAT_CRUSHER.get()).get()
     )
 
+    fun getScaledProgress(): Int = ((parent.progress.toFloat() / parent.maxProgress.toFloat()) * 48).toInt()
+
     fun getEnergyStoredScaled(): Int {
         return (parent.level ?: return 0).getCapability(
             Capabilities.EnergyStorage.BLOCK,

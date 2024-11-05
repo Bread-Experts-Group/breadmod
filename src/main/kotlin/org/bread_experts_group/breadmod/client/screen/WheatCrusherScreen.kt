@@ -32,6 +32,7 @@ class WheatCrusherScreen(
         guiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight)
         inventoryLabelY = imageHeight - 94
 
+        renderProgressArrow(guiGraphics)
         renderEnergyMeter(guiGraphics)
     }
 
@@ -62,19 +63,22 @@ class WheatCrusherScreen(
                     mouseX, mouseY
                 )
             }
-
-            // todo should be updated using [rgMinecraft.gui.guiTicks] for a consistent 20 ticks per second baseline
-            if (menu.isCrafting()) {
-                // Left crushing wheel
-                guiGraphics.blit(texture, leftPos + 51, topPos + 38, 176, step, 32, 32)
-                // Right crushing wheel
-                guiGraphics.blit(texture, leftPos + 92, topPos + 38, 208, step, 32, 32)
-                if (timer <= 0) {
-                    timer = 40
-                    if (step < 32) step += 32 else step = -32
-                } else timer -= 2
-            } else step = -32
         }
+
+        // todo should be updated using [rgMinecraft.gui.guiTicks] for a consistent 20 ticks per second baseline
+        if (menu.isCrafting()) {
+            // Left crushing wheel
+            guiGraphics.blit(texture, leftPos + 51, topPos + 38, 176, step, 32, 32)
+            // Right crushing wheel
+            guiGraphics.blit(texture, leftPos + 92, topPos + 38, 208, step, 32, 32)
+            if (timer <= 0) {
+                timer = 40
+                if (step < 32) step += 32 else step = -32
+            } else timer -= 2
+        } else step = -32
+
+//        println(menu.parent.progress)
+//        println(menu.parent.maxProgress)
 
         renderTooltip(guiGraphics, mouseX, mouseY)
     }
@@ -82,5 +86,11 @@ class WheatCrusherScreen(
     private fun renderEnergyMeter(guiGraphics: GuiGraphics) {
         val energyStored = menu.getEnergyStoredScaled()
         guiGraphics.blit(texture, leftPos + 151, topPos + 14 + 47 - energyStored, 176, 111 - energyStored, 16, 47)
+    }
+
+    private fun renderProgressArrow(guiGraphics: GuiGraphics) {
+        if (menu.isCrafting()) {
+            guiGraphics.blit(texture, leftPos + 83, topPos + 32, 192, 64, 9, menu.getScaledProgress())
+        }
     }
 }
