@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod
 
-import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
@@ -8,8 +7,6 @@ import net.neoforged.api.distmarker.Dist
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.config.ModConfig
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
-import net.neoforged.fml.event.lifecycle.FMLDedicatedServerSetupEvent
 import net.neoforged.fml.loading.FMLLoader
 import net.neoforged.neoforge.common.data.LanguageProvider
 import org.apache.logging.log4j.Level
@@ -21,10 +18,7 @@ import org.apache.logging.log4j.core.config.Configurator
 import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
-import org.bread_experts_group.breadmod.util.rgMinecraft
-import thedarkcolour.kotlinforforge.neoforge.forge.DIST
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
-import thedarkcolour.kotlinforforge.neoforge.forge.runForDist
 
 /**
  * Main mod class.
@@ -77,30 +71,30 @@ class Breadmod(container: ModContainer) {
         // Register the KDeferredRegister to the mod-specific event bus
         Registry.registerAll(MOD_BUS)
 
-        val obj = runForDist(clientTarget = {
-            MOD_BUS.addListener(::onClientSetup)
-            Minecraft.getInstance()
-        }, serverTarget = {
-            MOD_BUS.addListener(::onServerSetup)
-            "test"
-        })
+//        val obj = runForDist(clientTarget = {
+//            MOD_BUS.addListener(::onClientSetup)
+//            Minecraft.getInstance()
+//        }, serverTarget = {
+//            MOD_BUS.addListener(::onServerSetup)
+//            "test"
+//        })
 
-        println(obj)
+//        println(obj)
     }
 
-    /**
-     * This is used for initializing client specific
-     * things such as renderers and keymaps
-     * Fired on the mod specific event bus.
-     */
-    private fun onClientSetup(event: FMLClientSetupEvent) {
-        LOGGER.log(Level.INFO, "Initializing client...")
-    }
-
-    /**
-     * Fired on the global Forge bus.
-     */
-    private fun onServerSetup(event: FMLDedicatedServerSetupEvent) {
-        LOGGER.log(Level.INFO, "Server starting...")
-    }
+//    /**
+//     * This is used for initializing client specific
+//     * things such as renderers and keymaps
+//     * Fired on the mod specific event bus.
+//     */
+//    private fun onClientSetup(event: FMLClientSetupEvent) {
+//        LOGGER.log(Level.INFO, "Initializing client...")
+//    }
+//
+//    /**
+//     * Fired on the global Forge bus.
+//     */
+//    private fun onServerSetup(event: FMLDedicatedServerSetupEvent) {
+//        LOGGER.log(Level.INFO, "Server starting...")
+//    }
 }

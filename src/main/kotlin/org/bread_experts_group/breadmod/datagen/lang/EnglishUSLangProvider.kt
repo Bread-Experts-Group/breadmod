@@ -101,6 +101,10 @@ class EnglishUSLangProvider(
             "block", "random_sound_block", "tooltip"
         )
 
+        modAdd("Energy", path = arrayOf("energy"))
+        modAdd("Input", path = arrayOf("input"))
+        modAdd("Output", path = arrayOf("output"))
+
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
         add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")
     }
