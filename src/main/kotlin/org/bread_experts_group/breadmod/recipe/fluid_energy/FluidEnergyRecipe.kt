@@ -1,58 +1,81 @@
 package org.bread_experts_group.breadmod.recipe.fluid_energy
 
-import net.minecraft.core.HolderLookup
-import net.minecraft.tags.TagKey
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.Recipe
-import net.minecraft.world.item.crafting.RecipeInput
-import net.minecraft.world.item.crafting.RecipeSerializer
-import net.minecraft.world.item.crafting.RecipeType
-import net.minecraft.world.level.Level
-import com.mojang.datafixers.util.Pair
 import net.minecraft.core.HolderLookup.Provider
-import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.core.NonNullList
+import net.minecraft.world.entity.player.StackedContents
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.*
+import net.minecraft.world.level.Level
+import net.neoforged.neoforge.common.util.RecipeMatcher
+import net.neoforged.neoforge.fluids.FluidStack
+import net.neoforged.neoforge.fluids.crafting.FluidIngredient
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class FluidEnergyRecipe(
-    val recipeInput: List<ItemStack>? = null,
-    val recipeInputTagged: List<TagKey<Item>>? = null,
-    val recipeOutput: List<ItemStack>? = null
+    val itemIngredients: NonNullList<Ingredient>,
+    val fluidIngredients: NonNullList<FluidIngredient>,
+    val results: List<ItemStack>,
+    val energy: Int,
+    val time: Int
 ) : Recipe<FluidEnergyRecipe.FluidEnergyInput> {
+    val isSimple: Boolean = itemIngredients.stream().allMatch(Ingredient::isSimple) &&
+            fluidIngredients.stream().allMatch(FluidIngredient::isSimple)
+
     override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY.get()
     override fun getType(): RecipeType<*> = ModRecipeTypes.FLUID_ENERGY.get()
 
     override fun matches(input: FluidEnergyInput, level: Level): Boolean {
-        val okay = recipeInput?.all { recipeIn ->
-            input.itemsRequired?.all { inputIn ->
-                Ingredient.of(recipeIn).test(inputIn)
-            } ?: false
-        } ?: true && recipeInputTagged?.all { recipeInTag ->
-            input.itemsRequiredTagged?.all { inputInTag ->
-                Ingredient.of(BuiltInRegistries.ITEM.get(recipeInTag.location))
-                    .test(BuiltInRegistries.ITEM.get(inputInTag.first.location).defaultInstance)
-            } ?: false
-        } ?: true
+        return if (input.count != itemIngredients.size || input.count != fluidIngredients.size) {
+            false
+        } else if (!isSimple) {
+            val nonEmptyItems = ArrayList<ItemStack>(input.count)
+            val nonEmptyFluids = ArrayList<FluidStack>(input.count)
+            for (item in input.itemsRequired) nonEmptyItems.add(item)
+            for (fluid in input.fluidsRequired) nonEmptyFluids.add(fluid)
+            val itemMatch = RecipeMatcher.findMatches(nonEmptyItems, itemIngredients) != null
+            val fluidMatch = RecipeMatcher.findMatches(nonEmptyFluids, fluidIngredients) != null
 
-        return okay
+            return itemMatch || fluidMatch
+        } else false /*{
+            if (input.size == 1 && ingredients.size == 1)
+                ingredients.first().test(input.getItem(0))
+            else
+                input.stackedContents.canCraft(this, null)
+        }*/
+        // todo figure this out later
     }
 
     override fun assemble(input: FluidEnergyInput, registries: Provider): ItemStack = ItemStack.EMPTY
 
-    fun assembleOutputs(input: FluidEnergyInput, registries: Provider): List<ItemStack> =
-        recipeOutput ?: listOf()
+    fun assembleOutputs(input: FluidEnergyInput, registries: Provider): List<ItemStack> = results
 
     override fun getResultItem(registries: Provider): ItemStack = ItemStack.EMPTY
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
     class FluidEnergyInput(
         val size: Int,
-        val itemsRequired: List<ItemStack>? = null,
-        val itemsRequiredTagged: List<Pair<TagKey<Item>, Int>>? = null
+        val itemsRequired: List<ItemStack>,
+        val fluidsRequired: List<FluidStack>
     ) : RecipeInput {
-        override fun getItem(index: Int): ItemStack = ItemStack.EMPTY
+        var count: Int
+        val stackedContents = StackedContents()
+
+        init {
+            var i = 0
+
+            for (stack: ItemStack in itemsRequired) {
+                if (!stack.isEmpty) {
+                    i++
+                    stackedContents.accountStack(stack, 1)
+                }
+            }
+
+            count = i
+        }
+
+        override fun getItem(index: Int): ItemStack = itemsRequired[index]
+        fun getFluid(index: Int): FluidStack = fluidsRequired[index]
         override fun size(): Int = this.size
     }
 }
