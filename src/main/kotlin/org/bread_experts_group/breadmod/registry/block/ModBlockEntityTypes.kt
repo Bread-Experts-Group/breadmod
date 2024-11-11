@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.Breadmod
 import org.bread_experts_group.breadmod.block.entity.BreadScreenBlockEntity
 import org.bread_experts_group.breadmod.block.entity.SoundBlockEntity
+import org.bread_experts_group.breadmod.block.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.block.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import java.util.function.Supplier
@@ -33,17 +34,10 @@ object ModBlockEntityTypes {
             buildBlockEntity(::WheatCrusherBlockEntity, ModBlocks.WHEAT_CRUSHER.asBlock())
         }
 
-    /* Caused by: java.lang.NullPointerException: Trying to access unbound value: ResourceKey[minecraft:item / breadmod:monitor] */
-/*    fun <T : BlockEntity> DeferredRegister<BlockEntityType<*>>.registerBlockEntity(
-        id: String,
-        supplier: BlockEntitySupplier<T>,
-        block: Block
-    ): Supplier<BlockEntityType<out T>> = this.register(id) { ->
-        BlockEntityType.Builder.of(
-            supplier,
-            block
-        ).build(Util.fetchChoiceType(References.BLOCK_ENTITY, id))
-    }*/
+    val DOUGH_MACHINE: Supplier<BlockEntityType<DoughMachineBlockEntity>> =
+        BLOCK_ENTITY_REGISTRY.register("dough_machine_entity") { ->
+            buildBlockEntity(::DoughMachineBlockEntity, ModBlocks.DOUGH_MACHINE.asBlock())
+        }
 
     private fun <T : BlockEntity> buildBlockEntity(
         supplier: BlockEntitySupplier<T>,

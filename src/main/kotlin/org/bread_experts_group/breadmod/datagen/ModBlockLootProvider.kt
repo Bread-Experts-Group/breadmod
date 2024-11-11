@@ -54,6 +54,7 @@ class ModBlockLootProvider(
         dropSelf(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
         dropSelf(ModBlocks.SOUND_BLOCK.asBlock())
         dropSelf(ModBlocks.WHEAT_CRUSHER.asBlock())
+        dropSelf(ModBlocks.DOUGH_MACHINE.asBlock())
 
         add(
             FLOUR_BLOCK.asBlock(),

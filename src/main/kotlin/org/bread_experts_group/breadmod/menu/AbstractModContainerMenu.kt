@@ -18,6 +18,8 @@ abstract class AbstractModContainerMenu(
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack = moveStackFunction(player, index)
 
+    override fun stillValid(player: Player): Boolean = player.containerMenu == this
+
     /**
      * ### Used in [quickMoveStack] to enable shift clicking items into the target inventory
      * value must match the number of slots your block entity has

@@ -21,6 +21,7 @@ import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
+import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
 import org.bread_experts_group.breadmod.item.toolGun.ToolGunItem
 import org.bread_experts_group.breadmod.item.toolGun.ToolGunItem.Companion.TOOL_GUN_DEF
@@ -91,6 +92,7 @@ internal object ClientModEventBus {
     @SubscribeEvent
     fun registerMenuScreens(event: RegisterMenuScreensEvent) {
         event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
+        event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
     }
 
     @Suppress("UNCHECKED_CAST")

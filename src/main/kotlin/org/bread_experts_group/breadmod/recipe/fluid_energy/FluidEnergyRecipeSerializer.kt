@@ -10,85 +10,79 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
-import net.neoforged.neoforge.fluids.crafting.FluidIngredient
+import net.neoforged.neoforge.common.crafting.SizedIngredient
+import net.neoforged.neoforge.fluids.FluidStack
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
+import java.util.function.Function
 
 class FluidEnergyRecipeSerializer : RecipeSerializer<FluidEnergyRecipe> {
+    // todo possible single item and result codec?
 
-    // ShapelessRecipe.java
-    companion object {
-        val CODEC: MapCodec<FluidEnergyRecipe> = RecordCodecBuilder.mapCodec { inst ->
-            inst.group(
-                Ingredient.CODEC
-                    .listOf()
-                    .fieldOf("item_ingredients")
-                    .flatXmap(
-                        { list ->
-                            val typedArray = list.toTypedArray()
-                            DataResult.success(NonNullList.of(Ingredient.EMPTY, *typedArray))
-                        }, { result -> DataResult.success(result) }
-                    ).forGetter(FluidEnergyRecipe::itemIngredients),
-                FluidIngredient.CODEC
-                    .listOf()
-                    .fieldOf("fluid_ingredients")
-                    .flatXmap(
-                        { fluidList ->
-                            val fluidArray = fluidList.toTypedArray()
-                            DataResult.success(NonNullList.of(FluidIngredient.of(), *fluidArray))
-                        }, { result -> DataResult.success(result) }
-                    ).forGetter(FluidEnergyRecipe::fluidIngredients),
-                ItemStack.CODEC.listOf().fieldOf("result").forGetter(FluidEnergyRecipe::results),
-                Codec.INT.fieldOf("energy").forGetter(FluidEnergyRecipe::energy),
-                Codec.INT.fieldOf("time").forGetter(FluidEnergyRecipe::time)
-            ).apply(inst, ::FluidEnergyRecipe)
-        }
-
-        val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, FluidEnergyRecipe> = StreamCodec.composite(
-            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity(cap) }),
-            FluidEnergyRecipe::itemIngredients,
-            FluidIngredient.STREAM_CODEC.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity(cap) }),
-            FluidEnergyRecipe::fluidIngredients,
-            ItemStack.LIST_STREAM_CODEC, FluidEnergyRecipe::results,
-            ByteBufCodecs.INT, FluidEnergyRecipe::energy,
-            ByteBufCodecs.INT, FluidEnergyRecipe::time,
-            ::FluidEnergyRecipe
-        )
-
-//        val STREAM_CODEC = StreamCodec.of(::toNetwork, ::fromNetwork)
-
-/*        fun fromNetwork(buffer: RegistryFriendlyByteBuf): FluidEnergyRecipe {
-            val i = buffer.readVarInt()
-            val ingredientList: NonNullList<Ingredient> = NonNullList.withSize(i, Ingredient.EMPTY)
-            ingredientList.replaceAll { _ -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer) }
-
-            val f = buffer.readVarInt()
-            val fluidIngredientList = NonNullList.withSize(f, FluidIngredient.of())
-            fluidIngredientList.replaceAll { _ -> FluidIngredient.STREAM_CODEC.decode(buffer) }
-
-            val results = ItemStack.LIST_STREAM_CODEC.decode(buffer)
-            val energy = buffer.readInt()
-            val time = buffer.readInt()
-
-            return FluidEnergyRecipe(ingredientList, fluidIngredientList, results, energy, time)
-        }
-
-        fun toNetwork(buffer: RegistryFriendlyByteBuf, recipe: FluidEnergyRecipe) {
-            buffer.writeVarInt(recipe.itemIngredients.size)
-            for (ingredient: Ingredient in recipe.itemIngredients) {
-                Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient)
-            }
-
-            buffer.writeVarInt(recipe.fluidIngredients.size)
-            for (fluidIngredient: FluidIngredient in recipe.fluidIngredients) {
-                FluidIngredient.STREAM_CODEC.encode(buffer, fluidIngredient)
-            }
-
-            ItemStack.LIST_STREAM_CODEC.encode(buffer, recipe.results)
-            buffer.writeInt(recipe.energy)
-            buffer.writeInt(recipe.time)
-        }*/
+    private val codec: MapCodec<FluidEnergyRecipe> = RecordCodecBuilder.mapCodec { inst ->
+        inst.group(
+            sizedIngredientCodecModule(FluidEnergyRecipe::itemIngredients),
+            sizedFluidIngredientCodecModule(FluidEnergyRecipe::fluidIngredients),
+            itemStackCodecModule(FluidEnergyRecipe::results),
+            fluidStackCodecModule(FluidEnergyRecipe::fluidResults),
+            intCodecModule("energy", FluidEnergyRecipe::energy),
+            intCodecModule("time", FluidEnergyRecipe::time),
+        ).apply(inst, ::FluidEnergyRecipe)
     }
 
-    override fun codec(): MapCodec<FluidEnergyRecipe> = CODEC
+    private val streamCodec: StreamCodec<RegistryFriendlyByteBuf, FluidEnergyRecipe> = StreamCodec.composite(
+        nonNullListStreamCodec(SizedIngredient.STREAM_CODEC), FluidEnergyRecipe::itemIngredients,
+        nonNullListStreamCodec(SizedFluidIngredient.STREAM_CODEC), FluidEnergyRecipe::fluidIngredients,
+        ItemStack.LIST_STREAM_CODEC, FluidEnergyRecipe::results,
+        listStreamCodec(FluidStack.STREAM_CODEC), FluidEnergyRecipe::fluidResults,
+        ByteBufCodecs.INT, FluidEnergyRecipe::energy,
+        ByteBufCodecs.INT, FluidEnergyRecipe::time,
+        ::FluidEnergyRecipe
+    )
 
-    override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, FluidEnergyRecipe> = STREAM_CODEC
+    private fun <O> sizedIngredientCodecModule(getter: Function<O, NonNullList<SizedIngredient>>) =
+        SizedIngredient.FLAT_CODEC
+            .listOf()
+            .fieldOf("item_ingredients")
+            .flatXmap(
+                { itemList ->
+                    val itemArray = itemList.toTypedArray()
+                    DataResult.success(NonNullList.of(SizedIngredient.of(ItemStack.EMPTY.item, 0), *itemArray))
+                }, { result -> DataResult.success(result) }
+            ).forGetter(getter)
+
+    private fun <O> sizedFluidIngredientCodecModule(getter: Function<O, NonNullList<SizedFluidIngredient>>) =
+        SizedFluidIngredient.FLAT_CODEC
+            .listOf()
+            .fieldOf("fluid_ingredients")
+            .flatXmap(
+                { fluidList ->
+                    val fluidArray = fluidList.toTypedArray()
+                    DataResult.success(NonNullList.of(SizedFluidIngredient.of(FluidStack.EMPTY), *fluidArray))
+                }, { result -> DataResult.success(result) }
+            ).forGetter(getter)
+
+    private fun <O> itemStackCodecModule(getter: Function<O, List<ItemStack>>) =
+        ItemStack.CODEC.listOf().fieldOf("item_result").forGetter(getter)
+
+    private fun <O> fluidStackCodecModule(getter: Function<O, List<FluidStack>>) =
+        FluidStack.CODEC.listOf().fieldOf("fluid_result").forGetter(getter)
+
+    private fun <O> intCodecModule(field: String, getter: Function<O, Int>) =
+        Codec.INT.fieldOf(field).forGetter(getter)
+
+    /**
+     * Applies a [NonNullList] to the specified [StreamCodec]
+     */
+    private fun <T> nonNullListStreamCodec(streamCodec: StreamCodec<RegistryFriendlyByteBuf, T>) =
+        streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity(cap) })
+
+    /**
+     * [nonNullListStreamCodec] with [NonNullList] converted to [List]
+     */
+    private fun <T> listStreamCodec(streamCodec: StreamCodec<RegistryFriendlyByteBuf, T>) =
+        streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toList() })
+
+    override fun codec(): MapCodec<FluidEnergyRecipe> = codec
+
+    override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, FluidEnergyRecipe> = streamCodec
 }

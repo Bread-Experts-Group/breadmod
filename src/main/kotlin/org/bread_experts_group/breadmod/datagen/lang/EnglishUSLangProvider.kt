@@ -57,6 +57,7 @@ class EnglishUSLangProvider(
         add(ModBlocks.RANDOM_SOUND_BLOCK)
         add(ModBlocks.SOUND_BLOCK)
         add(ModBlocks.WHEAT_CRUSHER)
+        add(ModBlocks.DOUGH_MACHINE)
 
         add(ModSounds.POW, "Pow!")
         add(ModSounds.TEST_SOUND, "Test sound plays")

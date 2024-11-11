@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.menu
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.Slot
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.energy.IEnergyStorage
@@ -42,6 +41,4 @@ class WheatCrusherMenu(
         addSlot(Slot(parent, 0, 80, 15))
         addSlot(ResultSlot(1, 80, 87, parent))
     }
-
-    override fun stillValid(player: Player): Boolean = player.containerMenu == this
 }

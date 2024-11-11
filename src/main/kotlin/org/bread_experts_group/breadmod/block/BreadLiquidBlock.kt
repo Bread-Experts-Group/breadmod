@@ -6,6 +6,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.fluids.BaseFlowingFluid
+import org.bread_experts_group.breadmod.block.util.ILiquidCombustible
 import org.bread_experts_group.breadmod.registry.fluid.ModFluids
 import java.awt.Color
 

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.block.util
 
 import net.neoforged.neoforge.common.extensions.IFluidExtension
 

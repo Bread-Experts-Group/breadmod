@@ -163,5 +163,18 @@ internal object CommonModEventBus {
             Capabilities.ItemHandler.BLOCK,
             ModBlockEntityTypes.WHEAT_CRUSHER.get()
         ) { entity, _: Direction? -> entity.sidedInvWrapper }
+
+        event.registerBlockEntity(
+            Capabilities.EnergyStorage.BLOCK,
+            ModBlockEntityTypes.DOUGH_MACHINE.get(),
+        ) { entity, _: Direction? -> entity.energyHandler }
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            ModBlockEntityTypes.DOUGH_MACHINE.get()
+        ) { entity, _: Direction? -> entity.sidedInvWrapper }
+        event.registerBlockEntity(
+            Capabilities.FluidHandler.BLOCK,
+            ModBlockEntityTypes.DOUGH_MACHINE.get()
+        ) { entity, _: Direction? -> entity.fluidHandler }
     }
 }

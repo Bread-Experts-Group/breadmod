@@ -24,6 +24,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.FlourLayeredBlock
 import org.bread_experts_group.breadmod.HappyBlock
 import org.bread_experts_group.breadmod.block.*
+import org.bread_experts_group.breadmod.block.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.block.machine.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 
@@ -93,6 +94,12 @@ object ModBlocks {
     val WHEAT_CRUSHER = BLOCK_REGISTRY.registerBlockItem(
         "wheat_crusher",
         { WheatCrusherBlock() },
+        Item.Properties()
+    )
+
+    val DOUGH_MACHINE = BLOCK_REGISTRY.registerBlockItem(
+        "dough_machine",
+        { DoughMachineBlock() },
         Item.Properties()
     )
 

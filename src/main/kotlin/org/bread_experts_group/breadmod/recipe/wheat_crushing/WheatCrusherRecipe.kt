@@ -7,7 +7,6 @@ import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
-// todo use CustomRecipe next time?
 class WheatCrusherRecipe(
     val recipeInput: ItemStack,
     val recipeOutput: ItemStack,
