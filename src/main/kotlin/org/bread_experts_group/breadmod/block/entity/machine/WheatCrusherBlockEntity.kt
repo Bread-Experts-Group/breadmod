@@ -158,7 +158,6 @@ class WheatCrusherBlockEntity(
 
     override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.loadAdditional(tag, registries)
-
         energyHandler.deserializeNBT(registries, tag.get("energy") ?: return)
         progress = tag.getInt("progress")
         maxProgress = tag.getInt("maxProgress")

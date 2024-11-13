@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.Container
+import net.minecraft.world.ContainerHelper
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.WorldlyContainer
 import net.minecraft.world.entity.player.Inventory
@@ -32,7 +33,7 @@ import net.neoforged.neoforge.items.wrapper.SidedInvWrapper
 import org.bread_experts_group.breadmod.Breadmod.Companion.LOGGER
 import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.menu.DoughMachineMenu
-import org.bread_experts_group.breadmod.recipe.fluid_energy.FluidEnergyRecipe
+import org.bread_experts_group.breadmod.recipe.dough_machine.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
@@ -53,9 +54,9 @@ class DoughMachineBlockEntity(
     var maxProgress = 0
     private var energyDivision: Int? = null
 
-    var currentRecipe: Optional<FluidEnergyRecipe> = Optional.empty()
-    val recipeDial: RecipeManager.CachedCheck<FluidEnergyRecipe.FluidEnergyInput, FluidEnergyRecipe> by lazy {
-        RecipeManager.createCheck(ModRecipeTypes.FLUID_ENERGY.get())
+    var currentRecipe: Optional<DoughMachineRecipe> = Optional.empty()
+    val recipeDial: RecipeManager.CachedCheck<DoughMachineRecipe.DoughMachineInput, DoughMachineRecipe> by lazy {
+        RecipeManager.createCheck(ModRecipeTypes.DOUGH_MACHINE.get())
     }
 
     val energyHandler: EnergyStorage by lazy {
@@ -90,8 +91,8 @@ class DoughMachineBlockEntity(
         currentRecipe.ifPresentOrElse({ activeRecipe ->
             if (!inputStillValid(activeRecipe)) resetRecipe()
             if (!inputStillValid(activeRecipe)) resetRecipe()
-            val div = if (energyDivision == null) ((activeRecipe.energy) / max(
-                activeRecipe.time,
+            val div = if (energyDivision == null) ((activeRecipe.recipeEnergy) / max(
+                activeRecipe.recipeTime,
                 1
             )).also { div -> energyDivision = div } else energyDivision ?: return@ifPresentOrElse
             if ((div < 0) && (energyHandler.energyStored + div > energyHandler.maxEnergyStored)) return@ifPresentOrElse
@@ -100,17 +101,18 @@ class DoughMachineBlockEntity(
             if (energy >= div && canFitResults(activeRecipe)) {
                 progress++
                 level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
-                if (progress >= activeRecipe.time) {
-                    recipeDone(activeRecipe)
+                if (progress >= activeRecipe.recipeTime) {
+                    recipeDone(level, activeRecipe)
                     resetRecipe()
                 }
             }
         }, {
             val check = recipeDial.getRecipeFor(
-                FluidEnergyRecipe.FluidEnergyInput(
-                    2,
-                    listOf(getItem(0)),
-                    listOf()
+                DoughMachineRecipe.DoughMachineInput(
+                    getItem(0),
+                    getItem(0).count,
+                    getFluidtank(0),
+                    getFluidtank(0).amount
                 ), level
             )
 
@@ -119,17 +121,17 @@ class DoughMachineBlockEntity(
                 println("recipe present?")
                 if (!canFitResults(recipe)) return@ifPresent
                 currentRecipe = Optional.of(recipe)
-                maxProgress = recipe.time
+                maxProgress = recipe.recipeTime
 
                 if (debugMode) {
                     try {
                         LOGGER.info("after getting recipe: $recipe")
                         LOGGER.info("recipe id: ${present.id.path}")
-                        LOGGER.info("item requirement list: ${present.value.itemIngredients}")
-                        LOGGER.info("item output list: ${present.value.results}")
-                        LOGGER.info("fluid requirement list: ${present.value.fluidIngredients}")
-                        LOGGER.info("fluid output list: ${present.value.fluidResults}")
-                        LOGGER.info("time required: ${present.value.time}")
+                        LOGGER.info("item requirement: ${present.value.recipeInput}")
+                        LOGGER.info("item output: ${present.value.recipeOutput}")
+                        LOGGER.info("fluid requirement: ${present.value.recipeFluidInput}")
+                        LOGGER.info("fluid output: ${present.value.recipeFluidOutput}")
+                        LOGGER.info("time required: ${present.value.recipeTime}")
                     } catch (e: Exception) {
                         LOGGER.error(e)
                     }
@@ -147,41 +149,36 @@ class DoughMachineBlockEntity(
     }
 
     // in this machine's case we only have one input fluid tank
-    fun inputStillValid(recipe: FluidEnergyRecipe): Boolean {
-        val item = (getItem(0) == recipe.getFirstItem()) || items.isNotEmpty()
-        val fluid = (recipe.getFirstFluid() == getFluidtank(0)) || !fluidHandler.isEmpty
+    fun inputStillValid(recipe: DoughMachineRecipe): Boolean {
+        val item = getItem(0) == recipe.recipeInput || !getItem(0).isEmpty
+        val fluid = getFluidtank(0) == recipe.recipeFluidInput || !fluidHandler.isEmpty
 
         return item && fluid
     }
 
-    fun canFitResults(recipe: FluidEnergyRecipe): Boolean =
-        (getItem(1).count < maxStackSize || getItem(1).count + recipe.getFirstItem().count < maxStackSize) &&
-                getFluidtank(1).amount < fluidHandler.getTankCapacity(1) ||
-                getFluidtank(1).amount + recipe.getFirstFluid().amount < fluidHandler.getTankCapacity(1)
+    fun canFitResults(recipe: DoughMachineRecipe): Boolean =
+        (getItem(1).count < maxStackSize || getItem(1).count + recipe.recipeOutput.count < maxStackSize) &&
+                (getFluidtank(1).amount < fluidHandler.getTankCapacity(1) || getFluidtank(1).amount +
+                        recipe.recipeFluidOutput.amount < fluidHandler.getTankCapacity(1))
 
-    fun recipeDone(recipe: FluidEnergyRecipe) {
-        itemSlots[0].shrink(recipe.getFirstItem().count)
-        getFluidtank(0).shrink(recipe.getFirstFluid().amount)
-        val assembleItems = recipe.assembleItems(
-            FluidEnergyRecipe.FluidEnergyInput(
-                2,
-                itemSlots,
-                listOf(getFluidtank(0))
-            )
+    fun recipeDone(level: Level, recipe: DoughMachineRecipe) {
+        itemSlots[0].shrink(recipe.recipeInput.count)
+        getFluidtank(0).shrink(recipe.recipeFluidInput.amount)
+        val input = DoughMachineRecipe.DoughMachineInput(
+            getItem(0),
+            recipe.recipeInput.count,
+            getFluidtank(0),
+            recipe.recipeFluidInput.amount
         )
-        val assembleFluids = recipe.assembleFluids(
-            FluidEnergyRecipe.FluidEnergyInput(
-                2,
-                itemSlots,
-                listOf(getFluidtank(1))
-            )
-        )
+
+        val assembleItems = recipe.assemble(input, level.registryAccess())
+        val assembleFluids = recipe.assembleFluid(input)
 
         if (itemSlots[1].isEmpty) itemSlots[1] =
-            assembleItems[0].copyWithCount(recipe.results[0].count) else itemSlots[1].grow(recipe.results[0].count)
+            assembleItems.copyWithCount(recipe.recipeOutput.count) else itemSlots[1].grow(recipe.recipeOutput.count)
         if (getFluidtank(1).isEmpty) fluidHandler.fluid =
-            assembleFluids[0].copyWithAmount(recipe.fluidResults[0].amount) else
-            getFluidtank(1).amount += recipe.fluidResults[0].amount
+            assembleFluids.copyWithAmount(recipe.recipeFluidOutput.amount) else
+            getFluidtank(1).amount += recipe.recipeFluidOutput.amount
     }
 
     override fun clearContent() = itemSlots.forEach { it.count = 0 }
@@ -221,6 +218,27 @@ class DoughMachineBlockEntity(
 
     override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
         ClientboundBlockEntityDataPacket.create(this)
+
+    override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
+        super.saveAdditional(tag, registries)
+        tag.put("energy", energyHandler.serializeNBT(registries))
+        tag.put("fluid", CompoundTag().also { fluidHandler.writeToNBT(registries, it) })
+        tag.putInt("progress", progress)
+        tag.putInt("maxProgress", maxProgress)
+
+        ContainerHelper.saveAllItems(tag, itemSlots, registries)
+    }
+
+    override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
+        super.loadAdditional(tag, registries)
+        energyHandler.deserializeNBT(registries, tag.get("energy") ?: return)
+        fluidHandler.readFromNBT(registries, tag.getCompound("fluid"))
+        progress = tag.getInt("progress")
+        maxProgress = tag.getInt("maxProgress")
+
+        itemSlots = NonNullList.withSize(3, ItemStack.EMPTY)
+        ContainerHelper.loadAllItems(tag, itemSlots, registries)
+    }
 
     override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
         DoughMachineMenu(containerId, playerInventory, this)

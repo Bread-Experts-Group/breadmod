@@ -5,12 +5,15 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
 import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.menu.DoughMachineMenu
 import org.bread_experts_group.breadmod.util.formatUnit
+import org.bread_experts_group.breadmod.util.renderFluid
 
 class DoughMachineScreen(
     menu: DoughMachineMenu,
@@ -56,6 +59,25 @@ class DoughMachineScreen(
                 )
             }
         }
+
+        menu.parent.level?.getCapability(Capabilities.FluidHandler.BLOCK, menu.parent.blockPos, menu.parent.horizontal)
+            ?.let { handler ->
+                handler.getFluidInTank(0).let { tank ->
+                    val fluid = tank.fluid
+                    if (tank.amount > 0) {
+                        val percentage = (tank.amount.toFloat() / handler.getTankCapacity(0)) * 28
+                        guiGraphics.renderFluid(
+                            x = leftPos + 153F,
+                            y = (topPos + 75F),
+                            width = 16,
+                            height = percentage.toInt(),
+                            fluid = fluid,
+                            flowing = false,
+                            direction = Direction.SOUTH
+                        )
+                    }
+                }
+            }
 
         renderTooltip(guiGraphics, mouseX, mouseY)
     }

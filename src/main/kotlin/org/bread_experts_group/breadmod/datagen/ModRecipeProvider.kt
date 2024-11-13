@@ -8,7 +8,6 @@ import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.world.item.Items
 import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
-import org.bread_experts_group.breadmod.recipe.fluid_energy.FluidEnergyRecipeBuilder
 import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipeBuilder
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.concurrent.CompletableFuture
@@ -36,15 +35,17 @@ class ModRecipeProvider(
 //            .energyRequired(4000)
 //            .save(recipeOutput, modLocation("special", "hell"))
 
-        FluidEnergyRecipeBuilder(listOf(Items.BREAD.defaultInstance))
-            .requiresItem(ModItems.FLOUR.toStack())
-            .timeRequired(100)
-            .energyRequired(1000)
-            .save(recipeOutput, modLocation("special", "machine", "bread_test"))
+//        FluidEnergyRecipeBuilder(listOf(Items.BREAD.defaultInstance))
+//            .requiresItem(ModItems.FLOUR.toStack())
+//            .timeRequired(100)
+//            .energyRequired(1000)
+//            .save(recipeOutput, modLocation("special", "machine", "bread_test"))
 
         ShapelessRecipeBuilder(RecipeCategory.MISC, ModItems.TEST_BREAD.toStack())
             .unlockedBy("has_item", has(Items.BREAD))
             .requires(Items.BREAD, 5)
             .save(recipeOutput, modLocation("special", "test"))
+
+        // todo make DoughMachineRecipeBuilder
     }
 }

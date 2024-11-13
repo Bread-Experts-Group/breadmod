@@ -19,7 +19,7 @@ import kotlin.jvm.optionals.getOrNull
 class DoughMachineMenu(
     id: Int,
     inventory: Inventory,
-    private val parent: DoughMachineBlockEntity
+    val parent: DoughMachineBlockEntity
 ) : AbstractModContainerMenu(ModMenuTypes.DOUGH_MACHINE.get(), id) {
     constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
         id, inventory,

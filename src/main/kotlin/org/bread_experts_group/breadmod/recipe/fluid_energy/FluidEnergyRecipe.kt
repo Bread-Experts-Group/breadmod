@@ -12,6 +12,7 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
+// todo this whole thing is fucked and needs a redo
 open class FluidEnergyRecipe(
     val itemIngredients: NonNullList<SizedIngredient>,
     val fluidIngredients: NonNullList<SizedFluidIngredient>,
@@ -27,8 +28,12 @@ open class FluidEnergyRecipe(
     fun getFirstItem(): ItemStack = itemIngredients[0].items[0]
     fun getFirstFluid(): FluidStack = fluidIngredients[0].fluids[0]
 
+    // todo ugh..
     override fun matches(input: FluidEnergyInput, level: Level): Boolean {
-        return itemIngredients.first().test(input.getItem(0)) && time >= 0 && energy >= 0
+        val ingredient = itemIngredients[0].ingredient()
+        val count = itemIngredients[0].count()
+        return itemIngredients.all { i -> input.itemsRequired.all { i.test(it) } }
+//        return itemIngredients[0].test(input.getItem(0)) && time >= 0 && energy >= 0
         /*return if (input.count != itemIngredients.size && input.count != fluidIngredients.size) {
             false
         } else {
@@ -40,7 +45,6 @@ open class FluidEnergyRecipe(
             } || input.fluidsRequired.isEmpty()
 
             itemOkay && fluidOkay
-            // todo fix later(?)
         }*/
     }
 
@@ -58,7 +62,6 @@ open class FluidEnergyRecipe(
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
     class FluidEnergyInput(
-        val size: Int,
         val itemsRequired: List<ItemStack>,
         val fluidsRequired: List<FluidStack>
     ) : RecipeInput {
@@ -85,6 +88,6 @@ open class FluidEnergyRecipe(
 
         override fun getItem(index: Int): ItemStack = if (index == 0) itemsRequired[0] else ItemStack.EMPTY
         fun getFluid(index: Int): FluidStack = fluidsRequired[index]
-        override fun size(): Int = this.size
+        override fun size(): Int = 2
     }
 }
