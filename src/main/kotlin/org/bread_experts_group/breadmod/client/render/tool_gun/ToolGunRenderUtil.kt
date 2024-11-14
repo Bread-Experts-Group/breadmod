@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.toolGun
+package org.bread_experts_group.breadmod.client.render.tool_gun
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -110,42 +110,40 @@ fun drawTextOnScreen(
 //    pPoseStack.popPose()
 //}
 
-// --Commented out by Inspection START (9/10/2024 03:55):
-//fun drawWrappedTextOnScreen(
-//    font: Font,
-//    text: Component,
-//    poseStack: PoseStack,
-//    buffer: MultiBufferSource,
-//    color: Int,
-//    backgroundColor: Int,
-//    dropShadow: Boolean,
-//    posX: Double,
-//    posY: Double,
-//    posZ: Double,
-//    splitY: Float,
-//    scale: Float,
-//    lineWidth: Int
-//) {
-//    initialTranslations(poseStack, posX, posY, posZ, scale)
-//    var split: Float = splitY
-//    for (formattedCharSequence: FormattedCharSequence in componentSplit(text, lineWidth, font)) {
-//        font.drawInBatch(
-//            formattedCharSequence,
-//            0f,
-//            split,
-//            color,
-//            dropShadow,
-//            poseStack.last().pose(),
-//            buffer,
-//            Font.DisplayMode.NORMAL,
-//            backgroundColor,
-//            SCREEN_TINT
-//        )
-//        split += 9f
-//    }
-//    poseStack.popPose()
-//}
-// --Commented out by Inspection STOP (9/10/2024 03:55)
+fun drawWrappedTextOnScreen(
+    font: Font,
+    text: Component,
+    poseStack: PoseStack,
+    buffer: MultiBufferSource,
+    color: Int,
+    backgroundColor: Int,
+    dropShadow: Boolean,
+    posX: Double,
+    posY: Double,
+    posZ: Double,
+    splitY: Float,
+    scale: Float,
+    lineWidth: Int
+) {
+    initialTranslations(poseStack, posX, posY, posZ, scale)
+    var split: Float = splitY
+    for (formattedCharSequence: FormattedCharSequence in componentSplit(text, lineWidth, font)) {
+        font.drawInBatch(
+            formattedCharSequence,
+            0f,
+            split,
+            color,
+            dropShadow,
+            poseStack.last().pose(),
+            buffer,
+            Font.DisplayMode.NORMAL,
+            backgroundColor,
+            SCREEN_TINT
+        )
+        split += 9f
+    }
+    poseStack.popPose()
+}
 
 @Suppress("unused")
 // Font.split() converted to take in a Component instead of a FormattedCharSequence

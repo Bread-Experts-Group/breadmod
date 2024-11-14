@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.Fluid
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
+import net.neoforged.neoforge.client.settings.KeyModifier
 import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.model.MachTrailModel
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
@@ -57,6 +58,13 @@ internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableL
 
 internal var skyColorMixinActive: Boolean = false
 internal var redness: Float = 1f
+
+fun modifierMatches(modifiers: Int, modifier: KeyModifier) = when (modifier) {
+    KeyModifier.SHIFT -> modifiers and 0x0001
+    KeyModifier.CONTROL -> modifiers and 0x0002
+    KeyModifier.ALT -> modifiers and 0x0004
+    KeyModifier.NONE -> 1
+} != 0
 
 /**
  * Color getter for ItemStacks.

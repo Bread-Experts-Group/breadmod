@@ -1,8 +1,5 @@
 package org.bread_experts_group.breadmod.registry.block
 
-import com.mojang.serialization.MapCodec
-import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.BlockItem
@@ -10,15 +7,10 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeType
-import net.minecraft.world.level.BlockGetter
 import org.bread_experts_group.breadmod.Breadmod
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.FallingBlock
-import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.material.MapColor
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.FlourLayeredBlock
@@ -110,33 +102,7 @@ object ModBlocks {
 
     val FLOUR_BLOCK = BLOCK_REGISTRY.registerBlockItem(
         "flour_block",
-        {
-            object :
-                FallingBlock(Properties.of().ignitedByLava().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.SNOW)) {
-                override fun isFlammable(
-                    state: BlockState,
-                    level: BlockGetter,
-                    pos: BlockPos,
-                    direction: Direction
-                ): Boolean = true
-
-                override fun codec(): MapCodec<out FallingBlock> = simpleCodec { this }
-
-                override fun getFlammability(
-                    state: BlockState,
-                    level: BlockGetter,
-                    pos: BlockPos,
-                    direction: Direction
-                ): Int = 100
-
-                override fun getFireSpreadSpeed(
-                    state: BlockState,
-                    level: BlockGetter,
-                    pos: BlockPos,
-                    direction: Direction
-                ): Int = 150
-            }
-        },
+        { FlourBlock() },
         Item.Properties()
     )
 

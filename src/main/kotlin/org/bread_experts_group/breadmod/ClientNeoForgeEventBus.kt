@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod
 
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -7,18 +8,34 @@ import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.math.Axis
 import net.minecraft.Util
+import net.minecraft.client.KeyMapping
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.util.Mth.clamp
 import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.item.ItemStack
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.client.event.ClientTickEvent
+import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.client.settings.KeyConflictContext
+import net.neoforged.neoforge.client.settings.KeyModifier
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.neoforge.network.PacketDistributor
+import org.apache.commons.lang3.ArrayUtils
+import org.bread_experts_group.breadmod.ClientModEventBus.toolGunBindList
+import org.bread_experts_group.breadmod.api.IHoldScreen
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.item.armor.ChefHatItem
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunConfigurationPacket
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.*
 import org.bread_experts_group.breadmod.util.redness
@@ -92,6 +109,122 @@ internal object ClientNeoForgeEventBus {
                 renderEvent.invoke(mutableList, event)
             }
         }
+    }
+
+    val changeMode = KeyMapping(
+        "controls.${Breadmod.ID}.$TOOL_GUN_DEF.change_mode",
+        KeyConflictContext.GUI,
+        KeyModifier.SHIFT,
+        InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
+        "controls.${Breadmod.ID}.category.$TOOL_GUN_DEF"
+    )
+
+    val openGuiEditor = KeyMapping(
+        "controls.${Breadmod.ID}.gui_editor",
+        KeyConflictContext.UNIVERSAL,
+        KeyModifier.SHIFT,
+        InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F1),
+        "controls.${Breadmod.ID}.category"
+    )
+
+    var createdMappings = listOf<KeyMapping>()
+
+    @Suppress("UNUSED_PARAMETER")
+    @SubscribeEvent
+    fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
+        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
+            rgMinecraft.options.keyMappings,
+            *createdMappings.toTypedArray()
+        )
+    }
+
+    private fun handleToolgunInput(
+        player: LocalPlayer,
+        itemHeld: ToolGunItem, stackHeld: ItemStack,
+        key: InputConstants.Key, modifiers: Int,
+        early: Boolean
+    ): Boolean {
+        val currentMode = itemHeld.getCurrentMode(stackHeld)
+
+        if (!early && key == changeMode.key && modifierMatches(modifiers, changeMode.keyModifier)) {
+            PacketDistributor.sendToServer(ToolGunConfigurationPacket(true))
+            player.playSound(SoundEvents.DISPENSER_FAIL, 1.0f, 1.0f)
+            return true
+        } else {
+            currentMode.keyBinds.forEach {
+                toolGunBindList[it]?.let { bind ->
+                    if (key == bind.key && modifierMatches(modifiers, bind.keyModifier)) {
+                        PacketDistributor.sendToServer(ToolGunConfigurationPacket(false, it, early))
+
+                        val mode = currentMode.mode
+                        (if (early) mode::actionEarly else mode::action)(player.level(), player, stackHeld, it)
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun <T> handleHoldScreenInput(
+        holdScreen: T,
+        key: InputConstants.Key,
+        action: Int,
+        modifiers: Int
+    ) where T : Screen, T : IHoldScreen {
+        if (
+            action == InputConstants.RELEASE &&
+            key == holdScreen.keyCheck.key &&
+            modifierMatches(modifiers, holdScreen.keyCheck.keyModifier)
+        ) holdScreen.onClose()
+    }
+
+    private fun handleInput(
+        action: Int,
+        key: InputConstants.Key,
+        modifiers: Int,
+        player: LocalPlayer?,
+        screen: Screen?
+    ) {
+        if (action == InputConstants.REPEAT) return
+        if (screen is IHoldScreen) {
+            handleHoldScreenInput(screen, key, action, modifiers)
+        } else if (player != null && screen == null) {
+            val stackHeld = player.mainHandItem
+            val itemHeld = stackHeld.item
+
+            if (itemHeld is ToolGunItem) handleToolgunInput(
+                player,
+                itemHeld, stackHeld,
+                key, modifiers,
+                action == InputConstants.PRESS
+            )
+        }
+    }
+
+    @SubscribeEvent
+    fun keyInput(event: InputEvent.Key) {
+        handleInput(
+            event.action, InputConstants.getKey(event.key, event.scanCode), event.modifiers,
+            rgMinecraft.player, rgMinecraft.screen
+        )
+    }
+
+    @SubscribeEvent
+    fun mouseInput(event: InputEvent.MouseButton.Post) {
+        handleInput(
+            event.action, InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
+            rgMinecraft.player, rgMinecraft.screen
+        )
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    @SubscribeEvent
+    fun login(event: PlayerEvent.PlayerLoggedInEvent) {
+        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
+            rgMinecraft.options.keyMappings,
+            openGuiEditor
+        )
     }
 
     private var sprintTimer = 0

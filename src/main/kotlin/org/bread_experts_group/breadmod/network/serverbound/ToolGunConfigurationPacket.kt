@@ -1,0 +1,94 @@
+package org.bread_experts_group.breadmod.network.serverbound
+
+import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.neoforged.neoforge.network.handling.IPayloadContext
+import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunModeData
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.util.MapIterator
+
+class ToolGunConfigurationPacket(
+    val modeSwitch: Boolean,
+    val control: ToolGunModeProvider.Control = ToolGunModeProvider.Control.EMPTY,
+    val early: Boolean = false
+) : CustomPacketPayload {
+    companion object {
+        val TYPE: CustomPacketPayload.Type<ToolGunConfigurationPacket> =
+            CustomPacketPayload.Type(modLocation("tool_gun_configuration"))
+
+        val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToolGunConfigurationPacket> = StreamCodec.composite(
+            ByteBufCodecs.BOOL, ToolGunConfigurationPacket::modeSwitch,
+            ToolGunModeProvider.Control.CODEC, ToolGunConfigurationPacket::control,
+            ByteBufCodecs.BOOL, ToolGunConfigurationPacket::early,
+            ::ToolGunConfigurationPacket
+        )
+
+        fun handleServerboundPacket(data: ToolGunConfigurationPacket, context: IPayloadContext) {
+            context.enqueueWork {
+                val player = context.player()
+                Breadmod.LOGGER.info("ToolGunConfigurationPacket: receiving packet from ${player.name.string}")
+
+                val stack = player.mainHandItem
+                val item = stack.item
+                if (item is ToolGunItem) {
+                    if (!player.cooldowns.isOnCooldown(item)) {
+                        if (data.modeSwitch) {
+                            val currentMode = item.ensureCurrentMode(stack)
+                            val namespaceIterator = MapIterator(ToolGunModeDataLoader.modes)
+                            namespaceIterator.restoreState(currentMode.namespaceIteratorState)
+                            val modeIterator = MapIterator(namespaceIterator.current().value)
+                            val newData = ToolGunModeData.EMPTY
+
+                            val last = modeIterator.current().value.first
+                            when {
+                                modeIterator.hasNext() -> {
+                                    newData.name = modeIterator.next().key
+                                    newData.modeIteratorState = modeIterator.saveState()
+                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), newData)
+                                }
+
+                                namespaceIterator.hasNext() -> {
+                                    newData.namespace = namespaceIterator.next().key
+                                    newData.namespaceIteratorState = namespaceIterator.saveState()
+                                    newData.modeIteratorState = 0
+                                    newData.name = modeIterator.current().key
+                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), newData)
+                                }
+
+                                else -> {
+                                    newData.namespaceIteratorState = 0
+                                    newData.namespace = namespaceIterator.current().key
+                                    newData.modeIteratorState = 0
+                                    newData.name = modeIterator.current().key
+                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), newData)
+                                }
+                            }
+
+                            val level = player.level()
+                            last.mode.close(level, player, stack, modeIterator.current().value.first.mode)
+                            modeIterator.current().value.first.mode.open(level, player, stack, last.mode)
+                            player.cooldowns.addCooldown(item, 10)
+                        } else {
+                            val mode = item.getCurrentMode(stack).mode
+                            (if (data.early) mode::actionEarly else mode::action)(
+                                player.level(),
+                                player,
+                                stack,
+                                data.control
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
+}

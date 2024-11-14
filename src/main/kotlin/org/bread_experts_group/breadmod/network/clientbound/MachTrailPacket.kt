@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
 import org.bread_experts_group.breadmod.util.MachTrailData
 import org.bread_experts_group.breadmod.util.machTrailMap
 
-internal data class MachTrailPacket(
+data class MachTrailPacket(
     val playerProfile: GameProfile
 ) : CustomPacketPayload {
     companion object {

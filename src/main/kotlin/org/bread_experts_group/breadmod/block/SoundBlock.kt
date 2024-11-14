@@ -22,6 +22,10 @@ class SoundBlock : BaseEntityBlock(
         .requiresCorrectToolForDrops()
         .sound(SoundType.METAL)
 ) {
+    companion object {
+        val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { SoundBlock() }
+    }
+
     init {
         registerDefaultState(
             stateDefinition.any()
@@ -29,7 +33,7 @@ class SoundBlock : BaseEntityBlock(
         )
     }
 
-    override fun codec(): MapCodec<out BaseEntityBlock> = simpleCodec { this }
+    override fun codec(): MapCodec<out BaseEntityBlock> = CODEC
 
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = SoundBlockEntity(pos, state)
 

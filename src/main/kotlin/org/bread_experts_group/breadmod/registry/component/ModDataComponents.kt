@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.network.codec.ByteBufCodecs
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunModeData
 import java.util.function.Supplier
 
 object ModDataComponents {
@@ -19,4 +20,13 @@ object ModDataComponents {
             .cacheEncoding()
             .build()
     }
+
+    val TOOL_GUN_DATA: Supplier<DataComponentType<ToolGunModeData>> =
+        DATA_COMPONENT_REGISTRY.register("tool_gun_data") { ->
+            DataComponentType.builder<ToolGunModeData>()
+                .persistent(ToolGunModeData.CODEC)
+                .networkSynchronized(ToolGunModeData.STREAM_CODEC)
+                .cacheEncoding()
+                .build()
+        }
 }

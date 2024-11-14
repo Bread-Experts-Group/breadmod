@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.client.gui
 
-import org.bread_experts_group.breadmod.item.toolGun.ToolGunItem
-import org.bread_experts_group.breadmod.item.toolGun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting

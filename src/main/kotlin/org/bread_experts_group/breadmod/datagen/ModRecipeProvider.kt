@@ -23,6 +23,12 @@ class ModRecipeProvider(
             .itemRequired(Items.WHEAT, 1)
             .save(recipeOutput, modLocation("special", "machine", "wheat_crushing"))
 
+//        DoughMachineRecipeBuilder(ModItems.TEST_BREAD.toStack(), 1)
+//            .itemRequired(ModItems.FLOUR.get(), 2)
+//            .timeRequired(100)
+//            .energyRequired(5000)
+//            .save(recipeOutput, modLocation("special", "machine", "dough_testing"))
+
 //        FluidEnergyRecipeBuilder(
 //            listOf(ItemStack(ModItems.TOOL_GUN.asItem(), 2), ItemStack(Items.BREAD, 16)),
 //            listOf(FluidStack(Fluids.LAVA, 6000))

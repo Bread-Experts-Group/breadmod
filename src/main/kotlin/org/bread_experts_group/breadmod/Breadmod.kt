@@ -8,6 +8,7 @@ import net.neoforged.fml.ModContainer
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.config.ModConfig
 import net.neoforged.fml.loading.FMLLoader
+import net.neoforged.fml.loading.FMLPaths
 import net.neoforged.neoforge.common.data.LanguageProvider
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
@@ -33,6 +34,8 @@ class Breadmod(container: ModContainer) {
 
         // the logger for our mod
         val LOGGER: Logger = LogManager.getLogger(ID)
+
+        val DATA_DIR = FMLPaths.CONFIGDIR.get().resolve(ID)
 
         /**
          * @param override Only use this when you need to refer to a namespace outside breadmod

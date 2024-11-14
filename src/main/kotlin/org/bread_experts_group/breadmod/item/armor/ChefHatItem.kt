@@ -101,9 +101,11 @@ class ChefHatItem : ArmorItem(ModArmorMaterials.CHEF, Type.HELMET, Properties().
                 if (sprintTimer >= 70) machStage = 4
 
                 if (sprintTimer == 1 && !isRunning) {
-                    level.server.playerList.players.filter { it != entity }.forEach { serverPlayer ->
-                        PacketDistributor.sendToPlayer(serverPlayer, MachTrailPacket(entity.gameProfile))
-                    }
+                    PacketDistributor.sendToPlayersTrackingChunk(
+                        level,
+                        entity.chunkPosition(),
+                        MachTrailPacket(entity.gameProfile)
+                    )
                     isRunning = true
                 }
 

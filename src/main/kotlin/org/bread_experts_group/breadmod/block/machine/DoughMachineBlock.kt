@@ -22,7 +22,11 @@ import org.bread_experts_group.breadmod.block.entity.machine.DoughMachineBlockEn
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 
 class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
-    override fun codec(): MapCodec<out BaseEntityBlock> = simpleCodec { this }
+    companion object {
+        val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { DoughMachineBlock() }
+    }
+
+    override fun codec(): MapCodec<out BaseEntityBlock> = CODEC
 
     override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =
         !player.isCreative

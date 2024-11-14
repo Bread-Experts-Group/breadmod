@@ -90,7 +90,6 @@ class DoughMachineBlockEntity(
     fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: DoughMachineBlockEntity) {
         currentRecipe.ifPresentOrElse({ activeRecipe ->
             if (!inputStillValid(activeRecipe)) resetRecipe()
-            if (!inputStillValid(activeRecipe)) resetRecipe()
             val div = if (energyDivision == null) ((activeRecipe.recipeEnergy) / max(
                 activeRecipe.recipeTime,
                 1

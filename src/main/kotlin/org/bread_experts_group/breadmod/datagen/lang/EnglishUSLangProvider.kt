@@ -76,6 +76,12 @@ class EnglishUSLangProvider(
         add(ModItems.TOOL_GUN)
         add(ModItems.TEST_BREAD)
         add(ModItems.ULTIMATE_BREAD)
+        add(ModItems.BREAD_SHIELD)
+        add(ModItems.DOPED_BREAD)
+        add(ModItems.TOASTED_BREAD)
+        add(ModItems.BREAD_SLICE)
+        add(ModItems.DOUGH)
+        add(ModItems.DIE)
 
         add(ModDamageTypes.TIMER_RAN_OUT.translationKey(), "%1\$s ran out of time!")
 
@@ -100,6 +106,14 @@ class EnglishUSLangProvider(
         modAdd(
             "Uses the power of a die to make random noises",
             "block", "random_sound_block", "tooltip"
+        )
+        modAdd(
+            "No it does NOT look like balsa wood >:(",
+            "item", "bread_shield", "tooltip"
+        )
+        modAdd(
+            "contains trace amounts of neurotoxin",
+            "item", "doped_bread", "tooltip"
         )
 
         modAdd("Energy", path = arrayOf("energy"))
