@@ -4,10 +4,12 @@ import net.minecraft.commands.Commands
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.neoforge.event.AddReloadListenerEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.util.ModDamageTypes
@@ -15,6 +17,11 @@ import org.bread_experts_group.breadmod.util.ModDamageTypes
 @Suppress("unused")
 @EventBusSubscriber(modid = Breadmod.ID, bus = EventBusSubscriber.Bus.GAME)
 internal object CommonNeoForgeEventBus {
+    @SubscribeEvent
+    fun onResourceReload(event: AddReloadListenerEvent) {
+        event.addListener(ToolGunModeDataLoader)
+    }
+
     /**
      * A map holding a war timer for every player on the server.
      */

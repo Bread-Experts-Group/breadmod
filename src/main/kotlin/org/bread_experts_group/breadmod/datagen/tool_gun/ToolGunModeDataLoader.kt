@@ -10,7 +10,6 @@ import net.minecraft.util.profiling.ProfilerFiller
 import net.neoforged.api.distmarker.Dist
 import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.ClientModEventBus
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.*
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.CLASS_KEY
@@ -24,6 +23,7 @@ import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Com
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOLGUN_INFO_DISPLAY_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOLTIP_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.createMappingsForControls
 import org.bread_experts_group.breadmod.util.jsonToComponent
 import org.bread_experts_group.breadmod.util.rgMinecraft
 import org.jetbrains.annotations.ApiStatus.Internal
@@ -117,7 +117,7 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
     }
 
     fun loadKeys() {
-        val keyMaps = ClientModEventBus.createMappingsForControls(keybindsToAdd)
+        val keyMaps = createMappingsForControls(keybindsToAdd)
         rgMinecraft.options.keyMappings = ArrayUtils.addAll(
             rgMinecraft.options.keyMappings,
             *keyMaps

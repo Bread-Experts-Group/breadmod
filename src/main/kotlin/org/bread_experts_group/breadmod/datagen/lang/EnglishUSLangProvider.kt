@@ -9,6 +9,7 @@ import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.fluids.FluidType
 import org.bread_experts_group.breadmod.Breadmod
 import org.bread_experts_group.breadmod.Breadmod.Companion.modAdd
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
@@ -82,6 +83,20 @@ class EnglishUSLangProvider(
         add(ModItems.BREAD_SLICE)
         add(ModItems.DOUGH)
         add(ModItems.DIE)
+        add(ModItems.BAGEL)
+        add(ModItems.HALF_BAGEL)
+        add(ModItems.ALUMINA)
+        add(ModItems.BREAD_AMULET)
+        add(ModItems.BREAD_PICKAXE)
+        add(ModItems.BREAD_SHOVEL)
+        add(ModItems.BREAD_AXE)
+        add(ModItems.BREAD_HOE)
+        add(ModItems.BREAD_SWORD)
+        add(ModItems.RF_BREAD_PICKAXE)
+        add(ModItems.RF_BREAD_SHOVEL)
+        add(ModItems.RF_BREAD_AXE)
+        add(ModItems.RF_BREAD_HOE)
+        add(ModItems.RF_BREAD_SWORD)
 
         add(ModDamageTypes.TIMER_RAN_OUT.translationKey(), "%1\$s ran out of time!")
 
@@ -115,10 +130,204 @@ class EnglishUSLangProvider(
             "contains trace amounts of neurotoxin",
             "item", "doped_bread", "tooltip"
         )
+        modAdd(
+            "What? you thought it was gonna be sliced like a normal bagel?",
+            "item", "half_bagel", "description"
+        )
+        modAdd(
+            "Feeds %s every %s",
+            "item", "bread_amulet", "description"
+        )
+        modAdd(
+            "(stacking!)",
+            "item", "bread_amulet", "stacks"
+        )
 
         modAdd("Energy", path = arrayOf("energy"))
         modAdd("Input", path = arrayOf("input"))
         modAdd("Output", path = arrayOf("output"))
+
+        // Tool Gun //
+        modAdd(
+            "Toolgun",
+            "controls", "category", TOOL_GUN_DEF
+        )
+        modAdd(
+            "Bread Mod",
+            "controls", "category"
+        )
+        modAdd(
+            "Switch Mode",
+            "controls", TOOL_GUN_DEF, "change_mode"
+        )
+        modAdd(
+            "Open BM-GUI Editor",
+            "controls", "gui_editor"
+        )
+        modAdd(
+            "Mode is in a broken state. Run /data get entity @s and report this as a bug.",
+            TOOL_GUN_DEF, "broken_tooltip"
+        )
+
+        // Remover Action
+        modAdd(
+            "Remover",
+            TOOL_GUN_DEF, "mode", "display_name", "remover"
+        )
+        modAdd(
+            "Remove entities with right click.",
+            TOOL_GUN_DEF, "mode", "tooltip", "remover"
+        )
+        modAdd(
+            "... to remove the entity you're looking at.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "remover", "rmb"
+        )
+
+        modAdd(
+            "Remove Entity",
+            TOOL_GUN_DEF, "mode", "controls", "name", "remover", "rmb"
+        )
+        modAdd(
+            "Toolgun: Remover",
+            TOOL_GUN_DEF, "mode", "controls", "category", "remover"
+        )
+        modAdd(
+            "%s left the game",
+            "item", TOOL_GUN_DEF, "remover", "entity_left_game"
+        )
+        modAdd(
+            "BreadMod: Disconnect: Client 0 overflowed reliable channel.",
+            "item", TOOL_GUN_DEF, "remover", "player_left_game"
+        )
+
+        // Creator action
+        modAdd(
+            "Creator",
+            TOOL_GUN_DEF, "mode", "display_name", "creator"
+        )
+        modAdd(
+            "Add entities/blocks with right click.",
+            TOOL_GUN_DEF, "mode", "tooltip", "creator"
+        )
+        modAdd(
+            "Create Entity",
+            TOOL_GUN_DEF, "mode", "controls", "name", "creator", "rmb"
+        )
+        modAdd(
+            "... to add an entity.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb"
+        )
+        modAdd(
+            "Open Entity Menu",
+            TOOL_GUN_DEF, "mode", "controls", "name", "creator", "r"
+        )
+        modAdd(
+            "... to open the entity/block editor.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"
+        )
+        modAdd(
+            "Save / Load",
+            TOOL_GUN_DEF, "creator", "save_load"
+        )
+        modAdd(
+            "expected %s, got %s",
+            TOOL_GUN_DEF, "creator", "invalid_entity"
+        )
+        modAdd(
+            "Toolgun: Creator",
+            TOOL_GUN_DEF, "mode", "controls", "category", "creator"
+        )
+        modAdd(
+            "BreadMod: Bad creator data packet timing",
+            "item", TOOL_GUN_DEF, "creator", "bad_timing"
+        )
+        modAdd(
+            "BreadMod: No creator data packet",
+            "item", TOOL_GUN_DEF, "creator", "no_data"
+        )
+
+        // Power action
+        modAdd(
+            "Power",
+            TOOL_GUN_DEF, "mode", "display_name", "power"
+        )
+        modAdd(
+            "Turns off the \"power.\"",
+            TOOL_GUN_DEF, "mode", "tooltip", "power"
+        )
+        modAdd(
+            "... to turn off the \"power.\"",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "power", "rmb"
+        )
+
+        modAdd(
+            "Power Off (5 Times)",
+            TOOL_GUN_DEF, "mode", "controls", "name", "power", "rmb"
+        )
+        modAdd(
+            "Toolgun: Power",
+            TOOL_GUN_DEF, "mode", "controls", "category", "power"
+        )
+
+        // Explode action
+        modAdd(
+            "Exploder",
+            TOOL_GUN_DEF, "mode", "display_name", "explode"
+        )
+        modAdd(
+            "Explodes whatever surface you're pointing at.",
+            TOOL_GUN_DEF, "mode", "tooltip", "explode"
+        )
+        modAdd(
+            "... to explode the block you're looking at.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "rmb"
+        )
+        modAdd(
+            "... to target fluids.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off"
+        )
+        modAdd(
+            "... to not target fluids.",
+            TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "on"
+        )
+
+        modAdd(
+            "Explode",
+            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "rmb"
+        )
+        modAdd(
+            "Target Fluids",
+            TOOL_GUN_DEF, "mode", "controls", "name", "explode", "mmb"
+        )
+        modAdd(
+            "Toolgun: Exploder",
+            TOOL_GUN_DEF, "mode", "controls", "category", "explode"
+        )
+
+        modAdd(
+            "Targeting Fluids:",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid"
+        )
+        modAdd(
+            "Enabled",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "enabled"
+        )
+        modAdd(
+            "Disabled",
+            TOOL_GUN_DEF, "mode", "explode", "hit_fluid", "disabled"
+        )
+
+        // Misc
+        modAdd(
+            "Current Mode: ",
+            "item", TOOL_GUN_DEF, "tooltip", "current_mode"
+        )
+        modAdd(
+            " to switch modes",
+            "item", TOOL_GUN_DEF, "tooltip", "mode_switch"
+        )
+
+        // End Tool Gun //
 
         add(ModCreativeTabs.MAIN_TAB, "Bread Mod")
         add(ModCreativeTabs.SPECIALS_TAB, "Bread Mod: Specials")

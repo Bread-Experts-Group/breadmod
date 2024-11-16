@@ -26,6 +26,24 @@ class ModItemModelProvider(
         singleItem(ModItems.BREAD_SLICE)
         singleItem(ModItems.DOUGH)
         singleItem(ModItems.DIE)
+        singleItem(ModItems.BAGEL)
+        singleItem(ModItems.HALF_BAGEL)
+        singleItem(ModItems.ALUMINA)
+        singleItem(ModItems.RF_BREAD_HELMET)
+        singleItem(ModItems.RF_BREAD_CHESTPLATE)
+        singleItem(ModItems.RF_BREAD_LEGGINGS)
+        singleItem(ModItems.RF_BREAD_BOOTS)
+        singleItem(ModItems.BREAD_AMULET)
+        singleItem(ModItems.BREAD_PICKAXE)
+        singleItem(ModItems.BREAD_SHOVEL)
+        singleItem(ModItems.BREAD_AXE)
+        singleItem(ModItems.BREAD_HOE)
+        singleItem(ModItems.BREAD_SWORD)
+        singleItem(ModItems.RF_BREAD_PICKAXE)
+        singleItem(ModItems.RF_BREAD_SHOVEL)
+        singleItem(ModItems.RF_BREAD_AXE)
+        singleItem(ModItems.RF_BREAD_HOE)
+        singleItem(ModItems.RF_BREAD_SWORD)
 
         multiLayeredTexture(
             "breadmod:bread_boots",
@@ -51,6 +69,7 @@ class ModItemModelProvider(
             modLoc("item/bread_helmet"),
             modLoc("item/bread_helmet_overlay")
         )
+
         multiLayeredTexture(
             "breadmod:doped_bread",
             mcLoc("item/generated"),

@@ -13,7 +13,7 @@ data class ToolGunModeData(
     var modeIteratorState: Int
 ) {
     companion object {
-        val EMPTY = ToolGunModeData("???", "???", 0, 0)
+        val EMPTY = ToolGunModeData("breadmod", "none", 0, 0)
 
         val CODEC: Codec<ToolGunModeData> = RecordCodecBuilder.create { inst ->
             inst.group(
@@ -31,5 +31,10 @@ data class ToolGunModeData(
             ByteBufCodecs.INT, ToolGunModeData::modeIteratorState,
             ::ToolGunModeData
         )
+    }
+
+    fun resetIteratorStates() {
+        namespaceIteratorState = 0
+        modeIteratorState = 0
     }
 }

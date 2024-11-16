@@ -13,7 +13,6 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
 import net.neoforged.neoforge.items.wrapper.InvWrapper
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
-import net.neoforged.neoforge.network.registration.HandlerThread
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.Level
 import org.bread_experts_group.breadmod.Breadmod.Companion.LOGGER
@@ -28,6 +27,7 @@ import org.bread_experts_group.breadmod.datagen.tool_gun.ModToolGunModeProvider
 import org.bread_experts_group.breadmod.entity.FakePlayer
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
+import org.bread_experts_group.breadmod.network.clientbound.ToolGunModeDataPacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
@@ -151,6 +151,12 @@ internal object CommonModEventBus {
             ToolGunConfigurationPacket.TYPE,
             ToolGunConfigurationPacket.STREAM_CODEC,
             ToolGunConfigurationPacket::handleServerboundPacket
+        )
+
+        registrar.playToClient(
+            ToolGunModeDataPacket.TYPE,
+            ToolGunModeDataPacket.STREAM_CODEC,
+            ToolGunModeDataPacket::handleClientboundPacket
         )
     }
 

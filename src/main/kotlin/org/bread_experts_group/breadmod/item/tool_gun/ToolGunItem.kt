@@ -12,9 +12,9 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.changeMode
 import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.changeMode
 import org.bread_experts_group.breadmod.item.tool_gun.mode.ToolGunNoMode
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -110,21 +110,7 @@ class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab 
         }
     }
 
-//    override fun initializeClient(consumer: Consumer<IClientItemExtensions>) =
-//        consumer.accept(object : IClientItemExtensions {
-//            override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
-//        override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose {
-//            val armPose = IArmPoseTransformer { model, entity, arm ->
-//                if(entity.isHolding(this@ToolGunItem)) {
-//                    model.rightArm.yRot = -0.1F + model.head.yRot
-//                    model.rightArm.xRot = ((-Math.PI / 2f) + model.head.xRot).toFloat()
-//                }
-//            }
-//            return ArmPose.create("tool_gun", false, armPose)
-//        }
-//        })
-
-    internal companion object {
+    companion object {
         const val TOOL_GUN_DEF = "tool_gun"
 
 //        const val CURRENT_MODE_TAG = "currentMode"

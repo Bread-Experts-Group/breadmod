@@ -21,7 +21,7 @@ abstract class ToolGunModeProvider(private val packOutput: PackOutput, private v
         val categoryKey: String,
         val toolGunComponent: Component,
         val key: String,
-        val modifier: String = ""
+        val modifier: String = "none"
     ) {
         companion object {
             val CODEC: StreamCodec<RegistryFriendlyByteBuf, Control> = StreamCodec.composite(
@@ -34,7 +34,7 @@ abstract class ToolGunModeProvider(private val packOutput: PackOutput, private v
                 ToolGunModeProvider::Control
             )
 
-            val EMPTY = Control("???", "???", "???", Component.empty(), "???")
+            val EMPTY = Control("breadmod", "empty", "none", Component.empty(), "none")
         }
     }
 

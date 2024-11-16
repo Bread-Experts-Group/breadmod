@@ -10,7 +10,6 @@ import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunModeData
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.util.MapIterator
 
@@ -44,30 +43,28 @@ class ToolGunConfigurationPacket(
                             val namespaceIterator = MapIterator(ToolGunModeDataLoader.modes)
                             namespaceIterator.restoreState(currentMode.namespaceIteratorState)
                             val modeIterator = MapIterator(namespaceIterator.current().value)
-                            val newData = ToolGunModeData.EMPTY
 
                             val last = modeIterator.current().value.first
                             when {
                                 modeIterator.hasNext() -> {
-                                    newData.name = modeIterator.next().key
-                                    newData.modeIteratorState = modeIterator.saveState()
-                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), newData)
+                                    currentMode.name = modeIterator.next().key
+                                    currentMode.modeIteratorState = modeIterator.saveState()
+                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), currentMode)
                                 }
 
                                 namespaceIterator.hasNext() -> {
-                                    newData.namespace = namespaceIterator.next().key
-                                    newData.namespaceIteratorState = namespaceIterator.saveState()
-                                    newData.modeIteratorState = 0
-                                    newData.name = modeIterator.current().key
-                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), newData)
+                                    currentMode.namespace = namespaceIterator.next().key
+                                    currentMode.namespaceIteratorState = namespaceIterator.saveState()
+                                    currentMode.modeIteratorState = 0
+                                    currentMode.name = modeIterator.current().key
+                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), currentMode)
                                 }
 
                                 else -> {
-                                    newData.namespaceIteratorState = 0
-                                    newData.namespace = namespaceIterator.current().key
-                                    newData.modeIteratorState = 0
-                                    newData.name = modeIterator.current().key
-                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), newData)
+                                    currentMode.resetIteratorStates()
+                                    currentMode.namespace = namespaceIterator.current().key
+                                    currentMode.name = modeIterator.current().key
+                                    stack.set(ModDataComponents.TOOL_GUN_DATA.get(), currentMode)
                                 }
                             }
 

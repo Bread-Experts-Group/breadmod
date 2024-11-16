@@ -27,15 +27,15 @@ object ModArmorMaterials {
                 map[ArmorItem.Type.HELMET] = 2
                 map[ArmorItem.Type.BODY] = 2
             },
-            20, // Enchantability
+            30, // Enchantability
             SoundEvents.ARMOR_EQUIP_LEATHER,
             { Ingredient.of(Items.BREAD) },
             listOf(
                 ArmorMaterial.Layer(modLocation("bread"), "", true),
                 ArmorMaterial.Layer(modLocation("bread"), "_overlay", false)
             ),
-            0f, // Toughness
-            0f // Knockback Resistance
+            0f,
+            0f
         )
     }
 
@@ -48,14 +48,14 @@ object ModArmorMaterials {
                 map[ArmorItem.Type.HELMET] = 4
                 map[ArmorItem.Type.BODY] = 6
             },
-            20, // Enchantability
+            20,
             SoundEvents.ARMOR_EQUIP_LEATHER,
             { Ingredient.of(Items.BREAD) },
             listOf(
                 ArmorMaterial.Layer(modLocation("rf_bread"), "", false)
             ),
-            1f, // Toughness
-            0.5f // Knockback Resistance
+            1f,
+            0.5f
         )
     }
 
@@ -64,7 +64,7 @@ object ModArmorMaterials {
             Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
                 map[ArmorItem.Type.HELMET] = 2
             },
-            5,
+            10,
             SoundEvents.ARMOR_EQUIP_LEATHER,
             { Ingredient.of(Items.LEATHER) },
             listOf(

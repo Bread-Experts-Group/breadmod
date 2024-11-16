@@ -1,17 +1,19 @@
 package org.bread_experts_group.breadmod.datagen.tag
 
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.registries.Registries
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.BlockTags
+import net.minecraft.tags.TagKey
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.data.BlockTagsProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import net.neoforged.neoforge.registries.DeferredItem
 import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.tag.BlockTags.MINEABLE_WITH_KNIFE
 import java.util.concurrent.CompletableFuture
 
 class ModBlockTags(
@@ -46,5 +48,13 @@ class ModBlockTags(
             .add(ModBlocks.BREAD_BLOCK)
         tag(MINEABLE_WITH_KNIFE)
             .add(ModBlocks.BREAD_BLOCK)
+    }
+
+    companion object {
+        val MINEABLE_WITH_KNIFE: TagKey<Block> = TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
+        val INCORRECT_FOR_BREAD_TOOL: TagKey<Block> =
+            TagKey.create(Registries.BLOCK, modLocation("incorrect_for_bread_tool"))
+        val INCORRECT_FOR_REINFORCED_BREAD_TOOL: TagKey<Block> =
+            TagKey.create(Registries.BLOCK, modLocation("incorrect_for_reinforced_bread_tool"))
     }
 }

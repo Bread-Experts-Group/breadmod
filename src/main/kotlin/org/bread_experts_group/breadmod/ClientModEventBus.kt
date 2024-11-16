@@ -1,7 +1,5 @@
 package org.bread_experts_group.breadmod
 
-import com.mojang.blaze3d.platform.InputConstants
-import net.minecraft.client.KeyMapping
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
@@ -17,11 +15,7 @@ import net.neoforged.neoforge.client.event.*
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
-import net.neoforged.neoforge.client.settings.KeyConflictContext
-import net.neoforged.neoforge.client.settings.KeyModifier
 import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
-import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.changeMode
-import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.createdMappings
 import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openGuiEditor
 import org.bread_experts_group.breadmod.block.BreadLiquidBlock
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
@@ -32,7 +26,7 @@ import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRen
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
-import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
+import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.changeMode
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -62,31 +56,6 @@ internal object ClientModEventBus {
         event.register(openGuiEditor)
     }
 
-    val toolGunBindList = mutableMapOf<ToolGunModeProvider.Control, KeyMapping>()
-    fun createMappingsForControls(prepared: List<ToolGunModeProvider.Control>): List<KeyMapping> {
-        prepared.forEach {
-            val mapping = if (it.modifier != "") {
-                KeyMapping(
-                    it.nameKey,
-                    KeyConflictContext.IN_GAME,
-                    KeyModifier.valueFromString(it.modifier),
-                    InputConstants.getKey(it.key),
-                    it.categoryKey
-                )
-            } else {
-                KeyMapping(
-                    it.nameKey,
-                    KeyConflictContext.IN_GAME,
-                    InputConstants.getKey(it.key),
-                    it.categoryKey
-                )
-            }
-            toolGunBindList[it] = mapping
-        }
-        createdMappings = toolGunBindList.values.toList()
-        return createdMappings
-    }
-
     @SubscribeEvent
     fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
         event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
@@ -107,7 +76,14 @@ internal object ClientModEventBus {
 
     @SubscribeEvent
     fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
-        event.register(itemColor, ModItems.CHEF_HAT.get())
+        event.register(
+            itemColor,
+            ModItems.CHEF_HAT.get(),
+/*            ModItems.BREAD_HELMET.get(),
+            ModItems.BREAD_CHESTPLATE.get(),
+            ModItems.BREAD_LEGGINGS.get(),
+            ModItems.BREAD_BOOTS.get()*/
+        )
     }
 
     @SubscribeEvent
