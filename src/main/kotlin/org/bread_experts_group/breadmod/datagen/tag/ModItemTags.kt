@@ -29,9 +29,9 @@ class ModItemTags(
 
     override fun addTags(provider: HolderLookup.Provider) {
         tag(Tags.Items.MUSIC_DISCS)
-            .add(ModItems.TEST_RECORD)
+            .add(ModItems.RECORD_SECRET_HOPPIN)
         tag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
-            .add(ModItems.TEST_RECORD)
+            .add(ModItems.RECORD_SECRET_HOPPIN)
         tag(ItemTags.DYEABLE)
             .add(ModItems.CHEF_HAT)
             .add(ModItems.BREAD_HELMET)

@@ -53,7 +53,7 @@ class BreadAmuletItem(durability: Int) : Item(Properties().durability(durability
         tooltipComponents.add(
             modTranslatable(
                 "item",
-                "bread_amulet", "description",
+                "bread_amulet", "tooltip",
                 args = listOf(
                     if (bars == 1.0) "a bar" else "${decimalFormat.format(bars)} bars",
                     if (secDelay == 1.0) "second" else "${decimalFormat.format(secDelay)} seconds"

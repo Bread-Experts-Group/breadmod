@@ -24,6 +24,7 @@ import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
+import org.bread_experts_group.breadmod.client.screen.CertificateScreen
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.changeMode
@@ -47,6 +48,11 @@ internal object ClientModEventBus {
             ) { itemStack, _, livingEntity, _ ->
                 if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1.0f else 0.0f
             }
+
+            // todo fix later
+//            ItemProperties.register(ModItems.CERTIFICATE.get(), modLocation("signed")) { stack, _, _, _ ->
+//                if (stack.tag != null && stack.tag!!.contains("author")) 1f else 0f
+//            }
         }
     }
 
@@ -121,6 +127,7 @@ internal object ClientModEventBus {
     fun registerMenuScreens(event: RegisterMenuScreensEvent) {
         event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
         event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
+        event.register(ModMenuTypes.CERTIFICATE.get(), ::CertificateScreen)
     }
 
     @Suppress("UNCHECKED_CAST")

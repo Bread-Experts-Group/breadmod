@@ -18,7 +18,7 @@ class ModItemModelProvider(
     override fun registerModels() {
         singleItem(ModItems.FLOUR)
         singleItem(ModFluids.BREAD_LIQUID.bucket)
-        singleItem(ModItems.TEST_RECORD)
+        singleItem(ModItems.RECORD_SECRET_HOPPIN)
         singleItem(ModItems.CHEF_HAT)
         singleItem(ModItems.TEST_BREAD)
         singleItem(ModItems.ULTIMATE_BREAD)
@@ -44,6 +44,13 @@ class ModItemModelProvider(
         singleItem(ModItems.RF_BREAD_AXE)
         singleItem(ModItems.RF_BREAD_HOE)
         singleItem(ModItems.RF_BREAD_SWORD)
+        singleItem(ModItems.BREAD_BULLET)
+        singleItem(ModItems.CAPRISPIN)
+        singleItem(ModItems.TOASTER_HEATING_ELEMENT)
+        singleItem(ModItems.CREATURE)
+
+        handheldItem(ModItems.WRENCH)
+        handheldItem(ModItems.BREAD_GUN)
 
         multiLayeredTexture(
             "breadmod:bread_boots",

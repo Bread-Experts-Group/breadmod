@@ -71,7 +71,7 @@ class EnglishUSLangProvider(
         add(ModSounds.WAR_TIMER, "War Timer counts down")
         add(ModSounds.WAR_TIMER_UP, "War Timer increases")
 
-        add(ModItems.TEST_RECORD, "Music Disc")
+        add(ModItems.RECORD_SECRET_HOPPIN, "Music Disc")
         add(ModItems.FLOUR)
         add(ModItems.CHEF_HAT)
         add(ModItems.TOOL_GUN)
@@ -97,6 +97,13 @@ class EnglishUSLangProvider(
         add(ModItems.RF_BREAD_AXE)
         add(ModItems.RF_BREAD_HOE)
         add(ModItems.RF_BREAD_SWORD)
+        add(ModItems.BREAD_BULLET)
+        add(ModItems.CAPRISPIN)
+        add(ModItems.TOASTER_HEATING_ELEMENT)
+        add(ModItems.CREATURE)
+        add(ModItems.WRENCH)
+        add(ModItems.BREAD_GUN)
+        add(ModItems.CERTIFICATE)
 
         add(ModDamageTypes.TIMER_RAN_OUT.translationKey(), "%1\$s ran out of time!")
 
@@ -132,15 +139,19 @@ class EnglishUSLangProvider(
         )
         modAdd(
             "What? you thought it was gonna be sliced like a normal bagel?",
-            "item", "half_bagel", "description"
+            "item", "half_bagel", "tooltip"
         )
         modAdd(
             "Feeds %s every %s",
-            "item", "bread_amulet", "description"
+            "item", "bread_amulet", "tooltip"
         )
         modAdd(
             "(stacking!)",
             "item", "bread_amulet", "stacks"
+        )
+        modAdd(
+            "Wouldn't be official without some light blue dye, would it?",
+            "item", "certificate", "tooltip"
         )
 
         modAdd("Energy", path = arrayOf("energy"))

@@ -3,6 +3,8 @@ package org.bread_experts_group.breadmod.registry.item
 import net.minecraft.ChatFormatting
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EquipmentSlotGroup
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
@@ -18,9 +20,7 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.item.BreadAmuletItem
-import org.bread_experts_group.breadmod.item.TestBreadItem
-import org.bread_experts_group.breadmod.item.UltimateBreadItem
+import org.bread_experts_group.breadmod.item.*
 import org.bread_experts_group.breadmod.item.armor.BreadArmorItem
 import org.bread_experts_group.breadmod.item.armor.ChefHatItem
 import org.bread_experts_group.breadmod.item.armor.ModArmorMaterials
@@ -33,9 +33,10 @@ object ModItems {
 //    fun getLocation(item: Item) = BuiltInRegistries.ITEM.getKey(item)
 
     val FLOUR: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("flour")
-    val TEST_RECORD: DeferredItem<Item> = ITEM_REGISTRY.register("music_disc_secret_hoppin") { ->
-        Item(Item.Properties().jukeboxPlayable(ModRecords.TEST_SOUND).stacksTo(1).rarity(Rarity.RARE))
-    }
+    val RECORD_SECRET_HOPPIN: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem(
+        "music_disc_secret_hoppin",
+        Item.Properties().jukeboxPlayable(ModRecords.TEST_SOUND).stacksTo(1).rarity(Rarity.RARE)
+    )
 
     val CHEF_HAT: DeferredItem<ChefHatItem> = ITEM_REGISTRY.register("chef_hat", ::ChefHatItem)
     val TOOL_GUN: DeferredItem<ToolGunItem> = ITEM_REGISTRY.register("tool_gun", ::ToolGunItem)
@@ -83,24 +84,25 @@ object ModItems {
         }
     }
 
-    val TOASTED_BREAD: DeferredItem<Item> = ITEM_REGISTRY.register("toasted_bread") { ->
-        Item(
-            Item.Properties().food(FoodProperties.Builder().nutrition(7).saturationModifier(0.8f).build())
-        )
-    }
+    val TOASTED_BREAD: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem(
+        "toasted_bread",
+        Item.Properties().food(FoodProperties.Builder().nutrition(7).saturationModifier(0.8f).build())
+    )
 
-    val BREAD_SLICE: DeferredItem<Item> = ITEM_REGISTRY.register("bread_slice") { ->
-        Item(Item.Properties().food(FoodProperties.Builder().nutrition(2).fast().build()))
-    }
+    val BREAD_SLICE: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem(
+        "bread_slice",
+        Item.Properties().food(FoodProperties.Builder().nutrition(2).fast().build())
+    )
 
     val DOUGH: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("dough")
     val DIE: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("die")
 
     val KNIFE: DeferredItem<KnifeItem> = ITEM_REGISTRY.register("knife") { -> KnifeItem(Tiers.IRON) }
 
-    val BAGEL: DeferredItem<Item> = ITEM_REGISTRY.register("bagel") { ->
-        Item(Item.Properties().food(FoodProperties.Builder().nutrition(4).saturationModifier(0.2f).build()))
-    }
+    val BAGEL: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem(
+        "bagel",
+        Item.Properties().food(FoodProperties.Builder().nutrition(4).saturationModifier(0.2f).build())
+    )
 
     val HALF_BAGEL: DeferredItem<Item> = ITEM_REGISTRY.register("half_bagel") { ->
         object : Item(
@@ -113,17 +115,15 @@ object ModItems {
                 tooltipFlag: TooltipFlag
             ) {
                 tooltipComponents.add(
-                    modTranslatable("item", "half_bagel", "description")
+                    modTranslatable("item", "half_bagel", "tooltip")
                         .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                 )
             }
         }
     }
 
-    val ALUMINA: DeferredItem<Item> =
-        ITEM_REGISTRY.registerSimpleItem("alumina")
-    val BREAD_AMULET: DeferredItem<BreadAmuletItem> =
-        ITEM_REGISTRY.register("bread_amulet") { -> BreadAmuletItem(500) }
+    val ALUMINA: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("alumina")
+    val BREAD_AMULET: DeferredItem<BreadAmuletItem> = ITEM_REGISTRY.register("bread_amulet") { -> BreadAmuletItem(500) }
 
     // Bread Armor
     val BREAD_HELMET: DeferredItem<BreadArmorItem> =
@@ -207,4 +207,27 @@ object ModItems {
         HoeItem::class.registerTool("reinforced_bread_hoe", ToolTier.RF_BREAD, 1.0, -2.8)
     val RF_BREAD_SWORD: DeferredItem<SwordItem> =
         SwordItem::class.registerTool("reinforced_bread_sword", ToolTier.RF_BREAD, 2.0, -2.5)
+
+    val WRENCH = ITEM_REGISTRY.registerSimpleItem("wrench", Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON))
+
+    // End Tools
+
+    val BREAD_GUN: DeferredItem<BreadGunItem> = ITEM_REGISTRY.register("bread_gun", ::BreadGunItem)
+    val BREAD_BULLET: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("bread_bullet")
+
+    val CAPRISPIN: DeferredItem<Item> = ITEM_REGISTRY.register("caprispin") { ->
+        object : Item(
+            Properties().food(
+                FoodProperties.Builder().alwaysEdible().nutrition(20)
+                    .effect({ MobEffectInstance(MobEffects.LEVITATION, 100, 20) }, 1f).build()
+            ).rarity(Rarity.RARE)
+        ) {
+            override fun getUseAnimation(stack: ItemStack): UseAnim = UseAnim.DRINK
+        }
+    }
+
+    val TOASTER_HEATING_ELEMENT: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("toaster_heating_element")
+    val CREATURE: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("creature")
+
+    val CERTIFICATE: DeferredItem<CertificateItem> = ITEM_REGISTRY.register("certificate", ::CertificateItem)
 }

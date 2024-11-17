@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.menu.DoughMachineMenu
 import org.bread_experts_group.breadmod.menu.WheatCrusherMenu
+import org.bread_experts_group.breadmod.menu.item.CertificateMenu
 import java.util.function.Supplier
 
 object ModMenuTypes {
@@ -18,5 +19,9 @@ object ModMenuTypes {
 
     val DOUGH_MACHINE: Supplier<MenuType<DoughMachineMenu>> = MENU_TYPE_REGISTRY.register("dough_machine_menu") { ->
         IMenuTypeExtension.create(::DoughMachineMenu)
+    }
+
+    val CERTIFICATE: Supplier<MenuType<CertificateMenu>> = MENU_TYPE_REGISTRY.register("certificate_menu") { ->
+        IMenuTypeExtension.create { windowId, inv, _ -> CertificateMenu(windowId, inv) }
     }
 }
