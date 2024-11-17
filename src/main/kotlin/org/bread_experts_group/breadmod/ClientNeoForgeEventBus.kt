@@ -41,7 +41,7 @@ import kotlin.math.sin
 
 // todo register the other client stuff later
 @Suppress("unused")
-@EventBusSubscriber(modid = Breadmod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
+@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
     @SubscribeEvent
     fun registerStageRender(event: RenderLevelStageEvent) {
@@ -107,11 +107,11 @@ internal object ClientNeoForgeEventBus {
     }
 
     val openGuiEditor = KeyMapping(
-        "controls.${Breadmod.ID}.gui_editor",
+        "controls.${BreadMod.ID}.gui_editor",
         KeyConflictContext.UNIVERSAL,
         KeyModifier.SHIFT,
         InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F1),
-        "controls.${Breadmod.ID}.category"
+        "controls.${BreadMod.ID}.category"
     )
 
     var createdMappings = listOf<KeyMapping>()

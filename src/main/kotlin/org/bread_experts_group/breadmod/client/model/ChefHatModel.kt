@@ -13,7 +13,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.util.rgMinecraft
 
 /**

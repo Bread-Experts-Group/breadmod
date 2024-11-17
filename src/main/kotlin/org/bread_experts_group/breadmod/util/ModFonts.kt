@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.util
 
 import net.minecraft.network.chat.Style
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
 object ModFonts {
     /**

@@ -3,7 +3,7 @@ package org.bread_experts_group.breadmod.registry.recipe
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.recipe.dough_machine.DoughMachineRecipe
 import org.bread_experts_group.breadmod.recipe.dough_machine.DoughMachineRecipeSerializer
 import org.bread_experts_group.breadmod.recipe.fluid_energy.FluidEnergyRecipe
@@ -14,7 +14,7 @@ import java.util.function.Supplier
 
 object ModRecipeSerializers {
     val RECIPE_SERIALIZER_REGISTRY: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(
-        Registries.RECIPE_SERIALIZER, Breadmod.ID
+        Registries.RECIPE_SERIALIZER, BreadMod.ID
     )
 
     val WHEAT_CRUSHING: Supplier<RecipeSerializer<WheatCrusherRecipe>> =

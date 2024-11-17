@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.changeMode

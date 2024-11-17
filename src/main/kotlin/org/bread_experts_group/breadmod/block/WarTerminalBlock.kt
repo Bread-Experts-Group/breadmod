@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.warTimerMap
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand.increaseTime
 import java.util.stream.Stream
@@ -93,7 +93,7 @@ class WarTerminalBlock : Block(Properties.of()) {
         tooltipFlag: TooltipFlag
     ) {
         tooltipComponents.add(
-            Breadmod.modTranslatable("block", "war_terminal", "tooltip").withStyle(ChatFormatting.RED)
+            BreadMod.modTranslatable("block", "war_terminal", "tooltip").withStyle(ChatFormatting.RED)
         )
     }
 }

@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.mixinutil;
 
 import org.apache.logging.log4j.Logger;
-import org.bread_experts_group.breadmod.Breadmod;
+import org.bread_experts_group.breadmod.BreadMod;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.zip.InflaterInputStream;
 
 public class General {
-    public final static Logger breadmod$LOGGER = Breadmod.Companion.getLOGGER();
+    public final static Logger breadmod$LOGGER = BreadMod.Companion.getLOGGER();
 
     private General() {
     }

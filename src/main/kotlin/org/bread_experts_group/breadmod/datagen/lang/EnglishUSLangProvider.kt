@@ -7,8 +7,8 @@ import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.level.ItemLike
 import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.fluids.FluidType
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modAdd
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modAdd
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -20,7 +20,7 @@ import java.util.function.Supplier
 
 class EnglishUSLangProvider(
     output: PackOutput
-) : LanguageProvider(output, Breadmod.ID, "en_us") {
+) : LanguageProvider(output, BreadMod.ID, "en_us") {
     private fun String.joinUnderscoreWithCaps() =
         this.split("_").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
 

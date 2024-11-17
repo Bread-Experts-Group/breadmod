@@ -28,8 +28,8 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper
-import org.bread_experts_group.breadmod.Breadmod.Companion.LOGGER
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.menu.WheatCrusherMenu
 import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipe.WheatCrusherInput

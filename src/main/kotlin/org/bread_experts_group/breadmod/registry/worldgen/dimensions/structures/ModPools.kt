@@ -7,10 +7,10 @@ import net.minecraft.data.worldgen.Pools
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 
 object ModPools {
-    private fun createKey(id: String) = ResourceKey.create(Registries.TEMPLATE_POOL, Breadmod.modLocation(id))
+    private fun createKey(id: String) = ResourceKey.create(Registries.TEMPLATE_POOL, BreadMod.modLocation(id))
 
     val FARMHOUSE_POOL: ResourceKey<StructureTemplatePool> = createKey("farmhouse")
 

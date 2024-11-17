@@ -12,8 +12,8 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.Tags
 import net.neoforged.neoforge.common.data.ExistingFileHelper
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
@@ -23,7 +23,7 @@ class ModItemTags(
     lookupProvider: CompletableFuture<HolderLookup.Provider>,
     blockTags: CompletableFuture<TagLookup<Block>>,
     existingFileHelper: ExistingFileHelper
-) : ItemTagsProvider(output, lookupProvider, blockTags, Breadmod.ID, existingFileHelper) {
+) : ItemTagsProvider(output, lookupProvider, blockTags, BreadMod.ID, existingFileHelper) {
     inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
         this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
 

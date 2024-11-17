@@ -9,7 +9,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import net.neoforged.api.distmarker.Dist
 import org.apache.commons.lang3.ArrayUtils
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.*
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.CLASS_KEY
@@ -110,7 +110,7 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
                         classConstructor.isAccessible = false
                     } else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${IToolGunMode::class.qualifiedName}")
                 } catch (e: ClassNotFoundException) {
-                    Breadmod.LOGGER.error("Failed to load a tool-gun mode: ${e.stackTraceToString()}")
+                    BreadMod.LOGGER.error("Failed to load a tool-gun mode: ${e.stackTraceToString()}")
                 }
             }
         }

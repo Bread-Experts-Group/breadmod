@@ -6,12 +6,12 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.levelgen.structure.StructureSet
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 object ModStructureSets {
-    private fun createKey(id: String) = ResourceKey.create(Registries.STRUCTURE_SET, Breadmod.modLocation(id))
+    private fun createKey(id: String) = ResourceKey.create(Registries.STRUCTURE_SET, BreadMod.modLocation(id))
 
     private val RANDOM = Random(39245)
     private val FARMHOUSE: ResourceKey<StructureSet> = createKey("farmhouse")

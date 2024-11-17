@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.block.entity.BreadScreenBlockEntity
 import org.bread_experts_group.breadmod.block.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.block.entity.machine.DoughMachineBlockEntity
@@ -17,7 +17,7 @@ import java.util.function.Supplier
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 object ModBlockEntityTypes {
     val BLOCK_ENTITY_REGISTRY: DeferredRegister<BlockEntityType<*>> =
-        DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Breadmod.ID)
+        DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, BreadMod.ID)
 
     val MONITOR: Supplier<BlockEntityType<BreadScreenBlockEntity>> =
         BLOCK_ENTITY_REGISTRY.register("monitor_entity") { ->

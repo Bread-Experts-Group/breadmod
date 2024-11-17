@@ -7,7 +7,7 @@ import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.block.Block
 import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
 
-enum class ToolTiers(
+enum class ToolTier(
     private val incorrectTool: TagKey<Block>,
     private val getUses: Int,
     private val getSpeed: Float,

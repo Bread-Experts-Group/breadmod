@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.registry
 
 import net.neoforged.bus.api.IEventBus
-import org.bread_experts_group.breadmod.Breadmod.Companion.LOGGER
+import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
 import org.bread_experts_group.breadmod.item.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks

@@ -11,8 +11,8 @@ import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.data.BlockTagsProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import net.neoforged.neoforge.registries.DeferredItem
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import java.util.concurrent.CompletableFuture
 
@@ -20,7 +20,7 @@ class ModBlockTags(
     output: PackOutput,
     lookupProvider: CompletableFuture<HolderLookup.Provider>,
     existingFileHelper: ExistingFileHelper,
-) : BlockTagsProvider(output, lookupProvider, Breadmod.ID, existingFileHelper) {
+) : BlockTagsProvider(output, lookupProvider, BreadMod.ID, existingFileHelper) {
     private fun IntrinsicTagAppender<Block>.add(vararg toAdd: DeferredItem<BlockItem>) =
         this.also { toAdd.forEach { this.add(it.get().block) } }
 

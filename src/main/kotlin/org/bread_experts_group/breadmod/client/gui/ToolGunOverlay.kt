@@ -10,8 +10,8 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.util.drawScaledText
 import org.bread_experts_group.breadmod.util.rgMinecraft
 import java.awt.Color

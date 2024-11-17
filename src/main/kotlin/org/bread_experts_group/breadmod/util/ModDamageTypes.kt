@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.damagesource.DamageType
 import net.minecraft.world.level.Level
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
 data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaustion: Float) {
     private constructor(name: String) : this(name, 0f)

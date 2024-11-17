@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.createdMappings
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
@@ -20,11 +20,11 @@ object ToolGunControlLogic {
     val toolGunBindList = mutableMapOf<ToolGunModeProvider.Control, KeyMapping>()
 
     val changeMode = KeyMapping(
-        "controls.${Breadmod.ID}.$TOOL_GUN_DEF.change_mode",
+        "controls.${BreadMod.ID}.$TOOL_GUN_DEF.change_mode",
         KeyConflictContext.GUI,
         KeyModifier.SHIFT,
         InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT),
-        "controls.${Breadmod.ID}.category.$TOOL_GUN_DEF"
+        "controls.${BreadMod.ID}.category.$TOOL_GUN_DEF"
     )
 
     fun createMappingsForControls(prepared: List<ToolGunModeProvider.Control>): List<KeyMapping> {

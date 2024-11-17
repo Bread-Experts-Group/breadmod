@@ -5,18 +5,18 @@ import org.bread_experts_group.breadmod.item.tool_gun.mode.ToolGunPowerMode
 import org.bread_experts_group.breadmod.item.tool_gun.mode.ToolGunRemoverMode
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.data.PackOutput
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.item.tool_gun.mode.creator.ToolGunCreatorMode
 
 internal class ModToolGunModeProvider(
     output: PackOutput
-) : ToolGunModeProvider(output, Breadmod.ID) {
+) : ToolGunModeProvider(output, BreadMod.ID) {
     companion object {
         val SCREEN_CONTROL = Control(
             "screen",
-            "${TOOL_GUN_DEF}.${Breadmod.ID}.mode.controls.name.creator.r",
-            "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.category.creator",
+            "${TOOL_GUN_DEF}.${BreadMod.ID}.mode.controls.name.creator.r",
+            "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.creator",
             modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
             InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R).name
         )
@@ -30,8 +30,8 @@ internal class ModToolGunModeProvider(
             listOf(
                 Control(
                     "use",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.name.remover.rmb",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.category.remover",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.name.remover.rmb",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.remover",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "remover", "rmb"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT).name
                 )
@@ -46,8 +46,8 @@ internal class ModToolGunModeProvider(
             listOf(
                 Control(
                     "use",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.name.creator.rmb",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.category.creator",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.name.creator.rmb",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.creator",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "rmb"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT).name
                 ),
@@ -63,8 +63,8 @@ internal class ModToolGunModeProvider(
             listOf(
                 Control(
                     "use",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.name.power.rmb",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.category.power",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.name.power.rmb",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.power",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "power", "rmb"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT).name
                 )
@@ -79,15 +79,15 @@ internal class ModToolGunModeProvider(
             listOf(
                 Control(
                     "use",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.name.explode.rmb",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.category.explode",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.name.explode.rmb",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.explode",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "rmb"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_RIGHT).name
                 ),
                 Control(
                     "fluid_toggle",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.name.explode.mmb",
-                    "$TOOL_GUN_DEF.${Breadmod.ID}.mode.controls.category.explode",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.name.explode.mmb",
+                    "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.explode",
                     modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "explode", "mmb", "off"),
                     InputConstants.Type.MOUSE.getOrCreate(InputConstants.MOUSE_BUTTON_MIDDLE).name
                 )

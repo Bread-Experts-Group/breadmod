@@ -7,7 +7,7 @@ import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.util.ModFonts
 import org.bread_experts_group.breadmod.util.rgMinecraft
 import org.bread_experts_group.breadmod.util.scaleFlat

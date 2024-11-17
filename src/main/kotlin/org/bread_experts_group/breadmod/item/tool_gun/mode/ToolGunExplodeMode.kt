@@ -9,8 +9,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunMode.Companion.playModeSound
 import org.bread_experts_group.breadmod.api.IToolGunMode.Companion.playToolGunSound
@@ -34,19 +34,19 @@ internal class ToolGunExplodeMode : IToolGunMode {
         control: ToolGunModeProvider.Control
     ) {
         if (level is ServerLevel) {
-            Breadmod.LOGGER.info("ToolGunExplodeMode: triggering explode action on server side")
-            Breadmod.LOGGER.info("ToolGunExplodeMode: Control key is $control")
+            BreadMod.LOGGER.info("ToolGunExplodeMode: triggering explode action on server side")
+            BreadMod.LOGGER.info("ToolGunExplodeMode: Control key is $control")
             if (control.id == "use") {
 //                val settings = gunStack.orCreateTag.getCompound(control.categoryKey)
 
-                Breadmod.LOGGER.info("ToolGunExplodeMode: before blockRaycast")
+                BreadMod.LOGGER.info("ToolGunExplodeMode: before blockRaycast")
                 level.blockRaycast(
                     player.eyePosition,
                     Vec3.directionFromRotation(player.xRot, player.yRot),
                     1000.0,
                     /*settings.getBoolean("hitFluid")*/ false
                 )?.let {
-                    Breadmod.LOGGER.info("ToolGunExplodeMode: sending blockRayCast to server")
+                    BreadMod.LOGGER.info("ToolGunExplodeMode: sending blockRayCast to server")
                     PacketDistributor.sendToPlayersTrackingChunk(
                         level,
                         player.chunkPosition(),

@@ -24,8 +24,8 @@ import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 /**
  * Main mod class.
  */
-@Mod(Breadmod.ID)
-class Breadmod(container: ModContainer) {
+@Mod(BreadMod.ID)
+class BreadMod(container: ModContainer) {
     companion object {
         /**
          * ID for breadmod.

@@ -4,12 +4,12 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.sounds.SoundEvent
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
 object ModSounds {
     val SOUND_REGISTRY: DeferredRegister<SoundEvent> =
-        DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, Breadmod.ID)
+        DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, BreadMod.ID)
 
     val TEST_SOUND = registerSoundEvents("test_sound")
     val HAPPY_BLOCK_FUSE = registerSoundEvents("happy_block_fuse")

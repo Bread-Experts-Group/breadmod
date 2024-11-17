@@ -12,14 +12,14 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel
 import net.neoforged.neoforge.client.model.generators.ModelFile
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 
 class ModBlockStateProvider(
     packOutput: PackOutput,
     private val existingFileHelper: ExistingFileHelper
-) : BlockStateProvider(packOutput, Breadmod.ID, existingFileHelper) {
+) : BlockStateProvider(packOutput, BreadMod.ID, existingFileHelper) {
     override fun registerStatesAndModels() {
         blockWithItem(ModBlocks.BREAD_BLOCK.asBlock())
         blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK.asBlock())

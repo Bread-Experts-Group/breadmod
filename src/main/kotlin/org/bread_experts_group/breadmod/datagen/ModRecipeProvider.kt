@@ -7,7 +7,7 @@ import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.world.item.Items
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipeBuilder
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.concurrent.CompletableFuture

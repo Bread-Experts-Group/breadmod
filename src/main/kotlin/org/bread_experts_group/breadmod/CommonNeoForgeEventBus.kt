@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerTo
 import org.bread_experts_group.breadmod.util.ModDamageTypes
 
 @Suppress("unused")
-@EventBusSubscriber(modid = Breadmod.ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME)
 internal object CommonNeoForgeEventBus {
     @SubscribeEvent
     fun onResourceReload(event: AddReloadListenerEvent) {

@@ -3,8 +3,8 @@ package org.bread_experts_group.breadmod.registry.menu
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.CreativeModeTab
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
@@ -12,7 +12,7 @@ import java.util.function.Supplier
 
 object ModCreativeTabs {
     val CREATIVE_TAB_REGISTRY: DeferredRegister<CreativeModeTab> =
-        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Breadmod.ID)
+        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, BreadMod.ID)
 
     private fun constructTab(
         name: String,

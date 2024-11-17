@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeType
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockBehaviour
@@ -21,7 +21,7 @@ import org.bread_experts_group.breadmod.block.machine.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 
 object ModBlocks {
-    val BLOCK_REGISTRY = DeferredRegister.createBlocks(Breadmod.ID)
+    val BLOCK_REGISTRY = DeferredRegister.createBlocks(BreadMod.ID)
 
     fun getLocation(block: Block) = BuiltInRegistries.BLOCK.getKey(block)
 

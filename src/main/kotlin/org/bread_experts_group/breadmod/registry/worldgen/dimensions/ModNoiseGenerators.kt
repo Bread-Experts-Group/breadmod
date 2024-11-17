@@ -10,7 +10,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
 import net.minecraft.world.level.levelgen.NoiseRouterData
 import net.minecraft.world.level.levelgen.NoiseSettings
 import net.minecraft.world.level.levelgen.synth.NormalNoise
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 
 typealias NoiseGeneratorBuilder = (HolderGetter<DensityFunction>, HolderGetter<NormalNoise.NoiseParameters>) -> NoiseGeneratorSettings
@@ -20,7 +20,7 @@ object ModNoiseGenerators : NoiseRouterData() {
     fun register(name: String, builder: NoiseGeneratorBuilder): ResourceKey<NoiseGeneratorSettings> =
         ResourceKey.create(
             Registries.NOISE_SETTINGS,
-            Breadmod.modLocation(name)
+            BreadMod.modLocation(name)
         ).also {
             entries.add(it to builder)
         }

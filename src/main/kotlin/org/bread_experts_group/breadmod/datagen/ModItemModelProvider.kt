@@ -6,15 +6,15 @@ import net.minecraft.world.item.Item
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import net.neoforged.neoforge.registries.DeferredItem
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.fluid.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 
 class ModItemModelProvider(
     packOutput: PackOutput,
     existingFileHelper: ExistingFileHelper
-) : ItemModelProvider(packOutput, Breadmod.ID, existingFileHelper) {
+) : ItemModelProvider(packOutput, BreadMod.ID, existingFileHelper) {
     override fun registerModels() {
         singleItem(ModItems.FLOUR)
         singleItem(ModFluids.BREAD_LIQUID.bucket)

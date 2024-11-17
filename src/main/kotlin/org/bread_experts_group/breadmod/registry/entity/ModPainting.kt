@@ -4,7 +4,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.entity.decoration.PaintingVariant
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
 object ModPainting {
     val PAINTING_TEST: ResourceKey<PaintingVariant> = create("painting_test")

@@ -30,8 +30,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper
-import org.bread_experts_group.breadmod.Breadmod.Companion.LOGGER
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.menu.DoughMachineMenu
 import org.bread_experts_group.breadmod.recipe.dough_machine.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes

@@ -15,7 +15,7 @@ import net.neoforged.neoforge.items.wrapper.InvWrapper
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.Level
-import org.bread_experts_group.breadmod.Breadmod.Companion.LOGGER
+import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
 import org.bread_experts_group.breadmod.block.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.datagen.*
 import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider.Companion.constructLootProvider
@@ -48,7 +48,7 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructures
 
 @Suppress("unused")
-@EventBusSubscriber(modid = Breadmod.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.MOD)
 internal object CommonModEventBus {
     @SubscribeEvent
     fun gatherData(event: GatherDataEvent) {
@@ -76,7 +76,7 @@ internal object CommonModEventBus {
 
         // bootstrap all the datapack entries and create the provider
         val datapackEntriesProvider = DatapackBuiltinEntriesProvider(
-            packOutput, event.lookupProvider, registrySetBuilder, setOf(Breadmod.ID)
+            packOutput, event.lookupProvider, registrySetBuilder, setOf(BreadMod.ID)
         )
         val lookupProvider = datapackEntriesProvider.registryProvider
 

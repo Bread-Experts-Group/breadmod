@@ -16,11 +16,11 @@ import net.minecraft.world.level.levelgen.structure.Structure.StructureSettings
 import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModPools.FARMHOUSE_POOL
 
 object ModStructures {
-    private fun createKey(id: String) = ResourceKey.create(Registries.STRUCTURE, Breadmod.modLocation(id))
+    private fun createKey(id: String) = ResourceKey.create(Registries.STRUCTURE, BreadMod.modLocation(id))
 
     val FARMHOUSE: ResourceKey<Structure> = createKey("farmhouse")
 

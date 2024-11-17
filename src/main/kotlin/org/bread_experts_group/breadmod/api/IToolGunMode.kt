@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import org.bread_experts_group.breadmod.Breadmod.Companion.DATA_DIR
+import org.bread_experts_group.breadmod.BreadMod.Companion.DATA_DIR
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import java.nio.file.Path

@@ -15,7 +15,7 @@ import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.dimension.LevelStem
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import java.util.*
 
 object ModDimensions {
@@ -24,7 +24,7 @@ object ModDimensions {
         dimensionType: (key: ResourceKey<DimensionType>, location: ResourceLocation) -> DimensionType,
         climateParameterListBuilder: ClimateParameterListBuilder,
         noiseGenerationSettings: ResourceKey<NoiseGeneratorSettings>
-    ) = Breadmod.modLocation(name).let {
+    ) = BreadMod.modLocation(name).let {
         ModDimensionEntry(
             it,
             ResourceKey.create(Registries.DIMENSION_TYPE, it)

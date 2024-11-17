@@ -18,7 +18,7 @@ import net.minecraft.world.item.alchemy.Potions
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
-import org.bread_experts_group.breadmod.Breadmod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
 import java.awt.Color
 import java.text.DecimalFormat

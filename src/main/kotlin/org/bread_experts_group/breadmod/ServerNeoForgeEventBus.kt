@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.network.clientbound.ToolGunModeDataPacket
 
 @Suppress("unused")
-@EventBusSubscriber(modid = Breadmod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.DEDICATED_SERVER])
+@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.DEDICATED_SERVER])
 internal object ServerNeoForgeEventBus {
     @SubscribeEvent
     fun onPlayerJoin(event: PlayerLoggedInEvent) {

@@ -12,7 +12,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguratio
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement
 import net.minecraft.world.level.levelgen.placement.PlacedFeature
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest
-import org.bread_experts_group.breadmod.Breadmod
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 
 typealias PlacedFeatureBuilder = (configuredFeaturesHolder: HolderGetter<ConfiguredFeature<*, *>>) -> PlacedFeature
@@ -27,7 +27,7 @@ object ModFeatures {
     private fun registerPlacedFeature(name: String, builder: PlacedFeatureBuilder): ResourceKey<PlacedFeature> =
         ResourceKey.create(
             Registries.PLACED_FEATURE,
-            Breadmod.modLocation(name)
+            BreadMod.modLocation(name)
         ).also { entries.first.add(it to builder) }
 
     private fun registerConfiguredFeature(
@@ -35,7 +35,7 @@ object ModFeatures {
         builder: ConfiguredFeatureBuilder
     ): ResourceKey<ConfiguredFeature<*, *>> = ResourceKey.create(
         Registries.CONFIGURED_FEATURE,
-        Breadmod.modLocation(name)
+        BreadMod.modLocation(name)
     ).also { entries.second.add(it to builder) }
 
     private val BAUXITE_ORE_CONFIGURED = registerConfiguredFeature("bauxite") {

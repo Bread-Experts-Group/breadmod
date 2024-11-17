@@ -5,8 +5,8 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.neoforged.neoforge.network.handling.IPayloadContext
-import org.bread_experts_group.breadmod.Breadmod
-import org.bread_experts_group.breadmod.Breadmod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
@@ -32,7 +32,7 @@ class ToolGunConfigurationPacket(
         fun handleServerboundPacket(data: ToolGunConfigurationPacket, context: IPayloadContext) {
             context.enqueueWork {
                 val player = context.player()
-                Breadmod.LOGGER.info("ToolGunConfigurationPacket: receiving packet from ${player.name.string}")
+                BreadMod.LOGGER.info("ToolGunConfigurationPacket: receiving packet from ${player.name.string}")
 
                 val stack = player.mainHandItem
                 val item = stack.item
