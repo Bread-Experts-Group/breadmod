@@ -2,8 +2,11 @@ package org.bread_experts_group.breadmod.registry.recipe
 
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.recipe.crafting.AbstractCuttingRecipe
+import org.bread_experts_group.breadmod.recipe.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.recipe.dough_machine.DoughMachineRecipe
 import org.bread_experts_group.breadmod.recipe.dough_machine.DoughMachineRecipeSerializer
 import org.bread_experts_group.breadmod.recipe.fluid_energy.FluidEnergyRecipe
@@ -25,4 +28,10 @@ object ModRecipeSerializers {
 
     val FLUID_ENERGY: Supplier<RecipeSerializer<FluidEnergyRecipe>> =
         RECIPE_SERIALIZER_REGISTRY.register("fluid_energy", ::FluidEnergyRecipeSerializer)
+
+    val BREAD_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
+        RECIPE_SERIALIZER_REGISTRY.register("bread_slice_crafting") { ->
+            SimpleCraftingRecipeSerializer { BreadSlicingRecipe() }
+        }
+
 }

@@ -21,12 +21,15 @@ import org.bread_experts_group.breadmod.block.BreadLiquidBlock
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
+import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
+import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.CertificateScreen
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
+import org.bread_experts_group.breadmod.item.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.changeMode
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
@@ -66,6 +69,7 @@ internal object ClientModEventBus {
     fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
         event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
         event.registerItem(ToolGunItem.ToolGunItemExtensions(), ModItems.TOOL_GUN)
+        event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
     }
 
     @SubscribeEvent
@@ -111,9 +115,11 @@ internal object ClientModEventBus {
         for (skin: PlayerSkin.Model in event.skins) {
             val entity: LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>? = event.getSkin(skin)
             entity?.addLayer(ChefHatArmorLayer(entity))
+            entity?.addLayer(GluonGunBackpackArmorLayer(entity))
+//            entity?.addLayer(GluonGunBackpackArmorLayer(entity))
         }
 
-        addHatLayer(EntityType.ZOMBIE, event)
+//        addHatLayer(EntityType.ZOMBIE, event)
         addHatLayer(EntityType.ARMOR_STAND, event)
         addHatLayer(EntityType.FOX, event)
     }
@@ -121,6 +127,10 @@ internal object ClientModEventBus {
     @SubscribeEvent
     fun registerLayerDefinitions(event: EntityRenderersEvent.RegisterLayerDefinitions) {
         event.registerLayerDefinition(ChefHatModel.HAT_LAYER, ChefHatModel::createLayerDefinition)
+        event.registerLayerDefinition(
+            GluonGunBackpackModel.BACKPACK_LAYER,
+            GluonGunBackpackModel::createLayerDefinition
+        )
     }
 
     @SubscribeEvent

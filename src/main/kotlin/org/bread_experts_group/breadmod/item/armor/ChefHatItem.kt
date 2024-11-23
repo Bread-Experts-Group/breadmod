@@ -23,9 +23,6 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
-// todo currently using ArmorItem with an empty texture to be able to dye and wear the item (hacky solution tbh).
-//  Needs to be a generic Equipable item that allows dyeing and not render a texture onto the player head since this item uses a custom model.
-
 /**
  * Chef Hat, inspired from the game Pizza Tower by Tour De Pizza.
  *

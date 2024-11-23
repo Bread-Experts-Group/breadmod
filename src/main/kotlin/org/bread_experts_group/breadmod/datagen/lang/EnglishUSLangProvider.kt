@@ -104,6 +104,8 @@ class EnglishUSLangProvider(
         add(ModItems.WRENCH)
         add(ModItems.BREAD_GUN)
         add(ModItems.CERTIFICATE)
+//        add(ModItems.GLUON_GUN_BACKPACK)
+        add(ModItems.GLUON_GUN)
 
         add(ModDamageTypes.TIMER_RAN_OUT.translationKey(), "%1\$s ran out of time!")
 

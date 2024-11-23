@@ -23,6 +23,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.item.*
 import org.bread_experts_group.breadmod.item.armor.BreadArmorItem
 import org.bread_experts_group.breadmod.item.armor.ChefHatItem
+import org.bread_experts_group.breadmod.item.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.item.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.item.tool.KnifeItem
 import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
@@ -230,4 +231,10 @@ object ModItems {
     val CREATURE: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("creature")
 
     val CERTIFICATE: DeferredItem<CertificateItem> = ITEM_REGISTRY.register("certificate", ::CertificateItem)
+
+    // todo uncomment after finishing new backpack model
+    val GLUON_GUN_BACKPACK: DeferredItem<GluonGunBackpackItem> =
+        ITEM_REGISTRY.register("gluon_gun_backpack", ::GluonGunBackpackItem)
+
+    val GLUON_GUN: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("gluon_gun")
 }

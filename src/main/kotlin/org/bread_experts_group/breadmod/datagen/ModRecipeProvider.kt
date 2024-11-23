@@ -6,10 +6,12 @@ import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapelessRecipeBuilder
+import net.minecraft.data.recipes.SpecialRecipeBuilder
 import net.minecraft.world.item.Items
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipeBuilder
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.recipe.crafting.BreadSlicingRecipe
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(
@@ -51,6 +53,9 @@ class ModRecipeProvider(
             .unlockedBy("has_item", has(Items.BREAD))
             .requires(Items.BREAD, 5)
             .save(recipeOutput, modLocation("special", "test"))
+
+        SpecialRecipeBuilder.special { BreadSlicingRecipe() }
+            .save(recipeOutput, modLocation("special", "crafting", "bread_slicing"))
 
         // todo make DoughMachineRecipeBuilder
     }

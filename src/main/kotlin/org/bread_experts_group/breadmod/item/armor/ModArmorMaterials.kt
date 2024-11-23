@@ -67,11 +67,23 @@ object ModArmorMaterials {
             10,
             SoundEvents.ARMOR_EQUIP_LEATHER,
             { Ingredient.of(Items.LEATHER) },
-            listOf(
-                ArmorMaterial.Layer(modLocation("chef"), "", true)
-            ),
+            listOf(),
             1f,
             1f
+        )
+    }
+
+    val GLUON_GUN_BACKPACK: Holder<ArmorMaterial> = ARMOR_REGISTRY.register("gluon_backpack") { ->
+        ArmorMaterial(
+            Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
+                map[ArmorItem.Type.BODY] = 3
+            },
+            4,
+            SoundEvents.ARMOR_EQUIP_IRON,
+            { Ingredient.of(Items.NETHERITE_INGOT) },
+            listOf(),
+            2f,
+            0f
         )
     }
 }
