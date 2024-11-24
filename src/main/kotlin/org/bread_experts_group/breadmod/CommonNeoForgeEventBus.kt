@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.command.server.WarTimerCommand
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
-import org.bread_experts_group.breadmod.util.ModDamageTypes
+import org.bread_experts_group.breadmod.registry.ModDamageTypes
 
 @Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME)

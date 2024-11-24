@@ -37,6 +37,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.client.settings.KeyModifier
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.model.MachTrailModel
+import org.bread_experts_group.breadmod.registry.MachTrailData
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import org.jetbrains.annotations.ApiStatus.Internal

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.util
+package org.bread_experts_group.breadmod.registry
 
 import net.minecraft.network.chat.Style
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation

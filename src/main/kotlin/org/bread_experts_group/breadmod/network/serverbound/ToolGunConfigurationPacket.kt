@@ -11,7 +11,6 @@ import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
-import org.bread_experts_group.breadmod.util.MapIterator
 
 class ToolGunConfigurationPacket(
     val modeSwitch: Boolean,

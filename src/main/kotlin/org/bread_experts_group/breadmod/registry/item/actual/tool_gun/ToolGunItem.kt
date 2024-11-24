@@ -19,7 +19,6 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolG
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.util.MapIterator
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features

@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import org.bread_experts_group.breadmod.util.ModDamageTypes
+import org.bread_experts_group.breadmod.registry.ModDamageTypes
 import java.util.function.Supplier
 
 class EnglishUSLangProvider(

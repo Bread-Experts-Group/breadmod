@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.util
+package org.bread_experts_group.breadmod.registry
 
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.Registries
