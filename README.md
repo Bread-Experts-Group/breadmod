@@ -1,3 +1,163 @@
-# Breadmod NeoForge 1.21.1
+# The Bread Mod (omega 1.21.1 edition)
 
-### i got bored okay
+## Priority todos
+
+- [ ] Document functions and code to make it more understandable
+
+## Standard, Base Mod
+
+- [X] Bread Armor
+    - [X] Takes damage every few seconds - water speeds up this process and lava completely destroys whatever it touches
+    - [X] Each piece will keep your hunger from going below a certain point (+1 cumulative)
+    - [X] Doped bread/armor set
+        - [ ] Reinforced bread armor, doesn't dissolve in water. stats comparable to diamond armor, high enchantability
+    - [ ] Bread Armor Doping
+        - [X] Any piece of the set can be crafted with a potion to change its color and grant that effect to you while
+          it's equipped
+            - [X] Effect(s) are only applied with amplification I, further amplification increases the range your effect
+              gets applied to fellow players
+            - [ ] Make doped armor effects only target players and non-hostile entities
+- [ ] Bread Tools
+    - Slightly weaker than stone in durability and strength but has approx 1.5x more speed
+    - [X] Pickaxe
+    - [X] Shovel
+    - [X] Hoe
+    - [X] Axe
+    - [X] Sword
+    - [X] Reinforced Variants of tools
+    - [X] Crafting/Smithing recipes for tools
+    - [ ] Balance Tool stats against wood/stone, diamond/netherite for reinforced
+        - Similar to netherite or diamond, faster than diamond but once again weaker in durability and strength
+- [X] Bread Block
+    - [X] Mixin for turning burning blocks into another block
+    - [X] Edible
+    - [X] Custom charcoal block as a result of bread block being burned
+    - [ ] Portal block that leads into the bread dimension
+- [ ] Bread Dimension
+    - [X] A dimension composed of bread blocks
+    - [X] Nonflammable
+    - [ ] Items inside the dimension will vanish from the players inventory when they leave, and come back when they
+      reenter
+- [ ] Dough Machine
+    - [X] If the machine is broken during its operation, flour will be spread everywhere
+    - [X] Flour/Dough
+        - [X] Snow-like layer block (Very flammable)
+            - Figure out model and loot table datagen for this block (SnowLayerBlock), might have to just roll with
+              manually written json files to start off with
+        - [X] Refinement processes
+        - [X] Textures
+        - [X] Data driven recipe and serializer
+        - [ ] Create compat.
+            - [ ] Mixing recipe for flour to dough (might already work with the item tags)
+        - [X] Compat with fluid tank-like containers in the bucket slot
+- [X] Wheat Crusher
+    - [X] Block model and textures (animated)
+    - [X] Menu actually working
+    - [X] Recipe type and serializer
+    - [X] jei category and recipe
+    - [X] gui size fix
+
+### Needs to be done still:
+
+- [X] Redirect recipes with custom json names to the breadmod folder instead of the minecraft folder
+    - [X] Sort recipe types into their own folders (ex. mixing, smithing, block compaction and decompaction)
+- [ ] actually work on recipes
+- [ ] Textures for tools, weapons, items, blocks
+- [X] Fix mixin refmaps not generating during mod build
+- [X] Recipe datagen
+- [X] Lang datagen
+- [X] Model datagen
+- [X] Crafting recipes for reinforced bread block (now smithing recipe)
+- [ ] Happy Block Nuclear Inferno
+- [X] Bread slices
+    - [X] Crafted from using a sword on bread in a crafting table (the sword uses durability)
+        - [X] FIX RECIPE TO NOT CONSUME THE SWORD, ONLY TAKE DURABILITY (IMPORTANT)
+    - [X] You get 8 bread slices per bread in the recipe
+    - [X] Crafted using a cutting board from farmer's delight
+- [ ] Recipe Fixes with other mods
+    - [ ] Dough compat with create mod dough
+    - [ ] Charcoal block compat with mekanism charcoal block
+- [ ] Pipes and cables that transport items, fluids, and power (important)
+    - [ ] Blockstates or similar connecting system for the model to connect to each-other
+    - <b>https://www.mcjty.eu/docs/1.20/ep5#cable</b>
+- [ ] Fix up base mod generator (not the diesel one)
+- [ ] Decoration blocks
+    - Pending ideas.
+    - [X] Joke item: "the ultimate bread" just gives you creative mode lmao
+- [X] "Bread amulet" gives you 1 hunger point every 10 seconds
+    - Curios Compat.
+    - [ ] Different Tiers of bread amulet
+        - [ ] Standard (the one that already exists)
+        - [ ] Reinforced (has more durability)
+        - [ ] Indestructible (what it says on the tin)
+- [ ] "Godlike loaf" a monstrous combination of rare materials and a nether star to give you 10 full minutes of positive
+  potion effects and a whole 10 absorption hearts
+- [X] "Farmhouse structure" a random house with a farm attached to it with a random amount of bread or wheat in loot
+  chests
+- [X] "Bread tools and weapons" tools and weapons have stats comparable to stone tools, can be upgraded to their
+  Reinforced variant for a much stronger / longer lasting item\
+
+### Tool gun (totally not from gmod)
+
+- [ ] Recoil and rapid coil spin animation when tool gun is used
+    - [ ] timer-like system for the animations
+- [ ] Improve gui overlay, add mouse and key icons
+- [ ] <s>turn IToolGunMode into an api</s>
+- [ ] Tool gun modes (creator, exploder, remover)
+    - fix up and polish existing modes
+    - tool gun displaying mode information and image accompanying said mode
+
+# BUGS
+
+- [X] items inputted into machines from their sides are voided out of existence
+    - [X] items not saving on world save/load
+- [ ] Fluid texture on diesel machine needs to be normalized
+- [X] (major) tool gun stacking up/absorbing clicks when not equipped
+- [ ] Tool gun beam is scuffed
+- [ ] Certain slots in block entity screens not showing any items on client
+- [ ] happy block explosion not actually exploding an area
+- [ ] (production specific) Tool gun action not triggering
+- [ ] BMExplosion causing crash
+
+## Advanced, Machines and stuff
+
+- [X] Creative mode tab for advanced
+- [ ] Diesel Generator
+    - [X] Custom rendering (BER) / fluid rendering inside of model
+    - [ ] Particles
+    - [ ] logic
+    - [ ] upgrades
+        -  [ ] Turbo
+        -  [ ] Internal power buffer
+        -  [ ] charger
+- [ ] Bread Screen
+    - WIP
+
+## External Mods to look into (will be their own projects)
+
+- [ ] Lighting mod (colored lighting)
+- [ ] "Intrusive" mods (such as, being able to heat up a furnace like w/ the bread machine)
+
+### Other mod compatibility
+
+- [ ] Add recipe integrations with other mods where possible
+- [ ] <s>ProjectE</s> Mod not updated to 1.21 (probably never will tbh)
+    - [ ] Add EMC to items
+    - [X] Potential Bread-like EMC holder
+        - [X] Make texture for item
+- [ ] <s>Create</s> waiting on 1.21 port
+    - [ ] Create recipe generators for the other recipe types
+- [ ] Mekanism
+    - [ ] Crushing recipes for the food-like items
+- [ ] JEI Integration
+    - [ ] Recipe Categories
+        - Figure out which of our machines don't have jei integration yet
+    - [X] Custom recipe support
+    - [ ] Item infos
+    - [X] Recipe auto-fill support
+- [ ] WAILA-like compat
+    - Jade
+    - The One Probe
+    - some other waila mod that I forgot
+
+### *[bacillus was here]*
