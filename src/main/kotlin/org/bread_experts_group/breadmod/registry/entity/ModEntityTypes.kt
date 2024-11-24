@@ -7,8 +7,8 @@ import net.minecraft.world.entity.player.Player
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.entity.FakePlayer
-import org.bread_experts_group.breadmod.entity.PrimedHappyBlock
+import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
+import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 import java.util.function.Supplier
 
 object ModEntityTypes {

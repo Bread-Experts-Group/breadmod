@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.TntBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.Vec3
-import org.bread_experts_group.breadmod.entity.PrimedHappyBlock
+import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3

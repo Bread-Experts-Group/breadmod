@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.resources.DefaultPlayerSkin
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.resources.ResourceLocation
-import org.bread_experts_group.breadmod.entity.FakePlayer
+import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.util.rgMinecraft
 
 class FakePlayerRenderer(

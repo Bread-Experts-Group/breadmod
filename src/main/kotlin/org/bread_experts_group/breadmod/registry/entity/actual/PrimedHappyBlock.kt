@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.entity
+package org.bread_experts_group.breadmod.registry.entity.actual
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.Entity

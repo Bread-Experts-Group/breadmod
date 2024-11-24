@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.TntMinecartRenderer
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.entity.PrimedHappyBlock
+import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 
 class PrimedHappyBlockRenderer(
