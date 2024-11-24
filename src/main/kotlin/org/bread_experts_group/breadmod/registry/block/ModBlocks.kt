@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.FlourLayeredBlock
-import org.bread_experts_group.breadmod.HappyBlock
+import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
+import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
 import org.bread_experts_group.breadmod.registry.block.actual.*
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
