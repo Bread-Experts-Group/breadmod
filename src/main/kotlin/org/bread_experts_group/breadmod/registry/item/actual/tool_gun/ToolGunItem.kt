@@ -46,18 +46,6 @@ class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab 
         )
     }
 
-    fun ensureCurrentMode(stack: ItemStack): ToolGunModeData {
-        if (!stack.has(ModDataComponents.TOOL_GUN_DATA.get())) {
-            val nextNamespace = MapIterator(ToolGunModeDataLoader.modes).next()
-            val nextMode = MapIterator(nextNamespace.value).next()
-
-            val newData = ToolGunModeData(nextNamespace.key, nextMode.key, 0, 0)
-            stack.set(ModDataComponents.TOOL_GUN_DATA.get(), newData)
-            return newData
-        }
-        return stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA.get(), ToolGunModeData.EMPTY)
-    }
-
     fun getCurrentMode(stack: ItemStack): ToolGunModeDataLoader.ToolgunMode {
         return try {
             val data = stack.get(ModDataComponents.TOOL_GUN_DATA.get())
