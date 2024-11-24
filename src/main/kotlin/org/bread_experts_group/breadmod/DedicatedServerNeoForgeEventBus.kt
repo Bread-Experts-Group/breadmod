@@ -11,7 +11,7 @@ import org.bread_experts_group.breadmod.network.clientbound.ToolGunModeDataPacke
 
 @Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.DEDICATED_SERVER])
-internal object ServerNeoForgeEventBus {
+internal object DedicatedServerNeoForgeEventBus {
     @SubscribeEvent
     fun onPlayerJoin(event: PlayerLoggedInEvent) {
         val list =
