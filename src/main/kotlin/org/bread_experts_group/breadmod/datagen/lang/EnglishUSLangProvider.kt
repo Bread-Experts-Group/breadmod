@@ -103,7 +103,6 @@ class EnglishUSLangProvider(
         add(ModItems.CREATURE)
         add(ModItems.WRENCH)
         add(ModItems.BREAD_GUN)
-        add(ModItems.CERTIFICATE)
 //        add(ModItems.GLUON_GUN_BACKPACK)
         add(ModItems.GLUON_GUN)
 
