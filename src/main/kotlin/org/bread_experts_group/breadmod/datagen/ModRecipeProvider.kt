@@ -9,9 +9,9 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.data.recipes.SpecialRecipeBuilder
 import net.minecraft.world.item.Items
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipeBuilder
+import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeBuilder
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.recipe.crafting.BreadSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(

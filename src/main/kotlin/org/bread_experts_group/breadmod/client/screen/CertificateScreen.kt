@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.menu.item.CertificateMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.item.CertificateMenu
 
 class CertificateScreen(
     menu: CertificateMenu,

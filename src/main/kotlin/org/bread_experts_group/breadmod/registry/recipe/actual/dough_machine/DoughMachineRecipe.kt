@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.recipe.dough_machine
+package org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine
 
 import net.minecraft.core.HolderLookup
 import net.minecraft.world.item.ItemStack

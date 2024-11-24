@@ -5,9 +5,9 @@ import net.minecraft.world.inventory.MenuType
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.menu.DoughMachineMenu
-import org.bread_experts_group.breadmod.menu.WheatCrusherMenu
-import org.bread_experts_group.breadmod.menu.item.CertificateMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.item.CertificateMenu
 import java.util.function.Supplier
 
 object ModMenuTypes {

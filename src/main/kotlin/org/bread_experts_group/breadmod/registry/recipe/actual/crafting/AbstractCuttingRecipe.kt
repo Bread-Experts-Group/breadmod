@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.recipe.crafting
+package org.bread_experts_group.breadmod.registry.recipe.actual.crafting
 
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList

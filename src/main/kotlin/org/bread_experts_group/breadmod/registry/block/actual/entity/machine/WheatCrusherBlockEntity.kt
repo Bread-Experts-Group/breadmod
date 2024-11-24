@@ -30,9 +30,9 @@ import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper
 import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.menu.WheatCrusherMenu
-import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipe
-import org.bread_experts_group.breadmod.recipe.wheat_crushing.WheatCrusherRecipe.WheatCrusherInput
+import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
+import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe.WheatCrusherInput
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*

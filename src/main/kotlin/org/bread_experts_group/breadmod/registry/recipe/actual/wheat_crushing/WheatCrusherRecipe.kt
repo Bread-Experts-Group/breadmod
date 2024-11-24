@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.recipe.wheat_crushing
+package org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing
 
 import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.world.item.ItemStack

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.recipe.fluid_energy
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult

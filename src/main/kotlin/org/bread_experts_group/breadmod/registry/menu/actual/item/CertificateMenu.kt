@@ -1,9 +1,9 @@
-package org.bread_experts_group.breadmod.menu.item
+package org.bread_experts_group.breadmod.registry.menu.actual.item
 
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.menu.AbstractModContainerMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.AbstractModContainerMenu
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 

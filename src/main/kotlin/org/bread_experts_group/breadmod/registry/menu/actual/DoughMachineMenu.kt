@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.menu
+package org.bread_experts_group.breadmod.registry.menu.actual
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.tags.FluidTags

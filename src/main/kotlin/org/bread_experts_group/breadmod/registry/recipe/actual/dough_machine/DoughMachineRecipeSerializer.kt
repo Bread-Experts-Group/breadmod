@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.recipe.dough_machine
+package org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
