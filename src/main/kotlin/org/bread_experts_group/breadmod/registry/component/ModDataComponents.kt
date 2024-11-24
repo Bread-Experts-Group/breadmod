@@ -6,7 +6,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.network.codec.ByteBufCodecs
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunModeData
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunModeData
 import java.util.function.Supplier
 
 object ModDataComponents {

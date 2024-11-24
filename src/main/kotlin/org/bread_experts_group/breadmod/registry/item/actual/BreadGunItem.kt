@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item
+package org.bread_experts_group.breadmod.registry.item.actual
 
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.projectile.Projectile

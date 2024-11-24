@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.tool_gun
+package org.bread_experts_group.breadmod.registry.item.actual.tool_gun
 
 import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
@@ -14,8 +14,8 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.changeMode
-import org.bread_experts_group.breadmod.item.tool_gun.mode.ToolGunNoMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.changeMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunNoMode
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs

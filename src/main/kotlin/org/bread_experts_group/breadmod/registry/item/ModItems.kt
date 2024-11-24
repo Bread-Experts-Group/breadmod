@@ -20,13 +20,16 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.item.*
-import org.bread_experts_group.breadmod.item.armor.BreadArmorItem
-import org.bread_experts_group.breadmod.item.armor.ChefHatItem
-import org.bread_experts_group.breadmod.item.armor.GluonGunBackpackItem
-import org.bread_experts_group.breadmod.item.armor.ModArmorMaterials
-import org.bread_experts_group.breadmod.item.tool.KnifeItem
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.registry.item.actual.armor.BreadArmorItem
+import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
+import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
+import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
+import org.bread_experts_group.breadmod.registry.item.actual.tool.KnifeItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
+import org.bread_experts_group.breadmod.registry.item.actual.BreadGunItem
+import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
+import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
 import kotlin.reflect.KClass
 
 object ModItems {
@@ -229,8 +232,6 @@ object ModItems {
 
     val TOASTER_HEATING_ELEMENT: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("toaster_heating_element")
     val CREATURE: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("creature")
-
-    val CERTIFICATE: DeferredItem<CertificateItem> = ITEM_REGISTRY.register("certificate", ::CertificateItem)
 
     // todo uncomment after finishing new backpack model
     val GLUON_GUN_BACKPACK: DeferredItem<GluonGunBackpackItem> =

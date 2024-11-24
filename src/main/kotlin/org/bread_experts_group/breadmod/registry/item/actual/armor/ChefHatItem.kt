@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.armor
+package org.bread_experts_group.breadmod.registry.item.actual.armor
 
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer

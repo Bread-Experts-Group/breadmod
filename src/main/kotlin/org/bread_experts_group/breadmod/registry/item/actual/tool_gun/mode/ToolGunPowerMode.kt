@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.tool_gun.mode
+package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack

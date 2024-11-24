@@ -16,7 +16,7 @@ import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
-import org.bread_experts_group.breadmod.item.armor.GluonGunBackpackItem
+import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.util.plus
 import org.bread_experts_group.breadmod.util.rgMinecraft
 import org.bread_experts_group.breadmod.util.scaleFlat

@@ -29,10 +29,10 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBack
 import org.bread_experts_group.breadmod.client.screen.CertificateScreen
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
-import org.bread_experts_group.breadmod.item.armor.GluonGunBackpackItem
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.changeMode
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.changeMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.fluid.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems

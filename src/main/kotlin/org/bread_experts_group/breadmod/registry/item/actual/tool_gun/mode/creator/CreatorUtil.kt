@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.tool_gun.mode.creator
+package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.creator
 
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation

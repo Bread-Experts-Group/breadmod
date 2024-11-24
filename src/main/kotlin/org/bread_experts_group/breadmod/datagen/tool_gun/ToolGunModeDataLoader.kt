@@ -23,7 +23,7 @@ import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Com
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOLGUN_INFO_DISPLAY_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOLTIP_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.createMappingsForControls
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.createMappingsForControls
 import org.bread_experts_group.breadmod.util.jsonToComponent
 import org.bread_experts_group.breadmod.util.rgMinecraft
 import org.jetbrains.annotations.ApiStatus.Internal

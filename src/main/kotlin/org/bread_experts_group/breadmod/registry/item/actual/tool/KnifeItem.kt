@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.tool
+package org.bread_experts_group.breadmod.registry.item.actual.tool
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction

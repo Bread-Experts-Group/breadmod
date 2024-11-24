@@ -1,13 +1,13 @@
 package org.bread_experts_group.breadmod.datagen.tool_gun
 
-import org.bread_experts_group.breadmod.item.tool_gun.mode.ToolGunExplodeMode
-import org.bread_experts_group.breadmod.item.tool_gun.mode.ToolGunPowerMode
-import org.bread_experts_group.breadmod.item.tool_gun.mode.ToolGunRemoverMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunExplodeMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunPowerMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunRemoverMode
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.data.PackOutput
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.item.tool_gun.mode.creator.ToolGunCreatorMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.creator.ToolGunCreatorMode
 
 internal class ModToolGunModeProvider(
     output: PackOutput

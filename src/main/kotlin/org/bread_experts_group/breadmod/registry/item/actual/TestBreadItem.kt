@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item
+package org.bread_experts_group.breadmod.registry.item.actual
 
 import net.minecraft.network.chat.Component
 import net.minecraft.world.food.FoodProperties

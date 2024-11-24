@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.tool_gun.mode
+package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource

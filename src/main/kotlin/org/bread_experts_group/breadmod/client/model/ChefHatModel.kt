@@ -1,6 +1,6 @@
 package org.bread_experts_group.breadmod.client.model
 
-import org.bread_experts_group.breadmod.item.armor.ChefHatItem
+import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.model.Model

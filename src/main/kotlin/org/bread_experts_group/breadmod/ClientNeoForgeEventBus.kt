@@ -28,9 +28,9 @@ import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.api.IHoldScreen
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
-import org.bread_experts_group.breadmod.item.armor.ChefHatItem
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.item.tool_gun.ToolGunControlLogic.handleToolgunInput
+import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.handleToolgunInput
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.*
 import org.bread_experts_group.breadmod.util.redness

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.tool_gun
+package org.bread_experts_group.breadmod.registry.item.actual.tool_gun
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder

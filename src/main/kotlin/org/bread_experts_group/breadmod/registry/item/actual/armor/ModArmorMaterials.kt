@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.item.armor
+package org.bread_experts_group.breadmod.registry.item.actual.armor
 
 import net.minecraft.Util
 import net.minecraft.core.Holder
