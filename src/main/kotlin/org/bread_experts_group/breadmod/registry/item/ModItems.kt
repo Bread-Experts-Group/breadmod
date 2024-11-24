@@ -26,10 +26,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackp
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.item.actual.tool.KnifeItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
-import org.bread_experts_group.breadmod.registry.item.actual.BreadGunItem
-import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
-import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
+import org.bread_experts_group.breadmod.registry.item.actual.*
 import kotlin.reflect.KClass
 
 object ModItems {
@@ -238,4 +235,6 @@ object ModItems {
         ITEM_REGISTRY.register("gluon_gun_backpack", ::GluonGunBackpackItem)
 
     val GLUON_GUN: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("gluon_gun")
+
+    val PHYSX_TEST_ITEM: DeferredItem<Item> = ITEM_REGISTRY.register("physx", ::PhysXTestTool)
 }
