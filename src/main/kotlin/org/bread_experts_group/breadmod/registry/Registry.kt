@@ -7,7 +7,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
-import org.bread_experts_group.breadmod.registry.fluid.ModFluids
+import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes

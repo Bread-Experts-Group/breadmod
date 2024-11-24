@@ -8,7 +8,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper
 import net.neoforged.neoforge.registries.DeferredItem
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.registry.fluid.ModFluids
+import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 
 class ModItemModelProvider(

@@ -7,7 +7,7 @@ import net.minecraft.world.level.material.FluidState
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.fluids.BaseFlowingFluid
 import org.bread_experts_group.breadmod.registry.block.actual.util.ILiquidCombustible
-import org.bread_experts_group.breadmod.registry.fluid.ModFluids
+import org.bread_experts_group.breadmod.registry.block.ModFluids
 import java.awt.Color
 
 abstract class BreadLiquidBlock private constructor() : BaseFlowingFluid(

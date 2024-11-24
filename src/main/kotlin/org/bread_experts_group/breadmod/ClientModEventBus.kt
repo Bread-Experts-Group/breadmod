@@ -34,7 +34,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunCon
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
-import org.bread_experts_group.breadmod.registry.fluid.ModFluids
+import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.util.itemColor
