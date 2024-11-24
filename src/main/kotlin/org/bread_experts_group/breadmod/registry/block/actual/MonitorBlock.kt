@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
-import org.bread_experts_group.breadmod.block.entity.BreadScreenBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
 
 class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBlock {
     init {

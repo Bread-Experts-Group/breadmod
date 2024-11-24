@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.state.StateDefinition
@@ -6,7 +6,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.fluids.BaseFlowingFluid
-import org.bread_experts_group.breadmod.block.util.ILiquidCombustible
+import org.bread_experts_group.breadmod.registry.block.actual.util.ILiquidCombustible
 import org.bread_experts_group.breadmod.registry.fluid.ModFluids
 import java.awt.Color
 

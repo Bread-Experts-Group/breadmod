@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.block.BreadLiquidBlock
+import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.ModItems

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block.entity
+package org.bread_experts_group.breadmod.registry.block.actual.entity
 
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.entity.BlockEntity

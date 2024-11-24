@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -10,7 +10,7 @@ import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.material.PushReaction
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
-import org.bread_experts_group.breadmod.block.util.ModBlockSetTypes
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 
 class HellNawButtonBlock : ButtonBlock(
     ModBlockSetTypes.HELL_NAW,

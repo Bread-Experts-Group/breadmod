@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openGuiEditor
-import org.bread_experts_group.breadmod.block.BreadLiquidBlock
+import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel

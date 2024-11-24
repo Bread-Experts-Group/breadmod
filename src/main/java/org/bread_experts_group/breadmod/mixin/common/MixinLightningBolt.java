@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.bread_experts_group.breadmod.block.util.ILightningStrikeAction;
+import org.bread_experts_group.breadmod.registry.block.actual.util.ILightningStrikeAction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;

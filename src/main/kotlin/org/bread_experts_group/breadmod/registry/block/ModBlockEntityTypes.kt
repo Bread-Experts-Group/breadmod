@@ -7,10 +7,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.block.entity.BreadScreenBlockEntity
-import org.bread_experts_group.breadmod.block.entity.SoundBlockEntity
-import org.bread_experts_group.breadmod.block.entity.machine.DoughMachineBlockEntity
-import org.bread_experts_group.breadmod.block.entity.machine.WheatCrusherBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import java.util.function.Supplier
 

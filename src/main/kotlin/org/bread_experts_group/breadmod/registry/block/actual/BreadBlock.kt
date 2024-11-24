@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.portal.DimensionTransition
-import org.bread_experts_group.breadmod.block.util.ILightningStrikeAction
+import org.bread_experts_group.breadmod.registry.block.actual.util.ILightningStrikeAction
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModDimensions
 

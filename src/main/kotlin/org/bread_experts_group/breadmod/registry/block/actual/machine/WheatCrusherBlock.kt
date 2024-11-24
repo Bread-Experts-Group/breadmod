@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block.machine
+package org.bread_experts_group.breadmod.registry.block.actual.machine
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
@@ -18,12 +18,12 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
-import org.bread_experts_group.breadmod.block.entity.machine.DoughMachineBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 
-class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
+class WheatCrusherBlock : BaseEntityBlock(Properties.of()) {
     companion object {
-        val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { DoughMachineBlock() }
+        val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { WheatCrusherBlock() }
     }
 
     override fun codec(): MapCodec<out BaseEntityBlock> = CODEC
@@ -48,11 +48,16 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
         hitResult: BlockHitResult
     ): InteractionResult {
         if (!level.isClientSide) {
-            val entity = level.getBlockEntity(pos) as? DoughMachineBlockEntity ?: return InteractionResult.FAIL
+            val entity = level.getBlockEntity(pos) as? WheatCrusherBlockEntity ?: return InteractionResult.FAIL
             player.openMenu(entity, pos)
         }
         return InteractionResult.sidedSuccess(level.isClientSide)
     }
+
+    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
+        WheatCrusherBlockEntity(pos, state)
+
+    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun onRemove(
         state: BlockState,
@@ -62,17 +67,12 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
         movedByPiston: Boolean
     ) {
         if (!state.`is`(newState.block)) {
-            val entity = (level.getBlockEntity(pos) as DoughMachineBlockEntity)
+            val entity = (level.getBlockEntity(pos) as WheatCrusherBlockEntity)
             Containers.dropContents(level, pos, entity)
         }
         level.invalidateCapabilities(pos)
         super.onRemove(state, level, pos, newState, movedByPiston)
     }
-
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
-        DoughMachineBlockEntity(pos, state)
-
-    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun <T : BlockEntity?> getTicker(
         level: Level,
@@ -80,8 +80,8 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
         blockEntityType: BlockEntityType<T>
     ): BlockEntityTicker<T>? = createTickerHelper(
         blockEntityType,
-        ModBlockEntityTypes.DOUGH_MACHINE.get()
-    ) { tLevel: Level, tPos: BlockPos, tState: BlockState, tBlockEntity: DoughMachineBlockEntity ->
+        ModBlockEntityTypes.WHEAT_CRUSHER.get()
+    ) { tLevel: Level, tPos: BlockPos, tState: BlockState, tBlockEntity: WheatCrusherBlockEntity ->
         tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity)
     }
 }

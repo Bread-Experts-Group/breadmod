@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos

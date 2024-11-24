@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block.util
+package org.bread_experts_group.breadmod.registry.block.actual.util
 
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.level.block.SoundType

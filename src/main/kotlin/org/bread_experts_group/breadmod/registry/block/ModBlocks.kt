@@ -15,9 +15,9 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.FlourLayeredBlock
 import org.bread_experts_group.breadmod.HappyBlock
-import org.bread_experts_group.breadmod.block.*
-import org.bread_experts_group.breadmod.block.machine.DoughMachineBlock
-import org.bread_experts_group.breadmod.block.machine.WheatCrusherBlock
+import org.bread_experts_group.breadmod.registry.block.actual.*
+import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
+import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 
 object ModBlocks {

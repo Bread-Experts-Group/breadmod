@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.Slot
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.energy.IEnergyStorage
-import org.bread_experts_group.breadmod.block.entity.machine.WheatCrusherBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 

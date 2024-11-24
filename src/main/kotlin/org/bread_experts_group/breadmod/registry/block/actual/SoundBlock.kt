@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.MapColor
-import org.bread_experts_group.breadmod.block.entity.SoundBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 
 class SoundBlock : BaseEntityBlock(
     Properties.of()

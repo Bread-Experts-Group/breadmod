@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
-import org.bread_experts_group.breadmod.block.entity.SoundBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.datagen.*
 import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider.Companion.constructLootProvider
 import org.bread_experts_group.breadmod.datagen.lang.EnglishUSLangProvider

@@ -10,7 +10,7 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.fluids.FluidUtil
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
-import org.bread_experts_group.breadmod.block.entity.machine.DoughMachineBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.util.isTag

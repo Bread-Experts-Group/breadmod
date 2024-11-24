@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.block.entity.machine
+package org.bread_experts_group.breadmod.registry.block.actual.entity.machine
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
