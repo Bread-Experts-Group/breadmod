@@ -26,7 +26,7 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
     private val classLoader: ClassLoader = run {
         val loader = this::class.java.classLoader
             ?: throw IllegalStateException("Class loader is null")
-        val librariesPath = Path(System.getProperty("java.library.path"))
+        val librariesPath = Path(System.getProperty("java.io.tmpdir"))
         System.setProperty("physxjni.nativeLibLocation", librariesPath.absolutePathString())
         System.setProperty("physxjni.loadFromResources", "false")
         Files.createDirectories(librariesPath)
