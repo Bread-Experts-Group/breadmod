@@ -217,6 +217,8 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.145'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -230,6 +232,8 @@ tasks.named('wrapper', Wrapper).configure {
 
 version = mod_version
 group = mod_group_id
+
+jarJar.enable()
 
 repositories {
     mavenLocal()
@@ -262,6 +266,7 @@ base {
 
 // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+kotlin.jvmToolchain(21)
 
 //minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
 //minecraft.accessTransformers.entry public net.minecraft.client.Minecraft textureManager # textureManager
@@ -356,13 +361,11 @@ dependencies {
 
     implementation 'thedarkcolour:kotlinforforge-neoforge:5.6.0'
 
-    jarJar("de.fabmax:physx-jni:2.4.2") {
-        jarJar.pin(it, "2.4.2")
-    }
-    jarJar("de.fabmax:physx-jni:2.4.2:natives-windows")
-    jarJar("de.fabmax:physx-jni:2.4.2:natives-linux")
-    jarJar("de.fabmax:physx-jni:2.4.2:natives-macos")
-    jarJar("de.fabmax:physx-jni:2.4.2:natives-macos-arm64")
+    implementation("de.fabmax:physx-jni:2.4.2")
+    runtimeOnly("de.fabmax:physx-jni:2.4.2:natives-windows")
+    runtimeOnly("de.fabmax:physx-jni:2.4.2:natives-linux")
+    runtimeOnly("de.fabmax:physx-jni:2.4.2:natives-macos")
+    runtimeOnly("de.fabmax:physx-jni:2.4.2:natives-macos-arm64")
 
     // compile against the JEI API but do not include it at runtime
     compileOnly("mezz.jei:jei-1.21.1-neoforge-api:19.10.0.126")
@@ -402,6 +405,12 @@ tasks.withType(ProcessResources).configureEach {
 
     filesMatching(['META-INF/neoforge.mods.toml']) {
         expand replaceProperties
+    }
+}
+
+tasks {
+    assemble {
+        dependsOn(jarJar)
     }
 }
 
