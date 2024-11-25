@@ -166,60 +166,65 @@ class ConsoleColorAppender(
                     "[${event.threadName.getColorForString(ColorBanks.THREAD)}/" +
                     "${event.loggerName.getColorForString(ColorBanks.LOGGER)}]"
 
-            event.thrownProxy.let {
-                var baseMessage = "$prepend ${event.message.formattedMessage}\n"
-                if (it != null) {
-                    var longestClassLoaderName = 13
-                    var longestClassName = 0
-                    var longestLineNumber = 0
-                    var longestMethodName = 0
-                    var longestFileName = 0
-                    var longestModuleName = 0
-                    var longestModuleVersion = 0
-                    it.stackTrace.forEach { trace ->
-                        if ((trace.classLoaderName?.length ?: 0) > longestClassLoaderName)
-                            longestClassLoaderName = trace.classLoaderName?.length ?: 0
-                        if (trace.className.length > longestClassName) longestClassName = trace.className.length
-                        if (trace.lineNumber.toString().length > longestLineNumber)
-                            longestLineNumber = trace.lineNumber.toString().length
-                        if (trace.methodName.length > longestMethodName) longestMethodName = trace.methodName.length
-                        trace.fileName?.let { n -> if (n.length > longestFileName) longestFileName = n.length }
-                        trace.moduleName?.let { n -> if (n.length > longestModuleName) longestModuleName = n.length }
-                        trace.moduleVersion?.let { n -> if (n.length > longestModuleVersion) longestModuleVersion = n.length }
-                    }
-                    val lineLength = longestLineNumber + longestFileName + longestModuleName + longestClassName +
-                            longestMethodName + longestClassLoaderName + longestModuleVersion + 13
-                    val bg = ESC + BACKGROUND + END
-                    val ebg = (ESC + (BRIGHT + RED + BACKGROUND) + END) + (ESC + FOREGROUND + END)
-                    val rbg = (ESC + (RED + BACKGROUND) + END) + (ESC + FOREGROUND + END)
-                    baseMessage += "$ebg[${it.name}]".padCTL(lineLength) + ESC + RESET + END
-                    it.localizedMessage.chunked(lineLength).joinToString("\n") { s ->
-                        rbg + s.padCTL(lineLength) + ESC + RESET + END
-                    }.let { f -> baseMessage += "\n$f" }
-                    baseMessage += "\n$bg$ESC${RED + FOREGROUND}$END.$ESC${WHITE + FOREGROUND}$END "
+            var baseMessage = "$prepend ${event.message.formattedMessage}\n"
+            var proxy = event.thrownProxy
+            if (proxy == null) {
+                DEFAULT_OUT.print(baseMessage)
+                return
+            }
+            while (proxy != null) {
+                var longestClassLoaderName = 13
+                var longestClassName = 0
+                var longestLineNumber = 0
+                var longestMethodName = 0
+                var longestFileName = 0
+                var longestModuleName = 0
+                var longestModuleVersion = 0
+                proxy.stackTrace.forEach { trace ->
+                    if ((trace.classLoaderName?.length ?: 0) > longestClassLoaderName)
+                        longestClassLoaderName = trace.classLoaderName?.length ?: 0
+                    if (trace.className.length > longestClassName) longestClassName = trace.className.length
+                    if (trace.lineNumber.toString().length > longestLineNumber)
+                        longestLineNumber = trace.lineNumber.toString().length
+                    if (trace.methodName.length > longestMethodName) longestMethodName = trace.methodName.length
+                    trace.fileName?.let { n -> if (n.length > longestFileName) longestFileName = n.length }
+                    trace.moduleName?.let { n -> if (n.length > longestModuleName) longestModuleName = n.length }
+                    trace.moduleVersion?.let { n -> if (n.length > longestModuleVersion) longestModuleVersion = n.length }
+                }
+                val lineLength = longestLineNumber + longestFileName + longestModuleName + longestClassName +
+                        longestMethodName + longestClassLoaderName + longestModuleVersion + 13
+                val bg = ESC + BACKGROUND + END
+                val ebg = (ESC + (BRIGHT + RED + BACKGROUND) + END) + (ESC + FOREGROUND + END)
+                val rbg = (ESC + (RED + BACKGROUND) + END) + (ESC + FOREGROUND + END)
+                baseMessage += "$ebg[${proxy.name}]".padCTL(lineLength) + ESC + RESET + END
+                proxy.localizedMessage.chunked(lineLength).joinToString("\n") { s ->
+                    rbg + s.padCTL(lineLength) + ESC + RESET + END
+                }.let { f -> baseMessage += "\n$f" }
+                baseMessage += "\n$bg$ESC${RED + FOREGROUND}$END.$ESC${WHITE + FOREGROUND}$END "
 
-                    val separator = "\n$bg$ESC${WHITE + FOREGROUND}$END^ "
-                    baseMessage += it.stackTrace.joinToString(separator) { trace ->
-                        '[' + ((trace.fileName?.getColorForString(ColorBanks.FILE) ?: "") + bg).padCTL(longestFileName) +
-                                ESC + (WHITE + FOREGROUND) + END +
-                                ':' +
-                                trace.lineNumber.toString().padCTL(longestLineNumber) +
-                                bg +
-                                " -> " +
-                                ((trace.classLoaderName?.getColorForString(ColorBanks.CLASSLOADER) ?: "System Loader") + bg)
-                                    .padCTL(longestClassLoaderName) + "] " + bg +
-                                (trace.className.getColorForString(ColorBanks.LOGGER) + bg).padCTL(longestClassName) + '.' +
-                                ESC + ((if (trace.isNativeMethod) 0 else BRIGHT) + WHITE + FOREGROUND) + END +
-                                trace.methodName.padCTL(longestMethodName) + ' ' +
-                                ESC + (BRIGHT + CYAN + FOREGROUND) + END +
-                                ((trace.moduleName?.getColorForString(ColorBanks.LOGGER) ?: "") + bg).padCTL(longestModuleName) +
-                                ' ' + ESC + (CYAN + FOREGROUND) + END +
-                                ((trace.moduleVersion ?: "") + bg).padCTL(longestModuleVersion) +
-                                ESC + RESET + END
+                val separator = "\n$bg$ESC${WHITE + FOREGROUND}$END^ "
+                baseMessage += proxy.stackTrace.joinToString(separator) { trace ->
+                    '[' + ((trace.fileName?.getColorForString(ColorBanks.FILE) ?: "") + bg).padCTL(longestFileName) +
+                            ESC + (WHITE + FOREGROUND) + END +
+                            ':' +
+                            trace.lineNumber.toString().padCTL(longestLineNumber) +
+                            bg +
+                            " -> " +
+                            ((trace.classLoaderName?.getColorForString(ColorBanks.CLASSLOADER) ?: "System Loader") + bg)
+                                .padCTL(longestClassLoaderName) + "] " + bg +
+                            (trace.className.getColorForString(ColorBanks.LOGGER) + bg).padCTL(longestClassName) + '.' +
+                            ESC + ((if (trace.isNativeMethod) 0 else BRIGHT) + WHITE + FOREGROUND) + END +
+                            trace.methodName.padCTL(longestMethodName) + ' ' +
+                            ESC + (BRIGHT + CYAN + FOREGROUND) + END +
+                            ((trace.moduleName?.getColorForString(ColorBanks.LOGGER) ?: "") + bg).padCTL(longestModuleName) +
+                            ' ' + ESC + (CYAN + FOREGROUND) + END +
+                            ((trace.moduleVersion ?: "") + bg).padCTL(longestModuleVersion) +
+                            ESC + RESET + END
 
-                    }
-                    DEFAULT_OUT.println(baseMessage)
-                } else DEFAULT_OUT.print(baseMessage)
+                }
+                DEFAULT_OUT.println(baseMessage)
+                proxy = proxy.causeProxy
+                baseMessage = ""
             }
         }
     }
