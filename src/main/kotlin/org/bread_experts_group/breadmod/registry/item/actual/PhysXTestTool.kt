@@ -78,16 +78,15 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
             }
 
             override fun loadClass(name: String, resolve: Boolean): Class<*> {
-                println("Loading class $name")
                 findLoadedClass(name)?.let { return it }
                 val clazz = if (name.startsWith("de.fabmax.physxjni.") || name.startsWith("physx.")) {
                     synchronized(getClassLoadingLock(name)) {
                         loadMap.remove(name)?.let {
                             defineClass(name, it, 0, it.size)
                         } ?: throw ClassNotFoundException("Class $name not found")
-                    }.also { println("BREADMOD: Sending back ${it.toGenericString()}") }
+                    }
                 } else {
-                    this.parent.loadClass(name).also { println("PARENT: Sending back ${it.toGenericString()}") }
+                    this.parent.loadClass(name)
                 }
 
                 if (resolve) resolveClass(clazz)
@@ -101,8 +100,8 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
         Thread.currentThread().contextClassLoader = classLoader
 
         try {
-            Class.forName("physx.PxTopLevelFunctions", true, classLoader)
-            val version: Int = PxTopLevelFunctions.getPHYSICS_VERSION()
+            val pxTL = Class.forName("physx.PxTopLevelFunctions", true, classLoader)
+            val version: Int = pxTL.getMethod("getPHYSICS_VERSION").invoke(null) as Int
 
             val versionMajor = version shr 24
             val versionMinor = (version shr 16) and 0xff
