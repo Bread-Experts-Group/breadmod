@@ -58,13 +58,11 @@ class ConsoleColorAppender(
         const val YELLOW = 3
         const val BLUE = 4
 
-        // const val MAGENTA = 5
-        @Suppress("unused")
+        //        const val MAGENTA = 5
         const val CYAN = 6
         const val WHITE = 7
 
-        private val threadColors = mutableMapOf<String, Pair<String, List<Int>>>()
-        private var lastThreadColor: String? = null
+        private val threadColorBanks = mutableMapOf<ColorBanks, Pair<MutableMap<String, Pair<String, List<Int>>>, String?>>()
 
         private val DEFAULT_OUT = PrintStream(FileOutputStream(FileDescriptor.out))
     }
@@ -80,23 +78,21 @@ class ConsoleColorAppender(
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss;SSS")
 
-    private fun String.prepend(len: Int): String {
-        var new = ""
-        val split = this.trim().split('\n')
-        split.forEachIndexed { i, t ->
-            if (i != 0) {
-                new += " ,".padStart(len) + t + (if (i == split.size - 1) "" else '\n')
-            } else new = t
-        }
-        return new
+    private enum class ColorBanks {
+        FILE,
+        CLASSLOADER,
+        LOGGER,
+        THREAD
     }
 
-    private fun String.getColorForString(): String {
-        val color = threadColors[this]
+    private fun String.getColorForString(bank: ColorBanks): String {
+        val (colorBank, lastColor) = threadColorBanks.getOrPut(bank) { mutableMapOf<String, Pair<String, List<Int>>>() to null }
+
+        val color = colorBank[this]
         if (color != null) return color.first
         else {
-            val last = threadColors[lastThreadColor]
-            lastThreadColor = this
+            val last = colorBank[lastColor]
+            threadColorBanks[bank] = colorBank to this
 
             val new =
                 if (last == null)
@@ -130,9 +126,26 @@ class ConsoleColorAppender(
                     (newStr + ESC + RESET + END) to newLast
                 }
 
-            threadColors[this] = new
+            colorBank[this] = new
             return new.first
         }
+    }
+
+    private fun String.padCTL(length: Int): String {
+        var additional = length
+        var lastRead = ' '
+        var reading = false
+        this.forEach {
+            if (it == '[' && lastRead == '\u001B') {
+                additional += 2
+                reading = true
+            } else if (reading) {
+                if (it == 'm') reading = false
+                additional++
+            }
+            lastRead = it
+        }
+        return this.padEnd(additional)
     }
 
     /**
@@ -150,12 +163,63 @@ class ConsoleColorAppender(
 
             val prepend = "[${ESC + (FOREGROUND + BRIGHT + BLUE) + END}${formattedTime}${ESC + RESET + END}" +
                     "/${colors[event.level.standardLevel]}${event.level.toString().padEnd(5)}${ESC + RESET + END}] " +
-                    "[${event.threadName.getColorForString()}/" + "${event.loggerName.getColorForString()}]"
+                    "[${event.threadName.getColorForString(ColorBanks.THREAD)}/" +
+                    "${event.loggerName.getColorForString(ColorBanks.LOGGER)}]"
 
             event.thrownProxy.let {
-                val prependStrippedLength = prepend.replace(Regex("\u001B\\[.+?m"), "").length
-                DEFAULT_OUT.println("$prepend ${event.message.formattedMessage.prepend(prependStrippedLength)}")
-                if (it != null) DEFAULT_OUT.println(it.extendedStackTraceAsString.prepend(prependStrippedLength))
+                var baseMessage = "$prepend ${event.message.formattedMessage}\n"
+                if (it != null) {
+                    var longestClassLoaderName = 13
+                    var longestClassName = 0
+                    var longestLineNumber = 0
+                    var longestMethodName = 0
+                    var longestFileName = 0
+                    var longestModuleName = 0
+                    var longestModuleVersion = 0
+                    it.stackTrace.forEach { trace ->
+                        if ((trace.classLoaderName?.length ?: 0) > longestClassLoaderName)
+                            longestClassLoaderName = trace.classLoaderName?.length ?: 0
+                        if (trace.className.length > longestClassName) longestClassName = trace.className.length
+                        if (trace.lineNumber.toString().length > longestLineNumber)
+                            longestLineNumber = trace.lineNumber.toString().length
+                        if (trace.methodName.length > longestMethodName) longestMethodName = trace.methodName.length
+                        trace.fileName?.let { n -> if (n.length > longestFileName) longestFileName = n.length }
+                        trace.moduleName?.let { n -> if (n.length > longestModuleName) longestModuleName = n.length }
+                        trace.moduleVersion?.let { n -> if (n.length > longestModuleVersion) longestModuleVersion = n.length }
+                    }
+                    val lineLength = longestLineNumber + longestFileName + longestModuleName + longestClassName +
+                            longestMethodName + longestClassLoaderName + longestModuleVersion + 13
+                    val bg = ESC + BACKGROUND + END
+                    val ebg = (ESC + (BRIGHT + RED + BACKGROUND) + END) + (ESC + FOREGROUND + END)
+                    val rbg = (ESC + (RED + BACKGROUND) + END) + (ESC + FOREGROUND + END)
+                    baseMessage += "$ebg[${it.name}]".padCTL(lineLength) + ESC + RESET + END
+                    it.localizedMessage.chunked(lineLength).joinToString("\n") { s ->
+                        rbg + s.padCTL(lineLength) + ESC + RESET + END
+                    }.let { f -> baseMessage += "\n$f" }
+                    baseMessage += "\n$bg$ESC${RED + FOREGROUND}$END.$ESC${WHITE + FOREGROUND}$END "
+
+                    val separator = "\n$bg$ESC${WHITE + FOREGROUND}$END^ "
+                    baseMessage += it.stackTrace.joinToString(separator) { trace ->
+                        '[' + ((trace.fileName?.getColorForString(ColorBanks.FILE) ?: "") + bg).padCTL(longestFileName) +
+                                ESC + (WHITE + FOREGROUND) + END +
+                                ':' +
+                                trace.lineNumber.toString().padCTL(longestLineNumber) +
+                                bg +
+                                " -> " +
+                                ((trace.classLoaderName?.getColorForString(ColorBanks.CLASSLOADER) ?: "System Loader") + bg)
+                                    .padCTL(longestClassLoaderName) + "] " + bg +
+                                (trace.className.getColorForString(ColorBanks.LOGGER) + bg).padCTL(longestClassName) + '.' +
+                                ESC + ((if (trace.isNativeMethod) 0 else BRIGHT) + WHITE + FOREGROUND) + END +
+                                trace.methodName.padCTL(longestMethodName) + ' ' +
+                                ESC + (BRIGHT + CYAN + FOREGROUND) + END +
+                                ((trace.moduleName?.getColorForString(ColorBanks.LOGGER) ?: "") + bg).padCTL(longestModuleName) +
+                                ' ' + ESC + (CYAN + FOREGROUND) + END +
+                                ((trace.moduleVersion ?: "") + bg).padCTL(longestModuleVersion) +
+                                ESC + RESET + END
+
+                    }
+                    DEFAULT_OUT.println(baseMessage)
+                } else DEFAULT_OUT.print(baseMessage)
             }
         }
     }
