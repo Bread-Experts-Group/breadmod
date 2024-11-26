@@ -34,6 +34,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunIte
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModFluids
+import org.bread_experts_group.breadmod.registry.block.actual.experimental.MultiItemScreen
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.util.itemColor
@@ -136,6 +137,8 @@ internal object ClientModEventBus {
     fun registerMenuScreens(event: RegisterMenuScreensEvent) {
         event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
         event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
+
+        event.register(ModMenuTypes.MULTI_ITEM.get(), ::MultiItemScreen)
     }
 
     @Suppress("UNCHECKED_CAST")

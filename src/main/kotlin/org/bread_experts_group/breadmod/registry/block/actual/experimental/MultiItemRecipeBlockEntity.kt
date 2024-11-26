@@ -5,14 +5,18 @@ import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.Container
 import net.minecraft.world.ContainerHelper
+import net.minecraft.world.MenuProvider
 import net.minecraft.world.WorldlyContainer
+import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.player.StackedContents
+import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.CraftingContainer
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeManager
@@ -30,7 +34,8 @@ import java.util.*
 class MultiItemRecipeBlockEntity(
     pos: BlockPos,
     state: BlockState
-) : BlockEntity(ModBlockEntityTypes.MULTI_ITEM_TEST.get(), pos, state), CraftingContainer, WorldlyContainer {
+) : BlockEntity(ModBlockEntityTypes.MULTI_ITEM_TEST.get(), pos, state), CraftingContainer, WorldlyContainer,
+    MenuProvider {
     var progress = 0
     var maxProgress = 0
 
@@ -40,13 +45,14 @@ class MultiItemRecipeBlockEntity(
     }
 
     val invWrapper = InvWrapper(this)
-
     var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(4, ItemStack.EMPTY)
 
     fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: MultiItemRecipeBlockEntity) {
         currentRecipe.ifPresentOrElse({ activeRecipe ->
+            if (!inputStillValid(activeRecipe)) resetRecipe()
+            val recipeTime = activeRecipe.rTime ?: 0
             progress++
-            if (progress >= activeRecipe.rTime) {
+            if (progress >= recipeTime) {
                 recipeDone(activeRecipe)
                 resetRecipe()
             }
@@ -61,13 +67,14 @@ class MultiItemRecipeBlockEntity(
 
             check.ifPresent { present ->
                 val recipe = present.value
+                val recipeTime = recipe.rTime ?: 0
                 currentRecipe = Optional.of(recipe)
-                maxProgress = recipe.rTime
+                maxProgress = recipeTime
 
                 try {
                     LOGGER.info("recipe id: ${present.id.path}")
                     LOGGER.info("items: ${recipe.rItemInputs}")
-                    LOGGER.info("outputs: ${recipe.rItemOuputs}")
+                    LOGGER.info("outputs: ${recipe.rItemOutputs}")
                 } catch (e: Exception) {
                     LOGGER.error(e)
                 }
@@ -76,9 +83,6 @@ class MultiItemRecipeBlockEntity(
     }
 
     fun recipeDone(recipe: MultiItemTestRecipe) {
-        tryShrinkSlot(recipe, 0)
-        tryShrinkSlot(recipe, 1)
-        tryShrinkSlot(recipe, 2) // todo slot 2 isn't shrinking with the recipe, need to fix somehow
         val assemble = recipe.assembleOutputs(
             BMRecipeInputs.MultiItem(
                 items,
@@ -86,28 +90,40 @@ class MultiItemRecipeBlockEntity(
                 3
             )
         )
-        assemble.forEach { println(it) }
         if (itemSlots[3].isEmpty) itemSlots[3] =
-            assemble[0].copyWithCount(recipe.rItemOuputs[0].count) else itemSlots[3].grow(recipe.rItemOuputs[0].count)
+            assemble[0].copyWithCount(recipe.rItemOutputs[0].count) else itemSlots[3].grow(recipe.rItemOutputs[0].count)
+        consumeInputs(0 until 2, recipe)
     }
 
-    fun tryShrinkSlot(recipe: MultiItemTestRecipe, slot: Int) {
-        if (!itemSlots[slot].isEmpty) {
-            try {
-                if (recipe.rItemInputs[slot].items.isNotEmpty()) {
-                    LOGGER.info(recipe.rItemInputs[slot].items)
-                    itemSlots[slot].shrink(recipe.rItemInputs[slot].count())
+    // todo oh boy
+    /**
+     * Consumes an [inputSlotRange] using the recipe for shrinking item slots based on the current recipe.
+     * @param inputSlotRange The slot range for consuming input items.
+     * @param inputItems The container items to be consumed.
+     */
+    fun consumeInputs(inputSlotRange: IntRange, recipe: MultiItemTestRecipe) {
+        for (index: Int in inputSlotRange) {
+            recipe.rItemInputs.forEach {
+                if (it.test(items[index])) {
+                    items[index].shrink(it.count())
                 }
-            } catch (e: Exception) {
-                LOGGER.error(e)
             }
+//            if (recipe.rItemInputs[index].test(items[index])) {
+//                items[index].shrink(recipe.rItemInputs[index].count())
+//            }
         }
     }
 
+    /**
+     * Resets the current recipe.
+     */
     fun resetRecipe() {
         currentRecipe = Optional.empty()
         maxProgress = 0; progress = -1
     }
+
+    fun inputStillValid(recipe: MultiItemTestRecipe) =
+        recipe.rItemInputs.all { rItem -> items.any { rItem.test(it) } }
 
     override fun getMaxStackSize(): Int = 64
 
@@ -165,4 +181,9 @@ class MultiItemRecipeBlockEntity(
 
     override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
         ClientboundBlockEntityDataPacket.create(this)
+
+    override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
+        MultiItemRecipeMenu(containerId, playerInventory, this)
+
+    override fun getDisplayName(): Component = Component.literal("multi item recipe test block")
 }

@@ -23,8 +23,8 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.Brea
 class MultiItemTestRecipe(
     rItemInputs: NonNullList<SizedIngredient>,
     rItemOutputs: List<ItemStack>,
-    rTime: Int,
-    rEnergy: Int
+    rTime: Int?,
+    rEnergy: Int?
 ) : BreadModRecipes.MultiItem(rItemInputs, rItemOutputs, rTime, rEnergy) {
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = width * height >= 1
     override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.MULTI_ITEM_TEST.get()
@@ -34,15 +34,15 @@ class MultiItemTestRecipe(
         override fun codec(): MapCodec<MultiItemTestRecipe> = RecordCodecBuilder.mapCodec { inst ->
             inst.group(
                 sizedIngredientCodecModule("ingredients", MultiItemTestRecipe::rItemInputs),
-                itemStackListCodecModule("results", MultiItemTestRecipe::rItemOuputs),
-                intCodecModule("time", MultiItemTestRecipe::rTime),
-                intCodecModule("energy", MultiItemTestRecipe::rEnergy)
+                itemStackListCodecModule("results", MultiItemTestRecipe::rItemOutputs),
+                optionalIntCodecModule("time", MultiItemTestRecipe::rTime),
+                optionalIntCodecModule("energy", MultiItemTestRecipe::rEnergy)
             ).apply(inst, ::MultiItemTestRecipe)
         }
 
         override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, MultiItemTestRecipe> = StreamCodec.composite(
             nonNullListStreamCodec(SizedIngredient.STREAM_CODEC), MultiItemTestRecipe::rItemInputs,
-            ItemStack.LIST_STREAM_CODEC, MultiItemTestRecipe::rItemOuputs,
+            ItemStack.LIST_STREAM_CODEC, MultiItemTestRecipe::rItemOutputs,
             ByteBufCodecs.INT, MultiItemTestRecipe::rTime,
             ByteBufCodecs.INT, MultiItemTestRecipe::rEnergy,
             ::MultiItemTestRecipe
