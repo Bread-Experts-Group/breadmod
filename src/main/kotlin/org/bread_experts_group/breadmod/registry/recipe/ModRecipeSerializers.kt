@@ -9,6 +9,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.Abstract
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipeSerializer
+import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeSerializer
@@ -33,5 +34,10 @@ object ModRecipeSerializers {
         RECIPE_SERIALIZER_REGISTRY.register("bread_slice_crafting") { ->
             SimpleCraftingRecipeSerializer { BreadSlicingRecipe() }
         }
+
+    // Exp.
+
+    val MULTI_ITEM_TEST: Supplier<RecipeSerializer<MultiItemTestRecipe>> =
+        RECIPE_SERIALIZER_REGISTRY.register("multi_item_test") { -> MultiItemTestRecipe.Serializer() }
 
 }

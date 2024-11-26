@@ -199,5 +199,10 @@ internal object CommonModEventBus {
             Capabilities.FluidHandler.BLOCK,
             ModBlockEntityTypes.DOUGH_MACHINE.get()
         ) { entity, _: Direction? -> entity.fluidHandler }
+
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            ModBlockEntityTypes.MULTI_ITEM_TEST.get()
+        ) { entity, _: Direction? -> entity.invWrapper }
     }
 }

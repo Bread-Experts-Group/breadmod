@@ -16,6 +16,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
 import org.bread_experts_group.breadmod.registry.block.actual.*
+import org.bread_experts_group.breadmod.registry.block.actual.experimental.MultiItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
@@ -123,6 +124,12 @@ object ModBlocks {
     val HELL_NAW_BUTTON = BLOCK_REGISTRY.registerBlockItem(
         "hell_naw_button",
         { HellNawButtonBlock() },
+        Item.Properties()
+    )
+
+    val MULTI_ITEM_TEST = BLOCK_REGISTRY.registerBlockItem(
+        "multi_item_recipe",
+        { MultiItemRecipeBlock() },
         Item.Properties()
     )
 

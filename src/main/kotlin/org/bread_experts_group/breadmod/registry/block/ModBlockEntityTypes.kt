@@ -12,6 +12,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockE
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
+import org.bread_experts_group.breadmod.registry.block.actual.experimental.MultiItemRecipeBlockEntity
 import java.util.function.Supplier
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -37,6 +38,11 @@ object ModBlockEntityTypes {
     val DOUGH_MACHINE: Supplier<BlockEntityType<DoughMachineBlockEntity>> =
         BLOCK_ENTITY_REGISTRY.register("dough_machine_entity") { ->
             buildBlockEntity(::DoughMachineBlockEntity, ModBlocks.DOUGH_MACHINE.asBlock())
+        }
+
+    val MULTI_ITEM_TEST: Supplier<BlockEntityType<MultiItemRecipeBlockEntity>> =
+        BLOCK_ENTITY_REGISTRY.register("multi_item_recipe_entity") { ->
+            buildBlockEntity(::MultiItemRecipeBlockEntity, ModBlocks.MULTI_ITEM_TEST.asBlock())
         }
 
     private fun <T : BlockEntity> buildBlockEntity(

@@ -7,11 +7,13 @@ import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.data.recipes.SpecialRecipeBuilder
+import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeBuilder
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.multi.MultiItemTestRecipe
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(
@@ -56,6 +58,14 @@ class ModRecipeProvider(
 
         SpecialRecipeBuilder.special { BreadSlicingRecipe() }
             .save(recipeOutput, modLocation("special", "crafting", "bread_slicing"))
+
+        // Exp
+
+        MultiItemTestRecipe.Builder(listOf(Items.BREAD to 5))
+            .itemRequired(ModItems.FLOUR.get(), 3)
+            .itemRequired(ItemTags.BEDS, 1)
+            .timeRequired(100)
+            .save(recipeOutput, modLocation("experimental", "multi_item_test"))
 
         // todo make DoughMachineRecipeBuilder
     }

@@ -16,8 +16,6 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import java.util.function.Function
 
 class FluidEnergyRecipeSerializer : RecipeSerializer<FluidEnergyRecipe> {
-    // todo possible single item and result codec?
-
     private val codec: MapCodec<FluidEnergyRecipe> = RecordCodecBuilder.mapCodec { inst ->
         inst.group(
             sizedIngredientCodecModule(FluidEnergyRecipe::itemIngredients),
