@@ -185,7 +185,7 @@ class ConsoleColorAppender(
                 longestMethodName + longestClassLoaderName + longestModuleVersion + 13
         modifiedMessage += "\n$prepend${if (suppressed) S_EBG else EBG}" + "[${proxy.name}]".padCTL(lineLength) +
                 ESC + RESET + END
-        proxy.localizedMessage.chunked(lineLength).joinToString("\n") { s ->
+        (proxy.localizedMessage ?: "<no message>").chunked(lineLength).joinToString("\n") { s ->
             (if (suppressed) S_RBG else RBG) + s.padCTL(lineLength) + ESC + RESET + END
         }.let { f -> modifiedMessage += "\n$prepend$f" }
         modifiedMessage += "\n$prepend$BG$ESC${RED + FOREGROUND}$END.$ESC${WHITE + FOREGROUND}$END "

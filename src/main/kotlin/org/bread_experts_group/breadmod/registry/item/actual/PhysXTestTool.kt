@@ -10,14 +10,13 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import physx.PxTopLevelFunctions
+import java.io.File
+import java.net.URL
 import java.nio.file.Files
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
-import kotlin.io.path.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.exists
-import kotlin.io.path.writeBytes
+import kotlin.io.path.*
+
 
 class PhysXTestTool : Item(Properties().stacksTo(1)) {
 
@@ -36,9 +35,14 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
         object : ClassLoader("PhysX ClassLoader", Thread.currentThread().contextClassLoader) {
             val loadMap: MutableMap<String, ByteArray> = mutableMapOf()
 
-            fun loadJAR(name: String) {
-                val url = loader.getResource("/libraries/physx-jni-$name.jar")
-                    ?: throw IllegalStateException("Can't find JAR for $name")
+            fun loadResourceJAR(name: String) {
+                loadJAR(
+                    loader.getResource("/libraries/physx-jni-$name.jar")
+                        ?: throw IllegalStateException("Can't find JAR for $name")
+                )
+            }
+
+            fun loadJAR(url: URL) {
                 val jar = JarInputStream(url.openConnection().getInputStream())
                 var entry: JarEntry? = jar.nextJarEntry
                 while (entry != null) {
@@ -62,24 +66,48 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
 
             init {
                 logger.info("Loading PhysX JARs [Core]...")
-                loadJAR("2.4.2")
+                loadResourceJAR("2.4.2")
                 logger.info("Loading PhysX JARs [Native]...")
                 when {
-                    osName.contains("windows") -> loadJAR("2.4.2-natives-windows")
-                    osName.contains("linux") -> loadJAR("2.4.2-natives-linux")
+                    osName.contains("windows") -> loadResourceJAR("2.4.2-natives-windows")
+                    osName.contains("linux") -> loadResourceJAR("2.4.2-natives-linux")
                     else -> {
                         if (osName.contains("mac os x") || osName.contains("darwin") || osName.contains("osx")) {
-                            if (arch == "aarch64") loadJAR("2.4.2-natives-macos-arm64")
-                            else loadJAR("2.4.2-natives-macos")
+                            if (arch == "aarch64") loadResourceJAR("2.4.2-natives-macos-arm64")
+                            else loadResourceJAR("2.4.2-natives-macos")
                         } else throw IllegalStateException("Bad platform: $osName, $arch")
                     }
                 }
                 logger.info("PhysX JARs loaded.")
+                logger.info("Loading self-reference...")
+                val path = File(
+                    this::class.java.protectionDomain.codeSource.location
+                        .toURI().path
+                        .substringBeforeLast('#')
+                ).toPath()
+                if (path.isRegularFile()) loadJAR(path.toUri().toURL())
+                else {
+                    Files.walk(path.parent.parent).forEach {
+                        if (!(it.isRegularFile() && it.name.endsWith(".class"))) return@forEach
+                        val className =
+                            it.absolutePathString()
+                                .substringAfter("main")
+                                .substring(1)
+                                .replace(File.separatorChar, '.')
+                                .substringBeforeLast(".class")
+                        loadMap[className] = it.readBytes()
+                    }
+                }
+                logger.info("Self-references loaded, PhysX ClassLoader ready.")
             }
 
             override fun loadClass(name: String, resolve: Boolean): Class<*> {
                 findLoadedClass(name)?.let { return it }
-                val clazz = if (name.startsWith("de.fabmax.physxjni.") || name.startsWith("physx.")) {
+                val clazz = if (
+                    name.startsWith("de.fabmax.physxjni.") ||
+                    name.startsWith("physx.") ||
+                    name.startsWith("org.bread_experts_group.breadmod.physx.")
+                ) {
                     synchronized(getClassLoadingLock(name)) {
                         loadMap.remove(name)?.let {
                             defineClass(name, it, 0, it.size)
@@ -106,7 +134,13 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
             val versionMajor = version shr 24
             val versionMinor = (version shr 16) and 0xff
             val versionMicro = (version shr 8) and 0xff
-            player.sendSystemMessage(Component.literal("PhysX appears OK, seeing version $versionMajor.$versionMinor.$versionMicro"))
+            player.sendSystemMessage(
+                Component.literal("PhysX appears OK, seeing version $versionMajor.$versionMinor.$versionMicro")
+            )
+
+            Class.forName("org.bread_experts_group.breadmod.physx.PhysX", true, classLoader)
+                .getMethod("runTest", Int::class.java, Player::class.java)
+                .invoke(null, version, player)
         } catch (e: Throwable) {
             player.sendSystemMessage(Component.literal("PhysX failed to load: ${e.message}"))
             logger.error("PhysX failed to load", e)
