@@ -198,7 +198,7 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
             scene.addActor(ground)
             renderBuffer.add(mutableListOf<Float>() to { _, event ->
                 if (!noExecute) {
-                    scene.simulate(1f / 60f)
+                    scene.simulate(event.partialTick.gameTimeDeltaTicks / 20)
                     scene.fetchResults(true)
                 }
 
@@ -218,7 +218,6 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
         }
 
         fun addCube() {
-            println("Cube added")
             // create a small dynamic box with size 1x1x1, which will fall on the ground
             tmpPose.p = PxVec3(0f, 5f, 0f)
             val boxGeometry = PxBoxGeometry(0.5f, 0.5f, 0.5f) // PxBoxGeometry uses half-sizes
