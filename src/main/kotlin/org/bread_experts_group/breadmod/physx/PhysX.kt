@@ -9,6 +9,8 @@ import physx.physics.PxFilterData
 import physx.physics.PxSceneDesc
 import physx.physics.PxShapeFlagEnum
 import physx.physics.PxShapeFlags
+import physx.support.PxPvdInstrumentationFlagEnum
+import physx.support.PxPvdInstrumentationFlags
 
 @Suppress("UNUSED")
 object PhysX {
@@ -19,9 +21,14 @@ object PhysX {
         val errorCb = PxDefaultErrorCallback()
         val foundation = PxTopLevelFunctions.CreateFoundation(version, allocator, errorCb)
 
+        // PhysX debugging
+        val pvd = PxTopLevelFunctions.CreatePvd(foundation)
+        val transport = PxTopLevelFunctions.DefaultPvdSocketTransportCreate("localhost", 5425, 10000)
+        pvd.connect(transport, PxPvdInstrumentationFlags(PxPvdInstrumentationFlagEnum.eALL.value.toByte()))
+
         // create PhysX main physics object
         val tolerances = PxTolerancesScale()
-        val physics = PxTopLevelFunctions.CreatePhysics(version, foundation, tolerances)
+        val physics = PxTopLevelFunctions.CreatePhysics(version, foundation, tolerances, pvd)
 
         // create the CPU dispatcher, can be shared among multiple scenes
         val numThreads = Runtime.getRuntime().availableProcessors()
@@ -107,6 +114,8 @@ object PhysX {
         scene.release()
         material.release()
         physics.release()
+        pvd.release()
+        transport.release()
         foundation.release()
         errorCb.destroy()
         allocator.destroy()
