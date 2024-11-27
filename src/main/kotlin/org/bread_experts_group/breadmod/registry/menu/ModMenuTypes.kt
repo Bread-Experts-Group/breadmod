@@ -5,6 +5,7 @@ import net.minecraft.world.inventory.MenuType
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.registry.block.actual.experimental.MultiItemRecipeMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import java.util.function.Supplier
@@ -18,5 +19,9 @@ object ModMenuTypes {
 
     val DOUGH_MACHINE: Supplier<MenuType<DoughMachineMenu>> = MENU_TYPE_REGISTRY.register("dough_machine_menu") { ->
         IMenuTypeExtension.create(::DoughMachineMenu)
+    }
+
+    val MULTI_ITEM: Supplier<MenuType<MultiItemRecipeMenu>> = MENU_TYPE_REGISTRY.register("multi_item") { ->
+        IMenuTypeExtension.create { windowId, inv, data -> MultiItemRecipeMenu(windowId, inv, data) }
     }
 }

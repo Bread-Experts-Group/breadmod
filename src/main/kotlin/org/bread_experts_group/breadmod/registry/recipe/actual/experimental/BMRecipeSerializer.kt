@@ -31,6 +31,11 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
     fun <O> intCodecModule(field: String, getter: Function<O, Int>): RecordCodecBuilder<O, Int> =
         Codec.INT.fieldOf(field).forGetter(getter)
 
+    fun <O> optionalIntCodecModule(
+        field: String,
+        getter: Function<O, Int?>
+    ): RecordCodecBuilder<O, Int?> = Codec.INT.optionalFieldOf(field, 0).forGetter(getter)
+
     fun <O> sizedIngredientCodecModule(
         field: String,
         getter: Function<O, NonNullList<SizedIngredient>>

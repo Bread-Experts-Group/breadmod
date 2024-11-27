@@ -41,7 +41,7 @@ abstract class BMRecipeInputs(private val iSize: Int) : RecipeInput {
         val iCount: List<Int>,
         val iFluids: List<FluidStack>,
         val iAmount: List<Int>,
-        val iSize: Int
+        iSize: Int
     ) : BMRecipeInputs(iSize) {
         override fun getItem(index: Int): ItemStack = iItems[index]
         fun getFluid(index: Int): FluidStack = iFluids[index]
