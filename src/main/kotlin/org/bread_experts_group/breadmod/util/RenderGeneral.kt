@@ -74,27 +74,6 @@ val itemColor: ItemColor = ItemColor { stack: ItemStack, i: Int ->
     if (i > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE.rgb)
 }
 
-// --Commented out by Inspection START (9/10/2024 03:54):
-//val mouseGuiX: Double
-//    get() = rgMinecraft.mouseHandler.xpos() * rgMinecraft.window.guiScaledWidth.toDouble() /
-//            rgMinecraft.window.screenWidth.toDouble()
-// --Commented out by Inspection STOP (9/10/2024 03:54)
-// --Commented out by Inspection START (9/10/2024 03:54):
-//val mouseGuiY: Double
-//    get() = rgMinecraft.mouseHandler.ypos() * rgMinecraft.window.guiScaledHeight.toDouble() /
-//            rgMinecraft.window.screenHeight.toDouble()
-// --Commented out by Inspection STOP (9/10/2024 03:54)
-
-/** millis info
-val millis = Util.getMillis()
-
-// clamped decimal millis //
-println(clamp((millis.toFloat() / 300f % 2), 0f, 2f))
-
-// constant millis divided by a number //
-Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
- */
-
 /**
  * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
  *

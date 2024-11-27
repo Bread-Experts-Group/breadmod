@@ -200,8 +200,12 @@ internal object ClientNeoForgeEventBus {
         MachSoundInstance(ModSounds.MACH_FOUR.get(), 70..Int.MAX_VALUE, null)
     }
 
+    internal var clientTickingGroup = mutableMapOf<String, (event: ClientTickEvent.Pre) -> Boolean>()
+        private set
+
     @SubscribeEvent
     fun clientTick(event: ClientTickEvent.Pre) {
+        clientTickingGroup = clientTickingGroup.filter { (_, exe) -> exe(event) }.toMutableMap()
         if (machTrailMap.isNotEmpty()) {
             machTrailMap.forEach { (_, machTrailData) ->
                 machTrailData.tick()
