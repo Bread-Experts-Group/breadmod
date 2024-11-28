@@ -26,7 +26,7 @@ class MultiItemTestRecipe(
     rTime: Int?,
     rEnergy: Int?
 ) : BreadModRecipes.MultiItem(rItemInputs, rItemOutputs, rTime, rEnergy) {
-    override fun canCraftInDimensions(width: Int, height: Int): Boolean = width * height >= 1
+    override fun canCraftInDimensions(width: Int, height: Int): Boolean = width >= 3 && height >= 1
     override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.MULTI_ITEM_TEST.get()
     override fun getType(): RecipeType<*> = ModRecipeTypes.MULTI_ITEM.get()
 
