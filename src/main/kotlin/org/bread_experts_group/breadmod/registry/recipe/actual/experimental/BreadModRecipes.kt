@@ -44,9 +44,10 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
         rTime: Int?,
         rEnergy: Int?
     ) : BreadModRecipes<BMRecipeInputs.MultiItem>(rTime, rEnergy) {
-        // todo matches logic might be flawed, look into
+
+        // todo account for split stacks of matching items
         override fun matches(input: BMRecipeInputs.MultiItem, level: Level): Boolean =
-            rItemInputs.all { rItem -> input.iItems.any { rItem.test(it) } } && super.matches(input, level)
+            rItemInputs.all { rItem -> input.iItems.any { iItem -> rItem.test(iItem) } } && super.matches(input, level)
 
         /**
          * @return The first item in [rItemOutputs]

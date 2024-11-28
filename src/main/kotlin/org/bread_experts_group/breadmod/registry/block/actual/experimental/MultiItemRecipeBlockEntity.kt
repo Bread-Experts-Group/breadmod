@@ -95,22 +95,18 @@ class MultiItemRecipeBlockEntity(
         consumeInputs(0 until 2, recipe)
     }
 
-    // todo oh boy
+    // todo fix not consuming third slot
     /**
      * Consumes an [inputSlotRange] using the recipe for shrinking item slots based on the current recipe.
      * @param inputSlotRange The slot range for consuming input items.
-     * @param inputItems The container items to be consumed.
      */
     fun consumeInputs(inputSlotRange: IntRange, recipe: MultiItemTestRecipe) {
         for (index: Int in inputSlotRange) {
-            recipe.rItemInputs.forEach {
-                if (it.test(items[index])) {
-                    items[index].shrink(it.count())
+            items.forEach {
+                if (recipe.rItemInputs[index].test(it)) {
+                    it.shrink(recipe.rItemInputs[index].count())
                 }
             }
-//            if (recipe.rItemInputs[index].test(items[index])) {
-//                items[index].shrink(recipe.rItemInputs[index].count())
-//            }
         }
     }
 

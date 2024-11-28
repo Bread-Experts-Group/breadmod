@@ -14,7 +14,6 @@ import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.util.Mth.clamp
-import net.minecraft.world.entity.EquipmentSlot
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
@@ -28,7 +27,6 @@ import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.api.IHoldScreen
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
-import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.handleToolgunInput
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
@@ -215,39 +213,6 @@ internal object ClientNeoForgeEventBus {
                     machTrailMap.remove(machTrailData.playerProfile)
                 }
             }
-        }
-
-        val player = rgMinecraft.player ?: return
-        val headSlot = player.getItemBySlot(EquipmentSlot.HEAD)
-        val item = headSlot.item
-        val soundManager = rgMinecraft.soundManager
-        if (item is ChefHatItem && player.isSprinting) {
-            machOneSound.timer = sprintTimer
-            machTwoSound.timer = sprintTimer
-            machThreeSound.timer = sprintTimer
-            machFourSound.timer = sprintTimer
-
-            when (sprintTimer) {
-                1 -> soundManager.play(machOneSound)
-                20 -> soundManager.play(machTwoSound)
-                41 -> soundManager.play(machThreeSound)
-                70 -> {
-                    machFourSound.shouldLoop = true
-                    soundManager.play(machFourSound)
-                }
-            }
-
-            sprintTimer++
-            if (sprintTimer >= 20) {
-                renderMachTrail(player.gameProfile)
-            }
-        } else if (!player.isSprinting || item !is ChefHatItem) {
-            sprintTimer = 0
-            machFourSound.shouldLoop = false
-            soundManager.stop(machOneSound)
-            soundManager.stop(machTwoSound)
-            soundManager.stop(machThreeSound)
-            soundManager.stop(machFourSound)
         }
     }
 }
