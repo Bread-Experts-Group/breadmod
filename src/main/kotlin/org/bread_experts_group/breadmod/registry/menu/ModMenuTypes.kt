@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.MenuType
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.registry.block.actual.experimental.MultiItemRecipeMenu
+import org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item.MultiItemRecipeMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import java.util.function.Supplier

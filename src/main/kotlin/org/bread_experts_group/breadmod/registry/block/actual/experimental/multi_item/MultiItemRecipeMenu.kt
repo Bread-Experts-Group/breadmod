@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.experimental
+package org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
@@ -25,4 +25,6 @@ class MultiItemRecipeMenu(
         addSlot(Slot(parent, 2, 45, 30))
         addSlot(ResultSlot(3, 80, 30, parent))
     }
+
+    override val containerSlotCount: Int = 4
 }

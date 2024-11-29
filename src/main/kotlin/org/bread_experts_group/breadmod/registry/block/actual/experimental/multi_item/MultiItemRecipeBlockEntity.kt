@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.experimental
+package org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -49,7 +49,7 @@ class MultiItemRecipeBlockEntity(
 
     fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: MultiItemRecipeBlockEntity) {
         currentRecipe.ifPresentOrElse({ activeRecipe ->
-            if (!inputStillValid(activeRecipe)) resetRecipe()
+            if (!activeRecipe.inputStillValid(items)) resetRecipe()
             val recipeTime = activeRecipe.rTime ?: 0
             progress++
             if (progress >= recipeTime) {
@@ -92,22 +92,7 @@ class MultiItemRecipeBlockEntity(
         )
         if (itemSlots[3].isEmpty) itemSlots[3] =
             assemble[0].copyWithCount(recipe.rItemOutputs[0].count) else itemSlots[3].grow(recipe.rItemOutputs[0].count)
-        consumeInputs(0 until 2, recipe)
-    }
-
-    // todo fix not consuming third slot
-    /**
-     * Consumes an [inputSlotRange] using the recipe for shrinking item slots based on the current recipe.
-     * @param inputSlotRange The slot range for consuming input items.
-     */
-    fun consumeInputs(inputSlotRange: IntRange, recipe: MultiItemTestRecipe) {
-        for (index: Int in inputSlotRange) {
-            items.forEach {
-                if (recipe.rItemInputs[index].test(it)) {
-                    it.shrink(recipe.rItemInputs[index].count())
-                }
-            }
-        }
+        recipe.consumeInputs(items)
     }
 
     /**
@@ -117,11 +102,6 @@ class MultiItemRecipeBlockEntity(
         currentRecipe = Optional.empty()
         maxProgress = 0; progress = -1
     }
-
-    fun inputStillValid(recipe: MultiItemTestRecipe) =
-        recipe.rItemInputs.all { rItem -> items.any { rItem.test(it) } }
-
-    override fun getMaxStackSize(): Int = 64
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)

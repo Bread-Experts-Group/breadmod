@@ -24,8 +24,8 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
     abstract class SingleItem(
         val rItemInput: SizedIngredient,
         val rItemOutput: ItemStack,
-        rTime: Int,
-        rEnergy: Int
+        rTime: Int?,
+        rEnergy: Int?
     ) : BreadModRecipes<BMRecipeInputs.SingleItem>(rTime, rEnergy) {
         override fun matches(input: BMRecipeInputs.SingleItem, level: Level): Boolean =
             rItemInput.test(input.iItem) && super.matches(input, level)
@@ -66,5 +66,20 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
                 repeat(rItemOutputs.size) { index -> add(rItemOutputs[index].copyWithCount(input.iCount[index])) }
             }
         }
+
+        fun consumeInputs(items: List<ItemStack>) {
+            val list: MutableList<ItemStack> = mutableListOf()
+            rItemInputs.forEach {
+                list.add(items.find { item -> it.test(item) } ?: return@forEach)
+            }
+            list.forEach { item ->
+                rItemInputs.forEach {
+                    if (it.test(item)) item.shrink(it.count())
+                }
+            }
+        }
+
+        fun inputStillValid(items: List<ItemStack>) =
+            rItemInputs.all { rItem -> items.any { rItem.test(it) } }
     }
 }

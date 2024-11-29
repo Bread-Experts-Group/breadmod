@@ -17,7 +17,6 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openGuiEditor
-import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
@@ -28,14 +27,15 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
+import org.bread_experts_group.breadmod.registry.block.ModFluids
+import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
+import org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item.MultiItemScreen
+import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
+import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.changeMode
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
-import org.bread_experts_group.breadmod.registry.block.ModFluids
-import org.bread_experts_group.breadmod.registry.block.actual.experimental.MultiItemScreen
-import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.util.itemColor
 
@@ -89,10 +89,6 @@ internal object ClientModEventBus {
         event.register(
             itemColor,
             ModItems.CHEF_HAT.get(),
-/*            ModItems.BREAD_HELMET.get(),
-            ModItems.BREAD_CHESTPLATE.get(),
-            ModItems.BREAD_LEGGINGS.get(),
-            ModItems.BREAD_BOOTS.get()*/
         )
     }
 
