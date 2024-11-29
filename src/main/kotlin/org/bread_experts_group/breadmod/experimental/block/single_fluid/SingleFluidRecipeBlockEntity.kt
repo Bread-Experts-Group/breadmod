@@ -42,7 +42,7 @@ class SingleFluidRecipeBlockEntity(
                 syncToClients()
             }
 
-            override fun getTanks(): Int = 2
+            override fun getTanks(): Int = 1
         }
     }
 
