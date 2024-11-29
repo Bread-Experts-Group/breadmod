@@ -17,9 +17,9 @@ import org.bread_experts_group.breadmod.util.modifierMatches
 
 // todo consolidate tool gun control functions and vals to this object
 object ToolGunControlLogic {
-    val toolGunBindList = mutableMapOf<ToolGunModeProvider.Control, KeyMapping>()
+    val toolGunBindList: MutableMap<ToolGunModeProvider.Control, KeyMapping> = mutableMapOf<ToolGunModeProvider.Control, KeyMapping>()
 
-    val changeMode = KeyMapping(
+    val changeMode: KeyMapping = KeyMapping(
         "controls.${BreadMod.ID}.$TOOL_GUN_DEF.change_mode",
         KeyConflictContext.GUI,
         KeyModifier.SHIFT,

@@ -1,7 +1,5 @@
 package org.bread_experts_group.breadmod.client.gui
 
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
@@ -12,8 +10,10 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.util.drawScaledText
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.util.render.drawScaledText
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 import java.awt.Color
 
 class ToolGunOverlay : LayeredDraw.Layer {

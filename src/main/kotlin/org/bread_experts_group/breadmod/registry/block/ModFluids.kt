@@ -50,7 +50,7 @@ object ModFluids {
         )
     }
 
-    val BREAD_LIQUID = registerWithBucket(
+    val BREAD_LIQUID: FluidHolder<BreadLiquidBlock.Source, BreadLiquidBlock.Flowing> = registerWithBucket(
         "bread_liquid",
         { BreadLiquidBlock.Source() }, { BreadLiquidBlock.Flowing() },
         Item.Properties().stacksTo(1),

@@ -7,7 +7,6 @@ import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
-import org.bread_experts_group.breadmod.network.clientbound.ToolGunModeDataPacket
 
 @Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.DEDICATED_SERVER])

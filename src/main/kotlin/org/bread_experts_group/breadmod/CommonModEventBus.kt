@@ -27,7 +27,6 @@ import org.bread_experts_group.breadmod.datagen.tool_gun.ModToolGunModeProvider
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
-import org.bread_experts_group.breadmod.network.clientbound.ToolGunModeDataPacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization

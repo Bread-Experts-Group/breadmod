@@ -98,7 +98,7 @@ class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab 
     }
 
     companion object {
-        const val TOOL_GUN_DEF = "tool_gun"
+        const val TOOL_GUN_DEF: String = "tool_gun"
 
 //        const val CURRENT_MODE_TAG = "currentMode"
 //        const val MODE_NAMESPACE_TAG = "namespace"

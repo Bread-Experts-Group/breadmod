@@ -29,7 +29,7 @@ object ModBiomes {
         modLocation(name)
     ).also { entries.add(it to builder) }
 
-    val BREAD = register("bread") { features, carvers, sound ->
+    val BREAD: ResourceKey<Biome> = register("bread") { features, carvers, sound ->
         Biome.BiomeBuilder()
             .hasPrecipitation(false)
             .temperatureAdjustment(Biome.TemperatureModifier.NONE)

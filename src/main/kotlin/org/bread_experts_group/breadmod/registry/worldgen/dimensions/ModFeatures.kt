@@ -52,7 +52,7 @@ object ModFeatures {
         )
     }
 
-    val BAUXITE_ORE = registerPlacedFeature("bauxite") {
+    val BAUXITE_ORE: ResourceKey<PlacedFeature> = registerPlacedFeature("bauxite") {
         PlacedFeature(
             it.getOrThrow(BAUXITE_ORE_CONFIGURED), listOf(
                 HeightRangePlacement.uniform(

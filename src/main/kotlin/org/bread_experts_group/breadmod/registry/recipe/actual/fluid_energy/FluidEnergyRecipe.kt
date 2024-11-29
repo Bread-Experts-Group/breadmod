@@ -67,7 +67,7 @@ open class FluidEnergyRecipe(
     ) : RecipeInput {
         var count: Int
         var amount: Int
-        val stackedContents = StackedContents()
+        val stackedContents: StackedContents = StackedContents()
 
         init {
             var i = 0

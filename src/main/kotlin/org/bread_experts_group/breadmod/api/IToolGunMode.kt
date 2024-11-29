@@ -86,10 +86,10 @@ interface IToolGunMode {
     companion object {
         val BASE_TOOL_GUN_DATA_PATH: Path = DATA_DIR.resolve("tool_gun")
 
-        fun playToolGunSound(pLevel: Level, at: BlockPos) =
+        fun playToolGunSound(pLevel: Level, at: BlockPos): Unit =
             pLevel.playSound(null, at, ModSounds.TOOL_GUN.get(), SoundSource.PLAYERS, 2.0f, 1f)
 
-        fun playModeSound(pLevel: Level, at: BlockPos) =
+        fun playModeSound(pLevel: Level, at: BlockPos): Unit =
             pLevel.playSound(null, at, SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 2.0f, 1f)
     }
 }

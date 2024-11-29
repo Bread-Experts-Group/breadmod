@@ -164,7 +164,7 @@ fun <T : Recipe<*>> DeferredRegister<RecipeType<*>>.registerType(name: String): 
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun Fluid.isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).get() == tag) /*?: false*/
+fun isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).get() == tag) /*?: false*/
 
 // --Commented out by Inspection START (9/10/2024 03:52):
 ///**

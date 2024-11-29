@@ -28,7 +28,7 @@ class PrimedHappyBlock(
     private val divisions = ModConfiguration.COMMON.HAPPY_BLOCK_DIVISIONS.get()
 
     // todo reimplement BMExplosion
-    override fun explode() = level().let {
+    override fun explode(): Unit = level().let {
         it.explode(
             null,
             position().x,

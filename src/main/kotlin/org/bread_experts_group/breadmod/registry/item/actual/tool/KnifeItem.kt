@@ -28,7 +28,7 @@ class KnifeItem(
     tier: Tier
 ) : DiggerItem(tier, MINEABLE_WITH_KNIFE, Properties().attributes(createKnifeAttributes(tier))) {
     companion object {
-        fun createKnifeAttributes(tier: Tier) =
+        fun createKnifeAttributes(tier: Tier): ItemAttributeModifiers? =
             ItemAttributeModifiers.builder()
                 .add(
                     Attributes.ATTACK_DAMAGE,

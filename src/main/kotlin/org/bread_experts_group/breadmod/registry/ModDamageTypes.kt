@@ -16,7 +16,7 @@ data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaustion: Floa
         exhaustion
     )
 
-    fun source(level: Level) = source(level.registryAccess())
+    fun source(level: Level): DamageSource = source(level.registryAccess())
 
     private fun source(registryAccess: RegistryAccess): DamageSource =
         DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key))

@@ -38,7 +38,7 @@ class BreadAmuletItem(durability: Int) : Item(Properties().durability(durability
         }
     }
 
-    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) =
+    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean): Unit =
         if (entity is Player) playerFood(stack, entity) else {
         }
 

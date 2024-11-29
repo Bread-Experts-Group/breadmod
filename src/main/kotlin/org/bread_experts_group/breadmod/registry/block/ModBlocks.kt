@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.registry.block
 
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
@@ -20,16 +21,16 @@ import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrush
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 
 object ModBlocks {
-    val BLOCK_REGISTRY = DeferredRegister.createBlocks(BreadMod.ID)
+    val BLOCK_REGISTRY: DeferredRegister.Blocks? = DeferredRegister.createBlocks(BreadMod.ID)
 
-    fun getLocation(block: Block) = BuiltInRegistries.BLOCK.getKey(block)
+    fun getLocation(block: Block): ResourceLocation = BuiltInRegistries.BLOCK.getKey(block)
 
     /**
      * Convenience function for directly getting a block from a [DeferredItem]
      */
     fun DeferredItem<BlockItem>.asBlock(): Block = this.get().block
 
-    val BREAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val BREAD_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "bread_block", { BreadBlock() }, Item.Properties().also {
             val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null)
                 ?: throw IllegalArgumentException("Bread has no food properties?")
@@ -42,15 +43,15 @@ object ModBlocks {
         }
     )
 
-    val REINFORCED_BREAD_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val REINFORCED_BREAD_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "reinforced_bread_block",
         { Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK).strength(25f, 1200f)) },
         Item.Properties().fireResistant()
     )
 
-    val MONITOR = BLOCK_REGISTRY.registerBlockItem("monitor", { MonitorBlock() }, Item.Properties())
+    val MONITOR: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem("monitor", { MonitorBlock() }, Item.Properties())
 
-    val LOW_DENSITY_CHARCOAL_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val LOW_DENSITY_CHARCOAL_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "ld_charcoal_block",
         { FlammableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL)) },
         { block ->
@@ -60,19 +61,19 @@ object ModBlocks {
         }
     )
 
-    val WAR_TERMINAL = BLOCK_REGISTRY.registerBlockItem(
+    val WAR_TERMINAL: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "war_terminal", { WarTerminalBlock() }, Item.Properties()
     )
 
-    val RANDOM_SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val RANDOM_SOUND_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "random_sound_block", { RandomSoundBlock() }, Item.Properties()
     )
 
-    val SOUND_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val SOUND_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "sound_block", { SoundBlock() }, Item.Properties()
     )
 
-    val CHARCOAL_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val CHARCOAL_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "charcoal_block",
         { FlammableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COAL_BLOCK)) },
         { block ->
@@ -82,44 +83,44 @@ object ModBlocks {
         }
     )
 
-    val WHEAT_CRUSHER = BLOCK_REGISTRY.registerBlockItem(
+    val WHEAT_CRUSHER: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "wheat_crusher",
         { WheatCrusherBlock() },
         Item.Properties()
     )
 
-    val DOUGH_MACHINE = BLOCK_REGISTRY.registerBlockItem(
+    val DOUGH_MACHINE: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "dough_machine",
         { DoughMachineBlock() },
         Item.Properties()
     )
 
     // todo port
-    val BAUXITE_ORE = BLOCK_REGISTRY.registerBlockItem(
+    val BAUXITE_ORE: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "bauxite_ore", { Block(BlockBehaviour.Properties.of()) }, Item.Properties()
     )
 
-    val FLOUR_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val FLOUR_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "flour_block",
         { FlourBlock() },
         Item.Properties()
     )
 
-    val FLOUR_LAYER_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val FLOUR_LAYER_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "flour_layer", { FlourLayeredBlock() }, Item.Properties()
     )
 
-    val HAPPY_BLOCK = BLOCK_REGISTRY.registerBlockItem(
+    val HAPPY_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "happy_block", { HappyBlock() }, Item.Properties()
     )
 
-    val KEYBOARD = BLOCK_REGISTRY.registerBlockItem(
+    val KEYBOARD: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "keyboard",
         { KeyboardBlock() },
         Item.Properties().stacksTo(1)
     )
 
-    val HELL_NAW_BUTTON = BLOCK_REGISTRY.registerBlockItem(
+    val HELL_NAW_BUTTON: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "hell_naw_button",
         { HellNawButtonBlock() },
         Item.Properties()
@@ -143,7 +144,7 @@ object ModBlocks {
 
     // EXPERIMENTAL PAST THIS POINT
 
-    val MULTI_ITEM_TEST = BLOCK_REGISTRY.registerBlockItem(
+    val MULTI_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "multi_item_recipe",
         { MultiItemRecipeBlock() },
         Item.Properties()

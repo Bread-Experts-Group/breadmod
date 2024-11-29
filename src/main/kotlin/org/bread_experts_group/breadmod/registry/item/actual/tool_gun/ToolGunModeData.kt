@@ -13,7 +13,7 @@ data class ToolGunModeData(
     var modeIteratorState: Int
 ) {
     companion object {
-        val EMPTY = ToolGunModeData("breadmod", "none", 0, 0)
+        val EMPTY: ToolGunModeData = ToolGunModeData("breadmod", "none", 0, 0)
 
         val CODEC: Codec<ToolGunModeData> = RecordCodecBuilder.create { inst ->
             inst.group(

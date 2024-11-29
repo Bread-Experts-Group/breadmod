@@ -50,7 +50,7 @@ class ChefHatModel() : Model(RenderType::entityTranslucent) {
         packedLight: Int,
         packedOverlay: Int,
         color: Int
-    ) = renderToBuffer(
+    ): Unit = renderToBuffer(
         poseStack,
         rgMinecraft.renderBuffers().bufferSource().getBuffer(renderType(HAT_TEXTURE)),
         packedLight,

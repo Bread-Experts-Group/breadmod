@@ -78,11 +78,4 @@ class FakePlayer(
 
     override fun isInvulnerable(): Boolean = true
 
-    /**
-     * Gets called every tick from main Entity class
-     */
-    override fun baseTick() {
-//        if (level().isClientSide) LogManager.getLogger().info(getOwnerUUID())
-        super.baseTick()
-    }
 }

@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.BlockTags
 import net.minecraft.util.valueproviders.ConstantInt
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.biome.Climate
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource
 import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists
@@ -24,7 +25,7 @@ object ModDimensions {
         dimensionType: (key: ResourceKey<DimensionType>, location: ResourceLocation) -> DimensionType,
         climateParameterListBuilder: ClimateParameterListBuilder,
         noiseGenerationSettings: ResourceKey<NoiseGeneratorSettings>
-    ) = BreadMod.modLocation(name).let {
+    ): kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = BreadMod.modLocation(name).let {
         ModDimensionEntry(
             it,
             ResourceKey.create(Registries.DIMENSION_TYPE, it)
@@ -35,7 +36,7 @@ object ModDimensions {
         ) to ResourceKey.create(Registries.DIMENSION, it)
     }
 
-    val BREAD = register("bread", { _, _ ->
+    val BREAD: kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = register("bread", { _, _ ->
         DimensionType(
             OptionalLong.empty(),
             true,
@@ -76,7 +77,7 @@ object ModDimensions {
         )
     }, ModNoiseGenerators.BREAD_FLOATING_ISLANDS)
 
-    fun bootstrapDimensionTypes(ctx: BootstrapContext<DimensionType>) =
+    fun bootstrapDimensionTypes(ctx: BootstrapContext<DimensionType>): Unit =
         ModDimensionEntry.entries.forEach { ctx.register(it.dimensionType.first, it.dimensionType.second) }
 
     fun bootstrapLevelStems(ctx: BootstrapContext<LevelStem>) {

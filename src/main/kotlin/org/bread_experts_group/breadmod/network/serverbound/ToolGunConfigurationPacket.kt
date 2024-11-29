@@ -5,12 +5,8 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.neoforged.neoforge.network.handling.IPayloadContext
-import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 
 class ToolGunConfigurationPacket(
     val modeSwitch: Boolean,

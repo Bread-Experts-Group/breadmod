@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.ModFonts
-import org.bread_experts_group.breadmod.util.rgMinecraft
-import org.bread_experts_group.breadmod.util.scaleFlat
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
 
 internal class WarOverlay : LayeredDraw.Layer {

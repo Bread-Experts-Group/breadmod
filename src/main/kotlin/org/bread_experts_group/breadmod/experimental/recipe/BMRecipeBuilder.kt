@@ -12,8 +12,8 @@ import net.minecraft.resources.ResourceLocation
 @Suppress("unused")
 abstract class BMRecipeBuilder : RecipeBuilder {
     val criteria: MutableMap<String, Criterion<*>> = hashMapOf()
-    var time = 0
-    var energy = 0
+    var time: Int = 0
+    var energy: Int = 0
 
     override fun unlockedBy(name: String, criterion: Criterion<*>): RecipeBuilder {
         criteria[name] = criterion
@@ -22,8 +22,8 @@ abstract class BMRecipeBuilder : RecipeBuilder {
 
     override fun group(groupName: String?): RecipeBuilder = this
 
-    fun timeRequired(time: Int) = this.also { this.time = time }
-    fun energyRequired(energy: Int) = this.also { this.energy = energy }
+    fun timeRequired(time: Int): BMRecipeBuilder = this.also { this.time = time }
+    fun energyRequired(energy: Int): BMRecipeBuilder = this.also { this.energy = energy }
 
     protected fun buildAdvancement(recipeOutput: RecipeOutput, id: ResourceLocation): AdvancementHolder {
         val advancement = recipeOutput.advancement()

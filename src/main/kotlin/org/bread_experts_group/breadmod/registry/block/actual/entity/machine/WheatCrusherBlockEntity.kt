@@ -49,8 +49,8 @@ class WheatCrusherBlockEntity(
         var debugMode = false
     }
 
-    var progress = 0
-    var maxProgress = 0
+    var progress: Int = 0
+    var maxProgress: Int = 0
     private var energyDivision: Int? = null
 
     var currentRecipe: Optional<WheatCrusherRecipe> = Optional.empty()
@@ -68,8 +68,8 @@ class WheatCrusherBlockEntity(
         }
     }
 
-    val horizontal = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
-    val sidedInvWrapper = SidedInvWrapper(this, horizontal)
+    val horizontal: Direction? = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
+    val sidedInvWrapper: SidedInvWrapper = SidedInvWrapper(this, horizontal)
 
     var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(2, ItemStack.EMPTY)
 
@@ -166,7 +166,7 @@ class WheatCrusherBlockEntity(
         ContainerHelper.loadAllItems(tag, itemSlots, registries)
     }
 
-    override fun clearContent() = itemSlots.forEach { it.count = 0 }
+    override fun clearContent(): Unit = itemSlots.forEach { it.count = 0 }
 
     override fun getContainerSize(): Int = itemSlots.size
     override fun isEmpty(): Boolean = itemSlots.any { !it.isEmpty }

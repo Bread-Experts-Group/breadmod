@@ -24,7 +24,7 @@ class ModRecipeProvider(
         WheatCrusherRecipeBuilder(ModItems.FLOUR.toStack(), 2)
             .timeRequired(100)
             .energyRequired(2000)
-            .itemRequired(Items.WHEAT, 1)
+            .itemRequired(Items.WHEAT)
             .save(recipeOutput, modLocation("special", "machine", "wheat_crushing"))
 
 //        DoughMachineRecipeBuilder(ModItems.TEST_BREAD.toStack(), 1)
@@ -63,7 +63,7 @@ class ModRecipeProvider(
 
         MultiItemTestRecipe.Builder(listOf(Items.BREAD to 5))
             .itemRequired(ModItems.FLOUR.get(), 3)
-            .itemRequired(ItemTags.BEDS, 1)
+            .itemRequired(ItemTags.BEDS)
             .timeRequired(100)
             .save(recipeOutput, modLocation("experimental", "multi_item_test"))
 

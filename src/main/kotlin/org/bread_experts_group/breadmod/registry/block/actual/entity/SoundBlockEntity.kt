@@ -15,7 +15,7 @@ class SoundBlockEntity(
 ) : BlockEntity(ModBlockEntityTypes.SOUND_BLOCK.get(), pos, state), Container {
     var items: NonNullList<ItemStack> = NonNullList.withSize(8, ItemStack.EMPTY)
 
-    override fun clearContent() = items.clear()
+    override fun clearContent(): Unit = items.clear()
 
     override fun getContainerSize(): Int = items.size
 
@@ -36,5 +36,5 @@ class SoundBlockEntity(
 
     override fun stillValid(player: Player): Boolean = true
 
-    override fun setChanged() = super.setChanged()
+    override fun setChanged(): Unit = super.setChanged()
 }

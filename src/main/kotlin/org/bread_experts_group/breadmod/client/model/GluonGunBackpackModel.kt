@@ -33,7 +33,7 @@ class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
         packedLight: Int,
         packedOverlay: Int,
         color: Int
-    ) = renderToBuffer(
+    ): Unit = renderToBuffer(
         poseStack,
         rgMinecraft.renderBuffers().bufferSource().getBuffer(renderType(BACKPACK_TEXTURE)),
         packedLight,
@@ -51,7 +51,7 @@ class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
             val meshDefinition = MeshDefinition()
             val partDefinition = meshDefinition.root
 
-            val Backpack: PartDefinition = partDefinition.addOrReplaceChild(
+            val backpack: PartDefinition = partDefinition.addOrReplaceChild(
                 "Backpack",
                 CubeListBuilder.create().texOffs(0, 0)
                     .addBox(-8.0f, -9.4673f, 0.6748f, 16.0f, 22.0f, 6.0f, CubeDeformation(0.0f))
@@ -63,13 +63,13 @@ class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
                 PartPose.offset(0.0f, 11.4673f, -6.6748f)
             )
 
-            Backpack.addOrReplaceChild(
+            backpack.addOrReplaceChild(
                 "middle_3_r1",
                 CubeListBuilder.create().texOffs(38, 0)
                     .addBox(-2.0f, -3.0009f, 0.0151f, 4.0f, 3.0f, 2.0f, CubeDeformation(0.0f)),
                 PartPose.offsetAndRotation(0.0f, -8.4914f, -1.5153f, -0.9163f, 0.0f, 0.0f)
             )
-            Backpack.addOrReplaceChild(
+            backpack.addOrReplaceChild(
                 "middle_2_r1",
                 CubeListBuilder.create().texOffs(44, 4)
                     .addBox(-2.0f, -10.0009f, 0.0151f, 4.0f, 10.0f, 6.0f, CubeDeformation(0.0f)),

@@ -32,9 +32,9 @@ class WheatCrusherRecipeBuilder(
         return this
     }
 
-    fun itemRequired(item: Item, count: Int = 1) = this.also { this.item = ItemStack(item, count) }
-    fun timeRequired(time: Int) = this.also { this.time = time }
-    fun energyRequired(energy: Int) = this.also { this.energy = energy }
+    fun itemRequired(item: Item, count: Int = 1): WheatCrusherRecipeBuilder = this.also { this.item = ItemStack(item, count) }
+    fun timeRequired(time: Int): WheatCrusherRecipeBuilder = this.also { this.time = time }
+    fun energyRequired(energy: Int): WheatCrusherRecipeBuilder = this.also { this.energy = energy }
 
     override fun getResult(): Item = result.item
 

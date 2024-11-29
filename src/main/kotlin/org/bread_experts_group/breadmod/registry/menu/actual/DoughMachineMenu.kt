@@ -45,10 +45,10 @@ class DoughMachineMenu(
 
     class DoughMachineBucketSlot(parent: DoughMachineBlockEntity) : Slot(parent, 2, 153, 7) {
         override fun mayPlace(stack: ItemStack): Boolean =
-            stack.item.let { it is BucketItem && it.content.isTag(FluidTags.WATER) } ||
+            stack.item.let { it is BucketItem && isTag(FluidTags.WATER) } ||
                     FluidUtil.getFluidHandler(stack).getOrNull().let {
                         it?.drain(1, IFluidHandler.FluidAction.SIMULATE)
-                            ?.let { drained -> drained.amount == 1 && drained.fluid.isTag(FluidTags.WATER) } == true
+                            ?.let { drained -> drained.amount == 1 && isTag(FluidTags.WATER) } == true
                     }
     }
 

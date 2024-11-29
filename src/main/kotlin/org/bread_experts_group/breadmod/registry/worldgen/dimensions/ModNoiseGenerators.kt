@@ -26,7 +26,7 @@ object ModNoiseGenerators : NoiseRouterData() {
         }
 
     private val BREAD_FLOATING_ISLANDS_NOISE: NoiseSettings = NoiseSettings(0, 512, 2, 1)
-    val BREAD_FLOATING_ISLANDS = register("bread_floating_islands") { densityFunctionHolderGetter, noiseHolderGetter ->
+    val BREAD_FLOATING_ISLANDS: ResourceKey<NoiseGeneratorSettings> = register("bread_floating_islands") { densityFunctionHolderGetter, noiseHolderGetter ->
         NoiseGeneratorSettings(
             BREAD_FLOATING_ISLANDS_NOISE,
             ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),

@@ -60,7 +60,7 @@ internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableL
 internal var skyColorMixinActive: Boolean = false
 internal var redness: Float = 1f
 
-fun modifierMatches(modifiers: Int, modifier: KeyModifier) = when (modifier) {
+fun modifierMatches(modifiers: Int, modifier: KeyModifier): Boolean = when (modifier) {
     KeyModifier.SHIFT -> modifiers and 0x0001
     KeyModifier.CONTROL -> modifiers and 0x0002
     KeyModifier.ALT -> modifiers and 0x0004
@@ -377,7 +377,7 @@ fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
  * Translates the [PoseStack] of the added [renderBuffer] to the player's camera.
  * Used for initial model positions in-world.
  */
-fun PoseStack.initialTranslate(camera: Camera) =
+fun PoseStack.initialTranslate(camera: Camera): Unit =
     this.translate(-camera.position.x, -camera.position.y, -camera.position.z)
 
 /**

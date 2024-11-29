@@ -9,17 +9,18 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.Dou
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.util.registerType
+import java.util.function.Supplier
 
 object ModRecipeTypes {
     val RECIPE_TYPE_REGISTRY: DeferredRegister<RecipeType<*>> =
         DeferredRegister.create(Registries.RECIPE_TYPE, BreadMod.ID)
 
-    val WHEAT_CRUSHING = RECIPE_TYPE_REGISTRY.registerType<WheatCrusherRecipe>("wheat_crushing")
-    val DOUGH_MACHINE = RECIPE_TYPE_REGISTRY.registerType<DoughMachineRecipe>("dough_machine")
+    val WHEAT_CRUSHING: Supplier<RecipeType<WheatCrusherRecipe>> = RECIPE_TYPE_REGISTRY.registerType<WheatCrusherRecipe>("wheat_crushing")
+    val DOUGH_MACHINE: Supplier<RecipeType<DoughMachineRecipe>> = RECIPE_TYPE_REGISTRY.registerType<DoughMachineRecipe>("dough_machine")
 
-    val FLUID_ENERGY = RECIPE_TYPE_REGISTRY.registerType<FluidEnergyRecipe>("fluid_energy")
+    val FLUID_ENERGY: Supplier<RecipeType<FluidEnergyRecipe>> = RECIPE_TYPE_REGISTRY.registerType<FluidEnergyRecipe>("fluid_energy")
 
     // exp
 
-    val MULTI_ITEM = RECIPE_TYPE_REGISTRY.registerType<MultiItemTestRecipe>("multi_item_test")
+    val MULTI_ITEM: Supplier<RecipeType<MultiItemTestRecipe>> = RECIPE_TYPE_REGISTRY.registerType<MultiItemTestRecipe>("multi_item_test")
 }

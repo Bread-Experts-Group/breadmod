@@ -5,7 +5,7 @@ import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 
 class MachSoundInstance(
     soundEvent: SoundEvent,
@@ -14,7 +14,7 @@ class MachSoundInstance(
     var timer: Int = 0
 ) : AbstractTickableSoundInstance(soundEvent, SoundSource.AMBIENT, SoundInstance.createUnseededRandom()) {
     private var stopped = false
-    var shouldLoop = false
+    var shouldLoop: Boolean = false
 
     init {
         delay = 0

@@ -37,15 +37,15 @@ class MultiItemRecipeBlockEntity(
     state: BlockState
 ) : BlockEntity(ModBlockEntityTypes.MULTI_ITEM_TEST.get(), pos, state), CraftingContainer, WorldlyContainer,
     MenuProvider {
-    var progress = 0
-    var maxProgress = 0
+    var progress: Int = 0
+    var maxProgress: Int = 0
 
     var currentRecipe: Optional<MultiItemTestRecipe> = Optional.empty()
     val recipeDial: RecipeManager.CachedCheck<BMRecipeInputs.MultiItem, MultiItemTestRecipe> by lazy {
         RecipeManager.createCheck(ModRecipeTypes.MULTI_ITEM.get())
     }
 
-    val invWrapper = InvWrapper(this)
+    val invWrapper: InvWrapper = InvWrapper(this)
     var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(4, ItemStack.EMPTY)
 
     fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: MultiItemRecipeBlockEntity) {
@@ -121,7 +121,7 @@ class MultiItemRecipeBlockEntity(
         ContainerHelper.loadAllItems(tag, itemSlots, registries)
     }
 
-    override fun clearContent() = itemSlots.forEach { it.count = 0 }
+    override fun clearContent(): Unit = itemSlots.forEach { it.count = 0 }
 
     override fun getContainerSize(): Int = itemSlots.size
     override fun isEmpty(): Boolean = itemSlots.any { !it.isEmpty }

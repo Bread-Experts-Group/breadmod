@@ -20,6 +20,7 @@ import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
+import java.nio.file.Path
 
 /**
  * Main mod class.
@@ -30,12 +31,12 @@ class BreadMod(container: ModContainer) {
         /**
          * ID for breadmod.
          */
-        const val ID = "breadmod"
+        const val ID: String = "breadmod"
 
         // the logger for our mod
         val LOGGER: Logger = LogManager.getLogger(ID)
 
-        val DATA_DIR = FMLPaths.CONFIGDIR.get().resolve(ID)
+        val DATA_DIR: Path? = FMLPaths.CONFIGDIR.get().resolve(ID)
 
         /**
          * @param override Only use this when you need to refer to a namespace outside breadmod
@@ -50,7 +51,7 @@ class BreadMod(container: ModContainer) {
         fun modTranslatable(type: String = "misc", vararg path: String, args: List<Any> = listOf()): MutableComponent =
             Component.translatable("$type.$ID.${path.joinToString(".")}", *args.toTypedArray())
 
-        fun LanguageProvider.modAdd(value: String, type: String = "misc", vararg path: String) =
+        fun LanguageProvider.modAdd(value: String, type: String = "misc", vararg path: String): Unit =
             add("$type.$ID.${path.joinToString(".")}", value)
     }
 

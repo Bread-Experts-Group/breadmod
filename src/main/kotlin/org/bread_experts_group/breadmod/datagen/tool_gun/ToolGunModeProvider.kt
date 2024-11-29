@@ -34,7 +34,7 @@ abstract class ToolGunModeProvider(private val packOutput: PackOutput, private v
                 ToolGunModeProvider::Control
             )
 
-            val EMPTY = Control("breadmod", "empty", "none", Component.empty(), "none")
+            val EMPTY: Control = Control("breadmod", "empty", "none", Component.empty(), "none")
         }
     }
 
@@ -85,18 +85,18 @@ abstract class ToolGunModeProvider(private val packOutput: PackOutput, private v
     override fun getName(): String = "Toolgun Modes: $modID"
 
     companion object {
-        const val TOOL_GUN_DEF = "tool_gun"
+        const val TOOL_GUN_DEF: String = "tool_gun"
 
-        const val CONTROLS_ID_KEY = "id"
-        const val CONTROLS_NAME_TRANSLATION_KEY = "controls_name_key"
-        const val CONTROLS_CATEGORY_TRANSLATION_KEY = "controls_category_key"
-        const val TOOLGUN_INFO_DISPLAY_KEY = "${TOOL_GUN_DEF}_key"
-        const val KEY_ENTRY_KEY = "key"
-        const val MODIFIER_ENTRY_KEY = "modifier"
+        const val CONTROLS_ID_KEY: String = "id"
+        const val CONTROLS_NAME_TRANSLATION_KEY: String = "controls_name_key"
+        const val CONTROLS_CATEGORY_TRANSLATION_KEY: String = "controls_category_key"
+        const val TOOLGUN_INFO_DISPLAY_KEY: String = "${TOOL_GUN_DEF}_key"
+        const val KEY_ENTRY_KEY: String = "key"
+        const val MODIFIER_ENTRY_KEY: String = "modifier"
 
-        const val KEYBINDS_KEY = "keybinds"
-        const val CLASS_KEY = "class"
-        const val DISPLAY_NAME_KEY = "display_name"
-        const val TOOLTIP_KEY = "tooltip"
+        const val KEYBINDS_KEY: String = "keybinds"
+        const val CLASS_KEY: String = "class"
+        const val DISPLAY_NAME_KEY: String = "display_name"
+        const val TOOLTIP_KEY: String = "tooltip"
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
@@ -20,7 +21,7 @@ class DoughMachineScreen(
     inventory: Inventory,
     title: Component
 ) : AbstractContainerScreen<DoughMachineMenu>(menu, inventory, title) {
-    val texture = modLocation("textures", "gui", "container", "dough_machine.png")
+    val texture: ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
 
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)

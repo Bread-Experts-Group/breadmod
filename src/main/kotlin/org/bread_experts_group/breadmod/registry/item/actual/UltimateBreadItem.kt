@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.GameType
 import net.minecraft.world.level.Level
+import net.neoforged.neoforge.common.ModConfigSpec
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -34,7 +35,7 @@ class UltimateBreadItem : Item(
         }
     }
 
-    fun setTimeLeft(stack: ItemStack, ticks: Long) = stack.set(ModDataComponents.TIME_LEFT, ticks)
+    fun setTimeLeft(stack: ItemStack, ticks: Long): Long? = stack.set(ModDataComponents.TIME_LEFT, ticks)
 
     override fun getBarColor(stack: ItemStack): Int =
         (13F * (getTimeLeft(stack) / MAX_TIME_CONFIG.get())).roundToInt()
@@ -70,6 +71,6 @@ class UltimateBreadItem : Item(
     override val creativeModeTabs: List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
     companion object {
-        val MAX_TIME_CONFIG = ModConfiguration.COMMON.ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS
+        val MAX_TIME_CONFIG: ModConfigSpec.ConfigValue<Long> = ModConfiguration.COMMON.ULTIMATE_BREAD_MAX_CREATIVE_TIME_TICKS
     }
 }

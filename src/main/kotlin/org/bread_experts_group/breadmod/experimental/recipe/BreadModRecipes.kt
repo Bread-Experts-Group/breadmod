@@ -80,7 +80,7 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
             }
         }
 
-        fun inputStillValid(items: List<ItemStack>) =
+        fun inputStillValid(items: List<ItemStack>): Boolean =
             rItemInputs.all { rItem -> items.any { rItem.test(it) } }
     }
 }

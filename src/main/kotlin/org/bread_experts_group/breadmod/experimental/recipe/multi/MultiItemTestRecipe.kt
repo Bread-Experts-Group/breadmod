@@ -54,8 +54,8 @@ class MultiItemTestRecipe(
     ) : BMRecipeBuilder() {
         private var items = NonNullList.create<SizedIngredient>()
 
-        fun itemRequired(item: Item, count: Int = 1) = this.also { this.items.add(SizedIngredient.of(item, count)) }
-        fun itemRequired(tag: TagKey<Item>, count: Int = 1) =
+        fun itemRequired(item: Item, count: Int = 1): Builder = this.also { this.items.add(SizedIngredient.of(item, count)) }
+        fun itemRequired(tag: TagKey<Item>, count: Int = 1): Builder =
             this.also { this.items.add(SizedIngredient.of(tag, count)) }
 
         override fun getResult(): Item = results[0].first

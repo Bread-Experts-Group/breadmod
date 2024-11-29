@@ -18,6 +18,7 @@ import net.minecraft.world.item.alchemy.Potions
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
+import net.neoforged.neoforge.common.ModConfigSpec
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
 import java.awt.Color
@@ -100,8 +101,8 @@ class BreadArmorItem(type: Type) : ArmorItem(
     }
 
     companion object {
-        val distanceMultiplier = COMMON.EFFECT_DISTANCE_MULTIPLIER
-        val decayChance = COMMON.DECAY_CHANCE_PER_TICK
+        val distanceMultiplier: ModConfigSpec.ConfigValue<Double> = COMMON.EFFECT_DISTANCE_MULTIPLIER
+        val decayChance: ModConfigSpec.ConfigValue<Int> = COMMON.DECAY_CHANCE_PER_TICK
 
         private val decimalFormat = DecimalFormat("0.#")
         val BREAD_COLOR = Color(216, 196, 170)
