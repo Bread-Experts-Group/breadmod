@@ -41,7 +41,7 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
     }
 
     private fun safeGetFileSystem(uri: URI): FileSystem = try {
-        LOGGER.info("Safe-getting file system from: {}", uri)
+        LOGGER.info("Safe-getting file system from: $uri")
         FileSystems.getFileSystem(uri)
     } catch (_: FileSystemNotFoundException) {
         FileSystems.newFileSystem(uri, mapOf("create" to "true"))
@@ -50,23 +50,22 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
     val packageClasses: List<KClass<out Any>> = buildList {
         pForLoader.getResources(pForPackage.name.replace(".", "/")).toList().forEach {
             try {
-                safeGetFileSystem(it.toURI()).also { fs ->
-                    fs.rootDirectories.forEach { rootDir ->
-                        Files.walk(rootDir)
-                            .filter(Files::isRegularFile)
-                            .filter { f -> f.name.endsWith(".class", true) }
-                            .forEach { f ->
-                                try {
-                                    val className = f
-                                        .absolutePathString()
-                                        .substring(1)
-                                        .removeSuffix(".class")
-                                        .replace('/', '.')
-                                    add(pForLoader.loadClass(className).kotlin)
-                                } catch (_: Throwable) {
-                                }
+                val fs = safeGetFileSystem(it.toURI())
+                fs.rootDirectories.forEach { rootDir ->
+                    Files.walk(rootDir)
+                        .filter(Files::isRegularFile)
+                        .filter { f -> f.name.endsWith(".class", false) }
+                        .forEach { f ->
+                            try {
+                                val className = f
+                                    .absolutePathString()
+                                    .substring(1)
+                                    .removeSuffix(".class")
+                                    .replace('/', '.')
+                                add(pForLoader.loadClass(className).kotlin)
+                            } catch (_: Throwable) {
                             }
-                    }
+                        }
                 }
             } catch (e: Exception) {
                 LOGGER.warn("Failure when reading from file system: $e")

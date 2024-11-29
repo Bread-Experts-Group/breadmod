@@ -318,5 +318,5 @@ object ModItems {
     val GLUON_GUN: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("gluon_gun")
 
     @DataGenerateLanguage("en_us", "PhysX Test Item")
-    val PHYSX_TEST_ITEM: DeferredItem<Item> = ITEM_REGISTRY.register("physx", ::PhysXTestTool)
+    val PHYSX_TEST_ITEM: DeferredItem<Item> = ITEM_REGISTRY.register("physx") { _ -> PhysXTestTool }
 }

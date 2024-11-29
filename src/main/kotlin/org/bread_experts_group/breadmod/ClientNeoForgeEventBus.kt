@@ -22,6 +22,7 @@ import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
+import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.util.render.*
 import kotlin.math.cos
 import kotlin.math.max
@@ -101,17 +102,6 @@ internal object ClientNeoForgeEventBus {
         "controls.${BreadMod.ID}.category"
     )
 
-    private var createdMappings = listOf<KeyMapping>()
-
-    @Suppress("UNUSED_PARAMETER")
-    @SubscribeEvent
-    fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
-        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
-            rgMinecraft.options.keyMappings,
-            *createdMappings.toTypedArray()
-        )
-    }
-
 //    private fun <T> handleHoldScreenInput(
 //        holdScreen: T,
 //        key: InputConstants.Key,
@@ -171,6 +161,19 @@ internal object ClientNeoForgeEventBus {
             rgMinecraft.options.keyMappings,
             openGuiEditor
         )
+        PhysXTestTool.createPhysX()
+    }
+
+    private var createdMappings = listOf<KeyMapping>()
+
+    @Suppress("UNUSED_PARAMETER")
+    @SubscribeEvent
+    fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
+        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
+            rgMinecraft.options.keyMappings,
+            *createdMappings.toTypedArray()
+        )
+        PhysXTestTool.destroyPhysX()
     }
 
     @SubscribeEvent
