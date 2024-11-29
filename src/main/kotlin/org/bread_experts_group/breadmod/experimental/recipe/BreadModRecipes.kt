@@ -7,6 +7,8 @@ import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeInput
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.common.crafting.SizedIngredient
+import net.neoforged.neoforge.fluids.FluidStack
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 
 @Suppress("unused")
 abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: Int?) : Recipe<T> {
@@ -22,6 +24,30 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
      */
     fun usesNoEnergy(): Boolean = rEnergy == 0
 
+    abstract class SingleFluid(
+        val rFluidInput: SizedFluidIngredient,
+        val rFluidOutput: FluidStack,
+        rTime: Int?,
+        rEnergy: Int?
+    ) : BreadModRecipes<BMRecipeInputs.SingleFluid>(rTime, rEnergy) {
+        override fun matches(input: BMRecipeInputs.SingleFluid, level: Level): Boolean {
+            println(input.iFluid)
+            return rFluidInput.test(input.iFluid) && super.matches(input, level)
+        }
+
+        override fun assemble(input: BMRecipeInputs.SingleFluid, registries: HolderLookup.Provider): ItemStack =
+            ItemStack.EMPTY
+
+        fun assembleFluid(input: BMRecipeInputs.SingleFluid): FluidStack =
+            rFluidOutput.copyWithAmount(input.iAmount)
+
+        override fun getResultItem(registries: HolderLookup.Provider): ItemStack = ItemStack.EMPTY
+        fun getResultFluid(): FluidStack = rFluidOutput.copy()
+        override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
+
+        fun inputStillValid(fluid: FluidStack) = rFluidInput.test(fluid)
+    }
+
     abstract class SingleItem(
         val rItemInput: SizedIngredient,
         val rItemOutput: ItemStack,
@@ -35,8 +61,15 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
             rItemOutput.copyWithCount(input.iCount)
 
         override fun getResultItem(registries: HolderLookup.Provider): ItemStack = rItemOutput.copy()
-
         override fun canCraftInDimensions(width: Int, height: Int): Boolean = width * height >= 1
+
+        /**
+         * Consumes the input item in slot 0.
+         * ### Expected slot should always be index 0.
+         */
+        fun consumeInput(items: List<ItemStack>) = items[0].shrink(rItemInput.count())
+
+        fun inputStillValid(items: List<ItemStack>) = rItemInput.test(items[0])
     }
 
     abstract class MultiItem(

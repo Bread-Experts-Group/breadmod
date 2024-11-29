@@ -24,7 +24,7 @@ abstract class AbstractModContainerMenu(
      * ### Used in [quickMoveStack] to enable shift clicking items into the target inventory
      * value must match the number of slots your block entity has
      */
-    open val containerSlotCount: Int = 1
+    abstract val containerSlotCount: Int
 
     private fun moveStackFunction(playerIn: Player, pIndex: Int): ItemStack {
         val sourceSlot = slots[pIndex]

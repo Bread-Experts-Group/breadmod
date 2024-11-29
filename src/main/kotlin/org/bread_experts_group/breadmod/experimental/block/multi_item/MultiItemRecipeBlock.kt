@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.multi_item
+package org.bread_experts_group.breadmod.experimental.block.multi_item
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
