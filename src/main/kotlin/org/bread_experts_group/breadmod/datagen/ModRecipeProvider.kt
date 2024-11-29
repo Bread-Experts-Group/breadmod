@@ -2,18 +2,18 @@ package org.bread_experts_group.breadmod.datagen
 
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
-import net.minecraft.data.recipes.RecipeCategory
-import net.minecraft.data.recipes.RecipeOutput
-import net.minecraft.data.recipes.RecipeProvider
-import net.minecraft.data.recipes.ShapelessRecipeBuilder
-import net.minecraft.data.recipes.SpecialRecipeBuilder
+import net.minecraft.data.recipes.*
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
+import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeBuilder
+import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe.single.SingleFluidTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe.single.SingleItemTestRecipe
+import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
-import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeBuilder
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(
@@ -67,6 +67,13 @@ class ModRecipeProvider(
             .timeRequired(100)
             .save(recipeOutput, modLocation("experimental", "multi_item_test"))
 
-        // todo make DoughMachineRecipeBuilder
+        SingleItemTestRecipe.Builder(ModItems.FLOUR.get(), 10)
+            .itemRequired(Items.BREAD, 5)
+            .timeRequired(50)
+            .save(recipeOutput, modLocation("experimental", "single_item_test"))
+
+        SingleFluidTestRecipe.Builder(ModFluids.BREAD_LIQUID.source.get(), 1000)
+            .fluidRequired(Fluids.WATER, 500)
+            .save(recipeOutput, modLocation("experimental", "single_fluid_test"))
     }
 }

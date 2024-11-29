@@ -27,7 +27,9 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
-import org.bread_experts_group.breadmod.experimental.multi_item.MultiItemScreen
+import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemScreen
+import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidScreen
+import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemScreen
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -135,6 +137,8 @@ internal object ClientModEventBus {
 
         // Experimental stuff
         event.register(ModMenuTypes.MULTI_ITEM.get(), ::MultiItemScreen)
+        event.register(ModMenuTypes.SINGLE_ITEM.get(), ::SingleItemScreen)
+        event.register(ModMenuTypes.SINGLE_FLUID.get(), ::SingleFluidScreen)
     }
 
     @Suppress("UNCHECKED_CAST")

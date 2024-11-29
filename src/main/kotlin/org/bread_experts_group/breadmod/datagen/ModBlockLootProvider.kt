@@ -56,6 +56,8 @@ class ModBlockLootProvider(
         dropSelf(ModBlocks.WHEAT_CRUSHER.asBlock())
         dropSelf(ModBlocks.DOUGH_MACHINE.asBlock())
         dropSelf(ModBlocks.MULTI_ITEM_TEST.asBlock())
+        dropSelf(ModBlocks.SINGLE_ITEM_TEST.asBlock())
+        dropSelf(ModBlocks.SINGLE_FLUID_TEST.asBlock())
 
         add(
             FLOUR_BLOCK.asBlock(),

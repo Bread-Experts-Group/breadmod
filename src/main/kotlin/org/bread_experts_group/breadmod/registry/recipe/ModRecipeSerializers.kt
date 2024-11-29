@@ -6,6 +6,8 @@ import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe.single.SingleFluidTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.AbstractCuttingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
@@ -39,5 +41,9 @@ object ModRecipeSerializers {
 
     val MULTI_ITEM_TEST: Supplier<RecipeSerializer<MultiItemTestRecipe>> =
         RECIPE_SERIALIZER_REGISTRY.register("multi_item_test") { -> MultiItemTestRecipe.Serializer() }
+    val SINGLE_ITEM_TEST: Supplier<RecipeSerializer<SingleItemTestRecipe>> =
+        RECIPE_SERIALIZER_REGISTRY.register("single_item_test") { -> SingleItemTestRecipe.Serializer() }
+    val SINGLE_FLUID_TEST: Supplier<RecipeSerializer<SingleFluidTestRecipe>> =
+        RECIPE_SERIALIZER_REGISTRY.register("single_fluid_test") { -> SingleFluidTestRecipe.Serializer() }
 
 }

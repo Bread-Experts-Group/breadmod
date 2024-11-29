@@ -12,9 +12,11 @@ abstract class BMRecipeInputs(private val iSize: Int) : RecipeInput {
         override fun getItem(index: Int): ItemStack = if (index == 0) iItem else ItemStack.EMPTY
     }
 
-    class SingleFluid(private val iFluid: FluidStack, val iAmount: Int, iSize: Int) : BMRecipeInputs(iSize) {
+    class SingleFluid(val iFluid: FluidStack, val iAmount: Int, iSize: Int) : BMRecipeInputs(iSize) {
         override fun getItem(index: Int): ItemStack = ItemStack.EMPTY
         fun getFluid(index: Int): FluidStack = if (index == 0) iFluid else FluidStack.EMPTY
+
+        override fun isEmpty(): Boolean = iFluid.isEmpty
     }
 
     class SingleFluidItem(

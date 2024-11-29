@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.multi_item
+package org.bread_experts_group.breadmod.experimental.block.multi_item
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory

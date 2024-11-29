@@ -15,7 +15,9 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.experimental.multi_item.MultiItemRecipeBlock
+import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeBlock
+import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeBlock
+import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.*
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
@@ -53,7 +55,8 @@ object ModBlocks {
     )
 
     @DataGenerateLanguage("en_us")
-    val MONITOR: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem("monitor", { MonitorBlock() }, Item.Properties())
+    val MONITOR: DeferredItem<BlockItem> =
+        BLOCK_REGISTRY.registerBlockItem("monitor", { MonitorBlock() }, Item.Properties())
 
     @DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
     val LOW_DENSITY_CHARCOAL_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
@@ -167,6 +170,18 @@ object ModBlocks {
     val MULTI_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "multi_item_recipe",
         { MultiItemRecipeBlock() },
+        Item.Properties()
+    )
+
+    val SINGLE_ITEM_TEST = BLOCK_REGISTRY.registerBlockItem(
+        "single_item_recipe",
+        { SingleItemRecipeBlock() },
+        Item.Properties()
+    )
+
+    val SINGLE_FLUID_TEST = BLOCK_REGISTRY.registerBlockItem(
+        "single_fluid_recipe",
+        { SingleFluidRecipeBlock() },
         Item.Properties()
     )
 }
