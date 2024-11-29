@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.util
+package org.bread_experts_group.breadmod.util.render
 
 import com.mojang.authlib.GameProfile
 import com.mojang.blaze3d.systems.RenderSystem
@@ -21,7 +21,6 @@ import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
@@ -40,6 +39,7 @@ import org.bread_experts_group.breadmod.client.model.MachTrailModel
 import org.bread_experts_group.breadmod.registry.MachTrailData
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
+import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
 import org.joml.Vector2f
@@ -443,7 +443,7 @@ fun ModelBlockRenderer.renderBlockModel(
     buffer: MultiBufferSource,
     blockState: BlockState,
     packedLight: Int,
-    packedOverlay: Int,
+    packedOverlay: Int = NO_OVERLAY,
     renderType: RenderType = RenderType.solid(),
     red: Float = 1f,
     green: Float = 1f,
@@ -508,84 +508,6 @@ fun renderStaticItem(
         buffer,
         blockEntity.level,
         1
-    )
-}
-
-/**
- * Draws a vertex.
- *
- * @author Logan McLean
- * @see drawQuad
- */
-fun drawVertex(
-    poseStack: PoseStack,
-    pBuffer: MultiBufferSource,
-    renderType: RenderType,
-    color: Vector4f,
-    x: Float,
-    y: Float,
-    z: Float,
-    u: Float,
-    v: Float
-) {
-    val buffer = pBuffer.getBuffer(renderType)
-    buffer.addVertex(poseStack.last().pose(), x, y, z)
-        .setColor(color.x, color.y, color.z, color.w)
-        .setUv(u, v)
-        .setOverlay(NO_OVERLAY)
-        .setLight(0xFFFFFF)
-        .setNormal(0f, 1f, 0f)
-}
-
-/**
- * Draws a quad.
- *
- * @author Logan McLean
- * @see drawTexturedQuad
- */
-fun drawQuad(
-    poseStack: PoseStack,
-    buffer: MultiBufferSource,
-    renderType: RenderType,
-    color: Vector4f,
-    vertex0: Vector3f,
-    vertex1: Vector3f,
-    vertex2: Vector3f,
-    vertex3: Vector3f,
-    u0: Float, v0: Float,
-    u1: Float, v1: Float
-) {
-    drawVertex(poseStack, buffer, renderType, color, vertex0.x, vertex0.y, vertex0.z, u0, v0)
-    drawVertex(poseStack, buffer, renderType, color, vertex1.x, vertex1.y, vertex1.z, u0, v1)
-    drawVertex(poseStack, buffer, renderType, color, vertex2.x, vertex2.y, vertex2.z, u1, v1)
-    drawVertex(poseStack, buffer, renderType, color, vertex3.x, vertex3.y, vertex3.z, u1, v0)
-}
-
-/**
- * Draws a quad with a provided [textureLocation].
- *
- * @author Logan McLean
- */
-fun drawTexturedQuad(
-    textureLocation: ResourceLocation,
-    renderType: RenderType,
-    poseStack: PoseStack,
-    buffer: MultiBufferSource,
-    color: Vector4f,
-    vertex0: Vector3f = Vector3f(0f, 0f, 0f),
-    vertex1: Vector3f = Vector3f(0f, 0f, 1f),
-    vertex2: Vector3f = Vector3f(1f, 0f, 1f),
-    vertex3: Vector3f = Vector3f(1f, 0f, 0f)
-) {
-    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(textureLocation)
-    drawQuad(
-        poseStack, buffer, renderType, color,
-        vertex0,
-        vertex1,
-        vertex2,
-        vertex3,
-        sprite.u0, sprite.v0,
-        sprite.u1, sprite.v1
     )
 }
 
@@ -707,9 +629,17 @@ fun translateOnBlockSide(
     poseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
     poseStack.translate(posX, posY, posZ)
     when (facing) {
-        Direction.NORTH -> poseStack.translate(-1.0, 1.0, TRANSLATE_OFFSET)
+        Direction.NORTH -> poseStack.translate(
+            -1.0, 1.0,
+            TRANSLATE_OFFSET
+        )
+
         Direction.EAST -> poseStack.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
-        Direction.WEST -> poseStack.translate(0.0, 1.0, TRANSLATE_OFFSET)
+        Direction.WEST -> poseStack.translate(
+            0.0, 1.0,
+            TRANSLATE_OFFSET
+        )
+
         Direction.SOUTH -> poseStack.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
         Direction.UP, Direction.DOWN -> {
             poseStack.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
@@ -739,10 +669,26 @@ fun drawTextOnSide(
     scale: Float = 1f
 ) {
     poseStack.pushPose()
-    translateOnBlockSide(blockState, direction, poseStack, posX, posY, posZ)
+    translateOnBlockSide(
+        blockState,
+        direction,
+        poseStack,
+        posX,
+        posY,
+        posZ
+    )
     poseStack.mulPose(Axis.XN.rotationDegrees(180f))
     poseStack.scaleFlat(scale)
-    renderText(component.visualOrderText, color, backgroundColor, fontRenderer, poseStack, buffer, dropShadow, 15728880)
+    renderText(
+        component.visualOrderText,
+        color,
+        backgroundColor,
+        fontRenderer,
+        poseStack,
+        buffer,
+        dropShadow,
+        15728880
+    )
     poseStack.popPose()
 }
 
