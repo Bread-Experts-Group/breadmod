@@ -3,8 +3,8 @@ package org.bread_experts_group.breadmod.registry
 import com.mojang.authlib.GameProfile
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import org.bread_experts_group.breadmod.util.renderMachTrail
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.renderMachTrail
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 
 data class MachTrailData(var playerProfile: GameProfile) {
     val player = rgMinecraft.level?.getPlayerByUUID(playerProfile.id)!!

@@ -8,10 +8,8 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import net.neoforged.api.distmarker.Dist
-import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.*
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.CLASS_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.CONTROLS_CATEGORY_TRANSLATION_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.CONTROLS_ID_KEY
@@ -23,9 +21,8 @@ import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Com
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOLGUN_INFO_DISPLAY_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOLTIP_KEY
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.createMappingsForControls
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Control
 import org.bread_experts_group.breadmod.util.jsonToComponent
-import org.bread_experts_group.breadmod.util.rgMinecraft
 import org.jetbrains.annotations.ApiStatus.Internal
 import thedarkcolour.kotlinforforge.neoforge.forge.callWhenOn
 import kotlin.reflect.full.isSubclassOf
@@ -58,7 +55,7 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
         callWhenOn(Dist.CLIENT) {
             Runnable {
                 pProfiler.push("Load controls from toolgun data")
-                loadKeys()
+//                loadKeys()
                 pProfiler.pop()
             }
         }
@@ -116,13 +113,13 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
         }
     }
 
-    private fun loadKeys() {
-        val keyMaps = createMappingsForControls(keybindsToAdd)
-        rgMinecraft.options.keyMappings = ArrayUtils.addAll(
-            rgMinecraft.options.keyMappings,
-            *keyMaps
-                //.filter { toolgunMap -> minecraft.options.keyMappings.firstOrNull { it == toolgunMap } == null }
-                .toTypedArray()
-        )
-    }
+//    private fun loadKeys() {
+//        val keyMaps = createMappingsForControls(keybindsToAdd)
+//        rgMinecraft.options.keyMappings = ArrayUtils.addAll(
+//            rgMinecraft.options.keyMappings,
+//            *keyMaps
+//                //.filter { toolgunMap -> minecraft.options.keyMappings.firstOrNull { it == toolgunMap } == null }
+//                .toTypedArray()
+//        )
+//    }
 }

@@ -8,7 +8,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 
 internal data class WarTimerSynchronization(val time: Int) : CustomPacketPayload {
     companion object {

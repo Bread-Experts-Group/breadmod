@@ -18,8 +18,8 @@ import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.util.plus
-import org.bread_experts_group.breadmod.util.rgMinecraft
-import org.bread_experts_group.breadmod.util.scaleFlat
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.scaleFlat
 import org.joml.Matrix4f
 import java.awt.Color
 

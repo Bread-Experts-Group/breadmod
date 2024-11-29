@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.builders.*
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 
 
 class GluonGunBackpackModel() : Model(RenderType::entitySolid) {

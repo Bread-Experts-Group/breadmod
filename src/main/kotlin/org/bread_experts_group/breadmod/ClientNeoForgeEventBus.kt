@@ -28,11 +28,10 @@ import org.bread_experts_group.breadmod.api.IHoldScreen
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.handleToolgunInput
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import org.bread_experts_group.breadmod.util.*
-import org.bread_experts_group.breadmod.util.redness
-import org.bread_experts_group.breadmod.util.skyColorMixinActive
+import org.bread_experts_group.breadmod.util.render.*
+import org.bread_experts_group.breadmod.util.render.redness
+import org.bread_experts_group.breadmod.util.render.skyColorMixinActive
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin

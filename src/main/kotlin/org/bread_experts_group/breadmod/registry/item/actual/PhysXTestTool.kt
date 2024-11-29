@@ -11,8 +11,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.util.renderBuffer
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.renderBuffer
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 import physx.PxTopLevelFunctions
 import physx.common.*
 import physx.geometry.PxBoxGeometry

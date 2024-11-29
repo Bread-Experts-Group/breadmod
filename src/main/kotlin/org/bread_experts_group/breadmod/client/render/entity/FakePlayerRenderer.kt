@@ -11,7 +11,7 @@ import net.minecraft.client.resources.DefaultPlayerSkin
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 
 class FakePlayerRenderer(
     context: EntityRendererProvider.Context,

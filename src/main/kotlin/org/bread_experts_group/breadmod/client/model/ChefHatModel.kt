@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.client.model
 
-import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.model.Model
@@ -12,9 +11,10 @@ import net.minecraft.client.model.geom.builders.LayerDefinition
 import net.minecraft.client.model.geom.builders.MeshDefinition
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
-import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
+import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 
 /**
  * Model data for the Chef Hat.

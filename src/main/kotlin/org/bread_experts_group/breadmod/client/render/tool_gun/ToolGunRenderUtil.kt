@@ -8,8 +8,8 @@ import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.util.FormattedCharSequence
-import org.bread_experts_group.breadmod.util.renderText
-import org.bread_experts_group.breadmod.util.scaleFlat
+import org.bread_experts_group.breadmod.util.render.renderText
+import org.bread_experts_group.breadmod.util.render.scaleFlat
 
 private const val SCREEN_TINT = 15728880
 

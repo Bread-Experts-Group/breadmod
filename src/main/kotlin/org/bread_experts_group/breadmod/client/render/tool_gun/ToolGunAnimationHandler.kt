@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.client.render.tool_gun
 
 import net.minecraft.util.RandomSource
-import org.bread_experts_group.breadmod.util.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
 
 // todo convert this to use millis and merge into the renderer (look in WarOverlay for reference)
 internal object ToolGunAnimationHandler {

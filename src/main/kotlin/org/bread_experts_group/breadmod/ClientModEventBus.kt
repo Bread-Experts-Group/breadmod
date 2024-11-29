@@ -33,11 +33,10 @@ import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunControlLogic.changeMode
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
-import org.bread_experts_group.breadmod.util.itemColor
+import org.bread_experts_group.breadmod.util.render.itemColor
 
 @Suppress("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = BreadMod.ID, value = [Dist.CLIENT])

@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.world.entity.player.Player
-import org.bread_experts_group.breadmod.util.rgMinecraft
-import org.bread_experts_group.breadmod.util.scaleFlat
+import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.scaleFlat
 
 // todo collection of hat, player, armor, and item held models to be rendered in the mach trail
 // todo Armor Rendering: use a combination of HumanoidArmorLayer and HumanoidArmorModel to recreate the model rendering with proper material

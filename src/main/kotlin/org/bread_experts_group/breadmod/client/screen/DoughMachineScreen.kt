@@ -14,7 +14,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.util.formatUnit
-import org.bread_experts_group.breadmod.util.renderFluid
+import org.bread_experts_group.breadmod.util.render.renderFluid
 
 class DoughMachineScreen(
     menu: DoughMachineMenu,
