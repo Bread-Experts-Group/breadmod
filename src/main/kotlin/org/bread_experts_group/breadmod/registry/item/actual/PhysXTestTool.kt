@@ -1,6 +1,6 @@
 package org.bread_experts_group.breadmod.registry.item.actual
 
-import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
@@ -11,6 +11,9 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.registry.block.ModBlocks
+import org.bread_experts_group.breadmod.util.render.initialTranslate
+import org.bread_experts_group.breadmod.util.render.renderBlockModel
 import org.bread_experts_group.breadmod.util.render.renderBuffer
 import org.bread_experts_group.breadmod.util.render.rgMinecraft
 import physx.PxTopLevelFunctions
@@ -28,7 +31,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import kotlin.io.path.*
 
-internal class PhysXTestTool : Item(Properties().stacksTo(1)) {
+internal object PhysXTestTool : Item(Properties().stacksTo(1)) {
 
     val logger: Logger = LogManager.getLogger("PhysX Test Tool")
 
@@ -133,10 +136,21 @@ internal class PhysXTestTool : Item(Properties().stacksTo(1)) {
         }
     }
 
-    private val physX by lazy {
-        Class.forName("org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool\$PhysX", true, classLoader)
-            .getDeclaredConstructor()
-            .newInstance()
+    private var physX: Any = 0
+
+    fun createPhysX() {
+        if(physX == 0) physX = Class.forName(
+            "org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool\$PhysX",
+            true,
+            classLoader
+        ).getDeclaredConstructor().newInstance()
+    }
+
+    fun destroyPhysX() {
+        if(physX != 0) {
+            physX::class.java.getDeclaredMethod("cleanup").invoke(physX)
+            physX = 0
+        }
     }
 
     @Suppress("unused")
@@ -203,13 +217,17 @@ internal class PhysXTestTool : Item(Properties().stacksTo(1)) {
                 }
 
                 rigidActors.forEach { actor ->
-                    val level = rgMinecraft.level ?: return@forEach
-                    val p = actor.globalPose.p
-                    level.addParticle(
-                        ParticleTypes.SMOKE,
-                        p.x.toDouble(), p.y.toDouble(), p.z.toDouble(),
-                        0.0, 0.0, 0.0
+                    event.poseStack.pushPose()
+                    event.poseStack.initialTranslate(event.camera)
+                    event.poseStack.translate(actor.globalPose.p.x, actor.globalPose.p.y, actor.globalPose.p.z)
+                    rgMinecraft.blockRenderer.modelRenderer.renderBlockModel(
+                        event.poseStack.last(),
+                        rgMinecraft.renderBuffers().bufferSource(),
+                        ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
+                        0x7FFFFFFF,
+                        OverlayTexture.NO_OVERLAY
                     )
+                    event.poseStack.popPose()
                 }
 
                 false
@@ -227,34 +245,20 @@ internal class PhysXTestTool : Item(Properties().stacksTo(1)) {
             box.attachShape(boxShape)
             scene.addActor(box)
             rigidActors.add(box)
+        }
 
-            // clean up temp objects
-//        groundGeometry.destroy()
-//        boxGeometry.destroy()
-//        tmpFilterData.destroy()
-//        tmpPose.destroy()
-//        tmpVec.destroy()
-//        shapeFlags.destroy()
-//        sceneDesc.destroy()
-//        tolerances.destroy()
-
-            // cleanup stuff
-//        scene.removeActor(ground)
-//        ground.release()
-//        groundShape.release()
-//
-//        scene.removeActor(box)
-//        box.release()
-//        boxShape.release()
-//
-//        scene.release()
-//        material.release()
-//        physics.release()
-//        pvd.release()
-//        transport.release()
-//        foundation.release()
-//        errorCb.destroy()
-//        allocator.destroy()
+        fun cleanup() {
+            scene.release()
+            rigidActors.clear()
+            defaultMaterial.release()
+            sceneDescription.destroy()
+            cpuDispatcher.destroy()
+            physics.release()
+            pvd.release()
+            transport.release()
+            foundation.release()
+            errorCb.destroy()
+            allocator.destroy()
         }
     }
 
