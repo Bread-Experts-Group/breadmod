@@ -7,16 +7,14 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeType
-import org.bread_experts_group.breadmod.BreadMod
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
-import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.multi_item.MultiItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.*
-import org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item.MultiItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
@@ -127,12 +125,6 @@ object ModBlocks {
         Item.Properties()
     )
 
-    val MULTI_ITEM_TEST = BLOCK_REGISTRY.registerBlockItem(
-        "multi_item_recipe",
-        { MultiItemRecipeBlock() },
-        Item.Properties()
-    )
-
     fun DeferredRegister.Blocks.registerBlockItem(
         id: String,
         block: () -> Block,
@@ -148,4 +140,12 @@ object ModBlocks {
     ): DeferredItem<BlockItem> = this.register(id, block).let { supplier ->
         ITEM_REGISTRY.register(id) { -> item(supplier.get()) }
     }
+
+    // EXPERIMENTAL PAST THIS POINT
+
+    val MULTI_ITEM_TEST = BLOCK_REGISTRY.registerBlockItem(
+        "multi_item_recipe",
+        { MultiItemRecipeBlock() },
+        Item.Properties()
+    )
 }

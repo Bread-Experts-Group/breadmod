@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.recipe.actual.experimental.multi
+package org.bread_experts_group.breadmod.experimental.recipe.multi
 
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -14,11 +14,11 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.neoforged.neoforge.common.crafting.SizedIngredient
+import org.bread_experts_group.breadmod.experimental.recipe.BMRecipeBuilder
+import org.bread_experts_group.breadmod.experimental.recipe.BMRecipeSerializer
+import org.bread_experts_group.breadmod.experimental.recipe.BreadModRecipes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.BMRecipeBuilder
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.BMRecipeSerializer
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.BreadModRecipes
 
 class MultiItemTestRecipe(
     rItemInputs: NonNullList<SizedIngredient>,

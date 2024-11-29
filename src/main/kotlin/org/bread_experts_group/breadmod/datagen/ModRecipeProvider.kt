@@ -13,7 +13,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeBuilder
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.multi.MultiItemTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(

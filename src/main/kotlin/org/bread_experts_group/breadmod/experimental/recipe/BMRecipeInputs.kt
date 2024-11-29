@@ -1,9 +1,10 @@
-package org.bread_experts_group.breadmod.registry.recipe.actual.experimental
+package org.bread_experts_group.breadmod.experimental.recipe
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeInput
 import net.neoforged.neoforge.fluids.FluidStack
 
+@Suppress("unused")
 abstract class BMRecipeInputs(private val iSize: Int) : RecipeInput {
     override fun size(): Int = iSize
 

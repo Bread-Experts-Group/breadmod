@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item
+package org.bread_experts_group.breadmod.experimental.multi_item
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -25,12 +25,13 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.items.wrapper.InvWrapper
 import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
+import org.bread_experts_group.breadmod.experimental.recipe.BMRecipeInputs
+import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.BMRecipeInputs
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.multi.MultiItemTestRecipe
 import java.util.*
 
+@Suppress("unused", "UNUSED_PARAMETER")
 class MultiItemRecipeBlockEntity(
     pos: BlockPos,
     state: BlockState

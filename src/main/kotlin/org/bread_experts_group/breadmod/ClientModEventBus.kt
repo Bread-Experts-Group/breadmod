@@ -27,9 +27,9 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
+import org.bread_experts_group.breadmod.experimental.multi_item.MultiItemScreen
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
-import org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item.MultiItemScreen
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
@@ -134,6 +134,7 @@ internal object ClientModEventBus {
         event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
         event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
 
+        // Experimental stuff
         event.register(ModMenuTypes.MULTI_ITEM.get(), ::MultiItemScreen)
     }
 

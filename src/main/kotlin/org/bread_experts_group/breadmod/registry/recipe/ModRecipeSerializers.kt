@@ -5,15 +5,15 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.AbstractCuttingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipeSerializer
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeSerializer
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeSerializer
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeSerializer
 import java.util.function.Supplier
 
 object ModRecipeSerializers {

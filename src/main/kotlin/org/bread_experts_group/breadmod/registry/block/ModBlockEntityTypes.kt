@@ -7,12 +7,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.multi_item.MultiItemRecipeBlockEntity
+import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
-import org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item.MultiItemRecipeBlockEntity
 import java.util.function.Supplier
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -40,13 +40,15 @@ object ModBlockEntityTypes {
             buildBlockEntity(::DoughMachineBlockEntity, ModBlocks.DOUGH_MACHINE.asBlock())
         }
 
-    val MULTI_ITEM_TEST: Supplier<BlockEntityType<MultiItemRecipeBlockEntity>> =
-        BLOCK_ENTITY_REGISTRY.register("multi_item_recipe_entity") { ->
-            buildBlockEntity(::MultiItemRecipeBlockEntity, ModBlocks.MULTI_ITEM_TEST.asBlock())
-        }
-
     private fun <T : BlockEntity> buildBlockEntity(
         supplier: BlockEntitySupplier<T>,
         vararg block: Block
     ) = BlockEntityType.Builder.of(supplier, *block).build(null)
+
+    // EXPERIMENTAL PAST THIS POINT
+
+    val MULTI_ITEM_TEST: Supplier<BlockEntityType<MultiItemRecipeBlockEntity>> =
+        BLOCK_ENTITY_REGISTRY.register("multi_item_recipe_entity") { ->
+            buildBlockEntity(::MultiItemRecipeBlockEntity, ModBlocks.MULTI_ITEM_TEST.asBlock())
+        }
 }

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.experimental.multi_item
+package org.bread_experts_group.breadmod.experimental.multi_item
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen

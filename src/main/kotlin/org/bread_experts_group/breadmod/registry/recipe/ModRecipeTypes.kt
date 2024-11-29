@@ -4,8 +4,8 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.crafting.RecipeType
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.experimental.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.util.registerType

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.recipe.actual.experimental
+package org.bread_experts_group.breadmod.experimental.recipe
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
@@ -15,6 +15,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import java.util.function.Function
 
+@Suppress("unused")
 abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
     fun <O> itemStackListCodecModule(
         field: String,

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.recipe.actual.experimental
+package org.bread_experts_group.breadmod.experimental.recipe
 
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
@@ -8,6 +8,7 @@ import net.minecraft.world.item.crafting.RecipeInput
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 
+@Suppress("unused")
 abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: Int?) : Recipe<T> {
     override fun matches(input: T, level: Level): Boolean = rTime!! >= 0 && rEnergy!! >= 0
 
