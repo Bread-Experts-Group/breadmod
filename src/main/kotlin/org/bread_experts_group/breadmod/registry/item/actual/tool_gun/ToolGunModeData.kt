@@ -33,8 +33,4 @@ data class ToolGunModeData(
         )
     }
 
-    fun resetIteratorStates() {
-        namespaceIteratorState = 0
-        modeIteratorState = 0
-    }
 }

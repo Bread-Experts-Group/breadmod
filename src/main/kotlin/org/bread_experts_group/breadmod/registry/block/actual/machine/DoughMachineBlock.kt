@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
-import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 
 class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
     companion object {
@@ -82,6 +82,6 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
         blockEntityType,
         ModBlockEntityTypes.DOUGH_MACHINE.get()
     ) { tLevel: Level, tPos: BlockPos, tState: BlockState, tBlockEntity: DoughMachineBlockEntity ->
-        tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity)
+//        tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity)
     }
 }

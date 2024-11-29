@@ -28,7 +28,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import kotlin.io.path.*
 
-class PhysXTestTool : Item(Properties().stacksTo(1)) {
+internal class PhysXTestTool : Item(Properties().stacksTo(1)) {
 
     val logger: Logger = LogManager.getLogger("PhysX Test Tool")
 
@@ -139,6 +139,7 @@ class PhysXTestTool : Item(Properties().stacksTo(1)) {
             .newInstance()
     }
 
+    @Suppress("unused")
     class PhysX {
         private val version = PxTopLevelFunctions.getPHYSICS_VERSION()
 

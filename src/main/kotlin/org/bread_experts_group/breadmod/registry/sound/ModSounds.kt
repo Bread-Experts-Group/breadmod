@@ -7,21 +7,40 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 
 object ModSounds {
     val SOUND_REGISTRY: DeferredRegister<SoundEvent> =
         DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, BreadMod.ID)
 
+    @DataGenerateLanguage("en_us", "Test Sound plays")
     val TEST_SOUND: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("test_sound")
+
+    @DataGenerateLanguage("en_us", "HAPPY HAPPY HAPPY")
     val HAPPY_BLOCK_FUSE: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("happy_block_fuse")
-    val ULTRAMARINE: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("ultramarine")
+
+    @DataGenerateLanguage("en_us", "Pow!")
     val POW: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("pow")
+
+    @DataGenerateLanguage("en_us", "AAAAAAAAAAAAAAA-")
     val SCREAM: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("scream")
+
+    @DataGenerateLanguage("en_us", "Minigun fires")
     val MINIGUN: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("minigun")
+
+    @DataGenerateLanguage("en_us", "Tool Gun fires")
     val TOOL_GUN: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("tool_gun")
+
+    @DataGenerateLanguage("en_us", "HELL NAW!")
     val HELL_NAW: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("hell_naw")
+
+    @DataGenerateLanguage("en_us", "War timer counts down")
     val WAR_TIMER: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("war_timer")
+
+    @DataGenerateLanguage("en_us", "War timer counts up")
     val WAR_TIMER_UP: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("war_timer_up")
+
+    val ULTRAMARINE: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("ultramarine")
     val MACH_ONE: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("mach_one")
     val MACH_TWO: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("mach_two")
     val MACH_THREE: DeferredHolder<SoundEvent, SoundEvent> = registerSoundEvents("mach_three")

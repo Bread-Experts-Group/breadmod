@@ -10,10 +10,10 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Blocks
 import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunAnimationHandler
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.client.render.tool_gun.drawTextOnScreen
 import org.bread_experts_group.breadmod.registry.ModConfiguration
-import org.bread_experts_group.breadmod.util.*
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.util.render.*
 import java.awt.Color
 import java.security.SecureRandom
 import kotlin.math.round

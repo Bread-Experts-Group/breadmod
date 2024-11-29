@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.command.server.WarTimerCommand
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
-import org.bread_experts_group.breadmod.registry.ModDamageTypes
+import org.bread_experts_group.breadmod.registry.ModDamageType
 
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME)
 internal object CommonNeoForgeEventBus {
@@ -52,7 +52,7 @@ internal object CommonNeoForgeEventBus {
                     data.gracePeriod--
                 } else if (data.timeLeft <= 0 && data.gracePeriod == 0) {
                     if (!player.isCreative) {
-                        player.hurt(ModDamageTypes.TIMER_RAN_OUT.source(player.level()), Float.MAX_VALUE)
+                        player.hurt(ModDamageType.TIMER_RAN_OUT.source(player.level()), Float.MAX_VALUE)
                         player.level().explode(
                             null,
                             player.x,

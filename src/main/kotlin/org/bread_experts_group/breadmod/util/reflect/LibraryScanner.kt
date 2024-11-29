@@ -75,6 +75,14 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
     }
 
     /**
+     * Gets all [KClass]es from the provided [Package] that are annotated with [T].
+     * @author Miko Elbrecht
+     * @since 1.0.0
+     */
+    inline fun <reified T : Annotation> getClassesAnnotatedWith(): List<KClass<out Any>> =
+        packageClasses.filter { it.annotations.any { a -> a.annotationClass == T::class } }
+
+    /**
      * Gets all [kotlin.reflect.KProperty1]s from Kotlin Objects in the provided [Package], annotated with [T].
      * @author Miko Elbrecht
      * @since 1.0.0

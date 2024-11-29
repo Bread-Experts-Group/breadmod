@@ -16,15 +16,14 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
-import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.datagen.*
 import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider.Companion.constructLootProvider
-import org.bread_experts_group.breadmod.datagen.lang.EnglishUSLangProvider
+import org.bread_experts_group.breadmod.datagen.lang.BaseLanguageProvider
+import org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator
 import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
 import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
 import org.bread_experts_group.breadmod.datagen.tool_gun.ModToolGunModeProvider
-import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
@@ -34,8 +33,10 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerTo
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
+import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.entity.ModPainting
+import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.registry.item.ModRecords
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModBiomes
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModDimensions
@@ -44,6 +45,8 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModNoiseGen
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModPools
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructureSets
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructures
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
+import kotlin.reflect.full.primaryConstructor
 
 @Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.MOD)
@@ -53,6 +56,8 @@ internal object CommonModEventBus {
         val generator = event.generator
         val packOutput = generator.packOutput
         val existingFileHelper = event.existingFileHelper
+
+        val scanner = LibraryScanner(BreadMod::class.java.classLoader, ModRecipeProvider::class.java.`package`)
 
         // add all the bootstrap entries to the registry set builder
         val registrySetBuilder = RegistrySetBuilder()
@@ -105,7 +110,10 @@ internal object CommonModEventBus {
             LOGGER.info("Client datagen")
             generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))
             generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
-            generator.addProvider(true, EnglishUSLangProvider(packOutput))
+            scanner.getClassesAnnotatedWith<LanguageDataGenerator>().forEach { clazz ->
+                val check = clazz.primaryConstructor!!.call(packOutput)
+                if (check is BaseLanguageProvider) generator.addProvider(true, check)
+            }
         }
     }
 
@@ -143,18 +151,6 @@ internal object CommonModEventBus {
             BeamPacket.TYPE,
             BeamPacket.STREAM_CODEC,
             BeamPacket::handleClientboundPacket
-        )
-
-        registrar.playToServer(
-            ToolGunConfigurationPacket.TYPE,
-            ToolGunConfigurationPacket.STREAM_CODEC,
-            ToolGunConfigurationPacket::handleServerboundPacket
-        )
-
-        registrar.playToClient(
-            ToolGunModeDataPacket.TYPE,
-            ToolGunModeDataPacket.STREAM_CODEC,
-            ToolGunModeDataPacket::handleClientboundPacket
         )
     }
 

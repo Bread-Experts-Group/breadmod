@@ -9,8 +9,6 @@ import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.math.Axis
 import net.minecraft.Util
 import net.minecraft.client.KeyMapping
-import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.util.Mth.clamp
@@ -18,26 +16,18 @@ import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.client.event.ClientTickEvent
-import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import org.apache.commons.lang3.ArrayUtils
-import org.bread_experts_group.breadmod.api.IHoldScreen
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
-import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.render.*
-import org.bread_experts_group.breadmod.util.render.redness
-import org.bread_experts_group.breadmod.util.render.skyColorMixinActive
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
 // todo register the other client stuff later
-@Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
     @SubscribeEvent
@@ -111,7 +101,7 @@ internal object ClientNeoForgeEventBus {
         "controls.${BreadMod.ID}.category"
     )
 
-    var createdMappings = listOf<KeyMapping>()
+    private var createdMappings = listOf<KeyMapping>()
 
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
@@ -122,57 +112,57 @@ internal object ClientNeoForgeEventBus {
         )
     }
 
-    private fun <T> handleHoldScreenInput(
-        holdScreen: T,
-        key: InputConstants.Key,
-        action: Int,
-        modifiers: Int
-    ) where T : Screen, T : IHoldScreen {
-        if (
-            action == InputConstants.RELEASE &&
-            key == holdScreen.keyCheck.key &&
-            modifierMatches(modifiers, holdScreen.keyCheck.keyModifier)
-        ) holdScreen.onClose()
-    }
+//    private fun <T> handleHoldScreenInput(
+//        holdScreen: T,
+//        key: InputConstants.Key,
+//        action: Int,
+//        modifiers: Int
+//    ) where T : Screen, T : IHoldScreen {
+//        if (
+//            action == InputConstants.RELEASE &&
+//            key == holdScreen.keyCheck.key &&
+//            modifierMatches(modifiers, holdScreen.keyCheck.keyModifier)
+//        ) holdScreen.onClose()
+//    }
 
-    private fun handleInput(
-        action: Int,
-        key: InputConstants.Key,
-        modifiers: Int,
-        player: LocalPlayer?,
-        screen: Screen?
-    ) {
-        if (action == InputConstants.REPEAT) return
-        if (screen is IHoldScreen) {
-            handleHoldScreenInput(screen, key, action, modifiers)
-        } else if (player != null && screen == null) {
-            val stackHeld = player.mainHandItem
-            val itemHeld = stackHeld.item
+//    private fun handleInput(
+//        action: Int,
+//        key: InputConstants.Key,
+//        modifiers: Int,
+//        player: LocalPlayer?,
+//        screen: Screen?
+//    ) {
+//        if (action == InputConstants.REPEAT) return
+//        if (screen is IHoldScreen) {
+//            handleHoldScreenInput(screen, key, action, modifiers)
+//        } else if (player != null && screen == null) {
+//            val stackHeld = player.mainHandItem
+//            val itemHeld = stackHeld.item
+//
+//            if (itemHeld is ToolGunItem) handleToolgunInput(
+//                player,
+//                itemHeld, stackHeld,
+//                key, modifiers,
+//                action == InputConstants.PRESS
+//            )
+//        }
+//    }
 
-            if (itemHeld is ToolGunItem) handleToolgunInput(
-                player,
-                itemHeld, stackHeld,
-                key, modifiers,
-                action == InputConstants.PRESS
-            )
-        }
-    }
-
-    @SubscribeEvent
-    fun keyInput(event: InputEvent.Key) {
-        handleInput(
-            event.action, InputConstants.getKey(event.key, event.scanCode), event.modifiers,
-            rgMinecraft.player, rgMinecraft.screen
-        )
-    }
-
-    @SubscribeEvent
-    fun mouseInput(event: InputEvent.MouseButton.Post) {
-        handleInput(
-            event.action, InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
-            rgMinecraft.player, rgMinecraft.screen
-        )
-    }
+//    @SubscribeEvent
+//    fun keyInput(event: InputEvent.Key) {
+//        handleInput(
+//            event.action, InputConstants.getKey(event.key, event.scanCode), event.modifiers,
+//            rgMinecraft.player, rgMinecraft.screen
+//        )
+//    }
+//
+//    @SubscribeEvent
+//    fun mouseInput(event: InputEvent.MouseButton.Post) {
+//        handleInput(
+//            event.action, InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
+//            rgMinecraft.player, rgMinecraft.screen
+//        )
+//    }
 
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
@@ -183,26 +173,8 @@ internal object ClientNeoForgeEventBus {
         )
     }
 
-    private var sprintTimer = 0
-    private val machOneSound: MachSoundInstance by lazy {
-        MachSoundInstance(ModSounds.MACH_ONE.get(), 1..20, null)
-    }
-    private val machTwoSound: MachSoundInstance by lazy {
-        MachSoundInstance(ModSounds.MACH_TWO.get(), 21..40, null)
-    }
-    private val machThreeSound: MachSoundInstance by lazy {
-        MachSoundInstance(ModSounds.MACH_THREE.get(), 40..70, null)
-    }
-    private val machFourSound: MachSoundInstance by lazy {
-        MachSoundInstance(ModSounds.MACH_FOUR.get(), 70..Int.MAX_VALUE, null)
-    }
-
-    private var clientTickingGroup = mutableMapOf<String, (event: ClientTickEvent.Pre) -> Boolean>()
-        private set
-
     @SubscribeEvent
     fun clientTick(event: ClientTickEvent.Pre) {
-        clientTickingGroup = clientTickingGroup.filter { (_, exe) -> exe(event) }.toMutableMap()
         if (machTrailMap.isNotEmpty()) {
             machTrailMap.forEach { (_, machTrailData) ->
                 machTrailData.tick()

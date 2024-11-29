@@ -11,7 +11,7 @@ data class MachTrailData(var playerProfile: GameProfile) {
     private val machOneSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_ONE.get(), 1..20, player)
     private val machTwoSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_TWO.get(), 21..40, player)
     private val machThreeSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_THREE.get(), 40..70, player)
-    private val machFourSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_FOUR.get(), 70..Int.MAX_VALUE, player)
+    val machFourSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_FOUR.get(), 70..Int.MAX_VALUE, player)
     private var sprintTimer: Int = 0
     private var shouldTick: Boolean = true
 

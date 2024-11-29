@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.util.componentToJson
 import java.util.concurrent.CompletableFuture
 
@@ -71,16 +70,6 @@ abstract class ToolGunModeProvider(private val packOutput: PackOutput, private v
     }
 
     abstract fun addModes()
-
-    fun <T : IToolGunMode> addMode(
-        name: String,
-        displayName: Component, tooltip: Component,
-        keyActions: List<Control>,
-        actionClass: Class<T>
-    ) {
-        if (addedModes.containsKey(name)) throw IllegalStateException("There already exists a tool gun mode for $modID/$name!")
-        addedModes[name] = Triple(displayName to tooltip, keyActions, actionClass)
-    }
 
     override fun getName(): String = "Toolgun Modes: $modID"
 

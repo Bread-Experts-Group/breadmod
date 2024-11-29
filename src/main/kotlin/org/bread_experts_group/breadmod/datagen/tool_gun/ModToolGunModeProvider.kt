@@ -1,21 +1,19 @@
 package org.bread_experts_group.breadmod.datagen.tool_gun
 
-import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.data.PackOutput
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 
 internal class ModToolGunModeProvider(
     output: PackOutput
 ) : ToolGunModeProvider(output, BreadMod.ID) {
     companion object {
-        val SCREEN_CONTROL = Control(
-            "screen",
-            "${TOOL_GUN_DEF}.${BreadMod.ID}.mode.controls.name.creator.r",
-            "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.creator",
-            modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
-            InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R).name
-        )
+//        val SCREEN_CONTROL = Control(
+//            "screen",
+//            "${TOOL_GUN_DEF}.${BreadMod.ID}.mode.controls.name.creator.r",
+//            "$TOOL_GUN_DEF.${BreadMod.ID}.mode.controls.category.creator",
+//            modTranslatable(TOOL_GUN_DEF, "mode", "key_tooltip", "creator", "r"),
+//            InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R).name
+//        )
     }
 
     override fun addModes() {

@@ -60,7 +60,7 @@ internal object ClientModEventBus {
 
     @SubscribeEvent
     fun registerKeyMappings(event: RegisterKeyMappingsEvent) {
-        event.register(changeMode)
+//        event.register(changeMode)
         event.register(openGuiEditor)
     }
 

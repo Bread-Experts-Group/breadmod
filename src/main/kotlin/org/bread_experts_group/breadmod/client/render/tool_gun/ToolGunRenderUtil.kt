@@ -4,10 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.locale.Language
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.Style
-import net.minecraft.util.FormattedCharSequence
 import org.bread_experts_group.breadmod.util.render.renderText
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 
@@ -109,42 +106,3 @@ fun drawTextOnScreen(
 //    }
 //    pPoseStack.popPose()
 //}
-
-fun drawWrappedTextOnScreen(
-    font: Font,
-    text: Component,
-    poseStack: PoseStack,
-    buffer: MultiBufferSource,
-    color: Int,
-    backgroundColor: Int,
-    dropShadow: Boolean,
-    posX: Double,
-    posY: Double,
-    posZ: Double,
-    splitY: Float,
-    scale: Float,
-    lineWidth: Int
-) {
-    initialTranslations(poseStack, posX, posY, posZ, scale)
-    var split: Float = splitY
-    for (formattedCharSequence: FormattedCharSequence in componentSplit(text, lineWidth, font)) {
-        font.drawInBatch(
-            formattedCharSequence,
-            0f,
-            split,
-            color,
-            dropShadow,
-            poseStack.last().pose(),
-            buffer,
-            Font.DisplayMode.NORMAL,
-            backgroundColor,
-            SCREEN_TINT
-        )
-        split += 9f
-    }
-    poseStack.popPose()
-}
-
-// Font.split() converted to take in a Component instead of a FormattedCharSequence
-fun componentSplit(text: Component, maxWidth: Int, font: Font): MutableList<FormattedCharSequence> =
-    Language.getInstance().getVisualOrder(font.splitter.splitLines(text, maxWidth, Style.EMPTY))

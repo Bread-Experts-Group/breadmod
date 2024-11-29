@@ -8,8 +8,9 @@ import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.damagesource.DamageType
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 
-data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaustion: Float) {
+data class ModDamageType(val key: ResourceKey<DamageType>, val exhaustion: Float) {
     private constructor(name: String) : this(name, 0f)
     private constructor(name: String, exhaustion: Float) : this(
         ResourceKey.create(Registries.DAMAGE_TYPE, modLocation(name)),
@@ -26,6 +27,7 @@ data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaustion: Floa
     fun translationKey(): String = "death.attack." + msgID()
 
     companion object {
-        val TIMER_RAN_OUT: ModDamageTypes = ModDamageTypes("timer")
+        @DataGenerateLanguage("en_us", "%1\$s ran out of time!")
+        val TIMER_RAN_OUT: ModDamageType = ModDamageType("timer")
     }
 }

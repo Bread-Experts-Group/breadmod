@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.contents.PlainTextContents
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.tags.TagKey
@@ -19,6 +18,7 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.util.RaycastResult.RaycastResultType
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.util.function.Supplier
 
@@ -125,23 +125,6 @@ fun componentToJson(component: Component): JsonObject = JsonObject().also {
 }
 
 /**
- * Reads a [MutableComponent] from the given [JsonObject].
- * @return The [MutableComponent] given by this [JsonObject].
- * @param json The [JsonObject] to read the [MutableComponent] from.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun jsonToComponent(json: JsonObject): MutableComponent = when (val type = json.getAsJsonPrimitive("type").asString) {
-    "translate" -> Component.translatableWithFallback(
-        json.getAsJsonPrimitive("key").asString,
-        json.get("fallback")?.let { if (it.isJsonNull) null else it.asString }
-    )
-
-    "literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
-    else -> throw IllegalArgumentException("Illegal component type: $type")
-}
-
-/**
  * Registers a [name]d [RecipeType] under the requisite [DeferredRegister].
  * @param name The name of the [RecipeType] to register.
  * @return The [Supplier] containing the registered [RecipeType].
@@ -203,13 +186,6 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
     }
 
 /**
- * Removes all whitespace from this string.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun String.removeWhitespace(): String = this.replace(Regex("\\s+"), "")
-
-/**
  * A result of a raycast operation.
  * @author Miko Elbrecht
  * @since 1.0.0
@@ -227,12 +203,14 @@ sealed class RaycastResult(
      * @author Miko Elbrecht
      * @since 1.0.0
      */
+    @Suppress("unused")
     val startPosition: Vec3,
     /**
      * The [Vec3] this raycast ended at (either by missing or hitting something).
      * @author Miko Elbrecht
      * @since 1.0.0
      */
+    @Suppress("unused")
     val endPosition: Vec3,
     /**
      * The unit direction this raycast was aimed towards.
@@ -273,6 +251,7 @@ sealed class RaycastResult(
          * @author Miko Elbrecht
          * @since 1.0.0
          */
+        @Suppress("unused")
         val blockState: BlockState,
         startPosition: Vec3, endPosition: Vec3, direction: Vec3
     ) : RaycastResult(RaycastResultType.BLOCK, startPosition, endPosition, direction)

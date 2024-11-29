@@ -21,8 +21,8 @@ internal object ToolGunAnimationHandler {
         }
     }
 
-    fun trigger() {
-        coilDelta = 4f + random.nextFloat()
-        recoil = 0.1f
-    }
+//    fun trigger() {
+//        coilDelta = 4f + random.nextFloat()
+//        recoil = 0.1f
+//    }
 }

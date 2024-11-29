@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 
 class MultiItemRecipeBlock : BaseEntityBlock(Properties.of()) {
     companion object {
-        val CODEC: MapCodec<MultiItemRecipeBlock>? = simpleCodec { MultiItemRecipeBlock() }
+        val CODEC: MapCodec<MultiItemRecipeBlock> = simpleCodec { MultiItemRecipeBlock() }
     }
 
     override fun codec(): MapCodec<out BaseEntityBlock> = CODEC
