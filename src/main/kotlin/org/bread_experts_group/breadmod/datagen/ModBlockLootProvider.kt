@@ -100,7 +100,7 @@ class ModBlockLootProvider(
     }
 
     companion object {
-        val dropNone: MutableList<Block> = mutableListOf<Block>()
+        val dropNone: MutableList<Block> = mutableListOf()
 
         fun constructLootProvider(
             blockLootProvider: BlockLootSubProvider,

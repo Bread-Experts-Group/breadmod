@@ -81,9 +81,9 @@ class ChefHatModel() : Model(RenderType::entityTranslucent) {
             partDefinition.addOrReplaceChild(
                 "chef_hat", CubeListBuilder.create().texOffs(0, 0)
                     .texOffs(0, 0)
-                    .addBox(-4.5f, -3f, -4.5f, 9f, 3f, 9f,)
+                    .addBox(-4.5f, -3f, -4.5f, 9f, 3f, 9f)
                     .texOffs(0, 12)
-                    .addBox(-5f, -8f, -5f, 10f, 5f, 10f,),
+                    .addBox(-5f, -8f, -5f, 10f, 5f, 10f),
                 PartPose.ZERO
             )
 

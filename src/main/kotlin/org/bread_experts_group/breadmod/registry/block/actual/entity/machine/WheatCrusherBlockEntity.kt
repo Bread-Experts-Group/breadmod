@@ -53,8 +53,8 @@ class WheatCrusherBlockEntity(
     var maxProgress: Int = 0
     private var energyDivision: Int? = null
 
-    var currentRecipe: Optional<WheatCrusherRecipe> = Optional.empty()
-    val recipeDial: RecipeManager.CachedCheck<WheatCrusherInput, WheatCrusherRecipe> by lazy {
+    private var currentRecipe: Optional<WheatCrusherRecipe> = Optional.empty()
+    private val recipeDial: RecipeManager.CachedCheck<WheatCrusherInput, WheatCrusherRecipe> by lazy {
         RecipeManager.createCheck(ModRecipeTypes.WHEAT_CRUSHING.get())
     }
 
@@ -71,7 +71,7 @@ class WheatCrusherBlockEntity(
     val horizontal: Direction? = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
     val sidedInvWrapper: SidedInvWrapper = SidedInvWrapper(this, horizontal)
 
-    var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(2, ItemStack.EMPTY)
+    private var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(2, ItemStack.EMPTY)
 
     // todo having syncToClients() not be present in extract and receive in the energy handler stops it from syncing every time it handles energy
     //  then the energy is only updated when tick() updates the block on client
@@ -124,20 +124,20 @@ class WheatCrusherBlockEntity(
         })
     }
 
-    fun resetRecipe() {
+    private fun resetRecipe() {
         level?.setBlockAndUpdate(blockPos, blockState.setValue(BlockStateProperties.POWERED, false))
         currentRecipe = Optional.empty()
         maxProgress = 0; progress = -1
         energyDivision = null
     }
 
-    fun inputStillValid(recipe: WheatCrusherRecipe): Boolean =
+    private fun inputStillValid(recipe: WheatCrusherRecipe): Boolean =
         getItem(0) == recipe.recipeInput || !getItem(0).isEmpty
 
-    fun canFitResults(recipe: WheatCrusherRecipe): Boolean =
+    private fun canFitResults(recipe: WheatCrusherRecipe): Boolean =
         getItem(1).count < maxStackSize || getItem(1).count + recipe.recipeOutput.count < maxStackSize
 
-    fun recipeDone(level: Level, recipe: WheatCrusherRecipe) {
+    private fun recipeDone(level: Level, recipe: WheatCrusherRecipe) {
         itemSlots[0].shrink(recipe.recipeInput.count)
         val assemble =
             recipe.assemble(WheatCrusherInput(getItem(0), recipe.recipeInput.count), level.registryAccess())

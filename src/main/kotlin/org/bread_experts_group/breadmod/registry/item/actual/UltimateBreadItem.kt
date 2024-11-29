@@ -35,7 +35,7 @@ class UltimateBreadItem : Item(
         }
     }
 
-    fun setTimeLeft(stack: ItemStack, ticks: Long): Long? = stack.set(ModDataComponents.TIME_LEFT, ticks)
+    private fun setTimeLeft(stack: ItemStack, ticks: Long): Long? = stack.set(ModDataComponents.TIME_LEFT, ticks)
 
     override fun getBarColor(stack: ItemStack): Int =
         (13F * (getTimeLeft(stack) / MAX_TIME_CONFIG.get())).roundToInt()

@@ -6,7 +6,7 @@ import org.bread_experts_group.breadmod.util.rgMinecraft
 // todo convert this to use millis and merge into the renderer (look in WarOverlay for reference)
 internal object ToolGunAnimationHandler {
     var coilRotation: Float = 0f
-    var coilDelta: Float = 0f
+    private var coilDelta: Float = 0f
 
     var recoil: Float = 0f
 

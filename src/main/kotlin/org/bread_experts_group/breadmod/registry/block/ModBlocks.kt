@@ -126,7 +126,7 @@ object ModBlocks {
         Item.Properties()
     )
 
-    fun DeferredRegister.Blocks.registerBlockItem(
+    private fun DeferredRegister.Blocks.registerBlockItem(
         id: String,
         block: () -> Block,
         properties: Item.Properties
@@ -134,7 +134,7 @@ object ModBlocks {
         ITEM_REGISTRY.register(id) { -> BlockItem(supplier.get(), properties) }
     }
 
-    fun DeferredRegister.Blocks.registerBlockItem(
+    private fun DeferredRegister.Blocks.registerBlockItem(
         id: String,
         block: () -> Block,
         item: (block: Block) -> BlockItem

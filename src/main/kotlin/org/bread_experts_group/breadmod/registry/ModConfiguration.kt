@@ -35,8 +35,8 @@ object ModConfiguration {
         val BREAD_AMULET_STACKS: ConfigValue<Boolean>
         val HAPPY_BLOCK_DIVISIONS: ConfigValue<Int>
         val HAPPY_BLOCK_SPREAD_RADIUS: ConfigValue<Double>
-        val GENERATOR_MAX_BURN_TIME_TICKS: ConfigValue<Int>
-        val GENERATOR_RF_PER_TICK: ConfigValue<Int>
+        private val GENERATOR_MAX_BURN_TIME_TICKS: ConfigValue<Int>
+        private val GENERATOR_RF_PER_TICK: ConfigValue<Int>
 
         init {
             builder.push("common")

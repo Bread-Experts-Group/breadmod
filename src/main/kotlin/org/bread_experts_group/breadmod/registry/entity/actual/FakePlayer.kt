@@ -19,7 +19,7 @@ class FakePlayer(
     type: EntityType<FakePlayer>,
     level: Level
 ) : LivingEntity(type, level) {
-    var owner: LivingEntity? = null
+    private var owner: LivingEntity? = null
 
     companion object {
         val ownerUUID: EntityDataAccessor<Optional<UUID>> =

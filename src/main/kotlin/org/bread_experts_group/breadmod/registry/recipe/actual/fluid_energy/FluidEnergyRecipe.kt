@@ -63,11 +63,11 @@ open class FluidEnergyRecipe(
 
     class FluidEnergyInput(
         val itemsRequired: List<ItemStack>,
-        val fluidsRequired: List<FluidStack>
+        private val fluidsRequired: List<FluidStack>
     ) : RecipeInput {
         var count: Int
         var amount: Int
-        val stackedContents: StackedContents = StackedContents()
+        private val stackedContents: StackedContents = StackedContents()
 
         init {
             var i = 0

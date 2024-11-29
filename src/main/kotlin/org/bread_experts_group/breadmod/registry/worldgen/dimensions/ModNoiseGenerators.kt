@@ -26,24 +26,25 @@ object ModNoiseGenerators : NoiseRouterData() {
         }
 
     private val BREAD_FLOATING_ISLANDS_NOISE: NoiseSettings = NoiseSettings(0, 512, 2, 1)
-    val BREAD_FLOATING_ISLANDS: ResourceKey<NoiseGeneratorSettings> = register("bread_floating_islands") { densityFunctionHolderGetter, noiseHolderGetter ->
-        NoiseGeneratorSettings(
-            BREAD_FLOATING_ISLANDS_NOISE,
-            ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
-            ModBlocks.FLOUR_BLOCK.get().block.defaultBlockState(),
-            floatingIslands(
-                densityFunctionHolderGetter,
-                noiseHolderGetter
-            ),
-            SurfaceRuleData.overworld(),
-            listOf(),
-            -64,
-            false,
-            false,
-            true,
-            true
-        )
-    }
+    val BREAD_FLOATING_ISLANDS: ResourceKey<NoiseGeneratorSettings> =
+        register("bread_floating_islands") { densityFunctionHolderGetter, noiseHolderGetter ->
+            NoiseGeneratorSettings(
+                BREAD_FLOATING_ISLANDS_NOISE,
+                ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
+                ModBlocks.FLOUR_BLOCK.get().block.defaultBlockState(),
+                floatingIslands(
+                    densityFunctionHolderGetter,
+                    noiseHolderGetter
+                ),
+                SurfaceRuleData.overworld(),
+                listOf(),
+                -64,
+                false,
+                false,
+                true,
+                true
+            )
+        }
 
     fun bootstrapNoiseGenerators(ctx: BootstrapContext<NoiseGeneratorSettings>) {
         val densityFunctionGetter = ctx.lookup(Registries.DENSITY_FUNCTION)

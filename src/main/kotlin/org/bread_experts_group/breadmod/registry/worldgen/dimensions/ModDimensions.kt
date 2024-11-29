@@ -46,8 +46,8 @@ object ModDimensions {
             4.0,
             true,
             false,
-            -64, // minY TODO,
-            2048, // maxY TODO
+            -64,
+            2048,
             2048,
             BlockTags.INFINIBURN_OVERWORLD,
             BuiltinDimensionTypes.NETHER_EFFECTS,

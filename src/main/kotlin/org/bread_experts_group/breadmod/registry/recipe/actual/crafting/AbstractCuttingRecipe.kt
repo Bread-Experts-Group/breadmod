@@ -12,10 +12,10 @@ import net.minecraft.world.level.Level
 import kotlin.math.min
 
 abstract class AbstractCuttingRecipe(
-    val input: ItemStack,
+    private val input: ItemStack,
     val output: ItemStack,
-    val outputMultiplier: Int,
-    val toolTag: TagKey<Item>
+    private val outputMultiplier: Int,
+    private val toolTag: TagKey<Item>
 ) : CustomRecipe(CraftingBookCategory.MISC) {
     override fun matches(input: CraftingInput, level: Level): Boolean {
         var hasItem = false

@@ -12,15 +12,15 @@ abstract class BMRecipeInputs(private val iSize: Int) : RecipeInput {
         override fun getItem(index: Int): ItemStack = if (index == 0) iItem else ItemStack.EMPTY
     }
 
-    class SingleFluid(val iFluid: FluidStack, val iAmount: Int, iSize: Int) : BMRecipeInputs(iSize) {
+    class SingleFluid(private val iFluid: FluidStack, val iAmount: Int, iSize: Int) : BMRecipeInputs(iSize) {
         override fun getItem(index: Int): ItemStack = ItemStack.EMPTY
         fun getFluid(index: Int): FluidStack = if (index == 0) iFluid else FluidStack.EMPTY
     }
 
     class SingleFluidItem(
-        val iItem: ItemStack,
+        private val iItem: ItemStack,
         val iCount: Int,
-        val iFluid: FluidStack,
+        private val iFluid: FluidStack,
         val iAmount: Int,
         iSize: Int
     ) : BMRecipeInputs(iSize) {
@@ -32,15 +32,15 @@ abstract class BMRecipeInputs(private val iSize: Int) : RecipeInput {
         override fun getItem(index: Int): ItemStack = iItems[index]
     }
 
-    class MultiFluid(val iFluids: List<FluidStack>, val iAmount: List<Int>, iSize: Int) : BMRecipeInputs(iSize) {
+    class MultiFluid(private val iFluids: List<FluidStack>, val iAmount: List<Int>, iSize: Int) : BMRecipeInputs(iSize) {
         override fun getItem(index: Int): ItemStack = ItemStack.EMPTY
         fun getFluid(index: Int): FluidStack = iFluids[index]
     }
 
     class MultiFluidItem(
-        val iItems: List<ItemStack>,
+        private val iItems: List<ItemStack>,
         val iCount: List<Int>,
-        val iFluids: List<FluidStack>,
+        private val iFluids: List<FluidStack>,
         val iAmount: List<Int>,
         iSize: Int
     ) : BMRecipeInputs(iSize) {

@@ -90,7 +90,7 @@ class FakePlayerRenderer(
         return model == PlayerSkin.Model.SLIM
     }
 
-    fun getPlayerInfo(entity: FakePlayer): PlayerInfo? {
+    private fun getPlayerInfo(entity: FakePlayer): PlayerInfo? {
         val connection = rgMinecraft.connection ?: return null
         return connection.getPlayerInfo(entity.getOwnerUUID())
     }

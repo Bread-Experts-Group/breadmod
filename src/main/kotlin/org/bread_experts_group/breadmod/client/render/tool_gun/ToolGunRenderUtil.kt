@@ -145,7 +145,6 @@ fun drawWrappedTextOnScreen(
     poseStack.popPose()
 }
 
-@Suppress("unused")
 // Font.split() converted to take in a Component instead of a FormattedCharSequence
 fun componentSplit(text: Component, maxWidth: Int, font: Font): MutableList<FormattedCharSequence> =
     Language.getInstance().getVisualOrder(font.splitter.splitLines(text, maxWidth, Style.EMPTY))

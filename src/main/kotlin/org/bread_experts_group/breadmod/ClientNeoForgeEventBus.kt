@@ -198,7 +198,7 @@ internal object ClientNeoForgeEventBus {
         MachSoundInstance(ModSounds.MACH_FOUR.get(), 70..Int.MAX_VALUE, null)
     }
 
-    internal var clientTickingGroup = mutableMapOf<String, (event: ClientTickEvent.Pre) -> Boolean>()
+    private var clientTickingGroup = mutableMapOf<String, (event: ClientTickEvent.Pre) -> Boolean>()
         private set
 
     @SubscribeEvent

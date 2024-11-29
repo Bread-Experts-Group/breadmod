@@ -209,7 +209,8 @@ object ModItems {
     val RF_BREAD_SWORD: DeferredItem<SwordItem> =
         SwordItem::class.registerTool("reinforced_bread_sword", ToolTier.RF_BREAD, 2.0, -2.5)
 
-    val WRENCH: DeferredItem<Item> = ITEM_REGISTRY.registerSimpleItem("wrench", Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON))
+    val WRENCH: DeferredItem<Item> =
+        ITEM_REGISTRY.registerSimpleItem("wrench", Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON))
 
     // End Tools
 

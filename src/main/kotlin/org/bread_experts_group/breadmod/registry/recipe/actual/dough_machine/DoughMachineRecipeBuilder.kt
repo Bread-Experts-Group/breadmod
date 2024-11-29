@@ -31,10 +31,10 @@ class DoughMachineRecipeBuilder(
         return this
     }
 
-    fun itemRequired(item: Item, count: Int = 1) = this.also { this.item = ItemStack(item, count) }
-    fun fluidRequired(fluid: Fluid, amount: Int = 1000) = this.also { this.fluid = FluidStack(fluid, amount) }
-    fun timeRequired(time: Int) = this.also { this.time = time }
-    fun energyRequired(energy: Int) = this.also { this.energy = energy }
+    fun itemRequired(item: Item, count: Int = 1): DoughMachineRecipeBuilder = this.also { this.item = ItemStack(item, count) }
+    fun fluidRequired(fluid: Fluid, amount: Int = 1000): DoughMachineRecipeBuilder = this.also { this.fluid = FluidStack(fluid, amount) }
+    fun timeRequired(time: Int): DoughMachineRecipeBuilder = this.also { this.time = time }
+    fun energyRequired(energy: Int): DoughMachineRecipeBuilder = this.also { this.energy = energy }
 
     override fun group(groupName: String?): RecipeBuilder {
         group = groupName

@@ -31,21 +31,21 @@ class FluidEnergyRecipeBuilder(
     override fun group(groupName: String?): RecipeBuilder = this
     override fun getResult(): Item = results.first().item
 
-    fun requiresItem(item: ItemStack) = this.also { ingredients.add(SizedIngredient.of(item.item, 1)) }
-    fun requiresItem(item: ItemStack, amount: Int) =
+    fun requiresItem(item: ItemStack): FluidEnergyRecipeBuilder = this.also { ingredients.add(SizedIngredient.of(item.item, 1)) }
+    fun requiresItem(item: ItemStack, amount: Int): FluidEnergyRecipeBuilder =
         this.also { ingredients.add(SizedIngredient.of(item.item, amount)) }
 
-    fun requiresItem(item: TagKey<Item>) = this.also { ingredients.add(SizedIngredient.of(item, 1)) }
-    fun requiresItem(item: TagKey<Item>, amount: Int) = this.also { ingredients.add(SizedIngredient.of(item, amount)) }
+    fun requiresItem(item: TagKey<Item>): FluidEnergyRecipeBuilder = this.also { ingredients.add(SizedIngredient.of(item, 1)) }
+    fun requiresItem(item: TagKey<Item>, amount: Int): FluidEnergyRecipeBuilder = this.also { ingredients.add(SizedIngredient.of(item, amount)) }
 
-    fun requiresFluid(fluid: FluidStack) =
+    fun requiresFluid(fluid: FluidStack): FluidEnergyRecipeBuilder =
         this.also { fluidIngredients.add(SizedFluidIngredient.of(fluid.fluid, 1000)) }
 
-    fun requiresFluid(fluid: Fluid, amount: Int) =
+    fun requiresFluid(fluid: Fluid, amount: Int): FluidEnergyRecipeBuilder =
         this.also { fluidIngredients.add(SizedFluidIngredient.of(FluidStack(fluid, amount))) }
 
-    fun timeRequired(time: Int) = this.also { this.time = time }
-    fun energyRequired(energy: Int) = this.also { this.energy = energy }
+    fun timeRequired(time: Int): FluidEnergyRecipeBuilder = this.also { this.time = time }
+    fun energyRequired(energy: Int): FluidEnergyRecipeBuilder = this.also { this.energy = energy }
 
     override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
         val itemOutputList = buildList { results.forEach { add(it) } }

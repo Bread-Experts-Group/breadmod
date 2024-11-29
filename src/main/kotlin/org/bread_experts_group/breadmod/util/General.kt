@@ -306,7 +306,7 @@ sealed class RaycastResult(
          * @see blockRaycast
          * @see Entity
          */
-        fun Level.entityRaycast(
+        private fun Level.entityRaycast(
             exclude: net.minecraft.world.entity.Entity?,
             origin: Vec3,
             direction: Vec3,
@@ -342,7 +342,7 @@ sealed class RaycastResult(
          * @see entityRaycast
          * @see Block
          */
-        fun Level.blockRaycast(
+        private fun Level.blockRaycast(
             origin: Vec3,
             direction: Vec3,
             length: Double,

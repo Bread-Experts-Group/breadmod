@@ -12,12 +12,11 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.createdMappings
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.network.serverbound.ToolGunConfigurationPacket
 import org.bread_experts_group.breadmod.util.modifierMatches
 
 // todo consolidate tool gun control functions and vals to this object
 object ToolGunControlLogic {
-    val toolGunBindList: MutableMap<ToolGunModeProvider.Control, KeyMapping> = mutableMapOf<ToolGunModeProvider.Control, KeyMapping>()
+    private val toolGunBindList: MutableMap<ToolGunModeProvider.Control, KeyMapping> = mutableMapOf()
 
     val changeMode: KeyMapping = KeyMapping(
         "controls.${BreadMod.ID}.$TOOL_GUN_DEF.change_mode",

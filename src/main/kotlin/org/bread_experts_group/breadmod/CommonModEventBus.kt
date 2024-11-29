@@ -31,7 +31,6 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
-import org.bread_experts_group.breadmod.network.serverbound.ToolGunConfigurationPacket
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock

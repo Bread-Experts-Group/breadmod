@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation
 
 @Suppress("unused")
 abstract class BMRecipeBuilder : RecipeBuilder {
-    val criteria: MutableMap<String, Criterion<*>> = hashMapOf()
+    private val criteria: MutableMap<String, Criterion<*>> = hashMapOf()
     var time: Int = 0
     var energy: Int = 0
 

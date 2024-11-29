@@ -21,8 +21,8 @@ data class ModDamageTypes(val key: ResourceKey<DamageType>, val exhaustion: Floa
     private fun source(registryAccess: RegistryAccess): DamageSource =
         DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key))
 
-    fun registryName(): ResourceLocation = key.location()
-    fun msgID(): String = registryName().namespace + "." + registryName().path
+    private fun registryName(): ResourceLocation = key.location()
+    private fun msgID(): String = registryName().namespace + "." + registryName().path
     fun translationKey(): String = "death.attack." + msgID()
 
     companion object {

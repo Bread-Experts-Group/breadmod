@@ -15,12 +15,12 @@ object ModRecipeTypes {
     val RECIPE_TYPE_REGISTRY: DeferredRegister<RecipeType<*>> =
         DeferredRegister.create(Registries.RECIPE_TYPE, BreadMod.ID)
 
-    val WHEAT_CRUSHING: Supplier<RecipeType<WheatCrusherRecipe>> = RECIPE_TYPE_REGISTRY.registerType<WheatCrusherRecipe>("wheat_crushing")
-    val DOUGH_MACHINE: Supplier<RecipeType<DoughMachineRecipe>> = RECIPE_TYPE_REGISTRY.registerType<DoughMachineRecipe>("dough_machine")
+    val WHEAT_CRUSHING: Supplier<RecipeType<WheatCrusherRecipe>> = RECIPE_TYPE_REGISTRY.registerType("wheat_crushing")
+    val DOUGH_MACHINE: Supplier<RecipeType<DoughMachineRecipe>> = RECIPE_TYPE_REGISTRY.registerType("dough_machine")
 
-    val FLUID_ENERGY: Supplier<RecipeType<FluidEnergyRecipe>> = RECIPE_TYPE_REGISTRY.registerType<FluidEnergyRecipe>("fluid_energy")
+    val FLUID_ENERGY: Supplier<RecipeType<FluidEnergyRecipe>> = RECIPE_TYPE_REGISTRY.registerType("fluid_energy")
 
     // exp
 
-    val MULTI_ITEM: Supplier<RecipeType<MultiItemTestRecipe>> = RECIPE_TYPE_REGISTRY.registerType<MultiItemTestRecipe>("multi_item_test")
+    val MULTI_ITEM: Supplier<RecipeType<MultiItemTestRecipe>> = RECIPE_TYPE_REGISTRY.registerType("multi_item_test")
 }

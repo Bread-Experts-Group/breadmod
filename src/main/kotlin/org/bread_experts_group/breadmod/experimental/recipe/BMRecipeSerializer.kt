@@ -15,7 +15,6 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import java.util.function.Function
 
-@Suppress("unused")
 abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
     fun <O> itemStackListCodecModule(
         field: String,

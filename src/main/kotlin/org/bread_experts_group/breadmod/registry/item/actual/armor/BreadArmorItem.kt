@@ -105,6 +105,6 @@ class BreadArmorItem(type: Type) : ArmorItem(
         val decayChance: ModConfigSpec.ConfigValue<Int> = COMMON.DECAY_CHANCE_PER_TICK
 
         private val decimalFormat = DecimalFormat("0.#")
-        val BREAD_COLOR = Color(216, 196, 170)
+        val BREAD_COLOR: Color = Color(216, 196, 170)
     }
 }

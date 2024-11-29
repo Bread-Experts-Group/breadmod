@@ -72,7 +72,7 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
 //        }
     }
 
-    val keybindsToAdd: MutableList<Control> = mutableListOf()
+    private val keybindsToAdd: MutableList<Control> = mutableListOf()
     fun load(pObject: Map<ResourceLocation, JsonElement>) {
         pObject.forEach { (location, data) ->
             if (location.path.startsWith("mode/")) {
@@ -116,7 +116,7 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
         }
     }
 
-    fun loadKeys() {
+    private fun loadKeys() {
         val keyMaps = createMappingsForControls(keybindsToAdd)
         rgMinecraft.options.keyMappings = ArrayUtils.addAll(
             rgMinecraft.options.keyMappings,

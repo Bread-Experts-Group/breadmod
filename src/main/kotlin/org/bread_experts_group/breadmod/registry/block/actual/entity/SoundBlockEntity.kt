@@ -35,6 +35,4 @@ class SoundBlockEntity(
     }
 
     override fun stillValid(player: Player): Boolean = true
-
-    override fun setChanged(): Unit = super.setChanged()
 }

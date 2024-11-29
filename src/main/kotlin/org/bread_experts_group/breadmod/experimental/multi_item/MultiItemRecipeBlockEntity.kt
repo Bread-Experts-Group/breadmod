@@ -31,7 +31,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
 
-@Suppress("unused", "UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER")
 class MultiItemRecipeBlockEntity(
     pos: BlockPos,
     state: BlockState
@@ -40,13 +40,13 @@ class MultiItemRecipeBlockEntity(
     var progress: Int = 0
     var maxProgress: Int = 0
 
-    var currentRecipe: Optional<MultiItemTestRecipe> = Optional.empty()
-    val recipeDial: RecipeManager.CachedCheck<BMRecipeInputs.MultiItem, MultiItemTestRecipe> by lazy {
+    private var currentRecipe: Optional<MultiItemTestRecipe> = Optional.empty()
+    private val recipeDial: RecipeManager.CachedCheck<BMRecipeInputs.MultiItem, MultiItemTestRecipe> by lazy {
         RecipeManager.createCheck(ModRecipeTypes.MULTI_ITEM.get())
     }
 
     val invWrapper: InvWrapper = InvWrapper(this)
-    var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(4, ItemStack.EMPTY)
+    private var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(4, ItemStack.EMPTY)
 
     fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: MultiItemRecipeBlockEntity) {
         currentRecipe.ifPresentOrElse({ activeRecipe ->
@@ -83,7 +83,7 @@ class MultiItemRecipeBlockEntity(
         })
     }
 
-    fun recipeDone(recipe: MultiItemTestRecipe) {
+    private fun recipeDone(recipe: MultiItemTestRecipe) {
         val assemble = recipe.assembleOutputs(
             BMRecipeInputs.MultiItem(
                 items,
@@ -99,7 +99,7 @@ class MultiItemRecipeBlockEntity(
     /**
      * Resets the current recipe.
      */
-    fun resetRecipe() {
+    private fun resetRecipe() {
         currentRecipe = Optional.empty()
         maxProgress = 0; progress = -1
     }

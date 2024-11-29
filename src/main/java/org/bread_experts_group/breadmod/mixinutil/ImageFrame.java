@@ -22,8 +22,8 @@ import java.util.Collections;
 /* https://stackoverflow.com/a/17269591/7693129 */
 public class ImageFrame {
 
-    public int delay;
-    public DisposeOperation disposal;
+    public final int delay;
+    public final DisposeOperation disposal;
     public BufferedImage image;
 
     public ImageFrame(final BufferedImage img, final int delay, final DisposeOperation disposal) {

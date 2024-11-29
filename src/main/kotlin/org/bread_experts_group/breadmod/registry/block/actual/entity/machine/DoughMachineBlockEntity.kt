@@ -63,7 +63,7 @@ class DoughMachineBlockEntity(
     val horizontal: Direction = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
     val sidedInvWrapper: SidedInvWrapper = SidedInvWrapper(this, horizontal)
 
-    var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(3, ItemStack.EMPTY)
+    private var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(3, ItemStack.EMPTY)
 
     private fun syncToClients() = level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_CLIENTS)
 
