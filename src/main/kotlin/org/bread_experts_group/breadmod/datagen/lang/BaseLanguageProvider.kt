@@ -75,7 +75,7 @@ internal sealed class BaseLanguageProvider(
                     is EntityType<*> -> actualItem.descriptionId
                     is CreativeModeTab -> (actualItem.displayName.contents as TranslatableContents).key
                     is ModDamageType -> actualItem.translationKey()
-                    is SoundEvent -> actualItem.location.toLanguageKey()
+                    is SoundEvent -> actualItem.location.toLanguageKey("sound")
                     else -> throw UnsupportedItemClassException(actualItem::class.java)
                 } + if (annotation.extension == "<null>") "" else "." + annotation.extension
                 add(languageID, assureName(annotation.name, languageID))
