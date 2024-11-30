@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.registry.block
 
+import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.food.FoodProperties
@@ -8,12 +9,15 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeType
+import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeBlock
 import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeBlock
@@ -22,6 +26,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.*
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
+import java.awt.Color
 
 object ModBlocks {
     val BLOCK_REGISTRY: DeferredRegister.Blocks = DeferredRegister.createBlocks(BreadMod.ID)
@@ -166,22 +171,60 @@ object ModBlocks {
 
     // EXPERIMENTAL PAST THIS POINT
 
-    @DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK")
+    @DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (MULTI)")
     val MULTI_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "multi_item_recipe",
         { MultiItemRecipeBlock() },
         Item.Properties()
     )
 
-    val SINGLE_ITEM_TEST = BLOCK_REGISTRY.registerBlockItem(
+    @DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (SINGLE)")
+    val SINGLE_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "single_item_recipe",
         { SingleItemRecipeBlock() },
         Item.Properties()
     )
 
-    val SINGLE_FLUID_TEST = BLOCK_REGISTRY.registerBlockItem(
+    @DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK (SINGLE, FLUID)")
+    val SINGLE_FLUID_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "single_fluid_recipe",
         { SingleFluidRecipeBlock() },
+        Item.Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, RED")
+    val COLORED_EMISSIVE_LIGHT_RED: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "colored_emissive_light_red",
+        {
+            object : Block(Properties.of().lightLevel { _ -> 15 }), ILightColored {
+                override fun getLightColor(level: BlockAndTintGetter, blockState: BlockState, position: BlockPos): Int =
+                    Color.RED.rgb
+            }
+        },
+        Item.Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, GREEN")
+    val COLORED_EMISSIVE_LIGHT_GREEN: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "colored_emissive_light_green",
+        {
+            object : Block(Properties.of().lightLevel { _ -> 15 }), ILightColored {
+                override fun getLightColor(level: BlockAndTintGetter, blockState: BlockState, position: BlockPos): Int =
+                    Color.GREEN.rgb
+            }
+        },
+        Item.Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, BLUE")
+    val COLORED_EMISSIVE_LIGHT_BLUE: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "colored_emissive_light_blue",
+        {
+            object : Block(Properties.of().lightLevel { _ -> 15 }), ILightColored {
+                override fun getLightColor(level: BlockAndTintGetter, blockState: BlockState, position: BlockPos): Int =
+                    Color.BLUE.rgb
+            }
+        },
         Item.Properties()
     )
 }

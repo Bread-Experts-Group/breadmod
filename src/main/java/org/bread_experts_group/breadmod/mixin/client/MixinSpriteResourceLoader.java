@@ -75,6 +75,7 @@ interface MixinSpriteResourceLoader {
         return result;
     }
 
+    @SuppressWarnings("LongLine")
     @Inject(
             method = "loadSprite(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/server/packs/resources/Resource;)Lnet/minecraft/client/renderer/texture/SpriteContents;",
             at = @At("HEAD"),
