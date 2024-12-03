@@ -1,5 +1,7 @@
 package org.bread_experts_group.breadmod.util
 
+import net.minecraft.core.HolderLookup.Provider
+import net.minecraft.nbt.CompoundTag
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.IFluidTank
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
@@ -8,28 +10,32 @@ import java.util.function.Predicate
 import kotlin.math.min
 
 open class CustomFluidTank(
-    capacity: Int,
+    val tankCapacity: Int,
     tanks: Int,
-    validator: Predicate<FluidStack>
+    // todo individual validators for each tank?
+    val validator: Predicate<FluidStack>
 ) : IFluidHandler, IFluidTank {
     constructor(capacity: Int, tanks: Int) : this(capacity, tanks, { true })
     constructor(capacity: Int) : this(capacity, 1, { true })
 
-    val tanks: ArrayList<FluidStack> = arrayListOf()
-    val capacities: ArrayList<Int> = arrayListOf()
+    protected val tanks: ArrayList<FluidStack> = arrayListOf()
+    protected val capacities: ArrayList<Int> = arrayListOf()
 
-    // todo individual validators for each tank?
-    var validator: Predicate<FluidStack>
+    // todo so basically these need to be integrated into fill and drain, the logic should be the first tank in the list
+    //  should be queried if it can fill or drain. If so, then proceed with that action. If not, move onto the next tank in the list
+    //  and try the operation again, rinse and repeat until the operation is a success or the index loops back around. In that case,
+    //  return 0 or the fluidstack for the fill and drain methods respectively
+    var fillTanks: ArrayList<Int> = arrayListOf()
+    var drainTanks: ArrayList<Int> = arrayListOf()
 
     init {
         repeat(tanks) {
             this.tanks.add(FluidStack.EMPTY)
-            this.capacities.add(capacity)
+            this.capacities.add(tankCapacity)
         }
-        this.validator = validator
     }
 
-    override fun getTanks(): Int = tanks.size
+    final override fun getTanks(): Int = tanks.size
 
     override fun getFluidInTank(tank: Int): FluidStack = tanks[tank]
 
@@ -96,6 +102,7 @@ open class CustomFluidTank(
         return filled
     }
 
+    // todo move logic from this and drainTank to private function to reduce code duplication
     override fun drain(maxDrain: Int, action: FluidAction): FluidStack {
         var drained = maxDrain
         if (fluid.amount < drained) {
@@ -109,9 +116,27 @@ open class CustomFluidTank(
         return stack
     }
 
+    fun drainTank(maxDrain: Int, action: FluidAction, tank: Int): FluidStack {
+        var drained = maxDrain
+        if (tanks[tank].amount < drained) {
+            drained = fluid.amount
+        }
+        val stack = tanks[tank].copyWithAmount(drained)
+        if (action.execute() && drained > 0) {
+            tanks[tank].shrink(drained)
+            onContentsChanged()
+        }
+        return stack
+    }
+
     override fun drain(resource: FluidStack, action: FluidAction): FluidStack {
-        if (resource.isEmpty || !FluidStack.isSameFluidSameComponents(resource, fluid)) return FluidStack.EMPTY
+        if (resource.isEmpty || !FluidStack.isSameFluidSameComponents(resource, tanks[1])) return FluidStack.EMPTY
         return drain(resource.amount, action)
+    }
+
+    fun drainTank(resource: FluidStack, action: FluidAction, tank: Int): FluidStack {
+        if (resource.isEmpty || !FluidStack.isSameFluidSameComponents(resource, tanks[tank])) return FluidStack.EMPTY
+        return drainTank(resource.amount, action, tank)
     }
 
     /**
@@ -130,16 +155,35 @@ open class CustomFluidTank(
         return amount
     }
 
-    /**
-     * @return The combined capacity of all tanks.
-     */
-    override fun getCapacity(): Int {
-        var capacity = 0
-        capacities.forEach {
-            capacity += it
+//    /**
+//     * @return The combined capacity of all tanks.
+//     */
+//    override fun getCapacity(): Int {
+//        var capacity = 0
+//        capacities.forEach {
+//            capacity += it
+//        }
+//        return capacity
+//    }
+
+    override fun getCapacity(): Int = this.tankCapacity
+
+    protected open fun onContentsChanged() {}
+
+    fun writeToNBT(lookupProvider: Provider, nbt: CompoundTag): CompoundTag {
+        repeat(tanks.size) { index ->
+            if (!tanks[index].isEmpty) {
+                nbt.put("Fluid_$index", tanks[index].save(lookupProvider))
+            }
         }
-        return capacity
+
+        return nbt
     }
 
-    protected fun onContentsChanged() {}
+    fun readFromNBT(lookupProvider: Provider, nbt: CompoundTag): CustomFluidTank {
+        repeat(tanks.size) { index ->
+            tanks[index] = FluidStack.parseOptional(lookupProvider, nbt.getCompound("Fluid_$index"))
+        }
+        return this
+    }
 }

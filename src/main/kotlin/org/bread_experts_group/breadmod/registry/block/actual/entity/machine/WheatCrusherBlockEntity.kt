@@ -30,11 +30,11 @@ import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper
 import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
+import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe.WheatCrusherInput
-import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
-import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
 import kotlin.math.max
 
@@ -95,7 +95,7 @@ class WheatCrusherBlockEntity(
                 progress++
                 level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
                 if (progress >= activeRecipe.recipeTime) {
-                    recipeDone(level, activeRecipe)
+                    finalizeRecipe(level, activeRecipe)
                     resetRecipe()
                 }
             }
@@ -137,7 +137,7 @@ class WheatCrusherBlockEntity(
     private fun canFitResults(recipe: WheatCrusherRecipe): Boolean =
         getItem(1).count < maxStackSize || getItem(1).count + recipe.recipeOutput.count < maxStackSize
 
-    private fun recipeDone(level: Level, recipe: WheatCrusherRecipe) {
+    private fun finalizeRecipe(level: Level, recipe: WheatCrusherRecipe) {
         itemSlots[0].shrink(recipe.recipeInput.count)
         val assemble =
             recipe.assemble(WheatCrusherInput(getItem(0), recipe.recipeInput.count), level.registryAccess())

@@ -66,14 +66,25 @@ class ModRecipeProvider(
             .itemRequired(ItemTags.BEDS)
             .timeRequired(100)
             .save(recipeOutput, modLocation("experimental", "multi_item_test"))
+        MultiItemTestRecipe.Builder(listOf(ModItems.TOOL_GUN.get() to 1))
+            .itemRequired(ModItems.TOASTER_HEATING_ELEMENT.get())
+            .itemRequired(ItemTags.HOES)
+            .itemRequired(ItemTags.ANVIL, 3)
+            .timeRequired(50)
+            .save(recipeOutput, modLocation("experimental", "multi_item_test_two"))
 
         SingleItemTestRecipe.Builder(ModItems.FLOUR.get(), 10)
             .itemRequired(Items.BREAD, 5)
             .timeRequired(50)
             .save(recipeOutput, modLocation("experimental", "single_item_test"))
+        SingleItemTestRecipe.Builder(Items.COD, 1)
+            .itemRequired(Items.PUFFERFISH)
+            .timeRequired(100)
+            .save(recipeOutput, modLocation("experimental", "single_item_test_two"))
 
         SingleFluidTestRecipe.Builder(ModFluids.BREAD_LIQUID.source.get(), 1000)
             .fluidRequired(Fluids.WATER, 500)
+            .timeRequired(100)
             .save(recipeOutput, modLocation("experimental", "single_fluid_test"))
     }
 }

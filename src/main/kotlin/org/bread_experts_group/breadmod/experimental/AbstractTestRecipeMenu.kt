@@ -8,7 +8,7 @@ abstract class AbstractTestRecipeMenu(
     menuType: MenuType<*>,
     containerId: Int,
     inventory: Inventory,
-    val parent: AbstractTestItemRecipeBlockEntity<*, *>,
+    val parent: AbstractTestRecipeBlockEntity<*, *>,
 ) : AbstractModContainerMenu(menuType, containerId) {
     init {
         addInventorySlots(inventory, 8, 174, 116)

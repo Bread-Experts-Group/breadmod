@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.block.multi_fluid.MultiFluidRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemRecipeBlockEntity
@@ -52,6 +53,11 @@ object ModBlockEntityTypes {
     val MULTI_ITEM_TEST: Supplier<BlockEntityType<MultiItemRecipeBlockEntity>> =
         BLOCK_ENTITY_REGISTRY.register("multi_item_recipe_entity") { ->
             buildBlockEntity(::MultiItemRecipeBlockEntity, ModBlocks.MULTI_ITEM_TEST.asBlock())
+        }
+
+    val MULTI_FLUID_TEST: Supplier<BlockEntityType<MultiFluidRecipeBlockEntity>> =
+        BLOCK_ENTITY_REGISTRY.register("multi_fluid_recipe_entity") { ->
+            buildBlockEntity(::MultiFluidRecipeBlockEntity, ModBlocks.MULTI_FLUID_TEST.asBlock())
         }
 
     val SINGLE_ITEM_TEST: Supplier<BlockEntityType<SingleItemRecipeBlockEntity>> =

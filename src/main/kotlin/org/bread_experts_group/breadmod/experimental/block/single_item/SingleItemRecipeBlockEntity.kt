@@ -30,7 +30,7 @@ class SingleItemRecipeBlockEntity(
             val recipeTime = activeRecipe.rTime ?: 0
             progress++
             if (progress >= recipeTime) {
-                recipeDone(activeRecipe, level)
+                finalizeRecipe(activeRecipe, level)
                 resetRecipe()
             }
         }, {
@@ -59,7 +59,7 @@ class SingleItemRecipeBlockEntity(
 
     override fun getDisplayName(): Component = Component.literal("SingleItemRecipe")
 
-    override fun recipeDone(recipe: SingleItemTestRecipe, level: Level) {
+    override fun finalizeRecipe(recipe: SingleItemTestRecipe, level: Level) {
         val assemble = recipe.assemble(BMRecipeInputs.SingleItem(items[0], items[0].count, 1), level.registryAccess())
         if (itemSlots[1].isEmpty) itemSlots[1] =
             assemble.copyWithCount(recipe.rItemOutput.count) else itemSlots[1].grow(recipe.rItemOutput.count)

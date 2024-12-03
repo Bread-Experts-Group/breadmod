@@ -45,6 +45,6 @@ class MultiItemRecipeBlock : BaseEntityBlock(Properties.of()) {
         blockEntityType,
         ModBlockEntityTypes.MULTI_ITEM_TEST.get()
     ) { tLevel: Level, tPos: BlockPos, tState: BlockState, tBlockEntity: MultiItemRecipeBlockEntity ->
-        tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity)
+        tBlockEntity.tick(tLevel, tPos, tState)
     }
 }

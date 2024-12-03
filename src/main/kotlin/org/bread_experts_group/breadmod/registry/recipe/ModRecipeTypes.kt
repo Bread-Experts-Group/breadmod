@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.crafting.RecipeType
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.single.SingleItemTestRecipe
@@ -25,6 +26,7 @@ object ModRecipeTypes {
     // exp
 
     val MULTI_ITEM: Supplier<RecipeType<MultiItemTestRecipe>> = RECIPE_TYPE_REGISTRY.registerType("multi_item_test")
+    val MULTI_FLUID: Supplier<RecipeType<MultiFluidTestRecipe>> = RECIPE_TYPE_REGISTRY.registerType("multi_fluid_test")
     val SINGLE_ITEM = RECIPE_TYPE_REGISTRY.registerType<SingleItemTestRecipe>("single_item_test")
     val SINGLE_FLUID = RECIPE_TYPE_REGISTRY.registerType<SingleFluidTestRecipe>("single_fluid_test")
 }

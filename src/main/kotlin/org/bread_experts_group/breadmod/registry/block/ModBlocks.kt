@@ -15,6 +15,7 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.experimental.block.multi_fluid.MultiFluidRecipeBlock
 import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeBlock
 import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeBlock
 import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemRecipeBlock
@@ -166,19 +167,27 @@ object ModBlocks {
 
     // EXPERIMENTAL PAST THIS POINT
 
-    @DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK")
+    @DataGenerateLanguage("en_us", "Multi Item Test Recipe Block")
     val MULTI_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "multi_item_recipe",
         { MultiItemRecipeBlock() },
         Item.Properties()
     )
 
+    val MULTI_FLUID_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "multi_fluid_recipe",
+        { MultiFluidRecipeBlock() },
+        Item.Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "Single Item Test Recipe Block")
     val SINGLE_ITEM_TEST = BLOCK_REGISTRY.registerBlockItem(
         "single_item_recipe",
         { SingleItemRecipeBlock() },
         Item.Properties()
     )
 
+    @DataGenerateLanguage("en_us", "Single Fluid Test Recipe Block")
     val SINGLE_FLUID_TEST = BLOCK_REGISTRY.registerBlockItem(
         "single_fluid_recipe",
         { SingleFluidRecipeBlock() },
