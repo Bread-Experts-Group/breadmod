@@ -12,8 +12,6 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.Abstract
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipeSerializer
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeSerializer
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeSerializer
 import java.util.function.Supplier
@@ -28,9 +26,6 @@ object ModRecipeSerializers {
 
     val DOUGH_MACHINE: Supplier<RecipeSerializer<DoughMachineRecipe>> =
         RECIPE_SERIALIZER_REGISTRY.register("dough_machine", ::DoughMachineRecipeSerializer)
-
-    val FLUID_ENERGY: Supplier<RecipeSerializer<FluidEnergyRecipe>> =
-        RECIPE_SERIALIZER_REGISTRY.register("fluid_energy", ::FluidEnergyRecipeSerializer)
 
     val BREAD_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
         RECIPE_SERIALIZER_REGISTRY.register("bread_slice_crafting") { ->
