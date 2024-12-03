@@ -9,7 +9,6 @@ import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestR
 import org.bread_experts_group.breadmod.experimental.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.util.registerType
 import java.util.function.Supplier
@@ -20,8 +19,6 @@ object ModRecipeTypes {
 
     val WHEAT_CRUSHING: Supplier<RecipeType<WheatCrusherRecipe>> = RECIPE_TYPE_REGISTRY.registerType("wheat_crushing")
     val DOUGH_MACHINE: Supplier<RecipeType<DoughMachineRecipe>> = RECIPE_TYPE_REGISTRY.registerType("dough_machine")
-
-    val FLUID_ENERGY: Supplier<RecipeType<FluidEnergyRecipe>> = RECIPE_TYPE_REGISTRY.registerType("fluid_energy")
 
     // exp
 

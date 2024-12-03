@@ -29,30 +29,6 @@ class ModRecipeProvider(
             .itemRequired(Items.WHEAT)
             .save(recipeOutput, modLocation("special", "machine", "wheat_crushing"))
 
-//        DoughMachineRecipeBuilder(ModItems.TEST_BREAD.toStack(), 1)
-//            .itemRequired(ModItems.FLOUR.get(), 2)
-//            .timeRequired(100)
-//            .energyRequired(5000)
-//            .save(recipeOutput, modLocation("special", "machine", "dough_testing"))
-
-//        FluidEnergyRecipeBuilder(
-//            listOf(ItemStack(ModItems.TOOL_GUN.asItem(), 2), ItemStack(Items.BREAD, 16)),
-//            listOf(FluidStack(Fluids.LAVA, 6000))
-//        )
-//            .requiresItem(Items.WHEAT.defaultInstance, 5)
-//            .requiresItem(ItemTags.BEDS)
-//            .requiresItem(ItemTags.DIRT, 50)
-//            .requiresFluid(Fluids.LAVA, 500)
-//            .timeRequired(100)
-//            .energyRequired(4000)
-//            .save(recipeOutput, modLocation("special", "hell"))
-
-//        FluidEnergyRecipeBuilder(listOf(Items.BREAD.defaultInstance))
-//            .requiresItem(ModItems.FLOUR.toStack())
-//            .timeRequired(100)
-//            .energyRequired(1000)
-//            .save(recipeOutput, modLocation("special", "machine", "bread_test"))
-
         ShapelessRecipeBuilder(RecipeCategory.MISC, ModItems.TEST_BREAD.toStack())
             .unlockedBy("has_item", has(Items.BREAD))
             .requires(Items.BREAD, 5)
