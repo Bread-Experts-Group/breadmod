@@ -5,13 +5,17 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "breadmod_neoforge.refmap.json",
   "mixins": [
+    "client.InvokerIVertexConsumerExtension",
+    "client.MixinFallbackResourceManager",
     "common.IAccessorEntity",
     "common.MixinLightningBolt"
   ],
   "client": [
     "client.IAccessorDirectoryLister",
     "client.MixinDirectoryListener",
-    "client.MixinSpriteResourceLoader"
+    "client.MixinLevelRenderer",
+    "client.MixinSpriteResourceLoader",
+    "client.MixinVertexConsumer"
   ],
   "injectors": {
     "defaultRequire": 1
