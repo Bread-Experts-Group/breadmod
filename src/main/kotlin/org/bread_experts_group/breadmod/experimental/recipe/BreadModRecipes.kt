@@ -10,6 +10,7 @@ import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
+import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
 import org.bread_experts_group.breadmod.util.CustomFluidTank
 
 @Suppress("unused")
@@ -61,9 +62,12 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
         rTime: Int?,
         rEnergy: Int?
     ) : BreadModRecipes<BMRecipeInputs.MultiFluid>(rTime, rEnergy) {
+
         override fun matches(input: BMRecipeInputs.MultiFluid, level: Level): Boolean =
             rFluidInputs.all { rFluid ->
                 input.iFluids.any { iFluid ->
+                    LOGGER.info("${iFluid.fluidType} comparing against ${rFluid.fluids[0].fluidType}")
+                    LOGGER.info(rFluid.test(iFluid))
                     rFluid.test(iFluid)
                 }
             } && super.matches(input, level)
@@ -89,7 +93,12 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
         fun inputsStillValid(fluids: List<FluidStack>): Boolean =
             rFluidInputs.all { rFluid -> fluids.any { rFluid.test(it) } }
 
-        fun canFitResults() {} // todo
+        fun canFitResults(list: List<FluidStack>, capacity: Int): Boolean =
+            list.all { iFluid ->
+                rFluidOutputs.any { rFluid ->
+                    iFluid.amount < capacity || iFluid.amount + rFluid.amount < capacity
+                }
+            }
     }
 
     abstract class SingleItem(
@@ -158,6 +167,11 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
         fun inputStillValid(items: List<ItemStack>): Boolean =
             rItemInputs.all { rItem -> items.any { rItem.test(it) } }
 
-        fun canFitResults() {} // todo
+        fun canFitResults(list: List<ItemStack>): Boolean =
+            list.all { iItem ->
+                rItemOutputs.any { rItem ->
+                    iItem.count < rItem.maxStackSize || iItem.count + rItem.count < rItem.maxStackSize
+                }
+            }
     }
 }

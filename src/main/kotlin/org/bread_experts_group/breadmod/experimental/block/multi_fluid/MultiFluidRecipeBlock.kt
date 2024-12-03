@@ -10,8 +10,11 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.BlockHitResult
+import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.registry.block.ModFluids
 
 class MultiFluidRecipeBlock : BaseEntityBlock(Properties.of()) {
     companion object {
@@ -31,6 +34,10 @@ class MultiFluidRecipeBlock : BaseEntityBlock(Properties.of()) {
             val entity = level.getBlockEntity(pos) as? MultiFluidRecipeBlockEntity ?: return InteractionResult.FAIL
             player.openMenu(entity, pos)
         }
+        val entity = level.getBlockEntity(pos) as? MultiFluidRecipeBlockEntity ?: return InteractionResult.FAIL
+        entity.tank.setFluidInTank(1, FluidStack(Fluids.LAVA, 250))
+        entity.tank.setFluidInTank(0, FluidStack(ModFluids.BREAD_LIQUID.flowing.get(), 1000))
+        level.setBlockAndUpdate(pos, state)
         return InteractionResult.sidedSuccess(level.isClientSide)
     }
 

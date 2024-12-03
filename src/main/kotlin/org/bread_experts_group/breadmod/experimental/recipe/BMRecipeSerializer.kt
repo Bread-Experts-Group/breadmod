@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.level.material.Fluids
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
@@ -60,7 +61,7 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
             .flatXmap(
                 { fluidList ->
                     val fluidArray = fluidList.toTypedArray()
-                    DataResult.success(NonNullList.of(SizedFluidIngredient.of(FluidStack.EMPTY), *fluidArray))
+                    DataResult.success(NonNullList.of(SizedFluidIngredient.of(Fluids.WATER, 1), *fluidArray))
                 }, { result -> DataResult.success(result) }
             ).forGetter(getter)
 
@@ -71,8 +72,8 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
         streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity(cap) })
 
     /**
-     * [nonNullListStreamCodec] with [NonNullList] converted to [List]
+     * [nonNullListStreamCodec] with [NonNullList] converted to a [MutableList]
      */
     fun <T> listStreamCodec(streamCodec: StreamCodec<RegistryFriendlyByteBuf, T>): StreamCodec<RegistryFriendlyByteBuf, List<T>> =
-        streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toList() })
+        streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toMutableList() })
 }

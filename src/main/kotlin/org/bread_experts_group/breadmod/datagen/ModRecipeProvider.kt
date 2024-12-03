@@ -3,10 +3,12 @@ package org.bread_experts_group.breadmod.datagen
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.*
+import net.minecraft.tags.FluidTags
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.single.SingleItemTestRecipe
@@ -72,6 +74,12 @@ class ModRecipeProvider(
             .itemRequired(ItemTags.ANVIL, 3)
             .timeRequired(50)
             .save(recipeOutput, modLocation("experimental", "multi_item_test_two"))
+
+        MultiFluidTestRecipe.Builder(listOf(Fluids.WATER to 1000, Fluids.LAVA to 500))
+            .fluidRequired(ModFluids.BREAD_LIQUID.source.get(), 1000)
+            .fluidRequired(FluidTags.LAVA, 250)
+            .timeRequired(100)
+            .save(recipeOutput, modLocation("experimental", "multi_fluid_test"))
 
         SingleItemTestRecipe.Builder(ModItems.FLOUR.get(), 10)
             .itemRequired(Items.BREAD, 5)

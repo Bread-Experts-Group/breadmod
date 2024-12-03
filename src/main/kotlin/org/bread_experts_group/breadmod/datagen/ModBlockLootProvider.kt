@@ -58,6 +58,10 @@ class ModBlockLootProvider(
         dropSelf(ModBlocks.MULTI_ITEM_TEST.asBlock())
         dropSelf(ModBlocks.SINGLE_ITEM_TEST.asBlock())
         dropSelf(ModBlocks.SINGLE_FLUID_TEST.asBlock())
+        dropSelf(ModBlocks.MULTI_FLUID_TEST.asBlock())
+        add(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock(), noDrop())
+        add(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock(), noDrop())
+        add(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock(), noDrop())
 
         add(
             FLOUR_BLOCK.asBlock(),

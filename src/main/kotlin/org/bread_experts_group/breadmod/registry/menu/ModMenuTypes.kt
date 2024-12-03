@@ -5,6 +5,7 @@ import net.minecraft.world.inventory.MenuType
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.block.multi_fluid.MultiFluidRecipeMenu
 import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeMenu
 import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeMenu
 import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemRecipeMenu
@@ -27,6 +28,10 @@ object ModMenuTypes {
 
     val MULTI_ITEM: Supplier<MenuType<MultiItemRecipeMenu>> = MENU_TYPE_REGISTRY.register("multi_item") { ->
         IMenuTypeExtension.create(::MultiItemRecipeMenu)
+    }
+
+    val MULTI_FLUID: Supplier<MenuType<MultiFluidRecipeMenu>> = MENU_TYPE_REGISTRY.register("multi_fluid") { ->
+        IMenuTypeExtension.create(::MultiFluidRecipeMenu)
     }
 
     val SINGLE_ITEM: Supplier<MenuType<SingleItemRecipeMenu>> = MENU_TYPE_REGISTRY.register("single_item") { ->
