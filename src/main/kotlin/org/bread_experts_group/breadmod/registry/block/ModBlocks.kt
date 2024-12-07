@@ -19,10 +19,10 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.experimental.block.multi_fluid.MultiFluidRecipeBlock
-import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeBlock
-import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeBlock
-import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemRecipeBlock
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeBlock
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeBlock
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeBlock
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_item.SingleItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.*
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock

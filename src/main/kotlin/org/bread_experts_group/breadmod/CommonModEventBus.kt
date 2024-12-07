@@ -199,9 +199,22 @@ internal object CommonModEventBus {
             ModBlockEntityTypes.SINGLE_FLUID_TEST.get()
         ) { entity, _: Direction? -> entity.tank }
 
+//        event.registerBlockEntity(
+//            Capabilities.FluidHandler.BLOCK,
+//            ModBlockEntityTypes.MULTI_FLUID_TEST.get()
+//        ) { entity, direction: Direction? -> entity.tank }
+
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,
             ModBlockEntityTypes.MULTI_FLUID_TEST.get()
-        ) { entity, _: Direction? -> entity.tank }
+        ) { entity, direction: Direction? ->
+            when (direction) {
+//                Direction.UP -> entity.sidedTest.tanks[0]
+                Direction.DOWN -> entity.sidedTest.tanks[1]
+                Direction.NORTH -> entity.sidedTest.tanks[2]
+                Direction.SOUTH -> entity.sidedTest.tanks[3]
+                else -> entity.sidedTest.tanks[0]
+            }
+        }
     }
 }

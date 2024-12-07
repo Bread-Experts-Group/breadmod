@@ -5,10 +5,10 @@ import net.minecraft.world.inventory.MenuType
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.experimental.block.multi_fluid.MultiFluidRecipeMenu
-import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeMenu
-import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeMenu
-import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemRecipeMenu
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeMenu
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeMenu
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeMenu
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_item.SingleItemRecipeMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import java.util.function.Supplier

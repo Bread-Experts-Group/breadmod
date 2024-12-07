@@ -8,10 +8,10 @@ import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiFluidTestRecipe
-import org.bread_experts_group.breadmod.experimental.recipe.multi.MultiItemTestRecipe
-import org.bread_experts_group.breadmod.experimental.recipe.single.SingleFluidTestRecipe
-import org.bread_experts_group.breadmod.experimental.recipe.single.SingleItemTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.multi.MultiFluidTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.multi.MultiItemTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.single.SingleFluidTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe

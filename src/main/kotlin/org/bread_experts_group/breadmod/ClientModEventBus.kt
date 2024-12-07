@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.minecraft.client.model.EntityModel
+import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.client.resources.PlayerSkin
@@ -17,6 +19,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openGuiEditor
+import org.bread_experts_group.breadmod.client.gui.CameraOverlay
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
@@ -27,10 +30,10 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
-import org.bread_experts_group.breadmod.experimental.block.multi_fluid.MultiFluidScreen
-import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemScreen
-import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidScreen
-import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemScreen
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidScreen
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemScreen
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidScreen
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_item.SingleItemScreen
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -39,6 +42,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackp
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
+import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.render.itemColor
 
 @Suppress("unused")
@@ -68,6 +72,17 @@ internal object ClientModEventBus {
     }
 
     @SubscribeEvent
+    fun registerShaders(event: RegisterShadersEvent) {
+        event.registerShader(
+            ShaderInstance(
+                event.resourceProvider,
+                modLocation("rendertype_solid_texture"),
+                DefaultVertexFormat.BLOCK
+            )
+        ) { ModRenderType.solidInstance = it }
+    }
+
+    @SubscribeEvent
     fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
         event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
         event.registerItem(ToolGunItem.ToolGunItemExtensions(), ModItems.TOOL_GUN)
@@ -83,6 +98,7 @@ internal object ClientModEventBus {
     @SubscribeEvent
     fun registerGuiLayers(event: RegisterGuiLayersEvent) {
         event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
+        event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
         event.registerBelow(VanillaGuiLayers.DEBUG_OVERLAY, modLocation("tool_gun_overlay"), ToolGunOverlay())
     }
 

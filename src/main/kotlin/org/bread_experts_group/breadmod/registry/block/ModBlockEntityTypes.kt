@@ -7,10 +7,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.experimental.block.multi_fluid.MultiFluidRecipeBlockEntity
-import org.bread_experts_group.breadmod.experimental.block.multi_item.MultiItemRecipeBlockEntity
-import org.bread_experts_group.breadmod.experimental.block.single_fluid.SingleFluidRecipeBlockEntity
-import org.bread_experts_group.breadmod.experimental.block.single_item.SingleItemRecipeBlockEntity
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeBlockEntity
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeBlockEntity
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeBlockEntity
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_item.SingleItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
