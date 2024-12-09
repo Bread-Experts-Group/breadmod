@@ -8,8 +8,6 @@ import net.neoforged.fml.ModContainer
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.config.ModConfig
 import net.neoforged.fml.loading.FMLLoader
-import net.neoforged.fml.loading.FMLPaths
-import net.neoforged.neoforge.common.data.LanguageProvider
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -17,10 +15,10 @@ import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.config.ConfigurationFactory
 import org.apache.logging.log4j.core.config.Configurator
 import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
+import org.bread_experts_group.breadmod.logging.ConsoleUnnamedRedirection
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
-import java.nio.file.Path
 
 /**
  * Main mod class.
@@ -36,7 +34,7 @@ class BreadMod(container: ModContainer) {
         // the logger for our mod
         val LOGGER: Logger = LogManager.getLogger(ID)
 
-        val DATA_DIR: Path? = FMLPaths.CONFIGDIR.get().resolve(ID)
+//        val DATA_DIR: Path? = FMLPaths.CONFIGDIR.get().resolve(ID)
 
         /**
          * @param override Only use this when you need to refer to a namespace outside breadmod
@@ -50,9 +48,6 @@ class BreadMod(container: ModContainer) {
 
         fun modTranslatable(type: String = "misc", vararg path: String, args: List<Any> = listOf()): MutableComponent =
             Component.translatable("$type.$ID.${path.joinToString(".")}", *args.toTypedArray())
-
-        fun LanguageProvider.modAdd(value: String, type: String = "misc", vararg path: String): Unit =
-            add("$type.$ID.${path.joinToString(".")}", value)
     }
 
     init {
@@ -65,6 +60,8 @@ class BreadMod(container: ModContainer) {
             val clrApd = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
             cfg.addAppender(clrApd)
             Configurator.reconfigure(cfg)
+
+            ConsoleUnnamedRedirection.setup()
         }
 
         LOGGER.log(Level.INFO, "Hello world!")
