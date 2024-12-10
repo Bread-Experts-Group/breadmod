@@ -8,19 +8,14 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.contents.PlainTextContents
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.tags.TagKey
-import net.minecraft.world.item.crafting.Recipe
-import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.util.RaycastResult.RaycastResultType
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
-import java.util.function.Supplier
 
 internal val formatArray: List<String> = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
 
@@ -121,22 +116,6 @@ fun componentToJson(component: Component): JsonObject = JsonObject().also {
         }
 
         else -> throw NotImplementedError("Unknown contents: ${contents::class.qualifiedName}")
-    }
-}
-
-/**
- * Registers a [name]d [RecipeType] under the requisite [DeferredRegister].
- * @param name The name of the [RecipeType] to register.
- * @return The [Supplier] containing the registered [RecipeType].
- * @param T The type of the [Recipe] this [RecipeType] is for.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun <T : Recipe<*>> DeferredRegister<RecipeType<*>>.registerType(name: String): Supplier<RecipeType<T>> {
-    return this.register(name) { ->
-        object : RecipeType<T> {
-            override fun toString(): String = modLocation(name).toString()
-        }
     }
 }
 

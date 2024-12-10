@@ -22,6 +22,7 @@ import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeBlock
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid_item.SingleFluidItemRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_item.SingleItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.*
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
@@ -197,6 +198,13 @@ object ModBlocks {
     val SINGLE_FLUID_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "single_fluid_recipe",
         { SingleFluidRecipeBlock() },
+        Item.Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK(SINGLE, FLUID/ITEM")
+    val SINGLE_FLUID_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "single_fluid_item_recipe",
+        { SingleFluidItemRecipeBlock() },
         Item.Properties()
     )
 

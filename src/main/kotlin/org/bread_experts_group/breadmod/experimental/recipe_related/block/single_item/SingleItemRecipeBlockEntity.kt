@@ -45,6 +45,7 @@ class SingleItemRecipeBlockEntity(
             check.ifPresent { present ->
                 val recipe = present.value
                 val recipeTime = recipe.rTime ?: 0
+                if (!recipe.canFitResults(items, 1)) return@ifPresent
                 currentRecipe = Optional.of(recipe)
                 maxProgress = recipeTime
             }

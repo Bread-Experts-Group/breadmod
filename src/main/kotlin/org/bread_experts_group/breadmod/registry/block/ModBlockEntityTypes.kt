@@ -10,6 +10,7 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeBlockEntity
+import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid_item.SingleFluidItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_item.SingleItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
@@ -68,5 +69,10 @@ object ModBlockEntityTypes {
     val SINGLE_FLUID_TEST: Supplier<BlockEntityType<SingleFluidRecipeBlockEntity>> =
         BLOCK_ENTITY_REGISTRY.register("single_fluid_recipe_entity") { ->
             buildBlockEntity(::SingleFluidRecipeBlockEntity, ModBlocks.SINGLE_FLUID_TEST.asBlock())
+        }
+
+    val SINGLE_FLUID_ITEM_TEST: Supplier<BlockEntityType<SingleFluidItemRecipeBlockEntity>> =
+        BLOCK_ENTITY_REGISTRY.register("single_fluid_item_recipe_entity") { ->
+            buildBlockEntity(::SingleFluidItemRecipeBlockEntity, ModBlocks.SINGLE_FLUID_ITEM_TEST.asBlock())
         }
 }

@@ -20,6 +20,17 @@ class MultiItemRecipeBlock : BaseEntityBlock(Properties.of()) {
 
     override fun codec(): MapCodec<out BaseEntityBlock> = CODEC
 
+    override fun onRemove(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        newState: BlockState,
+        movedByPiston: Boolean
+    ) {
+        level.invalidateCapabilities(pos)
+        super.onRemove(state, level, pos, newState, movedByPiston)
+    }
+
     override fun useWithoutItem(
         state: BlockState,
         level: Level,

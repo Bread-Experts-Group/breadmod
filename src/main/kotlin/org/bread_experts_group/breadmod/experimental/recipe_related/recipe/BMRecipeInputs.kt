@@ -20,14 +20,16 @@ abstract class BMRecipeInputs(private val iSize: Int) : RecipeInput {
     }
 
     class SingleFluidItem(
-        private val iItem: ItemStack,
+        val iItem: ItemStack,
         val iCount: Int,
-        private val iFluid: FluidStack,
+        val iFluid: FluidStack,
         val iAmount: Int,
         iSize: Int
     ) : BMRecipeInputs(iSize) {
         override fun getItem(index: Int): ItemStack = if (index == 0) iItem else ItemStack.EMPTY
         fun getFluid(index: Int): FluidStack = if (index == 0) iFluid else FluidStack.EMPTY
+
+        override fun isEmpty(): Boolean = iItem.isEmpty && iFluid.isEmpty
     }
 
     class MultiItem(val iItems: List<ItemStack>, val iCount: List<Int>, iSize: Int) : BMRecipeInputs(iSize) {

@@ -25,6 +25,9 @@ abstract class AbstractTestItemRecipeBlockEntity<INPUT : RecipeInput, RECIPE : R
 ) : AbstractTestRecipeBlockEntity<INPUT, RECIPE>(pos, state, type, recipeType), CraftingContainer {
     var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(slotCount, ItemStack.EMPTY)
 
+    // todo eventually migrate to using this instead of the vanilla method
+//    val itemHandler = ItemStackHandler(4)
+
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
 

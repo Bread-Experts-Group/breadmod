@@ -7,7 +7,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -53,20 +52,13 @@ class SingleItemTestRecipe(
     class Builder(
         private val result: Item,
         private val count: Int
-    ) : BMRecipeBuilder() {
-        private var item = SizedIngredient.of(Items.AIR, 1)
-
+    ) : BMRecipeBuilder.Single() {
         override fun getResult(): Item = result
-
-        fun itemRequired(item: Item, count: Int = 1) = this.also { this.item = SizedIngredient.of(item, count) }
-        fun itemRequired(tag: TagKey<Item>, count: Int = 1) =
-            this.also { item = SizedIngredient.of(tag, count) }
 
         override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
             if (item == SizedIngredient.of(Items.AIR, 1)) throw IllegalArgumentException("ingredient must be set!")
             val recipe = SingleItemTestRecipe(item, ItemStack(result).copyWithCount(count), time, energy)
             recipeOutput.accept(id, recipe, buildAdvancement(recipeOutput, id))
         }
-
     }
 }

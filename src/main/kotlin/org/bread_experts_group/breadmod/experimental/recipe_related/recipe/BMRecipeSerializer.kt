@@ -16,6 +16,9 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import java.util.function.Function
 
+// todo look into more efficient codec practices such as Codec#pair
+//  https://docs.neoforged.net/docs/datastorage/codecs
+//  https://docs.neoforged.net/docs/networking/streamcodecs
 abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
     fun <O> itemStackListCodecModule(
         field: String,

@@ -8,7 +8,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeSerializer
@@ -51,15 +50,7 @@ class MultiItemTestRecipe(
 
     class Builder(
         private val results: List<Pair<Item, Int>>
-    ) : BMRecipeBuilder() {
-        private var items = NonNullList.create<SizedIngredient>()
-
-        fun itemRequired(item: Item, count: Int = 1): Builder =
-            this.also { this.items.add(SizedIngredient.of(item, count)) }
-
-        fun itemRequired(tag: TagKey<Item>, count: Int = 1): Builder =
-            this.also { this.items.add(SizedIngredient.of(tag, count)) }
-
+    ) : BMRecipeBuilder.Multi() {
         override fun getResult(): Item = results[0].first
 
         override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
