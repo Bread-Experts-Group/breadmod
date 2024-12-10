@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
-import net.neoforged.api.distmarker.Dist
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.config.ModConfig
@@ -51,7 +50,7 @@ class BreadMod(container: ModContainer) {
     }
 
     init {
-        if (!FMLLoader.isProduction() || FMLLoader.getDist() == Dist.DEDICATED_SERVER) {
+        if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {
             val ctx = LogManager.getContext(false) as LoggerContext
             val uri = this::class.java.getResource("/log4j2.xml")?.toURI()
                 ?: throw IllegalStateException("Failed to load log4j2.xml")
