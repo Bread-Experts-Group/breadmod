@@ -37,6 +37,8 @@ open class CustomFluidTank(
 
     final override fun getTanks(): Int = tanks.size
 
+    fun getFluid(index: Int) = getFluidInTank(index)
+
     override fun getFluidInTank(tank: Int): FluidStack = tanks[tank]
 
     fun setFluidInTank(tank: Int, stack: FluidStack) {

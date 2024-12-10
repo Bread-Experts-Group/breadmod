@@ -9,12 +9,12 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import org.bread_experts_group.breadmod.experimental.fluid_tank.CustomFluidTank
 import org.bread_experts_group.breadmod.experimental.recipe_related.AbstractTestRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import org.bread_experts_group.breadmod.experimental.fluid_tank.CustomFluidTank
 import java.util.*
 
 class SingleFluidRecipeBlockEntity(
@@ -57,8 +57,10 @@ class SingleFluidRecipeBlockEntity(
 
             check.ifPresent { present ->
                 val recipe = present.value
+                val recipeTime = recipe.rTime ?: 0
                 if (!recipe.canFitResults(tank, 1)) return@ifPresent
                 currentRecipe = Optional.of(recipe)
+                maxProgress = recipeTime
             }
         })
     }

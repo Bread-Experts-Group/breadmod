@@ -10,6 +10,7 @@ import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.multi.MultiItemTestRecipe
+import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.single.SingleFluidItemRecipe
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModFluids
@@ -70,5 +71,11 @@ class ModRecipeProvider(
             .fluidRequired(Fluids.WATER, 500)
             .timeRequired(100)
             .save(recipeOutput, modLocation("experimental", "single_fluid_test"))
+
+        SingleFluidItemRecipe.Builder(Items.COD to 4, Fluids.LAVA to 500)
+            .itemRequired(Items.BREAD, 2)
+            .fluidRequired(Fluids.WATER, 500)
+            .timeRequired(100)
+            .save(recipeOutput, modLocation("experimental", "single_fluid_item_test"))
     }
 }

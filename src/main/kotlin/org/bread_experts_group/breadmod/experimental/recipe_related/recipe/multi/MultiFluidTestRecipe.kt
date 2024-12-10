@@ -8,7 +8,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeSerializer
@@ -52,17 +51,9 @@ class MultiFluidTestRecipe(
 
     class Builder(
         private val results: List<Pair<Fluid, Int>>
-    ) : BMRecipeBuilder() {
-        private var fluids = NonNullList.create<SizedFluidIngredient>()
-
+    ) : BMRecipeBuilder.Multi() {
         override fun getResult(): Item = ItemStack.EMPTY.item
         fun getFluidResult(): Fluid = results[0].first
-
-        fun fluidRequired(fluid: Fluid, amount: Int = 1000): Builder =
-            this.also { this.fluids.add(SizedFluidIngredient.of(fluid, amount)) }
-
-        fun fluidRequired(tag: TagKey<Fluid>, amount: Int = 1000): Builder =
-            this.also { this.fluids.add(SizedFluidIngredient.of(tag, amount)) }
 
         override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
             val recipe = MultiFluidTestRecipe(
@@ -73,6 +64,5 @@ class MultiFluidTestRecipe(
             )
             recipeOutput.accept(id, recipe, buildAdvancement(recipeOutput, id))
         }
-
     }
 }

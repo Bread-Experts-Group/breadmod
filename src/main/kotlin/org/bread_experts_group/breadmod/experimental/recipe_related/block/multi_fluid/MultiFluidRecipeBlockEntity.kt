@@ -11,13 +11,12 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
+import org.bread_experts_group.breadmod.experimental.fluid_tank.CustomFluidTank
 import org.bread_experts_group.breadmod.experimental.recipe_related.AbstractTestRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe_related.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
-import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTank
 import java.util.*
 
 class MultiFluidRecipeBlockEntity(
@@ -29,34 +28,34 @@ class MultiFluidRecipeBlockEntity(
     ModBlockEntityTypes.MULTI_FLUID_TEST.get(),
     ModRecipeTypes.MULTI_FLUID.get()
 ) {
-//    val tank: CustomFluidTank by lazy {
-//        object : CustomFluidTank(10000, 4) {
-//            override fun onContentsChanged() {
-//                syncToClients()
-//            }
-//        }
-//    }
-
-    val sidedTest: SidedFluidTank by lazy {
-        SidedFluidTank(
-            arrayListOf(
-                SidedFluidTank.CustomHandler(10000) { syncToClients() },
-                SidedFluidTank.CustomHandler(
-                    10000,
-                    { it.`is`(ModFluids.BREAD_LIQUID.source.get()) }) { syncToClients() },
-                SidedFluidTank.CustomHandler(5000) { syncToClients() },
-                SidedFluidTank.CustomHandler(5000) { syncToClients() }
-            )
-        )
+    val tank: CustomFluidTank by lazy {
+        object : CustomFluidTank(10000, 4) {
+            override fun onContentsChanged() {
+                syncToClients()
+            }
+        }
     }
 
-    private fun getFluid(tank: Int): FluidStack = this.sidedTest.getFluidInTank(tank)
+//    val sidedTest: SidedFluidTank by lazy {
+//        SidedFluidTank(
+//            arrayListOf(
+//                SidedFluidTank.CustomHandler(10000) { syncToClients() },
+//                SidedFluidTank.CustomHandler(
+//                    10000,
+//                    { it.`is`(ModFluids.BREAD_LIQUID.source.get()) }) { syncToClients() },
+//                SidedFluidTank.CustomHandler(5000) { syncToClients() },
+//                SidedFluidTank.CustomHandler(5000) { syncToClients() }
+//            )
+//        )
+//    }
+
+    private fun getFluid(tank: Int): FluidStack = this.tank.getFluidInTank(tank)
 
     override fun tick(level: Level, pos: BlockPos, state: BlockState) {
         currentRecipe.ifPresentOrElse({ activeRecipe ->
             val inputList = listOf(getFluid(0), getFluid(1))
             if (!activeRecipe.inputsStillValid(inputList)) resetRecipe()
-            if (activeRecipe.canFitResults(listOf(getFluid(2), getFluid(3)), sidedTest.tanks[3].capacity)) {
+            if (activeRecipe.canFitResults(listOf(getFluid(2), getFluid(3)), tank.capacity)) {
                 val recipeTime = activeRecipe.rTime ?: 0
                 progress++
                 if (progress >= recipeTime) {
@@ -98,11 +97,11 @@ class MultiFluidRecipeBlockEntity(
         )
         // index 0 for multi-item/fluid recipes should always exist. If it doesn't, then something seriously went wrong...
         if (getFluid(2).isEmpty) {
-            sidedTest.setFluidInTank(2, assemble[0].copyWithAmount(recipe.rFluidOutputs[0].amount))
+            tank.setFluidInTank(2, assemble[0].copyWithAmount(recipe.rFluidOutputs[0].amount))
         } else getFluid(2).amount += recipe.rFluidOutputs[0].amount
         try {
             if (getFluid(3).isEmpty) {
-                sidedTest.setFluidInTank(3, assemble[1].copyWithAmount(recipe.rFluidOutputs[1].amount))
+                tank.setFluidInTank(3, assemble[1].copyWithAmount(recipe.rFluidOutputs[1].amount))
             } else getFluid(3).amount += recipe.rFluidOutputs[1].amount
         } catch (e: Exception) {
             LOGGER.error(e)
@@ -113,14 +112,12 @@ class MultiFluidRecipeBlockEntity(
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
 
-//        tag.put("fluid", CompoundTag().also { tank.writeToNBT(registries, it) })
-        tag.put("fluid", CompoundTag().also { sidedTest.writeToNBT(registries, it) })
+        tag.put("fluid", CompoundTag().also { tank.writeToNBT(registries, it) })
     }
 
     override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.loadAdditional(tag, registries)
 
-//        tank.readFromNBT(registries, tag.getCompound("fluid"))
-        sidedTest.readFromNBT(registries, tag.getCompound("fluid"))
+        tank.readFromNBT(registries, tag.getCompound("fluid"))
     }
 }

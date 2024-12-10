@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.recipe_related.block.single_item
+package org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid_item
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
@@ -14,9 +14,9 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 
-class SingleItemRecipeBlock : BaseEntityBlock(Properties.of()) {
+class SingleFluidItemRecipeBlock : BaseEntityBlock(Properties.of()) {
     companion object {
-        val CODEC = simpleCodec { SingleItemRecipeBlock() }
+        val CODEC = simpleCodec { SingleFluidItemRecipeBlock() }
     }
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
@@ -42,14 +42,14 @@ class SingleItemRecipeBlock : BaseEntityBlock(Properties.of()) {
         hitResult: BlockHitResult
     ): InteractionResult {
         if (!level.isClientSide) {
-            val entity = level.getBlockEntity(pos) as? SingleItemRecipeBlockEntity ?: return InteractionResult.FAIL
+            val entity = level.getBlockEntity(pos) as? SingleFluidItemRecipeBlockEntity ?: return InteractionResult.FAIL
             player.openMenu(entity, pos)
         }
         return InteractionResult.sidedSuccess(level.isClientSide)
     }
 
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
-        SingleItemRecipeBlockEntity(pos, state)
+        SingleFluidItemRecipeBlockEntity(pos, state)
 
     override fun <T : BlockEntity?> getTicker(
         level: Level,
@@ -57,7 +57,7 @@ class SingleItemRecipeBlock : BaseEntityBlock(Properties.of()) {
         blockEntityType: BlockEntityType<T>
     ): BlockEntityTicker<T>? = createTickerHelper(
         blockEntityType,
-        ModBlockEntityTypes.SINGLE_ITEM_TEST.get()
+        ModBlockEntityTypes.SINGLE_FLUID_ITEM_TEST.get()
     ) { tLevel, tPos, tState, tBlockEntity ->
         tBlockEntity.tick(tLevel, tPos, tState)
     }
