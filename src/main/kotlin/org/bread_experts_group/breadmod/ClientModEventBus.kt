@@ -111,6 +111,23 @@ internal object ClientModEventBus {
         )
     }
 
+    private fun modModelLoc(id: String) = ModelResourceLocation.standalone(modLocation(id))
+
+    @Suppress("UNCHECKED_CAST")
+    /**
+     * Adds the chef hat armor layer to any living entity renderer
+     *
+     * @author Logan Mclean
+     * @since 1.0.0
+     * @throws IllegalArgumentException if [type] is not a [LivingEntityRenderer].
+     */
+    private fun addHatLayer(type: EntityType<*>, event: EntityRenderersEvent.AddLayers) {
+        if (event.getRenderer(type) is LivingEntityRenderer<*, *>) {
+            val renderer = event.getRenderer(type) as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+            renderer.addLayer(ChefHatArmorLayer(renderer))
+        } else throw IllegalArgumentException("Expected LivingEntityRenderer, got ${event.getRenderer(type)}")
+    }
+
     @SubscribeEvent
     fun registerAdditionalModels(event: ModelEvent.RegisterAdditional) {
         event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
@@ -131,7 +148,6 @@ internal object ClientModEventBus {
             val entity: LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>? = event.getSkin(skin)
             entity?.addLayer(ChefHatArmorLayer(entity))
             entity?.addLayer(GluonGunBackpackArmorLayer(entity))
-//            entity?.addLayer(GluonGunBackpackArmorLayer(entity))
         }
 
 //        addHatLayer(EntityType.ZOMBIE, event)
@@ -160,22 +176,4 @@ internal object ClientModEventBus {
         event.register(ModMenuTypes.SINGLE_FLUID.get(), ::SingleFluidScreen)
         event.register(ModMenuTypes.SINGLE_FLUID_ITEM.get(), ::SingleFluidItemScreen)
     }
-
-    @Suppress("UNCHECKED_CAST")
-    /**
-     * Adds the chef hat armor layer to any living entity renderer
-     *
-     * @author Logan Mclean
-     * @since 1.0.0
-     * @throws IllegalArgumentException if [type] is not [LivingEntityRenderer]
-     */
-    private fun addHatLayer(type: EntityType<*>, event: EntityRenderersEvent.AddLayers) {
-        if (event.getRenderer(type) is LivingEntityRenderer<*, *>) {
-            val renderer = event.getRenderer(type) as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
-            renderer.addLayer(ChefHatArmorLayer(renderer))
-        } else throw IllegalArgumentException("Expected LivingEntityRenderer, got ${event.getRenderer(type)}")
-    }
-
-    private fun modModelLoc(id: String) =
-        ModelResourceLocation.standalone(modLocation(id))
 }

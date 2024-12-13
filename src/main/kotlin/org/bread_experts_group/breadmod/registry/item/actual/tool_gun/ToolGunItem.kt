@@ -14,8 +14,6 @@ import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.experimental.camera.testCameraView
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.util.render.addBeamTask
-import org.joml.Vector3f
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features
@@ -29,7 +27,7 @@ class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab 
         if (level.isClientSide) {
             testCameraView(player)
             BreadMod.LOGGER.info("hello from client")
-            addBeamTask(Vector3f(0f, 0f, 0f), Vector3f(0f, -10f, 0f), 1f)
+//            addBeamTask(Vector3f(0f, 0f, 0f), Vector3f(0f, -10f, 0f), 1f) // todo busted(?)
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide)
     }

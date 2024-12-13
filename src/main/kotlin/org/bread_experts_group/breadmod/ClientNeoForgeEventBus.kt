@@ -11,17 +11,22 @@ import net.minecraft.Util
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.network.chat.Component
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.util.Mth.clamp
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.client.event.ClientTickEvent
+import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
+import org.bread_experts_group.breadmod.experimental.TestScreen
+import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.util.render.*
 import kotlin.math.cos
@@ -91,6 +96,18 @@ internal object ClientNeoForgeEventBus {
             renderBuffer.removeIf { (mutableList, renderEvent) ->
                 renderEvent.invoke(mutableList, event)
             }
+        }
+    }
+
+    @SubscribeEvent
+    fun onMouseEvent(event: MouseScrollingEvent) {
+        val player = rgMinecraft.player ?: return
+        val stack = player.getItemInHand(player.usedItemHand)
+        if (player.isShiftKeyDown and stack.`is`(ModItems.TOOL_GUN)) {
+            player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
+            player.sendSystemMessage(Component.literal("Scrolling cancelled!"))
+            rgMinecraft.setScreen(TestScreen(Component.literal("TestScreen")))
+            event.isCanceled = true
         }
     }
 

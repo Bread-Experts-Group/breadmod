@@ -6,6 +6,7 @@ import net.minecraft.client.Screenshot
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.client.renderer.texture.DynamicTexture
+import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.util.render.rgMinecraft
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
@@ -13,6 +14,9 @@ import java.awt.Color
 class CameraOverlay : LayeredDraw.Layer {
     override fun render(guiGraphics: GuiGraphics, deltaTracker: DeltaTracker) {
         val mc = Minecraft.getInstance()
+        val player = mc.player ?: return
+        val stack = if (!player.mainHandItem.isEmpty) player.mainHandItem else player.offhandItem
+        if (!stack.`is`(ModItems.TEST_BREAD)) return
         val renderTarget = Minecraft.getInstance().mainRenderTarget
         val image = Screenshot.takeScreenshot(renderTarget)
         val texture = DynamicTexture(image)

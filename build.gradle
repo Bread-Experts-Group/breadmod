@@ -107,7 +107,8 @@ dependencies {
     // Mod Compatibility //
 
     // Jade (WAILA)
-    implementation "curse.maven:jade-324717:5706149"
+    runtimeOnly "curse.maven:jade-324717:5976517"
+//    runtimeOnly "curse.maven:the-one-probe-245211:5836106"
 
     // Just Enough Items (JEI)
     compileOnly("mezz.jei:jei-1.21.1-neoforge-api:19.10.0.126")

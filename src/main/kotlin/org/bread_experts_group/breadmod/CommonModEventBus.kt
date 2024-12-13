@@ -192,7 +192,12 @@ internal object CommonModEventBus {
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,
             ModBlockEntityTypes.DOUGH_MACHINE.get()
-        ) { entity, _: Direction? -> entity.fluidHandler }
+        ) { entity, direction: Direction? ->
+            when (direction) {
+                Direction.UP -> entity.fluidHandler
+                else -> null
+            }
+        }
 
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,
@@ -207,7 +212,17 @@ internal object CommonModEventBus {
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,
             ModBlockEntityTypes.SINGLE_FLUID_ITEM_TEST.get()
-        ) { entity, _: Direction? -> entity.tank }
+        ) { entity, direction: Direction? -> entity.tank }
+
+//        event.registerBlock(
+//            Capabilities.FluidHandler.BLOCK,
+//            { level, pos, state, entity, direction ->
+//                if (entity is SingleFluidItemRecipeBlockEntity) {
+//                    if (direction == Direction.UP) entity.tank else null
+//                } else null
+//            },
+//            ModBlocks.SINGLE_FLUID_ITEM_TEST.asBlock()
+//        )
 
 //        event.registerBlockEntity(
 //            Capabilities.FluidHandler.BLOCK,
