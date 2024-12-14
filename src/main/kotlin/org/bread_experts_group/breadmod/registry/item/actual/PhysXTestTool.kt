@@ -139,7 +139,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)) {
     private var physX: Any = 0
 
     fun createPhysX() {
-        if(physX == 0) physX = Class.forName(
+        if (physX == 0) physX = Class.forName(
             "org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool\$PhysX",
             true,
             classLoader
@@ -147,7 +147,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)) {
     }
 
     fun destroyPhysX() {
-        if(physX != 0) {
+        if (physX != 0) {
             physX::class.java.getDeclaredMethod("cleanup").invoke(physX)
             physX = 0
         }

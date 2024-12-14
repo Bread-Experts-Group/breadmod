@@ -18,7 +18,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openGuiEditor
+import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openModeGui
 import org.bread_experts_group.breadmod.client.gui.CameraOverlay
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
@@ -69,7 +69,8 @@ internal object ClientModEventBus {
     @SubscribeEvent
     fun registerKeyMappings(event: RegisterKeyMappingsEvent) {
 //        event.register(changeMode)
-        event.register(openGuiEditor)
+//        event.register(openGuiEditor)
+        event.register(openModeGui)
     }
 
     @SubscribeEvent

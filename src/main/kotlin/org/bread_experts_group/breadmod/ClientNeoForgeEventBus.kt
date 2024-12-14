@@ -18,14 +18,14 @@ import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.client.event.ClientTickEvent
+import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
-import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
-import org.bread_experts_group.breadmod.experimental.TestScreen
+import org.bread_experts_group.breadmod.experimental.tool_gun_mode.TestScreen
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.util.render.*
@@ -106,18 +106,34 @@ internal object ClientNeoForgeEventBus {
         if (player.isShiftKeyDown and stack.`is`(ModItems.TOOL_GUN)) {
             player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
             player.sendSystemMessage(Component.literal("Scrolling cancelled!"))
-            rgMinecraft.setScreen(TestScreen(Component.literal("TestScreen")))
             event.isCanceled = true
         }
     }
 
-    val openGuiEditor = KeyMapping(
-        "controls.${BreadMod.ID}.gui_editor",
+    @SubscribeEvent
+    fun onKeyboardPress(event: InputEvent.Key) {
+        val player = rgMinecraft.player ?: return
+        val stack = player.getItemInHand(player.usedItemHand)
+        if (event.key == openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN)) {
+            rgMinecraft.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
+        }
+    }
+
+    val openModeGui = KeyMapping(
+        "controls.${BreadMod.ID}.mode_screen",
         KeyConflictContext.UNIVERSAL,
-        KeyModifier.SHIFT,
-        InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F1),
-        "controls.${BreadMod.ID}.category"
+        KeyModifier.NONE,
+        InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R),
+        "controls.${BreadMod.ID}"
     )
+
+//    val openGuiEditor = KeyMapping(
+//        "controls.${BreadMod.ID}.gui_editor",
+//        KeyConflictContext.UNIVERSAL,
+//        KeyModifier.SHIFT,
+//        InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F1),
+//        "controls.${BreadMod.ID}.category"
+//    )
 
 //    private fun <T> handleHoldScreenInput(
 //        holdScreen: T,
@@ -174,22 +190,22 @@ internal object ClientNeoForgeEventBus {
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
     fun login(event: PlayerEvent.PlayerLoggedInEvent) {
-        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
-            rgMinecraft.options.keyMappings,
-            openGuiEditor
-        )
+//        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
+//            rgMinecraft.options.keyMappings,
+//            openGuiEditor
+//        )
         PhysXTestTool.createPhysX()
     }
 
-    private var createdMappings = listOf<KeyMapping>()
+//    private var createdMappings = listOf<KeyMapping>()
 
     @Suppress("UNUSED_PARAMETER")
     @SubscribeEvent
     fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
-        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
-            rgMinecraft.options.keyMappings,
-            *createdMappings.toTypedArray()
-        )
+//        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
+//            rgMinecraft.options.keyMappings,
+//            *createdMappings.toTypedArray()
+//        )
         PhysXTestTool.destroyPhysX()
     }
 
