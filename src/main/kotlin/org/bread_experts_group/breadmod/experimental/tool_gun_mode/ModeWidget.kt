@@ -16,7 +16,8 @@ abstract class ModeWidget(
     val icon: ItemStack
 ) : AbstractWidget(0, 0, 35, 40, title) {
     abstract val previewImage: ResourceLocation
-    abstract val description: Component
+    abstract val modeName: Component
+    abstract val modeDescription: Component
 
     override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
         guiGraphics.pose().pushPose()

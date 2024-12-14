@@ -12,8 +12,8 @@ import java.awt.Color
 // todo proof of concept
 //  needs proper gui centering, and actual logic for putting together selectable modes and previews
 class TestScreen(title: Component) : Screen(title) {
-    var leftPos = width / 2
-    var topPos = height / 2
+    var leftPos = (width - 280) / 2
+    var topPos = (height - 210) / 2
 
     val modes: List<ModeWidget> = listOf(
         ExplodeWidget(),
@@ -34,10 +34,9 @@ class TestScreen(title: Component) : Screen(title) {
     override fun isPauseScreen(): Boolean = false
 
     override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
         val poseStack = guiGraphics.pose()
         poseStack.pushPose()
-        renderBlurredBackground(partialTick)
-        poseStack.translate(leftPos + 85f, topPos + 10f, 0f)
         guiGraphics.fill(RenderType.gui(), leftPos, topPos, leftPos + 173, topPos + 200, Color.RED.rgb)
         guiGraphics.fill(
             RenderType.gui(),
@@ -64,11 +63,20 @@ class TestScreen(title: Component) : Screen(title) {
             guiGraphics.fill(RenderType.gui(), leftPos + 179, topPos + 3, leftPos + 296, topPos + 70, Color.BLACK.rgb)
             guiGraphics.drawString(
                 rgMinecraft.font,
-                widget.description,
+                widget.modeName,
                 leftPos + 179,
-                topPos + 75,
+                topPos + 73,
                 Color.BLACK.rgb,
                 false
+            )
+            guiGraphics.fill(RenderType.gui(), leftPos + 176, topPos + 83, leftPos + 299, topPos + 84, Color.RED.rgb)
+            guiGraphics.drawWordWrap(
+                rgMinecraft.font,
+                widget.modeDescription,
+                leftPos + 179,
+                topPos + 86,
+                120,
+                Color.BLACK.rgb
             )
             poseStack.translate(leftPos + 179.8f, topPos + 4f, 0f)
             poseStack.scaleFlat(0.135f)
@@ -103,18 +111,16 @@ class TestScreen(title: Component) : Screen(title) {
         } else super.keyPressed(keyCode, scanCode, modifiers)
 
     override fun init() {
-//        repeat(modes.size) { index ->
-//            val y = 1 + ((index / 4) * 2)
-//            modes[index].x = leftPos + 90 + index
-//            modes[index].y = topPos + 25 * y
-//        }
+        leftPos = (width - 280) / 2
+        topPos = (height - 210) / 2
         gridList = buildList {
             repeat(5) { y ->
                 repeat(4) { x ->
-                    add(leftPos + 90 + x * 40 to topPos + 25 + y * 45)
+                    add(leftPos + 10 + x * 40 to topPos + 15 + y * 45)
                 }
             }
         }
+
         repeat(modes.size) { index ->
             modes[index].x = gridList[index].first
             modes[index].y = gridList[index].second
@@ -122,13 +128,5 @@ class TestScreen(title: Component) : Screen(title) {
         modes.forEach {
             addRenderableWidget(it)
         }
-//        addRenderableWidget(
-//            ModeWidget(
-//                leftPos + 90,
-//                topPos + 25,
-//                Component.literal("Exploder"),
-//                Blocks.TNT.asItem().defaultInstance
-//            )
-//        )
     }
 }

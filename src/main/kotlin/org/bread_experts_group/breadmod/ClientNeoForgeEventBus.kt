@@ -114,7 +114,7 @@ internal object ClientNeoForgeEventBus {
     fun onKeyboardPress(event: InputEvent.Key) {
         val player = rgMinecraft.player ?: return
         val stack = player.getItemInHand(player.usedItemHand)
-        if (event.key == openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN)) {
+        if (event.key == openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN) && rgMinecraft.screen == null) {
             rgMinecraft.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
         }
     }
