@@ -30,6 +30,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
@@ -151,6 +152,12 @@ internal object CommonModEventBus {
             BeamPacket.TYPE,
             BeamPacket.STREAM_CODEC,
             BeamPacket::handleClientboundPacket
+        )
+
+        registrar.playToServer(
+            ToolGunActionPacket.TYPE,
+            ToolGunActionPacket.STREAM_CODEC,
+            ToolGunActionPacket::handleServerboundPacket
         )
     }
 

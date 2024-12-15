@@ -9,9 +9,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
-import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.experimental.camera.testCameraView
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import java.util.function.Supplier
@@ -25,8 +23,8 @@ class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab 
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         if (usedHand != InteractionHand.MAIN_HAND) return InteractionResultHolder.fail(player.getItemInHand(usedHand))
         if (level.isClientSide) {
-            testCameraView(player)
-            BreadMod.LOGGER.info("hello from client")
+//            testCameraView(player)
+//            BreadMod.LOGGER.info("hello from client")
 //            addBeamTask(Vector3f(0f, 0f, 0f), Vector3f(0f, -10f, 0f), 1f) // todo busted(?)
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide)

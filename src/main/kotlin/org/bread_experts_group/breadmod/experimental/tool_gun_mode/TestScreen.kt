@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunModeData.modeWidgets
 import org.bread_experts_group.breadmod.util.render.rgMinecraft
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
@@ -14,21 +15,6 @@ import java.awt.Color
 class TestScreen(title: Component) : Screen(title) {
     var leftPos = (width - 280) / 2
     var topPos = (height - 210) / 2
-
-    val modes: List<ModeWidget> = listOf(
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget(),
-        ExplodeWidget()
-    )
-
     var gridList: List<Pair<Int, Int>> = listOf()
 
     override fun isPauseScreen(): Boolean = false
@@ -121,11 +107,11 @@ class TestScreen(title: Component) : Screen(title) {
             }
         }
 
-        repeat(modes.size) { index ->
-            modes[index].x = gridList[index].first
-            modes[index].y = gridList[index].second
+        repeat(modeWidgets.size) { index ->
+            modeWidgets[index].x = gridList[index].first
+            modeWidgets[index].y = gridList[index].second
         }
-        modes.forEach {
+        modeWidgets.forEach {
             addRenderableWidget(it)
         }
     }

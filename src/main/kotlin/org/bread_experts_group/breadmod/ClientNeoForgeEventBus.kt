@@ -24,8 +24,10 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.experimental.tool_gun_mode.TestScreen
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.util.render.*
@@ -100,7 +102,7 @@ internal object ClientNeoForgeEventBus {
     }
 
     @SubscribeEvent
-    fun onMouseEvent(event: MouseScrollingEvent) {
+    fun onMouseScroll(event: MouseScrollingEvent) {
         val player = rgMinecraft.player ?: return
         val stack = player.getItemInHand(player.usedItemHand)
         if (player.isShiftKeyDown and stack.`is`(ModItems.TOOL_GUN)) {
@@ -116,6 +118,18 @@ internal object ClientNeoForgeEventBus {
         val stack = player.getItemInHand(player.usedItemHand)
         if (event.key == openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN) && rgMinecraft.screen == null) {
             rgMinecraft.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
+        }
+    }
+
+    @SubscribeEvent
+    fun onMouseInput(event: InputEvent.MouseButton.Post) {
+        val player = rgMinecraft.player ?: return
+        val stack = player.getItemInHand(player.usedItemHand)
+        if (event.button == InputConstants.MOUSE_BUTTON_RIGHT &&
+            event.action == InputConstants.PRESS && stack.`is`(ModItems.TOOL_GUN)
+        ) {
+            PacketDistributor.sendToServer(ToolGunActionPacket(true))
+//            println("mouse button right clicked!")
         }
     }
 
