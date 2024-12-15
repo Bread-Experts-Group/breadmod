@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.ModFonts
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
 
@@ -18,7 +18,7 @@ internal class WarOverlay : LayeredDraw.Layer {
     private var lastTick: Int = 0
 
     override fun render(guiGraphics: GuiGraphics, deltaTracker: DeltaTracker) {
-        val guiTicks = rgMinecraft.gui.guiTicks
+        val guiTicks = localClient.gui.guiTicks
         val colorPair: Triple<Float, Float, Float> =
             if (isTimerIncreasing) Triple(0.376f, 0.91f, 0.471f)
             else if (setTimer > 0) Triple(0.922f, 0.353f, 0f)
@@ -42,7 +42,7 @@ internal class WarOverlay : LayeredDraw.Layer {
 
         if (timerPosition > -60f) {
             val poseStack = guiGraphics.pose()
-            val scaledWidth = rgMinecraft.window.guiScaledWidth
+            val scaledWidth = localClient.window.guiScaledWidth
 
             poseStack.pushPose()
             poseStack.translate(scaledWidth.toDouble() / 3.3, timerPosition.toDouble(), 0.0)
@@ -54,7 +54,7 @@ internal class WarOverlay : LayeredDraw.Layer {
             poseStack.translate(54.0, 17.0, 0.0)
             guiGraphics.setColor(colorPair.first, colorPair.second, colorPair.third, 1f)
             guiGraphics.drawString(
-                rgMinecraft.font,
+                localClient.font,
                 Component
                     .literal(
                         "${(timeLeft / 60).toString().padStart(2, '0')}:${

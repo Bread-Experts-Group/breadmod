@@ -103,7 +103,7 @@ internal object ClientNeoForgeEventBus {
 
     @SubscribeEvent
     fun onMouseScroll(event: MouseScrollingEvent) {
-        val player = rgMinecraft.player ?: return
+        val player = localClient.player ?: return
         val stack = player.getItemInHand(player.usedItemHand)
         if (player.isShiftKeyDown and stack.`is`(ModItems.TOOL_GUN)) {
             player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
@@ -114,16 +114,16 @@ internal object ClientNeoForgeEventBus {
 
     @SubscribeEvent
     fun onKeyboardPress(event: InputEvent.Key) {
-        val player = rgMinecraft.player ?: return
+        val player = localClient.player ?: return
         val stack = player.getItemInHand(player.usedItemHand)
-        if (event.key == openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN) && rgMinecraft.screen == null) {
-            rgMinecraft.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
+        if (event.key == openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN) && localClient.screen == null) {
+            localClient.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
         }
     }
 
     @SubscribeEvent
     fun onMouseInput(event: InputEvent.MouseButton.Post) {
-        val player = rgMinecraft.player ?: return
+        val player = localClient.player ?: return
         val stack = player.getItemInHand(player.usedItemHand)
         if (event.button == InputConstants.MOUSE_BUTTON_RIGHT &&
             event.action == InputConstants.PRESS && stack.`is`(ModItems.TOOL_GUN)
@@ -230,7 +230,7 @@ internal object ClientNeoForgeEventBus {
                 machTrailData.tick()
                 if (!machTrailData.player.isSprinting) {
                     machTrailData.machFourSound.shouldLoop = false
-                    rgMinecraft.soundManager.stop(machTrailData.machFourSound)
+                    localClient.soundManager.stop(machTrailData.machFourSound)
                     machTrailMap.remove(machTrailData.playerProfile)
                 }
             }

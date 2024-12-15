@@ -19,7 +19,7 @@ import java.security.SecureRandom
 import kotlin.math.round
 
 class ToolGunItemRenderer :
-    BlockEntityWithoutLevelRenderer(rgMinecraft.blockEntityRenderDispatcher, rgMinecraft.entityModels) {
+    BlockEntityWithoutLevelRenderer(localClient.blockEntityRenderDispatcher, localClient.entityModels) {
     private companion object {
         val secureRandom = SecureRandom()
     }
@@ -39,10 +39,10 @@ class ToolGunItemRenderer :
     ) {
 //    val toolGunItem = stack.item as ToolGunItem
 //      val toolGunMode = toolGunItem.getCurrentMode(stack)
-        val modelManager = rgMinecraft.modelManager
-        val itemRenderer = rgMinecraft.itemRenderer
-        val blockModelRenderer = rgMinecraft.blockRenderer.modelRenderer
-        val font = rgMinecraft.font
+        val modelManager = localClient.modelManager
+        val itemRenderer = localClient.itemRenderer
+        val blockModelRenderer = localClient.blockRenderer.modelRenderer
+        val font = localClient.font
 
         val mainModel = modelManager.getModel(mainModelLocation)
         val coilModel = modelManager.getModel(coilModelLocation)

@@ -5,7 +5,7 @@ import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 
 class MachSoundInstance(
     soundEvent: SoundEvent,
@@ -21,7 +21,7 @@ class MachSoundInstance(
     }
 
     override fun tick() {
-        val currentPlayer = player ?: rgMinecraft.player ?: return
+        val currentPlayer = player ?: localClient.player ?: return
         if (!currentPlayer.isRemoved && timer in range && !stopped) {
             stopped = false
             looping = true

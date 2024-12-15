@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.world.entity.player.Player
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 
 // todo collection of hat, player, armor, and item held models to be rendered in the mach trail
@@ -21,16 +21,16 @@ class MachTrailModel(
     var currentColor: Int
 ) {
     private val playerId = playerProfile.id
-    private val connection = rgMinecraft.connection!!
+    private val connection = localClient.connection!!
     private val playerInfo = connection.getPlayerInfo(playerId)!!
     private val playerSkin = playerInfo.skin
     private val playerTexture = playerSkin.texture
     private val playerModelType = playerSkin.model
-    private val player = rgMinecraft.level!!.getPlayerByUUID(playerId)!!
+    private val player = localClient.level!!.getPlayerByUUID(playerId)!!
     private val limbSwing = player.walkAnimation.position()
 
-    private val entityModels = rgMinecraft.entityModels
-    private val bufferSource = rgMinecraft.renderBuffers().bufferSource()
+    private val entityModels = localClient.entityModels
+    private val bufferSource = localClient.renderBuffers().bufferSource()
 
     private val chefHatModel = ChefHatModel(entityModels)
     private val playerModel = PlayerModel<Player>(

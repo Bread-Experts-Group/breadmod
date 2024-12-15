@@ -27,7 +27,7 @@ fun drawTexturedQuad(
     vertex2: Vector3f = Vector3f(1f, 0f, 1f),
     vertex3: Vector3f = Vector3f(1f, 0f, 0f)
 ) {
-    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(textureLocation)
+    val sprite = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(textureLocation)
     drawQuad(
         poseStack, buffer, renderType, color,
         vertex0,

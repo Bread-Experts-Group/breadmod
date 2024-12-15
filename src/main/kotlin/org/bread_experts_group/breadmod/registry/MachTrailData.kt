@@ -4,10 +4,10 @@ import com.mojang.authlib.GameProfile
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.render.renderMachTrail
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 
 data class MachTrailData(var playerProfile: GameProfile) {
-    val player = rgMinecraft.level?.getPlayerByUUID(playerProfile.id)!!
+    val player = localClient.level?.getPlayerByUUID(playerProfile.id)!!
     private val machOneSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_ONE.get(), 1..20, player)
     private val machTwoSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_TWO.get(), 21..40, player)
     private val machThreeSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_THREE.get(), 40..70, player)
@@ -16,7 +16,7 @@ data class MachTrailData(var playerProfile: GameProfile) {
     private var shouldTick: Boolean = true
 
     fun tick() {
-        val soundManager = rgMinecraft.soundManager
+        val soundManager = localClient.soundManager
         if (player.isSprinting && shouldTick) {
             machOneSound.timer = sprintTimer
             machTwoSound.timer = sprintTimer

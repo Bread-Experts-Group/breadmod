@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
 
@@ -31,7 +31,7 @@ abstract class ModeWidget(
         )
         guiGraphics.fill(RenderType.gui(), x + 1, y + 1, x + 34, y + 39, Color.DARK_GRAY.rgb)
         guiGraphics.drawScrollingString(
-            rgMinecraft.font,
+            localClient.font,
             message,
             x + 2,
             x + 33,

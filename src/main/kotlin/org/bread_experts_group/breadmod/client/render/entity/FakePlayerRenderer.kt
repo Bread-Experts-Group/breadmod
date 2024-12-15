@@ -11,7 +11,7 @@ import net.minecraft.client.resources.DefaultPlayerSkin
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 
 class FakePlayerRenderer(
     context: EntityRendererProvider.Context,
@@ -91,7 +91,7 @@ class FakePlayerRenderer(
     }
 
     private fun getPlayerInfo(entity: FakePlayer): PlayerInfo? {
-        val connection = rgMinecraft.connection ?: return null
+        val connection = localClient.connection ?: return null
         return connection.getPlayerInfo(entity.getOwnerUUID())
     }
 

@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunModeData.modeWidgets
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
 
@@ -43,12 +43,12 @@ class TestScreen(title: Component) : Screen(title) {
             Color(150, 150, 150).rgb
         )
 
-        guiGraphics.drawString(rgMinecraft.font, title, leftPos + 2, topPos + 2, Color.BLACK.rgb, false)
+        guiGraphics.drawString(localClient.font, title, leftPos + 2, topPos + 2, Color.BLACK.rgb, false)
         if (focused is ModeWidget) {
             val widget = focused as ModeWidget
             guiGraphics.fill(RenderType.gui(), leftPos + 179, topPos + 3, leftPos + 296, topPos + 70, Color.BLACK.rgb)
             guiGraphics.drawString(
-                rgMinecraft.font,
+                localClient.font,
                 widget.modeName,
                 leftPos + 179,
                 topPos + 73,
@@ -57,7 +57,7 @@ class TestScreen(title: Component) : Screen(title) {
             )
             guiGraphics.fill(RenderType.gui(), leftPos + 176, topPos + 83, leftPos + 299, topPos + 84, Color.RED.rgb)
             guiGraphics.drawWordWrap(
-                rgMinecraft.font,
+                localClient.font,
                 widget.modeDescription,
                 leftPos + 179,
                 topPos + 86,
@@ -79,7 +79,7 @@ class TestScreen(title: Component) : Screen(title) {
             )
         } else {
             guiGraphics.drawWordWrap(
-                rgMinecraft.font,
+                localClient.font,
                 Component.literal("Click on any of the modes to display their preview."),
                 leftPos + 179,
                 topPos + 3,

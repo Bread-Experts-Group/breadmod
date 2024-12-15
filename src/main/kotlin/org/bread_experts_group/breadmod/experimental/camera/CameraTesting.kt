@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.util.render.initialTranslate
 import org.bread_experts_group.breadmod.util.render.renderBuffer
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 
 fun testCameraView(player: Player) {
     val x = player.x
@@ -30,7 +30,7 @@ fun testCameraView(player: Player) {
         val renderTarget = Minecraft.getInstance().mainRenderTarget
         val image = screenshot(renderTarget)
         val texture = DynamicTexture(image)
-        val resource = rgMinecraft.textureManager.register("test", texture)
+        val resource = localClient.textureManager.register("test", texture)
         poseStack.mulPose(Axis.XN.rotationDegrees(90f))
 
         RenderSystem.setShaderTexture(0, resource)
@@ -42,7 +42,7 @@ fun testCameraView(player: Player) {
         bufferBuilder.addVertex(pose, 3f, 0f, 2f).setUv(0f, 0f)
         bufferBuilder.addVertex(pose, 3f, 0f, 0f).setUv(0f, 1f)
         BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
-        rgMinecraft.textureManager.release(resource)
+        localClient.textureManager.release(resource)
         image.close()
 
         renderStageEvent.poseStack.popPose()

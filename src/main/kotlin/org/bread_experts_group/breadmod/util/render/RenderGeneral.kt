@@ -54,7 +54,7 @@ import kotlin.math.min
  * Main minecraft instance
  */
 @Internal
-val rgMinecraft: Minecraft = Minecraft.getInstance()
+val localClient: Minecraft = Minecraft.getInstance()
 internal typealias RenderBuffer = MutableList<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>
 
 internal var skyColorMixinActive: Boolean = false
@@ -97,7 +97,7 @@ val machTrailMap: MutableMap<GameProfile, MachTrailData> = mutableMapOf()
  */
 fun renderMachTrail(playerProfile: GameProfile) {
     val playerId = playerProfile.id
-    val level = rgMinecraft.level ?: return
+    val level = localClient.level ?: return
     val player = level.getPlayerByUUID(playerId) ?: return
     val x = player.x
     val y = player.y
@@ -156,7 +156,7 @@ fun addMultiblockIdentifier(
     val x = pos.x.toDouble()
     val y = pos.y.toDouble()
     val z = pos.z.toDouble()
-    val modelManager = rgMinecraft.modelManager
+    val modelManager = localClient.modelManager
     val wrongModel = modelManager.getModel(modelLocation("block/outline/outline_wrong"))
     val rightModel = modelManager.getModel(modelLocation("block/outline/outline_right"))
     val stateCheck: BakedModel = if (state.`is`(ModBlocks.BREAD_BLOCK.get().block)) rightModel else wrongModel
@@ -167,9 +167,9 @@ fun addMultiblockIdentifier(
         poseStack.pushPose()
         poseStack.initialTranslate(camera)
         poseStack.translate(x, y, z)
-        rgMinecraft.blockRenderer.modelRenderer.renderModel(
+        localClient.blockRenderer.modelRenderer.renderModel(
             poseStack.last(),
-            rgMinecraft.renderBuffers().bufferSource().getBuffer(RenderType.translucent()),
+            localClient.renderBuffers().bufferSource().getBuffer(RenderType.translucent()),
             Blocks.AIR.defaultBlockState(),
             stateCheck,
             1f,
@@ -186,9 +186,9 @@ fun addMultiblockIdentifier(
             Component.literal(id.toString()).visualOrderText,
             Color.WHITE.rgb,
             Color(0f, 0f, 0f, 0.5f).rgb,
-            rgMinecraft.font,
+            localClient.font,
             poseStack,
-            rgMinecraft.renderBuffers().bufferSource(),
+            localClient.renderBuffers().bufferSource(),
             false,
             15728880
         )
@@ -204,9 +204,9 @@ fun addMultiblockIdentifier(
  * @since 1.0.0
  */
 fun addBeamTask(start: Vector3f, end: Vector3f, thickness: Float?) {
-    val level = rgMinecraft.level
-    val player = rgMinecraft.player
-    val bufferSource = rgMinecraft.renderBuffers().bufferSource()
+    val level = localClient.level
+    val player = localClient.player
+    val bufferSource = localClient.renderBuffers().bufferSource()
 
     renderBuffer.add(mutableListOf(1F) to { mutableList, renderStageEvent ->
         val currentOpacity = mutableList[0]
@@ -310,7 +310,7 @@ fun GuiGraphics.renderFluid(
     x: Float, y: Float, width: Int, height: Int,
     fluid: Fluid, flowing: Boolean, direction: Direction = Direction.NORTH,
 ) {
-    val atlas = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+    val atlas = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
     val ext = IClientFluidTypeExtensions.of(fluid)
     val spriteDiff = if (flowing) {
         val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
@@ -395,7 +395,7 @@ fun drawScaledText(
 ) {
     poseStack.scaleFlat(scale)
     guiGraphics.drawString(
-        rgMinecraft.font,
+        localClient.font,
         text,
         x,
         y,
@@ -422,7 +422,7 @@ fun renderBlockModel(
     green: Float = 1f,
     blue: Float = 1f
 ) {
-    rgMinecraft.blockRenderer.modelRenderer.renderModel(
+    localClient.blockRenderer.modelRenderer.renderModel(
         poseStack.last(),
         bufferSource.getBuffer(renderType),
         blockEntity.blockState,
@@ -449,7 +449,7 @@ fun ModelBlockRenderer.renderBlockModel(
     green: Float = 1f,
     blue: Float = 1f
 ) {
-    val blockModel = rgMinecraft.modelManager.blockModelShaper.getBlockModel(blockState)
+    val blockModel = localClient.modelManager.blockModelShaper.getBlockModel(blockState)
     renderModel(
         lastPose,
         buffer.getBuffer(renderType),
@@ -498,7 +498,7 @@ fun renderStaticItem(
     blockEntity: BlockEntity,
     packedLight: Int
 ) {
-    val itemRenderer = rgMinecraft.itemRenderer
+    val itemRenderer = localClient.itemRenderer
     itemRenderer.renderStatic(
         stack,
         ItemDisplayContext.FIXED,
@@ -713,7 +713,7 @@ fun drawCenteredTextOnSide(
     poseStack.pushPose()
     translateOnBlockSide(
         blockState, direction, poseStack,
-        posX - rgMinecraft.font.width(component.visualOrderText) / 2,
+        posX - localClient.font.width(component.visualOrderText) / 2,
         posY, posZ
     )
     poseStack.mulPose(Axis.XN.rotationDegrees(180f))

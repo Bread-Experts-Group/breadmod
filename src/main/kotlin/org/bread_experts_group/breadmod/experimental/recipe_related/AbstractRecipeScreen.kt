@@ -5,7 +5,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import java.awt.Color
 
 abstract class AbstractRecipeScreen<MENU : AbstractTestRecipeMenu>(
@@ -25,14 +25,14 @@ abstract class AbstractRecipeScreen<MENU : AbstractTestRecipeMenu>(
         )
 
         guiGraphics.drawString(
-            rgMinecraft.font,
+            localClient.font,
             "progress: ${menu.parent.progress}",
             leftPos + 10,
             topPos + 20,
             Color.WHITE.rgb,
         )
         guiGraphics.drawString(
-            rgMinecraft.font,
+            localClient.font,
             "max progress: ${menu.parent.maxProgress}",
             leftPos + 80,
             topPos + 20,

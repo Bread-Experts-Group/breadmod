@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.util.plus
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import org.joml.Matrix4f
 import java.awt.Color
@@ -26,7 +26,7 @@ import java.awt.Color
 class GluonGunBackpackArmorLayer(
     renderer: RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
 ) : RenderLayer<LivingEntity, EntityModel<LivingEntity>>(renderer) {
-    private val backpackModel = GluonGunBackpackModel(rgMinecraft.entityModels)
+    private val backpackModel = GluonGunBackpackModel(localClient.entityModels)
 
     override fun render(
         poseStack: PoseStack,

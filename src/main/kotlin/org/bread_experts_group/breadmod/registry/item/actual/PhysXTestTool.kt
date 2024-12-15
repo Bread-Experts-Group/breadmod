@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.util.render.initialTranslate
 import org.bread_experts_group.breadmod.util.render.renderBlockModel
 import org.bread_experts_group.breadmod.util.render.renderBuffer
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import physx.PxTopLevelFunctions
 import physx.common.*
 import physx.geometry.PxBoxGeometry
@@ -220,9 +220,9 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)) {
                     event.poseStack.pushPose()
                     event.poseStack.initialTranslate(event.camera)
                     event.poseStack.translate(actor.globalPose.p.x, actor.globalPose.p.y, actor.globalPose.p.z)
-                    rgMinecraft.blockRenderer.modelRenderer.renderBlockModel(
+                    localClient.blockRenderer.modelRenderer.renderBlockModel(
                         event.poseStack.last(),
-                        rgMinecraft.renderBuffers().bufferSource(),
+                        localClient.renderBuffers().bufferSource(),
                         ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
                         0x7FFFFFFF,
                         OverlayTexture.NO_OVERLAY

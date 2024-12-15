@@ -13,7 +13,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.util.render.drawScaledText
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 import java.awt.Color
 
 class ToolGunOverlay : LayeredDraw.Layer {
@@ -25,15 +25,15 @@ class ToolGunOverlay : LayeredDraw.Layer {
         deltaTracker: DeltaTracker
     ) {
         val poseStack = guiGraphics.pose()
-        val screenWidth = rgMinecraft.window.screenWidth
-        val screenHeight = rgMinecraft.window.screenHeight
+        val screenWidth = localClient.window.screenWidth
+        val screenHeight = localClient.window.screenHeight
         val x = screenWidth - (screenWidth - 3)
         val y = screenHeight - (screenHeight - 3)
-        val player = rgMinecraft.player ?: return
+        val player = localClient.player ?: return
         val handStack = player.getItemInHand(InteractionHand.MAIN_HAND) ?: return
         val item = handStack.item
 
-        if (!rgMinecraft.options.hideGui && item is ToolGunItem) {
+        if (!localClient.options.hideGui && item is ToolGunItem) {
             RenderSystem.enableBlend()
             renderBackground(guiGraphics, poseStack, x, y)
 

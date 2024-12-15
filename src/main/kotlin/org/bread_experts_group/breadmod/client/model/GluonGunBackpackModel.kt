@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.builders.*
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.util.render.rgMinecraft
+import org.bread_experts_group.breadmod.util.render.localClient
 
 
 class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
@@ -35,7 +35,7 @@ class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
         color: Int
     ): Unit = renderToBuffer(
         poseStack,
-        rgMinecraft.renderBuffers().bufferSource().getBuffer(renderType(BACKPACK_TEXTURE)),
+        localClient.renderBuffers().bufferSource().getBuffer(renderType(BACKPACK_TEXTURE)),
         packedLight,
         packedOverlay,
         color
