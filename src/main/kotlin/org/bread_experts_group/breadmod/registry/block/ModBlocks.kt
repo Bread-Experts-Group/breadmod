@@ -20,6 +20,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeBlock
@@ -335,6 +336,13 @@ object ModBlocks {
                     Color.BLUE.rgb
             }
         },
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
+    )
+
+    @DataGenerateLanguage("en_us", "Jade Fluid Tank Test Block")
+    val JADE_FLUID_TANK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "jade_fluid_tank",
+        { FluidTankJadeBlock() },
         { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 }

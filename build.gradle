@@ -107,7 +107,7 @@ dependencies {
     // Mod Compatibility //
 
     // Jade (WAILA)
-    runtimeOnly "curse.maven:jade-324717:5976517"
+    implementation "curse.maven:jade-324717:5976517"
 //    runtimeOnly "curse.maven:the-one-probe-245211:5836106"
 
     // Just Enough Items (JEI)

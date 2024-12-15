@@ -69,6 +69,7 @@ class ModBlockLootProvider(
         add(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock(), noDrop())
         add(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock(), noDrop())
         add(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock(), noDrop())
+        add(ModBlocks.JADE_FLUID_TANK.asBlock(), noDrop())
 
         add(
             FLOUR_BLOCK.asBlock(),

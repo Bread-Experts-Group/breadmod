@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.datagen.lang
 import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.tags.TagKey
 import net.minecraft.world.effect.MobEffect
@@ -76,6 +77,7 @@ internal sealed class BaseLanguageProvider(
                     is CreativeModeTab -> (actualItem.displayName.contents as TranslatableContents).key
                     is ModDamageType -> actualItem.translationKey()
                     is SoundEvent -> actualItem.location.toLanguageKey("sound")
+                    is ResourceLocation -> "config.jade.plugin_${actualItem.toLanguageKey()}" // todo TEMPORARY, DELETE LATER
                     else -> throw UnsupportedItemClassException(actualItem::class.java)
                 } + if (annotation.extension == "<null>") "" else "." + annotation.extension
                 add(languageID, assureName(annotation.name, languageID))

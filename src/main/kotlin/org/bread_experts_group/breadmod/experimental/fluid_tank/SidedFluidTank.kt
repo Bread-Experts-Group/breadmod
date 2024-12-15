@@ -10,7 +10,7 @@ import kotlin.math.min
 
 // todo proof of concept in progress..
 class SidedFluidTank(
-    val tanks: ArrayList<CustomHandler>
+    val tanks: List<CustomHandler>
 ) {
     fun getFluidInTank(tank: Int) = tanks[tank].fluid
 
@@ -41,21 +41,14 @@ class SidedFluidTank(
         return this
     }
 
-    class CustomHandler(
+    open class CustomHandler(
         val capacity: Int,
         val fluidTanks: Int,
-        val validator: Predicate<FluidStack>,
-        val contentsChangedListener: () -> Unit
+        val validator: Predicate<FluidStack>
     ) : IFluidHandler {
-        constructor(capacity: Int, tanks: Int, listener: () -> Unit) : this(capacity, tanks, { true }, listener)
-        constructor(capacity: Int, validator: Predicate<FluidStack>, listener: () -> Unit) : this(
-            capacity,
-            1,
-            validator,
-            listener
-        )
-
-        constructor(capacity: Int, listener: () -> Unit) : this(capacity, 1, { true }, listener)
+        constructor(capacity: Int, tanks: Int) : this(capacity, tanks, { true })
+        constructor(capacity: Int, validator: Predicate<FluidStack>) : this(capacity, 1, validator)
+        constructor(capacity: Int) : this(capacity, 1, { true })
 
         override fun getTanks(): Int = this.fluidTanks
         var fluid = FluidStack.EMPTY
@@ -83,7 +76,7 @@ class SidedFluidTank(
             }
             if (fluid.isEmpty) {
                 fluid = resource.copyWithAmount(min(capacity.toDouble(), resource.amount.toDouble()).toInt())
-                contentsChangedListener
+                onContentsChanged()
                 return fluid.amount
             }
             if (!FluidStack.isSameFluidSameComponents(fluid, resource)) {
@@ -97,7 +90,7 @@ class SidedFluidTank(
             } else {
                 fluid.amount = capacity
             }
-            if (filled > 0) contentsChangedListener
+            if (filled > 0) onContentsChanged()
             return filled
         }
 
@@ -114,11 +107,11 @@ class SidedFluidTank(
             val stack = fluid.copyWithAmount(drained)
             if (action.execute() && drained > 0) {
                 fluid.shrink(drained)
-                contentsChangedListener
+                onContentsChanged()
             }
             return stack
         }
 
-//        protected open fun onContentsChanged() = contentsChangedListener
+        protected open fun onContentsChanged() {}
     }
 }

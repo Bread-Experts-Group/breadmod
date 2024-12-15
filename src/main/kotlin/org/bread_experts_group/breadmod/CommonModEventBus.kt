@@ -201,12 +201,7 @@ internal object CommonModEventBus {
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,
             ModBlockEntityTypes.DOUGH_MACHINE.get()
-        ) { entity, direction: Direction? ->
-            when (direction) {
-                Direction.UP -> entity.fluidHandler
-                else -> null
-            }
-        }
+        ) { entity, direction: Direction? -> entity.fluidHandler }
 
         event.registerBlockEntity(
             Capabilities.FluidHandler.BLOCK,
@@ -222,6 +217,22 @@ internal object CommonModEventBus {
             Capabilities.FluidHandler.BLOCK,
             ModBlockEntityTypes.SINGLE_FLUID_ITEM_TEST.get()
         ) { entity, direction: Direction? -> entity.tank }
+
+        event.registerBlockEntity(
+            Capabilities.FluidHandler.BLOCK,
+            ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get()
+        ) { entity, direction: Direction? ->
+            val tanks = entity.tank.tanks
+            when (direction) {
+                Direction.UP -> tanks[0]
+                Direction.DOWN -> tanks[1]
+                Direction.NORTH -> tanks[2]
+                Direction.SOUTH -> tanks[3]
+                Direction.EAST -> tanks[4]
+                Direction.WEST -> tanks[5]
+                else -> null
+            }
+        }
 
 //        event.registerBlock(
 //            Capabilities.FluidHandler.BLOCK,
