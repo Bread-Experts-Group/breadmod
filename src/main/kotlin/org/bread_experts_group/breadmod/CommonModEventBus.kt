@@ -21,6 +21,7 @@ import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider.Companion.c
 import org.bread_experts_group.breadmod.datagen.lang.BaseLanguageProvider
 import org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator
 import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
+import org.bread_experts_group.breadmod.datagen.tag.ModFluidTags
 import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
 import org.bread_experts_group.breadmod.datagen.tool_gun.ModToolGunModeProvider
@@ -98,6 +99,7 @@ internal object CommonModEventBus {
                 true,
                 constructLootProvider(ModBlockLootProvider(lookupProvider), packOutput, lookupProvider)
             )
+            generator.addProvider(true, ModFluidTags(packOutput, lookupProvider, existingFileHelper))
 
             val blockTagGenerator =
                 generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))

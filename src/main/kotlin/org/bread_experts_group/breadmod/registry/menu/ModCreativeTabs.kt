@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.registry.menu
 
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
@@ -39,9 +40,14 @@ object ModCreativeTabs {
         return registryObject
     }
 
-    @DataGenerateLanguage("en_us", "The Bread Mod")
+    @DataGenerateLanguage("en_us", "Bread Mod")
     val MAIN_TAB: Supplier<CreativeModeTab> = constructTab("main", true) {
         icon { ModBlocks.BREAD_BLOCK.get().asItem().defaultInstance }
+    }
+
+    @DataGenerateLanguage("en_us", "Bread Mod: Experimental(!!)")
+    val EXPERIMENTAL_TAB: Supplier<CreativeModeTab> = constructTab("experimental", false) {
+        icon { Blocks.BARRIER.asItem().defaultInstance }
     }
 
     @DataGenerateLanguage("en_us", "Bread Mod: Specials")

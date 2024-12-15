@@ -48,6 +48,8 @@ class ModBlockTags(
             .add(ModBlocks.BREAD_BLOCK)
         tag(MINEABLE_WITH_KNIFE)
             .add(ModBlocks.BREAD_BLOCK)
+        tag(BlockTags.FENCES)
+            .add(ModBlocks.BREAD_FENCE)
     }
 
     companion object {

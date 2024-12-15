@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.registry.item.actual
 
+import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.food.FoodProperties
@@ -18,7 +19,7 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
         tooltipComponents: MutableList<Component>,
         tooltipFlag: TooltipFlag
     ) {
-        tooltipComponents.add(modTranslatable("item", "test_bread", "tooltip"))
+        tooltipComponents.add(modTranslatable("item", "test_bread", "tooltip").withStyle(ChatFormatting.GOLD))
         tooltipComponents.add(Component.literal("Hold this item to show the camera overlay (temp)"))
     }
 

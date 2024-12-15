@@ -1,19 +1,20 @@
 package org.bread_experts_group.breadmod.registry.block
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.food.FoodProperties
-import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
+import net.minecraft.world.item.*
+import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.BlockAndTintGetter
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.MapColor
+import net.minecraft.world.level.material.PushReaction
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
@@ -27,8 +28,12 @@ import org.bread_experts_group.breadmod.experimental.recipe_related.block.single
 import org.bread_experts_group.breadmod.registry.block.actual.*
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
+import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
+import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import java.awt.Color
+import java.util.function.Supplier
 
 object ModBlocks {
     val BLOCK_REGISTRY: DeferredRegister.Blocks = DeferredRegister.createBlocks(BreadMod.ID)
@@ -42,7 +47,7 @@ object ModBlocks {
 
     @DataGenerateLanguage("en_us")
     val BREAD_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "bread_block", { BreadBlock() }, Item.Properties().also {
+        "bread_block", { BreadBlock() }, Properties().also {
             val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null)
                 ?: throw IllegalArgumentException("Bread has no food properties?")
             it.food(
@@ -58,12 +63,12 @@ object ModBlocks {
     val REINFORCED_BREAD_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "reinforced_bread_block",
         { Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK).strength(25f, 1200f)) },
-        Item.Properties().fireResistant()
+        Properties().fireResistant()
     )
 
     @DataGenerateLanguage("en_us")
     val MONITOR: DeferredItem<BlockItem> =
-        BLOCK_REGISTRY.registerBlockItem("monitor", { MonitorBlock() }, Item.Properties())
+        BLOCK_REGISTRY.registerBlockItem("monitor", { MonitorBlock() }, Properties())
 
     @DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
     val LOW_DENSITY_CHARCOAL_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
@@ -79,18 +84,18 @@ object ModBlocks {
     @DataGenerateLanguage("en_us")
     @DataGenerateLanguage("en_us", "Prolongs the inevitable.", "tooltip")
     val WAR_TERMINAL: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "war_terminal", { WarTerminalBlock() }, Item.Properties()
+        "war_terminal", { WarTerminalBlock() }, Properties()
     )
 
     @DataGenerateLanguage("en_us")
     @DataGenerateLanguage("en_us", "Uses the power of a die to make random noises.", "tooltip")
     val RANDOM_SOUND_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "random_sound_block", { RandomSoundBlock() }, Item.Properties()
+        "random_sound_block", { RandomSoundBlock() }, Properties()
     )
 
     @DataGenerateLanguage("en_us")
     val SOUND_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "sound_block", { SoundBlock() }, Item.Properties()
+        "sound_block", { SoundBlock() }, Properties()
     )
 
     @DataGenerateLanguage("en_us")
@@ -108,57 +113,136 @@ object ModBlocks {
     val WHEAT_CRUSHER: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "wheat_crusher",
         { WheatCrusherBlock() },
-        Item.Properties()
+        Properties()
     )
 
     @DataGenerateLanguage("en_us")
     val DOUGH_MACHINE: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "dough_machine",
         { DoughMachineBlock() },
-        Item.Properties()
+        Properties()
     )
 
     // todo port
     @DataGenerateLanguage("en_us")
     val BAUXITE_ORE: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "bauxite_ore", { Block(BlockBehaviour.Properties.of()) }, Item.Properties()
+        "bauxite_ore", { Block(BlockBehaviour.Properties.of()) }, Properties()
     )
 
     @DataGenerateLanguage("en_us")
     val FLOUR_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "flour_block",
         { FlourBlock() },
-        Item.Properties()
+        Properties()
     )
 
     @DataGenerateLanguage("en_us", "Flour")
     val FLOUR_LAYER_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "flour_layer", { FlourLayeredBlock() }, Item.Properties()
+        "flour_layer", { FlourLayeredBlock() }, Properties()
     )
 
     @DataGenerateLanguage("en_us")
     val HAPPY_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
-        "happy_block", { HappyBlock() }, Item.Properties()
+        "happy_block", { HappyBlock() }, Properties()
     )
 
     @DataGenerateLanguage("en_us")
     val KEYBOARD: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "keyboard",
         { KeyboardBlock() },
-        Item.Properties().stacksTo(1)
+        Properties().stacksTo(1)
     )
 
     @DataGenerateLanguage("en_us")
     val HELL_NAW_BUTTON: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "hell_naw_button",
         { HellNawButtonBlock() },
-        Item.Properties()
+        Properties()
+    )
+
+    @DataGenerateLanguage("en_us", "NIKO TENSHOT")
+    val NIKO_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "niko_block",
+        { CharacterModelBlock() },
+        Properties().rarity(Rarity.EPIC)
+    )
+
+    @DataGenerateLanguage("en_us", "OMANEKO")
+    val OMANEKO_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "omaneko_block",
+        { CharacterModelBlock() },
+        Properties().rarity(Rarity.EPIC)
+    )
+
+    @DataGenerateLanguage("en_us", "Ricard")
+    val RICARD_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "ricard_block",
+        { CharacterModelBlock() },
+        Properties().rarity(Rarity.EPIC)
+    )
+
+    @DataGenerateLanguage("en_us", "Unfunnylad")
+    val UNFUNNYLAD_BLOCK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "unfunnylad_block",
+        { CharacterModelBlock() },
+        Properties().rarity(Rarity.EPIC)
+    )
+
+    @DataGenerateLanguage("en_us")
+    val BREAD_FENCE: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "bread_fence",
+        {
+            object : FenceBlock(
+                Properties.of()
+                    .forceSolidOn()
+                    .sound(SoundType.GRASS)
+                    .strength(1.0F)
+            ) {
+                override fun getFireSpreadSpeed(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Int = 100
+
+                override fun isFlammable(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Boolean = true
+            }
+        },
+        Properties()
+    )
+
+    @DataGenerateLanguage("en_us")
+    val BREAD_DOOR = BLOCK_REGISTRY.registerBlockItem(
+        "bread_door",
+        {
+            object : DoorBlock(
+                ModBlockSetTypes.BREAD,
+                Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(1.0F)
+                    .pushReaction(PushReaction.DESTROY)
+                    .noOcclusion()
+            ) { //todo create item texture
+                override fun isFlammable(
+                    state: BlockState,
+                    level: BlockGetter,
+                    pos: BlockPos,
+                    direction: Direction
+                ): Boolean = true
+            }
+        },
+        Properties()
     )
 
     private fun DeferredRegister.Blocks.registerBlockItem(
         id: String,
         block: () -> Block,
-        properties: Item.Properties
+        properties: Properties
     ): DeferredItem<BlockItem> = this.register(id, block).let { supplier ->
         ITEM_REGISTRY.register(id) { -> BlockItem(supplier.get(), properties) }
     }
@@ -171,41 +255,51 @@ object ModBlocks {
         ITEM_REGISTRY.register(id) { -> item(supplier.get()) }
     }
 
+    private fun itemWithCreativeTab(
+        block: Block,
+        properties: Properties,
+        creativeTabs: List<Supplier<CreativeModeTab>>
+    ): BlockItem = run {
+        object : BlockItem(block, properties), IRegisterSpecialCreativeTab {
+            override val creativeModeTabs: List<Supplier<CreativeModeTab>> = creativeTabs
+        }
+    }
+
     // EXPERIMENTAL PAST THIS POINT
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (MULTI)")
     val MULTI_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "multi_item_recipe",
         { MultiItemRecipeBlock() },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (MULTI, FLUID)")
     val MULTI_FLUID_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "multi_fluid_recipe",
         { MultiFluidRecipeBlock() },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (SINGLE)")
     val SINGLE_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "single_item_recipe",
         { SingleItemRecipeBlock() },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK (SINGLE, FLUID)")
     val SINGLE_FLUID_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "single_fluid_recipe",
         { SingleFluidRecipeBlock() },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK(SINGLE, FLUID/ITEM")
     val SINGLE_FLUID_ITEM_TEST: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "single_fluid_item_recipe",
         { SingleFluidItemRecipeBlock() },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, RED")
@@ -217,7 +311,7 @@ object ModBlocks {
                     Color.RED.rgb
             }
         },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, GREEN")
@@ -229,7 +323,7 @@ object ModBlocks {
                     Color.GREEN.rgb
             }
         },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
     @DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, BLUE")
@@ -241,6 +335,6 @@ object ModBlocks {
                     Color.BLUE.rgb
             }
         },
-        Item.Properties()
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 }

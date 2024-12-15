@@ -4,6 +4,8 @@ import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.ButtonBlock
+import net.minecraft.world.level.block.DoorBlock
+import net.minecraft.world.level.block.FenceBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.AttachFace
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -131,11 +133,25 @@ class ModBlockStateProvider(
             models().getBuilder("breadmod:block/flour_layer_1")
         )
 
-        horizontalBlock(ModBlocks.KEYBOARD.asBlock(), blockBenchModel("keyboard"))
-        simpleBlockItem(ModBlocks.KEYBOARD.asBlock(), blockBenchModel("keyboard"))
+        horizontalBlockBenchModelWithItem(ModBlocks.KEYBOARD.asBlock(), "keyboard")
+        horizontalBlockBenchModelWithItem(ModBlocks.WAR_TERMINAL.asBlock(), "war_terminal")
+        horizontalBlockBenchModelWithItem(ModBlocks.NIKO_BLOCK.asBlock(), "niko_block")
+        horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.asBlock(), "omaneko_block")
+        horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
+        horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
 
-        horizontalBlock(ModBlocks.WAR_TERMINAL.asBlock(), blockBenchModel("war_terminal"))
-        simpleBlockItem(ModBlocks.WAR_TERMINAL.asBlock(), blockBenchModel("war_terminal"))
+        doorBlockWithRenderType(
+            ModBlocks.BREAD_DOOR.asBlock() as DoorBlock,
+            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
+            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top"),
+            "minecraft:cutout"
+        )
+
+        fenceBlockWithRenderType(
+            ModBlocks.BREAD_FENCE.asBlock() as FenceBlock,
+            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"),
+            "minecraft:cutout"
+        )
 
         // Hell Naw button
         getVariantBuilder(ModBlocks.HELL_NAW_BUTTON.asBlock() as ButtonBlock).forAllStates { state: BlockState ->
@@ -167,4 +183,9 @@ class ModBlockStateProvider(
 
     private fun blockBenchModel(model: String): ModelFile.ExistingModelFile =
         ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/$model"), existingFileHelper)
+
+    private fun horizontalBlockBenchModelWithItem(block: Block, model: String) {
+        horizontalBlock(block, blockBenchModel(model))
+        simpleBlockItem(block, blockBenchModel(model))
+    }
 }

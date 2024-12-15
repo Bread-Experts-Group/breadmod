@@ -6,16 +6,19 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
+import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
+import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.util.render.initialTranslate
+import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.renderBlockModel
 import org.bread_experts_group.breadmod.util.render.renderBuffer
-import org.bread_experts_group.breadmod.util.render.localClient
 import physx.PxTopLevelFunctions
 import physx.common.*
 import physx.geometry.PxBoxGeometry
@@ -27,11 +30,12 @@ import physx.support.PxPvdTransport
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
+import java.util.function.Supplier
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import kotlin.io.path.*
 
-internal object PhysXTestTool : Item(Properties().stacksTo(1)) {
+internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
 
     val logger: Logger = LogManager.getLogger("PhysX Test Tool")
 
@@ -275,4 +279,6 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)) {
 
         return super.use(level, player, usedHand)
     }
+
+    override val creativeModeTabs: List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.EXPERIMENTAL_TAB)
 }

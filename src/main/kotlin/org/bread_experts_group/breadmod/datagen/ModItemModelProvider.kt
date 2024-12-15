@@ -4,10 +4,12 @@ import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
+import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import net.neoforged.neoforge.registries.DeferredItem
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 
@@ -48,6 +50,8 @@ class ModItemModelProvider(
         singleItem(ModItems.CAPRISPIN)
         singleItem(ModItems.TOASTER_HEATING_ELEMENT)
         singleItem(ModItems.CREATURE)
+        singleItem(ModBlocks.BREAD_DOOR)
+        fenceInventory("bread_fence", modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"))
 
         handheldItem(ModItems.WRENCH)
         handheldItem(ModItems.BREAD_GUN)

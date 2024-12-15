@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.contents.PlainTextContents
 import net.minecraft.network.chat.contents.TranslatableContents
@@ -14,8 +15,9 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import org.bread_experts_group.breadmod.util.RaycastResult.RaycastResultType
+import org.bread_experts_group.breadmod.util.RaycastResult.RayCastResultType
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
+import java.util.function.Supplier
 
 internal val formatArray: List<String> = listOf("p", "n", "m", "", "k", "M", "G", "T", "P", "E")
 
@@ -24,24 +26,24 @@ internal val formatArray: List<String> = listOf("p", "n", "m", "", "k", "M", "G"
  * For example, 1000 → "1", "k".
  *
  * @return A pair containing the limited number and the unit sign.
- * @param pN The number to format.
- * @param pUnitOffset The offset to start at.
- * @param pUnitMax The maximum number to reach before moving to the next unit.
+ * @param n The number to format.
+ * @param unitOffset The offset to start at.
+ * @param unitMax The maximum number to reach before moving to the next unit.
  * @return A pair containing the limited number and the unit.
  * @author Miko Elbrecht
  * @since 1.0
  * @see formatUnit
  * @see formatArray
  */
-fun formatNumber(pN: Double, pUnitOffset: Int = 0, pUnitMax: Int = 1000): Pair<Double, String> {
-    var num = pN
-    var index = 3 + pUnitOffset
-    while (num >= pUnitMax && index < formatArray.size - 1) {
-        num /= pUnitMax
+fun formatNumber(n: Double, unitOffset: Int = 0, unitMax: Int = 1000): Pair<Double, String> {
+    var num = n
+    var index = 3 + unitOffset
+    while (num >= unitMax && index < formatArray.size - 1) {
+        num /= unitMax
         index++
     }
     while (num < 1 && index > 0) {
-        num *= pUnitMax
+        num *= unitMax
         index--
     }
     return num to formatArray[index]
@@ -50,43 +52,43 @@ fun formatNumber(pN: Double, pUnitOffset: Int = 0, pUnitMax: Int = 1000): Pair<D
 /**
  * Formats a number.
  * @return The formatted number: `"X S / Y S W (Z%)"` assuming X is under Y, otherwise `"Y / X S W (Z%)"`.
- * @param pFrom The number to format.
- * @param pTo The maximum number (Y).
- * @param pUnit The label to append at the end (W).
- * @param pFormatShort If the numbers should be shortened with a unit in [formatNumber] (S).
- * @param pDecimals The number of decimals to use when representing [pFrom] / [pTo].
- * @param pUnitOffset The offset to start at in [formatNumber].
- * (Only applicable in [pFormatShort]).
- * @param pUnitMax The maximum number to reach before moving to the next unit in [formatNumber].
- * (Only applicable in [pFormatShort]).
+ * @param from The number to format.
+ * @param to The maximum number (Y).
+ * @param unit The label to append at the end (W).
+ * @param formatShort If the numbers should be shortened with a unit in [formatNumber] (S).
+ * @param decimals The number of decimals to use when representing [from] / [to].
+ * @param unitOffset The offset to start at in [formatNumber].
+ * (Only applicable in [formatShort]).
+ * @param unitMax The maximum number to reach before moving to the next unit in [formatNumber].
+ * (Only applicable in [formatShort]).
  * @author Miko Elbrecht
  * @see formatNumber
  */
 fun formatUnit(
-    pFrom: Double,
-    pTo: Double,
-    pUnit: String,
-    pFormatShort: Boolean,
-    pDecimals: Int,
-    pUnitOffset: Int = 0,
-    pUnitMax: Int = 1000
+    from: Double,
+    to: Double,
+    unit: String,
+    formatShort: Boolean,
+    decimals: Int,
+    unitOffset: Int = 0,
+    unitMax: Int = 1000
 ): String {
-    val formatStr = "%.${pDecimals}f %s/ %.${pDecimals}f %s (%.${pDecimals}f%%)"
-    val percent = (pFrom / pTo) * 100
-    if (pFormatShort) {
-        val toFormat = formatNumber(pTo, pUnitOffset, pUnitMax)
-        val fromFormat = formatNumber(pFrom, pUnitOffset, pUnitMax)
+    val formatStr = "%.${decimals}f %s/ %.${decimals}f %s (%.${decimals}f%%)"
+    val percent = (from / to) * 100
+    if (formatShort) {
+        val toFormat = formatNumber(to, unitOffset, unitMax)
+        val fromFormat = formatNumber(from, unitOffset, unitMax)
         return String.format(
             formatStr,
-            fromFormat.first, if (toFormat.second != fromFormat.second) "${fromFormat.second}$pUnit " else "",
-            toFormat.first, toFormat.second + pUnit,
+            fromFormat.first, if (toFormat.second != fromFormat.second) "${fromFormat.second}$unit " else "",
+            toFormat.first, toFormat.second + unit,
             percent
         )
     } else {
         return String.format(
             formatStr,
-            pFrom, "",
-            pTo, pUnit,
+            from, "",
+            to, unit,
             percent
         )
     }
@@ -146,6 +148,9 @@ fun isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).ge
 //    formatUnit(pFrom.toDouble(), pTo.toDouble(), pUnit, pFormatShort, pDecimals, pUnitOffset, pUnitMax)
 // --Commented out by Inspection STOP (9/10/2024 03:52)
 
+inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
+    this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
+
 /**
  * Translates a [Direction] to a side relative to another [Direction].
  * @return The relativized [Direction].
@@ -171,12 +176,12 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
  */
 sealed class RaycastResult(
     /**
-     * The type of the result; either [RaycastResultType.ENTITY] or [RaycastResultType.BLOCK].
+     * The type of the result; either [RayCastResultType.ENTITY] or [RayCastResultType.BLOCK].
      * @author Miko Elbrecht
      * @since 1.0.0
-     * @see RaycastResultType
+     * @see RayCastResultType
      */
-    val type: RaycastResultType,
+    val type: RayCastResultType,
     /**
      * The [Vec3] this raycast started at.
      * @author Miko Elbrecht
@@ -199,11 +204,11 @@ sealed class RaycastResult(
     val direction: Vec3
 ) {
     /**
-     * The type of the result; either [RaycastResultType.ENTITY] or [RaycastResultType.BLOCK].
+     * The type of the result; either [RayCastResultType.ENTITY] or [RayCastResultType.BLOCK].
      * @author Miko Elbrecht
      * @since 1.0.0
      */
-    enum class RaycastResultType {
+    enum class RayCastResultType {
         /**
          * The result was for detecting an [Entity].
          * @author Miko Elbrecht
@@ -233,7 +238,7 @@ sealed class RaycastResult(
         @Suppress("unused")
         val blockState: BlockState,
         startPosition: Vec3, endPosition: Vec3, direction: Vec3
-    ) : RaycastResult(RaycastResultType.BLOCK, startPosition, endPosition, direction)
+    ) : RaycastResult(RayCastResultType.BLOCK, startPosition, endPosition, direction)
 
     /**
      * A result of a raycast operation for an [Entity].
@@ -248,7 +253,7 @@ sealed class RaycastResult(
          */
         val entity: net.minecraft.world.entity.Entity,
         startPosition: Vec3, endPosition: Vec3, direction: Vec3
-    ) : RaycastResult(RaycastResultType.ENTITY, startPosition, endPosition, direction)
+    ) : RaycastResult(RayCastResultType.ENTITY, startPosition, endPosition, direction)
 
     companion object {
         /**
