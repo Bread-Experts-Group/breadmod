@@ -51,14 +51,14 @@ class BreadMod(container: ModContainer) {
 
     init {
         if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {
-            val ctx = LogManager.getContext(false) as LoggerContext
-            val uri = this::class.java.getResource("/log4j2.xml")?.toURI()
+            val context = LogManager.getContext(false) as LoggerContext
+            val fileLocator = this::class.java.getResource("/log4j2.xml")?.toURI()
                 ?: throw IllegalStateException("Failed to load log4j2.xml")
-            val cfg = ConfigurationFactory.getInstance().getConfiguration(ctx, ctx.name, uri, null)
+            val configuration = ConfigurationFactory.getInstance().getConfiguration(context, context.name, fileLocator, null)
 
-            val clrApd = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
-            cfg.addAppender(clrApd)
-            Configurator.reconfigure(cfg)
+            val colorAppender = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
+            configuration.addAppender(colorAppender)
+            Configurator.reconfigure(configuration)
 
             ConsoleUnnamedRedirection.setup()
         }
