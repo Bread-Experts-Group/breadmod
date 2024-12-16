@@ -1,8 +1,8 @@
 package org.bread_experts_group.breadmod.compat.lookingat.jade
 
+import net.minecraft.core.Direction
 import net.minecraft.resources.ResourceLocation
-import net.neoforged.neoforge.fluids.capability.IFluidHandler
-import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
+import net.neoforged.neoforge.capabilities.Capabilities
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
@@ -22,18 +22,35 @@ class TestProvider : IBlockComponentProvider/*, IServerDataProvider<BlockAccesso
 //    }
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
-        val entity = accessor.blockEntity as SidedFluidTankJadeBlockEntity
-        for (tank: IFluidHandler in entity.tank.tanks) {
-            tooltip.add(
-                CustomFluidElement(
-                    JadeFluidObject.of(
-                        tank.getFluidInTank(0).fluid,
-                        tank.getFluidInTank(0).amount.toLong(),
-                    ),
-                    tank.getTankCapacity(0)
+//        val entity = accessor.blockEntity as SidedFluidTankJadeBlockEntity
+        for (direction: Direction? in Direction.entries) {
+            if (direction != null) {
+                val handler =
+                    accessor.level.getCapability(Capabilities.FluidHandler.BLOCK, accessor.position, direction)
+                        ?: return
+                tooltip.add(
+                    CustomFluidElement(
+                        JadeFluidObject.of(
+                            handler.getFluidInTank(0).fluid,
+                            handler.getFluidInTank(0).amount.toLong()
+                        ),
+                        handler.getTankCapacity(0),
+                        direction
+                    )
                 )
-            )
-//            tooltip.add(Component.literal("${tank.getFluidInTank(0).amount} ${tank.getFluidInTank(0).fluidType}"))
+            }
         }
+//        for (tank: IFluidHandler in entity.tank.tanks) {
+//            tooltip.add(
+//                CustomFluidElement(
+//                    JadeFluidObject.of(
+//                        tank.getFluidInTank(0).fluid,
+//                        tank.getFluidInTank(0).amount.toLong(),
+//                    ),
+//                    tank.getTankCapacity(0)
+//                )
+//            )
+////            tooltip.add(Component.literal("${tank.getFluidInTank(0).amount} ${tank.getFluidInTank(0).fluidType}"))
+//        }
     }
 }
