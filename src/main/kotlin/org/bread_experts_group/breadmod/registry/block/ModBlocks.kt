@@ -339,7 +339,7 @@ object ModBlocks {
         { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
     )
 
-    @DataGenerateLanguage("en_us", "Jade Fluid Tank Test Block")
+    @DataGenerateLanguage("en_us", "JadeFluidTank")
     val JADE_FLUID_TANK: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
         "jade_fluid_tank",
         { FluidTankJadeBlock() },

@@ -13,7 +13,7 @@ import snownee.jade.overlay.DisplayHelper
 import java.awt.Color
 
 class CustomFluidElement(val fluid: JadeFluidObject, val capacity: Int, val direction: Direction?) : Element() {
-    override fun getSize(): Vec2 = Vec2(140f, 14f)
+    override fun getSize(): Vec2 = Vec2(118f, 14f)
 
     private val uV = mapOf(
         *listOf(
@@ -30,8 +30,6 @@ class CustomFluidElement(val fluid: JadeFluidObject, val capacity: Int, val dire
     override fun render(guiGraphics: GuiGraphics, x: Float, y: Float, maxX: Float, maxY: Float) {
         val text =
             Component.translatable(if (!fluid.isEmpty) fluid.type.fluidType.descriptionId else "tooltip.jade.empty")
-        val poseStack = guiGraphics.pose()
-        poseStack.pushPose()
         DisplayHelper.INSTANCE.drawBorder(
             guiGraphics,
             x, y,
@@ -61,7 +59,7 @@ class CustomFluidElement(val fluid: JadeFluidObject, val capacity: Int, val dire
         guiGraphics.drawString(
             localClient.font,
             amount,
-            x + size.x - localClient.font.width(amount) - 42,
+            x + size.x - localClient.font.width(amount) - 20,
             y + 3,
             Color.GRAY.rgb,
             true
@@ -71,9 +69,8 @@ class CustomFluidElement(val fluid: JadeFluidObject, val capacity: Int, val dire
             modLocation("textures", "gui", "cube_sprites.png"),
             x.toInt() + 102,
             y.toInt() - 1,
-            uV[direction]!!, 0, 16, 16
+            uV[direction] ?: 0, 0, 16, 16
         )
         RenderSystem.disableBlend()
-        poseStack.popPose()
     }
 }
