@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.compat.lookingat.jade
 
 import com.mojang.blaze3d.systems.RenderSystem
+import net.minecraft.ChatFormatting
 import net.minecraft.Util
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
@@ -128,7 +129,14 @@ class FluidBarElement(
         }
     }
 
-    private fun GuiGraphics.drawScrollingStringBM(font: Font, text: Component, minX: Int, maxX: Int, y: Int, color: Int): Int {
+    private fun GuiGraphics.drawScrollingStringBM(
+        font: Font,
+        text: Component,
+        minX: Int,
+        maxX: Int,
+        y: Int,
+        color: Int
+    ): Int {
         val maxWidth = maxX - minX
         val textWidth = font.width(text.visualOrderText)
         if (textWidth <= maxWidth) {
@@ -188,19 +196,12 @@ class FluidBarElement(
             zeros += char
         }
         val zeroPadSize = localClient.font.width(zeros)
-        guiGraphics.drawString(
-            localClient.font,
-            zeros,
-            x + 100,
-            y + 3,
-            Color.GRAY.rgb,
-            true
-        )
         val filledString = "${asString.substring(zeros.length)} ${unit}B"
         guiGraphics.drawString(
             localClient.font,
-            filledString,
-            x + 100 + zeroPadSize,
+            Component.literal(zeros).withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(filledString).withStyle(ChatFormatting.WHITE)).visualOrderText,
+            x + 100,
             y + 3,
             Color.WHITE.rgb,
             true
