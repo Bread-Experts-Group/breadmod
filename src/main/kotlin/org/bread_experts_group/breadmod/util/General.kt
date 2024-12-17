@@ -20,7 +20,7 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.util.function.Supplier
 
 internal val formatArray: List<String> =
-    listOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
+    listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
 
 /**
  * Limits a number to 1000, and provides a keyword describing it in a shortened format.
@@ -38,7 +38,7 @@ internal val formatArray: List<String> =
  */
 fun formatNumber(n: Double, unitOffset: Int = 0, unitMax: Int = 1000): Pair<Double, String> {
     var num = n
-    var index = 8 + unitOffset
+    var index = 10 + unitOffset
     while (num >= unitMax && index < formatArray.size - 1) {
         num /= unitMax
         index++
