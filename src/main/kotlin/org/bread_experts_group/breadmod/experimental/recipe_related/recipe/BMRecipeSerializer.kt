@@ -17,6 +17,7 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import java.util.function.Function
 
 // todo look into more efficient codec practices such as Codec#pair
+//  also figure out more efficient ways of writing these methods
 //  https://docs.neoforged.net/docs/datastorage/codecs
 //  https://docs.neoforged.net/docs/networking/streamcodecs
 abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
@@ -26,11 +27,23 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
     ): RecordCodecBuilder<O, MutableList<ItemStack>> =
         ItemStack.CODEC.listOf().fieldOf(field).forGetter(getter)
 
+    fun <O> optionalItemStackListCodecModule(
+        field: String,
+        getter: Function<O, List<ItemStack>>
+    ): RecordCodecBuilder<O, MutableList<ItemStack>> =
+        ItemStack.CODEC.listOf().optionalFieldOf(field, listOf()).forGetter(getter)
+
     fun <O> fluidStackListCodecModule(
         field: String,
         getter: Function<O, List<FluidStack>>
     ): RecordCodecBuilder<O, MutableList<FluidStack>> =
         FluidStack.CODEC.listOf().fieldOf(field).forGetter(getter)
+
+    fun <O> optionalFluidStackListCodecModule(
+        field: String,
+        getter: Function<O, List<FluidStack>>
+    ): RecordCodecBuilder<O, MutableList<FluidStack>> =
+        FluidStack.CODEC.listOf().optionalFieldOf(field, mutableListOf()).forGetter(getter)
 
     fun <O> intCodecModule(field: String, getter: Function<O, Int>): RecordCodecBuilder<O, Int> =
         Codec.INT.fieldOf(field).forGetter(getter)
@@ -54,6 +67,20 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
                 }, { result -> DataResult.success(result) }
             ).forGetter(getter)
 
+    fun <O> optionalSizedIngredientCodecModule(
+        field: String,
+        getter: Function<O, NonNullList<SizedIngredient>>
+    ): RecordCodecBuilder<O, NonNullList<SizedIngredient>> =
+        SizedIngredient.FLAT_CODEC
+            .listOf()
+            .optionalFieldOf(field, NonNullList.create())
+            .flatXmap(
+                { itemList ->
+                    val itemArray = itemList.toTypedArray()
+                    DataResult.success(NonNullList.of(SizedIngredient.of(ItemStack.EMPTY.item, 1), *itemArray))
+                }, { result -> DataResult.success(result) }
+            ).forGetter(getter)
+
     fun <O> sizedFluidIngredientCodecModule(
         field: String,
         getter: Function<O, NonNullList<SizedFluidIngredient>>
@@ -61,6 +88,20 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
         SizedFluidIngredient.FLAT_CODEC
             .listOf()
             .fieldOf(field)
+            .flatXmap(
+                { fluidList ->
+                    val fluidArray = fluidList.toTypedArray()
+                    DataResult.success(NonNullList.of(SizedFluidIngredient.of(Fluids.WATER, 1), *fluidArray))
+                }, { result -> DataResult.success(result) }
+            ).forGetter(getter)
+
+    fun <O> optionalSizedFluidIngredientCodecModule(
+        field: String,
+        getter: Function<O, NonNullList<SizedFluidIngredient>>
+    ): RecordCodecBuilder<O, NonNullList<SizedFluidIngredient>> =
+        SizedFluidIngredient.FLAT_CODEC
+            .listOf()
+            .optionalFieldOf(field, NonNullList.create())
             .flatXmap(
                 { fluidList ->
                     val fluidArray = fluidList.toTypedArray()

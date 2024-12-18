@@ -30,6 +30,7 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyScreen
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidScreen
@@ -176,5 +177,7 @@ internal object ClientModEventBus {
         event.register(ModMenuTypes.SINGLE_ITEM.get(), ::SingleItemScreen)
         event.register(ModMenuTypes.SINGLE_FLUID.get(), ::SingleFluidScreen)
         event.register(ModMenuTypes.SINGLE_FLUID_ITEM.get(), ::SingleFluidItemScreen)
+
+        event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
     }
 }

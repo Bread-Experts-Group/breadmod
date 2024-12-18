@@ -53,6 +53,8 @@ class SidedFluidTank(
         override fun getTanks(): Int = this.fluidTanks
         var fluid = FluidStack.EMPTY
 
+        fun isEmpty(): Boolean = fluid.amount == 0
+
         override fun getFluidInTank(tank: Int): FluidStack = fluid
         fun getFluidAmount(): Int = fluid.amount
 

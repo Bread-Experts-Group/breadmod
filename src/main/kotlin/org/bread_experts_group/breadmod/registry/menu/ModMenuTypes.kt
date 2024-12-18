@@ -7,6 +7,7 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.network.IContainerFactory
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyMenu
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeMenu
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeMenu
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeMenu
@@ -31,6 +32,9 @@ object ModMenuTypes {
         registerMenuType("single_fluid", ::SingleFluidRecipeMenu)
     val SINGLE_FLUID_ITEM: Supplier<MenuType<SingleFluidItemRecipeMenu>> =
         registerMenuType("single_fluid_item", ::SingleFluidItemRecipeMenu)
+
+    val FLUID_ENERGY_TEST: Supplier<MenuType<FluidEnergyMenu>> =
+        registerMenuType("fluid_energy", ::FluidEnergyMenu)
 
     private fun <T : AbstractContainerMenu> registerMenuType(
         name: String,

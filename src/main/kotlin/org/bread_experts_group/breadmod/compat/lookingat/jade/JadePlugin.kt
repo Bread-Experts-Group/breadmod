@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.compat.lookingat.jade
 
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyBlock
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.single_fluid.SingleFluidRecipeBlock
 import snownee.jade.api.IWailaClientRegistration
@@ -22,5 +23,6 @@ class JadePlugin : IWailaPlugin {
     override fun registerClient(registration: IWailaClientRegistration) {
         registration.registerBlockComponent(TestProvider.INSTANCE, FluidTankJadeBlock::class.java)
         registration.registerBlockComponent(TestProvider.INSTANCE, SingleFluidRecipeBlock::class.java)
+        registration.registerBlockComponent(TestProvider.INSTANCE, FluidEnergyBlock::class.java)
     }
 }

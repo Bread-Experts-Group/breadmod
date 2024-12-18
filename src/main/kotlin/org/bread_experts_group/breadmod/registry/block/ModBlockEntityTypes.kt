@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyBlockEntity
 import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeBlockEntity
@@ -43,6 +44,11 @@ object ModBlockEntityTypes {
     val DOUGH_MACHINE: Supplier<BlockEntityType<DoughMachineBlockEntity>> =
         BLOCK_ENTITY_REGISTRY.register("dough_machine_entity") { ->
             buildBlockEntity(::DoughMachineBlockEntity, ModBlocks.DOUGH_MACHINE.asBlock())
+        }
+
+    val FLUID_ENERGY: Supplier<BlockEntityType<FluidEnergyBlockEntity>> =
+        BLOCK_ENTITY_REGISTRY.register("fluid_energy_entity") { ->
+            buildBlockEntity(::FluidEnergyBlockEntity, ModBlocks.FLUID_ENERGY.asBlock())
         }
 
     private fun <T : BlockEntity> buildBlockEntity(

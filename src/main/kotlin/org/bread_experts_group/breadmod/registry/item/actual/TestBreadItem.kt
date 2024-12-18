@@ -26,7 +26,7 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
     override fun useOn(context: UseOnContext): InteractionResult {
         val cap = context.level.getCapability(Capabilities.FluidHandler.BLOCK, context.clickedPos, context.clickedFace)
         if (!context.level.isClientSide && cap != null) {
-            println("Fluid capability found at ${context.clickedPos}, Direction ${context.clickedFace}, hashcode ${cap.hashCode()}")
+            println("Fluid capability found at ${context.clickedPos}, Direction: ${context.clickedFace.name}, Hashcode: ${cap.hashCode()}")
         }
         return InteractionResult.CONSUME
     }

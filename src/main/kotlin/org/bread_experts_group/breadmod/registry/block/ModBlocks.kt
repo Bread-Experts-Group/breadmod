@@ -20,6 +20,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyBlock
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_fluid.MultiFluidRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe_related.block.multi_item.MultiItemRecipeBlock
@@ -265,6 +266,13 @@ object ModBlocks {
             override val creativeModeTabs: List<Supplier<CreativeModeTab>> = creativeTabs
         }
     }
+
+    @DataGenerateLanguage("en_us", "Fluid Energy Recipe")
+    val FLUID_ENERGY: DeferredItem<BlockItem> = BLOCK_REGISTRY.registerBlockItem(
+        "fluid_energy_block",
+        { FluidEnergyBlock() },
+        { block -> itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
+    )
 
     // EXPERIMENTAL PAST THIS POINT
 

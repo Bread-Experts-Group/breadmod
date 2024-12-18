@@ -66,6 +66,7 @@ class ModBlockLootProvider(
         dropSelf(ModBlocks.UNFUNNYLAD_BLOCK.asBlock())
         dropSelf(ModBlocks.BREAD_FENCE.asBlock())
         dropSelf(ModBlocks.BREAD_DOOR.asBlock())
+        dropSelf(ModBlocks.FLUID_ENERGY.asBlock())
         add(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock(), noDrop())
         add(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock(), noDrop())
         add(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock(), noDrop())
