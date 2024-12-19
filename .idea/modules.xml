@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.test.iml" filepath="$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.test.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Bread Mod Code" pattern="src[breadmod.main]:org.bread_experts_group.breadmod..*" />
+</component>
