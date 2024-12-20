@@ -8,7 +8,6 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyRecipeTest
@@ -29,78 +28,79 @@ class FluidEnergyBlockEntity(
 ) {
     inner class SyncedHandler(capacity: Int) : SidedFluidTank.CustomHandler(capacity) {
         override fun onContentsChanged() {
-            level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
+//            level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
+            this@FluidEnergyBlockEntity.setChanged()
         }
     }
 
     // todo needs logic to disallow input fluids
-    val tank = SidedFluidTank(
-        listOf(10000, 10000, 10000, 10000).map { SyncedHandler(it) }
+    val tank: SidedFluidTank = SidedFluidTank(
+        listOf(10000, 10000, 10000, 10000).map(this::SyncedHandler)
     )
 
     private fun getFluid(tank: Int): FluidStack = this.tank.getFluidInTank(tank)
 
     override fun tick(level: Level, pos: BlockPos, state: BlockState) {
-        currentRecipe.ifPresentOrElse({ activeRecipe ->
-            val fluidInputs = listOf(getFluid(0), getFluid(1))
-            if (!activeRecipe.inputStillValid(items, fluidInputs)) resetRecipe()
+        this.currentRecipe.ifPresentOrElse({ activeRecipe ->
+            val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
+            if (!activeRecipe.inputStillValid(this.items, fluidInputs)) this.resetRecipe()
             if (activeRecipe.canFitResults(
-                    listOf(items[4], items[5], items[6], items[7]),
-                    tank,
+                    listOf(this.items[4], this.items[5], this.items[6], this.items[7]),
+                    this.tank,
                     10000
                 )
             ) {
                 val recipeTime = activeRecipe.rTime ?: 0
-                progress++
-                if (progress >= recipeTime) {
-                    finalizeRecipe(activeRecipe, level)
-                    resetRecipe()
+                this.progress++
+                if (this.progress >= recipeTime) {
+                    this.finalizeRecipe(activeRecipe, level)
+                    this.resetRecipe()
                 }
             }
         }, {
-            val fluidInputs = listOf(getFluid(0), getFluid(1))
-            val itemInputs = listOf(items[0], items[1], items[2], items[3])
-            val check = recipeDial.getRecipeFor(
+            val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
+            val itemInputs = listOf(this.items[0], this.items[1], this.items[2], this.items[3])
+            val check = this.recipeDial.getRecipeFor(
                 FluidEnergyRecipe.FluidEnergyInput(
-                    items,
-                    buildList { itemInputs.forEach { add(it.count) } },
+                    this.items,
+                    buildList { itemInputs.forEach { this.add(it.count) } },
                     fluidInputs,
-                    buildList { fluidInputs.forEach { add(it.amount) } },
+                    buildList { fluidInputs.forEach { this.add(it.amount) } },
                     2
                 ), level
             )
 
             check.ifPresent { present ->
                 val recipe = present.value
-                maxProgress = recipe.rTime ?: 0
-                currentRecipe = Optional.of(recipe)
+                this.maxProgress = recipe.rTime ?: 0
+                this.currentRecipe = Optional.of(recipe)
             }
         })
     }
 
     override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level) {
-        val inputItems = listOf(items[0], items[1], items[2], items[3])
-        val inputFluids = listOf(getFluid(0), getFluid(1))
+        val inputItems = listOf(this.items[0], this.items[1], this.items[2], this.items[3])
+        val inputFluids = listOf(this.getFluid(0), this.getFluid(1))
         val assemble = recipe.assembleOutputs(
             FluidEnergyRecipe.FluidEnergyInput(
                 inputItems,
-                buildList { inputItems.filter { it.count != 0 }.forEach { add(it.count) } },
+                buildList { inputItems.filter { it.count != 0 }.forEach { this.add(it.count) } },
                 inputFluids,
-                buildList { inputFluids.filter { it.amount != 0 }.forEach { add(it.amount) } },
+                buildList { inputFluids.filter { it.amount != 0 }.forEach { this.add(it.amount) } },
                 4
             )
         )
         // todo needs rewriting to actually set the output slots with the item outputs, fluid part seems to be fine?
-        val outputSlots = mutableListOf(getItem(4), getItem(5), getItem(6), getItem(7))
+        val outputSlots = mutableListOf(this.getItem(4), this.getItem(5), this.getItem(6), this.getItem(7))
         if (assemble.first.isNotEmpty()) repeat(assemble.first.size) { index ->
             if (outputSlots[index].isEmpty) outputSlots[index] =
                 assemble.first[index].copyWithCount(recipe.rItemOutputs[index].count) else
                 outputSlots[index].grow(recipe.rItemOutputs[index].count)
         }
         if (assemble.second.isNotEmpty()) repeat(assemble.second.size) { index ->
-            if (tank.tanks[index].isEmpty()) tank.tanks[index].fluid =
+            if (this.tank.tanks[index].isEmpty()) this.tank.tanks[index].fluid =
                 assemble.second[index].copyWithAmount(recipe.rFluidOutputs[index].amount) else
-                tank.tanks[index].fluid.grow(recipe.rFluidOutputs[index].amount)
+                this.tank.tanks[index].fluid.grow(recipe.rFluidOutputs[index].amount)
         }
         recipe.consumeInputs(inputItems, inputFluids)
     }
@@ -110,12 +110,12 @@ class FluidEnergyBlockEntity(
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
-        tank.writeToNBT(registries, tag)
+        this.tank.writeToNBT(registries, tag)
     }
 
     override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.loadAdditional(tag, registries)
-        tank.readFromNBT(registries, tag)
+        this.tank.readFromNBT(registries, tag)
     }
 
     override fun getDisplayName(): Component = Component.literal("FluidEnergyRecipe")

@@ -19,15 +19,15 @@ class FluidEnergyMenu(
     )
 
     init {
-        addSlot(Slot(parent, 0, 15, 30))
-        addSlot(Slot(parent, 1, 30, 30))
-        addSlot(Slot(parent, 2, 15, 45))
-        addSlot(Slot(parent, 3, 30, 45))
+        this.addSlot(Slot(parent, 0, 15, 30))
+        this.addSlot(Slot(parent, 1, 30, 30))
+        this.addSlot(Slot(parent, 2, 15, 45))
+        this.addSlot(Slot(parent, 3, 30, 45))
 
-        addSlot(ResultSlot(4, 60, 30, parent))
-        addSlot(ResultSlot(5, 75, 30, parent))
-        addSlot(ResultSlot(6, 60, 45, parent))
-        addSlot(ResultSlot(7, 75, 45, parent))
+        this.addSlot(ResultSlot(4, 60, 30, parent))
+        this.addSlot(ResultSlot(5, 75, 30, parent))
+        this.addSlot(ResultSlot(6, 60, 45, parent))
+        this.addSlot(ResultSlot(7, 75, 45, parent))
     }
 
     override val containerSlotCount: Int = 8

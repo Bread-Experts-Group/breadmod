@@ -120,4 +120,10 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
      */
     fun <T> listStreamCodec(streamCodec: StreamCodec<RegistryFriendlyByteBuf, T>): StreamCodec<RegistryFriendlyByteBuf, List<T>> =
         streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toMutableList() })
+
+    fun <T> StreamCodec<RegistryFriendlyByteBuf, T>.toMutableList(): StreamCodec<RegistryFriendlyByteBuf, MutableList<T>> =
+        this.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toMutableList() })
+
+    fun <T> StreamCodec<RegistryFriendlyByteBuf, T>.toList(): StreamCodec<RegistryFriendlyByteBuf, List<T>> =
+        this.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toList() })
 }
