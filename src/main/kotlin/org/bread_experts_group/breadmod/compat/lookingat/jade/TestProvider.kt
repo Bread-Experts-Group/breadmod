@@ -11,31 +11,30 @@ import snownee.jade.api.config.IPluginConfig
 import snownee.jade.api.fluid.JadeFluidObject
 
 class TestProvider : IBlockComponentProvider {
-    companion object {
-        val INSTANCE = TestProvider()
-    }
+	companion object {
+		val INSTANCE : TestProvider = TestProvider()
+	}
 
-    override fun getUid(): ResourceLocation = JadePlugin.BLOCK_DATA
-
-    override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
-        tooltip.remove(JadeIds.UNIVERSAL_FLUID_STORAGE)
-        for (direction: Direction? in Direction.entries) {
-            if (direction != null) {
-                val handler =
-                    accessor.level.getCapability(Capabilities.FluidHandler.BLOCK, accessor.position, direction)
-                if (handler != null) {
-                    tooltip.add(
-                        FluidBarElement(
-                            JadeFluidObject.of(
-                                handler.getFluidInTank(0).fluid,
-                                handler.getFluidInTank(0).amount.toLong()
-                            ),
-                            handler.getTankCapacity(0),
-                            direction
-                        )
-                    )
-                }
-            }
-        }
-    }
+	override fun getUid() : ResourceLocation = JadePlugin.BLOCK_DATA
+	override fun appendTooltip(tooltip : ITooltip, accessor : BlockAccessor, config : IPluginConfig) {
+		tooltip.remove(JadeIds.UNIVERSAL_FLUID_STORAGE)
+		for (direction : Direction? in Direction.entries) {
+			if (direction != null) {
+				val handler =
+					accessor.level.getCapability(Capabilities.FluidHandler.BLOCK, accessor.position, direction)
+				if (handler != null) {
+					tooltip.add(
+						FluidBarElement(
+							JadeFluidObject.of(
+								handler.getFluidInTank(0).fluid,
+								handler.getFluidInTank(0).amount.toLong()
+							),
+							handler.getTankCapacity(0),
+							direction
+						)
+					)
+				}
+			}
+		}
+	}
 }

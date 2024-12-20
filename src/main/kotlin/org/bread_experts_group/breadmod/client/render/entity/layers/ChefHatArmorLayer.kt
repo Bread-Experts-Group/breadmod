@@ -29,62 +29,60 @@ import java.awt.Color
  * @see ChefHatItem
  */
 class ChefHatArmorLayer(
-    renderer: RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
+	renderer : RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
 ) : RenderLayer<LivingEntity, EntityModel<LivingEntity>>(renderer) {
-    private val chefHatModel = ChefHatModel(localClient.entityModels)
+	private val chefHatModel = ChefHatModel(localClient.entityModels)
+	override fun render(
+		poseStack : PoseStack,
+		bufferSource : MultiBufferSource,
+		packedLight : Int,
+		livingEntity : LivingEntity,
+		limbSwing : Float,
+		limbSwingAmount : Float,
+		partialTick : Float,
+		ageInTicks : Float,
+		netHeadYaw : Float,
+		headPitch : Float
+	) {
+		val stack = livingEntity.getItemBySlot(EquipmentSlot.HEAD)
+		val item = stack.item
+		val entityModel = this.parentModel
 
-    override fun render(
-        poseStack: PoseStack,
-        bufferSource: MultiBufferSource,
-        packedLight: Int,
-        livingEntity: LivingEntity,
-        limbSwing: Float,
-        limbSwingAmount: Float,
-        partialTick: Float,
-        ageInTicks: Float,
-        netHeadYaw: Float,
-        headPitch: Float
-    ) {
-        val stack = livingEntity.getItemBySlot(EquipmentSlot.HEAD)
-        val item = stack.item
-        val entityModel = parentModel
+		if (item is ChefHatItem) {
+			val color = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(stack, Color.WHITE.rgb))
 
-        if (item is ChefHatItem) {
-            val color = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(stack, Color.WHITE.rgb))
+			poseStack.pushPose()
+			when (entityModel) {
+				is HumanoidModel<*> -> {
+					// todo figure out why it doesn't translate with zombie heads
+					entityModel.head.translateAndRotate(poseStack)
+					poseStack.translate(0.0, -0.5, 0.0)
+				}
+				is FoxModel<*>      -> {
+					entityModel.head.translateAndRotate(poseStack)
+					poseStack.translate(0.06, -0.1, -0.13)
+					poseStack.scaleFlat(0.9f)
+				}
+			}
 
-            poseStack.pushPose()
-            when (entityModel) {
-                is HumanoidModel<*> -> {
-                    // todo figure out why it doesn't translate with zombie heads
-                    entityModel.head.translateAndRotate(poseStack)
-                    poseStack.translate(0.0, -0.5, 0.0)
-                }
+			this.renderHat(poseStack, bufferSource, packedLight, color)
+			poseStack.popPose()
+		}
+	}
 
-                is FoxModel<*> -> {
-                    entityModel.head.translateAndRotate(poseStack)
-                    poseStack.translate(0.06, -0.1, -0.13)
-                    poseStack.scaleFlat(0.9f)
-                }
-            }
-
-            renderHat(poseStack, bufferSource, packedLight, color)
-            poseStack.popPose()
-        }
-    }
-
-    private fun renderHat(
-        poseStack: PoseStack,
-        buffer: MultiBufferSource,
-        packedLight: Int,
-        color: Int
-    ) {
-        poseStack.scaleFlat(1.05f)
-        chefHatModel.renderToBuffer(
-            poseStack,
-            buffer.getBuffer(RenderType.entitySolid(HAT_TEXTURE)),
-            packedLight,
-            OverlayTexture.NO_OVERLAY,
-            color
-        )
-    }
+	private fun renderHat(
+		poseStack : PoseStack,
+		buffer : MultiBufferSource,
+		packedLight : Int,
+		color : Int
+	) {
+		poseStack.scaleFlat(1.05f)
+		this.chefHatModel.renderToBuffer(
+			poseStack,
+			buffer.getBuffer(RenderType.entitySolid(HAT_TEXTURE)),
+			packedLight,
+			OverlayTexture.NO_OVERLAY,
+			color
+		)
+	}
 }

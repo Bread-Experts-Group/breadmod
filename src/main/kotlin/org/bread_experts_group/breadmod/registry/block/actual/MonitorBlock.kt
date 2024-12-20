@@ -13,19 +13,18 @@ import net.minecraft.world.level.block.state.StateDefinition
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
 
 class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBlock {
-    init {
-        this.registerDefaultState(
-            stateDefinition.any()
-                .setValue(DirectionalBlock.FACING, Direction.NORTH)
-        )
-    }
+	init {
+		this.registerDefaultState(
+			this.stateDefinition.any()
+				.setValue(DirectionalBlock.FACING, Direction.NORTH)
+		)
+	}
 
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = BreadScreenBlockEntity(pos, state)
+	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity = BreadScreenBlockEntity(pos, state)
+	override fun createBlockStateDefinition(builder : StateDefinition.Builder<Block, BlockState>) {
+		builder.add(DirectionalBlock.FACING)
+	}
 
-    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
-        builder.add(DirectionalBlock.FACING)
-    }
-
-    override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
-        defaultBlockState().setValue(DirectionalBlock.FACING, context.nearestLookingDirection)
+	override fun getStateForPlacement(context : BlockPlaceContext) : BlockState =
+		this.defaultBlockState().setValue(DirectionalBlock.FACING, context.nearestLookingDirection)
 }

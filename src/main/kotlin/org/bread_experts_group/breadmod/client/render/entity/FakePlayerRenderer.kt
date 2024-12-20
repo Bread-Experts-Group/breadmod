@@ -8,25 +8,23 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.resources.DefaultPlayerSkin
-import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.util.render.localClient
 
 class FakePlayerRenderer(
-    context: EntityRendererProvider.Context,
+	context : EntityRendererProvider.Context,
 ) : LivingEntityRenderer<FakePlayer, PlayerModel<FakePlayer>>(
-    context,
-    PlayerModel<FakePlayer>(
-        context.bakeLayer(if (useSlimModel) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER),
-        useSlimModel,
-    ), 0.5f
+	context,
+	PlayerModel<FakePlayer>(
+		context.bakeLayer(if (this.useSlimModel) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER),
+		this.useSlimModel,
+	), 0.5f
 ) {
-    companion object {
-        private var useSlimModel: Boolean = true
-    }
-
-//    override fun render(
+	companion object {
+		private var useSlimModel : Boolean = true
+	}
+	//    override fun render(
 //        entity: MachTrail,
 //        entityYaw: Float,
 //        partialTick: Float,
@@ -64,15 +62,14 @@ class FakePlayerRenderer(
 //        )
 //        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight)
 //    }
-
-    override fun render(
-        entity: FakePlayer,
-        entityYaw: Float,
-        partialTicks: Float,
-        poseStack: PoseStack,
-        buffer: MultiBufferSource,
-        packedLight: Int
-    ) {
+	override fun render(
+		entity : FakePlayer,
+		entityYaw : Float,
+		partialTicks : Float,
+		poseStack : PoseStack,
+		buffer : MultiBufferSource,
+		packedLight : Int
+	) {
 //        model.body.translateAndRotate(poseStack)
 //        val level = rgMinecraft.level ?: return
 //        try {
@@ -81,21 +78,15 @@ class FakePlayerRenderer(
 //        } catch (e: Exception) {
 //            LogManager.getLogger().error(e)
 //        }
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight)
-    }
+		super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight)
+	}
 
-    private fun isOwnerModelSlim(entity: FakePlayer): Boolean {
-        val model = if (getPlayerInfo(entity) != null) getPlayerInfo(entity)!!.skin.model
-        else DefaultPlayerSkin.get(entity.getOwnerUUID()).model
-        return model == PlayerSkin.Model.SLIM
-    }
+	private fun getPlayerInfo(entity : FakePlayer) : PlayerInfo? {
+		val connection = localClient.connection ?: return null
+		return connection.getPlayerInfo(entity.getOwnerUUID())
+	}
 
-    private fun getPlayerInfo(entity: FakePlayer): PlayerInfo? {
-        val connection = localClient.connection ?: return null
-        return connection.getPlayerInfo(entity.getOwnerUUID())
-    }
-
-    override fun getTextureLocation(entity: FakePlayer): ResourceLocation =
-        if (getPlayerInfo(entity) != null) getPlayerInfo(entity)!!.skin.texture
-        else DefaultPlayerSkin.get(entity.getOwnerUUID()).texture
+	override fun getTextureLocation(entity : FakePlayer) : ResourceLocation =
+		if (this.getPlayerInfo(entity) != null) this.getPlayerInfo(entity)!!.skin.texture
+		else DefaultPlayerSkin.get(entity.getOwnerUUID()).texture
 }

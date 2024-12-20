@@ -14,24 +14,25 @@ import java.util.Map;
 
 @Mixin(DirectoryLister.class)
 abstract class MixinDirectoryListener implements IAccessorDirectoryLister {
-    @Inject(method = "run", at = @At("HEAD"), cancellable = true)
-    private void run(final ResourceManager resourceManager, final SpriteSource.Output output, final CallbackInfo ci) {
-        final String prefix = "textures/" + this.getSourcePath();
-        final Map<ResourceLocation, Resource> resourceLocationResourceMap = resourceManager.listResources(prefix, (location) -> true);
-        resourceLocationResourceMap.forEach((location, resource) -> {
-            final String path = location.getPath();
-            ResourceLocation translated = location.withPath(
-                    path.substring(
-                            prefix.length() + 1,
-                            // Allow for default processing of PNGs, don't strip extensions of
-                            // unknown resources for our purposes
-                            path.endsWith(".png") ? path.lastIndexOf('.') : path.length()
-                    )
-            );
+	@Inject(method = "run", at = @At("HEAD"), cancellable = true)
+	private void run(final ResourceManager resourceManager, final SpriteSource.Output output, final CallbackInfo ci) {
+		final String prefix = "textures/" + this.getSourcePath();
+		final Map<ResourceLocation, Resource> resourceLocationResourceMap =
+				resourceManager.listResources(prefix, (location) -> true);
+		resourceLocationResourceMap.forEach((location, resource) -> {
+			final String path = location.getPath();
+			ResourceLocation translated = location.withPath(
+					path.substring(
+							prefix.length() + 1,
+							// Allow for default processing of PNGs, don't strip extensions of
+							// unknown resources for our purposes
+							path.endsWith(".png") ? path.lastIndexOf('.') : path.length()
+					)
+			);
 
-            translated = translated.withPrefix(this.getIDPrefix());
-            output.add(translated, resource);
-        });
-        ci.cancel();
-    }
+			translated = translated.withPrefix(this.getIDPrefix());
+			output.add(translated, resource);
+		});
+		ci.cancel();
+	}
 }

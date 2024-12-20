@@ -32,102 +32,93 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 
 class DoughMachineBlockEntity(
-    pos: BlockPos, state: BlockState
+	pos : BlockPos, state : BlockState
 ) : BlockEntity(
-    ModBlockEntityTypes.DOUGH_MACHINE.get(),
-    pos,
-    state
+	ModBlockEntityTypes.DOUGH_MACHINE.get(),
+	pos,
+	state
 ), MenuProvider, CraftingContainer, WorldlyContainer {
-    var progress: Int = 0
-    var maxProgress: Int = 0
+	var progress : Int = 0
+	var maxProgress : Int = 0
+	val energyHandler : EnergyStorage by lazy {
+		object : EnergyStorage(100000) {
+			override fun receiveEnergy(toReceive : Int, simulate : Boolean) : Int {
+				this@DoughMachineBlockEntity.syncToClients()
+				return super.receiveEnergy(toReceive, simulate)
+			}
+		}
+	}
+	val fluidHandler : FluidTank by lazy {
+		object : FluidTank(10000) {
+			override fun onContentsChanged() {
+				this@DoughMachineBlockEntity.syncToClients()
+			}
 
-    val energyHandler: EnergyStorage by lazy {
-        object : EnergyStorage(100000) {
-            override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
-                syncToClients()
-                return super.receiveEnergy(toReceive, simulate)
-            }
-        }
-    }
+			override fun getTanks() : Int = 2
+		}
+	}
+	val horizontal : Direction = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
+	val sidedInvWrapper : SidedInvWrapper = SidedInvWrapper(this, this.horizontal)
+	private var itemSlots : NonNullList<ItemStack> = NonNullList.withSize(3, ItemStack.EMPTY)
+	private fun syncToClients() =
+		this.level?.sendBlockUpdated(this.blockPos, this.blockState, this.blockState, Block.UPDATE_CLIENTS)
 
-    val fluidHandler: FluidTank by lazy {
-        object : FluidTank(10000) {
-            override fun onContentsChanged() {
-                syncToClients()
-            }
+	override fun clearContent() : Unit = this.itemSlots.forEach { it.count = 0 }
+	override fun getContainerSize() : Int = this.itemSlots.size
+	override fun isEmpty() : Boolean = this.itemSlots.any { !it.isEmpty }
+	override fun getItem(slot : Int) : ItemStack = this.itemSlots[slot]
+	override fun removeItem(slot : Int, pAmount : Int) : ItemStack = this.itemSlots[slot].split(pAmount)
+	override fun removeItemNoUpdate(slot : Int) : ItemStack = this.itemSlots[slot].copyAndClear()
+	override fun setItem(slot : Int, stack : ItemStack) {
+		this.itemSlots[slot] = stack
+	}
 
-            override fun getTanks(): Int = 2
-        }
-    }
+	override fun stillValid(player : Player) : Boolean = Container.stillValidBlockEntity(this, player)
+	override fun fillStackedContents(contents : StackedContents) {
+		for (stack : ItemStack in this.itemSlots) {
+			contents.accountSimpleStack(stack)
+		}
+	}
+	// allow every face of the block to receive and extract items
+	override fun getSlotsForFace(side : Direction) : IntArray = intArrayOf(0, 1, 2)
+	override fun canPlaceItemThroughFace(index : Int, itemStack : ItemStack, direction : Direction?) : Boolean =
+		if (direction != null) this.getSlotsForFace(direction).contains(index) && index == 0 else true
 
-    val horizontal: Direction = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
-    val sidedInvWrapper: SidedInvWrapper = SidedInvWrapper(this, horizontal)
+	override fun canTakeItemThroughFace(index : Int, stack : ItemStack, direction : Direction) : Boolean =
+		this.getSlotsForFace(direction).contains(index) && ((index == 2 && stack.`is`(Items.BUCKET)) || index != 0)
 
-    private var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(3, ItemStack.EMPTY)
+	override fun getWidth() : Int = 1
+	override fun getHeight() : Int = 1
+	override fun getItems() : MutableList<ItemStack> = this.itemSlots
+	override fun getUpdateTag(registries : HolderLookup.Provider) : CompoundTag =
+		super.getUpdateTag(registries).also { this.saveAdditional(it, registries) }
 
-    private fun syncToClients() = level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_CLIENTS)
+	override fun getUpdatePacket() : Packet<ClientGamePacketListener> =
+		ClientboundBlockEntityDataPacket.create(this)
 
-    override fun clearContent(): Unit = itemSlots.forEach { it.count = 0 }
+	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+		super.saveAdditional(tag, registries)
+		tag.put("energy", this.energyHandler.serializeNBT(registries))
+		tag.put("fluid", CompoundTag().also { this.fluidHandler.writeToNBT(registries, it) })
+		tag.putInt("progress", this.progress)
+		tag.putInt("maxProgress", this.maxProgress)
 
-    override fun getContainerSize(): Int = itemSlots.size
-    override fun isEmpty(): Boolean = itemSlots.any { !it.isEmpty }
-    override fun getItem(slot: Int): ItemStack = itemSlots[slot]
-    override fun removeItem(slot: Int, pAmount: Int): ItemStack = itemSlots[slot].split(pAmount)
-    override fun removeItemNoUpdate(slot: Int): ItemStack = itemSlots[slot].copyAndClear()
-    override fun setItem(slot: Int, stack: ItemStack) {
-        itemSlots[slot] = stack
-    }
+		ContainerHelper.saveAllItems(tag, this.itemSlots, registries)
+	}
 
-    override fun stillValid(player: Player): Boolean = Container.stillValidBlockEntity(this, player)
+	override fun loadAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+		super.loadAdditional(tag, registries)
+		this.energyHandler.deserializeNBT(registries, tag.get("energy") ?: return)
+		this.fluidHandler.readFromNBT(registries, tag.getCompound("fluid"))
+		this.progress = tag.getInt("progress")
+		this.maxProgress = tag.getInt("maxProgress")
 
-    override fun fillStackedContents(contents: StackedContents) {
-        for (stack: ItemStack in itemSlots) {
-            contents.accountSimpleStack(stack)
-        }
-    }
+		this.itemSlots = NonNullList.withSize(3, ItemStack.EMPTY)
+		ContainerHelper.loadAllItems(tag, this.itemSlots, registries)
+	}
 
-    // allow every face of the block to receive and extract items
-    override fun getSlotsForFace(side: Direction): IntArray = intArrayOf(0, 1, 2)
+	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+		DoughMachineMenu(containerId, playerInventory, this)
 
-    override fun canPlaceItemThroughFace(index: Int, itemStack: ItemStack, direction: Direction?): Boolean =
-        if (direction != null) getSlotsForFace(direction).contains(index) && index == 0 else true
-
-    override fun canTakeItemThroughFace(index: Int, stack: ItemStack, direction: Direction): Boolean =
-        getSlotsForFace(direction).contains(index) && ((index == 2 && stack.`is`(Items.BUCKET)) || index != 0)
-
-    override fun getWidth(): Int = 1
-    override fun getHeight(): Int = 1
-    override fun getItems(): MutableList<ItemStack> = itemSlots
-
-    override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =
-        super.getUpdateTag(registries).also { saveAdditional(it, registries) }
-
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
-        ClientboundBlockEntityDataPacket.create(this)
-
-    override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-        super.saveAdditional(tag, registries)
-        tag.put("energy", energyHandler.serializeNBT(registries))
-        tag.put("fluid", CompoundTag().also { fluidHandler.writeToNBT(registries, it) })
-        tag.putInt("progress", progress)
-        tag.putInt("maxProgress", maxProgress)
-
-        ContainerHelper.saveAllItems(tag, itemSlots, registries)
-    }
-
-    override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-        super.loadAdditional(tag, registries)
-        energyHandler.deserializeNBT(registries, tag.get("energy") ?: return)
-        fluidHandler.readFromNBT(registries, tag.getCompound("fluid"))
-        progress = tag.getInt("progress")
-        maxProgress = tag.getInt("maxProgress")
-
-        itemSlots = NonNullList.withSize(3, ItemStack.EMPTY)
-        ContainerHelper.loadAllItems(tag, itemSlots, registries)
-    }
-
-    override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
-        DoughMachineMenu(containerId, playerInventory, this)
-
-    override fun getDisplayName(): Component = modTranslatable("block", "dough_machine")
+	override fun getDisplayName() : Component = modTranslatable("block", "dough_machine")
 }

@@ -8,14 +8,13 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 
 class FluidTankJadeBlock : BaseEntityBlock(Properties.of()) {
-    companion object {
-        val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { FluidTankJadeBlock() }
-    }
+	companion object {
+		val CODEC : MapCodec<out BaseEntityBlock> = simpleCodec { FluidTankJadeBlock() }
+	}
 
-    override fun codec(): MapCodec<out BaseEntityBlock> = CODEC
+	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+		SidedFluidTankJadeBlockEntity(pos, state)
 
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
-        SidedFluidTankJadeBlockEntity(pos, state)
-
-    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
+	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
 }

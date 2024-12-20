@@ -5,5 +5,5 @@ import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.block.state.BlockState
 
 interface ILightColored {
-    fun getLightColor(level: BlockAndTintGetter, blockState: BlockState, position: BlockPos): Int
+	fun getLightColor(level : BlockAndTintGetter, blockState : BlockState, position : BlockPos) : Int
 }

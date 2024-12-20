@@ -19,41 +19,41 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
 
 class ModItemTags(
-    output: PackOutput,
-    lookupProvider: CompletableFuture<HolderLookup.Provider>,
-    blockTags: CompletableFuture<TagLookup<Block>>,
-    existingFileHelper: ExistingFileHelper
+	output : PackOutput,
+	lookupProvider : CompletableFuture<HolderLookup.Provider>,
+	blockTags : CompletableFuture<TagLookup<Block>>,
+	existingFileHelper : ExistingFileHelper
 ) : ItemTagsProvider(output, lookupProvider, blockTags, BreadMod.ID, existingFileHelper) {
-    inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
-        this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
+	inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd : Supplier<A>) : IntrinsicTagAppender<T> =
+		this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
 
-    override fun addTags(provider: HolderLookup.Provider) {
-        tag(Tags.Items.MUSIC_DISCS)
-            .add(ModItems.RECORD_SECRET_HOPPIN)
-        tag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
-            .add(ModItems.RECORD_SECRET_HOPPIN)
-        tag(ItemTags.DYEABLE)
-            .add(ModItems.CHEF_HAT)
-            .add(ModItems.BREAD_HELMET)
-            .add(ModItems.BREAD_CHESTPLATE)
-            .add(ModItems.BREAD_LEGGINGS)
-            .add(ModItems.BREAD_BOOTS)
+	override fun addTags(provider : HolderLookup.Provider) {
+		this.tag(Tags.Items.MUSIC_DISCS)
+			.add(ModItems.RECORD_SECRET_HOPPIN)
+		this.tag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
+			.add(ModItems.RECORD_SECRET_HOPPIN)
+		this.tag(ItemTags.DYEABLE)
+			.add(ModItems.CHEF_HAT)
+			.add(ModItems.BREAD_HELMET)
+			.add(ModItems.BREAD_CHESTPLATE)
+			.add(ModItems.BREAD_LEGGINGS)
+			.add(ModItems.BREAD_BOOTS)
 
-        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "flour/wheat")))
-            .add(ModItems.FLOUR)
+		this.tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "flour/wheat")))
+			.add(ModItems.FLOUR)
 
-        tag(TOASTABLE)
-            .add(
-                Items.BREAD,
-                Items.CHARCOAL
-            )
+		this.tag(Companion.TOASTABLE)
+			.add(
+				Items.BREAD,
+				Items.CHARCOAL
+			)
 
-        tag(KNIVES)
-            .add(ModItems.KNIFE)
-    }
+		this.tag(Companion.KNIVES)
+			.add(ModItems.KNIFE)
+	}
 
-    companion object {
-        val KNIVES: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
-        val TOASTABLE: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
-    }
+	companion object {
+		val KNIVES : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
+		val TOASTABLE : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
+	}
 }

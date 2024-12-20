@@ -14,55 +14,53 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class PrimedHappyBlock(
-    level: Level,
-    pos: Vec3 = Vec3.ZERO,
-    delta: Vec3 = Vec3.ZERO,
-    private val owner: Entity? = null,
-    private var shouldSpread: Boolean = false
+	level : Level,
+	pos : Vec3 = Vec3.ZERO,
+	delta : Vec3 = Vec3.ZERO,
+	private val owner : Entity? = null,
+	private var shouldSpread : Boolean = false
 ) : PrimedTnt(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), level) {
-    init {
-        this.setPos(pos); this.deltaMovement = delta
-    }
+	init {
+		this.setPos(pos); this.deltaMovement = delta
+	}
 
-    private val spreadRadius = ModConfiguration.COMMON.HAPPY_BLOCK_SPREAD_RADIUS.get()
-    private val divisions = ModConfiguration.COMMON.HAPPY_BLOCK_DIVISIONS.get()
-
-    // todo reimplement BMExplosion
-    override fun explode(): Unit = level().let {
-        it.explode(
-            null,
-            position().x,
-            position().y,
-            position().z,
-            30f,
-            Level.ExplosionInteraction.TNT
-        )
+	private val spreadRadius = ModConfiguration.COMMON.happyBlockExplosionSpreadRadius.get()
+	private val divisions = ModConfiguration.COMMON.happyBlockExplosionDivisions.get()
+	// todo reimplement BMExplosion
+	override fun explode() : Unit = this.level().let {
+		it.explode(
+			null,
+			this.position().x,
+			this.position().y,
+			this.position().z,
+			30f,
+			Level.ExplosionInteraction.TNT
+		)
 //        BMExplosion(it, owner, position(), 10.0, 5, Explosion.BlockInteraction.DESTROY).explodeThreaded()
-        if (shouldSpread) {
-            repeat(divisions) { arc ->
-                val current = arc.toDouble()
-                val extraPrimedHappyBlock = PrimedHappyBlock(
-                    it, position(),
-                    Vec3(spreadRadius * cos(current), 0.5, spreadRadius * sin(current)),
-                    this.owner
-                )
-                it.addFreshEntity(extraPrimedHappyBlock)
-            }
-        }
-    }
+		if (this.shouldSpread) {
+			repeat(this.divisions) { arc ->
+				val current = arc.toDouble()
+				val extraPrimedHappyBlock = PrimedHappyBlock(
+					it, this.position(),
+					Vec3(this.spreadRadius * cos(current), 0.5, this.spreadRadius * sin(current)),
+					this.owner
+				)
+				it.addFreshEntity(extraPrimedHappyBlock)
+			}
+		}
+	}
 
-    override fun save(compound: CompoundTag): Boolean =
-        if (!compound.getBoolean("shouldSpread")) {
-            compound.putBoolean("shouldSpread", true)
-            true
-        } else false
+	override fun save(compound : CompoundTag) : Boolean =
+		if (!compound.getBoolean("shouldSpread")) {
+			compound.putBoolean("shouldSpread", true)
+			true
+		} else false
 
-    override fun load(compound: CompoundTag) {
-        shouldSpread = compound.getBoolean("shouldSpread")
-        super.load(compound)
-    }
+	override fun load(compound : CompoundTag) {
+		this.shouldSpread = compound.getBoolean("shouldSpread")
+		super.load(compound)
+	}
 
-    override fun getType(): EntityType<*> = ModEntityTypes.HAPPY_BLOCK_ENTITY.get()
-
-    override fun getPickResult(): ItemStack = ModBlocks.HAPPY_BLOCK.toStack()
+	override fun getType() : EntityType<*> = ModEntityTypes.HAPPY_BLOCK_ENTITY.get()
+	override fun getPickResult() : ItemStack = ModBlocks.HAPPY_BLOCK.toStack()
 }

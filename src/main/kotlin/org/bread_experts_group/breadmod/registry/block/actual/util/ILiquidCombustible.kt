@@ -9,11 +9,11 @@ import net.neoforged.neoforge.common.extensions.IFluidExtension
  * @since 1.0.0
  */
 interface ILiquidCombustible : IFluidExtension {
-    /**
-     * Returns the burn time of this liquid, in ticks.
-     *
-     * @author Miko Elbrecht
-     * @since 1.0.0
-     */
-    fun getBurnTime(): Int
+	/**
+	 * Returns the burn time of this liquid, in ticks.
+	 *
+	 * @author Miko Elbrecht
+	 * @since 1.0.0
+	 */
+	fun getBurnTime() : Int
 }

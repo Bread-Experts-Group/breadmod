@@ -8,34 +8,34 @@ import net.minecraft.world.level.block.Block
 import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
 
 enum class ToolTier(
-    private val incorrectTool: TagKey<Block>,
-    private val getUses: Int,
-    private val getSpeed: Float,
-    private val getAttackDamageBonus: Float,
-    private val getEnchantmentValue: Int,
-    private val getRepairIngredient: Ingredient
+	private val incorrectTool : TagKey<Block>,
+	private val getUses : Int,
+	private val getSpeed : Float,
+	private val getAttackDamageBonus : Float,
+	private val getEnchantmentValue : Int,
+	private val getRepairIngredient : Ingredient
 ) : Tier {
-    BREAD(
-        ModBlockTags.INCORRECT_FOR_BREAD_TOOL,
-        100,
-        3f,
-        0.0f,
-        10,
-        Ingredient.of(Items.BREAD)
-    ),
-    RF_BREAD(
-        ModBlockTags.INCORRECT_FOR_REINFORCED_BREAD_TOOL,
-        1500,
-        8f,
-        3f,
-        17,
-        Ingredient.of(Items.NETHERITE_INGOT)
-    ); // Reinforced
+	BREAD(
+		ModBlockTags.INCORRECT_FOR_BREAD_TOOL,
+		100,
+		3f,
+		0.0f,
+		10,
+		Ingredient.of(Items.BREAD)
+	),
+	RF_BREAD(
+		ModBlockTags.INCORRECT_FOR_REINFORCED_BREAD_TOOL,
+		1500,
+		8f,
+		3f,
+		17,
+		Ingredient.of(Items.NETHERITE_INGOT)
+	); // Reinforced
 
-    override fun getIncorrectBlocksForDrops(): TagKey<Block> = incorrectTool
-    override fun getUses(): Int = getUses
-    override fun getSpeed(): Float = getSpeed
-    override fun getAttackDamageBonus(): Float = getAttackDamageBonus
-    override fun getEnchantmentValue(): Int = getEnchantmentValue
-    override fun getRepairIngredient(): Ingredient = getRepairIngredient
+	override fun getIncorrectBlocksForDrops() : TagKey<Block> = this.incorrectTool
+	override fun getUses() : Int = this.getUses
+	override fun getSpeed() : Float = this.getSpeed
+	override fun getAttackDamageBonus() : Float = this.getAttackDamageBonus
+	override fun getEnchantmentValue() : Int = this.getEnchantmentValue
+	override fun getRepairIngredient() : Ingredient = this.getRepairIngredient
 }

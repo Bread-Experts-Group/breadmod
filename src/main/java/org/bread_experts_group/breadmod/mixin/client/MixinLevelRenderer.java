@@ -12,19 +12,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LevelRenderer.class)
 abstract class MixinLevelRenderer {
-    @SuppressWarnings("LongLine")
-    @Inject(
-            method = "getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)I",
-            at = @At("HEAD"),
-            cancellable = true
-    )
-    private static void getLightColor(
-            BlockAndTintGetter level,
-            BlockState state,
-            BlockPos pos,
-            CallbackInfoReturnable<Integer> cir
-    ) {
-        if (state.getBlock() instanceof ILightColored)
-            cir.setReturnValue(((ILightColored) state.getBlock()).getLightColor(level, state, pos) | 0x80000000);
-    }
+	@SuppressWarnings("LongLine")
+	@Inject(
+			method = "getLightColor(Lnet/minecraft/world/level/BlockAndTintGetter;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)I",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	private static void getLightColor(
+			BlockAndTintGetter level,
+			BlockState state,
+			BlockPos pos,
+			CallbackInfoReturnable<Integer> cir
+	) {
+		if (state.getBlock() instanceof ILightColored)
+			cir.setReturnValue(((ILightColored) state.getBlock()).getLightColor(level, state, pos) | 0x80000000);
+	}
 }

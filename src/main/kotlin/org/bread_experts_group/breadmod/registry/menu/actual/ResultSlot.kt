@@ -4,6 +4,6 @@ import net.minecraft.world.Container
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 
-class ResultSlot(id: Int, x: Int, y: Int, container: Container) : Slot(container, id, x, y) {
-    override fun mayPlace(stack: ItemStack): Boolean = false
+class ResultSlot(id : Int, x : Int, y : Int, container : Container) : Slot(container, id, x, y) {
+	override fun mayPlace(stack : ItemStack) : Boolean = false
 }

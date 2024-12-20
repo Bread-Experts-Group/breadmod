@@ -12,56 +12,61 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
 import java.text.DecimalFormat
 
-class BreadAmuletItem(durability: Int) : Item(Properties().durability(durability)) {
-    companion object {
-        private val feedTime = COMMON.BREAD_AMULET_FEED_TIME_TICKS
-        private val feedAmt = COMMON.BREAD_AMULET_FEED_AMOUNT
-        private val feedStacks = COMMON.BREAD_AMULET_STACKS
+class BreadAmuletItem(durability : Int) : Item(Properties().durability(durability)) {
+	private companion object {
+		val decimalFormat : DecimalFormat = DecimalFormat("0.#")
+		val timers : MutableMap<String, PlayerData> = mutableMapOf<String, PlayerData>()
+	}
 
-        private val decimalFormat = DecimalFormat("0.#")
+	data class PlayerData(var timeLeft : Int, var lastExec : Int)
 
-        data class PlayerData(var timeLeft: Int, var lastExec: Int)
+	private fun playerFood(stack : ItemStack, player : Player) {
+		val feedTime = COMMON.breadAmuletFeedTimeTicks.get()
+		val feedAmount = COMMON.breadAmuletFeedAmount.get()
+		val feedStacks = COMMON.breadAmuletEffectCanStack.get()
+		val timer = Companion.timers.getOrPut(player.stringUUID) { PlayerData(feedTime, 0) }
+		if (feedStacks || timer.lastExec != player.tickCount && !player.isCreative) {
+			val hungerLevel = player.foodData.foodLevel
+			if (hungerLevel <= 20 && timer.timeLeft <= 0) {
+				stack.hurtAndBreak(1, player, player.getEquipmentSlotForItem(stack))
+				player.foodData.foodLevel += feedAmount
+				timer.timeLeft = feedTime
+			} else if (hungerLevel <= 19) timer.timeLeft--
+			timer.lastExec = player.tickCount
+		}
+	}
 
-        private val timers = mutableMapOf<String, PlayerData>()
-    }
+	override fun inventoryTick(
+		stack : ItemStack,
+		level : Level,
+		entity : Entity,
+		slotId : Int,
+		isSelected : Boolean
+	) : Unit =
+		if (entity is Player) this.playerFood(stack, entity) else {
+		}
 
-    private fun playerFood(stack: ItemStack, player: Player) {
-        val timer = timers.getOrPut(player.stringUUID) { PlayerData(feedTime.get(), 0) }
-        if (feedStacks.get() || timer.lastExec != player.tickCount && !player.isCreative) {
-            val hungerLevel = player.foodData.foodLevel
-            if (hungerLevel <= 20 && timer.timeLeft <= 0) {
-                stack.hurtAndBreak(1, player, player.getEquipmentSlotForItem(stack))
-                player.foodData.foodLevel += feedAmt.get()
-                timer.timeLeft = feedTime.get()
-            } else if (hungerLevel <= 19) timer.timeLeft--
-            timer.lastExec = player.tickCount
-        }
-    }
-
-    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean): Unit =
-        if (entity is Player) playerFood(stack, entity) else {
-        }
-
-    override fun appendHoverText(
-        stack: ItemStack,
-        context: TooltipContext,
-        tooltipComponents: MutableList<Component>,
-        tooltipFlag: TooltipFlag
-    ) {
-        val bars = feedAmt.get().toDouble() / 2
-        val secDelay = feedTime.get().toDouble() / 20
-        tooltipComponents.add(
-            modTranslatable(
-                "item",
-                "bread_amulet", "tooltip",
-                args = listOf(
-                    if (bars == 1.0) "a bar" else "${decimalFormat.format(bars)} bars",
-                    if (secDelay == 1.0) "second" else "${decimalFormat.format(secDelay)} seconds"
-                )
-            ).append(
-                if (feedStacks.get()) Component.literal(" ").append(modTranslatable("item", "bread_amulet", "stacks"))
-                else Component.empty()
-            ).withStyle(ChatFormatting.GOLD)
-        )
-    }
+	override fun appendHoverText(
+		stack : ItemStack,
+		context : TooltipContext,
+		tooltipComponents : MutableList<Component>,
+		tooltipFlag : TooltipFlag
+	) {
+		val secDelay = COMMON.breadAmuletFeedTimeTicks.get().toDouble() / 20
+		val bars = COMMON.breadAmuletFeedAmount.get().toDouble() / 2
+		val feedStacks = COMMON.breadAmuletEffectCanStack.get()
+		tooltipComponents.add(
+			modTranslatable(
+				"item",
+				"bread_amulet", "tooltip",
+				args = listOf(
+					if (bars == 1.0) "a bar" else "${Companion.decimalFormat.format(bars)} bars",
+					if (secDelay == 1.0) "second" else "${Companion.decimalFormat.format(secDelay)} seconds"
+				)
+			).append(
+				if (feedStacks) Component.literal(" ").append(modTranslatable("item", "bread_amulet", "stacks"))
+				else Component.empty()
+			).withStyle(ChatFormatting.GOLD)
+		)
+	}
 }

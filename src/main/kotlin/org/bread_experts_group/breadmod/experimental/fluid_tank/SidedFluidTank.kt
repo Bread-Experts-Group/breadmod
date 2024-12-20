@@ -10,106 +10,87 @@ import kotlin.math.min
 
 // todo proof of concept in progress..
 class SidedFluidTank(
-    val tanks: List<CustomHandler>
+    val tanks : List<CustomHandler>
 ) {
-    fun getFluidInTank(tank: Int) = tanks[tank].fluid
-
-    fun getFluidType(tank: Int) = tanks[tank].fluid.fluidType
-
-    fun setFluidInTank(tank: Int, fluid: FluidStack) {
-        tanks[tank].fluid = fluid
-    }
-
-    fun getTankCapacity(tank: Int): Int = tanks[tank].capacity
-
-    fun drain(maxDrain: Int, action: FluidAction, tank: Int) = tanks[tank].drain(maxDrain, action)
-
-    fun writeToNBT(lookupProvider: Provider, nbt: CompoundTag): CompoundTag {
-        repeat(tanks.size) { index ->
-            if (!tanks[index].fluid.isEmpty) {
-                nbt.put("Fluid_$index", tanks[index].fluid.save(lookupProvider))
+    fun getFluidInTank(tank : Int) : FluidStack = this.tanks[tank].fluid
+    fun writeToNBT(lookupProvider : Provider, nbt : CompoundTag) : CompoundTag {
+        repeat(this.tanks.size) { index ->
+            if (!this.tanks[index].fluid.isEmpty) {
+                nbt.put("Fluid_$index", this.tanks[index].fluid.save(lookupProvider))
             }
         }
 
         return nbt
     }
 
-    fun readFromNBT(lookupProvider: Provider, nbt: CompoundTag): SidedFluidTank {
-        repeat(tanks.size) { index ->
-            tanks[index].fluid = FluidStack.parseOptional(lookupProvider, nbt.getCompound("Fluid_$index"))
+    fun readFromNBT(lookupProvider : Provider, nbt : CompoundTag) : SidedFluidTank {
+        repeat(this.tanks.size) { index ->
+            this.tanks[index].fluid = FluidStack.parseOptional(lookupProvider, nbt.getCompound("Fluid_$index"))
         }
         return this
     }
 
     open class CustomHandler(
-        val capacity: Int,
-        val fluidTanks: Int,
-        val validator: Predicate<FluidStack>
+        val capacity : Int,
+        val fluidTanks : Int,
+        val validator : Predicate<FluidStack>
     ) : IFluidHandler {
-        constructor(capacity: Int, tanks: Int) : this(capacity, tanks, { true })
-        constructor(capacity: Int, validator: Predicate<FluidStack>) : this(capacity, 1, validator)
-        constructor(capacity: Int) : this(capacity, 1, { true })
+        constructor(capacity : Int) : this(capacity, 1, { true })
 
-        override fun getTanks(): Int = this.fluidTanks
-        var fluid = FluidStack.EMPTY
-
-        fun isEmpty(): Boolean = fluid.amount == 0
-
-        override fun getFluidInTank(tank: Int): FluidStack = fluid
-        fun getFluidAmount(): Int = fluid.amount
-
-        override fun getTankCapacity(tank: Int): Int = this.capacity
-
-        override fun isFluidValid(tank: Int, stack: FluidStack): Boolean = isFluidValid(stack)
-        fun isFluidValid(stack: FluidStack) = validator.test(stack)
-
-        override fun fill(resource: FluidStack, action: FluidAction): Int {
-            if (resource.isEmpty || !isFluidValid(resource)) {
+        override fun getTanks() : Int = this.fluidTanks
+        var fluid : FluidStack = FluidStack.EMPTY
+        fun isEmpty() : Boolean = this.fluid.amount == 0
+        override fun getFluidInTank(tank : Int) : FluidStack = this.fluid
+        override fun getTankCapacity(tank : Int) : Int = this.capacity
+        override fun isFluidValid(tank : Int, stack : FluidStack) : Boolean = this.isFluidValid(stack)
+        fun isFluidValid(stack : FluidStack) : Boolean = this.validator.test(stack)
+        override fun fill(resource : FluidStack, action : FluidAction) : Int {
+            if (resource.isEmpty || !this.isFluidValid(resource)) {
                 return 0
             }
             if (action.simulate()) {
-                if (fluid.isEmpty) {
-                    return min(capacity.toDouble(), resource.amount.toDouble()).toInt()
+                if (this.fluid.isEmpty) {
+                    return min(this.capacity.toDouble(), resource.amount.toDouble()).toInt()
                 }
-                if (!FluidStack.isSameFluidSameComponents(fluid, resource)) {
+                if (!FluidStack.isSameFluidSameComponents(this.fluid, resource)) {
                     return 0
                 }
-                return min((capacity - fluid.amount).toDouble(), resource.amount.toDouble()).toInt()
+                return min((this.capacity - this.fluid.amount).toDouble(), resource.amount.toDouble()).toInt()
             }
-            if (fluid.isEmpty) {
-                fluid = resource.copyWithAmount(min(capacity.toDouble(), resource.amount.toDouble()).toInt())
-                onContentsChanged()
-                return fluid.amount
+            if (this.fluid.isEmpty) {
+                this.fluid = resource.copyWithAmount(min(this.capacity.toDouble(), resource.amount.toDouble()).toInt())
+                this.onContentsChanged()
+                return this.fluid.amount
             }
-            if (!FluidStack.isSameFluidSameComponents(fluid, resource)) {
+            if (!FluidStack.isSameFluidSameComponents(this.fluid, resource)) {
                 return 0
             }
-            var filled = capacity - fluid.amount
+            var filled = this.capacity - this.fluid.amount
 
             if (resource.amount < filled) {
-                fluid.grow(resource.amount)
+                this.fluid.grow(resource.amount)
                 filled = resource.amount
             } else {
-                fluid.amount = capacity
+                this.fluid.amount = this.capacity
             }
-            if (filled > 0) onContentsChanged()
+            if (filled > 0) this.onContentsChanged()
             return filled
         }
 
-        override fun drain(resource: FluidStack, action: FluidAction): FluidStack {
-            if (resource.isEmpty || !FluidStack.isSameFluidSameComponents(resource, fluid)) return FluidStack.EMPTY
-            return drain(resource.amount, action)
+        override fun drain(resource : FluidStack, action : FluidAction) : FluidStack {
+            if (resource.isEmpty || !FluidStack.isSameFluidSameComponents(resource, this.fluid)) return FluidStack.EMPTY
+            return this.drain(resource.amount, action)
         }
 
-        override fun drain(maxDrain: Int, action: FluidAction): FluidStack {
+        override fun drain(maxDrain : Int, action : FluidAction) : FluidStack {
             var drained = maxDrain
-            if (fluid.amount < drained) {
-                drained = fluid.amount
+            if (this.fluid.amount < drained) {
+                drained = this.fluid.amount
             }
-            val stack = fluid.copyWithAmount(drained)
+            val stack = this.fluid.copyWithAmount(drained)
             if (action.execute() && drained > 0) {
-                fluid.shrink(drained)
-                onContentsChanged()
+                this.fluid.shrink(drained)
+                this.onContentsChanged()
             }
             return stack
         }

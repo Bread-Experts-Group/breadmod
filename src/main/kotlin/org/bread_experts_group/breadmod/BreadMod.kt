@@ -23,78 +23,56 @@ import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
  * Main mod class.
  */
 @Mod(BreadMod.ID)
-class BreadMod(container: ModContainer) {
-    companion object {
-        /**
-         * ID for breadmod.
-         */
-        const val ID: String = "breadmod"
+class BreadMod(container : ModContainer) {
+	companion object {
+		const val ID : String = "breadmod"
+		/**
+		 * @param override Only use this when you need to refer to a namespace outside breadmod
+		 */
+		fun modLocation(vararg path : String, override : Boolean = false) : ResourceLocation =
+			path.toMutableList().let {
+				ResourceLocation.fromNamespaceAndPath(
+					if (override) it.removeFirst() else this.ID, it.joinToString("/")
+				)
+			}
 
-        // the logger for our mod
-        val LOGGER: Logger = LogManager.getLogger(ID)
+		fun modTranslatable(
+			type : String = "misc",
+			vararg path : String,
+			args : List<Any> = listOf()
+		) : MutableComponent = Component.translatable(
+			"$type.${this.ID}.${path.joinToString(".")}",
+			*args.toTypedArray()
+		)
+	}
 
-//        val DATA_DIR: Path? = FMLPaths.CONFIGDIR.get().resolve(ID)
+	val logger : Logger = LogManager.getLogger()
 
-        /**
-         * @param override Only use this when you need to refer to a namespace outside breadmod
-         */
-        fun modLocation(vararg path: String, override: Boolean = false): ResourceLocation =
-            path.toMutableList().let {
-                ResourceLocation.fromNamespaceAndPath(
-                    if (override) it.removeFirst() else ID, it.joinToString("/")
-                )
-            }
+	init {
+		if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {
+			val context = LogManager.getContext(false) as LoggerContext
+			val fileLocator = this::class.java.getResource("/log4j2.xml")?.toURI()
+				?: throw IllegalStateException("Failed to load log4j2.xml")
+			val configuration = ConfigurationFactory
+				.getInstance()
+				.getConfiguration(
+					context,
+					context.name,
+					fileLocator,
+					null
+				)
+			val colorAppender = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
+			configuration.addAppender(colorAppender)
+			Configurator.reconfigure(configuration)
 
-        fun modTranslatable(type: String = "misc", vararg path: String, args: List<Any> = listOf()): MutableComponent =
-            Component.translatable("$type.$ID.${path.joinToString(".")}", *args.toTypedArray())
-    }
+			ConsoleUnnamedRedirection.setup()
+		}
 
-    init {
-        if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {
-            val context = LogManager.getContext(false) as LoggerContext
-            val fileLocator = this::class.java.getResource("/log4j2.xml")?.toURI()
-                ?: throw IllegalStateException("Failed to load log4j2.xml")
-            val configuration = ConfigurationFactory.getInstance().getConfiguration(context, context.name, fileLocator, null)
+		this.logger.log(Level.INFO, "Hello world!")
 
-            val colorAppender = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
-            configuration.addAppender(colorAppender)
-            Configurator.reconfigure(configuration)
-
-            ConsoleUnnamedRedirection.setup()
-        }
-
-        LOGGER.log(Level.INFO, "Hello world!")
-
-        container.registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPEC.right, "breadmod-common.toml")
-        container.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPEC.right, "breadmod-client.toml")
-
-        // Register the KDeferredRegister to the mod-specific event bus
-        Registry.registerAll(MOD_BUS)
-
-//        val obj = runForDist(clientTarget = {
-//            MOD_BUS.addListener(::onClientSetup)
-//            Minecraft.getInstance()
-//        }, serverTarget = {
-//            MOD_BUS.addListener(::onServerSetup)
-//            "test"
-//        })
-
-//        println(obj)
-    }
-
-//    /**
-//     * This is used for initializing client specific
-//     * things such as renderers and keymaps
-//     * Fired on the mod specific event bus.
-//     */
-//    private fun onClientSetup(event: FMLClientSetupEvent) {
-//        LOGGER.log(Level.INFO, "Initializing client...")
-//    }
-//
-//    /**
-//     * Fired on the global Forge bus.
-//     */
-//    private fun onServerSetup(event: FMLDedicatedServerSetupEvent) {
-//        LOGGER.log(Level.INFO, "Server starting...")
-//    }
+		container.registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPEC.right, "breadmod-common.toml")
+		container.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPEC.right, "breadmod-client.toml")
+		// Register the KDeferredRegister to the mod-specific event bus
+		Registry.registerAll(MOD_BUS)
+	}
 }

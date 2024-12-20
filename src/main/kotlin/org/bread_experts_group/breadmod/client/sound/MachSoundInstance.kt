@@ -8,30 +8,29 @@ import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.util.render.localClient
 
 class MachSoundInstance(
-    soundEvent: SoundEvent,
-    private val range: IntRange,
-    private val player: Player?,
-    var timer: Int = 0
+	soundEvent : SoundEvent,
+	private val range : IntRange,
+	private val player : Player?,
+	var timer : Int = 0
 ) : AbstractTickableSoundInstance(soundEvent, SoundSource.AMBIENT, SoundInstance.createUnseededRandom()) {
-    private var stopped = false
-    var shouldLoop: Boolean = false
+	private var stopped = false
+	var shouldLoop : Boolean = false
 
-    init {
-        delay = 0
-    }
+	init {
+		this.delay = 0
+	}
 
-    override fun tick() {
-        val currentPlayer = player ?: localClient.player ?: return
-        if (!currentPlayer.isRemoved && timer in range && !stopped) {
-            stopped = false
-            looping = true
-            x = currentPlayer.x
-            y = currentPlayer.y
-            z = currentPlayer.z
-        } else stop()
-    }
+	override fun tick() {
+		val currentPlayer = this.player ?: localClient.player ?: return
+		if (!currentPlayer.isRemoved && this.timer in this.range && !this.stopped) {
+			this.stopped = false
+			this.looping = true
+			this.x = currentPlayer.x
+			this.y = currentPlayer.y
+			this.z = currentPlayer.z
+		} else this.stop()
+	}
 
-    override fun isStopped(): Boolean = stopped
-
-    override fun isLooping(): Boolean = shouldLoop
+	override fun isStopped() : Boolean = this.stopped
+	override fun isLooping() : Boolean = this.shouldLoop
 }

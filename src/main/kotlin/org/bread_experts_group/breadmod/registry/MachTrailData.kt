@@ -1,48 +1,50 @@
 package org.bread_experts_group.breadmod.registry
 
 import com.mojang.authlib.GameProfile
+import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import org.bread_experts_group.breadmod.util.render.renderMachTrail
 import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.util.render.renderMachTrail
 
-data class MachTrailData(var playerProfile: GameProfile) {
-    val player = localClient.level?.getPlayerByUUID(playerProfile.id)!!
-    private val machOneSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_ONE.get(), 1..20, player)
-    private val machTwoSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_TWO.get(), 21..40, player)
-    private val machThreeSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_THREE.get(), 40..70, player)
-    val machFourSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_FOUR.get(), 70..Int.MAX_VALUE, player)
-    private var sprintTimer: Int = 0
-    private var shouldTick: Boolean = true
+data class MachTrailData(var playerProfile : GameProfile) {
+	val player : Player = localClient.level?.getPlayerByUUID(this.playerProfile.id)!!
+	private val machOneSound : MachSoundInstance = MachSoundInstance(ModSounds.MACH_ONE.get(), 1 .. 20, this.player)
+	private val machTwoSound : MachSoundInstance = MachSoundInstance(ModSounds.MACH_TWO.get(), 21 .. 40, this.player)
+	private val machThreeSound : MachSoundInstance =
+		MachSoundInstance(ModSounds.MACH_THREE.get(), 40 .. 70, this.player)
+	val machFourSound : MachSoundInstance =
+		MachSoundInstance(ModSounds.MACH_FOUR.get(), 70 .. Int.MAX_VALUE, this.player)
+	private var sprintTimer : Int = 0
+	private var shouldTick : Boolean = true
+	fun tick() {
+		val soundManager = localClient.soundManager
+		if (this.player.isSprinting && this.shouldTick) {
+			this.machOneSound.timer = this.sprintTimer
+			this.machTwoSound.timer = this.sprintTimer
+			this.machThreeSound.timer = this.sprintTimer
+			this.machFourSound.timer = this.sprintTimer
 
-    fun tick() {
-        val soundManager = localClient.soundManager
-        if (player.isSprinting && shouldTick) {
-            machOneSound.timer = sprintTimer
-            machTwoSound.timer = sprintTimer
-            machThreeSound.timer = sprintTimer
-            machFourSound.timer = sprintTimer
-
-            when (sprintTimer) {
-                1 -> soundManager.play(machOneSound)
-                20 -> soundManager.play(machTwoSound)
-                41 -> soundManager.play(machThreeSound)
-                70 -> {
-                    machFourSound.shouldLoop = true
-                    soundManager.play(machFourSound)
-                }
-            }
-            sprintTimer++
-            if (sprintTimer >= 20) {
-                renderMachTrail(playerProfile)
-            }
-        } else if (!player.isSprinting || !shouldTick) {
-            machFourSound.shouldLoop = false
-            sprintTimer = 0
-            soundManager.stop(machOneSound)
-            soundManager.stop(machTwoSound)
-            soundManager.stop(machThreeSound)
-            soundManager.stop(machFourSound)
-        }
-    }
+			when (this.sprintTimer) {
+				1  -> soundManager.play(this.machOneSound)
+				20 -> soundManager.play(this.machTwoSound)
+				41 -> soundManager.play(this.machThreeSound)
+				70 -> {
+					this.machFourSound.shouldLoop = true
+					soundManager.play(this.machFourSound)
+				}
+			}
+			this.sprintTimer++
+			if (this.sprintTimer >= 20) {
+				renderMachTrail(this.playerProfile)
+			}
+		} else if (!this.player.isSprinting || !this.shouldTick) {
+			this.machFourSound.shouldLoop = false
+			this.sprintTimer = 0
+			soundManager.stop(this.machOneSound)
+			soundManager.stop(this.machTwoSound)
+			soundManager.stop(this.machThreeSound)
+			soundManager.stop(this.machFourSound)
+		}
+	}
 }

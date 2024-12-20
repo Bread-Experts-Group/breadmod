@@ -22,66 +22,64 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 
 class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
-    companion object {
-        val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { DoughMachineBlock() }
-    }
+	companion object {
+		val CODEC : MapCodec<out BaseEntityBlock> = simpleCodec { DoughMachineBlock() }
+	}
 
-    override fun codec(): MapCodec<out BaseEntityBlock> = CODEC
+	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun canHarvestBlock(state : BlockState, level : BlockGetter, pos : BlockPos, player : Player) : Boolean =
+		!player.isCreative
 
-    override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =
-        !player.isCreative
+	override fun getStateForPlacement(context : BlockPlaceContext) : BlockState =
+		this.defaultBlockState()
+			.setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite)
+			.setValue(BlockStateProperties.POWERED, false)
 
-    override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
-        defaultBlockState()
-            .setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite)
-            .setValue(BlockStateProperties.POWERED, false)
+	override fun createBlockStateDefinition(builder : StateDefinition.Builder<Block, BlockState>) {
+		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.POWERED)
+	}
 
-    override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
-        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.POWERED)
-    }
+	override fun useWithoutItem(
+		state : BlockState,
+		level : Level,
+		pos : BlockPos,
+		player : Player,
+		hitResult : BlockHitResult
+	) : InteractionResult {
+		if (!level.isClientSide) {
+			val entity = level.getBlockEntity(pos) as? DoughMachineBlockEntity ?: return InteractionResult.FAIL
+			player.openMenu(entity, pos)
+		}
+		return InteractionResult.sidedSuccess(level.isClientSide)
+	}
 
-    override fun useWithoutItem(
-        state: BlockState,
-        level: Level,
-        pos: BlockPos,
-        player: Player,
-        hitResult: BlockHitResult
-    ): InteractionResult {
-        if (!level.isClientSide) {
-            val entity = level.getBlockEntity(pos) as? DoughMachineBlockEntity ?: return InteractionResult.FAIL
-            player.openMenu(entity, pos)
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide)
-    }
+	override fun onRemove(
+		state : BlockState,
+		level : Level,
+		pos : BlockPos,
+		newState : BlockState,
+		movedByPiston : Boolean
+	) {
+		if (!state.`is`(newState.block)) {
+			val entity = (level.getBlockEntity(pos) as DoughMachineBlockEntity)
+			Containers.dropContents(level, pos, entity)
+		}
+		level.invalidateCapabilities(pos)
+		super.onRemove(state, level, pos, newState, movedByPiston)
+	}
 
-    override fun onRemove(
-        state: BlockState,
-        level: Level,
-        pos: BlockPos,
-        newState: BlockState,
-        movedByPiston: Boolean
-    ) {
-        if (!state.`is`(newState.block)) {
-            val entity = (level.getBlockEntity(pos) as DoughMachineBlockEntity)
-            Containers.dropContents(level, pos, entity)
-        }
-        level.invalidateCapabilities(pos)
-        super.onRemove(state, level, pos, newState, movedByPiston)
-    }
+	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+		DoughMachineBlockEntity(pos, state)
 
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
-        DoughMachineBlockEntity(pos, state)
-
-    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
-
-    override fun <T : BlockEntity?> getTicker(
-        level: Level,
-        state: BlockState,
-        blockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T>? = createTickerHelper(
-        blockEntityType,
-        ModBlockEntityTypes.DOUGH_MACHINE.get()
-    ) { tLevel: Level, tPos: BlockPos, tState: BlockState, tBlockEntity: DoughMachineBlockEntity ->
+	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
+	override fun <T : BlockEntity?> getTicker(
+		level : Level,
+		state : BlockState,
+		blockEntityType : BlockEntityType<T>
+	) : BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
+		blockEntityType,
+		ModBlockEntityTypes.DOUGH_MACHINE.get()
+	) { tLevel : Level, tPos : BlockPos, tState : BlockState, tBlockEntity : DoughMachineBlockEntity ->
 //        tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity)
-    }
+	}
 }

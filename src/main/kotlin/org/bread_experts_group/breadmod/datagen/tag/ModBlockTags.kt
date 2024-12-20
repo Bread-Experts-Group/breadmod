@@ -17,46 +17,46 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import java.util.concurrent.CompletableFuture
 
 class ModBlockTags(
-    output: PackOutput,
-    lookupProvider: CompletableFuture<HolderLookup.Provider>,
-    existingFileHelper: ExistingFileHelper,
+	output : PackOutput,
+	lookupProvider : CompletableFuture<HolderLookup.Provider>,
+	existingFileHelper : ExistingFileHelper,
 ) : BlockTagsProvider(output, lookupProvider, BreadMod.ID, existingFileHelper) {
-    private fun IntrinsicTagAppender<Block>.add(vararg toAdd: DeferredItem<BlockItem>) =
-        this.also { toAdd.forEach { this.add(it.get().block) } }
+	private fun IntrinsicTagAppender<Block>.add(vararg toAdd : DeferredItem<BlockItem>) =
+		this.also { toAdd.forEach { this.add(it.get().block) } }
 
-    override fun addTags(provider: HolderLookup.Provider) {
-        tag(BlockTags.MINEABLE_WITH_HOE)
-            .add(ModBlocks.BREAD_BLOCK, ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK)
-        tag(BlockTags.MINEABLE_WITH_PICKAXE)
-            .add(ModBlocks.REINFORCED_BREAD_BLOCK)
-            .add(ModBlocks.BAUXITE_ORE)
-            .add(ModBlocks.MONITOR)
-        tag(BlockTags.BEACON_BASE_BLOCKS)
-            .add(ModBlocks.REINFORCED_BREAD_BLOCK)
-        tag(BlockTags.STONE_ORE_REPLACEABLES)
-            .add(ModBlocks.BREAD_BLOCK)
-        tag(BlockTags.MINEABLE_WITH_SHOVEL)
-            .add(ModBlocks.FLOUR_BLOCK, ModBlocks.FLOUR_LAYER_BLOCK)
-        tag(
-            BlockTags.create(
-                ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/low_density_charcoal")
-            )
-        ).add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK)
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/charcoal")))
-            .add(ModBlocks.CHARCOAL_BLOCK)
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/bread")))
-            .add(ModBlocks.BREAD_BLOCK)
-        tag(MINEABLE_WITH_KNIFE)
-            .add(ModBlocks.BREAD_BLOCK)
-        tag(BlockTags.FENCES)
-            .add(ModBlocks.BREAD_FENCE)
-    }
+	override fun addTags(provider : HolderLookup.Provider) {
+		this.tag(BlockTags.MINEABLE_WITH_HOE)
+			.add(ModBlocks.BREAD_BLOCK, ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK)
+		this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
+			.add(ModBlocks.REINFORCED_BREAD_BLOCK)
+			.add(ModBlocks.BAUXITE_ORE)
+			.add(ModBlocks.MONITOR)
+		this.tag(BlockTags.BEACON_BASE_BLOCKS)
+			.add(ModBlocks.REINFORCED_BREAD_BLOCK)
+		this.tag(BlockTags.STONE_ORE_REPLACEABLES)
+			.add(ModBlocks.BREAD_BLOCK)
+		this.tag(BlockTags.MINEABLE_WITH_SHOVEL)
+			.add(ModBlocks.FLOUR_BLOCK, ModBlocks.FLOUR_LAYER_BLOCK)
+		this.tag(
+			BlockTags.create(
+				ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/low_density_charcoal")
+			)
+		).add(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK)
+		this.tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/charcoal")))
+			.add(ModBlocks.CHARCOAL_BLOCK)
+		this.tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/bread")))
+			.add(ModBlocks.BREAD_BLOCK)
+		this.tag(Companion.MINEABLE_WITH_KNIFE)
+			.add(ModBlocks.BREAD_BLOCK)
+		this.tag(BlockTags.FENCES)
+			.add(ModBlocks.BREAD_FENCE)
+	}
 
-    companion object {
-        val MINEABLE_WITH_KNIFE: TagKey<Block> = TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
-        val INCORRECT_FOR_BREAD_TOOL: TagKey<Block> =
-            TagKey.create(Registries.BLOCK, modLocation("incorrect_for_bread_tool"))
-        val INCORRECT_FOR_REINFORCED_BREAD_TOOL: TagKey<Block> =
-            TagKey.create(Registries.BLOCK, modLocation("incorrect_for_reinforced_bread_tool"))
-    }
+	companion object {
+		val MINEABLE_WITH_KNIFE : TagKey<Block> = TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
+		val INCORRECT_FOR_BREAD_TOOL : TagKey<Block> =
+			TagKey.create(Registries.BLOCK, modLocation("incorrect_for_bread_tool"))
+		val INCORRECT_FOR_REINFORCED_BREAD_TOOL : TagKey<Block> =
+			TagKey.create(Registries.BLOCK, modLocation("incorrect_for_reinforced_bread_tool"))
+	}
 }

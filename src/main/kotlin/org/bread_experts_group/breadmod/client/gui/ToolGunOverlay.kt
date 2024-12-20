@@ -17,79 +17,74 @@ import org.bread_experts_group.breadmod.util.render.localClient
 import java.awt.Color
 
 class ToolGunOverlay : LayeredDraw.Layer {
-    private val overlayTexture = modLocation("textures", "gui", "hud", "tool_gun_overlay.png")
-    private val textColor = Color.WHITE.rgb
+	private val overlayTexture = modLocation("textures", "gui", "hud", "tool_gun_overlay.png")
+	private val textColor = Color.WHITE.rgb
+	override fun render(
+		guiGraphics : GuiGraphics,
+		deltaTracker : DeltaTracker
+	) {
+		val poseStack = guiGraphics.pose()
+		val screenWidth = localClient.window.screenWidth
+		val screenHeight = localClient.window.screenHeight
+		val x = screenWidth - (screenWidth - 3)
+		val y = screenHeight - (screenHeight - 3)
+		val player = localClient.player ?: return
+		val handStack = player.getItemInHand(InteractionHand.MAIN_HAND) ?: return
+		val item = handStack.item
 
-    override fun render(
-        guiGraphics: GuiGraphics,
-        deltaTracker: DeltaTracker
-    ) {
-        val poseStack = guiGraphics.pose()
-        val screenWidth = localClient.window.screenWidth
-        val screenHeight = localClient.window.screenHeight
-        val x = screenWidth - (screenWidth - 3)
-        val y = screenHeight - (screenHeight - 3)
-        val player = localClient.player ?: return
-        val handStack = player.getItemInHand(InteractionHand.MAIN_HAND) ?: return
-        val item = handStack.item
-
-        if (!localClient.options.hideGui && item is ToolGunItem) {
-            RenderSystem.enableBlend()
-            renderBackground(guiGraphics, poseStack, x, y)
-
+		if (!localClient.options.hideGui && item is ToolGunItem) {
+			RenderSystem.enableBlend()
+			this.renderBackground(guiGraphics, poseStack, x, y)
 //            val ensured = item.ensureCurrentMode(handStack)
-            renderMode(
-                /*ensured.getString(MODE_NAMESPACE_TAG)*/ "breadmod", /*item.getCurrentMode(handStack)*/
-                guiGraphics, poseStack, x, y
-            )
+			this.renderMode(
+				/*ensured.getString(MODE_NAMESPACE_TAG)*/ "breadmod", /*item.getCurrentMode(handStack)*/
+				guiGraphics, poseStack, x, y
+			)
 
-            RenderSystem.disableBlend()
-        }
-    }
+			RenderSystem.disableBlend()
+		}
+	}
 
-    private fun renderBackground(guiGraphics: GuiGraphics, poseStack: PoseStack, x: Int, y: Int) {
-        poseStack.pushPose()
-        guiGraphics.blit(overlayTexture, x, y, 0, 0, 166, 41)
-        poseStack.popPose()
-    }
+	private fun renderBackground(guiGraphics : GuiGraphics, poseStack : PoseStack, x : Int, y : Int) {
+		poseStack.pushPose()
+		guiGraphics.blit(this.overlayTexture, x, y, 0, 0, 166, 41)
+		poseStack.popPose()
+	}
 
-    private fun renderMode(
-        namespace: String,
-//        mode: ModToolGunModeDataLoader.ToolgunMode?,
-        guiGraphics: GuiGraphics,
-        poseStack: PoseStack,
-        pX: Int,
-        pY: Int
-    ) {
-        poseStack.pushPose()
-        // Icon renders
-        guiGraphics.blit(overlayTexture, pX + 1, pY + 33, 0, 41, 8, 8)
-
-        // start rendering key (with the key letter on them) and mouse icons, fix positioning on description and controls, set up 9 sliced key texture for wider keys
-
-        // Action source
-        drawScaledText(
-            Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
-            poseStack, guiGraphics, pX + 2, pY + 2, textColor, 0.8f, true
-        )
-
-        // Action Name
-        drawScaledText(
-            (/*mode?.displayName?.copy() ?:*/ Component.literal("???")).withStyle(ChatFormatting.BOLD),
-            poseStack, guiGraphics, pX - 1, pY + 4, textColor, 2.5f, false
-        )
-        // Mode Tooltip
-        drawScaledText(
-            (/*mode?.tooltip?.copy() ?:*/ modTranslatable(TOOL_GUN_DEF, "broken_tooltip")),
-            poseStack,
-            guiGraphics,
-            pX + 13,
-            pY + 43,
-            textColor,
-            0.4f,
-            true
-        )
-        // KeyBinds
+	fun renderMode(
+		namespace : String,
+		guiGraphics : GuiGraphics,
+		poseStack : PoseStack,
+		pX : Int,
+		pY : Int
+	) {
+		poseStack.pushPose()
+		// Icon renders
+		guiGraphics.blit(this.overlayTexture, pX + 1, pY + 33, 0, 41, 8, 8)
+		// start rendering key (with the key letter on them) and mouse icons, fix positioning on description and
+		// controls, set up 9-sliced key texture for wider keys
+		// Action source
+		drawScaledText(
+			Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
+			poseStack, guiGraphics, pX + 2, pY + 2, this.textColor, 0.8f, true
+		)
+		// Action Name
+		drawScaledText(
+			(/*mode?.displayName?.copy() ?:*/ Component.literal("???")).withStyle(ChatFormatting.BOLD),
+			poseStack, guiGraphics, pX - 1, pY + 4, this.textColor, 2.5f, false
+		)
+		// Mode Tooltip
+		drawScaledText(
+			(/*mode?.tooltip?.copy() ?:*/ modTranslatable(TOOL_GUN_DEF, "broken_tooltip")),
+			poseStack,
+			guiGraphics,
+			pX + 13,
+			pY + 43,
+			this.textColor,
+			0.4f,
+			true
+		)
+		// KeyBinds
 //        mode?.keyBinds?.forEachIndexed { index, control ->
 //            val moved = ((index + 1) * 12) + 2
 //            drawScaledText(
@@ -116,6 +111,6 @@ class ToolGunOverlay : LayeredDraw.Layer {
 //                }
 //            }
 //        }
-        poseStack.popPose()
-    }
+		poseStack.popPose()
+	}
 }

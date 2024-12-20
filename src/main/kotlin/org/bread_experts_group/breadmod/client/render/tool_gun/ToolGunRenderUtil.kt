@@ -9,16 +9,20 @@ import org.bread_experts_group.breadmod.util.render.renderText
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 
 private const val SCREEN_TINT = 15728880
-
-private fun initialTranslations(pPoseStack: PoseStack, pPosX: Double, pPosY: Double, pPosZ: Double, pScale: Float) {
-    pPoseStack.pushPose()
-    pPoseStack.translate(pPosX, pPosY, pPosZ)
-    pPoseStack.scaleFlat(pScale)
-    pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
-    pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
-    pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
+private fun initialTranslations(
+	pPoseStack : PoseStack,
+	pPosX : Double,
+	pPosY : Double,
+	pPosZ : Double,
+	pScale : Float
+) {
+	pPoseStack.pushPose()
+	pPoseStack.translate(pPosX, pPosY, pPosZ)
+	pPoseStack.scaleFlat(pScale)
+	pPoseStack.mulPose(Axis.XN.rotationDegrees(180f))
+	pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
+	pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
 }
-
 /**
  * +X moves text forward on tool gun
  * -X moves text backward on tool gun
@@ -27,47 +31,45 @@ private fun initialTranslations(pPoseStack: PoseStack, pPosX: Double, pPosY: Dou
  * -Z moves text left on tool gun
  */
 fun drawTextOnScreen(
-    pComponent: Component,
-    pColor: Int,
-    pBackgroundColor: Int,
-    pDropShadow: Boolean,
-    pFontRenderer: Font,
-    pPoseStack: PoseStack,
-    pBuffer: MultiBufferSource,
-    pPosX: Double,
-    pPosY: Double,
-    pPosZ: Double,
-    pScale: Float
+	pComponent : Component,
+	pColor : Int,
+	pBackgroundColor : Int,
+	pDropShadow : Boolean,
+	pFontRenderer : Font,
+	pPoseStack : PoseStack,
+	pBuffer : MultiBufferSource,
+	pPosX : Double,
+	pPosY : Double,
+	pPosZ : Double,
+	pScale : Float
 ) {
-    initialTranslations(pPoseStack, pPosX, pPosY, pPosZ, pScale)
-    renderText(
-        pComponent.visualOrderText, pColor, pBackgroundColor, pFontRenderer,
-        pPoseStack, pBuffer,
-        pDropShadow, SCREEN_TINT
-    )
-    pPoseStack.popPose()
+	initialTranslations(pPoseStack, pPosX, pPosY, pPosZ, pScale)
+	renderText(
+		pComponent.visualOrderText, pColor, pBackgroundColor, pFontRenderer,
+		pPoseStack, pBuffer,
+		pDropShadow, SCREEN_TINT
+	)
+	pPoseStack.popPose()
 }
-
 /**
  * @see drawTextOnScreen
  */
 fun drawTextOnScreen(
-    pText: String,
-    pColor: Int,
-    pBackgroundColor: Int,
-    pDropShadow: Boolean,
-    pFontRenderer: Font,
-    pPoseStack: PoseStack,
-    pBuffer: MultiBufferSource,
-    pPosX: Double,
-    pPosY: Double,
-    pPosZ: Double,
-    pScale: Float
-): Unit = drawTextOnScreen(
-    Component.literal(pText),
-    pColor, pBackgroundColor, pDropShadow, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
+	pText : String,
+	pColor : Int,
+	pBackgroundColor : Int,
+	pDropShadow : Boolean,
+	pFontRenderer : Font,
+	pPoseStack : PoseStack,
+	pBuffer : MultiBufferSource,
+	pPosX : Double,
+	pPosY : Double,
+	pPosZ : Double,
+	pScale : Float
+) : Unit = drawTextOnScreen(
+	Component.literal(pText),
+	pColor, pBackgroundColor, pDropShadow, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
 )
-
 //fun drawWrappedTextOnScreen( // Old wrapped text function using FormattedCharSequence, can possibly be repurposed
 //    pFont: Font,
 //    pText: FormattedText,

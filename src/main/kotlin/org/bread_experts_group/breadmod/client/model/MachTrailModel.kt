@@ -12,57 +12,50 @@ import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 
 // todo collection of hat, player, armor, and item held models to be rendered in the mach trail
-// todo Armor Rendering: use a combination of HumanoidArmorLayer and HumanoidArmorModel to recreate the model rendering with proper material
-// todo Item Rendering: get the item model using ItemRenderer or something similar to render it (issue: can't choose the color the item renders with)
+// todo Armor Rendering: use a combination of HumanoidArmorLayer and HumanoidArmorModel to recreate the
+//  model rendering with proper material
+// todo Item Rendering: get the item model using ItemRenderer or something similar to render it
+//  (issue: can't choose the color the item renders with)
 // todo hat and player model rendering is already taken care of in the render function, move those to this class
-
 class MachTrailModel(
-    playerProfile: GameProfile,
-    var currentColor: Int
+	playerProfile : GameProfile,
+	var currentColor : Int
 ) {
-    private val playerId = playerProfile.id
-    private val connection = localClient.connection!!
-    private val playerInfo = connection.getPlayerInfo(playerId)!!
-    private val playerSkin = playerInfo.skin
-    private val playerTexture = playerSkin.texture
-    private val playerModelType = playerSkin.model
-    private val player = localClient.level!!.getPlayerByUUID(playerId)!!
-    private val limbSwing = player.walkAnimation.position()
+	private val playerId = playerProfile.id
+	private val connection = localClient.connection!!
+	private val playerInfo = this.connection.getPlayerInfo(this.playerId)!!
+	private val playerSkin = this.playerInfo.skin
+	private val playerTexture = this.playerSkin.texture
+	private val playerModelType = this.playerSkin.model
+	private val player = localClient.level!!.getPlayerByUUID(this.playerId)!!
+	private val limbSwing = this.player.walkAnimation.position()
+	private val entityModels = localClient.entityModels
+	private val bufferSource = localClient.renderBuffers().bufferSource()
+	private val chefHatModel = ChefHatModel(this.entityModels)
+	private val playerModel = PlayerModel<Player>(
+		this.entityModels.bakeLayer(
+			if (this.playerModelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
+		),
+		this.playerModelType == PlayerSkin.Model.SLIM
+	)
 
-    private val entityModels = localClient.entityModels
-    private val bufferSource = localClient.renderBuffers().bufferSource()
+	init {
+		this.playerModel.young = false
+	}
 
-    private val chefHatModel = ChefHatModel(entityModels)
-    private val playerModel = PlayerModel<Player>(
-        entityModels.bakeLayer(
-            if (playerModelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
-        ),
-        playerModelType == PlayerSkin.Model.SLIM
-    )
-//    private val outerArmorModel = HumanoidArmorModel<Player>(
-//        entityModels.bakeLayer(
-//            if (playerModelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM_OUTER_ARMOR else ModelLayers.PLAYER_OUTER_ARMOR
-//        )
-//    )
+	fun render(poseStack : PoseStack) {
+		poseStack.scaleFlat(0.9375f)
+		this.playerModel.setupAnim(
+			this.player,
+			this.limbSwing,
+			0.6f,
+			-1f, 0f, 0f
+		)
+		val playerModelBuffer = this.bufferSource.getBuffer(RenderType.entityTranslucent(this.playerTexture))
+		this.playerModel.renderToBuffer(poseStack, playerModelBuffer, 15728880, NO_OVERLAY, this.currentColor)
 
-    init {
-        playerModel.young = false
-    }
-
-    fun render(poseStack: PoseStack) {
-        poseStack.scaleFlat(0.9375f)
-        playerModel.setupAnim(
-            player,
-            limbSwing,
-            0.6f,
-            -1f, 0f, 0f
-        )
-
-        val playerModelBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(playerTexture))
-        playerModel.renderToBuffer(poseStack, playerModelBuffer, 15728880, NO_OVERLAY, currentColor)
-
-        poseStack.translate(0.0, -0.5, 0.0)
-        chefHatModel.render(poseStack, 15728880, NO_OVERLAY, currentColor)
-        poseStack.translate(0.0, 0.5, 0.0)
-    }
+		poseStack.translate(0.0, -0.5, 0.0)
+		this.chefHatModel.render(poseStack, 15728880, NO_OVERLAY, this.currentColor)
+		poseStack.translate(0.0, 0.5, 0.0)
+	}
 }

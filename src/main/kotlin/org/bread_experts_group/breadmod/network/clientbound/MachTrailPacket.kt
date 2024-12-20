@@ -11,20 +11,19 @@ import org.bread_experts_group.breadmod.registry.MachTrailData
 import org.bread_experts_group.breadmod.util.render.machTrailMap
 
 data class MachTrailPacket(
-    val playerProfile: GameProfile
+	val playerProfile : GameProfile
 ) : CustomPacketPayload {
-    companion object {
-        val TYPE: CustomPacketPayload.Type<MachTrailPacket> =
-            CustomPacketPayload.Type(modLocation("mach_trail_packet"))
+	companion object {
+		val TYPE : CustomPacketPayload.Type<MachTrailPacket> =
+			CustomPacketPayload.Type(modLocation("mach_trail_packet"))
+		val STREAM_CODEC : StreamCodec<ByteBuf, MachTrailPacket> = StreamCodec.composite(
+			ByteBufCodecs.GAME_PROFILE, MachTrailPacket::playerProfile, ::MachTrailPacket
+		)
 
-        val STREAM_CODEC: StreamCodec<ByteBuf, MachTrailPacket> = StreamCodec.composite(
-            ByteBufCodecs.GAME_PROFILE, MachTrailPacket::playerProfile, ::MachTrailPacket
-        )
+		fun handleClientboundPacket(data : MachTrailPacket, context : IPayloadContext) {
+			machTrailMap[data.playerProfile] = MachTrailData(data.playerProfile)
+		}
+	}
 
-        fun handleClientboundPacket(data: MachTrailPacket, context: IPayloadContext) {
-            machTrailMap[data.playerProfile] = MachTrailData(data.playerProfile)
-        }
-    }
-
-    override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
+	override fun type() : CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
 }

@@ -14,18 +14,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @SuppressWarnings("resource")
 @Mixin(LightningBolt.class)
 abstract class MixinLightningBolt implements IAccessorEntity {
-    @Invoker("getStrikePosition")
-    abstract BlockPos iGetStrikePosition();
+	@Invoker("getStrikePosition")
+	abstract BlockPos iGetStrikePosition();
 
-    @Inject(method = "powerLightningRod", at = @At("HEAD"), cancellable = true)
-    private void powerLightningRod(final CallbackInfo ci) {
-        final BlockPos blockPos = iGetStrikePosition();
-        final Level level = breadmod$getLevel();
-        final BlockState blockState = level.getBlockState(blockPos);
+	@Inject(method = "powerLightningRod", at = @At("HEAD"), cancellable = true)
+	private void powerLightningRod(final CallbackInfo ci) {
+		final BlockPos blockPos = iGetStrikePosition();
+		final Level level = breadmod$getLevel();
+		final BlockState blockState = level.getBlockState(blockPos);
 
-        if (blockState.getBlock() instanceof ILightningStrikeAction) {
-            ((ILightningStrikeAction) blockState.getBlock()).onLightningStruck(breadmod$getLevel(), blockPos, blockState);
-            ci.cancel();
-        }
-    }
+		if (blockState.getBlock() instanceof ILightningStrikeAction) {
+			((ILightningStrikeAction) blockState.getBlock())
+					.onLightningStruck(breadmod$getLevel(), blockPos, blockState);
+			ci.cancel();
+		}
+	}
 }

@@ -21,25 +21,23 @@ import net.minecraft.world.item.ItemStack
 //        guiGraphics.drawString(rgMinecraft.font, timeString, x, y, -8355712, false)
 //    }
 //}
-
 /**
  * Builder for creating a progressive arrow sprite based on recipe time
  */
 fun createCachedArrows(
-    guiHelper: IGuiHelper,
-    maxSize: Long,
-    texture: ResourceLocation,
-    u: Int, v: Int,
-    width: Int, height: Int,
-    startDirection: IDrawableAnimated.StartDirection,
-    inverted: Boolean
-): LoadingCache<Int, IDrawableAnimated> =
-    CacheBuilder.newBuilder().maximumSize(maxSize).build(object : CacheLoader<Int, IDrawableAnimated>() {
-        override fun load(key: Int): IDrawableAnimated =
-            guiHelper.drawableBuilder(texture, u, v, width, height)
-                .buildAnimated(key, startDirection, inverted)
-    })
-
+	guiHelper : IGuiHelper,
+	maxSize : Long,
+	texture : ResourceLocation,
+	u : Int, v : Int,
+	width : Int, height : Int,
+	startDirection : IDrawableAnimated.StartDirection,
+	inverted : Boolean
+) : LoadingCache<Int, IDrawableAnimated> =
+	CacheBuilder.newBuilder().maximumSize(maxSize).build(object : CacheLoader<Int, IDrawableAnimated>() {
+		override fun load(key : Int) : IDrawableAnimated =
+			guiHelper.drawableBuilder(texture, u, v, width, height)
+				.buildAnimated(key, startDirection, inverted)
+	})
 /**
  * @see createCachedArrows
  */
@@ -47,15 +45,12 @@ fun createCachedArrows(
 //    recipe: WheatCrusherRecipe,
 //    cachedArrows: LoadingCache<Int, IDrawableAnimated>
 //): IDrawableAnimated = cachedArrows.getUnchecked(recipe.recipeTime)
-
-fun recipeList(item: Item, multiplier: Int, repeatCount: Int): List<ItemStack> =
-    List(repeatCount) { ItemStack(item, (it + 1) * multiplier) }
-
+fun recipeList(item : Item, multiplier : Int, repeatCount : Int) : List<ItemStack> =
+	List(repeatCount) { ItemStack(item, (it + 1) * multiplier) }
 /**
  * @return A list of the provided [tag]
  */
-fun itemTagToList(tag: TagKey<Item>): List<ItemStack> =
-    BuiltInRegistries.ITEM.getTag(tag).get().map { it.value().defaultInstance }
-
+fun itemTagToList(tag : TagKey<Item>) : List<ItemStack> =
+	BuiltInRegistries.ITEM.getTag(tag).get().map { it.value().defaultInstance }
 //fun blockTagToList(tag: TagKey<Block>): List<ItemStack> =
 //    BuiltInRegistries.BLOCK.getTag(tag).get().map { it.value().asItem().defaultInstance }

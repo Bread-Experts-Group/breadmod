@@ -30,7 +30,11 @@ import org.bread_experts_group.breadmod.experimental.tool_gun_mode.TestScreen
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
-import org.bread_experts_group.breadmod.util.render.*
+import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.util.render.machTrailMap
+import org.bread_experts_group.breadmod.util.render.redness
+import org.bread_experts_group.breadmod.util.render.renderBuffer
+import org.bread_experts_group.breadmod.util.render.skyColorMixinActive
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -38,202 +42,123 @@ import kotlin.math.sin
 // todo register the other client stuff later
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
-    @SubscribeEvent
-    fun registerStageRender(event: RenderLevelStageEvent) {
-        if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {
-            val poseStack = event.poseStack
-            val bufferBuilder =
-                Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
-            val millis = Util.getMillis()
+	@SubscribeEvent
+	fun registerStageRender(event : RenderLevelStageEvent) {
+		if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {
+			val poseStack = event.poseStack
+			val bufferBuilder =
+				Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
+			val millis = Util.getMillis()
 
-            RenderSystem.setShader { GameRenderer.getPositionColorShader() }
-            RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-            RenderSystem.enableBlend()
-            poseStack.pushPose()
-            poseStack.mulPose(Axis.XP.rotationDegrees(-17f))
-            val matrix = poseStack.last().pose()
-            bufferBuilder.addVertex(matrix, 0f, 100f, 0f).setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
+			RenderSystem.setShader(GameRenderer::getPositionColorShader)
+			RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+			RenderSystem.enableBlend()
+			poseStack.pushPose()
+			poseStack.mulPose(Axis.XP.rotationDegrees(-17f))
+			val matrix = poseStack.last().pose()
+			bufferBuilder.addVertex(matrix, 0f, 100f, 0f).setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
 
-            for (j: Int in 0..16) {
-                val f1 = j * (Math.PI.toFloat() * 2f) / 16f
-                val f2: Float = sin(f1)
-                val f3: Float = cos(f1)
-                bufferBuilder.addVertex(matrix, f2, -1f, -f3).setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
-            }
+			for (j : Int in 0 .. 16) {
+				val f1 = j * (Math.PI.toFloat() * 2f) / 16f
+				val f2 : Float = sin(f1)
+				val f3 : Float = cos(f1)
+				bufferBuilder.addVertex(matrix, f2, -1f, -f3).setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
+			}
+			val shaderFogColor = RenderSystem.getShaderFogColor()
+			RenderSystem.setShaderFogColor(
+				shaderFogColor[0] + redness,
+				shaderFogColor[1] - redness,
+				shaderFogColor[2] - redness,
+				1f
+			)
+			FogRenderer.setupFog(
+				event.camera,
+				FogRenderer.FogMode.FOG_SKY,
+				256f,
+				true,
+				event.partialTick.realtimeDeltaTicks
+			)
+			FogRenderer.setupFog(
+				event.camera,
+				FogRenderer.FogMode.FOG_TERRAIN,
+				max(256f, 32f),
+				true,
+				event.partialTick.realtimeDeltaTicks
+			)
 
-            val shaderFogColor = RenderSystem.getShaderFogColor()
-            RenderSystem.setShaderFogColor(
-                shaderFogColor[0] + redness,
-                shaderFogColor[1] - redness,
-                shaderFogColor[2] - redness,
-                1f
-            )
-            FogRenderer.setupFog(
-                event.camera,
-                FogRenderer.FogMode.FOG_SKY,
-                256f,
-                true,
-                event.partialTick.realtimeDeltaTicks
-            )
-            FogRenderer.setupFog(
-                event.camera,
-                FogRenderer.FogMode.FOG_TERRAIN,
-                max(256f, 32f),
-                true,
-                event.partialTick.realtimeDeltaTicks
-            )
+			redness = clamp((sin(millis.toFloat() / 1800) + 1) / 2, 0f, 1f)
+			skyColorMixinActive = true
 
-            redness = clamp((sin(millis.toFloat() / 1800) + 1) / 2, 0f, 1f)
-            skyColorMixinActive = true
+			BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
+			RenderSystem.disableBlend()
+			poseStack.popPose()
+		} else if (!WarOverlay.timerActive) {
+			redness = 0.0f
+			skyColorMixinActive = false
+		}
 
-            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
-            RenderSystem.disableBlend()
-            poseStack.popPose()
-        } else if (!WarOverlay.timerActive) {
-            redness = 0.0f
-            skyColorMixinActive = false
-        }
-
-        if (event.stage == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-            renderBuffer.removeIf { (mutableList, renderEvent) ->
-                renderEvent.invoke(mutableList, event)
-            }
-        }
-    }
-
-    @SubscribeEvent
-    fun onMouseScroll(event: MouseScrollingEvent) {
-        val player = localClient.player ?: return
-        val stack = player.getItemInHand(player.usedItemHand)
-        if (player.isShiftKeyDown and stack.`is`(ModItems.TOOL_GUN)) {
-            player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
-            player.sendSystemMessage(Component.literal("Scrolling cancelled!"))
-            event.isCanceled = true
-        }
-    }
-
-    @SubscribeEvent
-    fun onKeyboardPress(event: InputEvent.Key) {
-        val player = localClient.player ?: return
-        val stack = player.getItemInHand(player.usedItemHand)
-        if (event.key == openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN) && localClient.screen == null) {
-            localClient.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
-        }
-    }
-
-    @SubscribeEvent
-    fun onMouseInput(event: InputEvent.MouseButton.Post) {
-        val player = localClient.player ?: return
-        val stack = player.getItemInHand(player.usedItemHand)
-        if (event.button == InputConstants.MOUSE_BUTTON_RIGHT &&
-            event.action == InputConstants.PRESS && stack.`is`(ModItems.TOOL_GUN)
-        ) {
-            PacketDistributor.sendToServer(ToolGunActionPacket(true))
+		if (event.stage == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+			renderBuffer.removeIf { (mutableList, renderEvent) ->
+				renderEvent.invoke(mutableList, event)
+			}
+		}
+	}
+	@SubscribeEvent
+	fun onMouseScroll(event : MouseScrollingEvent) {
+		val player = localClient.player ?: return
+		val stack = player.getItemInHand(player.usedItemHand)
+		if (player.isShiftKeyDown and stack.`is`(ModItems.TOOL_GUN)) {
+			player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
+			player.sendSystemMessage(Component.literal("Scrolling cancelled!"))
+			event.isCanceled = true
+		}
+	}
+	@SubscribeEvent
+	fun onKeyboardPress(event : InputEvent.Key) {
+		val player = localClient.player ?: return
+		val stack = player.getItemInHand(player.usedItemHand)
+		if (event.key == this.openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN) && localClient.screen == null) {
+			localClient.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
+		}
+	}
+	@SubscribeEvent
+	fun onMouseInput(event : InputEvent.MouseButton.Post) {
+		val player = localClient.player ?: return
+		val stack = player.getItemInHand(player.usedItemHand)
+		if (event.button == InputConstants.MOUSE_BUTTON_RIGHT &&
+			event.action == InputConstants.PRESS && stack.`is`(ModItems.TOOL_GUN)
+		) {
+			PacketDistributor.sendToServer(ToolGunActionPacket(true))
 //            println("mouse button right clicked!")
-        }
-    }
+		}
+	}
 
-    val openModeGui = KeyMapping(
-        "controls.${BreadMod.ID}.mode_screen",
-        KeyConflictContext.UNIVERSAL,
-        KeyModifier.NONE,
-        InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R),
-        "controls.${BreadMod.ID}"
-    )
-
-//    val openGuiEditor = KeyMapping(
-//        "controls.${BreadMod.ID}.gui_editor",
-//        KeyConflictContext.UNIVERSAL,
-//        KeyModifier.SHIFT,
-//        InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F1),
-//        "controls.${BreadMod.ID}.category"
-//    )
-
-//    private fun <T> handleHoldScreenInput(
-//        holdScreen: T,
-//        key: InputConstants.Key,
-//        action: Int,
-//        modifiers: Int
-//    ) where T : Screen, T : IHoldScreen {
-//        if (
-//            action == InputConstants.RELEASE &&
-//            key == holdScreen.keyCheck.key &&
-//            modifierMatches(modifiers, holdScreen.keyCheck.keyModifier)
-//        ) holdScreen.onClose()
-//    }
-
-//    private fun handleInput(
-//        action: Int,
-//        key: InputConstants.Key,
-//        modifiers: Int,
-//        player: LocalPlayer?,
-//        screen: Screen?
-//    ) {
-//        if (action == InputConstants.REPEAT) return
-//        if (screen is IHoldScreen) {
-//            handleHoldScreenInput(screen, key, action, modifiers)
-//        } else if (player != null && screen == null) {
-//            val stackHeld = player.mainHandItem
-//            val itemHeld = stackHeld.item
-//
-//            if (itemHeld is ToolGunItem) handleToolgunInput(
-//                player,
-//                itemHeld, stackHeld,
-//                key, modifiers,
-//                action == InputConstants.PRESS
-//            )
-//        }
-//    }
-
-//    @SubscribeEvent
-//    fun keyInput(event: InputEvent.Key) {
-//        handleInput(
-//            event.action, InputConstants.getKey(event.key, event.scanCode), event.modifiers,
-//            rgMinecraft.player, rgMinecraft.screen
-//        )
-//    }
-//
-//    @SubscribeEvent
-//    fun mouseInput(event: InputEvent.MouseButton.Post) {
-//        handleInput(
-//            event.action, InputConstants.Type.MOUSE.getOrCreate(event.button), event.modifiers,
-//            rgMinecraft.player, rgMinecraft.screen
-//        )
-//    }
-
-    @Suppress("UNUSED_PARAMETER")
-    @SubscribeEvent
-    fun login(event: PlayerEvent.PlayerLoggedInEvent) {
-//        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
-//            rgMinecraft.options.keyMappings,
-//            openGuiEditor
-//        )
-        PhysXTestTool.createPhysX()
-    }
-
-//    private var createdMappings = listOf<KeyMapping>()
-
-    @Suppress("UNUSED_PARAMETER")
-    @SubscribeEvent
-    fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
-//        rgMinecraft.options.keyMappings = ArrayUtils.removeElements(
-//            rgMinecraft.options.keyMappings,
-//            *createdMappings.toTypedArray()
-//        )
-        PhysXTestTool.destroyPhysX()
-    }
-
-    @SubscribeEvent
-    fun clientTick(event: ClientTickEvent.Pre) {
-        if (machTrailMap.isNotEmpty()) {
-            machTrailMap.forEach { (_, machTrailData) ->
-                machTrailData.tick()
-                if (!machTrailData.player.isSprinting) {
-                    machTrailData.machFourSound.shouldLoop = false
-                    localClient.soundManager.stop(machTrailData.machFourSound)
-                    machTrailMap.remove(machTrailData.playerProfile)
-                }
-            }
-        }
-    }
+	val openModeGui : KeyMapping = KeyMapping(
+		"controls.${BreadMod.ID}.mode_screen",
+		KeyConflictContext.UNIVERSAL,
+		KeyModifier.NONE,
+		InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R),
+		"controls.${BreadMod.ID}"
+	)
+	@SubscribeEvent
+	fun login(event : PlayerEvent.PlayerLoggedInEvent) {
+		PhysXTestTool.createPhysX()
+	}
+	@SubscribeEvent
+	fun logout(event : PlayerEvent.PlayerLoggedOutEvent) {
+		PhysXTestTool.destroyPhysX()
+	}
+	@SubscribeEvent
+	fun clientTick(event : ClientTickEvent.Pre) {
+		if (machTrailMap.isNotEmpty()) {
+			machTrailMap.forEach { (_, machTrailData) ->
+				machTrailData.tick()
+				if (!machTrailData.player.isSprinting) {
+					machTrailData.machFourSound.shouldLoop = false
+					localClient.soundManager.stop(machTrailData.machFourSound)
+					machTrailMap.remove(machTrailData.playerProfile)
+				}
+			}
+		}
+	}
 }

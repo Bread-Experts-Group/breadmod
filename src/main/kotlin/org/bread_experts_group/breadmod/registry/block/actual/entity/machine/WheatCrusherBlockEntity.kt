@@ -28,7 +28,8 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper
-import org.bread_experts_group.breadmod.BreadMod.Companion.LOGGER
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
@@ -38,174 +39,183 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.Wh
 import java.util.*
 import kotlin.math.max
 
+private var debugMode = false
+
 class WheatCrusherBlockEntity(
-    pos: BlockPos, state: BlockState
+	pos : BlockPos, state : BlockState
 ) : BlockEntity(
-    ModBlockEntityTypes.WHEAT_CRUSHER.get(),
-    pos,
-    state
+	ModBlockEntityTypes.WHEAT_CRUSHER.get(),
+	pos,
+	state
 ), MenuProvider, CraftingContainer, WorldlyContainer {
-    private companion object {
-        var debugMode = false
-    }
+	val logger : Logger = LogManager.getLogger()
+	var progress : Int = 0
+	var maxProgress : Int = 0
+	private var energyDivision : Int? = null
+	private var currentRecipe : Optional<WheatCrusherRecipe> = Optional.empty()
+	private val recipeDial : RecipeManager.CachedCheck<WheatCrusherInput, WheatCrusherRecipe> by lazy {
+		RecipeManager.createCheck(ModRecipeTypes.WHEAT_CRUSHING.get())
+	}
+	val energyHandler : EnergyStorage by lazy {
+		object : EnergyStorage(100000) {
+			// todo there's gotta be a better way to sync the energy every receive and extract cause this just seems
+			//  hacky
+			override fun receiveEnergy(toReceive : Int, simulate : Boolean) : Int {
+				this@WheatCrusherBlockEntity.syncToClients()
+				return super.receiveEnergy(toReceive, simulate)
+			}
+		}
+	}
+	val horizontal : Direction? = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
+	val sidedInvWrapper : SidedInvWrapper = SidedInvWrapper(this, this.horizontal)
+	private var itemSlots : NonNullList<ItemStack> = NonNullList.withSize(2, ItemStack.EMPTY)
+	// todo having syncToClients() not be present in extract and receive in the energy handler stops it from syncing
+	//  every time it handles energy
+	//  then the energy is only updated when tick() updates the block on client
+	//  the caveat is having syncToClients() fire every energy event is potentially bogging down game resources and
+	//  the meter in the gui being jittery
+	private fun syncToClients() = this.level?.sendBlockUpdated(
+		this.blockPos, this.blockState, this.blockState,
+		Block.UPDATE_CLIENTS
+	)
 
-    var progress: Int = 0
-    var maxProgress: Int = 0
-    private var energyDivision: Int? = null
+	fun tick(level : Level, pos : BlockPos, state : BlockState) {
+		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
+			if (!this.inputStillValid(activeRecipe)) this.resetRecipe()
+			val div =
+				if (this.energyDivision == null) ((activeRecipe.recipeEnergy) / max(
+					activeRecipe.recipeTime,
+					1
+				)).also { div -> this.energyDivision = div } else this.energyDivision
+					?: return@ifPresentOrElse
+			if ((div < 0) && (this.energyHandler.energyStored + div > this.energyHandler.maxEnergyStored))
+				return@ifPresentOrElse
+			val energy = this.energyHandler.extractEnergy(div, false)
 
-    private var currentRecipe: Optional<WheatCrusherRecipe> = Optional.empty()
-    private val recipeDial: RecipeManager.CachedCheck<WheatCrusherInput, WheatCrusherRecipe> by lazy {
-        RecipeManager.createCheck(ModRecipeTypes.WHEAT_CRUSHING.get())
-    }
+			if (energy >= div && this.canFitResults()) {
+				this.progress++
+				level.setBlockAndUpdate(
+					pos,
+					state.setValue(
+						BlockStateProperties.POWERED,
+						true
+					)
+				)
+				if (this.progress >= activeRecipe.recipeTime) {
+					this.finalizeRecipe(level, activeRecipe)
+					this.resetRecipe()
+				}
+			}
+		}, {
+			val check = this.recipeDial.getRecipeFor(
+				WheatCrusherInput(
+					this.getItem(0),
+					this.getItem(0).count
+				), level
+			)
 
-    val energyHandler: EnergyStorage by lazy {
-        object : EnergyStorage(100000) {
-            // todo there's gotta be a better way to sync the energy every receive and extract cause this just seems hacky
-            override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
-                syncToClients()
-                return super.receiveEnergy(toReceive, simulate)
-            }
-        }
-    }
+			check.ifPresent { present ->
+				val recipe = present.value
+				if (!this.canFitResults()) return@ifPresent
+				this.currentRecipe = Optional.of(recipe)
+				this.maxProgress = recipe.recipeTime
 
-    val horizontal: Direction? = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
-    val sidedInvWrapper: SidedInvWrapper = SidedInvWrapper(this, horizontal)
+				if (debugMode) {
+					try {
+						this.logger.info("after getting recipe: $recipe")
+						this.logger.info("recipe id: ${present.id.path}")
+						this.logger.info("item requirement: ${present.value.recipeInput}")
+						this.logger.info("item output: ${present.value.recipeOutput}")
+						this.logger.info("time required: ${present.value.recipeTime}")
+					} catch (e : Exception) {
+						this.logger.error(e)
+					}
+				}
+			}
+			level.setBlockAndUpdate(
+				pos,
+				state.setValue(
+					BlockStateProperties.POWERED,
+					false
+				)
+			)
+		})
+	}
 
-    private var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(2, ItemStack.EMPTY)
+	private fun resetRecipe() {
+		this.level?.setBlockAndUpdate(this.blockPos, this.blockState.setValue(BlockStateProperties.POWERED, false))
+		this.currentRecipe = Optional.empty()
+		this.maxProgress = 0; this.progress = -1
+		this.energyDivision = null
+	}
 
-    // todo having syncToClients() not be present in extract and receive in the energy handler stops it from syncing every time it handles energy
-    //  then the energy is only updated when tick() updates the block on client
-    //  the caveat is having syncToClients() fire every energy event is potentially bogging down game resources and the meter in the gui being jittery
-    private fun syncToClients() = level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_CLIENTS)
+	private fun inputStillValid(recipe : WheatCrusherRecipe) : Boolean =
+		this.getItem(0) == recipe.recipeInput || !this.getItem(0).isEmpty
 
-    /**
-     * Ticks the recipe logic for this [BlockEntity]
-     */
-    fun tick(level: Level, pos: BlockPos, state: BlockState, blockEntity: WheatCrusherBlockEntity) {
-        currentRecipe.ifPresentOrElse({ activeRecipe ->
-            if (!inputStillValid(activeRecipe)) resetRecipe()
-            val div = if (energyDivision == null) ((activeRecipe.recipeEnergy) / max(
-                activeRecipe.recipeTime,
-                1
-            )).also { div -> energyDivision = div } else energyDivision ?: return@ifPresentOrElse
-            if ((div < 0) && (energyHandler.energyStored + div > energyHandler.maxEnergyStored)) return@ifPresentOrElse
-            val energy = energyHandler.extractEnergy(div, false)
+	private fun canFitResults() : Boolean = this.getItem(1).count.let { it < this.maxStackSize } == true
+	private fun finalizeRecipe(level : Level, recipe : WheatCrusherRecipe) {
+		this.itemSlots[0].shrink(recipe.recipeInput.count)
+		val assemble =
+			recipe.assemble(WheatCrusherInput(this.getItem(0), recipe.recipeInput.count), level.registryAccess())
+		if (this.itemSlots[1].isEmpty) this.itemSlots[1] =
+			assemble.copyWithCount(recipe.recipeOutput.count) else this.itemSlots[1].grow(recipe.recipeOutput.count)
+	}
 
-            if (energy >= div && canFitResults(activeRecipe)) {
-                progress++
-                level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
-                if (progress >= activeRecipe.recipeTime) {
-                    finalizeRecipe(level, activeRecipe)
-                    resetRecipe()
-                }
-            }
-        }, {
-            val check = recipeDial.getRecipeFor(WheatCrusherInput(getItem(0), getItem(0).count), level)
+	override fun getMaxStackSize() : Int = 64
+	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+		super.saveAdditional(tag, registries)
+		tag.put("energy", this.energyHandler.serializeNBT(registries))
+		tag.putInt("progress", this.progress)
+		tag.putInt("maxProgress", this.maxProgress)
 
-            check.ifPresent { present ->
-                val recipe = present.value
-                if (!canFitResults(recipe)) return@ifPresent
-                currentRecipe = Optional.of(recipe)
-                maxProgress = recipe.recipeTime
+		ContainerHelper.saveAllItems(tag, this.itemSlots, registries)
+	}
 
-                if (debugMode) {
-                    try {
-                        LOGGER.info("after getting recipe: $recipe")
-                        LOGGER.info("recipe id: ${present.id.path}")
-                        LOGGER.info("item requirement: ${present.value.recipeInput}")
-                        LOGGER.info("item output: ${present.value.recipeOutput}")
-                        LOGGER.info("time required: ${present.value.recipeTime}")
-                    } catch (e: Exception) {
-                        LOGGER.error(e)
-                    }
-                }
-            }
-            level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false))
-        })
-    }
+	override fun loadAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+		super.loadAdditional(tag, registries)
+		this.energyHandler.deserializeNBT(registries, tag.get("energy") ?: return)
+		this.progress = tag.getInt("progress")
+		this.maxProgress = tag.getInt("maxProgress")
 
-    private fun resetRecipe() {
-        level?.setBlockAndUpdate(blockPos, blockState.setValue(BlockStateProperties.POWERED, false))
-        currentRecipe = Optional.empty()
-        maxProgress = 0; progress = -1
-        energyDivision = null
-    }
+		this.itemSlots = NonNullList.withSize(2, ItemStack.EMPTY)
+		ContainerHelper.loadAllItems(tag, this.itemSlots, registries)
+	}
 
-    private fun inputStillValid(recipe: WheatCrusherRecipe): Boolean =
-        getItem(0) == recipe.recipeInput || !getItem(0).isEmpty
+	override fun clearContent() : Unit = this.itemSlots.forEach { it.count = 0 }
+	override fun getContainerSize() : Int = this.itemSlots.size
+	override fun isEmpty() : Boolean = this.itemSlots.any { !it.isEmpty }
+	override fun getItem(slot : Int) : ItemStack = this.itemSlots[slot]
+	override fun removeItem(slot : Int, pAmount : Int) : ItemStack = this.itemSlots[slot].split(pAmount)
+	override fun removeItemNoUpdate(slot : Int) : ItemStack = this.itemSlots[slot].copyAndClear()
+	override fun setItem(slot : Int, stack : ItemStack) {
+		this.itemSlots[slot] = stack
+	}
 
-    private fun canFitResults(recipe: WheatCrusherRecipe): Boolean =
-        getItem(1).count < maxStackSize || getItem(1).count + recipe.recipeOutput.count < maxStackSize
+	override fun stillValid(player : Player) : Boolean = Container.stillValidBlockEntity(this, player)
+	override fun fillStackedContents(contents : StackedContents) {
+		for (stack : ItemStack in this.itemSlots) {
+			contents.accountSimpleStack(stack)
+		}
+	}
+	// allow every face of the block to receive and extract items
+	override fun getSlotsForFace(side : Direction) : IntArray = intArrayOf(0, 1)
+	override fun canPlaceItemThroughFace(index : Int, itemStack : ItemStack, direction : Direction?) : Boolean =
+		if (direction != null) this.getSlotsForFace(direction).contains(index) && index == 0 else true
 
-    private fun finalizeRecipe(level: Level, recipe: WheatCrusherRecipe) {
-        itemSlots[0].shrink(recipe.recipeInput.count)
-        val assemble =
-            recipe.assemble(WheatCrusherInput(getItem(0), recipe.recipeInput.count), level.registryAccess())
-        if (itemSlots[1].isEmpty) itemSlots[1] =
-            assemble.copyWithCount(recipe.recipeOutput.count) else itemSlots[1].grow(recipe.recipeOutput.count)
-    }
+	override fun canTakeItemThroughFace(index : Int, stack : ItemStack, direction : Direction) : Boolean =
+		this.getSlotsForFace(direction).contains(index) && index != 0
 
-    override fun getMaxStackSize(): Int = 64
+	override fun getWidth() : Int = 1
+	override fun getHeight() : Int = 1
+	override fun getItems() : MutableList<ItemStack> = this.itemSlots
+	override fun getUpdateTag(registries : HolderLookup.Provider) : CompoundTag =
+		super.getUpdateTag(registries).also { this.saveAdditional(it, registries) }
 
-    override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-        super.saveAdditional(tag, registries)
-        tag.put("energy", energyHandler.serializeNBT(registries))
-        tag.putInt("progress", progress)
-        tag.putInt("maxProgress", maxProgress)
+	override fun getUpdatePacket() : Packet<ClientGamePacketListener> =
+		ClientboundBlockEntityDataPacket.create(this)
 
-        ContainerHelper.saveAllItems(tag, itemSlots, registries)
-    }
+	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+		WheatCrusherMenu(containerId, playerInventory, this)
 
-    override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-        super.loadAdditional(tag, registries)
-        energyHandler.deserializeNBT(registries, tag.get("energy") ?: return)
-        progress = tag.getInt("progress")
-        maxProgress = tag.getInt("maxProgress")
-
-        itemSlots = NonNullList.withSize(2, ItemStack.EMPTY)
-        ContainerHelper.loadAllItems(tag, itemSlots, registries)
-    }
-
-    override fun clearContent(): Unit = itemSlots.forEach { it.count = 0 }
-
-    override fun getContainerSize(): Int = itemSlots.size
-    override fun isEmpty(): Boolean = itemSlots.any { !it.isEmpty }
-    override fun getItem(slot: Int): ItemStack = itemSlots[slot]
-    override fun removeItem(slot: Int, pAmount: Int): ItemStack = itemSlots[slot].split(pAmount)
-    override fun removeItemNoUpdate(slot: Int): ItemStack = itemSlots[slot].copyAndClear()
-    override fun setItem(slot: Int, stack: ItemStack) {
-        itemSlots[slot] = stack
-    }
-
-    override fun stillValid(player: Player): Boolean = Container.stillValidBlockEntity(this, player)
-
-    override fun fillStackedContents(contents: StackedContents) {
-        for (stack: ItemStack in itemSlots) {
-            contents.accountSimpleStack(stack)
-        }
-    }
-
-    // allow every face of the block to receive and extract items
-    override fun getSlotsForFace(side: Direction): IntArray = intArrayOf(0, 1)
-
-    override fun canPlaceItemThroughFace(index: Int, itemStack: ItemStack, direction: Direction?): Boolean =
-        if (direction != null) getSlotsForFace(direction).contains(index) && index == 0 else true
-
-    override fun canTakeItemThroughFace(index: Int, stack: ItemStack, direction: Direction): Boolean =
-        getSlotsForFace(direction).contains(index) && index != 0
-
-    override fun getWidth(): Int = 1
-    override fun getHeight(): Int = 1
-    override fun getItems(): MutableList<ItemStack> = itemSlots
-
-    override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =
-        super.getUpdateTag(registries).also { saveAdditional(it, registries) }
-
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
-        ClientboundBlockEntityDataPacket.create(this)
-
-    override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
-        WheatCrusherMenu(containerId, playerInventory, this)
-
-    override fun getDisplayName(): Component = modTranslatable("block", "wheat_crusher")
+	override fun getDisplayName() : Component = modTranslatable("block", "wheat_crusher")
 }

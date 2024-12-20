@@ -13,84 +13,96 @@ import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.util.formatUnit
 
 class WheatCrusherScreen(
-    menu: WheatCrusherMenu,
-    inventory: Inventory,
-    title: Component
+	menu : WheatCrusherMenu,
+	inventory : Inventory,
+	title : Component
 ) : AbstractContainerScreen<WheatCrusherMenu>(menu, inventory, title) {
-    private val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
+	private val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
 
-    init {
-        imageWidth = 176
-        imageHeight = 198
-    }
+	init {
+		this.imageWidth = 176
+		this.imageHeight = 198
+	}
 
-    override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-        RenderSystem.setShaderTexture(0, texture)
+	override fun renderBg(guiGraphics : GuiGraphics, partialTick : Float, mouseX : Int, mouseY : Int) {
+		RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+		RenderSystem.setShaderTexture(0, this.texture)
 
-        guiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight)
-        inventoryLabelY = imageHeight - 94
+		guiGraphics.blit(this.texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight)
+		this.inventoryLabelY = this.imageHeight - 94
 
-        renderProgressArrow(guiGraphics)
-        renderEnergyMeter(guiGraphics)
-    }
+		this.renderProgressArrow(guiGraphics)
+		this.renderEnergyMeter(guiGraphics)
+	}
 
-    private var step: Int = -32
-    private var timer: Int = 20
-    override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick)
-
-        val showShort = !(minecraft ?: return).options.keyShift.isDown
-        if (this.isHovering(151, 14, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
-            menu.getEnergyHandler()?.let {
-                guiGraphics.renderComponentTooltip(
-                    font,
-                    listOf(
-                        modTranslatable(path = arrayOf("energy"))
-                            .withStyle(ChatFormatting.RED)
-                            .withStyle(ChatFormatting.ITALIC),
-                        Component.literal(
-                            formatUnit(
-                                it.energyStored.toDouble(),
-                                it.maxEnergyStored.toDouble(),
-                                "FE",
-                                showShort,
-                                2
-                            )
-                        )
-                    ),
-                    mouseX, mouseY
-                )
-            }
-        }
-
-        // todo should be updated using [rgMinecraft.gui.guiTicks] for a consistent 20 ticks per second baseline
-        if (menu.isCrafting()) {
-            // Left crushing wheel
-            guiGraphics.blit(texture, leftPos + 51, topPos + 38, 176, step, 32, 32)
-            // Right crushing wheel
-            guiGraphics.blit(texture, leftPos + 92, topPos + 38, 208, step, 32, 32)
-            if (timer <= 0) {
-                timer = 40
-                if (step < 32) step += 32 else step = -32
-            } else timer -= 2
-        } else step = -32
-
+	private var step : Int = -32
+	private var timer : Int = 20
+	override fun render(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
+		super.render(guiGraphics, mouseX, mouseY, partialTick)
+		val showShort = !(this.minecraft ?: return).options.keyShift.isDown
+		if (this.isHovering(151, 14, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
+			this.menu.getEnergyHandler()?.let {
+				guiGraphics.renderComponentTooltip(
+					this.font,
+					listOf(
+						modTranslatable(path = arrayOf("energy"))
+							.withStyle(ChatFormatting.RED)
+							.withStyle(ChatFormatting.ITALIC),
+						Component.literal(
+							formatUnit(
+								it.energyStored.toDouble(),
+								it.maxEnergyStored.toDouble(),
+								"FE",
+								showShort,
+								2
+							)
+						)
+					),
+					mouseX, mouseY
+				)
+			}
+		}
+		// todo should be updated using [rgMinecraft.gui.guiTicks] for a consistent 20 ticks per second baseline
+		if (this.menu.isCrafting()) {
+			// Left crushing wheel
+			guiGraphics.blit(this.texture, this.leftPos + 51, this.topPos + 38, 176, this.step, 32, 32)
+			// Right crushing wheel
+			guiGraphics.blit(this.texture, this.leftPos + 92, this.topPos + 38, 208, this.step, 32, 32)
+			if (this.timer <= 0) {
+				this.timer = 40
+				if (this.step < 32) this.step += 32 else this.step = -32
+			} else this.timer -= 2
+		} else this.step = -32
 //        println(menu.parent.progress)
 //        println(menu.parent.maxProgress)
+		this.renderTooltip(guiGraphics, mouseX, mouseY)
+	}
 
-        renderTooltip(guiGraphics, mouseX, mouseY)
-    }
+	private fun renderEnergyMeter(guiGraphics : GuiGraphics) {
+		val energyStored = this.menu.getEnergyStoredScaled()
+		guiGraphics.blit(
+			this.texture,
+			this.leftPos + 151,
+			this.topPos + 14 + 47 - energyStored,
+			176,
+			111 - energyStored,
+			16,
+			47
+		)
+	}
 
-    private fun renderEnergyMeter(guiGraphics: GuiGraphics) {
-        val energyStored = menu.getEnergyStoredScaled()
-        guiGraphics.blit(texture, leftPos + 151, topPos + 14 + 47 - energyStored, 176, 111 - energyStored, 16, 47)
-    }
-
-    private fun renderProgressArrow(guiGraphics: GuiGraphics) {
-        if (menu.isCrafting()) {
-            guiGraphics.blit(texture, leftPos + 83, topPos + 32, 192, 64, 9, menu.getScaledProgress())
-        }
-    }
+	private fun renderProgressArrow(guiGraphics : GuiGraphics) {
+		if (this.menu.isCrafting()) {
+			guiGraphics.blit(
+				this.texture,
+				this.leftPos + 83,
+				this.topPos + 32,
+				192,
+				64,
+				9,
+				this.menu.getScaledProgress()
+			)
+		}
+	}
 }

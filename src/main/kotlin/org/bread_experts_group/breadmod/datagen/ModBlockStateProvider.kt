@@ -19,173 +19,165 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 
 class ModBlockStateProvider(
-    packOutput: PackOutput,
-    private val existingFileHelper: ExistingFileHelper
+	packOutput : PackOutput,
+	private val existingFileHelper : ExistingFileHelper
 ) : BlockStateProvider(packOutput, BreadMod.ID, existingFileHelper) {
-    override fun registerStatesAndModels() {
-        blockWithItem(ModBlocks.BREAD_BLOCK.asBlock())
-        blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK.asBlock())
-        blockWithItem(ModBlocks.FLOUR_BLOCK.asBlock())
-        blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
-        blockWithItem(ModBlocks.HAPPY_BLOCK.asBlock())
-        blockWithItem(ModBlocks.CHARCOAL_BLOCK.asBlock())
-        blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
+	override fun registerStatesAndModels() {
+		this.blockWithItem(ModBlocks.BREAD_BLOCK.asBlock())
+		this.blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK.asBlock())
+		this.blockWithItem(ModBlocks.FLOUR_BLOCK.asBlock())
+		this.blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
+		this.blockWithItem(ModBlocks.HAPPY_BLOCK.asBlock())
+		this.blockWithItem(ModBlocks.CHARCOAL_BLOCK.asBlock())
+		this.blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
 
-        directionalBlock(ModBlocks.MONITOR.get().block) {
-            val name = "breadmod:block/monitor"
+		this.directionalBlock(ModBlocks.MONITOR.get().block) {
+			val name = "breadmod:block/monitor"
+			val model = this.models().cube(
+				name,
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
+			)
 
-            val model = models().cube(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
-            )
+			return@directionalBlock model
+		}
+		this.simpleBlockItem(
+			ModBlocks.MONITOR.get().block,
+			this.models().getBuilder("breadmod:block/monitor")
+		)
 
-            return@directionalBlock model
-        }
-        simpleBlockItem(
-            ModBlocks.MONITOR.get().block,
-            models().getBuilder("breadmod:block/monitor")
-        )
+		this.horizontalBlock(ModBlocks.SOUND_BLOCK.asBlock()) {
+			val name = "breadmod:block/sound_block"
+			val model = this.models().orientable(
+				name,
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side")
+			)
 
-        horizontalBlock(ModBlocks.SOUND_BLOCK.asBlock()) {
-            val name = "breadmod:block/sound_block"
+			return@horizontalBlock model
+		}
+		this.simpleBlockItem(
+			ModBlocks.SOUND_BLOCK.asBlock(),
+			this.models().getBuilder("breadmod:block/sound_block")
+		)
 
-            val model = models().orientable(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side")
-            )
+		this.getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.get().block).forAllStates { state ->
+			val layer = state.getValue(BlockStateProperties.LAYERS)
+			ConfiguredModel.builder()
+				.modelFile(
+					this.models().getBuilder("breadmod:block/flour_layer_${layer}")
+						.parent(
+							this.models().withExistingParent(
+								ModBlocks.getLocation(ModBlocks.FLOUR_LAYER_BLOCK.get().block).path,
+								this.mcLoc("${ModelProvider.BLOCK_FOLDER}/thin_block")
+							)
+						)
+						.texture("texture", this.modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
+						.texture("particle", this.modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
+						.element()
+						.from(0F, 0F, 0F)
+						.to(16F, 2F * layer, 16F)
+						.allFaces { d, u ->
+							u.uvs(0F, if (d.axis.isVertical) 0F else 16F - (2 * layer), 16F, 16F)
+							u.texture("#texture")
+							if (d != Direction.UP) u.cullface(d)
+						}
+						.end()
+				)
+				.build()
+		}
 
-            return@horizontalBlock model
-        }
-        simpleBlockItem(
-            ModBlocks.SOUND_BLOCK.asBlock(),
-            models().getBuilder("breadmod:block/sound_block")
-        )
+		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.asBlock()) { state ->
+			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+			val name = "breadmod:block/wheat_crusher$machineOn"
+			val model = this.models().orientable(
+				name,
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_side"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_top")
+			)
+			return@horizontalBlock model
+		}
+		this.simpleBlockItem(
+			ModBlocks.WHEAT_CRUSHER.asBlock(),
+			this.models().getBuilder("breadmod:block/wheat_crusher")
+		)
 
-        getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.get().block).forAllStates { state ->
-            val layer = state.getValue(BlockStateProperties.LAYERS)
-            ConfiguredModel.builder()
-                .modelFile(
-                    models().getBuilder("breadmod:block/flour_layer_${layer}")
-                        .parent(
-                            models().withExistingParent(
-                                ModBlocks.getLocation(ModBlocks.FLOUR_LAYER_BLOCK.get().block).path,
-                                mcLoc("${ModelProvider.BLOCK_FOLDER}/thin_block")
-                            )
-                        )
-                        .texture("texture", modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
-                        .texture("particle", modLoc("${ModelProvider.BLOCK_FOLDER}/flour_block"))
-                        .element()
-                        .from(0F, 0F, 0F)
-                        .to(16F, 2F * layer, 16F)
-                        .allFaces { d, u ->
-                            u.uvs(0F, if (d.axis.isVertical) 0F else 16F - (2 * layer), 16F, 16F)
-                            u.texture("#texture")
-                            if (d != Direction.UP) u.cullface(d)
-                        }
-                        .end()
-                )
-                .build()
-        }
+		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.asBlock()) { state ->
+			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+			val name = "breadmod:block/dough_machine$machineOn"
+			val model = this.models().orientable(
+				name,
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_side"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_top")
+			)
+			return@horizontalBlock model
+		}
+		this.simpleBlockItem(
+			ModBlocks.DOUGH_MACHINE.asBlock(),
+			this.models().getBuilder("breadmod:block/dough_machine")
+		)
 
-        horizontalBlock(ModBlocks.WHEAT_CRUSHER.asBlock()) { state ->
-            val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-            val name = "breadmod:block/wheat_crusher$machineOn"
+		this.simpleBlockItem(
+			ModBlocks.FLOUR_LAYER_BLOCK.get().block,
+			this.models().getBuilder("breadmod:block/flour_layer_1")
+		)
 
-            val model = models().orientable(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_side"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_top")
-            )
-            return@horizontalBlock model
-        }
-        simpleBlockItem(
-            ModBlocks.WHEAT_CRUSHER.asBlock(),
-            models().getBuilder("breadmod:block/wheat_crusher")
-        )
+		this.horizontalBlockBenchModelWithItem(ModBlocks.KEYBOARD.asBlock(), "keyboard")
+		this.horizontalBlockBenchModelWithItem(ModBlocks.WAR_TERMINAL.asBlock(), "war_terminal")
+		this.horizontalBlockBenchModelWithItem(ModBlocks.NIKO_BLOCK.asBlock(), "niko_block")
+		this.horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.asBlock(), "omaneko_block")
+		this.horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
+		this.horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
 
-        horizontalBlock(ModBlocks.DOUGH_MACHINE.asBlock()) { state ->
-            val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-            val name = "breadmod:block/dough_machine$machineOn"
+		this.doorBlockWithRenderType(
+			ModBlocks.BREAD_DOOR.asBlock() as DoorBlock,
+			this.modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
+			this.modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top"),
+			"minecraft:cutout"
+		)
 
-            val model = models().orientable(
-                name,
-                modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_side"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
-                modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_top")
-            )
-            return@horizontalBlock model
-        }
-        simpleBlockItem(
-            ModBlocks.DOUGH_MACHINE.asBlock(),
-            models().getBuilder("breadmod:block/dough_machine")
-        )
+		this.fenceBlockWithRenderType(
+			ModBlocks.BREAD_FENCE.asBlock() as FenceBlock,
+			this.modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"),
+			"minecraft:cutout"
+		)
+		// Hell Naw button
+		this.getVariantBuilder(ModBlocks.HELL_NAW_BUTTON.asBlock() as ButtonBlock).forAllStates { state : BlockState ->
+			val facing = state.getValue(ButtonBlock.FACING)
+			val face = state.getValue(ButtonBlock.FACE)
+			val powered = state.getValue(ButtonBlock.POWERED)
+			ConfiguredModel.builder()
+				.modelFile(
+					if (powered) this.blockBenchModel("hell_naw_button_pressed")
+					else this.blockBenchModel("hell_naw_button")
+				)
+				.rotationX(if (face == AttachFace.FLOOR) 0 else if (face == AttachFace.WALL) 90 else 180)
+				.rotationY((if (face == AttachFace.CEILING) facing else facing.opposite).toYRot().toInt())
+				.build()
+		}
 
-        simpleBlockItem(
-            ModBlocks.FLOUR_LAYER_BLOCK.get().block,
-            models().getBuilder("breadmod:block/flour_layer_1")
-        )
+		this.simpleBlockItem(
+			ModBlocks.HELL_NAW_BUTTON.get().block,
+			this.models().getBuilder("breadmod:block/hell_naw_button")
+		)
+	}
 
-        horizontalBlockBenchModelWithItem(ModBlocks.KEYBOARD.asBlock(), "keyboard")
-        horizontalBlockBenchModelWithItem(ModBlocks.WAR_TERMINAL.asBlock(), "war_terminal")
-        horizontalBlockBenchModelWithItem(ModBlocks.NIKO_BLOCK.asBlock(), "niko_block")
-        horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.asBlock(), "omaneko_block")
-        horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
-        horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
+	private fun blockWithItem(blockRegistryObject : Block) {
+		this.simpleBlockWithItem(blockRegistryObject, this.cubeAll(blockRegistryObject))
+	}
 
-        doorBlockWithRenderType(
-            ModBlocks.BREAD_DOOR.asBlock() as DoorBlock,
-            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
-            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_top"),
-            "minecraft:cutout"
-        )
+	private fun blockBenchModel(model : String) : ModelFile.ExistingModelFile =
+		ModelFile.ExistingModelFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/$model"), this.existingFileHelper)
 
-        fenceBlockWithRenderType(
-            ModBlocks.BREAD_FENCE.asBlock() as FenceBlock,
-            modLoc("${ModelProvider.BLOCK_FOLDER}/bread_block"),
-            "minecraft:cutout"
-        )
-
-        // Hell Naw button
-        getVariantBuilder(ModBlocks.HELL_NAW_BUTTON.asBlock() as ButtonBlock).forAllStates { state: BlockState ->
-            val facing = state.getValue(ButtonBlock.FACING)
-            val face = state.getValue(ButtonBlock.FACE)
-            val powered = state.getValue(ButtonBlock.POWERED)
-            ConfiguredModel.builder()
-                .modelFile(if (powered) blockBenchModel("hell_naw_button_pressed") else blockBenchModel("hell_naw_button"))
-                .rotationX(if (face == AttachFace.FLOOR) 0 else if (face == AttachFace.WALL) 90 else 180)
-                .rotationY((if (face == AttachFace.CEILING) facing else facing.opposite).toYRot().toInt())
-                .build()
-        }
-
-        simpleBlockItem(
-            ModBlocks.HELL_NAW_BUTTON.get().block,
-            models().getBuilder("breadmod:block/hell_naw_button")
-        )
-    }
-
-    private fun addBlockItemWithSelfParent(block: Block) {
-        val parent = modLoc("${ModelProvider.BLOCK_FOLDER}/${block.descriptionId.substringAfterLast('.')}")
-        horizontalBlock(block) { models().withExistingParent(parent.toString(), parent) }
-        simpleBlockItem(block, models().getBuilder(parent.toString()))
-    }
-
-    private fun blockWithItem(blockRegistryObject: Block) {
-        simpleBlockWithItem(blockRegistryObject, cubeAll(blockRegistryObject))
-    }
-
-    private fun blockBenchModel(model: String): ModelFile.ExistingModelFile =
-        ModelFile.ExistingModelFile(modLoc("${ModelProvider.BLOCK_FOLDER}/$model"), existingFileHelper)
-
-    private fun horizontalBlockBenchModelWithItem(block: Block, model: String) {
-        horizontalBlock(block, blockBenchModel(model))
-        simpleBlockItem(block, blockBenchModel(model))
-    }
+	private fun horizontalBlockBenchModelWithItem(block : Block, model : String) {
+		this.horizontalBlock(block, this.blockBenchModel(model))
+		this.simpleBlockItem(block, this.blockBenchModel(model))
+	}
 }

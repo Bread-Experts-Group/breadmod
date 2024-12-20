@@ -6,9 +6,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(DirectoryLister.class)
 interface IAccessorDirectoryLister {
-    @Accessor("sourcePath")
-    String getSourcePath();
+	@Accessor("sourcePath")
+	String getSourcePath();
 
-    @Accessor("idPrefix")
-    String getIDPrefix();
+	@Accessor("idPrefix")
+	String getIDPrefix();
 }

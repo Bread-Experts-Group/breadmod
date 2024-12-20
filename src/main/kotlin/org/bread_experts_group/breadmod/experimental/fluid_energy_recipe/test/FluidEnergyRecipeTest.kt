@@ -12,13 +12,13 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class FluidEnergyRecipeTest(
-    rItemInputs: NonNullList<SizedIngredient>,
-    rItemOutputs: MutableList<ItemStack>,
-    rFluidInputs: NonNullList<SizedFluidIngredient>,
-    rFluidOutputs: MutableList<FluidStack>,
-    rTime: Int?,
-    rEnergy: Int?
+	rItemInputs : NonNullList<SizedIngredient>,
+	rItemOutputs : MutableList<ItemStack>,
+	rFluidInputs : NonNullList<SizedFluidIngredient>,
+	rFluidOutputs : MutableList<FluidStack>,
+	rTime : Int?,
+	rEnergy : Int?
 ) : FluidEnergyRecipe(rItemInputs, rItemOutputs, rFluidInputs, rFluidOutputs, rTime, rEnergy) {
-    override fun getType(): RecipeType<*> = ModRecipeTypes.FLUID_ENERGY_TEST.get()
-    override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY_TEST.get()
+	override fun getType() : RecipeType<*> = ModRecipeTypes.FLUID_ENERGY_TEST.get()
+	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY_TEST.get()
 }

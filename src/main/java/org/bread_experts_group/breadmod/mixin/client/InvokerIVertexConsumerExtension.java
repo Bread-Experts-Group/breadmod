@@ -10,9 +10,9 @@ import java.nio.ByteBuffer;
 
 @Mixin(IVertexConsumerExtension.class)
 public interface InvokerIVertexConsumerExtension {
-    @Invoker("applyBakedLighting")
-    int invokeApplyBakedLighting(int packedLight, ByteBuffer data);
+	@Invoker("applyBakedLighting")
+	int invokeApplyBakedLighting(int packedLight, ByteBuffer data);
 
-    @Invoker("applyBakedNormals")
-    void invokeApplyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform);
+	@Invoker("applyBakedNormals")
+	void invokeApplyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform);
 }

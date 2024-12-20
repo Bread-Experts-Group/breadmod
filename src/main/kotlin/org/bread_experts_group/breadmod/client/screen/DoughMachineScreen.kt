@@ -17,80 +17,98 @@ import org.bread_experts_group.breadmod.util.formatUnit
 import org.bread_experts_group.breadmod.util.render.renderFluid
 
 class DoughMachineScreen(
-    menu: DoughMachineMenu,
-    inventory: Inventory,
-    title: Component
+	menu : DoughMachineMenu,
+	inventory : Inventory,
+	title : Component
 ) : AbstractContainerScreen<DoughMachineMenu>(menu, inventory, title) {
-    val texture: ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
+	val texture : ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
+	override fun renderBg(guiGraphics : GuiGraphics, partialTick : Float, mouseX : Int, mouseY : Int) {
+		RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
+		RenderSystem.setShaderTexture(0, this.texture)
 
-    override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
-        RenderSystem.setShaderTexture(0, texture)
+		guiGraphics.blit(this.texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight)
 
-        guiGraphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight)
+		this.renderProgressArrow(guiGraphics)
+		this.renderEnergyMeter(guiGraphics)
+	}
 
-        renderProgressArrow(guiGraphics)
-        renderEnergyMeter(guiGraphics)
-    }
+	override fun render(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
+		super.render(guiGraphics, mouseX, mouseY, partialTick)
+		val showShort = !(this.minecraft ?: return).options.keyShift.isDown
+		if (this.isHovering(132, 28, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
+			this.menu.getEnergyHandler()?.let {
+				guiGraphics.renderComponentTooltip(
+					this.font,
+					listOf(
+						modTranslatable(path = arrayOf("energy"))
+							.withStyle(ChatFormatting.RED)
+							.withStyle(ChatFormatting.ITALIC),
+						Component.literal(
+							formatUnit(
+								it.energyStored.toDouble(),
+								it.maxEnergyStored.toDouble(),
+								"FE",
+								showShort,
+								2
+							)
+						)
+					),
+					mouseX, mouseY
+				)
+			}
+		}
 
-    override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick)
+		this.menu.parent.level?.getCapability(
+			Capabilities.FluidHandler.BLOCK,
+			this.menu.parent.blockPos,
+			this.menu.parent.horizontal
+		)
+			?.let { handler ->
+				handler.getFluidInTank(0).let { tank ->
+					val fluid = tank.fluid
+					if (tank.amount > 0) {
+						val percentage = (tank.amount.toFloat() / handler.getTankCapacity(0)) * 28
+						guiGraphics.renderFluid(
+							x = this.leftPos + 153F,
+							y = (this.topPos + 75F),
+							width = 16,
+							height = percentage.toInt(),
+							fluid = fluid,
+							flowing = false,
+							direction = Direction.SOUTH
+						)
+					}
+				}
+			}
 
-        val showShort = !(minecraft ?: return).options.keyShift.isDown
-        if (this.isHovering(132, 28, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
-            menu.getEnergyHandler()?.let {
-                guiGraphics.renderComponentTooltip(
-                    font,
-                    listOf(
-                        modTranslatable(path = arrayOf("energy"))
-                            .withStyle(ChatFormatting.RED)
-                            .withStyle(ChatFormatting.ITALIC),
-                        Component.literal(
-                            formatUnit(
-                                it.energyStored.toDouble(),
-                                it.maxEnergyStored.toDouble(),
-                                "FE",
-                                showShort,
-                                2
-                            )
-                        )
-                    ),
-                    mouseX, mouseY
-                )
-            }
-        }
+		this.renderTooltip(guiGraphics, mouseX, mouseY)
+	}
 
-        menu.parent.level?.getCapability(Capabilities.FluidHandler.BLOCK, menu.parent.blockPos, menu.parent.horizontal)
-            ?.let { handler ->
-                handler.getFluidInTank(0).let { tank ->
-                    val fluid = tank.fluid
-                    if (tank.amount > 0) {
-                        val percentage = (tank.amount.toFloat() / handler.getTankCapacity(0)) * 28
-                        guiGraphics.renderFluid(
-                            x = leftPos + 153F,
-                            y = (topPos + 75F),
-                            width = 16,
-                            height = percentage.toInt(),
-                            fluid = fluid,
-                            flowing = false,
-                            direction = Direction.SOUTH
-                        )
-                    }
-                }
-            }
+	private fun renderProgressArrow(guiGraphics : GuiGraphics) {
+		if (this.menu.isCrafting()) {
+			guiGraphics.blit(
+				this.texture,
+				this.leftPos + 46,
+				this.topPos + 35,
+				176,
+				0,
+				this.menu.getScaledProgress(),
+				17
+			)
+		}
+	}
 
-        renderTooltip(guiGraphics, mouseX, mouseY)
-    }
-
-    private fun renderProgressArrow(guiGraphics: GuiGraphics) {
-        if (menu.isCrafting()) {
-            guiGraphics.blit(texture, leftPos + 46, topPos + 35, 176, 0, menu.getScaledProgress(), 17)
-        }
-    }
-
-    private fun renderEnergyMeter(guiGraphics: GuiGraphics) {
-        val energyStored = menu.getEnergyStoredScaled()
-        guiGraphics.blit(texture, leftPos + 132, topPos + 28 + 47 - energyStored, 176, 64 - energyStored, 16, 47)
-    }
+	private fun renderEnergyMeter(guiGraphics : GuiGraphics) {
+		val energyStored = this.menu.getEnergyStoredScaled()
+		guiGraphics.blit(
+			this.texture,
+			this.leftPos + 132,
+			this.topPos + 28 + 47 - energyStored,
+			176,
+			64 - energyStored,
+			16,
+			47
+		)
+	}
 }

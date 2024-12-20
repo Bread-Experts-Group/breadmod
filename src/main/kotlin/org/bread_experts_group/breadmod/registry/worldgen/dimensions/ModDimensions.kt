@@ -20,93 +20,100 @@ import org.bread_experts_group.breadmod.BreadMod
 import java.util.*
 
 object ModDimensions {
-    fun register(
-        name: String,
-        dimensionType: (key: ResourceKey<DimensionType>, location: ResourceLocation) -> DimensionType,
-        climateParameterListBuilder: ClimateParameterListBuilder,
-        noiseGenerationSettings: ResourceKey<NoiseGeneratorSettings>
-    ): kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = BreadMod.modLocation(name).let {
-        ModDimensionEntry(
-            it,
-            ResourceKey.create(Registries.DIMENSION_TYPE, it)
-                .let { typeKey -> typeKey to dimensionType.invoke(typeKey, it) },
-            ResourceKey.create(Registries.LEVEL_STEM, it),
-            climateParameterListBuilder,
-            noiseGenerationSettings
-        ) to ResourceKey.create(Registries.DIMENSION, it)
-    }
+	fun register(
+		name : String,
+		dimensionType : (key : ResourceKey<DimensionType>, location : ResourceLocation) -> DimensionType,
+		climateParameterListBuilder : ClimateParameterListBuilder,
+		noiseGenerationSettings : ResourceKey<NoiseGeneratorSettings>
+	) : kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = BreadMod.modLocation(name).let {
+		ModDimensionEntry(
+			ResourceKey.create(Registries.DIMENSION_TYPE, it)
+				.let { typeKey -> typeKey to dimensionType.invoke(typeKey, it) },
+			ResourceKey.create(Registries.LEVEL_STEM, it),
+			climateParameterListBuilder,
+			noiseGenerationSettings
+		) to ResourceKey.create(Registries.DIMENSION, it)
+	}
 
-    val BREAD: kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = register("bread", { _, _ ->
-        DimensionType(
-            OptionalLong.empty(),
-            true,
-            false,
-            false,
-            true,
-            4.0,
-            true,
-            false,
-            -64,
-            2048,
-            2048,
-            BlockTags.INFINIBURN_OVERWORLD,
-            BuiltinDimensionTypes.NETHER_EFFECTS,
-            8F,
-            DimensionType.MonsterSettings(
-                false,
-                false,
-                ConstantInt.of(0),
-                0
-            )
-        )
-    }, { holderGetter ->
-        Climate.ParameterList(
-            listOf(
-                Pair.of(
-                    Climate.parameters(
-                        0.9F,
-                        0.5f,
-                        0.0F,
-                        0.25f,
-                        1.0f,
-                        1.0F,
-                        0.175F
-                    ), holderGetter.getOrThrow(ModBiomes.BREAD)
-                )
-            )
-        )
-    }, ModNoiseGenerators.BREAD_FLOATING_ISLANDS)
+	val BREAD : kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = this.register(
+		"bread",
+		{ _, _ ->
+			DimensionType(
+				OptionalLong.empty(),
+				true,
+				false,
+				false,
+				true,
+				4.0,
+				true,
+				false,
+				-64,
+				2048,
+				2048,
+				BlockTags.INFINIBURN_OVERWORLD,
+				BuiltinDimensionTypes.NETHER_EFFECTS,
+				8F,
+				DimensionType.MonsterSettings(
+					false,
+					false,
+					ConstantInt.of(0),
+					0
+				)
+			)
+		},
+		{ holderGetter ->
+			Climate.ParameterList(
+				listOf(
+					Pair.of(
+						Climate.parameters(
+							0.9F,
+							0.5f,
+							0.0F,
+							0.25f,
+							1.0f,
+							1.0F,
+							0.175F
+						),
+						holderGetter.getOrThrow(
+							ModBiomes.BREAD
+						)
+					)
+				)
+			)
+		},
+		ModNoiseGenerators.BREAD_FLOATING_ISLANDS
+	)
 
-    fun bootstrapDimensionTypes(ctx: BootstrapContext<DimensionType>): Unit =
-        ModDimensionEntry.entries.forEach { ctx.register(it.dimensionType.first, it.dimensionType.second) }
+	fun bootstrapDimensionTypes(ctx : BootstrapContext<DimensionType>) : Unit =
+		ModDimensionEntry.entries.forEach { ctx.register(it.dimensionType.first, it.dimensionType.second) }
 
-    fun bootstrapLevelStems(ctx: BootstrapContext<LevelStem>) {
-        val noiseSettings = ctx.lookup(Registries.NOISE_SETTINGS)
-        val mnbspList = ctx.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
-        val holderGetter = ctx.lookup(Registries.DIMENSION_TYPE)
-        val biomeGetter = ctx.lookup(Registries.BIOME)
+	fun bootstrapLevelStems(ctx : BootstrapContext<LevelStem>) {
+		val noiseSettings = ctx.lookup(Registries.NOISE_SETTINGS)
+		val mnbspList = ctx.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
+		val holderGetter = ctx.lookup(Registries.DIMENSION_TYPE)
+		val biomeGetter = ctx.lookup(Registries.BIOME)
 
-        ModDimensionEntry.entries.forEach {
-            ctx.register(
-                it.levelStemKey, LevelStem(
-                    holderGetter.getOrThrow(it.dimensionType.first),
-                    NoiseBasedChunkGenerator(
-                        it.climateParameterListBuilder.let { builder ->
-                            if (builder != null) MultiNoiseBiomeSource.createFromList(builder(biomeGetter))
-                            else MultiNoiseBiomeSource.createFromPreset(
-                                mnbspList.getOrThrow(
-                                    MultiNoiseBiomeSourceParameterLists.OVERWORLD
-                                )
-                            )
-                        },
-                        noiseSettings.getOrThrow(it.noiseSettings)
-                    )
-                )
-            )
-        }
-    }
+		ModDimensionEntry.entries.forEach {
+			ctx.register(
+				it.levelStemKey, LevelStem(
+					holderGetter.getOrThrow(it.dimensionType.first),
+					NoiseBasedChunkGenerator(
+						it.climateParameterListBuilder.let { builder ->
+							if (builder != null) MultiNoiseBiomeSource.createFromList(builder(biomeGetter))
+							else MultiNoiseBiomeSource.createFromPreset(
+								mnbspList.getOrThrow(
+									MultiNoiseBiomeSourceParameterLists.OVERWORLD
+								)
+							)
+						},
+						noiseSettings.getOrThrow(it.noiseSettings)
+					)
+				)
+			)
+		}
+	}
 
-    init {
-        ModDimensionEntry.frozen = true
-    }
+	init {
+		ModDimensionEntry.frozen = true
+	}
 }

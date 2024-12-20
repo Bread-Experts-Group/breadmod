@@ -10,27 +10,26 @@ import org.bread_experts_group.breadmod.util.render.addBeamTask
 import org.joml.Vector3f
 
 class BeamPacket(
-    val start: Vector3f,
-    val end: Vector3f,
-    val thickness: Float?
+	val start : Vector3f,
+	val end : Vector3f,
+	val thickness : Float?
 ) : CustomPacketPayload {
-    companion object {
-        val TYPE: CustomPacketPayload.Type<BeamPacket> =
-            CustomPacketPayload.Type(modLocation("beam_packet"))
+	companion object {
+		val TYPE : CustomPacketPayload.Type<BeamPacket> =
+			CustomPacketPayload.Type(modLocation("beam_packet"))
+		val STREAM_CODEC : StreamCodec<ByteBuf, BeamPacket> = StreamCodec.composite(
+			ByteBufCodecs.VECTOR3F, BeamPacket::start,
+			ByteBufCodecs.VECTOR3F, BeamPacket::end,
+			ByteBufCodecs.FLOAT, BeamPacket::thickness,
+			::BeamPacket
+		)
 
-        val STREAM_CODEC: StreamCodec<ByteBuf, BeamPacket> = StreamCodec.composite(
-            ByteBufCodecs.VECTOR3F, BeamPacket::start,
-            ByteBufCodecs.VECTOR3F, BeamPacket::end,
-            ByteBufCodecs.FLOAT, BeamPacket::thickness,
-            ::BeamPacket
-        )
+		fun handleClientboundPacket(data : BeamPacket, context : IPayloadContext) {
+			context.enqueueWork {
+				addBeamTask(data.start, data.end, data.thickness)
+			}
+		}
+	}
 
-        fun handleClientboundPacket(data: BeamPacket, context: IPayloadContext) {
-            context.enqueueWork {
-                addBeamTask(data.start, data.end, data.thickness)
-            }
-        }
-    }
-
-    override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
+	override fun type() : CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
 }

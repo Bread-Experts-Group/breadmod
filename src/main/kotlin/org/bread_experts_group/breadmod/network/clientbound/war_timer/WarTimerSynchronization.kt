@@ -10,24 +10,22 @@ import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.render.localClient
 
-internal data class WarTimerSynchronization(val time: Int) : CustomPacketPayload {
-    companion object {
-        val TYPE: CustomPacketPayload.Type<WarTimerSynchronization> =
-            CustomPacketPayload.Type(modLocation("war_timer_sync"))
+internal data class WarTimerSynchronization(val time : Int) : CustomPacketPayload {
+	companion object {
+		val TYPE : CustomPacketPayload.Type<WarTimerSynchronization> =
+			CustomPacketPayload.Type(modLocation("war_timer_sync"))
+		val STREAM_CODEC : StreamCodec<ByteBuf, WarTimerSynchronization> = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT, WarTimerSynchronization::time, ::WarTimerSynchronization
+		)
 
-        val STREAM_CODEC: StreamCodec<ByteBuf, WarTimerSynchronization> = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, WarTimerSynchronization::time, ::WarTimerSynchronization
-        )
+		fun handleClientboundPacket(data : WarTimerSynchronization, context : IPayloadContext) {
+			context.enqueueWork {
+				WarOverlay.timeLeft = data.time
+				val player = localClient.player ?: return@enqueueWork
+				player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 1f)
+			}
+		}
+	}
 
-        fun handleClientboundPacket(data: WarTimerSynchronization, context: IPayloadContext) {
-            context.enqueueWork {
-                WarOverlay.timeLeft = data.time
-
-                val player = localClient.player ?: return@enqueueWork
-                player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 1f)
-            }
-        }
-    }
-
-    override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
+	override fun type() : CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
 }

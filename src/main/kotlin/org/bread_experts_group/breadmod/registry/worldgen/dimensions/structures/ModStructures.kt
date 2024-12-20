@@ -16,33 +16,31 @@ import net.minecraft.world.level.levelgen.structure.Structure.StructureSettings
 import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
-import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModPools.FARMHOUSE_POOL
 
 object ModStructures {
-    private fun createKey(id: String) = ResourceKey.create(Registries.STRUCTURE, BreadMod.modLocation(id))
+	fun createKey(id : String) : ResourceKey<Structure> = ResourceKey.create(Registries.STRUCTURE, modLocation(id))
+	val FARMHOUSE : ResourceKey<Structure> = this.createKey("farmhouse")
+	fun structure(
+		biomes : HolderSet<Biome>,
+		spawnOverrides : Map<MobCategory, StructureSpawnOverride> = mapOf(),
+		step : GenerationStep.Decoration = GenerationStep.Decoration.SURFACE_STRUCTURES,
+		adjustment : TerrainAdjustment = TerrainAdjustment.NONE
+	) : StructureSettings = StructureSettings(biomes, spawnOverrides, step, adjustment)
 
-    val FARMHOUSE: ResourceKey<Structure> = createKey("farmhouse")
-
-    private fun structure(
-        biomes: HolderSet<Biome>,
-        spawnOverrides: Map<MobCategory, StructureSpawnOverride> = mapOf(),
-        step: GenerationStep.Decoration = GenerationStep.Decoration.SURFACE_STRUCTURES,
-        adjustment: TerrainAdjustment = TerrainAdjustment.NONE
-    ): StructureSettings = StructureSettings(biomes, spawnOverrides, step, adjustment)
-
-    fun bootstrap(pContext: BootstrapContext<Structure>) {
-        val biomeHolder = pContext.lookup(Registries.BIOME)
-        val templateHolder = pContext.lookup(Registries.TEMPLATE_POOL)
-        pContext.register(
-            FARMHOUSE, JigsawStructure(
-                structure(
-                    biomeHolder.getOrThrow(BiomeTags.HAS_VILLAGE_PLAINS),
-                    adjustment = TerrainAdjustment.BEARD_THIN
-                ),
-                templateHolder.getOrThrow(FARMHOUSE_POOL), 1, ConstantHeight.of(VerticalAnchor.absolute(0)), false,
-                Heightmap.Types.WORLD_SURFACE_WG
-            )
-        )
-    }
+	fun bootstrap(pContext : BootstrapContext<Structure>) {
+		val biomeHolder = pContext.lookup(Registries.BIOME)
+		val templateHolder = pContext.lookup(Registries.TEMPLATE_POOL)
+		pContext.register(
+			this.FARMHOUSE, JigsawStructure(
+				this.structure(
+					biomeHolder.getOrThrow(BiomeTags.HAS_VILLAGE_PLAINS),
+					adjustment = TerrainAdjustment.BEARD_THIN
+				),
+				templateHolder.getOrThrow(FARMHOUSE_POOL), 1, ConstantHeight.of(VerticalAnchor.absolute(0)), false,
+				Heightmap.Types.WORLD_SURFACE_WG
+			)
+		)
+	}
 }
