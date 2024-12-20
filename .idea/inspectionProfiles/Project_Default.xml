@@ -1,36 +1,81 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
-    <inspection_tool class="Destructure" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="AtUsage" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="CascadeIf" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ConvertLambdaToReference" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
+    <inspection_tool class="ConvertReferenceToLambda" enabled="false" level="INFORMATION" enabled_by_default="false" />
+    <inspection_tool class="Destructure" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="DuplicateAwEntry" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="EmptyDirectory" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ExplicitThis" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="FieldDeclarationSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="FloatingPointLiteralPrecision" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="FoldInitializerAndIfToElvis" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="GradleKotlinxCoroutinesDeprecation" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="IfThenToElvis" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="IfThenToSafeAccess" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="IllegalDependencyOnInternalPackage" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="ImplicitThis" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
     <inspection_tool class="IncompleteDestructuring" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InconsistentLineSeparators" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="IncorrectFormatting" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="InfixCallToOrdinary" enabled="false" level="INFORMATION" enabled_by_default="false" />
+    <inspection_tool class="IntroduceWhenSubject" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="JavaAnnotator" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="KDocMissingDocumentation" enabled="true" level="Javadoc Needed" enabled_by_default="true" editorAttributes="Javadoc Needed" />
-    <inspection_tool class="KotlinLoggerInitializedWithForeignClass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="KtorOpenApiUpdate" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LocalVariableDeclarationSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="LoggingConditionDisagreesWithLogLevelStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LongLine" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="LoopToCallChain" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="MapGetWithNotNullAssertionOperator" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="MavenCoroutinesDeprecation" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="MayBeConstant" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
     <inspection_tool class="MethodCallSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="MethodSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="NestedClassSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="NewExpressionSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="NonNullableBooleanPropertyInExternalInterface" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ProblematicWhitespace" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="PublicApiImplicitType" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PublicApiImplicitType" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push">
+      <option name="reportInternal" value="true" />
+      <option name="reportPrivate" value="true" />
+    </inspection_tool>
     <inspection_tool class="QodanaJavaSanity" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="QodanaKotlinSanity" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="RedundantElseInIf" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="RedundantEmptyInitializerBlock" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="RedundantInnerClassModifier" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RedundantLabeledReturnOnLastExpressionInLambda" enabled="false" level="INFORMATION" enabled_by_default="false" />
+    <inspection_tool class="RedundantObjectTypeCheck" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="RedundantValueArgument" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="ReplaceArrayOfWithLiteral" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceAssertBooleanWithAssertEquality" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="ReplaceCollectionCountWithSize" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
-    <inspection_tool class="ReplacePrintlnWithLogging" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ReplaceGuardClauseWithFunctionCall" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceIsEmptyWithIfEmpty" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceManualRangeWithIndicesCalls" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceNegatedIsEmptyWithIsNotEmpty" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceNotNullAssertionWithElvisReturn" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="ReplacePrintlnWithLogging" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="ReplacePutWithAssignment" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceRangeToWithRangeUntil" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceRangeToWithUntil" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceReadLineWithReadln" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceStringFormatWithLiteral" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="ReplaceSubstringWithDropLast" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="ReplaceSubstringWithIndexingOperation" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="ReplaceSubstringWithSubstringAfter" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="ReplaceSubstringWithSubstringBefore" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="ReplaceSubstringWithTake" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
+    <inspection_tool class="ReplaceToStringWithStringTemplate" enabled="false" level="INFORMATION" enabled_by_default="false" />
+    <inspection_tool class="ReplaceWithOperatorAssignment" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="StackEmpty" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="SimplifiableCallChain" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="SimplifyAssertNotNull" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="SimplifyNegatedBinaryExpression" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
+    <inspection_tool class="StackEmpty" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="SuppressionAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="myAllowedSuppressions">
         <list>
@@ -52,9 +97,11 @@
     <inspection_tool class="TestInProductSource" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TestMethodWithoutAssertion" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TestOnlyProblems" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="TodoComment" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="TodoComment" enabled="true" level="Javadoc Needed" enabled_by_default="true" editorAttributes="Javadoc Needed" />
+    <inspection_tool class="UnclearPrecedenceOfBinaryExpression" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
     <inspection_tool class="UnstableTypeUsedInSignature" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnusedMainParameter" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="UsePropertyAccessSyntax" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES" />
     <inspection_tool class="VariableUseSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="WhenWithOnlyElse" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
   </profile>
