@@ -29,7 +29,6 @@ import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.experimental.tool_gun_mode.TestScreen
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.machTrailMap
 import org.bread_experts_group.breadmod.util.render.redness
@@ -142,11 +141,11 @@ internal object ClientNeoForgeEventBus {
 	)
 	@SubscribeEvent
 	fun login(event : PlayerEvent.PlayerLoggedInEvent) {
-		PhysXTestTool.createPhysX()
+//		PhysXTestTool.createPhysX()
 	}
 	@SubscribeEvent
 	fun logout(event : PlayerEvent.PlayerLoggedOutEvent) {
-		PhysXTestTool.destroyPhysX()
+//		PhysXTestTool.destroyPhysX()
 	}
 	@SubscribeEvent
 	fun clientTick(event : ClientTickEvent.Pre) {

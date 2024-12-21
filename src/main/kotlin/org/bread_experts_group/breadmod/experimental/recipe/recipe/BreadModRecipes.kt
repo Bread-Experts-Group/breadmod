@@ -73,9 +73,7 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime : Int?, val rEnergy : 
 	) : BreadModRecipes<BMRecipeInputs.MultiFluid>(rTime, rEnergy) {
 		override fun matches(input : BMRecipeInputs.MultiFluid, level : Level) : Boolean =
 			this.rFluidInputs.all { rFluid ->
-				input.iFluids.any { iFluid ->
-					rFluid.test(iFluid)
-				}
+				input.iFluids.any(rFluid::test)
 			} && super.matches(input, level)
 
 		override fun assemble(input : BMRecipeInputs.MultiFluid, registries : HolderLookup.Provider) : ItemStack =
@@ -95,15 +93,15 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime : Int?, val rEnergy : 
 		override fun canCraftInDimensions(width : Int, height : Int) : Boolean = true
 		fun consumeInputs(fluids : List<FluidStack>) {
 			val list : MutableList<FluidStack> = mutableListOf()
-			this.rFluidInputs.forEach { list.add(fluids.find { fluid -> it.test(fluid) } ?: return@forEach) }
+			this.rFluidInputs.forEach { list.add(fluids.find(it::test) ?: return@forEach) }
 			list.forEach { fluid -> this.rFluidInputs.forEach { if (it.test(fluid)) fluid.shrink(it.amount()) } }
 		}
 
 		fun inputsStillValid(fluids : List<FluidStack>) : Boolean =
-			this.rFluidInputs.all { rFluid -> fluids.any { rFluid.test(it) } }
+			this.rFluidInputs.all { rFluid -> fluids.any(rFluid::test) }
 
-		fun canFitResults(list : List<FluidStack>, capacity : Int) : Boolean =
-			list.all { iFluid ->
+		fun canFitResults(fluids : List<FluidStack>, capacity : Int) : Boolean =
+			fluids.all { iFluid ->
 				this.rFluidOutputs.any { rFluid ->
 					iFluid.amount < capacity || iFluid.amount + rFluid.amount < capacity
 				}
@@ -119,9 +117,7 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime : Int?, val rEnergy : 
 		// todo account for split stacks of matching items
 		override fun matches(input : BMRecipeInputs.MultiItem, level : Level) : Boolean =
 			this.rItemInputs.all { rItem ->
-				input.iItems.any { iItem ->
-					rItem.test(iItem)
-				}
+				input.iItems.any(rItem::test)
 			} && super.matches(input, level)
 		/**
 		 * @return The first item in [rItemOutputs]
@@ -144,12 +140,12 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime : Int?, val rEnergy : 
 
 		fun consumeInputs(items : List<ItemStack>) {
 			val list : MutableList<ItemStack> = mutableListOf()
-			this.rItemInputs.forEach { list.add(items.find { item -> it.test(item) } ?: return@forEach) }
+			this.rItemInputs.forEach { list.add(items.find(it::test) ?: return@forEach) }
 			list.forEach { item -> this.rItemInputs.forEach { if (it.test(item)) item.shrink(it.count()) } }
 		}
 
 		fun inputStillValid(items : List<ItemStack>) : Boolean =
-			this.rItemInputs.all { rItem -> items.any { rItem.test(it) } }
+			this.rItemInputs.all { rItem -> items.any(rItem::test) }
 
 		fun canFitResults(list : List<ItemStack>) : Boolean =
 			list.all { iItem ->

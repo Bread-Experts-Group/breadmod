@@ -257,7 +257,7 @@ fun GuiGraphics.renderFluid(
 		}
 	} else atlas.apply(ext.stillTexture) to 1F
 	val sprite = spriteDiff.first
-	val colors = FloatArray(4).also { Color(ext.tintColor).getComponents(it) }
+	val colors = FloatArray(4).also(Color(ext.tintColor)::getComponents)
 	val matrix4f : Matrix4f = this.pose().last().pose()
 	RenderSystem.setShaderTexture(0, sprite.atlasLocation())
 	RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)

@@ -34,15 +34,15 @@ object ModRecipeSerializers {
 		}
 	// Exp.
 	val MULTI_ITEM_TEST : Supplier<RecipeSerializer<MultiItemTestRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("multi_item_test") { -> MultiItemTestRecipe.Serializer() }
+		this.RECIPE_SERIALIZER_REGISTRY.register("multi_item_test", MultiItemTestRecipe::Serializer)
 	val SINGLE_ITEM_TEST : Supplier<RecipeSerializer<SingleItemTestRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("single_item_test") { -> SingleItemTestRecipe.Serializer() }
+		this.RECIPE_SERIALIZER_REGISTRY.register("single_item_test", SingleItemTestRecipe::Serializer)
 	val SINGLE_FLUID_TEST : Supplier<RecipeSerializer<SingleFluidTestRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("single_fluid_test") { -> SingleFluidTestRecipe.Serializer() }
+		this.RECIPE_SERIALIZER_REGISTRY.register("single_fluid_test", SingleFluidTestRecipe::Serializer)
 	val MULTI_FLUID_TEST : Supplier<RecipeSerializer<MultiFluidTestRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("multi_fluid_test") { -> MultiFluidTestRecipe.Serializer() }
+		this.RECIPE_SERIALIZER_REGISTRY.register("multi_fluid_test", MultiFluidTestRecipe::Serializer)
 	val SINGLE_FLUID_ITEM : Supplier<RecipeSerializer<SingleFluidItemRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("single_fluid_item") { -> SingleFluidItemRecipe.Serializer() }
+		this.RECIPE_SERIALIZER_REGISTRY.register("single_fluid_item", SingleFluidItemRecipe::Serializer)
 	val FLUID_ENERGY_TEST : Supplier<RecipeSerializer<FluidEnergyRecipe>> =
 		this.RECIPE_SERIALIZER_REGISTRY.register(
 			"fluid_energy"

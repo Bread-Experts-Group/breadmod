@@ -111,7 +111,7 @@ internal object CommonModEventBus {
 			generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))
 			generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
 			scanner.getClassesAnnotatedWith<LanguageDataGenerator>().forEach { clazz ->
-				val check = clazz.primaryConstructor!!.call(packOutput)
+				val check = (clazz.primaryConstructor ?: return@forEach).call(packOutput)
 				if (check is BaseLanguageProvider) generator.addProvider(true, check)
 			}
 		}
@@ -208,7 +208,7 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.SINGLE_FLUID_ITEM_TEST.get()
-		) { entity, direction : Direction? -> entity.tank }
+		) { entity, _ : Direction? -> entity.tank }
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
@@ -232,10 +232,10 @@ internal object CommonModEventBus {
 		) { entity, direction : Direction? ->
 			val tanks = entity.tank.tanks
 			when (direction) {
-				Direction.UP   -> tanks[0]
+				Direction.EAST -> tanks[0]
 				Direction.WEST -> tanks[1]
-				Direction.DOWN -> tanks[2]
-				Direction.EAST -> tanks[3]
+				Direction.UP   -> tanks[2]
+				Direction.DOWN -> tanks[3]
 				else           -> null
 			}
 		}

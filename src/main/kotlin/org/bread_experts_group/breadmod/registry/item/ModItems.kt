@@ -100,7 +100,7 @@ object ModItems {
 		) {
 			override fun finishUsingItem(stack : ItemStack, level : Level, livingEntity : LivingEntity) : ItemStack {
 				stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-					.forEachEffect { livingEntity.addEffect(it) }
+					.forEachEffect(livingEntity::addEffect)
 				return super.finishUsingItem(stack, level, livingEntity)
 			}
 

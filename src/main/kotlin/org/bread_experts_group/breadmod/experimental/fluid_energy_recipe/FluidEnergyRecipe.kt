@@ -19,7 +19,6 @@ import net.minecraft.world.level.material.Fluid
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
-import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTank
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeBuilder
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeSerializer
@@ -53,15 +52,14 @@ abstract class FluidEnergyRecipe(
 	rEnergy : Int?
 ) : BreadModRecipes<FluidEnergyRecipe.FluidEnergyInput>(rTime, rEnergy) {
 	override fun matches(input : FluidEnergyInput, level : Level) : Boolean =
-		this.rItemInputs.all { rItem ->
-			input.iItems.any(rItem::test)
-		} && this.rFluidInputs.all { rFluid ->
-			input.iFluids.any(rFluid::test)
+		this.rItemInputs.all { rItem -> input.iItems.any(rItem::test)
+		} && this.rFluidInputs.all { rFluid -> input.iFluids.any(rFluid::test)
 		} && super.matches(input, level)
 
 	override fun assemble(input : FluidEnergyInput, registries : HolderLookup.Provider) : ItemStack =
 		this.rItemOutputs[0]
 
+	// todo needs logic to fail over outputs into other empty slots when the intended slot reaches it's max count
 	fun assembleOutputs(input : FluidEnergyInput) : Pair<List<ItemStack>, List<FluidStack>> =
 		buildList {
 			repeat(this@FluidEnergyRecipe.rItemOutputs.size) { index ->
@@ -75,36 +73,73 @@ abstract class FluidEnergyRecipe(
 
 	override fun canCraftInDimensions(width : Int, height : Int) : Boolean = width * height >= 1
 	override fun getResultItem(registries : HolderLookup.Provider) : ItemStack = this.rItemOutputs[0].copy()
+
 	fun consumeInputs(items : List<ItemStack>, fluids : List<FluidStack>) {
+		this.consumeItems(items)
+		this.consumeFluids(fluids)
+	}
+
+	fun consumeItems(items : List<ItemStack>) {
 		val itemList : MutableList<ItemStack> = mutableListOf()
-		val fluidList : MutableList<FluidStack> = mutableListOf()
 		this.rItemInputs.forEach { itemList.add(items.find(it::test) ?: return@forEach) }
-		this.rItemInputs.forEach { itemList.add(items.find(it::test) ?: return@forEach) }
-		this.rFluidInputs.forEach { fluidList.add(fluids.find(it::test) ?: return@forEach) }
 		itemList.forEach { item -> this.rItemInputs.forEach { if (it.test(item)) item.shrink(it.count()) } }
+	}
+
+	fun consumeFluids(fluids : List<FluidStack>) {
+		val fluidList : MutableList<FluidStack> = mutableListOf()
+		this.rFluidInputs.forEach { fluidList.add(fluids.find(it::test) ?: return@forEach) }
 		fluidList.forEach { fluid -> this.rFluidInputs.forEach { if (it.test(fluid)) fluid.shrink(it.amount()) } }
 	}
 
-	fun inputStillValid(items : List<ItemStack>, fluids : List<FluidStack>) : Boolean =
-		this.rItemInputs.all { rItem -> items.any(rItem::test) } &&
-				this.rFluidInputs.all { rFluid -> fluids.any(rFluid::test) }
-	// todo always returning false, needs rewriting
-	//  (maybe just provide a list of FluidStacks instead of the entire tank itself)
-	//  the && in the function is what's causing it to always return false, expecting BOTH items and fluids to be true
-	//  when the recipe could only use items or fluids
-	fun canFitResults(items : List<ItemStack>, tank : SidedFluidTank, fluidCapacity : Int) : Boolean =
+	/**
+	 * @return True if both items and fluids are still valid.
+	 */
+	fun inputsStillValid(items : List<ItemStack>, fluids : List<FluidStack>) : Boolean =
+		this.itemsStillValid(items) && this.fluidsStillValid(fluids)
+
+	/**
+	 * @return True if the input items are still valid.
+	 */
+	fun itemsStillValid(items : List<ItemStack>) : Boolean =
+		this.rItemInputs.all { rItem -> items.any(rItem::test) }
+	/**
+	 * @return True if the input fluids are still valid.
+	 */
+	fun fluidsStillValid(fluids : List<FluidStack>) : Boolean =
+		this.rFluidInputs.all { rFluid -> fluids.any(rFluid::test) }
+
+	/**
+	 * @return True if items fit in result slots and fluids fit in result tanks.
+	 */
+	fun canFitResults(items : List<ItemStack>, fluids : List<FluidStack>, tankCapacity : Int) : Boolean =
+		this.canFitItemResults(items) && this.canFitFluidResults(fluids, tankCapacity)
+
+	/**
+	 * @return True if items fit in result slots, false otherwise.
+	 */
+	// todo fails to return true when [items] reaches max stack size on any slot, need logic to shift to the second
+	//  empty slot in [items] and check until the results will fit. Return false regardless if all slots can't fit items
+	fun canFitItemResults(items : List<ItemStack>) : Boolean =
 		items.all { iItem ->
 			this.rItemOutputs.any { rItem ->
 				iItem.count < rItem.maxStackSize || iItem.count + rItem.count < rItem.maxStackSize
 			}
-		} || tank.tanks.all { iFluidHandler ->
+		} || this.rItemOutputs.isEmpty()
+
+	/**
+	 * @return True if fluids fit in result tanks, false otherwise.
+	 */
+	// todo Fluids might also have this same issue, need more testing.
+	fun canFitFluidResults(fluids: List<FluidStack>, tankCapacity : Int) : Boolean =
+		fluids.all { iFluid ->
 			this.rFluidOutputs.any { rFluid ->
-				iFluidHandler.fluid.amount < fluidCapacity || iFluidHandler.fluid.amount + rFluid.amount < fluidCapacity
+				iFluid.amount <= tankCapacity || iFluid.amount + rFluid.amount <= tankCapacity
 			}
-		}
+		} || this.rFluidOutputs.isEmpty()
 
 	abstract override fun getSerializer() : RecipeSerializer<*>
 	abstract override fun getType() : RecipeType<*>
+
 	class FluidEnergyInput(
 		val iItems : List<ItemStack>,
 		val iCount : List<Int>,
@@ -119,7 +154,7 @@ abstract class FluidEnergyRecipe(
 	//  so we can just instantiate this class
 	//  instead of extending it for each recipe
 	class FluidEnergySerializer<R : FluidEnergyRecipe>(
-		val recipe : RecipeFunctionDataFixer<R>
+		private val recipe : RecipeFunctionDataFixer<R>
 	) : BMRecipeSerializer<R>() {
 		override fun codec() : MapCodec<R> = RecordCodecBuilder.mapCodec { inst ->
 			inst.group(

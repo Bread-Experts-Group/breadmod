@@ -15,9 +15,10 @@ class SidedFluidTankJadeBlockEntity(
 	pos : BlockPos,
 	state : BlockState
 ) : BlockEntity(ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get(), pos, state) {
-	inner class SyncedHandler(capacity : Int) : SidedFluidTank.CustomHandler(capacity) {
+	inner class SyncedHandler(capacity : Int, canFill : Boolean, canDrain : Boolean) :
+		SidedFluidTank.CustomHandler(capacity, canFill, canDrain) {
 		override fun onContentsChanged() {
-			level?.sendBlockUpdated(
+			this@SidedFluidTankJadeBlockEntity.level?.sendBlockUpdated(
 				this@SidedFluidTankJadeBlockEntity.blockPos,
 				this@SidedFluidTankJadeBlockEntity.blockState,
 				this@SidedFluidTankJadeBlockEntity.blockState,
@@ -27,7 +28,14 @@ class SidedFluidTankJadeBlockEntity(
 	}
 
 	val tank : SidedFluidTank = SidedFluidTank(
-		listOf(10000, 10000, 10000, 10000, 10000, 10000).map { this.SyncedHandler(it) }
+		listOf(
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true)
+		).map { this.SyncedHandler(it.first, it.second, it.third) }
 	)
 
 	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
