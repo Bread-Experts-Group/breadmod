@@ -164,7 +164,7 @@ class ConsoleColorAppender(
 		val separator = '\n' + (background set GraphicsModes.WHITE join "^ ")
 		modifiedMessage += proxy.stackTrace.joinToString(separator) { trace ->
 			val format = String.format(
-				"[%s%s%s → %s] %s.%s %s %s %s %s",
+				"[%1\$s%2\$s%3\$s → %4\$s] %5\$s.%6\$s %7\$s %8\$s",
 				(trace.fileName?.getColorForString(ColorBanks.FILE) ?: "")
 					.padCTL(longestFileName),
 				GraphicsModes.WHITE join ':',
