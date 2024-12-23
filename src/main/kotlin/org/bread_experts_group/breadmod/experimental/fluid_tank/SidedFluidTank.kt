@@ -14,18 +14,20 @@ class SidedFluidTank(
 ) {
 	fun getFluidInTank(tank : Int) : FluidStack = this.tanks[tank].fluid
 	fun writeToNBT(lookupProvider : Provider, nbt : CompoundTag) : CompoundTag {
+		val tag = CompoundTag()
 		repeat(this.tanks.size) { index ->
 			if (!this.tanks[index].fluid.isEmpty) {
-				nbt.put("Fluid_$index", this.tanks[index].fluid.save(lookupProvider))
+				tag.put("Fluid_$index", this.tanks[index].fluid.save(lookupProvider))
 			}
 		}
-
+		nbt.put("fluids", tag)
 		return nbt
 	}
 
 	fun readFromNBT(lookupProvider : Provider, nbt : CompoundTag) : SidedFluidTank {
+		val tag = nbt.getCompound("fluids")
 		repeat(this.tanks.size) { index ->
-			this.tanks[index].fluid = FluidStack.parseOptional(lookupProvider, nbt.getCompound("Fluid_$index"))
+			this.tanks[index].fluid = FluidStack.parseOptional(lookupProvider, tag.getCompound("Fluid_$index"))
 		}
 		return this
 	}

@@ -12,7 +12,7 @@ import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyRecipe
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyBuilder
 import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyRecipeTest
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiItemTestRecipe
@@ -82,7 +82,7 @@ class ModRecipeProvider(
 			.timeRequired(100)
 			.save(recipeOutput, modLocation("experimental", "single_fluid_item_test"))
 
-		FluidEnergyRecipe.FluidEnergyBuilder(
+		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
 			listOf(Items.BREAD to 16),
 			listOf(Fluids.WATER to 500)
@@ -93,7 +93,7 @@ class ModRecipeProvider(
 			.timeRequired(100)
 			.save(recipeOutput, modLocation("fluid_energy", "test_one"))
 
-		FluidEnergyRecipe.FluidEnergyBuilder(
+		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
 			listOf(Items.COOKED_BEEF to 16)
 		)

@@ -1,26 +1,23 @@
-package org.bread_experts_group.breadmod.experimental.fluid_energy_recipe
+package org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
-import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.registry.block.actual.AbstractTickingBlockWithBlockEntity
 
-class FluidEnergyBlock : BaseEntityBlock(Properties.of()) {
+class FluidEnergyBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	companion object {
 		val CODEC : MapCodec<FluidEnergyBlock> = simpleCodec { FluidEnergyBlock() }
 	}
 
 	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
-	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun codec() : MapCodec<FluidEnergyBlock> = CODEC
 	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
 		FluidEnergyBlockEntity(pos, state)
 
@@ -47,16 +44,5 @@ class FluidEnergyBlock : BaseEntityBlock(Properties.of()) {
 	) {
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)
-	}
-
-	override fun <T : BlockEntity?> getTicker(
-		level : Level,
-		state : BlockState,
-		blockEntityType : BlockEntityType<T>
-	) : BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
-		blockEntityType,
-		ModBlockEntityTypes.FLUID_ENERGY.get()
-	) { tLevel, tPos, tState, tBlockEntity ->
-		tBlockEntity.tick(tLevel, tPos, tState)
 	}
 }

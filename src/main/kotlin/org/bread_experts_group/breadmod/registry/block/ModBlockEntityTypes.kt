@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyBlockEntity
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyBlockEntity
 import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemRecipeBlockEntity

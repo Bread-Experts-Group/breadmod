@@ -5,7 +5,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyRecipe
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyRecipeMulti
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.serializer.FluidEnergySerializer
 import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyRecipeTest
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiItemTestRecipe
@@ -43,8 +44,8 @@ object ModRecipeSerializers {
 		this.RECIPE_SERIALIZER_REGISTRY.register("multi_fluid_test", MultiFluidTestRecipe::Serializer)
 	val SINGLE_FLUID_ITEM : Supplier<RecipeSerializer<SingleFluidItemRecipe>> =
 		this.RECIPE_SERIALIZER_REGISTRY.register("single_fluid_item", SingleFluidItemRecipe::Serializer)
-	val FLUID_ENERGY_TEST : Supplier<RecipeSerializer<FluidEnergyRecipe>> =
+	val FLUID_ENERGY_TEST : Supplier<RecipeSerializer<FluidEnergyRecipeMulti>> =
 		this.RECIPE_SERIALIZER_REGISTRY.register(
 			"fluid_energy"
-		) { -> FluidEnergyRecipe.FluidEnergySerializer(::FluidEnergyRecipeTest) }
+		) { -> FluidEnergySerializer(::FluidEnergyRecipeTest) }
 }

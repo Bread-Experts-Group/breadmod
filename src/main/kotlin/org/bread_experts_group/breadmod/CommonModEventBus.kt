@@ -230,7 +230,7 @@ internal object CommonModEventBus {
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_ENERGY.get()
 		) { entity, direction : Direction? ->
-			val tanks = entity.tank.tanks
+			val tanks = entity.tank!!.tanks
 			when (direction) {
 				Direction.EAST -> tanks[0]
 				Direction.WEST -> tanks[1]
@@ -239,5 +239,10 @@ internal object CommonModEventBus {
 				else           -> null
 			}
 		}
+
+		event.registerBlockEntity(
+			Capabilities.ItemHandler.BLOCK,
+			ModBlockEntityTypes.FLUID_ENERGY.get()
+		) { entity, _ : Direction? -> entity.items }
 	}
 }

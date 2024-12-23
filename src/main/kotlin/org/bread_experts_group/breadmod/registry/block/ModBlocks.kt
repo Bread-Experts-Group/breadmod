@@ -28,7 +28,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyBlock
+import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyBlock
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemRecipeBlock
@@ -65,7 +65,7 @@ object ModBlocks {
 	fun DeferredItem<BlockItem>.asBlock() : Block = this.get().block
 	@DataGenerateLanguage("en_us")
 	val BREAD_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"bread_block", { BreadBlock() }, Properties().also {
+		"bread_block", ::BreadBlock, Properties().also {
 			val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null)
 				?: throw IllegalArgumentException("Bread has no food properties?")
 			it.food(
@@ -84,7 +84,7 @@ object ModBlocks {
 	)
 	@DataGenerateLanguage("en_us")
 	val MONITOR : DeferredItem<BlockItem> =
-		this.BLOCK_REGISTRY.registerBlockItem("monitor", { MonitorBlock() }, Properties())
+		this.BLOCK_REGISTRY.registerBlockItem("monitor", ::MonitorBlock, Properties())
 	@DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
 	val LOW_DENSITY_CHARCOAL_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"ld_charcoal_block",
@@ -98,16 +98,16 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Prolongs the inevitable.", "tooltip")
 	val WAR_TERMINAL : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"war_terminal", { WarTerminalBlock() }, Properties()
+		"war_terminal", ::WarTerminalBlock, Properties()
 	)
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Uses the power of a die to make random noises.", "tooltip")
 	val RANDOM_SOUND_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"random_sound_block", { RandomSoundBlock() }, Properties()
+		"random_sound_block", ::RandomSoundBlock, Properties()
 	)
 	@DataGenerateLanguage("en_us")
 	val SOUND_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"sound_block", { SoundBlock() }, Properties()
+		"sound_block", ::SoundBlock, Properties()
 	)
 	@DataGenerateLanguage("en_us")
 	val CHARCOAL_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
@@ -122,13 +122,13 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	val WHEAT_CRUSHER : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"wheat_crusher",
-		{ WheatCrusherBlock() },
+		::WheatCrusherBlock,
 		Properties()
 	)
 	@DataGenerateLanguage("en_us")
 	val DOUGH_MACHINE : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"dough_machine",
-		{ DoughMachineBlock() },
+		::DoughMachineBlock,
 		Properties()
 	)
 	// todo port
@@ -139,51 +139,51 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	val FLOUR_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"flour_block",
-		{ FlourBlock() },
+		::FlourBlock,
 		Properties()
 	)
 	@DataGenerateLanguage("en_us", "Flour")
 	val FLOUR_LAYER_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"flour_layer", { FlourLayeredBlock() }, Properties()
+		"flour_layer", ::FlourLayeredBlock, Properties()
 	)
 	@DataGenerateLanguage("en_us")
 	val HAPPY_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"happy_block", { HappyBlock() }, Properties()
+		"happy_block", ::HappyBlock, Properties()
 	)
 	@DataGenerateLanguage("en_us")
 	val KEYBOARD : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"keyboard",
-		{ KeyboardBlock() },
+		::KeyboardBlock,
 		Properties().stacksTo(1)
 	)
 	@DataGenerateLanguage("en_us")
 	val HELL_NAW_BUTTON : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"hell_naw_button",
-		{ HellNawButtonBlock() },
+		::HellNawButtonBlock,
 		Properties()
 	)
 	@DataGenerateLanguage("en_us", "NIKO TENSHOT")
 	val NIKO_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"niko_block",
-		{ CharacterModelBlock() },
+		::CharacterModelBlock,
 		Properties().rarity(Rarity.EPIC)
 	)
 	@DataGenerateLanguage("en_us", "OMANEKO")
 	val OMANEKO_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"omaneko_block",
-		{ CharacterModelBlock() },
+		::CharacterModelBlock,
 		Properties().rarity(Rarity.EPIC)
 	)
 	@DataGenerateLanguage("en_us", "Ricard")
 	val RICARD_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"ricard_block",
-		{ CharacterModelBlock() },
+		::CharacterModelBlock,
 		Properties().rarity(Rarity.EPIC)
 	)
 	@DataGenerateLanguage("en_us", "Unfunnylad")
 	val UNFUNNYLAD_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"unfunnylad_block",
-		{ CharacterModelBlock() },
+		::CharacterModelBlock,
 		Properties().rarity(Rarity.EPIC)
 	)
 	@DataGenerateLanguage("en_us")
@@ -264,38 +264,38 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us", "Fluid Energy Recipe")
 	val FLUID_ENERGY : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"fluid_energy_block",
-		{ FluidEnergyBlock() },
+		::FluidEnergyBlock,
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 	// EXPERIMENTAL PAST THIS POINT
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (MULTI)")
 	val MULTI_ITEM_TEST : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"multi_item_recipe",
-		{ MultiItemRecipeBlock() },
+		::MultiItemRecipeBlock,
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (MULTI, FLUID)")
 	val MULTI_FLUID_TEST : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"multi_fluid_recipe",
-		{ MultiFluidRecipeBlock() },
+		::MultiFluidRecipeBlock,
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (SINGLE)")
 	val SINGLE_ITEM_TEST : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"single_item_recipe",
-		{ SingleItemRecipeBlock() },
+		::SingleItemRecipeBlock,
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK (SINGLE, FLUID)")
 	val SINGLE_FLUID_TEST : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"single_fluid_recipe",
-		{ SingleFluidRecipeBlock() },
+		::SingleFluidRecipeBlock,
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK(SINGLE, FLUID/ITEM")
 	val SINGLE_FLUID_ITEM_TEST : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"single_fluid_item_recipe",
-		{ SingleFluidItemRecipeBlock() },
+		::SingleFluidItemRecipeBlock,
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, RED")
@@ -343,7 +343,7 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us", "JadeFluidTank")
 	val JADE_FLUID_TANK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"jade_fluid_tank",
-		{ FluidTankJadeBlock() },
+		::FluidTankJadeBlock,
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 }
