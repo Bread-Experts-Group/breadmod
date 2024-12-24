@@ -21,6 +21,7 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -29,6 +30,7 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.block.state.properties.DirectionProperty
+import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -38,7 +40,12 @@ import org.bread_experts_group.breadmod.registry.block.actual.AbstractTickingBlo
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 
-class ToasterBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
+class ToasterBlock : AbstractTickingBlockWithBlockEntity(
+	Properties.of()
+		.strength(1f, 1.0f)
+		.mapColor(MapColor.TERRACOTTA_WHITE)
+		.sound(SoundType.COPPER)
+) {
 	private companion object {
 		val AABB_X : VoxelShape = Block.box(5.0, 0.0, 2.0, 11.0, 7.0, 14.0)
 		val AABB_Z : VoxelShape = Block.box(2.0, 0.0, 5.0, 14.0, 7.0, 11.0)
