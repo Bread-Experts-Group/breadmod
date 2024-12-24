@@ -159,27 +159,16 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	/**
 	 * @return True if items fit in result slots, false otherwise.
 	 */
-	// todo fails to return true when [items] reaches max stack size on any slot, need logic to shift to the second
-	//  empty slot in [items] and check until the results will fit. Return false regardless if all slots can't fit items
-//	fun canFitItemResults(items : List<ItemStack>) : Boolean =
-//		items.all { iItem ->
-//			this.rItemOutputs.any { rItem ->
-//				iItem.count < rItem.maxStackSize || iItem.count + rItem.count < rItem.maxStackSize
-//			}
-//		} || this.rItemOutputs.isEmpty()
-
-	// todo needs testing..
 	fun canFitItemResults(items : List<ItemStack>) : Boolean =
-		(0 .. items.size).any {
+		items.all { iItem ->
 			this.rItemOutputs.any { rItem ->
-				items[it].count < rItem.maxStackSize || items[it].count + rItem.count < rItem.maxStackSize
+				iItem.count < rItem.maxStackSize || iItem.count + rItem.count < rItem.maxStackSize
 			}
-		}
+		} || this.rItemOutputs.isEmpty()
 
 	/**
 	 * @return True if fluids fit in result tanks, false otherwise.
 	 */
-	// todo Fluids might also have this same issue, need more testing.
 	fun canFitFluidResults(fluids: List<FluidStack>, tankCapacity : Int) : Boolean =
 		fluids.all { iFluid ->
 			this.rFluidOutputs.any { rFluid ->

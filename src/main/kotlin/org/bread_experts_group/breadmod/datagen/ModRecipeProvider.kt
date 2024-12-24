@@ -21,6 +21,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.Single
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeBuilder
 import java.util.concurrent.CompletableFuture
@@ -101,5 +102,21 @@ class ModRecipeProvider(
 			.itemRequired(Items.SPONGE, 8)
 			.timeRequired(100)
 			.save(recipeOutput, modLocation("fluid_energy", "test_two"))
+
+		FluidEnergyBuilder(
+			::ToasterRecipe,
+			listOf(ModItems.TOASTED_BREAD.get() to 2)
+		)
+			.itemRequired(Items.BREAD, 2)
+			.timeRequired(100)
+			.save(recipeOutput, modLocation("toaster", "bread_to_toasted_bread"))
+
+		FluidEnergyBuilder(
+			::ToasterRecipe,
+			listOf(ModItems.TOAST_SLICE.get() to 2)
+		)
+			.itemRequired(ModItems.BREAD_SLICE.get(), 2)
+			.timeRequired(100)
+			.save(recipeOutput, modLocation("toaster", "slice_to_toast"))
 	}
 }

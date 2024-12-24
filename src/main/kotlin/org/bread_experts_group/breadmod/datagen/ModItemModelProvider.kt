@@ -25,6 +25,7 @@ class ModItemModelProvider(
 		this.singleItem(ModItems.ULTIMATE_BREAD)
 		this.singleItem(ModItems.TOASTED_BREAD)
 		this.singleItem(ModItems.BREAD_SLICE)
+		this.singleItem(ModItems.TOAST_SLICE)
 		this.singleItem(ModItems.DOUGH)
 		this.singleItem(ModItems.DIE)
 		this.singleItem(ModItems.BAGEL)

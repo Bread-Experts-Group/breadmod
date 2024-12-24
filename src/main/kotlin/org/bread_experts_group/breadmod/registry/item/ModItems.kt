@@ -129,6 +129,11 @@ object ModItems {
 		Item.Properties().food(FoodProperties.Builder().nutrition(2).fast().build())
 	)
 	@DataGenerateLanguage("en_us")
+	val TOAST_SLICE : DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem(
+		"toast_slice",
+		Item.Properties().food(FoodProperties.Builder().nutrition(5).fast().build())
+	)
+	@DataGenerateLanguage("en_us")
 	val DOUGH : DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem("dough")
 	@DataGenerateLanguage("en_us")
 	val DIE : DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem("die")

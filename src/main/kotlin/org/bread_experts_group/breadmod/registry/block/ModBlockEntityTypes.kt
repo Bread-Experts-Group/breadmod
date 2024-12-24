@@ -18,6 +18,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import java.util.function.Supplier
 
@@ -44,6 +45,10 @@ object ModBlockEntityTypes {
 	val FLUID_ENERGY : Supplier<BlockEntityType<FluidEnergyBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("fluid_energy_entity") { ->
 			this.buildBlockEntity(::FluidEnergyBlockEntity, ModBlocks.FLUID_ENERGY.asBlock())
+		}
+	val TOASTER : Supplier<BlockEntityType<ToasterBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("toaster_entity") { ->
+			this.buildBlockEntity(::ToasterBlockEntity, ModBlocks.TOASTER.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(

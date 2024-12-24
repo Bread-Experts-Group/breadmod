@@ -25,7 +25,7 @@ class ModItemTags(
 	existingFileHelper : ExistingFileHelper
 ) : ItemTagsProvider(output, lookupProvider, blockTags, BreadMod.ID, existingFileHelper) {
 	inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd : Supplier<A>) : IntrinsicTagAppender<T> =
-		this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
+		this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 
 	override fun addTags(provider : HolderLookup.Provider) {
 		this.tag(Tags.Items.MUSIC_DISCS)
@@ -45,7 +45,10 @@ class ModItemTags(
 		this.tag(Companion.TOASTABLE)
 			.add(
 				Items.BREAD,
-				Items.CHARCOAL
+				Items.CHARCOAL,
+				ModItems.TOASTED_BREAD.get(),
+				ModItems.BREAD_SLICE.get(),
+				ModItems.TOAST_SLICE.get()
 			)
 
 		this.tag(Companion.KNIVES)

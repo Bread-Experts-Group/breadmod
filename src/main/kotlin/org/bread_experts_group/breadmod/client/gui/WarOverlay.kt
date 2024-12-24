@@ -33,10 +33,11 @@ internal class WarOverlay : LayeredDraw.Layer {
 			} else Companion.isTimerIncreasing = false
 		}
 
+		val math = (Mth.clamp(millis.toFloat() / 50f, 0f, 1f) * deltaTracker.gameTimeDeltaTicks) * 3
 		if (Companion.timerPosition > -60.0 && !Companion.timerActive) {
-			Companion.timerPosition -= Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
+			Companion.timerPosition -= math
 		} else if (Companion.timerPosition < -1.0 && Companion.timerActive) {
-			Companion.timerPosition += Mth.clamp(millis.toFloat(), 0f, 1f) / 1.5f
+			Companion.timerPosition += math
 		}
 
 		if (Companion.timerPosition > -60f) {

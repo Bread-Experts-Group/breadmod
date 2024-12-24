@@ -31,7 +31,7 @@ abstract class BreadModBlockEntity<T : AbstractTickingBlockEntity<T>>(
 	private val energyCapacity : Int = 0,
 	private val fluidTanks : List<Triple<Int, Boolean, Boolean>> = listOf()
 ) : AbstractTickingBlockEntity<T>(type, pos, state) {
-	inner class SyncedHandler(capacity : Int, canFill : Boolean, canDrain : Boolean) :
+	inner class SyncedFluidHandler(capacity : Int, canFill : Boolean, canDrain : Boolean) :
 		SidedFluidTank.CustomHandler(capacity, canFill, canDrain) {
 		override fun onContentsChanged() {
 			this@BreadModBlockEntity.setChanged()
@@ -56,7 +56,7 @@ abstract class BreadModBlockEntity<T : AbstractTickingBlockEntity<T>>(
 	val items : ItemStackHandler? = if (this.itemSlots == 0) null else ItemStackHandler(this.itemSlots)
 	val energy : SyncedEnergy? = if (this.energyCapacity == 0) null else this.SyncedEnergy(this.energyCapacity)
 	val tank : SidedFluidTank? = if (this.fluidTanks.isEmpty()) null else SidedFluidTank(
-		this.fluidTanks.map { this.SyncedHandler(it.first, it.second, it.third) }
+		this.fluidTanks.map { this.SyncedFluidHandler(it.first, it.second, it.third) }
 	)
 
 	fun dropContents() {

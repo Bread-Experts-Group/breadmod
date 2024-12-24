@@ -42,6 +42,10 @@ class FluidEnergyBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 		newState : BlockState,
 		movedByPiston : Boolean
 	) {
+		if (!state.`is`(newState.block)) {
+			val entity = level.getBlockEntity(pos) as FluidEnergyBlockEntity
+			entity.dropContents()
+		}
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}

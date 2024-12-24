@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.datagen.tag
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.PackOutput
+import net.minecraft.references.Blocks
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.BlockTags
 import net.minecraft.tags.TagKey
@@ -48,6 +49,7 @@ class ModBlockTags(
 			.add(ModBlocks.BREAD_BLOCK)
 		this.tag(Companion.MINEABLE_WITH_KNIFE)
 			.add(ModBlocks.BREAD_BLOCK)
+			.add(Blocks.PUMPKIN)
 		this.tag(BlockTags.FENCES)
 			.add(ModBlocks.BREAD_FENCE)
 	}

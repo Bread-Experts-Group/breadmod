@@ -32,6 +32,7 @@ import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
@@ -42,6 +43,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.Mul
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item.SingleFluidItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemScreen
+import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -96,6 +98,7 @@ internal object ClientModEventBus {
 	fun registerRenderers(event : EntityRenderersEvent.RegisterRenderers) {
 		event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
 		event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get()) { ToasterRenderer() }
 	}
 	@SubscribeEvent
 	fun registerGuiLayers(event : RegisterGuiLayersEvent) {

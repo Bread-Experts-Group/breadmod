@@ -67,6 +67,7 @@ class ModBlockLootProvider(
 		this.dropSelf(ModBlocks.BREAD_FENCE.asBlock())
 		this.dropSelf(ModBlocks.BREAD_DOOR.asBlock())
 		this.dropSelf(ModBlocks.FLUID_ENERGY.asBlock())
+		this.dropSelf(ModBlocks.TOASTER.asBlock())
 		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock(), BlockLootSubProvider.noDrop())
 		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock(), BlockLootSubProvider.noDrop())
 		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock(), BlockLootSubProvider.noDrop())

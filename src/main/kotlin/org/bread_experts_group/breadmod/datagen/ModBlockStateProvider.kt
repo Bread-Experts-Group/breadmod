@@ -135,6 +135,7 @@ class ModBlockStateProvider(
 		this.horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.asBlock(), "omaneko_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
+		this.horizontalBlockBenchModelWithItem(ModBlocks.TOASTER.asBlock(), "toaster")
 
 		this.doorBlockWithRenderType(
 			ModBlocks.BREAD_DOOR.asBlock() as DoorBlock,

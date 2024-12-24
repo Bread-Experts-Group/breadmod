@@ -93,8 +93,7 @@ class FluidEnergyBlockEntity(
 				if (this.progress >= recipeTime) {
 					this.finalizeRecipe(activeRecipe, clientLevel)
 					this.resetRecipe()
-				}
-				this.progress++
+				} else this.progress++
 			} else this.resetRecipe()
 
 		}, {

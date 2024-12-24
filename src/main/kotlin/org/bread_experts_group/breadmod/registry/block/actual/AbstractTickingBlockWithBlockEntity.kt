@@ -13,7 +13,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTic
 abstract class AbstractTickingBlockWithBlockEntity(
 	properties : Properties
 ) : Block(properties), EntityBlock {
-	final override fun <T : BlockEntity> getTicker(
+	override fun <T : BlockEntity> getTicker(
 		level : Level,
 		state : BlockState,
 		blockEntityType : BlockEntityType<T>
