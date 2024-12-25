@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.contents.PlainTextContents
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.tags.TagKey
@@ -117,6 +118,22 @@ fun componentToJson(component : Component) : JsonObject = JsonObject().also {
 	}
 }
 /**
+ * Reads a [MutableComponent] from the given [JsonObject].
+ * @return The [MutableComponent] given by this [JsonObject].
+ * @param json The [JsonObject] to read the [MutableComponent] from.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun jsonToComponent(json: JsonObject): MutableComponent = when (val type = json.getAsJsonPrimitive("type").asString) {
+	"translate" -> Component.translatableWithFallback(
+		json.getAsJsonPrimitive("key").asString,
+		json.get("fallback")?.let { if (it.isJsonNull) null else it.asString }
+	)
+
+	"literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
+	else -> throw IllegalArgumentException("Illegal component type: $type")
+}
+/**
  * Checks if this [Fluid] can be represented under the given [TagKey].
  * @param tag The [TagKey] to check against.
  * @return `true` if this [Fluid] is represented by the [TagKey], `false` otherwise.
@@ -125,7 +142,7 @@ fun componentToJson(component : Component) : JsonObject = JsonObject().also {
  */
 fun isTag(tag : TagKey<Fluid>) : Boolean = (BuiltInRegistries.FLUID.getTag(tag).get() == tag) /*?: false*/
 inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd : Supplier<A>) : IntrinsicTagAppender<T> =
-	this.also { this.add(*toAdd.map { it.get() }.toTypedArray()) }
+	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 /**
  * A result of a raycast operation.
  * @author Miko Elbrecht

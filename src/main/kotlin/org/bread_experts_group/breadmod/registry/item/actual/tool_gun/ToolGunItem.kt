@@ -28,7 +28,6 @@ import java.util.function.Supplier
 class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
 	class ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer() : BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
-
 	}
 
 	override val creativeModeTabs : List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
@@ -47,7 +46,7 @@ class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab,
 
 	override fun onMouseInput(mouseEvent : Post, heldStack : ItemStack, player : Player) {
 		if (mouseEvent.button == InputConstants.MOUSE_BUTTON_RIGHT && mouseEvent.action == InputConstants.PRESS) {
-			PacketDistributor.sendToServer(ToolGunActionPacket(true))
+			PacketDistributor.sendToServer(ToolGunActionPacket())
 		}
 	}
 
