@@ -37,7 +37,7 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyScreen
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen

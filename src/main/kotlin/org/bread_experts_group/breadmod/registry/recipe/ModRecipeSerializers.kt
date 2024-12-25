@@ -5,9 +5,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyRecipeMulti
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.serializer.FluidEnergySerializer
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyRecipeTest
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyRecipeMulti
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.serializer.FluidEnergySerializer
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyRecipeTest
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidItemRecipe
@@ -16,10 +16,8 @@ import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.Single
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.AbstractCuttingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipeSerializer
-import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipeSerializer
+import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 import java.util.function.Supplier
 
 object ModRecipeSerializers {
@@ -27,9 +25,13 @@ object ModRecipeSerializers {
 		Registries.RECIPE_SERIALIZER, BreadMod.ID
 	)
 	val WHEAT_CRUSHING : Supplier<RecipeSerializer<WheatCrusherRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("wheat_crushing", ::WheatCrusherRecipeSerializer)
+		this.RECIPE_SERIALIZER_REGISTRY.register(
+			"wheat_crushing"
+		) { -> FluidEnergySerializer(::WheatCrusherRecipe) }
 	val DOUGH_MACHINE : Supplier<RecipeSerializer<DoughMachineRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("dough_machine", ::DoughMachineRecipeSerializer)
+		this.RECIPE_SERIALIZER_REGISTRY.register(
+			"dough_machine"
+		) { -> FluidEnergySerializer(::DoughMachineRecipe) }
 	val BREAD_SLICE : Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
 		this.RECIPE_SERIALIZER_REGISTRY.register("bread_slice_crafting") { ->
 			SimpleCraftingRecipeSerializer { BreadSlicingRecipe() }

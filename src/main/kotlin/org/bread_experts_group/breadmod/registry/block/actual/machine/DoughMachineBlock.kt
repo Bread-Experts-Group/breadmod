@@ -2,31 +2,26 @@ package org.bread_experts_group.breadmod.registry.block.actual.machine
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
-import net.minecraft.world.Containers
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
-import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.registry.block.actual.AbstractTickingBlockWithBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 
-class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
+class DoughMachineBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	companion object {
-		val CODEC : MapCodec<out BaseEntityBlock> = simpleCodec { DoughMachineBlock() }
+		val CODEC : MapCodec<DoughMachineBlock> = simpleCodec { DoughMachineBlock() }
 	}
 
-	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun codec() : MapCodec<DoughMachineBlock> = Companion.CODEC
 	override fun canHarvestBlock(state : BlockState, level : BlockGetter, pos : BlockPos, player : Player) : Boolean =
 		!player.isCreative
 
@@ -62,7 +57,7 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = (level.getBlockEntity(pos) as DoughMachineBlockEntity)
-			Containers.dropContents(level, pos, entity)
+			entity.dropContents()
 		}
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)
@@ -70,16 +65,4 @@ class DoughMachineBlock : BaseEntityBlock(Properties.of()) {
 
 	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
 		DoughMachineBlockEntity(pos, state)
-
-	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
-	override fun <T : BlockEntity?> getTicker(
-		level : Level,
-		state : BlockState,
-		blockEntityType : BlockEntityType<T>
-	) : BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
-		blockEntityType,
-		ModBlockEntityTypes.DOUGH_MACHINE.get()
-	) { tLevel : Level, tPos : BlockPos, tState : BlockState, tBlockEntity : DoughMachineBlockEntity ->
-//        tBlockEntity.tick(tLevel, tPos, tState, tBlockEntity)
-	}
 }

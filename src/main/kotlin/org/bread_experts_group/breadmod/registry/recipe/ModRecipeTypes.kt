@@ -6,15 +6,15 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyRecipeTest
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyRecipeTest
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidItemRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.dough_machine.DoughMachineRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.wheat_crushing.WheatCrusherRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 import java.util.function.Supplier
 
 object ModRecipeTypes {
@@ -22,7 +22,7 @@ object ModRecipeTypes {
 		DeferredRegister.create(Registries.RECIPE_TYPE, BreadMod.ID)
 	val WHEAT_CRUSHING : Supplier<RecipeType<WheatCrusherRecipe>> = this.registerRecipeType("wheat_crushing")
 	val DOUGH_MACHINE : Supplier<RecipeType<DoughMachineRecipe>> = this.registerRecipeType("dough_machine")
-	val TOASTER : Supplier<RecipeType<ToasterRecipe>> = this.registerRecipeType("toaster")
+	val TOASTING : Supplier<RecipeType<ToasterRecipe>> = this.registerRecipeType("toaster")
 
 	// exp
 	val MULTI_ITEM : Supplier<RecipeType<MultiItemTestRecipe>> = this.registerRecipeType("multi_item_test")

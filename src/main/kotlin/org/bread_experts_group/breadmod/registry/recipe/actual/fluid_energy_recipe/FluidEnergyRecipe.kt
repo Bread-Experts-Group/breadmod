@@ -1,21 +1,18 @@
-package org.bread_experts_group.breadmod.experimental.fluid_energy_recipe
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe
 
 import com.mojang.datafixers.util.Function6
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.material.Fluids
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BreadModRecipes
 
 typealias FluidEnergyRecipeMulti = FluidEnergyRecipe<FluidEnergyInput>
-typealias FluidEnergyRecipeSingle = FluidEnergyRecipe.Single<FluidEnergyInput.Single>
 
 typealias RecipeFunctionMulti = (
 	NonNullList<SizedIngredient>,
@@ -26,30 +23,11 @@ typealias RecipeFunctionMulti = (
 	Int?
 ) -> FluidEnergyRecipeMulti
 
-typealias RecipeFunctionSingle = (
-		SizedIngredient,
-		ItemStack,
-		SizedFluidIngredient,
-		FluidStack,
-		Int?,
-		Int?
-) -> FluidEnergyRecipeSingle
-
 typealias RecipeFunctionDataFixer<R> = Function6<
 		NonNullList<SizedIngredient>,
 		MutableList<ItemStack>,
 		NonNullList<SizedFluidIngredient>,
 		MutableList<FluidStack>,
-		Int?,
-		Int?,
-		R
-		>
-
-typealias RecipeFunctionDataFixerSingle<R> = Function6<
-		SizedIngredient,
-		ItemStack,
-		SizedFluidIngredient,
-		FluidStack,
 		Int?,
 		Int?,
 		R
@@ -63,38 +41,16 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	rTime : Int?,
 	rEnergy : Int?
 ) : BreadModRecipes<T>(rTime, rEnergy) {
-	abstract class Single<T : FluidEnergyInput>(
-		val rItemInput : SizedIngredient,
-		val rItemOutput : ItemStack,
-		val rFluidInput : SizedFluidIngredient,
-		val rFluidOutput : FluidStack,
-		rTime : Int?,
-		rEnergy : Int?
-	) : FluidEnergyRecipe<T>(
-		NonNullList.of(SizedIngredient.of(Items.AIR, 1), rItemInput),
-		mutableListOf(rItemOutput),
-		NonNullList.of(SizedFluidIngredient.of(Fluids.WATER, 1), rFluidInput),
-		mutableListOf(rFluidOutput),
-		rTime, rEnergy
-	) {
-		fun canFitItemResult(stack : ItemStack) : Boolean =
-			stack.count <= this.rItemOutput.maxStackSize ||
-					stack.count + this.rItemOutput.count <= this.rItemOutput.maxStackSize
-
-		fun canFitFluidResult(fluid : FluidStack, tankCapacity : Int) : Boolean =
-			fluid.amount <= tankCapacity || fluid.amount + this.rFluidOutput.amount <= tankCapacity
-	}
-
 	override fun matches(input : T, level : Level) : Boolean =
 		this.rItemInputs.all { rItem -> input.iItems.any(rItem::test)
 		} && this.rFluidInputs.all { rFluid -> input.iFluids.any(rFluid::test)
 		} && super.matches(input, level)
 
 	override fun assemble(input : T, registries : HolderLookup.Provider) : ItemStack =
-		this.rItemOutputs[0].copyWithCount(input.iCount[0])
+		this.rItemOutputs[0].copyWithCount(this.rItemOutputs[0].count)
 
 	fun assembleFluid(input : T) : FluidStack =
-		this.rFluidOutputs[0].copyWithAmount(input.iAmount[0])
+		this.rFluidOutputs[0].copyWithAmount(this.rFluidOutputs[0].amount)
 
 	fun assembleItems(input : T) : List<ItemStack> =
 		buildList {

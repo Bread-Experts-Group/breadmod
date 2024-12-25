@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory

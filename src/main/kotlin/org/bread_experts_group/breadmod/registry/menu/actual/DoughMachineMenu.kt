@@ -3,13 +3,14 @@ package org.bread_experts_group.breadmod.registry.menu.actual
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.tags.FluidTags
 import net.minecraft.world.entity.player.Inventory
-import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.fluids.FluidUtil
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
+import net.neoforged.neoforge.items.IItemHandler
+import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
@@ -41,7 +42,7 @@ class DoughMachineMenu(
 	fun isCrafting() : Boolean = this.parent.progress > 0
 	override val containerSlotCount : Int = 3
 
-	class DoughMachineBucketSlot(parent : DoughMachineBlockEntity) : Slot(parent, 2, 153, 7) {
+	class DoughMachineBucketSlot(handler : IItemHandler) : SlotItemHandler(handler, 2, 153, 7) {
 		override fun mayPlace(stack : ItemStack) : Boolean =
 			stack.item.let { it is BucketItem && isTag(FluidTags.WATER) } ||
 					FluidUtil.getFluidHandler(stack).getOrNull().let {
@@ -52,8 +53,10 @@ class DoughMachineMenu(
 
 	init {
 		this.addInventorySlots(inventory, 8, 142, 84)
-		this.addSlot(Slot(this.parent, 0, 26, 34))
-		this.addSlot(ResultSlot(1, 78, 35, this.parent))
-		this.addSlot(DoughMachineBucketSlot(this.parent))
+		if (this.parent.items != null) {
+			this.addSlot(SlotItemHandler(this.parent.items, 0, 26, 34))
+			this.addSlot(ResultSlotItemHandler(this.parent.items, 1, 78, 35))
+			this.addSlot(DoughMachineBucketSlot(this.parent.items))
+		}
 	}
 }

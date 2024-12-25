@@ -59,6 +59,8 @@ abstract class BreadModBlockEntity<T : AbstractTickingBlockEntity<T>>(
 		this.fluidTanks.map { this.SyncedFluidHandler(it.first, it.second, it.third) }
 	)
 
+	var energyDivision : Int? = null
+
 	fun dropContents() {
 		this.items?.let { item ->
 			val list = NonNullList.createWithCapacity<ItemStack>(item.slots)
@@ -107,7 +109,7 @@ abstract class BreadModBlockEntity<T : AbstractTickingBlockEntity<T>>(
 	override fun loadAdditional(tag : CompoundTag, registries : Provider) {
 		super.loadAdditional(tag, registries)
 		this.items?.deserializeNBT(registries, tag.getCompound("items"))
-		this.energy?.deserializeNBT(registries, tag.getCompound("energy"))
+		this.energy?.deserializeNBT(registries, tag.get("energy") ?: return)
 		this.tank?.readFromNBT(registries, tag)
 	}
 

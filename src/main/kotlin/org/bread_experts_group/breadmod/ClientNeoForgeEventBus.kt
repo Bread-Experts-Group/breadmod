@@ -11,8 +11,6 @@ import net.minecraft.Util
 import net.minecraft.client.KeyMapping
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
-import net.minecraft.network.chat.Component
-import net.minecraft.sounds.SoundEvents
 import net.minecraft.util.Mth.clamp
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
@@ -24,11 +22,9 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.settings.KeyConflictContext
 import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
-import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
-import org.bread_experts_group.breadmod.experimental.tool_gun_mode.TestScreen
-import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
-import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
+import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.machTrailMap
 import org.bread_experts_group.breadmod.util.render.redness
@@ -38,7 +34,6 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
-// todo register the other client stuff later
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
 	@SubscribeEvent
@@ -106,30 +101,22 @@ internal object ClientNeoForgeEventBus {
 	fun onMouseScroll(event : MouseScrollingEvent) {
 		val player = localClient.player ?: return
 		val stack = player.getItemInHand(player.usedItemHand)
-		if (player.isShiftKeyDown and stack.`is`(ModItems.TOOL_GUN)) {
-			player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
-			player.sendSystemMessage(Component.literal("Scrolling cancelled!"))
-			event.isCanceled = true
-		}
+		val item = stack.item
+		if (item is IMouseItem) item.onMouseScroll(event, stack, player)
 	}
 	@SubscribeEvent
 	fun onKeyboardPress(event : InputEvent.Key) {
 		val player = localClient.player ?: return
 		val stack = player.getItemInHand(player.usedItemHand)
-		if (event.key == this.openModeGui.key.value && stack.`is`(ModItems.TOOL_GUN) && localClient.screen == null) {
-			localClient.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
-		}
+		val item = stack.item
+		if (item is IKeyboardItem) item.onKeyboardPress(event, stack, player)
 	}
 	@SubscribeEvent
 	fun onMouseInput(event : InputEvent.MouseButton.Post) {
 		val player = localClient.player ?: return
 		val stack = player.getItemInHand(player.usedItemHand)
-		if (event.button == InputConstants.MOUSE_BUTTON_RIGHT &&
-			event.action == InputConstants.PRESS && stack.`is`(ModItems.TOOL_GUN)
-		) {
-			PacketDistributor.sendToServer(ToolGunActionPacket(true))
-//            println("mouse button right clicked!")
-		}
+		val item = stack.item
+		if (item is IMouseItem) item.onMouseInput(event, stack, player)
 	}
 
 	val openModeGui : KeyMapping = KeyMapping(

@@ -176,24 +176,30 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.EnergyStorage.BLOCK,
 			ModBlockEntityTypes.WHEAT_CRUSHER.get(),
-		) { entity, _ : Direction? -> entity.energyHandler }
+		) { entity, _ : Direction? -> entity.energy }
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.WHEAT_CRUSHER.get()
-		) { entity, _ : Direction? -> entity.sidedInvWrapper }
+		) { entity, _ : Direction? -> entity.items }
 
 		event.registerBlockEntity(
 			Capabilities.EnergyStorage.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get(),
-		) { entity, _ : Direction? -> entity.energyHandler }
+		) { entity, _ : Direction? -> entity.energy }
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get()
-		) { entity, _ : Direction? -> entity.sidedInvWrapper }
+		) { entity, _ : Direction? -> entity.items }
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get()
-		) { entity, _ : Direction? -> entity.fluidHandler }
+		) { entity, direction : Direction? ->
+			when (direction) {
+				Direction.UP -> entity.tank!!.tanks[0]
+				Direction.DOWN -> entity.tank!!.tanks[1]
+				else -> null
+			}
+		}
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,

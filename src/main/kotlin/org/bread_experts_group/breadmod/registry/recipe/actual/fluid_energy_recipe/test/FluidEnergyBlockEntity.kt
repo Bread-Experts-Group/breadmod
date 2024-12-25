@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test
 
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyInput
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity

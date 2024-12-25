@@ -8,7 +8,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.FluidEnergyInput
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
@@ -23,7 +23,7 @@ class ToasterBlockEntity(
 	ModBlockEntityTypes.TOASTER.get(),
 	pos,
 	state,
-	ModRecipeTypes.TOASTER.get(),
+	ModRecipeTypes.TOASTING.get(),
 	1
 ) {
 	override fun commonTick(
@@ -98,18 +98,16 @@ class ToasterBlockEntity(
 
 	override fun finalizeRecipe(recipe : ToasterRecipe, level : Level) {
 		val inputList = listOf(this.getItem(0))
-		val assemble = recipe.assembleItems(
+		val assemble = recipe.assemble(
 			FluidEnergyInput(
 				inputList,
 				listOf(inputList[0].count),
 				listOf(),
 				listOf()
-			)
+			), level.registryAccess()
 		)
 
-		if (assemble.isNotEmpty()) {
-			recipe.consumeItems(inputList)
-			this.setItem(0, assemble[0])
-		}
+		recipe.consumeItems(inputList)
+		this.setItem(0, assemble)
 	}
 }

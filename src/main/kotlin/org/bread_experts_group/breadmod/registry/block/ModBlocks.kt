@@ -29,7 +29,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test.FluidEnergyBlock
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyBlock
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidRecipeBlock
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemRecipeBlock

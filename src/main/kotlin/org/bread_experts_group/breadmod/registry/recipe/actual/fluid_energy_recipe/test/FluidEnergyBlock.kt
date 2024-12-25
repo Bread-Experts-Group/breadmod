@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.fluid_energy_recipe.test
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test
 
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
