@@ -51,6 +51,7 @@ class ModItemModelProvider(
 		this.singleItem(ModItems.TOASTER_HEATING_ELEMENT)
 		this.singleItem(ModItems.CREATURE)
 		this.singleItem(ModBlocks.BREAD_DOOR)
+		this.singleItem(ModItems.PHYSX_TEST_ITEM)
 		this.fenceInventory("bread_fence", this.modLoc("${BLOCK_FOLDER}/bread_block"))
 
 		this.handheldItem(ModItems.WRENCH)

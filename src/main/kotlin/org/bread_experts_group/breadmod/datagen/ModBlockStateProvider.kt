@@ -31,6 +31,17 @@ class ModBlockStateProvider(
 		this.blockWithItem(ModBlocks.CHARCOAL_BLOCK.asBlock())
 		this.blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
 
+		this.blockWithItem(ModBlocks.FLUID_ENERGY.asBlock())
+		this.blockWithItem(ModBlocks.MULTI_ITEM_TEST.asBlock())
+		this.blockWithItem(ModBlocks.MULTI_FLUID_TEST.asBlock())
+		this.blockWithItem(ModBlocks.SINGLE_ITEM_TEST.asBlock())
+		this.blockWithItem(ModBlocks.SINGLE_FLUID_TEST.asBlock())
+		this.blockWithItem(ModBlocks.SINGLE_FLUID_ITEM_TEST.asBlock())
+		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock())
+		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock())
+		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock())
+		this.blockWithItem(ModBlocks.JADE_FLUID_TANK.asBlock())
+
 		this.directionalBlock(ModBlocks.MONITOR.get().block) {
 			val name = "breadmod:block/monitor"
 			val model = this.models().cube(
