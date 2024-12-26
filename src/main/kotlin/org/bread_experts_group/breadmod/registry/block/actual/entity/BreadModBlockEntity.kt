@@ -10,8 +10,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.Containers
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.fluids.FluidStack
@@ -23,7 +23,7 @@ import org.bread_experts_group.breadmod.registry.Registry.logger
  * An "All In One" [BlockEntity].
  * todo actual javadocs.
  */
-abstract class BreadModBlockEntity<T : AbstractTickingBlockEntity<T>>(
+abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	type : BlockEntityType<T>,
 	pos : BlockPos,
 	state : BlockState,
@@ -79,17 +79,11 @@ abstract class BreadModBlockEntity<T : AbstractTickingBlockEntity<T>>(
 		if (this.tank != null) this.tank.tanks[tank].fluid = stack else logger.error("Fluid handler is null!")
 
 	fun growFluid(tank : Int, amount : Int) : Unit = this.getFluid(tank).grow(amount)
-	fun shrinkFluid(tank : Int, amount : Int) : Unit = this.getFluid(tank).shrink(amount)
-
 	fun getItem(slot : Int) : ItemStack =
 		if (this.items != null) this.items.getStackInSlot(slot) else ItemStack.EMPTY
 
 	fun setItem(slot : Int, stack : ItemStack) : Unit =
 		if (this.items != null) this.items.setStackInSlot(slot, stack) else logger.error("Item handler is null!")
-
-	fun growItem(slot : Int, count : Int) : Unit = this.getItem(slot).grow(count)
-	fun shrinkItem(slot : Int, count : Int) : Unit = this.getItem(slot).shrink(count)
-
 
 	private fun updateClients() =
 		this@BreadModBlockEntity.level?.sendBlockUpdated(
