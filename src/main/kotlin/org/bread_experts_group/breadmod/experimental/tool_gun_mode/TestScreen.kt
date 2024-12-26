@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunModeData.modeWidgets
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
@@ -13,9 +12,13 @@ import java.awt.Color
 // todo proof of concept
 //  needs proper gui centering, and actual logic for putting together selectable modes and previews
 class TestScreen(title : Component) : Screen(title) {
-	var leftPos : Int = (this.width - 280) / 2
-	var topPos : Int = (this.height - 210) / 2
-	var gridList : List<Pair<Int, Int>> = listOf()
+	val modeWidgets : MutableList<ModeWidget> = mutableListOf(
+		ExplodeWidget()
+	)
+
+	private var leftPos : Int = (this.width - 280) / 2
+	private var topPos : Int = (this.height - 210) / 2
+	private var gridList : List<Pair<Int, Int>> = listOf()
 	override fun isPauseScreen() : Boolean = false
 	override fun renderBackground(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
@@ -133,12 +136,10 @@ class TestScreen(title : Component) : Screen(title) {
 			}
 		}
 
-		repeat(modeWidgets.size) { index ->
-			modeWidgets[index].x = this.gridList[index].first
-			modeWidgets[index].y = this.gridList[index].second
+		repeat(this.modeWidgets.size) { index ->
+			this.modeWidgets[index].x = this.gridList[index].first
+			this.modeWidgets[index].y = this.gridList[index].second
 		}
-		modeWidgets.forEach {
-			this.addRenderableWidget(it)
-		}
+		this.modeWidgets.forEach(this::addRenderableWidget)
 	}
 }

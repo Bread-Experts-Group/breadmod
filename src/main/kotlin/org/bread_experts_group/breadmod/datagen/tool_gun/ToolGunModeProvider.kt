@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture
 
 // todo add widget data to the provider soon enough
 //  (preview image as ResourceLocation, widget title as Component, widget icon as an ItemStack)
+// todo look into using codecs for serializing the data instead of raw json manipulation (maybe)
 abstract class ToolGunModeProvider(private val packOutput : PackOutput, private val modID : String) : DataProvider {
 	private val addedModes : MutableMap<String, Pair<Pair<Component, Component>, Class<*>>> = mutableMapOf()
 	abstract fun addModes()

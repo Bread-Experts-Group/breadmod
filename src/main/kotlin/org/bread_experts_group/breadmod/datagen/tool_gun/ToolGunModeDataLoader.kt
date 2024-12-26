@@ -19,6 +19,7 @@ import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
+// todo look into using codecs for parsing instead of raw json operations (RecipeManager has codec parsing) (maybe)
 @Internal
 object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN_DEF) {
 	// todo the first MutableMap could be stripped off and classSet could just have an elvis operator to fill in the

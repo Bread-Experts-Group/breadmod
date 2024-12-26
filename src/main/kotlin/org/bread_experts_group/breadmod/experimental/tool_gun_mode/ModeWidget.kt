@@ -11,13 +11,14 @@ import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
 
+// todo codec for this widget
 abstract class ModeWidget(
 	val title : Component,
-	val icon : ItemStack
+	val icon : ItemStack,
+	val previewImage : ResourceLocation,
+	val modeName : Component,
+	val modeDescription : Component
 ) : AbstractWidget(0, 0, 35, 40, title) {
-	abstract val previewImage : ResourceLocation
-	abstract val modeName : Component
-	abstract val modeDescription : Component
 	override fun renderWidget(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
 		guiGraphics.pose().pushPose()
 		guiGraphics.fill(
