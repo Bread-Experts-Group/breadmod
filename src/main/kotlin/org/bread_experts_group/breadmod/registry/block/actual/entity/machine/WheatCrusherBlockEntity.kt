@@ -14,13 +14,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyInput
 import java.util.*
 import kotlin.math.max
 

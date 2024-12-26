@@ -58,9 +58,7 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	val tank : SidedFluidTank? = if (this.fluidTanks.isEmpty()) null else SidedFluidTank(
 		this.fluidTanks.map { this.SyncedFluidHandler(it.first, it.second, it.third) }
 	)
-
 	var energyDivision : Int? = null
-
 	fun dropContents() {
 		this.items?.let { item ->
 			val list = NonNullList.createWithCapacity<ItemStack>(item.slots)
@@ -85,6 +83,8 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	fun setItem(slot : Int, stack : ItemStack) : Unit =
 		if (this.items != null) this.items.setStackInSlot(slot, stack) else logger.error("Item handler is null!")
 
+	fun growItem(slot : Int, count : Int) : Unit = this.getItem(slot).grow(count)
+	//	fun shrinkItem(slot : Int, count : Int) : Unit = this.getItem(slot).shrink(count)
 	private fun updateClients() =
 		this@BreadModBlockEntity.level?.sendBlockUpdated(
 			this@BreadModBlockEntity.blockPos,

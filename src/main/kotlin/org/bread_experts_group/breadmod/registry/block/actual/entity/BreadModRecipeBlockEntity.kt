@@ -8,9 +8,9 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import java.util.Optional
+import java.util.*
 
-abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : AbstractTickingBlockEntity<T>>(
+abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : BreadModRecipeBlockEntity<I, R, T>>(
 	type : BlockEntityType<T>,
 	pos : BlockPos,
 	state : BlockState,
@@ -18,7 +18,10 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Abs
 	itemSlots : Int = 0,
 	energyCapacity : Int = 0,
 	fluidTanks : List<Triple<Int, Boolean, Boolean>> = listOf()
-) : BreadModBlockEntity<T>(type, pos, state, itemSlots, energyCapacity, fluidTanks) {
+) : BreadModBlockEntity<T>(
+	type, pos, state,
+	itemSlots, energyCapacity, fluidTanks
+) {
 	/**
 	 * Counts up by 1 every tick when the recipe is valid.
 	 * The recipe is completed when this is above or equal to the max recipe time.
@@ -37,7 +40,6 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Abs
 	 * Finalizes this recipe.
 	 */
 	abstract fun finalizeRecipe(recipe : R, level : Level)
-
 	/**
 	 * Resets the current recipe.
 	 */
