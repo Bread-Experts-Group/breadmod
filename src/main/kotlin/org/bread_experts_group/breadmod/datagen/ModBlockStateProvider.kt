@@ -91,15 +91,21 @@ class ModBlockStateProvider(
 				)
 				.build()
 		}
+		val machineTop = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
+		val machineSide = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
+		val machineBack = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
 
 		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.asBlock()) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
 			val name = "breadmod:block/wheat_crusher$machineOn"
-			val model = this.models().orientable(
+			val model = this.models().cube(
 				name,
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_side"),
+				machineTop,
+				machineTop,
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_top")
+				machineBack,
+				machineSide,
+				machineSide
 			)
 			return@horizontalBlock model
 		}
@@ -111,11 +117,14 @@ class ModBlockStateProvider(
 		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.asBlock()) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
 			val name = "breadmod:block/dough_machine$machineOn"
-			val model = this.models().orientable(
+			val model = this.models().cube(
 				name,
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_side"),
+				machineTop,
+				machineTop,
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_top")
+				machineBack,
+				machineSide,
+				machineSide
 			)
 			return@horizontalBlock model
 		}
