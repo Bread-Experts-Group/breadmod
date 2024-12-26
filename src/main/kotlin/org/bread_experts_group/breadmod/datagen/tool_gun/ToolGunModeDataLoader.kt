@@ -7,6 +7,9 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.CLASS_KEY
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.DISPLAY_NAME_KEY
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeProvider.Companion.TOOLTIP_KEY
 import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunMode
@@ -18,6 +21,8 @@ import kotlin.reflect.jvm.isAccessible
 
 @Internal
 object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN_DEF) {
+	// todo the first MutableMap could be stripped off and classSet could just have an elvis operator to fill in the
+	//  data if the left side returns null
 	private val loadedModes : MutableMap<String, MutableMap<String, Pair<Pair<Component, Component>, ToolGunMode>>> =
 		mutableMapOf()
 	val modes : Map<String, Map<String, Pair<Pair<Component, Component>, ToolGunMode>>>
@@ -28,9 +33,11 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
 		resourceManager : ResourceManager,
 		profiler : ProfilerFiller
 	) {
+		profiler.startTick()
 		profiler.push("Load tool gun data")
 		this.load(`object`)
 		profiler.pop()
+		profiler.endTick()
 	}
 
 	fun load(`object` : Map<ResourceLocation, JsonElement>) {
@@ -41,17 +48,20 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
 					val classSet = this.loadedModes.getOrPut(location.namespace, ::mutableMapOf)
 					val loadedClass =
 						Thread.currentThread().contextClassLoader.loadClass(
-							dataObj.getAsJsonPrimitive("class").asString
+							dataObj.getAsJsonPrimitive(CLASS_KEY).asString
 						).kotlin
 					if (loadedClass.isSubclassOf(ToolGunMode::class)) {
 						val classConstructor = loadedClass.primaryConstructor ?: return@forEach
 						classConstructor.isAccessible = true
 						classSet[location.path.substringAfter("mode/")] =
-							jsonToComponent(dataObj.getAsJsonObject("display_name")) to
-									jsonToComponent(dataObj.getAsJsonObject("tooltip")) to
+							jsonToComponent(dataObj.getAsJsonObject(DISPLAY_NAME_KEY)) to
+									jsonToComponent(dataObj.getAsJsonObject(TOOLTIP_KEY)) to
 									classConstructor.call() as ToolGunMode
 						classConstructor.isAccessible = false
-					} else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid. Loaded an instance of ${loadedClass.qualifiedName}, expected a subclass of ${ToolGunMode::class.qualifiedName}")
+					} else throw IllegalArgumentException("Class parameter for tool gun mode $location is invalid." +
+							" Loaded an instance of ${loadedClass.qualifiedName}, " +
+							"expected a subclass of ${ToolGunMode::class.qualifiedName}"
+					)
 				} catch (e : ClassNotFoundException) {
 					logger.error(e)
 				}

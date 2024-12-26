@@ -9,6 +9,8 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolG
 import org.bread_experts_group.breadmod.util.componentToJson
 import java.util.concurrent.CompletableFuture
 
+// todo add widget data to the provider soon enough
+//  (preview image as ResourceLocation, widget title as Component, widget icon as an ItemStack)
 abstract class ToolGunModeProvider(private val packOutput : PackOutput, private val modID : String) : DataProvider {
 	private val addedModes : MutableMap<String, Pair<Pair<Component, Component>, Class<*>>> = mutableMapOf()
 	abstract fun addModes()
@@ -23,7 +25,7 @@ abstract class ToolGunModeProvider(private val packOutput : PackOutput, private 
 					this.add(DataProvider.saveStable(output, JsonObject().also {
 						it.add(Companion.DISPLAY_NAME_KEY, componentToJson(data.first.first))
 						it.add(Companion.TOOLTIP_KEY, componentToJson(data.first.second))
-						it.addProperty(Companion.CLASS_KEY, data.second.javaClass.kotlin.qualifiedName)
+						it.addProperty(Companion.CLASS_KEY, data.second.kotlin.qualifiedName)
 					}, dataLocation.resolve("$name.json")))
 				}
 			}.toTypedArray()
@@ -42,9 +44,9 @@ abstract class ToolGunModeProvider(private val packOutput : PackOutput, private 
 
 	override fun getName() : String = "Toolgun Modes: ${this.modID}"
 
-	private companion object {
+	companion object {
 		const val TOOL_GUN_DEF : String = "tool_gun"
-		//		const val CONTROLS_ID_KEY : String = "id"
+//		const val CONTROLS_ID_KEY : String = "id"
 //		const val CONTROLS_NAME_TRANSLATION_KEY : String = "controls_name_key"
 //		const val CONTROLS_CATEGORY_TRANSLATION_KEY : String = "controls_category_key"
 //		const val TOOLGUN_INFO_DISPLAY_KEY : String = "${this.TOOL_GUN_DEF}_key"
