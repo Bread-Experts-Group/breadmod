@@ -76,7 +76,6 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	fun setFluid(tank : Int, stack : FluidStack) : Unit =
 		if (this.tank != null) this.tank.tanks[tank].fluid = stack else logger.error("Fluid handler is null!")
 
-	fun growFluid(tank : Int, amount : Int) : Unit = this.getFluid(tank).grow(amount)
 	fun getItem(slot : Int) : ItemStack =
 		if (this.items != null) this.items.getStackInSlot(slot) else ItemStack.EMPTY
 
@@ -84,7 +83,11 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 		if (this.items != null) this.items.setStackInSlot(slot, stack) else logger.error("Item handler is null!")
 
 	fun growItem(slot : Int, count : Int) : Unit = this.getItem(slot).grow(count)
-	//	fun shrinkItem(slot : Int, count : Int) : Unit = this.getItem(slot).shrink(count)
+	fun shrinkItem(slot : Int, count : Int) : Unit = this.getItem(slot).shrink(count)
+
+	fun growFluid(tank : Int, amount : Int) : Unit = this.getFluid(tank).grow(amount)
+	fun shrinkFluid(tank : Int, amount : Int) : Unit = this.getFluid(tank).shrink(amount)
+
 	private fun updateClients() =
 		this@BreadModBlockEntity.level?.sendBlockUpdated(
 			this@BreadModBlockEntity.blockPos,

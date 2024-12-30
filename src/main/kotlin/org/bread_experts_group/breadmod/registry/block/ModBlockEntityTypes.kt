@@ -16,6 +16,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_i
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
@@ -49,6 +50,10 @@ object ModBlockEntityTypes {
 	val TOASTER : Supplier<BlockEntityType<ToasterBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("toaster_entity") { ->
 			this.buildBlockEntity(::ToasterBlockEntity, ModBlocks.TOASTER.asBlock())
+		}
+	val MICROWAVE : Supplier<BlockEntityType<MicrowaveBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("microwave_entity") { ->
+			this.buildBlockEntity(::MicrowaveBlockEntity, ModBlocks.MICROWAVE.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(

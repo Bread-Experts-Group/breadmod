@@ -43,6 +43,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HellNawButtonBlock
 import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
+import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.SoundBlock
@@ -138,6 +139,12 @@ object ModBlocks {
 	val TOASTER : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"toaster",
 		::ToasterBlock,
+		Properties()
+	)
+	@DataGenerateLanguage("en_us")
+	val MICROWAVE : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"microwave",
+		::MicrowaveBlock,
 		Properties()
 	)
 	// todo port

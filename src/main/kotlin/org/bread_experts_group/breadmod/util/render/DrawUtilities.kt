@@ -21,7 +21,7 @@ fun drawTexturedQuad(
 	renderType : RenderType,
 	poseStack : PoseStack,
 	buffer : MultiBufferSource,
-	color : Vector4f,
+	color : Vector4f = Vector4f(1f, 1f, 1f, 1f),
 	vertex0 : Vector3f = Vector3f(0f, 0f, 0f),
 	vertex1 : Vector3f = Vector3f(0f, 0f, 1f),
 	vertex2 : Vector3f = Vector3f(1f, 0f, 1f),

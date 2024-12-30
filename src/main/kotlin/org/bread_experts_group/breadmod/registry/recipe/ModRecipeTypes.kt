@@ -14,6 +14,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.Single
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 import java.util.function.Supplier
 
@@ -22,7 +23,8 @@ object ModRecipeTypes {
 		DeferredRegister.create(Registries.RECIPE_TYPE, BreadMod.ID)
 	val WHEAT_CRUSHING : Supplier<RecipeType<WheatCrusherRecipe>> = this.registerRecipeType("wheat_crushing")
 	val DOUGH_MACHINE : Supplier<RecipeType<DoughMachineRecipe>> = this.registerRecipeType("dough_machine")
-	val TOASTING : Supplier<RecipeType<ToasterRecipe>> = this.registerRecipeType("toaster")
+	val TOASTING : Supplier<RecipeType<ToasterRecipe>> = this.registerRecipeType("toasting")
+	val MICROWAVE : Supplier<RecipeType<MicrowaveRecipe>> = this.registerRecipeType("microwaving")
 
 	// exp
 	val MULTI_ITEM : Supplier<RecipeType<MultiItemTestRecipe>> = this.registerRecipeType("multi_item_test")

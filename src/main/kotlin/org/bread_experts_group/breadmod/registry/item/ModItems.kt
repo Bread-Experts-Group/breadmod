@@ -40,6 +40,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.BreadGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
+import org.bread_experts_group.breadmod.registry.item.actual.WrenchItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.BreadArmorItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
@@ -268,7 +269,7 @@ object ModItems {
 		SwordItem::class.registerTool("reinforced_bread_sword", ToolTier.RF_BREAD, 2.0, -2.5)
 	@DataGenerateLanguage("en_us")
 	val WRENCH : DeferredItem<Item> =
-		this.ITEM_REGISTRY.registerSimpleItem("wrench", Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON))
+		this.ITEM_REGISTRY.register("wrench", ::WrenchItem)
 	// End Tools
 	@DataGenerateLanguage("en_us")
 	val BREAD_GUN : DeferredItem<BreadGunItem> = this.ITEM_REGISTRY.register("bread_gun", ::BreadGunItem)

@@ -2,6 +2,13 @@ package org.bread_experts_group.breadmod.util
 
 import com.google.gson.JsonObject
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.core.Direction.DOWN
+import net.minecraft.core.Direction.EAST
+import net.minecraft.core.Direction.NORTH
+import net.minecraft.core.Direction.SOUTH
+import net.minecraft.core.Direction.UP
+import net.minecraft.core.Direction.WEST
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.network.chat.Component
@@ -18,6 +25,7 @@ import org.bread_experts_group.breadmod.util.RaycastResult.Companion.blockRaycas
 import org.bread_experts_group.breadmod.util.RaycastResult.Companion.entityRaycast
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.util.function.Supplier
+import kotlin.math.round
 
 internal val formatArray : List<String> =
 	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
@@ -298,6 +306,79 @@ operator fun Vec3.plus(other : Vec3) : Vec3 = Vec3(this.x + other.x, this.y + ot
  * @since 1.0.0
  */
 operator fun Vec3.times(scale : Double) : Vec3 = this.scale(scale)
+/// Face Targeting Functions ///
+// https://github.com/GregTechCEu/GregTech/blob/master/src/main/java/gregtech/api/util/GTUtility.java#L325
+/**
+ * Targets the face the player is currently looking at.
+ * Looking at edges targets the neighbouring face, corners target the opposite face.
+ *
+ * Function copied from GregTechCEu.
+ */
+fun targetFace(facing : Direction, x : Double, y : Double, z : Double) : Direction {
+	val opposite : Direction = facing.opposite
+	when (facing) {
+		DOWN, UP     -> {
+			if (x < 0.25) {
+				if (z < 0.25) return opposite
+				if (z > 0.75) return opposite
+				return Direction.WEST
+			}
+			if (x > 0.75) {
+				if (z < 0.25) return opposite
+				if (z > 0.75) return opposite
+				return Direction.EAST
+			}
+			if (z < 0.25) return Direction.NORTH
+			if (z > 0.75) return Direction.SOUTH
+			return facing
+		}
+		NORTH, SOUTH -> {
+			if (x < 0.25) {
+				if (y < 0.25) return opposite
+				if (y > 0.75) return opposite
+				return Direction.WEST
+			}
+			if (x > 0.75) {
+				if (y < 0.25) return opposite
+				if (y > 0.75) return opposite
+				return Direction.EAST
+			}
+			if (y < 0.25) return Direction.DOWN
+			if (y > 0.75) return Direction.UP
+			return facing
+		}
+		WEST, EAST   -> {
+			if (z < 0.25) {
+				if (y < 0.25) return opposite
+				if (y > 0.75) return opposite
+				return Direction.NORTH
+			}
+			if (z > 0.75) {
+				if (y < 0.25) return opposite
+				if (y > 0.75) return opposite
+				return Direction.SOUTH
+			}
+			if (y < 0.25) return Direction.DOWN
+			if (y > 0.75) return Direction.UP
+			return facing
+		}
+	}
+}
+
+fun targetFaceSection(
+	targetX : Double,
+	targetY : Double,
+	minX : Double,
+	minY : Double,
+	maxX : Double,
+	maxY : Double
+) : Boolean = (targetX in minX .. maxX) && (targetY in minY .. maxY)
+/**
+ * Normalizes the absolute location of the hit result to 2 decimal places.
+ */
+fun normalizeHitLoc(hitLoc : Double, blockPos : Int) : Double = round((hitLoc - blockPos) * 100) / 100
+/// End Face Targeting Functions ///
+
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!
 // Make sure to write good Javadoc for them!
