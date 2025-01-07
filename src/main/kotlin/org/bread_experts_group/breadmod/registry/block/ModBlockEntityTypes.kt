@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyBlockEntity
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlockEntity
 import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemRecipeBlockEntity
@@ -16,6 +16,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_i
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
@@ -54,6 +55,10 @@ object ModBlockEntityTypes {
 	val MICROWAVE : Supplier<BlockEntityType<MicrowaveBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("microwave_entity") { ->
 			this.buildBlockEntity(::MicrowaveBlockEntity, ModBlocks.MICROWAVE.asBlock())
+		}
+	val ITEM_IN_WORLD : Supplier<BlockEntityType<ItemInWorldBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("item_in_world_entity") { ->
+			this.buildBlockEntity(::ItemInWorldBlockEntity, ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(

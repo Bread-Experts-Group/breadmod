@@ -116,10 +116,10 @@ class FluidBarElement(
 			val d1 = max(l.toDouble() * 0.5, 3.0)
 			val d2 = sin((Math.PI / 2) * cos((Math.PI * 2) * d0 / d1)) / 2.0 + 0.5
 			val d3 = Mth.lerp(d2, 0.0, l.toDouble())
-			this.fill(minX, minY, maxX, maxY, color)
-//            this.enableScissor(minX, minY, maxX, maxY)
+//			this.fill(minX, minY, maxX, maxY, Color(1f, 1f, 1f, 0.5f).rgb)
+			this.enableScissor(minX + 150, minY, maxX + 150, maxY + 10)
 			this.drawString(font, text, minX - d3.toInt(), j, color)
-//            this.disableScissor()
+			this.disableScissor()
 		} else {
 			val i1 = Mth.clamp(centerX, minX + i / 2, maxX - i / 2)
 			this.drawCenteredString(font, text, i1, j, color)

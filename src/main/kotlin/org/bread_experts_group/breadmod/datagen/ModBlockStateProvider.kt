@@ -155,8 +155,12 @@ class ModBlockStateProvider(
 		this.horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.asBlock(), "omaneko_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
-		this.horizontalBlockBenchModelWithItem(ModBlocks.TOASTER.asBlock(), "toaster")
+
+
+		this.horizontalBlockBenchModel(ModBlocks.TOASTER.asBlock(), "toaster")
+		this.simpleBlockItem(ModBlocks.TOASTER.asBlock(), this.blockBenchItemModel("toaster_item"))
 		this.horizontalBlockBenchModelWithItem(ModBlocks.MICROWAVE.asBlock(), "microwave")
+		this.simpleBlockItem(ModBlocks.MICROWAVE.asBlock(), this.blockBenchItemModel("microwave_item"))
 
 		this.doorBlockWithRenderType(
 			ModBlocks.BREAD_DOOR.asBlock() as DoorBlock,
@@ -177,8 +181,8 @@ class ModBlockStateProvider(
 			val powered = state.getValue(ButtonBlock.POWERED)
 			ConfiguredModel.builder()
 				.modelFile(
-					if (powered) this.blockBenchModel("hell_naw_button_pressed")
-					else this.blockBenchModel("hell_naw_button")
+					if (powered) this.blockBenchBlockModel("hell_naw_button_pressed")
+					else this.blockBenchBlockModel("hell_naw_button")
 				)
 				.rotationX(if (face == AttachFace.FLOOR) 0 else if (face == AttachFace.WALL) 90 else 180)
 				.rotationY((if (face == AttachFace.CEILING) facing else facing.opposite).toYRot().toInt())
@@ -195,11 +199,16 @@ class ModBlockStateProvider(
 		this.simpleBlockWithItem(blockRegistryObject, this.cubeAll(blockRegistryObject))
 	}
 
-	private fun blockBenchModel(model : String) : ModelFile.ExistingModelFile =
+	private fun blockBenchBlockModel(model : String) : ModelFile.ExistingModelFile =
 		ModelFile.ExistingModelFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/$model"), this.existingFileHelper)
+	private fun blockBenchItemModel(model : String) : ModelFile.ExistingModelFile =
+		ModelFile.ExistingModelFile(this.modLoc("${ModelProvider.ITEM_FOLDER}/$model"), this.existingFileHelper)
+
+	private fun horizontalBlockBenchModel(block : Block, model : String) : Unit =
+		this.horizontalBlock(block, this.blockBenchBlockModel(model))
 
 	private fun horizontalBlockBenchModelWithItem(block : Block, model : String) {
-		this.horizontalBlock(block, this.blockBenchModel(model))
-		this.simpleBlockItem(block, this.blockBenchModel(model))
+		this.horizontalBlockBenchModel(block, model)
+		this.simpleBlockItem(block, this.blockBenchBlockModel(model))
 	}
 }

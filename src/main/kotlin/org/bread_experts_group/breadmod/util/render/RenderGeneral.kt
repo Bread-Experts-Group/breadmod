@@ -18,7 +18,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
-import net.minecraft.client.renderer.ItemBlockRenderTypes
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.block.ModelBlockRenderer
@@ -362,7 +361,9 @@ fun ModelBlockRenderer.renderBlockModel(
 		green,
 		blue,
 		packedLight,
-		packedOverlay
+		packedOverlay,
+		ModelData.EMPTY,
+		renderType
 	)
 }
 
@@ -465,14 +466,21 @@ fun ItemRenderer.renderItemModel(
 	displayContext : ItemDisplayContext,
 	leftHand : Boolean,
 	poseStack : PoseStack,
-	buffer : MultiBufferSource,
+	bufferSource : MultiBufferSource,
 	packedOverlay : Int,
 	packedLight : Int,
+	fabulous : Boolean
 ) {
-	val renderType = ItemBlockRenderTypes.getRenderType(stack, false)
-	val vertexConsumer = ItemRenderer.getFoilBufferDirect(buffer, renderType, true, stack.hasFoil())
-	model.applyTransform(displayContext, poseStack, leftHand)
-	this.renderModelLists(model, stack, packedLight, packedOverlay, poseStack, vertexConsumer)
+	model.getRenderPasses(stack, fabulous).forEach { passes ->
+		passes.getRenderTypes(stack, fabulous).forEach { renderType ->
+			val buffer = if (fabulous) {
+				ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, stack.hasFoil())
+			} else
+				ItemRenderer.getFoilBuffer(bufferSource, renderType, true, stack.hasFoil())
+			passes.applyTransform(displayContext, poseStack, leftHand)
+			this.renderModelLists(passes, stack, packedLight, packedOverlay, poseStack, buffer)
+		}
+	}
 }
 /**
  * [ModelResourceLocation] with [modLocation] present.

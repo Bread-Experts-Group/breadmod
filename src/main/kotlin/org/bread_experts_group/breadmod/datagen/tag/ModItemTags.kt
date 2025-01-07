@@ -45,10 +45,15 @@ class ModItemTags(
 		this.tag(Companion.TOASTABLE)
 			.add(
 				Items.BREAD,
-				Items.CHARCOAL,
 				ModItems.TOASTED_BREAD.get(),
 				ModItems.BREAD_SLICE.get(),
 				ModItems.TOAST_SLICE.get()
+			)
+
+		this.tag(Companion.EXPLODES_IN_TOASTER)
+			.add(
+				Items.COAL,
+				Items.CHARCOAL
 			)
 
 		this.tag(Companion.KNIVES)
@@ -58,5 +63,6 @@ class ModItemTags(
 	companion object {
 		val KNIVES : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
 		val TOASTABLE : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
+		val EXPLODES_IN_TOASTER : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("explodes_in_toaster"))
 	}
 }

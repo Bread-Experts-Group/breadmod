@@ -10,9 +10,9 @@ import org.bread_experts_group.breadmod.util.render.addBeamTask
 import org.joml.Vector3f
 
 class BeamPacket(
-	val start : Vector3f,
-	val end : Vector3f,
-	val thickness : Float?
+	private val start : Vector3f,
+	private val end : Vector3f,
+	private val thickness : Float?
 ) : CustomPacketPayload {
 	companion object {
 		val TYPE : CustomPacketPayload.Type<BeamPacket> =

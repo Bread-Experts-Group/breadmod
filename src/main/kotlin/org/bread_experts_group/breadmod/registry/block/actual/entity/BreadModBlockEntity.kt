@@ -15,9 +15,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.fluids.FluidStack
-import net.neoforged.neoforge.items.ItemStackHandler
-import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTank
+import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
 import org.bread_experts_group.breadmod.registry.Registry.logger
+import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
 
 /**
  * An "All In One" [BlockEntity].
@@ -53,7 +53,7 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 		}
 	}
 
-	val items : ItemStackHandler? = if (this.itemSlots == 0) null else ItemStackHandler(this.itemSlots)
+	val items : ExtendedItemStackHandler? = if (this.itemSlots == 0) null else ExtendedItemStackHandler(this.itemSlots)
 	val energy : SyncedEnergy? = if (this.energyCapacity == 0) null else this.SyncedEnergy(this.energyCapacity)
 	val tank : SidedFluidTank? = if (this.fluidTanks.isEmpty()) null else SidedFluidTank(
 		this.fluidTanks.map { this.SyncedFluidHandler(it.first, it.second, it.third) }
@@ -81,6 +81,19 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 
 	fun setItem(slot : Int, stack : ItemStack) : Unit =
 		if (this.items != null) this.items.setStackInSlot(slot, stack) else logger.error("Item handler is null!")
+
+	fun getEnergy() : Int = this.energy?.energyStored ?: 0
+	fun getMaxEnergy() : Int = this.energyCapacity
+
+	/**
+	 * @return The number of slots that have items.
+	 */
+	fun filledItemSlots() : Int = this.items?.filledSlots() ?: 0
+
+	/**
+	 * @return The number of slots that have no items.
+	 */
+	fun emptyItemSlots() : Int = this.items?.emptySlots() ?: 0
 
 	fun growItem(slot : Int, count : Int) : Unit = this.getItem(slot).grow(count)
 	fun shrinkItem(slot : Int, count : Int) : Unit = this.getItem(slot).shrink(count)

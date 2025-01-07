@@ -1,21 +1,28 @@
 package org.bread_experts_group.breadmod.datagen.tool_gun
 
-import com.google.gson.JsonObject
+import net.minecraft.core.HolderLookup
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
 import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.Component
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunMode
-import org.bread_experts_group.breadmod.util.componentToJson
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import java.util.concurrent.CompletableFuture
 
-// todo add widget data to the provider soon enough
-//  (preview image as ResourceLocation, widget title as Component, widget icon as an ItemStack)
-// todo look into using codecs for serializing the data instead of raw json manipulation (maybe)
-abstract class ToolGunModeProvider(private val packOutput : PackOutput, private val modID : String) : DataProvider {
-	private val addedModes : MutableMap<String, Pair<Pair<Component, Component>, Class<*>>> = mutableMapOf()
+abstract class ToolGunModeProvider(
+	private val packOutput : PackOutput,
+	private val lookupProvider : CompletableFuture<HolderLookup.Provider>,
+	private val modID : String
+) : DataProvider {
+	private val addedModes : MutableMap<String, ToolGunModeData> = mutableMapOf()
 	abstract fun addModes()
-	override fun run(output : CachedOutput) : CompletableFuture<*> {
+	override fun run(output : CachedOutput) : CompletableFuture<*> =
+		this.lookupProvider.thenCompose { this.run(output, it) }
+
+	private fun run(output : CachedOutput, lookupProvider : HolderLookup.Provider) : CompletableFuture<*> {
 		this.addModes()
 		val dataLocation =
 			this.packOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modID)
@@ -23,25 +30,43 @@ abstract class ToolGunModeProvider(private val packOutput : PackOutput, private 
 		return CompletableFuture.allOf(
 			*buildList {
 				this@ToolGunModeProvider.addedModes.forEach { (name, data) ->
-					this.add(DataProvider.saveStable(output, JsonObject().also {
-						it.add(Companion.DISPLAY_NAME_KEY, componentToJson(data.first.first))
-						it.add(Companion.TOOLTIP_KEY, componentToJson(data.first.second))
-						it.addProperty(Companion.CLASS_KEY, data.second.kotlin.qualifiedName)
-					}, dataLocation.resolve("$name.json")))
+					this.add(
+						DataProvider.saveStable(
+							output,
+							lookupProvider,
+							ToolGunModeData.CODEC,
+							data,
+							dataLocation.resolve("$name.json")
+						)
+					)
 				}
 			}.toTypedArray()
 		)
 	}
 
-	fun <T : ToolGunMode> addMode(
+	fun addMode(
+		namespace : String,
 		name : String,
 		displayName : Component,
 		tooltip : Component,
-		actionClass : Class<T>
+		actionClass : ToolGunMode,
+		widget : ModeWidget
 	) {
 		check(!this.addedModes.containsKey(name)) { "There already exists a tool gun mode for $this.modID/$name!" }
-		this.addedModes[name] = displayName to tooltip to actionClass
+		this.addedModes[name] = ToolGunModeData(namespace, name, displayName, tooltip, actionClass, widget)
 	}
+	/**
+	 * Method for testing tool gun mode functionality
+	 */
+	fun addEmptyMode() : Unit = this.addMode(
+		BreadMod.ID,
+		"empty",
+		Component.literal("empty"),
+		Component.literal("empty"),
+		EmptyMode(),
+		ModeWidget.NONE
+	)
+
 
 	override fun getName() : String = "Toolgun Modes: ${this.modID}"
 
@@ -54,7 +79,7 @@ abstract class ToolGunModeProvider(private val packOutput : PackOutput, private 
 //		const val KEY_ENTRY_KEY : String = "key"
 //		const val MODIFIER_ENTRY_KEY : String = "modifier"
 //		const val KEYBINDS_KEY : String = "keybinds"
-		const val CLASS_KEY : String = "class"
+		const val CLASS_KEY : String = "action_class"
 		const val DISPLAY_NAME_KEY : String = "display_name"
 		const val TOOLTIP_KEY : String = "tooltip"
 	}

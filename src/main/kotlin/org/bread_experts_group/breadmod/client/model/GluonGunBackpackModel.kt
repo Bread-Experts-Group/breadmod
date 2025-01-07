@@ -28,7 +28,8 @@ class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
 		packedOverlay : Int,
 		color : Int
 	) {
-		Companion.createLayerDefinition().bakeRoot().render(poseStack, buffer, packedLight, packedOverlay, color)
+		localClient.entityModels.bakeLayer(Companion.BACKPACK_LAYER)
+			.render(poseStack, buffer, packedLight, packedOverlay, color)
 	}
 
 	fun render(

@@ -39,7 +39,8 @@ class ChefHatModel() : Model(RenderType::entityTranslucent) {
 		packedOverlay : Int,
 		color : Int
 	) {
-		Companion.createLayerDefinition().bakeRoot().render(poseStack, buffer, packedLight, packedOverlay, color)
+		localClient.entityModels.bakeLayer(Companion.HAT_LAYER)
+			.render(poseStack, buffer, packedLight, packedOverlay, color)
 	}
 	/**
 	 * [renderToBuffer] with the [VertexConsumer] already specified

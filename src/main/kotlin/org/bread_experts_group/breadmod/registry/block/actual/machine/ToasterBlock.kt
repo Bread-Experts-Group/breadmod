@@ -15,7 +15,6 @@ import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item.TooltipContext
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
@@ -114,7 +113,8 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 		val itemHandler = entity.items ?: return ItemInteractionResult.FAIL
 
 		if (!triggeredState && entity.progress <= 0 && !stack.isEmpty &&
-			itemHandler.getStackInSlot(0).count != 2 && stack.`is`(ModItemTags.TOASTABLE)
+			itemHandler.getStackInSlot(0).count != 2 &&
+			(stack.`is`(ModItemTags.TOASTABLE) || stack.`is`(ModItemTags.EXPLODES_IN_TOASTER))
 			) {
 			if (!player.isCreative) stack.shrink(1)
 			itemHandler.insertItem(0, ItemStack(stack.item, 1), false)
@@ -148,7 +148,7 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 		val d2 = if (axis == Direction.Axis.Z) direction.stepX * 0.52 else d1 // Z
 
 		if (state.getValue(Companion.TRIGGERED)) {
-			if (itemHandler.getStackInSlot(0).`is`(Items.CHARCOAL)) {
+			if (itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
 				level.addParticle(
 					ParticleTypes.LAVA,
 					posX + d2,

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.tool_gun_mode
+package org.bread_experts_group.breadmod.client.tool_gun_mode
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
@@ -12,9 +12,9 @@ import java.awt.Color
 // todo proof of concept
 //  needs proper gui centering, and actual logic for putting together selectable modes and previews
 class TestScreen(title : Component) : Screen(title) {
-	val modeWidgets : MutableList<ModeWidget> = mutableListOf(
-		ExplodeWidget()
-	)
+	companion object {
+		val modeWidgets : MutableList<ModeWidget> = mutableListOf()
+	}
 
 	private var leftPos : Int = (this.width - 280) / 2
 	private var topPos : Int = (this.height - 210) / 2
@@ -136,10 +136,10 @@ class TestScreen(title : Component) : Screen(title) {
 			}
 		}
 
-		repeat(this.modeWidgets.size) { index ->
-			this.modeWidgets[index].x = this.gridList[index].first
-			this.modeWidgets[index].y = this.gridList[index].second
+		repeat(Companion.modeWidgets.size) { index ->
+			Companion.modeWidgets[index].x = this.gridList[index].first
+			Companion.modeWidgets[index].y = this.gridList[index].second
 		}
-		this.modeWidgets.forEach(this::addRenderableWidget)
+		Companion.modeWidgets.forEach(this::addRenderableWidget)
 	}
 }

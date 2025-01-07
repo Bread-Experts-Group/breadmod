@@ -1,11 +1,32 @@
 package org.bread_experts_group.breadmod.client.render.entity.block
 
 import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Axis
+import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
+import net.minecraft.core.Direction
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
+import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.util.render.modelLocation
+import org.bread_experts_group.breadmod.util.render.renderBlockModel
 
-class MicrowaveRenderer : BlockEntityRenderer<MicrowaveBlockEntity> {
+class MicrowaveRenderer(private val ctx : Context) : BlockEntityRenderer<MicrowaveBlockEntity> {
+	private companion object {
+		val DOOR_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door")
+		val PLATE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate")
+		val DOOR_MODEL = localClient.modelManager.getModel(this.DOOR_MODEL_LOC)
+		val PLATE_MODEL = localClient.modelManager.getModel(this.PLATE_MODEL_LOC)
+		val LIGHT = LightTexture.pack(0, 3)
+	}
+
+	private val blockModelRenderer = this.ctx.blockRenderDispatcher.modelRenderer
+	private val itemRenderer = this.ctx.itemRenderer
+
 	override fun render(
 		blockEntity : MicrowaveBlockEntity,
 		partialTick : Float,
@@ -14,6 +35,28 @@ class MicrowaveRenderer : BlockEntityRenderer<MicrowaveBlockEntity> {
 		packedLight : Int,
 		packedOverlay : Int
 	) {
-		TODO("Not yet implemented")
+		val blockRotation = blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+		val open = blockEntity.blockState.getValue(BlockStateProperties.OPEN)
+
+		poseStack.pushPose()
+		when (blockRotation) {
+			Direction.NORTH -> {
+				poseStack.translate(0.875f, 0.125f, 0.1935f)
+			}
+
+			else -> {}
+		}
+
+		if (open) poseStack.mulPose(Axis.YN.rotationDegrees(102f))
+		this.blockModelRenderer.renderBlockModel(
+			poseStack.last(),
+			bufferSource,
+			blockEntity,
+			Companion.DOOR_MODEL,
+			packedLight,
+			packedOverlay,
+			Sheets.translucentCullBlockSheet()
+		)
+		poseStack.popPose()
 	}
 }

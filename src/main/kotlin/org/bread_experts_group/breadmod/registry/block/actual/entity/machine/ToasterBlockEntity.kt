@@ -4,11 +4,11 @@ import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.sounds.SoundSource.BLOCKS
-import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyInput
+import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
@@ -33,7 +33,7 @@ class ToasterBlockEntity(
 		entity : AbstractTickingBlockEntity<*>
 	) {
 		val itemHandler = this.items ?: return
-		if (itemHandler.getStackInSlot(0).`is`(Items.CHARCOAL)) {
+		if (itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
 			this.maxProgress = 60
 			this.progress++
 			if (this.progress == 35) clientLevel.playSound(null, pos, SoundEvents.TNT_PRIMED, BLOCKS)

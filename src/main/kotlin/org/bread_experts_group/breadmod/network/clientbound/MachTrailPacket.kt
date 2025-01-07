@@ -11,7 +11,7 @@ import org.bread_experts_group.breadmod.registry.MachTrailData
 import org.bread_experts_group.breadmod.util.render.machTrailMap
 
 data class MachTrailPacket(
-	val playerProfile : GameProfile
+	private val playerProfile : GameProfile
 ) : CustomPacketPayload {
 	companion object {
 		val TYPE : CustomPacketPayload.Type<MachTrailPacket> =

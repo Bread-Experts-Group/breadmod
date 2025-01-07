@@ -42,6 +42,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.FlourBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HellNawButtonBlock
+import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
 import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
@@ -55,7 +56,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTy
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyBlock
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlock
 import java.awt.Color
 import java.util.function.Supplier
 
@@ -145,6 +146,12 @@ object ModBlocks {
 	val MICROWAVE : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"microwave",
 		::MicrowaveBlock,
+		Properties()
+	)
+	@DataGenerateLanguage("en_us")
+	val ITEM_IN_WORLD_BLOCK : DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"item_in_world",
+		::ItemInWorldBlock,
 		Properties()
 	)
 	// todo port

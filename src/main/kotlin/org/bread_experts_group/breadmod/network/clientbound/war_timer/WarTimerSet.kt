@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.render.localClient
 
-internal data class WarTimerSet(val time : Int) : CustomPacketPayload {
+internal data class WarTimerSet(private val time : Int) : CustomPacketPayload {
 	companion object {
 		val TYPE : CustomPacketPayload.Type<WarTimerSet> =
 			CustomPacketPayload.Type(modLocation("war_timer_set"))

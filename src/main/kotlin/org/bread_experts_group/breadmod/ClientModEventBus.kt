@@ -24,7 +24,6 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openModeGui
 import org.bread_experts_group.breadmod.client.gui.CameraOverlay
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
@@ -32,17 +31,21 @@ import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyScreen
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item.SingleFluidItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemScreen
+import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
+import org.bread_experts_group.breadmod.registry.KeyMappings.placeItemKey
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
@@ -77,6 +80,7 @@ internal object ClientModEventBus {
 //        event.register(changeMode)
 //        event.register(openGuiEditor)
 		event.register(openModeGui)
+		event.register(placeItemKey)
 	}
 	@SubscribeEvent
 	fun registerShaders(event : RegisterShadersEvent) {
@@ -98,7 +102,9 @@ internal object ClientModEventBus {
 	fun registerRenderers(event : EntityRenderersEvent.RegisterRenderers) {
 		event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
 		event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
-		event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get()) { ToasterRenderer() }
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get(), ::ToasterRenderer)
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.MICROWAVE.get(), ::MicrowaveRenderer)
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
 	}
 	@SubscribeEvent
 	fun registerGuiLayers(event : RegisterGuiLayersEvent) {
@@ -141,6 +147,8 @@ internal object ClientModEventBus {
 		event.register(this.modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/outline/outline_wrong"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/outline/outline_right"))
+		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door"))
+		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate"))
 	}
 	@SubscribeEvent
 	fun registerEntityLayers(event : EntityRenderersEvent.AddLayers) {

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy
 
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.fluids.FluidStack

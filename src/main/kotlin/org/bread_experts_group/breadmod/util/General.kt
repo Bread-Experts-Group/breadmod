@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.util
 
-import com.google.gson.JsonObject
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.DOWN
@@ -11,10 +10,6 @@ import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.MutableComponent
-import net.minecraft.network.chat.contents.PlainTextContents
-import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.tags.TagKey
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.Fluid
@@ -98,48 +93,6 @@ fun formatUnit(
 		to, unit,
 		percent
 	)
-}
-/**
- * Writes a [Component] into a new [JsonObject].
- * @return The [JsonObject] containing the [Component].
- * @param component The [Component] to write into the [JsonObject].
- * @throws NotImplementedError If the [Component] contains contents not yet supported by this function.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun componentToJson(component : Component) : JsonObject = JsonObject().also {
-	when (val contents = component.contents) {
-		is TranslatableContents              -> {
-			it.addProperty("type", "translate")
-			it.addProperty("key", contents.key)
-			it.addProperty("fallback", contents.fallback)
-			if (contents.args.isNotEmpty())
-				throw NotImplementedError("Arguments not supposed for jsonifying translatable contents - sorry!")
-		}
-		is PlainTextContents.LiteralContents -> {
-			it.addProperty("type", "literal")
-			it.addProperty("text", contents.text)
-		}
-		else                                 -> {
-			throw NotImplementedError("Unknown contents: ${contents::class.qualifiedName}")
-		}
-	}
-}
-/**
- * Reads a [MutableComponent] from the given [JsonObject].
- * @return The [MutableComponent] given by this [JsonObject].
- * @param json The [JsonObject] to read the [MutableComponent] from.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun jsonToComponent(json: JsonObject): MutableComponent = when (val type = json.getAsJsonPrimitive("type").asString) {
-	"translate" -> Component.translatableWithFallback(
-		json.getAsJsonPrimitive("key").asString,
-		json.get("fallback")?.let { if (it.isJsonNull) null else it.asString }
-	)
-
-	"literal" -> Component.literal(json.getAsJsonPrimitive("text").asString)
-	else -> throw IllegalArgumentException("Illegal component type: $type")
 }
 /**
  * Checks if this [Fluid] can be represented under the given [TagKey].

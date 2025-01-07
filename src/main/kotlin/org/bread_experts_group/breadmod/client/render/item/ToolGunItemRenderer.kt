@@ -57,7 +57,8 @@ class ToolGunItemRenderer :
 				poseStack,
 				buffer,
 				packedOverlay,
-				packedLight
+				packedLight,
+				true
 			)
 		}
 
@@ -91,7 +92,8 @@ class ToolGunItemRenderer :
 					poseStack,
 					buffer,
 					packedOverlay,
-					packedLight
+					packedLight,
+					true
 				)
 			} else {
 				itemRenderer.renderItemModel(
@@ -102,7 +104,8 @@ class ToolGunItemRenderer :
 					poseStack,
 					buffer,
 					packedOverlay,
-					packedLight
+					packedLight,
+					true
 				)
 				drawTextOnScreen(
 					Component.literal("THE FUNNY"),
@@ -135,7 +138,8 @@ class ToolGunItemRenderer :
 					poseStack,
 					buffer,
 					packedOverlay,
-					packedLight
+					packedLight,
+					true
 				)
 			} else {
 				itemRenderer.renderItemModel(
@@ -146,7 +150,8 @@ class ToolGunItemRenderer :
 					poseStack,
 					buffer,
 					packedOverlay,
-					packedLight
+					packedLight,
+					true
 				)
 				rotateCoilAndRender()
 			}

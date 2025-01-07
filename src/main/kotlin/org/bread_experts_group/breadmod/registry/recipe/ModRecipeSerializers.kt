@@ -5,9 +5,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyRecipeMulti
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.serializer.FluidEnergySerializer
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test.FluidEnergyRecipeTest
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeMulti
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.serializer.FluidEnergySerializer
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiItemTestRecipe
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidItemRecipe
@@ -19,7 +19,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSli
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.RecipeFunctionDataFixer
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.RecipeFunctionDataFixer
 import java.util.function.Supplier
 
 object ModRecipeSerializers {

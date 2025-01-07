@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy
 
 import com.mojang.datafixers.util.Function6
 import net.minecraft.core.HolderLookup

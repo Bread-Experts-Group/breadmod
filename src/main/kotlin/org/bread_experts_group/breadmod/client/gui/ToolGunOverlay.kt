@@ -9,9 +9,9 @@ import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import org.bread_experts_group.breadmod.util.render.drawScaledText
 import org.bread_experts_group.breadmod.util.render.localClient
 import java.awt.Color
@@ -33,13 +33,11 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		val item = handStack.item
 
 		if (!localClient.options.hideGui && item is ToolGunItem) {
+			val currentMode = handStack.get(ModDataComponents.CURRENT_MODE) ?: ToolGunModeData.EMPTY
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
 //            val ensured = item.ensureCurrentMode(handStack)
-			this.renderMode(
-				/*ensured.getString(MODE_NAMESPACE_TAG)*/ "breadmod", /*item.getCurrentMode(handStack)*/
-				guiGraphics, poseStack, x, y
-			)
+			this.renderMode(currentMode, currentMode.namespace, guiGraphics, poseStack, x, y)
 
 			RenderSystem.disableBlend()
 		}
@@ -52,6 +50,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 	}
 
 	fun renderMode(
+		mode : ToolGunModeData,
 		namespace : String,
 		guiGraphics : GuiGraphics,
 		poseStack : PoseStack,
@@ -70,12 +69,12 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		)
 		// Action Name
 		drawScaledText(
-			(/*mode?.displayName?.copy() ?:*/ Component.literal("???")).withStyle(ChatFormatting.BOLD),
+			mode.displayName.copy().withStyle(ChatFormatting.BOLD),
 			poseStack, guiGraphics, pX - 1, pY + 4, this.textColor, 2.5f, false
 		)
 		// Mode Tooltip
 		drawScaledText(
-			(/*mode?.tooltip?.copy() ?:*/ modTranslatable(TOOL_GUN_DEF, "broken_tooltip")),
+			mode.tooltip.copy(),
 			poseStack,
 			guiGraphics,
 			pX + 13,

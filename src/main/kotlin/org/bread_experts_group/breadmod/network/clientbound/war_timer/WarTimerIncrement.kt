@@ -10,7 +10,10 @@ import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.render.localClient
 
-internal data class WarTimerIncrement(val increasing : Boolean, val increaseTimer : Int) : CustomPacketPayload {
+internal data class WarTimerIncrement(
+	private val increasing : Boolean,
+	private val increaseTimer : Int
+) : CustomPacketPayload {
 	companion object {
 		val TYPE : CustomPacketPayload.Type<WarTimerIncrement> =
 			CustomPacketPayload.Type(modLocation("war_timer_increment"))

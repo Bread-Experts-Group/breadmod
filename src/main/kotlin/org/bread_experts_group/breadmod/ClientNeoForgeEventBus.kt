@@ -8,10 +8,10 @@ import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.math.Axis
 import net.minecraft.Util
-import net.minecraft.client.KeyMapping
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.util.Mth.clamp
+import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
@@ -19,10 +19,11 @@ import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
-import net.neoforged.neoforge.client.settings.KeyConflictContext
-import net.neoforged.neoforge.client.settings.KeyModifier
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
+import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
+import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.util.render.localClient
@@ -110,6 +111,11 @@ internal object ClientNeoForgeEventBus {
 		val stack = player.getItemInHand(player.usedItemHand)
 		val item = stack.item
 		if (item is IKeyboardItem) item.onKeyboardPress(event, stack, player)
+
+		if (event.action == InputConstants.PRESS && event.key == KeyMappings.placeItemKey.key.value) {
+			val hitResult = localClient.hitResult as? BlockHitResult ?: return
+			PacketDistributor.sendToServer(PlaceItemInWorldPacket(hitResult.blockPos, hitResult.direction))
+		}
 	}
 	@SubscribeEvent
 	fun onMouseInput(event : InputEvent.MouseButton.Post) {
@@ -118,14 +124,6 @@ internal object ClientNeoForgeEventBus {
 		val item = stack.item
 		if (item is IMouseItem) item.onMouseInput(event, stack, player)
 	}
-
-	val openModeGui : KeyMapping = KeyMapping(
-		"controls.${BreadMod.ID}.mode_screen",
-		KeyConflictContext.UNIVERSAL,
-		KeyModifier.NONE,
-		InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R),
-		"controls.${BreadMod.ID}"
-	)
 	@SubscribeEvent
 	fun login(event : PlayerEvent.PlayerLoggedInEvent) {
 //		PhysXTestTool.createPhysX()

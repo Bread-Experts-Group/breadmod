@@ -10,8 +10,9 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTank.CustomHandler
+import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank.CustomHandler
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
 
 class SidedFluidTankJadeBlockEntity(
 	pos : BlockPos,

@@ -36,6 +36,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
+import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
@@ -84,7 +85,7 @@ internal object CommonModEventBus {
 		)
 		val lookupProvider = datapackEntriesProvider.registryProvider
 
-		generator.addProvider(true, ModToolGunModeProvider(packOutput))
+		generator.addProvider(true, ModToolGunModeProvider(packOutput, lookupProvider))
 
 		if (event.includeServer()) {
 			this.logger.info("Server datagen")
@@ -155,6 +156,11 @@ internal object CommonModEventBus {
 			ToolGunActionPacket.TYPE,
 			ToolGunActionPacket.STREAM_CODEC,
 			ToolGunActionPacket::handleServerboundPacket
+		)
+		registrar.playToServer(
+			PlaceItemInWorldPacket.TYPE,
+			PlaceItemInWorldPacket.STREAM_CODEC,
+			PlaceItemInWorldPacket::handleServerboundPacket
 		)
 	}
 	@SubscribeEvent

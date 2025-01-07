@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.fluid_tank
+package org.bread_experts_group.breadmod.util.handlers
 
 import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.nbt.CompoundTag

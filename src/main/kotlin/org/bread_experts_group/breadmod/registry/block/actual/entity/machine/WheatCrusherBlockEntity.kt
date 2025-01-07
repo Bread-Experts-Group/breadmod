@@ -20,7 +20,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRec
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.FluidEnergyInput
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import java.util.*
 import kotlin.math.max
 

@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
@@ -15,32 +14,35 @@ import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
-import org.bread_experts_group.breadmod.ClientNeoForgeEventBus.openModeGui
 import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
-import org.bread_experts_group.breadmod.experimental.tool_gun_mode.TestScreen
+import org.bread_experts_group.breadmod.client.tool_gun_mode.TestScreen
+import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
+import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.util.render.localClient
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features
-class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
+class ToolGunItem : Item(
+	Properties()
+		.stacksTo(1)
+		.component(ModDataComponents.CURRENT_MODE, ToolGunModeData.EMPTY)
+), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
 	class ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer() : BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
 	}
 
 	override fun use(level : Level, player : Player, usedHand : InteractionHand) : InteractionResultHolder<ItemStack> {
-		ToolGunModeDataLoader.modes.forEach { (_, map) ->
-			map.forEach { (_, u) ->
-				if (usedHand == MAIN_HAND && !level.isClientSide) u.second.action(
-					level,
-					player,
-					player.getItemInHand(usedHand)
-				)
-			}
+		val stack = player.getItemInHand(usedHand)
+		if (stack.`is`(ModItems.TOOL_GUN) && !level.isClientSide) {
+			val data = stack.get(ModDataComponents.CURRENT_MODE) ?: return InteractionResultHolder.fail(stack)
+			data.actionClass.action(level, player, stack)
+//			stack.set(ModDataComponents.CURRENT_MODE, ToolGunModeDataLoader.modes["breadmod"]?.get("explode"))
 		}
 		return super.use(level, player, usedHand)
 	}
@@ -54,7 +56,7 @@ class ToolGunItem : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab,
 	override fun onMouseScroll(scrollingEvent : MouseScrollingEvent, heldStack : ItemStack, player : Player) {
 		if (player.isShiftKeyDown) {
 			player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
-			player.sendSystemMessage(Component.literal("Scrolling cancelled!"))
+			player.sendSystemMessage(Component.literal("Scrolling Cancelled"))
 			scrollingEvent.isCanceled = true
 		}
 	}

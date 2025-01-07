@@ -6,16 +6,22 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.network.codec.ByteBufCodecs
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import java.util.function.Supplier
 
 object ModDataComponents {
 	val DATA_COMPONENT_REGISTRY : DeferredRegister<DataComponentType<*>> =
 		DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, BreadMod.ID)
-	val TIME_LEFT : Supplier<DataComponentType<Long>> = this.DATA_COMPONENT_REGISTRY.register("time_left") { ->
-		DataComponentType.builder<Long>()
+	val TIME_LEFT : Supplier<DataComponentType<Long>> = this.DATA_COMPONENT_REGISTRY.register(
+		"time_left", DataComponentType.builder<Long>()
 			.persistent(Codec.LONG)
 			.networkSynchronized(ByteBufCodecs.VAR_LONG)
-			.cacheEncoding()
-			.build()
-	}
+			.cacheEncoding()::build
+	)
+	val CURRENT_MODE : Supplier<DataComponentType<ToolGunModeData>> = this.DATA_COMPONENT_REGISTRY.register(
+		"current_mode", DataComponentType.builder<ToolGunModeData>()
+			.persistent(ToolGunModeData.CODEC)
+			.networkSynchronized(ToolGunModeData.STREAM_CODEC)
+			.cacheEncoding()::build
+	)
 }

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy_recipe.test
+package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen

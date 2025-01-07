@@ -3,7 +3,10 @@ package org.bread_experts_group.breadmod.client.render.entity.block
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
+import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
@@ -16,15 +19,15 @@ import org.bread_experts_group.breadmod.util.render.renderBlockModel
 import org.bread_experts_group.breadmod.util.render.renderStaticItem
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 
-class ToasterRenderer : BlockEntityRenderer<ToasterBlockEntity> {
+class ToasterRenderer(private val ctx : Context) : BlockEntityRenderer<ToasterBlockEntity> {
 	private companion object {
 		val HANDLE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
-		val HANDLE_MODEL = localClient.modelManager.getModel(this.HANDLE_MODEL_LOC)
+		val HANDLE_MODEL : BakedModel = localClient.modelManager.getModel(this.HANDLE_MODEL_LOC)
 	}
 
 	private var triggeredOffset : Double = 0.0
-	private val blockModelRenderer = localClient.blockRenderer.modelRenderer
-	private val itemRenderer = localClient.itemRenderer
+	private val blockModelRenderer = this.ctx.blockRenderDispatcher.modelRenderer
+	private val itemRenderer = this.ctx.itemRenderer
 
 	override fun render(
 		blockEntity : ToasterBlockEntity,
@@ -69,7 +72,8 @@ class ToasterRenderer : BlockEntityRenderer<ToasterBlockEntity> {
 			blockEntity,
 			Companion.HANDLE_MODEL,
 			packedLight,
-			packedOverlay
+			packedOverlay,
+			Sheets.solidBlockSheet()
 		)
 		poseStack.popPose()
 		val items = blockEntity.items ?: return

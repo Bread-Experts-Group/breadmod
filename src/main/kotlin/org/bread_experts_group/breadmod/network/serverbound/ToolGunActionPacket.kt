@@ -1,25 +1,40 @@
 package org.bread_experts_group.breadmod.network.serverbound
 
-import io.netty.buffer.ByteBuf
+import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
+import net.minecraft.world.InteractionHand.MAIN_HAND
+import net.minecraft.world.InteractionHand.OFF_HAND
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ExplodeMode
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.item.ModItems
 
-class ToolGunActionPacket : CustomPacketPayload {
+class ToolGunActionPacket(
+	private val namespace : String,
+	private val id : String
+) : CustomPacketPayload {
 	companion object {
 		val TYPE : CustomPacketPayload.Type<ToolGunActionPacket> =
 			CustomPacketPayload.Type(modLocation("tool_gun_packet"))
-		val STREAM_CODEC : StreamCodec<ByteBuf, ToolGunActionPacket> = StreamCodec.unit(ToolGunActionPacket())
+		val STREAM_CODEC : StreamCodec<RegistryFriendlyByteBuf, ToolGunActionPacket> = StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8, ToolGunActionPacket::namespace,
+			ByteBufCodecs.STRING_UTF8, ToolGunActionPacket::id,
+			::ToolGunActionPacket
+		)
 
 		fun handleServerboundPacket(data : ToolGunActionPacket, context : IPayloadContext) {
 			val player = context.player()
-			val level = player.level()
-			val stack = player.getItemInHand(player.usedItemHand)
-			val mode = ExplodeMode()
+			val mainHand = player.getItemInHand(MAIN_HAND)
+			val offHand = player.getItemInHand(OFF_HAND)
+			val handStack = if (mainHand.isEmpty) offHand else mainHand
 
-			mode.action(level, player, stack)
+			if (handStack.`is`(ModItems.TOOL_GUN)) handStack.set(
+				ModDataComponents.CURRENT_MODE,
+				ToolGunModeDataLoader.modes[data.namespace]?.get(data.id)
+				)
 		}
 	}
 
