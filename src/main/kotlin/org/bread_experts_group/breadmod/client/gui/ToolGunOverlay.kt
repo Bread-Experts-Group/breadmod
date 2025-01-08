@@ -8,7 +8,8 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
-import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.INFO
+import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
@@ -17,7 +18,6 @@ import org.bread_experts_group.breadmod.util.render.localClient
 import java.awt.Color
 
 class ToolGunOverlay : LayeredDraw.Layer {
-	private val overlayTexture = modLocation("textures", "gui", "hud", "tool_gun_overlay.png")
 	private val textColor = Color.WHITE.rgb
 	override fun render(
 		guiGraphics : GuiGraphics,
@@ -36,7 +36,6 @@ class ToolGunOverlay : LayeredDraw.Layer {
 			val currentMode = handStack.get(ModDataComponents.CURRENT_MODE) ?: ToolGunModeData.EMPTY
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
-//            val ensured = item.ensureCurrentMode(handStack)
 			this.renderMode(currentMode, currentMode.namespace, guiGraphics, poseStack, x, y)
 
 			RenderSystem.disableBlend()
@@ -45,7 +44,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 
 	private fun renderBackground(guiGraphics : GuiGraphics, poseStack : PoseStack, x : Int, y : Int) {
 		poseStack.pushPose()
-		guiGraphics.blit(this.overlayTexture, x, y, 0, 0, 166, 41)
+		MODE_OVERLAY_BG.blitTexture(guiGraphics, x, y)
 		poseStack.popPose()
 	}
 
@@ -54,31 +53,31 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		namespace : String,
 		guiGraphics : GuiGraphics,
 		poseStack : PoseStack,
-		pX : Int,
-		pY : Int
+		x : Int,
+		y : Int
 	) {
 		poseStack.pushPose()
 		// Icon renders
-		guiGraphics.blit(this.overlayTexture, pX + 1, pY + 33, 0, 41, 8, 8)
+		INFO.blitTexture(guiGraphics, x + 1, y + 33)
 		// start rendering key (with the key letter on them) and mouse icons, fix positioning on description and
 		// controls, set up 9-sliced key texture for wider keys
 		// Action source
 		drawScaledText(
 			Component.literal(namespace).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC),
-			poseStack, guiGraphics, pX + 2, pY + 2, this.textColor, 0.8f, true
+			poseStack, guiGraphics, x + 2, y + 2, this.textColor, 0.8f, true
 		)
 		// Action Name
 		drawScaledText(
 			mode.displayName.copy().withStyle(ChatFormatting.BOLD),
-			poseStack, guiGraphics, pX - 1, pY + 4, this.textColor, 2.5f, false
+			poseStack, guiGraphics, x - 1, y + 4, this.textColor, 2.5f, false
 		)
 		// Mode Tooltip
 		drawScaledText(
 			mode.tooltip.copy(),
 			poseStack,
 			guiGraphics,
-			pX + 13,
-			pY + 43,
+			x + 13,
+			y + 43,
 			this.textColor,
 			0.4f,
 			true

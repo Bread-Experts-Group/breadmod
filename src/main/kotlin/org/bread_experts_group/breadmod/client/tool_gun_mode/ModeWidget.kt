@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
@@ -15,6 +14,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.neoforged.neoforge.network.PacketDistributor
+import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
@@ -23,7 +23,7 @@ import java.awt.Color
 // todo codec for this widget
 open class ModeWidget(
 	val icon : ItemStack,
-	val previewImage : ResourceLocation,
+	val previewImage : BreadModTextureHelper,
 	val modeName : Component,
 	val modeDescription : Component
 ) : AbstractWidget(0, 0, 35, 40, modeName) {
@@ -34,14 +34,14 @@ open class ModeWidget(
 		val CODEC : Codec<ModeWidget> = RecordCodecBuilder.create { inst ->
 			inst.group(
 				ItemStack.CODEC.fieldOf("icon").forGetter(ModeWidget::icon),
-				ResourceLocation.CODEC.fieldOf("preview_image").forGetter(ModeWidget::previewImage),
+				BreadModTextureHelper.CODEC.fieldOf("preview_image").forGetter(ModeWidget::previewImage),
 				ComponentSerialization.CODEC.fieldOf("mode_name").forGetter(ModeWidget::modeName),
 				ComponentSerialization.CODEC.fieldOf("mode_desc").forGetter(ModeWidget::modeDescription)
 			).apply(inst, ::ModeWidget)
 		}
 		val STREAM_CODEC : StreamCodec<RegistryFriendlyByteBuf, ModeWidget> = StreamCodec.composite(
 			ItemStack.STREAM_CODEC, ModeWidget::icon,
-			ResourceLocation.STREAM_CODEC, ModeWidget::previewImage,
+			BreadModTextureHelper.STREAM_CODEC, ModeWidget::previewImage,
 			ComponentSerialization.STREAM_CODEC, ModeWidget::modeName,
 			ComponentSerialization.STREAM_CODEC, ModeWidget::modeDescription,
 			::ModeWidget
@@ -49,7 +49,7 @@ open class ModeWidget(
 
 		val NONE : ModeWidget = ModeWidget(
 			ItemStack(Items.BARRIER, 1),
-			MissingTextureAtlasSprite.getLocation(),
+			BreadModTextureHelper.MISSING_TEXTURE,
 			Component.literal("Empty Mode"),
 			Component.literal("Default Description")
 		)
@@ -90,12 +90,17 @@ open class ModeWidget(
 
 	class Builder {
 		private var icon : ItemStack = ItemStack(Items.BARRIER)
-		private var previewImage : ResourceLocation = MissingTextureAtlasSprite.getLocation()
+		private var previewImage : BreadModTextureHelper = BreadModTextureHelper.MISSING_TEXTURE
 		private var modeName : Component = Component.literal("Default Name")
 		private var modeDescription : Component = Component.literal("Default Description")
 
 		fun icon(stack : ItemStack) : Builder = this.also { this.icon = stack }
-		fun previewImage(location : ResourceLocation) : Builder = this.also { this.previewImage = location }
+		fun previewImage(
+			location : ResourceLocation,
+			width : Int,
+			height : Int
+		) : Builder = this.also { this.previewImage(BreadModTextureHelper(location, width, height)) }
+		fun previewImage(helper : BreadModTextureHelper) : Builder = this.also { this.previewImage = helper }
 		fun name(name : Component) : Builder = this.also { this.modeName = name }
 		fun name(name : String) : Builder = this.also { this.name(Component.literal(name)) }
 		fun description(description : Component) : Builder = this.also { this.modeDescription = description }

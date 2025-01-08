@@ -95,17 +95,7 @@ class TestScreen(title : Component) : Screen(title) {
 			)
 			poseStack.translate(this.leftPos + 179.8f, this.topPos + 4f, 0f)
 			poseStack.scaleFlat(0.135f)
-			guiGraphics.blit(
-				widget.previewImage,
-				0,
-				0,
-				0f,
-				0f,
-				854,
-				480,
-				854,
-				480
-			)
+			widget.previewImage.blitTexture(guiGraphics, 0, 0, 854, 480)
 		} else {
 			guiGraphics.drawWordWrap(
 				localClient.font,

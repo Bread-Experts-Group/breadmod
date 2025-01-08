@@ -5,16 +5,14 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
-import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.WAR_TIMER
 import org.bread_experts_group.breadmod.registry.ModFonts
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.scaleFlat
 import java.awt.Color
 
 internal class WarOverlay : LayeredDraw.Layer {
-	private val overlayTexture : ResourceLocation = modLocation("textures", "gui", "hud", "war_overlay_timer.png")
 	private var lastTick : Int = 0
 	override fun render(guiGraphics : GuiGraphics, deltaTracker : DeltaTracker) {
 		val guiTicks = localClient.gui.guiTicks
@@ -47,9 +45,7 @@ internal class WarOverlay : LayeredDraw.Layer {
 			poseStack.pushPose()
 			poseStack.translate(scaledWidth.toDouble() / 3.3, Companion.timerPosition.toDouble(), 0.0)
 			poseStack.scaleFlat(0.5f)
-			guiGraphics.blit(this.overlayTexture, 0, 0, 0, 0, 163, 89)
-			guiGraphics.blit(this.overlayTexture, 163, 0, 0, 90, 166, 111)
-
+			WAR_TIMER.blitTexture(guiGraphics, 0, 0)
 			poseStack.scaleFlat(1.7f)
 			poseStack.translate(54.0, 17.0, 0.0)
 			guiGraphics.setColor(colorPair.first, colorPair.second, colorPair.third, 1f)
