@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.core.NonNullList
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.IntTag
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
@@ -15,9 +16,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.energy.EnergyStorage
 import net.neoforged.neoforge.fluids.FluidStack
-import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
-import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
 
 /**
  * An "All In One" [BlockEntity].
@@ -53,14 +53,14 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 		}
 	}
 
-	val items : ExtendedItemStackHandler? = if (this.itemSlots == 0) null else ExtendedItemStackHandler(this.itemSlots)
-	val energy : SyncedEnergy? = if (this.energyCapacity == 0) null else this.SyncedEnergy(this.energyCapacity)
-	val tank : SidedFluidTank? = if (this.fluidTanks.isEmpty()) null else SidedFluidTank(
+	val items : ExtendedItemStackHandler = ExtendedItemStackHandler(this.itemSlots)
+	val energy : SyncedEnergy = this.SyncedEnergy(this.energyCapacity)
+	val tank : SidedFluidTank = SidedFluidTank(
 		this.fluidTanks.map { this.SyncedFluidHandler(it.first, it.second, it.third) }
 	)
 	var energyDivision : Int? = null
 	fun dropContents() {
-		this.items?.let { item ->
+		this.items.let { item ->
 			val list = NonNullList.createWithCapacity<ItemStack>(item.slots)
 			repeat(item.slots) {
 				list.add(item.getStackInSlot(it))
@@ -70,36 +70,35 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 		}
 	}
 
-	fun getFluid(tank : Int) : FluidStack =
-		if (this.tank != null) this.tank.getFluidInTank(tank) else FluidStack.EMPTY
+	fun getFluid(tank : Int) : FluidStack = this.tank.getFluidInTank(tank)
+	fun setFluid(tank : Int, stack : FluidStack) {
+		this.tank.tanks[tank].fluid = stack
+	}
 
-	fun setFluid(tank : Int, stack : FluidStack) : Unit =
-		if (this.tank != null) this.tank.tanks[tank].fluid = stack else logger.error("Fluid handler is null!")
+	fun getItem(slot : Int) : ItemStack = this.items.getStackInSlot(slot)
+	fun setItem(slot : Int, stack : ItemStack) : Boolean =
+		if (this.items.emptySlots() > 0) {
+			this.items.setStackInSlot(slot, stack)
+			true
+		} else false
 
-	fun getItem(slot : Int) : ItemStack =
-		if (this.items != null) this.items.getStackInSlot(slot) else ItemStack.EMPTY
+	fun growItem(slot : Int, count : Int) {
+		this.getItem(slot).grow(count)
+	}
 
-	fun setItem(slot : Int, stack : ItemStack) : Unit =
-		if (this.items != null) this.items.setStackInSlot(slot, stack) else logger.error("Item handler is null!")
+	@Suppress("unused")
+	fun shrinkItem(slot : Int, count : Int) {
+		this.getItem(slot).shrink(count)
+	}
 
-	fun getEnergy() : Int = this.energy?.energyStored ?: 0
-	fun getMaxEnergy() : Int = this.energyCapacity
+	fun growFluid(tank : Int, amount : Int) {
+		this.getFluid(tank).grow(amount)
+	}
 
-	/**
-	 * @return The number of slots that have items.
-	 */
-	fun filledItemSlots() : Int = this.items?.filledSlots() ?: 0
-
-	/**
-	 * @return The number of slots that have no items.
-	 */
-	fun emptyItemSlots() : Int = this.items?.emptySlots() ?: 0
-
-	fun growItem(slot : Int, count : Int) : Unit = this.getItem(slot).grow(count)
-	fun shrinkItem(slot : Int, count : Int) : Unit = this.getItem(slot).shrink(count)
-
-	fun growFluid(tank : Int, amount : Int) : Unit = this.getFluid(tank).grow(amount)
-	fun shrinkFluid(tank : Int, amount : Int) : Unit = this.getFluid(tank).shrink(amount)
+	@Suppress("unused")
+	fun shrinkFluid(tank : Int, amount : Int) {
+		this.getFluid(tank).shrink(amount)
+	}
 
 	private fun updateClients() =
 		this@BreadModBlockEntity.level?.sendBlockUpdated(
@@ -111,16 +110,16 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 
 	override fun saveAdditional(tag : CompoundTag, registries : Provider) {
 		super.saveAdditional(tag, registries)
-		this.items?.serializeNBT(registries)?.let { tag.put("items", it) }
-		this.energy?.serializeNBT(registries)?.let { tag.put("energy", it) }
-		this.tank?.writeToNBT(registries, tag)
+		this.items.serializeNBT(registries).let { tag.put("items", it) }
+		this.energy.serializeNBT(registries).let { tag.put("energy", it) }
+		this.tank.writeToNBT(registries, tag)
 	}
 
 	override fun loadAdditional(tag : CompoundTag, registries : Provider) {
 		super.loadAdditional(tag, registries)
-		this.items?.deserializeNBT(registries, tag.getCompound("items"))
-		this.energy?.deserializeNBT(registries, tag.get("energy") ?: return)
-		this.tank?.readFromNBT(registries, tag)
+		this.items.deserializeNBT(registries, tag.getCompound("items"))
+		this.energy.deserializeNBT(registries, tag.get("energy") as IntTag)
+		this.tank.readFromNBT(registries, tag)
 	}
 
 	override fun getUpdateTag(registries : Provider) : CompoundTag {

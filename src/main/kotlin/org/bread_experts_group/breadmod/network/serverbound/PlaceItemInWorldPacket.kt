@@ -49,23 +49,22 @@ class PlaceItemInWorldPacket(
 			} else data.pos
 			val checkState = level.getBlockState(pos)
 
-			if (!stack.isEmpty && !blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock()) &&
-				checkState.`is`(Blocks.AIR)
-			) {
-				level.setBlockAndUpdate(
-					pos,
-					ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock().defaultBlockState().setValue(
-						BlockStateProperties.FACING,
-						data.direction
+			if (!stack.isEmpty) {
+				if (!blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock()) && checkState.`is`(Blocks.AIR)) {
+					level.setBlockAndUpdate(
+						pos,
+						ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock().defaultBlockState().setValue(
+							BlockStateProperties.FACING,
+							data.direction
+						)
 					)
-				)
-				val entity = level.getBlockEntity(pos) as? ItemInWorldBlockEntity ?: return
-				entity.setItem(0, if (player.isCreative) stack.copy() else stack.copyAndClear())
-				level.sendBlockUpdated(pos, blockState, blockState, 3)
-			} else if (!stack.isEmpty && blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock())) {
-				val entity = level.getBlockEntity(pos) as ItemInWorldBlockEntity
-				val slotIndex = entity.filledItemSlots()
-				entity.setItem(slotIndex, if (player.isCreative) stack.copy() else stack.copyAndClear())
+					val entity = level.getBlockEntity(pos) as? ItemInWorldBlockEntity ?: return
+					entity.setItem(0, if (player.isCreative) stack.copy() else stack.copyAndClear())
+				} else {
+					val entity = level.getBlockEntity(pos) as? ItemInWorldBlockEntity ?: return
+					val slotIndex = entity.items.filledSlots()
+					entity.setItem(slotIndex, if (player.isCreative) stack.copy() else stack.copyAndClear())
+				}
 				level.sendBlockUpdated(pos, blockState, blockState, 3)
 			}
 		}

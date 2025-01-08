@@ -35,9 +35,7 @@ class WheatCrusherMenu(
 
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)
-		if (this.parent.items != null) {
-			this.addSlot(SlotItemHandler(this.parent.items, 0, 80, 15))
-			this.addSlot(ResultSlotItemHandler(this.parent.items, 1, 80, 87))
-		}
+		this.addSlot(SlotItemHandler(this.parent.items, 0, 80, 15))
+		this.addSlot(ResultSlotItemHandler(this.parent.items, 1, 80, 87))
 	}
 }

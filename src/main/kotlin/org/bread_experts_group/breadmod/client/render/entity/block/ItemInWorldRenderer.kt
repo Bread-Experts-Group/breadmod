@@ -57,7 +57,7 @@ class ItemInWorldRenderer(private val ctx : Context) : BlockEntityRenderer<ItemI
 				poseStack.translate(-2f, 0f, -2f)
 			}
 		}
-		when (blockEntity.filledItemSlots()) {
+		when (blockEntity.items.filledSlots()) {
 			1 -> {
 				this.renderItem(
 					blockEntity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
@@ -108,6 +108,7 @@ class ItemInWorldRenderer(private val ctx : Context) : BlockEntityRenderer<ItemI
 		}
 		poseStack.popPose()
 	}
+
 	// Note: This is initially translated to the middle of the "block" before rendering
 	private fun renderItem(
 		stack : ItemStack,
@@ -138,5 +139,5 @@ class ItemInWorldRenderer(private val ctx : Context) : BlockEntityRenderer<ItemI
 	}
 
 	override fun shouldRender(blockEntity : ItemInWorldBlockEntity, cameraPos : Vec3) : Boolean =
-		super.shouldRender(blockEntity, cameraPos) && blockEntity.items!!.isNotEmpty()
+		super.shouldRender(blockEntity, cameraPos) && blockEntity.items.isNotEmpty()
 }

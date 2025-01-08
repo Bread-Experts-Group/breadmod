@@ -26,6 +26,7 @@ import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPack
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
+import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.machTrailMap
 import org.bread_experts_group.breadmod.util.render.redness
@@ -35,6 +36,7 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
+@Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
 	@SubscribeEvent
@@ -105,18 +107,22 @@ internal object ClientNeoForgeEventBus {
 		val item = stack.item
 		if (item is IMouseItem) item.onMouseScroll(event, stack, player)
 	}
+
 	@SubscribeEvent
 	fun onKeyboardPress(event : InputEvent.Key) {
 		val player = localClient.player ?: return
+		val level = localClient.level ?: return
 		val stack = player.getItemInHand(player.usedItemHand)
 		val item = stack.item
 		if (item is IKeyboardItem) item.onKeyboardPress(event, stack, player)
 
 		if (event.action == InputConstants.PRESS && event.key == KeyMappings.placeItemKey.key.value) {
 			val hitResult = localClient.hitResult as? BlockHitResult ?: return
+			if (level.getBlockState(hitResult.blockPos).isAir) return
 			PacketDistributor.sendToServer(PlaceItemInWorldPacket(hitResult.blockPos, hitResult.direction))
 		}
 	}
+
 	@SubscribeEvent
 	fun onMouseInput(event : InputEvent.MouseButton.Post) {
 		val player = localClient.player ?: return
@@ -124,13 +130,14 @@ internal object ClientNeoForgeEventBus {
 		val item = stack.item
 		if (item is IMouseItem) item.onMouseInput(event, stack, player)
 	}
+
 	@SubscribeEvent
 	fun login(event : PlayerEvent.PlayerLoggedInEvent) {
-//		PhysXTestTool.createPhysX()
+		PhysXTestTool.createPhysX()
 	}
 	@SubscribeEvent
 	fun logout(event : PlayerEvent.PlayerLoggedOutEvent) {
-//		PhysXTestTool.destroyPhysX()
+		PhysXTestTool.destroyPhysX()
 	}
 	@SubscribeEvent
 	fun clientTick(event : ClientTickEvent.Pre) {

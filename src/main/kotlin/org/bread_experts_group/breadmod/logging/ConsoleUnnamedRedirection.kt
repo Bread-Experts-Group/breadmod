@@ -32,7 +32,7 @@ internal object ConsoleUnnamedRedirection {
 		System.setErr(Redirector(this.unnamedLoggerErr, Level.ERROR))
 		Thread.ofVirtual().start {
 			val sc = Scanner(System.`in`)
-			while (true) this.unnamedLoggerIn.info(sc.next())
+			while (true) if (sc.hasNext()) this.unnamedLoggerIn.info(sc.next())
 		}
 	}
 }

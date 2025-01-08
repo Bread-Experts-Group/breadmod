@@ -27,19 +27,23 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	 * The recipe is completed when this is above or equal to the max recipe time.
 	 */
 	var progress : Int = 0
+
 	/**
 	 * Not used in recipe logic, only as a visual indicator in guis for the player
 	 */
 	var maxProgress : Int = 0
+
 	/**
 	 * Holds the current running recipe.
 	 */
 	var currentRecipe : Optional<R> = Optional.empty()
 	val recipeDial : RecipeManager.CachedCheck<I, R> = RecipeManager.createCheck(recipeType)
+
 	/**
 	 * Finalizes this recipe.
 	 */
 	abstract fun finalizeRecipe(recipe : R, level : Level)
+
 	/**
 	 * Resets the current recipe.
 	 */

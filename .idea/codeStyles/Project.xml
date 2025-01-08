@@ -9,7 +9,6 @@
       <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="2147483647" />
       <option name="NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS" value="2147483647" />
       <option name="IMPORT_NESTED_CLASSES" value="true" />
-      <option name="BLANK_LINES_BEFORE_DECLARATION_WITH_COMMENT_OR_ANNOTATION_ON_SEPARATE_LINE" value="0" />
     </JetCodeStyleSettings>
     <codeStyleSettings language="JAVA">
       <indentOptions>

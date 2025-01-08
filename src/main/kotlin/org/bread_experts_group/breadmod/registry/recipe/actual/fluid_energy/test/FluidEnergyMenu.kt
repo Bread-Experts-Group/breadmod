@@ -21,17 +21,15 @@ class FluidEnergyMenu(
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)
 
-		if (this.parent.items != null) {
-			this.addSlot(SlotItemHandler(this.parent.items, 0, 15, 30))
-			this.addSlot(SlotItemHandler(this.parent.items, 1, 30, 30))
-			this.addSlot(SlotItemHandler(this.parent.items, 2, 15, 45))
-			this.addSlot(SlotItemHandler(this.parent.items, 3, 30, 45))
+		this.addSlot(SlotItemHandler(this.parent.items, 0, 15, 30))
+		this.addSlot(SlotItemHandler(this.parent.items, 1, 30, 30))
+		this.addSlot(SlotItemHandler(this.parent.items, 2, 15, 45))
+		this.addSlot(SlotItemHandler(this.parent.items, 3, 30, 45))
 
-			this.addSlot(ResultSlotItemHandler(this.parent.items, 4, 60, 30))
-			this.addSlot(ResultSlotItemHandler(this.parent.items, 5, 75, 30))
-			this.addSlot(ResultSlotItemHandler(this.parent.items, 6, 60, 45))
-			this.addSlot(ResultSlotItemHandler(this.parent.items, 7, 75, 45))
-		}
+		this.addSlot(ResultSlotItemHandler(this.parent.items, 4, 60, 30))
+		this.addSlot(ResultSlotItemHandler(this.parent.items, 5, 75, 30))
+		this.addSlot(ResultSlotItemHandler(this.parent.items, 6, 60, 45))
+		this.addSlot(ResultSlotItemHandler(this.parent.items, 7, 75, 45))
 	}
 
 	override val containerSlotCount : Int = 8

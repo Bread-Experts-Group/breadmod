@@ -53,10 +53,8 @@ class DoughMachineMenu(
 
 	init {
 		this.addInventorySlots(inventory, 8, 142, 84)
-		if (this.parent.items != null) {
-			this.addSlot(SlotItemHandler(this.parent.items, 0, 26, 34))
-			this.addSlot(ResultSlotItemHandler(this.parent.items, 1, 78, 35))
-			this.addSlot(DoughMachineBucketSlot(this.parent.items))
-		}
+		this.addSlot(SlotItemHandler(this.parent.items, 0, 26, 34))
+		this.addSlot(ResultSlotItemHandler(this.parent.items, 1, 78, 35))
+		this.addSlot(DoughMachineBucketSlot(this.parent.items))
 	}
 }

@@ -60,6 +60,7 @@ import kotlin.reflect.full.primaryConstructor
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.MOD)
 internal object CommonModEventBus {
 	val logger : Logger = LogManager.getLogger()
+
 	@SubscribeEvent
 	fun gatherData(event : GatherDataEvent) {
 		val generator = event.generator
@@ -117,6 +118,7 @@ internal object CommonModEventBus {
 			}
 		}
 	}
+
 	@SubscribeEvent
 	fun registerPayloads(event : RegisterPayloadHandlersEvent) {
 		val registrar : PayloadRegistrar = event.registrar("1")
@@ -163,14 +165,17 @@ internal object CommonModEventBus {
 			PlaceItemInWorldPacket::handleServerboundPacket
 		)
 	}
+
 	@SubscribeEvent
 	fun onCommonSetup(event : FMLCommonSetupEvent) {
 		this.logger.log(Level.INFO, "Hello! This is working!")
 	}
+
 	@SubscribeEvent
 	fun registerEntityAttributes(event : EntityAttributeCreationEvent) {
 		event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())
 	}
+
 	@SubscribeEvent
 	fun registerCapabilities(event : RegisterCapabilitiesEvent) {
 		event.registerBlock(
@@ -201,9 +206,9 @@ internal object CommonModEventBus {
 			ModBlockEntityTypes.DOUGH_MACHINE.get()
 		) { entity, direction : Direction? ->
 			when (direction) {
-				Direction.UP -> entity.tank!!.tanks[0]
-				Direction.DOWN -> entity.tank!!.tanks[1]
-				else -> null
+				Direction.UP   -> entity.tank.tanks[0]
+				Direction.DOWN -> entity.tank.tanks[1]
+				else           -> null
 			}
 		}
 
@@ -242,7 +247,7 @@ internal object CommonModEventBus {
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_ENERGY.get()
 		) { entity, direction : Direction? ->
-			val tanks = entity.tank!!.tanks
+			val tanks = entity.tank.tanks
 			when (direction) {
 				Direction.EAST -> tanks[0]
 				Direction.WEST -> tanks[1]
