@@ -10,15 +10,16 @@ import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
+import org.bread_experts_group.breadmod.util.render.RenderBuffer
 import org.bread_experts_group.breadmod.util.render.initialTranslate
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.renderBlockModel
-import org.bread_experts_group.breadmod.util.render.renderBuffer
 import physx.PxTopLevelFunctions
 import physx.common.PxDefaultAllocator
 import physx.common.PxDefaultCpuDispatcher
@@ -55,8 +56,8 @@ import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
 
 internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecialCreativeTab {
-	val logger : Logger = LogManager.getLogger("PhysX Test Tool")
-	private val classLoader : ClassLoader = this.run {
+	val logger: Logger = LogManager.getLogger("PhysX Test Tool")
+	private val classLoader: ClassLoader = this.run {
 		val loader = this::class.java.classLoader
 			?: throw IllegalStateException("Class loader is null")
 		val librariesPath = Path(System.getProperty("java.io.tmpdir"))
@@ -67,17 +68,17 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		val arch = System.getProperty("os.arch", "unknown").lowercase()
 
 		object : ClassLoader("PhysX ClassLoader", Thread.currentThread().contextClassLoader) {
-			val loadMap : MutableMap<String, ByteArray> = mutableMapOf()
-			fun loadResourceJAR(name : String) {
+			val loadMap: MutableMap<String, ByteArray> = mutableMapOf()
+			fun loadResourceJAR(name: String) {
 				this.loadJAR(
 					loader.getResource("/libraries/physx-jni-$name.jar")
 						?: throw IllegalStateException("Can't find JAR for $name")
 				)
 			}
 
-			fun loadJAR(url : URL) {
+			fun loadJAR(url: URL) {
 				val jar = JarInputStream(url.openConnection().getInputStream())
-				var entry : JarEntry? = jar.nextJarEntry
+				var entry: JarEntry? = jar.nextJarEntry
 				while (entry != null) {
 					entry.let {
 						try {
@@ -89,7 +90,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 								if (!libPath.exists()) libPath.writeBytes(jar.readBytes())
 							}
 							null
-						} catch (e : Throwable) {
+						} catch (e: Throwable) {
 							this@run.logger.warn("Failed to load JAR object ${it.name}", e)
 						}
 					}
@@ -134,7 +135,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 				this@run.logger.info("Self-references loaded, PhysX ClassLoader ready.")
 			}
 
-			override fun loadClass(name : String, resolve : Boolean) : Class<*> {
+			override fun loadClass(name: String, resolve: Boolean): Class<*> {
 				this.findLoadedClass(name)?.let { return it }
 				val clazz = if (
 					name.startsWith("de.fabmax.physxjni.") ||
@@ -155,7 +156,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			}
 		}
 	}
-	private var physX : Any = 0
+	private var physX: Any = 0
 	fun createPhysX() {
 		if (this.physX == 0) this.physX = Class.forName(
 			"org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool\$PhysX",
@@ -170,33 +171,34 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			this.physX = 0
 		}
 	}
+
 	@Suppress("unused")
 	class PhysX {
 		private val version = PxTopLevelFunctions.getPHYSICS_VERSION()
 		private val allocator = PxDefaultAllocator()
 		private val errorCb = PxDefaultErrorCallback()
-		private val foundation : PxFoundation = PxTopLevelFunctions.CreateFoundation(
+		private val foundation: PxFoundation = PxTopLevelFunctions.CreateFoundation(
 			this.version,
 			this.allocator,
 			this.errorCb
 		)
-		private val pvd : PxPvd = PxTopLevelFunctions.CreatePvd(this.foundation)
-		private val transport : PxPvdTransport = PxTopLevelFunctions.DefaultPvdSocketTransportCreate(
+		private val pvd: PxPvd = PxTopLevelFunctions.CreatePvd(this.foundation)
+		private val transport: PxPvdTransport = PxTopLevelFunctions.DefaultPvdSocketTransportCreate(
 			"localhost", 5425,
 			10000
 		)
 		private val tolerances = PxTolerancesScale()
-		private val physics : PxPhysics = PxTopLevelFunctions.CreatePhysics(
+		private val physics: PxPhysics = PxTopLevelFunctions.CreatePhysics(
 			this.version,
 			this.foundation,
 			this.tolerances,
 			this.pvd
 		)
 		private val numThreads = Runtime.getRuntime().availableProcessors()
-		private val cpuDispatcher : PxDefaultCpuDispatcher =
+		private val cpuDispatcher: PxDefaultCpuDispatcher =
 			PxTopLevelFunctions.DefaultCpuDispatcherCreate(this.numThreads)
 		private val sceneDescription = PxSceneDesc(this.tolerances)
-		private val scene : PxScene
+		private val scene: PxScene
 		private val defaultMaterial = this.physics.createMaterial(0.5f, 0.5f, 0.5f)
 		private val tmpPose = PxTransform(PxIDENTITYEnum.PxIdentity)
 		private val tmpFilterData = PxFilterData(1, 1, 0, 0)
@@ -204,6 +206,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			(PxShapeFlagEnum.eSCENE_QUERY_SHAPE.value or PxShapeFlagEnum.eSIMULATION_SHAPE.value).toByte()
 		)
 		private var noExecute = true
+
 		//        private fun suspendSimulation() {
 //            noExecute = true
 //            scene.fetchResults(true)
@@ -212,7 +215,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			this.noExecute = false
 		}
 
-		private val rigidActors : MutableList<PxRigidActor> = mutableListOf()
+		private val rigidActors: MutableList<PxRigidActor> = mutableListOf()
 
 		init {
 			this.pvd.connect(
@@ -230,28 +233,30 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			groundShape.simulationFilterData = this.tmpFilterData
 			ground.attachShape(groundShape)
 			this.scene.addActor(ground)
-			renderBuffer.add(mutableListOf<Float>() to { _, event ->
-				if (!this.noExecute) {
-					this.scene.simulate(event.partialTick.gameTimeDeltaTicks / 20)
-					this.scene.fetchResults(true)
-				}
+			RenderBuffer.add(
+				RenderLevelStageEvent.Stage.AFTER_SKY,
+				{ event, _ ->
+					if (!this.noExecute) {
+						this.scene.simulate(event.partialTick.gameTimeDeltaTicks / 20)
+						this.scene.fetchResults(true)
+					}
 
-				this.rigidActors.forEach { actor ->
-					event.poseStack.pushPose()
-					event.poseStack.initialTranslate(event.camera)
-					event.poseStack.translate(actor.globalPose.p.x, actor.globalPose.p.y, actor.globalPose.p.z)
-					localClient.blockRenderer.modelRenderer.renderBlockModel(
-						event.poseStack.last(),
-						localClient.renderBuffers().bufferSource(),
-						ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
-						0x7FFFFFFF,
-						OverlayTexture.NO_OVERLAY
-					)
-					event.poseStack.popPose()
-				}
+					this.rigidActors.forEach { actor ->
+						event.poseStack.pushPose()
+						event.poseStack.initialTranslate(event.camera)
+						event.poseStack.translate(actor.globalPose.p.x, actor.globalPose.p.y, actor.globalPose.p.z)
+						localClient.blockRenderer.modelRenderer.renderBlockModel(
+							event.poseStack.last(),
+							localClient.renderBuffers().bufferSource(),
+							ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
+							0x7FFFFFFF,
+							OverlayTexture.NO_OVERLAY
+						)
+						event.poseStack.popPose()
+					}
 
-				false
-			})
+					false
+				})
 			this.resumeSimulation()
 		}
 
@@ -282,13 +287,13 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		}
 	}
 
-	override fun use(level : Level, player : Player, usedHand : InteractionHand) : InteractionResultHolder<ItemStack> {
+	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		if (level is ServerLevel) return InteractionResultHolder.pass(player.getItemInHand(usedHand))
 		Thread.currentThread().contextClassLoader = this.classLoader
 
 		try {
 			this.physX::class.java.getDeclaredMethod("addCube").invoke(this.physX)
-		} catch (e : Throwable) {
+		} catch (e: Throwable) {
 			player.sendSystemMessage(Component.literal("PhysX failed to load: ${e.message}"))
 			this.logger.error("PhysX failed to load", e)
 		}
@@ -296,5 +301,5 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		return super.use(level, player, usedHand)
 	}
 
-	override val creativeModeTabs : List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.EXPERIMENTAL_TAB)
+	override val creativeModeTabs: List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.EXPERIMENTAL_TAB)
 }

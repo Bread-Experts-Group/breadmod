@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.util.render
 
-import com.mojang.authlib.GameProfile
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -9,13 +8,11 @@ import com.mojang.blaze3d.vertex.PoseStack.Pose
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
-import com.mojang.math.Axis
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
@@ -38,20 +35,13 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource
 import net.minecraft.world.level.material.Fluid
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.model.MachTrailModel
-import org.bread_experts_group.breadmod.registry.MachTrailData
-import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
 import org.joml.Vector2f
-import org.joml.Vector3f
-import org.joml.Vector4f
 import java.awt.Color
-import java.lang.Math.clamp
 import java.util.*
 import kotlin.math.min
 
@@ -59,197 +49,21 @@ import kotlin.math.min
  * Main minecraft instance
  */
 @Internal
-val localClient : Minecraft = Minecraft.getInstance()
-internal typealias RenderBuffer =
-		MutableList<Pair<MutableList<Float>, (MutableList<Float>, RenderLevelStageEvent) -> Boolean>>
+val localClient: Minecraft = Minecraft.getInstance()
+internal var skyColorMixinActive: Boolean = false
+internal var redness: Float = 1f
 
-internal var skyColorMixinActive : Boolean = false
-internal var redness : Float = 1f
 /**
  * Color getter for ItemStacks.
  */
-val itemColor : ItemColor = ItemColor { stack : ItemStack, i : Int ->
+val itemColor: ItemColor = ItemColor { stack: ItemStack, i: Int ->
 	if (i > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE.rgb)
 }
-/**
- * A list of lambdas to call for rendering. If lambdas return true, they will be removed.
- *
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-val renderBuffer : RenderBuffer = mutableListOf()
-/**
- * A map holding mach trail data for each player currently running with the chef hat.
- */
-val machTrailMap : MutableMap<GameProfile, MachTrailData> = mutableMapOf()
-// todo head rotations
-/**
- * Renders a single instance of the mach trail behind the player.
- *
- * @author Logan McLean
- * @see MachTrailData
- * @see ChefHatItem
- */
-fun renderMachTrail(playerProfile : GameProfile) {
-	val playerId = playerProfile.id
-	val level = localClient.level ?: return
-	val player = level.getPlayerByUUID(playerId) ?: return
-	val x = player.x
-	val y = player.y
-	val z = player.z
-	val yRot = -player.rotationVector.y
-	val machTrailModel = MachTrailModel(playerProfile, 0)
 
-	renderBuffer.add(
-		mutableListOf(
-			0.8F,
-			0F,
-			1F
-		) to { mutableList, renderStageEvent ->
-			val currentOpacity = mutableList[0]
-			val redValue = mutableList[1]
-			val greenValue = mutableList[2]
-			val poseStack = renderStageEvent.poseStack
-			val camera = renderStageEvent.camera
-			val partialTick = renderStageEvent.partialTick.realtimeDeltaTicks
-			val currentColor = Color(
-				redValue,
-				greenValue,
-				0.1f,
-				clamp(currentOpacity, 0f, 1f)
-			).rgb
-			machTrailModel.currentColor = currentColor
-
-			if (currentOpacity > 0) {
-				poseStack.pushPose()
-				poseStack.mulPose(Axis.YN.rotationDegrees(-yRot))
-				poseStack.translate(0.0, 0.0, -0.3)
-				poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
-				poseStack.initialTranslate(camera)
-				poseStack.translate(x, y, z)
-				poseStack.translate(0.0, 1.4, 0.0)
-				poseStack.mulPose(Axis.XN.rotationDegrees(180f))
-				poseStack.mulPose(Axis.YN.rotationDegrees(yRot))
-
-				machTrailModel.render(poseStack)
-
-				poseStack.popPose()
-
-				mutableList[1] = clamp(redValue + 0.05f, 0f, 1f)
-				mutableList[2] = clamp(greenValue - 0.05f, 0f, 1f)
-				mutableList[0] = currentOpacity - 0.1f * partialTick
-				false
-			} else true
-		})
-}
-/**
- * Draws a line from between [start] and [end], translated according to the current [LocalPlayer]'s position.
-// * @see breadmod.network.clientbound.BeamPacket
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-fun addBeamTask(start : Vector3f, end : Vector3f, thickness : Float?) {
-	val level = localClient.level
-	val player = localClient.player
-	val bufferSource = localClient.renderBuffers().bufferSource()
-
-	renderBuffer.add(mutableListOf(1F) to { mutableList, renderStageEvent ->
-		val currentOpacity = mutableList[0]
-		val poseStack = renderStageEvent.poseStack
-		val camera = renderStageEvent.camera
-		val partialTick = renderStageEvent.partialTick.realtimeDeltaTicks
-
-		if (level != null && currentOpacity > 0 && player != null) {
-			poseStack.pushPose()
-			poseStack.initialTranslate(camera)
-			poseStack.translate(0.0, -1.0, 0.0)
-
-			if (thickness != null) {
-				// South
-				drawTexturedQuad(
-					modLocation("block", "bread_block"),
-					RenderType.translucent(),
-					poseStack,
-					bufferSource,
-					Vector4f(1f, 1f, 1f, currentOpacity),
-					Vector3f(start.x + 1f, start.y, start.z + 1f),
-					Vector3f(start.x - 1f, start.y, start.z + 1f),
-					Vector3f(end.x - 1f, end.y, end.z + 1f),
-					Vector3f(end.x + 1f, end.y, end.z + 1f)
-				)
-//            poseStack.translate(2f, 0f, 0f)
-				// East
-				drawTexturedQuad(
-					modLocation("block", "bread_block"),
-					RenderType.translucent(),
-					poseStack,
-					bufferSource,
-					Vector4f(1f, 1f, 1f, currentOpacity),
-					Vector3f(start.x + 1f, start.y, start.z - 1f),
-					Vector3f(start.x + 1f, start.y, start.z + 1f),
-					Vector3f(end.x + 1f, end.y, end.z + 1f),
-					Vector3f(end.x + 1f, end.y, end.z - 1f)
-				)
-				// West
-				drawTexturedQuad(
-					modLocation("block", "bread_block"),
-					RenderType.translucent(),
-					poseStack,
-					bufferSource,
-					Vector4f(1f, 1f, 1f, currentOpacity),
-					Vector3f(start.x - 1f, start.y, start.z + 1f),
-					Vector3f(start.x - 1f, start.y, start.z - 1f),
-					Vector3f(end.x - 1f, end.y, end.z - 1f),
-					Vector3f(end.x - 1f, end.y, end.z + 1f)
-				)
-				// North
-				drawTexturedQuad(
-					modLocation("block", "bread_block"),
-					RenderType.translucent(),
-					poseStack,
-					bufferSource,
-					Vector4f(1f, 1f, 1f, currentOpacity),
-					Vector3f(start.x - 1f, start.y, start.z - 1f),
-					Vector3f(start.x + 1f, start.y, start.z - 1f),
-					Vector3f(end.x + 1f, end.y, end.z - 1f),
-					Vector3f(end.x - 1f, end.y, end.z - 1f)
-				)
-				// Start
-				drawTexturedQuad(
-					modLocation("block", "bread_block"),
-					RenderType.translucent(),
-					poseStack,
-					bufferSource,
-					Vector4f(1f, 1f, 1f, currentOpacity),
-					Vector3f(start.x - 1f, start.y, start.z - 1f),
-					Vector3f(start.x - 1f, start.y, start.z + 1f),
-					Vector3f(start.x + 1f, start.y, start.z + 1f),
-					Vector3f(start.x + 1f, start.y, start.z - 1f)
-				)
-				// End
-				drawTexturedQuad(
-					modLocation("block", "bread_block"),
-					RenderType.translucent(),
-					poseStack,
-					bufferSource,
-					Vector4f(1f, 1f, 1f, currentOpacity),
-					Vector3f(end.x - 1f, end.y, end.z - 1f),
-					Vector3f(end.x + 1f, end.y, end.z - 1f),
-					Vector3f(end.x + 1f, end.y, end.z + 1f),
-					Vector3f(end.x - 1f, end.y, end.z + 1f)
-				)
-			}
-
-			poseStack.popPose()
-			mutableList[0] = currentOpacity - 0.1f * partialTick
-			false
-		} else true
-	})
-}
 // todo it's only showing green in the render area
 fun GuiGraphics.renderFluid(
-	x : Float, y : Float, width : Int, height : Int,
-	fluid : Fluid, flowing : Boolean, direction : Direction = Direction.NORTH,
+	x: Float, y: Float, width: Int, height: Int,
+	fluid: Fluid, flowing: Boolean, direction: Direction = Direction.NORTH,
 ) {
 	val atlas = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
 	val ext = IClientFluidTypeExtensions.of(fluid)
@@ -262,7 +76,7 @@ fun GuiGraphics.renderFluid(
 	} else atlas.apply(ext.stillTexture) to 1F
 	val sprite = spriteDiff.first
 	val colors = FloatArray(4).also(Color(ext.tintColor)::getComponents)
-	val matrix4f : Matrix4f = this.pose().last().pose()
+	val matrix4f: Matrix4f = this.pose().last().pose()
 	RenderSystem.setShaderTexture(0, sprite.atlasLocation())
 	RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
 	RenderSystem.enableBlend()
@@ -303,28 +117,31 @@ fun GuiGraphics.renderFluid(
 	BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
 	RenderSystem.disableBlend()
 }
+
 /**
  * Scales the [PoseStack] uniformly on the X, Y, and Z axis.
  */
-fun PoseStack.scaleFlat(scale : Float) : Unit = this.scale(scale, scale, scale)
+fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
+
 /**
- * Translates the [PoseStack] of the added [renderBuffer] to the player's camera.
+ * Translates the [PoseStack] of the added [RenderBuffer] to the player's camera.
  * Used for initial model positions in-world.
  */
-fun PoseStack.initialTranslate(camera : Camera) : Unit =
+fun PoseStack.initialTranslate(camera: Camera): Unit =
 	this.translate(-camera.position.x, -camera.position.y, -camera.position.z)
+
 /**
  * Draws scaled [text] in a Screen or Overlay
  */
 fun drawScaledText(
-	text : Component,
-	poseStack : PoseStack,
-	guiGraphics : GuiGraphics,
-	x : Int,
-	y : Int,
-	color : Int,
-	scale : Float,
-	dropShadow : Boolean
+	text: Component,
+	poseStack: PoseStack,
+	guiGraphics: GuiGraphics,
+	x: Int,
+	y: Int,
+	color: Int,
+	scale: Float,
+	dropShadow: Boolean
 ) {
 	poseStack.scaleFlat(scale)
 	guiGraphics.drawString(
@@ -337,19 +154,20 @@ fun drawScaledText(
 	)
 	poseStack.scaleFlat(1f)
 }
+
 /**
  * Renders a specified [BlockState] onto a [BlockEntityWithoutLevelRenderer] or [BlockEntityRenderer]
  */
 fun ModelBlockRenderer.renderBlockModel(
-	lastPose : PoseStack.Pose,
-	buffer : MultiBufferSource,
-	blockState : BlockState,
-	packedLight : Int,
-	packedOverlay : Int = NO_OVERLAY,
-	renderType : RenderType = RenderType.solid(),
-	red : Float = 1f,
-	green : Float = 1f,
-	blue : Float = 1f
+	lastPose: PoseStack.Pose,
+	buffer: MultiBufferSource,
+	blockState: BlockState,
+	packedLight: Int,
+	packedOverlay: Int = NO_OVERLAY,
+	renderType: RenderType = RenderType.solid(),
+	red: Float = 1f,
+	green: Float = 1f,
+	blue: Float = 1f
 ) {
 	val blockModel = localClient.modelManager.blockModelShaper.getBlockModel(blockState)
 	this.renderModel(
@@ -368,17 +186,17 @@ fun ModelBlockRenderer.renderBlockModel(
 }
 
 fun ModelBlockRenderer.renderBlockModel(
-	lasePose : PoseStack.Pose,
-	buffer : MultiBufferSource,
-	blockEntity : BlockEntity,
-	model : BakedModel,
-	packedLight : Int,
-	packedOverlay : Int,
-	renderType : RenderType = RenderType.solid(),
-	red : Float = 1f,
-	green : Float = 1f,
-	blue : Float = 1f
-) : Unit = this.renderModel(
+	lasePose: PoseStack.Pose,
+	buffer: MultiBufferSource,
+	blockEntity: BlockEntity,
+	model: BakedModel,
+	packedLight: Int,
+	packedOverlay: Int,
+	renderType: RenderType = RenderType.solid(),
+	red: Float = 1f,
+	green: Float = 1f,
+	blue: Float = 1f
+): Unit = this.renderModel(
 	lasePose,
 	buffer.getBuffer(renderType),
 	blockEntity.blockState,
@@ -393,19 +211,20 @@ fun ModelBlockRenderer.renderBlockModel(
 )
 
 private val randomSource = XoroshiroRandomSource(42)
+
 /**
  * Renders a [BakedModel] with color
  */
 fun renderModel(
-	pose : Pose,
-	consumer : VertexConsumer,
-	state : BlockState,
-	model : BakedModel,
-	packedLight : Int,
-	packedOverlay : Int,
-	red : Float = 1f,
-	green : Float = 1f,
-	blue : Float = 1f
+	pose: Pose,
+	consumer: VertexConsumer,
+	state: BlockState,
+	model: BakedModel,
+	packedLight: Int,
+	packedOverlay: Int,
+	red: Float = 1f,
+	green: Float = 1f,
+	blue: Float = 1f
 ) {
 	Direction.entries.forEach {
 		renderQuadList(
@@ -425,10 +244,10 @@ fun renderModel(
 }
 
 private fun renderQuadList(
-	pose : Pose, consumer : VertexConsumer,
-	red : Float, green : Float, blue : Float,
-	quads : List<BakedQuad>,
-	packedLight : Int, packedOverlay : Int
+	pose: Pose, consumer: VertexConsumer,
+	red: Float, green: Float, blue: Float,
+	quads: List<BakedQuad>,
+	packedLight: Int, packedOverlay: Int
 ) {
 	quads.forEach {
 		consumer.putBulkData(
@@ -438,16 +257,17 @@ private fun renderQuadList(
 		)
 	}
 }
+
 /**
  * Renders a provided [stack] onto a [BlockEntityRenderer]
  */
 fun ItemRenderer.renderStaticItem(
-	stack : ItemStack,
-	poseStack : PoseStack,
-	buffer : MultiBufferSource,
-	blockEntity : BlockEntity,
-	packedLight : Int
-) : Unit = this.renderStatic(
+	stack: ItemStack,
+	poseStack: PoseStack,
+	buffer: MultiBufferSource,
+	blockEntity: BlockEntity,
+	packedLight: Int
+): Unit = this.renderStatic(
 	stack,
 	ItemDisplayContext.FIXED,
 	packedLight,
@@ -457,19 +277,20 @@ fun ItemRenderer.renderStaticItem(
 	blockEntity.level,
 	1
 )
+
 /**
  * Renders a provided [model] (as an item model) onto this [BlockEntityWithoutLevelRenderer]
  */
 fun ItemRenderer.renderItemModel(
-	model : BakedModel,
-	stack : ItemStack,
-	displayContext : ItemDisplayContext,
-	leftHand : Boolean,
-	poseStack : PoseStack,
-	bufferSource : MultiBufferSource,
-	packedOverlay : Int,
-	packedLight : Int,
-	fabulous : Boolean
+	model: BakedModel,
+	stack: ItemStack,
+	displayContext: ItemDisplayContext,
+	leftHand: Boolean,
+	poseStack: PoseStack,
+	bufferSource: MultiBufferSource,
+	packedOverlay: Int,
+	packedLight: Int,
+	fabulous: Boolean
 ) {
 	model.getRenderPasses(stack, fabulous).forEach { passes ->
 		passes.getRenderTypes(stack, fabulous).forEach { renderType ->
@@ -482,10 +303,11 @@ fun ItemRenderer.renderItemModel(
 		}
 	}
 }
+
 /**
  * [ModelResourceLocation] with [modLocation] present.
  */
-fun modelLocation(location : String) : ModelResourceLocation =
+fun modelLocation(location: String): ModelResourceLocation =
 	ModelResourceLocation(modLocation(location), "standalone")
 //fun drawVertex(
 //    pBuilder: VertexConsumer,
@@ -562,14 +384,14 @@ fun modelLocation(location : String) : ModelResourceLocation =
  * @since 0.0.1
  */
 fun renderText(
-	component : FormattedCharSequence,
-	color : Int,
-	backgroundColor : Int,
-	fontRenderer : Font,
-	postStack : PoseStack,
-	buffer : MultiBufferSource,
-	dropShadow : Boolean,
-	packedLight : Int
+	component: FormattedCharSequence,
+	color: Int,
+	backgroundColor: Int,
+	fontRenderer: Font,
+	postStack: PoseStack,
+	buffer: MultiBufferSource,
+	dropShadow: Boolean,
+	packedLight: Int
 ) {
 	fontRenderer.drawInBatch(
 		component,

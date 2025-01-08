@@ -15,13 +15,13 @@ abstract class ToolGunMode {
 			object : StreamCodec<FriendlyByteBuf, ToolGunMode> {
 				override fun decode(buffer : FriendlyByteBuf) : ToolGunMode =
 					this@Companion.convertFromString(buffer.readUtf())
+
 				override fun encode(buffer : FriendlyByteBuf, value : ToolGunMode) {
 					buffer.writeUtf(this@Companion.convertToString(value))
 				}
 			}
 
 		private fun convertToString(clazz : ToolGunMode) : String = clazz::class.qualifiedName!!
-
 		private fun convertFromString(path : String) : ToolGunMode =
 			Class.forName(
 				path,

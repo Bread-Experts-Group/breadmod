@@ -4,19 +4,19 @@ import com.mojang.authlib.GameProfile
 import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
+import org.bread_experts_group.breadmod.util.render.MachTrailBufferTask
 import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.renderMachTrail
 
-data class MachTrailData(var playerProfile : GameProfile) {
-	val player : Player = localClient.level?.getPlayerByUUID(this.playerProfile.id)!!
-	private val machOneSound : MachSoundInstance = MachSoundInstance(ModSounds.MACH_ONE.get(), 1 .. 20, this.player)
-	private val machTwoSound : MachSoundInstance = MachSoundInstance(ModSounds.MACH_TWO.get(), 21 .. 40, this.player)
-	private val machThreeSound : MachSoundInstance =
+data class MachTrailData(var playerProfile: GameProfile) {
+	val player: Player = localClient.level?.getPlayerByUUID(this.playerProfile.id)!!
+	private val machOneSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_ONE.get(), 1 .. 20, this.player)
+	private val machTwoSound: MachSoundInstance = MachSoundInstance(ModSounds.MACH_TWO.get(), 21 .. 40, this.player)
+	private val machThreeSound: MachSoundInstance =
 		MachSoundInstance(ModSounds.MACH_THREE.get(), 40 .. 70, this.player)
-	val machFourSound : MachSoundInstance =
+	val machFourSound: MachSoundInstance =
 		MachSoundInstance(ModSounds.MACH_FOUR.get(), 70 .. Int.MAX_VALUE, this.player)
-	private var sprintTimer : Int = 0
-	private var shouldTick : Boolean = true
+	private var sprintTimer: Int = 0
+	private var shouldTick: Boolean = true
 	fun tick() {
 		val soundManager = localClient.soundManager
 		if (this.player.isSprinting && this.shouldTick) {
@@ -36,7 +36,7 @@ data class MachTrailData(var playerProfile : GameProfile) {
 			}
 			this.sprintTimer++
 			if (this.sprintTimer >= 20) {
-				renderMachTrail(this.playerProfile)
+				MachTrailBufferTask.create(this.playerProfile)
 			}
 		} else if (!this.player.isSprinting || !this.shouldTick) {
 			this.machFourSound.shouldLoop = false

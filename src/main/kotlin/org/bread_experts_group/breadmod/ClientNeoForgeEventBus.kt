@@ -27,10 +27,10 @@ import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
+import org.bread_experts_group.breadmod.util.render.MachTrailBufferTask.machTrailMap
+import org.bread_experts_group.breadmod.util.render.RenderBuffer
 import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.machTrailMap
 import org.bread_experts_group.breadmod.util.render.redness
-import org.bread_experts_group.breadmod.util.render.renderBuffer
 import org.bread_experts_group.breadmod.util.render.skyColorMixinActive
 import kotlin.math.cos
 import kotlin.math.max
@@ -40,7 +40,7 @@ import kotlin.math.sin
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
 	@SubscribeEvent
-	fun registerStageRender(event : RenderLevelStageEvent) {
+	fun registerStageRender(event: RenderLevelStageEvent) {
 		if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {
 			val poseStack = event.poseStack
 			val bufferBuilder =
@@ -55,10 +55,10 @@ internal object ClientNeoForgeEventBus {
 			val matrix = poseStack.last().pose()
 			bufferBuilder.addVertex(matrix, 0f, 100f, 0f).setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
 
-			for (j : Int in 0 .. 16) {
+			for (j: Int in 0 .. 16) {
 				val f1 = j * (Math.PI.toFloat() * 2f) / 16f
-				val f2 : Float = sin(f1)
-				val f3 : Float = cos(f1)
+				val f2: Float = sin(f1)
+				val f3: Float = cos(f1)
 				bufferBuilder.addVertex(matrix, f2, -1f, -f3).setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
 			}
 			val shaderFogColor = RenderSystem.getShaderFogColor()
@@ -94,14 +94,11 @@ internal object ClientNeoForgeEventBus {
 			skyColorMixinActive = false
 		}
 
-		if (event.stage == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-			renderBuffer.removeIf { (mutableList, renderEvent) ->
-				renderEvent.invoke(mutableList, event)
-			}
-		}
+		RenderBuffer.handle(event)
 	}
+
 	@SubscribeEvent
-	fun onMouseScroll(event : MouseScrollingEvent) {
+	fun onMouseScroll(event: MouseScrollingEvent) {
 		val player = localClient.player ?: return
 		val stack = player.getItemInHand(player.usedItemHand)
 		val item = stack.item
@@ -109,7 +106,7 @@ internal object ClientNeoForgeEventBus {
 	}
 
 	@SubscribeEvent
-	fun onKeyboardPress(event : InputEvent.Key) {
+	fun onKeyboardPress(event: InputEvent.Key) {
 		val player = localClient.player ?: return
 		val level = localClient.level ?: return
 		val stack = player.getItemInHand(player.usedItemHand)
@@ -124,7 +121,7 @@ internal object ClientNeoForgeEventBus {
 	}
 
 	@SubscribeEvent
-	fun onMouseInput(event : InputEvent.MouseButton.Post) {
+	fun onMouseInput(event: InputEvent.MouseButton.Post) {
 		val player = localClient.player ?: return
 		val stack = player.getItemInHand(player.usedItemHand)
 		val item = stack.item
@@ -132,15 +129,17 @@ internal object ClientNeoForgeEventBus {
 	}
 
 	@SubscribeEvent
-	fun login(event : PlayerEvent.PlayerLoggedInEvent) {
+	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
 		PhysXTestTool.createPhysX()
 	}
+
 	@SubscribeEvent
-	fun logout(event : PlayerEvent.PlayerLoggedOutEvent) {
+	fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
 		PhysXTestTool.destroyPhysX()
 	}
+
 	@SubscribeEvent
-	fun clientTick(event : ClientTickEvent.Pre) {
+	fun clientTick(event: ClientTickEvent.Pre) {
 		if (machTrailMap.isNotEmpty()) {
 			machTrailMap.forEach { (_, machTrailData) ->
 				machTrailData.tick()

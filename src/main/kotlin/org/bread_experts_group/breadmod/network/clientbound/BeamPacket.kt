@@ -6,30 +6,30 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.util.render.addBeamTask
+import org.bread_experts_group.breadmod.util.render.BeamBufferTask
 import org.joml.Vector3f
 
 class BeamPacket(
-	private val start : Vector3f,
-	private val end : Vector3f,
-	private val thickness : Float?
+	private val start: Vector3f,
+	private val end: Vector3f,
+	private val thickness: Float?
 ) : CustomPacketPayload {
 	companion object {
-		val TYPE : CustomPacketPayload.Type<BeamPacket> =
+		val TYPE: CustomPacketPayload.Type<BeamPacket> =
 			CustomPacketPayload.Type(modLocation("beam_packet"))
-		val STREAM_CODEC : StreamCodec<ByteBuf, BeamPacket> = StreamCodec.composite(
+		val STREAM_CODEC: StreamCodec<ByteBuf, BeamPacket> = StreamCodec.composite(
 			ByteBufCodecs.VECTOR3F, BeamPacket::start,
 			ByteBufCodecs.VECTOR3F, BeamPacket::end,
 			ByteBufCodecs.FLOAT, BeamPacket::thickness,
 			::BeamPacket
 		)
 
-		fun handleClientboundPacket(data : BeamPacket, context : IPayloadContext) {
+		fun handleClientboundPacket(data: BeamPacket, context: IPayloadContext) {
 			context.enqueueWork {
-				addBeamTask(data.start, data.end, data.thickness)
+				BeamBufferTask.create(data.start, data.end, data.thickness)
 			}
 		}
 	}
 
-	override fun type() : CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
+	override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
 }
