@@ -24,7 +24,8 @@ import org.joml.Quaternionf
 import physx.PxTopLevelFunctions
 import physx.common.PxDefaultAllocator
 import physx.common.PxDefaultCpuDispatcher
-import physx.common.PxDefaultErrorCallback
+import physx.common.PxErrorCallback
+import physx.common.PxErrorCodeEnum
 import physx.common.PxFoundation
 import physx.common.PxIDENTITYEnum
 import physx.common.PxTolerancesScale
@@ -32,16 +33,14 @@ import physx.common.PxTransform
 import physx.common.PxVec3
 import physx.geometry.PxBoxGeometry
 import physx.physics.PxFilterData
+import physx.physics.PxMaterial
 import physx.physics.PxPhysics
 import physx.physics.PxRigidActor
 import physx.physics.PxScene
 import physx.physics.PxSceneDesc
 import physx.physics.PxShapeFlagEnum
 import physx.physics.PxShapeFlags
-import physx.support.PxPvd
-import physx.support.PxPvdInstrumentationFlagEnum
-import physx.support.PxPvdInstrumentationFlags
-import physx.support.PxPvdTransport
+import physx.support.PxOmniPvd
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
@@ -175,69 +174,86 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 
 	@Suppress("unused")
 	class PhysX {
-		private val version = PxTopLevelFunctions.getPHYSICS_VERSION()
-		private val allocator = PxDefaultAllocator()
-		private val errorCb = PxDefaultErrorCallback()
-		private val foundation: PxFoundation = PxTopLevelFunctions.CreateFoundation(
-			this.version,
-			this.allocator,
-			this.errorCb
-		)
-		private val pvd: PxPvd = PxTopLevelFunctions.CreatePvd(this.foundation)
-		private val transport: PxPvdTransport = PxTopLevelFunctions.DefaultPvdSocketTransportCreate(
-			"localhost", 5425,
-			10000
-		)
-		private val tolerances = PxTolerancesScale()
-		private val physics: PxPhysics = PxTopLevelFunctions.CreatePhysics(
-			this.version,
-			this.foundation,
-			this.tolerances,
-			this.pvd
-		)
-		private val numThreads = Runtime.getRuntime().availableProcessors()
-		private val cpuDispatcher: PxDefaultCpuDispatcher =
-			PxTopLevelFunctions.DefaultCpuDispatcherCreate(this.numThreads)
+		private val logger = LogManager.getLogger()
+
+		// PhysX System Objects
+		private val allocator: PxDefaultAllocator = PxDefaultAllocator()
+		private val foundation: PxFoundation
+		private val tolerances: PxTolerancesScale = PxTolerancesScale()
+		private val physics: PxPhysics
+		private val cpuDispatcher: PxDefaultCpuDispatcher
 		private val sceneDescription = PxSceneDesc(this.tolerances)
 		private val scene: PxScene
-		private val defaultMaterial = this.physics.createMaterial(0.5f, 0.5f, 0.5f)
-		private val tmpPose = PxTransform(PxIDENTITYEnum.PxIdentity)
-		private val tmpFilterData = PxFilterData(1, 1, 0, 0)
-		private val shapeFlags = PxShapeFlags(
-			(PxShapeFlagEnum.eSCENE_QUERY_SHAPE.value or PxShapeFlagEnum.eSIMULATION_SHAPE.value).toByte()
-		)
+		private val errorHandler = object : PxErrorCallback() {
+			override fun reportError(code: PxErrorCodeEnum, message: String, file: String, line: Int) {
+				super.reportError(code, message, file, line)
+				this@PhysXTestTool.logger.error("PhysX Error: $code, $message, $file, $line")
+			}
+		}
+
+		// PhysX Configuration
 		private var noExecute = true
 
-		//        private fun suspendSimulation() {
-//            noExecute = true
-//            scene.fetchResults(true)
-//        }
+		private fun suspendSimulation() {
+			this.noExecute = true
+			this.scene.fetchResults(true)
+		}
+
 		private fun resumeSimulation() {
 			this.noExecute = false
 		}
 
+		// PhysX Objects
 		private val rigidActors: MutableList<PxRigidActor> = mutableListOf()
+		private val materials: MutableMap<String, PxMaterial> = mutableMapOf()
+
+		fun defineMaterial(
+			name: String,
+			staticFriction: Float = 0.5f,
+			dynamicFriction: Float = 0.5f,
+			restitution: Float = 0.5f
+		): PxMaterial {
+			this.materials[name]?.destroy()
+			return this.physics.createMaterial(staticFriction, dynamicFriction, restitution)
+				.also { this.materials[name] = it }
+		}
 
 		init {
-			this.pvd.connect(
-				this.transport,
-				PxPvdInstrumentationFlags(PxPvdInstrumentationFlagEnum.eALL.value.toByte())
+			val version = PxTopLevelFunctions.getPHYSICS_VERSION()
+			this.foundation = PxTopLevelFunctions.CreateFoundation(
+				version,
+				this.allocator,
+				this.errorHandler
 			)
+			val pvd: PxOmniPvd? = PxTopLevelFunctions.CreateOmniPvd(this.foundation)?.also {
+				it.writer.setWriteStream(it.fileWriteStream)
+				it.fileWriteStream.setFileName("PhysXTestTool.ovd")
+				it.startSampling()
+				this.logger.info("PhysX PVD sampling started.")
+			}
+			this.physics = PxTopLevelFunctions.CreatePhysics(
+				version,
+				this.foundation,
+				this.tolerances,
+				null,
+				pvd
+			)
+
+			this.cpuDispatcher = PxTopLevelFunctions.DefaultCpuDispatcherCreate(
+				Runtime.getRuntime().availableProcessors()
+			)
+
 			this.sceneDescription.gravity = PxVec3(0f, -9.807f, 0f)
 			this.sceneDescription.cpuDispatcher = this.cpuDispatcher
 			this.sceneDescription.filterShader = PxTopLevelFunctions.DefaultFilterShader()
 			this.scene = this.physics.createScene(this.sceneDescription)
-			// create a large static box with size 20x1x20 as ground
-			val groundGeometry = PxBoxGeometry(10f, 0.5f, 10f) // PxBoxGeometry uses half-sizes
-			val groundShape = this.physics.createShape(groundGeometry, this.defaultMaterial, true, this.shapeFlags)
-			val ground = this.physics.createRigidStatic(this.tmpPose)
-			groundShape.simulationFilterData = this.tmpFilterData
-			ground.attachShape(groundShape)
-			this.scene.addActor(ground)
+			var i = 0
 			RenderBuffer.add(
 				RenderLevelStageEvent.Stage.AFTER_SKY,
 				{ event, _ ->
 					if (!this.noExecute) {
+						i++
+						if (i % 60 == 0) this.addCube(PxVec3(0.5f, 0.5f, 0.5f), "default")
 						this.scene.simulate(event.partialTick.gameTimeDeltaTicks / 20)
 						this.scene.fetchResults(true)
 					}
@@ -265,33 +281,42 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 					}
 
 					false
-				})
+				}
+			)
+			this.defineMaterial("default")
 			this.resumeSimulation()
 		}
 
-		fun addCube() {
-			// create a small dynamic box with size 1x1x1, which will fall on the ground
-			this.tmpPose.p = PxVec3(0f, 5f, 0f)
-			val boxGeometry = PxBoxGeometry(0.5f, 0.5f, 0.5f) // PxBoxGeometry uses half-sizes
-			val boxShape = this.physics.createShape(boxGeometry, this.defaultMaterial, true, this.shapeFlags)
-			val box = this.physics.createRigidDynamic(this.tmpPose)
-			boxShape.simulationFilterData = this.tmpFilterData
+		fun addCube(size: PxVec3, material: String) {
+			val transform = PxTransform(PxIDENTITYEnum.PxIdentity)
+			val boxGeometry = PxBoxGeometry(0.5f, 0.5f, 0.5f)
+			val boxShape = this.physics.createShape(
+				boxGeometry,
+				this.materials[material] ?: throw IllegalArgumentException("Material $material not found"),
+				true,
+				PxShapeFlags(
+					(PxShapeFlagEnum.eSCENE_QUERY_SHAPE.value or PxShapeFlagEnum.eSIMULATION_SHAPE.value).toByte()
+				)
+			)
+			val box = this.physics.createRigidDynamic(transform)
+			boxShape.simulationFilterData = PxFilterData(1, 1, 0, 0)
 			box.attachShape(boxShape)
 			this.scene.addActor(box)
 			this.rigidActors.add(box)
+			size.destroy()
 		}
 
 		fun cleanup() {
 			this.scene.release()
+			this.materials.forEach { (_, material) -> material.destroy() }
+			this.materials.clear()
+			this.rigidActors.forEach { it.release() }
 			this.rigidActors.clear()
-			this.defaultMaterial.release()
 			this.sceneDescription.destroy()
 			this.cpuDispatcher.destroy()
-			this.physics.release()
-			this.pvd.release()
-			this.transport.release()
+			this.physics.destroy()
 			this.foundation.release()
-			this.errorCb.destroy()
+			this.errorHandler.destroy()
 			this.allocator.destroy()
 		}
 	}
@@ -301,7 +326,8 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		Thread.currentThread().contextClassLoader = this.classLoader
 
 		try {
-			this.physX::class.java.getDeclaredMethod("addCube").invoke(this.physX)
+			this.physX::class.java.getDeclaredMethod("addCube")
+				.invoke(this.physX, PxVec3(0.5f, 0.5f, 0.5f), "default")
 		} catch (e: Throwable) {
 			player.sendSystemMessage(Component.literal("PhysX failed to load: ${e.message}"))
 			this.logger.error("PhysX failed to load", e)
