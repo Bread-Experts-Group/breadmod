@@ -251,7 +251,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			RenderBuffer.add(
 				RenderLevelStageEvent.Stage.AFTER_SKY,
 				{ event, _ ->
-					if (!this.noExecute) {
+					if (!(this.noExecute || localClient.isPaused)) {
 						i++
 						if (i % 60 == 0) this.addCube(PxVec3(0.5f, 0.5f, 0.5f), "default")
 						this.scene.simulate(event.partialTick.gameTimeDeltaTicks / 20)
