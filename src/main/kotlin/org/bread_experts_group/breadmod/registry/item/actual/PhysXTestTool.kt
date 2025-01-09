@@ -20,6 +20,7 @@ import org.bread_experts_group.breadmod.util.render.RenderBuffer
 import org.bread_experts_group.breadmod.util.render.initialTranslate
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.renderBlockModel
+import org.joml.Quaternionf
 import physx.PxTopLevelFunctions
 import physx.common.PxDefaultAllocator
 import physx.common.PxDefaultCpuDispatcher
@@ -100,15 +101,15 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 
 			init {
 				this@run.logger.info("Loading PhysX JARs [Core]...")
-				this.loadResourceJAR("2.4.2")
+				this.loadResourceJAR("2.5.0")
 				this@run.logger.info("Loading PhysX JARs [Native]...")
 				when {
-					osName.contains("windows") -> this.loadResourceJAR("2.4.2-natives-windows")
-					osName.contains("linux")   -> this.loadResourceJAR("2.4.2-natives-linux")
+					osName.contains("windows") -> this.loadResourceJAR("natives-windows-2.5.0")
+					osName.contains("linux")   -> this.loadResourceJAR("natives-linux-2.5.0")
 					else                       -> {
 						if (osName.contains("mac os x") || osName.contains("darwin") || osName.contains("osx")) {
-							if (arch == "aarch64") this.loadResourceJAR("2.4.2-natives-macos-arm64")
-							else this.loadResourceJAR("2.4.2-natives-macos")
+							if (arch == "aarch64") this.loadResourceJAR("natives-macos-arm64-2.5.0")
+							else this.loadResourceJAR("natives-macos-2.5.0")
 						} else throw IllegalStateException("Bad platform: $osName, $arch")
 					}
 				}
@@ -245,6 +246,14 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 						event.poseStack.pushPose()
 						event.poseStack.initialTranslate(event.camera)
 						event.poseStack.translate(actor.globalPose.p.x, actor.globalPose.p.y, actor.globalPose.p.z)
+						event.poseStack.mulPose(
+							Quaternionf(
+								-actor.globalPose.q.x,
+								-actor.globalPose.q.y,
+								actor.globalPose.q.z,
+								actor.globalPose.q.w
+							)
+						)
 						localClient.blockRenderer.modelRenderer.renderBlockModel(
 							event.poseStack.last(),
 							localClient.renderBuffers().bufferSource(),

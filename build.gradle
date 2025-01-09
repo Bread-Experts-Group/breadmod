@@ -102,7 +102,7 @@ dependencies {
     implementation 'thedarkcolour:kotlinforforge-neoforge:5.6.0'
 
     // Nvidia PhysX
-    compileOnly("de.fabmax:physx-jni:2.4.2")
+    compileOnly("de.fabmax:physx-jni:2.5.0")
 
     // Mod Compatibility //
 
