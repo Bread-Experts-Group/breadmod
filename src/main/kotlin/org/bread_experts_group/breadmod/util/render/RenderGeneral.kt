@@ -124,7 +124,7 @@ fun GuiGraphics.renderFluid(
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
 
 /**
- * Translates the [PoseStack] of the added [RenderBuffer] to the player's camera.
+ * Translates the [PoseStack] of the added [org.bread_experts_group.breadmod.util.buffer.render.RenderBuffer] to the player's camera.
  * Used for initial model positions in-world.
  */
 fun PoseStack.initialTranslate(camera: Camera): Unit =

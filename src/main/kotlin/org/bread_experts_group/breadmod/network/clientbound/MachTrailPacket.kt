@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.MachTrailData
-import org.bread_experts_group.breadmod.util.render.MachTrailBufferTask.machTrailMap
+import org.bread_experts_group.breadmod.util.buffer.render.MachTrailBufferTask.machTrailMap
 
 data class MachTrailPacket(
 	private val playerProfile: GameProfile

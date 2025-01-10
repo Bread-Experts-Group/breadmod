@@ -1,13 +1,13 @@
-package org.bread_experts_group.breadmod.util.render
+package org.bread_experts_group.breadmod.util.buffer.render
 
 import com.mojang.authlib.GameProfile
 import com.mojang.math.Axis
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.bread_experts_group.breadmod.client.model.MachTrailModel
 import org.bread_experts_group.breadmod.registry.MachTrailData
-import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
+import org.bread_experts_group.breadmod.util.render.initialTranslate
+import org.bread_experts_group.breadmod.util.render.localClient
 import java.awt.Color
-import java.lang.Math.clamp
 
 object MachTrailBufferTask {
 	/**
@@ -20,7 +20,7 @@ object MachTrailBufferTask {
 	 *
 	 * @author Logan McLean
 	 * @see MachTrailData
-	 * @see ChefHatItem
+	 * @see org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 	 */
 	// todo head rotations
 	fun create(playerProfile: GameProfile) {
@@ -43,7 +43,7 @@ object MachTrailBufferTask {
 					redValue,
 					greenValue,
 					0.1f,
-					clamp(currentOpacity, 0f, 1f)
+					Math.clamp(currentOpacity, 0f, 1f)
 				).rgb
 				val poseStack = event.poseStack
 				val camera = event.camera
@@ -64,8 +64,8 @@ object MachTrailBufferTask {
 
 					poseStack.popPose()
 
-					passthrough[1] = clamp(redValue + 0.05f, 0f, 1f)
-					passthrough[2] = clamp(greenValue - 0.05f, 0f, 1f)
+					passthrough[1] = Math.clamp(redValue + 0.05f, 0f, 1f)
+					passthrough[2] = Math.clamp(greenValue - 0.05f, 0f, 1f)
 					passthrough[0] = currentOpacity - 0.1f * partialTick
 					false
 				} else true

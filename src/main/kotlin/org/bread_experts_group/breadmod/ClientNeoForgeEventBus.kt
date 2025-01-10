@@ -20,6 +20,7 @@ import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
+import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
@@ -27,8 +28,9 @@ import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
-import org.bread_experts_group.breadmod.util.render.MachTrailBufferTask.machTrailMap
-import org.bread_experts_group.breadmod.util.render.RenderBuffer
+import org.bread_experts_group.breadmod.util.buffer.chunk.ChunkBuffer
+import org.bread_experts_group.breadmod.util.buffer.render.MachTrailBufferTask.machTrailMap
+import org.bread_experts_group.breadmod.util.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.redness
 import org.bread_experts_group.breadmod.util.render.skyColorMixinActive
@@ -39,6 +41,16 @@ import kotlin.math.sin
 @Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
+	@SubscribeEvent
+	fun onChunkLoad(event: ChunkEvent.Load) {
+		ChunkBuffer.handleLoad(event)
+	}
+
+	@SubscribeEvent
+	fun onChunkUnload(event: ChunkEvent.Unload) {
+		ChunkBuffer.handleUnload(event)
+	}
+
 	@SubscribeEvent
 	fun registerStageRender(event: RenderLevelStageEvent) {
 		if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {

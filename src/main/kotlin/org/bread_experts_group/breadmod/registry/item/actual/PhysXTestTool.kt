@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.apache.logging.log4j.LogManager
@@ -16,7 +17,7 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.util.render.RenderBuffer
+import org.bread_experts_group.breadmod.util.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.util.render.initialTranslate
 import org.bread_experts_group.breadmod.util.render.localClient
 import org.bread_experts_group.breadmod.util.render.renderBlockModel
@@ -32,6 +33,7 @@ import physx.common.PxTolerancesScale
 import physx.common.PxTransform
 import physx.common.PxVec3
 import physx.geometry.PxBoxGeometry
+import physx.physics.PxBroadPhaseTypeEnum
 import physx.physics.PxFilterData
 import physx.physics.PxMaterial
 import physx.physics.PxPhysics
@@ -44,6 +46,9 @@ import physx.support.PxOmniPvd
 import java.io.File
 import java.net.URL
 import java.nio.file.Files
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.function.Supplier
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
@@ -179,6 +184,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		// PhysX System Objects
 		private val allocator: PxDefaultAllocator = PxDefaultAllocator()
 		private val foundation: PxFoundation
+		private val pvd: PxOmniPvd?
 		private val tolerances: PxTolerancesScale = PxTolerancesScale()
 		private val physics: PxPhysics
 		private val cpuDispatcher: PxDefaultCpuDispatcher
@@ -204,8 +210,11 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		}
 
 		// PhysX Objects
-		private val rigidActors: MutableList<PxRigidActor> = mutableListOf()
+		private val rigidActors: ConcurrentLinkedQueue<PxRigidActor> = ConcurrentLinkedQueue()
 		private val materials: MutableMap<String, PxMaterial> = mutableMapOf()
+
+		// Minecraft Stuff
+		private val actorMap: MutableMap<ChunkPos, MutableMap<Int, MutableMap<Int, PxRigidActor>>> = ConcurrentHashMap()
 
 		fun defineMaterial(
 			name: String,
@@ -225,7 +234,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 				this.allocator,
 				this.errorHandler
 			)
-			val pvd: PxOmniPvd? = PxTopLevelFunctions.CreateOmniPvd(this.foundation)?.also {
+			this.pvd = PxTopLevelFunctions.CreateOmniPvd(this.foundation)?.also {
 				it.writer.setWriteStream(it.fileWriteStream)
 				it.fileWriteStream.setFileName("PhysXTestTool.ovd")
 				it.startSampling()
@@ -236,7 +245,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 				this.foundation,
 				this.tolerances,
 				null,
-				pvd
+				this.pvd
 			)
 
 			this.cpuDispatcher = PxTopLevelFunctions.DefaultCpuDispatcherCreate(
@@ -246,48 +255,99 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			this.sceneDescription.gravity = PxVec3(0f, -9.807f, 0f)
 			this.sceneDescription.cpuDispatcher = this.cpuDispatcher
 			this.sceneDescription.filterShader = PxTopLevelFunctions.DefaultFilterShader()
+			this.sceneDescription.broadPhaseType = PxBroadPhaseTypeEnum.ePABP
 			this.scene = this.physics.createScene(this.sceneDescription)
-			var i = 0
+			var cubeTimer = 0
 			RenderBuffer.add(
 				RenderLevelStageEvent.Stage.AFTER_SKY,
 				{ event, _ ->
 					if (!(this.noExecute || localClient.isPaused)) {
-						i++
-						if (i % 60 == 0) this.addCube(PxVec3(0.5f, 0.5f, 0.5f), "default")
+						cubeTimer++
+						if (cubeTimer % 60 == 0) this.addCube(this.rigidActors, PxVec3(0.5f, 0.5f, 0.5f), "default")
 						this.scene.simulate(event.partialTick.gameTimeDeltaTicks / 20)
 						this.scene.fetchResults(true)
 					}
-
-					this.rigidActors.forEach { actor ->
-						event.poseStack.pushPose()
-						event.poseStack.initialTranslate(event.camera)
-						event.poseStack.translate(actor.globalPose.p.x, actor.globalPose.p.y, actor.globalPose.p.z)
-						event.poseStack.mulPose(
-							Quaternionf(
-								-actor.globalPose.q.x,
-								-actor.globalPose.q.y,
-								actor.globalPose.q.z,
-								actor.globalPose.q.w
+					this.rigidActors.removeIf { actor ->
+						if (actor.globalPose.p.y < (localClient.level?.minBuildHeight ?: 0) - 25) {
+							actor.release()
+							true
+						} else {
+							event.poseStack.pushPose()
+							event.poseStack.initialTranslate(event.camera)
+							event.poseStack.translate(
+								actor.globalPose.p.x,
+								actor.globalPose.p.y,
+								actor.globalPose.p.z
 							)
-						)
-						localClient.blockRenderer.modelRenderer.renderBlockModel(
-							event.poseStack.last(),
-							localClient.renderBuffers().bufferSource(),
-							ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
-							0x7FFFFFFF,
-							OverlayTexture.NO_OVERLAY
-						)
-						event.poseStack.popPose()
+							event.poseStack.mulPose(
+								Quaternionf(
+									-actor.globalPose.q.x,
+									-actor.globalPose.q.y,
+									actor.globalPose.q.z,
+									actor.globalPose.q.w
+								)
+							)
+							localClient.blockRenderer.modelRenderer.renderBlockModel(
+								event.poseStack.last(),
+								localClient.renderBuffers().bufferSource(),
+								ModBlocks.BREAD_BLOCK.get().block.defaultBlockState(),
+								0x7FFFFFFF,
+								OverlayTexture.NO_OVERLAY
+							)
+							event.poseStack.popPose()
+							false
+						}
 					}
 
 					false
 				}
 			)
+			var loadCounter = 0
 			this.defineMaterial("default")
+			// Danger: This code will eat your face off!!
+//			ChunkBuffer.addLoad({ event, _ ->
+//				val chunkMaps = this.actorMap.computeIfAbsent(event.chunk.pos) { mutableMapOf() }
+//
+//				this.noExecute = true
+//				this.scene.lockWrite()
+//				val tmpPos = PxVec3()
+//				event.chunk.findBlocks({ (!it.isAir) && it.fluidState.isEmpty }) { pos, state ->
+//					val x = chunkMaps.computeIfAbsent(pos.x) { mutableMapOf() }
+//					val y = chunkMaps.computeIfAbsent(pos.y) { mutableMapOf() }
+//					if (y.contains(pos.z)) return@findBlocks
+//					loadCounter++
+//					val newCube = this.addCube(null, PxVec3(0.5f, 0.5f, 0.5f), "default", true)
+//					tmpPos.x = pos.x.toFloat(); tmpPos.y = pos.y.toFloat(); tmpPos.z = pos.z.toFloat()
+//					newCube.globalPose.p = tmpPos
+//					y[pos.z] = newCube
+//				}
+//				tmpPos.destroy()
+//				println("Loaded a chunk ($loadCounter blocks)")
+//				this.scene.unlockWrite()
+//				this.noExecute = false
+//				loadCounter = 0
+//				false
+//			})
+//			ChunkBuffer.addUnload({ event, _ ->
+//				val chunkMaps = this.actorMap[event.chunk.pos] ?: return@addUnload false
+//				this.noExecute = true
+//				this.scene.lockWrite()
+//				chunkMaps.values.forEach { x -> x.forEach { y -> y.value.release() } }
+//				println("Unloaded a chunk (${chunkMaps.size} blocks)")
+//				chunkMaps.clear()
+//				this.scene.unlockWrite()
+//				this.noExecute = false
+//				false
+//			})
 			this.resumeSimulation()
 		}
 
-		fun addCube(size: PxVec3, material: String) {
+		fun addCube(
+			actorGroup: Queue<PxRigidActor>?,
+			size: PxVec3,
+			material: String,
+			static: Boolean = false
+		): PxRigidActor {
 			val transform = PxTransform(PxIDENTITYEnum.PxIdentity)
 			val boxGeometry = PxBoxGeometry(0.5f, 0.5f, 0.5f)
 			val boxShape = this.physics.createShape(
@@ -298,12 +358,13 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 					(PxShapeFlagEnum.eSCENE_QUERY_SHAPE.value or PxShapeFlagEnum.eSIMULATION_SHAPE.value).toByte()
 				)
 			)
-			val box = this.physics.createRigidDynamic(transform)
 			boxShape.simulationFilterData = PxFilterData(1, 1, 0, 0)
+			val box = (if (static) this.physics::createRigidStatic else this.physics::createRigidDynamic)(transform)
 			box.attachShape(boxShape)
 			this.scene.addActor(box)
-			this.rigidActors.add(box)
+			actorGroup?.add(box)
 			size.destroy()
+			return box
 		}
 
 		fun cleanup() {
@@ -312,9 +373,12 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			this.materials.clear()
 			this.rigidActors.forEach { it.release() }
 			this.rigidActors.clear()
+			this.actorMap.forEach { (_, x) -> x.forEach { (_, y) -> y.forEach { (_, c) -> c.release() } } }
+			this.actorMap.clear()
 			this.sceneDescription.destroy()
 			this.cpuDispatcher.destroy()
-			this.physics.destroy()
+			this.physics.release()
+			this.pvd?.release()
 			this.foundation.release()
 			this.errorHandler.destroy()
 			this.allocator.destroy()
