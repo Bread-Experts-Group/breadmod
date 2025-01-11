@@ -20,16 +20,16 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModPools.FARMHOUSE_POOL
 
 object ModStructures {
-	fun createKey(id : String) : ResourceKey<Structure> = ResourceKey.create(Registries.STRUCTURE, modLocation(id))
-	val FARMHOUSE : ResourceKey<Structure> = this.createKey("farmhouse")
+	fun createKey(id: String): ResourceKey<Structure> = ResourceKey.create(Registries.STRUCTURE, modLocation(id))
+	val FARMHOUSE: ResourceKey<Structure> = this.createKey("farmhouse")
 	fun structure(
-		biomes : HolderSet<Biome>,
-		spawnOverrides : Map<MobCategory, StructureSpawnOverride> = mapOf(),
-		step : GenerationStep.Decoration = GenerationStep.Decoration.SURFACE_STRUCTURES,
-		adjustment : TerrainAdjustment = TerrainAdjustment.NONE
-	) : StructureSettings = StructureSettings(biomes, spawnOverrides, step, adjustment)
+		biomes: HolderSet<Biome>,
+		spawnOverrides: Map<MobCategory, StructureSpawnOverride> = mapOf(),
+		step: GenerationStep.Decoration = GenerationStep.Decoration.SURFACE_STRUCTURES,
+		adjustment: TerrainAdjustment = TerrainAdjustment.NONE
+	): StructureSettings = StructureSettings(biomes, spawnOverrides, step, adjustment)
 
-	fun bootstrap(pContext : BootstrapContext<Structure>) {
+	fun bootstrap(pContext: BootstrapContext<Structure>) {
 		val biomeHolder = pContext.lookup(Registries.BIOME)
 		val templateHolder = pContext.lookup(Registries.TEMPLATE_POOL)
 		pContext.register(

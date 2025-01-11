@@ -14,30 +14,30 @@ import net.minecraft.client.model.geom.builders.PartDefinition
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.localClient
 
 class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
-	constructor(modelSet : EntityModelSet) : this() {
+	constructor(modelSet: EntityModelSet) : this() {
 		modelSet.bakeLayer(Companion.BACKPACK_LAYER)
 	}
 
 	override fun renderToBuffer(
-		poseStack : PoseStack,
-		buffer : VertexConsumer,
-		packedLight : Int,
-		packedOverlay : Int,
-		color : Int
+		poseStack: PoseStack,
+		buffer: VertexConsumer,
+		packedLight: Int,
+		packedOverlay: Int,
+		color: Int
 	) {
 		localClient.entityModels.bakeLayer(Companion.BACKPACK_LAYER)
 			.render(poseStack, buffer, packedLight, packedOverlay, color)
 	}
 
 	fun render(
-		poseStack : PoseStack,
-		packedLight : Int,
-		packedOverlay : Int,
-		color : Int
-	) : Unit = this.renderToBuffer(
+		poseStack: PoseStack,
+		packedLight: Int,
+		packedOverlay: Int,
+		color: Int
+	): Unit = this.renderToBuffer(
 		poseStack,
 		localClient.renderBuffers().bufferSource().getBuffer(this.renderType(Companion.BACKPACK_TEXTURE)),
 		packedLight,
@@ -46,13 +46,13 @@ class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
 	)
 
 	companion object {
-		val BACKPACK_LAYER : ModelLayerLocation = ModelLayerLocation(modLocation("gluon_gun_backpack"), "main")
-		val BACKPACK_TEXTURE : ResourceLocation = modLocation("textures/item/gluon_gun_backpack.png")
-		fun createLayerDefinition() : LayerDefinition = LayerDefinition.create(this.createMesh(), 128, 128)
-		private fun createMesh() : MeshDefinition {
+		val BACKPACK_LAYER: ModelLayerLocation = ModelLayerLocation(modLocation("gluon_gun_backpack"), "main")
+		val BACKPACK_TEXTURE: ResourceLocation = modLocation("textures/item/gluon_gun_backpack.png")
+		fun createLayerDefinition(): LayerDefinition = LayerDefinition.create(this.createMesh(), 128, 128)
+		private fun createMesh(): MeshDefinition {
 			val meshDefinition = MeshDefinition()
 			val partDefinition = meshDefinition.root
-			val backpack : PartDefinition = partDefinition.addOrReplaceChild(
+			val backpack: PartDefinition = partDefinition.addOrReplaceChild(
 				"Backpack",
 				CubeListBuilder.create().texOffs(0, 0)
 					.addBox(-8.0f, -9.4673f, 0.6748f, 16.0f, 22.0f, 6.0f, CubeDeformation(0.0f))

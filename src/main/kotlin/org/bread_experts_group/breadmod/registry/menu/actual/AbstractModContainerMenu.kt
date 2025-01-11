@@ -8,10 +8,10 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 
 abstract class AbstractModContainerMenu(
-	type : MenuType<*>,
-	id : Int
+	type: MenuType<*>,
+	id: Int
 ) : AbstractContainerMenu(type, id) {
-	fun addInventorySlots(inventory : Inventory, pX : Int, hotBarY : Int, inventoryY : Int) {
+	fun addInventorySlots(inventory: Inventory, pX: Int, hotBarY: Int, inventoryY: Int) {
 		repeat(9) { this.addSlot(Slot(inventory, it, 8 + it * 18, hotBarY)) }
 		repeat(3) { y ->
 			repeat(9) { x ->
@@ -27,36 +27,35 @@ abstract class AbstractModContainerMenu(
 		}
 	}
 
-	override fun quickMoveStack(player : Player, index : Int) : ItemStack = this.moveStackFunction(player, index)
-	override fun stillValid(player : Player) : Boolean = player.containerMenu == this
+	override fun quickMoveStack(player: Player, index: Int): ItemStack = this.moveStackFunction(player, index)
+	override fun stillValid(player: Player): Boolean = player.containerMenu == this
+
 	/**
 	 * ### Used in [quickMoveStack] to enable shift clicking items into the target inventory
 	 * value must match the number of slots your block entity has
 	 */
-	open val containerSlotCount : Int = 0
+	open val containerSlotCount: Int = 0
 	private fun moveStackFunction(playerIn: Player, pIndex: Int): ItemStack {
 		val sourceSlot = this.slots[pIndex]
 		if (!sourceSlot.hasItem()) return ItemStack.EMPTY //EMPTY_ITEM
-
 		val sourceStack = sourceSlot.item
 		val copyOfSourceStack = sourceStack.copy()
-
 		// Check if the slot clicked is one of the vanilla container slots
-		if (pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
+		if (pIndex < Companion.VANILLA_FIRST_SLOT_INDEX + Companion.VANILLA_SLOT_COUNT) {
 			// This is a vanilla container slot so merge the stack into the tile inventory
-			if (!moveItemStackTo(
+			if (!this.moveItemStackTo(
 					sourceStack,
-					TE_INVENTORY_FIRST_SLOT_INDEX,
-					TE_INVENTORY_FIRST_SLOT_INDEX + containerSlotCount,
+					Companion.TE_INVENTORY_FIRST_SLOT_INDEX,
+					Companion.TE_INVENTORY_FIRST_SLOT_INDEX + this.containerSlotCount,
 					false
 				)
 			) return ItemStack.EMPTY // EMPTY_ITEM
-		} else if (pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + containerSlotCount) {
+		} else if (pIndex < Companion.TE_INVENTORY_FIRST_SLOT_INDEX + this.containerSlotCount) {
 			// This is a BE slot so merge the stack into the player's inventory
-			if (!moveItemStackTo(
+			if (!this.moveItemStackTo(
 					sourceStack,
-					VANILLA_FIRST_SLOT_INDEX,
-					VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT,
+					Companion.VANILLA_FIRST_SLOT_INDEX,
+					Companion.VANILLA_FIRST_SLOT_INDEX + Companion.VANILLA_SLOT_COUNT,
 					false
 				)
 			) return ItemStack.EMPTY
@@ -80,9 +79,9 @@ abstract class AbstractModContainerMenu(
 		const val HOTBAR_SLOT_COUNT = 9
 		const val PLAYER_INVENTORY_ROW_COUNT = 3
 		const val PLAYER_INVENTORY_COLUMN_COUNT = 9
-		const val PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT
-		const val VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT
+		const val PLAYER_INVENTORY_SLOT_COUNT = this.PLAYER_INVENTORY_COLUMN_COUNT * this.PLAYER_INVENTORY_ROW_COUNT
+		const val VANILLA_SLOT_COUNT = this.HOTBAR_SLOT_COUNT + this.PLAYER_INVENTORY_SLOT_COUNT
 		const val VANILLA_FIRST_SLOT_INDEX = 0
-		const val TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT
+		const val TE_INVENTORY_FIRST_SLOT_INDEX = this.VANILLA_FIRST_SLOT_INDEX + this.VANILLA_SLOT_COUNT
 	}
 }

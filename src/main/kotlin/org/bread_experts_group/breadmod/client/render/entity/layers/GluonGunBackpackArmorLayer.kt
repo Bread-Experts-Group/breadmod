@@ -18,26 +18,26 @@ import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.util.plus
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.joml.Matrix4f
 import java.awt.Color
 
 class GluonGunBackpackArmorLayer(
-	renderer : RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
+	renderer: RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
 ) : RenderLayer<LivingEntity, EntityModel<LivingEntity>>(renderer) {
 	private val backpackModel = GluonGunBackpackModel(localClient.entityModels)
 	override fun render(
-		poseStack : PoseStack,
-		bufferSource : MultiBufferSource,
-		packedLight : Int,
-		livingEntity : LivingEntity,
-		limbSwing : Float,
-		limbSwingAmount : Float,
-		partialTick : Float,
-		ageInTicks : Float,
-		netHeadYaw : Float,
-		headPitch : Float
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedLight: Int,
+		livingEntity: LivingEntity,
+		limbSwing: Float,
+		limbSwingAmount: Float,
+		partialTick: Float,
+		ageInTicks: Float,
+		netHeadYaw: Float,
+		headPitch: Float
 	) {
 		val stack = livingEntity.getItemBySlot(EquipmentSlot.CHEST)
 		val item = stack.item
@@ -60,10 +60,10 @@ class GluonGunBackpackArmorLayer(
 	}
 
 	private fun renderLeash(
-		livingEntity : LivingEntity,
-		partialTick : Float,
-		poseStack : PoseStack,
-		bufferSource : MultiBufferSource
+		livingEntity: LivingEntity,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource
 	) {
 		poseStack.pushPose()
 		val vec3 = livingEntity.getPosition(partialTick) + Vec3(-1.0, 0.5, 0.0) // The end of the rope
@@ -119,20 +119,20 @@ class GluonGunBackpackArmorLayer(
 	}
 
 	fun addVertexPair(
-		buffer : VertexConsumer,
-		pose : Matrix4f,
-		startX : Float,
-		startY : Float,
-		startZ : Float,
-		entityBlockLight : Int,
-		holderBlockLight : Int,
-		entitySkyLight : Int,
-		holderSkyLight : Int,
-		dy : Float,
-		dx : Float,
-		dz : Float,
-		index : Int,
-		reverse : Boolean
+		buffer: VertexConsumer,
+		pose: Matrix4f,
+		startX: Float,
+		startY: Float,
+		startZ: Float,
+		entityBlockLight: Int,
+		holderBlockLight: Int,
+		entitySkyLight: Int,
+		holderSkyLight: Int,
+		dy: Float,
+		dx: Float,
+		dz: Float,
+		index: Int,
+		reverse: Boolean
 	) {
 		val f = index.toFloat() / 24.0f
 		val i = Mth.lerp(f, entityBlockLight.toFloat(), holderBlockLight.toFloat()).toInt()

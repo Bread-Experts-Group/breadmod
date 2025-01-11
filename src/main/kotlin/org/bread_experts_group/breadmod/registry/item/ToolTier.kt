@@ -8,12 +8,12 @@ import net.minecraft.world.level.block.Block
 import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
 
 enum class ToolTier(
-	private val incorrectTool : TagKey<Block>,
-	private val getUses : Int,
-	private val getSpeed : Float,
-	private val getAttackDamageBonus : Float,
-	private val getEnchantmentValue : Int,
-	private val getRepairIngredient : Ingredient
+	private val incorrectTool: TagKey<Block>,
+	private val getUses: Int,
+	private val getSpeed: Float,
+	private val getAttackDamageBonus: Float,
+	private val getEnchantmentValue: Int,
+	private val getRepairIngredient: Ingredient
 ) : Tier {
 	BREAD(
 		ModBlockTags.INCORRECT_FOR_BREAD_TOOL,
@@ -32,10 +32,10 @@ enum class ToolTier(
 		Ingredient.of(Items.NETHERITE_INGOT)
 	); // Reinforced
 
-	override fun getIncorrectBlocksForDrops() : TagKey<Block> = this.incorrectTool
-	override fun getUses() : Int = this.getUses
-	override fun getSpeed() : Float = this.getSpeed
-	override fun getAttackDamageBonus() : Float = this.getAttackDamageBonus
-	override fun getEnchantmentValue() : Int = this.getEnchantmentValue
-	override fun getRepairIngredient() : Ingredient = this.getRepairIngredient
+	override fun getIncorrectBlocksForDrops(): TagKey<Block> = this.incorrectTool
+	override fun getUses(): Int = this.getUses
+	override fun getSpeed(): Float = this.getSpeed
+	override fun getAttackDamageBonus(): Float = this.getAttackDamageBonus
+	override fun getEnchantmentValue(): Int = this.getEnchantmentValue
+	override fun getRepairIngredient(): Ingredient = this.getRepairIngredient
 }

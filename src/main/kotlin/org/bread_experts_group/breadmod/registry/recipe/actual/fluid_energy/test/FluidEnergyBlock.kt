@@ -13,21 +13,21 @@ import org.bread_experts_group.breadmod.registry.block.actual.AbstractTickingBlo
 
 class FluidEnergyBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	companion object {
-		val CODEC : MapCodec<FluidEnergyBlock> = simpleCodec { FluidEnergyBlock() }
+		val CODEC: MapCodec<FluidEnergyBlock> = simpleCodec { FluidEnergyBlock() }
 	}
 
-	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
-	override fun codec() : MapCodec<FluidEnergyBlock> = CODEC
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
+	override fun codec(): MapCodec<FluidEnergyBlock> = org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlock.Companion.CODEC
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		FluidEnergyBlockEntity(pos, state)
 
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		if (!level.isClientSide) {
 			val entity = level.getBlockEntity(pos) as? FluidEnergyBlockEntity ?: return InteractionResult.FAIL
 			player.openMenu(entity, pos)
@@ -36,11 +36,11 @@ class FluidEnergyBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	}
 
 	override fun onRemove(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		newState : BlockState,
-		movedByPiston : Boolean
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		newState: BlockState,
+		movedByPiston: Boolean
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = level.getBlockEntity(pos) as FluidEnergyBlockEntity

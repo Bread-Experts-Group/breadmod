@@ -9,11 +9,11 @@ import org.bread_experts_group.breadmod.registry.menu.actual.AbstractModContaine
 import org.bread_experts_group.breadmod.registry.menu.actual.ResultSlotItemHandler
 
 class FluidEnergyMenu(
-	id : Int,
-	inventory : Inventory,
-	val parent : FluidEnergyBlockEntity
+	id: Int,
+	inventory: Inventory,
+	val parent: FluidEnergyBlockEntity
 ) : AbstractModContainerMenu(ModMenuTypes.FLUID_ENERGY_TEST.get(), id) {
-	constructor(id : Int, inventory : Inventory, byteBuf : RegistryFriendlyByteBuf) : this(
+	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.FLUID_ENERGY.get()).get()
 	)
@@ -32,5 +32,5 @@ class FluidEnergyMenu(
 		this.addSlot(ResultSlotItemHandler(this.parent.items, 7, 75, 45))
 	}
 
-	override val containerSlotCount : Int = 8
+	override val containerSlotCount: Int = 8
 }

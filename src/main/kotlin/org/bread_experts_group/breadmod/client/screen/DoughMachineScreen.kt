@@ -14,15 +14,15 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.util.formatUnit
-import org.bread_experts_group.breadmod.util.render.renderFluid
+import org.bread_experts_group.breadmod.client.render.renderFluid
 
 class DoughMachineScreen(
-	menu : DoughMachineMenu,
-	inventory : Inventory,
-	title : Component
+	menu: DoughMachineMenu,
+	inventory: Inventory,
+	title: Component
 ) : AbstractContainerScreen<DoughMachineMenu>(menu, inventory, title) {
-	val texture : ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
-	override fun renderBg(guiGraphics : GuiGraphics, partialTick : Float, mouseX : Int, mouseY : Int) {
+	val texture: ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
+	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F)
 		RenderSystem.setShaderTexture(0, this.texture)
@@ -33,7 +33,7 @@ class DoughMachineScreen(
 		this.renderEnergyMeter(guiGraphics)
 	}
 
-	override fun render(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
+	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
 		val showShort = !(this.minecraft ?: return).options.keyShift.isDown
 		if (this.isHovering(132, 28, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
@@ -85,7 +85,7 @@ class DoughMachineScreen(
 		this.renderTooltip(guiGraphics, mouseX, mouseY)
 	}
 
-	private fun renderProgressArrow(guiGraphics : GuiGraphics) {
+	private fun renderProgressArrow(guiGraphics: GuiGraphics) {
 		if (this.menu.isCrafting()) {
 			guiGraphics.blit(
 				this.texture,
@@ -99,7 +99,7 @@ class DoughMachineScreen(
 		}
 	}
 
-	private fun renderEnergyMeter(guiGraphics : GuiGraphics) {
+	private fun renderEnergyMeter(guiGraphics: GuiGraphics) {
 		val energyStored = this.menu.getEnergyStoredScaled()
 		guiGraphics.blit(
 			this.texture,

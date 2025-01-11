@@ -16,29 +16,29 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 
 class SingleItemRecipeBlock : BaseEntityBlock(Properties.of()) {
 	companion object {
-		val CODEC : MapCodec<SingleItemRecipeBlock> = simpleCodec { SingleItemRecipeBlock() }
+		val CODEC: MapCodec<SingleItemRecipeBlock> = simpleCodec { SingleItemRecipeBlock() }
 	}
 
-	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
-	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
+	override fun codec(): MapCodec<out BaseEntityBlock> = Companion.CODEC
 	override fun onRemove(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		newState : BlockState,
-		movedByPiston : Boolean
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		newState: BlockState,
+		movedByPiston: Boolean
 	) {
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		if (!level.isClientSide) {
 			val entity = level.getBlockEntity(pos) as? SingleItemRecipeBlockEntity ?: return InteractionResult.FAIL
 			player.openMenu(entity, pos)
@@ -46,14 +46,14 @@ class SingleItemRecipeBlock : BaseEntityBlock(Properties.of()) {
 		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		SingleItemRecipeBlockEntity(pos, state)
 
 	override fun <T : BlockEntity?> getTicker(
-		level : Level,
-		state : BlockState,
-		blockEntityType : BlockEntityType<T>
-	) : BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
+		level: Level,
+		state: BlockState,
+		blockEntityType: BlockEntityType<T>
+	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.SINGLE_ITEM_TEST.get()
 	) { tLevel, tPos, tState, tBlockEntity ->

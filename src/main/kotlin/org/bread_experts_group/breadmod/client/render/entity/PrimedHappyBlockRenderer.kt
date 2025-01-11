@@ -13,19 +13,19 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 
 class PrimedHappyBlockRenderer(
-	private val context : EntityRendererProvider.Context
+	private val context: EntityRendererProvider.Context
 ) : EntityRenderer<PrimedHappyBlock>(context) {
 	init {
 		this.shadowRadius = 0.5f
 	}
 
 	override fun render(
-		primedHappyBlock : PrimedHappyBlock,
-		entityYaw : Float,
-		partialTick : Float,
-		poseStack : PoseStack,
-		bufferSource : MultiBufferSource,
-		packedLight : Int
+		primedHappyBlock: PrimedHappyBlock,
+		entityYaw: Float,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedLight: Int
 	) {
 		poseStack.pushPose()
 		poseStack.translate(0.0f, 0.5f, 0.0f)
@@ -54,6 +54,6 @@ class PrimedHappyBlockRenderer(
 		super.render(primedHappyBlock, entityYaw, partialTick, poseStack, bufferSource, packedLight)
 	}
 
-	override fun getTextureLocation(entity : PrimedHappyBlock) : ResourceLocation =
+	override fun getTextureLocation(entity: PrimedHappyBlock): ResourceLocation =
 		modLocation("textures", "block", "happy_block.png")
 }

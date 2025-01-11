@@ -22,17 +22,17 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class SingleFluidItemRecipe(
-	rFluidInput : SizedFluidIngredient,
-	rItemInput : SizedIngredient,
-	rItemOutput : ItemStack,
-	rFluidOutput : FluidStack,
-	rTime : Int?,
-	rEnergy : Int?
+	rFluidInput: SizedFluidIngredient,
+	rItemInput: SizedIngredient,
+	rItemOutput: ItemStack,
+	rFluidOutput: FluidStack,
+	rTime: Int?,
+	rEnergy: Int?
 ) : BreadModRecipes.SingleFluidItem(rFluidInput, rItemInput, rItemOutput, rFluidOutput, rTime, rEnergy) {
-	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.SINGLE_FLUID_ITEM.get()
-	override fun getType() : RecipeType<*> = ModRecipeTypes.SINGLE_FLUID_ITEM.get()
+	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.SINGLE_FLUID_ITEM.get()
+	override fun getType(): RecipeType<*> = ModRecipeTypes.SINGLE_FLUID_ITEM.get()
 	class Serializer : BMRecipeSerializer<SingleFluidItemRecipe>() {
-		override fun codec() : MapCodec<SingleFluidItemRecipe> = RecordCodecBuilder.mapCodec { inst ->
+		override fun codec(): MapCodec<SingleFluidItemRecipe> = RecordCodecBuilder.mapCodec { inst ->
 			inst.group(
 				SizedFluidIngredient.FLAT_CODEC.fieldOf("fluid_ingredient")
 					.forGetter(SingleFluidItemRecipe::rFluidInput),
@@ -44,7 +44,7 @@ class SingleFluidItemRecipe(
 			).apply(inst, ::SingleFluidItemRecipe)
 		}
 
-		override fun streamCodec() : StreamCodec<RegistryFriendlyByteBuf, SingleFluidItemRecipe> =
+		override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, SingleFluidItemRecipe> =
 			StreamCodec.composite(
 				SizedFluidIngredient.STREAM_CODEC, SingleFluidItemRecipe::rFluidInput,
 				SizedIngredient.STREAM_CODEC, SingleFluidItemRecipe::rItemInput,
@@ -57,11 +57,11 @@ class SingleFluidItemRecipe(
 	}
 
 	class Builder(
-		private val itemResult : Pair<Item, Int>,
-		private val fluidResult : Pair<Fluid, Int>
+		private val itemResult: Pair<Item, Int>,
+		private val fluidResult: Pair<Fluid, Int>
 	) : BMRecipeBuilder.Single() {
-		override fun getResult() : Item = this.itemResult.first
-		override fun save(recipeOutput : RecipeOutput, id : ResourceLocation) {
+		override fun getResult(): Item = this.itemResult.first
+		override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
 			val recipe = SingleFluidItemRecipe(
 				this.fluid,
 				this.item,

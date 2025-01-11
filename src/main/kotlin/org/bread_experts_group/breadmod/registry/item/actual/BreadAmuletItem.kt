@@ -12,15 +12,15 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
 import java.text.DecimalFormat
 
-class BreadAmuletItem(durability : Int) : Item(Properties().durability(durability)) {
+class BreadAmuletItem(durability: Int) : Item(Properties().durability(durability)) {
 	private companion object {
-		val decimalFormat : DecimalFormat = DecimalFormat("0.#")
-		val timers : MutableMap<String, PlayerData> = mutableMapOf<String, PlayerData>()
+		val decimalFormat: DecimalFormat = DecimalFormat("0.#")
+		val timers: MutableMap<String, PlayerData> = mutableMapOf<String, PlayerData>()
 	}
 
-	data class PlayerData(var timeLeft : Int, var lastExec : Int)
+	data class PlayerData(var timeLeft: Int, var lastExec: Int)
 
-	private fun playerFood(stack : ItemStack, player : Player) {
+	private fun playerFood(stack: ItemStack, player: Player) {
 		val feedTime = COMMON.breadAmuletFeedTimeTicks.get()
 		val feedAmount = COMMON.breadAmuletFeedAmount.get()
 		val feedStacks = COMMON.breadAmuletEffectCanStack.get()
@@ -37,20 +37,20 @@ class BreadAmuletItem(durability : Int) : Item(Properties().durability(durabilit
 	}
 
 	override fun inventoryTick(
-		stack : ItemStack,
-		level : Level,
-		entity : Entity,
-		slotId : Int,
-		isSelected : Boolean
-	) : Unit =
+		stack: ItemStack,
+		level: Level,
+		entity: Entity,
+		slotId: Int,
+		isSelected: Boolean
+	): Unit =
 		if (entity is Player) this.playerFood(stack, entity) else {
 		}
 
 	override fun appendHoverText(
-		stack : ItemStack,
-		context : TooltipContext,
-		tooltipComponents : MutableList<Component>,
-		tooltipFlag : TooltipFlag
+		stack: ItemStack,
+		context: TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
 	) {
 		val secDelay = COMMON.breadAmuletFeedTimeTicks.get().toDouble() / 20
 		val bars = COMMON.breadAmuletFeedAmount.get().toDouble() / 2

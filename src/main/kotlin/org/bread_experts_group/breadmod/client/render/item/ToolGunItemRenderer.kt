@@ -13,27 +13,29 @@ import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunAnimationH
 import org.bread_experts_group.breadmod.client.render.tool_gun.drawTextOnScreen
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.modelLocation
-import org.bread_experts_group.breadmod.util.render.renderBlockModel
-import org.bread_experts_group.breadmod.util.render.renderItemModel
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.modelLocation
+import org.bread_experts_group.breadmod.client.render.renderBlockModel
+import org.bread_experts_group.breadmod.client.render.renderItemModel
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import java.awt.Color
 
 class ToolGunItemRenderer :
 	BlockEntityWithoutLevelRenderer(localClient.blockEntityRenderDispatcher, localClient.entityModels) {
-	private companion object;
-	private val mainModelLocation = modelLocation("item/$TOOL_GUN_DEF/item")
-	private val coilModelLocation = modelLocation("item/$TOOL_GUN_DEF/coil")
-	private val altModelLocation = modelLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
-	private val useAltModel = ModConfiguration.CLIENT.useAlternateToolGunModel
+	private companion object {
+		val mainModelLocation = modelLocation("item/$TOOL_GUN_DEF/item")
+		val coilModelLocation = modelLocation("item/$TOOL_GUN_DEF/coil")
+		val altModelLocation = modelLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
+		val useAltModel = ModConfiguration.CLIENT.useAlternateToolGunModel
+	}
+
 	override fun renderByItem(
-		stack : ItemStack,
-		displayContext : ItemDisplayContext,
-		poseStack : PoseStack,
-		buffer : MultiBufferSource,
-		packedLight : Int,
-		packedOverlay : Int
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int
 	) {
 //    val toolGunItem = stack.item as ToolGunItem
 //      val toolGunMode = toolGunItem.getCurrentMode(stack)
@@ -41,9 +43,9 @@ class ToolGunItemRenderer :
 		val itemRenderer = localClient.itemRenderer
 		val blockModelRenderer = localClient.blockRenderer.modelRenderer
 		val font = localClient.font
-		val mainModel = modelManager.getModel(this.mainModelLocation)
-		val coilModel = modelManager.getModel(this.coilModelLocation)
-		val altModel = modelManager.getModel(this.altModelLocation)
+		val mainModel = modelManager.getModel(Companion.mainModelLocation)
+		val coilModel = modelManager.getModel(Companion.coilModelLocation)
+		val altModel = modelManager.getModel(Companion.altModelLocation)
 		val animHandler = ToolGunAnimationHandler
 		val rotation = animHandler.coilRotation
 		val recoil = animHandler.recoil
@@ -83,7 +85,7 @@ class ToolGunItemRenderer :
 
 		if (displayContext.firstPerson()) {
 			poseStack.translate(-recoil, 0.0f, 0.0f)
-			if (this.useAltModel.get()) {
+			if (Companion.useAltModel.get()) {
 				itemRenderer.renderItemModel(
 					altModel,
 					stack,
@@ -129,7 +131,7 @@ class ToolGunItemRenderer :
 				rotateCoilAndRender()
 			}
 		} else {
-			if (this.useAltModel.get()) {
+			if (Companion.useAltModel.get()) {
 				itemRenderer.renderItemModel(
 					altModel,
 					stack,

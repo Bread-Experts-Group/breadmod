@@ -5,7 +5,7 @@ import net.minecraft.world.entity.player.Inventory
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractRecipeScreen
 
 class SingleItemScreen(
-	menu : SingleItemRecipeMenu,
-	inventory : Inventory,
-	title : Component
+	menu: SingleItemRecipeMenu,
+	inventory: Inventory,
+	title: Component
 ) : AbstractRecipeScreen<SingleItemRecipeMenu>(menu, inventory, title)

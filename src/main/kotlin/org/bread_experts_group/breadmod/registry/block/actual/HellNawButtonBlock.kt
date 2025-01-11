@@ -35,11 +35,11 @@ class HellNawButtonBlock : ButtonBlock(
 	private val eastAABB = Block.box(0.0, 5.0, 5.0, 1.4, 11.0, 11.0)
 	private val eastPressedAABB = Block.box(0.0, 5.0, 5.0, 0.9, 11.0, 11.0)
 	override fun getShape(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		context : CollisionContext
-	) : VoxelShape {
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		context: CollisionContext
+	): VoxelShape {
 		val direction = state.getValue(FACING)
 		val flag = state.getValue(POWERED)
 		return when (state.getValue(FACE) as AttachFace) {

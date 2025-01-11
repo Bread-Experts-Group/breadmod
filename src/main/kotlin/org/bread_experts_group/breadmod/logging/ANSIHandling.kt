@@ -2,7 +2,7 @@
 
 package org.bread_experts_group.breadmod.logging
 
-enum class GraphicsModes(val value : Int) {
+enum class GraphicsModes(val value: Int) {
 	// Graphics
 	BOLD(1),
 	DIM(2),
@@ -14,6 +14,7 @@ enum class GraphicsModes(val value : Int) {
 	STRIKETHROUGH(9),
 	BACKGROUND(10),
 	BRIGHT(60),
+
 	// Colors
 	BLACK(30),
 	RED(31),
@@ -25,7 +26,7 @@ enum class GraphicsModes(val value : Int) {
 	WHITE(37)
 }
 
-enum class GraphicsModesResets(val value : Int) {
+enum class GraphicsModesResets(val value: Int) {
 	// Graphics Resets
 	BOLD_DIM_RESET(22),
 	ITALIC_RESET(23),
@@ -34,26 +35,28 @@ enum class GraphicsModesResets(val value : Int) {
 	REVERSE_RESET(27),
 	HIDDEN_RESET(28),
 	STRIKETHROUGH_RESET(29),
+
 	// Colors Resets
 	FG_RESET(39),
 	BG_RESET(49),
+
 	// Master Reset
 	RESET(0)
 }
 
-const val ANSI_CONTROL_SEQUENCE_ESCAPE : String = "\u001B["
-const val ANSI_GRAPHICS_END : String = "m"
-infix fun GraphicsModes.join(text : String) : String =
+const val ANSI_CONTROL_SEQUENCE_ESCAPE: String = "\u001B["
+const val ANSI_GRAPHICS_END: String = "m"
+infix fun GraphicsModes.join(text: String): String =
 	"$ANSI_CONTROL_SEQUENCE_ESCAPE${this.value}${ANSI_GRAPHICS_END}$text"
 
-infix fun GraphicsModes.join(char : Char) : String = this.join(char.toString())
+infix fun GraphicsModes.join(char: Char): String = this.join(char.toString())
 typealias ChainedMode = MutableList<GraphicsModes>
 
-infix fun GraphicsModes.set(mode : GraphicsModes) : ChainedMode = mutableListOf(this, mode)
-infix fun ChainedMode.set(mode : GraphicsModes) : ChainedMode = this.also { it.add(mode) }
-infix fun ChainedMode.join(text : String) : String =
+infix fun GraphicsModes.set(mode: GraphicsModes): ChainedMode = mutableListOf(this, mode)
+infix fun ChainedMode.set(mode: GraphicsModes): ChainedMode = this.also { it.add(mode) }
+infix fun ChainedMode.join(text: String): String =
 	"$ANSI_CONTROL_SEQUENCE_ESCAPE${this.joinToString(";") { it.value.toString() }}${ANSI_GRAPHICS_END}$text"
 
-infix fun ChainedMode.join(char : Char) : String = this.join(char.toString())
-infix fun String.reset(reset : GraphicsModesResets) : String =
+infix fun ChainedMode.join(char: Char): String = this.join(char.toString())
+infix fun String.reset(reset: GraphicsModesResets): String =
 	"$this$ANSI_CONTROL_SEQUENCE_ESCAPE${reset.value}${ANSI_GRAPHICS_END}"

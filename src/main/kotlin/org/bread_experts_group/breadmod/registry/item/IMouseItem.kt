@@ -12,9 +12,10 @@ interface IMouseItem {
 	/**
 	 * Fires when mouse is scrolled while holding item.
 	 */
-	fun onMouseScroll(scrollingEvent : MouseScrollingEvent, heldStack : ItemStack, player : Player) {}
+	fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {}
+
 	/**
 	 * Fires during mouse input while holding item.
 	 */
-	fun onMouseInput(mouseEvent : InputEvent.MouseButton.Post, heldStack : ItemStack, player : Player) {}
+	fun onMouseInput(mouseEvent: InputEvent.MouseButton.Post, heldStack: ItemStack, player: Player) {}
 }

@@ -1,17 +1,18 @@
-package org.bread_experts_group.breadmod.util.buffer.render
+package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import net.minecraft.client.renderer.RenderType
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.minecraft.client.player.LocalPlayer
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.util.render.drawTexturedQuad
-import org.bread_experts_group.breadmod.util.render.initialTranslate
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.drawTexturedQuad
+import org.bread_experts_group.breadmod.client.render.initialTranslate
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.joml.Vector3f
 import org.joml.Vector4f
 
 object BeamBufferTask {
 	/**
-	 * Draws a line from between [start] and [end], translated according to the current [net.minecraft.client.player.LocalPlayer]'s position.
+	 * Draws a line from between [start] and [end],translated according to the current [LocalPlayer]'s position.
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
@@ -21,7 +22,7 @@ object BeamBufferTask {
 		val bufferSource = localClient.renderBuffers().bufferSource()
 
 		RenderBuffer.add(
-			RenderLevelStageEvent.Stage.AFTER_PARTICLES,
+			Stage.AFTER_PARTICLES,
 			{ event, passthrough ->
 				val currentOpacity = passthrough[0] as Float
 				val poseStack = event.poseStack
@@ -36,7 +37,7 @@ object BeamBufferTask {
 					if (thickness != null) {
 						// South
 						drawTexturedQuad(
-							BreadMod.Companion.modLocation("block", "bread_block"),
+							BreadMod.modLocation("block", "bread_block"),
 							RenderType.translucent(),
 							poseStack,
 							bufferSource,
@@ -49,7 +50,7 @@ object BeamBufferTask {
 //            poseStack.translate(2f, 0f, 0f)
 						// East
 						drawTexturedQuad(
-							BreadMod.Companion.modLocation("block", "bread_block"),
+							BreadMod.modLocation("block", "bread_block"),
 							RenderType.translucent(),
 							poseStack,
 							bufferSource,
@@ -61,7 +62,7 @@ object BeamBufferTask {
 						)
 						// West
 						drawTexturedQuad(
-							BreadMod.Companion.modLocation("block", "bread_block"),
+							BreadMod.modLocation("block", "bread_block"),
 							RenderType.translucent(),
 							poseStack,
 							bufferSource,
@@ -73,7 +74,7 @@ object BeamBufferTask {
 						)
 						// North
 						drawTexturedQuad(
-							BreadMod.Companion.modLocation("block", "bread_block"),
+							BreadMod.modLocation("block", "bread_block"),
 							RenderType.translucent(),
 							poseStack,
 							bufferSource,
@@ -85,7 +86,7 @@ object BeamBufferTask {
 						)
 						// Start
 						drawTexturedQuad(
-							BreadMod.Companion.modLocation("block", "bread_block"),
+							BreadMod.modLocation("block", "bread_block"),
 							RenderType.translucent(),
 							poseStack,
 							bufferSource,
@@ -97,7 +98,7 @@ object BeamBufferTask {
 						)
 						// End
 						drawTexturedQuad(
-							BreadMod.Companion.modLocation("block", "bread_block"),
+							BreadMod.modLocation("block", "bread_block"),
 							RenderType.translucent(),
 							poseStack,
 							bufferSource,

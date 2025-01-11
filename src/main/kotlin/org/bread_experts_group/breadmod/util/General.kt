@@ -22,8 +22,9 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.util.function.Supplier
 import kotlin.math.round
 
-internal val formatArray : List<String> =
+internal val formatArray: List<String> =
 	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
+
 /**
  * Limits a number to 1000, and provides a keyword describing it in a shortened format.
  * For example, 1000 → "1", "k".
@@ -38,7 +39,7 @@ internal val formatArray : List<String> =
  * @see formatUnit
  * @see formatArray
  */
-fun formatNumber(n : Double, unitOffset : Int = 0, unitMax : Int = 1000) : Pair<Double, String> {
+fun formatNumber(n: Double, unitOffset: Int = 0, unitMax: Int = 1000): Pair<Double, String> {
 	var num = n
 	var index = 10 + unitOffset
 	while (num >= unitMax && index < formatArray.size - 1) {
@@ -51,6 +52,7 @@ fun formatNumber(n : Double, unitOffset : Int = 0, unitMax : Int = 1000) : Pair<
 	}
 	return num to formatArray[index]
 }
+
 /**
  * Formats a number.
  * @return The formatted number: `"X S / Y S W (Z%)"` assuming X is under Y, otherwise `"Y / X S W (Z%)"`.
@@ -67,14 +69,14 @@ fun formatNumber(n : Double, unitOffset : Int = 0, unitMax : Int = 1000) : Pair<
  * @see formatNumber
  */
 fun formatUnit(
-	from : Double,
-	to : Double,
-	unit : String,
-	formatShort : Boolean,
-	decimals : Int,
-	unitOffset : Int = 0,
-	unitMax : Int = 1000
-) : String {
+	from: Double,
+	to: Double,
+	unit: String,
+	formatShort: Boolean,
+	decimals: Int,
+	unitOffset: Int = 0,
+	unitMax: Int = 1000
+): String {
 	val formatStr = "%.${decimals}f %s/ %.${decimals}f %s (%.${decimals}f%%)"
 	val percent = (from / to) * 100
 	if (formatShort) {
@@ -94,6 +96,7 @@ fun formatUnit(
 		percent
 	)
 }
+
 /**
  * Checks if this [Fluid] can be represented under the given [TagKey].
  * @param tag The [TagKey] to check against.
@@ -101,9 +104,10 @@ fun formatUnit(
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun isTag(tag : TagKey<Fluid>) : Boolean = (BuiltInRegistries.FLUID.getTag(tag).get() == tag) /*?: false*/
-inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd : Supplier<A>) : IntrinsicTagAppender<T> =
+fun isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).get() == tag) /*?: false*/
+inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
+
 /**
  * A result of a raycast operation.
  * @author Miko Elbrecht
@@ -116,27 +120,27 @@ sealed class RaycastResult(
 	 * @since 1.0.0
 	 * @see RayCastResultType
 	 */
-	val type : RayCastResultType,
+	val type: RayCastResultType,
 	/**
 	 * The [Vec3] this raycast started at.
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
 	@Suppress("unused")
-	val startPosition : Vec3,
+	val startPosition: Vec3,
 	/**
 	 * The [Vec3] this raycast ended at (either by missing or hitting something).
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
 	@Suppress("unused")
-	val endPosition : Vec3,
+	val endPosition: Vec3,
 	/**
 	 * The unit direction this raycast was aimed towards.
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	val direction : Vec3
+	val direction: Vec3
 ) {
 	/**
 	 * The type of the result; either [RayCastResultType.ENTITY] or [RayCastResultType.BLOCK].
@@ -150,6 +154,7 @@ sealed class RaycastResult(
 		 * @since 1.0.0
 		 */
 		ENTITY,
+
 		/**
 		 * The result was for detecting [Block]s.
 		 * @author Miko Elbrecht
@@ -157,21 +162,23 @@ sealed class RaycastResult(
 		 */
 		BLOCK
 	}
+
 	/**
 	 * A result of a raycast operation for [Block]s.
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
 	class Block(
-		startPosition : Vec3, endPosition : Vec3, direction : Vec3
+		startPosition: Vec3, endPosition: Vec3, direction: Vec3
 	) : RaycastResult(RayCastResultType.BLOCK, startPosition, endPosition, direction)
+
 	/**
 	 * A result of a raycast operation for an [Entity].
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
 	class Entity(
-		startPosition : Vec3, endPosition : Vec3, direction : Vec3
+		startPosition: Vec3, endPosition: Vec3, direction: Vec3
 	) : RaycastResult(RayCastResultType.ENTITY, startPosition, endPosition, direction)
 
 	companion object {
@@ -189,11 +196,11 @@ sealed class RaycastResult(
 		 * @see Entity
 		 */
 		fun Level.entityRaycast(
-			exclude : net.minecraft.world.entity.Entity?,
-			origin : Vec3,
-			direction : Vec3,
-			length : Double
-		) : Entity? {
+			exclude: net.minecraft.world.entity.Entity?,
+			origin: Vec3,
+			direction: Vec3,
+			length: Double
+		): Entity? {
 			var distance = 0.0
 			while (true) {
 				val position = origin + (direction * distance)
@@ -209,6 +216,7 @@ sealed class RaycastResult(
 				distance += 0.1
 			}
 		}
+
 		/**
 		 * Raycasts from [origin] in [direction] for [length] in a [Level],
 		 * returning the first [Block] hit (if any).
@@ -223,11 +231,11 @@ sealed class RaycastResult(
 		 * @see Block
 		 */
 		fun Level.blockRaycast(
-			origin : Vec3,
-			direction : Vec3,
-			length : Double,
-			countFluid : Boolean
-		) : Block? {
+			origin: Vec3,
+			direction: Vec3,
+			length: Double,
+			countFluid: Boolean
+		): Block? {
 			var distance = 0.0
 			while (true) {
 				val position = origin + (direction * distance)
@@ -243,6 +251,7 @@ sealed class RaycastResult(
 		}
 	}
 }
+
 /**
  * Adds a [Vec3] to this [Vec3].
  * @return The sum of this [Vec3] and [other].
@@ -250,7 +259,8 @@ sealed class RaycastResult(
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-operator fun Vec3.plus(other : Vec3) : Vec3 = Vec3(this.x + other.x, this.y + other.y, this.z + other.z)
+operator fun Vec3.plus(other: Vec3): Vec3 = Vec3(this.x + other.x, this.y + other.y, this.z + other.z)
+
 /**
  * Scales this [Vec3] by the specified factor.
  * @return The scaled [Vec3].
@@ -258,7 +268,7 @@ operator fun Vec3.plus(other : Vec3) : Vec3 = Vec3(this.x + other.x, this.y + ot
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-operator fun Vec3.times(scale : Double) : Vec3 = this.scale(scale)
+operator fun Vec3.times(scale: Double): Vec3 = this.scale(scale)
 /// Face Targeting Functions ///
 // https://github.com/GregTechCEu/GregTech/blob/master/src/main/java/gregtech/api/util/GTUtility.java#L325
 /**
@@ -267,8 +277,8 @@ operator fun Vec3.times(scale : Double) : Vec3 = this.scale(scale)
  *
  * Function copied from GregTechCEu.
  */
-fun targetFace(facing : Direction, x : Double, y : Double, z : Double) : Direction {
-	val opposite : Direction = facing.opposite
+fun targetFace(facing: Direction, x: Double, y: Double, z: Double): Direction {
+	val opposite: Direction = facing.opposite
 	when (facing) {
 		DOWN, UP     -> {
 			if (x < 0.25) {
@@ -319,19 +329,19 @@ fun targetFace(facing : Direction, x : Double, y : Double, z : Double) : Directi
 }
 
 fun targetFaceSection(
-	targetX : Double,
-	targetY : Double,
-	minX : Double,
-	minY : Double,
-	maxX : Double,
-	maxY : Double
-) : Boolean = (targetX in minX .. maxX) && (targetY in minY .. maxY)
+	targetX: Double,
+	targetY: Double,
+	minX: Double,
+	minY: Double,
+	maxX: Double,
+	maxY: Double
+): Boolean = (targetX in minX .. maxX) && (targetY in minY .. maxY)
+
 /**
  * Normalizes the absolute location of the hit result to 2 decimal places.
  */
-fun normalizeHitLoc(hitLoc : Double, blockPos : Int) : Double = round((hitLoc - blockPos) * 100) / 100
+fun normalizeHitLoc(hitLoc: Double, blockPos: Int): Double = round((hitLoc - blockPos) * 100) / 100
 /// End Face Targeting Functions ///
-
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!
 // Make sure to write good Javadoc for them!

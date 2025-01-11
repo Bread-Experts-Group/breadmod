@@ -14,10 +14,10 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import java.util.*
 
 object ModArmorMaterials {
-	internal val ARMOR_REGISTRY : DeferredRegister<ArmorMaterial> = DeferredRegister.create(
+	internal val ARMOR_REGISTRY: DeferredRegister<ArmorMaterial> = DeferredRegister.create(
 		Registries.ARMOR_MATERIAL, BreadMod.ID
 	)
-	val BREAD : Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("bread") { ->
+	val BREAD: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("bread") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.BOOTS] = 2
@@ -37,7 +37,7 @@ object ModArmorMaterials {
 			0f
 		)
 	}
-	val RF_BREAD : Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("rf_bread") { ->
+	val RF_BREAD: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("rf_bread") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.BOOTS] = 4
@@ -56,7 +56,7 @@ object ModArmorMaterials {
 			0.5f
 		)
 	}
-	val CHEF : Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("chef") { ->
+	val CHEF: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("chef") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.HELMET] = 2
@@ -69,7 +69,7 @@ object ModArmorMaterials {
 			1f
 		)
 	}
-	val GLUON_GUN_BACKPACK : Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("gluon_backpack") { ->
+	val GLUON_GUN_BACKPACK: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("gluon_backpack") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.BODY] = 3

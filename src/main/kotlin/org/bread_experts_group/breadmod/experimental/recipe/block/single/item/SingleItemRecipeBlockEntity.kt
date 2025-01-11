@@ -15,8 +15,8 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
 
 class SingleItemRecipeBlockEntity(
-	pos : BlockPos,
-	state : BlockState
+	pos: BlockPos,
+	state: BlockState
 ) : AbstractTestItemRecipeBlockEntity<BMRecipeInputs.SingleItem, SingleItemTestRecipe>(
 	pos,
 	state,
@@ -24,7 +24,7 @@ class SingleItemRecipeBlockEntity(
 	ModRecipeTypes.SINGLE_ITEM.get(),
 	2
 ) {
-	override fun tick(level : Level, tPos : BlockPos, tState : BlockState) {
+	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.inputStillValid(this.items)) this.resetRecipe()
 			val recipeTime = activeRecipe.rTime ?: 0
@@ -52,13 +52,13 @@ class SingleItemRecipeBlockEntity(
 		})
 	}
 
-	override fun getWidth() : Int = 1
-	override fun getHeight() : Int = 1
-	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+	override fun getWidth(): Int = 1
+	override fun getHeight(): Int = 1
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
 		SingleItemRecipeMenu(containerId, playerInventory, this)
 
-	override fun getDisplayName() : Component = Component.literal("SingleItemRecipe")
-	override fun finalizeRecipe(recipe : SingleItemTestRecipe, level : Level) {
+	override fun getDisplayName(): Component = Component.literal("SingleItemRecipe")
+	override fun finalizeRecipe(recipe: SingleItemTestRecipe, level: Level) {
 		val assemble =
 			recipe.assemble(BMRecipeInputs.SingleItem(this.items[0], this.items[0].count, 1), level.registryAccess())
 		if (this.itemSlots[1].isEmpty) this.itemSlots[1] =

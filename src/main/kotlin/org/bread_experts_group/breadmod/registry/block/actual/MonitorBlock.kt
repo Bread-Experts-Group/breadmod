@@ -20,11 +20,11 @@ class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBloc
 		)
 	}
 
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity = BreadScreenBlockEntity(pos, state)
-	override fun createBlockStateDefinition(builder : StateDefinition.Builder<Block, BlockState>) {
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = BreadScreenBlockEntity(pos, state)
+	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
 		builder.add(DirectionalBlock.FACING)
 	}
 
-	override fun getStateForPlacement(context : BlockPlaceContext) : BlockState =
+	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
 		this.defaultBlockState().setValue(DirectionalBlock.FACING, context.nearestLookingDirection)
 }

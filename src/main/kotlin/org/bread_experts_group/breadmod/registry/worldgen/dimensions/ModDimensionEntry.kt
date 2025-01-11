@@ -12,14 +12,14 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
 typealias ClimateParameterListBuilder = (HolderGetter<Biome>) -> Climate.ParameterList<Holder<Biome>>
 
 data class ModDimensionEntry(
-	val dimensionType : Pair<ResourceKey<DimensionType>, DimensionType>,
-	val levelStemKey : ResourceKey<LevelStem>,
-	val climateParameterListBuilder : ClimateParameterListBuilder? = null,
-	val noiseSettings : ResourceKey<NoiseGeneratorSettings> = NoiseGeneratorSettings.OVERWORLD
+	val dimensionType: Pair<ResourceKey<DimensionType>, DimensionType>,
+	val levelStemKey: ResourceKey<LevelStem>,
+	val climateParameterListBuilder: ClimateParameterListBuilder? = null,
+	val noiseSettings: ResourceKey<NoiseGeneratorSettings> = NoiseGeneratorSettings.OVERWORLD
 ) {
 	companion object {
-		internal val entries : MutableList<ModDimensionEntry> = mutableListOf<ModDimensionEntry>()
-		internal var frozen : Boolean = false
+		internal val entries: MutableList<ModDimensionEntry> = mutableListOf<ModDimensionEntry>()
+		internal var frozen: Boolean = false
 	}
 
 	init {

@@ -29,10 +29,10 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.concurrent.CompletableFuture
 
 class ModBlockLootProvider(
-	lookupProvider : CompletableFuture<HolderLookup.Provider>
+	lookupProvider: CompletableFuture<HolderLookup.Provider>
 ) : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags(), lookupProvider.get()) {
-	override fun getKnownBlocks() : MutableIterable<Block> = object : MutableIterable<Block> {
-		override fun iterator() : MutableIterator<Block> {
+	override fun getKnownBlocks(): MutableIterable<Block> = object : MutableIterable<Block> {
+		override fun iterator(): MutableIterator<Block> {
 			return ModBlocks.BLOCK_REGISTRY.entries
 				.stream()
 				.flatMap { obj -> obj.asOptional().stream() }
@@ -89,7 +89,7 @@ class ModBlockLootProvider(
 					.`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
 					.add(
 						AlternativesEntry.alternatives(
-							AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue : Int ->
+							AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
 								LootItem.lootTableItem(ModItems.FLOUR.get()).`when`(
 									LootItemBlockStatePropertyCondition
 										.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block)
@@ -100,7 +100,7 @@ class ModBlockLootProvider(
 										)
 								).apply(SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2)))
 							}.`when`(this.hasSilkTouch()),
-							AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue : Int ->
+							AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
 								(if (pValue == 8)
 									LootItem.lootTableItem(FLOUR_BLOCK.get().block)
 								else LootItem.lootTableItem(ModItems.FLOUR.get()).apply(
@@ -120,12 +120,12 @@ class ModBlockLootProvider(
 	}
 
 	companion object {
-		val dropNone : MutableList<Block> = mutableListOf()
+		val dropNone: MutableList<Block> = mutableListOf()
 		fun constructLootProvider(
-			blockLootProvider : BlockLootSubProvider,
-			output : PackOutput,
-			registries : CompletableFuture<HolderLookup.Provider>
-		) : LootTableProvider =
+			blockLootProvider: BlockLootSubProvider,
+			output: PackOutput,
+			registries: CompletableFuture<HolderLookup.Provider>
+		): LootTableProvider =
 			LootTableProvider(
 				output,
 				setOf(),

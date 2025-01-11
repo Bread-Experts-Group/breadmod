@@ -17,24 +17,26 @@ import org.bread_experts_group.breadmod.registry.ModDamageType
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME)
 internal object CommonNeoForgeEventBus {
 	@SubscribeEvent
-	fun onResourceReload(event : AddReloadListenerEvent) {
+	fun onResourceReload(event: AddReloadListenerEvent) {
 		event.addListener(ToolGunModeDataLoader)
 	}
+
 	/**
 	 * A map holding a war timer for every player on the server.
 	 */
-	val warTimerMap : MutableMap<ServerPlayer, WarTimerData> = mutableMapOf()
+	val warTimerMap: MutableMap<ServerPlayer, WarTimerData> = mutableMapOf()
 
 	data class WarTimerData(
-		var timeLeft : Int = 30,
-		var gracePeriod : Int = 20,
-		var ticker : Int = 20,
-		var increaseTime : Int = 0,
-		var gracePeriodActive : Boolean = false,
-		var active : Boolean = true
+		var timeLeft: Int = 30,
+		var gracePeriod: Int = 20,
+		var ticker: Int = 20,
+		var increaseTime: Int = 0,
+		var gracePeriodActive: Boolean = false,
+		var active: Boolean = true
 	)
+
 	@SubscribeEvent
-	fun serverTick(event : ServerTickEvent.Post) {
+	fun serverTick(event: ServerTickEvent.Post) {
 		this.warTimerMap.forEach { (player, data) ->
 			if (data.active && data.increaseTime == 0) {
 				if (data.ticker == 0 && data.timeLeft > 0 && !data.gracePeriodActive) {
@@ -75,8 +77,9 @@ internal object CommonNeoForgeEventBus {
 			}
 		}
 	}
+
 	@SubscribeEvent
-	fun registerCommands(event : RegisterCommandsEvent) {
+	fun registerCommands(event: RegisterCommandsEvent) {
 		event.dispatcher.register(
 			Commands.literal("breadmod")
 				.then(WarTimerCommand.register())

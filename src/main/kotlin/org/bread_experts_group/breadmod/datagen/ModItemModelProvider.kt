@@ -13,8 +13,8 @@ import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.item.ModItems
 
 class ModItemModelProvider(
-	packOutput : PackOutput,
-	existingFileHelper : ExistingFileHelper
+	packOutput: PackOutput,
+	existingFileHelper: ExistingFileHelper
 ) : ItemModelProvider(packOutput, BreadMod.ID, existingFileHelper) {
 	override fun registerModels() {
 		this.singleItem(ModItems.FLOUR)
@@ -90,7 +90,7 @@ class ModItemModelProvider(
 		)
 	}
 
-	private fun <T : Item> singleItem(item : DeferredItem<T>) {
+	private fun <T : Item> singleItem(item: DeferredItem<T>) {
 		this.withExistingParent(
 			item.id.path,
 			ResourceLocation.withDefaultNamespace("item/generated")
@@ -100,7 +100,7 @@ class ModItemModelProvider(
 		)
 	}
 
-	private fun <T : Item> handheldItem(item : DeferredItem<T>) {
+	private fun <T : Item> handheldItem(item: DeferredItem<T>) {
 		this.withExistingParent(
 			item.id.path,
 			ResourceLocation.withDefaultNamespace("item/handheld")
@@ -111,10 +111,10 @@ class ModItemModelProvider(
 	}
 
 	private fun multiLayeredTexture(
-		name : String,
-		parent : ResourceLocation,
-		texture : ResourceLocation,
-		texture2 : ResourceLocation
+		name: String,
+		parent: ResourceLocation,
+		texture: ResourceLocation,
+		texture2: ResourceLocation
 	) {
 		this.withExistingParent(name, parent)
 			.texture("layer0", texture)

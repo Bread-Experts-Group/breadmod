@@ -14,32 +14,33 @@ import net.minecraft.resources.ResourceLocation
  * Blit functions are also provided for easy rendering of textures.
  */
 class BreadModTextureHelper(
-	val location : ResourceLocation,
-	val width : Int,
-	val height : Int
+	val location: ResourceLocation,
+	val width: Int,
+	val height: Int
 ) {
 	companion object {
-		val CODEC : Codec<BreadModTextureHelper> = RecordCodecBuilder.create { inst ->
+		val CODEC: Codec<BreadModTextureHelper> = RecordCodecBuilder.create { inst ->
 			inst.group(
 				ResourceLocation.CODEC.fieldOf("location").forGetter(BreadModTextureHelper::location),
 				Codec.INT.fieldOf("width").forGetter(BreadModTextureHelper::width),
 				Codec.INT.fieldOf("height").forGetter(BreadModTextureHelper::height)
 			).apply(inst, ::BreadModTextureHelper)
 		}
-		val STREAM_CODEC : StreamCodec<RegistryFriendlyByteBuf, BreadModTextureHelper> = StreamCodec.composite(
+		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BreadModTextureHelper> = StreamCodec.composite(
 			ResourceLocation.STREAM_CODEC, BreadModTextureHelper::location,
 			ByteBufCodecs.INT, BreadModTextureHelper::width,
 			ByteBufCodecs.INT, BreadModTextureHelper::height,
 			::BreadModTextureHelper
 		)
-		val MISSING_TEXTURE : BreadModTextureHelper = BreadModTextureHelper(
-				MissingTextureAtlasSprite.getLocation(),
+		val MISSING_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(
+			MissingTextureAtlasSprite.getLocation(),
 			16, 16
 		)
 	}
 
-	fun blitTexture(guiGraphics : GuiGraphics, x : Int, y : Int, width : Int, height : Int) =
+	fun blitTexture(guiGraphics: GuiGraphics, x: Int, y: Int, width: Int, height: Int): Unit =
 		guiGraphics.blit(this.location, x, y, 0f, 0f, width, height, this.width, this.height)
-	fun blitTexture(guiGraphics : GuiGraphics, x : Int, y : Int) : Unit =
+
+	fun blitTexture(guiGraphics: GuiGraphics, x: Int, y: Int): Unit =
 		this.blitTexture(guiGraphics, x, y, this.width, this.height)
 }

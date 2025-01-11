@@ -15,28 +15,28 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 
 class MultiItemRecipeBlock : BaseEntityBlock(Properties.of()) {
 	companion object {
-		val CODEC : MapCodec<MultiItemRecipeBlock> = simpleCodec { MultiItemRecipeBlock() }
+		val CODEC: MapCodec<MultiItemRecipeBlock> = simpleCodec { MultiItemRecipeBlock() }
 	}
 
-	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun codec(): MapCodec<out BaseEntityBlock> = Companion.CODEC
 	override fun onRemove(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		newState : BlockState,
-		movedByPiston : Boolean
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		newState: BlockState,
+		movedByPiston: Boolean
 	) {
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		if (!level.isClientSide) {
 			val entity = level.getBlockEntity(pos) as? MultiItemRecipeBlockEntity ?: return InteractionResult.FAIL
 			player.openMenu(entity, pos)
@@ -44,17 +44,17 @@ class MultiItemRecipeBlock : BaseEntityBlock(Properties.of()) {
 		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		MultiItemRecipeBlockEntity(pos, state)
 
 	override fun <T : BlockEntity?> getTicker(
-		level : Level,
-		state : BlockState,
-		blockEntityType : BlockEntityType<T>
-	) : BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
+		level: Level,
+		state: BlockState,
+		blockEntityType: BlockEntityType<T>
+	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.MULTI_ITEM_TEST.get()
-	) { tLevel : Level, tPos : BlockPos, tState : BlockState, tBlockEntity : MultiItemRecipeBlockEntity ->
+	) { tLevel: Level, tPos: BlockPos, tState: BlockState, tBlockEntity: MultiItemRecipeBlockEntity ->
 		tBlockEntity.tick(tLevel, tPos, tState)
 	}
 }

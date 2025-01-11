@@ -31,12 +31,12 @@ typealias biomeBuilder = (
 
 object ModBiomes {
 	private val entries = mutableListOf<Pair<ResourceKey<Biome>, biomeBuilder>>()
-	fun register(name : String, builder : biomeBuilder) : ResourceKey<Biome> = ResourceKey.create(
+	fun register(name: String, builder: biomeBuilder): ResourceKey<Biome> = ResourceKey.create(
 		Registries.BIOME,
 		modLocation(name)
 	).also { this.entries.add(it to builder) }
 
-	val BREAD : ResourceKey<Biome> = this.register("bread") { features, carvers, sound ->
+	val BREAD: ResourceKey<Biome> = this.register("bread") { features, carvers, sound ->
 		Biome.BiomeBuilder()
 			.hasPrecipitation(false)
 			.temperatureAdjustment(Biome.TemperatureModifier.NONE)
@@ -67,7 +67,7 @@ object ModBiomes {
 			.build()
 	}
 
-	fun bootstrapBiomes(ctx : BootstrapContext<Biome>) {
+	fun bootstrapBiomes(ctx: BootstrapContext<Biome>) {
 		val features = ctx.lookup(Registries.PLACED_FEATURE)
 		val carvers = ctx.lookup(Registries.CONFIGURED_CARVER)
 		val sound = ctx.lookup(BuiltInRegistries.SOUND_EVENT.key())

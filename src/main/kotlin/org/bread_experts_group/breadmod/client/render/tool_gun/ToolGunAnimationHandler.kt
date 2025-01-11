@@ -1,12 +1,12 @@
 package org.bread_experts_group.breadmod.client.render.tool_gun
 
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.localClient
 
 // todo convert this to use millis and merge into the renderer (look in WarOverlay for reference)
 internal object ToolGunAnimationHandler {
-	var coilRotation : Float = 0f
-	private var coilDelta : Float = 0f
-	var recoil : Float = 0f
+	var coilRotation: Float = 0f
+	private var coilDelta: Float = 0f
+	var recoil: Float = 0f
 	fun clientTick() {
 		if (!localClient.isPaused) {
 			this.coilRotation += 2f * this.coilDelta

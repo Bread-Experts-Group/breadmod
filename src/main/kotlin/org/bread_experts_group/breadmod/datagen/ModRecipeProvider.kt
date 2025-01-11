@@ -27,10 +27,10 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecip
 import java.util.concurrent.CompletableFuture
 
 class ModRecipeProvider(
-	output : PackOutput,
-	registries : CompletableFuture<HolderLookup.Provider>
+	output: PackOutput,
+	registries: CompletableFuture<HolderLookup.Provider>
 ) : RecipeProvider(output, registries) {
-	override fun buildRecipes(recipeOutput : RecipeOutput) {
+	override fun buildRecipes(recipeOutput: RecipeOutput) {
 		FluidEnergyBuilder(
 			::WheatCrusherRecipe,
 			listOf(ModItems.FLOUR.get() to 2)

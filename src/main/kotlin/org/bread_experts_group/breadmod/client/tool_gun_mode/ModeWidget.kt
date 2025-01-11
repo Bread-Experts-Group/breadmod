@@ -16,22 +16,22 @@ import net.minecraft.world.item.Items
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import java.awt.Color
 
 // todo codec for this widget
 open class ModeWidget(
-	val icon : ItemStack,
-	val previewImage : BreadModTextureHelper,
-	val modeName : Component,
-	val modeDescription : Component
+	val icon: ItemStack,
+	val previewImage: BreadModTextureHelper,
+	val modeName: Component,
+	val modeDescription: Component
 ) : AbstractWidget(0, 0, 35, 40, modeName) {
-	var namespace : String = ""
-	var id : String = ""
+	var namespace: String = ""
+	var id: String = ""
 
 	companion object {
-		val CODEC : Codec<ModeWidget> = RecordCodecBuilder.create { inst ->
+		val CODEC: Codec<ModeWidget> = RecordCodecBuilder.create { inst ->
 			inst.group(
 				ItemStack.CODEC.fieldOf("icon").forGetter(ModeWidget::icon),
 				BreadModTextureHelper.CODEC.fieldOf("preview_image").forGetter(ModeWidget::previewImage),
@@ -39,15 +39,14 @@ open class ModeWidget(
 				ComponentSerialization.CODEC.fieldOf("mode_desc").forGetter(ModeWidget::modeDescription)
 			).apply(inst, ::ModeWidget)
 		}
-		val STREAM_CODEC : StreamCodec<RegistryFriendlyByteBuf, ModeWidget> = StreamCodec.composite(
+		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ModeWidget> = StreamCodec.composite(
 			ItemStack.STREAM_CODEC, ModeWidget::icon,
 			BreadModTextureHelper.STREAM_CODEC, ModeWidget::previewImage,
 			ComponentSerialization.STREAM_CODEC, ModeWidget::modeName,
 			ComponentSerialization.STREAM_CODEC, ModeWidget::modeDescription,
 			::ModeWidget
 		)
-
-		val NONE : ModeWidget = ModeWidget(
+		val NONE: ModeWidget = ModeWidget(
 			ItemStack(Items.BARRIER, 1),
 			BreadModTextureHelper.MISSING_TEXTURE,
 			Component.literal("Empty Mode"),
@@ -55,12 +54,12 @@ open class ModeWidget(
 		)
 	}
 
-	override fun onClick(mouseX : Double, mouseY : Double, button : Int) {
+	override fun onClick(mouseX: Double, mouseY: Double, button: Int) {
 		PacketDistributor.sendToServer(ToolGunActionPacket(this.namespace, this.id))
 		super.onClick(mouseX, mouseY, button)
 	}
 
-	override fun renderWidget(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
+	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.pose().pushPose()
 		guiGraphics.fill(
 			RenderType.gui(),
@@ -85,28 +84,29 @@ open class ModeWidget(
 		guiGraphics.pose().popPose()
 	}
 
-	override fun updateWidgetNarration(narrationElementOutput : NarrationElementOutput) {
+	override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
 	}
 
 	class Builder {
-		private var icon : ItemStack = ItemStack(Items.BARRIER)
-		private var previewImage : BreadModTextureHelper = BreadModTextureHelper.MISSING_TEXTURE
-		private var modeName : Component = Component.literal("Default Name")
-		private var modeDescription : Component = Component.literal("Default Description")
+		private var icon: ItemStack = ItemStack(Items.BARRIER)
+		private var previewImage: BreadModTextureHelper = BreadModTextureHelper.MISSING_TEXTURE
+		private var modeName: Component = Component.literal("Default Name")
+		private var modeDescription: Component = Component.literal("Default Description")
 
-		fun icon(stack : ItemStack) : Builder = this.also { this.icon = stack }
+		fun icon(stack: ItemStack): Builder = this.also { this.icon = stack }
 		fun previewImage(
-			location : ResourceLocation,
-			width : Int,
-			height : Int
-		) : Builder = this.also { this.previewImage(BreadModTextureHelper(location, width, height)) }
-		fun previewImage(helper : BreadModTextureHelper) : Builder = this.also { this.previewImage = helper }
-		fun name(name : Component) : Builder = this.also { this.modeName = name }
-		fun name(name : String) : Builder = this.also { this.name(Component.literal(name)) }
-		fun description(description : Component) : Builder = this.also { this.modeDescription = description }
-		fun description(description : String) : Builder = this.also { this.description(Component.literal(description)) }
+			location: ResourceLocation,
+			width: Int,
+			height: Int
+		): Builder = this.also { this.previewImage(BreadModTextureHelper(location, width, height)) }
 
-		fun build() : ModeWidget = ModeWidget(
+		fun previewImage(helper: BreadModTextureHelper): Builder = this.also { this.previewImage = helper }
+		fun name(name: Component): Builder = this.also { this.modeName = name }
+		fun name(name: String): Builder = this.also { this.name(Component.literal(name)) }
+		fun description(description: Component): Builder = this.also { this.modeDescription = description }
+		fun description(description: String): Builder = this.also { this.description(Component.literal(description)) }
+
+		fun build(): ModeWidget = ModeWidget(
 			this.icon,
 			this.previewImage,
 			this.modeName,

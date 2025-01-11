@@ -13,13 +13,13 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class WheatCrusherRecipe(
-	rItemInputs : NonNullList<SizedIngredient>,
-	rItemOutputs : MutableList<ItemStack>,
-	rFluidInputs : NonNullList<SizedFluidIngredient>,
-	rFluidOutputs : MutableList<FluidStack>,
-	rTime : Int?,
-	rEnergy : Int?
+	rItemInputs: NonNullList<SizedIngredient>,
+	rItemOutputs: MutableList<ItemStack>,
+	rFluidInputs: NonNullList<SizedFluidIngredient>,
+	rFluidOutputs: MutableList<FluidStack>,
+	rTime: Int?,
+	rEnergy: Int?
 ) : FluidEnergyRecipe<FluidEnergyInput>(rItemInputs, rItemOutputs, rFluidInputs, rFluidOutputs, rTime, rEnergy) {
-	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.WHEAT_CRUSHING.get()
-	override fun getType() : RecipeType<*> = ModRecipeTypes.WHEAT_CRUSHING.get()
+	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.WHEAT_CRUSHING.get()
+	override fun getType(): RecipeType<*> = ModRecipeTypes.WHEAT_CRUSHING.get()
 }

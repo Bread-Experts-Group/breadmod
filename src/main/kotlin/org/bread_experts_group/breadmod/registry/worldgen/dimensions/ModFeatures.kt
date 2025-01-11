@@ -15,7 +15,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 
-typealias PlacedFeatureBuilder = (configuredFeaturesHolder : HolderGetter<ConfiguredFeature<*, *>>) -> PlacedFeature
+typealias PlacedFeatureBuilder = (configuredFeaturesHolder: HolderGetter<ConfiguredFeature<*, *>>) -> PlacedFeature
 typealias ConfiguredFeatureBuilder = () -> ConfiguredFeature<*, *>
 
 object ModFeatures {
@@ -24,16 +24,16 @@ object ModFeatures {
 		mutableListOf<Pair<ResourceKey<ConfiguredFeature<*, *>>, ConfiguredFeatureBuilder>>()
 	)
 
-	fun registerPlacedFeature(name : String, builder : PlacedFeatureBuilder) : ResourceKey<PlacedFeature> =
+	fun registerPlacedFeature(name: String, builder: PlacedFeatureBuilder): ResourceKey<PlacedFeature> =
 		ResourceKey.create(
 			Registries.PLACED_FEATURE,
 			modLocation(name)
 		).also { this.entries.first.add(it to builder) }
 
 	fun registerConfiguredFeature(
-		name : String,
-		builder : ConfiguredFeatureBuilder
-	) : ResourceKey<ConfiguredFeature<*, *>> = ResourceKey.create(
+		name: String,
+		builder: ConfiguredFeatureBuilder
+	): ResourceKey<ConfiguredFeature<*, *>> = ResourceKey.create(
 		Registries.CONFIGURED_FEATURE,
 		modLocation(name)
 	).also { this.entries.second.add(it to builder) }
@@ -51,7 +51,7 @@ object ModFeatures {
 			)
 		)
 	}
-	val BAUXITE_ORE : ResourceKey<PlacedFeature> = this.registerPlacedFeature("bauxite") {
+	val BAUXITE_ORE: ResourceKey<PlacedFeature> = this.registerPlacedFeature("bauxite") {
 		PlacedFeature(
 			it.getOrThrow(this.BAUXITE_ORE_CONFIGURED), listOf(
 				HeightRangePlacement.uniform(
@@ -62,11 +62,11 @@ object ModFeatures {
 		)
 	}
 
-	fun bootstrapConfiguredFeatures(ctx : BootstrapContext<ConfiguredFeature<*, *>>) {
+	fun bootstrapConfiguredFeatures(ctx: BootstrapContext<ConfiguredFeature<*, *>>) {
 		this.entries.second.forEach { ctx.register(it.first, it.second()) }
 	}
 
-	fun bootstrapPlacedFeatures(ctx : BootstrapContext<PlacedFeature>) {
+	fun bootstrapPlacedFeatures(ctx: BootstrapContext<PlacedFeature>) {
 		val cfHolder = ctx.lookup(Registries.CONFIGURED_FEATURE)
 		this.entries.first.forEach { ctx.register(it.first, it.second(cfHolder)) }
 	}

@@ -14,11 +14,11 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.BlockHitResult
 import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.util.normalizeHitLoc
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.targetFace
 
 class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
-	override fun use(level : Level, player : Player, usedHand : InteractionHand) : InteractionResultHolder<ItemStack> {
+	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		if (level.isClientSide) {
 			val partialTick = localClient.timer.gameTimeDeltaTicks
 			val vec3 = player.getEyePosition(partialTick)
@@ -33,7 +33,7 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 		return super.use(level, player, usedHand)
 	}
 
-	override fun inventoryTick(stack : ItemStack, level : Level, entity : Entity, slotId : Int, isSelected : Boolean) {
+	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		if (level.isClientSide && isSelected) {
 			val result = localClient.hitResult
 			if (result is BlockHitResult) {
@@ -46,7 +46,16 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 					val y = normalizeHitLoc(loc.y, pos.y)
 					val z = normalizeHitLoc(loc.z, pos.z)
 					player.displayClientMessage(
-						Component.literal("looking at: [X:$x, Y:$y, Z:$z] Direction: ${result.direction.name} Targeting: ${targetFace(result.direction, x, y, z)} ")
+						Component.literal(
+							"looking at: [X:$x, Y:$y, Z:$z] Direction: ${result.direction.name} Targeting: ${
+								targetFace(
+									result.direction,
+									x,
+									y,
+									z
+								)
+							} "
+						)
 							.append(state.block.name),
 						true
 					)

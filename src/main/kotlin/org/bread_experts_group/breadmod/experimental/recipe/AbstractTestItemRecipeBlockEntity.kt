@@ -17,44 +17,45 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 
 abstract class AbstractTestItemRecipeBlockEntity<INPUT : RecipeInput, RECIPE : Recipe<INPUT>>(
-	pos : BlockPos,
-	state : BlockState,
-	type : BlockEntityType<*>,
-	recipeType : RecipeType<RECIPE>,
-	private val slotCount : Int
+	pos: BlockPos,
+	state: BlockState,
+	type: BlockEntityType<*>,
+	recipeType: RecipeType<RECIPE>,
+	private val slotCount: Int
 ) : AbstractTestRecipeBlockEntity<INPUT, RECIPE>(pos, state, type, recipeType), CraftingContainer {
-	var itemSlots : NonNullList<ItemStack> = NonNullList.withSize(this.slotCount, ItemStack.EMPTY)
+	var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(this.slotCount, ItemStack.EMPTY)
+
 	// todo eventually migrate to using this instead of the vanilla method
 //    val itemHandler = ItemStackHandler(4)
-	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.saveAdditional(tag, registries)
 
 		ContainerHelper.saveAllItems(tag, this.itemSlots, registries)
 	}
 
-	override fun loadAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.loadAdditional(tag, registries)
 
 		this.itemSlots = NonNullList.withSize(this.slotCount, ItemStack.EMPTY)
 		ContainerHelper.loadAllItems(tag, this.itemSlots, registries)
 	}
 
-	override fun clearContent() : Unit = this.itemSlots.forEach { it.count = 0 }
-	override fun getContainerSize() : Int = this.itemSlots.size
-	override fun isEmpty() : Boolean = this.itemSlots.any { !it.isEmpty }
-	override fun getItem(slot : Int) : ItemStack = this.itemSlots[slot]
-	override fun removeItem(slot : Int, pAmount : Int) : ItemStack = this.itemSlots[slot].split(pAmount)
-	override fun removeItemNoUpdate(slot : Int) : ItemStack = this.itemSlots[slot].copyAndClear()
-	override fun setItem(slot : Int, stack : ItemStack) {
+	override fun clearContent(): Unit = this.itemSlots.forEach { it.count = 0 }
+	override fun getContainerSize(): Int = this.itemSlots.size
+	override fun isEmpty(): Boolean = this.itemSlots.any { !it.isEmpty }
+	override fun getItem(slot: Int): ItemStack = this.itemSlots[slot]
+	override fun removeItem(slot: Int, pAmount: Int): ItemStack = this.itemSlots[slot].split(pAmount)
+	override fun removeItemNoUpdate(slot: Int): ItemStack = this.itemSlots[slot].copyAndClear()
+	override fun setItem(slot: Int, stack: ItemStack) {
 		this.itemSlots[slot] = stack
 	}
 
-	override fun stillValid(player : Player) : Boolean = Container.stillValidBlockEntity(this, player)
-	override fun fillStackedContents(contents : StackedContents) {
-		for (stack : ItemStack in this.itemSlots) {
+	override fun stillValid(player: Player): Boolean = Container.stillValidBlockEntity(this, player)
+	override fun fillStackedContents(contents: StackedContents) {
+		for (stack: ItemStack in this.itemSlots) {
 			contents.accountSimpleStack(stack)
 		}
 	}
 
-	override fun getItems() : MutableList<ItemStack> = this.itemSlots
+	override fun getItems(): MutableList<ItemStack> = this.itemSlots
 }

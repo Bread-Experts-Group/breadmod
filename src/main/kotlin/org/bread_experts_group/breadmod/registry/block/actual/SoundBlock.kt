@@ -23,7 +23,7 @@ class SoundBlock : BaseEntityBlock(
 		.sound(SoundType.METAL)
 ) {
 	companion object {
-		val CODEC : MapCodec<out BaseEntityBlock> = simpleCodec { SoundBlock() }
+		val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { SoundBlock() }
 	}
 
 	init {
@@ -33,14 +33,14 @@ class SoundBlock : BaseEntityBlock(
 		)
 	}
 
-	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity = SoundBlockEntity(pos, state)
-	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
-	override fun getStateForPlacement(context : BlockPlaceContext) : BlockState =
+	override fun codec(): MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = SoundBlockEntity(pos, state)
+	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
+	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
 		this.defaultBlockState()
 			.setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite)
 
-	override fun createBlockStateDefinition(builder : StateDefinition.Builder<Block, BlockState>) {
+	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
 		builder.add(BlockStateProperties.HORIZONTAL_FACING)
 	}
 }

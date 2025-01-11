@@ -21,16 +21,16 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
 
 class MultiFluidRecipeBlockEntity(
-	pos : BlockPos,
-	state : BlockState
+	pos: BlockPos,
+	state: BlockState
 ) : AbstractTestRecipeBlockEntity<BMRecipeInputs.MultiFluid, MultiFluidTestRecipe>(
 	pos,
 	state,
 	ModBlockEntityTypes.MULTI_FLUID_TEST.get(),
 	ModRecipeTypes.MULTI_FLUID.get()
 ) {
-	val logger : Logger = LogManager.getLogger()
-	val tank : CustomFluidTank by lazy {
+	val logger: Logger = LogManager.getLogger()
+	val tank: CustomFluidTank by lazy {
 		object : CustomFluidTank(10000, 4) {
 			override fun onContentsChanged() {
 				this@MultiFluidRecipeBlockEntity.syncToClients()
@@ -38,8 +38,8 @@ class MultiFluidRecipeBlockEntity(
 		}
 	}
 
-	private fun getFluid(tank : Int) : FluidStack = this.tank.getFluidInTank(tank)
-	override fun tick(level : Level, tPos : BlockPos, tState : BlockState) {
+	private fun getFluid(tank: Int): FluidStack = this.tank.getFluidInTank(tank)
+	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			val inputList = listOf(this.getFluid(0), this.getFluid(1))
 			if (!activeRecipe.inputsStillValid(inputList)) this.resetRecipe()
@@ -75,11 +75,11 @@ class MultiFluidRecipeBlockEntity(
 		})
 	}
 
-	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
 		MultiFluidRecipeMenu(containerId, playerInventory, this)
 
-	override fun getDisplayName() : Component = Component.literal("MultiFluidTestRecipe")
-	override fun finalizeRecipe(recipe : MultiFluidTestRecipe, level : Level) {
+	override fun getDisplayName(): Component = Component.literal("MultiFluidTestRecipe")
+	override fun finalizeRecipe(recipe: MultiFluidTestRecipe, level: Level) {
 		val inputList = listOf(this.getFluid(0), this.getFluid(1))
 		val assemble = recipe.assembleFluids(
 			BMRecipeInputs.MultiFluid(
@@ -97,19 +97,19 @@ class MultiFluidRecipeBlockEntity(
 			if (this.getFluid(3).isEmpty) {
 				this.tank.setFluidInTank(3, assemble[1].copyWithAmount(recipe.rFluidOutputs[1].amount))
 			} else this.getFluid(3).amount += recipe.rFluidOutputs[1].amount
-		} catch (e : Exception) {
+		} catch (e: Exception) {
 			this.logger.error(e)
 		}
 		recipe.consumeInputs(inputList)
 	}
 
-	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.saveAdditional(tag, registries)
 
 		tag.put("fluid", CompoundTag().also { this.tank.writeToNBT(registries, it) })
 	}
 
-	override fun loadAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.loadAdditional(tag, registries)
 
 		this.tank.readFromNBT(registries, tag.getCompound("fluid"))

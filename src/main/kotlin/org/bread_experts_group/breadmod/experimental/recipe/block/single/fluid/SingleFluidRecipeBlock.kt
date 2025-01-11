@@ -16,18 +16,18 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 
 class SingleFluidRecipeBlock : BaseEntityBlock(Properties.of()) {
 	companion object {
-		val CODEC : MapCodec<SingleFluidRecipeBlock> = simpleCodec { SingleFluidRecipeBlock() }
+		val CODEC: MapCodec<SingleFluidRecipeBlock> = simpleCodec { SingleFluidRecipeBlock() }
 	}
 
-	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
-	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
+	override fun codec(): MapCodec<out BaseEntityBlock> = Companion.CODEC
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		if (!level.isClientSide) {
 			val entity = level.getBlockEntity(pos) as? SingleFluidRecipeBlockEntity ?: return InteractionResult.FAIL
 			player.openMenu(entity, pos)
@@ -35,14 +35,14 @@ class SingleFluidRecipeBlock : BaseEntityBlock(Properties.of()) {
 		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		SingleFluidRecipeBlockEntity(pos, state)
 
 	override fun <T : BlockEntity?> getTicker(
-		level : Level,
-		state : BlockState,
-		blockEntityType : BlockEntityType<T>
-	) : BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
+		level: Level,
+		state: BlockState,
+		blockEntityType: BlockEntityType<T>
+	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.SINGLE_FLUID_TEST.get()
 	) { tLevel, tPos, tState, tBlockEntity ->

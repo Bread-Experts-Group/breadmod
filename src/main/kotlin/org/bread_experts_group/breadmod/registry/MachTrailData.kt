@@ -4,8 +4,8 @@ import com.mojang.authlib.GameProfile
 import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import org.bread_experts_group.breadmod.util.buffer.render.MachTrailBufferTask
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask
+import org.bread_experts_group.breadmod.client.render.localClient
 
 data class MachTrailData(var playerProfile: GameProfile) {
 	val player: Player = localClient.level?.getPlayerByUUID(this.playerProfile.id)!!

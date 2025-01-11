@@ -56,13 +56,12 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunIte
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
-import org.bread_experts_group.breadmod.util.render.itemColor
+import org.bread_experts_group.breadmod.client.render.itemColor
 
-@Suppress("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = BreadMod.ID, value = [Dist.CLIENT])
 internal object ClientModEventBus {
 	@SubscribeEvent
-	fun clientSetup(event : FMLClientSetupEvent) {
+	fun clientSetup(event: FMLClientSetupEvent) {
 		event.enqueueWork {
 			ItemProperties.register(
 				ModItems.BREAD_SHIELD.get(), modLocation("blocking")
@@ -75,15 +74,17 @@ internal object ClientModEventBus {
 //            }
 		}
 	}
+
 	@SubscribeEvent
-	fun registerKeyMappings(event : RegisterKeyMappingsEvent) {
+	fun registerKeyMappings(event: RegisterKeyMappingsEvent) {
 //        event.register(changeMode)
 //        event.register(openGuiEditor)
 		event.register(openModeGui)
 		event.register(placeItemKey)
 	}
+
 	@SubscribeEvent
-	fun registerShaders(event : RegisterShadersEvent) {
+	fun registerShaders(event: RegisterShadersEvent) {
 		event.registerShader(
 			ShaderInstance(
 				event.resourceProvider,
@@ -92,35 +93,40 @@ internal object ClientModEventBus {
 			)
 		) { ModRenderType.solidInstance = it }
 	}
+
 	@SubscribeEvent
-	fun registerClientExtensions(event : RegisterClientExtensionsEvent) {
+	fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
 		event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
 		event.registerItem(ToolGunItem.ToolGunItemExtensions(), ModItems.TOOL_GUN)
 		event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
 	}
+
 	@SubscribeEvent
-	fun registerRenderers(event : EntityRenderersEvent.RegisterRenderers) {
+	fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
 		event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
 		event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get(), ::ToasterRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.MICROWAVE.get(), ::MicrowaveRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
 	}
+
 	@SubscribeEvent
-	fun registerGuiLayers(event : RegisterGuiLayersEvent) {
+	fun registerGuiLayers(event: RegisterGuiLayersEvent) {
 		event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
 		event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
 		event.registerBelow(VanillaGuiLayers.DEBUG_OVERLAY, modLocation("tool_gun_overlay"), ToolGunOverlay())
 	}
+
 	@SubscribeEvent
-	fun registerItemColors(event : RegisterColorHandlersEvent.Item) {
+	fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
 		event.register(
 			itemColor,
 			ModItems.CHEF_HAT.get(),
 		)
 	}
 
-	private fun modModelLoc(id : String) = ModelResourceLocation.standalone(modLocation(id))
+	private fun modModelLoc(id: String) = ModelResourceLocation.standalone(modLocation(id))
+
 	@Suppress("UNCHECKED_CAST")
 	/**
 	 * Adds the chef hat armor layer to any living entity renderer
@@ -129,14 +135,15 @@ internal object ClientModEventBus {
 	 * @since 1.0.0
 	 * @throws IllegalArgumentException if [type] is not a [LivingEntityRenderer].
 	 */
-	private fun addHatLayer(type : EntityType<*>, event : EntityRenderersEvent.AddLayers) {
+	private fun addHatLayer(type: EntityType<*>, event: EntityRenderersEvent.AddLayers) {
 		if (event.getRenderer(type) is LivingEntityRenderer<*, *>) {
 			val renderer = event.getRenderer(type) as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
 			renderer.addLayer(ChefHatArmorLayer(renderer))
 		} else throw IllegalArgumentException("Expected LivingEntityRenderer, got ${event.getRenderer(type)}")
 	}
+
 	@SubscribeEvent
-	fun registerAdditionalModels(event : ModelEvent.RegisterAdditional) {
+	fun registerAdditionalModels(event: ModelEvent.RegisterAdditional) {
 		event.register(this.modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
 		event.register(this.modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/generator_on"))
@@ -150,10 +157,11 @@ internal object ClientModEventBus {
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate"))
 	}
+
 	@SubscribeEvent
-	fun registerEntityLayers(event : EntityRenderersEvent.AddLayers) {
-		for (skin : PlayerSkin.Model in event.skins) {
-			val entity : LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>? = event.getSkin(skin)
+	fun registerEntityLayers(event: EntityRenderersEvent.AddLayers) {
+		for (skin: PlayerSkin.Model in event.skins) {
+			val entity: LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>? = event.getSkin(skin)
 			entity?.addLayer(ChefHatArmorLayer(entity))
 			entity?.addLayer(GluonGunBackpackArmorLayer(entity))
 		}
@@ -161,16 +169,18 @@ internal object ClientModEventBus {
 		this.addHatLayer(EntityType.ARMOR_STAND, event)
 		this.addHatLayer(EntityType.FOX, event)
 	}
+
 	@SubscribeEvent
-	fun registerLayerDefinitions(event : EntityRenderersEvent.RegisterLayerDefinitions) {
+	fun registerLayerDefinitions(event: EntityRenderersEvent.RegisterLayerDefinitions) {
 		event.registerLayerDefinition(ChefHatModel.HAT_LAYER, ChefHatModel::createLayerDefinition)
 		event.registerLayerDefinition(
 			GluonGunBackpackModel.BACKPACK_LAYER,
 			GluonGunBackpackModel::createLayerDefinition
 		)
 	}
+
 	@SubscribeEvent
-	fun registerMenuScreens(event : RegisterMenuScreensEvent) {
+	fun registerMenuScreens(event: RegisterMenuScreensEvent) {
 		event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
 		event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
 		// Experimental stuff

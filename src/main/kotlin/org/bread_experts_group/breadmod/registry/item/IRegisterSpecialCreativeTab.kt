@@ -14,7 +14,8 @@ interface IRegisterSpecialCreativeTab {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	val creativeModeTabs : List<Supplier<CreativeModeTab>>
+	val creativeModeTabs: List<Supplier<CreativeModeTab>>
+
 	/**
 	 * Defines a special creative tab registration method.
 	 * @author Miko Elbrecht
@@ -23,7 +24,7 @@ interface IRegisterSpecialCreativeTab {
 	 */
 	@Suppress("SameReturnValue")
 	fun displayInCreativeTab(
-		parameters : CreativeModeTab.ItemDisplayParameters,
-		output : CreativeModeTab.Output
-	) : Boolean = true
+		parameters: CreativeModeTab.ItemDisplayParameters,
+		output: CreativeModeTab.Output
+	): Boolean = true
 }

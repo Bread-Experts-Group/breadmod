@@ -18,14 +18,14 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import java.util.concurrent.CompletableFuture
 
 class ModBlockTags(
-	output : PackOutput,
-	lookupProvider : CompletableFuture<HolderLookup.Provider>,
-	existingFileHelper : ExistingFileHelper,
+	output: PackOutput,
+	lookupProvider: CompletableFuture<HolderLookup.Provider>,
+	existingFileHelper: ExistingFileHelper,
 ) : BlockTagsProvider(output, lookupProvider, BreadMod.ID, existingFileHelper) {
-	private fun IntrinsicTagAppender<Block>.add(vararg toAdd : DeferredItem<BlockItem>) =
+	private fun IntrinsicTagAppender<Block>.add(vararg toAdd: DeferredItem<BlockItem>) =
 		this.also { toAdd.forEach { this.add(it.get().block) } }
 
-	override fun addTags(provider : HolderLookup.Provider) {
+	override fun addTags(provider: HolderLookup.Provider) {
 		this.tag(BlockTags.MINEABLE_WITH_HOE)
 			.add(ModBlocks.BREAD_BLOCK, ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK)
 		this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -55,10 +55,10 @@ class ModBlockTags(
 	}
 
 	companion object {
-		val MINEABLE_WITH_KNIFE : TagKey<Block> = TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
-		val INCORRECT_FOR_BREAD_TOOL : TagKey<Block> =
+		val MINEABLE_WITH_KNIFE: TagKey<Block> = TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
+		val INCORRECT_FOR_BREAD_TOOL: TagKey<Block> =
 			TagKey.create(Registries.BLOCK, modLocation("incorrect_for_bread_tool"))
-		val INCORRECT_FOR_REINFORCED_BREAD_TOOL : TagKey<Block> =
+		val INCORRECT_FOR_REINFORCED_BREAD_TOOL: TagKey<Block> =
 			TagKey.create(Registries.BLOCK, modLocation("incorrect_for_reinforced_bread_tool"))
 	}
 }

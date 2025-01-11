@@ -11,28 +11,28 @@ import net.minecraft.world.level.material.MapColor
 
 class FlourBlock : FallingBlock(Properties.of().ignitedByLava().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.SNOW)) {
 	companion object {
-		val CODEC : MapCodec<out FallingBlock> = simpleCodec { FlourBlock() }
+		val CODEC: MapCodec<out FallingBlock> = simpleCodec { FlourBlock() }
 	}
 
 	override fun isFlammable(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		direction : Direction
-	) : Boolean = true
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		direction: Direction
+	): Boolean = true
 
-	override fun codec() : MapCodec<out FallingBlock> = Companion.CODEC
+	override fun codec(): MapCodec<out FallingBlock> = Companion.CODEC
 	override fun getFlammability(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		direction : Direction
-	) : Int = 100
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		direction: Direction
+	): Int = 100
 
 	override fun getFireSpreadSpeed(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		direction : Direction
-	) : Int = 150
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		direction: Direction
+	): Int = 150
 }

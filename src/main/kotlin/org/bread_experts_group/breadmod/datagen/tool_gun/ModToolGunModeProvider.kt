@@ -11,8 +11,8 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.Explo
 import java.util.concurrent.CompletableFuture
 
 internal class ModToolGunModeProvider(
-	output : PackOutput,
-	lookupProvider : CompletableFuture<HolderLookup.Provider>
+	output: PackOutput,
+	lookupProvider: CompletableFuture<HolderLookup.Provider>
 ) : ToolGunModeProvider(output, lookupProvider, BreadMod.ID) {
 	override fun addModes() {
 		// Testing Method
@@ -32,7 +32,6 @@ internal class ModToolGunModeProvider(
 					"BOOM BOOM BOOM, I CAN'T SINGING THIS BLOODY TUNE TUNE TUNE IT'S GONNA MAKE MY BRAIN GO BOOM BOOM BOOM-"
 				)
 				.build()
-
 		)
 	}
 }

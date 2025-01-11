@@ -7,24 +7,24 @@ import java.io.PrintStream
 import java.util.*
 
 internal object ConsoleUnnamedRedirection {
-	private val unnamedLoggerOut : Logger = LogManager.getLogger("Unnamed Logger, Standard Out")
-	private val unnamedLoggerIn : Logger = LogManager.getLogger("Unnamed Logger, Standard In")
-	private val unnamedLoggerErr : Logger = LogManager.getLogger("Unnamed Logger, Error")
+	private val unnamedLoggerOut: Logger = LogManager.getLogger("Unnamed Logger, Standard Out")
+	private val unnamedLoggerIn: Logger = LogManager.getLogger("Unnamed Logger, Standard In")
+	private val unnamedLoggerErr: Logger = LogManager.getLogger("Unnamed Logger, Error")
 
-	class Redirector(val logger : Logger, val level : Level) : PrintStream(nullOutputStream()) {
+	class Redirector(val logger: Logger, val level: Level) : PrintStream(nullOutputStream()) {
 		private val intermediateBuilder = StringBuilder()
-		override fun print(x : Any?) {
+		override fun print(x: Any?) {
 			this.intermediateBuilder.append(x)
 			val result = this.intermediateBuilder.toString().split("\n").toMutableList()
 			if (result.size > 1) {
 				val last = result.removeLast()
-				result.forEach { this.logger.info(it) }
+				result.forEach(this.logger::info)
 				this.intermediateBuilder.clear()
 				this.intermediateBuilder.append(last)
 			}
 		}
 
-		override fun println(x : Any?) = this.logger.log(this.level, x)
+		override fun println(x: Any?): Unit = this.logger.log(this.level, x)
 	}
 
 	fun setup() {

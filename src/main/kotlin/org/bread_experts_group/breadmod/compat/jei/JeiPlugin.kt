@@ -13,8 +13,8 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSli
 @JeiPlugin
 @Suppress("unused")
 class JeiPlugin : IModPlugin {
-	override fun getPluginUid() : ResourceLocation = modLocation("jei_plugin")
-	override fun registerVanillaCategoryExtensions(registration : IVanillaCategoryExtensionRegistration) {
+	override fun getPluginUid(): ResourceLocation = modLocation("jei_plugin")
+	override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
 		registration.craftingCategory.addExtension(
 			BreadSlicingRecipe::class.java, JEISliceCraftingExtension(
 				Items.BREAD, 1, 8, ModItems.BREAD_SLICE.get(), 8, 8

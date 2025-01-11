@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
 object ModBlockSetTypes {
-	val BREAD : BlockSetType = BlockSetType.register(
+	val BREAD: BlockSetType = BlockSetType.register(
 		BlockSetType(
 			"bread",
 			true,
@@ -24,7 +24,7 @@ object ModBlockSetTypes {
 			SoundEvents.WOODEN_BUTTON_CLICK_ON
 		)
 	)
-	val HELL_NAW : BlockSetType = BlockSetType.register(
+	val HELL_NAW: BlockSetType = BlockSetType.register(
 		BlockSetType(
 			"hell_naw",
 			false,

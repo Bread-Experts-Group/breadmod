@@ -20,16 +20,16 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class MultiItemTestRecipe(
-	rItemInputs : NonNullList<SizedIngredient>,
-	rItemOutputs : List<ItemStack>,
-	rTime : Int?,
-	rEnergy : Int?
+	rItemInputs: NonNullList<SizedIngredient>,
+	rItemOutputs: List<ItemStack>,
+	rTime: Int?,
+	rEnergy: Int?
 ) : BreadModRecipes.MultiItem(rItemInputs, rItemOutputs, rTime, rEnergy) {
-	override fun canCraftInDimensions(width : Int, height : Int) : Boolean = width >= 3 && height >= 1
-	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.MULTI_ITEM_TEST.get()
-	override fun getType() : RecipeType<*> = ModRecipeTypes.MULTI_ITEM.get()
+	override fun canCraftInDimensions(width: Int, height: Int): Boolean = width >= 3 && height >= 1
+	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.MULTI_ITEM_TEST.get()
+	override fun getType(): RecipeType<*> = ModRecipeTypes.MULTI_ITEM.get()
 	class Serializer : BMRecipeSerializer<MultiItemTestRecipe>() {
-		override fun codec() : MapCodec<MultiItemTestRecipe> = RecordCodecBuilder.mapCodec { inst ->
+		override fun codec(): MapCodec<MultiItemTestRecipe> = RecordCodecBuilder.mapCodec { inst ->
 			inst.group(
 				this.sizedIngredientCodecModule("ingredients", MultiItemTestRecipe::rItemInputs),
 				this.itemStackListCodecModule("results", MultiItemTestRecipe::rItemOutputs),
@@ -38,7 +38,7 @@ class MultiItemTestRecipe(
 			).apply(inst, ::MultiItemTestRecipe)
 		}
 
-		override fun streamCodec() : StreamCodec<RegistryFriendlyByteBuf, MultiItemTestRecipe> = StreamCodec.composite(
+		override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, MultiItemTestRecipe> = StreamCodec.composite(
 			this.nonNullListStreamCodec(SizedIngredient.STREAM_CODEC), MultiItemTestRecipe::rItemInputs,
 			ItemStack.LIST_STREAM_CODEC, MultiItemTestRecipe::rItemOutputs,
 			ByteBufCodecs.INT, MultiItemTestRecipe::rTime,
@@ -48,10 +48,10 @@ class MultiItemTestRecipe(
 	}
 
 	class Builder(
-		private val results : List<Pair<Item, Int>>
+		private val results: List<Pair<Item, Int>>
 	) : BMRecipeBuilder.Multi() {
-		override fun getResult() : Item = this.results[0].first
-		override fun save(recipeOutput : RecipeOutput, id : ResourceLocation) {
+		override fun getResult(): Item = this.results[0].first
+		override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
 			val recipe = MultiItemTestRecipe(
 				this.items,
 				buildList { this@Builder.results.forEach { this.add(ItemStack(it.first, it.second)) } },

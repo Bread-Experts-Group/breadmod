@@ -5,10 +5,10 @@ import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.SlotItemHandler
 
 class ResultSlotItemHandler(
-	itemHandler : IItemHandler,
-	index : Int,
-	xPosition : Int,
-	yPosition : Int
+	itemHandler: IItemHandler,
+	index: Int,
+	xPosition: Int,
+	yPosition: Int
 ) : SlotItemHandler(itemHandler, index, xPosition, yPosition) {
-	override fun mayPlace(stack : ItemStack) : Boolean = false
+	override fun mayPlace(stack: ItemStack): Boolean = false
 }

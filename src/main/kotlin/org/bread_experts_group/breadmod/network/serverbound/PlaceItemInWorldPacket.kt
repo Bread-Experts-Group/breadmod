@@ -22,19 +22,19 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 
 class PlaceItemInWorldPacket(
-	private val pos : BlockPos,
-	private val direction : Direction
+	private val pos: BlockPos,
+	private val direction: Direction
 ) : CustomPacketPayload {
 	companion object {
-		val TYPE : CustomPacketPayload.Type<PlaceItemInWorldPacket> =
+		val TYPE: CustomPacketPayload.Type<PlaceItemInWorldPacket> =
 			CustomPacketPayload.Type(modLocation("place_item_packet"))
-		val STREAM_CODEC : StreamCodec<ByteBuf, PlaceItemInWorldPacket> = StreamCodec.composite(
+		val STREAM_CODEC: StreamCodec<ByteBuf, PlaceItemInWorldPacket> = StreamCodec.composite(
 			BlockPos.STREAM_CODEC, PlaceItemInWorldPacket::pos,
 			Direction.STREAM_CODEC, PlaceItemInWorldPacket::direction,
 			::PlaceItemInWorldPacket
 		)
 
-		fun handleServerboundPacket(data : PlaceItemInWorldPacket, context : IPayloadContext) {
+		fun handleServerboundPacket(data: PlaceItemInWorldPacket, context: IPayloadContext) {
 			val player = context.player()
 			val level = player.level()
 			val stack = player.getItemInHand(MAIN_HAND)
@@ -70,5 +70,5 @@ class PlaceItemInWorldPacket(
 		}
 	}
 
-	override fun type() : Type<out CustomPacketPayload> = Companion.TYPE
+	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE
 }

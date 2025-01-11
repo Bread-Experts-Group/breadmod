@@ -8,20 +8,20 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 
-internal data class WarTimerToggle(private val active : Boolean) : CustomPacketPayload {
+internal data class WarTimerToggle(private val active: Boolean) : CustomPacketPayload {
 	companion object {
-		val TYPE : CustomPacketPayload.Type<WarTimerToggle> =
+		val TYPE: CustomPacketPayload.Type<WarTimerToggle> =
 			CustomPacketPayload.Type(modLocation("war_timer_toggle"))
-		val STREAM_CODEC : StreamCodec<ByteBuf, WarTimerToggle> = StreamCodec.composite(
+		val STREAM_CODEC: StreamCodec<ByteBuf, WarTimerToggle> = StreamCodec.composite(
 			ByteBufCodecs.BOOL, WarTimerToggle::active, ::WarTimerToggle
 		)
 
-		fun handleClientboundPacket(data : WarTimerToggle, context : IPayloadContext) {
+		fun handleClientboundPacket(data: WarTimerToggle, context: IPayloadContext) {
 			context.enqueueWork {
 				WarOverlay.timerActive = data.active
 			}
 		}
 	}
 
-	override fun type() : CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
+	override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
 }

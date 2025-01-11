@@ -16,7 +16,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSe
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 
 internal object WarTimerCommand {
-	fun register() : ArgumentBuilder<CommandSourceStack, *> =
+	fun register(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("warTimer")
 			.requires { sourceStack -> sourceStack.hasPermission(2) }
 			.then(
@@ -26,12 +26,12 @@ internal object WarTimerCommand {
 					.then(this.set())
 			)
 
-	private fun reset(player : ServerPlayer) {
+	private fun reset(player: ServerPlayer) {
 		warTimerMap[player] = CommonNeoForgeEventBus.WarTimerData()
 		PacketDistributor.sendToPlayer(player, WarTimerToggle(true))
 	}
 
-	private fun toggle() : ArgumentBuilder<CommandSourceStack, *> =
+	private fun toggle(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("toggle")
 			.executes { ctx ->
 				val targets = EntityArgument.getPlayers(ctx, "targets")
@@ -45,18 +45,18 @@ internal object WarTimerCommand {
 				Command.SINGLE_SUCCESS
 			}
 
-	fun increaseTime(player : ServerPlayer, data : CommonNeoForgeEventBus.WarTimerData, amount : Int) {
+	fun increaseTime(player: ServerPlayer, data: CommonNeoForgeEventBus.WarTimerData, amount: Int) {
 		data.increaseTime += amount
 		PacketDistributor.sendToPlayer(player, WarTimerIncrement(true, data.increaseTime))
 	}
 
-	private fun setTime(player : ServerPlayer, data : CommonNeoForgeEventBus.WarTimerData, amount : Int) {
+	private fun setTime(player: ServerPlayer, data: CommonNeoForgeEventBus.WarTimerData, amount: Int) {
 		data.timeLeft = amount
 		data.ticker = 70
 		PacketDistributor.sendToPlayer(player, WarTimerSet(amount))
 	}
 
-	private fun increaseTimeLogic(ctx : CommandContext<CommandSourceStack>, amount : Int) {
+	private fun increaseTimeLogic(ctx: CommandContext<CommandSourceStack>, amount: Int) {
 		val targets = EntityArgument.getPlayers(ctx, "targets")
 		targets.forEach { player ->
 			val check = warTimerMap[player]
@@ -65,7 +65,7 @@ internal object WarTimerCommand {
 		}
 	}
 
-	private fun increase() : ArgumentBuilder<CommandSourceStack, *> =
+	private fun increase(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("increase")
 			.executes { ctx ->
 				this.increaseTimeLogic(ctx, 30)
@@ -80,7 +80,7 @@ internal object WarTimerCommand {
 					}
 			)
 
-	private fun set() : ArgumentBuilder<CommandSourceStack, *> =
+	private fun set(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("set")
 			.then(
 				Commands.argument("amount", IntegerArgumentType.integer(1, 6039))

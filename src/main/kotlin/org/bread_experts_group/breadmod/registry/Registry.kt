@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
 object Registry {
-	val logger : Logger = LogManager.getLogger()
+	val logger: Logger = LogManager.getLogger()
 	private val registerList = listOf(
 		ModItems.ITEM_REGISTRY,
 		ModBlocks.BLOCK_REGISTRY,
@@ -34,7 +34,7 @@ object Registry {
 		ModMenuTypes.MENU_TYPE_REGISTRY
 	)
 
-	fun registerAll(bus : IEventBus) {
+	fun registerAll(bus: IEventBus) {
 		this.registerList.forEach {
 			this.logger.info("Pushing register for ${it.registryName}")
 			it.register(bus)

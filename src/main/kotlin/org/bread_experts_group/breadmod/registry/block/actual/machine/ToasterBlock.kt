@@ -46,40 +46,40 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 		.sound(SoundType.COPPER)
 ) {
 	private companion object {
-		val AABB_X : VoxelShape = Block.box(5.0, 0.0, 2.0, 11.0, 7.0, 14.0)
-		val AABB_Z : VoxelShape = Block.box(2.0, 0.0, 5.0, 14.0, 7.0, 11.0)
-		val FACING : DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
-		val RANDOM : RandomSource = RandomSource.create()
-		val TRIGGERED : BooleanProperty = BlockStateProperties.TRIGGERED
+		val AABB_X: VoxelShape = Block.box(5.0, 0.0, 2.0, 11.0, 7.0, 14.0)
+		val AABB_Z: VoxelShape = Block.box(2.0, 0.0, 5.0, 14.0, 7.0, 11.0)
+		val FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
+		val RANDOM: RandomSource = RandomSource.create()
+		val TRIGGERED: BooleanProperty = BlockStateProperties.TRIGGERED
 	}
 
-	override fun getStateForPlacement(context : BlockPlaceContext) : BlockState =
+	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
 		this.defaultBlockState()
 			.setValue(Companion.FACING, context.horizontalDirection.opposite)
 			.setValue(Companion.TRIGGERED, false)
 			.setValue(BlockStateProperties.WATERLOGGED, false)
 
-	override fun createBlockStateDefinition(builder : Builder<Block, BlockState>) {
+	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
 		builder.add(Companion.FACING, Companion.TRIGGERED, BlockStateProperties.WATERLOGGED)
 	}
 
 	override fun getShape(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		context : CollisionContext
-	) : VoxelShape = when (state.getValue(Companion.FACING)) {
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		context: CollisionContext
+	): VoxelShape = when (state.getValue(Companion.FACING)) {
 		Direction.NORTH, Direction.SOUTH -> Companion.AABB_X
-		else -> Companion.AABB_Z
+		else                             -> Companion.AABB_Z
 	}
 
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		val entity = level.getBlockEntity(pos) as? ToasterBlockEntity ?: return InteractionResult.FAIL
 		val triggeredState = state.getValue(Companion.TRIGGERED)
 
@@ -91,7 +91,7 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 			}
 		} else if (!player.isCrouching && !triggeredState && entity.progress == 0 &&
 			player.getItemInHand(player.usedItemHand).isEmpty
-			) {
+		) {
 			entity.dropContents()
 			level.setBlockAndUpdate(pos, state)
 		}
@@ -100,22 +100,22 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 	}
 
 	override fun useItemOn(
-		stack : ItemStack,
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hand : InteractionHand,
-		hitResult : BlockHitResult
-	) : ItemInteractionResult {
+		stack: ItemStack,
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hand: InteractionHand,
+		hitResult: BlockHitResult
+	): ItemInteractionResult {
 		val entity = (level.getBlockEntity(pos) as? ToasterBlockEntity) ?: return ItemInteractionResult.FAIL
 		val triggeredState = state.getValue(Companion.TRIGGERED)
-		val itemHandler = entity.items ?: return ItemInteractionResult.FAIL
+		val itemHandler = entity.items
 
 		if (!triggeredState && entity.progress <= 0 && !stack.isEmpty &&
 			itemHandler.getStackInSlot(0).count != 2 &&
 			(stack.`is`(ModItemTags.TOASTABLE) || stack.`is`(ModItemTags.EXPLODES_IN_TOASTER))
-			) {
+		) {
 			if (!player.isCreative) stack.shrink(1)
 			itemHandler.insertItem(0, ItemStack(stack.item, 1), false)
 			level.playSound(
@@ -133,13 +133,12 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 	}
 
 	// Pretty much a clone of the furnace animateTick code.
-	override fun animateTick(state : BlockState, level : Level, pos : BlockPos, random : RandomSource) {
+	override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: RandomSource) {
 		val entity = level.getBlockEntity(pos) as? ToasterBlockEntity ?: return
-		val itemHandler = entity.items ?: return
+		val itemHandler = entity.items
 		val posX = pos.x + 0.4
 		val posY = pos.y + 0.5
 		val posZ = pos.z + 0.5
-
 		val direction = state.getValue(Companion.FACING)
 		val axis = direction.axis
 		val d1 = random.nextDouble() * 0.6 - 0.3
@@ -183,22 +182,22 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 	}
 
 	override fun appendHoverText(
-		stack : ItemStack,
-		context : TooltipContext,
-		tooltipComponents : MutableList<Component>,
-		tooltipFlag : TooltipFlag
+		stack: ItemStack,
+		context: TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
 	) {
 		tooltipComponents.add(BreadMod.modTranslatable("block", "toaster", "tooltip").withStyle(RED))
 	}
 
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity = ToasterBlockEntity(pos, state)
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = ToasterBlockEntity(pos, state)
 
 	override fun onRemove(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		newState : BlockState,
-		movedByPiston : Boolean
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		newState: BlockState,
+		movedByPiston: Boolean
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = level.getBlockEntity(pos) as ToasterBlockEntity
@@ -209,18 +208,18 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 	}
 
 	override fun <T : BlockEntity> getTicker(
-		level : Level,
-		state : BlockState,
-		blockEntityType : BlockEntityType<T>
-	) : BlockEntityTicker<T> = if (level.isClientSide)
-		BlockEntityTicker<T> { clientLevel : Level, pos : BlockPos, tState : BlockState, entity : T ->
+		level: Level,
+		state: BlockState,
+		blockEntityType: BlockEntityType<T>
+	): BlockEntityTicker<T> = if (level.isClientSide)
+		BlockEntityTicker<T> { clientLevel: Level, pos: BlockPos, tState: BlockState, entity: T ->
 			if (state.getValue(Companion.TRIGGERED)) {
 				(entity as AbstractTickingBlockEntity<*>).commonTick(clientLevel, pos, tState, entity)
 				entity.clientTick(clientLevel, pos, tState, entity)
 			}
 		}
 	else
-		BlockEntityTicker<T> { serverLevel : Level, pos : BlockPos, tState : BlockState, entity : T ->
+		BlockEntityTicker<T> { serverLevel: Level, pos: BlockPos, tState: BlockState, entity: T ->
 			if (state.getValue(Companion.TRIGGERED)) {
 				(entity as AbstractTickingBlockEntity<*>).commonTick(serverLevel, pos, tState, entity)
 				entity.serverTick(serverLevel, pos, tState, entity)

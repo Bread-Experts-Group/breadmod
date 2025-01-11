@@ -19,15 +19,15 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
 
 class ModItemTags(
-	output : PackOutput,
-	lookupProvider : CompletableFuture<HolderLookup.Provider>,
-	blockTags : CompletableFuture<TagLookup<Block>>,
-	existingFileHelper : ExistingFileHelper
+	output: PackOutput,
+	lookupProvider: CompletableFuture<HolderLookup.Provider>,
+	blockTags: CompletableFuture<TagLookup<Block>>,
+	existingFileHelper: ExistingFileHelper
 ) : ItemTagsProvider(output, lookupProvider, blockTags, BreadMod.ID, existingFileHelper) {
-	inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd : Supplier<A>) : IntrinsicTagAppender<T> =
+	inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
 		this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 
-	override fun addTags(provider : HolderLookup.Provider) {
+	override fun addTags(provider: HolderLookup.Provider) {
 		this.tag(Tags.Items.MUSIC_DISCS)
 			.add(ModItems.RECORD_SECRET_HOPPIN)
 		this.tag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
@@ -61,8 +61,8 @@ class ModItemTags(
 	}
 
 	companion object {
-		val KNIVES : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
-		val TOASTABLE : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
-		val EXPLODES_IN_TOASTER : TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("explodes_in_toaster"))
+		val KNIVES: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
+		val TOASTABLE: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
+		val EXPLODES_IN_TOASTER: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("explodes_in_toaster"))
 	}
 }

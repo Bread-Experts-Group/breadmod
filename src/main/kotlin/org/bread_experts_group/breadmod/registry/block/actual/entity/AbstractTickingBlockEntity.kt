@@ -7,28 +7,28 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 
 abstract class AbstractTickingBlockEntity<T : AbstractTickingBlockEntity<T>>(
-	type : BlockEntityType<T>,
-	pos : BlockPos,
-	blockState : BlockState
+	type: BlockEntityType<T>,
+	pos: BlockPos,
+	blockState: BlockState
 ) : BlockEntity(type, pos, blockState) {
 	open fun commonTick(
-		clientLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
-	) : Unit = Unit
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
+	): Unit = Unit
 
 	open fun clientTick(
-		clientLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
-	) : Unit = Unit
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
+	): Unit = Unit
 
 	open fun serverTick(
-		serverLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
-	) : Unit = Unit
+		serverLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
+	): Unit = Unit
 }

@@ -31,38 +31,38 @@ class RandomSoundBlock : Block(
 		.requiresCorrectToolForDrops()
 		.sound(SoundType.METAL)
 ) {
-	val random : RandomSource = RandomSource.create()
+	val random: RandomSource = RandomSource.create()
 
 	init {
 		this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.POWERED, false))
 	}
 
-	override fun getStateForPlacement(pContext : BlockPlaceContext) : BlockState =
+	override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
 		this.defaultBlockState()
 			.setValue(BlockStateProperties.POWERED, false)
 
-	override fun createBlockStateDefinition(pBuilder : StateDefinition.Builder<Block, BlockState>) {
+	override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
 		pBuilder.add(BlockStateProperties.POWERED)
 	}
 
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		if (player.usedItemHand == InteractionHand.MAIN_HAND && !level.isClientSide) this.playRandomSound(pos, level)
 		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 
 	override fun neighborChanged(
-		pState : BlockState,
-		pLevel : Level,
-		pPos : BlockPos,
-		pNeighborBlock : Block,
-		pNeighborPos : BlockPos,
-		pMovedByPiston : Boolean
+		pState: BlockState,
+		pLevel: Level,
+		pPos: BlockPos,
+		pNeighborBlock: Block,
+		pNeighborPos: BlockPos,
+		pMovedByPiston: Boolean
 	) {
 		val flag = pLevel.hasNeighborSignal(pPos)
 		if (flag != pState.getValue(BlockStateProperties.POWERED)) {
@@ -71,13 +71,13 @@ class RandomSoundBlock : Block(
 		}
 	}
 
-	private fun playRandomSound(pPos : BlockPos, pLevel : Level) {
+	private fun playRandomSound(pPos: BlockPos, pLevel: Level) {
 		val randomEntry = BuiltInRegistries.SOUND_EVENT.entrySet().random().value
 		pLevel.playSound(null, pPos, randomEntry, SoundSource.RECORDS, 1f, 1f)
 		pLevel.blockEvent(pPos, this, 0, 0)
 	}
 
-	override fun triggerEvent(pState : BlockState, pLevel : Level, pPos : BlockPos, pId : Int, pParam : Int) : Boolean {
+	override fun triggerEvent(pState: BlockState, pLevel: Level, pPos: BlockPos, pId: Int, pParam: Int): Boolean {
 		pLevel.addParticle(
 			ParticleTypes.NOTE,
 			pPos.x.toDouble() + 0.5,
@@ -91,10 +91,10 @@ class RandomSoundBlock : Block(
 	}
 
 	override fun appendHoverText(
-		stack : ItemStack,
-		context : Item.TooltipContext,
-		tooltipComponents : MutableList<Component>,
-		tooltipFlag : TooltipFlag
+		stack: ItemStack,
+		context: Item.TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
 	) {
 		tooltipComponents.add(
 			modTranslatable("block", "random_sound_block", "tooltip")

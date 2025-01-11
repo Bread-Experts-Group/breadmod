@@ -11,5 +11,5 @@ interface IKeyboardItem {
 	/**
 	 * Fires when a key is pressed.
 	 */
-	fun onKeyboardPress(keyEvent : InputEvent.Key, heldStack : ItemStack, player : Player)
+	fun onKeyboardPress(keyEvent: InputEvent.Key, heldStack: ItemStack, player: Player)
 }

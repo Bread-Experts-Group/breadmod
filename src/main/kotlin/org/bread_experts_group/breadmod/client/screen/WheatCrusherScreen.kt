@@ -13,9 +13,9 @@ import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.util.formatUnit
 
 class WheatCrusherScreen(
-	menu : WheatCrusherMenu,
-	inventory : Inventory,
-	title : Component
+	menu: WheatCrusherMenu,
+	inventory: Inventory,
+	title: Component
 ) : AbstractContainerScreen<WheatCrusherMenu>(menu, inventory, title) {
 	private val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
 
@@ -24,7 +24,7 @@ class WheatCrusherScreen(
 		this.imageHeight = 198
 	}
 
-	override fun renderBg(guiGraphics : GuiGraphics, partialTick : Float, mouseX : Int, mouseY : Int) {
+	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
 		RenderSystem.setShaderTexture(0, this.texture)
@@ -36,9 +36,9 @@ class WheatCrusherScreen(
 		this.renderEnergyMeter(guiGraphics)
 	}
 
-	private var step : Int = -32
-	private var timer : Int = 20
-	override fun render(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
+	private var step: Int = -32
+	private var timer: Int = 20
+	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
 		val showShort = !(this.minecraft ?: return).options.keyShift.isDown
 		if (this.isHovering(151, 14, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
@@ -79,7 +79,7 @@ class WheatCrusherScreen(
 		this.renderTooltip(guiGraphics, mouseX, mouseY)
 	}
 
-	private fun renderEnergyMeter(guiGraphics : GuiGraphics) {
+	private fun renderEnergyMeter(guiGraphics: GuiGraphics) {
 		val energyStored = this.menu.getEnergyStoredScaled()
 		guiGraphics.blit(
 			this.texture,
@@ -92,7 +92,7 @@ class WheatCrusherScreen(
 		)
 	}
 
-	private fun renderProgressArrow(guiGraphics : GuiGraphics) {
+	private fun renderProgressArrow(guiGraphics: GuiGraphics) {
 		if (this.menu.isCrafting()) {
 			guiGraphics.blit(
 				this.texture,

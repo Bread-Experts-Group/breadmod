@@ -14,9 +14,9 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.Reci
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeSerializer
 
 class FluidEnergySerializer<R : FluidEnergyRecipeMulti>(
-	private val recipe : RecipeFunctionDataFixer<R>
+	private val recipe: RecipeFunctionDataFixer<R>
 ) : BMRecipeSerializer<R>() {
-	override fun codec() : MapCodec<R> = RecordCodecBuilder.mapCodec { inst ->
+	override fun codec(): MapCodec<R> = RecordCodecBuilder.mapCodec { inst ->
 		inst.group(
 			this.optionalSizedIngredientCodecModule("item_ingredients", FluidEnergyRecipeMulti::rItemInputs),
 			this.optionalItemStackListCodecModule("item_results", FluidEnergyRecipeMulti::rItemOutputs),
@@ -27,7 +27,7 @@ class FluidEnergySerializer<R : FluidEnergyRecipeMulti>(
 		).apply(inst, this.recipe)
 	}
 
-	override fun streamCodec() : StreamCodec<RegistryFriendlyByteBuf, R> =
+	override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, R> =
 		StreamCodec.composite(
 			this.nonNullListStreamCodec(SizedIngredient.STREAM_CODEC), FluidEnergyRecipeMulti::rItemInputs,
 			ItemStack.LIST_STREAM_CODEC, FluidEnergyRecipeMulti::rItemOutputs,

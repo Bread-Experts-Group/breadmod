@@ -10,13 +10,13 @@ import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
 object ModPools {
-	fun createKey(id : String) : ResourceKey<StructureTemplatePool> = ResourceKey.create(
+	fun createKey(id: String): ResourceKey<StructureTemplatePool> = ResourceKey.create(
 		Registries.TEMPLATE_POOL,
 		modLocation(id)
 	)
 
-	val FARMHOUSE_POOL : ResourceKey<StructureTemplatePool> = this.createKey("farmhouse")
-	fun bootstrap(pContext : BootstrapContext<StructureTemplatePool>) {
+	val FARMHOUSE_POOL: ResourceKey<StructureTemplatePool> = this.createKey("farmhouse")
+	fun bootstrap(pContext: BootstrapContext<StructureTemplatePool>) {
 		val templateHolder = pContext.lookup(Registries.TEMPLATE_POOL).getOrThrow(Pools.EMPTY)
 		pContext.register(
 			this.FARMHOUSE_POOL, StructureTemplatePool(

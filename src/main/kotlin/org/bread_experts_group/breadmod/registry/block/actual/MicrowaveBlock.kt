@@ -39,9 +39,9 @@ import java.util.stream.Stream
 
 class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	private companion object {
-		val HORIZONTAL_FACING : DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
-		val OPEN : BooleanProperty = BlockStateProperties.OPEN
-		val SHAPE_NORTH : VoxelShape = Stream.of(
+		val HORIZONTAL_FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
+		val OPEN: BooleanProperty = BlockStateProperties.OPEN
+		val SHAPE_NORTH: VoxelShape = Stream.of(
 			box(1.0, 1.0, 3.0, 15.0, 9.0, 13.0),
 			box(2.0, 2.0, 13.0, 14.0, 8.0, 14.0),
 			box(1.5, 0.0, 10.5, 3.5, 1.0, 12.5),
@@ -49,32 +49,31 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
 		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val SHAPE_SOUTH : VoxelShape = Stream.of(
+		val SHAPE_SOUTH: VoxelShape = Stream.of(
 			box(1.0, 1.0, 3.0, 15.0, 9.0, 13.0),
 			box(2.0, 2.0, 2.0, 14.0, 8.0, 3.0),
 			box(1.5, 0.0, 10.5, 3.5, 1.0, 12.5),
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5),
 			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
-		).reduce { v1 : VoxelShape, v2 : VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val SHAPE_WEST : VoxelShape = Stream.of(
+		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		val SHAPE_WEST: VoxelShape = Stream.of(
 			box(3.0, 1.0, 1.0, 13.0, 9.0, 15.0),
 			box(13.0, 2.0, 2.0, 14.0, 8.0, 14.0),
 			box(3.5, 0.0, 1.5, 5.5, 1.0, 3.5),
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5)
-		).reduce { v1 : VoxelShape, v2 : VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val SHAPE_EAST : VoxelShape = Stream.of(
+		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		val SHAPE_EAST: VoxelShape = Stream.of(
 			box(3.0, 1.0, 1.0, 13.0, 9.0, 15.0),
 			box(2.0, 2.0, 2.0, 3.0, 8.0, 14.0),
 			box(3.5, 0.0, 1.5, 5.5, 1.0, 3.5),
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5)
-		).reduce { v1 : VoxelShape, v2 : VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-
-		val SHAPE_NORTH_OPEN : VoxelShape = Stream.of(
+		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		val SHAPE_NORTH_OPEN: VoxelShape = Stream.of(
 			box(1.0, 1.0, 3.0, 5.0, 9.0, 13.0),
 			box(5.0, 1.0, 3.0, 15.0, 2.0, 13.0),
 			box(6.5, 2.0, 5.0, 12.5, 2.5, 11.0),
@@ -86,8 +85,8 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5),
 			box(1.5, 0.0, 10.5, 3.5, 1.0, 12.5),
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5)
-		).reduce { v1 : VoxelShape, v2 : VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val SHAPE_SOUTH_OPEN : VoxelShape = Stream.of(
+		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		val SHAPE_SOUTH_OPEN: VoxelShape = Stream.of(
 			box(11.0, 1.0, 3.0, 15.0, 9.0, 13.0),
 			box(1.0, 1.0, 3.0, 11.0, 2.0, 13.0),
 			box(3.5, 2.0, 5.0, 9.5, 2.5, 11.0),
@@ -99,8 +98,8 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5),
 			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
-		).reduce { v1 : VoxelShape, v2 : VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val SHAPE_WEST_OPEN : VoxelShape = Stream.of(
+		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		val SHAPE_WEST_OPEN: VoxelShape = Stream.of(
 			box(3.0, 1.0, 11.0, 13.0, 9.0, 15.0),
 			box(3.0, 1.0, 1.0, 13.0, 2.0, 11.0),
 			box(5.0, 2.1, 3.5, 11.0, 2.5, 9.5),
@@ -112,8 +111,8 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5)
-		).reduce { v1 : VoxelShape, v2 : VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val SHAPE_EAST_OPEN : VoxelShape = Stream.of(
+		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		val SHAPE_EAST_OPEN: VoxelShape = Stream.of(
 			box(3.0, 1.0, 1.0, 13.0, 9.0, 5.0),
 			box(3.0, 1.0, 5.0, 13.0, 2.0, 15.0),
 			box(5.0, 2.1, 6.5, 11.0, 2.5, 12.5),
@@ -125,17 +124,17 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5)
-		).reduce { v1 : VoxelShape, v2 : VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
 	}
 
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity = MicrowaveBlockEntity(pos, state)
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MicrowaveBlockEntity(pos, state)
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		val direction = hitResult.direction ?: return FAIL
 		val hitLoc = hitResult.location
 		val hitX = normalizeHitLoc(hitLoc.x, pos.x)
@@ -159,18 +158,18 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 		return sidedSuccess(level.isClientSide)
 	}
 
-	private fun sound(level : Level, pos : BlockPos, pitch : Float) =
+	private fun sound(level: Level, pos: BlockPos, pitch: Float) =
 		level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BIT.value(), BLOCKS, 1f, pitch)
 
 	private fun buttonPress(
-		targetX : Double,
-		targetY : Double,
-		startMinX : Double,
-		startMaxX : Double,
-		level : Level,
-		pos : BlockPos,
-		facing : Direction
-	) : Int {
+		targetX: Double,
+		targetY: Double,
+		startMinX: Double,
+		startMaxX: Double,
+		level: Level,
+		pos: BlockPos,
+		facing: Direction
+	): Int {
 		repeat(4) { yIndex ->
 			val yMul = (yIndex / 100.0) * 5
 
@@ -183,8 +182,8 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 						0.3 - yMul,
 						if (facing == NORTH || facing == EAST) startMaxX - xMul else startMaxX + xMul,
 						0.33 - yMul
-				)
-					) {
+					)
+				) {
 					this.sound(level, pos, 0.5f + pitchMul + yMul.toFloat())
 					return (xIndex + 1) + (yIndex * 3)
 				}
@@ -194,50 +193,50 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	}
 
 	override fun useItemOn(
-		stack : ItemStack,
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hand : InteractionHand,
-		hitResult : BlockHitResult
-	) : ItemInteractionResult {
+		stack: ItemStack,
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hand: InteractionHand,
+		hitResult: BlockHitResult
+	): ItemInteractionResult {
 		return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
 	}
 
-	override fun getLightEmission(state : BlockState, level : BlockGetter, pos : BlockPos) : Int {
+	override fun getLightEmission(state: BlockState, level: BlockGetter, pos: BlockPos): Int {
 		return super.getLightEmission(state, level, pos)
 	}
 
-	override fun createBlockStateDefinition(builder : Builder<Block, BlockState>) {
+	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
 		builder.add(Companion.HORIZONTAL_FACING, Companion.OPEN)
 	}
 
-	override fun getStateForPlacement(context : BlockPlaceContext) : BlockState =
+	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
 		this.defaultBlockState()
 			.setValue(Companion.HORIZONTAL_FACING, context.horizontalDirection.opposite)
 			.setValue(Companion.OPEN, false)
 
 	override fun getShape(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		context : CollisionContext
-	) : VoxelShape {
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		context: CollisionContext
+	): VoxelShape {
 		val direction = state.getValue(Companion.HORIZONTAL_FACING) ?: return Shapes.block()
 		return if (state.getValue(Companion.OPEN)) {
 			when (direction) {
-				NORTH -> Companion.SHAPE_NORTH_OPEN
-				SOUTH -> Companion.SHAPE_SOUTH_OPEN
-				WEST  -> Companion.SHAPE_WEST_OPEN
-				EAST  -> Companion.SHAPE_EAST_OPEN
+				NORTH    -> Companion.SHAPE_NORTH_OPEN
+				SOUTH    -> Companion.SHAPE_SOUTH_OPEN
+				WEST     -> Companion.SHAPE_WEST_OPEN
+				EAST     -> Companion.SHAPE_EAST_OPEN
 				UP, DOWN -> Shapes.block()
 			}
 		} else when (direction) {
-			NORTH -> Companion.SHAPE_NORTH
-			SOUTH -> Companion.SHAPE_SOUTH
-			WEST  -> Companion.SHAPE_WEST
-			EAST  -> Companion.SHAPE_EAST
+			NORTH    -> Companion.SHAPE_NORTH
+			SOUTH    -> Companion.SHAPE_SOUTH
+			WEST     -> Companion.SHAPE_WEST
+			EAST     -> Companion.SHAPE_EAST
 			UP, DOWN -> Shapes.block()
 		}
 	}

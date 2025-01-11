@@ -36,18 +36,19 @@ class ChefHatItem : ArmorItem(ModArmorMaterials.CHEF, Type.HELMET, Properties().
 	private var machStage = 0
 	private var isRunning = false
 	override fun appendHoverText(
-		stack : ItemStack,
-		context : TooltipContext,
-		tooltipComponents : MutableList<Component>,
-		tooltipFlag : TooltipFlag
+		stack: ItemStack,
+		context: TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
 	) {
 		tooltipComponents.add(
 			modTranslatable("item", "chef_hat", "tooltip")
 				.withStyle(ChatFormatting.LIGHT_PURPLE)
 		)
 	}
+
 	// todo figure out why other players using the hat cancel out the first player also using the hat
-	override fun inventoryTick(stack : ItemStack, level : Level, entity : Entity, slotId : Int, isSelected : Boolean) {
+	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 //        LogManager.getLogger().info("${entity.name.string} mach stage: $machStage, sprint timer: $sprintTimer")
 		if (!level.isClientSide && level is ServerLevel && slotId == 39) {
 			if (entity is ServerPlayer && entity.isSprinting) {

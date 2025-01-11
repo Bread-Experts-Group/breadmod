@@ -21,16 +21,16 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class SingleFluidTestRecipe(
-	rFluidInput : SizedFluidIngredient,
-	rFluidOutput : FluidStack,
-	rTime : Int?,
-	rEnergy : Int?
+	rFluidInput: SizedFluidIngredient,
+	rFluidOutput: FluidStack,
+	rTime: Int?,
+	rEnergy: Int?
 ) : BreadModRecipes.SingleFluid(rFluidInput, rFluidOutput, rTime, rEnergy) {
-	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.SINGLE_FLUID_TEST.get()
-	override fun getType() : RecipeType<*> = ModRecipeTypes.SINGLE_FLUID.get()
-	override fun isIncomplete() : Boolean = false
+	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.SINGLE_FLUID_TEST.get()
+	override fun getType(): RecipeType<*> = ModRecipeTypes.SINGLE_FLUID.get()
+	override fun isIncomplete(): Boolean = false
 	class Serializer : BMRecipeSerializer<SingleFluidTestRecipe>() {
-		override fun codec() : MapCodec<SingleFluidTestRecipe> = RecordCodecBuilder.mapCodec { inst ->
+		override fun codec(): MapCodec<SingleFluidTestRecipe> = RecordCodecBuilder.mapCodec { inst ->
 			inst.group(
 				SizedFluidIngredient.FLAT_CODEC.fieldOf("ingredient").forGetter(SingleFluidTestRecipe::rFluidInput),
 				FluidStack.CODEC.fieldOf("result").forGetter(SingleFluidTestRecipe::rFluidOutput),
@@ -39,7 +39,7 @@ class SingleFluidTestRecipe(
 			).apply(inst, ::SingleFluidTestRecipe)
 		}
 
-		override fun streamCodec() : StreamCodec<RegistryFriendlyByteBuf, SingleFluidTestRecipe> =
+		override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, SingleFluidTestRecipe> =
 			StreamCodec.composite(
 				SizedFluidIngredient.STREAM_CODEC, SingleFluidTestRecipe::rFluidInput,
 				FluidStack.STREAM_CODEC, SingleFluidTestRecipe::rFluidOutput,
@@ -50,11 +50,11 @@ class SingleFluidTestRecipe(
 	}
 
 	class Builder(
-		private val result : Fluid,
-		private val amount : Int
+		private val result: Fluid,
+		private val amount: Int
 	) : BMRecipeBuilder.Single() {
-		override fun getResult() : Item = ItemStack.EMPTY.item
-		override fun save(recipeOutput : RecipeOutput, id : ResourceLocation) {
+		override fun getResult(): Item = ItemStack.EMPTY.item
+		override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
 			val recipe = SingleFluidTestRecipe(this.fluid, FluidStack(this.result, this.amount), this.time, this.energy)
 			recipeOutput.accept(id, recipe, this.buildAdvancement(recipeOutput, id))
 		}

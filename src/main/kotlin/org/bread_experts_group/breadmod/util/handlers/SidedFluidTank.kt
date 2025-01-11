@@ -10,10 +10,10 @@ import kotlin.math.min
 
 // todo proof of concept in progress..
 class SidedFluidTank(
-	val tanks : List<CustomHandler>
+	val tanks: List<CustomHandler>
 ) {
-	fun getFluidInTank(tank : Int) : FluidStack = this.tanks[tank].fluid
-	fun writeToNBT(lookupProvider : Provider, nbt : CompoundTag) : CompoundTag {
+	fun getFluidInTank(tank: Int): FluidStack = this.tanks[tank].fluid
+	fun writeToNBT(lookupProvider: Provider, nbt: CompoundTag): CompoundTag {
 		val tag = CompoundTag()
 		repeat(this.tanks.size) { index ->
 			if (!this.tanks[index].fluid.isEmpty) {
@@ -24,7 +24,7 @@ class SidedFluidTank(
 		return nbt
 	}
 
-	fun readFromNBT(lookupProvider : Provider, nbt : CompoundTag) : SidedFluidTank {
+	fun readFromNBT(lookupProvider: Provider, nbt: CompoundTag): SidedFluidTank {
 		val tag = nbt.getCompound("fluids")
 		repeat(this.tanks.size) { index ->
 			this.tanks[index].fluid = FluidStack.parseOptional(lookupProvider, tag.getCompound("Fluid_$index"))
@@ -32,18 +32,18 @@ class SidedFluidTank(
 		return this
 	}
 
-	fun getCapacity(tank : Int) : Int = this.tanks[tank].capacity
+	fun getCapacity(tank: Int): Int = this.tanks[tank].capacity
 	open class CustomHandler(
 		/**
 		 * Returns the capacity of this tank.
 		 */
-		val capacity : Int,
-		private val fluidTanks : Int,
-		private val canFill : Boolean,
-		private val canDrain : Boolean,
-		private val validator : Predicate<FluidStack>
+		val capacity: Int,
+		private val fluidTanks: Int,
+		private val canFill: Boolean,
+		private val canDrain: Boolean,
+		private val validator: Predicate<FluidStack>
 	) : IFluidHandler {
-		constructor(capacity : Int, canFill : Boolean, canDrain : Boolean) : this(
+		constructor(capacity: Int, canFill: Boolean, canDrain: Boolean) : this(
 			capacity,
 			1,
 			canFill,
@@ -51,14 +51,14 @@ class SidedFluidTank(
 			{ true }
 		)
 
-		override fun getTanks() : Int = this.fluidTanks
-		var fluid : FluidStack = FluidStack.EMPTY
-		fun isEmpty() : Boolean = this.fluid.amount == 0
-		override fun getFluidInTank(tank : Int) : FluidStack = this.fluid
-		override fun getTankCapacity(tank : Int) : Int = this.capacity
-		override fun isFluidValid(tank : Int, stack : FluidStack) : Boolean = this.isFluidValid(stack)
-		fun isFluidValid(stack : FluidStack) : Boolean = this.validator.test(stack)
-		override fun fill(resource : FluidStack, action : FluidAction) : Int {
+		override fun getTanks(): Int = this.fluidTanks
+		var fluid: FluidStack = FluidStack.EMPTY
+		fun isEmpty(): Boolean = this.fluid.amount == 0
+		override fun getFluidInTank(tank: Int): FluidStack = this.fluid
+		override fun getTankCapacity(tank: Int): Int = this.capacity
+		override fun isFluidValid(tank: Int, stack: FluidStack): Boolean = this.isFluidValid(stack)
+		fun isFluidValid(stack: FluidStack): Boolean = this.validator.test(stack)
+		override fun fill(resource: FluidStack, action: FluidAction): Int {
 			if (resource.isEmpty || !this.isFluidValid(resource) || !this.canFill) {
 				return 0
 			}
@@ -91,13 +91,13 @@ class SidedFluidTank(
 			return filled
 		}
 
-		override fun drain(resource : FluidStack, action : FluidAction) : FluidStack {
+		override fun drain(resource: FluidStack, action: FluidAction): FluidStack {
 			if (resource.isEmpty || !FluidStack.isSameFluidSameComponents(resource, this.fluid) || !this.canDrain
 			) return FluidStack.EMPTY
 			return this.drain(resource.amount, action)
 		}
 
-		override fun drain(maxDrain : Int, action : FluidAction) : FluidStack {
+		override fun drain(maxDrain: Int, action: FluidAction): FluidStack {
 			var drained = maxDrain
 			if (this.fluid.amount < drained) {
 				drained = this.fluid.amount

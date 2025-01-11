@@ -22,15 +22,15 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class MultiFluidTestRecipe(
-	rFluidInputs : NonNullList<SizedFluidIngredient>,
-	rFluidOutputs : List<FluidStack>,
-	rTime : Int?,
-	rEnergy : Int?
+	rFluidInputs: NonNullList<SizedFluidIngredient>,
+	rFluidOutputs: List<FluidStack>,
+	rTime: Int?,
+	rEnergy: Int?
 ) : BreadModRecipes.MultiFluid(rFluidInputs, rFluidOutputs, rTime, rEnergy) {
-	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.MULTI_FLUID_TEST.get()
-	override fun getType() : RecipeType<*> = ModRecipeTypes.MULTI_FLUID.get()
+	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.MULTI_FLUID_TEST.get()
+	override fun getType(): RecipeType<*> = ModRecipeTypes.MULTI_FLUID.get()
 	class Serializer : BMRecipeSerializer<MultiFluidTestRecipe>() {
-		override fun codec() : MapCodec<MultiFluidTestRecipe> = RecordCodecBuilder.mapCodec { inst ->
+		override fun codec(): MapCodec<MultiFluidTestRecipe> = RecordCodecBuilder.mapCodec { inst ->
 			inst.group(
 				this.sizedFluidIngredientCodecModule("ingredients", MultiFluidTestRecipe::rFluidInputs),
 				this.fluidStackListCodecModule("results", MultiFluidTestRecipe::rFluidOutputs),
@@ -39,7 +39,7 @@ class MultiFluidTestRecipe(
 			).apply(inst, ::MultiFluidTestRecipe)
 		}
 
-		override fun streamCodec() : StreamCodec<RegistryFriendlyByteBuf, MultiFluidTestRecipe> = StreamCodec.composite(
+		override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, MultiFluidTestRecipe> = StreamCodec.composite(
 			this.nonNullListStreamCodec(SizedFluidIngredient.STREAM_CODEC), MultiFluidTestRecipe::rFluidInputs,
 			this.listStreamCodec(FluidStack.STREAM_CODEC), MultiFluidTestRecipe::rFluidOutputs,
 			ByteBufCodecs.INT, MultiFluidTestRecipe::rTime,
@@ -49,10 +49,10 @@ class MultiFluidTestRecipe(
 	}
 
 	class Builder(
-		private val results : List<Pair<Fluid, Int>>
+		private val results: List<Pair<Fluid, Int>>
 	) : BMRecipeBuilder.Multi() {
-		override fun getResult() : Item = ItemStack.EMPTY.item
-		override fun save(recipeOutput : RecipeOutput, id : ResourceLocation) {
+		override fun getResult(): Item = ItemStack.EMPTY.item
+		override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
 			val recipe = MultiFluidTestRecipe(
 				this.fluids,
 				buildList { this@Builder.results.forEach { this.add(FluidStack(it.first, it.second)) } },

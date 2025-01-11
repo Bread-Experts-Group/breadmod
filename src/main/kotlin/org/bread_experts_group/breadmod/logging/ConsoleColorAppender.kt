@@ -42,6 +42,7 @@ private val background = GraphicsModes.BLACK set GraphicsModes.BACKGROUND
 private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss;SSS")
 private val threadColorBanks = mutableMapOf<ColorBanks, ColorBankWithLastColor>()
 private val DEFAULT_OUT = PrintStream(FileOutputStream(FileDescriptor.out))
+
 /**
  * A console appender that colors the output based on the log level.
  * @author Miko Elbrecht, Dan Dyer @ dandyer.co.uk (initial code source)
@@ -53,8 +54,8 @@ private val DEFAULT_OUT = PrintStream(FileOutputStream(FileDescriptor.out))
 	elementType = Appender.ELEMENT_TYPE
 )
 class ConsoleColorAppender(
-	name : String,
-	filter : Filter?
+	name: String,
+	filter: Filter?
 ) : AbstractAppender(name, filter, null, false, null) {
 	internal companion object {
 		/**
@@ -65,12 +66,12 @@ class ConsoleColorAppender(
 		@JvmStatic
 		@PluginFactory
 		fun createAppender(
-			@PluginAttribute("name") name : String,
-			@PluginElement("Filter") filter : Filter?
-		) : ConsoleColorAppender = ConsoleColorAppender(name, filter)
+			@PluginAttribute("name") name: String,
+			@PluginElement("Filter") filter: Filter?
+		): ConsoleColorAppender = ConsoleColorAppender(name, filter)
 	}
 
-	private fun String.getColorForString(bank : ColorBanks) : String {
+	private fun String.getColorForString(bank: ColorBanks): String {
 		val (colorBank, lastColor) = threadColorBanks.getOrPut(bank) { mutableMapOf<String, ColorBankCount>() to null }
 		val color = colorBank[this]
 		if (color != null) return color.first
@@ -106,7 +107,7 @@ class ConsoleColorAppender(
 		return new.first
 	}
 
-	private fun String.padCTL(length : Int) : String {
+	private fun String.padCTL(length: Int): String {
 		var additional = length
 		var lastRead = ' '
 		var reading = false
@@ -124,10 +125,10 @@ class ConsoleColorAppender(
 	}
 
 	private fun addErrorTraceIterative(
-		proxy : ThrowableProxy,
-		baseMessage : String,
-		suppressed : Boolean = false
-	) : String {
+		proxy: ThrowableProxy,
+		baseMessage: String,
+		suppressed: Boolean = false
+	): String {
 		// Length calculations for padding
 		var modifiedMessage = baseMessage
 		var longestClassLoaderName = 13
@@ -188,12 +189,13 @@ class ConsoleColorAppender(
 		proxy.suppressedProxies.forEach { modifiedMessage = this.addErrorTraceIterative(it, modifiedMessage, true) }
 		return modifiedMessage
 	}
+
 	/**
 	 * Acts upon a given [LogEvent] for colorization.
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	override fun append(event : LogEvent?) {
+	override fun append(event: LogEvent?) {
 		if (event != null && event.level.isMoreSpecificThan(Level.INFO)) {
 			val formattedTime = LocalDateTime.ofEpochSecond(
 				event.instant.epochSecond,

@@ -26,38 +26,38 @@ typealias KListCodec<T> = StreamCodec<RegistryFriendlyByteBuf, List<T>>
 //  https://docs.neoforged.net/docs/networking/streamcodecs
 abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
 	fun <O> itemStackListCodecModule(
-		field : String,
-		getter : Function<O, List<ItemStack>>
-	) : RecordCodecBuilder<O, MutableList<ItemStack>> =
+		field: String,
+		getter: Function<O, List<ItemStack>>
+	): RecordCodecBuilder<O, MutableList<ItemStack>> =
 		ItemStack.CODEC.listOf().fieldOf(field).forGetter(getter)
 
 	fun <O> optionalItemStackListCodecModule(
-		field : String,
-		getter : Function<O, List<ItemStack>>
-	) : RecordCodecBuilder<O, MutableList<ItemStack>> =
+		field: String,
+		getter: Function<O, List<ItemStack>>
+	): RecordCodecBuilder<O, MutableList<ItemStack>> =
 		ItemStack.CODEC.listOf().optionalFieldOf(field, listOf()).forGetter(getter)
 
 	fun <O> fluidStackListCodecModule(
-		field : String,
-		getter : Function<O, List<FluidStack>>
-	) : RecordCodecBuilder<O, MutableList<FluidStack>> =
+		field: String,
+		getter: Function<O, List<FluidStack>>
+	): RecordCodecBuilder<O, MutableList<FluidStack>> =
 		FluidStack.CODEC.listOf().fieldOf(field).forGetter(getter)
 
 	fun <O> optionalFluidStackListCodecModule(
-		field : String,
-		getter : Function<O, List<FluidStack>>
-	) : RecordCodecBuilder<O, MutableList<FluidStack>> =
+		field: String,
+		getter: Function<O, List<FluidStack>>
+	): RecordCodecBuilder<O, MutableList<FluidStack>> =
 		FluidStack.CODEC.listOf().optionalFieldOf(field, mutableListOf()).forGetter(getter)
 
 	fun <O> optionalIntCodecModule(
-		field : String,
-		getter : Function<O, Int?>
-	) : RecordCodecBuilder<O, Int?> = Codec.INT.optionalFieldOf(field, 0).forGetter(getter)
+		field: String,
+		getter: Function<O, Int?>
+	): RecordCodecBuilder<O, Int?> = Codec.INT.optionalFieldOf(field, 0).forGetter(getter)
 
 	fun <O> sizedIngredientCodecModule(
-		field : String,
-		getter : Function<O, NonNullList<SizedIngredient>>
-	) : RecordCodecBuilder<O, NonNullList<SizedIngredient>> =
+		field: String,
+		getter: Function<O, NonNullList<SizedIngredient>>
+	): RecordCodecBuilder<O, NonNullList<SizedIngredient>> =
 		SizedIngredient.FLAT_CODEC
 			.listOf()
 			.fieldOf(field)
@@ -69,9 +69,9 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
 			).forGetter(getter)
 
 	fun <O> optionalSizedIngredientCodecModule(
-		field : String,
-		getter : Function<O, NonNullList<SizedIngredient>>
-	) : RecordCodecBuilder<O, NonNullList<SizedIngredient>> =
+		field: String,
+		getter: Function<O, NonNullList<SizedIngredient>>
+	): RecordCodecBuilder<O, NonNullList<SizedIngredient>> =
 		SizedIngredient.FLAT_CODEC
 			.listOf()
 			.optionalFieldOf(field, NonNullList.create())
@@ -83,9 +83,9 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
 			).forGetter(getter)
 
 	fun <O> sizedFluidIngredientCodecModule(
-		field : String,
-		getter : Function<O, NonNullList<SizedFluidIngredient>>
-	) : RecordCodecBuilder<O, NonNullList<SizedFluidIngredient>> =
+		field: String,
+		getter: Function<O, NonNullList<SizedFluidIngredient>>
+	): RecordCodecBuilder<O, NonNullList<SizedFluidIngredient>> =
 		SizedFluidIngredient.FLAT_CODEC
 			.listOf()
 			.fieldOf(field)
@@ -97,9 +97,9 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
 			).forGetter(getter)
 
 	fun <O> optionalSizedFluidIngredientCodecModule(
-		field : String,
-		getter : Function<O, NonNullList<SizedFluidIngredient>>
-	) : RecordCodecBuilder<O, NonNullList<SizedFluidIngredient>> =
+		field: String,
+		getter: Function<O, NonNullList<SizedFluidIngredient>>
+	): RecordCodecBuilder<O, NonNullList<SizedFluidIngredient>> =
 		SizedFluidIngredient.FLAT_CODEC
 			.listOf()
 			.optionalFieldOf(field, NonNullList.create())
@@ -109,17 +109,20 @@ abstract class BMRecipeSerializer<T : Recipe<*>> : RecipeSerializer<T> {
 					DataResult.success(NonNullList.of(SizedFluidIngredient.of(Fluids.WATER, 1), *fluidArray))
 				}, { result -> DataResult.success(result) }
 			).forGetter(getter)
+
 	/**
 	 * Applies a [NonNullList] to the specified [StreamCodec]
 	 */
-	fun <T> nonNullListStreamCodec(streamCodec : StreamCodec<RegistryFriendlyByteBuf, T>) : NotNullListCodec<T> =
+	@Suppress("ConvertLambdaToReference")
+	fun <T> nonNullListStreamCodec(streamCodec: StreamCodec<RegistryFriendlyByteBuf, T>): NotNullListCodec<T> =
 		streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity(cap) })
+
 	/**
 	 * [nonNullListStreamCodec] with [NonNullList] converted to a [MutableList]
 	 */
-	fun <T> listStreamCodec(streamCodec : StreamCodec<RegistryFriendlyByteBuf, T>) : KListCodec<T> =
+	fun <T> listStreamCodec(streamCodec: StreamCodec<RegistryFriendlyByteBuf, T>): KListCodec<T> =
 		streamCodec.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toMutableList() })
 
-	fun <T> StreamByteBufCodec<T>.toMutableList() : StreamByteBufCodec<MutableList<T>> =
+	fun <T> StreamByteBufCodec<T>.toMutableList(): StreamByteBufCodec<MutableList<T>> =
 		this.apply(ByteBufCodecs.collection { cap -> NonNullList.createWithCapacity<T>(cap).toMutableList() })
 }

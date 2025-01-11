@@ -16,8 +16,8 @@ import net.minecraft.world.item.component.DyedItemColor
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ChefHatModel.Companion.HAT_TEXTURE
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import java.awt.Color
 
 /**
@@ -29,20 +29,20 @@ import java.awt.Color
  * @see ChefHatItem
  */
 class ChefHatArmorLayer(
-	renderer : RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
+	renderer: RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
 ) : RenderLayer<LivingEntity, EntityModel<LivingEntity>>(renderer) {
 	private val chefHatModel = ChefHatModel(localClient.entityModels)
 	override fun render(
-		poseStack : PoseStack,
-		bufferSource : MultiBufferSource,
-		packedLight : Int,
-		livingEntity : LivingEntity,
-		limbSwing : Float,
-		limbSwingAmount : Float,
-		partialTick : Float,
-		ageInTicks : Float,
-		netHeadYaw : Float,
-		headPitch : Float
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedLight: Int,
+		livingEntity: LivingEntity,
+		limbSwing: Float,
+		limbSwingAmount: Float,
+		partialTick: Float,
+		ageInTicks: Float,
+		netHeadYaw: Float,
+		headPitch: Float
 	) {
 		val stack = livingEntity.getItemBySlot(EquipmentSlot.HEAD)
 		val item = stack.item
@@ -71,10 +71,10 @@ class ChefHatArmorLayer(
 	}
 
 	private fun renderHat(
-		poseStack : PoseStack,
-		buffer : MultiBufferSource,
-		packedLight : Int,
-		color : Int
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		color: Int
 	) {
 		poseStack.scaleFlat(1.05f)
 		this.chefHatModel.renderToBuffer(

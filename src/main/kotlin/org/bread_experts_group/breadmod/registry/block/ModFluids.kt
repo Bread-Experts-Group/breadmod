@@ -19,27 +19,27 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.function.Supplier
 
 object ModFluids {
-	val FLUID_REGISTRY : DeferredRegister<Fluid> = DeferredRegister.create(Registries.FLUID, BreadMod.ID)
-	val FLUID_TYPE_REGISTRY : DeferredRegister<FluidType> =
+	val FLUID_REGISTRY: DeferredRegister<Fluid> = DeferredRegister.create(Registries.FLUID, BreadMod.ID)
+	val FLUID_TYPE_REGISTRY: DeferredRegister<FluidType> =
 		DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, BreadMod.ID)
 
 	fun <S : BaseFlowingFluid, F : BaseFlowingFluid> registerWithBucket(
-		id : String,
-		sourceSupplier : () -> S,
-		flowingSupplier : () -> F,
-		itemProperties : Item.Properties,
-		blockProperties : BlockBehaviour.Properties,
-		fluidProperties : FluidType.Properties
-	) : FluidHolder<S, F> {
+		id: String,
+		sourceSupplier: () -> S,
+		flowingSupplier: () -> F,
+		itemProperties: Item.Properties,
+		blockProperties: BlockBehaviour.Properties,
+		fluidProperties: FluidType.Properties
+	): FluidHolder<S, F> {
 		val source = this.FLUID_REGISTRY.register(id, sourceSupplier)
 		val flowing = this.FLUID_REGISTRY.register("flowing_$id", flowingSupplier)
 		val block = ModBlocks.BLOCK_REGISTRY.register(id) { ->
 			LiquidBlock(
 				source.get(),
 				blockProperties
-			).also { ModBlockLootProvider.dropNone.add(it) }
+			).also(ModBlockLootProvider.dropNone::add)
 		}
-		val fluidType : Supplier<FluidType> = this.FLUID_TYPE_REGISTRY.register(id) { -> FluidType(fluidProperties) }
+		val fluidType: Supplier<FluidType> = this.FLUID_TYPE_REGISTRY.register(id) { -> FluidType(fluidProperties) }
 
 		return FluidHolder(
 			source, flowing,
@@ -49,17 +49,17 @@ object ModFluids {
 		)
 	}
 
-	val BREAD_LIQUID : FluidHolder<BreadLiquidBlock.Source, BreadLiquidBlock.Flowing> = this.registerWithBucket(
+	val BREAD_LIQUID: FluidHolder<BreadLiquidBlock.Source, BreadLiquidBlock.Flowing> = this.registerWithBucket(
 		"bread_liquid",
-		{ BreadLiquidBlock.Source() }, { BreadLiquidBlock.Flowing() },
+		BreadLiquidBlock::Source, BreadLiquidBlock::Flowing,
 		Item.Properties().stacksTo(1),
 		BlockBehaviour.Properties.ofFullCopy(Blocks.WATER),
 		FluidType.Properties.create()
 	)
 
 	data class FluidHolder<S : BaseFlowingFluid, F : BaseFlowingFluid>(
-		val source : Supplier<S>, val flowing : Supplier<F>,
-		val bucket : DeferredItem<BucketItem>, val block : Supplier<LiquidBlock>,
-		val type : Supplier<FluidType>
+		val source: Supplier<S>, val flowing: Supplier<F>,
+		val bucket: DeferredItem<BucketItem>, val block: Supplier<LiquidBlock>,
+		val type: Supplier<FluidType>
 	)
 }

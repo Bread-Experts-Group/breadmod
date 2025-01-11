@@ -12,13 +12,13 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 
 class ToasterRecipe(
-	rItemInputs : NonNullList<SizedIngredient>,
-	rItemOutputs : MutableList<ItemStack>,
-	rFluidInputs : NonNullList<SizedFluidIngredient>,
-	rFluidOutputs : MutableList<FluidStack>,
-	rTime : Int?,
-	rEnergy : Int?
+	rItemInputs: NonNullList<SizedIngredient>,
+	rItemOutputs: MutableList<ItemStack>,
+	rFluidInputs: NonNullList<SizedFluidIngredient>,
+	rFluidOutputs: MutableList<FluidStack>,
+	rTime: Int?,
+	rEnergy: Int?
 ) : FluidEnergyRecipeMulti(rItemInputs, rItemOutputs, rFluidInputs, rFluidOutputs, rTime, rEnergy) {
-	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.TOASTER.get()
-	override fun getType() : RecipeType<*> = ModRecipeTypes.TOASTING.get()
+	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.TOASTER.get()
+	override fun getType(): RecipeType<*> = ModRecipeTypes.TOASTING.get()
 }

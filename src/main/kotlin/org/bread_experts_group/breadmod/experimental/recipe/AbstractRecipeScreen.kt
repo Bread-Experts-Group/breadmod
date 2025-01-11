@@ -5,15 +5,15 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
 abstract class AbstractRecipeScreen<MENU : AbstractTestRecipeMenu>(
-	menu : MENU,
-	inventory : Inventory,
-	title : Component
+	menu: MENU,
+	inventory: Inventory,
+	title: Component
 ) : AbstractContainerScreen<MENU>(menu, inventory, title) {
-	override fun renderBg(guiGraphics : GuiGraphics, partialTick : Float, mouseX : Int, mouseY : Int) {
+	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		guiGraphics.fill(
 			RenderType.gui(),
 			this.leftPos,
@@ -47,7 +47,7 @@ abstract class AbstractRecipeScreen<MENU : AbstractTestRecipeMenu>(
 		)
 	}
 
-	override fun render(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
+	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
 
 		this.renderTooltip(guiGraphics, mouseX, mouseY)

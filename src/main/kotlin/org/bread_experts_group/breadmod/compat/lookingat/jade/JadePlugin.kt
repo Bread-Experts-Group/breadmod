@@ -16,10 +16,10 @@ import snownee.jade.api.WailaPlugin
 class JadePlugin : IWailaPlugin {
 	companion object {
 		@DataGenerateLanguage("en_us", "Breadmod jade data provider")
-		val BLOCK_DATA : ResourceLocation = modLocation("data_provider")
+		val BLOCK_DATA: ResourceLocation = modLocation("data_provider")
 	}
 
-	override fun registerClient(registration : IWailaClientRegistration) {
+	override fun registerClient(registration: IWailaClientRegistration) {
 		registration.registerBlockComponent(TestProvider.INSTANCE, FluidTankJadeBlock::class.java)
 		registration.registerBlockComponent(TestProvider.INSTANCE, SingleFluidRecipeBlock::class.java)
 		registration.registerBlockComponent(TestProvider.INSTANCE, FluidEnergyBlock::class.java)

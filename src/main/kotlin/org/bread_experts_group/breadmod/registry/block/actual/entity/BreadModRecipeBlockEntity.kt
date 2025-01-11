@@ -11,13 +11,13 @@ import net.minecraft.world.level.block.state.BlockState
 import java.util.*
 
 abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : BreadModRecipeBlockEntity<I, R, T>>(
-	type : BlockEntityType<T>,
-	pos : BlockPos,
-	state : BlockState,
-	recipeType : RecipeType<R>,
-	itemSlots : Int = 0,
-	energyCapacity : Int = 0,
-	fluidTanks : List<Triple<Int, Boolean, Boolean>> = listOf()
+	type: BlockEntityType<T>,
+	pos: BlockPos,
+	state: BlockState,
+	recipeType: RecipeType<R>,
+	itemSlots: Int = 0,
+	energyCapacity: Int = 0,
+	fluidTanks: List<Triple<Int, Boolean, Boolean>> = listOf()
 ) : BreadModBlockEntity<T>(
 	type, pos, state,
 	itemSlots, energyCapacity, fluidTanks
@@ -26,23 +26,23 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	 * Counts up by 1 every tick when the recipe is valid.
 	 * The recipe is completed when this is above or equal to the max recipe time.
 	 */
-	var progress : Int = 0
+	var progress: Int = 0
 
 	/**
 	 * Not used in recipe logic, only as a visual indicator in guis for the player
 	 */
-	var maxProgress : Int = 0
+	var maxProgress: Int = 0
 
 	/**
 	 * Holds the current running recipe.
 	 */
-	var currentRecipe : Optional<R> = Optional.empty()
-	val recipeDial : RecipeManager.CachedCheck<I, R> = RecipeManager.createCheck(recipeType)
+	var currentRecipe: Optional<R> = Optional.empty()
+	val recipeDial: RecipeManager.CachedCheck<I, R> = RecipeManager.createCheck(recipeType)
 
 	/**
 	 * Finalizes this recipe.
 	 */
-	abstract fun finalizeRecipe(recipe : R, level : Level)
+	abstract fun finalizeRecipe(recipe: R, level: Level)
 
 	/**
 	 * Resets the current recipe.

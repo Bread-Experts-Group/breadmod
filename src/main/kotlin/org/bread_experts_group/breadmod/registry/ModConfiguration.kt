@@ -6,13 +6,13 @@ import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue
 import org.apache.commons.lang3.tuple.Pair
 
 object ModConfiguration {
-	val CLIENT_SPEC : Pair<Client, ModConfigSpec> = Builder().configure(::Client)
-	val COMMON_SPEC : Pair<Common, ModConfigSpec> = Builder().configure(::Common)
-	val COMMON : Common = this.COMMON_SPEC.left
-	val CLIENT : Client = this.CLIENT_SPEC.left
+	val CLIENT_SPEC: Pair<Client, ModConfigSpec> = Builder().configure(::Client)
+	val COMMON_SPEC: Pair<Common, ModConfigSpec> = Builder().configure(::Common)
+	val COMMON: Common = this.COMMON_SPEC.left
+	val CLIENT: Client = this.CLIENT_SPEC.left
 
-	class Client(builder : Builder) {
-		val useAlternateToolGunModel : ConfigValue<Boolean>
+	class Client(builder: Builder) {
+		val useAlternateToolGunModel: ConfigValue<Boolean>
 
 		init {
 			builder.push("client")
@@ -25,17 +25,17 @@ object ModConfiguration {
 		}
 	}
 
-	class Common(builder : Builder) {
-		val breadArmorDecayChancePerTick : ConfigValue<Int>
-		val dopedArmorEffectDistanceMultiplier : ConfigValue<Double>
-		val ultimateBreadMaxCreativeTimeTicks : ConfigValue<Long>
-		val breadAmuletFeedTimeTicks : ConfigValue<Int>
-		val breadAmuletFeedAmount : ConfigValue<Int>
-		val breadAmuletEffectCanStack : ConfigValue<Boolean>
-		val happyBlockExplosionDivisions : ConfigValue<Int>
-		val happyBlockExplosionSpreadRadius : ConfigValue<Double>
-		val generatorMaxBurnTimeTicks : ConfigValue<Int>
-		val generatorRFPerTick : ConfigValue<Int>
+	class Common(builder: Builder) {
+		val breadArmorDecayChancePerTick: ConfigValue<Int>
+		val dopedArmorEffectDistanceMultiplier: ConfigValue<Double>
+		val ultimateBreadMaxCreativeTimeTicks: ConfigValue<Long>
+		val breadAmuletFeedTimeTicks: ConfigValue<Int>
+		val breadAmuletFeedAmount: ConfigValue<Int>
+		val breadAmuletEffectCanStack: ConfigValue<Boolean>
+		val happyBlockExplosionDivisions: ConfigValue<Int>
+		val happyBlockExplosionSpreadRadius: ConfigValue<Double>
+		val generatorMaxBurnTimeTicks: ConfigValue<Int>
+		val generatorRFPerTick: ConfigValue<Int>
 
 		init {
 			builder.push("common")

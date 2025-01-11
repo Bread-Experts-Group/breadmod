@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.world.entity.player.Player
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 
 // todo collection of hat, player, armor, and item held models to be rendered in the mach trail
 // todo Armor Rendering: use a combination of HumanoidArmorLayer and HumanoidArmorModel to recreate the
@@ -18,8 +18,8 @@ import org.bread_experts_group.breadmod.util.render.scaleFlat
 //  (issue: can't choose the color the item renders with)
 // todo hat and player model rendering is already taken care of in the render function, move those to this class
 class MachTrailModel(
-	playerProfile : GameProfile,
-	var currentColor : Int
+	playerProfile: GameProfile,
+	var currentColor: Int
 ) {
 	private val playerId = playerProfile.id
 	private val connection = localClient.connection!!
@@ -43,7 +43,7 @@ class MachTrailModel(
 		this.playerModel.young = false
 	}
 
-	fun render(poseStack : PoseStack) {
+	fun render(poseStack: PoseStack) {
 		poseStack.scaleFlat(0.9375f)
 		this.playerModel.setupAnim(
 			this.player,

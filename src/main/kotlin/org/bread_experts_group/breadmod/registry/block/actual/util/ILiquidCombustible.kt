@@ -15,5 +15,5 @@ interface ILiquidCombustible : IFluidExtension {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	fun getBurnTime() : Int
+	fun getBurnTime(): Int
 }

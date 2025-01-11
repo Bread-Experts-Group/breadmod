@@ -29,10 +29,10 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 
 class KnifeItem(
-	tier : Tier
+	tier: Tier
 ) : DiggerItem(tier, MINEABLE_WITH_KNIFE, Properties().attributes(this.createKnifeAttributes(tier))) {
 	companion object {
-		fun createKnifeAttributes(tier : Tier) : ItemAttributeModifiers =
+		fun createKnifeAttributes(tier: Tier): ItemAttributeModifiers =
 			ItemAttributeModifiers.builder()
 				.add(
 					Attributes.ATTACK_DAMAGE,
@@ -49,15 +49,15 @@ class KnifeItem(
 				.build()
 	}
 
-	override fun canAttackBlock(state : BlockState, level : Level, pos : BlockPos, player : Player) : Boolean =
+	override fun canAttackBlock(state: BlockState, level: Level, pos: BlockPos, player: Player): Boolean =
 		!player.isCreative
 
-	override fun hurtEnemy(stack : ItemStack, target : LivingEntity, attacker : LivingEntity) : Boolean {
+	override fun hurtEnemy(stack: ItemStack, target: LivingEntity, attacker: LivingEntity): Boolean {
 		stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND)
 		return true
 	}
 
-	override fun useOn(context : UseOnContext) : InteractionResult {
+	override fun useOn(context: UseOnContext): InteractionResult {
 		val level = context.level
 		val handStack = context.itemInHand
 		val clickedPos = context.clickedPos
@@ -106,13 +106,13 @@ class KnifeItem(
 	}
 
 	private fun createItemEntity(
-		pItem : Item,
-		pCount : Int,
-		pLevel : Level,
-		pPos : BlockPos,
-		pDirection :
+		pItem: Item,
+		pCount: Int,
+		pLevel: Level,
+		pPos: BlockPos,
+		pDirection:
 		Direction
-	) : ItemEntity = ItemEntity(
+	): ItemEntity = ItemEntity(
 		pLevel,
 		pPos.x + 0.5 + pDirection.stepX * 0.65,
 		pPos.y + 0.1,

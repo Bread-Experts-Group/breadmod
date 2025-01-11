@@ -19,26 +19,23 @@ import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
-import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
+import org.bread_experts_group.breadmod.client.render.buffer.chunk.ChunkBuffer
+import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask.machTrailMap
+import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.redness
+import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
-import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
-import org.bread_experts_group.breadmod.util.buffer.chunk.ChunkBuffer
-import org.bread_experts_group.breadmod.util.buffer.render.MachTrailBufferTask.machTrailMap
-import org.bread_experts_group.breadmod.util.buffer.render.RenderBuffer
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.redness
-import org.bread_experts_group.breadmod.util.render.skyColorMixinActive
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
-@Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
 	@SubscribeEvent
@@ -140,16 +137,16 @@ internal object ClientNeoForgeEventBus {
 		if (item is IMouseItem) item.onMouseInput(event, stack, player)
 	}
 
-	@SubscribeEvent
-	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
-		PhysXTestTool.createPhysX()
-	}
-
-	@SubscribeEvent
-	fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
-		PhysXTestTool.destroyPhysX()
-	}
-
+	// todo FIX PHYSX CRASHING
+	//	@SubscribeEvent
+//	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
+//		PhysXTestTool.createPhysX()
+//	}
+//
+//	@SubscribeEvent
+//	fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
+//		PhysXTestTool.destroyPhysX()
+//	}
 	@SubscribeEvent
 	fun clientTick(event: ClientTickEvent.Pre) {
 		if (machTrailMap.isNotEmpty()) {

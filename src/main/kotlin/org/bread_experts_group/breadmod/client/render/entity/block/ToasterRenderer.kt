@@ -13,29 +13,29 @@ import net.minecraft.core.Direction.SOUTH
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.modelLocation
-import org.bread_experts_group.breadmod.util.render.renderBlockModel
-import org.bread_experts_group.breadmod.util.render.renderStaticItem
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.modelLocation
+import org.bread_experts_group.breadmod.client.render.renderBlockModel
+import org.bread_experts_group.breadmod.client.render.renderStaticItem
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 
-class ToasterRenderer(private val ctx : Context) : BlockEntityRenderer<ToasterBlockEntity> {
+class ToasterRenderer(private val ctx: Context) : BlockEntityRenderer<ToasterBlockEntity> {
 	private companion object {
 		val HANDLE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
-		val HANDLE_MODEL : BakedModel = localClient.modelManager.getModel(this.HANDLE_MODEL_LOC)
+		val HANDLE_MODEL: BakedModel = localClient.modelManager.getModel(this.HANDLE_MODEL_LOC)
 	}
 
-	private var triggeredOffset : Double = 0.0
+	private var triggeredOffset: Double = 0.0
 	private val blockModelRenderer = this.ctx.blockRenderDispatcher.modelRenderer
 	private val itemRenderer = this.ctx.itemRenderer
 
 	override fun render(
-		blockEntity : ToasterBlockEntity,
-		partialTick : Float,
-		poseStack : PoseStack,
-		bufferSource : MultiBufferSource,
-		packedLight : Int,
-		packedOverlay : Int
+		blockEntity: ToasterBlockEntity,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int
 	) {
 		val blockRotation = blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
 		val triggered = blockEntity.blockState.getValue(BlockStateProperties.TRIGGERED)
@@ -48,22 +48,18 @@ class ToasterRenderer(private val ctx : Context) : BlockEntityRenderer<ToasterBl
 				poseStack.mulPose(Axis.YN.rotationDegrees(180f))
 				poseStack.translate(-1.0, this.triggeredOffset, -1.0)
 			}
-
 			Direction.WEST  -> {
 				poseStack.translate(0.0, this.triggeredOffset, 1.0)
 				poseStack.mulPose(Axis.YN.rotationDegrees(-90f))
 			}
-
 			Direction.EAST  -> {
 				poseStack.translate(1.0, this.triggeredOffset, 0.0)
 				poseStack.mulPose(Axis.YN.rotationDegrees(90f))
 			}
-
 			Direction.NORTH -> {
 				poseStack.translate(0.0, this.triggeredOffset, 0.0)
 			}
-
-			else -> {}
+			else            -> {}
 		}
 
 		this.blockModelRenderer.renderBlockModel(
@@ -76,7 +72,7 @@ class ToasterRenderer(private val ctx : Context) : BlockEntityRenderer<ToasterBl
 			Sheets.solidBlockSheet()
 		)
 		poseStack.popPose()
-		val items = blockEntity.items ?: return
+		val items = blockEntity.items
 		val stack = items.getStackInSlot(0)
 
 		poseStack.pushPose()
@@ -96,5 +92,5 @@ class ToasterRenderer(private val ctx : Context) : BlockEntityRenderer<ToasterBl
 		poseStack.popPose()
 	}
 
-	override fun getViewDistance() : Int = 32
+	override fun getViewDistance(): Int = 32
 }

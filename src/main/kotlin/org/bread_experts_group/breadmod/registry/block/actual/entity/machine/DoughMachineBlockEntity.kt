@@ -20,7 +20,7 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 
 class DoughMachineBlockEntity(
-	pos : BlockPos, state : BlockState
+	pos: BlockPos, state: BlockState
 ) : BreadModRecipeBlockEntity<FluidEnergyInput, DoughMachineRecipe, DoughMachineBlockEntity>(
 	ModBlockEntityTypes.DOUGH_MACHINE.get(),
 	pos,
@@ -33,22 +33,22 @@ class DoughMachineBlockEntity(
 		Triple(10000, false, true),
 	)
 ), MenuProvider {
-	val horizontal : Direction = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
+	val horizontal: Direction = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
 	override fun commonTick(
-		clientLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
 	) {
 		super.commonTick(clientLevel, pos, state, entity)
 	}
 
-	override fun finalizeRecipe(recipe : DoughMachineRecipe, level : Level) {
+	override fun finalizeRecipe(recipe: DoughMachineRecipe, level: Level) {
 		TODO("Not yet implemented")
 	}
 
-	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
 		DoughMachineMenu(containerId, playerInventory, this)
 
-	override fun getDisplayName() : Component = modTranslatable("block", "dough_machine")
+	override fun getDisplayName(): Component = modTranslatable("block", "dough_machine")
 }

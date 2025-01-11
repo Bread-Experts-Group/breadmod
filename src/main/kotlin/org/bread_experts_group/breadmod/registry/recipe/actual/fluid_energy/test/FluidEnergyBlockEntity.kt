@@ -16,8 +16,8 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
 
 class FluidEnergyBlockEntity(
-	pos : BlockPos,
-	state : BlockState
+	pos: BlockPos,
+	state: BlockState
 ) : BreadModRecipeBlockEntity<FluidEnergyInput, FluidEnergyRecipeTest, FluidEnergyBlockEntity>(
 	ModBlockEntityTypes.FLUID_ENERGY.get(),
 	pos,
@@ -31,7 +31,7 @@ class FluidEnergyBlockEntity(
 		Triple(10000, false, true)
 	)
 ), MenuProvider {
-	override fun finalizeRecipe(recipe : FluidEnergyRecipeTest, level : Level) {
+	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level) {
 		val inputItems = listOf(this.getItem(0), this.getItem(1), this.getItem(2), this.getItem(3))
 		val inputFluids = listOf(this.getFluid(0), this.getFluid(1))
 		val outputSlots = mutableListOf(this.getItem(4), this.getItem(5), this.getItem(6), this.getItem(7))
@@ -43,7 +43,6 @@ class FluidEnergyBlockEntity(
 				buildList { inputFluids.filter { !it.isEmpty }.forEach { this.add(it.amount) } }
 			)
 		)
-
 		// todo rework to account for multiple output slots, fail over into other slots when the intended slot is full
 		//  and/or has the wrong item type
 		if (assemble.first.isNotEmpty()) {
@@ -69,14 +68,16 @@ class FluidEnergyBlockEntity(
 		}
 		recipe.consumeInputs(inputItems, inputFluids)
 	}
-	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
 		FluidEnergyMenu(containerId, playerInventory, this)
-	override fun getDisplayName() : Component = Component.literal("Fluid Energy Recipe")
+
+	override fun getDisplayName(): Component = Component.literal("Fluid Energy Recipe")
 	override fun commonTick(
-		clientLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
 	) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
@@ -95,7 +96,6 @@ class FluidEnergyBlockEntity(
 					this.resetRecipe()
 				} else this.progress++
 			} else this.resetRecipe()
-
 		}, {
 			val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
 			val itemInputs =

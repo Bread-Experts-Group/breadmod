@@ -32,31 +32,31 @@ class BreadBlock : FlammableBlock(
 	}
 
 	override fun isFlammable(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		direction : Direction
-	) : Boolean = !(state.getValue(BlockStateProperties.POWERED) ||
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		direction: Direction
+	): Boolean = !(state.getValue(BlockStateProperties.POWERED) ||
 			(level is ServerLevel && level.dimensionType() == ModDimensions.BREAD.first.dimensionType.second))
 
 	override fun getFireSpreadSpeed(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		direction : Direction
-	) : Int = 120
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		direction: Direction
+	): Int = 120
 
 	override fun onCaughtFire(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		direction : Direction?,
-		igniter : LivingEntity?
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		direction: Direction?,
+		igniter: LivingEntity?
 	) {
 		level.setBlockAndUpdate(pos, LOW_DENSITY_CHARCOAL_BLOCK.get().block.defaultBlockState())
 	}
 
-	override fun entityInside(state : BlockState, level : Level, pos : BlockPos, entity : Entity) {
+	override fun entityInside(state: BlockState, level: Level, pos: BlockPos, entity: Entity) {
 		if (level is ServerLevel && entity.canChangeDimensions(level, level)) {
 			val resourceKey =
 				if (level.dimensionType() === ModDimensions.BREAD.first.dimensionType.second) Level.OVERWORLD
@@ -83,12 +83,12 @@ class BreadBlock : FlammableBlock(
 		}
 	}
 
-	override fun onLightningStruck(level : Level, pos : BlockPos, state : BlockState) {
+	override fun onLightningStruck(level: Level, pos: BlockPos, state: BlockState) {
 		level.playSound(null, pos, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 2f, 1f)
 		level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
 	}
 
-	override fun createBlockStateDefinition(builder : StateDefinition.Builder<Block, BlockState>) {
+	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
 		builder.add(BlockStateProperties.POWERED)
 	}
 }

@@ -21,11 +21,11 @@ import java.util.*
 
 object ModDimensions {
 	fun register(
-		name : String,
-		dimensionType : (key : ResourceKey<DimensionType>, location : ResourceLocation) -> DimensionType,
-		climateParameterListBuilder : ClimateParameterListBuilder,
-		noiseGenerationSettings : ResourceKey<NoiseGeneratorSettings>
-	) : kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = BreadMod.modLocation(name).let {
+		name: String,
+		dimensionType: (key: ResourceKey<DimensionType>, location: ResourceLocation) -> DimensionType,
+		climateParameterListBuilder: ClimateParameterListBuilder,
+		noiseGenerationSettings: ResourceKey<NoiseGeneratorSettings>
+	): kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = BreadMod.modLocation(name).let {
 		ModDimensionEntry(
 			ResourceKey.create(Registries.DIMENSION_TYPE, it)
 				.let { typeKey -> typeKey to dimensionType.invoke(typeKey, it) },
@@ -35,7 +35,7 @@ object ModDimensions {
 		) to ResourceKey.create(Registries.DIMENSION, it)
 	}
 
-	val BREAD : kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = this.register(
+	val BREAD: kotlin.Pair<ModDimensionEntry, ResourceKey<Level>> = this.register(
 		"bread",
 		{ _, _ ->
 			DimensionType(
@@ -84,10 +84,10 @@ object ModDimensions {
 		ModNoiseGenerators.BREAD_FLOATING_ISLANDS
 	)
 
-	fun bootstrapDimensionTypes(ctx : BootstrapContext<DimensionType>) : Unit =
+	fun bootstrapDimensionTypes(ctx: BootstrapContext<DimensionType>): Unit =
 		ModDimensionEntry.entries.forEach { ctx.register(it.dimensionType.first, it.dimensionType.second) }
 
-	fun bootstrapLevelStems(ctx : BootstrapContext<LevelStem>) {
+	fun bootstrapLevelStems(ctx: BootstrapContext<LevelStem>) {
 		val noiseSettings = ctx.lookup(Registries.NOISE_SETTINGS)
 		val mnbspList = ctx.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
 		val holderGetter = ctx.lookup(Registries.DIMENSION_TYPE)

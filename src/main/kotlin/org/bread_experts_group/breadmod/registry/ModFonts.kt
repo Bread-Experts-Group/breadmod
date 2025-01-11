@@ -9,5 +9,5 @@ object ModFonts {
 	 * @author Logan McLean (this property), Miko Elbrecht (translation of sprites into font), Tour De Pizza (sprites)
 	 * @since 1.0.0
 	 */
-	val WARTIMER_INFILL : Style = Style.EMPTY.withFont(modLocation("wartimer_infill"))
+	val WARTIMER_INFILL: Style = Style.EMPTY.withFont(modLocation("wartimer_infill"))
 }

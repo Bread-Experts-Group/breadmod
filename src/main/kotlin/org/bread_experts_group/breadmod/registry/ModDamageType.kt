@@ -10,19 +10,19 @@ import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 
-data class ModDamageType(val key : ResourceKey<DamageType>) {
-	constructor(name : String) : this(ResourceKey.create(Registries.DAMAGE_TYPE, modLocation(name)))
+data class ModDamageType(val key: ResourceKey<DamageType>) {
+	constructor(name: String) : this(ResourceKey.create(Registries.DAMAGE_TYPE, modLocation(name)))
 
-	fun source(level : Level) : DamageSource = this.source(level.registryAccess())
-	private fun source(registryAccess : RegistryAccess) : DamageSource =
+	fun source(level: Level): DamageSource = this.source(level.registryAccess())
+	private fun source(registryAccess: RegistryAccess): DamageSource =
 		DamageSource(registryAccess.registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(this.key))
 
-	private fun registryName() : ResourceLocation = this.key.location()
-	private fun msgID() : String = this.registryName().namespace + "." + this.registryName().path
-	fun translationKey() : String = "death.attack." + this.msgID()
+	private fun registryName(): ResourceLocation = this.key.location()
+	private fun msgID(): String = this.registryName().namespace + "." + this.registryName().path
+	fun translationKey(): String = "death.attack." + this.msgID()
 
 	companion object {
 		@DataGenerateLanguage("en_us", "%1\$s ran out of time!")
-		val TIMER_RAN_OUT : ModDamageType = ModDamageType("timer")
+		val TIMER_RAN_OUT: ModDamageType = ModDamageType("timer")
 	}
 }

@@ -24,7 +24,7 @@ import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.random.Random
 
-class BreadArmorItem(type : Type) : ArmorItem(
+class BreadArmorItem(type: Type) : ArmorItem(
 	ModArmorMaterials.BREAD,
 	type,
 	Properties()
@@ -33,14 +33,14 @@ class BreadArmorItem(type : Type) : ArmorItem(
 		.stacksTo(1)
 ) {
 	private companion object {
-		val decimalFormat : DecimalFormat = DecimalFormat("0.#")
+		val decimalFormat: DecimalFormat = DecimalFormat("0.#")
 	}
 
 	override fun appendHoverText(
-		stack : ItemStack,
-		context : TooltipContext,
-		tooltipComponents : MutableList<Component>,
-		tooltipFlag : TooltipFlag
+		stack: ItemStack,
+		context: TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
 	) {
 		val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents(Potions.SWIFTNESS))
 		if (potion.customEffects.isEmpty() || potion.customEffects.first() == null) return
@@ -54,7 +54,7 @@ class BreadArmorItem(type : Type) : ArmorItem(
 		potion.addPotionTooltip(tooltipComponents::add, 1.0f, context.tickRate())
 	}
 
-	override fun inventoryTick(stack : ItemStack, level : Level, entity : Entity, slotId : Int, isSelected : Boolean) {
+	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		if (this.type.slot.index == slotId && level is ServerLevel && entity is ServerPlayer) {
 			val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
 

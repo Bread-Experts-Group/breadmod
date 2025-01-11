@@ -18,17 +18,17 @@ import org.bread_experts_group.breadmod.util.isTag
 import kotlin.jvm.optionals.getOrNull
 
 class DoughMachineMenu(
-	id : Int,
-	inventory : Inventory,
-	val parent : DoughMachineBlockEntity
+	id: Int,
+	inventory: Inventory,
+	val parent: DoughMachineBlockEntity
 ) : AbstractModContainerMenu(ModMenuTypes.DOUGH_MACHINE.get(), id) {
-	constructor(id : Int, inventory : Inventory, byteBuf : RegistryFriendlyByteBuf) : this(
+	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.DOUGH_MACHINE.get()).get()
 	)
 
-	fun getScaledProgress() : Int = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 24).toInt()
-	fun getEnergyStoredScaled() : Int {
+	fun getScaledProgress(): Int = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 24).toInt()
+	fun getEnergyStoredScaled(): Int {
 		return (this.parent.level ?: return 0).getCapability(
 			Capabilities.EnergyStorage.BLOCK,
 			this.parent.blockPos,
@@ -36,14 +36,14 @@ class DoughMachineMenu(
 		)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
 	}
 
-	fun getEnergyHandler() : IEnergyStorage? =
+	fun getEnergyHandler(): IEnergyStorage? =
 		this.parent.level?.getCapability(Capabilities.EnergyStorage.BLOCK, this.parent.blockPos, this.parent.horizontal)
 
-	fun isCrafting() : Boolean = this.parent.progress > 0
-	override val containerSlotCount : Int = 3
+	fun isCrafting(): Boolean = this.parent.progress > 0
+	override val containerSlotCount: Int = 3
 
-	class DoughMachineBucketSlot(handler : IItemHandler) : SlotItemHandler(handler, 2, 153, 7) {
-		override fun mayPlace(stack : ItemStack) : Boolean =
+	class DoughMachineBucketSlot(handler: IItemHandler) : SlotItemHandler(handler, 2, 153, 7) {
+		override fun mayPlace(stack: ItemStack): Boolean =
 			stack.item.let { it is BucketItem && isTag(FluidTags.WATER) } ||
 					FluidUtil.getFluidHandler(stack).getOrNull().let {
 						it?.drain(1, IFluidHandler.FluidAction.SIMULATE)

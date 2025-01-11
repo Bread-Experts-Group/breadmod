@@ -1,12 +1,12 @@
-package org.bread_experts_group.breadmod.util.buffer.render
+package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import com.mojang.authlib.GameProfile
 import com.mojang.math.Axis
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import org.bread_experts_group.breadmod.client.model.MachTrailModel
 import org.bread_experts_group.breadmod.registry.MachTrailData
-import org.bread_experts_group.breadmod.util.render.initialTranslate
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.initialTranslate
+import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
 object MachTrailBufferTask {
@@ -34,7 +34,7 @@ object MachTrailBufferTask {
 		val machTrailModel = MachTrailModel(playerProfile, 0)
 
 		RenderBuffer.add(
-			RenderLevelStageEvent.Stage.AFTER_PARTICLES,
+			Stage.AFTER_PARTICLES,
 			{ event, passthrough ->
 				val currentOpacity = passthrough[0] as Float
 				val redValue = passthrough[1] as Float

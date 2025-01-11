@@ -19,29 +19,31 @@ import net.minecraft.world.level.block.state.BlockState
 import java.util.*
 
 abstract class AbstractTestRecipeBlockEntity<INPUT : RecipeInput, RECIPE : Recipe<INPUT>>(
-	pos : BlockPos,
-	state : BlockState,
-	type : BlockEntityType<*>,
-	recipeType : RecipeType<RECIPE>
+	pos: BlockPos,
+	state: BlockState,
+	type: BlockEntityType<*>,
+	recipeType: RecipeType<RECIPE>
 ) : BlockEntity(type, pos, state), MenuProvider {
 	/**
 	 * Counts up by 1 every tick when the recipe is valid.
 	 * The recipe is completed when this is above or equal to the max recipe time.
 	 */
-	var progress : Int = 0
+	var progress: Int = 0
+
 	/**
 	 * Not used in recipe logic, only as a visual indicator in guis for the player
 	 */
-	var maxProgress : Int = 0
-	var currentRecipe : Optional<RECIPE> = Optional.empty()
-	val recipeDial : RecipeManager.CachedCheck<INPUT, RECIPE> by lazy {
+	var maxProgress: Int = 0
+	var currentRecipe: Optional<RECIPE> = Optional.empty()
+	val recipeDial: RecipeManager.CachedCheck<INPUT, RECIPE> by lazy {
 		RecipeManager.createCheck(recipeType)
 	}
 
-	abstract fun tick(level : Level, tPos : BlockPos, tState : BlockState)
-	abstract fun finalizeRecipe(recipe : RECIPE, level : Level)
-	fun syncToClients() : Unit? =
+	abstract fun tick(level: Level, tPos: BlockPos, tState: BlockState)
+	abstract fun finalizeRecipe(recipe: RECIPE, level: Level)
+	fun syncToClients(): Unit? =
 		this.level?.sendBlockUpdated(this.blockPos, this.blockState, this.blockState, Block.UPDATE_ALL)
+
 	/**
 	 * Resets the current recipe.
 	 */
@@ -50,21 +52,21 @@ abstract class AbstractTestRecipeBlockEntity<INPUT : RecipeInput, RECIPE : Recip
 		this.maxProgress = 0; this.progress = 0
 	}
 
-	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.saveAdditional(tag, registries)
 		tag.putInt("progress", this.progress)
 		tag.putInt("maxProgress", this.maxProgress)
 	}
 
-	override fun loadAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.loadAdditional(tag, registries)
 		this.progress = tag.getInt("progress")
 		this.maxProgress = tag.getInt("maxProgress")
 	}
 
-	override fun getUpdateTag(registries : HolderLookup.Provider) : CompoundTag =
+	override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =
 		super.getUpdateTag(registries).also { this.saveAdditional(it, registries) }
 
-	override fun getUpdatePacket() : Packet<ClientGamePacketListener> =
+	override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
 		ClientboundBlockEntityDataPacket.create(this)
 }

@@ -25,7 +25,7 @@ import java.util.*
 import kotlin.math.max
 
 class WheatCrusherBlockEntity(
-	pos : BlockPos, state : BlockState
+	pos: BlockPos, state: BlockState
 ) : BreadModRecipeBlockEntity<FluidEnergyInput, WheatCrusherRecipe, WheatCrusherBlockEntity>(
 	ModBlockEntityTypes.WHEAT_CRUSHER.get(),
 	pos,
@@ -34,19 +34,19 @@ class WheatCrusherBlockEntity(
 	2,
 	100000
 ), MenuProvider {
-	val logger : Logger = LogManager.getLogger()
-	val horizontal : Direction = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
+	val logger: Logger = LogManager.getLogger()
+	val horizontal: Direction = this.blockState.getValue(HorizontalDirectionalBlock.FACING)
 	override fun commonTick(
-		clientLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
 	) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.itemsStillValid(listOf(this.getItem(0)))) this.resetRecipe()
 			val recipeTime = activeRecipe.rTime ?: 0
 			val recipeEnergy = activeRecipe.rEnergy ?: 0
-			val energy = this.energy ?: return@ifPresentOrElse
+			val energy = this.energy
 			val energyDiv = if (this.energyDivision == null) ((recipeEnergy) / max(
 				recipeTime,
 				1
@@ -94,7 +94,7 @@ class WheatCrusherBlockEntity(
 		super.resetRecipe()
 	}
 
-	override fun finalizeRecipe(recipe : WheatCrusherRecipe, level : Level) {
+	override fun finalizeRecipe(recipe: WheatCrusherRecipe, level: Level) {
 		val inputList = listOf(this.getItem(0))
 		val assemble = recipe.assemble(
 			FluidEnergyInput(
@@ -110,8 +110,8 @@ class WheatCrusherBlockEntity(
 			this.growItem(1, assemble.count)
 	}
 
-	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
 		WheatCrusherMenu(containerId, playerInventory, this)
 
-	override fun getDisplayName() : Component = modTranslatable("block", "wheat_crusher")
+	override fun getDisplayName(): Component = modTranslatable("block", "wheat_crusher")
 }

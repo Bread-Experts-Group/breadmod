@@ -19,25 +19,25 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecip
 import java.util.function.Supplier
 
 object ModRecipeTypes {
-	val RECIPE_TYPE_REGISTRY : DeferredRegister<RecipeType<*>> =
+	val RECIPE_TYPE_REGISTRY: DeferredRegister<RecipeType<*>> =
 		DeferredRegister.create(Registries.RECIPE_TYPE, BreadMod.ID)
-	val WHEAT_CRUSHING : Supplier<RecipeType<WheatCrusherRecipe>> = this.registerRecipeType("wheat_crushing")
-	val DOUGH_MACHINE : Supplier<RecipeType<DoughMachineRecipe>> = this.registerRecipeType("dough_machine")
-	val TOASTING : Supplier<RecipeType<ToasterRecipe>> = this.registerRecipeType("toasting")
-	val MICROWAVE : Supplier<RecipeType<MicrowaveRecipe>> = this.registerRecipeType("microwaving")
+	val WHEAT_CRUSHING: Supplier<RecipeType<WheatCrusherRecipe>> = this.registerRecipeType("wheat_crushing")
+	val DOUGH_MACHINE: Supplier<RecipeType<DoughMachineRecipe>> = this.registerRecipeType("dough_machine")
+	val TOASTING: Supplier<RecipeType<ToasterRecipe>> = this.registerRecipeType("toasting")
+	val MICROWAVE: Supplier<RecipeType<MicrowaveRecipe>> = this.registerRecipeType("microwaving")
 
 	// exp
-	val MULTI_ITEM : Supplier<RecipeType<MultiItemTestRecipe>> = this.registerRecipeType("multi_item_test")
-	val MULTI_FLUID : Supplier<RecipeType<MultiFluidTestRecipe>> = this.registerRecipeType("multi_fluid_test")
-	val SINGLE_ITEM : Supplier<RecipeType<SingleItemTestRecipe>> = this.registerRecipeType("single_item_test")
-	val SINGLE_FLUID : Supplier<RecipeType<SingleFluidTestRecipe>> = this.registerRecipeType("single_fluid_test")
-	val SINGLE_FLUID_ITEM : Supplier<RecipeType<SingleFluidItemRecipe>> =
+	val MULTI_ITEM: Supplier<RecipeType<MultiItemTestRecipe>> = this.registerRecipeType("multi_item_test")
+	val MULTI_FLUID: Supplier<RecipeType<MultiFluidTestRecipe>> = this.registerRecipeType("multi_fluid_test")
+	val SINGLE_ITEM: Supplier<RecipeType<SingleItemTestRecipe>> = this.registerRecipeType("single_item_test")
+	val SINGLE_FLUID: Supplier<RecipeType<SingleFluidTestRecipe>> = this.registerRecipeType("single_fluid_test")
+	val SINGLE_FLUID_ITEM: Supplier<RecipeType<SingleFluidItemRecipe>> =
 		this.registerRecipeType("single_fluid_item_test")
-	val FLUID_ENERGY_TEST : Supplier<RecipeType<FluidEnergyRecipeTest>> = this.registerRecipeType("fluid_energy_test")
-	private fun <T : Recipe<*>> registerRecipeType(name : String) : Supplier<RecipeType<T>> =
+	val FLUID_ENERGY_TEST: Supplier<RecipeType<FluidEnergyRecipeTest>> = this.registerRecipeType("fluid_energy_test")
+	private fun <T : Recipe<*>> registerRecipeType(name: String): Supplier<RecipeType<T>> =
 		this.RECIPE_TYPE_REGISTRY.register(name) { ->
 			object : RecipeType<T> {
-				override fun toString() : String = modLocation(name).toString()
+				override fun toString(): String = modLocation(name).toString()
 			}
 		}
 }

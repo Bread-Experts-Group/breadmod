@@ -18,29 +18,30 @@ import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import java.util.function.Supplier
 
 object ModMenuTypes {
-	val MENU_TYPE_REGISTRY : DeferredRegister<MenuType<*>> = DeferredRegister.create(Registries.MENU, BreadMod.ID)
-	val WHEAT_CRUSHER : Supplier<MenuType<WheatCrusherMenu>> =
+	val MENU_TYPE_REGISTRY: DeferredRegister<MenuType<*>> = DeferredRegister.create(Registries.MENU, BreadMod.ID)
+	val WHEAT_CRUSHER: Supplier<MenuType<WheatCrusherMenu>> =
 		this.registerMenuType("wheat_crusher_menu", ::WheatCrusherMenu)
-	val DOUGH_MACHINE : Supplier<MenuType<DoughMachineMenu>> =
+	val DOUGH_MACHINE: Supplier<MenuType<DoughMachineMenu>> =
 		this.registerMenuType("dough_machine_menu", ::DoughMachineMenu)
+
 	// Exp.
-	val MULTI_ITEM : Supplier<MenuType<MultiItemRecipeMenu>> =
+	val MULTI_ITEM: Supplier<MenuType<MultiItemRecipeMenu>> =
 		this.registerMenuType("multi_item", ::MultiItemRecipeMenu)
-	val MULTI_FLUID : Supplier<MenuType<MultiFluidRecipeMenu>> =
+	val MULTI_FLUID: Supplier<MenuType<MultiFluidRecipeMenu>> =
 		this.registerMenuType("multi_fluid", ::MultiFluidRecipeMenu)
-	val SINGLE_ITEM : Supplier<MenuType<SingleItemRecipeMenu>> =
+	val SINGLE_ITEM: Supplier<MenuType<SingleItemRecipeMenu>> =
 		this.registerMenuType("single_item", ::SingleItemRecipeMenu)
-	val SINGLE_FLUID : Supplier<MenuType<SingleFluidRecipeMenu>> =
+	val SINGLE_FLUID: Supplier<MenuType<SingleFluidRecipeMenu>> =
 		this.registerMenuType("single_fluid", ::SingleFluidRecipeMenu)
-	val SINGLE_FLUID_ITEM : Supplier<MenuType<SingleFluidItemRecipeMenu>> =
+	val SINGLE_FLUID_ITEM: Supplier<MenuType<SingleFluidItemRecipeMenu>> =
 		this.registerMenuType("single_fluid_item", ::SingleFluidItemRecipeMenu)
-	val FLUID_ENERGY_TEST : Supplier<MenuType<FluidEnergyMenu>> =
+	val FLUID_ENERGY_TEST: Supplier<MenuType<FluidEnergyMenu>> =
 		this.registerMenuType("fluid_energy", ::FluidEnergyMenu)
 
 	private fun <T : AbstractContainerMenu> registerMenuType(
-		name : String,
-		menu : IContainerFactory<T>
-	) : Supplier<MenuType<T>> =
+		name: String,
+		menu: IContainerFactory<T>
+	): Supplier<MenuType<T>> =
 		this.MENU_TYPE_REGISTRY.register(name) { ->
 			IMenuTypeExtension.create(menu)
 		}

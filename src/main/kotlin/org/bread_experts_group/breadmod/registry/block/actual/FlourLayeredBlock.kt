@@ -11,17 +11,17 @@ import net.minecraft.world.level.material.MapColor
 class FlourLayeredBlock : SnowLayerBlock(
 	Properties.ofFullCopy(Blocks.SNOW).ignitedByLava().mapColor(MapColor.COLOR_YELLOW)
 ) {
-	override fun isFlammable(state : BlockState, level : BlockGetter, pos : BlockPos, direction : Direction) : Boolean =
+	override fun isFlammable(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Boolean =
 		state.getValue(LAYERS) == 8 || (direction != Direction.UP)
 
-	override fun getFlammability(state : BlockState, level : BlockGetter, pos : BlockPos, direction : Direction) : Int =
+	override fun getFlammability(state: BlockState, level: BlockGetter, pos: BlockPos, direction: Direction): Int =
 		100
 
 	override fun getFireSpreadSpeed(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		direction : Direction
-	) : Int =
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		direction: Direction
+	): Int =
 		150
 }

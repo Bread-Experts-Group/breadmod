@@ -26,22 +26,22 @@ import java.util.stream.Stream
 
 class WarTerminalBlock : Block(Properties.of()) {
 	private companion object {
-		val northAABB : VoxelShape = Stream.of(
+		val northAABB: VoxelShape = Stream.of(
 			box(0.0, 6.0, 0.0, 16.0, 7.0, 1.0),
 			box(0.0, 0.0, 1.0, 16.0, 7.0, 5.0),
 			box(0.0, 0.0, 5.0, 16.0, 16.0, 16.0)
 		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val southAABB : VoxelShape = Stream.of(
+		val southAABB: VoxelShape = Stream.of(
 			box(0.0, 6.0, 15.0, 16.0, 7.0, 16.0),
 			box(0.0, 0.0, 11.0, 16.0, 7.0, 15.0),
 			box(0.0, 0.0, 0.0, 16.0, 16.0, 11.0)
 		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val eastAABB : VoxelShape = Stream.of(
+		val eastAABB: VoxelShape = Stream.of(
 			box(15.0, 6.0, 0.0, 16.0, 7.0, 16.0),
 			box(11.0, 0.0, 0.0, 15.0, 7.0, 16.0),
 			box(0.0, 0.0, 0.0, 11.0, 16.0, 16.0)
 		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
-		val westAABB : VoxelShape = Stream.of(
+		val westAABB: VoxelShape = Stream.of(
 			box(0.0, 6.0, 0.0, 1.0, 7.0, 16.0),
 			box(1.0, 0.0, 0.0, 5.0, 7.0, 16.0),
 			box(5.0, 0.0, 0.0, 16.0, 16.0, 16.0)
@@ -54,19 +54,19 @@ class WarTerminalBlock : Block(Properties.of()) {
 		)
 	}
 
-	override fun getStateForPlacement(pContext : BlockPlaceContext) : BlockState =
+	override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
 		this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
 
-	override fun createBlockStateDefinition(pBuilder : StateDefinition.Builder<Block, BlockState>) {
+	override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
 		pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
 	}
 
 	override fun playerWillDestroy(
-		level : Level,
-		pos : BlockPos,
-		state : BlockState,
-		thisPlayer : Player
-	) : BlockState {
+		level: Level,
+		pos: BlockPos,
+		state: BlockState,
+		thisPlayer: Player
+	): BlockState {
 		val server = level.server ?: return super.playerWillDestroy(level, pos, state, thisPlayer)
 		server.playerList.players.forEach { player ->
 			val check = warTimerMap[player]
@@ -74,6 +74,7 @@ class WarTerminalBlock : Block(Properties.of()) {
 		}
 		return super.playerWillDestroy(level, pos, state, thisPlayer)
 	}
+
 	@Deprecated(
 		"Deprecated in Java", ReplaceWith(
 			"super.getShape(pState, pLevel, pPos, pContext)",
@@ -81,11 +82,11 @@ class WarTerminalBlock : Block(Properties.of()) {
 		)
 	)
 	override fun getShape(
-		pState : BlockState,
-		pLevel : BlockGetter,
-		pPos : BlockPos,
-		pContext : CollisionContext
-	) : VoxelShape = when (pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+		pState: BlockState,
+		pLevel: BlockGetter,
+		pPos: BlockPos,
+		pContext: CollisionContext
+	): VoxelShape = when (pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
 		Direction.SOUTH -> Companion.southAABB
 		Direction.EAST  -> Companion.eastAABB
 		Direction.WEST  -> Companion.westAABB
@@ -93,10 +94,10 @@ class WarTerminalBlock : Block(Properties.of()) {
 	}
 
 	override fun appendHoverText(
-		stack : ItemStack,
-		context : TooltipContext,
-		tooltipComponents : MutableList<Component>,
-		tooltipFlag : TooltipFlag
+		stack: ItemStack,
+		context: TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
 	) {
 		tooltipComponents.add(
 			BreadMod.modTranslatable("block", "war_terminal", "tooltip").withStyle(ChatFormatting.RED)

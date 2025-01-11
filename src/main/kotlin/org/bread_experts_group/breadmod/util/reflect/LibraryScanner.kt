@@ -25,16 +25,16 @@ import kotlin.reflect.jvm.javaField
  * @since 1.0.0
  */
 // TODO: Cache.
-class LibraryScanner(private val pForLoader : ClassLoader, private val pForPackage : Package) {
-	val logger : Logger = LogManager.getLogger()
-	private fun safeGetFileSystem(uri : URI) : FileSystem = try {
+class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackage: Package) {
+	val logger: Logger = LogManager.getLogger()
+	private fun safeGetFileSystem(uri: URI): FileSystem = try {
 		this.logger.info("Safe-getting file system from: $uri")
 		FileSystems.getFileSystem(uri)
-	} catch (_ : FileSystemNotFoundException) {
+	} catch (_: FileSystemNotFoundException) {
 		FileSystems.newFileSystem(uri, mapOf("create" to "true"))
 	}
 
-	val packageClasses : List<KClass<out Any>> = buildList {
+	val packageClasses: List<KClass<out Any>> = buildList {
 		this@LibraryScanner.pForLoader.getResources(this@LibraryScanner.pForPackage.name.replace(".", "/")).toList()
 			.forEach {
 				try {
@@ -51,34 +51,36 @@ class LibraryScanner(private val pForLoader : ClassLoader, private val pForPacka
 										.removeSuffix(".class")
 										.replace('/', '.')
 									this.add(this@LibraryScanner.pForLoader.loadClass(className).kotlin)
-								} catch (_ : Throwable) {
+								} catch (_: Throwable) {
 								}
 							}
 					}
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					this@LibraryScanner.logger.warn("Failure when reading from file system: $e")
 				}
 			}
 	}
+
 	/**
 	 * Gets all [KClass]es from the provided [Package] that are annotated with [T].
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	inline fun <reified T : Annotation> getClassesAnnotatedWith() : List<KClass<out Any>> =
+	inline fun <reified T : Annotation> getClassesAnnotatedWith(): List<KClass<out Any>> =
 		this.packageClasses.filter { it.annotations.any { a -> a.annotationClass == T::class } }
+
 	/**
 	 * Gets all [kotlin.reflect.KProperty1]s from Kotlin Objects in the provided [Package], annotated with [T].
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
 	@Suppress("UNCHECKED_CAST")
-	inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith() : Map<KProperty1<*, *>, Pair<*, Array<T>>> =
+	inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): Map<KProperty1<*, *>, Pair<*, Array<T>>> =
 		buildMap {
 			this@LibraryScanner.packageClasses.filter {
 				try {
 					it.objectInstance != null
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					// NOTE: This is quite inefficient. Look into fixes in the future?
 					this@LibraryScanner.logger.warn("Failure when getting objectInstance: $e")
 					false
@@ -98,7 +100,7 @@ class LibraryScanner(private val pForLoader : ClassLoader, private val pForPacka
 							if (annotations != null) this[f] = f.call(it.objectInstance) to annotations
 						}
 					}
-				} catch (e : Exception) {
+				} catch (e: Exception) {
 					this@LibraryScanner.logger.error("Failure when reading annotations off ${it.qualifiedName}: $e")
 				}
 			}

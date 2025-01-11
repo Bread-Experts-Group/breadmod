@@ -12,12 +12,12 @@ import net.minecraft.world.level.Level
 import kotlin.math.min
 
 abstract class AbstractCuttingRecipe(
-	private val input : ItemStack,
-	val output : ItemStack,
-	private val outputMultiplier : Int,
-	private val toolTag : TagKey<Item>
+	private val input: ItemStack,
+	val output: ItemStack,
+	private val outputMultiplier: Int,
+	private val toolTag: TagKey<Item>
 ) : CustomRecipe(CraftingBookCategory.MISC) {
-	override fun matches(input : CraftingInput, level : Level) : Boolean {
+	override fun matches(input: CraftingInput, level: Level): Boolean {
 		var hasItem = false
 		var hasTool = false
 		input.items().forEach {
@@ -30,7 +30,7 @@ abstract class AbstractCuttingRecipe(
 		return hasTool && hasItem
 	}
 
-	override fun assemble(input : CraftingInput, registries : HolderLookup.Provider) : ItemStack {
+	override fun assemble(input: CraftingInput, registries: HolderLookup.Provider): ItemStack {
 		var toolStack = ItemStack.EMPTY
 		var valid = true
 		val itemToSplit = mutableListOf<ItemStack>()
@@ -60,7 +60,7 @@ abstract class AbstractCuttingRecipe(
 		)
 	}
 
-	override fun getRemainingItems(input : CraftingInput) : NonNullList<ItemStack> =
+	override fun getRemainingItems(input: CraftingInput): NonNullList<ItemStack> =
 		NonNullList.withSize(input.size(), ItemStack.EMPTY).also {
 			var count = 0
 			var tool = ItemStack.EMPTY
@@ -77,5 +77,5 @@ abstract class AbstractCuttingRecipe(
 			}
 		}
 
-	override fun canCraftInDimensions(width : Int, height : Int) : Boolean = (width * height) >= 2
+	override fun canCraftInDimensions(width: Int, height: Int): Boolean = (width * height) >= 2
 }

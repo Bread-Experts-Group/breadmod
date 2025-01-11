@@ -14,16 +14,16 @@ import net.minecraft.world.phys.BlockHitResult
 
 class FluidTankJadeBlock : BaseEntityBlock(Properties.of()) {
 	companion object {
-		val CODEC : MapCodec<out BaseEntityBlock> = simpleCodec { FluidTankJadeBlock() }
+		val CODEC: MapCodec<out BaseEntityBlock> = simpleCodec { FluidTankJadeBlock() }
 	}
 
 	override fun useWithoutItem(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		player : Player,
-		hitResult : BlockHitResult
-	) : InteractionResult {
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult {
 		val entity = level.getBlockEntity(pos) as SidedFluidTankJadeBlockEntity
 		entity.sides[Direction.EAST] = entity.tank.tanks[2]
 		entity.sides[Direction.WEST] = entity.tank.tanks[3]
@@ -31,9 +31,9 @@ class FluidTankJadeBlock : BaseEntityBlock(Properties.of()) {
 		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 
-	override fun codec() : MapCodec<out BaseEntityBlock> = Companion.CODEC
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+	override fun codec(): MapCodec<out BaseEntityBlock> = Companion.CODEC
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		SidedFluidTankJadeBlockEntity(pos, state)
 
-	override fun getRenderShape(state : BlockState) : RenderShape = RenderShape.MODEL
+	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 }

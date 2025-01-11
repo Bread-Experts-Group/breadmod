@@ -8,45 +8,46 @@ import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHel
  * Holds [ResourceLocation]s for Breadmod's textures
  */
 object ModTextureLocations {
-	val WAR_TIMER : BreadModTextureHelper = BreadModTextureHelper(
+	val WAR_TIMER: BreadModTextureHelper = BreadModTextureHelper(
 		modLocation("textures", "gui", "hud", "war_overlay_timer.png"),
 		329, 111
 	)
 
 	// Tool Gun Specific
-	val MODE_OVERLAY_BG : BreadModTextureHelper = BreadModTextureHelper(
+	val MODE_OVERLAY_BG: BreadModTextureHelper = BreadModTextureHelper(
 		this.toolGunHudLocation("mode_overlay_bg"),
 		166, 41
 	)
-	val MOUSE : BreadModTextureHelper = BreadModTextureHelper(
+	val MOUSE: BreadModTextureHelper = BreadModTextureHelper(
 		this.toolGunHudLocation("mouse"),
 		16, 16
 	)
-	val MOUSE_LEFT : BreadModTextureHelper = BreadModTextureHelper(
+	val MOUSE_LEFT: BreadModTextureHelper = BreadModTextureHelper(
 		this.toolGunHudLocation("mouse_left"),
 		16, 16
 	)
-	val MOUSE_RIGHT : BreadModTextureHelper = BreadModTextureHelper(
+	val MOUSE_RIGHT: BreadModTextureHelper = BreadModTextureHelper(
 		this.toolGunHudLocation("mouse_right"),
 		16, 16
 	)
-	val MOUSE_MIDDLE : BreadModTextureHelper = BreadModTextureHelper(
+	val MOUSE_MIDDLE: BreadModTextureHelper = BreadModTextureHelper(
 		this.toolGunHudLocation("mouse_middle"),
 		16, 16
 	)
-	val INFO : BreadModTextureHelper = BreadModTextureHelper(
+	val INFO: BreadModTextureHelper = BreadModTextureHelper(
 		this.toolGunHudLocation("info_icon"),
 		8, 8
 	)
 
 	// Mode Preview Images
-	val EXPLODE_PREVIEW : BreadModTextureHelper = BreadModTextureHelper(
-		this.toolGunGuiLocation( "exploder"),
+	val EXPLODE_PREVIEW: BreadModTextureHelper = BreadModTextureHelper(
+		this.toolGunGuiLocation("exploder"),
 		854, 480
 	)
 
-	private fun toolGunHudLocation(name : String) : ResourceLocation =
+	private fun toolGunHudLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "hud", "$name.png")
-	private fun toolGunGuiLocation(name : String) : ResourceLocation =
+
+	private fun toolGunGuiLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "gui", "$name.png")
 }

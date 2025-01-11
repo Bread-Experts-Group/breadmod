@@ -15,15 +15,15 @@ import org.jetbrains.annotations.ApiStatus.Internal
 
 @Internal
 object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN_DEF) {
-	private val loadedModes : MutableMap<String, MutableMap<String, ToolGunModeData>> =
+	private val loadedModes: MutableMap<String, MutableMap<String, ToolGunModeData>> =
 		mutableMapOf()
-	val modes : Map<String, Map<String, ToolGunModeData>>
+	val modes: Map<String, Map<String, ToolGunModeData>>
 		get() = this.loadedModes
 
 	override fun apply(
-		`object` : MutableMap<ResourceLocation, JsonElement>,
-		resourceManager : ResourceManager,
-		profiler : ProfilerFiller
+		`object`: MutableMap<ResourceLocation, JsonElement>,
+		resourceManager: ResourceManager,
+		profiler: ProfilerFiller
 	) {
 		profiler.startTick()
 		profiler.push("Load tool gun data")
@@ -32,7 +32,7 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
 		profiler.endTick()
 	}
 
-	private fun load(`object` : Map<ResourceLocation, JsonElement>) {
+	private fun load(`object`: Map<ResourceLocation, JsonElement>) {
 		this.loadedModes.clear()
 		modeWidgets.clear()
 		`object`.forEach { (location, data) ->
@@ -44,7 +44,7 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
 					val classSet = this.loadedModes.getOrPut(location.namespace, ::mutableMapOf)
 					classSet[location.path.substringAfter("mode/")] = modeData
 					modeWidgets.add(modeData.widget)
-				} catch (e : ClassNotFoundException) {
+				} catch (e: ClassNotFoundException) {
 					logger.error(e)
 				}
 			}

@@ -5,22 +5,22 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import java.awt.Color
 
 // todo proof of concept
 //  needs proper gui centering, and actual logic for putting together selectable modes and previews
-class TestScreen(title : Component) : Screen(title) {
+class TestScreen(title: Component) : Screen(title) {
 	companion object {
-		val modeWidgets : MutableList<ModeWidget> = mutableListOf()
+		val modeWidgets: MutableList<ModeWidget> = mutableListOf()
 	}
 
-	private var leftPos : Int = (this.width - 280) / 2
-	private var topPos : Int = (this.height - 210) / 2
-	private var gridList : List<Pair<Int, Int>> = listOf()
-	override fun isPauseScreen() : Boolean = false
-	override fun renderBackground(guiGraphics : GuiGraphics, mouseX : Int, mouseY : Int, partialTick : Float) {
+	private var leftPos: Int = (this.width - 280) / 2
+	private var topPos: Int = (this.height - 210) / 2
+	private var gridList: List<Pair<Int, Int>> = listOf()
+	override fun isPauseScreen(): Boolean = false
+	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
 		val poseStack = guiGraphics.pose()
 		poseStack.pushPose()
@@ -109,7 +109,7 @@ class TestScreen(title : Component) : Screen(title) {
 		poseStack.popPose()
 	}
 
-	override fun keyPressed(keyCode : Int, scanCode : Int, modifiers : Int) : Boolean =
+	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean =
 		if (keyCode == InputConstants.KEY_E) {
 			this.onClose()
 			true

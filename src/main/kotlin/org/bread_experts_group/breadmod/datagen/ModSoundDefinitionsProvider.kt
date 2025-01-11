@@ -8,8 +8,8 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
 class ModSoundDefinitionsProvider(
-	packOutput : PackOutput,
-	existingFileHelper : ExistingFileHelper
+	packOutput: PackOutput,
+	existingFileHelper: ExistingFileHelper
 ) : SoundDefinitionsProvider(packOutput, BreadMod.ID, existingFileHelper) {
 	override fun registerSounds() {
 		this.add(

@@ -15,8 +15,8 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
 
 class MultiItemRecipeBlockEntity(
-	pos : BlockPos,
-	state : BlockState,
+	pos: BlockPos,
+	state: BlockState,
 ) : AbstractTestItemRecipeBlockEntity<BMRecipeInputs.MultiItem, MultiItemTestRecipe>(
 	pos,
 	state,
@@ -24,7 +24,7 @@ class MultiItemRecipeBlockEntity(
 	ModRecipeTypes.MULTI_ITEM.get(),
 	4
 ) {
-	override fun tick(level : Level, tPos : BlockPos, tState : BlockState) {
+	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.inputStillValid(this.items)) this.resetRecipe()
 			if (activeRecipe.canFitResults(listOf(this.items[3]))) {
@@ -60,7 +60,7 @@ class MultiItemRecipeBlockEntity(
 		})
 	}
 
-	override fun finalizeRecipe(recipe : MultiItemTestRecipe, level : Level) {
+	override fun finalizeRecipe(recipe: MultiItemTestRecipe, level: Level) {
 		val inputList = listOf(this.items[0], this.items[1], this.items[2])
 		val assemble = recipe.assembleItems(
 			BMRecipeInputs.MultiItem(
@@ -74,10 +74,10 @@ class MultiItemRecipeBlockEntity(
 		recipe.consumeInputs(inputList)
 	}
 
-	override fun getWidth() : Int = 3
-	override fun getHeight() : Int = 1
-	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+	override fun getWidth(): Int = 3
+	override fun getHeight(): Int = 1
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
 		MultiItemRecipeMenu(containerId, playerInventory, this)
 
-	override fun getDisplayName() : Component = Component.literal("multi item recipe test block")
+	override fun getDisplayName(): Component = Component.literal("multi item recipe test block")
 }

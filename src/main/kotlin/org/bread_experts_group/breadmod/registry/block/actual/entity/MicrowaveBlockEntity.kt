@@ -9,8 +9,8 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 
 class MicrowaveBlockEntity(
-	pos : BlockPos,
-	state : BlockState
+	pos: BlockPos,
+	state: BlockState
 ) : BreadModRecipeBlockEntity<FluidEnergyInput, MicrowaveRecipe, MicrowaveBlockEntity>(
 	ModBlockEntityTypes.MICROWAVE.get(),
 	pos,
@@ -19,15 +19,15 @@ class MicrowaveBlockEntity(
 	1
 ) {
 	override fun commonTick(
-		clientLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
 	) {
 		super.commonTick(clientLevel, pos, state, entity)
 	}
 
-	override fun finalizeRecipe(recipe : MicrowaveRecipe, level : Level) {
+	override fun finalizeRecipe(recipe: MicrowaveRecipe, level: Level) {
 		TODO("Not yet implemented")
 	}
 }

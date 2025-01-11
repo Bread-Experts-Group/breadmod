@@ -15,10 +15,10 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
 
 class SidedFluidTankJadeBlockEntity(
-	pos : BlockPos,
-	state : BlockState
+	pos: BlockPos,
+	state: BlockState
 ) : BlockEntity(ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get(), pos, state) {
-	inner class SyncedHandler(capacity : Int, canFill : Boolean, canDrain : Boolean) :
+	inner class SyncedHandler(capacity: Int, canFill: Boolean, canDrain: Boolean) :
 		SidedFluidTank.CustomHandler(capacity, canFill, canDrain) {
 		override fun onContentsChanged() {
 			this@SidedFluidTankJadeBlockEntity.level?.sendBlockUpdated(
@@ -30,7 +30,7 @@ class SidedFluidTankJadeBlockEntity(
 		}
 	}
 
-	val tank : SidedFluidTank = SidedFluidTank(
+	val tank: SidedFluidTank = SidedFluidTank(
 		listOf(
 			Triple(10000, true, true),
 			Triple(10000, true, true),
@@ -40,8 +40,7 @@ class SidedFluidTankJadeBlockEntity(
 			Triple(10000, true, true)
 		).map { this.SyncedHandler(it.first, it.second, it.third) }
 	)
-
-	val sides : MutableMap<Direction, CustomHandler?> =
+	val sides: MutableMap<Direction, CustomHandler?> =
 		mutableMapOf(
 			Direction.UP to this.tank.tanks[0],
 			Direction.DOWN to this.tank.tanks[1],
@@ -51,19 +50,20 @@ class SidedFluidTankJadeBlockEntity(
 			Direction.SOUTH to null
 		)
 
-	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.saveAdditional(tag, registries)
 		this.tank.writeToNBT(registries, tag)
 	}
 
-	override fun loadAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.loadAdditional(tag, registries)
 		this.tank.readFromNBT(registries, tag)
 	}
+
 	//    fun syncToClients() = level?.sendBlockUpdated(blockPos, blockState, blockState, Block.UPDATE_ALL)
-	override fun getUpdateTag(registries : HolderLookup.Provider) : CompoundTag =
+	override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =
 		super.getUpdateTag(registries).also { this.saveAdditional(it, registries) }
 
-	override fun getUpdatePacket() : Packet<ClientGamePacketListener> =
+	override fun getUpdatePacket(): Packet<ClientGamePacketListener> =
 		ClientboundBlockEntityDataPacket.create(this)
 }

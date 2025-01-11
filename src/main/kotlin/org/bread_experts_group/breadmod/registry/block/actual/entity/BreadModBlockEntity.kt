@@ -24,14 +24,14 @@ import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
  * todo actual javadocs.
  */
 abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
-	type : BlockEntityType<T>,
-	pos : BlockPos,
-	state : BlockState,
-	private val itemSlots : Int = 0,
-	private val energyCapacity : Int = 0,
-	private val fluidTanks : List<Triple<Int, Boolean, Boolean>> = listOf()
+	type: BlockEntityType<T>,
+	pos: BlockPos,
+	state: BlockState,
+	private val itemSlots: Int = 0,
+	private val energyCapacity: Int = 0,
+	private val fluidTanks: List<Triple<Int, Boolean, Boolean>> = listOf()
 ) : AbstractTickingBlockEntity<T>(type, pos, state) {
-	inner class SyncedFluidHandler(capacity : Int, canFill : Boolean, canDrain : Boolean) :
+	inner class SyncedFluidHandler(capacity: Int, canFill: Boolean, canDrain: Boolean) :
 		SidedFluidTank.CustomHandler(capacity, canFill, canDrain) {
 		override fun onContentsChanged() {
 			this@BreadModBlockEntity.setChanged()
@@ -39,26 +39,26 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 		}
 	}
 
-	inner class SyncedEnergy(capacity : Int) : EnergyStorage(capacity) {
-		override fun receiveEnergy(toReceive : Int, simulate : Boolean) : Int {
+	inner class SyncedEnergy(capacity: Int) : EnergyStorage(capacity) {
+		override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
 			this@BreadModBlockEntity.setChanged()
 			this@BreadModBlockEntity.updateClients()
 			return super.receiveEnergy(toReceive, simulate)
 		}
 
-		override fun extractEnergy(toExtract : Int, simulate : Boolean) : Int {
+		override fun extractEnergy(toExtract: Int, simulate: Boolean): Int {
 			this@BreadModBlockEntity.setChanged()
 			this@BreadModBlockEntity.updateClients()
 			return super.extractEnergy(toExtract, simulate)
 		}
 	}
 
-	val items : ExtendedItemStackHandler = ExtendedItemStackHandler(this.itemSlots)
-	val energy : SyncedEnergy = this.SyncedEnergy(this.energyCapacity)
-	val tank : SidedFluidTank = SidedFluidTank(
+	val items: ExtendedItemStackHandler = ExtendedItemStackHandler(this.itemSlots)
+	val energy: SyncedEnergy = this.SyncedEnergy(this.energyCapacity)
+	val tank: SidedFluidTank = SidedFluidTank(
 		this.fluidTanks.map { this.SyncedFluidHandler(it.first, it.second, it.third) }
 	)
-	var energyDivision : Int? = null
+	var energyDivision: Int? = null
 	fun dropContents() {
 		this.items.let { item ->
 			val list = NonNullList.createWithCapacity<ItemStack>(item.slots)
@@ -70,33 +70,31 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 		}
 	}
 
-	fun getFluid(tank : Int) : FluidStack = this.tank.getFluidInTank(tank)
-	fun setFluid(tank : Int, stack : FluidStack) {
+	fun getFluid(tank: Int): FluidStack = this.tank.getFluidInTank(tank)
+	fun setFluid(tank: Int, stack: FluidStack) {
 		this.tank.tanks[tank].fluid = stack
 	}
 
-	fun getItem(slot : Int) : ItemStack = this.items.getStackInSlot(slot)
-	fun setItem(slot : Int, stack : ItemStack) : Boolean =
+	fun getItem(slot: Int): ItemStack = this.items.getStackInSlot(slot)
+	fun setItem(slot: Int, stack: ItemStack): Boolean =
 		if (this.items.emptySlots() > 0) {
 			this.items.setStackInSlot(slot, stack)
 			true
 		} else false
 
-	fun growItem(slot : Int, count : Int) {
+	fun growItem(slot: Int, count: Int) {
 		this.getItem(slot).grow(count)
 	}
 
-	@Suppress("unused")
-	fun shrinkItem(slot : Int, count : Int) {
+	fun shrinkItem(slot: Int, count: Int) {
 		this.getItem(slot).shrink(count)
 	}
 
-	fun growFluid(tank : Int, amount : Int) {
+	fun growFluid(tank: Int, amount: Int) {
 		this.getFluid(tank).grow(amount)
 	}
 
-	@Suppress("unused")
-	fun shrinkFluid(tank : Int, amount : Int) {
+	fun shrinkFluid(tank: Int, amount: Int) {
 		this.getFluid(tank).shrink(amount)
 	}
 
@@ -108,25 +106,25 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 			Block.UPDATE_CLIENTS
 		)
 
-	override fun saveAdditional(tag : CompoundTag, registries : Provider) {
+	override fun saveAdditional(tag: CompoundTag, registries: Provider) {
 		super.saveAdditional(tag, registries)
 		this.items.serializeNBT(registries).let { tag.put("items", it) }
 		this.energy.serializeNBT(registries).let { tag.put("energy", it) }
 		this.tank.writeToNBT(registries, tag)
 	}
 
-	override fun loadAdditional(tag : CompoundTag, registries : Provider) {
+	override fun loadAdditional(tag: CompoundTag, registries: Provider) {
 		super.loadAdditional(tag, registries)
 		this.items.deserializeNBT(registries, tag.getCompound("items"))
 		this.energy.deserializeNBT(registries, tag.get("energy") as IntTag)
 		this.tank.readFromNBT(registries, tag)
 	}
 
-	override fun getUpdateTag(registries : Provider) : CompoundTag {
+	override fun getUpdateTag(registries: Provider): CompoundTag {
 		val tag = CompoundTag()
 		this.saveAdditional(tag, registries)
 		return tag
 	}
 
-	override fun getUpdatePacket() : Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
+	override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
 }

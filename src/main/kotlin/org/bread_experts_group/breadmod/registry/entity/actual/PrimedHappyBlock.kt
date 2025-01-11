@@ -14,11 +14,11 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class PrimedHappyBlock(
-	level : Level,
-	pos : Vec3 = Vec3.ZERO,
-	delta : Vec3 = Vec3.ZERO,
-	private val owner : Entity? = null,
-	private var shouldSpread : Boolean = false
+	level: Level,
+	pos: Vec3 = Vec3.ZERO,
+	delta: Vec3 = Vec3.ZERO,
+	private val owner: Entity? = null,
+	private var shouldSpread: Boolean = false
 ) : PrimedTnt(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), level) {
 	init {
 		this.setPos(pos); this.deltaMovement = delta
@@ -26,8 +26,9 @@ class PrimedHappyBlock(
 
 	private val spreadRadius = ModConfiguration.COMMON.happyBlockExplosionSpreadRadius.get()
 	private val divisions = ModConfiguration.COMMON.happyBlockExplosionDivisions.get()
+
 	// todo reimplement BMExplosion
-	override fun explode() : Unit = this.level().let {
+	override fun explode(): Unit = this.level().let {
 		it.explode(
 			null,
 			this.position().x,
@@ -50,17 +51,17 @@ class PrimedHappyBlock(
 		}
 	}
 
-	override fun save(compound : CompoundTag) : Boolean =
+	override fun save(compound: CompoundTag): Boolean =
 		if (!compound.getBoolean("shouldSpread")) {
 			compound.putBoolean("shouldSpread", true)
 			true
 		} else false
 
-	override fun load(compound : CompoundTag) {
+	override fun load(compound: CompoundTag) {
 		this.shouldSpread = compound.getBoolean("shouldSpread")
 		super.load(compound)
 	}
 
-	override fun getType() : EntityType<*> = ModEntityTypes.HAPPY_BLOCK_ENTITY.get()
-	override fun getPickResult() : ItemStack = ModBlocks.HAPPY_BLOCK.toStack()
+	override fun getType(): EntityType<*> = ModEntityTypes.HAPPY_BLOCK_ENTITY.get()
+	override fun getPickResult(): ItemStack = ModBlocks.HAPPY_BLOCK.toStack()
 }

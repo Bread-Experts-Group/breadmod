@@ -10,17 +10,18 @@ object KeyMappings {
 	/**
 	 * Key for opening the mode change gui in the tool gun.
 	 */
-	val openModeGui : KeyMapping = KeyMapping(
+	val openModeGui: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.mode_screen",
 		KeyConflictContext.UNIVERSAL,
 		KeyModifier.NONE,
 		InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_R),
 		"controls.${BreadMod.ID}"
 	)
+
 	/**
 	 * Key for placing an item in world.
 	 */
-	val placeItemKey : KeyMapping = KeyMapping(
+	val placeItemKey: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.place_item",
 		KeyConflictContext.IN_GAME,
 		KeyModifier.NONE,

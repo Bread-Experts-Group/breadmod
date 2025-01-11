@@ -5,16 +5,16 @@ import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.util.render.renderText
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.renderText
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 
 private const val SCREEN_TINT = 15728880
 private fun initialTranslations(
-	pPoseStack : PoseStack,
-	pPosX : Double,
-	pPosY : Double,
-	pPosZ : Double,
-	pScale : Float
+	pPoseStack: PoseStack,
+	pPosX: Double,
+	pPosY: Double,
+	pPosZ: Double,
+	pScale: Float
 ) {
 	pPoseStack.pushPose()
 	pPoseStack.translate(pPosX, pPosY, pPosZ)
@@ -23,6 +23,7 @@ private fun initialTranslations(
 	pPoseStack.mulPose(Axis.YN.rotationDegrees(-90f))
 	pPoseStack.mulPose(Axis.XP.rotationDegrees(-22.5f))
 }
+
 /**
  * +X moves text forward on tool gun
  * -X moves text backward on tool gun
@@ -31,17 +32,17 @@ private fun initialTranslations(
  * -Z moves text left on tool gun
  */
 fun drawTextOnScreen(
-	pComponent : Component,
-	pColor : Int,
-	pBackgroundColor : Int,
-	pDropShadow : Boolean,
-	pFontRenderer : Font,
-	pPoseStack : PoseStack,
-	pBuffer : MultiBufferSource,
-	pPosX : Double,
-	pPosY : Double,
-	pPosZ : Double,
-	pScale : Float
+	pComponent: Component,
+	pColor: Int,
+	pBackgroundColor: Int,
+	pDropShadow: Boolean,
+	pFontRenderer: Font,
+	pPoseStack: PoseStack,
+	pBuffer: MultiBufferSource,
+	pPosX: Double,
+	pPosY: Double,
+	pPosZ: Double,
+	pScale: Float
 ) {
 	initialTranslations(pPoseStack, pPosX, pPosY, pPosZ, pScale)
 	renderText(
@@ -51,22 +52,23 @@ fun drawTextOnScreen(
 	)
 	pPoseStack.popPose()
 }
+
 /**
  * @see drawTextOnScreen
  */
 fun drawTextOnScreen(
-	pText : String,
-	pColor : Int,
-	pBackgroundColor : Int,
-	pDropShadow : Boolean,
-	pFontRenderer : Font,
-	pPoseStack : PoseStack,
-	pBuffer : MultiBufferSource,
-	pPosX : Double,
-	pPosY : Double,
-	pPosZ : Double,
-	pScale : Float
-) : Unit = drawTextOnScreen(
+	pText: String,
+	pColor: Int,
+	pBackgroundColor: Int,
+	pDropShadow: Boolean,
+	pFontRenderer: Font,
+	pPoseStack: PoseStack,
+	pBuffer: MultiBufferSource,
+	pPosX: Double,
+	pPosY: Double,
+	pPosZ: Double,
+	pScale: Float
+): Unit = drawTextOnScreen(
 	Component.literal(pText),
 	pColor, pBackgroundColor, pDropShadow, pFontRenderer, pPoseStack, pBuffer, pPosX, pPosY, pPosZ, pScale
 )

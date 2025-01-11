@@ -17,8 +17,8 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import java.util.*
 
 class ToasterBlockEntity(
-	pos : BlockPos,
-	state : BlockState
+	pos: BlockPos,
+	state: BlockState
 ) : BreadModRecipeBlockEntity<FluidEnergyInput, ToasterRecipe, ToasterBlockEntity>(
 	ModBlockEntityTypes.TOASTER.get(),
 	pos,
@@ -27,12 +27,12 @@ class ToasterBlockEntity(
 	1
 ) {
 	override fun commonTick(
-		clientLevel : Level,
-		pos : BlockPos,
-		state : BlockState,
-		entity : AbstractTickingBlockEntity<*>
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: AbstractTickingBlockEntity<*>
 	) {
-		val itemHandler = this.items ?: return
+		val itemHandler = this.items
 		if (itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
 			this.maxProgress = 60
 			this.progress++
@@ -77,7 +77,7 @@ class ToasterBlockEntity(
 					), clientLevel
 				)
 
-				check.ifPresentOrElse ({ present ->
+				check.ifPresentOrElse({ present ->
 					val recipe = present.value
 					this.maxProgress = recipe.rTime ?: 0
 					this.currentRecipe = Optional.of(recipe)
@@ -96,7 +96,7 @@ class ToasterBlockEntity(
 		}
 	}
 
-	override fun finalizeRecipe(recipe : ToasterRecipe, level : Level) {
+	override fun finalizeRecipe(recipe: ToasterRecipe, level: Level) {
 		val inputList = listOf(this.getItem(0))
 		val assemble = recipe.assemble(
 			FluidEnergyInput(

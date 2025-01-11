@@ -9,13 +9,12 @@ import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeBuilder
 
 class FluidEnergyBuilder(
-	private val recipe : RecipeFunctionMulti,
-	private val itemResults : List<Pair<Item, Int>> = listOf(),
-	private val fluidResults : List<Pair<Fluid, Int>> = listOf()
+	private val recipe: RecipeFunctionMulti,
+	private val itemResults: List<Pair<Item, Int>> = listOf(),
+	private val fluidResults: List<Pair<Fluid, Int>> = listOf()
 ) : BMRecipeBuilder.Multi() {
-
-	override fun getResult() : Item = this.itemResults[0].first
-	override fun save(recipeOutput : RecipeOutput, id : ResourceLocation) {
+	override fun getResult(): Item = this.itemResults[0].first
+	override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
 		recipeOutput.accept(
 			id,
 			this.recipe.invoke(

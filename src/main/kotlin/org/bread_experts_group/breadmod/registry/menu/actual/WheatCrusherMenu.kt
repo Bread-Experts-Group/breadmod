@@ -10,17 +10,17 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.Whe
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 
 class WheatCrusherMenu(
-	id : Int,
-	inventory : Inventory,
-	val parent : WheatCrusherBlockEntity
+	id: Int,
+	inventory: Inventory,
+	val parent: WheatCrusherBlockEntity
 ) : AbstractModContainerMenu(ModMenuTypes.WHEAT_CRUSHER.get(), id) {
-	constructor(id : Int, inventory : Inventory, byteBuf : RegistryFriendlyByteBuf) : this(
+	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.WHEAT_CRUSHER.get()).get()
 	)
 
-	fun getScaledProgress() : Int = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 48).toInt()
-	fun getEnergyStoredScaled() : Int {
+	fun getScaledProgress(): Int = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 48).toInt()
+	fun getEnergyStoredScaled(): Int {
 		return (this.parent.level ?: return 0).getCapability(
 			Capabilities.EnergyStorage.BLOCK,
 			this.parent.blockPos,
@@ -28,10 +28,10 @@ class WheatCrusherMenu(
 		)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
 	}
 
-	fun getEnergyHandler() : IEnergyStorage? =
+	fun getEnergyHandler(): IEnergyStorage? =
 		this.parent.level?.getCapability(Capabilities.EnergyStorage.BLOCK, this.parent.blockPos, this.parent.horizontal)
 
-	fun isCrafting() : Boolean = this.parent.progress > 0
+	fun isCrafting(): Boolean = this.parent.progress > 0
 
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)

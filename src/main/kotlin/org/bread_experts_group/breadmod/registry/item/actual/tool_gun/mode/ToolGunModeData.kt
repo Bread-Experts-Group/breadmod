@@ -10,12 +10,12 @@ import net.minecraft.network.codec.StreamCodec
 import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
 
 data class ToolGunModeData(
-	val namespace : String,
-	val name : String,
-	val displayName : Component,
-	val tooltip : Component,
-	val actionClass : ToolGunMode,
-	val widget : ModeWidget
+	val namespace: String,
+	val name: String,
+	val displayName: Component,
+	val tooltip: Component,
+	val actionClass: ToolGunMode,
+	val widget: ModeWidget
 ) {
 	init {
 		this.widget.namespace = this.namespace
@@ -23,7 +23,7 @@ data class ToolGunModeData(
 	}
 
 	companion object {
-		val CODEC : Codec<ToolGunModeData> = RecordCodecBuilder.create { inst ->
+		val CODEC: Codec<ToolGunModeData> = RecordCodecBuilder.create { inst ->
 			inst.group(
 				Codec.STRING.fieldOf("namespace").forGetter(ToolGunModeData::namespace),
 				Codec.STRING.fieldOf("name").forGetter(ToolGunModeData::name),
@@ -33,7 +33,7 @@ data class ToolGunModeData(
 				ModeWidget.CODEC.fieldOf("widget").forGetter(ToolGunModeData::widget)
 			).apply(inst, ::ToolGunModeData)
 		}
-		val STREAM_CODEC : StreamCodec<RegistryFriendlyByteBuf, ToolGunModeData> = StreamCodec.composite(
+		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToolGunModeData> = StreamCodec.composite(
 			ByteBufCodecs.STRING_UTF8, ToolGunModeData::namespace,
 			ByteBufCodecs.STRING_UTF8, ToolGunModeData::name,
 			ComponentSerialization.STREAM_CODEC, ToolGunModeData::displayName,
@@ -42,7 +42,7 @@ data class ToolGunModeData(
 			ModeWidget.STREAM_CODEC, ToolGunModeData::widget,
 			::ToolGunModeData
 		)
-		val EMPTY : ToolGunModeData = ToolGunModeData(
+		val EMPTY: ToolGunModeData = ToolGunModeData(
 			"breadmod",
 			"empty",
 			Component.literal("???"),

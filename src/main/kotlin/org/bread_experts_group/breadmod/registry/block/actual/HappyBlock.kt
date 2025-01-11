@@ -18,11 +18,11 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 class HappyBlock : TntBlock(Properties.ofFullCopy(Blocks.TNT)) {
 	private fun BlockPos.adjust() = this.toVec3().plus(Vec3(0.5, 0.0, 0.5))
 	override fun onCaughtFire(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		face : Direction?,
-		igniter : LivingEntity?
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		face: Direction?,
+		igniter: LivingEntity?
 	) {
 		if (!level.isClientSide) {
 			val primedHappyBlock = PrimedHappyBlock(level, pos.adjust(), owner = igniter, shouldSpread = true)

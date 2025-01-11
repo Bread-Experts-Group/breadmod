@@ -8,17 +8,17 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.localClient
 
-internal data class WarTimerSynchronization(private val time : Int) : CustomPacketPayload {
+internal data class WarTimerSynchronization(private val time: Int) : CustomPacketPayload {
 	companion object {
-		val TYPE : CustomPacketPayload.Type<WarTimerSynchronization> =
+		val TYPE: CustomPacketPayload.Type<WarTimerSynchronization> =
 			CustomPacketPayload.Type(modLocation("war_timer_sync"))
-		val STREAM_CODEC : StreamCodec<ByteBuf, WarTimerSynchronization> = StreamCodec.composite(
+		val STREAM_CODEC: StreamCodec<ByteBuf, WarTimerSynchronization> = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT, WarTimerSynchronization::time, ::WarTimerSynchronization
 		)
 
-		fun handleClientboundPacket(data : WarTimerSynchronization, context : IPayloadContext) {
+		fun handleClientboundPacket(data: WarTimerSynchronization, context: IPayloadContext) {
 			context.enqueueWork {
 				WarOverlay.timeLeft = data.time
 				val player = localClient.player ?: return@enqueueWork
@@ -27,5 +27,5 @@ internal data class WarTimerSynchronization(private val time : Int) : CustomPack
 		}
 	}
 
-	override fun type() : CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
+	override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE
 }

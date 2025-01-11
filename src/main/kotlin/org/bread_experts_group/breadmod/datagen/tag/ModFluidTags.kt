@@ -11,11 +11,11 @@ import org.bread_experts_group.breadmod.util.add
 import java.util.concurrent.CompletableFuture
 
 class ModFluidTags(
-	output : PackOutput,
-	lookupProvider : CompletableFuture<HolderLookup.Provider>,
-	existingFileHelper : ExistingFileHelper
+	output: PackOutput,
+	lookupProvider: CompletableFuture<HolderLookup.Provider>,
+	existingFileHelper: ExistingFileHelper
 ) : FluidTagsProvider(output, lookupProvider, BreadMod.ID, existingFileHelper) {
-	override fun addTags(provider : HolderLookup.Provider) {
+	override fun addTags(provider: HolderLookup.Provider) {
 		this.tag(FluidTags.WATER)
 			.add(ModFluids.BREAD_LIQUID.source)
 	}

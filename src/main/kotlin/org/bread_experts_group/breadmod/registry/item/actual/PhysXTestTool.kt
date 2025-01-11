@@ -17,10 +17,10 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.util.buffer.render.RenderBuffer
-import org.bread_experts_group.breadmod.util.render.initialTranslate
-import org.bread_experts_group.breadmod.util.render.localClient
-import org.bread_experts_group.breadmod.util.render.renderBlockModel
+import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
+import org.bread_experts_group.breadmod.client.render.initialTranslate
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.joml.Quaternionf
 import physx.PxTopLevelFunctions
 import physx.common.PxDefaultAllocator
@@ -193,7 +193,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		private val errorHandler = object : PxErrorCallback() {
 			override fun reportError(code: PxErrorCodeEnum, message: String, file: String, line: Int) {
 				super.reportError(code, message, file, line)
-				this@PhysXTestTool.logger.error("PhysX Error: $code, $message, $file, $line")
+				this@PhysX.logger.error("PhysX Error: $code, $message, $file, $line")
 			}
 		}
 
@@ -371,7 +371,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 			this.scene.release()
 			this.materials.forEach { (_, material) -> material.destroy() }
 			this.materials.clear()
-			this.rigidActors.forEach { it.release() }
+			this.rigidActors.forEach(PxRigidActor::release)
 			this.rigidActors.clear()
 			this.actorMap.forEach { (_, x) -> x.forEach { (_, y) -> y.forEach { (_, c) -> c.release() } } }
 			this.actorMap.clear()

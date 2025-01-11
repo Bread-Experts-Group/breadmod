@@ -1,28 +1,31 @@
 package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
+import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.serialization.Codec
+import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import kotlin.reflect.full.primaryConstructor
 
 abstract class ToolGunMode {
 	companion object {
-		val CODEC : Codec<ToolGunMode> = Codec.STRING.xmap(this::convertFromString, this::convertToString)
-		val STREAM_CODEC : StreamCodec<FriendlyByteBuf, ToolGunMode> =
+		val CODEC: Codec<ToolGunMode> = Codec.STRING.xmap(this::convertFromString, this::convertToString)
+		val STREAM_CODEC: StreamCodec<FriendlyByteBuf, ToolGunMode> =
 			object : StreamCodec<FriendlyByteBuf, ToolGunMode> {
-				override fun decode(buffer : FriendlyByteBuf) : ToolGunMode =
+				override fun decode(buffer: FriendlyByteBuf): ToolGunMode =
 					this@Companion.convertFromString(buffer.readUtf())
 
-				override fun encode(buffer : FriendlyByteBuf, value : ToolGunMode) {
+				override fun encode(buffer: FriendlyByteBuf, value: ToolGunMode) {
 					buffer.writeUtf(this@Companion.convertToString(value))
 				}
 			}
 
-		private fun convertToString(clazz : ToolGunMode) : String = clazz::class.qualifiedName!!
-		private fun convertFromString(path : String) : ToolGunMode =
+		private fun convertToString(clazz: ToolGunMode): String = clazz::class.qualifiedName!!
+		private fun convertFromString(path: String): ToolGunMode =
 			Class.forName(
 				path,
 				true,
@@ -30,5 +33,15 @@ abstract class ToolGunMode {
 			).kotlin.primaryConstructor?.call() as ToolGunMode
 	}
 
-	abstract fun action(level : Level, player : Player, stack : ItemStack)
+	abstract fun action(level: Level, player: Player, stack: ItemStack)
+
+	fun render(
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int
+	) {
+	}
 }

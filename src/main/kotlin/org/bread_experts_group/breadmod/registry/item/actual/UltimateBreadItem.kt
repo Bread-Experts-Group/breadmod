@@ -22,18 +22,18 @@ class UltimateBreadItem : Item(
 		.fireResistant()
 		.component(ModDataComponents.TIME_LEFT, 20 * 20)
 ), IRegisterSpecialCreativeTab {
-	private fun getTimeLeft(stack : ItemStack) : Long {
+	private fun getTimeLeft(stack: ItemStack): Long {
 		val max = COMMON.ultimateBreadMaxCreativeTimeTicks.get()
 		if (stack.has(ModDataComponents.TIME_LEFT)) return stack.getOrDefault(ModDataComponents.TIME_LEFT, max)
 		this.setTimeLeft(stack, max)
 		return max
 	}
 
-	private fun setTimeLeft(stack : ItemStack, ticks : Long) : Long? = stack.set(ModDataComponents.TIME_LEFT, ticks)
-	override fun getBarColor(stack : ItemStack) : Int =
+	private fun setTimeLeft(stack: ItemStack, ticks: Long): Long? = stack.set(ModDataComponents.TIME_LEFT, ticks)
+	override fun getBarColor(stack: ItemStack): Int =
 		(13F * (this.getTimeLeft(stack) / COMMON.ultimateBreadMaxCreativeTimeTicks.get())).roundToInt()
 
-	override fun inventoryTick(stack : ItemStack, level : Level, entity : Entity, slotId : Int, isSelected : Boolean) {
+	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		if (entity is ServerPlayer) {
 			if (isSelected) {
 				val randomIndex = (random() * entity.inventory.items.size).roundToInt()
@@ -58,6 +58,6 @@ class UltimateBreadItem : Item(
 		}
 	}
 
-	override fun getEntityLifespan(itemStack : ItemStack, level : Level) : Int = 0
-	override val creativeModeTabs : List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
+	override fun getEntityLifespan(itemStack: ItemStack, level: Level): Int = 0
+	override val creativeModeTabs: List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 }

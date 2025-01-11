@@ -20,7 +20,7 @@ typealias NoiseGeneratorBuilder = (
 
 object ModNoiseGenerators : NoiseRouterData() {
 	private val entries = mutableListOf<Pair<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorBuilder>>()
-	fun register(name : String, builder : NoiseGeneratorBuilder) : ResourceKey<NoiseGeneratorSettings> =
+	fun register(name: String, builder: NoiseGeneratorBuilder): ResourceKey<NoiseGeneratorSettings> =
 		ResourceKey.create(
 			Registries.NOISE_SETTINGS,
 			modLocation(name)
@@ -28,9 +28,10 @@ object ModNoiseGenerators : NoiseRouterData() {
 			this.entries.add(it to builder)
 		}
 
-	private val BREAD_FLOATING_ISLANDS_NOISE : NoiseSettings = NoiseSettings(0, 512, 2, 1)
+	private val BREAD_FLOATING_ISLANDS_NOISE: NoiseSettings = NoiseSettings(0, 512, 2, 1)
+
 	@Suppress("ImplicitThis")
-	val BREAD_FLOATING_ISLANDS : ResourceKey<NoiseGeneratorSettings> =
+	val BREAD_FLOATING_ISLANDS: ResourceKey<NoiseGeneratorSettings> =
 		this.register("bread_floating_islands") { densityFunctionHolderGetter, noiseHolderGetter ->
 			NoiseGeneratorSettings(
 				this.BREAD_FLOATING_ISLANDS_NOISE,
@@ -50,7 +51,7 @@ object ModNoiseGenerators : NoiseRouterData() {
 			)
 		}
 
-	fun bootstrapNoiseGenerators(ctx : BootstrapContext<NoiseGeneratorSettings>) {
+	fun bootstrapNoiseGenerators(ctx: BootstrapContext<NoiseGeneratorSettings>) {
 		val densityFunctionGetter = ctx.lookup(Registries.DENSITY_FUNCTION)
 		val noiseGetter = ctx.lookup(Registries.NOISE)
 		this.entries.forEach { ctx.register(it.first, it.second(densityFunctionGetter, noiseGetter)) }

@@ -59,10 +59,10 @@ import kotlin.reflect.full.primaryConstructor
 @Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.MOD)
 internal object CommonModEventBus {
-	val logger : Logger = LogManager.getLogger()
+	val logger: Logger = LogManager.getLogger()
 
 	@SubscribeEvent
-	fun gatherData(event : GatherDataEvent) {
+	fun gatherData(event: GatherDataEvent) {
 		val generator = event.generator
 		val packOutput = generator.packOutput
 		val existingFileHelper = event.existingFileHelper
@@ -120,8 +120,8 @@ internal object CommonModEventBus {
 	}
 
 	@SubscribeEvent
-	fun registerPayloads(event : RegisterPayloadHandlersEvent) {
-		val registrar : PayloadRegistrar = event.registrar("1")
+	fun registerPayloads(event: RegisterPayloadHandlersEvent) {
+		val registrar: PayloadRegistrar = event.registrar("1")
 		// Clientbound packets
 		registrar.playToClient(
 			WarTimerIncrement.TYPE,
@@ -167,44 +167,44 @@ internal object CommonModEventBus {
 	}
 
 	@SubscribeEvent
-	fun onCommonSetup(event : FMLCommonSetupEvent) {
+	fun onCommonSetup(event: FMLCommonSetupEvent) {
 		this.logger.log(Level.INFO, "Hello! This is working!")
 	}
 
 	@SubscribeEvent
-	fun registerEntityAttributes(event : EntityAttributeCreationEvent) {
+	fun registerEntityAttributes(event: EntityAttributeCreationEvent) {
 		event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())
 	}
 
 	@SubscribeEvent
-	fun registerCapabilities(event : RegisterCapabilitiesEvent) {
+	fun registerCapabilities(event: RegisterCapabilitiesEvent) {
 		event.registerBlock(
 			Capabilities.ItemHandler.BLOCK,
-			{ _, _, _, entity, _ : Direction? -> InvWrapper(entity as SoundBlockEntity) },
+			{ _, _, _, entity, _: Direction? -> InvWrapper(entity as SoundBlockEntity) },
 			ModBlocks.SOUND_BLOCK.asBlock()
 		)
 
 		event.registerBlockEntity(
 			Capabilities.EnergyStorage.BLOCK,
 			ModBlockEntityTypes.WHEAT_CRUSHER.get(),
-		) { entity, _ : Direction? -> entity.energy }
+		) { entity, _: Direction? -> entity.energy }
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.WHEAT_CRUSHER.get()
-		) { entity, _ : Direction? -> entity.items }
+		) { entity, _: Direction? -> entity.items }
 
 		event.registerBlockEntity(
 			Capabilities.EnergyStorage.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get(),
-		) { entity, _ : Direction? -> entity.energy }
+		) { entity, _: Direction? -> entity.energy }
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get()
-		) { entity, _ : Direction? -> entity.items }
+		) { entity, _: Direction? -> entity.items }
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get()
-		) { entity, direction : Direction? ->
+		) { entity, direction: Direction? ->
 			when (direction) {
 				Direction.UP   -> entity.tank.tanks[0]
 				Direction.DOWN -> entity.tank.tanks[1]
@@ -215,22 +215,22 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.SINGLE_FLUID_TEST.get()
-		) { entity, _ : Direction? -> entity.tank }
+		) { entity, _: Direction? -> entity.tank }
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.MULTI_FLUID_TEST.get()
-		) { entity, _ : Direction? -> entity.tank }
+		) { entity, _: Direction? -> entity.tank }
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.SINGLE_FLUID_ITEM_TEST.get()
-		) { entity, _ : Direction? -> entity.tank }
+		) { entity, _: Direction? -> entity.tank }
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get()
-		) { entity, direction : Direction? ->
+		) { entity, direction: Direction? ->
 			entity.sides[direction]
 //			when (direction) {
 //				Direction.UP    -> tanks[0]
@@ -246,7 +246,7 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_ENERGY.get()
-		) { entity, direction : Direction? ->
+		) { entity, direction: Direction? ->
 			val tanks = entity.tank.tanks
 			when (direction) {
 				Direction.EAST -> tanks[0]
@@ -260,6 +260,6 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_ENERGY.get()
-		) { entity, _ : Direction? -> entity.items }
+		) { entity, _: Direction? -> entity.items }
 	}
 }

@@ -24,24 +24,24 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 
 class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noCollission().pushReaction(PUSH_ONLY)) {
-	override fun codec() : MapCodec<out BaseEntityBlock> = simpleCodec { this }
-	override fun newBlockEntity(pos : BlockPos, state : BlockState) : BlockEntity =
+	override fun codec(): MapCodec<out BaseEntityBlock> = simpleCodec { this }
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		ItemInWorldBlockEntity(pos, state)
 
-	override fun createBlockStateDefinition(builder : Builder<Block, BlockState>) {
+	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
 		builder.add(BlockStateProperties.FACING)
 	}
 
-	override fun getStateForPlacement(context : BlockPlaceContext) : BlockState =
+	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
 		this.defaultBlockState().setValue(BlockStateProperties.FACING, context.nearestLookingDirection.opposite)
 
-	override fun propagatesSkylightDown(state : BlockState, level : BlockGetter, pos : BlockPos) : Boolean = true
+	override fun propagatesSkylightDown(state: BlockState, level: BlockGetter, pos: BlockPos): Boolean = true
 	override fun getShape(
-		state : BlockState,
-		level : BlockGetter,
-		pos : BlockPos,
-		context : CollisionContext
-	) : VoxelShape {
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		context: CollisionContext
+	): VoxelShape {
 		val direction = state.getValue(BlockStateProperties.FACING) ?: return Shapes.block()
 		return when (direction) {
 			DOWN  -> box(0.0, 15.0, 0.0, 16.0, 16.0, 16.0)
@@ -54,11 +54,11 @@ class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noColliss
 	}
 
 	override fun onRemove(
-		state : BlockState,
-		level : Level,
-		pos : BlockPos,
-		newState : BlockState,
-		movedByPiston : Boolean
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		newState: BlockState,
+		movedByPiston: Boolean
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = level.getBlockEntity(pos) as ItemInWorldBlockEntity

@@ -13,7 +13,7 @@ import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.phys.Vec2
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.util.formatNumber
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.localClient
 import snownee.jade.api.config.IWailaConfig.IConfigOverlay
 import snownee.jade.api.fluid.JadeFluidObject
 import snownee.jade.api.ui.Element
@@ -25,15 +25,15 @@ import kotlin.math.max
 import kotlin.math.sin
 
 class FluidBarElement(
-	private val fluid : JadeFluidObject,
-	private val capacity : Int,
-	private val direction : Direction?
+	private val fluid: JadeFluidObject,
+	private val capacity: Int,
+	private val direction: Direction?
 ) : Element() {
 	companion object {
 		private val defaultSize = Vec2(150f, 14f)
 	}
 
-	override fun getSize() : Vec2 = this.size ?: Companion.defaultSize
+	override fun getSize(): Vec2 = this.size ?: Companion.defaultSize
 	private val uvs = mapOf(
 		*listOf(
 			null,
@@ -46,13 +46,13 @@ class FluidBarElement(
 		).mapIndexed { index, direction -> direction to index * 16 }.toTypedArray()
 	)
 
-	private fun fill(guiGraphics : GuiGraphics, minX : Float, minY : Float, maxX : Float, maxY : Float) {
+	private fun fill(guiGraphics: GuiGraphics, minX: Float, minY: Float, maxX: Float, maxY: Float) {
 		var minX = minX
 		var minY = minY
 		var maxX = maxX
 		var maxY = maxY
 		val matrix = guiGraphics.pose().last().pose()
-		var j : Float
+		var j: Float
 		if (minX < maxX) {
 			j = minX
 			minX = maxX
@@ -67,7 +67,7 @@ class FluidBarElement(
 		val color = IConfigOverlay.applyAlpha(Color.WHITE.rgb, OverlayRenderer.alpha)
 		val sprite = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(modLocation("block", "bread_block"))
 		val buffer = guiGraphics.bufferSource().getBuffer(RenderType.solid())
-		fun addVertex(x : Float, y : Float, u : Float, v : Float) = buffer
+		fun addVertex(x: Float, y: Float, u: Float, v: Float) = buffer
 			.addVertex(matrix, x, y, 0f)
 			.setUv(u, v)
 			.setNormal(0f, 0f, 0f)
@@ -81,11 +81,11 @@ class FluidBarElement(
 	}
 
 	private fun drawBorder(
-		guiGraphics : GuiGraphics,
-		minX : Float,
-		minY : Float,
-		maxX : Float,
-		maxY : Float
+		guiGraphics: GuiGraphics,
+		minX: Float,
+		minY: Float,
+		maxX: Float,
+		maxY: Float
 	) {
 		this.fill(guiGraphics, minX + 1, minY, maxX - 1, minY + 1)
 		this.fill(guiGraphics, minX + 1, maxY - 1, maxX - 1, maxY)
@@ -94,18 +94,18 @@ class FluidBarElement(
 	}
 
 	private fun GuiGraphics.renderScrollingStringBM(
-		font : Font, text : Component, minX : Int, minY : Int, maxX : Int, maxY : Int, color : Int
+		font: Font, text: Component, minX: Int, minY: Int, maxX: Int, maxY: Int, color: Int
 	) = this.renderScrollingStringBM(font, text, (minX + maxX) / 2, minX, minY, maxX, maxY, color)
 
 	private fun GuiGraphics.renderScrollingStringBM(
-		font : Font,
-		text : Component,
-		centerX : Int,
-		minX : Int,
-		minY : Int,
-		maxX : Int,
-		maxY : Int,
-		color : Int
+		font: Font,
+		text: Component,
+		centerX: Int,
+		minX: Int,
+		minY: Int,
+		maxX: Int,
+		maxY: Int,
+		color: Int
 	) {
 		val i = font.width(text)
 		val j = (minY + maxY - 9) / 2 + 1
@@ -127,13 +127,13 @@ class FluidBarElement(
 	}
 
 	private fun GuiGraphics.drawScrollingStringBM(
-		font : Font,
-		text : Component,
-		minX : Int,
-		maxX : Int,
-		y : Int,
-		color : Int
-	) : Int {
+		font: Font,
+		text: Component,
+		minX: Int,
+		maxX: Int,
+		y: Int,
+		color: Int
+	): Int {
 		val maxWidth = maxX - minX
 		val textWidth = font.width(text.visualOrderText)
 		if (textWidth <= maxWidth) {
@@ -143,7 +143,7 @@ class FluidBarElement(
 		return maxWidth
 	}
 
-	override fun render(guiGraphics : GuiGraphics, x : Float, y : Float, maxX : Float, maxY : Float) {
+	override fun render(guiGraphics: GuiGraphics, x: Float, y: Float, maxX: Float, maxY: Float) {
 		val poseStack = guiGraphics.pose()
 		poseStack.pushPose()
 		// Fluid Box

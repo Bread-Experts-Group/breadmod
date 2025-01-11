@@ -12,14 +12,14 @@ import snownee.jade.api.fluid.JadeFluidObject
 
 class TestProvider : IBlockComponentProvider {
 	companion object {
-		val INSTANCE : TestProvider = TestProvider()
+		val INSTANCE: TestProvider = TestProvider()
 	}
 
-	override fun getUid() : ResourceLocation = JadePlugin.BLOCK_DATA
-	override fun appendTooltip(tooltip : ITooltip, accessor : BlockAccessor, config : IPluginConfig) {
+	override fun getUid(): ResourceLocation = JadePlugin.BLOCK_DATA
+	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		tooltip.remove(JadeIds.UNIVERSAL_FLUID_STORAGE)
 //		val entity = accessor.blockEntity as? BreadModBlockEntity<*> ?: return
-		for (direction : Direction in Direction.entries) {
+		for (direction: Direction in Direction.entries) {
 			val handler = accessor.level.getCapability(Capabilities.FluidHandler.BLOCK, accessor.position, direction)
 			if (handler != null) {
 				tooltip.add(

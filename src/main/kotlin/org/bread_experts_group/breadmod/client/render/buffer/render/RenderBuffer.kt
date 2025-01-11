@@ -1,6 +1,7 @@
-package org.bread_experts_group.breadmod.util.buffer.render
+package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 
 typealias BufferPassthrough = MutableList<Any>
 typealias BufferLambda<T> = (event: T, args: BufferPassthrough) -> Boolean
@@ -10,7 +11,7 @@ typealias SingleBufferEntry<T> = Pair<T, BufferPassthrough>
 private typealias RenderLambda = BufferLambda<RenderLevelStageEvent>
 
 object RenderBuffer {
-	private val renderBuffer: MutableList<BufferEntry<RenderLevelStageEvent.Stage, RenderLambda>> = mutableListOf()
+	private val renderBuffer: MutableList<BufferEntry<Stage, RenderLambda>> = mutableListOf()
 
 	fun add(
 		forStage: RenderLevelStageEvent.Stage? = null,

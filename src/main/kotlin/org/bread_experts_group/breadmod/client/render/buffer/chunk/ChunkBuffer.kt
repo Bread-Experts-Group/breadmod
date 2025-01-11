@@ -1,12 +1,14 @@
-package org.bread_experts_group.breadmod.util.buffer.chunk
+package org.bread_experts_group.breadmod.client.render.buffer.chunk
 
 import net.neoforged.neoforge.event.level.ChunkEvent
-import org.bread_experts_group.breadmod.util.buffer.render.BufferLambda
-import org.bread_experts_group.breadmod.util.buffer.render.BufferPassthrough
-import org.bread_experts_group.breadmod.util.buffer.render.SingleBufferEntry
+import net.neoforged.neoforge.event.level.ChunkEvent.Load
+import net.neoforged.neoforge.event.level.ChunkEvent.Unload
+import org.bread_experts_group.breadmod.client.render.buffer.render.BufferLambda
+import org.bread_experts_group.breadmod.client.render.buffer.render.BufferPassthrough
+import org.bread_experts_group.breadmod.client.render.buffer.render.SingleBufferEntry
 
-private typealias ChunkLoadLambda = BufferLambda<ChunkEvent.Load>
-private typealias ChunkUnloadLambda = BufferLambda<ChunkEvent.Unload>
+private typealias ChunkLoadLambda = BufferLambda<Load>
+private typealias ChunkUnloadLambda = BufferLambda<Unload>
 
 object ChunkBuffer {
 	private val loadBuffer: MutableList<SingleBufferEntry<ChunkLoadLambda>> = mutableListOf()

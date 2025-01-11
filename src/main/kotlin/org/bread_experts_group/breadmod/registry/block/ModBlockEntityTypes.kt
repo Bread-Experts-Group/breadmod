@@ -26,67 +26,68 @@ import java.util.function.Supplier
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 object ModBlockEntityTypes {
-	val BLOCK_ENTITY_REGISTRY : DeferredRegister<BlockEntityType<*>> =
+	val BLOCK_ENTITY_REGISTRY: DeferredRegister<BlockEntityType<*>> =
 		DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, BreadMod.ID)
-	val MONITOR : Supplier<BlockEntityType<BreadScreenBlockEntity>> =
+	val MONITOR: Supplier<BlockEntityType<BreadScreenBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("monitor_entity") { ->
 			this.buildBlockEntity(::BreadScreenBlockEntity, ModBlocks.MONITOR.asBlock())
 		}
-	val SOUND_BLOCK : Supplier<BlockEntityType<SoundBlockEntity>> =
+	val SOUND_BLOCK: Supplier<BlockEntityType<SoundBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("sound_block_entity") { ->
 			this.buildBlockEntity(::SoundBlockEntity, ModBlocks.SOUND_BLOCK.asBlock())
 		}
-	val WHEAT_CRUSHER : Supplier<BlockEntityType<WheatCrusherBlockEntity>> =
+	val WHEAT_CRUSHER: Supplier<BlockEntityType<WheatCrusherBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("wheat_crusher_entity") { ->
 			this.buildBlockEntity(::WheatCrusherBlockEntity, ModBlocks.WHEAT_CRUSHER.asBlock())
 		}
-	val DOUGH_MACHINE : Supplier<BlockEntityType<DoughMachineBlockEntity>> =
+	val DOUGH_MACHINE: Supplier<BlockEntityType<DoughMachineBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("dough_machine_entity") { ->
 			this.buildBlockEntity(::DoughMachineBlockEntity, ModBlocks.DOUGH_MACHINE.asBlock())
 		}
-	val FLUID_ENERGY : Supplier<BlockEntityType<FluidEnergyBlockEntity>> =
+	val FLUID_ENERGY: Supplier<BlockEntityType<FluidEnergyBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("fluid_energy_entity") { ->
 			this.buildBlockEntity(::FluidEnergyBlockEntity, ModBlocks.FLUID_ENERGY.asBlock())
 		}
-	val TOASTER : Supplier<BlockEntityType<ToasterBlockEntity>> =
+	val TOASTER: Supplier<BlockEntityType<ToasterBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("toaster_entity") { ->
 			this.buildBlockEntity(::ToasterBlockEntity, ModBlocks.TOASTER.asBlock())
 		}
-	val MICROWAVE : Supplier<BlockEntityType<MicrowaveBlockEntity>> =
+	val MICROWAVE: Supplier<BlockEntityType<MicrowaveBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("microwave_entity") { ->
 			this.buildBlockEntity(::MicrowaveBlockEntity, ModBlocks.MICROWAVE.asBlock())
 		}
-	val ITEM_IN_WORLD : Supplier<BlockEntityType<ItemInWorldBlockEntity>> =
+	val ITEM_IN_WORLD: Supplier<BlockEntityType<ItemInWorldBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("item_in_world_entity") { ->
 			this.buildBlockEntity(::ItemInWorldBlockEntity, ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(
-		supplier : BlockEntitySupplier<T>,
-		vararg block : Block
+		supplier: BlockEntitySupplier<T>,
+		vararg block: Block
 	) = BlockEntityType.Builder.of(supplier, *block).build(null)
+
 	// EXPERIMENTAL PAST THIS POINT
-	val MULTI_ITEM_TEST : Supplier<BlockEntityType<MultiItemRecipeBlockEntity>> =
+	val MULTI_ITEM_TEST: Supplier<BlockEntityType<MultiItemRecipeBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("multi_item_recipe_entity") { ->
 			this.buildBlockEntity(::MultiItemRecipeBlockEntity, ModBlocks.MULTI_ITEM_TEST.asBlock())
 		}
-	val MULTI_FLUID_TEST : Supplier<BlockEntityType<MultiFluidRecipeBlockEntity>> =
+	val MULTI_FLUID_TEST: Supplier<BlockEntityType<MultiFluidRecipeBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("multi_fluid_recipe_entity") { ->
 			this.buildBlockEntity(::MultiFluidRecipeBlockEntity, ModBlocks.MULTI_FLUID_TEST.asBlock())
 		}
-	val SINGLE_ITEM_TEST : Supplier<BlockEntityType<SingleItemRecipeBlockEntity>> =
+	val SINGLE_ITEM_TEST: Supplier<BlockEntityType<SingleItemRecipeBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("single_item_recipe_entity") { ->
 			this.buildBlockEntity(::SingleItemRecipeBlockEntity, ModBlocks.SINGLE_ITEM_TEST.asBlock())
 		}
-	val SINGLE_FLUID_TEST : Supplier<BlockEntityType<SingleFluidRecipeBlockEntity>> =
+	val SINGLE_FLUID_TEST: Supplier<BlockEntityType<SingleFluidRecipeBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("single_fluid_recipe_entity") { ->
 			this.buildBlockEntity(::SingleFluidRecipeBlockEntity, ModBlocks.SINGLE_FLUID_TEST.asBlock())
 		}
-	val SINGLE_FLUID_ITEM_TEST : Supplier<BlockEntityType<SingleFluidItemRecipeBlockEntity>> =
+	val SINGLE_FLUID_ITEM_TEST: Supplier<BlockEntityType<SingleFluidItemRecipeBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("single_fluid_item_recipe_entity") { ->
 			this.buildBlockEntity(::SingleFluidItemRecipeBlockEntity, ModBlocks.SINGLE_FLUID_ITEM_TEST.asBlock())
 		}
-	val FLUID_TANK_JADE_ENTITY : Supplier<BlockEntityType<SidedFluidTankJadeBlockEntity>> =
+	val FLUID_TANK_JADE_ENTITY: Supplier<BlockEntityType<SidedFluidTankJadeBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("jade_fluid_tank_entity") { ->
 			this.buildBlockEntity(::SidedFluidTankJadeBlockEntity, ModBlocks.JADE_FLUID_TANK.asBlock())
 		}

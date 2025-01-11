@@ -10,11 +10,11 @@ import org.bread_experts_group.breadmod.registry.entity.ModPainting
 import java.util.concurrent.CompletableFuture
 
 class ModPaintingTags(
-	output : PackOutput,
-	lookupProvider : CompletableFuture<HolderLookup.Provider>,
-	existingFileHelper : ExistingFileHelper
+	output: PackOutput,
+	lookupProvider: CompletableFuture<HolderLookup.Provider>,
+	existingFileHelper: ExistingFileHelper
 ) : PaintingVariantTagsProvider(output, lookupProvider, BreadMod.ID, existingFileHelper) {
-	override fun addTags(provider : HolderLookup.Provider) {
+	override fun addTags(provider: HolderLookup.Provider) {
 		this.tag(PaintingVariantTags.PLACEABLE)
 			.add(
 				ModPainting.PAINTING_TEST,

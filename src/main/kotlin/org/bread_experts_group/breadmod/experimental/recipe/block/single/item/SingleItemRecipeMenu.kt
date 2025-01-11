@@ -9,11 +9,11 @@ import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.menu.actual.ResultSlot
 
 class SingleItemRecipeMenu(
-	id : Int,
-	inventory : Inventory,
-	parent : SingleItemRecipeBlockEntity
+	id: Int,
+	inventory: Inventory,
+	parent: SingleItemRecipeBlockEntity
 ) : AbstractTestRecipeMenu(ModMenuTypes.SINGLE_ITEM.get(), id, inventory, parent) {
-	constructor(id : Int, inventory : Inventory, byteBuf : RegistryFriendlyByteBuf) : this(
+	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.SINGLE_ITEM_TEST.get())
 			.get()
@@ -24,5 +24,5 @@ class SingleItemRecipeMenu(
 		this.addSlot(ResultSlot(1, 40, 30, parent))
 	}
 
-	override val containerSlotCount : Int = 2
+	override val containerSlotCount: Int = 2
 }

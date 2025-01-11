@@ -10,10 +10,10 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.resources.DefaultPlayerSkin
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
-import org.bread_experts_group.breadmod.util.render.localClient
+import org.bread_experts_group.breadmod.client.render.localClient
 
 class FakePlayerRenderer(
-	context : EntityRendererProvider.Context,
+	context: EntityRendererProvider.Context,
 ) : LivingEntityRenderer<FakePlayer, PlayerModel<FakePlayer>>(
 	context,
 	PlayerModel<FakePlayer>(
@@ -22,8 +22,9 @@ class FakePlayerRenderer(
 	), 0.5f
 ) {
 	companion object {
-		private var useSlimModel : Boolean = true
+		private var useSlimModel: Boolean = true
 	}
+
 	//    override fun render(
 //        entity: MachTrail,
 //        entityYaw: Float,
@@ -63,12 +64,12 @@ class FakePlayerRenderer(
 //        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight)
 //    }
 	override fun render(
-		entity : FakePlayer,
-		entityYaw : Float,
-		partialTicks : Float,
-		poseStack : PoseStack,
-		buffer : MultiBufferSource,
-		packedLight : Int
+		entity: FakePlayer,
+		entityYaw: Float,
+		partialTicks: Float,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int
 	) {
 //        model.body.translateAndRotate(poseStack)
 //        val level = rgMinecraft.level ?: return
@@ -81,12 +82,12 @@ class FakePlayerRenderer(
 		super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight)
 	}
 
-	private fun getPlayerInfo(entity : FakePlayer) : PlayerInfo? {
+	private fun getPlayerInfo(entity: FakePlayer): PlayerInfo? {
 		val connection = localClient.connection ?: return null
 		return connection.getPlayerInfo(entity.getOwnerUUID())
 	}
 
-	override fun getTextureLocation(entity : FakePlayer) : ResourceLocation =
+	override fun getTextureLocation(entity: FakePlayer): ResourceLocation =
 		if (this.getPlayerInfo(entity) != null) this.getPlayerInfo(entity)!!.skin.texture
 		else DefaultPlayerSkin.get(entity.getOwnerUUID()).texture
 }

@@ -19,8 +19,8 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 
 class ModBlockStateProvider(
-	packOutput : PackOutput,
-	private val existingFileHelper : ExistingFileHelper
+	packOutput: PackOutput,
+	private val existingFileHelper: ExistingFileHelper
 ) : BlockStateProvider(packOutput, BreadMod.ID, existingFileHelper) {
 	override fun registerStatesAndModels() {
 		this.blockWithItem(ModBlocks.BREAD_BLOCK.asBlock())
@@ -175,7 +175,7 @@ class ModBlockStateProvider(
 			"minecraft:cutout"
 		)
 		// Hell Naw button
-		this.getVariantBuilder(ModBlocks.HELL_NAW_BUTTON.asBlock() as ButtonBlock).forAllStates { state : BlockState ->
+		this.getVariantBuilder(ModBlocks.HELL_NAW_BUTTON.asBlock() as ButtonBlock).forAllStates { state: BlockState ->
 			val facing = state.getValue(ButtonBlock.FACING)
 			val face = state.getValue(ButtonBlock.FACE)
 			val powered = state.getValue(ButtonBlock.POWERED)
@@ -195,19 +195,20 @@ class ModBlockStateProvider(
 		)
 	}
 
-	private fun blockWithItem(blockRegistryObject : Block) {
+	private fun blockWithItem(blockRegistryObject: Block) {
 		this.simpleBlockWithItem(blockRegistryObject, this.cubeAll(blockRegistryObject))
 	}
 
-	private fun blockBenchBlockModel(model : String) : ModelFile.ExistingModelFile =
+	private fun blockBenchBlockModel(model: String): ModelFile.ExistingModelFile =
 		ModelFile.ExistingModelFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/$model"), this.existingFileHelper)
-	private fun blockBenchItemModel(model : String) : ModelFile.ExistingModelFile =
+
+	private fun blockBenchItemModel(model: String): ModelFile.ExistingModelFile =
 		ModelFile.ExistingModelFile(this.modLoc("${ModelProvider.ITEM_FOLDER}/$model"), this.existingFileHelper)
 
-	private fun horizontalBlockBenchModel(block : Block, model : String) : Unit =
+	private fun horizontalBlockBenchModel(block: Block, model: String): Unit =
 		this.horizontalBlock(block, this.blockBenchBlockModel(model))
 
-	private fun horizontalBlockBenchModelWithItem(block : Block, model : String) {
+	private fun horizontalBlockBenchModelWithItem(block: Block, model: String) {
 		this.horizontalBlockBenchModel(block, model)
 		this.simpleBlockItem(block, this.blockBenchBlockModel(model))
 	}

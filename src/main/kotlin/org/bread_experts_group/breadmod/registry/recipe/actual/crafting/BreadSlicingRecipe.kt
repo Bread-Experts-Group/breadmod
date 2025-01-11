@@ -12,5 +12,5 @@ class BreadSlicingRecipe : AbstractCuttingRecipe(
 	8,
 	ItemTags.SWORDS
 ) {
-	override fun getSerializer() : RecipeSerializer<*> = ModRecipeSerializers.BREAD_SLICE.get()
+	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.BREAD_SLICE.get()
 }

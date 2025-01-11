@@ -17,16 +17,16 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
-import org.bread_experts_group.breadmod.util.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 
-class ItemInWorldRenderer(private val ctx : Context) : BlockEntityRenderer<ItemInWorldBlockEntity> {
+class ItemInWorldRenderer(private val ctx: Context) : BlockEntityRenderer<ItemInWorldBlockEntity> {
 	override fun render(
-		blockEntity : ItemInWorldBlockEntity,
-		partialTick : Float,
-		poseStack : PoseStack,
-		bufferSource : MultiBufferSource,
-		packedLight : Int,
-		packedOverlay : Int
+		blockEntity: ItemInWorldBlockEntity,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int
 	) {
 		val direction = blockEntity.blockState.getValue(BlockStateProperties.FACING) ?: return
 		poseStack.pushPose()
@@ -111,12 +111,12 @@ class ItemInWorldRenderer(private val ctx : Context) : BlockEntityRenderer<ItemI
 
 	// Note: This is initially translated to the middle of the "block" before rendering
 	private fun renderItem(
-		stack : ItemStack,
-		packedLight : Int,
-		packedOverlay : Int,
-		poseStack : PoseStack,
-		bufferSource : MultiBufferSource,
-		blockEntity : ItemInWorldBlockEntity,
+		stack: ItemStack,
+		packedLight: Int,
+		packedOverlay: Int,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		blockEntity: ItemInWorldBlockEntity,
 	) {
 		poseStack.pushPose()
 		if (stack.item is BlockItem) {
@@ -138,6 +138,6 @@ class ItemInWorldRenderer(private val ctx : Context) : BlockEntityRenderer<ItemI
 		poseStack.popPose()
 	}
 
-	override fun shouldRender(blockEntity : ItemInWorldBlockEntity, cameraPos : Vec3) : Boolean =
+	override fun shouldRender(blockEntity: ItemInWorldBlockEntity, cameraPos: Vec3): Boolean =
 		super.shouldRender(blockEntity, cameraPos) && blockEntity.items.isNotEmpty()
 }

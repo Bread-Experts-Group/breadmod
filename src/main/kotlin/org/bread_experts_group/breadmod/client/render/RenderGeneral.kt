@@ -1,10 +1,9 @@
-package org.bread_experts_group.breadmod.util.render
+package org.bread_experts_group.breadmod.client.render
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.PoseStack.Pose
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
@@ -17,8 +16,8 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.block.ModelBlockRenderer
-import net.minecraft.client.renderer.block.model.BakedQuad
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
@@ -29,14 +28,17 @@ import net.minecraft.network.chat.Component
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
+import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.levelgen.XoroshiroRandomSource
 import net.minecraft.world.level.material.Fluid
+import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
+import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
+import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
@@ -124,11 +126,25 @@ fun GuiGraphics.renderFluid(
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
 
 /**
- * Translates the [PoseStack] of the added [org.bread_experts_group.breadmod.util.buffer.render.RenderBuffer] to the player's camera.
+ * Translates the [PoseStack] of the added [RenderBuffer] to the player's camera.
  * Used for initial model positions in-world.
+ *
+ * @see offsetRenderToCameraPos
  */
 fun PoseStack.initialTranslate(camera: Camera): Unit =
 	this.translate(-camera.position.x, -camera.position.y, -camera.position.z)
+
+/**
+ * Alternative method for positioning the [PoseStack] of the added [RenderBuffer] to the camera pos.
+ *
+ * Offsets the current [PoseStack] to [pos] by subtracting [pos] from the [camera] position.
+ * @see initialTranslate
+ */
+fun PoseStack.offsetRenderToCameraPos(pos: Vec3, camera: Camera) {
+	val offset = pos.subtract(camera.position)
+	// the -0.5 is a temp workaround for the render being positioned at the corner instead of centered
+	this.translate(offset.x - 0.5, offset.y, offset.z - 0.5)
+}
 
 /**
  * Draws scaled [text] in a Screen or Overlay
@@ -164,7 +180,7 @@ fun ModelBlockRenderer.renderBlockModel(
 	blockState: BlockState,
 	packedLight: Int,
 	packedOverlay: Int = NO_OVERLAY,
-	renderType: RenderType = RenderType.solid(),
+	renderType: RenderType = Sheets.solidBlockSheet(),
 	red: Float = 1f,
 	green: Float = 1f,
 	blue: Float = 1f
@@ -180,7 +196,7 @@ fun ModelBlockRenderer.renderBlockModel(
 		blue,
 		packedLight,
 		packedOverlay,
-		ModelData.EMPTY,
+		ModelData.builder().with(ModelProperty(), ExtraFaceData(Color.WHITE.rgb, 0, 0, true)).build(),
 		renderType
 	)
 }
@@ -210,53 +226,53 @@ fun ModelBlockRenderer.renderBlockModel(
 	renderType
 )
 
-private val randomSource = XoroshiroRandomSource(42)
-
-/**
- * Renders a [BakedModel] with color
- */
-fun renderModel(
-	pose: Pose,
-	consumer: VertexConsumer,
-	state: BlockState,
-	model: BakedModel,
-	packedLight: Int,
-	packedOverlay: Int,
-	red: Float = 1f,
-	green: Float = 1f,
-	blue: Float = 1f
-) {
-	Direction.entries.forEach {
-		renderQuadList(
-			pose, consumer,
-			red, green, blue,
-			model.getQuads(state, it, randomSource),
-			packedLight, packedOverlay
-		)
-	}
-
-	renderQuadList(
-		pose, consumer,
-		red, green, blue,
-		model.getQuads(state, null, randomSource),
-		packedLight, packedOverlay
-	)
-}
-
-private fun renderQuadList(
-	pose: Pose, consumer: VertexConsumer,
-	red: Float, green: Float, blue: Float,
-	quads: List<BakedQuad>,
-	packedLight: Int, packedOverlay: Int
-) {
-	quads.forEach {
-		consumer.putBulkData(
-			pose, it,
-			red, green, blue, 1.0f,
-			packedLight, packedOverlay
-		)
-	}
-}
+//private val randomSource = XoroshiroRandomSource(42)
+//
+///**
+// * Renders a [BakedModel] with color
+// */
+//fun renderModel(
+//	pose: Pose,
+//	consumer: VertexConsumer,
+//	state: BlockState,
+//	model: BakedModel,
+//	packedLight: Int,
+//	packedOverlay: Int,
+//	red: Float = 1f,
+//	green: Float = 1f,
+//	blue: Float = 1f
+//) {
+//	Direction.entries.forEach {
+//		renderQuadList(
+//			pose, consumer,
+//			red, green, blue,
+//			model.getQuads(state, it, randomSource),
+//			packedLight, packedOverlay
+//		)
+//	}
+//
+//	renderQuadList(
+//		pose, consumer,
+//		red, green, blue,
+//		model.getQuads(state, null, randomSource),
+//		packedLight, packedOverlay
+//	)
+//}
+//
+//private fun renderQuadList(
+//	pose: Pose, consumer: VertexConsumer,
+//	red: Float, green: Float, blue: Float,
+//	quads: List<BakedQuad>,
+//	packedLight: Int, packedOverlay: Int
+//) {
+//	quads.forEach {
+//		consumer.putBulkData(
+//			pose, it,
+//			red, green, blue, 1.0f,
+//			packedLight, packedOverlay
+//		)
+//	}
+//}
 
 /**
  * Renders a provided [stack] onto a [BlockEntityRenderer]

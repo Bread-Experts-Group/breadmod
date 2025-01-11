@@ -14,9 +14,9 @@ class GluonGunBackpackItem : ArmorItem(
 ) {
 	class GluonGunExtensions : IClientItemExtensions {
 		override fun getArmPose(
-			entityLiving : LivingEntity,
-			hand : InteractionHand,
-			itemStack : ItemStack
-		) : HumanoidModel.ArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW
+			entityLiving: LivingEntity,
+			hand: InteractionHand,
+			itemStack: ItemStack
+		): HumanoidModel.ArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW
 	}
 }

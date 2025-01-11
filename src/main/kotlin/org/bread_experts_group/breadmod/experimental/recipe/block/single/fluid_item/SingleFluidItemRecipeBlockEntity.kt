@@ -18,8 +18,8 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import java.util.*
 
 class SingleFluidItemRecipeBlockEntity(
-	pos : BlockPos,
-	state : BlockState
+	pos: BlockPos,
+	state: BlockState
 ) : AbstractTestItemRecipeBlockEntity<BMRecipeInputs.SingleFluidItem, SingleFluidItemRecipe>(
 	pos,
 	state,
@@ -27,7 +27,7 @@ class SingleFluidItemRecipeBlockEntity(
 	ModRecipeTypes.SINGLE_FLUID_ITEM.get(),
 	2
 ) {
-	val tank : CustomFluidTank by lazy {
+	val tank: CustomFluidTank by lazy {
 		object : CustomFluidTank(10000, 2) {
 			override fun onContentsChanged() {
 				this@SingleFluidItemRecipeBlockEntity.syncToClients()
@@ -35,19 +35,19 @@ class SingleFluidItemRecipeBlockEntity(
 		}
 	}
 
-	override fun saveAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.saveAdditional(tag, registries)
 
 		tag.put("fluid", CompoundTag().also { this.tank.writeToNBT(registries, it) })
 	}
 
-	override fun loadAdditional(tag : CompoundTag, registries : HolderLookup.Provider) {
+	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
 		super.loadAdditional(tag, registries)
 
 		this.tank.readFromNBT(registries, tag.getCompound("fluid"))
 	}
 
-	override fun tick(level : Level, tPos : BlockPos, tState : BlockState) {
+	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.inputStillValid(
 					this.items[0],
@@ -86,13 +86,13 @@ class SingleFluidItemRecipeBlockEntity(
 		})
 	}
 
-	override fun createMenu(containerId : Int, playerInventory : Inventory, player : Player) : AbstractContainerMenu =
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
 		SingleFluidItemRecipeMenu(containerId, playerInventory, this)
 
-	override fun getDisplayName() : Component = Component.literal("SingleFluidItemRecipe")
-	override fun getWidth() : Int = 1
-	override fun getHeight() : Int = 1
-	override fun finalizeRecipe(recipe : SingleFluidItemRecipe, level : Level) {
+	override fun getDisplayName(): Component = Component.literal("SingleFluidItemRecipe")
+	override fun getWidth(): Int = 1
+	override fun getHeight(): Int = 1
+	override fun finalizeRecipe(recipe: SingleFluidItemRecipe, level: Level) {
 		val assemble = recipe.assembleOutputs(
 			BMRecipeInputs.SingleFluidItem(
 				this.items[0],

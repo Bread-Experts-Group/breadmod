@@ -23,13 +23,14 @@ import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
  * Main mod class.
  */
 @Mod(BreadMod.ID)
-class BreadMod(container : ModContainer) {
+class BreadMod(container: ModContainer) {
 	companion object {
-		const val ID : String = "breadmod"
+		const val ID: String = "breadmod"
+
 		/**
 		 * @param override Only use this when you need to refer to a namespace outside breadmod
 		 */
-		fun modLocation(vararg path : String, override : Boolean = false) : ResourceLocation =
+		fun modLocation(vararg path: String, override: Boolean = false): ResourceLocation =
 			path.toMutableList().let {
 				ResourceLocation.fromNamespaceAndPath(
 					if (override) it.removeFirst() else this.ID, it.joinToString("/")
@@ -37,16 +38,16 @@ class BreadMod(container : ModContainer) {
 			}
 
 		fun modTranslatable(
-			type : String = "misc",
-			vararg path : String,
-			args : List<Any> = listOf()
-		) : MutableComponent = Component.translatable(
+			type: String = "misc",
+			vararg path: String,
+			args: List<Any> = listOf()
+		): MutableComponent = Component.translatable(
 			"$type.${this.ID}.${path.joinToString(".")}",
 			*args.toTypedArray()
 		)
 	}
 
-	val logger : Logger = LogManager.getLogger()
+	val logger: Logger = LogManager.getLogger()
 
 	init {
 		if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {
