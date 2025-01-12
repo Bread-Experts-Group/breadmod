@@ -47,13 +47,19 @@ internal sealed class BaseLanguageProvider(
 	final override fun addDimension(dimension: ResourceKey<Level>, value: String): Nothing =
 		throw UnsupportedOperationException()
 
-	final override fun addEffect(key: Supplier<out MobEffect>, name: String): Nothing = throw UnsupportedOperationException()
+	final override fun addEffect(key: Supplier<out MobEffect>, name: String): Nothing =
+		throw UnsupportedOperationException()
+
 	final override fun addEntityType(key: Supplier<out EntityType<*>>, name: String): Nothing =
 		throw UnsupportedOperationException()
 
 	final override fun addItem(key: Supplier<out Item>, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun addItemStack(key: Supplier<ItemStack>, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun addTag(key: Supplier<out TagKey<*>>, name: String): Nothing = throw UnsupportedOperationException()
+	final override fun addItemStack(key: Supplier<ItemStack>, name: String): Nothing =
+		throw UnsupportedOperationException()
+
+	final override fun addTag(key: Supplier<out TagKey<*>>, name: String): Nothing =
+		throw UnsupportedOperationException()
+
 	protected open fun assureName(name: String, otherwise: String): String =
 		if (name == "<null>") throw UnsupportedOperationException() else name
 
@@ -93,8 +99,5 @@ internal sealed class BaseLanguageProvider(
 
 	@Suppress("SameReturnValue")
 	abstract fun getNameAdditional(): String
-	final override fun getName(): String = String.format(
-		"BreadMod internal language provider for {} ",
-		this.getNameAdditional()
-	)
+	final override fun getName(): String = "BreadMod internal language provider for ${this.getNameAdditional()}"
 }

@@ -50,7 +50,9 @@ class LibraryScanner(private val pForLoader: ClassLoader, private val pForPackag
 										.substring(1)
 										.removeSuffix(".class")
 										.replace('/', '.')
-									this.add(this@LibraryScanner.pForLoader.loadClass(className).kotlin)
+									if (!className.contains("PhysX")) {
+										this.add(this@LibraryScanner.pForLoader.loadClass(className).kotlin)
+									}
 								} catch (_: Throwable) {
 								}
 							}

@@ -14,13 +14,13 @@ import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
-import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
+import org.bread_experts_group.breadmod.registry.block.ModBlocks
+import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
+import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.joml.Quaternionf
 import physx.PxTopLevelFunctions
 import physx.common.PxDefaultAllocator
@@ -162,6 +162,8 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		}
 	}
 	private var physX: Any = 0
+
+	@Suppress("unused")
 	fun createPhysX() {
 		if (this.physX == 0) this.physX = Class.forName(
 			"org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool\$PhysX",
@@ -170,6 +172,7 @@ internal object PhysXTestTool : Item(Properties().stacksTo(1)), IRegisterSpecial
 		).getDeclaredConstructor().newInstance()
 	}
 
+	@Suppress("unused")
 	fun destroyPhysX() {
 		if (this.physX != 0) {
 			this.physX::class.java.getDeclaredMethod("cleanup").invoke(this.physX)
