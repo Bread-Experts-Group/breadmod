@@ -45,9 +45,26 @@ object ModTextureLocations {
 		854, 480
 	)
 
+	// Gui Elements
+	val ENERGY_METER_16X47: BreadModTextureHelper = BreadModTextureHelper(
+		this.guiElementLocation("energy_meter_16x47"),
+		16, 47
+	)
+	val VERTICAL_ARROW_9X48: BreadModTextureHelper = BreadModTextureHelper(
+		this.guiElementLocation("vertical_arrow_9x48"),
+		9, 48
+	)
+	val FILLED_VERTICAL_ARROW_9X48: BreadModTextureHelper = BreadModTextureHelper(
+		this.guiElementLocation("filled_vertical_arrow_9x48"),
+		9, 48
+	)
+
 	private fun toolGunHudLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "hud", "$name.png")
 
 	private fun toolGunGuiLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "gui", "$name.png")
+
+	private fun guiElementLocation(name: String): ResourceLocation =
+		modLocation("textures", "gui", "container", "elements", "$name.png")
 }

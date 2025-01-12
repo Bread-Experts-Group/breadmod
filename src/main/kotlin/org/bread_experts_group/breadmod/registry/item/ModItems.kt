@@ -104,8 +104,9 @@ object ModItems {
 	val DOPED_BREAD: DeferredItem<Item> = this.ITEM_REGISTRY.register("doped_bread") { ->
 		object : Item(
 			Properties()
-				.food(FoodProperties.Builder().nutrition(6).build())
+				.food(FoodProperties.Builder().nutrition(6).alwaysEdible().build())
 				.component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+				.rarity(Rarity.RARE)
 		) {
 			override fun finishUsingItem(stack: ItemStack, level: Level, livingEntity: LivingEntity): ItemStack {
 				stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)

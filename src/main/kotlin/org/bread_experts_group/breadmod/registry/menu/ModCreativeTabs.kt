@@ -1,7 +1,10 @@
 package org.bread_experts_group.breadmod.registry.menu
 
+import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.alchemy.PotionContents
+import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
@@ -10,6 +13,7 @@ import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import java.util.*
 import java.util.function.Supplier
 
 object ModCreativeTabs {
@@ -31,7 +35,26 @@ object ModCreativeTabs {
 					when {
 						item is IRegisterSpecialCreativeTab -> if (item.creativeModeTabs.contains(registryObject))
 							if (item.displayInCreativeTab(parameters, output)) output.accept(item.defaultInstance)
-						general                             -> output.accept(item.defaultInstance)
+						general                             -> {
+							output.accept(item.defaultInstance)
+							parameters.holders.lookupOrThrow(Registries.POTION)
+								.filterElements { potion -> potion.effects.isNotEmpty() }
+								.listElements()
+								.forEach { potion ->
+									val dopedBread = ModItems.DOPED_BREAD.toStack()
+									val color = potion.value().effects.firstOrNull()?.effect?.value()?.color ?: 0
+									dopedBread.set(
+										DataComponents.POTION_CONTENTS,
+										PotionContents(
+											Optional.of(potion),
+											Optional.of(color),
+											listOf()
+										)
+									)
+									dopedBread.set(DataComponents.DYED_COLOR, DyedItemColor(color, false))
+									output.accept(dopedBread)
+								}
+						}
 					}
 				}
 			}

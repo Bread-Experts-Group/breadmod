@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.math.Axis
 import net.minecraft.Util
+import net.minecraft.client.KeyMapping
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.util.Mth.clamp
@@ -19,8 +20,10 @@ import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.network.PacketDistributor
+import org.apache.commons.lang3.ArrayUtils
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.render.buffer.chunk.ChunkBuffer
 import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask.machTrailMap
@@ -28,6 +31,7 @@ import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.redness
 import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
@@ -138,15 +142,26 @@ internal object ClientNeoForgeEventBus {
 	}
 
 	// todo FIX PHYSX CRASHING
-	//	@SubscribeEvent
-//	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
+	@SubscribeEvent
+	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
 //		PhysXTestTool.createPhysX()
-//	}
+		val keyList = mutableListOf<KeyMapping>()
+		ToolGunModeDataLoader.modes.forEach { (_, toolGunData) ->
+			toolGunData.forEach { (_, data) ->
+				keyList.add(data.keyMapping.toKeyMapping())
+			}
+		}
+		localClient.options.keyMappings = ArrayUtils.addAll(
+			localClient.options.keyMappings,
+			*keyList.toTypedArray()
+		)
+	}
 //
 //	@SubscribeEvent
 //	fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
 //		PhysXTestTool.destroyPhysX()
 //	}
+
 	@SubscribeEvent
 	fun clientTick(event: ClientTickEvent.Pre) {
 		if (machTrailMap.isNotEmpty()) {

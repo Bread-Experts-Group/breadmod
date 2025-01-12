@@ -56,6 +56,7 @@ class ModItemModelProvider(
 
 		this.handheldItem(ModItems.WRENCH)
 		this.handheldItem(ModItems.BREAD_GUN)
+		this.handheldItem(ModItems.KNIFE)
 
 		this.multiLayeredTexture(
 			"breadmod:bread_boots",
@@ -81,7 +82,6 @@ class ModItemModelProvider(
 			this.modLoc("item/bread_helmet"),
 			this.modLoc("item/bread_helmet_overlay")
 		)
-
 		this.multiLayeredTexture(
 			"breadmod:doped_bread",
 			this.mcLoc("item/generated"),

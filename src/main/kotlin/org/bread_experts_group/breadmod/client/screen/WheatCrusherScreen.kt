@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.util.formatUnit
 
@@ -22,6 +23,7 @@ class WheatCrusherScreen(
 	init {
 		this.imageWidth = 176
 		this.imageHeight = 198
+		this.inventoryLabelY = this.imageHeight - 94
 	}
 
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
@@ -30,10 +32,15 @@ class WheatCrusherScreen(
 		RenderSystem.setShaderTexture(0, this.texture)
 
 		guiGraphics.blit(this.texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight)
-		this.inventoryLabelY = this.imageHeight - 94
 
-		this.renderProgressArrow(guiGraphics)
-		this.renderEnergyMeter(guiGraphics)
+		ModTextureLocations.ENERGY_METER_16X47.drawProgressiveSpriteVertical(
+			guiGraphics,
+			this.menu.getEnergyStoredScaled(),
+			this.leftPos + 151,
+			this.topPos + 14,
+			false
+		)
+		ModTextureLocations.VERTICAL_ARROW_9X48.blitTexture(guiGraphics, this.leftPos + 83, this.topPos + 33)
 	}
 
 	private var step: Int = -32
@@ -63,6 +70,13 @@ class WheatCrusherScreen(
 				)
 			}
 		}
+		ModTextureLocations.FILLED_VERTICAL_ARROW_9X48.drawProgressiveSpriteVertical(
+			guiGraphics,
+			this.menu.getScaledProgress(),
+			this.leftPos + 83,
+			this.topPos + 33,
+			true
+		)
 		// todo should be updated using [rgMinecraft.gui.guiTicks] for a consistent 20 ticks per second baseline
 		if (this.menu.isCrafting()) {
 			// Left crushing wheel
@@ -77,32 +91,5 @@ class WheatCrusherScreen(
 //        println(menu.parent.progress)
 //        println(menu.parent.maxProgress)
 		this.renderTooltip(guiGraphics, mouseX, mouseY)
-	}
-
-	private fun renderEnergyMeter(guiGraphics: GuiGraphics) {
-		val energyStored = this.menu.getEnergyStoredScaled()
-		guiGraphics.blit(
-			this.texture,
-			this.leftPos + 151,
-			this.topPos + 14 + 47 - energyStored,
-			176,
-			111 - energyStored,
-			16,
-			47
-		)
-	}
-
-	private fun renderProgressArrow(guiGraphics: GuiGraphics) {
-		if (this.menu.isCrafting()) {
-			guiGraphics.blit(
-				this.texture,
-				this.leftPos + 83,
-				this.topPos + 32,
-				192,
-				64,
-				9,
-				this.menu.getScaledProgress()
-			)
-		}
 	}
 }

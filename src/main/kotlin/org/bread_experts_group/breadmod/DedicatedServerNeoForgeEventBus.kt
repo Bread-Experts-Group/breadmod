@@ -1,10 +1,7 @@
 package org.bread_experts_group.breadmod
 
-import net.neoforged.api.distmarker.Dist
-import net.neoforged.fml.common.EventBusSubscriber
-
-@Suppress("unused")
-@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.DEDICATED_SERVER])
+//@Suppress("unused")
+//@EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.DEDICATED_SERVER])
 internal object DedicatedServerNeoForgeEventBus {
 //    @SubscribeEvent
 //    fun onPlayerJoin(event: PlayerLoggedInEvent) {

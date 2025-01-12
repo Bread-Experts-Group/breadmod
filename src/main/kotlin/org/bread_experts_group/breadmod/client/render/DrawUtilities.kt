@@ -201,7 +201,7 @@ fun renderBakedQuads(
 			green,
 			blue,
 			1f,
-			intArrayOf(1, 1, light, light),
+			intArrayOf(light, light, light, light),
 			packedLight,
 			false
 		)

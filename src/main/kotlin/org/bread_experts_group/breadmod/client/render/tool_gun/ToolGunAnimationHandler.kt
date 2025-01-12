@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.client.render.tool_gun
 
+import net.minecraft.util.RandomSource
 import org.bread_experts_group.breadmod.client.render.localClient
 
 // todo convert this to use millis and merge into the renderer (look in WarOverlay for reference)
@@ -7,6 +8,7 @@ internal object ToolGunAnimationHandler {
 	var coilRotation: Float = 0f
 	private var coilDelta: Float = 0f
 	var recoil: Float = 0f
+	val random: RandomSource = RandomSource.create(42)
 	fun clientTick() {
 		if (!localClient.isPaused) {
 			this.coilRotation += 2f * this.coilDelta
@@ -17,8 +19,9 @@ internal object ToolGunAnimationHandler {
 			this.coilRotation %= 360
 		}
 	}
-//    fun trigger() {
-//        coilDelta = 4f + random.nextFloat()
-//        recoil = 0.1f
-//    }
+
+	fun trigger() {
+		this.coilDelta = 4f + this.random.nextFloat()
+		this.recoil = 0.1f
+	}
 }

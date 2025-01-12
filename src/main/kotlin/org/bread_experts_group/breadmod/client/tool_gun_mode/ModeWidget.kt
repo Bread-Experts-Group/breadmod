@@ -1,21 +1,14 @@
 package org.bread_experts_group.breadmod.client.tool_gun_mode
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.ComponentSerialization
-import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
-import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
-import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import java.awt.Color
@@ -31,33 +24,45 @@ open class ModeWidget(
 	var id: String = ""
 
 	companion object {
-		val CODEC: Codec<ModeWidget> = RecordCodecBuilder.create { inst ->
-			inst.group(
-				ItemStack.CODEC.fieldOf("icon").forGetter(ModeWidget::icon),
-				BreadModTextureHelper.CODEC.fieldOf("preview_image").forGetter(ModeWidget::previewImage),
-				ComponentSerialization.CODEC.fieldOf("mode_name").forGetter(ModeWidget::modeName),
-				ComponentSerialization.CODEC.fieldOf("mode_desc").forGetter(ModeWidget::modeDescription)
-			).apply(inst, ::ModeWidget)
+//		val CODEC: Codec<ModeWidget> = RecordCodecBuilder.create { inst ->
+//			inst.group(
+//				ItemStack.CODEC.fieldOf("icon").forGetter(ModeWidget::icon),
+//				BreadModTextureHelper.CODEC.fieldOf("preview_image").forGetter(ModeWidget::previewImage),
+//				ComponentSerialization.CODEC.fieldOf("mode_name").forGetter(ModeWidget::modeName),
+//				ComponentSerialization.CODEC.fieldOf("mode_desc").forGetter(ModeWidget::modeDescription)
+//			).apply(inst, ::ModeWidget)
+//		}
+//		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ModeWidget> = StreamCodec.composite(
+//			ItemStack.STREAM_CODEC, ModeWidget::icon,
+//			BreadModTextureHelper.STREAM_CODEC, ModeWidget::previewImage,
+//			ComponentSerialization.STREAM_CODEC, ModeWidget::modeName,
+//			ComponentSerialization.STREAM_CODEC, ModeWidget::modeDescription,
+//			::ModeWidget
+//		)
+//		val NONE: ModeWidget = ModeWidget(
+//			ItemStack(Items.BARRIER, 1),
+//			BreadModTextureHelper.MISSING_TEXTURE,
+//			Component.literal("Empty Mode"),
+//			Component.literal("Default Description")
+//		)
+		fun fromData(data: ModeWidgetData): ModeWidget {
+			val widget = ModeWidget(
+				data.icon,
+				data.previewImage,
+				data.modeName,
+				data.modeDescription
+			)
+			widget.namespace = data.namespace
+			widget.id = data.id
+
+			return widget
 		}
-		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ModeWidget> = StreamCodec.composite(
-			ItemStack.STREAM_CODEC, ModeWidget::icon,
-			BreadModTextureHelper.STREAM_CODEC, ModeWidget::previewImage,
-			ComponentSerialization.STREAM_CODEC, ModeWidget::modeName,
-			ComponentSerialization.STREAM_CODEC, ModeWidget::modeDescription,
-			::ModeWidget
-		)
-		val NONE: ModeWidget = ModeWidget(
-			ItemStack(Items.BARRIER, 1),
-			BreadModTextureHelper.MISSING_TEXTURE,
-			Component.literal("Empty Mode"),
-			Component.literal("Default Description")
-		)
 	}
 
-	override fun onClick(mouseX: Double, mouseY: Double, button: Int) {
-		PacketDistributor.sendToServer(ToolGunActionPacket(this.namespace, this.id))
-		super.onClick(mouseX, mouseY, button)
-	}
+//	override fun onClick(mouseX: Double, mouseY: Double, button: Int) {
+//		PacketDistributor.sendToServer(ToolGunActionPacket(this.namespace, this.id))
+//		super.onClick(mouseX, mouseY, button)
+//	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.pose().pushPose()
@@ -87,7 +92,7 @@ open class ModeWidget(
 	override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
 	}
 
-	class Builder {
+	open class Builder {
 		private var icon: ItemStack = ItemStack(Items.BARRIER)
 		private var previewImage: BreadModTextureHelper = BreadModTextureHelper.MISSING_TEXTURE
 		private var modeName: Component = Component.literal("Default Name")
@@ -107,6 +112,13 @@ open class ModeWidget(
 		fun description(description: String): Builder = this.also { this.description(Component.literal(description)) }
 
 		fun build(): ModeWidget = ModeWidget(
+			this.icon,
+			this.previewImage,
+			this.modeName,
+			this.modeDescription
+		)
+
+		fun buildData(): ModeWidgetData = ModeWidgetData(
 			this.icon,
 			this.previewImage,
 			this.modeName,

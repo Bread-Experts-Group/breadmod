@@ -2,11 +2,15 @@ package org.bread_experts_group.breadmod.client.tool_gun_mode
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
+import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import java.awt.Color
 
 // todo proof of concept
@@ -16,9 +20,20 @@ class TestScreen(title: Component) : Screen(title) {
 		val modeWidgets: MutableList<ModeWidget> = mutableListOf()
 	}
 
+	init {
+		Companion.modeWidgets.clear()
+		ToolGunModeDataLoader.modes.forEach { (_, u) ->
+			u.forEach { (_, data) ->
+				Companion.modeWidgets.add(ModeWidget.fromData(data.widgetData))
+			}
+		}
+	}
+
 	private var leftPos: Int = (this.width - 280) / 2
 	private var topPos: Int = (this.height - 210) / 2
 	private var gridList: List<Pair<Int, Int>> = listOf()
+	private var currentModeWidget: ModeWidget? = null
+
 	override fun isPauseScreen(): Boolean = false
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
@@ -61,6 +76,7 @@ class TestScreen(title: Component) : Screen(title) {
 		guiGraphics.drawString(localClient.font, this.title, this.leftPos + 2, this.topPos + 2, Color.BLACK.rgb, false)
 		if (this.focused is ModeWidget) {
 			val widget = this.focused as ModeWidget
+			this.currentModeWidget = widget
 			guiGraphics.fill(
 				RenderType.gui(),
 				this.leftPos + 179,
@@ -95,7 +111,7 @@ class TestScreen(title: Component) : Screen(title) {
 			)
 			poseStack.translate(this.leftPos + 179.8f, this.topPos + 4f, 0f)
 			poseStack.scaleFlat(0.135f)
-			widget.previewImage.blitTexture(guiGraphics, 0, 0, 854, 480)
+			widget.previewImage.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
 		} else {
 			guiGraphics.drawWordWrap(
 				localClient.font,
@@ -125,6 +141,11 @@ class TestScreen(title: Component) : Screen(title) {
 				}
 			}
 		}
+		this.addRenderableWidget(ModeButton(this.leftPos + 40, this.topPos + 80) {
+			this.currentModeWidget?.let { widget ->
+				PacketDistributor.sendToServer(ToolGunActionPacket(widget.namespace, widget.id))
+			}
+		})
 
 		repeat(Companion.modeWidgets.size) { index ->
 			Companion.modeWidgets[index].x = this.gridList[index].first
@@ -132,4 +153,7 @@ class TestScreen(title: Component) : Screen(title) {
 		}
 		Companion.modeWidgets.forEach(this::addRenderableWidget)
 	}
+
+	private class ModeButton(x: Int, y: Int, onPress: OnPress) :
+		Button(x, y, 30, 15, Component.literal("funny"), onPress, { Component.empty() })
 }

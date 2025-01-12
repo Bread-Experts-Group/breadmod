@@ -1,54 +1,68 @@
 package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
+import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
-import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
+import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidgetData
 
 data class ToolGunModeData(
-	val namespace: String,
-	val name: String,
+	val namespaceName: Pair<String, String>,
 	val displayName: Component,
 	val tooltip: Component,
 	val actionClass: ToolGunMode,
-	val widget: ModeWidget
+	val widgetData: ModeWidgetData,
+	val keyMapping: KeyMappingData
 ) {
 	init {
-		this.widget.namespace = this.namespace
-		this.widget.id = this.name
+		this.widgetData.namespace = this.namespaceName.first
+		this.widgetData.id = this.namespaceName.second
 	}
 
 	companion object {
+		private val pairStreamCodec: StreamCodec<FriendlyByteBuf, Pair<String, String>> =
+			object : StreamCodec<FriendlyByteBuf, Pair<String, String>> {
+				override fun decode(buffer: FriendlyByteBuf): Pair<String, String> =
+					Pair(buffer.readUtf(), buffer.readUtf())
+
+				override fun encode(buffer: FriendlyByteBuf, value: Pair<String, String>) {
+					buffer.writeUtf(value.first)
+					buffer.writeUtf(value.second)
+				}
+			}
 		val CODEC: Codec<ToolGunModeData> = RecordCodecBuilder.create { inst ->
 			inst.group(
-				Codec.STRING.fieldOf("namespace").forGetter(ToolGunModeData::namespace),
-				Codec.STRING.fieldOf("name").forGetter(ToolGunModeData::name),
+				Codec.pair(
+					Codec.STRING.fieldOf("namespace").codec(),
+					Codec.STRING.fieldOf("name").codec()
+				).fieldOf("id").forGetter(ToolGunModeData::namespaceName),
 				ComponentSerialization.CODEC.fieldOf("display_name").forGetter(ToolGunModeData::displayName),
 				ComponentSerialization.CODEC.fieldOf("tooltip").forGetter(ToolGunModeData::tooltip),
 				ToolGunMode.CODEC.fieldOf("action_class").forGetter(ToolGunModeData::actionClass),
-				ModeWidget.CODEC.fieldOf("widget").forGetter(ToolGunModeData::widget)
+				ModeWidgetData.CODEC.fieldOf("widget_data").forGetter(ToolGunModeData::widgetData),
+				KeyMappingData.CODEC.fieldOf("key_mapping_data").forGetter(ToolGunModeData::keyMapping)
 			).apply(inst, ::ToolGunModeData)
 		}
 		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToolGunModeData> = StreamCodec.composite(
-			ByteBufCodecs.STRING_UTF8, ToolGunModeData::namespace,
-			ByteBufCodecs.STRING_UTF8, ToolGunModeData::name,
+			this.pairStreamCodec, ToolGunModeData::namespaceName,
 			ComponentSerialization.STREAM_CODEC, ToolGunModeData::displayName,
 			ComponentSerialization.STREAM_CODEC, ToolGunModeData::tooltip,
 			ToolGunMode.STREAM_CODEC, ToolGunModeData::actionClass,
-			ModeWidget.STREAM_CODEC, ToolGunModeData::widget,
+			ModeWidgetData.STREAM_CODEC, ToolGunModeData::widgetData,
+			KeyMappingData.STREAM_CODEC, ToolGunModeData::keyMapping,
 			::ToolGunModeData
 		)
 		val EMPTY: ToolGunModeData = ToolGunModeData(
-			"breadmod",
-			"empty",
+			Pair("breadmod", "empty"),
 			Component.literal("???"),
 			Component.literal("If you see this mode then something probably went wrong!"),
 			EmptyMode(),
-			ModeWidget.NONE
+			ModeWidgetData.NONE,
+			KeyMappingData.EMPTY
 		)
 	}
 }

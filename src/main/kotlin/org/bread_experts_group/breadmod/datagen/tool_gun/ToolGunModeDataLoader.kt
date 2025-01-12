@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
-import org.bread_experts_group.breadmod.client.tool_gun_mode.TestScreen.Companion.modeWidgets
 import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
@@ -34,7 +33,6 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
 
 	private fun load(`object`: Map<ResourceLocation, JsonElement>) {
 		this.loadedModes.clear()
-		modeWidgets.clear()
 		`object`.forEach { (location, data) ->
 			if (location.path.startsWith("mode/")) {
 				try {
@@ -43,7 +41,6 @@ object ToolGunModeDataLoader : SimpleJsonResourceReloadListener(Gson(), TOOL_GUN
 					).result().get()
 					val classSet = this.loadedModes.getOrPut(location.namespace, ::mutableMapOf)
 					classSet[location.path.substringAfter("mode/")] = modeData
-					modeWidgets.add(modeData.widget)
 				} catch (e: ClassNotFoundException) {
 					logger.error(e)
 				}

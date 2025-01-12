@@ -31,7 +31,7 @@ class WheatCrusherMenu(
 	fun getEnergyHandler(): IEnergyStorage? =
 		this.parent.level?.getCapability(Capabilities.EnergyStorage.BLOCK, this.parent.blockPos, this.parent.horizontal)
 
-	fun isCrafting(): Boolean = this.parent.progress > 0
+	fun isCrafting(): Boolean = this.parent.progress > 1
 
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)

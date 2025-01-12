@@ -27,6 +27,8 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunAnimationHandler
+import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features
@@ -44,6 +46,8 @@ class ToolGunItem : Item(
 		if (stack.`is`(ModItems.TOOL_GUN) && !level.isClientSide) {
 			val data = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: return InteractionResultHolder.fail(stack)
 			data.actionClass.action(level, player, stack)
+		} else {
+			ToolGunAnimationHandler.trigger()
 		}
 		return super.use(level, player, usedHand)
 	}
@@ -74,6 +78,11 @@ class ToolGunItem : Item(
 		}
 		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {
 			TestCubeBufferTask.create(player.position())
+		}
+		ToolGunModeDataLoader.modes.forEach { (_, u) ->
+			u.forEach { (_, data) ->
+				if (keyEvent.key == data.keyMapping.key) println("hooray")
+			}
 		}
 	}
 }

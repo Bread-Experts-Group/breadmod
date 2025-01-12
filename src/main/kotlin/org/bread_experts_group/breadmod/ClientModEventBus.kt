@@ -68,10 +68,6 @@ internal object ClientModEventBus {
 			) { itemStack, _, livingEntity, _ ->
 				if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1f else 0f
 			}
-			// todo fix later
-//            ItemProperties.register(ModItems.CERTIFICATE.get(), modLocation("signed")) { stack, _, _, _ ->
-//                if (stack.tag != null && stack.tag!!.contains("author")) 1f else 0f
-//            }
 		}
 	}
 
@@ -121,7 +117,7 @@ internal object ClientModEventBus {
 	fun registerItemColors(event: RegisterColorHandlersEvent.Item) {
 		event.register(
 			itemColor,
-			ModItems.CHEF_HAT.get(),
+			ModItems.CHEF_HAT.get(), ModItems.DOPED_BREAD.get()
 		)
 	}
 

@@ -18,6 +18,7 @@ import org.joml.Vector3f
 object TestCubeBufferTask {
 	fun create(pos: Vec3) {
 		val bufferSource = localClient.renderBuffers().bufferSource()
+		val blockPos = BlockPos.containing(pos)
 
 		RenderBuffer.add(
 			Stage.AFTER_TRANSLUCENT_BLOCKS,
@@ -37,16 +38,46 @@ object TestCubeBufferTask {
 					poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
 					1f, 1f, 1f,
 					listOf(
-						texturedBakedQuadTest(modLocation("block", "bread_block")),
-						texturedBakedQuadTest(
+						texturedBakedQuadTest( // North
+							modLocation("block", "bread_block")
+						),
+						texturedBakedQuadTest( // Top
 							modLocation("block", "bread_block"),
 							topLeft = Vector3f(0f, 0f, 0f),
 							topRight = Vector3f(1f, 0f, 0f),
 							bottomLeft = Vector3f(0f, 0f, 1f),
 							bottomRight = Vector3f(1f, 0f, 1f)
+						),
+						texturedBakedQuadTest( // East
+							modLocation("block", "bread_block"),
+							topLeft = Vector3f(1f, 0f, 1f),
+							topRight = Vector3f(1f, 0f, 0f),
+							bottomLeft = Vector3f(1f, -1f, 1f),
+							bottomRight = Vector3f(1f, -1f, 0f)
+						),
+						texturedBakedQuadTest( // West
+							modLocation("block", "bread_block"),
+							topLeft = Vector3f(0f, 0f, 0f),
+							topRight = Vector3f(0f, 0f, 1f),
+							bottomLeft = Vector3f(0f, -1f, 0f),
+							bottomRight = Vector3f(0f, -1f, 1f)
+						),
+						texturedBakedQuadTest( // South
+							modLocation("block", "bread_block"),
+							topLeft = Vector3f(0f, 0f, 1f),
+							topRight = Vector3f(1f, 0f, 1f),
+							bottomLeft = Vector3f(0f, -1f, 1f),
+							bottomRight = Vector3f(1f, -1f, 1f)
+						),
+						texturedBakedQuadTest( // Bottom
+							modLocation("block", "bread_block"),
+							topLeft = Vector3f(0f, -1f, 1f),
+							topRight = Vector3f(1f, -1f, 1f),
+							bottomLeft = Vector3f(0f, -1f, 0f),
+							bottomRight = Vector3f(1f, -1f, 0f)
 						)
 					),
-					LevelRenderer.getLightColor(level, BlockPos.containing(pos)),
+					LevelRenderer.getLightColor(level, blockPos),
 					OverlayTexture.NO_OVERLAY,
 				)
 				poseStack.popPose()
