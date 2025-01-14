@@ -9,6 +9,7 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
 
 class ModeWidgetData(
@@ -39,16 +40,16 @@ class ModeWidgetData(
 		val NONE: ModeWidgetData = ModeWidgetData(
 			ItemStack(Items.BARRIER, 1),
 			BreadModTextureHelper.MISSING_TEXTURE,
-			Component.literal("Empty Mode"),
-			Component.literal("Default Description")
+			modTranslatable("tool_gun", "empty", "mode", "name"),
+			modTranslatable("tool_gun", "empty", "mode", "description")
 		)
 	}
 
 	class Builder {
 		private var icon: ItemStack = Items.BARRIER.defaultInstance
 		private var previewImage: BreadModTextureHelper = BreadModTextureHelper.MISSING_TEXTURE
-		private var modeName: Component = Component.literal("Default Name")
-		private var modeDescription: Component = Component.literal("Default Description")
+		private var modeName: Component = modTranslatable("tool_gun", "default", "mode", "name")
+		private var modeDescription: Component = modTranslatable("tool_gun", "default", "mode", "description")
 
 		fun icon(stack: ItemStack): Builder = this.also { this.icon = stack }
 		fun previewImage(
@@ -61,7 +62,8 @@ class ModeWidgetData(
 		fun name(name: Component): Builder = this.also { this.modeName = name }
 		fun name(name: String): Builder = this.also { this.name(Component.literal(name)) }
 		fun description(description: Component): Builder = this.also { this.modeDescription = description }
-		fun description(description: String): Builder = this.also { this.description(Component.literal(description)) }
+		fun description(description: String): Builder =
+			this.also { this.description(Component.translatable(description)) }
 
 		fun buildData(): ModeWidgetData = ModeWidgetData(
 			this.icon,

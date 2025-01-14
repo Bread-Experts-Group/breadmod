@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.compat.lookingat.jade
 
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlock
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidRecipeBlock
@@ -12,10 +11,10 @@ import snownee.jade.api.IWailaPlugin
 import snownee.jade.api.WailaPlugin
 
 // MekanismJadePlugin.java !!!
+// todo items, proper fluid, energy provider
 @WailaPlugin
 class JadePlugin : IWailaPlugin {
 	companion object {
-		@DataGenerateLanguage("en_us", "Breadmod jade data provider", "jade_plugin")
 		val BLOCK_DATA: ResourceLocation = modLocation("data_provider")
 	}
 

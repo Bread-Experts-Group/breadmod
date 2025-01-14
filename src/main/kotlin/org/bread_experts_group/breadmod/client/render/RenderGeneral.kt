@@ -121,6 +121,23 @@ fun GuiGraphics.renderFluid(
 }
 
 /**
+ * Fills in a square area with border.
+ */
+fun GuiGraphics.borderedFill(
+	renderType: RenderType,
+	minX: Int,
+	minY: Int,
+	maxX: Int,
+	maxY: Int,
+	borderColor: Int,
+	innerColor: Int
+) {
+	this.fill(renderType, minX, minY, maxX, maxY, borderColor)
+	this.fill(renderType, minX + 1, minY + 1, maxX - 1, maxY - 1, innerColor)
+
+}
+
+/**
  * Scales the [PoseStack] uniformly on the X, Y, and Z axis.
  */
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)

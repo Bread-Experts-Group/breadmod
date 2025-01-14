@@ -25,7 +25,6 @@ class MicrowaveRenderer(private val ctx: Context) : BlockEntityRenderer<Microwav
 	}
 
 	private val blockModelRenderer = this.ctx.blockRenderDispatcher.modelRenderer
-	private val itemRenderer = this.ctx.itemRenderer
 	private val random = RandomSource.create(1)
 
 	override fun render(
@@ -67,15 +66,6 @@ class MicrowaveRenderer(private val ctx: Context) : BlockEntityRenderer<Microwav
 			),
 			Sheets.translucentCullBlockSheet()
 		)
-//		this.blockModelRenderer.renderBlockModel(
-//			poseStack.last(),
-//			bufferSource,
-//			blockEntity,
-//			Companion.DOOR_MODEL,
-//			packedLight,
-//			packedOverlay,
-//			Sheets.translucentCullBlockSheet()
-//		)
 		poseStack.popPose()
 	}
 }

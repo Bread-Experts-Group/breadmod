@@ -30,7 +30,6 @@ class ModBlockTags(
 			.add(ModBlocks.BREAD_BLOCK, ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK)
 		this.tag(BlockTags.MINEABLE_WITH_PICKAXE)
 			.add(ModBlocks.REINFORCED_BREAD_BLOCK)
-			.add(ModBlocks.BAUXITE_ORE)
 			.add(ModBlocks.MONITOR)
 		this.tag(BlockTags.BEACON_BASE_BLOCKS)
 			.add(ModBlocks.REINFORCED_BREAD_BLOCK)

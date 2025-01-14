@@ -57,7 +57,7 @@ object ModBiomes {
 			)
 			.generationSettings(
 				BiomeGenerationSettings.Builder(features, carvers)
-					.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModFeatures.BAUXITE_ORE)
+//					.addFeature(GenerationStep.Decoration.RAW_GENERATION, ModFeatures.BAUXITE_ORE)
 					.addFeature(GenerationStep.Decoration.SURFACE_STRUCTURES, NetherPlacements.DELTA)
 					.build()
 			)

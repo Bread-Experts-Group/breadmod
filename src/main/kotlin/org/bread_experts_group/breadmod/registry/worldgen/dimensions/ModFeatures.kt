@@ -4,16 +4,9 @@ import net.minecraft.core.HolderGetter
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
-import net.minecraft.tags.BlockTags
-import net.minecraft.world.level.levelgen.VerticalAnchor
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
-import net.minecraft.world.level.levelgen.feature.Feature
-import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration
-import net.minecraft.world.level.levelgen.placement.HeightRangePlacement
 import net.minecraft.world.level.levelgen.placement.PlacedFeature
-import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
 
 typealias PlacedFeatureBuilder = (configuredFeaturesHolder: HolderGetter<ConfiguredFeature<*, *>>) -> PlacedFeature
 typealias ConfiguredFeatureBuilder = () -> ConfiguredFeature<*, *>
@@ -38,29 +31,29 @@ object ModFeatures {
 		modLocation(name)
 	).also { this.entries.second.add(it to builder) }
 
-	private val BAUXITE_ORE_CONFIGURED = this.registerConfiguredFeature("bauxite") {
-		ConfiguredFeature(
-			Feature.ORE, OreConfiguration(
-				listOf(
-					OreConfiguration.target(
-						TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
-						ModBlocks.BAUXITE_ORE.get().block.defaultBlockState()
-					)
-				),
-				20
-			)
-		)
-	}
-	val BAUXITE_ORE: ResourceKey<PlacedFeature> = this.registerPlacedFeature("bauxite") {
-		PlacedFeature(
-			it.getOrThrow(this.BAUXITE_ORE_CONFIGURED), listOf(
-				HeightRangePlacement.uniform(
-					VerticalAnchor.absolute(0),
-					VerticalAnchor.absolute(128)
-				)
-			)
-		)
-	}
+//	private val BAUXITE_ORE_CONFIGURED = this.registerConfiguredFeature("bauxite") {
+//		ConfiguredFeature(
+//			Feature.ORE, OreConfiguration(
+//				listOf(
+//					OreConfiguration.target(
+//						TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
+//						ModBlocks.BAUXITE_ORE.get().block.defaultBlockState()
+//					)
+//				),
+//				20
+//			)
+//		)
+//	}
+//	val BAUXITE_ORE: ResourceKey<PlacedFeature> = this.registerPlacedFeature("bauxite") {
+//		PlacedFeature(
+//			it.getOrThrow(this.BAUXITE_ORE_CONFIGURED), listOf(
+//				HeightRangePlacement.uniform(
+//					VerticalAnchor.absolute(0),
+//					VerticalAnchor.absolute(128)
+//				)
+//			)
+//		)
+//	}
 
 	fun bootstrapConfiguredFeatures(ctx: BootstrapContext<ConfiguredFeature<*, *>>) {
 		this.entries.second.forEach { ctx.register(it.first, it.second()) }

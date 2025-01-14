@@ -46,7 +46,6 @@ class ModItemModelProvider(
 		this.singleItem(ModItems.RF_BREAD_AXE)
 		this.singleItem(ModItems.RF_BREAD_HOE)
 		this.singleItem(ModItems.RF_BREAD_SWORD)
-		this.singleItem(ModItems.BREAD_BULLET)
 		this.singleItem(ModItems.CAPRISPIN)
 		this.singleItem(ModItems.TOASTER_HEATING_ELEMENT)
 		this.singleItem(ModItems.CREATURE)
@@ -55,7 +54,6 @@ class ModItemModelProvider(
 		this.fenceInventory("bread_fence", this.modLoc("${BLOCK_FOLDER}/bread_block"))
 
 		this.handheldItem(ModItems.WRENCH)
-		this.handheldItem(ModItems.BREAD_GUN)
 		this.handheldItem(ModItems.KNIFE)
 
 		this.multiLayeredTexture(

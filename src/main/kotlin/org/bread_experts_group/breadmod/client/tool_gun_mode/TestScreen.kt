@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.neoforged.neoforge.network.PacketDistributor
+import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
@@ -33,48 +34,39 @@ class TestScreen(title: Component) : Screen(title) {
 	private var topPos: Int = (this.height - 210) / 2
 	private var gridList: List<Pair<Int, Int>> = listOf()
 	private var currentModeWidget: ModeWidget? = null
+	private val modeButton = ModeButton(0, 0) {
+		this.currentModeWidget?.let { widget ->
+			PacketDistributor.sendToServer(ToolGunActionPacket(widget.data.namespace, widget.data.name))
+		}
+	}
 
 	override fun isPauseScreen(): Boolean = false
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
 		val poseStack = guiGraphics.pose()
 		poseStack.pushPose()
-		guiGraphics.fill(
+		guiGraphics.borderedFill(
 			RenderType.gui(),
 			this.leftPos,
 			this.topPos,
 			this.leftPos + 173,
 			this.topPos + 200,
-			Color.RED.rgb
-		)
-		guiGraphics.fill(
-			RenderType.gui(),
-			this.leftPos + 1,
-			this.topPos + 1,
-			this.leftPos + 172,
-			this.topPos + 199,
+			Color.RED.rgb,
 			Color(150, 150, 150).rgb
 		)
-
-		guiGraphics.fill(
+		guiGraphics.borderedFill(
 			RenderType.gui(),
 			this.leftPos + 175,
 			this.topPos,
 			this.leftPos + 300,
 			this.topPos + 200,
-			Color.RED.rgb
-		)
-		guiGraphics.fill(
-			RenderType.gui(),
-			this.leftPos + 176,
-			this.topPos + 1,
-			this.leftPos + 299,
-			this.topPos + 199,
+			Color.RED.rgb,
 			Color(150, 150, 150).rgb
 		)
 
 		guiGraphics.drawString(localClient.font, this.title, this.leftPos + 2, this.topPos + 2, Color.BLACK.rgb, false)
 		if (this.focused is ModeWidget) {
+			// todo redo to render when currentModeWidget is populated to keep rendering after the widget is no longer focused
 			val widget = this.focused as ModeWidget
 			this.currentModeWidget = widget
 			guiGraphics.fill(
@@ -93,14 +85,7 @@ class TestScreen(title: Component) : Screen(title) {
 				Color.BLACK.rgb,
 				false
 			)
-			guiGraphics.fill(
-				RenderType.gui(),
-				this.leftPos + 176,
-				this.topPos + 83,
-				this.leftPos + 299,
-				this.topPos + 84,
-				Color.RED.rgb
-			)
+			guiGraphics.hLine(this.leftPos + 176, this.leftPos + 299, this.topPos + 83, Color.RED.rgb)
 			guiGraphics.drawWordWrap(
 				localClient.font,
 				widget.data.modeDescription,
@@ -141,11 +126,7 @@ class TestScreen(title: Component) : Screen(title) {
 				}
 			}
 		}
-		this.addRenderableWidget(ModeButton(this.leftPos + 40, this.topPos + 80) {
-			this.currentModeWidget?.let { widget ->
-				PacketDistributor.sendToServer(ToolGunActionPacket(widget.data.namespace, widget.data.name))
-			}
-		})
+		this.addRenderableWidget(this.modeButton.also { it.setPosition(this.leftPos + 195, this.topPos + 170) })
 
 		repeat(Companion.modeWidgets.size) { index ->
 			Companion.modeWidgets[index].x = this.gridList[index].first
@@ -155,5 +136,5 @@ class TestScreen(title: Component) : Screen(title) {
 	}
 
 	private class ModeButton(x: Int, y: Int, onPress: OnPress) :
-		Button(x, y, 30, 15, Component.literal("funny"), onPress, { Component.empty() })
+		Button(x, y, 80, 20, Component.literal("Change Mode"), onPress, { Component.empty() })
 }

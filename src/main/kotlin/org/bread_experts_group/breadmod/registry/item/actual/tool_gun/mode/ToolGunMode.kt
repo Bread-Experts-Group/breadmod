@@ -47,7 +47,7 @@ abstract class ToolGunMode {
 	 * Event bridge for [MouseScrollingEvent], used for handling mouse scrolling while holding the tool gun.
 	 * Return true to cancel this event.
 	 */
-	fun mouseScrollAction(event: MouseScrollingEvent, stack: ItemStack, player: Player): Boolean = true
+	fun mouseScrollAction(event: MouseScrollingEvent, stack: ItemStack, player: Player): Boolean = false
 
 	/**
 	 * Event bridge for [MouseButton.Post], used for handling mouse button presses.

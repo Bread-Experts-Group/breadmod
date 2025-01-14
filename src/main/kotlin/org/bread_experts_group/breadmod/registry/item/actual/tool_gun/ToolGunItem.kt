@@ -53,6 +53,9 @@ class ToolGunItem : Item(
 
 	override val creativeModeTabs: List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
+	override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean =
+		false
+
 	companion object {
 		const val TOOL_GUN_DEF: String = "tool_gun"
 	}

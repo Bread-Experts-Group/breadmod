@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.datagen.lang
 
 import net.minecraft.data.PackOutput
+import org.bread_experts_group.breadmod.compat.lookingat.jade.JadePlugin
 
 @LanguageDataGenerator
 internal class EnglishUSLangProvider(
@@ -13,8 +14,7 @@ internal class EnglishUSLangProvider(
 		if (name == "<null>") otherwise.substringAfterLast('.').joinUnderscoreWithCaps() else name
 
 	override fun addManualTranslations() {
-		// CHRIS ADD THINGS HERE NOOOOOOOWWWWWWWWWWWWWWWWWW
-		throw InternalError("CHRIS ADD THINGS TO THE LANG GEN NOW")
+		this.bmAdd("config.jade.plugin_${JadePlugin.BLOCK_DATA.toLanguageKey()}", "Breadmod jade data provider")
 	}
 
 	override fun getNameAdditional(): String = "(with automatic naming)"

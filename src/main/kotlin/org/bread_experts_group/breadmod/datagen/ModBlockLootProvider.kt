@@ -45,7 +45,6 @@ class ModBlockLootProvider(
 		this.dropSelf(ModBlocks.REINFORCED_BREAD_BLOCK.asBlock())
 		this.dropSelf(ModBlocks.MONITOR.asBlock())
 		this.dropSelf(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.BAUXITE_ORE.asBlock())
 		this.dropSelf(ModBlocks.HAPPY_BLOCK.asBlock())
 		this.dropSelf(ModBlocks.CHARCOAL_BLOCK.asBlock())
 		this.dropSelf(ModBlocks.KEYBOARD.asBlock())

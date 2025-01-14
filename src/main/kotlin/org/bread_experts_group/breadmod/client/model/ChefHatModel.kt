@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.model.Model
 import net.minecraft.client.model.geom.EntityModelSet
 import net.minecraft.client.model.geom.ModelLayerLocation
+import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
 import net.minecraft.client.model.geom.builders.CubeListBuilder
 import net.minecraft.client.model.geom.builders.LayerDefinition
@@ -25,10 +26,8 @@ import org.bread_experts_group.breadmod.client.render.localClient
  * @author Logan McLean
  * @since 1.0.0
  */
-class ChefHatModel() : Model(RenderType::entityTranslucent) {
-	constructor(modelSet: EntityModelSet) : this() {
-		modelSet.bakeLayer(Companion.HAT_LAYER)
-	}
+class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::entityTranslucent) {
+	private val parts: List<ModelPart> = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts.toList()
 
 	/**
 	 * Bakes and renders this model to the buffer.
@@ -39,10 +38,7 @@ class ChefHatModel() : Model(RenderType::entityTranslucent) {
 		packedLight: Int,
 		packedOverlay: Int,
 		color: Int
-	) {
-		localClient.entityModels.bakeLayer(Companion.HAT_LAYER)
-			.render(poseStack, buffer, packedLight, packedOverlay, color)
-	}
+	): Unit = this.parts.forEach { it.render(poseStack, buffer, packedLight, packedOverlay, color) }
 
 	/**
 	 * [renderToBuffer] with the [VertexConsumer] already specified

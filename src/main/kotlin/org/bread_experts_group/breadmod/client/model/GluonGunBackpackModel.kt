@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.model.Model
 import net.minecraft.client.model.geom.EntityModelSet
 import net.minecraft.client.model.geom.ModelLayerLocation
+import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
 import net.minecraft.client.model.geom.builders.CubeDeformation
 import net.minecraft.client.model.geom.builders.CubeListBuilder
@@ -16,10 +17,8 @@ import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 
-class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
-	constructor(modelSet: EntityModelSet) : this() {
-		modelSet.bakeLayer(Companion.BACKPACK_LAYER)
-	}
+class GluonGunBackpackModel(private val modelSet: EntityModelSet) : Model(RenderType::entitySolid) {
+	private val parts: List<ModelPart> = this.modelSet.bakeLayer(Companion.BACKPACK_LAYER).allParts.toList()
 
 	override fun renderToBuffer(
 		poseStack: PoseStack,
@@ -27,10 +26,7 @@ class GluonGunBackpackModel() : Model(RenderType::entitySolid) {
 		packedLight: Int,
 		packedOverlay: Int,
 		color: Int
-	) {
-		localClient.entityModels.bakeLayer(Companion.BACKPACK_LAYER)
-			.render(poseStack, buffer, packedLight, packedOverlay, color)
-	}
+	): Unit = this.parts.forEach { it.render(poseStack, buffer, packedLight, packedOverlay, color) }
 
 	fun render(
 		poseStack: PoseStack,
