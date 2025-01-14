@@ -113,8 +113,10 @@ internal object CommonModEventBus {
 			generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))
 			generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
 			scanner.getClassesAnnotatedWith<LanguageDataGenerator>().forEach { clazz ->
-				val check = (clazz.primaryConstructor ?: return@forEach).call(packOutput)
-				if (check is BaseLanguageProvider) generator.addProvider(true, check)
+				generator.addProvider(
+					true,
+					(clazz.primaryConstructor ?: return@forEach).call(packOutput) as BaseLanguageProvider
+				)
 			}
 		}
 	}
