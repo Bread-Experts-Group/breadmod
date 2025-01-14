@@ -36,7 +36,6 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
-import org.bread_experts_group.breadmod.registry.item.actual.BreadGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
@@ -311,12 +310,6 @@ object ModItems {
 		this.ITEM_REGISTRY.register("wrench", ::WrenchItem)
 
 	// End Tools
-	@DataGenerateLanguage("en_us")
-	val BREAD_GUN: DeferredItem<BreadGunItem> = this.ITEM_REGISTRY.register("bread_gun", ::BreadGunItem)
-
-	@DataGenerateLanguage("en_us")
-	val BREAD_BULLET: DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem("bread_bullet")
-
 	@DataGenerateLanguage("en_us")
 	val CAPRISPIN: DeferredItem<Item> = this.ITEM_REGISTRY.register("caprispin") { ->
 		object : Item(

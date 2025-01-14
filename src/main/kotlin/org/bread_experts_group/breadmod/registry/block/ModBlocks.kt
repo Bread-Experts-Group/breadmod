@@ -169,12 +169,6 @@ object ModBlocks {
 		Properties()
 	)
 
-	// todo port
-	@DataGenerateLanguage("en_us")
-	val BAUXITE_ORE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"bauxite_ore", { Block(BlockBehaviour.Properties.of()) }, Properties()
-	)
-
 	@DataGenerateLanguage("en_us")
 	val FLOUR_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"flour_block",
