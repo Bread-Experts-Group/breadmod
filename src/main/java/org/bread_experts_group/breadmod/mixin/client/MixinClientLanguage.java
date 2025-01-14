@@ -1,8 +1,10 @@
 package org.bread_experts_group.breadmod.mixin.client;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.client.resources.language.ClientLanguage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bread_experts_group.breadmod.BreadMod;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +34,7 @@ public abstract class MixinClientLanguage {
 			CallbackInfoReturnable<Boolean> cir
 	) {
 		final boolean has = this.storage.containsKey(id);
-		if (!has && id.contains("breadmod") && !breadmod$warned.contains(id)) {
+		if (SharedConstants.IS_RUNNING_IN_IDE && !has && id.contains(BreadMod.ID) && !breadmod$warned.contains(id)) {
 			breadmod$logger.warn("No language entry defined for ID: {}", id);
 			breadmod$warned.add(id);
 		}

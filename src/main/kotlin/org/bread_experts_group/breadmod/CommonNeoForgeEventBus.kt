@@ -36,7 +36,7 @@ internal object CommonNeoForgeEventBus {
 	)
 
 	@SubscribeEvent
-	fun serverTick(event: ServerTickEvent.Post) {
+	fun serverTick(@Suppress("unused") event: ServerTickEvent.Post) {
 		this.warTimerMap.forEach { (player, data) ->
 			if (data.active && data.increaseTime == 0) {
 				if (data.ticker == 0 && data.timeLeft > 0 && !data.gracePeriodActive) {
@@ -81,7 +81,7 @@ internal object CommonNeoForgeEventBus {
 	@SubscribeEvent
 	fun registerCommands(event: RegisterCommandsEvent) {
 		event.dispatcher.register(
-			Commands.literal("breadmod")
+			Commands.literal(BreadMod.ID)
 				.then(WarTimerCommand.register())
 		)
 	}

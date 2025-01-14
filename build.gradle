@@ -51,6 +51,10 @@ neoForge {
         mappingsVersion = "2024.11.17"
     }
 
+    accessTransformers {
+        file('src/main/resources/META-INF/accesstransformer.cfg')
+    }
+
     runs {
         client {
             client()

@@ -9,6 +9,7 @@
     "client.MixinFallbackResourceManager",
     "client.MixinTranslatableContents",
     "common.IAccessorEntity",
+    "common.MixinActiveProfiler",
     "common.MixinLightningBolt"
   ],
   "client": [
@@ -16,6 +17,7 @@
     "client.MixinClientLanguage",
     "client.MixinDirectoryListener",
     "client.MixinLevelRenderer",
+    "client.MixinSoundManager",
     "client.MixinSpriteResourceLoader",
     "client.MixinVertexConsumer"
   ],

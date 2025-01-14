@@ -1,7 +1,9 @@
 package org.bread_experts_group.breadmod.mixin.client;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import org.bread_experts_group.breadmod.BreadMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,6 +15,7 @@ public abstract class MixinTranslatableContents {
 	private void initLangCheck(
 			String key, String fallback, Object[] args, CallbackInfo ci
 	) {
-		if (key.contains("breadmod")) Language.getInstance().has(key);
+		if (SharedConstants.IS_RUNNING_IN_IDE && key.contains(BreadMod.ID))
+			Language.getInstance().has(key);
 	}
 }

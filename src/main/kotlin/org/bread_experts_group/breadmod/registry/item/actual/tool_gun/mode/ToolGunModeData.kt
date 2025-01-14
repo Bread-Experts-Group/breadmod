@@ -8,6 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.codec.StreamCodec
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidgetData
 
 data class ToolGunModeData(
@@ -54,7 +55,7 @@ data class ToolGunModeData(
 			::ToolGunModeData
 		)
 		val EMPTY: ToolGunModeData = ToolGunModeData(
-			Pair("breadmod", "empty"),
+			Pair(BreadMod.ID, "empty"),
 			Component.literal("???"),
 			Component.literal("If you see this mode then something probably went wrong!"),
 			EmptyMode(),
