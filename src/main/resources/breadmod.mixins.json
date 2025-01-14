@@ -7,11 +7,13 @@
   "mixins": [
     "client.InvokerIVertexConsumerExtension",
     "client.MixinFallbackResourceManager",
+    "client.MixinTranslatableContents",
     "common.IAccessorEntity",
     "common.MixinLightningBolt"
   ],
   "client": [
     "client.IAccessorDirectoryLister",
+    "client.MixinClientLanguage",
     "client.MixinDirectoryListener",
     "client.MixinLevelRenderer",
     "client.MixinSpriteResourceLoader",
