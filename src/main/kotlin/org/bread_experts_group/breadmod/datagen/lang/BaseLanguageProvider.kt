@@ -38,31 +38,46 @@ internal sealed class BaseLanguageProvider(
 	output: PackOutput,
 	@Suppress("SameParameterValue") val language: String
 ) : LanguageProvider(output, BreadMod.ID, language) {
-	final override fun add(key: Block, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun add(key: Item, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun add(key: ItemStack, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun add(key: MobEffect, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun add(key: EntityType<*>, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun add(tagKey: TagKey<*>, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun addBlock(key: Supplier<out Block>, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun addDimension(dimension: ResourceKey<Level>, value: String): Nothing =
-		throw UnsupportedOperationException()
-
-	final override fun addEffect(key: Supplier<out MobEffect>, name: String): Nothing =
-		throw UnsupportedOperationException()
-
-	final override fun addEntityType(key: Supplier<out EntityType<*>>, name: String): Nothing =
-		throw UnsupportedOperationException()
-
-	final override fun addItem(key: Supplier<out Item>, name: String): Nothing = throw UnsupportedOperationException()
-	final override fun addItemStack(key: Supplier<ItemStack>, name: String): Nothing =
-		throw UnsupportedOperationException()
-
-	final override fun addTag(key: Supplier<out TagKey<*>>, name: String): Nothing =
-		throw UnsupportedOperationException()
-
 	protected open fun assureName(name: String, otherwise: String): String =
 		if (name == "<null>") throw UnsupportedOperationException() else name
+
+	fun getLanguageID(item: Any, extension: String = "<null>"): String {
+		val actualItem = when (item) {
+			is DeferredHolder<*, *> -> item.get()
+			else                    -> item
+		}
+		return when (actualItem) {
+			is Block            -> actualItem.descriptionId
+			is Item             -> actualItem.descriptionId
+			is ItemStack        -> actualItem.item.descriptionId
+			is EntityType<*>    -> actualItem.descriptionId
+			is CreativeModeTab  -> (actualItem.displayName.contents as TranslatableContents).key
+			is ModDamageType    -> actualItem.translationKey()
+			is SoundEvent       -> actualItem.location.toLanguageKey("sound")
+			is KeyMapping       -> actualItem.name
+			is String           -> actualItem
+			is ResourceLocation -> actualItem.toLanguageKey()
+			else                -> throw UnsupportedItemClassException(actualItem::class.java)
+		} + if (extension == "<null>") "" else ".$extension"
+	}
+
+	protected fun bmAdd(key: Any, name: String = "<null>") = this.getLanguageID(key).let {
+		this.add(it, this.assureName(name, it))
+	}
+
+	final override fun add(key: Block, name: String): Unit = this.bmAdd(key, name)
+	final override fun add(key: Item, name: String): Unit = this.bmAdd(key, name)
+	final override fun add(key: ItemStack, name: String): Unit = this.bmAdd(key, name)
+	final override fun add(key: MobEffect, name: String): Unit = this.bmAdd(key, name)
+	final override fun add(key: EntityType<*>, name: String): Unit = this.bmAdd(key, name)
+	final override fun add(key: TagKey<*>, name: String): Unit = this.bmAdd(key, name)
+	final override fun addBlock(key: Supplier<out Block>, name: String): Unit = this.bmAdd(key, name)
+	final override fun addDimension(key: ResourceKey<Level>, name: String): Unit = this.bmAdd(key, name)
+	final override fun addEffect(key: Supplier<out MobEffect>, name: String): Unit = this.bmAdd(key, name)
+	final override fun addEntityType(key: Supplier<out EntityType<*>>, name: String): Unit = this.bmAdd(key, name)
+	final override fun addItem(key: Supplier<out Item>, name: String): Unit = this.bmAdd(key, name)
+	final override fun addItemStack(key: Supplier<ItemStack>, name: String): Unit = this.bmAdd(key, name)
+	final override fun addTag(key: Supplier<out TagKey<*>>, name: String): Unit = this.bmAdd(key, name)
 
 	private class UnsupportedItemClassException(clazz: Class<*>) :
 		UnsupportedOperationException("Unsupported item class for translation: ${clazz.toGenericString()}") {
@@ -72,31 +87,18 @@ internal sealed class BaseLanguageProvider(
 		}
 	}
 
+	protected open fun addManualTranslations() {}
+
 	private val registryScanner = LibraryScanner(BreadMod::class.java.classLoader, Registry::class.java.`package`)
 	final override fun addTranslations() {
 		this.registryScanner.getObjectPropertiesAnnotatedWith<DataGenerateLanguage>().forEach { (_, data) ->
 			data.second.filter { it.language == this.language }.forEach { annotation ->
 				val item = data.first ?: throw IllegalStateException("Item is null")
-				val actualItem = when (item) {
-					is DeferredHolder<*, *> -> item.get()
-					else                    -> item
-				}
-				val languageID = when (actualItem) {
-					is Block            -> actualItem.descriptionId
-					is Item             -> actualItem.descriptionId
-					is ItemStack        -> actualItem.item.descriptionId
-					is EntityType<*>    -> actualItem.descriptionId
-					is CreativeModeTab  -> (actualItem.displayName.contents as TranslatableContents).key
-					is ModDamageType    -> actualItem.translationKey()
-					is SoundEvent       -> actualItem.location.toLanguageKey("sound")
-					is KeyMapping       -> actualItem.name
-					is String           -> actualItem
-					is ResourceLocation -> actualItem.toLanguageKey()
-					else                -> throw UnsupportedItemClassException(actualItem::class.java)
-				} + if (annotation.extension == "<null>") "" else "." + annotation.extension
+				val languageID = this.getLanguageID(item, annotation.extension)
 				this.add(languageID, this.assureName(annotation.name, languageID))
 			}
 		}
+		this.addManualTranslations()
 	}
 
 	@Suppress("SameReturnValue")
