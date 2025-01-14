@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSli
 
 @JeiPlugin
 @Suppress("unused")
-class JeiPlugin : IModPlugin {
+class BreadModJeiPlugin : IModPlugin {
 	override fun getPluginUid(): ResourceLocation = modLocation("jei_plugin")
 	override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
 		registration.craftingCategory.addExtension(

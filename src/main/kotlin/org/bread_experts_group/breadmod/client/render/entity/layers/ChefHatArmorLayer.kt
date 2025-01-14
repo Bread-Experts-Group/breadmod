@@ -54,7 +54,6 @@ class ChefHatArmorLayer(
 			poseStack.pushPose()
 			when (entityModel) {
 				is HumanoidModel<*> -> {
-					// todo figure out why it doesn't translate with zombie heads
 					entityModel.head.translateAndRotate(poseStack)
 					poseStack.translate(0.0, -0.5, 0.0)
 				}

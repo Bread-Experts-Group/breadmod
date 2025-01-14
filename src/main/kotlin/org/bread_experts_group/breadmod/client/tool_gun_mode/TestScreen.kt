@@ -24,7 +24,7 @@ class TestScreen(title: Component) : Screen(title) {
 		Companion.modeWidgets.clear()
 		ToolGunModeDataLoader.modes.forEach { (_, u) ->
 			u.forEach { (_, data) ->
-				Companion.modeWidgets.add(ModeWidget.fromData(data.widgetData))
+				Companion.modeWidgets.add(ModeWidget(data.widgetData))
 			}
 		}
 	}
@@ -87,7 +87,7 @@ class TestScreen(title: Component) : Screen(title) {
 			)
 			guiGraphics.drawString(
 				localClient.font,
-				widget.modeName,
+				widget.data.modeName,
 				this.leftPos + 179,
 				this.topPos + 73,
 				Color.BLACK.rgb,
@@ -103,7 +103,7 @@ class TestScreen(title: Component) : Screen(title) {
 			)
 			guiGraphics.drawWordWrap(
 				localClient.font,
-				widget.modeDescription,
+				widget.data.modeDescription,
 				this.leftPos + 179,
 				this.topPos + 86,
 				120,
@@ -111,7 +111,7 @@ class TestScreen(title: Component) : Screen(title) {
 			)
 			poseStack.translate(this.leftPos + 179.8f, this.topPos + 4f, 0f)
 			poseStack.scaleFlat(0.135f)
-			widget.previewImage.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
+			widget.data.previewImage.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
 		} else {
 			guiGraphics.drawWordWrap(
 				localClient.font,
@@ -143,7 +143,7 @@ class TestScreen(title: Component) : Screen(title) {
 		}
 		this.addRenderableWidget(ModeButton(this.leftPos + 40, this.topPos + 80) {
 			this.currentModeWidget?.let { widget ->
-				PacketDistributor.sendToServer(ToolGunActionPacket(widget.namespace, widget.id))
+				PacketDistributor.sendToServer(ToolGunActionPacket(widget.data.namespace, widget.data.name))
 			}
 		})
 

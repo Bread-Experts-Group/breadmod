@@ -11,16 +11,15 @@ import net.minecraft.network.codec.StreamCodec
 import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidgetData
 
 data class ToolGunModeData(
-	val namespaceName: Pair<String, String>,
+	val namespaceAndName: Pair<String, String>,
 	val displayName: Component,
 	val tooltip: Component,
 	val actionClass: ToolGunMode,
-	val widgetData: ModeWidgetData,
-	val keyMapping: KeyMappingData
+	val widgetData: ModeWidgetData
 ) {
 	init {
-		this.widgetData.namespace = this.namespaceName.first
-		this.widgetData.id = this.namespaceName.second
+		this.widgetData.namespace = this.namespaceAndName.first
+		this.widgetData.name = this.namespaceAndName.second
 	}
 
 	companion object {
@@ -39,21 +38,19 @@ data class ToolGunModeData(
 				Codec.pair(
 					Codec.STRING.fieldOf("namespace").codec(),
 					Codec.STRING.fieldOf("name").codec()
-				).fieldOf("id").forGetter(ToolGunModeData::namespaceName),
+				).fieldOf("id").forGetter(ToolGunModeData::namespaceAndName),
 				ComponentSerialization.CODEC.fieldOf("display_name").forGetter(ToolGunModeData::displayName),
 				ComponentSerialization.CODEC.fieldOf("tooltip").forGetter(ToolGunModeData::tooltip),
 				ToolGunMode.CODEC.fieldOf("action_class").forGetter(ToolGunModeData::actionClass),
-				ModeWidgetData.CODEC.fieldOf("widget_data").forGetter(ToolGunModeData::widgetData),
-				KeyMappingData.CODEC.fieldOf("key_mapping_data").forGetter(ToolGunModeData::keyMapping)
+				ModeWidgetData.CODEC.fieldOf("widget_data").forGetter(ToolGunModeData::widgetData)
 			).apply(inst, ::ToolGunModeData)
 		}
 		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToolGunModeData> = StreamCodec.composite(
-			this.pairStreamCodec, ToolGunModeData::namespaceName,
+			this.pairStreamCodec, ToolGunModeData::namespaceAndName,
 			ComponentSerialization.STREAM_CODEC, ToolGunModeData::displayName,
 			ComponentSerialization.STREAM_CODEC, ToolGunModeData::tooltip,
 			ToolGunMode.STREAM_CODEC, ToolGunModeData::actionClass,
 			ModeWidgetData.STREAM_CODEC, ToolGunModeData::widgetData,
-			KeyMappingData.STREAM_CODEC, ToolGunModeData::keyMapping,
 			::ToolGunModeData
 		)
 		val EMPTY: ToolGunModeData = ToolGunModeData(
@@ -61,8 +58,7 @@ data class ToolGunModeData(
 			Component.literal("???"),
 			Component.literal("If you see this mode then something probably went wrong!"),
 			EmptyMode(),
-			ModeWidgetData.NONE,
-			KeyMappingData.EMPTY
+			ModeWidgetData.NONE
 		)
 	}
 }

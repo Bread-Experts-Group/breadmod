@@ -38,7 +38,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 			val currentMode = handStack.get(ModDataComponents.TOOL_GUN_DATA) ?: ToolGunModeData.EMPTY
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
-			this.renderMode(currentMode, currentMode.namespaceName.first, guiGraphics, poseStack, x, y)
+			this.renderMode(currentMode, currentMode.namespaceAndName.first, guiGraphics, poseStack, x, y)
 
 			RenderSystem.disableBlend()
 		}

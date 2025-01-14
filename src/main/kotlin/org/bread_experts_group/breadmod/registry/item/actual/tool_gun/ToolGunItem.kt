@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.registry.item.actual.tool_gun
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.network.chat.Component
-import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.player.Player
@@ -13,6 +12,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
+import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
@@ -28,7 +28,6 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolG
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunAnimationHandler
-import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features
@@ -59,30 +58,29 @@ class ToolGunItem : Item(
 	}
 
 	override fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {
-		if (player.isShiftKeyDown) {
-			player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 1f)
-			player.sendSystemMessage(Component.literal("Scrolling Cancelled"))
-			scrollingEvent.isCanceled = true
-		}
+		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		if (modeData.actionClass.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
 	}
 
-	override fun onMouseInput(mouseEvent: Post, heldStack: ItemStack, player: Player) {
-//		if (mouseEvent.button == InputConstants.MOUSE_BUTTON_RIGHT && mouseEvent.action == InputConstants.PRESS) {
-//			PacketDistributor.sendToServer(ToolGunActionPacket())
-//		}
+	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
+		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		modeData.actionClass.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
 
+	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {
+		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		modeData.actionClass.mouseButtonPreAction(mouseEvent, heldStack, player)
+	}
+
+	// todo figure out key modifiers in the if statement
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
+		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
 		if (keyEvent.key == openModeGui.key.value && localClient.screen == null) {
 			localClient.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
 		}
+		modeData.actionClass.keyboardInputAction(keyEvent, heldStack, player)
 		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {
 			TestCubeBufferTask.create(player.position())
-		}
-		ToolGunModeDataLoader.modes.forEach { (_, u) ->
-			u.forEach { (_, data) ->
-				if (keyEvent.key == data.keyMapping.key) println("hooray")
-			}
 		}
 	}
 }

@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidgetData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.KeyMappingData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunMode
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import java.util.concurrent.CompletableFuture
@@ -52,12 +51,11 @@ abstract class ToolGunModeProvider(
 		displayName: Component,
 		tooltip: Component,
 		actionClass: ToolGunMode,
-		widget: ModeWidgetData,
-		keyMapping: KeyMappingData
+		widget: ModeWidgetData
 	) {
 		check(!this.addedModes.containsKey(name)) { "There already exists a tool gun mode for $this.modID/$name!" }
 		this.addedModes[name] =
-			ToolGunModeData(Pair(namespace, name), displayName, tooltip, actionClass, widget, keyMapping)
+			ToolGunModeData(Pair(namespace, name), displayName, tooltip, actionClass, widget)
 	}
 
 	/**
@@ -69,8 +67,7 @@ abstract class ToolGunModeProvider(
 		Component.literal("empty"),
 		Component.literal("empty"),
 		EmptyMode(),
-		ModeWidgetData.NONE,
-		KeyMappingData.EMPTY
+		ModeWidgetData.NONE
 	)
 
 	override fun getName(): String = "Toolgun Modes: ${this.modID}"

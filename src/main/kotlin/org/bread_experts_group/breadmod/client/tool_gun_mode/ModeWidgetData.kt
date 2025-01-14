@@ -6,6 +6,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.codec.StreamCodec
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
@@ -17,7 +18,7 @@ class ModeWidgetData(
 	val modeDescription: Component
 ) {
 	var namespace: String = ""
-	var id: String = ""
+	var name: String = ""
 
 	companion object {
 		val CODEC: Codec<ModeWidgetData> = RecordCodecBuilder.create { inst ->
@@ -40,6 +41,33 @@ class ModeWidgetData(
 			BreadModTextureHelper.MISSING_TEXTURE,
 			Component.literal("Empty Mode"),
 			Component.literal("Default Description")
+		)
+	}
+
+	class Builder {
+		private var icon: ItemStack = Items.BARRIER.defaultInstance
+		private var previewImage: BreadModTextureHelper = BreadModTextureHelper.MISSING_TEXTURE
+		private var modeName: Component = Component.literal("Default Name")
+		private var modeDescription: Component = Component.literal("Default Description")
+
+		fun icon(stack: ItemStack): Builder = this.also { this.icon = stack }
+		fun previewImage(
+			location: ResourceLocation,
+			width: Int,
+			height: Int
+		): Builder = this.also { this.previewImage(BreadModTextureHelper(location, width, height)) }
+
+		fun previewImage(helper: BreadModTextureHelper): Builder = this.also { this.previewImage = helper }
+		fun name(name: Component): Builder = this.also { this.modeName = name }
+		fun name(name: String): Builder = this.also { this.name(Component.literal(name)) }
+		fun description(description: Component): Builder = this.also { this.modeDescription = description }
+		fun description(description: String): Builder = this.also { this.description(Component.literal(description)) }
+
+		fun buildData(): ModeWidgetData = ModeWidgetData(
+			this.icon,
+			this.previewImage,
+			this.modeName,
+			this.modeDescription
 		)
 	}
 }

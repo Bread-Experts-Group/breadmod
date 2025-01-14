@@ -2,6 +2,7 @@
 
 package org.bread_experts_group.breadmod.datagen.lang
 
+import net.minecraft.client.KeyMapping
 import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceKey
@@ -88,8 +89,9 @@ internal sealed class BaseLanguageProvider(
 					is CreativeModeTab  -> (actualItem.displayName.contents as TranslatableContents).key
 					is ModDamageType    -> actualItem.translationKey()
 					is SoundEvent       -> actualItem.location.toLanguageKey("sound")
-					// TODO: Remove later
-					is ResourceLocation -> "config.jade.plugin_${actualItem.toLanguageKey()}"
+					is KeyMapping       -> actualItem.name
+					is String           -> actualItem
+					is ResourceLocation -> actualItem.toLanguageKey()
 					else                -> throw UnsupportedItemClassException(actualItem::class.java)
 				} + if (annotation.extension == "<null>") "" else "." + annotation.extension
 				this.add(languageID, this.assureName(annotation.name, languageID))

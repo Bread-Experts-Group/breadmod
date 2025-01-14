@@ -15,7 +15,7 @@ import snownee.jade.api.WailaPlugin
 @WailaPlugin
 class JadePlugin : IWailaPlugin {
 	companion object {
-		@DataGenerateLanguage("en_us", "Breadmod jade data provider")
+		@DataGenerateLanguage("en_us", "Breadmod jade data provider", "jade_plugin")
 		val BLOCK_DATA: ResourceLocation = modLocation("data_provider")
 	}
 

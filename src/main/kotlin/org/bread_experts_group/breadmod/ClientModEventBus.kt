@@ -57,6 +57,10 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunIte
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.client.render.itemColor
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltFour
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltOne
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltThree
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltTwo
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = BreadMod.ID, value = [Dist.CLIENT])
 internal object ClientModEventBus {
@@ -73,9 +77,11 @@ internal object ClientModEventBus {
 
 	@SubscribeEvent
 	fun registerKeyMappings(event: RegisterKeyMappingsEvent) {
-//        event.register(changeMode)
-//        event.register(openGuiEditor)
 		event.register(openModeGui)
+		event.register(toolGunAltOne)
+		event.register(toolGunAltTwo)
+		event.register(toolGunAltThree)
+		event.register(toolGunAltFour)
 		event.register(placeItemKey)
 	}
 
