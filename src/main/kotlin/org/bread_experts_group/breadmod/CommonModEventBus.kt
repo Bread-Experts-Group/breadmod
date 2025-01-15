@@ -29,7 +29,6 @@ import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
 import org.bread_experts_group.breadmod.datagen.tag.ModFluidTags
 import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
-import org.bread_experts_group.breadmod.datagen.tool_gun.ModToolGunModeProvider
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
@@ -85,8 +84,6 @@ internal object CommonModEventBus {
 			packOutput, event.lookupProvider, registrySetBuilder, setOf(BreadMod.ID)
 		)
 		val lookupProvider = datapackEntriesProvider.registryProvider
-
-		generator.addProvider(true, ModToolGunModeProvider(packOutput, lookupProvider))
 
 		if (event.includeServer()) {
 			this.logger.info("Server datagen")
@@ -182,31 +179,31 @@ internal object CommonModEventBus {
 	fun registerCapabilities(event: RegisterCapabilitiesEvent) {
 		event.registerBlock(
 			Capabilities.ItemHandler.BLOCK,
-			{ _, _, _, entity, _: Direction? -> InvWrapper(entity as SoundBlockEntity) },
+			{ _, _, _, entity, _: Direction -> InvWrapper(entity as SoundBlockEntity) },
 			ModBlocks.SOUND_BLOCK.asBlock()
 		)
 
 		event.registerBlockEntity(
 			Capabilities.EnergyStorage.BLOCK,
 			ModBlockEntityTypes.WHEAT_CRUSHER.get(),
-		) { entity, _: Direction? -> entity.energy }
+		) { entity, _: Direction -> entity.energy }
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.WHEAT_CRUSHER.get()
-		) { entity, _: Direction? -> entity.items }
+		) { entity, _: Direction -> entity.items }
 
 		event.registerBlockEntity(
 			Capabilities.EnergyStorage.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get(),
-		) { entity, _: Direction? -> entity.energy }
+		) { entity, _: Direction -> entity.energy }
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get()
-		) { entity, _: Direction? -> entity.items }
+		) { entity, _: Direction -> entity.items }
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.DOUGH_MACHINE.get()
-		) { entity, direction: Direction? ->
+		) { entity, direction: Direction ->
 			when (direction) {
 				Direction.UP   -> entity.tank.tanks[0]
 				Direction.DOWN -> entity.tank.tanks[1]
@@ -217,12 +214,12 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.SINGLE_FLUID_TEST.get()
-		) { entity, _: Direction? -> entity.tank }
+		) { entity, _: Direction -> entity.tank }
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.MULTI_FLUID_TEST.get()
-		) { entity, _: Direction? -> entity.tank }
+		) { entity, _: Direction -> entity.tank }
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
@@ -248,7 +245,7 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_ENERGY.get()
-		) { entity, direction: Direction? ->
+		) { entity, direction: Direction ->
 			val tanks = entity.tank.tanks
 			when (direction) {
 				Direction.EAST -> tanks[0]
@@ -262,6 +259,6 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_ENERGY.get()
-		) { entity, _: Direction? -> entity.items }
+		) { entity, _: Direction -> entity.items }
 	}
 }

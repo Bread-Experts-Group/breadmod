@@ -24,17 +24,17 @@ import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunAnimationHandler
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features
 class ToolGunItem : Item(
 	Properties()
 		.stacksTo(1)
-		.component(ModDataComponents.TOOL_GUN_DATA, ToolGunModeData.EMPTY)
+		.component(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
 ), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
 	class ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
@@ -43,8 +43,8 @@ class ToolGunItem : Item(
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		val stack = player.getItemInHand(usedHand)
 		if (stack.`is`(ModItems.TOOL_GUN) && !level.isClientSide) {
-			val data = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: return InteractionResultHolder.fail(stack)
-			data.actionClass.action(level, player, stack)
+			val mode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: return InteractionResultHolder.fail(stack)
+			mode.action(level, player, stack)
 		} else {
 			ToolGunAnimationHandler.trigger()
 		}
@@ -61,27 +61,27 @@ class ToolGunItem : Item(
 	}
 
 	override fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {
-		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
-		if (modeData.actionClass.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
+		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		if (mode.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
 	}
 
 	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
-		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
-		modeData.actionClass.mouseButtonPostAction(mouseEvent, heldStack, player)
+		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
 
 	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {
-		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
-		modeData.actionClass.mouseButtonPreAction(mouseEvent, heldStack, player)
+		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		mode.mouseButtonPreAction(mouseEvent, heldStack, player)
 	}
 
 	// todo figure out key modifiers in the if statement
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
-		val modeData = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
 		if (keyEvent.key == openModeGui.key.value && localClient.screen == null) {
 			localClient.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
 		}
-		modeData.actionClass.keyboardInputAction(keyEvent, heldStack, player)
+		mode.keyboardInputAction(keyEvent, heldStack, player)
 		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {
 			TestCubeBufferTask.create(player.position())
 		}

@@ -10,13 +10,14 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.INFO
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.ToolGunModeData
 import org.bread_experts_group.breadmod.client.render.drawScaledText
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import java.awt.Color
 
 class ToolGunOverlay : LayeredDraw.Layer {
@@ -35,10 +36,10 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		val item = handStack.item
 
 		if (!localClient.options.hideGui && item is ToolGunItem) {
-			val currentMode = handStack.get(ModDataComponents.TOOL_GUN_DATA) ?: ToolGunModeData.EMPTY
+			val currentMode = handStack.get(ModDataComponents.TOOL_GUN_DATA) ?: EmptyMode()
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
-			this.renderMode(currentMode, currentMode.namespaceAndName.first, guiGraphics, poseStack, x, y)
+			this.renderMode(currentMode, currentMode.getUid().namespace, guiGraphics, poseStack, x, y)
 
 			RenderSystem.disableBlend()
 		}
@@ -51,7 +52,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 	}
 
 	fun renderMode(
-		mode: ToolGunModeData,
+		mode: IToolGunMode,
 		namespace: String,
 		guiGraphics: GuiGraphics,
 		poseStack: PoseStack,
@@ -70,12 +71,12 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		)
 		// Action Name
 		drawScaledText(
-			mode.displayName.copy().withStyle(BOLD),
+			mode.getDisplayName().copy().withStyle(BOLD),
 			poseStack, guiGraphics, x - 1, y + 4, this.textColor, 2.5f, false
 		)
 		// Mode Tooltip
 		drawScaledText(
-			mode.tooltip.copy(),
+			mode.getTooltip().copy(),
 			poseStack,
 			guiGraphics,
 			x + 13,

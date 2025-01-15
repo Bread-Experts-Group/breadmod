@@ -7,26 +7,20 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.neoforged.neoforge.network.PacketDistributor
+import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.datagen.tool_gun.ToolGunModeDataLoader
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
 import java.awt.Color
 
-// todo proof of concept
-//  needs proper gui centering, and actual logic for putting together selectable modes and previews
 class TestScreen(title: Component) : Screen(title) {
-	companion object {
-		val modeWidgets: MutableList<ModeWidget> = mutableListOf()
-	}
+	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
 
 	init {
-		Companion.modeWidgets.clear()
-		ToolGunModeDataLoader.modes.forEach { (_, u) ->
-			u.forEach { (_, data) ->
-				Companion.modeWidgets.add(ModeWidget(data.widgetData))
-			}
+		this.modeWidgets.clear()
+		CommonNeoForgeEventBus.toolGunModes.forEach { (_, mode) ->
+			this.modeWidgets.add(mode.getModeWidget())
 		}
 	}
 
@@ -36,7 +30,7 @@ class TestScreen(title: Component) : Screen(title) {
 	private var currentModeWidget: ModeWidget? = null
 	private val modeButton = ModeButton(0, 0) {
 		this.currentModeWidget?.let { widget ->
-			PacketDistributor.sendToServer(ToolGunActionPacket(widget.data.namespace, widget.data.name))
+			PacketDistributor.sendToServer(ToolGunActionPacket(widget.id))
 		}
 	}
 
@@ -79,7 +73,7 @@ class TestScreen(title: Component) : Screen(title) {
 			)
 			guiGraphics.drawString(
 				localClient.font,
-				widget.data.modeName,
+				widget.modeName,
 				this.leftPos + 179,
 				this.topPos + 73,
 				Color.BLACK.rgb,
@@ -88,7 +82,7 @@ class TestScreen(title: Component) : Screen(title) {
 			guiGraphics.hLine(this.leftPos + 176, this.leftPos + 299, this.topPos + 83, Color.RED.rgb)
 			guiGraphics.drawWordWrap(
 				localClient.font,
-				widget.data.modeDescription,
+				widget.modeDescription,
 				this.leftPos + 179,
 				this.topPos + 86,
 				120,
@@ -96,7 +90,7 @@ class TestScreen(title: Component) : Screen(title) {
 			)
 			poseStack.translate(this.leftPos + 179.8f, this.topPos + 4f, 0f)
 			poseStack.scaleFlat(0.135f)
-			widget.data.previewImage.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
+			widget.previewImage.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
 		} else {
 			guiGraphics.drawWordWrap(
 				localClient.font,
@@ -128,11 +122,11 @@ class TestScreen(title: Component) : Screen(title) {
 		}
 		this.addRenderableWidget(this.modeButton.also { it.setPosition(this.leftPos + 195, this.topPos + 170) })
 
-		repeat(Companion.modeWidgets.size) { index ->
-			Companion.modeWidgets[index].x = this.gridList[index].first
-			Companion.modeWidgets[index].y = this.gridList[index].second
+		repeat(this.modeWidgets.size) { index ->
+			this.modeWidgets[index].x = this.gridList[index].first
+			this.modeWidgets[index].y = this.gridList[index].second
 		}
-		Companion.modeWidgets.forEach(this::addRenderableWidget)
+		this.modeWidgets.forEach(this::addRenderableWidget)
 	}
 
 	private class ModeButton(x: Int, y: Int, onPress: OnPress) :
