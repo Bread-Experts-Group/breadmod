@@ -38,6 +38,10 @@ object ModTextureLocations {
 		this.toolGunHudLocation("info_icon"),
 		8, 8
 	)
+	val FRAME: BreadModTextureHelper = BreadModTextureHelper(
+		this.toolGunGuiLocation("frame"),
+		256, 256
+	)
 
 	// Mode Preview Images
 	val EXPLODE_PREVIEW: BreadModTextureHelper = BreadModTextureHelper(
