@@ -134,7 +134,6 @@ fun GuiGraphics.borderedFill(
 ) {
 	this.fill(renderType, minX, minY, maxX, maxY, borderColor)
 	this.fill(renderType, minX + 1, minY + 1, maxX - 1, maxY - 1, innerColor)
-
 }
 
 /**
@@ -243,54 +242,6 @@ fun ModelBlockRenderer.renderBlockModel(
 	renderType
 )
 
-//private val randomSource = XoroshiroRandomSource(42)
-//
-///**
-// * Renders a [BakedModel] with color
-// */
-//fun renderModel(
-//	pose: Pose,
-//	consumer: VertexConsumer,
-//	state: BlockState,
-//	model: BakedModel,
-//	packedLight: Int,
-//	packedOverlay: Int,
-//	red: Float = 1f,
-//	green: Float = 1f,
-//	blue: Float = 1f
-//) {
-//	Direction.entries.forEach {
-//		renderQuadList(
-//			pose, consumer,
-//			red, green, blue,
-//			model.getQuads(state, it, randomSource),
-//			packedLight, packedOverlay
-//		)
-//	}
-//
-//	renderQuadList(
-//		pose, consumer,
-//		red, green, blue,
-//		model.getQuads(state, null, randomSource),
-//		packedLight, packedOverlay
-//	)
-//}
-//
-//private fun renderQuadList(
-//	pose: Pose, consumer: VertexConsumer,
-//	red: Float, green: Float, blue: Float,
-//	quads: List<BakedQuad>,
-//	packedLight: Int, packedOverlay: Int
-//) {
-//	quads.forEach {
-//		consumer.putBulkData(
-//			pose, it,
-//			red, green, blue, 1.0f,
-//			packedLight, packedOverlay
-//		)
-//	}
-//}
-
 /**
  * Renders a provided [stack] onto a [BlockEntityRenderer]
  */
@@ -342,66 +293,7 @@ fun ItemRenderer.renderItemModel(
  */
 fun modelLocation(location: String): ModelResourceLocation =
 	ModelResourceLocation(modLocation(location), "standalone")
-//fun drawVertex(
-//    pBuilder: VertexConsumer,
-//    pPoseStack: PoseStack,
-//    pX: Float,
-//    pY: Float,
-//    pZ: Float,
-//    pU: Float,
-//    pV: Float,
-//    pPackedLight: Int,
-//    pPackedOverlay: Int,
-//    pColor: Int
-//) {
-//    pBuilder.vertex(pPoseStack.last().pose(), pX, pY, pZ)
-//        .color(pColor)
-//        .uv(pU, pV)
-//        .overlayCoords(pPackedOverlay)
-//        .uv2(pPackedLight)
-//        .normal(0f, 1f, 0f)
-//        .endVertex()
-//}
-//
-//fun drawQuad(
-//    pBuilder: VertexConsumer,
-//    pPoseStack: PoseStack,
-//    pColor: Int,
-//    pX0: Float, pY0: Float, pZ0: Float,
-//    pX1: Float, pY1: Float, pZ1: Float,
-//    pU0: Float, pV0: Float,
-//    pU1: Float, pV1: Float,
-//    pPackedLight: Int,
-//    pPackedOverlay: Int
-//) {
-//    drawVertex(pBuilder, pPoseStack, pX0, pY0, pZ0, pU0, pV0, pPackedLight, pColor, pPackedOverlay)
-//    drawVertex(pBuilder, pPoseStack, pX0, pY1, pZ1, pU0, pV1, pPackedLight, pColor, pPackedOverlay)
-//    drawVertex(pBuilder, pPoseStack, pX1, pY1, pZ1, pU1, pV1, pPackedLight, pColor, pPackedOverlay)
-//    drawVertex(pBuilder, pPoseStack, pX1, pY0, pZ0, pU1, pV0, pPackedLight, pColor, pPackedOverlay)
-//}
-//
-//fun drawTexturedQuad(
-//    pTextureLocation: ResourceLocation,
-//    pRenderType: RenderType,
-//    pPoseStack: PoseStack,
-//    pBuffer: MultiBufferSource,
-//    pPackedLight: Int,
-//    pPackedOverlay: Int,
-//    pX0: Float = 0f, pY0: Float = 0f, pZ0: Float = 0f,
-//    pX1: Float = 1f, pY1: Float = 0f, pZ1: Float = 1f
-//) {
-//    val sprite = rgMinecraft.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(pTextureLocation)
-//    val spriteBuilder = pBuffer.getBuffer(pRenderType)
-//    drawQuad(
-//        spriteBuilder, pPoseStack, Color.WHITE.rgb,
-//        pX0, pY0, pZ0,
-//        pX1, pY1, pZ1,
-//        sprite.u0, sprite.v0,
-//        sprite.u1, sprite.v1,
-//        pPackedLight,
-//        pPackedOverlay
-//    )
-//}
+
 /**
  * Renders a given [Component] onto a [BlockEntityWithoutLevelRenderer] or [BlockEntityRenderer]
  *

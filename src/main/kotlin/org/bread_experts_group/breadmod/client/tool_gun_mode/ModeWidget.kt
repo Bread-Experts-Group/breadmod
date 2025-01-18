@@ -22,8 +22,7 @@ class ModeWidget(
 	val modeDescription: Component,
 	val id: ResourceLocation
 ) : AbstractWidget(0, 0, 35, 40, modeName) {
-
-//	override fun onClick(mouseX: Double, mouseY: Double, button: Int) {
+	//	override fun onClick(mouseX: Double, mouseY: Double, button: Int) {
 //		PacketDistributor.sendToServer(ToolGunActionPacket(this.namespace, this.id))
 //		super.onClick(mouseX, mouseY, button)
 //	}

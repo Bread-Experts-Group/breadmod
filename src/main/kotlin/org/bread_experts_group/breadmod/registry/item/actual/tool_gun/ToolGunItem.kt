@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Rarity
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
@@ -16,7 +17,7 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
-import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
+import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.tool_gun_mode.TestScreen
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -35,6 +36,7 @@ class ToolGunItem : Item(
 	Properties()
 		.stacksTo(1)
 		.component(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
+		.rarity(Rarity.RARE)
 ), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
 	class ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()

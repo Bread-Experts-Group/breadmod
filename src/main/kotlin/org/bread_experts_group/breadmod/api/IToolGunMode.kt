@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
+import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunRenderContext
 import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
 import kotlin.reflect.full.primaryConstructor
 
@@ -74,6 +75,10 @@ interface IToolGunMode {
 
 	/**
 	 * Used to render special effects and/or models on the tool gun's [BlockEntityWithoutLevelRenderer].
+	 * Fires before the other render stages.
+	 * @see renderScreenStage
+	 * @see renderCoilStage
+	 * @see renderBodyStage
 	 */
 	fun render(
 		stack: ItemStack,
@@ -81,7 +86,52 @@ interface IToolGunMode {
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
 		packedLight: Int,
-		packedOverlay: Int
+		packedOverlay: Int,
+		context: ToolGunRenderContext
+	)
+
+	/**
+	 * Used to render text and/or icons positioned to the tool gun screen, fires after everything else.
+	 * @see render
+	 */
+	fun renderScreenStage(
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int,
+		context: ToolGunRenderContext
+	)
+
+	/**
+	 * Used to render effects and/or models to the tool gun's coil, fires after [render] and [renderBodyStage].
+	 * This rotates along with the coil.
+	 * @see render
+	 * @see renderBodyStage
+	 */
+	fun renderCoilStage(
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int,
+		context: ToolGunRenderContext
+	)
+
+	/**
+	 * Used to render effects and/or models to the tool gun's main body, fires after [render].
+	 * @see render
+	 */
+	fun renderBodyStage(
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int,
+		context: ToolGunRenderContext
 	)
 
 	fun getModeWidget(): ModeWidget
@@ -90,7 +140,7 @@ interface IToolGunMode {
 
 	fun getTooltip(): Component
 
-	fun shouldCoilSpin(stack: ItemStack): Boolean = true
+	fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean = true
 
 	fun getUid(): ResourceLocation
 }

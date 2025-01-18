@@ -13,16 +13,16 @@ import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 
-class ToolGunActionPacket(private val id: ResourceLocation) : CustomPacketPayload {
+class ToolGunModeChangePacket(private val id: ResourceLocation) : CustomPacketPayload {
 	companion object {
-		val TYPE: CustomPacketPayload.Type<ToolGunActionPacket> =
+		val TYPE: CustomPacketPayload.Type<ToolGunModeChangePacket> =
 			CustomPacketPayload.Type(modLocation("tool_gun_packet"))
-		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToolGunActionPacket> = StreamCodec.composite(
-			ResourceLocation.STREAM_CODEC, ToolGunActionPacket::id,
-			::ToolGunActionPacket
+		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToolGunModeChangePacket> = StreamCodec.composite(
+			ResourceLocation.STREAM_CODEC, ToolGunModeChangePacket::id,
+			::ToolGunModeChangePacket
 		)
 
-		fun handleServerboundPacket(data: ToolGunActionPacket, context: IPayloadContext) {
+		fun handleServerboundPacket(data: ToolGunModeChangePacket, context: IPayloadContext) {
 			val player = context.player()
 			val mainHand = player.getItemInHand(MAIN_HAND)
 			val offHand = player.getItemInHand(OFF_HAND)

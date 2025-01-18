@@ -36,7 +36,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSe
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
-import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
@@ -154,9 +154,9 @@ internal object CommonModEventBus {
 		)
 
 		registrar.playToServer(
-			ToolGunActionPacket.TYPE,
-			ToolGunActionPacket.STREAM_CODEC,
-			ToolGunActionPacket::handleServerboundPacket
+			ToolGunModeChangePacket.TYPE,
+			ToolGunModeChangePacket.STREAM_CODEC,
+			ToolGunModeChangePacket::handleServerboundPacket
 		)
 		registrar.playToServer(
 			PlaceItemInWorldPacket.TYPE,

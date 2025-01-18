@@ -49,6 +49,9 @@ object ModTextureLocations {
 		854, 480
 	)
 
+	// todo convert the existing mod guis to this system
+	// todo long term: figure out how to make a nine sliced file that minecraft recognizes to use for gui backgrounds
+	// tab.png.mcmeta / tab.png
 	// Gui Elements
 	val ENERGY_METER_16X47: BreadModTextureHelper = BreadModTextureHelper(
 		this.guiElementLocation("energy_meter_16x47"),

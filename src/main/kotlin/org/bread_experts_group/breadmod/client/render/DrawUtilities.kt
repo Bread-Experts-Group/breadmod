@@ -122,10 +122,12 @@ fun drawVertex(
 		.setNormal(0f, 1f, 0f)
 }
 
-// todo learned the existence of QuadBakingVertexConsumer
 private val quadBuilder = QuadBakingVertexConsumer()
 
-fun bakedQuadTest(
+/**
+ * Creates a [BakedQuad].
+ */
+fun buildBakedQuad(
 	color: Int,
 	topLeft: Vector3f = Vector3f(1f, 0f, 0f), // top left
 	topRight: Vector3f = Vector3f(0f, 0f, 0f), // top right
@@ -146,7 +148,11 @@ fun bakedQuadTest(
 	return quadBuilder.bakeQuad()
 }
 
-fun texturedBakedQuadTest(
+/**
+ * Creates a textured [BakedQuad]
+ * @see buildBakedQuad
+ */
+fun buildTexturedBakedQuad(
 	textureLocation: ResourceLocation,
 	color: Int = Color.WHITE.rgb,
 	useAmbientOcclusion: Boolean = false,
@@ -158,7 +164,7 @@ fun texturedBakedQuadTest(
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY
 ): BakedQuad {
 	val sprite = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(textureLocation)
-	return bakedQuadTest(
+	return buildBakedQuad(
 		color,
 		topLeft, // top left
 		bottomLeft, // bottom left
@@ -174,6 +180,9 @@ fun texturedBakedQuadTest(
 	)
 }
 
+fun transparentColor(): Color = Color(0f, 0f, 0f, 0f)
+
+@Suppress("SameParameterValue")
 private fun QuadBakingVertexConsumer.addVertex(
 	x: Float,
 	y: Float,

@@ -1,11 +1,7 @@
 package org.bread_experts_group.breadmod.client.render.texture
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.network.codec.ByteBufCodecs
-import net.minecraft.network.codec.StreamCodec
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 
@@ -19,21 +15,8 @@ class BreadModTextureHelper(
 	val textureHeight: Int
 ) {
 	companion object {
-		val CODEC: Codec<BreadModTextureHelper> = RecordCodecBuilder.create { inst ->
-			inst.group(
-				ResourceLocation.CODEC.fieldOf("location").forGetter(BreadModTextureHelper::location),
-				Codec.INT.fieldOf("width").forGetter(BreadModTextureHelper::textureWidth),
-				Codec.INT.fieldOf("height").forGetter(BreadModTextureHelper::textureHeight)
-			).apply(inst, ::BreadModTextureHelper)
-		}
-		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BreadModTextureHelper> = StreamCodec.composite(
-			ResourceLocation.STREAM_CODEC, BreadModTextureHelper::location,
-			ByteBufCodecs.INT, BreadModTextureHelper::textureWidth,
-			ByteBufCodecs.INT, BreadModTextureHelper::textureHeight,
-			::BreadModTextureHelper
-		)
 		val MISSING_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(
-			ResourceLocation.withDefaultNamespace("missingno"),
+			MissingTextureAtlasSprite.getLocation(),
 			16, 16
 		)
 	}
@@ -60,22 +43,23 @@ class BreadModTextureHelper(
 
 	/**
 	 * Draws a progressive texture/sprite which defaults drawing from bottom to top.
-	 * @param startFromTop draws the texture from the top instead of the bottom.
+	 * @param drawFromTop draws the texture from the top instead of the bottom.
 	 */
 	fun drawProgressiveSpriteVertical(
 		guiGraphics: GuiGraphics,
 		progressInput: Int,
 		x: Int,
 		y: Int,
-		startFromTop: Boolean
+		drawFromTop: Boolean
 	): Unit = this.blitTexture(
 		guiGraphics,
 		x,
-		y + if (!startFromTop) this.textureHeight - progressInput else 0,
-		vOffset = 0f - if (!startFromTop) progressInput else 0,
+		y + if (!drawFromTop) this.textureHeight - progressInput else 0,
+		vOffset = 0f - if (!drawFromTop) progressInput else 0,
 		height = 0 + progressInput
 	)
 
+	// todo work on mirrored logic
 	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, energyStored: Int, x: Int, y: Int): Unit =
 		this.blitTexture(
 			guiGraphics,

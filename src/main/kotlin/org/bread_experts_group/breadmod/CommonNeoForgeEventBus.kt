@@ -35,7 +35,7 @@ internal object CommonNeoForgeEventBus {
 	)
 
 	@SubscribeEvent
-	fun serverTick(@Suppress("unused") event: ServerTickEvent.Post) {
+	fun serverTick(event: ServerTickEvent.Post) {
 		this.warTimerMap.forEach { (player, data) ->
 			if (data.active && data.increaseTime == 0) {
 				if (data.ticker == 0 && data.timeLeft > 0 && !data.gracePeriodActive) {
@@ -86,6 +86,12 @@ internal object CommonNeoForgeEventBus {
 			val mode = (it.primaryConstructor ?: return@forEach).call() as IToolGunMode
 			this.toolGunModes[mode.getUid()] = mode
 		}
+//		ModList.get().allScanData.forEach { sData ->
+//			sData.getAnnotatedBy(ToolGunMode::class.java, ANNOTATION_TYPE).forEach { aData ->
+//				val mode = Class.forName(aData.memberName).kotlin.createInstance() as IToolGunMode
+//				this.toolGunModes[mode.getUid()] = mode
+//			}
+//		}
 	}
 
 	@SubscribeEvent

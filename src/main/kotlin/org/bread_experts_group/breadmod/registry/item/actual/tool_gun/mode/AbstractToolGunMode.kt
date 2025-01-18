@@ -13,6 +13,7 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunRenderContext
 import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
 
 /**
@@ -43,7 +44,41 @@ abstract class AbstractToolGunMode : IToolGunMode {
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
 		packedLight: Int,
-		packedOverlay: Int
+		packedOverlay: Int,
+		context: ToolGunRenderContext
+	) {
+	}
+
+	override fun renderScreenStage(
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int,
+		context: ToolGunRenderContext
+	) {
+	}
+
+	override fun renderCoilStage(
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int,
+		context: ToolGunRenderContext
+	) {
+	}
+
+	override fun renderBodyStage(
+		stack: ItemStack,
+		displayContext: ItemDisplayContext,
+		poseStack: PoseStack,
+		buffer: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int,
+		context: ToolGunRenderContext
 	) {
 	}
 

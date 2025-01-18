@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.network.serverbound.ToolGunActionPacket
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
 class TestScreen(title: Component) : Screen(title) {
@@ -31,7 +31,7 @@ class TestScreen(title: Component) : Screen(title) {
 	private var currentModeWidget: ModeWidget? = null
 	private val modeButton = ModeButton(0, 0) {
 		this.currentModeWidget?.let { widget ->
-			PacketDistributor.sendToServer(ToolGunActionPacket(widget.id))
+			PacketDistributor.sendToServer(ToolGunModeChangePacket(widget.id))
 		}
 	}
 
