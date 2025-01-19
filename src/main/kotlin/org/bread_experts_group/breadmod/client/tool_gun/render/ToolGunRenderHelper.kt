@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.block.BlockRenderDispatcher
 import net.minecraft.client.renderer.block.ModelBlockRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.resources.model.ModelManager
@@ -24,6 +25,7 @@ class ToolGunRenderHelper(
 	val itemRenderer: ItemRenderer,
 	val blockModelRenderer: ModelBlockRenderer,
 	val blockRenderDispatcher: BlockRenderDispatcher,
+	val blockEntityRenderDispatcher: BlockEntityRenderDispatcher,
 	val entityRenderDispatcher: EntityRenderDispatcher,
 	val font: Font
 ) {
@@ -33,6 +35,7 @@ class ToolGunRenderHelper(
 			localClient.itemRenderer,
 			localClient.blockRenderer.modelRenderer,
 			localClient.blockRenderer,
+			localClient.blockEntityRenderDispatcher,
 			localClient.entityRenderDispatcher,
 			localClient.font
 		)
@@ -70,7 +73,8 @@ class ToolGunRenderHelper(
 		poseStack: PoseStack,
 		buffer: MultiBufferSource
 	) {
-		this.initialScreenTranslations(poseStack, -0.035, 0.414, 0.8319, 0.07f)
+		// this.initialScreenTranslations(poseStack, -0.035, 0.414, 0.8319, 0.07f)
+		this.initialScreenTranslations(poseStack, -0.0357, 0.3545, 0.8319, 0.07f)
 		poseStack.scale(1.025f, 0.856f, 1f)
 		drawQuad(
 			poseStack,
@@ -85,7 +89,7 @@ class ToolGunRenderHelper(
 			textureWidth.toFloat(),
 			textureHeight.toFloat(),
 			textureHeight.toFloat(),
-			15728880
+			this.screenTint
 		)
 		poseStack.popPose()
 	}

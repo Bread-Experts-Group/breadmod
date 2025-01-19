@@ -21,6 +21,7 @@ import org.bread_experts_group.breadmod.util.RaycastResult.Companion.entityRayca
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.util.function.Supplier
 import kotlin.math.round
+import kotlin.reflect.full.createInstance
 
 internal val formatArray: List<String> =
 	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
@@ -96,6 +97,22 @@ fun formatUnit(
 		percent
 	)
 }
+
+/**
+ * Retrieves an instance of the provided [path]
+ * @throws [NoClassDefFoundError] if [path] is invalid.
+ */
+inline fun <reified T> toClass(path: String): T =
+	Class.forName(
+		path,
+		true,
+		T::class.java.classLoader
+	).kotlin.createInstance() as T
+
+/**
+ * Converts a given [Class] to it's qualified name.
+ */
+inline fun <reified T> fromClass(clazz: T): String = (clazz ?: "")::class.qualifiedName!!
 
 /**
  * Checks if this [Fluid] can be represented under the given [TagKey].

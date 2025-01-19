@@ -17,29 +17,20 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
-import kotlin.reflect.full.primaryConstructor
+import org.bread_experts_group.breadmod.util.fromClass
+import org.bread_experts_group.breadmod.util.toClass
 
 interface IToolGunMode {
 	companion object {
-		val CODEC: Codec<IToolGunMode> = Codec.STRING.xmap(this::toClass, this::fromClass)
+		val CODEC: Codec<IToolGunMode> = Codec.STRING.xmap(::toClass, ::fromClass)
 		val STREAM_CODEC: StreamCodec<FriendlyByteBuf, IToolGunMode> =
 			object : StreamCodec<FriendlyByteBuf, IToolGunMode> {
-				override fun decode(buffer: FriendlyByteBuf): IToolGunMode =
-					this@Companion.toClass(buffer.readUtf())
+				override fun decode(buffer: FriendlyByteBuf): IToolGunMode = toClass(buffer.readUtf())
 
 				override fun encode(buffer: FriendlyByteBuf, value: IToolGunMode) {
-					buffer.writeUtf(this@Companion.fromClass(value))
+					buffer.writeUtf(fromClass(value))
 				}
 			}
-
-		inline fun <reified T> toClass(path: String): T =
-			Class.forName(
-				path,
-				true,
-				T::class.java.classLoader
-			).kotlin.primaryConstructor?.call() as T
-
-		inline fun <reified T> fromClass(clazz: T): String = (clazz ?: "")::class.qualifiedName!!
 	}
 
 	/**
