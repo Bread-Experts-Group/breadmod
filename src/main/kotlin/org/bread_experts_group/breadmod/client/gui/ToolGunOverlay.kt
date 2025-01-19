@@ -51,7 +51,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		poseStack.popPose()
 	}
 
-	fun renderMode(
+	private fun renderMode(
 		mode: IToolGunMode,
 		namespace: String,
 		guiGraphics: GuiGraphics,

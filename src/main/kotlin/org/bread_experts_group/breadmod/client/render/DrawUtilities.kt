@@ -194,6 +194,7 @@ private fun QuadBakingVertexConsumer.addVertex(
 	packedOverlay: Int
 ): Unit = this.addVertex(x, y, z, color, u, v, packedLight, packedOverlay, 0f, 1f, 0f)
 
+// todo work in progress
 fun renderBakedQuads(
 	pose: Pose, consumer: VertexConsumer,
 	red: Float, green: Float, blue: Float,

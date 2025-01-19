@@ -269,12 +269,11 @@ fun ItemRenderer.renderItemModel(
 	model: BakedModel,
 	stack: ItemStack,
 	displayContext: ItemDisplayContext,
-	leftHand: Boolean,
 	poseStack: PoseStack,
 	bufferSource: MultiBufferSource,
 	packedOverlay: Int,
 	packedLight: Int,
-	fabulous: Boolean
+	fabulous: Boolean = true
 ) {
 	model.getRenderPasses(stack, fabulous).forEach { passes ->
 		passes.getRenderTypes(stack, fabulous).forEach { renderType ->
@@ -282,7 +281,11 @@ fun ItemRenderer.renderItemModel(
 				ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, stack.hasFoil())
 			} else
 				ItemRenderer.getFoilBuffer(bufferSource, renderType, true, stack.hasFoil())
-			passes.applyTransform(displayContext, poseStack, leftHand)
+			passes.applyTransform(
+				displayContext,
+				poseStack,
+				displayContext == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+			)
 			this.renderModelLists(passes, stack, packedLight, packedOverlay, poseStack, buffer)
 		}
 	}

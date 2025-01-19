@@ -18,11 +18,8 @@ import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunRenderContext
-import org.bread_experts_group.breadmod.client.render.tool_gun.drawTextOnScreen
-import org.bread_experts_group.breadmod.client.render.transparentColor
-import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
-import java.awt.Color
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
 
 @ToolGunMode
 @Suppress("unused")
@@ -52,7 +49,7 @@ class ExplodeMode : AbstractToolGunMode() {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	) {
 		val millis = Util.getMillis()
 		poseStack.pushPose()
@@ -61,7 +58,7 @@ class ExplodeMode : AbstractToolGunMode() {
 		poseStack.translate(0.5, 0.0, 0.5)
 		poseStack.mulPose(Axis.YP.rotationDegrees((millis.toFloat() / 50f) % 360f))
 		poseStack.translate(-0.5, 0.0, -0.5)
-		context.blockModelRenderer.renderBlockModel(
+		helper.blockModelRenderer.renderBlockModel(
 			poseStack.last(),
 			buffer,
 			Blocks.TNT.defaultBlockState(),
@@ -69,26 +66,5 @@ class ExplodeMode : AbstractToolGunMode() {
 			packedOverlay
 		)
 		poseStack.popPose()
-	}
-
-	override fun renderScreenStage(
-		stack: ItemStack,
-		displayContext: ItemDisplayContext,
-		poseStack: PoseStack,
-		buffer: MultiBufferSource,
-		packedLight: Int,
-		packedOverlay: Int,
-		context: ToolGunRenderContext
-	) {
-		drawTextOnScreen(
-			this.getDisplayName(),
-			Color.WHITE.rgb, transparentColor().rgb,
-			false,
-			context.font,
-			poseStack,
-			buffer,
-			posX = -0.035,
-			posY = 0.414
-		)
 	}
 }

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.tool_gun_mode
+package org.bread_experts_group.breadmod.client.tool_gun
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
@@ -22,10 +22,6 @@ class ModeWidget(
 	val modeDescription: Component,
 	val id: ResourceLocation
 ) : AbstractWidget(0, 0, 35, 40, modeName) {
-	//	override fun onClick(mouseX: Double, mouseY: Double, button: Int) {
-//		PacketDistributor.sendToServer(ToolGunActionPacket(this.namespace, this.id))
-//		super.onClick(mouseX, mouseY, button)
-//	}
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.pose().pushPose()
 		guiGraphics.fill(
@@ -51,7 +47,9 @@ class ModeWidget(
 		guiGraphics.pose().popPose()
 	}
 
-	override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {}
+	override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
+		this.defaultButtonNarrationText(narrationElementOutput)
+	}
 
 	class Builder {
 		private var icon: ItemStack = Items.BARRIER.defaultInstance

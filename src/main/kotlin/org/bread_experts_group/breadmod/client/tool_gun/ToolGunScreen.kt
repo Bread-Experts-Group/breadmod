@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.tool_gun_mode
+package org.bread_experts_group.breadmod.client.tool_gun
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
-class TestScreen(title: Component) : Screen(title) {
+class ToolGunScreen(title: Component) : Screen(title) {
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
 
 	init {
@@ -110,10 +110,13 @@ class TestScreen(title: Component) : Screen(title) {
 		this.gridList = buildList {
 			repeat(5) { y ->
 				repeat(3) { x ->
-					this.add(this@TestScreen.leftPos + 10 + x * 36 to this@TestScreen.topPos + 30 + y * 45)
+					this.add(this@ToolGunScreen.leftPos + 10 + x * 36 to this@ToolGunScreen.topPos + 30 + y * 45)
 				}
 			}
 		}
+		// todo make a "screen" button that opens a screen from the selected mode if one is present
+		//  alternative: when the tabs on the top of the tool gun screen eventually exist we can have a new tab appear
+		//  when the selected mode has a valid screen.
 		this.addRenderableWidget(this.modeButton.also { it.setPosition(this.leftPos + 155, this.topPos + 190) })
 
 		repeat(this.modeWidgets.size) { index ->

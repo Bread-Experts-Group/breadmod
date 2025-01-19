@@ -4,6 +4,7 @@ import net.minecraft.commands.Commands
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.fml.ModList
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.server.ServerStartedEvent
@@ -15,8 +16,8 @@ import org.bread_experts_group.breadmod.command.server.WarTimerCommand
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.registry.ModDamageType
-import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
-import kotlin.reflect.full.primaryConstructor
+import java.lang.annotation.ElementType
+import kotlin.reflect.full.createInstance
 
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME)
 internal object CommonNeoForgeEventBus {
@@ -81,17 +82,12 @@ internal object CommonNeoForgeEventBus {
 
 	@SubscribeEvent
 	fun onServerStarted(event: ServerStartedEvent) {
-		val libraryScanner = LibraryScanner(BreadMod::class.java.classLoader, BreadMod::class.java.`package`)
-		libraryScanner.getClassesAnnotatedWith<ToolGunMode>().forEach {
-			val mode = (it.primaryConstructor ?: return@forEach).call() as IToolGunMode
-			this.toolGunModes[mode.getUid()] = mode
+		ModList.get().allScanData.forEach { scanData ->
+			scanData.getAnnotatedBy(ToolGunMode::class.java, ElementType.TYPE).forEach { annotationData ->
+				val mode = Class.forName(annotationData.memberName).kotlin.createInstance() as IToolGunMode
+				this.toolGunModes[mode.getUid()] = mode
+			}
 		}
-//		ModList.get().allScanData.forEach { sData ->
-//			sData.getAnnotatedBy(ToolGunMode::class.java, ANNOTATION_TYPE).forEach { aData ->
-//				val mode = Class.forName(aData.memberName).kotlin.createInstance() as IToolGunMode
-//				this.toolGunModes[mode.getUid()] = mode
-//			}
-//		}
 	}
 
 	@SubscribeEvent

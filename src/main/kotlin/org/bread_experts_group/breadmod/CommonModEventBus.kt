@@ -5,7 +5,6 @@ import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider
@@ -14,7 +13,6 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
 import net.neoforged.neoforge.items.wrapper.InvWrapper
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider
@@ -163,11 +161,6 @@ internal object CommonModEventBus {
 			PlaceItemInWorldPacket.STREAM_CODEC,
 			PlaceItemInWorldPacket::handleServerboundPacket
 		)
-	}
-
-	@SubscribeEvent
-	fun onCommonSetup(event: FMLCommonSetupEvent) {
-		this.logger.log(Level.INFO, "Hello! This is working!")
 	}
 
 	@SubscribeEvent

@@ -13,8 +13,8 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunRenderContext
-import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
 
 /**
  * Base abstract implementation of [IToolGunMode], use this class for your own modes.
@@ -45,7 +45,7 @@ abstract class AbstractToolGunMode : IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	) {
 	}
 
@@ -56,7 +56,7 @@ abstract class AbstractToolGunMode : IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	) {
 	}
 
@@ -67,7 +67,7 @@ abstract class AbstractToolGunMode : IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	) {
 	}
 
@@ -78,7 +78,7 @@ abstract class AbstractToolGunMode : IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	) {
 	}
 

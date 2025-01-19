@@ -17,8 +17,8 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
-import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.client.tool_gun_mode.TestScreen
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunItemRenderer
+import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
@@ -27,7 +27,6 @@ import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunAnimationHandler
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import java.util.function.Supplier
 
@@ -48,7 +47,7 @@ class ToolGunItem : Item(
 			val mode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: return InteractionResultHolder.fail(stack)
 			mode.action(level, player, stack)
 		} else {
-			ToolGunAnimationHandler.trigger()
+			ToolGunItemRenderer.triggerDelta()
 		}
 		return super.use(level, player, usedHand)
 	}
@@ -81,7 +80,7 @@ class ToolGunItem : Item(
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
 		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
 		if (keyEvent.key == openModeGui.key.value && localClient.screen == null) {
-			localClient.setScreen(TestScreen(Component.literal("Tool Gun: Mode Select")))
+			localClient.setScreen(ToolGunScreen(Component.literal("Tool Gun: Mode Select")))
 		}
 		mode.keyboardInputAction(keyEvent, heldStack, player)
 		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {

@@ -15,8 +15,8 @@ import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
-import org.bread_experts_group.breadmod.client.render.tool_gun.ToolGunRenderContext
-import org.bread_experts_group.breadmod.client.tool_gun_mode.ModeWidget
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
 import kotlin.reflect.full.primaryConstructor
 
 interface IToolGunMode {
@@ -87,7 +87,7 @@ interface IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	)
 
 	/**
@@ -101,7 +101,7 @@ interface IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	)
 
 	/**
@@ -117,7 +117,7 @@ interface IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	)
 
 	/**
@@ -131,7 +131,7 @@ interface IToolGunMode {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		context: ToolGunRenderContext
+		helper: ToolGunRenderHelper
 	)
 
 	fun getModeWidget(): ModeWidget
