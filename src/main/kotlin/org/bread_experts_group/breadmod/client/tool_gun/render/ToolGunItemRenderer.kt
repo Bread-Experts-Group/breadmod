@@ -28,7 +28,6 @@ import java.awt.Color
 import java.lang.Math.clamp
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.math.abs
 
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
@@ -90,19 +89,10 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					posX = -0.035,
 					posY = 0.414
 				)
-				caseOhSize = caseOhSize.add(
-					BigDecimal.valueOf(
-						abs(
-							caseOhInstrument.nextDouble() * caseOhInstrument.nextInt(
-								1,
-								1000000
-							)
-						)
-					)
-				)
+				caseOhSize = caseOhSize.add(BigDecimal.valueOf(caseOhInstrument.nextDouble(0.0, 1234511121314.0)))
 				val (truncated, unit) = formatNumberBigDecimal(caseOhSize)
 				helper.drawTextOnScreen(
-					"CASEOH: ${truncated.setScale(2, RoundingMode.DOWN)} ${unit}tons",
+					"CASEOH: ${truncated.setScale(2, RoundingMode.DOWN)} ${unit}g",
 					Color.RED.rgb,
 					transparentColor().rgb,
 					false,

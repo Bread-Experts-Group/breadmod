@@ -10,7 +10,7 @@ internal object ToolGunClientGlobals {
 	// Miscellaneous
 	internal var helper: ToolGunRenderHelper = ToolGunRenderHelper()
 	internal val caseOhInstrument: SecureRandom = SecureRandom()
-	internal var caseOhSize: BigDecimal = BigDecimal.ZERO
+	internal var caseOhSize: BigDecimal = BigDecimal.TWO
 
 	// Recoil and Coil Spin vars
 	internal var coilRotation: Float = 0f
