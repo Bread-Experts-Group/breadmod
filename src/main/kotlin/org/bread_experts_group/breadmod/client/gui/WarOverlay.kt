@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.client.gui
 
-import net.minecraft.Util
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
@@ -10,7 +9,6 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.ModFonts
 import java.awt.Color
-import java.lang.Math.clamp
 
 internal class WarOverlay : LayeredDraw.Layer {
 	private var lastTick: Int = 0
@@ -20,7 +18,6 @@ internal class WarOverlay : LayeredDraw.Layer {
 			if (Companion.isTimerIncreasing) Triple(0.376f, 0.91f, 0.471f)
 			else if (Companion.setTimer > 0) Triple(0.922f, 0.353f, 0f)
 			else Triple(0.973f, 0f, 0f)
-		val millis = Util.getMillis()
 
 		if (this.lastTick != guiTicks) {
 			this.lastTick = guiTicks
@@ -30,11 +27,11 @@ internal class WarOverlay : LayeredDraw.Layer {
 				Companion.timeLeft++
 			} else Companion.isTimerIncreasing = false
 		}
-		val math = (clamp(millis.toFloat() / 50f, 0f, 1f) * deltaTracker.gameTimeDeltaTicks) * 3
+
 		if (Companion.timerPosition > -60.0 && !Companion.timerActive) {
-			Companion.timerPosition -= math
+			Companion.timerPosition -= 4f * deltaTracker.gameTimeDeltaTicks
 		} else if (Companion.timerPosition < -1.0 && Companion.timerActive) {
-			Companion.timerPosition += math
+			Companion.timerPosition += 4f * deltaTracker.gameTimeDeltaTicks
 		}
 
 		if (Companion.timerPosition > -60f) {
@@ -42,7 +39,7 @@ internal class WarOverlay : LayeredDraw.Layer {
 			val scaledWidth = localClient.window.guiScaledWidth
 
 			poseStack.pushPose()
-			poseStack.translate(scaledWidth.toDouble() / 3.3, Companion.timerPosition.toDouble(), 0.0)
+			poseStack.translate((scaledWidth.toDouble() - 200) / 2, Companion.timerPosition.toDouble(), 0.0)
 			poseStack.scaleFlat(0.5f)
 			WAR_TIMER.blitTexture(guiGraphics, 0, 0)
 			poseStack.scaleFlat(1.7f)

@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import com.mojang.math.Axis
-import net.minecraft.Util
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
@@ -19,20 +18,22 @@ object TestCubeBufferTask {
 	fun create(pos: Vec3) {
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockPos = BlockPos.containing(pos)
+		var rotation = 0f
 
 		RenderBuffer.add(
 			Stage.AFTER_TRANSLUCENT_BLOCKS,
 			{ event, _ ->
 				val poseStack = event.poseStack
 				val camera = event.camera
-//				val partialTick = event.partialTick.gameTimeDeltaTicks
+				val partialTick = event.partialTick.gameTimeDeltaTicks
 				val level = localClient.level ?: return@add true
-				val millis = Util.getMillis()
 
 				poseStack.pushPose()
 				poseStack.offsetRenderToCameraPos(pos.add(Vec3(0.0, 2.0, 0.0)), camera)
 				poseStack.translate(0.5, 0.0, 0.5)
-				poseStack.mulPose(Axis.YN.rotationDegrees((millis.toFloat() / 20 % 360)))
+				rotation += 20f * partialTick
+				rotation % 360
+				poseStack.mulPose(Axis.YN.rotationDegrees(rotation))
 				poseStack.translate(-0.5, 0.0, -0.5)
 				renderBakedQuads(
 					poseStack.last(), bufferSource.getBuffer(RenderType.solid()),
