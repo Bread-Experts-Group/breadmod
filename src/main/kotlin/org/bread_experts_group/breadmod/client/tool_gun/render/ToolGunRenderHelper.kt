@@ -68,26 +68,19 @@ class ToolGunRenderHelper(
 		textureWidth: Int,
 		textureHeight: Int,
 		poseStack: PoseStack,
-		buffer: MultiBufferSource,
-		posX: Double,
-		posY: Double,
-		posZ: Double = 0.8319,
-		topLeft: Vector3f = Vector3f(1f, 0f, 0f), // top left
-		topRight: Vector3f = Vector3f(0f, 0f, 0f), // top right
-		bottomLeft: Vector3f = Vector3f(1f, -1f, 0f), // bottom left
-		bottomRight: Vector3f = Vector3f(0f, -1f, 0f), // bottom right
+		buffer: MultiBufferSource
 	) {
-		this.initialScreenTranslations(poseStack, posX, posY, posZ, 0.07f)
+		this.initialScreenTranslations(poseStack, -0.035, 0.414, 0.8319, 0.07f)
 		poseStack.scale(1.025f, 0.856f, 1f)
 		drawQuad(
 			poseStack,
 			buffer,
 			RenderType.text(texture),
 			Vector4f(1f, 1f, 1f, 1f),
-			topLeft,
-			topRight,
-			bottomLeft,
-			bottomRight,
+			Vector3f(1f, 0f, 0f),
+			Vector3f(0f, 0f, 0f),
+			Vector3f(1f, -1f, 0f),
+			Vector3f(0f, -1f, 0f),
 			textureWidth.toFloat(),
 			textureWidth.toFloat(),
 			textureHeight.toFloat(),

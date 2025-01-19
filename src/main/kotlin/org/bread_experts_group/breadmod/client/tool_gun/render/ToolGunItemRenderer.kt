@@ -93,11 +93,7 @@ class ToolGunItemRenderer :
 			// Render Screen Stage
 			poseStack.pushPose()
 			if (helper.shouldRenderScreenContents) {
-				helper.renderScreenBackground(
-					ModTextureLocations.SCREEN.location,
-					9, 8,
-					poseStack, buffer, -0.0356, 0.3545
-				)
+				helper.renderScreenBackground(ModTextureLocations.SCREEN.location, 9, 8, poseStack, buffer)
 				helper.drawTextOnScreen(
 					currentMode.getDisplayName(),
 					Color.RED.rgb, transparentColor().rgb,
