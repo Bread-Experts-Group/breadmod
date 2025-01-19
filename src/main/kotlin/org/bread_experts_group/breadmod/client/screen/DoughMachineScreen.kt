@@ -12,9 +12,9 @@ import net.minecraft.world.entity.player.Inventory
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.client.render.renderFluid
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.util.formatUnit
-import org.bread_experts_group.breadmod.client.render.renderFluid
 
 class DoughMachineScreen(
 	menu: DoughMachineMenu,
@@ -46,8 +46,8 @@ class DoughMachineScreen(
 							.withStyle(ChatFormatting.ITALIC),
 						Component.literal(
 							formatUnit(
-								it.energyStored.toDouble(),
-								it.maxEnergyStored.toDouble(),
+								it.energyStored,
+								it.maxEnergyStored,
 								"FE",
 								showShort,
 								2

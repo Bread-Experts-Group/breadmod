@@ -58,8 +58,8 @@ class WheatCrusherScreen(
 							.withStyle(ChatFormatting.ITALIC),
 						Component.literal(
 							formatUnit(
-								it.energyStored.toDouble(),
-								it.maxEnergyStored.toDouble(),
+								it.energyStored,
+								it.maxEnergyStored,
 								"FE",
 								showShort,
 								2

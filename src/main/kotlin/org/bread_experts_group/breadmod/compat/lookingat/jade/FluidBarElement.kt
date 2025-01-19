@@ -12,8 +12,9 @@ import net.minecraft.util.Mth
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.phys.Vec2
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.util.formatNumber
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.util.formatNumber
+import org.joml.Math.clamp
 import snownee.jade.api.config.IWailaConfig.IConfigOverlay
 import snownee.jade.api.fluid.JadeFluidObject
 import snownee.jade.api.ui.Element
@@ -121,7 +122,7 @@ class FluidBarElement(
 			this.drawString(font, text, minX - d3.toInt(), j, color)
 			this.disableScissor()
 		} else {
-			val i1 = Mth.clamp(centerX, minX + i / 2, maxX - i / 2)
+			val i1 = clamp(centerX, minX + i / 2, maxX - i / 2)
 			this.drawCenteredString(font, text, i1, j, color)
 		}
 	}
@@ -181,7 +182,7 @@ class FluidBarElement(
 		)
 		RenderSystem.disableBlend()
 		// Fluid Amount
-		val (truncatedAmount, unit) = formatNumber(this.fluid.amount.toDouble(), -1)
+		val (truncatedAmount, unit) = formatNumber(this.fluid.amount, -1)
 		val asString = String.format("%07.2f", truncatedAmount)
 		var zeros = ""
 		for (char in asString) {

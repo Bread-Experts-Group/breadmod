@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.client.render.texture
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.Mth
 
 /**
  * Contains the [location], [textureWidth], and [textureHeight] of a texture.
@@ -59,12 +58,12 @@ class BreadModTextureHelper(
 		height = 0 + progressInput
 	)
 
-	// todo work on mirrored logic
-	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, energyStored: Int, x: Int, y: Int): Unit =
-		this.blitTexture(
-			guiGraphics,
-			x,
-			y,
-			width = Mth.clamp(energyStored, 0, this.textureWidth)
-		)
+//	// todo work on mirrored logic
+//	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, energyStored: Int, x: Int, y: Int): Unit =
+//		this.blitTexture(
+//			guiGraphics,
+//			x,
+//			y,
+//			width = clamp(energyStored, 0, this.textureWidth)
+//		)
 }

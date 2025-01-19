@@ -17,17 +17,18 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunItemRenderer
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.triggerDelta
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
-import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
+import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
+import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features
@@ -47,7 +48,7 @@ class ToolGunItem : Item(
 			val mode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: return InteractionResultHolder.fail(stack)
 			mode.action(level, player, stack)
 		} else {
-			ToolGunItemRenderer.triggerDelta()
+			triggerDelta()
 		}
 		return super.use(level, player, usedHand)
 	}

@@ -19,12 +19,29 @@ import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.util.RaycastResult.Companion.blockRaycast
 import org.bread_experts_group.breadmod.util.RaycastResult.Companion.entityRaycast
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
+import java.math.BigDecimal
 import java.util.function.Supplier
 import kotlin.math.round
 import kotlin.reflect.full.createInstance
 
 internal val formatArray: List<String> =
 	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
+
+/**
+ * Long supporting variant of [formatNumberBigDecimal].
+ * @author Miko Elbrecht
+ * @see formatNumberBigDecimal
+ * @see formatUnitBigDecimal
+ */
+fun formatNumber(
+	n: Long,
+	unitOffset: Int = 0,
+	unitMax: Long = 1000
+): Pair<Long, String> = formatNumberBigDecimal(
+	BigDecimal.valueOf(n),
+	unitOffset,
+	BigDecimal.valueOf(unitMax)
+).let { (num, unit) -> num.toLong() to unit }
 
 /**
  * Limits a number to 1000, and provides a keyword describing it in a shortened format.
@@ -37,17 +54,21 @@ internal val formatArray: List<String> =
  * @return A pair containing the limited number and the unit.
  * @author Miko Elbrecht
  * @since 1.0
- * @see formatUnit
+ * @see formatUnitBigDecimal
  * @see formatArray
  */
-fun formatNumber(n: Double, unitOffset: Int = 0, unitMax: Int = 1000): Pair<Double, String> {
+fun formatNumberBigDecimal(
+	n: BigDecimal,
+	unitOffset: Int = 0,
+	unitMax: BigDecimal = BigDecimal.valueOf(1000)
+): Pair<BigDecimal, String> {
 	var num = n
 	var index = 10 + unitOffset
 	while (num >= unitMax && index < formatArray.size - 1) {
 		num /= unitMax
 		index++
 	}
-	while (num < 1 && index > 0) {
+	while (num < BigDecimal.ONE && index > 0) {
 		num *= unitMax
 		index--
 	}
@@ -55,34 +76,57 @@ fun formatNumber(n: Double, unitOffset: Int = 0, unitMax: Int = 1000): Pair<Doub
 }
 
 /**
- * Formats a number.
- * @return The formatted number: `"X S / Y S W (Z%)"` assuming X is under Y, otherwise `"Y / X S W (Z%)"`.
- * @param from The number to format.
- * @param to The maximum number (Y).
- * @param unit The label to append at the end (W).
- * @param formatShort If the numbers should be shortened with a unit in [formatNumber] (S).
- * @param decimals The number of decimals to use when representing [from] / [to].
- * @param unitOffset The offset to start at in [formatNumber].
- * (Only applicable in [formatShort]).
- * @param unitMax The maximum number to reach before moving to the next unit in [formatNumber].
- * (Only applicable in [formatShort]).
+ * Integer supporting variant of [formatUnitBigDecimal].
  * @author Miko Elbrecht
- * @see formatNumber
+ * @see formatUnitBigDecimal
  */
 fun formatUnit(
-	from: Double,
-	to: Double,
+	from: Int,
+	to: Int,
 	unit: String,
 	formatShort: Boolean,
 	decimals: Int,
 	unitOffset: Int = 0,
 	unitMax: Int = 1000
+): String = formatUnitBigDecimal(
+	BigDecimal.valueOf(from.toLong()),
+	BigDecimal.valueOf(to.toLong()),
+	unit,
+	formatShort,
+	decimals,
+	unitOffset,
+	BigDecimal.valueOf(unitMax.toLong())
+)
+
+/**
+ * Formats a number.
+ * @return The formatted number: `"X S / Y S W (Z%)"` assuming X is under Y, otherwise `"Y / X S W (Z%)"`.
+ * @param from The number to format.
+ * @param to The maximum number (Y).
+ * @param unit The label to append at the end (W).
+ * @param formatShort If the numbers should be shortened with a unit in [formatNumberBigDecimal] (S).
+ * @param decimals The number of decimals to use when representing [from] / [to].
+ * @param unitOffset The offset to start at in [formatNumberBigDecimal].
+ * (Only applicable in [formatShort]).
+ * @param unitMax The maximum number to reach before moving to the next unit in [formatNumberBigDecimal].
+ * (Only applicable in [formatShort]).
+ * @author Miko Elbrecht
+ * @see formatNumberBigDecimal
+ */
+fun formatUnitBigDecimal(
+	from: BigDecimal,
+	to: BigDecimal,
+	unit: String,
+	formatShort: Boolean,
+	decimals: Int,
+	unitOffset: Int = 0,
+	unitMax: BigDecimal = BigDecimal.valueOf(1000)
 ): String {
 	val formatStr = "%.${decimals}f %s/ %.${decimals}f %s (%.${decimals}f%%)"
-	val percent = (from / to) * 100
+	val percent = (from / to) * BigDecimal.valueOf(100)
 	if (formatShort) {
-		val toFormat = formatNumber(to, unitOffset, unitMax)
-		val fromFormat = formatNumber(from, unitOffset, unitMax)
+		val toFormat = formatNumberBigDecimal(to, unitOffset, unitMax)
+		val fromFormat = formatNumberBigDecimal(from, unitOffset, unitMax)
 		return String.format(
 			formatStr,
 			fromFormat.first, if (toFormat.second != fromFormat.second) "${fromFormat.second}$unit " else "",
@@ -286,11 +330,25 @@ operator fun Vec3.plus(other: Vec3): Vec3 = Vec3(this.x + other.x, this.y + othe
  * @since 1.0.0
  */
 operator fun Vec3.times(scale: Double): Vec3 = this.scale(scale)
+
 /// Face Targeting Functions ///
+fun dunsxCheck(opposite: Direction, x: Double, z: Double): Direction? {
+	if (x < 0.25) {
+		if (z < 0.25) return opposite
+		if (z > 0.75) return opposite
+		return Direction.WEST
+	}
+	if (x > 0.75) {
+		if (z < 0.25) return opposite
+		if (z > 0.75) return opposite
+		return Direction.EAST
+	}
+	return null
+}
 // https://github.com/GregTechCEu/GregTech/blob/master/src/main/java/gregtech/api/util/GTUtility.java#L325
 /**
  * Targets the face the player is currently looking at.
- * Looking at edges targets the neighbouring face, corners target the opposite face.
+ * Looking at edges, targets the neighboring face; corners target the opposite face.
  *
  * Function copied from GregTechCEu.
  */
@@ -298,34 +356,18 @@ fun targetFace(facing: Direction, x: Double, y: Double, z: Double): Direction {
 	val opposite: Direction = facing.opposite
 	when (facing) {
 		DOWN, UP     -> {
-			if (x < 0.25) {
-				if (z < 0.25) return opposite
-				if (z > 0.75) return opposite
-				return Direction.WEST
+			return dunsxCheck(opposite, x, z) ?: facing.let {
+				if (z < 0.25) return Direction.NORTH
+				if (z > 0.75) return Direction.SOUTH
+				it
 			}
-			if (x > 0.75) {
-				if (z < 0.25) return opposite
-				if (z > 0.75) return opposite
-				return Direction.EAST
-			}
-			if (z < 0.25) return Direction.NORTH
-			if (z > 0.75) return Direction.SOUTH
-			return facing
 		}
 		NORTH, SOUTH -> {
-			if (x < 0.25) {
-				if (y < 0.25) return opposite
-				if (y > 0.75) return opposite
-				return Direction.WEST
+			return dunsxCheck(opposite, x, z) ?: facing.let {
+				if (y < 0.25) return Direction.DOWN
+				if (y > 0.75) return Direction.UP
+				it
 			}
-			if (x > 0.75) {
-				if (y < 0.25) return opposite
-				if (y > 0.75) return opposite
-				return Direction.EAST
-			}
-			if (y < 0.25) return Direction.DOWN
-			if (y > 0.75) return Direction.UP
-			return facing
 		}
 		WEST, EAST   -> {
 			if (z < 0.25) {
@@ -355,7 +397,7 @@ fun targetFaceSection(
 ): Boolean = (targetX in minX .. maxX) && (targetY in minY .. maxY)
 
 /**
- * Normalizes the absolute location of the hit result to 2 decimal places.
+ * Normalizes the absolute location of the hit result to two decimal places.
  */
 fun normalizeHitLoc(hitLoc: Double, blockPos: Int): Double = round((hitLoc - blockPos) * 100) / 100
 /// End Face Targeting Functions ///

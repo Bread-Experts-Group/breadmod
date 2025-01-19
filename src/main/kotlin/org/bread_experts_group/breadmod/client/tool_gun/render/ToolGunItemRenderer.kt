@@ -4,52 +4,38 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.server.packs.resources.ResourceManager
-import net.minecraft.util.Mth
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderItemModel
 import org.bread_experts_group.breadmod.client.render.transparentColor
-import org.bread_experts_group.breadmod.registry.ModConfiguration
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhInstrument
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhSize
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilDelta
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilModel
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilRotation
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.helper
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.mainModel
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.recoil
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
+import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
+import java.lang.Math.clamp
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.abs
 
-class ToolGunItemRenderer :
-	BlockEntityWithoutLevelRenderer(localClient.blockEntityRenderDispatcher, localClient.entityModels) {
-	companion object {
-		private val useAltModel = ModConfiguration.CLIENT.useAlternateToolGunModel
-		private var helper = ToolGunRenderHelper.init()
-		private val mainModel: BakedModel =
-			this.helper.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/item"))
-		private val coilModel: BakedModel =
-			this.helper.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/coil"))
-		private val altModel: BakedModel =
-			this.helper.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"))
-
-		// Recoil and Coil Spin vars
-		private var coilRotation: Float = 0f
-		private var coilDelta: Float = 0f
-		private var recoil: Float = 0f
-
-		/**
-		 * Sets the delta and recoil to their triggered values.
-		 */
-		fun triggerDelta() {
-			this.coilDelta = 1f
-			this.recoil = 0.1f
-		}
-	}
-
+class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
+	localClient.blockEntityRenderDispatcher,
+	localClient.entityModels
+) {
 	override fun onResourceManagerReload(resourceManager: ResourceManager) {
-		Companion.helper = ToolGunRenderHelper.init()
+		helper = ToolGunRenderHelper()
 	}
 
 	private fun renderToolGun(
@@ -64,23 +50,23 @@ class ToolGunItemRenderer :
 	) {
 		val deltaTracker = localClient.timer
 		val partialTick = deltaTracker.gameTimeDeltaTicks
-		if (Companion.coilDelta > 0f) {
-			Companion.coilDelta -= 0.025f * partialTick
-			Companion.coilRotation += (40f * Companion.coilDelta) * partialTick
-			Companion.recoil -= 0.025f * partialTick * Companion.coilDelta / 3.5f
+		if (coilDelta > 0f) {
+			coilDelta -= 0.025f * partialTick
+			coilRotation += (40f * coilDelta) * partialTick
+			recoil -= 0.025f * partialTick * coilDelta / 3.5f
 		}
 
 		if (displayContext.firstPerson()) {
 			poseStack.pushPose()
 			// Main recoil translations
 			// todo improve recoil
-			if (helper.shouldRecoil) poseStack.translate(-Mth.clamp(Companion.recoil, 0f, 1f), 0f, 0f)
+			if (helper.shouldRecoil) poseStack.translate(-clamp(recoil, 0f, 1f), 0f, 0f)
 
 			poseStack.pushPose()
 			currentMode.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			// Render Body Stage
 			if (helper.shouldRenderMainBody) helper.itemRenderer.renderItemModel(
-				Companion.mainModel,
+				mainModel,
 				stack,
 				displayContext,
 				poseStack,
@@ -104,8 +90,19 @@ class ToolGunItemRenderer :
 					posX = -0.035,
 					posY = 0.414
 				)
+				caseOhSize = caseOhSize.add(
+					BigDecimal.valueOf(
+						abs(
+							caseOhInstrument.nextDouble() * caseOhInstrument.nextInt(
+								1,
+								1000000
+							)
+						)
+					)
+				)
+				val (truncated, unit) = formatNumberBigDecimal(caseOhSize)
 				helper.drawTextOnScreen(
-					"CASEOH: Not Available",
+					"CASEOH: ${truncated.setScale(2, RoundingMode.DOWN)} ${unit}tons",
 					Color.RED.rgb,
 					transparentColor().rgb,
 					false,
@@ -121,10 +118,10 @@ class ToolGunItemRenderer :
 			// Render Coil Stage
 			poseStack.pushPose()
 			if (currentMode.shouldCoilSpin(stack, displayContext)) {
-				poseStack.mulPose(Axis.XN.rotationDegrees(Companion.coilRotation))
+				poseStack.mulPose(Axis.XN.rotationDegrees(coilRotation))
 			}
 			if (helper.shouldRenderCoil) helper.itemRenderer.renderItemModel(
-				Companion.coilModel,
+				coilModel,
 				stack,
 				displayContext,
 				poseStack,
@@ -152,8 +149,8 @@ class ToolGunItemRenderer :
 		packedLight: Int,
 		coilSpin: Boolean
 	) {
-		Companion.helper.itemRenderer.renderItemModel(
-			Companion.mainModel,
+		helper.itemRenderer.renderItemModel(
+			mainModel,
 			stack,
 			displayContext,
 			poseStack,
@@ -161,9 +158,9 @@ class ToolGunItemRenderer :
 			packedOverlay,
 			packedLight
 		)
-		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(Companion.coilRotation))
-		Companion.helper.itemRenderer.renderItemModel(
-			Companion.coilModel,
+		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(coilRotation))
+		helper.itemRenderer.renderItemModel(
+			coilModel,
 			stack,
 			displayContext,
 			poseStack,
@@ -190,7 +187,7 @@ class ToolGunItemRenderer :
 			packedLight,
 			packedOverlay,
 			currentMode,
-			Companion.helper
+			helper
 		)
 	}
 }

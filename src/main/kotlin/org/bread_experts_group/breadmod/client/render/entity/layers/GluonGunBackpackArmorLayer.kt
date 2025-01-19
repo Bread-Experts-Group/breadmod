@@ -12,14 +12,15 @@ import net.minecraft.client.renderer.entity.RenderLayerParent
 import net.minecraft.client.renderer.entity.layers.RenderLayer
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.Mth
+import net.minecraft.util.Mth.invSqrt
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
-import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
-import org.bread_experts_group.breadmod.util.plus
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
+import org.bread_experts_group.breadmod.util.plus
 import org.joml.Matrix4f
 import java.awt.Color
 
@@ -73,7 +74,7 @@ class GluonGunBackpackArmorLayer(
 		val startZ = (vec3.z - Mth.lerp(partialTick.toDouble(), livingEntity.zo, livingEntity.z)).toFloat()
 		val vertexConsumer = bufferSource.getBuffer(RenderType.leash())
 		val matrix4f = poseStack.last().pose()
-		val f4 = Mth.invSqrt(startX * startX + startZ * startZ) * 0.025f / 2.0f
+		val f4 = invSqrt(startX * startX + startZ * startZ) * 0.025f / 2.0f
 		val f5 = startZ * f4 + 0.05f
 		val f6 = startX * f4 + 0.05f
 

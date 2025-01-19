@@ -7,10 +7,10 @@ import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.TntMinecartRenderer
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.Mth
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
+import java.lang.Math.clamp
 
 class PrimedHappyBlockRenderer(
 	private val context: EntityRendererProvider.Context
@@ -32,7 +32,7 @@ class PrimedHappyBlockRenderer(
 		val fuse = primedHappyBlock.fuse
 		if (fuse.toFloat() - partialTick + 1.0f < 10.0f) {
 			var f = 1.0f - (fuse.toFloat() - partialTick + 1.0f) / 10.0f
-			f = Mth.clamp(f, 0.0f, 1.0f)
+			f = clamp(f, 0.0f, 1.0f)
 			f *= f
 			f *= f
 			val f1 = 1.0f + f * 0.3f

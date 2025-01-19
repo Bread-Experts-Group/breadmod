@@ -5,12 +5,12 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
-import net.minecraft.util.Mth
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.WAR_TIMER
-import org.bread_experts_group.breadmod.registry.ModFonts
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.registry.ModFonts
 import java.awt.Color
+import java.lang.Math.clamp
 
 internal class WarOverlay : LayeredDraw.Layer {
 	private var lastTick: Int = 0
@@ -30,7 +30,7 @@ internal class WarOverlay : LayeredDraw.Layer {
 				Companion.timeLeft++
 			} else Companion.isTimerIncreasing = false
 		}
-		val math = (Mth.clamp(millis.toFloat() / 50f, 0f, 1f) * deltaTracker.gameTimeDeltaTicks) * 3
+		val math = (clamp(millis.toFloat() / 50f, 0f, 1f) * deltaTracker.gameTimeDeltaTicks) * 3
 		if (Companion.timerPosition > -60.0 && !Companion.timerActive) {
 			Companion.timerPosition -= math
 		} else if (Companion.timerPosition < -1.0 && Companion.timerActive) {
