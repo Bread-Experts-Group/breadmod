@@ -20,8 +20,8 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
-import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
 
 class DoughMachineBlockEntity(
 	pos: BlockPos, state: BlockState
@@ -32,11 +32,11 @@ class DoughMachineBlockEntity(
 	ModRecipeTypes.DOUGH_MACHINE.get()
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity, EnergyBearingBlockEntity {
 	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(3)
-	override val fluidHandler: SidedFluidTank = SidedFluidTank(
+	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		listOf(
 			Triple(10000, true, false),
 			Triple(10000, false, true),
-		).map { SidedFluidTank.CustomHandler(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
 	)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		mutableListOf((100000).toBigDecimal())

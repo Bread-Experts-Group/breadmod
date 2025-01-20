@@ -13,7 +13,8 @@ import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.phys.Vec2
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.util.formatNumber
+import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.joml.Math.clamp
 import snownee.jade.api.config.IWailaConfig.IConfigOverlay
 import snownee.jade.api.fluid.JadeFluidObject
@@ -26,8 +27,7 @@ import kotlin.math.max
 import kotlin.math.sin
 
 class FluidBarElement(
-	private val fluid: JadeFluidObject,
-	private val capacity: Int,
+	private val tank: ExpansibleFluidHandler.ExpansibleTank,
 	private val direction: Direction?
 ) : Element() {
 	companion object {
@@ -157,13 +157,13 @@ class FluidBarElement(
 			guiGraphics,
 			x + 1,
 			y + 1,
-			this.fluid,
-			((this.fluid.amount.toFloat() / this.capacity) * 78),
+			JadeFluidObject.of(this.tank.fluid),
+			((this.tank.amount / this.tank.capacity).toFloat() * 78),
 			12f,
 			JadeFluidObject.bucketVolume()
 		)
 		// Fluid Name
-		val fluidNameKey = if (!this.fluid.isEmpty) this.fluid.type.fluidType.descriptionId else "tooltip.jade.empty"
+		val fluidNameKey = if (!this.tank.isEmpty) this.tank.fluidType.descriptionId else "tooltip.jade.empty"
 		guiGraphics.drawScrollingStringBM(
 			localClient.font,
 			Component.translatable(fluidNameKey),
@@ -182,8 +182,8 @@ class FluidBarElement(
 		)
 		RenderSystem.disableBlend()
 		// Fluid Amount
-		val (truncatedAmount, unit) = formatNumber(this.fluid.amount, -1)
-		val asString = String.format("%010d", truncatedAmount)
+		val (truncatedAmount, unit) = formatNumberBigDecimal(this.tank.amount, -1)
+		val asString = String.format("%07.2f", truncatedAmount)
 		var zeros = ""
 		for (char in asString) {
 			if (char != '0' && char != '.') break

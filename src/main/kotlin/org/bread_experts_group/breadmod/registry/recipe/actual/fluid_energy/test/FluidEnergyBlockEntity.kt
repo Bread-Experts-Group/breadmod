@@ -15,8 +15,8 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearin
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
-import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
 import java.util.Optional
 
 class FluidEnergyBlockEntity(
@@ -29,13 +29,13 @@ class FluidEnergyBlockEntity(
 	ModRecipeTypes.FLUID_ENERGY_TEST.get()
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity {
 	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(8)
-	override val fluidHandler: SidedFluidTank = SidedFluidTank(
+	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		listOf(
 			Triple(10000, true, false),
 			Triple(10000, true, false),
 			Triple(10000, false, true),
 			Triple(10000, false, true)
-		).map { SidedFluidTank.CustomHandler(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
 	)
 
 	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level) {

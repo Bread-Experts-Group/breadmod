@@ -1,13 +1,12 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
-import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.nbt.CompoundTag
 import net.neoforged.neoforge.fluids.FluidStack
-import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 
 @Suppress("unused")
 interface FluidBearingBlockEntity {
-	val fluidHandler: SidedFluidTank
+	val fluidHandler: ExpansibleFluidHandler
 
 	fun growFluid(tank: Int, amount: Int) {
 		this.getFluid(tank).grow(amount)
@@ -18,17 +17,16 @@ interface FluidBearingBlockEntity {
 	}
 
 	fun getFluid(tank: Int): FluidStack = this.fluidHandler.getFluidInTank(tank)
-	fun setFluid(tank: Int, stack: FluidStack) {
-		this.fluidHandler.tanks[tank].fluid = stack
+	fun setFluid(tank: Int, stack: FluidStack): Unit = this.fluidHandler.getTank(tank).let {
+		it.fluid = stack.fluid
+		it.amount = stack.amount.toBigDecimal()
 	}
 
-	fun serializeFluidsNBT(to: CompoundTag, registries: Provider): Unit = CompoundTag().let {
-		this.fluidHandler.writeToNBT(registries, it)
-		to.put(this::class.simpleName + "_fluids", it)
-		null
+	fun serializeFluidsNBT(to: CompoundTag): Unit = CompoundTag().let {
+		to.put(this::class.simpleName + "_fluids", this.fluidHandler.serializeNBT())
 	}
 
-	fun deserializeFluidsNBT(from: CompoundTag, registries: Provider) {
-		this.fluidHandler.readFromNBT(registries, from.getCompound(this::class.simpleName + "_fluids"))
+	fun deserializeFluidsNBT(from: CompoundTag) {
+		this.fluidHandler.deserializeNBT(from.getCompound(this::class.simpleName + "_fluids"))
 	}
 }
