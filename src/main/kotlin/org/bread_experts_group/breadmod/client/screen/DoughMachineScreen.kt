@@ -9,6 +9,7 @@ import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
@@ -37,7 +38,7 @@ class DoughMachineScreen(
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
 		val showShort = !(this.minecraft ?: return).options.keyShift.isDown
 		if (this.isHovering(132, 28, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
-			this.menu.getEnergyHandler()?.let {
+			this.menu.getEnergyHandler().let {
 				guiGraphics.renderComponentTooltip(
 					this.font,
 					listOf(
@@ -62,7 +63,7 @@ class DoughMachineScreen(
 		this.menu.parent.level?.getCapability(
 			Capabilities.FluidHandler.BLOCK,
 			this.menu.parent.blockPos,
-			this.menu.parent.horizontal
+			this.menu.parent.blockState.getValue(HorizontalDirectionalBlock.FACING)
 		)
 			?.let { handler ->
 				handler.getFluidInTank(0).let { tank ->
@@ -93,14 +94,14 @@ class DoughMachineScreen(
 				this.topPos + 35,
 				176,
 				0,
-				this.menu.getScaledProgress(),
+				this.menu.scaledProgress,
 				17
 			)
 		}
 	}
 
 	private fun renderEnergyMeter(guiGraphics: GuiGraphics) {
-		val energyStored = this.menu.getEnergyStoredScaled()
+		val energyStored = this.menu.energyStoredScaled
 		guiGraphics.blit(
 			this.texture,
 			this.leftPos + 132,

@@ -8,12 +8,16 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import java.util.*
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
+import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import org.bread_experts_group.breadmod.util.handlers.SidedFluidTank
+import java.util.Optional
 
 class FluidEnergyBlockEntity(
 	pos: BlockPos,
@@ -22,15 +26,18 @@ class FluidEnergyBlockEntity(
 	ModBlockEntityTypes.FLUID_ENERGY.get(),
 	pos,
 	state,
-	ModRecipeTypes.FLUID_ENERGY_TEST.get(),
-	8,
-	fluidTanks = listOf(
-		Triple(10000, true, false),
-		Triple(10000, true, false),
-		Triple(10000, false, true),
-		Triple(10000, false, true)
+	ModRecipeTypes.FLUID_ENERGY_TEST.get()
+), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity {
+	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(8)
+	override val fluidHandler: SidedFluidTank = SidedFluidTank(
+		listOf(
+			Triple(10000, true, false),
+			Triple(10000, true, false),
+			Triple(10000, false, true),
+			Triple(10000, false, true)
+		).map { SidedFluidTank.CustomHandler(it.first, it.second, it.third) }
 	)
-), MenuProvider {
+
 	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level) {
 		val inputItems = listOf(this.getItem(0), this.getItem(1), this.getItem(2), this.getItem(3))
 		val inputFluids = listOf(this.getFluid(0), this.getFluid(1))

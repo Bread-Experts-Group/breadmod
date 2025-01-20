@@ -36,9 +36,9 @@ import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRend
 import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
+import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen
@@ -46,6 +46,10 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_i
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemScreen
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.KeyMappings.placeItemKey
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltFour
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltOne
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltThree
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltTwo
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
@@ -55,13 +59,10 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackp
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyScreen
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
-import org.bread_experts_group.breadmod.client.render.itemColor
-import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltFour
-import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltOne
-import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltThree
-import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltTwo
 
+@Suppress("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = BreadMod.ID, value = [Dist.CLIENT])
 internal object ClientModEventBus {
 	@SubscribeEvent

@@ -183,7 +183,7 @@ class FluidBarElement(
 		RenderSystem.disableBlend()
 		// Fluid Amount
 		val (truncatedAmount, unit) = formatNumber(this.fluid.amount, -1)
-		val asString = String.format("%07.2f", truncatedAmount)
+		val asString = String.format("%010d", truncatedAmount)
 		var zeros = ""
 		for (char in asString) {
 			if (char != '0' && char != '.') break

@@ -17,7 +17,7 @@ import java.util.*
 class SingleItemRecipeBlockEntity(
 	pos: BlockPos,
 	state: BlockState
-) : AbstractTestItemRecipeBlockEntity<BMRecipeInputs.SingleItem, SingleItemTestRecipe>(
+) : AbstractTestItemRecipeBlockEntity<BMRecipeInputs.SingleItem, SingleItemTestRecipe, SingleItemRecipeBlockEntity>(
 	pos,
 	state,
 	ModBlockEntityTypes.SINGLE_ITEM_TEST.get(),

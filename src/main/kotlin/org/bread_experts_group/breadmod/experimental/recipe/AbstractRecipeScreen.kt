@@ -5,14 +5,21 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeInput
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
-abstract class AbstractRecipeScreen<MENU : AbstractTestRecipeMenu>(
-	menu: MENU,
+abstract class AbstractRecipeScreen<
+		INPUT : RecipeInput,
+		RECIPE : Recipe<INPUT>,
+		T : AbstractTestRecipeBlockEntity<INPUT, RECIPE, T>,
+		M : AbstractTestRecipeMenu<INPUT, RECIPE, T, M>
+		>(
+	menu: M,
 	inventory: Inventory,
 	title: Component
-) : AbstractContainerScreen<MENU>(menu, inventory, title) {
+) : AbstractContainerScreen<M>(menu, inventory, title) {
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		guiGraphics.fill(
 			RenderType.gui(),

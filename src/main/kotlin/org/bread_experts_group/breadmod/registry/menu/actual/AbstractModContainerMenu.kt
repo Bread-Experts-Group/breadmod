@@ -6,10 +6,15 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.HorizontalDirectionalBlock
+import net.neoforged.neoforge.capabilities.Capabilities
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 
-abstract class AbstractModContainerMenu(
+abstract class AbstractModContainerMenu<T : BreadModBlockEntity<T>>(
 	type: MenuType<*>,
-	id: Int
+	id: Int,
+	private val parent: BreadModBlockEntity<T>
 ) : AbstractContainerMenu(type, id) {
 	fun addInventorySlots(inventory: Inventory, pX: Int, hotBarY: Int, inventoryY: Int) {
 		repeat(9) { this.addSlot(Slot(inventory, it, 8 + it * 18, hotBarY)) }
@@ -27,7 +32,12 @@ abstract class AbstractModContainerMenu(
 		}
 	}
 
-	override fun quickMoveStack(player: Player, index: Int): ItemStack = this.moveStackFunction(player, index)
+	fun getEnergyHandler(): ExpansibleEnergyHandler = this.parent.level?.getCapability(
+		Capabilities.EnergyStorage.BLOCK,
+		this.parent.blockPos,
+		this.parent.blockState.getValue(HorizontalDirectionalBlock.FACING)
+	) as ExpansibleEnergyHandler
+
 	override fun stillValid(player: Player): Boolean = player.containerMenu == this
 
 	/**
@@ -67,6 +77,8 @@ abstract class AbstractModContainerMenu(
 		sourceSlot.onTake(playerIn, sourceStack)
 		return copyOfSourceStack
 	}
+
+	override fun quickMoveStack(player: Player, index: Int): ItemStack = this.moveStackFunction(player, index)
 
 	private companion object {
 		// CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons

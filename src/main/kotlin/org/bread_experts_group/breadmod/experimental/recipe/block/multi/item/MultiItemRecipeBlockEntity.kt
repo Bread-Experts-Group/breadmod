@@ -17,7 +17,7 @@ import java.util.*
 class MultiItemRecipeBlockEntity(
 	pos: BlockPos,
 	state: BlockState,
-) : AbstractTestItemRecipeBlockEntity<BMRecipeInputs.MultiItem, MultiItemTestRecipe>(
+) : AbstractTestItemRecipeBlockEntity<BMRecipeInputs.MultiItem, MultiItemTestRecipe, MultiItemRecipeBlockEntity>(
 	pos,
 	state,
 	ModBlockEntityTypes.MULTI_ITEM_TEST.get(),

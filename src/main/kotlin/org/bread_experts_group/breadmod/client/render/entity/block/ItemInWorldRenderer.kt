@@ -16,19 +16,19 @@ import net.minecraft.world.item.ItemDisplayContext.NONE
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.Vec3
-import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 
 class ItemInWorldRenderer(private val ctx: Context) : BlockEntityRenderer<ItemInWorldBlockEntity> {
 	override fun render(
-		blockEntity: ItemInWorldBlockEntity,
+		entity: ItemInWorldBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val direction = blockEntity.blockState.getValue(BlockStateProperties.FACING) ?: return
+		val direction = entity.blockState.getValue(BlockStateProperties.FACING) ?: return
 		poseStack.pushPose()
 		poseStack.scaleFlat(0.5f)
 		when (direction) {
@@ -57,52 +57,52 @@ class ItemInWorldRenderer(private val ctx: Context) : BlockEntityRenderer<ItemIn
 				poseStack.translate(-2f, 0f, -2f)
 			}
 		}
-		when (blockEntity.items.filledSlots()) {
+		when (entity.itemHandler.filledSlots()) {
 			1 -> {
 				this.renderItem(
-					blockEntity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 			}
 			2 -> {
 				poseStack.translate(-0.5f, 0f, 0f)
 				this.renderItem(
-					blockEntity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 				poseStack.translate(1f, 0f, 0f)
 				this.renderItem(
-					blockEntity.getItem(1), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(1), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 			}
 			3 -> {
 				poseStack.translate(-0.5f, 0f, -0.5f)
 				this.renderItem(
-					blockEntity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 				poseStack.translate(1f, 0f, 0f)
 				this.renderItem(
-					blockEntity.getItem(1), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(1), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 				poseStack.translate(-0.5f, 0f, 1f)
 				this.renderItem(
-					blockEntity.getItem(2), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(2), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 			}
 			4 -> {
 				poseStack.translate(-0.5f, 0f, -0.5f)
 				this.renderItem(
-					blockEntity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 				poseStack.translate(1f, 0f, 0f)
 				this.renderItem(
-					blockEntity.getItem(1), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(1), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 				poseStack.translate(-1f, 0f, 1f)
 				this.renderItem(
-					blockEntity.getItem(2), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(2), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 				poseStack.translate(1f, 0f, 0f)
 				this.renderItem(
-					blockEntity.getItem(3), packedLight, packedOverlay, poseStack, bufferSource, blockEntity
+					entity.getItem(3), packedLight, packedOverlay, poseStack, bufferSource, entity
 				)
 			}
 		}
@@ -116,7 +116,7 @@ class ItemInWorldRenderer(private val ctx: Context) : BlockEntityRenderer<ItemIn
 		packedOverlay: Int,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
-		blockEntity: ItemInWorldBlockEntity,
+		entity: ItemInWorldBlockEntity,
 	) {
 		poseStack.pushPose()
 		if (stack.item is BlockItem) {
@@ -132,12 +132,12 @@ class ItemInWorldRenderer(private val ctx: Context) : BlockEntityRenderer<ItemIn
 			packedOverlay,
 			poseStack,
 			bufferSource,
-			blockEntity.level,
+			entity.level,
 			42
 		)
 		poseStack.popPose()
 	}
 
-	override fun shouldRender(blockEntity: ItemInWorldBlockEntity, cameraPos: Vec3): Boolean =
-		super.shouldRender(blockEntity, cameraPos) && blockEntity.items.isNotEmpty()
+	override fun shouldRender(entity: ItemInWorldBlockEntity, cameraPos: Vec3): Boolean =
+		super.shouldRender(entity, cameraPos) && entity.itemHandler.isNotEmpty()
 }

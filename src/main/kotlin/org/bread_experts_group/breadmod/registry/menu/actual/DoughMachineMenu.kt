@@ -5,8 +5,6 @@ import net.minecraft.tags.FluidTags
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.ItemStack
-import net.neoforged.neoforge.capabilities.Capabilities
-import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.fluids.FluidUtil
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.items.IItemHandler
@@ -21,23 +19,17 @@ class DoughMachineMenu(
 	id: Int,
 	inventory: Inventory,
 	val parent: DoughMachineBlockEntity
-) : AbstractModContainerMenu(ModMenuTypes.DOUGH_MACHINE.get(), id) {
+) : AbstractModContainerMenu<DoughMachineBlockEntity>(ModMenuTypes.DOUGH_MACHINE.get(), id, parent) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.DOUGH_MACHINE.get()).get()
 	)
 
-	fun getScaledProgress(): Int = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 24).toInt()
-	fun getEnergyStoredScaled(): Int {
-		return (this.parent.level ?: return 0).getCapability(
-			Capabilities.EnergyStorage.BLOCK,
-			this.parent.blockPos,
-			this.parent.horizontal
-		)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
-	}
-
-	fun getEnergyHandler(): IEnergyStorage? =
-		this.parent.level?.getCapability(Capabilities.EnergyStorage.BLOCK, this.parent.blockPos, this.parent.horizontal)
+	val scaledProgress: Int
+		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 24).toInt()
+	val energyStoredScaled: Int
+		get() = this.getEnergyHandler()
+			.let { ((it.energyStoredDecimal / it.maxEnergyStoredDecimal).toFloat() * 47).toInt() }
 
 	fun isCrafting(): Boolean = this.parent.progress > 0
 	override val containerSlotCount: Int = 3
@@ -53,8 +45,8 @@ class DoughMachineMenu(
 
 	init {
 		this.addInventorySlots(inventory, 8, 142, 84)
-		this.addSlot(SlotItemHandler(this.parent.items, 0, 26, 34))
-		this.addSlot(ResultSlotItemHandler(this.parent.items, 1, 78, 35))
-		this.addSlot(DoughMachineBucketSlot(this.parent.items))
+		this.addSlot(SlotItemHandler(this.parent.itemHandler, 0, 26, 34))
+		this.addSlot(ResultSlotItemHandler(this.parent.itemHandler, 1, 78, 35))
+		this.addSlot(DoughMachineBucketSlot(this.parent.itemHandler))
 	}
 }

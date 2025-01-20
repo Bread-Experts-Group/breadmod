@@ -2,8 +2,6 @@ package org.bread_experts_group.breadmod.registry.menu.actual
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
-import net.neoforged.neoforge.capabilities.Capabilities
-import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
@@ -13,29 +11,23 @@ class WheatCrusherMenu(
 	id: Int,
 	inventory: Inventory,
 	val parent: WheatCrusherBlockEntity
-) : AbstractModContainerMenu(ModMenuTypes.WHEAT_CRUSHER.get(), id) {
+) : AbstractModContainerMenu<WheatCrusherBlockEntity>(ModMenuTypes.WHEAT_CRUSHER.get(), id, parent) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.WHEAT_CRUSHER.get()).get()
 	)
 
-	fun getScaledProgress(): Int = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 48).toInt()
-	fun getEnergyStoredScaled(): Int {
-		return (this.parent.level ?: return 0).getCapability(
-			Capabilities.EnergyStorage.BLOCK,
-			this.parent.blockPos,
-			this.parent.horizontal
-		)?.let { ((it.energyStored.toFloat() / it.maxEnergyStored) * 47).toInt() } ?: 0
-	}
-
-	fun getEnergyHandler(): IEnergyStorage? =
-		this.parent.level?.getCapability(Capabilities.EnergyStorage.BLOCK, this.parent.blockPos, this.parent.horizontal)
+	val scaledProgress: Int
+		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 48).toInt()
+	val energyStoredScaled: Int
+		get() = this.getEnergyHandler()
+			.let { ((it.energyStoredDecimal / it.maxEnergyStoredDecimal).toFloat() * 47).toInt() }
 
 	fun isCrafting(): Boolean = this.parent.progress > 1
 
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)
-		this.addSlot(SlotItemHandler(this.parent.items, 0, 80, 15))
-		this.addSlot(ResultSlotItemHandler(this.parent.items, 1, 80, 87))
+		this.addSlot(SlotItemHandler(this.parent.itemHandler, 0, 80, 15))
+		this.addSlot(ResultSlotItemHandler(this.parent.itemHandler, 1, 80, 87))
 	}
 }

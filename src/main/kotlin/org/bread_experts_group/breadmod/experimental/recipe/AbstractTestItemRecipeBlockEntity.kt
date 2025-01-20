@@ -16,13 +16,17 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 
-abstract class AbstractTestItemRecipeBlockEntity<INPUT : RecipeInput, RECIPE : Recipe<INPUT>>(
+abstract class AbstractTestItemRecipeBlockEntity<
+		INPUT : RecipeInput,
+		RECIPE : Recipe<INPUT>,
+		T : AbstractTestItemRecipeBlockEntity<INPUT, RECIPE, T>
+		>(
 	pos: BlockPos,
 	state: BlockState,
-	type: BlockEntityType<*>,
+	type: BlockEntityType<T>,
 	recipeType: RecipeType<RECIPE>,
 	private val slotCount: Int
-) : AbstractTestRecipeBlockEntity<INPUT, RECIPE>(pos, state, type, recipeType), CraftingContainer {
+) : AbstractTestRecipeBlockEntity<INPUT, RECIPE, T>(pos, state, type, recipeType), CraftingContainer {
 	var itemSlots: NonNullList<ItemStack> = NonNullList.withSize(this.slotCount, ItemStack.EMPTY)
 
 	// todo eventually migrate to using this instead of the vanilla method

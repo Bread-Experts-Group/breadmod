@@ -57,7 +57,7 @@ class DoughMachineBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = (level.getBlockEntity(pos) as DoughMachineBlockEntity)
-			entity.dropContents()
+			entity.dropContents(level, pos)
 		}
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)

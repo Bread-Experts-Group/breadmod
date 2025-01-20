@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -24,7 +25,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 
 class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noCollission().pushReaction(PUSH_ONLY)) {
-	override fun codec(): MapCodec<out BaseEntityBlock> = simpleCodec { this }
+	override fun codec(): MapCodec<out BaseEntityBlock> = BlockBehaviour.simpleCodec { this }
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		ItemInWorldBlockEntity(pos, state)
 
@@ -44,12 +45,12 @@ class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noColliss
 	): VoxelShape {
 		val direction = state.getValue(BlockStateProperties.FACING) ?: return Shapes.block()
 		return when (direction) {
-			DOWN  -> box(0.0, 15.0, 0.0, 16.0, 16.0, 16.0)
-			UP    -> box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0)
-			NORTH -> box(0.0, 0.0, 15.0, 16.0, 16.0, 16.0)
-			SOUTH -> box(0.0, 0.0, 0.0, 16.0, 16.0, 1.0)
-			WEST  -> box(15.0, 0.0, 0.0, 16.0, 16.0, 16.0)
-			EAST  -> box(0.0, 0.0, 0.0, 1.0, 16.0, 16.0)
+			DOWN  -> Block.box(0.0, 15.0, 0.0, 16.0, 16.0, 16.0)
+			UP    -> Block.box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0)
+			NORTH -> Block.box(0.0, 0.0, 15.0, 16.0, 16.0, 16.0)
+			SOUTH -> Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 1.0)
+			WEST  -> Block.box(15.0, 0.0, 0.0, 16.0, 16.0, 16.0)
+			EAST  -> Block.box(0.0, 0.0, 0.0, 1.0, 16.0, 16.0)
 		}
 	}
 
@@ -62,7 +63,7 @@ class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noColliss
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = level.getBlockEntity(pos) as ItemInWorldBlockEntity
-			entity.dropContents()
+			entity.dropContents(level, pos)
 		}
 	}
 }

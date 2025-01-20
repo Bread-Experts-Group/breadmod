@@ -20,7 +20,10 @@ import java.util.*
 class SingleFluidRecipeBlockEntity(
 	pos: BlockPos,
 	state: BlockState
-) : AbstractTestRecipeBlockEntity<BMRecipeInputs.SingleFluid, SingleFluidTestRecipe>(
+) : AbstractTestRecipeBlockEntity<
+		BMRecipeInputs.SingleFluid,
+		SingleFluidTestRecipe,
+		SingleFluidRecipeBlockEntity>(
 	pos,
 	state,
 	ModBlockEntityTypes.SINGLE_FLUID_TEST.get(),

@@ -92,7 +92,7 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 		} else if (!player.isCrouching && !triggeredState && entity.progress == 0 &&
 			player.getItemInHand(player.usedItemHand).isEmpty
 		) {
-			entity.dropContents()
+			entity.dropContents(level, pos)
 			level.setBlockAndUpdate(pos, state)
 		}
 
@@ -110,14 +110,13 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 	): ItemInteractionResult {
 		val entity = (level.getBlockEntity(pos) as? ToasterBlockEntity) ?: return ItemInteractionResult.FAIL
 		val triggeredState = state.getValue(Companion.TRIGGERED)
-		val itemHandler = entity.items
 
 		if (!triggeredState && entity.progress <= 0 && !stack.isEmpty &&
-			itemHandler.getStackInSlot(0).count != 2 &&
+			entity.itemHandler.getStackInSlot(0).count != 2 &&
 			(stack.`is`(ModItemTags.TOASTABLE) || stack.`is`(ModItemTags.EXPLODES_IN_TOASTER))
 		) {
 			if (!player.isCreative) stack.shrink(1)
-			itemHandler.insertItem(0, ItemStack(stack.item, 1), false)
+			entity.itemHandler.insertItem(0, ItemStack(stack.item, 1), false)
 			level.playSound(
 				null,
 				pos,
@@ -135,7 +134,6 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 	// Pretty much a clone of the furnace animateTick code.
 	override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: RandomSource) {
 		val entity = level.getBlockEntity(pos) as? ToasterBlockEntity ?: return
-		val itemHandler = entity.items
 		val posX = pos.x + 0.4
 		val posY = pos.y + 0.5
 		val posZ = pos.z + 0.5
@@ -147,7 +145,7 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 		val d2 = if (axis == Direction.Axis.Z) direction.stepX * 0.52 else d1 // Z
 
 		if (state.getValue(Companion.TRIGGERED)) {
-			if (itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
+			if (entity.itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
 				level.addParticle(
 					ParticleTypes.LAVA,
 					posX + d2,
@@ -201,7 +199,7 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = level.getBlockEntity(pos) as ToasterBlockEntity
-			entity.dropContents()
+			entity.dropContents(level, pos)
 		}
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)

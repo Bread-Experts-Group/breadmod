@@ -17,7 +17,8 @@ class FluidEnergyBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	}
 
 	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
-	override fun codec(): MapCodec<FluidEnergyBlock> = org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlock.Companion.CODEC
+	override fun codec(): MapCodec<FluidEnergyBlock> = FluidEnergyBlock.Companion.CODEC
+
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		FluidEnergyBlockEntity(pos, state)
 
@@ -44,7 +45,7 @@ class FluidEnergyBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 	) {
 		if (!state.`is`(newState.block)) {
 			val entity = level.getBlockEntity(pos) as FluidEnergyBlockEntity
-			entity.dropContents()
+			entity.dropContents(level, pos)
 		}
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)

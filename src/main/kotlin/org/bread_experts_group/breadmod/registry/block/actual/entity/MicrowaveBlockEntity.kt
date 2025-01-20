@@ -7,6 +7,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
+import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
 
 class MicrowaveBlockEntity(
 	pos: BlockPos,
@@ -15,9 +16,10 @@ class MicrowaveBlockEntity(
 	ModBlockEntityTypes.MICROWAVE.get(),
 	pos,
 	state,
-	ModRecipeTypes.MICROWAVE.get(),
-	1
-) {
+	ModRecipeTypes.MICROWAVE.get()
+), ItemBearingBlockEntity {
+	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(1)
+
 	override fun commonTick(
 		clientLevel: Level,
 		pos: BlockPos,

@@ -4,6 +4,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.Slot
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestRecipeMenu
+import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
+import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidItemRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.menu.actual.ResultSlot
@@ -12,7 +14,12 @@ class SingleFluidItemRecipeMenu(
 	id: Int,
 	inventory: Inventory,
 	parent: SingleFluidItemRecipeBlockEntity
-) : AbstractTestRecipeMenu(ModMenuTypes.SINGLE_FLUID_ITEM.get(), id, inventory, parent) {
+) : AbstractTestRecipeMenu<
+		BMRecipeInputs.SingleFluidItem,
+		SingleFluidItemRecipe,
+		SingleFluidItemRecipeBlockEntity,
+		SingleFluidItemRecipeMenu
+		>(ModMenuTypes.SINGLE_FLUID_ITEM.get(), id, inventory, parent) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level()

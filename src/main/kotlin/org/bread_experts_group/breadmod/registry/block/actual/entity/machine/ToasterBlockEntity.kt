@@ -8,13 +8,15 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
-import java.util.*
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
+import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import java.util.Optional
 
 class ToasterBlockEntity(
 	pos: BlockPos,
@@ -23,17 +25,17 @@ class ToasterBlockEntity(
 	ModBlockEntityTypes.TOASTER.get(),
 	pos,
 	state,
-	ModRecipeTypes.TOASTING.get(),
-	1
-) {
+	ModRecipeTypes.TOASTING.get()
+), ItemBearingBlockEntity {
+	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(1)
+
 	override fun commonTick(
 		clientLevel: Level,
 		pos: BlockPos,
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
 	) {
-		val itemHandler = this.items
-		if (itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
+		if (this.itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
 			this.maxProgress = 60
 			this.progress++
 			if (this.progress == 35) clientLevel.playSound(null, pos, SoundEvents.TNT_PRIMED, BLOCKS)

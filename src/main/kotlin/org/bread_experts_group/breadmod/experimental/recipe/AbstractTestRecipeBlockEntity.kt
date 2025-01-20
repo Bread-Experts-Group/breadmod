@@ -13,17 +13,21 @@ import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import java.util.*
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import java.util.Optional
 
-abstract class AbstractTestRecipeBlockEntity<INPUT : RecipeInput, RECIPE : Recipe<INPUT>>(
+abstract class AbstractTestRecipeBlockEntity<
+		INPUT : RecipeInput,
+		RECIPE : Recipe<INPUT>,
+		T : AbstractTestRecipeBlockEntity<INPUT, RECIPE, T>
+		>(
 	pos: BlockPos,
 	state: BlockState,
-	type: BlockEntityType<*>,
+	type: BlockEntityType<T>,
 	recipeType: RecipeType<RECIPE>
-) : BlockEntity(type, pos, state), MenuProvider {
+) : BreadModBlockEntity<T>(type, pos, state), MenuProvider {
 	/**
 	 * Counts up by 1 every tick when the recipe is valid.
 	 * The recipe is completed when this is above or equal to the max recipe time.

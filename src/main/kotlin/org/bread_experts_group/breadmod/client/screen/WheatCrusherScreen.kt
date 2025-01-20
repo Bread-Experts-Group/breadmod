@@ -35,7 +35,7 @@ class WheatCrusherScreen(
 
 		ModTextureLocations.ENERGY_METER_16X47.drawProgressiveSpriteVertical(
 			guiGraphics,
-			this.menu.getEnergyStoredScaled(),
+			this.menu.energyStoredScaled,
 			this.leftPos + 151,
 			this.topPos + 14,
 			false
@@ -49,7 +49,7 @@ class WheatCrusherScreen(
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
 		val showShort = !(this.minecraft ?: return).options.keyShift.isDown
 		if (this.isHovering(151, 14, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
-			this.menu.getEnergyHandler()?.let {
+			this.menu.getEnergyHandler().let {
 				guiGraphics.renderComponentTooltip(
 					this.font,
 					listOf(
@@ -72,7 +72,7 @@ class WheatCrusherScreen(
 		}
 		ModTextureLocations.FILLED_VERTICAL_ARROW_9X48.drawProgressiveSpriteVertical(
 			guiGraphics,
-			this.menu.getScaledProgress(),
+			this.menu.scaledProgress,
 			this.leftPos + 83,
 			this.topPos + 33,
 			true

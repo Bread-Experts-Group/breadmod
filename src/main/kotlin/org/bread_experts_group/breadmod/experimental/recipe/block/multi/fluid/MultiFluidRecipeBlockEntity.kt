@@ -23,7 +23,7 @@ import java.util.*
 class MultiFluidRecipeBlockEntity(
 	pos: BlockPos,
 	state: BlockState
-) : AbstractTestRecipeBlockEntity<BMRecipeInputs.MultiFluid, MultiFluidTestRecipe>(
+) : AbstractTestRecipeBlockEntity<BMRecipeInputs.MultiFluid, MultiFluidTestRecipe, MultiFluidRecipeBlockEntity>(
 	pos,
 	state,
 	ModBlockEntityTypes.MULTI_FLUID_TEST.get(),
