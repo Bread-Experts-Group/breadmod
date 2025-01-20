@@ -21,6 +21,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecip
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import java.math.BigDecimal
 import java.util.Optional
 import kotlin.math.max
 
@@ -34,7 +35,9 @@ class WheatCrusherBlockEntity(
 ), MenuProvider, ItemBearingBlockEntity, EnergyBearingBlockEntity {
 	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(2)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
-		mutableListOf((100000).toBigDecimal())
+		listOf(
+			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(100000))
+		)
 	)
 	private var energyDivision: Int = -1
 

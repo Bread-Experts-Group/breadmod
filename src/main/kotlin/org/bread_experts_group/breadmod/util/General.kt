@@ -27,6 +27,9 @@ import kotlin.reflect.full.createInstance
 internal val formatArray: List<String> =
 	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
 
+fun BigDecimal.capInt(): Int = if (this > Int.MAX_VALUE.toBigDecimal()) Int.MAX_VALUE else this.toInt()
+fun BigDecimal.capLong(): Long = if (this > Long.MAX_VALUE.toBigDecimal()) Long.MAX_VALUE else this.toLong()
+
 /**
  * Long supporting variant of [formatNumberBigDecimal].
  * @author Miko Elbrecht
@@ -38,9 +41,9 @@ fun formatNumber(
 	unitOffset: Int = 0,
 	unitMax: Long = 1000
 ): Pair<Long, String> = formatNumberBigDecimal(
-	BigDecimal.valueOf(n),
+	n.toBigDecimal(),
 	unitOffset,
-	BigDecimal.valueOf(unitMax)
+	unitMax.toBigDecimal()
 ).let { (num, unit) -> num.toLong() to unit }
 
 /**
@@ -89,13 +92,13 @@ fun formatUnit(
 	unitOffset: Int = 0,
 	unitMax: Int = 1000
 ): String = formatUnitBigDecimal(
-	BigDecimal.valueOf(from.toLong()),
-	BigDecimal.valueOf(to.toLong()),
+	from.toBigDecimal(),
+	to.toBigDecimal(),
 	unit,
 	formatShort,
 	decimals,
 	unitOffset,
-	BigDecimal.valueOf(unitMax.toLong())
+	unitMax.toBigDecimal()
 )
 
 /**

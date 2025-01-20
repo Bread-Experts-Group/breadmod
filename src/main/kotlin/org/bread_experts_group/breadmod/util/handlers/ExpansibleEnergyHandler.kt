@@ -2,61 +2,75 @@ package org.bread_experts_group.breadmod.util.handlers
 
 import net.minecraft.nbt.CompoundTag
 import net.neoforged.neoforge.energy.IEnergyStorage
+import org.bread_experts_group.breadmod.util.capInt
 import java.math.BigDecimal
 
 open class ExpansibleEnergyHandler(
-	private val cellCapacities: MutableList<BigDecimal?>,
-	var maxIn: BigDecimal? = null,
-	var maxOut: BigDecimal? = null,
-	var receiveAction: (count: Int, simulate: Boolean) -> BigDecimal? = { _, _ -> null },
-	var extractAction: (count: Int, simulate: Boolean) -> BigDecimal? = { _, _ -> null },
+	cells: List<ExpansibleCell>,
+	var receiveAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
+	var extractAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
 ) : IEnergyStorage {
-	private val cells: MutableList<BigDecimal> = MutableList(this.cellCapacities.size) { BigDecimal.ZERO }
+	private val cells: MutableList<ExpansibleCell> = cells.toMutableList()
 
-	override fun receiveEnergy(count: Int, simulate: Boolean): Int {
-		TODO("Not yet implemented")
+	class ExpansibleCell(
+		var capacity: BigDecimal? = null,
+		var maxIn: BigDecimal? = null,
+		var maxOut: BigDecimal? = null,
+		var amount: BigDecimal = BigDecimal.ZERO
+	) {
+		fun fill(count: BigDecimal, simulate: Boolean): BigDecimal {
+			val actualCount = if (this.maxIn != null) count.min(this.maxIn) else count
+			val saved = this.amount
+			val sum = (saved + actualCount).min(this.capacity)
+			if (!simulate) this.amount = sum
+			return sum - saved
+		}
 	}
+
+	val energyStoredDecimal: BigDecimal
+		get() = this.cells.sumOf { it.amount }
+	val maxEnergyStoredDecimal: BigDecimal?
+		get() = this.cells.sumOf { it.capacity ?: return null }
+
+	fun receiveEnergyDecimal(count: BigDecimal, simulate: Boolean): BigDecimal {
+		var actualCount = count
+		var sum = BigDecimal.ZERO
+		this.cells.forEachIndexed { cellIndex, cell ->
+			val filled = cell.fill(this.receiveAction(actualCount, simulate, cellIndex) ?: actualCount, simulate)
+			actualCount -= filled
+			filled
+		}
+		return sum
+	}
+
+	override fun receiveEnergy(count: Int, simulate: Boolean): Int = this.receiveEnergyDecimal(
+		count.toBigDecimal(),
+		simulate
+	).capInt()
 
 	override fun extractEnergy(count: Int, simulate: Boolean): Int {
 		TODO("Not yet implemented")
 	}
 
-	val energyStoredDecimal: BigDecimal
-		get() = this.cells.sumOf { it }
-	val maxEnergyStoredDecimal: BigDecimal
-		get() {
-			var sum = BigDecimal.ZERO
-			for (capacity in this.cellCapacities) {
-				if (capacity == null) return this.energyStoredDecimal + BigDecimal.ONE
-				sum += capacity
-			}
-			return sum
-		}
-
-	override fun getEnergyStored(): Int =
-		if (this.energyStoredDecimal > Int.MAX_VALUE.toBigDecimal()) Int.MAX_VALUE
-		else this.energyStoredDecimal.toInt()
-
-	override fun getMaxEnergyStored(): Int =
-		if (this.maxEnergyStoredDecimal > Int.MAX_VALUE.toBigDecimal()) Int.MAX_VALUE
-		else this.maxEnergyStoredDecimal.toInt()
-
-	override fun canExtract(): Boolean =
-		this.energyStored > 0 && this.maxOut.let { it == null || (it > BigDecimal.ZERO) }
-
-	override fun canReceive(): Boolean =
-		this.energyStoredDecimal < this.maxEnergyStoredDecimal &&
-				this.maxIn.let { it == null || (it > BigDecimal.ZERO) }
+	override fun getEnergyStored(): Int = this.energyStoredDecimal.capInt()
+	override fun getMaxEnergyStored(): Int = this.maxEnergyStoredDecimal?.capInt() ?: Int.MAX_VALUE
+	override fun canExtract(): Boolean = this.energyStored > 0
+	override fun canReceive(): Boolean = this.energyStoredDecimal < this.maxEnergyStoredDecimal
 
 	fun serializeNBT(): CompoundTag = CompoundTag().also { tag ->
 		this.cells.forEachIndexed { index, cell ->
-			tag.putString("$index", cell.toEngineeringString())
+			tag.put("$index", CompoundTag().also { tankTag ->
+				tankTag.putString("amount", cell.amount.toEngineeringString())
+				tankTag.putString("capacity", cell.amount.toEngineeringString())
+			})
 		}
 	}
 
 	fun deserializeNBT(from: CompoundTag) {
 		from.allKeys.forEach {
-			this.cells[it.toInt()] = BigDecimal(from.getString(it))
+			val tank = this.cells[it.toInt()]
+			tank.capacity = BigDecimal(from.getCompound(it).getString("capacity"))
+			tank.amount = BigDecimal(from.getCompound(it).getString("amount"))
 		}
 	}
 }

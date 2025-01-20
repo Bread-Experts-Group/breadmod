@@ -25,7 +25,6 @@ import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlob
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
 import java.lang.Math.clamp
-import java.math.BigDecimal
 import java.math.RoundingMode
 
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
@@ -88,7 +87,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					posX = -0.035,
 					posY = 0.414
 				)
-				caseOhSize = caseOhSize.add(BigDecimal.valueOf(caseOhInstrument.nextDouble(0.0, 1234511121314.0)))
+				caseOhSize = caseOhSize.add(caseOhInstrument.nextDouble(0.0, 1234511121314.0).toBigDecimal())
 				val (truncated, unit) = formatNumberBigDecimal(caseOhSize)
 				helper.drawTextOnScreen(
 					"CASEOH: ${truncated.setScale(2, RoundingMode.DOWN)} ${unit}g",

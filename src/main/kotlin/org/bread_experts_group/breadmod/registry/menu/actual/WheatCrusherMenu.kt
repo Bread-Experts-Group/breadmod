@@ -20,8 +20,12 @@ class WheatCrusherMenu(
 	val scaledProgress: Int
 		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 48).toInt()
 	val energyStoredScaled: Int
-		get() = this.getEnergyHandler()
-			.let { ((it.energyStoredDecimal / it.maxEnergyStoredDecimal).toFloat() * 47).toInt() }
+		get() = this.getEnergyHandler().let {
+			it.maxEnergyStoredDecimal.let { max ->
+				if (max == null) return 47
+				((it.energyStoredDecimal / max).toFloat() * 47).toInt()
+			}
+		}
 
 	fun isCrafting(): Boolean = this.parent.progress > 1
 

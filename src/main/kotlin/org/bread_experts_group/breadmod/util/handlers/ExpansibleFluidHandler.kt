@@ -10,14 +10,17 @@ import net.neoforged.neoforge.fluids.FluidType
 import net.neoforged.neoforge.fluids.IFluidTank
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
+import org.bread_experts_group.breadmod.util.capInt
 import java.math.BigDecimal
 import java.util.function.Predicate
 
 @Suppress("unused")
 class ExpansibleFluidHandler(
 	tanks: List<ExpansibleTank>,
-	var receiveAction: (count: Int, simulate: IFluidHandler.FluidAction) -> Unit = { _, _ -> null },
-	var extractAction: (count: Int, simulate: IFluidHandler.FluidAction) -> Unit = { _, _ -> null },
+	var receiveAction: (count: BigDecimal, simulate: IFluidHandler.FluidAction, tankIndex: Int) -> BigDecimal? =
+		{ _, _, _ -> null },
+	var extractAction: (count: BigDecimal, simulate: IFluidHandler.FluidAction, tankIndex: Int) -> BigDecimal? =
+		{ _, _, _ -> null },
 	val itemContainer: ItemStack = ItemStack.EMPTY
 ) : IFluidHandler, IFluidHandlerItem {
 	private val tanks: MutableList<ExpansibleTank> = tanks.toMutableList()
@@ -39,9 +42,9 @@ class ExpansibleFluidHandler(
 			fluid: Fluid = Fluids.EMPTY,
 			amount: BigDecimal = BigDecimal.ZERO
 		) : this(
-			BigDecimal.valueOf(capacity.toLong()),
-			if (allowIn) BigDecimal.valueOf(capacity.toLong()) else null,
-			if (allowOut) BigDecimal.valueOf(capacity.toLong()) else null,
+			capacity.toBigDecimal(),
+			if (allowIn) capacity.toBigDecimal() else null,
+			if (allowOut) capacity.toBigDecimal() else null,
 			filter,
 			fluid,
 			amount
@@ -53,28 +56,28 @@ class ExpansibleFluidHandler(
 			get() = this.fluid.fluidType
 
 		override fun getFluid(): FluidStack = FluidStack(this.fluid, this.fluidAmount)
-
-		override fun getFluidAmount(): Int =
-			if (this.amount > BigDecimal.valueOf(Int.MAX_VALUE.toLong())) Int.MAX_VALUE
-			else this.amount.toInt()
-
-		override fun getCapacity(): Int =
-			if (this.capacity > BigDecimal.valueOf(Int.MAX_VALUE.toLong())) Int.MAX_VALUE
-			else this.capacity.toInt()
-
+		override fun getFluidAmount(): Int = this.amount.capInt()
+		override fun getCapacity(): Int = this.capacity.capInt()
 		override fun isFluidValid(stack: FluidStack): Boolean = this.filter.test(stack)
+
+		fun fillDecimal(
+			count: BigDecimal,
+			action: IFluidHandler.FluidAction
+		): BigDecimal {
+			val actualCount = if (this.maxIn != null) count.min(this.maxIn) else count
+			val saved = this.amount
+			val sum = (saved + actualCount).min(this.capacity)
+			if (action == IFluidHandler.FluidAction.EXECUTE) this.amount = sum
+			return sum - saved
+		}
 
 		override fun fill(
 			stack: FluidStack,
 			action: IFluidHandler.FluidAction
-		): Int {
-			if (stack.fluidType != this.fluidType) return 0
-			val saved = this.amount
-			val sum = (saved + stack.amount.toBigDecimal()).min(this.capacity)
-			if (action == IFluidHandler.FluidAction.EXECUTE) this.amount = sum
-			val diff = sum - saved
-			return if (diff > BigDecimal.valueOf(Int.MAX_VALUE.toLong())) Int.MAX_VALUE else diff.toInt()
-		}
+		): Int = this.fillDecimal(
+			stack.amount.toBigDecimal(),
+			action
+		).capInt()
 
 		override fun drain(
 			count: Int,
@@ -94,7 +97,14 @@ class ExpansibleFluidHandler(
 	override fun fill(
 		stack: FluidStack,
 		action: IFluidHandler.FluidAction
-	): Int = this.tanks.sumOf { it.fill(stack, action) }.also { this.receiveAction(it, action) }
+	): Int {
+		var count = stack.amount
+		return this.tanks.sumOf {
+			val filled = it.fill(FluidStack(stack.fluid, count), action)
+			count -= filled
+			filled
+		}
+	}
 
 	override fun drain(
 		stack: FluidStack,
