@@ -37,12 +37,14 @@
     <inspection_tool class="NestedClassSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="NewExpressionSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="NonNullableBooleanPropertyInExternalInterface" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="ProblematicWhitespace" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PublicApiImplicitType" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push">
       <option name="reportInternal" value="true" />
       <option name="reportPrivate" value="true" />
     </inspection_tool>
     <inspection_tool class="QodanaJavaSanity" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="QodanaKotlinSanity" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="RedundantCompanionReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantElseInIf" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="RedundantEmptyInitializerBlock" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="RedundantInnerClassModifier" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -97,6 +99,7 @@
           <option value="SpellCheckingInspection" />
           <option value="ImplicitThis" />
           <option value="SameParameterValue" />
+          <option value="ConvertLambdaToReference" />
         </list>
       </option>
     </inspection_tool>

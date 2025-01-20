@@ -1,4 +1,7 @@
 package org.bread_experts_group.breadmod.api
 
-@Target(AnnotationTarget.CLASS)
-annotation class ToolGunMode
+import net.neoforged.api.distmarker.Dist
+import kotlin.annotation.AnnotationTarget.CLASS
+
+@Target(CLASS)
+annotation class ToolGunMode(val side: Dist)

@@ -57,7 +57,6 @@ class ToolGunRenderHelper(
 		poseStack: PoseStack,
 		buffer: MultiBufferSource
 	) {
-		// this.initialScreenTranslations(poseStack, -0.035, 0.414, 0.8319, 0.07f)
 		this.initialScreenTranslations(poseStack, -0.0357, 0.3545, 0.8319, 0.07f)
 		poseStack.scale(1.025f, 0.856f, 1f)
 		drawQuad(
@@ -78,13 +77,6 @@ class ToolGunRenderHelper(
 		poseStack.popPose()
 	}
 
-	/**
-	 * +X moves text forward on tool gun
-	 * -X moves text backward on tool gun
-	 *
-	 * +Z moves text right on tool gun
-	 * -Z moves text left on tool gun
-	 */
 	fun drawTextOnScreen(
 		component: Component,
 		color: Int,

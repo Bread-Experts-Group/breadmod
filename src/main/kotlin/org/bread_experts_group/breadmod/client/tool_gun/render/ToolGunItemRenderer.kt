@@ -8,11 +8,12 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeClient
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderItemModel
 import org.bread_experts_group.breadmod.client.render.transparentColor
+import org.bread_experts_group.breadmod.client.tool_gun.client_modes.EmptyModeClient
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhInstrument
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhSize
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilDelta
@@ -21,8 +22,6 @@ import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlob
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.helper
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.mainModel
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.recoil
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
 import java.lang.Math.clamp
@@ -44,7 +43,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		currentMode: IToolGunMode,
+		currentMode: IToolGunModeClient,
 		helper: ToolGunRenderHelper
 	) {
 		val deltaTracker = localClient.timer
@@ -168,7 +167,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val currentMode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: EmptyMode()
+		val currentMode = ToolGunClientGlobals.currentMode ?: EmptyModeClient()
 		this.renderToolGun(
 			stack,
 			displayContext,

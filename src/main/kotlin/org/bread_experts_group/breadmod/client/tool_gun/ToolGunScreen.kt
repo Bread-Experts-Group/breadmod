@@ -7,11 +7,13 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.toolGunModesClient
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
@@ -20,7 +22,7 @@ class ToolGunScreen(title: Component) : Screen(title) {
 
 	init {
 		this.modeWidgets.clear()
-		CommonNeoForgeEventBus.toolGunModes.forEach { (_, mode) ->
+		toolGunModesClient.forEach { (_, mode) ->
 			this.modeWidgets.add(mode.getModeWidget())
 		}
 	}
@@ -32,70 +34,66 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	private val modeButton = ModeButton(0, 0) {
 		this.currentModeWidget?.let { widget ->
 			PacketDistributor.sendToServer(ToolGunModeChangePacket(widget.id))
+			ToolGunClientGlobals.currentMode = toolGunModesClient[widget.id]
 		}
 	}
 
 	override fun isPauseScreen(): Boolean = false
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
-		val poseStack = guiGraphics.pose()
-		poseStack.pushPose()
 		ModTextureLocations.FRAME.blitTexture(guiGraphics, this.leftPos, this.topPos)
+		if (this.focused is ModeWidget) this.currentModeWidget = this.focused as ModeWidget
+		this.renderModeTab(guiGraphics)
+	}
+
+	private fun renderModeTab(guiGraphics: GuiGraphics) {
+		val poseStack = guiGraphics.pose()
 		guiGraphics.borderedFill(
 			RenderType.gui(),
 			this.leftPos + 7,
-			this.topPos + 27,
+			this.topPos + 38,
 			this.leftPos + 250,
 			this.topPos + 223,
 			Color.RED.rgb,
 			Color(150, 150, 150).rgb
 		)
-		guiGraphics.vLine(this.leftPos + 127, this.topPos + 27, this.topPos + 222, Color.RED.rgb)
+		guiGraphics.vLine(this.leftPos + 127, this.topPos + 37, this.topPos + 222, Color.RED.rgb)
 
 		guiGraphics.drawString(localClient.font, this.title, this.leftPos + 2, this.topPos + 2, Color.BLACK.rgb, false)
-		if (this.focused is ModeWidget) {
-			// todo redo to render when currentModeWidget is populated to keep rendering after the widget is no longer focused
-			val widget = this.focused as ModeWidget
-			this.currentModeWidget = widget
-			guiGraphics.fill(
-				RenderType.gui(),
-				this.leftPos + 129,
-				this.topPos + 30,
-				this.leftPos + 246,
-				this.topPos + 97,
-				Color.BLACK.rgb
-			)
-			guiGraphics.drawString(
-				localClient.font,
-				widget.modeName,
-				this.leftPos + 129,
-				this.topPos + 100,
-				Color.BLACK.rgb,
-				false
-			)
-			guiGraphics.hLine(this.leftPos + 128, this.leftPos + 248, this.topPos + 110, Color.RED.rgb)
-			guiGraphics.drawWordWrap(
-				localClient.font,
-				widget.modeDescription,
-				this.leftPos + 129,
-				this.topPos + 112,
-				120,
-				Color.BLACK.rgb
-			)
-			poseStack.translate(this.leftPos + 129.8f, this.topPos + 31f, 0f)
-			poseStack.scaleFlat(0.135f)
-			widget.previewImage.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
-		} else {
-//			guiGraphics.drawWordWrap(
-//				localClient.font,
-//				Component.literal("Click on any of the modes to display their preview."),
-//				this.leftPos + 179,
-//				this.topPos + 3,
-//				125,
-//				Color.WHITE.rgb
-//			)
-		}
+		guiGraphics.fill(
+			RenderType.gui(),
+			this.leftPos + 129,
+			this.topPos + 40,
+			this.leftPos + 246,
+			this.topPos + 107,
+			Color.BLACK.rgb
+		)
+		guiGraphics.drawString(
+			localClient.font,
+			this.currentModeWidget?.modeName ?: Component.literal("???"),
+			this.leftPos + 129,
+			this.topPos + 109,
+			Color.BLACK.rgb,
+			false
+		)
+		guiGraphics.hLine(this.leftPos + 128, this.leftPos + 248, this.topPos + 118, Color.RED.rgb)
+		guiGraphics.drawWordWrap(
+			localClient.font,
+			this.currentModeWidget?.modeDescription ?: Component.literal("???"),
+			this.leftPos + 129,
+			this.topPos + 121,
+			120,
+			Color.BLACK.rgb
+		)
+		poseStack.pushPose()
+		poseStack.translate(this.leftPos + 129.85f, this.topPos + 41.25f, 0f)
+		poseStack.scaleFlat(0.135f)
+		this.currentModeWidget?.previewImage?.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
+			?: BreadModTextureHelper.MISSING_TEXTURE.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
 		poseStack.popPose()
+	}
+
+	private fun renderSettingsTab(guiGraphics: GuiGraphics) {
 	}
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean =
@@ -110,7 +108,7 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		this.gridList = buildList {
 			repeat(5) { y ->
 				repeat(3) { x ->
-					this.add(this@ToolGunScreen.leftPos + 10 + x * 36 to this@ToolGunScreen.topPos + 30 + y * 45)
+					this.add(this@ToolGunScreen.leftPos + 10 + x * 36 to this@ToolGunScreen.topPos + 40 + y * 45)
 				}
 			}
 		}

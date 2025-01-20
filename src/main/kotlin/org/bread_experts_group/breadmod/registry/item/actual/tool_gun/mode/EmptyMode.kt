@@ -5,16 +5,14 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.neoforged.api.distmarker.Dist
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
 
-@ToolGunMode
+@ToolGunMode(Dist.DEDICATED_SERVER)
 class EmptyMode : AbstractToolGunMode() {
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 	}
-
-	override fun getModeWidget(): ModeWidget = ModeWidget.Builder().id(this.getUid()).build()
 
 	override fun getDisplayName(): Component = Component.literal("???")
 

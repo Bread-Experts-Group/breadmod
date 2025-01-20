@@ -1,12 +1,18 @@
 package org.bread_experts_group.breadmod.client.tool_gun.render
 
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.resources.ResourceLocation
+import org.bread_experts_group.breadmod.api.IToolGunModeClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import java.math.BigDecimal
 import java.security.SecureRandom
 
 internal object ToolGunClientGlobals {
+	// Client-Sided Modes
+	var currentMode: IToolGunModeClient? = null
+	val toolGunModesClient: MutableMap<ResourceLocation, IToolGunModeClient> = mutableMapOf()
+
 	// Miscellaneous
 	internal var helper: ToolGunRenderHelper = ToolGunRenderHelper()
 	internal val caseOhInstrument: SecureRandom = SecureRandom()

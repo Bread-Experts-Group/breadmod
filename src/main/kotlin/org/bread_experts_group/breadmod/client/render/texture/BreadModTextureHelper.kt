@@ -57,7 +57,6 @@ class BreadModTextureHelper(
 		vOffset = 0f - if (!drawFromTop) progressInput else 0,
 		height = 0 + progressInput
 	)
-
 //	// todo work on mirrored logic
 //	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, energyStored: Int, x: Int, y: Int): Unit =
 //		this.blitTexture(
