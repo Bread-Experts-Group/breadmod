@@ -16,8 +16,8 @@ import java.util.function.Predicate
 @Suppress("unused")
 class ExpansibleFluidHandler(
 	tanks: List<ExpansibleTank>,
-	var receiveAction: (count: Int, simulate: IFluidHandler.FluidAction) -> BigDecimal? = { _, _ -> null },
-	var extractAction: (count: Int, simulate: IFluidHandler.FluidAction) -> BigDecimal? = { _, _ -> null },
+	var receiveAction: (count: Int, simulate: IFluidHandler.FluidAction) -> Unit = { _, _ -> null },
+	var extractAction: (count: Int, simulate: IFluidHandler.FluidAction) -> Unit = { _, _ -> null },
 	val itemContainer: ItemStack = ItemStack.EMPTY
 ) : IFluidHandler, IFluidHandlerItem {
 	private val tanks: MutableList<ExpansibleTank> = tanks.toMutableList()
@@ -70,7 +70,7 @@ class ExpansibleFluidHandler(
 		): Int {
 			if (stack.fluidType != this.fluidType) return 0
 			val saved = this.amount
-			val sum = (saved + stack.amount.toBigDecimal()).max(this.capacity)
+			val sum = (saved + stack.amount.toBigDecimal()).min(this.capacity)
 			if (action == IFluidHandler.FluidAction.EXECUTE) this.amount = sum
 			val diff = sum - saved
 			return if (diff > BigDecimal.valueOf(Int.MAX_VALUE.toLong())) Int.MAX_VALUE else diff.toInt()
