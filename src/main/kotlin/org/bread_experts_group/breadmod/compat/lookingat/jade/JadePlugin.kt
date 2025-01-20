@@ -1,7 +1,5 @@
 package org.bread_experts_group.breadmod.compat.lookingat.jade
 
-import net.minecraft.resources.ResourceLocation
-import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
@@ -13,15 +11,15 @@ import snownee.jade.api.WailaPlugin
 // MekanismJadePlugin.java !!!
 // todo items, proper fluid, energy provider
 @WailaPlugin
+@Suppress("unused")
 class JadePlugin : IWailaPlugin {
-	companion object {
-		val BLOCK_DATA: ResourceLocation = modLocation("data_provider")
-	}
-
 	override fun registerClient(registration: IWailaClientRegistration) {
-		registration.registerBlockComponent(ExpansibleTankDisplayProvider.INSTANCE, FluidTankJadeBlock::class.java)
-		registration.registerBlockComponent(ExpansibleTankDisplayProvider.INSTANCE, SingleFluidRecipeBlock::class.java)
-		registration.registerBlockComponent(ExpansibleTankDisplayProvider.INSTANCE, FluidEnergyBlock::class.java)
-		registration.registerBlockComponent(ExpansibleTankDisplayProvider.INSTANCE, DoughMachineBlock::class.java)
+		registration.registerBlockComponent(ExpansibleTankDisplayProvider, FluidTankJadeBlock::class.java)
+		registration.registerBlockComponent(ExpansibleTankDisplayProvider, SingleFluidRecipeBlock::class.java)
+		registration.registerBlockComponent(ExpansibleTankDisplayProvider, FluidEnergyBlock::class.java)
+		registration.registerBlockComponent(ExpansibleTankDisplayProvider, DoughMachineBlock::class.java)
+
+		registration.registerBlockComponent(ExpansibleCellDisplayProvider, DoughMachineBlock::class.java)
+		registration.registerBlockComponent(ExpansibleCellDisplayProvider, FluidEnergyBlock::class.java)
 	}
 }

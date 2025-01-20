@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.datagen.lang
 
 import net.minecraft.data.PackOutput
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.compat.lookingat.jade.JadePlugin
 
 @LanguageDataGenerator
 internal class EnglishUSLangProvider(
@@ -15,7 +14,6 @@ internal class EnglishUSLangProvider(
 		if (name == "<null>") otherwise.substringAfterLast('.').joinUnderscoreWithCaps() else name
 
 	override fun addManualTranslations() {
-		this.bmAdd("config.jade.plugin_${JadePlugin.BLOCK_DATA.toLanguageKey()}", "Breadmod jade data provider")
 		this.bmAdd(modTranslatable("tool_gun", "explode", "mode", "name").string, "Explode Mode")
 		this.bmAdd(
 			modTranslatable("tool_gun", "explode", "mode", "description").string,

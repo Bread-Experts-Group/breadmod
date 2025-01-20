@@ -12,6 +12,8 @@ open class ExpansibleEnergyHandler(
 ) : IEnergyStorage {
 	private val cells: MutableList<ExpansibleCell> = cells.toMutableList()
 
+	fun getCell(cell: Int): ExpansibleCell = this.cells[cell]
+
 	class ExpansibleCell(
 		var capacity: BigDecimal? = null,
 		var maxIn: BigDecimal? = null,
