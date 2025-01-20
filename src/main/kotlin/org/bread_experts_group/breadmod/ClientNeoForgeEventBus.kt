@@ -22,7 +22,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModesSided
+import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.render.buffer.chunk.ChunkBuffer
 import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask.machTrailMap
@@ -38,6 +38,7 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
+@Suppress("unused")
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME, value = [Dist.CLIENT])
 internal object ClientNeoForgeEventBus {
 	@SubscribeEvent
@@ -142,7 +143,7 @@ internal object ClientNeoForgeEventBus {
 	// todo FIX PHYSX CRASHING
 	@SubscribeEvent
 	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
-		loadToolGunModesSided()
+		loadToolGunModes()
 //		PhysXTestTool.createPhysX()
 	}
 //

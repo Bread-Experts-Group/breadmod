@@ -1,16 +1,14 @@
-package org.bread_experts_group.breadmod.client.tool_gun.client_modes
+package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.api.IToolGunModeClient
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
 
-abstract class AbstractToolGunModeClient : IToolGunModeClient {
+abstract class AbstractToolGunModeRenderer : IToolGunMode.Renderer {
 	override fun render(
 		stack: ItemStack,
 		displayContext: ItemDisplayContext,
@@ -57,9 +55,5 @@ abstract class AbstractToolGunModeClient : IToolGunModeClient {
 
 	abstract override fun getModeWidget(): ModeWidget
 
-	abstract override fun getDisplayName(): Component
-
 	override fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean = true
-
-	abstract override fun getUid(): ResourceLocation
 }

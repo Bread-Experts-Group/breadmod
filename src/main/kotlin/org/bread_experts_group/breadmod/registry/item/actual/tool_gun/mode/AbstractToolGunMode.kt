@@ -23,6 +23,8 @@ abstract class AbstractToolGunMode : IToolGunMode {
 
 	abstract override fun getUid(): ResourceLocation
 
+	override fun getCustomRenderer(): IToolGunMode.Renderer = EmptyMode.EmptyModeRenderer(this.getUid())
+
 	override fun mouseScrollAction(event: MouseScrollingEvent, stack: ItemStack, player: Player): Boolean = false
 
 	override fun mouseButtonPostAction(event: Post, stack: ItemStack, player: Player) {}

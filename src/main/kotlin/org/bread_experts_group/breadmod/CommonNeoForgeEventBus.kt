@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.server.ServerStartedEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModesSided
+import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
@@ -79,7 +79,7 @@ internal object CommonNeoForgeEventBus {
 
 	@SubscribeEvent
 	fun onServerStarted(event: ServerStartedEvent) {
-		loadToolGunModesSided()
+		loadToolGunModes()
 	}
 
 	@SubscribeEvent

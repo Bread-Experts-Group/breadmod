@@ -8,12 +8,11 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.api.IToolGunModeClient
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderItemModel
 import org.bread_experts_group.breadmod.client.render.transparentColor
-import org.bread_experts_group.breadmod.client.tool_gun.client_modes.EmptyModeClient
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhInstrument
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhSize
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilDelta
@@ -22,6 +21,8 @@ import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlob
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.helper
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.mainModel
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.recoil
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
 import java.lang.Math.clamp
@@ -42,7 +43,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int,
-		currentMode: IToolGunModeClient,
+		currentMode: IToolGunMode,
 		helper: ToolGunRenderHelper
 	) {
 		val deltaTracker = localClient.timer
@@ -54,13 +55,14 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		}
 
 		if (displayContext.firstPerson()) {
+			val modeRenderer = currentMode.getCustomRenderer()
 			poseStack.pushPose()
 			// Main recoil translations
 			// todo improve recoil
 			if (helper.shouldRecoil) poseStack.translate(-clamp(recoil, 0f, 1f), 0f, 0f)
 
 			poseStack.pushPose()
-			currentMode.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			// Render Body Stage
 			if (helper.shouldRenderMainBody) helper.itemRenderer.renderItemModel(
 				mainModel,
@@ -71,7 +73,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				packedOverlay,
 				packedLight
 			)
-			currentMode.renderBodyStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.renderBodyStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			poseStack.popPose()
 			// Render Screen Stage
 			poseStack.pushPose()
@@ -101,11 +103,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					posY = 0.361
 				)
 			}
-			currentMode.renderScreenStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.renderScreenStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			poseStack.popPose()
 			// Render Coil Stage
 			poseStack.pushPose()
-			if (currentMode.shouldCoilSpin(stack, displayContext)) {
+			if (modeRenderer.shouldCoilSpin(stack, displayContext)) {
 				poseStack.mulPose(Axis.XN.rotationDegrees(coilRotation))
 			}
 			if (helper.shouldRenderCoil) helper.itemRenderer.renderItemModel(
@@ -117,7 +119,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				packedOverlay,
 				packedLight
 			)
-			currentMode.renderCoilStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.renderCoilStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			poseStack.popPose()
 			// End Render, pop the final push
 			poseStack.popPose()
@@ -166,7 +168,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val currentMode = ToolGunClientGlobals.currentMode ?: EmptyModeClient()
+		val currentMode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: EmptyMode()
 		this.renderToolGun(
 			stack,
 			displayContext,

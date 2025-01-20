@@ -7,13 +7,12 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.neoforged.neoforge.network.PacketDistributor
+import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.toolGunModesClient
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
@@ -22,8 +21,8 @@ class ToolGunScreen(title: Component) : Screen(title) {
 
 	init {
 		this.modeWidgets.clear()
-		toolGunModesClient.forEach { (_, mode) ->
-			this.modeWidgets.add(mode.getModeWidget())
+		toolGunModes.forEach { (_, mode) ->
+			this.modeWidgets.add(mode.getCustomRenderer().getModeWidget())
 		}
 	}
 
@@ -34,7 +33,6 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	private val modeButton = ModeButton(0, 0) {
 		this.currentModeWidget?.let { widget ->
 			PacketDistributor.sendToServer(ToolGunModeChangePacket(widget.id))
-			ToolGunClientGlobals.currentMode = toolGunModesClient[widget.id]
 		}
 	}
 
