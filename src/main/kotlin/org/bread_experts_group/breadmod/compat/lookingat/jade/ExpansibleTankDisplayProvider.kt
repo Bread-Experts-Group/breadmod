@@ -10,6 +10,7 @@ import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
 import snownee.jade.api.JadeIds
+import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 
 object ExpansibleTankDisplayProvider : IBlockComponentProvider {
@@ -33,4 +34,6 @@ object ExpansibleTankDisplayProvider : IBlockComponentProvider {
 			)
 		}
 	}
+
+	override fun getDefaultPriority(): Int = TooltipPosition.TAIL
 }
