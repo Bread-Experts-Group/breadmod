@@ -116,8 +116,10 @@ object JadeDrawingCommon {
 			val d1 = max(l.toDouble() * 0.5, 3.0)
 			val d2 = sin((Math.PI / 2) * cos((Math.PI * 2) * d0 / d1)) / 2.0 + 0.5
 			val d3 = Mth.lerp(d2, 0.0, l.toDouble())
-			this.fill(minX, minY, maxX, maxY, 0x00FF0080)
-			this.enableScissor(minX + 150, minY, maxX + 150, maxY + 10)
+			val matrix = this.pose().last().pose()
+			val left = matrix.m30().toInt()
+			val top = matrix.m31().toInt()
+			this.enableScissor(left + minX, top + minY, left + maxX, top + maxY)
 			this.drawString(font, text, minX - d3.toInt(), j, color)
 			this.disableScissor()
 		} else {
