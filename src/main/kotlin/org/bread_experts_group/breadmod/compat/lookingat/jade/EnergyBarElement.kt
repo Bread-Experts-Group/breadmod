@@ -3,7 +3,7 @@ package org.bread_experts_group.breadmod.compat.lookingat.jade
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.Direction
-import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.Vec2
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.drawBorder
@@ -25,7 +25,6 @@ class EnergyBarElement(
 	override fun render(guiGraphics: GuiGraphics, x: Float, y: Float, maxX: Float, maxY: Float) {
 		val poseStack = guiGraphics.pose()
 		poseStack.pushPose()
-		// Fluid Box (TODO!)
 		guiGraphics.drawBorder(
 			x, y,
 			x + 80, y + 14
@@ -34,8 +33,8 @@ class EnergyBarElement(
 			guiGraphics,
 			x + 1,
 			y + 1,
-			JadeFluidObject.of(BuiltInRegistries.FLUID.first()),
-			this.cell.capacity?.let { ((this.cell.amount / it).toFloat() * 78) } ?: 78f,
+			JadeFluidObject.of(Fluids.FLOWING_WATER), // TODO; change this to blinker fluid
+			this.cell.capacity?.let { ((this.cell.amount.divide(it)).toFloat() * 78) } ?: 78f,
 			12f,
 			JadeFluidObject.bucketVolume()
 		)

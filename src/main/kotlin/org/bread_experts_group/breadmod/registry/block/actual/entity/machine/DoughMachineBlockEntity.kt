@@ -41,7 +41,7 @@ class DoughMachineBlockEntity(
 	)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		listOf(
-			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(2.205).multiply(BigDecimal.valueOf(10).pow(28)))
+			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(1_000_000))
 		)
 	)
 

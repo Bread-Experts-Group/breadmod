@@ -35,7 +35,7 @@ class FluidBarElement(
 			x + 1,
 			y + 1,
 			JadeFluidObject.of(this.tank.fluid),
-			this.tank.capacity?.let { ((this.tank.amount / it).toFloat() * 78) } ?: 78f,
+			this.tank.capacity?.let { ((this.tank.amount.divide(it)).toFloat() * 78) } ?: 78f,
 			12f,
 			JadeFluidObject.bucketVolume()
 		)

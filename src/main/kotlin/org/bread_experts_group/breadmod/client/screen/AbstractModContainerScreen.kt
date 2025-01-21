@@ -31,10 +31,9 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 	protected fun GuiGraphics.renderEnergyMeter(x: Int, y: Int, w: Int, h: Int, cell: Int? = null) {
 		val energyHandler = (this@AbstractModContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
 		val sap = if (cell == null) energyHandler else energyHandler.getCell(cell)
-		val scaled = sap.maxEnergyStoredDecimal.let {
-			if (it == null) return@let 0
-			((sap.energyStoredDecimal / it).toFloat() * h).toInt()
-		}
+		val scaled = sap.maxEnergyStoredDecimal?.let {
+			((sap.energyStoredDecimal.divide(it)).toFloat() * h).toInt()
+		} ?: 0
 		this.blit(
 			this@AbstractModContainerScreen.baseTexture,
 			this@AbstractModContainerScreen.leftPos + x,

@@ -146,6 +146,8 @@ object JadeDrawingCommon {
 		return maxWidth
 	}
 
+	private val decimalFormatter = java.text.DecimalFormat("0000.00")
+
 	fun fixedLengthNumberedComponent(
 		n: BigDecimal?,
 		offset: Int = 0,
@@ -154,7 +156,7 @@ object JadeDrawingCommon {
 	): Pair<MutableComponent, String> {
 		if (n != null) {
 			val (truncatedAmount, unit) = formatNumberBigDecimal(n, offset)
-			val asString = String.format("%07.2f", truncatedAmount)
+			val asString = this.decimalFormatter.format(truncatedAmount)
 			var zeros = ""
 			for (char in asString) {
 				if (char != '0' && char != '.') break

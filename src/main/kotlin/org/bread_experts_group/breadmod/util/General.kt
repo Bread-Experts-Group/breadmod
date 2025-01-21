@@ -50,11 +50,11 @@ fun formatNumberBigDecimal(
 	var num = n
 	var index = 10 + unitOffset
 	while (num >= unitMax && index < formatArray.size - 1) {
-		num /= unitMax
+		num = num.divide(unitMax)
 		index++
 	}
 	while (num < BigDecimal.ONE && index > 0) {
-		num *= unitMax
+		num = num.multiply(unitMax)
 		index--
 	}
 	return num to formatArray[index]
