@@ -150,7 +150,7 @@ object JadeDrawingCommon {
 		n: BigDecimal?,
 		offset: Int = 0,
 		gray: Style,
-		darkGray: Style
+		offWhite: Style
 	): Pair<MutableComponent, String> {
 		if (n != null) {
 			val (truncatedAmount, unit) = formatNumberBigDecimal(n, offset)
@@ -161,14 +161,32 @@ object JadeDrawingCommon {
 				zeros += char
 			}
 			return Component
-				.literal(zeros).withStyle(darkGray)
-				.append(Component.literal(asString.substring(zeros.length)).withStyle(gray)) to unit
+				.literal(zeros).withStyle(gray)
+				.append(Component.literal(asString.substring(zeros.length)).withStyle(offWhite)) to unit
 		}
 		return Component.literal("∞").withStyle(ChatFormatting.GOLD) to ""
 	}
 
 	private val darkGrayArray = Color(ChatFormatting.DARK_GRAY.color!!).getComponents(null)
 	private val grayArray = Color(ChatFormatting.GRAY.color!!).getComponents(null)
+	private val offWhiteArray = Color(230, 230, 230).getComponents(null)
+	private val savedColors = mutableMapOf<FloatArray, MutableMap<Int, Style>>()
+
+	fun computeColor(
+		tint: Int,
+		color: FloatArray
+	): Style {
+		return this.savedColors.getOrDefault(color, mutableMapOf()).getOrPut(tint) {
+			val tintArray = Color(tint).getComponents(null)
+			Style.EMPTY.withColor(
+				Color(
+					(tintArray[0] * color[0]).toFloat(),
+					(tintArray[1] * color[1]).toFloat(),
+					(tintArray[2] * color[2]).toFloat()
+				).rgb
+			)
+		}
+	}
 
 	fun fixedLengthScrollingComponent(
 		n: BigDecimal,
@@ -177,33 +195,21 @@ object JadeDrawingCommon {
 		offset: Int = 0,
 		tint: Int = Color.WHITE.rgb
 	): MutableComponent {
-		val tintArray = Color(tint).getComponents(null)
-		val tintedDarkGray = Style.EMPTY.withColor(
-			Color(
-				(tintArray[0] * this.darkGrayArray[0]).toFloat(),
-				(tintArray[1] * this.darkGrayArray[1]).toFloat(),
-				(tintArray[2] * this.darkGrayArray[2]).toFloat()
-			).rgb
-		)
-		val tintedGray = Style.EMPTY.withColor(
-			Color(
-				(tintArray[0] * this.grayArray[0]).toFloat(),
-				(tintArray[1] * this.grayArray[1]).toFloat(),
-				(tintArray[2] * this.grayArray[2]).toFloat()
-			).rgb
-		)
+		val tintedDarkGray = this.computeColor(tint, this.darkGrayArray)
+		val tintedGray = this.computeColor(tint, this.grayArray)
+		val tintedOffWhite = this.computeColor(tint, this.offWhiteArray)
 
 		val (truncated, unit) = this.fixedLengthNumberedComponent(
 			n,
 			offset,
 			tintedGray,
-			tintedDarkGray
+			tintedOffWhite
 		)
 		val (truncatedCapacity, unitCapacity) = this.fixedLengthNumberedComponent(
 			cap,
 			offset,
 			tintedGray,
-			tintedDarkGray
+			tintedOffWhite
 		)
 
 		return truncated
