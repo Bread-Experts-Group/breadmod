@@ -5,8 +5,10 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -65,7 +67,8 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 					JadeDrawingCommon.fixedLengthScrollingComponent(
 						sap.energyStoredDecimal,
 						sap.maxEnergyStoredDecimal,
-						"FE"
+						"FE",
+						tint = ChatFormatting.RED.color!!
 					)
 				),
 				mouseX.toInt(), mouseY.toInt()
@@ -116,7 +119,7 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		val fluidHandler = (this@AbstractModContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
 		val tank = fluidHandler.getTank(tank)
 		if (tank.amount > BigDecimal.ZERO) {
-			val percentage = (tank.amount / tank.capacity).toFloat() * h
+			val percentage = tank.capacity?.let { (tank.amount / it).toFloat() * h } ?: 0f
 			this.renderFluid(
 				this@AbstractModContainerScreen.leftPos + x.toFloat(),
 				(this@AbstractModContainerScreen.topPos + y.toFloat()),
@@ -141,17 +144,17 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		if (this@AbstractModContainerScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
 			val fluidHandler = (this@AbstractModContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
 			val tank = fluidHandler.getTank(tank)
+			val tint = IClientFluidTypeExtensions.of(tank.fluid).tintColor
 			this.renderComponentTooltip(
 				this@AbstractModContainerScreen.font,
 				listOf(
 					Component.translatable(tank.fluidType.descriptionId)
-						.withStyle(ChatFormatting.WHITE)
+						.withStyle(Style.EMPTY.withColor(tint))
 						.withStyle(ChatFormatting.ITALIC),
 					JadeDrawingCommon.fixedLengthScrollingComponent(
-						tank.amount,
-						tank.capacity,
-						"B",
-						-1
+						tank.amount, tank.capacity,
+						"B", -1,
+						tint
 					)
 				),
 				mouseX.toInt(), mouseY.toInt()

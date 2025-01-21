@@ -31,15 +31,11 @@ abstract class AbstractTestItemRecipeBlockEntity<
 
 	// todo eventually migrate to using this instead of the vanilla method
 //    val itemHandler = ItemStackHandler(4)
-	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-		super.saveAdditional(tag, registries)
-
+	override fun saveAdditionalBM(tag: CompoundTag, registries: HolderLookup.Provider) {
 		ContainerHelper.saveAllItems(tag, this.itemSlots, registries)
 	}
 
-	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-		super.loadAdditional(tag, registries)
-
+	override fun loadAdditionalBM(tag: CompoundTag, registries: HolderLookup.Provider) {
 		this.itemSlots = NonNullList.withSize(this.slotCount, ItemStack.EMPTY)
 		ContainerHelper.loadAllItems(tag, this.itemSlots, registries)
 	}

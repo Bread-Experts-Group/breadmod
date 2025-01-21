@@ -1,21 +1,20 @@
 package org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import org.bread_experts_group.breadmod.experimental.fluid_tank.CustomFluidTank
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidItemRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import java.util.*
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
+import java.util.Optional
 
 class SingleFluidItemRecipeBlockEntity(
 	pos: BlockPos,
@@ -30,32 +29,21 @@ class SingleFluidItemRecipeBlockEntity(
 	ModBlockEntityTypes.SINGLE_FLUID_ITEM_TEST.get(),
 	ModRecipeTypes.SINGLE_FLUID_ITEM.get(),
 	2
-) {
-	val tank: CustomFluidTank by lazy {
-		object : CustomFluidTank(10000, 2) {
-			override fun onContentsChanged() {
-				this@SingleFluidItemRecipeBlockEntity.syncToClients()
-			}
-		}
-	}
-
-	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-		super.saveAdditional(tag, registries)
-
-		tag.put("fluid", CompoundTag().also { this.tank.writeToNBT(registries, it) })
-	}
-
-	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-		super.loadAdditional(tag, registries)
-
-		this.tank.readFromNBT(registries, tag.getCompound("fluid"))
-	}
+), FluidBearingBlockEntity {
+	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
+		listOf(
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+	)
 
 	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.inputStillValid(
 					this.items[0],
-					this.tank.getFluid(0)
+					this.fluidHandler.getTank(0).asStack
 				)
 			) this.resetRecipe()
 			val recipeTime = activeRecipe.rTime ?: 0
@@ -69,8 +57,8 @@ class SingleFluidItemRecipeBlockEntity(
 				BMRecipeInputs.SingleFluidItem(
 					this.items[0],
 					this.items[0].count,
-					this.tank.getFluid(0),
-					this.tank.getFluid(0).amount, 1
+					this.fluidHandler.getTank(0).asStack,
+					this.fluidHandler.getTank(0).fluidAmount, 1
 				), level
 			)
 
@@ -78,8 +66,7 @@ class SingleFluidItemRecipeBlockEntity(
 				val recipe = present.value
 				val recipeTime = recipe.rTime ?: 0
 				if (!recipe.canFitResults(
-						this.tank,
-						1,
+						this.fluidHandler.getTank(1),
 						this.items,
 						1
 					)
@@ -101,16 +88,15 @@ class SingleFluidItemRecipeBlockEntity(
 			BMRecipeInputs.SingleFluidItem(
 				this.items[0],
 				this.items[0].count,
-				this.tank.getFluid(0),
-				this.tank.getFluid(0).amount, 1
+				this.fluidHandler.getTank(0).asStack,
+				this.fluidHandler.getTank(0).fluidAmount, 1
 			)
 		)
 		if (this.itemSlots[1].isEmpty) this.itemSlots[1] = assemble.second.copyWithCount(recipe.rItemOutput.count)
 		else this.itemSlots[1].grow(recipe.rItemOutput.count)
-		if (this.tank.getFluid(1).isEmpty) this.tank.setFluidInTank(
-			1,
-			assemble.first.copyWithAmount(recipe.rFluidOutput.amount)
-		) else this.tank.getFluid(1).grow(recipe.rFluidOutput.amount)
-		recipe.consumeInputs(this.tank, 0, this.items, 0)
+		if (this.fluidHandler.getTank(1).isEmpty)
+			this.fluidHandler.getTank(1).asStack = assemble.first.copyWithAmount(recipe.rFluidOutput.amount)
+		else this.fluidHandler.getTank(1).asStack.grow(recipe.rFluidOutput.amount)
+		recipe.consumeInputs(this.fluidHandler.getTank(0), this.items, 0)
 	}
 }

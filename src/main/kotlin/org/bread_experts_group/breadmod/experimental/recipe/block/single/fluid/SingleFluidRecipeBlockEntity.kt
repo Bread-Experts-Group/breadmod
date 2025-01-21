@@ -1,21 +1,20 @@
 package org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.HolderLookup
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import org.bread_experts_group.breadmod.experimental.fluid_tank.CustomFluidTank
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import java.util.*
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
+import java.util.Optional
 
 class SingleFluidRecipeBlockEntity(
 	pos: BlockPos,
@@ -28,20 +27,20 @@ class SingleFluidRecipeBlockEntity(
 	state,
 	ModBlockEntityTypes.SINGLE_FLUID_TEST.get(),
 	ModRecipeTypes.SINGLE_FLUID.get()
-) {
-	// todo needs a custom FluidTank impl to allow setting specific tanks
-	val tank: CustomFluidTank by lazy {
-		object : CustomFluidTank(10000, 2) {
-			override fun onContentsChanged() {
-				this@SingleFluidRecipeBlockEntity.syncToClients()
-			}
-		}
-	}
+), FluidBearingBlockEntity {
+	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
+		listOf(
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+			Triple(10000, true, true),
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+	)
 
 	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
-			if (!activeRecipe.inputStillValid(this.tank.getFluidInTank(0))) this.resetRecipe()
-			if (activeRecipe.canFitResults(this.tank, 1)) {
+			if (!activeRecipe.inputStillValid(this.fluidHandler.getFluidInTank(0))) this.resetRecipe()
+			if (activeRecipe.canFitResults(this.fluidHandler.getTank(1))) {
 				val recipeTime = activeRecipe.rTime ?: 0
 				this.progress++
 				if (this.progress >= recipeTime) {
@@ -52,8 +51,8 @@ class SingleFluidRecipeBlockEntity(
 		}, {
 			val check = this.recipeDial.getRecipeFor(
 				BMRecipeInputs.SingleFluid(
-					this.tank.getFluidInTank(0),
-					this.tank.getFluidInTank(0).amount,
+					this.fluidHandler.getFluidInTank(0),
+					this.fluidHandler.getFluidInTank(0).amount,
 					0
 				), level
 			)
@@ -61,7 +60,7 @@ class SingleFluidRecipeBlockEntity(
 			check.ifPresent { present ->
 				val recipe = present.value
 				val recipeTime = recipe.rTime ?: 0
-				if (!recipe.canFitResults(this.tank, 1)) return@ifPresent
+				if (!recipe.canFitResults(this.fluidHandler.getTank(1))) return@ifPresent
 				this.currentRecipe = Optional.of(recipe)
 				this.maxProgress = recipeTime
 			}
@@ -71,28 +70,15 @@ class SingleFluidRecipeBlockEntity(
 	override fun finalizeRecipe(recipe: SingleFluidTestRecipe, level: Level) {
 		val assemble = recipe.assembleFluid(
 			BMRecipeInputs.SingleFluid(
-				this.tank.getFluidInTank(0),
-				this.tank.getFluidInTank(0).amount,
+				this.fluidHandler.getFluidInTank(0),
+				this.fluidHandler.getFluidInTank(0).amount,
 				0
 			)
 		)
-		if (this.tank.getFluidInTank(1).isEmpty) this.tank.setFluidInTank(
-			1,
-			assemble.copyWithAmount(recipe.rFluidOutput.amount)
-		) else this.tank.getFluidInTank(1).amount += recipe.rFluidOutput.amount
-		recipe.consumeInput(this.tank, 0)
-	}
-
-	override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-		super.saveAdditional(tag, registries)
-
-		tag.put("fluid", CompoundTag().also { this.tank.writeToNBT(registries, it) })
-	}
-
-	override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
-		super.loadAdditional(tag, registries)
-
-		this.tank.readFromNBT(registries, tag.getCompound("fluid"))
+		if (this.fluidHandler.getFluidInTank(1).isEmpty) {
+			this.fluidHandler.getTank(1).asStack = assemble.copyWithAmount(recipe.rFluidOutput.amount)
+		} else this.fluidHandler.getFluidInTank(1).amount += recipe.rFluidOutput.amount
+		recipe.consumeInput(this.fluidHandler.getTank(0))
 	}
 
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =

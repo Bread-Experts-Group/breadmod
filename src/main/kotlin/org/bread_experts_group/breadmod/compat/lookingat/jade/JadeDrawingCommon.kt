@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
+import net.minecraft.network.chat.Style
 import net.minecraft.util.Mth
 import net.minecraft.world.inventory.InventoryMenu
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
@@ -145,7 +146,12 @@ object JadeDrawingCommon {
 		return maxWidth
 	}
 
-	fun fixedLengthNumberedComponent(n: BigDecimal?, offset: Int = 0): Pair<MutableComponent, String> {
+	fun fixedLengthNumberedComponent(
+		n: BigDecimal?,
+		offset: Int = 0,
+		gray: Style,
+		darkGray: Style
+	): Pair<MutableComponent, String> {
 		if (n != null) {
 			val (truncatedAmount, unit) = formatNumberBigDecimal(n, offset)
 			val asString = String.format("%07.2f", truncatedAmount)
@@ -155,28 +161,58 @@ object JadeDrawingCommon {
 				zeros += char
 			}
 			return Component
-				.literal(zeros)
-				.withStyle(ChatFormatting.GRAY)
-				.append(Component.literal(asString.substring(zeros.length)).withStyle(ChatFormatting.WHITE)) to unit
+				.literal(zeros).withStyle(darkGray)
+				.append(Component.literal(asString.substring(zeros.length)).withStyle(gray)) to unit
 		}
 		return Component.literal("∞").withStyle(ChatFormatting.GOLD) to ""
 	}
+
+	private val darkGrayArray = Color(ChatFormatting.DARK_GRAY.color!!).getComponents(null)
+	private val grayArray = Color(ChatFormatting.GRAY.color!!).getComponents(null)
 
 	fun fixedLengthScrollingComponent(
 		n: BigDecimal,
 		cap: BigDecimal?,
 		unitName: String,
-		offset: Int = 0
+		offset: Int = 0,
+		tint: Int = Color.WHITE.rgb
 	): MutableComponent {
-		val (truncated, unit) = this.fixedLengthNumberedComponent(n, offset)
-		val (truncatedCapacity, unitCapacity) = this.fixedLengthNumberedComponent(cap, offset)
+		val tintArray = Color(tint).getComponents(null)
+		val tintedDarkGray = Style.EMPTY.withColor(
+			Color(
+				(tintArray[0] * this.darkGrayArray[0]).toFloat(),
+				(tintArray[1] * this.darkGrayArray[1]).toFloat(),
+				(tintArray[2] * this.darkGrayArray[2]).toFloat()
+			).rgb
+		)
+		val tintedGray = Style.EMPTY.withColor(
+			Color(
+				(tintArray[0] * this.grayArray[0]).toFloat(),
+				(tintArray[1] * this.grayArray[1]).toFloat(),
+				(tintArray[2] * this.grayArray[2]).toFloat()
+			).rgb
+		)
+
+		val (truncated, unit) = this.fixedLengthNumberedComponent(
+			n,
+			offset,
+			tintedGray,
+			tintedDarkGray
+		)
+		val (truncatedCapacity, unitCapacity) = this.fixedLengthNumberedComponent(
+			cap,
+			offset,
+			tintedGray,
+			tintedDarkGray
+		)
+
 		return truncated
 			.append(
 				if (unit == unitCapacity) Component.empty()
-				else Component.literal(" ${unit}$unitName").withStyle(ChatFormatting.WHITE)
+				else Component.literal(" ${unit}$unitName").withStyle(tintedGray)
 			)
-			.append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY))
+			.append(Component.literal(" | ").withStyle(tintedDarkGray))
 			.append(truncatedCapacity)
-			.append(Component.literal(" ${unitCapacity}$unitName").withStyle(ChatFormatting.WHITE))
+			.append(Component.literal(" ${unitCapacity}$unitName").withStyle(tintedGray))
 	}
 }

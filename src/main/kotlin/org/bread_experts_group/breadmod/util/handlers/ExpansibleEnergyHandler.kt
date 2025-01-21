@@ -32,11 +32,15 @@ open class ExpansibleEnergyHandler(
 	}
 
 	class ExpansibleCell(
-		var capacity: BigDecimal? = null,
+		capacity: BigDecimal? = null,
 		var maxIn: BigDecimal? = null,
 		var maxOut: BigDecimal? = null,
 		var amount: BigDecimal = BigDecimal.ZERO
 	) : ExpansibleEnergyHolder {
+		var capacity: BigDecimal? = capacity
+			set(value) {
+				field = if (value != null && value <= BigDecimal.ZERO) null else value
+			}
 		override val energyStoredDecimal: BigDecimal
 			get() = this.amount
 		override val maxEnergyStoredDecimal: BigDecimal?
@@ -45,7 +49,7 @@ open class ExpansibleEnergyHandler(
 		fun fill(count: BigDecimal, simulate: Boolean): BigDecimal {
 			val actualCount = if (this.maxIn != null) count.min(this.maxIn) else count
 			val saved = this.amount
-			val sum = (saved + actualCount).min(this.capacity)
+			val sum = (saved + actualCount).let { this.capacity?.let { c -> it.min(c) } ?: it }
 			if (!simulate) this.amount = sum
 			return sum - saved
 		}
@@ -58,13 +62,11 @@ open class ExpansibleEnergyHandler(
 
 	fun receiveEnergyDecimal(count: BigDecimal, simulate: Boolean): BigDecimal {
 		var actualCount = count
-		var sum = BigDecimal.ZERO
 		this.cells.forEachIndexed { cellIndex, cell ->
 			val filled = cell.fill(this.receiveAction(actualCount, simulate, cellIndex) ?: actualCount, simulate)
 			actualCount -= filled
-			filled
 		}
-		return sum
+		return count - actualCount
 	}
 
 	override fun receiveEnergy(count: Int, simulate: Boolean): Int = this.receiveEnergyDecimal(
@@ -79,13 +81,13 @@ open class ExpansibleEnergyHandler(
 	override fun getEnergyStored(): Int = this.energyStoredDecimal.capInt()
 	override fun getMaxEnergyStored(): Int = this.maxEnergyStoredDecimal?.capInt() ?: Int.MAX_VALUE
 	override fun canExtract(): Boolean = this.energyStored > 0
-	override fun canReceive(): Boolean = this.energyStoredDecimal < this.maxEnergyStoredDecimal
+	override fun canReceive(): Boolean = this.maxEnergyStoredDecimal?.let { this.energyStoredDecimal < it } != false
 
 	fun serializeNBT(): CompoundTag = CompoundTag().also { tag ->
 		this.cells.forEachIndexed { index, cell ->
-			tag.put("$index", CompoundTag().also { tankTag ->
-				tankTag.putString("amount", cell.amount.toEngineeringString())
-				tankTag.putString("capacity", cell.amount.toEngineeringString())
+			tag.put("$index", CompoundTag().also { cellTag ->
+				cellTag.putString("amount", cell.amount.toEngineeringString())
+				cell.capacity?.let { cellTag.putString("capacity", it.toEngineeringString()) }
 			})
 		}
 	}
@@ -93,8 +95,11 @@ open class ExpansibleEnergyHandler(
 	fun deserializeNBT(from: CompoundTag) {
 		from.allKeys.forEach {
 			val tank = this.cells[it.toInt()]
-			tank.capacity = BigDecimal(from.getCompound(it).getString("capacity"))
-			tank.amount = BigDecimal(from.getCompound(it).getString("amount"))
+			val thisCompound = from.getCompound(it)
+			tank.capacity =
+				if (thisCompound.contains("capacity")) BigDecimal(thisCompound.getString("capacity"))
+				else null
+			tank.amount = BigDecimal(thisCompound.getString("amount"))
 		}
 	}
 }

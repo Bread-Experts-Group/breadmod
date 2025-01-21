@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.compat.lookingat.jade
 
+import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
@@ -43,7 +44,11 @@ class EnergyBarElement(
 		// Cell Amount
 		guiGraphics.drawScrollingStringBM(
 			localClient.font,
-			fixedLengthScrollingComponent(this.cell.amount, this.cell.capacity, "RF"),
+			fixedLengthScrollingComponent(
+				this.cell.amount, this.cell.capacity,
+				"RF",
+				tint = ChatFormatting.RED.color!!
+			),
 			(x + 2).toInt(),
 			(x + 78).toInt(),
 			y.toInt() + 3,

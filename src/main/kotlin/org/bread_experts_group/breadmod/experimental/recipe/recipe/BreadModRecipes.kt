@@ -10,7 +10,7 @@ import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
-import org.bread_experts_group.breadmod.experimental.fluid_tank.CustomFluidTank
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 
 abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: Int?) : Recipe<T> {
 	override fun matches(input: T, level: Level): Boolean = this.rTime!! >= 0 && this.rEnergy!! >= 0
@@ -32,12 +32,11 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
 		override fun getResultItem(registries: HolderLookup.Provider): ItemStack = ItemStack.EMPTY
 		override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 		fun inputStillValid(fluid: FluidStack): Boolean = this.rFluidInput.test(fluid)
-		fun canFitResults(tank: CustomFluidTank, index: Int): Boolean =
-			tank.getFluidInTank(index).amount < tank.getTankCapacity(index) ||
-					tank.getFluidInTank(index).amount + this.rFluidOutput.amount < tank.getTankCapacity(index)
+		fun canFitResults(tank: ExpansibleFluidHandler.ExpansibleTank): Boolean =
+			tank.amount < tank.capacity || tank.amount + this.rFluidOutput.amount.toBigDecimal() < tank.capacity
 
-		fun consumeInput(tank: CustomFluidTank, index: Int): FluidStack =
-			tank.drainTank(this.rFluidInput.amount(), IFluidHandler.FluidAction.EXECUTE, index)
+		fun consumeInput(tank: ExpansibleFluidHandler.ExpansibleTank): FluidStack =
+			tank.drain(this.rFluidInput.amount(), IFluidHandler.FluidAction.EXECUTE)
 	}
 
 	abstract class SingleItem(
@@ -178,14 +177,17 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
 		fun inputStillValid(item: ItemStack, fluids: FluidStack): Boolean =
 			this.rItemInput.test(item) && this.rFluidInput.test(fluids)
 
-		fun canFitResults(tank: CustomFluidTank, tankIndex: Int, items: List<ItemStack>, itemIndex: Int): Boolean =
-			(tank.getFluidInTank(tankIndex).amount < tank.getTankCapacity(tankIndex) ||
-					tank.getFluidInTank(tankIndex).amount + this.rFluidOutput.amount < tank.getTankCapacity(tankIndex))
+		fun canFitResults(
+			tank: ExpansibleFluidHandler.ExpansibleTank,
+			items: List<ItemStack>,
+			itemIndex: Int
+		): Boolean =
+			tank.amount < tank.capacity || tank.amount + this.rFluidOutput.amount.toBigDecimal() < tank.capacity
 					&& (items[itemIndex].count < items[itemIndex].maxStackSize ||
 					items[itemIndex].count + this.rItemOutput.count < items[itemIndex].maxStackSize)
 
-		fun consumeInputs(fluid: CustomFluidTank, tankIndex: Int, items: List<ItemStack>, itemIndex: Int) {
-			fluid.drainTank(this.rFluidInput.amount(), IFluidHandler.FluidAction.EXECUTE, tankIndex)
+		fun consumeInputs(tank: ExpansibleFluidHandler.ExpansibleTank, items: List<ItemStack>, itemIndex: Int) {
+			tank.drain(this.rFluidInput.amount(), IFluidHandler.FluidAction.EXECUTE)
 			items[itemIndex].shrink(this.rItemInput.count())
 		}
 

@@ -1,19 +1,12 @@
 package org.bread_experts_group.breadmod.client.render
 
-import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.BufferUploader
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.Tesselator
-import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
-import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
@@ -26,26 +19,20 @@ import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FormattedCharSequence
-import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
-import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import org.jetbrains.annotations.ApiStatus.Internal
-import org.joml.Matrix4f
-import org.joml.Vector2f
 import java.awt.Color
-import java.util.*
-import kotlin.math.min
 
 /**
  * Main minecraft instance
@@ -67,57 +54,8 @@ fun GuiGraphics.renderFluid(
 	x: Float, y: Float, width: Int, height: Int,
 	fluid: Fluid, flowing: Boolean, direction: Direction = Direction.NORTH,
 ) {
-	val atlas = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-	val ext = IClientFluidTypeExtensions.of(fluid)
-	val spriteDiff = if (flowing) {
-		val stillWidth = atlas.apply(ext.stillTexture).contents().width().toFloat()
-		atlas.apply(ext.flowingTexture).let {
-			val flowingWidth =
-				it.contents().width(); it to if (flowingWidth > stillWidth) (stillWidth / flowingWidth) else 1F
-		}
-	} else atlas.apply(ext.stillTexture) to 1F
-	val sprite = spriteDiff.first
-	val colors = FloatArray(4).also(Color(ext.tintColor)::getComponents)
-	val matrix4f: Matrix4f = this.pose().last().pose()
-	RenderSystem.setShaderTexture(0, sprite.atlasLocation())
-	RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
-	RenderSystem.enableBlend()
-	val bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR)
-	val pX2 = x + width
-	var remainingFluid = height
-	while (remainingFluid > 0) {
-		// TODO: Make pY the TOP LEFT, instead of BOTTOM LEFT
-		val lpY = (y - remainingFluid)
-		val lpY2 = lpY + min(remainingFluid, width)
-		// N  // E  // S  // W
-		// AB // CA // DC // BD
-		// CD // DB // BA // AC
-		// (pX, lpY2), (pX2, lpY2)
-		// (pX, lpY ), (pX2, lpY )
-		val rotated = listOf(Vector2f(x, lpY), Vector2f(x, lpY2), Vector2f(pX2, lpY2), Vector2f(pX2, lpY)).also {
-			Collections.rotate(
-				it,
-				when (direction) {
-					Direction.EAST -> 1; Direction.SOUTH -> 2; Direction.WEST -> 3; else -> 0
-				}
-			)
-		}
-		val dv1 = (sprite.v1 - sprite.v0)
-		val v1 =
-			if (remainingFluid < width) (sprite.v0 + ((dv1 / width) * remainingFluid))
-			else (sprite.v0 + (dv1 * spriteDiff.second))
-		val u1 = sprite.u0 + ((sprite.u1 - sprite.u0) * spriteDiff.second)
-		fun VertexConsumer.color() = this.setColor(colors[0], colors[1], colors[2], colors[3])
-		rotated[0].let { bufferBuilder.addVertex(matrix4f, it.x, it.y, 0F).color().setUv(u1, v1) }
-		rotated[1].let { bufferBuilder.addVertex(matrix4f, it.x, it.y, 0F).color().setUv(u1, sprite.v0) }
-		rotated[2].let { bufferBuilder.addVertex(matrix4f, it.x, it.y, 0F).color().setUv(sprite.u0, sprite.v0) }
-		rotated[3].let { bufferBuilder.addVertex(matrix4f, it.x, it.y, 0F).color().setUv(sprite.u0, v1) }
-
-		remainingFluid -= width
-	}
-
-	BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
-	RenderSystem.disableBlend()
+	if (fluid.fluidType.isAir || width <= 0 || height <= 0) return
+	// TODO
 }
 
 /**
