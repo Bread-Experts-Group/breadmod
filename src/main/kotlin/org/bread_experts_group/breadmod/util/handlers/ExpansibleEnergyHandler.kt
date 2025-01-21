@@ -2,15 +2,26 @@ package org.bread_experts_group.breadmod.util.handlers
 
 import net.minecraft.nbt.CompoundTag
 import net.neoforged.neoforge.energy.IEnergyStorage
+import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
 import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler.ExpansibleEnergyHolder
 import java.math.BigDecimal
+import kotlin.reflect.full.isSubclassOf
 
 open class ExpansibleEnergyHandler(
 	cells: List<ExpansibleCell>,
 	var receiveAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
 	var extractAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
 ) : IEnergyStorage, ExpansibleEnergyHolder {
+	init {
+		val stackTrace = Thread.currentThread().stackTrace
+		val callingLocation = this::class.java.classLoader.loadClass(stackTrace.first {
+			it.className != this::class.qualifiedName && !it.className.startsWith("java.")
+		}.className)
+		if (!callingLocation.kotlin.isSubclassOf(EnergyBearingBlockEntity::class))
+			throw IllegalStateException("ExpansibleEnergyHandler must be used in an EnergyBearingBlockEntity")
+	}
+
 	private val cells: MutableList<ExpansibleCell> = cells.toMutableList()
 
 	fun getCell(cell: Int): ExpansibleCell = this.cells[cell]
