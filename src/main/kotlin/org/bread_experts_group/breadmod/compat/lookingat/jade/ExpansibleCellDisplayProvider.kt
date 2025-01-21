@@ -24,7 +24,7 @@ object ExpansibleCellDisplayProvider : IBlockComponentProvider {
 				EnergyBarElement(
 					entity.energyHandler.getCell(
 						cell.getIndexForBlockProvider(
-							Capabilities.FluidHandler.BLOCK,
+							Capabilities.EnergyStorage.BLOCK,
 							direction
 						)
 					),
