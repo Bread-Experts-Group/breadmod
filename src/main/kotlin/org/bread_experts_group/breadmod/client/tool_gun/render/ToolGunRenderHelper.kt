@@ -17,14 +17,24 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.joml.Vector3f
 import org.joml.Vector4f
 
+@Suppress("unused")
 class ToolGunRenderHelper(
-	val modelManager: ModelManager = localClient.modelManager,
-	val itemRenderer: ItemRenderer = localClient.itemRenderer,
-	val blockModelRenderer: ModelBlockRenderer = localClient.blockRenderer.modelRenderer,
+	val modelManager: ModelManager,
+	val itemRenderer: ItemRenderer,
+	val blockModelRenderer: ModelBlockRenderer,
 //	val blockRenderDispatcher: BlockRenderDispatcher = localClient.blockRenderer,
 //	val entityRenderDispatcher: EntityRenderDispatcher = localClient.entityRenderDispatcher,
-	val font: Font = localClient.font
+	val font: Font
 ) {
+	companion object {
+		fun init(): ToolGunRenderHelper = ToolGunRenderHelper(
+			localClient.modelManager,
+			localClient.itemRenderer,
+			localClient.blockRenderer.modelRenderer,
+			localClient.font
+		)
+	}
+
 	/**
 	 * Default screen brightness.
 	 */

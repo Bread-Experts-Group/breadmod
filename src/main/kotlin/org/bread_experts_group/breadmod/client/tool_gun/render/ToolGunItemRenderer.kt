@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
@@ -11,17 +12,16 @@ import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderItemModel
 import org.bread_experts_group.breadmod.client.render.transparentColor
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhInstrument
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhSize
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilDelta
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilModel
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilRotation
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.helper
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.mainModel
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.recoil
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
@@ -32,8 +32,19 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
+	private var helper = ToolGunRenderHelper.init()
+
+	// Models
+	@Suppress("unused")
+	private val altModel: BakedModel =
+		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"))
+	private val mainModel: BakedModel =
+		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/item"))
+	private val coilModel: BakedModel =
+		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/coil"))
+
 	override fun onResourceManagerReload(resourceManager: ResourceManager) {
-		helper = ToolGunRenderHelper()
+		this.helper = ToolGunRenderHelper.init()
 	}
 
 	private fun renderToolGun(
@@ -65,7 +76,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			modeRenderer.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			// Render Body Stage
 			if (helper.shouldRenderMainBody) helper.itemRenderer.renderItemModel(
-				mainModel,
+				this.mainModel,
 				stack,
 				displayContext,
 				poseStack,
@@ -111,7 +122,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				poseStack.mulPose(Axis.XN.rotationDegrees(coilRotation))
 			}
 			if (helper.shouldRenderCoil) helper.itemRenderer.renderItemModel(
-				coilModel,
+				this.coilModel,
 				stack,
 				displayContext,
 				poseStack,
@@ -139,8 +150,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		coilSpin: Boolean
 	) {
-		helper.itemRenderer.renderItemModel(
-			mainModel,
+		this.helper.itemRenderer.renderItemModel(
+			this.mainModel,
 			stack,
 			displayContext,
 			poseStack,
@@ -149,8 +160,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			packedLight
 		)
 		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(coilRotation))
-		helper.itemRenderer.renderItemModel(
-			coilModel,
+		this.helper.itemRenderer.renderItemModel(
+			this.coilModel,
 			stack,
 			displayContext,
 			poseStack,
@@ -177,7 +188,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			packedLight,
 			packedOverlay,
 			currentMode,
-			helper
+			this.helper
 		)
 	}
 }
