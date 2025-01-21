@@ -2,8 +2,10 @@ package org.bread_experts_group.breadmod.compat.lookingat.jade
 
 import net.minecraft.core.Direction
 import net.minecraft.resources.ResourceLocation
+import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.FacingSensitiveProviderRetriever
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
@@ -14,11 +16,18 @@ object ExpansibleCellDisplayProvider : IBlockComponentProvider {
 	override fun getUid(): ResourceLocation = modLocation("energy_data_provider")
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		val entity = accessor.blockEntity as? EnergyBearingBlockEntity ?: return
-		tooltip.remove(JadeIds.UNIVERSAL_ENERGY_STORAGE)
-		for (direction: Direction in Direction.entries) {
+		val cell = accessor.blockEntity as? FacingSensitiveProviderRetriever
+		tooltip.remove(JadeIds.ROOT)
+		if (cell == null) tooltip.add(EnergyBarElement(entity.energyHandler.getCell(0), null))
+		else for (direction: Direction in Direction.entries) {
 			tooltip.add(
 				EnergyBarElement(
-					entity.energyHandler.getCell(0),
+					entity.energyHandler.getCell(
+						cell.getIndexForBlockProvider(
+							Capabilities.FluidHandler.BLOCK,
+							direction
+						)
+					),
 					direction
 				)
 			)
