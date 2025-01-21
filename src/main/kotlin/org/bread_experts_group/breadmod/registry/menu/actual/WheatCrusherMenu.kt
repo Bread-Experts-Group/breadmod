@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 class WheatCrusherMenu(
 	id: Int,
 	inventory: Inventory,
-	val parent: WheatCrusherBlockEntity
+	parent: WheatCrusherBlockEntity
 ) : AbstractModContainerMenu<WheatCrusherBlockEntity>(ModMenuTypes.WHEAT_CRUSHER.get(), id, parent) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
@@ -19,13 +19,6 @@ class WheatCrusherMenu(
 
 	val scaledProgress: Int
 		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 48).toInt()
-	val energyStoredScaled: Int
-		get() = this.getEnergyHandler().let {
-			it.maxEnergyStoredDecimal.let { max ->
-				if (max == null) return 47
-				((it.energyStoredDecimal / max).toFloat() * 47).toInt()
-			}
-		}
 
 	fun isCrafting(): Boolean = this.parent.progress > 1
 

@@ -11,7 +11,7 @@ import org.bread_experts_group.breadmod.registry.menu.actual.ResultSlotItemHandl
 class FluidEnergyMenu(
 	id: Int,
 	inventory: Inventory,
-	val parent: FluidEnergyBlockEntity
+	parent: FluidEnergyBlockEntity
 ) : AbstractModContainerMenu<FluidEnergyBlockEntity>(ModMenuTypes.FLUID_ENERGY_TEST.get(), id, parent) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,

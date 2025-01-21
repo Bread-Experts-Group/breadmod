@@ -1,23 +1,20 @@
 package org.bread_experts_group.breadmod.client.screen
 
 import com.mojang.blaze3d.systems.RenderSystem
-import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
-import org.bread_experts_group.breadmod.util.formatUnit
 
 class WheatCrusherScreen(
 	menu: WheatCrusherMenu,
 	inventory: Inventory,
 	title: Component
-) : AbstractContainerScreen<WheatCrusherMenu>(menu, inventory, title) {
+) : AbstractModContainerScreen<WheatCrusherMenu, WheatCrusherBlockEntity>(menu, inventory, title) {
 	private val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
 
 	init {
@@ -32,14 +29,6 @@ class WheatCrusherScreen(
 		RenderSystem.setShaderTexture(0, this.texture)
 
 		guiGraphics.blit(this.texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight)
-
-		ModTextureLocations.ENERGY_METER_16X47.drawProgressiveSpriteVertical(
-			guiGraphics,
-			this.menu.energyStoredScaled,
-			this.leftPos + 151,
-			this.topPos + 14,
-			false
-		)
 		ModTextureLocations.VERTICAL_ARROW_9X48.blitTexture(guiGraphics, this.leftPos + 83, this.topPos + 33)
 	}
 
@@ -47,29 +36,7 @@ class WheatCrusherScreen(
 	private var timer: Int = 20
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
-		val showShort = !(this.minecraft ?: return).options.keyShift.isDown
-		if (this.isHovering(151, 14, 16, 47, mouseX.toDouble(), mouseY.toDouble())) {
-			this.menu.getEnergyHandler().let {
-				guiGraphics.renderComponentTooltip(
-					this.font,
-					listOf(
-						modTranslatable(path = arrayOf("energy"))
-							.withStyle(ChatFormatting.RED)
-							.withStyle(ChatFormatting.ITALIC),
-						Component.literal(
-							formatUnit(
-								it.energyStored,
-								it.maxEnergyStored,
-								"FE",
-								showShort,
-								2
-							)
-						)
-					),
-					mouseX, mouseY
-				)
-			}
-		}
+		guiGraphics.renderEnergyWithTooltip(151, 14, 16, 47, mouseX.toDouble(), mouseY.toDouble())
 		ModTextureLocations.FILLED_VERTICAL_ARROW_9X48.drawProgressiveSpriteVertical(
 			guiGraphics,
 			this.menu.scaledProgress,

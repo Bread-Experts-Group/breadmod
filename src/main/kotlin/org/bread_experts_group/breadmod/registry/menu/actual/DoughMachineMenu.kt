@@ -18,7 +18,7 @@ import kotlin.jvm.optionals.getOrNull
 class DoughMachineMenu(
 	id: Int,
 	inventory: Inventory,
-	val parent: DoughMachineBlockEntity
+	parent: DoughMachineBlockEntity
 ) : AbstractModContainerMenu<DoughMachineBlockEntity>(ModMenuTypes.DOUGH_MACHINE.get(), id, parent) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
@@ -27,13 +27,6 @@ class DoughMachineMenu(
 
 	val scaledProgress: Int
 		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 24).toInt()
-	val energyStoredScaled: Int
-		get() = this.getEnergyHandler().let {
-			it.maxEnergyStoredDecimal.let { max ->
-				if (max == null) return 47
-				((it.energyStoredDecimal / max).toFloat() * 47).toInt()
-			}
-		}
 
 	fun isCrafting(): Boolean = this.parent.progress > 0
 	override val containerSlotCount: Int = 3

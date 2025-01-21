@@ -9,7 +9,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.FacingSensi
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
-import snownee.jade.api.JadeIds
 import snownee.jade.api.config.IPluginConfig
 
 object ExpansibleCellDisplayProvider : IBlockComponentProvider {
@@ -17,7 +16,6 @@ object ExpansibleCellDisplayProvider : IBlockComponentProvider {
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		val entity = accessor.blockEntity as? EnergyBearingBlockEntity ?: return
 		val cell = accessor.blockEntity as? FacingSensitiveProviderRetriever
-		tooltip.remove(JadeIds.ROOT)
 		if (cell == null) tooltip.add(EnergyBarElement(entity.energyHandler.getCell(0), null))
 		else for (direction: Direction in Direction.entries) {
 			tooltip.add(

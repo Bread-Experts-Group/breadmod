@@ -19,11 +19,7 @@ class EnergyBarElement(
 	private val cell: ExpansibleEnergyHandler.ExpansibleCell,
 	private val direction: Direction?
 ) : Element() {
-	companion object {
-		private val defaultSize = Vec2(150f, 14f)
-	}
-
-	override fun getSize(): Vec2 = this.size ?: Companion.defaultSize
+	override fun getSize(): Vec2 = this.size ?: Vec2(150f, 14f)
 
 	override fun render(guiGraphics: GuiGraphics, x: Float, y: Float, maxX: Float, maxY: Float) {
 		val poseStack = guiGraphics.pose()

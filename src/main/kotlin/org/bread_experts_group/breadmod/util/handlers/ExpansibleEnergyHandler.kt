@@ -3,23 +3,34 @@ package org.bread_experts_group.breadmod.util.handlers
 import net.minecraft.nbt.CompoundTag
 import net.neoforged.neoforge.energy.IEnergyStorage
 import org.bread_experts_group.breadmod.util.capInt
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler.ExpansibleEnergyHolder
 import java.math.BigDecimal
 
 open class ExpansibleEnergyHandler(
 	cells: List<ExpansibleCell>,
 	var receiveAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
 	var extractAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
-) : IEnergyStorage {
+) : IEnergyStorage, ExpansibleEnergyHolder {
 	private val cells: MutableList<ExpansibleCell> = cells.toMutableList()
 
 	fun getCell(cell: Int): ExpansibleCell = this.cells[cell]
+
+	interface ExpansibleEnergyHolder {
+		val energyStoredDecimal: BigDecimal
+		val maxEnergyStoredDecimal: BigDecimal?
+	}
 
 	class ExpansibleCell(
 		var capacity: BigDecimal? = null,
 		var maxIn: BigDecimal? = null,
 		var maxOut: BigDecimal? = null,
 		var amount: BigDecimal = BigDecimal.ZERO
-	) {
+	) : ExpansibleEnergyHolder {
+		override val energyStoredDecimal: BigDecimal
+			get() = this.amount
+		override val maxEnergyStoredDecimal: BigDecimal?
+			get() = this.capacity
+
 		fun fill(count: BigDecimal, simulate: Boolean): BigDecimal {
 			val actualCount = if (this.maxIn != null) count.min(this.maxIn) else count
 			val saved = this.amount
@@ -29,9 +40,9 @@ open class ExpansibleEnergyHandler(
 		}
 	}
 
-	val energyStoredDecimal: BigDecimal
+	override val energyStoredDecimal: BigDecimal
 		get() = this.cells.sumOf { it.amount }
-	val maxEnergyStoredDecimal: BigDecimal?
+	override val maxEnergyStoredDecimal: BigDecimal?
 		get() = this.cells.sumOf { it.capacity ?: return null }
 
 	fun receiveEnergyDecimal(count: BigDecimal, simulate: Boolean): BigDecimal {

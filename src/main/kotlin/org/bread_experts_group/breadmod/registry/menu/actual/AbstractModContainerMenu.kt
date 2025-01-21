@@ -6,17 +6,14 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.HorizontalDirectionalBlock
-import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 
 abstract class AbstractModContainerMenu<T : BreadModBlockEntity<T>>(
 	type: MenuType<*>,
 	id: Int,
-	private val parent: BreadModBlockEntity<T>
+	val parent: T
 ) : AbstractContainerMenu(type, id) {
-	fun addInventorySlots(inventory: Inventory, pX: Int, hotBarY: Int, inventoryY: Int) {
+	protected fun addInventorySlots(inventory: Inventory, pX: Int, hotBarY: Int, inventoryY: Int) {
 		repeat(9) { this.addSlot(Slot(inventory, it, 8 + it * 18, hotBarY)) }
 		repeat(3) { y ->
 			repeat(9) { x ->
@@ -31,12 +28,6 @@ abstract class AbstractModContainerMenu<T : BreadModBlockEntity<T>>(
 			}
 		}
 	}
-
-	fun getEnergyHandler(): ExpansibleEnergyHandler = this.parent.level?.getCapability(
-		Capabilities.EnergyStorage.BLOCK,
-		this.parent.blockPos,
-		this.parent.blockState.getValue(HorizontalDirectionalBlock.FACING)
-	) as ExpansibleEnergyHandler
 
 	override fun stillValid(player: Player): Boolean = player.containerMenu == this
 

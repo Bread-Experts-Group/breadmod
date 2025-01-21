@@ -28,23 +28,6 @@ internal val formatArray: List<String> =
 	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
 
 fun BigDecimal.capInt(): Int = if (this > Int.MAX_VALUE.toBigDecimal()) Int.MAX_VALUE else this.toInt()
-fun BigDecimal.capLong(): Long = if (this > Long.MAX_VALUE.toBigDecimal()) Long.MAX_VALUE else this.toLong()
-
-/**
- * Long supporting variant of [formatNumberBigDecimal].
- * @author Miko Elbrecht
- * @see formatNumberBigDecimal
- * @see formatUnitBigDecimal
- */
-fun formatNumber(
-	n: Long,
-	unitOffset: Int = 0,
-	unitMax: Long = 1000
-): Pair<Long, String> = formatNumberBigDecimal(
-	n.toBigDecimal(),
-	unitOffset,
-	unitMax.toBigDecimal()
-).let { (num, unit) -> num.toLong() to unit }
 
 /**
  * Limits a number to 1000, and provides a keyword describing it in a shortened format.
@@ -57,7 +40,6 @@ fun formatNumber(
  * @return A pair containing the limited number and the unit.
  * @author Miko Elbrecht
  * @since 1.0
- * @see formatUnitBigDecimal
  * @see formatArray
  */
 fun formatNumberBigDecimal(
@@ -76,73 +58,6 @@ fun formatNumberBigDecimal(
 		index--
 	}
 	return num to formatArray[index]
-}
-
-/**
- * Integer supporting variant of [formatUnitBigDecimal].
- * @author Miko Elbrecht
- * @see formatUnitBigDecimal
- */
-fun formatUnit(
-	from: Int,
-	to: Int,
-	unit: String,
-	formatShort: Boolean,
-	decimals: Int,
-	unitOffset: Int = 0,
-	unitMax: Int = 1000
-): String = formatUnitBigDecimal(
-	from.toBigDecimal(),
-	to.toBigDecimal(),
-	unit,
-	formatShort,
-	decimals,
-	unitOffset,
-	unitMax.toBigDecimal()
-)
-
-/**
- * Formats a number.
- * @return The formatted number: `"X S / Y S W (Z%)"` assuming X is under Y, otherwise `"Y / X S W (Z%)"`.
- * @param from The number to format.
- * @param to The maximum number (Y).
- * @param unit The label to append at the end (W).
- * @param formatShort If the numbers should be shortened with a unit in [formatNumberBigDecimal] (S).
- * @param decimals The number of decimals to use when representing [from] / [to].
- * @param unitOffset The offset to start at in [formatNumberBigDecimal].
- * (Only applicable in [formatShort]).
- * @param unitMax The maximum number to reach before moving to the next unit in [formatNumberBigDecimal].
- * (Only applicable in [formatShort]).
- * @author Miko Elbrecht
- * @see formatNumberBigDecimal
- */
-fun formatUnitBigDecimal(
-	from: BigDecimal,
-	to: BigDecimal,
-	unit: String,
-	formatShort: Boolean,
-	decimals: Int,
-	unitOffset: Int = 0,
-	unitMax: BigDecimal = BigDecimal.valueOf(1000)
-): String {
-	val formatStr = "%.${decimals}f %s/ %.${decimals}f %s (%.${decimals}f%%)"
-	val percent = (from / to) * BigDecimal.valueOf(100)
-	if (formatShort) {
-		val toFormat = formatNumberBigDecimal(to, unitOffset, unitMax)
-		val fromFormat = formatNumberBigDecimal(from, unitOffset, unitMax)
-		return String.format(
-			formatStr,
-			fromFormat.first, if (toFormat.second != fromFormat.second) "${fromFormat.second}$unit " else "",
-			toFormat.first, toFormat.second + unit,
-			percent
-		)
-	}
-	return String.format(
-		formatStr,
-		from, "",
-		to, unit,
-		percent
-	)
 }
 
 /**
