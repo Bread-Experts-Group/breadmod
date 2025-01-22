@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.client.screen
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
@@ -110,21 +109,18 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		w: Int,
 		h: Int,
 		tank: Int,
-		flowing: Boolean = false,
-		direction: Direction = Direction.SOUTH
+		flowing: Boolean = false
 	) {
 		val fluidHandler = (this@AbstractModContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
 		val tank = fluidHandler.getUnit(tank)
 		if (tank.amount > BigDecimal.ZERO) {
-			val percentage = tank.capacity?.let { (tank.amount / it).toFloat() * h } ?: 0f
 			this.renderFluid(
 				this@AbstractModContainerScreen.leftPos + x.toFloat(),
 				(this@AbstractModContainerScreen.topPos + y.toFloat()),
 				w,
-				percentage.toInt(),
-				tank.fluid,
-				flowing,
-				direction
+				h,
+				tank,
+				flowing
 			)
 		}
 	}

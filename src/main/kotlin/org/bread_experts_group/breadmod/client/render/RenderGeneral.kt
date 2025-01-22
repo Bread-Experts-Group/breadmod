@@ -1,12 +1,18 @@
 package org.bread_experts_group.breadmod.client.render
 
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.BufferUploader
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.blaze3d.vertex.Tesselator
+import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
+import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
@@ -14,11 +20,12 @@ import net.minecraft.client.renderer.block.ModelBlockRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
+import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelResourceLocation
-import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.DyedItemColor
@@ -26,13 +33,19 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.jetbrains.annotations.ApiStatus.Internal
+import org.joml.Matrix4f
+import snownee.jade.overlay.DisplayHelper
 import java.awt.Color
+import java.math.BigDecimal
+import java.util.function.Supplier
 
 /**
  * Main minecraft instance
@@ -49,17 +62,123 @@ val itemColor: ItemColor = ItemColor { stack: ItemStack, i: Int ->
 	if (i > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE.rgb)
 }
 
-// todo it's only showing green in the render area
+fun getFluidSpriteAndTint(fluid: Fluid, flowing: Boolean): Pair<TextureAtlasSprite?, Int> {
+	val handler = IClientFluidTypeExtensions.of(fluid)
+	val fluidSprite = if (flowing) handler.flowingTexture else handler.stillTexture
+	val fluidSpriteApplied = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluidSprite)
+	return fluidSpriteApplied to handler.tintColor
+}
+
+private fun drawTextureWithMasking(
+	matrix: Matrix4f,
+	xCoord: Float,
+	yCoord: Float,
+	textureSprite: TextureAtlasSprite,
+	maskTop: Float,
+	maskRight: Float
+) {
+	val uMin = textureSprite.u0
+	var uMax = textureSprite.u1
+	val vMin = textureSprite.v0
+	var vMax = textureSprite.v1
+	uMax -= maskRight / 16.0f * (uMax - uMin)
+	vMax -= maskTop / 16.0f * (vMax - vMin)
+	val buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX)
+	buffer.addVertex(matrix, xCoord, yCoord + 16.0f, 0f).setUv(uMin, vMax)
+	buffer.addVertex(matrix, xCoord + 16.0f - maskRight, yCoord + 16.0f, 0f).setUv(uMax, vMax)
+	buffer.addVertex(matrix, xCoord + 16.0f - maskRight, yCoord + maskTop, 0f).setUv(uMax, vMin)
+	buffer.addVertex(matrix, xCoord, yCoord + maskTop, 0f).setUv(uMin, vMin)
+	BufferUploader.drawWithShader(buffer.buildOrThrow())
+}
+
+private fun setGLColorFromInt(color: Int) {
+	val red = (color shr 16 and 255).toFloat() / 255.0f
+	val green = (color shr 8 and 255).toFloat() / 255.0f
+	val blue = (color and 255).toFloat() / 255.0f
+	val alpha = (color shr 24 and 255).toFloat() / 255.0f
+	RenderSystem.setShaderColor(red, green, blue, alpha)
+}
+
+fun GuiGraphics.drawTiledSprite(
+	xPosition: Float,
+	yPosition: Float,
+	tiledWidth: Float,
+	tiledHeight: Float,
+	color: Int,
+	scaledAmount: Float,
+	sprite: TextureAtlasSprite
+) {
+	if (tiledWidth == 0.0f || tiledHeight == 0.0f || scaledAmount == 0.0f) return
+	RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS)
+	RenderSystem.setShader(Supplier { GameRenderer.getPositionTexShader() })
+	val matrix = this.pose().last().pose()
+	setGLColorFromInt(color)
+	RenderSystem.enableBlend()
+	val xTileCount = (tiledWidth / 16.0f).toInt()
+	val xRemainder = tiledWidth - (xTileCount * 16).toFloat()
+	val yTileCount = (scaledAmount / 16.0f).toInt()
+	val yRemainder = scaledAmount - (yTileCount * 16).toFloat()
+	val yStart = yPosition + tiledHeight
+
+	for (xTile in 0 .. xTileCount) {
+		for (yTile in 0 .. yTileCount) {
+			val width = if (xTile == xTileCount) xRemainder else 16.0f
+			val height = if (yTile == yTileCount) yRemainder else 16.0f
+			val x = xPosition + (xTile * 16).toFloat()
+			val y = yStart - ((yTile + 1) * 16).toFloat()
+			if (width > 0.0f && height > 0.0f) {
+				val maskTop = 16.0f - height
+				val maskRight = 16.0f - width
+				drawTextureWithMasking(matrix, x, y, sprite, maskTop, maskRight)
+			}
+		}
+	}
+
+	RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+	RenderSystem.disableBlend()
+}
+
 fun GuiGraphics.renderFluid(
 	x: Float, y: Float, width: Int, height: Int,
-	fluid: Fluid, flowing: Boolean, direction: Direction = Direction.NORTH,
+	tank: ExpansibleFluidHandler.ExpansibleTank,
+	flowing: Boolean
 ) {
-	if (fluid.fluidType.isAir || width <= 0 || height <= 0) return
-	// TODO
+	if (tank.fluid.fluidType.isAir
+		|| width <= 0
+		|| height <= 0
+		|| tank.capacity == null
+		|| tank.amount == BigDecimal.ZERO
+	) return
+	var scaledAmount = tank.amount.divide(tank.capacity).toFloat() * height
+	val (sprite, tint) = getFluidSpriteAndTint(tank.fluid, flowing)
+	var color = tint
+	if (sprite == null) {
+		val maxY: Float = y + height
+		if (color == -1) color = -0x55555556
+
+		DisplayHelper.fill(
+			this,
+			x,
+			maxY - scaledAmount.toFloat(),
+			x + width,
+			maxY,
+			color
+		)
+	} else {
+		this.drawTiledSprite(
+			x,
+			y,
+			width.toFloat(),
+			height.toFloat(),
+			color,
+			scaledAmount.toFloat(),
+			sprite
+		)
+	}
 }
 
 /**
- * Fills in a square area with border.
+ * Fills in a square area with a border.
  */
 fun GuiGraphics.borderedFill(
 	renderType: RenderType,
@@ -96,7 +215,7 @@ fun PoseStack.initialTranslate(camera: Camera): Unit =
  */
 fun PoseStack.offsetRenderToCameraPos(pos: Vec3, camera: Camera) {
 	val offset = pos.subtract(camera.position)
-	// the -0.5 is a temp workaround for the render being positioned at the corner instead of centered
+	// the -0.5 is a temp workaround for the render being positioned in the corner instead of centered
 	this.translate(offset.x - 0.5, offset.y, offset.z - 0.5)
 }
 
