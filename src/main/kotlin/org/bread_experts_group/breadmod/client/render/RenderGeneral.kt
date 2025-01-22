@@ -46,6 +46,7 @@ import snownee.jade.overlay.DisplayHelper
 import java.awt.Color
 import java.math.BigDecimal
 import java.util.function.Supplier
+import kotlin.math.min
 
 /**
  * Main minecraft instance
@@ -149,7 +150,7 @@ fun GuiGraphics.renderFluid(
 		|| tank.capacity == null
 		|| tank.amount == BigDecimal.ZERO
 	) return
-	var scaledAmount = tank.amount.divide(tank.capacity).toFloat() * height
+	var scaledAmount = min(tank.amount.divide(tank.capacity).toFloat() * height, height.toFloat())
 	val (sprite, tint) = getFluidSpriteAndTint(tank.fluid, flowing)
 	var color = tint
 	if (sprite == null) {

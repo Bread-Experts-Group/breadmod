@@ -9,9 +9,9 @@ import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
-import org.bread_experts_group.breadmod.registry.block.actual.AbstractTickingBlockWithBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 
-class FluidEnergyBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
+class FluidEnergyBlock : BreadModBlockWithEntity(Properties.of()) {
 	companion object {
 		val CODEC: MapCodec<FluidEnergyBlock> = simpleCodec { FluidEnergyBlock() }
 	}

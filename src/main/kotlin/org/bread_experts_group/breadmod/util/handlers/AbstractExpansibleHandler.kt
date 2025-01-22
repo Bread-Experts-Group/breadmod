@@ -78,6 +78,8 @@ abstract class AbstractExpansibleHandler<T : HandlerSerializable> : HandlerLimit
 	}
 
 	fun deserializeNBT(from: CompoundTag) {
+		// SGI more like
+		// SGay
 		from.allKeys.forEach {
 			val unit = this.units[it.toInt()]
 			val thisCompound = from.getCompound(it)

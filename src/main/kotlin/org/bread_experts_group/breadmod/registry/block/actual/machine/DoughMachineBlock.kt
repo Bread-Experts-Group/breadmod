@@ -13,10 +13,10 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
-import org.bread_experts_group.breadmod.registry.block.actual.AbstractTickingBlockWithBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 
-class DoughMachineBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
+class DoughMachineBlock : BreadModBlockWithEntity(Properties.of()) {
 	companion object {
 		val CODEC: MapCodec<DoughMachineBlock> = simpleCodec { DoughMachineBlock() }
 	}

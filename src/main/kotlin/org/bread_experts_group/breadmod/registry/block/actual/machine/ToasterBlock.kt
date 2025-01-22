@@ -35,11 +35,11 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
-import org.bread_experts_group.breadmod.registry.block.actual.AbstractTickingBlockWithBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 
-class ToasterBlock : AbstractTickingBlockWithBlockEntity(
+class ToasterBlock : BreadModBlockWithEntity(
 	Properties.of()
 		.strength(1f, 1.0f)
 		.mapColor(MapColor.TERRACOTTA_WHITE)
@@ -99,7 +99,7 @@ class ToasterBlock : AbstractTickingBlockWithBlockEntity(
 		return sidedSuccess(level.isClientSide)
 	}
 
-	override fun useItemOn(
+	override fun useItemOnBM(
 		stack: ItemStack,
 		state: BlockState,
 		level: Level,

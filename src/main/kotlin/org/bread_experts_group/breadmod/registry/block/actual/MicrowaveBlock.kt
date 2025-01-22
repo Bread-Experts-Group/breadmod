@@ -10,13 +10,10 @@ import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource.BLOCKS
-import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.InteractionResult.FAIL
 import net.minecraft.world.InteractionResult.sidedSuccess
-import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -37,7 +34,7 @@ import org.bread_experts_group.breadmod.util.normalizeHitLoc
 import org.bread_experts_group.breadmod.util.targetFaceSection
 import java.util.stream.Stream
 
-class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
+class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 	private companion object {
 		val HORIZONTAL_FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
 		val OPEN: BooleanProperty = BlockStateProperties.OPEN
@@ -190,22 +187,6 @@ class MicrowaveBlock : AbstractTickingBlockWithBlockEntity(Properties.of()) {
 			}
 		}
 		return 0
-	}
-
-	override fun useItemOn(
-		stack: ItemStack,
-		state: BlockState,
-		level: Level,
-		pos: BlockPos,
-		player: Player,
-		hand: InteractionHand,
-		hitResult: BlockHitResult
-	): ItemInteractionResult {
-		return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
-	}
-
-	override fun getLightEmission(state: BlockState, level: BlockGetter, pos: BlockPos): Int {
-		return super.getLightEmission(state, level, pos)
 	}
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
