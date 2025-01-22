@@ -53,17 +53,20 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 		this.setup()
 		super.saveAdditional(tag, registries)
 		if (this is ItemBearingBlockEntity) tag.put("bm_be_items", this.itemHandler.serializeNBT(registries))
-		if (this is FluidBearingBlockEntity) tag.put("bm_be_fluids", this.fluidHandler.serializeNBT())
-		if (this is EnergyBearingBlockEntity) tag.put("bm_be_energy", this.energyHandler.serializeNBT())
+		if (this is FluidBearingBlockEntity) tag.put("bm_be_fluids", this.fluidHandler.serializeNBT(registries))
+		if (this is EnergyBearingBlockEntity) tag.put("bm_be_energy", this.energyHandler.serializeNBT(registries))
 		this.saveAdditionalBM(tag, registries)
 	}
 
 	final override fun loadAdditional(tag: CompoundTag, registries: Provider) {
 		this.setup()
 		super.loadAdditional(tag, registries)
-		if (this is ItemBearingBlockEntity) this.itemHandler.deserializeNBT(registries, tag.getCompound("bm_be_items"))
-		if (this is FluidBearingBlockEntity) this.fluidHandler.deserializeNBT(tag.getCompound("bm_be_fluids"))
-		if (this is EnergyBearingBlockEntity) this.energyHandler.deserializeNBT(tag.getCompound("bm_be_energy"))
+		if (this is ItemBearingBlockEntity)
+			this.itemHandler.deserializeNBT(registries, tag.getCompound("bm_be_items"))
+		if (this is FluidBearingBlockEntity)
+			this.fluidHandler.deserializeNBT(registries, tag.getCompound("bm_be_fluids"))
+		if (this is EnergyBearingBlockEntity)
+			this.energyHandler.deserializeNBT(registries, tag.getCompound("bm_be_energy"))
 		this.loadAdditionalBM(tag, registries)
 	}
 

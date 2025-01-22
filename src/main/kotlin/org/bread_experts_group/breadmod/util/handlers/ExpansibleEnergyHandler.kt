@@ -6,7 +6,7 @@ import org.bread_experts_group.breadmod.util.capInt
 import java.math.BigDecimal
 import kotlin.reflect.full.isSubclassOf
 
-open class ExpansibleEnergyHandler(
+class ExpansibleEnergyHandler(
 	override val units: MutableList<ExpansibleCell>
 ) : AbstractExpansibleHandler<ExpansibleEnergyHandler.ExpansibleCell>(), IEnergyStorage {
 	init {

@@ -16,7 +16,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearing
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
-import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 import java.util.Optional
 
 class FluidEnergyBlockEntity(
@@ -28,7 +28,7 @@ class FluidEnergyBlockEntity(
 	state,
 	ModRecipeTypes.FLUID_ENERGY_TEST.get()
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity {
-	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(8)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(8)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
 			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),

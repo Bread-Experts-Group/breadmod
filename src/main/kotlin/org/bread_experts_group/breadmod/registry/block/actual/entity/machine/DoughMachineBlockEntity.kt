@@ -21,7 +21,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecip
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
-import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 
 class DoughMachineBlockEntity(
 	pos: BlockPos, state: BlockState
@@ -31,7 +31,7 @@ class DoughMachineBlockEntity(
 	state,
 	ModRecipeTypes.DOUGH_MACHINE.get()
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity, EnergyBearingBlockEntity {
-	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(3)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(3)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
 			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),

@@ -57,7 +57,7 @@ class ItemInWorldRenderer(private val ctx: Context) : BlockEntityRenderer<ItemIn
 				poseStack.translate(-2f, 0f, -2f)
 			}
 		}
-		when (entity.itemHandler.filledSlots()) {
+		when (entity.itemHandler.filledSlots) {
 			1 -> {
 				this.renderItem(
 					entity.getItem(0), packedLight, packedOverlay, poseStack, bufferSource, entity
@@ -139,5 +139,5 @@ class ItemInWorldRenderer(private val ctx: Context) : BlockEntityRenderer<ItemIn
 	}
 
 	override fun shouldRender(entity: ItemInWorldBlockEntity, cameraPos: Vec3): Boolean =
-		super.shouldRender(entity, cameraPos) && entity.itemHandler.isNotEmpty()
+		super.shouldRender(entity, cameraPos) && !entity.itemHandler.isEmpty
 }

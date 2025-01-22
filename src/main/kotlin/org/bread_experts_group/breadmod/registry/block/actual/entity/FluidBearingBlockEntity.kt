@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
+import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
@@ -22,11 +23,11 @@ interface FluidBearingBlockEntity {
 		it.amount = stack.amount.toBigDecimal()
 	}
 
-	fun serializeFluidsNBT(to: CompoundTag): Unit = CompoundTag().let {
-		to.put(this::class.simpleName + "_fluids", this.fluidHandler.serializeNBT())
+	fun serializeFluidsNBT(registries: HolderLookup.Provider, to: CompoundTag): Unit = CompoundTag().let {
+		to.put(this::class.simpleName + "_fluids", this.fluidHandler.serializeNBT(registries))
 	}
 
-	fun deserializeFluidsNBT(from: CompoundTag) {
-		this.fluidHandler.deserializeNBT(from.getCompound(this::class.simpleName + "_fluids"))
+	fun deserializeFluidsNBT(registries: HolderLookup.Provider, from: CompoundTag) {
+		this.fluidHandler.deserializeNBT(registries, from.getCompound(this::class.simpleName + "_fluids"))
 	}
 }

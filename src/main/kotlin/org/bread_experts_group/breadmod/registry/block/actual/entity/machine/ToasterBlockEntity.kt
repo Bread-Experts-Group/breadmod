@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearing
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
-import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 import java.util.Optional
 
 class ToasterBlockEntity(
@@ -27,7 +27,7 @@ class ToasterBlockEntity(
 	state,
 	ModRecipeTypes.TOASTING.get()
 ), ItemBearingBlockEntity {
-	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(1)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1)
 
 	override fun commonTick(
 		clientLevel: Level,

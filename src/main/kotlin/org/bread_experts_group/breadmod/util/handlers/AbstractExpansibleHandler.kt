@@ -1,9 +1,10 @@
 package org.bread_experts_group.breadmod.util.handlers
 
+import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import java.math.BigDecimal
 
-abstract class AbstractExpansibleHandler<T : HandlerSerializable> : HandlerLimits, HandlerListener {
+abstract class AbstractExpansibleHandler<T : HandlerSerializable> : HandlerSerializable, HandlerListener {
 	protected open val units: MutableList<T> = mutableListOf()
 	override var receiveAction: ListenerHandler = { _, _, _, _ -> null }
 	override var extractAction: ListenerHandler = { _, _, _, _ -> null }
@@ -67,23 +68,23 @@ abstract class AbstractExpansibleHandler<T : HandlerSerializable> : HandlerLimit
 		return count - actualCount to additional
 	}
 
-	fun serializeNBT(): CompoundTag = CompoundTag().also { tag ->
+	override fun serializeNBT(registies: HolderLookup.Provider): CompoundTag = CompoundTag().also { tag ->
 		this.units.forEachIndexed { index, unit ->
 			tag.put("$index", CompoundTag().also { unitTag ->
-				unitTag.put("additional", unit.serializeNBT())
+				unitTag.put("additional", unit.serializeNBT(registies))
 				unitTag.putString("amount", unit.amount.toEngineeringString())
 				unit.capacity?.let { unitTag.putString("capacity", it.toEngineeringString()) }
 			})
 		}
 	}
 
-	fun deserializeNBT(from: CompoundTag) {
+	override fun deserializeNBT(registries: HolderLookup.Provider, from: CompoundTag) {
 		// SGI more like
 		// SGay
 		from.allKeys.forEach {
 			val unit = this.units[it.toInt()]
 			val thisCompound = from.getCompound(it)
-			unit.deserializeNBT(thisCompound.getCompound("additional"))
+			unit.deserializeNBT(registries, thisCompound.getCompound("additional"))
 			unit.capacity =
 				if (thisCompound.contains("capacity")) BigDecimal(thisCompound.getString("capacity"))
 				else null

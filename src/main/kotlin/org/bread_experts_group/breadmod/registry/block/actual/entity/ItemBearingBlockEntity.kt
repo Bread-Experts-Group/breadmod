@@ -10,11 +10,11 @@ import net.minecraft.world.WorldlyContainer
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 
 @Suppress("unused")
 interface ItemBearingBlockEntity : WorldlyContainer {
-	val itemHandler: ExtendedItemStackHandler
+	val itemHandler: ExpansibleItemHandler
 
 	fun dropContents(level: Level, position: BlockPos) {
 		val list = NonNullList.createWithCapacity<ItemStack>(this.itemHandler.slots)
@@ -26,7 +26,7 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 	}
 
 	override fun getContainerSize(): Int = this.itemHandler.slots
-	override fun isEmpty(): Boolean = this.itemHandler.isEmpty()
+	override fun isEmpty(): Boolean = this.itemHandler.isEmpty
 	override fun removeItem(slot: Int, count: Int): ItemStack = this.itemHandler.extractItem(slot, count, false)
 	override fun removeItemNoUpdate(slot: Int): ItemStack = this.itemHandler.extractItem(
 		slot,
@@ -41,7 +41,7 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 	override fun canTakeItemThroughFace(slot: Int, stack: ItemStack, facing: Direction): Boolean = true
 
 	override fun clearContent() {
-		if (this.itemHandler.isNotEmpty())
+		if (!this.itemHandler.isEmpty)
 			repeat(this.itemHandler.slots) { this.itemHandler.setStackInSlot(it, ItemStack.EMPTY) }
 	}
 
@@ -55,7 +55,7 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 
 	override fun getItem(slot: Int): ItemStack = this.itemHandler.getStackInSlot(slot)
 	override fun setItem(slot: Int, stack: ItemStack) {
-		if (this.itemHandler.emptySlots() > 0) this.itemHandler.setStackInSlot(slot, stack)
+		if (!this.itemHandler.isEmpty) this.itemHandler.setStackInSlot(slot, stack)
 	}
 
 	fun serializeItemsNBT(to: CompoundTag, registries: Provider) {
