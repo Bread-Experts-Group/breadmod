@@ -5,14 +5,17 @@ import net.neoforged.neoforge.energy.IEnergyStorage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
 import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler.ExpansibleEnergyHolder
+import org.bread_experts_group.breadmod.util.handlers.HandlerCommon.calculateAndSave
 import java.math.BigDecimal
 import kotlin.reflect.full.isSubclassOf
 
 open class ExpansibleEnergyHandler(
 	cells: List<ExpansibleCell>,
-	var receiveAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
-	var extractAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? = { _, _, _ -> null },
-) : IEnergyStorage, ExpansibleEnergyHolder {
+	override var receiveAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? =
+		{ _, _, _ -> null },
+	override var extractAction: (count: BigDecimal, simulate: Boolean, cellIndex: Int) -> BigDecimal? =
+		{ _, _, _ -> null },
+) : IEnergyStorage, ExpansibleEnergyHolder, HandlerListener {
 	init {
 		val stackTrace = Thread.currentThread().stackTrace
 		val callingLocation = this::class.java.classLoader.loadClass(stackTrace.first {
@@ -33,11 +36,11 @@ open class ExpansibleEnergyHandler(
 
 	class ExpansibleCell(
 		capacity: BigDecimal? = null,
-		var maxIn: BigDecimal? = null,
-		var maxOut: BigDecimal? = null,
-		var amount: BigDecimal = BigDecimal.ZERO
-	) : ExpansibleEnergyHolder {
-		var capacity: BigDecimal? = capacity
+		override var maxIn: BigDecimal? = null,
+		override var maxOut: BigDecimal? = null,
+		override var amount: BigDecimal = BigDecimal.ZERO
+	) : ExpansibleEnergyHolder, HandlerLimits {
+		override var capacity: BigDecimal? = capacity
 			set(value) {
 				field = if (value != null && value <= BigDecimal.ZERO) null else value
 			}
@@ -46,13 +49,7 @@ open class ExpansibleEnergyHandler(
 		override val maxEnergyStoredDecimal: BigDecimal?
 			get() = this.capacity
 
-		fun fill(count: BigDecimal, simulate: Boolean): BigDecimal {
-			val actualCount = if (this.maxIn != null) count.min(this.maxIn) else count
-			val saved = this.amount
-			val sum = (saved + actualCount).let { this.capacity?.let { c -> it.min(c) } ?: it }
-			if (!simulate) this.amount = sum
-			return sum - saved
-		}
+		fun fillDecimal(count: BigDecimal, simulate: Boolean): BigDecimal = this.calculateAndSave(count, simulate)
 	}
 
 	override val energyStoredDecimal: BigDecimal
@@ -62,9 +59,15 @@ open class ExpansibleEnergyHandler(
 
 	fun receiveEnergyDecimal(count: BigDecimal, simulate: Boolean): BigDecimal {
 		var actualCount = count
-		this.cells.forEachIndexed { cellIndex, cell ->
-			val filled = cell.fill(this.receiveAction(actualCount, simulate, cellIndex) ?: actualCount, simulate)
+		for (cellIndex in this.cells.indices) {
+			val cell = this.cells[cellIndex]
+			if (cell.maxIn == BigDecimal.ZERO) continue
+			val filled = cell.fillDecimal(
+				this.receiveAction(actualCount, simulate, cellIndex) ?: actualCount,
+				simulate
+			)
 			actualCount -= filled
+			if (actualCount == BigDecimal.ZERO) break
 		}
 		return count - actualCount
 	}

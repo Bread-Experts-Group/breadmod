@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import java.math.BigDecimal
 
 /**
@@ -36,15 +35,12 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	private fun setup() {
 		if (this.setupState) return
 		this.setupState = true
+		val update: (BigDecimal, Boolean, Int) -> BigDecimal? = { _, s, _ -> if (!s) this.updateClients(); null }
 		if (this is FluidBearingBlockEntity) {
-			val update: (BigDecimal, IFluidHandler.FluidAction, Int) -> BigDecimal? =
-				{ _, s, _ -> if (s == IFluidHandler.FluidAction.EXECUTE) this.updateClients(); null }
 			this.fluidHandler.receiveAction = update
 			this.fluidHandler.extractAction = update
 		}
 		if (this is EnergyBearingBlockEntity) {
-			val update: (BigDecimal, Boolean, Int) -> BigDecimal? =
-				{ _, s, _ -> if (!s) this.updateClients(); null }
 			this.energyHandler.receiveAction = update
 			this.energyHandler.extractAction = update
 		}
