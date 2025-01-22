@@ -34,7 +34,7 @@ class MultiFluidRecipeBlockEntity(
 			Triple(10000, true, true),
 			Triple(10000, true, true),
 			Triple(10000, true, true),
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
 	)
 
 	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
@@ -90,7 +90,7 @@ class MultiFluidRecipeBlockEntity(
 		// If it doesn't, then something seriously went wrong...
 		if (this.getFluid(2).isEmpty) {
 			val stack = assemble[0].copyWithAmount(recipe.rFluidOutputs[0].amount)
-			this.fluidHandler.getTank(2).let {
+			this.fluidHandler.getUnit(2).let {
 				it.fluid = stack.fluid
 				it.amount = stack.amount.toBigDecimal()
 			}
@@ -98,7 +98,7 @@ class MultiFluidRecipeBlockEntity(
 		try {
 			if (this.getFluid(3).isEmpty) {
 				val stack = assemble[1].copyWithAmount(recipe.rFluidOutputs[1].amount)
-				this.fluidHandler.getTank(3).let {
+				this.fluidHandler.getUnit(3).let {
 					it.fluid = stack.fluid
 					it.amount = stack.amount.toBigDecimal()
 				}

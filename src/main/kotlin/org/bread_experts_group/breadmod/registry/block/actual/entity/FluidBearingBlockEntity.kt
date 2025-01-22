@@ -17,7 +17,7 @@ interface FluidBearingBlockEntity {
 	}
 
 	fun getFluid(tank: Int): FluidStack = this.fluidHandler.getFluidInTank(tank)
-	fun setFluid(tank: Int, stack: FluidStack): Unit = this.fluidHandler.getTank(tank).let {
+	fun setFluid(tank: Int, stack: FluidStack): Unit = this.fluidHandler.getUnit(tank).let {
 		it.fluid = stack.fluid
 		it.amount = stack.amount.toBigDecimal()
 	}

@@ -20,13 +20,13 @@ object ExpansibleCellDisplayProvider : IBlockComponentProvider {
 		val sides = accessor.blockEntity as? FacingSensitiveProviderRetriever
 		tooltip.remove(JadeIds.UNIVERSAL_ENERGY_STORAGE)
 		if (sides == null) {
-			for (cellIndex in 0 ..< entity.energyHandler.getCells()) {
-				tooltip.add(EnergyBarElement(entity.energyHandler.getCell(cellIndex), null))
+			for (cellIndex in 0 ..< entity.energyHandler.getUnits()) {
+				tooltip.add(EnergyBarElement(entity.energyHandler.getUnit(cellIndex), null))
 			}
 		} else {
 			for (direction: Direction in Direction.entries) {
 				val cellIndex = sides.getIndexForBlockProvider(Capabilities.EnergyStorage.BLOCK, direction)
-				if (cellIndex > 0) tooltip.add(EnergyBarElement(entity.energyHandler.getCell(cellIndex), direction))
+				if (cellIndex > 0) tooltip.add(EnergyBarElement(entity.energyHandler.getUnit(cellIndex), direction))
 			}
 		}
 	}

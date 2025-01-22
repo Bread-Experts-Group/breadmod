@@ -36,14 +36,14 @@ class SingleFluidItemRecipeBlockEntity(
 			Triple(10000, true, true),
 			Triple(10000, true, true),
 			Triple(10000, true, true),
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
 	)
 
 	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.inputStillValid(
 					this.items[0],
-					this.fluidHandler.getTank(0).asStack
+					this.fluidHandler.getUnit(0).asStack
 				)
 			) this.resetRecipe()
 			val recipeTime = activeRecipe.rTime ?: 0
@@ -57,8 +57,8 @@ class SingleFluidItemRecipeBlockEntity(
 				BMRecipeInputs.SingleFluidItem(
 					this.items[0],
 					this.items[0].count,
-					this.fluidHandler.getTank(0).asStack,
-					this.fluidHandler.getTank(0).fluidAmount, 1
+					this.fluidHandler.getUnit(0).asStack,
+					this.fluidHandler.getUnit(0).fluidAmount, 1
 				), level
 			)
 
@@ -66,7 +66,7 @@ class SingleFluidItemRecipeBlockEntity(
 				val recipe = present.value
 				val recipeTime = recipe.rTime ?: 0
 				if (!recipe.canFitResults(
-						this.fluidHandler.getTank(1),
+						this.fluidHandler.getUnit(1),
 						this.items,
 						1
 					)
@@ -88,15 +88,15 @@ class SingleFluidItemRecipeBlockEntity(
 			BMRecipeInputs.SingleFluidItem(
 				this.items[0],
 				this.items[0].count,
-				this.fluidHandler.getTank(0).asStack,
-				this.fluidHandler.getTank(0).fluidAmount, 1
+				this.fluidHandler.getUnit(0).asStack,
+				this.fluidHandler.getUnit(0).fluidAmount, 1
 			)
 		)
 		if (this.itemSlots[1].isEmpty) this.itemSlots[1] = assemble.second.copyWithCount(recipe.rItemOutput.count)
 		else this.itemSlots[1].grow(recipe.rItemOutput.count)
-		if (this.fluidHandler.getTank(1).isEmpty)
-			this.fluidHandler.getTank(1).asStack = assemble.first.copyWithAmount(recipe.rFluidOutput.amount)
-		else this.fluidHandler.getTank(1).asStack.grow(recipe.rFluidOutput.amount)
-		recipe.consumeInputs(this.fluidHandler.getTank(0), this.items, 0)
+		if (this.fluidHandler.getUnit(1).isEmpty)
+			this.fluidHandler.getUnit(1).asStack = assemble.first.copyWithAmount(recipe.rFluidOutput.amount)
+		else this.fluidHandler.getUnit(1).asStack.grow(recipe.rFluidOutput.amount)
+		recipe.consumeInputs(this.fluidHandler.getUnit(0), this.items, 0)
 	}
 }

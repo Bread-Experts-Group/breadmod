@@ -37,10 +37,10 @@ class DoughMachineBlockEntity(
 		listOf(
 			Triple(10000, true, false),
 			Triple(10000, false, true),
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
 	)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
-		listOf(
+		mutableListOf(
 			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(1_000_000))
 		)
 	)

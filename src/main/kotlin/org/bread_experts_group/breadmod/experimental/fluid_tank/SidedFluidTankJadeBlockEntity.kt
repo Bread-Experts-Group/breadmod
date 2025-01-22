@@ -24,7 +24,7 @@ class SidedFluidTankJadeBlockEntity(
 			Triple(10000, true, true),
 			Triple(10000, true, true),
 			Triple(10000, true, true)
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
 	)
 
 	override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =

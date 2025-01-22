@@ -34,13 +34,13 @@ class SingleFluidRecipeBlockEntity(
 			Triple(10000, true, true),
 			Triple(10000, true, true),
 			Triple(10000, true, true),
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
 	)
 
 	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.inputStillValid(this.fluidHandler.getFluidInTank(0))) this.resetRecipe()
-			if (activeRecipe.canFitResults(this.fluidHandler.getTank(1))) {
+			if (activeRecipe.canFitResults(this.fluidHandler.getUnit(1))) {
 				val recipeTime = activeRecipe.rTime ?: 0
 				this.progress++
 				if (this.progress >= recipeTime) {
@@ -60,7 +60,7 @@ class SingleFluidRecipeBlockEntity(
 			check.ifPresent { present ->
 				val recipe = present.value
 				val recipeTime = recipe.rTime ?: 0
-				if (!recipe.canFitResults(this.fluidHandler.getTank(1))) return@ifPresent
+				if (!recipe.canFitResults(this.fluidHandler.getUnit(1))) return@ifPresent
 				this.currentRecipe = Optional.of(recipe)
 				this.maxProgress = recipeTime
 			}
@@ -76,9 +76,9 @@ class SingleFluidRecipeBlockEntity(
 			)
 		)
 		if (this.fluidHandler.getFluidInTank(1).isEmpty) {
-			this.fluidHandler.getTank(1).asStack = assemble.copyWithAmount(recipe.rFluidOutput.amount)
+			this.fluidHandler.getUnit(1).asStack = assemble.copyWithAmount(recipe.rFluidOutput.amount)
 		} else this.fluidHandler.getFluidInTank(1).amount += recipe.rFluidOutput.amount
-		recipe.consumeInput(this.fluidHandler.getTank(0))
+		recipe.consumeInput(this.fluidHandler.getUnit(0))
 	}
 
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =

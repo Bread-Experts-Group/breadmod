@@ -20,13 +20,13 @@ object ExpansibleTankDisplayProvider : IBlockComponentProvider {
 		val sides = accessor.blockEntity as? FacingSensitiveProviderRetriever
 		tooltip.remove(JadeIds.UNIVERSAL_FLUID_STORAGE)
 		if (sides == null) {
-			for (tankIndex in 0 ..< entity.fluidHandler.getTanks()) {
-				tooltip.add(FluidBarElement(entity.fluidHandler.getTank(tankIndex), null))
+			for (tankIndex in 0 ..< entity.fluidHandler.getUnits()) {
+				tooltip.add(FluidBarElement(entity.fluidHandler.getUnit(tankIndex), null))
 			}
 		} else {
 			for (direction: Direction in Direction.entries) {
 				val tankIndex = sides.getIndexForBlockProvider(Capabilities.FluidHandler.BLOCK, direction)
-				if (tankIndex > 0) tooltip.add(FluidBarElement(entity.fluidHandler.getTank(tankIndex), direction))
+				if (tankIndex > 0) tooltip.add(FluidBarElement(entity.fluidHandler.getUnit(tankIndex), direction))
 			}
 		}
 	}

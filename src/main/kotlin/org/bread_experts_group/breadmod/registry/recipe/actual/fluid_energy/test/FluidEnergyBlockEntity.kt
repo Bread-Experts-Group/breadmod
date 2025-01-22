@@ -35,7 +35,7 @@ class FluidEnergyBlockEntity(
 			Triple(10000, true, false),
 			Triple(10000, false, true),
 			Triple(10000, false, true)
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }
+		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
 	)
 
 	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level) {

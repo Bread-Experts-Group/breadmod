@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import java.math.BigDecimal
+import org.bread_experts_group.breadmod.util.handlers.ListenerHandler
 
 /**
  * An "All In One" [BlockEntity].
@@ -35,7 +35,7 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	private fun setup() {
 		if (this.setupState) return
 		this.setupState = true
-		val update: (BigDecimal, Boolean, Int) -> BigDecimal? = { _, s, _ -> if (!s) this.updateClients(); null }
+		val update: ListenerHandler = { _, s, _, _ -> if (!s) this.updateClients(); null }
 		if (this is FluidBearingBlockEntity) {
 			this.fluidHandler.receiveAction = update
 			this.fluidHandler.extractAction = update

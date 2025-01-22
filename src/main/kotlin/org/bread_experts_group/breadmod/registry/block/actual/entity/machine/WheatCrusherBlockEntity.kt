@@ -35,7 +35,7 @@ class WheatCrusherBlockEntity(
 ), MenuProvider, ItemBearingBlockEntity, EnergyBearingBlockEntity {
 	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(2)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
-		listOf(
+		mutableListOf(
 			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(100000))
 		)
 	)
