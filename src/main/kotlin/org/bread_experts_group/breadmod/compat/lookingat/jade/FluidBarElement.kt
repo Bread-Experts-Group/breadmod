@@ -6,14 +6,13 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.phys.Vec2
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.renderFluid
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.drawBorder
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.drawDirectionCube
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.drawScrollingStringBM
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.fixedLengthScrollingComponent
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
-import snownee.jade.api.fluid.JadeFluidObject
 import snownee.jade.api.ui.Element
-import snownee.jade.overlay.DisplayHelper
 import java.awt.Color
 
 class FluidBarElement(
@@ -30,14 +29,13 @@ class FluidBarElement(
 			x, y,
 			x + 80, y + 14
 		)
-		DisplayHelper.INSTANCE.drawFluid(
-			guiGraphics,
+		guiGraphics.renderFluid(
 			x + 1,
 			y + 1,
-			JadeFluidObject.of(this.tank.fluid),
-			this.tank.capacity?.let { ((this.tank.amount.divide(it)).toFloat() * 78) } ?: 78f,
-			12f,
-			JadeFluidObject.bucketVolume()
+			78,
+			12,
+			this.tank,
+			false
 		)
 		// Fluid Name
 		val fluidNameKey = if (!this.tank.isEmpty) this.tank.fluidType.descriptionId else "tooltip.jade.empty"
