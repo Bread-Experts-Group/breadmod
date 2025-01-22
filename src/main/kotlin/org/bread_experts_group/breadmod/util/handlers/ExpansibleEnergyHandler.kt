@@ -57,6 +57,8 @@ open class ExpansibleEnergyHandler(
 	override val maxEnergyStoredDecimal: BigDecimal?
 		get() = this.cells.sumOf { it.capacity ?: return null }
 
+	fun getCells(): Int = this.cells.size
+
 	fun receiveEnergyDecimal(count: BigDecimal, simulate: Boolean): BigDecimal {
 		var actualCount = count
 		for (cellIndex in this.cells.indices) {

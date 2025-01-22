@@ -50,7 +50,7 @@ class FluidBarElement(
 			Color.WHITE.rgb
 		)
 		// Direction Sprite
-		guiGraphics.drawDirectionCube(x, y, this.direction)
+		guiGraphics.drawDirectionCube(x, y, this.direction, this.tank)
 		// Fluid Amount
 		guiGraphics.drawScrollingStringBM(
 			localClient.font,

@@ -17,21 +17,17 @@ object ExpansibleCellDisplayProvider : IBlockComponentProvider {
 	override fun getUid(): ResourceLocation = modLocation("energy_data_provider")
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		val entity = accessor.blockEntity as? EnergyBearingBlockEntity ?: return
-		val cell = accessor.blockEntity as? FacingSensitiveProviderRetriever
+		val sides = accessor.blockEntity as? FacingSensitiveProviderRetriever
 		tooltip.remove(JadeIds.UNIVERSAL_ENERGY_STORAGE)
-		if (cell == null) tooltip.add(EnergyBarElement(entity.energyHandler.getCell(0), null))
-		else for (direction: Direction in Direction.entries) {
-			tooltip.add(
-				EnergyBarElement(
-					entity.energyHandler.getCell(
-						cell.getIndexForBlockProvider(
-							Capabilities.EnergyStorage.BLOCK,
-							direction
-						)
-					),
-					direction
-				)
-			)
+		if (sides == null) {
+			for (cellIndex in 0 ..< entity.energyHandler.getCells()) {
+				tooltip.add(EnergyBarElement(entity.energyHandler.getCell(cellIndex), null))
+			}
+		} else {
+			for (direction: Direction in Direction.entries) {
+				val cellIndex = sides.getIndexForBlockProvider(Capabilities.EnergyStorage.BLOCK, direction)
+				if (cellIndex > 0) tooltip.add(EnergyBarElement(entity.energyHandler.getCell(cellIndex), direction))
+			}
 		}
 	}
 

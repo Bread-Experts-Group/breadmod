@@ -15,6 +15,7 @@ import net.minecraft.world.inventory.InventoryMenu
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
+import org.bread_experts_group.breadmod.util.handlers.HandlerLimits
 import org.joml.Math.clamp
 import snownee.jade.api.config.IWailaConfig.IConfigOverlay
 import snownee.jade.overlay.OverlayRenderer
@@ -25,7 +26,7 @@ import kotlin.math.max
 import kotlin.math.sin
 
 object JadeDrawingCommon {
-	val uvs: Map<Direction?, Int> = mapOf(
+	private val uvs: Map<Direction?, Int> = mapOf(
 		*listOf(
 			null,
 			Direction.DOWN,
@@ -36,13 +37,18 @@ object JadeDrawingCommon {
 			Direction.EAST,
 		).mapIndexed { index, direction -> direction to index * 16 }.toTypedArray()
 	)
+	private val cubeBidirectionalSprites = modLocation("textures", "gui", "cube_sprites.png")
+	private val cubeInOnlySprites = modLocation("textures", "gui", "cube_sprites_in.png")
+	private val cubeOutOnlySprites = modLocation("textures", "gui", "cube_sprites_out.png")
 
-	fun GuiGraphics.drawDirectionCube(x: Float, y: Float, direction: Direction?) {
+	fun GuiGraphics.drawDirectionCube(x: Float, y: Float, direction: Direction?, item: HandlerLimits) {
 		RenderSystem.enableBlend()
 		this.blit(
-			modLocation("textures", "gui", "cube_sprites.png"),
+			if (item.maxIn == BigDecimal.ZERO) JadeDrawingCommon.cubeOutOnlySprites
+			else if (item.maxOut == BigDecimal.ZERO) JadeDrawingCommon.cubeInOnlySprites
+			else JadeDrawingCommon.cubeBidirectionalSprites,
 			x.toInt() + 82, y.toInt() - 1,
-			this@JadeDrawingCommon.uvs[direction] ?: 0, 0,
+			JadeDrawingCommon.uvs[direction] ?: 0, 0,
 			16, 16
 		)
 		RenderSystem.disableBlend()

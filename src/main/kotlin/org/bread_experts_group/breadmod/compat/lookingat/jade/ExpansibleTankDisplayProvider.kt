@@ -17,21 +17,17 @@ object ExpansibleTankDisplayProvider : IBlockComponentProvider {
 	override fun getUid(): ResourceLocation = modLocation("fluid_data_provider")
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		val entity = accessor.blockEntity as? FluidBearingBlockEntity ?: return
-		val tank = accessor.blockEntity as? FacingSensitiveProviderRetriever
+		val sides = accessor.blockEntity as? FacingSensitiveProviderRetriever
 		tooltip.remove(JadeIds.UNIVERSAL_FLUID_STORAGE)
-		if (tank == null) tooltip.add(FluidBarElement(entity.fluidHandler.getTank(0), null))
-		else for (direction: Direction in Direction.entries) {
-			tooltip.add(
-				FluidBarElement(
-					entity.fluidHandler.getTank(
-						tank.getIndexForBlockProvider(
-							Capabilities.FluidHandler.BLOCK,
-							direction
-						)
-					),
-					direction
-				)
-			)
+		if (sides == null) {
+			for (tankIndex in 0 ..< entity.fluidHandler.getTanks()) {
+				tooltip.add(FluidBarElement(entity.fluidHandler.getTank(tankIndex), null))
+			}
+		} else {
+			for (direction: Direction in Direction.entries) {
+				val tankIndex = sides.getIndexForBlockProvider(Capabilities.FluidHandler.BLOCK, direction)
+				if (tankIndex > 0) tooltip.add(FluidBarElement(entity.fluidHandler.getTank(tankIndex), direction))
+			}
 		}
 	}
 

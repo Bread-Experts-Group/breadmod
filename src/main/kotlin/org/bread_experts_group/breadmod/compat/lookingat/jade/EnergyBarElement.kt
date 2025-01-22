@@ -39,7 +39,7 @@ class EnergyBarElement(
 			JadeFluidObject.bucketVolume()
 		)
 		// Direction Sprite
-		guiGraphics.drawDirectionCube(x, y, this.direction)
+		guiGraphics.drawDirectionCube(x, y, this.direction, this.cell)
 		// Cell Amount
 		guiGraphics.drawScrollingStringBM(
 			localClient.font,
