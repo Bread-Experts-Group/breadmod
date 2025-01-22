@@ -22,7 +22,6 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.Flui
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.handlers.ExtendedItemStackHandler
-import java.math.BigDecimal
 
 class DoughMachineBlockEntity(
 	pos: BlockPos, state: BlockState
@@ -34,14 +33,14 @@ class DoughMachineBlockEntity(
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity, EnergyBearingBlockEntity {
 	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(3)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
-		listOf(
-			Triple(10000, true, false),
-			Triple(10000, false, true),
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
+		mutableListOf(
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, false, true)
+		)
 	)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		mutableListOf(
-			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(1_000_000))
+			ExpansibleEnergyHandler.ExpansibleCell(1_000_000, true, false)
 		)
 	)
 

@@ -29,12 +29,12 @@ class SingleFluidRecipeBlockEntity(
 	ModRecipeTypes.SINGLE_FLUID.get()
 ), FluidBearingBlockEntity {
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
-		listOf(
-			Triple(10000, true, true),
-			Triple(10000, true, true),
-			Triple(10000, true, true),
-			Triple(10000, true, true),
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
+		mutableListOf(
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true)
+		)
 	)
 
 	override fun tick(level: Level, tPos: BlockPos, tState: BlockState) {

@@ -30,12 +30,12 @@ class FluidEnergyBlockEntity(
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity {
 	override val itemHandler: ExtendedItemStackHandler = ExtendedItemStackHandler(8)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
-		listOf(
-			Triple(10000, true, false),
-			Triple(10000, true, false),
-			Triple(10000, false, true),
-			Triple(10000, false, true)
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
+		mutableListOf(
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, false, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, false, true)
+		)
 	)
 
 	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level) {

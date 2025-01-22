@@ -17,14 +17,14 @@ class SidedFluidTankJadeBlockEntity(
 	state: BlockState
 ) : BlockEntity(ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get(), pos, state), FluidBearingBlockEntity {
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
-		listOf(
-			Triple(10000, true, true),
-			Triple(10000, true, true),
-			Triple(10000, true, true),
-			Triple(10000, true, true),
-			Triple(10000, true, true),
-			Triple(10000, true, true)
-		).map { ExpansibleFluidHandler.ExpansibleTank(it.first, it.second, it.third) }.toMutableList()
+		mutableListOf(
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+		)
 	)
 
 	override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag =

@@ -24,6 +24,18 @@ open class ExpansibleEnergyHandler(
 		override var maxOut: BigDecimal? = null,
 		override var amount: BigDecimal = BigDecimal.ZERO
 	) : HandlerSerializable {
+		constructor(
+			capacity: Int,
+			allowIn: Boolean,
+			allowOut: Boolean,
+			amount: BigDecimal = BigDecimal.ZERO
+		) : this(
+			capacity.toBigDecimal(),
+			if (allowIn) capacity.toBigDecimal() else BigDecimal.ZERO,
+			if (allowOut) capacity.toBigDecimal() else BigDecimal.ZERO,
+			amount
+		)
+
 		override var capacity: BigDecimal? = capacity
 			set(value) {
 				field = if (value != null && value <= BigDecimal.ZERO) null else value
