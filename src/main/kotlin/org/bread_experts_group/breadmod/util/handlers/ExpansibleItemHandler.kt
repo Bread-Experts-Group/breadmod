@@ -8,10 +8,12 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.IItemHandlerModifiable
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler.ExpansibleSlot
 import java.math.BigDecimal
 import java.util.function.Predicate
+import kotlin.math.min
 
 class ExpansibleItemHandler(
 	override val units: MutableList<ExpansibleSlot>
@@ -33,10 +35,12 @@ class ExpansibleItemHandler(
 		val isEmpty: Boolean
 			get() = this.item == Items.AIR || this.amount == BigDecimal.ZERO
 		var asStack: ItemStack
-			get() = ItemStack(this.item, this.amount.capInt())
+			get() = ItemStack(this.item, min(this.amount.capInt(), 99)).also {
+				it.update(ModDataComponents.EXPANSIBLE_ITEM_STACK, BigDecimal.ZERO) { this.amount }
+			}
 			set(value) {
 				this.item = value.item
-				this.amount = value.count.toBigDecimal()
+				this.amount = value.get(ModDataComponents.EXPANSIBLE_ITEM_STACK) ?: value.count.toBigDecimal()
 			}
 
 		override fun serializeNBT(registries: HolderLookup.Provider): CompoundTag =
@@ -54,7 +58,8 @@ class ExpansibleItemHandler(
 		get() = this.units.all { it.isEmpty }
 	val filledSlots: Int
 		get() = this.units.count { !it.isEmpty }
-//	val emptySlots: Int
+
+	//	val emptySlots: Int
 //		get() = this.units.count { it.isEmpty }
 	override fun insertItem(
 		slot: Int,

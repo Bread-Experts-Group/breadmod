@@ -16,6 +16,7 @@
     "client.IAccessorDirectoryLister",
     "client.MixinClientLanguage",
     "client.MixinDirectoryListener",
+    "client.MixinGuiGraphics",
     "client.MixinLevelRenderer",
     "client.MixinSoundManager",
     "client.MixinSpriteResourceLoader",

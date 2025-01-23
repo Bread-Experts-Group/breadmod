@@ -7,6 +7,7 @@ import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 
 abstract class AbstractModContainerMenu<T : BreadModBlockEntity<T>>(
 	type: MenuType<*>,
@@ -40,6 +41,8 @@ abstract class AbstractModContainerMenu<T : BreadModBlockEntity<T>>(
 		val sourceSlot = this.slots[pIndex]
 		if (!sourceSlot.hasItem()) return ItemStack.EMPTY //EMPTY_ITEM
 		val sourceStack = sourceSlot.item
+		// ENSURE that expansible stacks aren't exposed to the player inventory!
+		sourceStack.remove(ModDataComponents.EXPANSIBLE_ITEM_STACK)
 		val copyOfSourceStack = sourceStack.copy()
 		// Check if the slot clicked is one of the vanilla container slots
 		if (pIndex < Companion.VANILLA_FIRST_SLOT_INDEX + Companion.VANILLA_SLOT_COUNT) {

@@ -21,6 +21,7 @@ import snownee.jade.api.config.IWailaConfig.IConfigOverlay
 import snownee.jade.overlay.OverlayRenderer
 import java.awt.Color
 import java.math.BigDecimal
+import java.text.DecimalFormat
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -152,7 +153,7 @@ object JadeDrawingCommon {
 		return maxWidth
 	}
 
-	private val decimalFormatter = java.text.DecimalFormat("0000.00")
+	val decimalFormatter: DecimalFormat = DecimalFormat("#,000.00")
 
 	fun fixedLengthNumberedComponent(
 		n: BigDecimal?,
