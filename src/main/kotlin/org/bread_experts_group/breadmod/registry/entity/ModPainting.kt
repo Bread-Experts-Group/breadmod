@@ -5,14 +5,28 @@ import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.entity.decoration.PaintingVariant
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 
 object ModPainting {
+	@DataGenerateLanguage("en_us", prefix = "painting.", suffix = ".title")
+	@DataGenerateLanguage("en_us", "logan mclean", "painting.", ".author")
 	val PAINTING_TEST: ResourceKey<PaintingVariant> = this.create("painting_test")
+
+	@DataGenerateLanguage("en_us", "marrroww", "painting.", ".title")
+	@DataGenerateLanguage("en_us", "https://x.com/aluminumoxy/media", "painting.", ".author")
 	val DEVIL_PUPP: ResourceKey<PaintingVariant> = this.create("devil_pupp")
 
 	// Specials
+	@DataGenerateLanguage("en_us", "experimental giffy fish", "painting.", ".title")
+	@DataGenerateLanguage("en_us", "N/A", "painting.", ".author")
 	val FISH: ResourceKey<PaintingVariant> = this.create("fish")
+
+	@DataGenerateLanguage("en_us", "experimental apngy elephant", "painting.", ".title")
+	@DataGenerateLanguage("en_us", "N/A", "painting.", ".author")
 	val ELEPHANT: ResourceKey<PaintingVariant> = this.create("elephant")
+
+	@DataGenerateLanguage("en_us", "CLASSIFIED", "painting.", ".title")
+	@DataGenerateLanguage("en_us", "N/A", "painting.", ".author")
 	val CLASSIFIED: ResourceKey<PaintingVariant> = this.create("meow")
 	fun bootstrap(context: BootstrapContext<PaintingVariant>) {
 		this.register(context, this.PAINTING_TEST, 4, 4)

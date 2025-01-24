@@ -14,6 +14,7 @@ import net.neoforged.neoforge.common.Tags
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.concurrent.CompletableFuture
 import java.util.function.Supplier
@@ -61,8 +62,13 @@ class ModItemTags(
 	}
 
 	companion object {
+		@DataGenerateLanguage("en_us", prefix = "tag.item.")
 		val KNIVES: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
+
+		@DataGenerateLanguage("en_us", prefix = "tag.item.")
 		val TOASTABLE: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
+
+		@DataGenerateLanguage("en_us", prefix = "tag.item.")
 		val EXPLODES_IN_TOASTER: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("explodes_in_toaster"))
 	}
 }

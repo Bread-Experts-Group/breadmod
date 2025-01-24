@@ -14,6 +14,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper
 import net.neoforged.neoforge.registries.DeferredItem
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import java.util.concurrent.CompletableFuture
 
@@ -54,9 +55,15 @@ class ModBlockTags(
 	}
 
 	companion object {
-		val MINEABLE_WITH_KNIFE: TagKey<Block> = TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
+		@DataGenerateLanguage("en_us", prefix = "tag.block.")
+		val MINEABLE_WITH_KNIFE: TagKey<Block> =
+			TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
+
+		@DataGenerateLanguage("en_us", prefix = "tag.block.")
 		val INCORRECT_FOR_BREAD_TOOL: TagKey<Block> =
 			TagKey.create(Registries.BLOCK, modLocation("incorrect_for_bread_tool"))
+
+		@DataGenerateLanguage("en_us", prefix = "tag.block.")
 		val INCORRECT_FOR_REINFORCED_BREAD_TOOL: TagKey<Block> =
 			TagKey.create(Registries.BLOCK, modLocation("incorrect_for_reinforced_bread_tool"))
 	}

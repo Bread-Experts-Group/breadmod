@@ -14,6 +14,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.function.Supplier
@@ -49,6 +50,7 @@ object ModFluids {
 		)
 	}
 
+	@DataGenerateLanguage("en_us")
 	val BREAD_LIQUID: FluidHolder<BreadLiquidBlock.Source, BreadLiquidBlock.Flowing> = this.registerWithBucket(
 		"bread_liquid",
 		BreadLiquidBlock::Source, BreadLiquidBlock::Flowing,

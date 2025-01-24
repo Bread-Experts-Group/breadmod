@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.datagen.lang
 
 import net.minecraft.data.PackOutput
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import net.minecraft.network.chat.Component
 
 @LanguageDataGenerator
 internal class EnglishUSLangProvider(
@@ -14,11 +14,7 @@ internal class EnglishUSLangProvider(
 		if (name == "<null>") otherwise.substringAfterLast('.').joinUnderscoreWithCaps() else name
 
 	override fun addManualTranslations() {
-		this.bmAdd(modTranslatable("tool_gun", "explode", "mode", "name").string, "Explode Mode")
-		this.bmAdd(
-			modTranslatable("tool_gun", "explode", "mode", "description").string,
-			"An explode mode description."
-		)
+		this.bmAdd(Component.translatable("modmenu.nameTranslation.breadmod"), "Bread Mod")
 	}
 
 	override fun getNameAdditional(): String = "(with automatic naming)"

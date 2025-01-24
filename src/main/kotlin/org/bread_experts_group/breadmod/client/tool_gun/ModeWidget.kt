@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
@@ -54,8 +53,8 @@ class ModeWidget(
 	class Builder {
 		private var icon: ItemStack = Items.BARRIER.defaultInstance
 		private var previewImage: BreadModTextureHelper = BreadModTextureHelper.MISSING_TEXTURE
-		private var modeName: Component = modTranslatable("tool_gun", "default", "mode", "name")
-		private var modeDescription: Component = modTranslatable("tool_gun", "default", "mode", "description")
+		private var modeName: Component? = null
+		private var modeDescription: Component? = null
 		private var id: ResourceLocation = modLocation()
 
 		fun icon(stack: ItemStack): Builder = this.also { this.icon = stack }
@@ -76,7 +75,9 @@ class ModeWidget(
 
 		fun build(): ModeWidget {
 			require(this.id != modLocation()) { "id must be set." }
-			return ModeWidget(this.icon, this.previewImage, this.modeName, this.modeDescription, this.id)
+			require(this.modeName != null) { "mode name component must be set." }
+			require(this.modeDescription != null) { "mode description component must be set." }
+			return ModeWidget(this.icon, this.previewImage, this.modeName!!, this.modeDescription!!, this.id)
 		}
 	}
 }

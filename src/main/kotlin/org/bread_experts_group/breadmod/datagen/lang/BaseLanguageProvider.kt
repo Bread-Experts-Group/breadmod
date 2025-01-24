@@ -4,6 +4,7 @@ package org.bread_experts_group.breadmod.datagen.lang
 
 import net.minecraft.client.KeyMapping
 import net.minecraft.data.PackOutput
+import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
@@ -16,11 +17,14 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.material.Fluid
 import net.neoforged.neoforge.common.data.LanguageProvider
+import net.neoforged.neoforge.fluids.FluidType
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.ModDamageType
 import org.bread_experts_group.breadmod.registry.Registry
+import org.bread_experts_group.breadmod.registry.block.ModFluids.FluidHolder
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import java.io.Serial
 import java.util.function.Supplier
@@ -57,6 +61,13 @@ internal sealed class BaseLanguageProvider(
 			is KeyMapping       -> actualItem.name
 			is String           -> actualItem
 			is ResourceLocation -> actualItem.toLanguageKey()
+			is FluidType        -> actualItem.descriptionId
+			is Fluid            -> actualItem.fluidType.descriptionId +
+					if (actualItem.isSource(actualItem.defaultFluidState())) "_source"
+					else "_flowing"
+			is Component        -> actualItem.string
+			is TagKey<*>        -> actualItem.location.toLanguageKey()
+			is ResourceKey<*>   -> actualItem.location().toLanguageKey()
 			else                -> throw UnsupportedItemClassException(actualItem::class.java)
 		} + (if (annotation.suffix == "<null>") "" else annotation.suffix)
 	}
@@ -94,8 +105,20 @@ internal sealed class BaseLanguageProvider(
 		this.registryScanner.resolveAnnotationValuePairs<DataGenerateLanguage>()
 			.filter { it.first.language == this.language }
 			.forEach { (annotation, data) ->
-				val languageID = this.getLanguageID(data, annotation)
-				this.add(languageID, this.assureName(annotation.name, languageID))
+				fun addForDatum(datum: Any) {
+					val languageID = this.getLanguageID(datum, annotation)
+					this.add(languageID, this.assureName(annotation.name, languageID))
+				}
+				when (val dataValue = data) {
+					is FluidHolder<*, *> -> {
+						addForDatum(dataValue.block)
+						addForDatum(dataValue.bucket)
+						addForDatum(dataValue.type)
+						addForDatum(dataValue.source)
+						addForDatum(dataValue.flowing)
+					}
+					else                 -> addForDatum(dataValue)
+				}
 			}
 		this.addManualTranslations()
 	}

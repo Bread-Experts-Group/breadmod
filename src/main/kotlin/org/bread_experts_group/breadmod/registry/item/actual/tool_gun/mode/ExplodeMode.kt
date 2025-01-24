@@ -5,6 +5,7 @@ import com.mojang.math.Axis
 import net.minecraft.Util
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
@@ -21,28 +22,34 @@ import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 
 @ToolGunMode
 @Suppress("unused")
 class ExplodeMode : AbstractToolGunMode() {
+	companion object {
+		@DataGenerateLanguage("en_us", "Explode Mode")
+		val name: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "name")
+
+		@DataGenerateLanguage("en_us", "goes kaboom and probably blows a fuse in your house or two")
+		val description: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "description")
+	}
+
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		level.explode(player, player.x, player.y, player.z, 20f, Level.ExplosionInteraction.MOB)
 	}
 
 	override fun getDisplayName(): Component = Component.literal("explode")
-
-	override fun getTooltip(): Component = Component.literal("tooltip")
-
+	override fun getTooltip(): Component = Component.literal("kaboom")
 	override fun getUid(): ResourceLocation = modLocation("tool_gun", "explode_mode")
-
 	override fun getCustomRenderer(): IToolGunMode.Renderer = ExplodeModeRenderer(this.getUid())
 
 	class ExplodeModeRenderer(val id: ResourceLocation) : AbstractToolGunModeRenderer() {
 		override fun getModeWidget(): ModeWidget = ModeWidget.Builder()
 			.icon(Items.TNT.defaultInstance)
 			.previewImage(ModTextureLocations.EXPLODE_PREVIEW)
-			.name(modTranslatable("tool_gun", "explode", "mode", "name"))
-			.description(modTranslatable("tool_gun", "explode", "mode", "description"))
+			.name(Companion.name)
+			.description(Companion.description)
 			.id(this.id)
 			.build()
 
