@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.util.reflect
 
+import net.minecraft.client.Minecraft
 import net.neoforged.neoforgespi.language.ModFileScanData
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -18,20 +19,16 @@ import kotlin.reflect.jvm.javaField
 /**
  * A scanner for JVM packages.
  *
- * @property pForLoader The class loader to use when finding/loading classes and getting CLASS files.
  * @property pForPackage The package to scan for.
  * @property localClasses The [KClass]
  * (note, classes don't need to be Kotlin) contained within the provided [Package].
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-class LibraryScanner private constructor(
-	pForLoader: ClassLoader,
-	pForPackage: Package?,
-	pData: List<ModFileScanData>?
-) {
+class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModFileScanData>?) {
 	companion object {
 		private val classes: MutableMap<Package, List<KClass<out Any>>> = mutableMapOf()
+		private val piggybackClasses: MutableMap<ModFileScanData, List<KClass<out Any>>> = mutableMapOf()
 		val logger: Logger = LogManager.getLogger()
 
 		private fun safeGetFileSystem(uri: URI): FileSystem = try {
@@ -41,10 +38,11 @@ class LibraryScanner private constructor(
 			FileSystems.newFileSystem(uri, mapOf("create" to "true"))
 		}
 
-		fun Package.getOrScan(forLoader: ClassLoader): List<KClass<out Any>> {
+		fun Package.getOrScanCache(): List<KClass<out Any>> {
 			return Companion.classes.getOrPut(this) {
+				val loader = Minecraft::class.java.classLoader
 				buildList {
-					forLoader.getResources(this@getOrScan.name.replace(".", "/")).toList()
+					loader.getResources(this@getOrScanCache.name.replace(".", "/")).toList()
 						.forEach {
 							try {
 								val fs = Companion.safeGetFileSystem(it.toURI())
@@ -55,7 +53,7 @@ class LibraryScanner private constructor(
 										.forEach { f ->
 											try {
 												this.add(
-													forLoader.loadClass(
+													loader.loadClass(
 														f
 															.absolutePathString()
 															.substring(1)
@@ -76,28 +74,47 @@ class LibraryScanner private constructor(
 			}
 		}
 
-		fun Package.getScanner(forLoader: ClassLoader = this::class.java.classLoader): LibraryScanner =
-			LibraryScanner(forLoader, this, null)
+		fun List<ModFileScanData>.piggybackCache(): List<KClass<out Any>> {
+			var failures = 0
+			var count = 0
+			val list = buildList {
+				this@piggybackCache.forEach {
+					this.addAll(
+						Companion.piggybackClasses.getOrPut(it) {
+							buildList {
+								count += it.classes.size
+								it.classes.forEach { c ->
+									try {
+										this.add(Minecraft::class.java.classLoader.loadClass(c.clazz.className).kotlin)
+									} catch (_: Throwable) {
+										failures++
+									}
+								}
+							}
+						}
+					)
+				}
+			}
+			if (failures > 0) Companion.logger.warn(
+				"Failed to load $failures piggyback classes, ${count - failures}/${count}"
+			)
+			return list
+		}
 
-		fun piggyback(
-			forLoader: ClassLoader = this::class.java.classLoader,
-			data: List<ModFileScanData>
-		): LibraryScanner =
-			LibraryScanner(forLoader, null, data)
+		fun Package.getScanner(): LibraryScanner =
+			LibraryScanner(this, null)
+
+		fun piggyback(data: List<ModFileScanData>): LibraryScanner =
+			LibraryScanner(null, data)
 	}
 
-	val logger: Logger = LogManager.getLogger()
 	val localClasses: List<KClass<out Any>>
 
 	init {
 		if (pForPackage != null) {
-			this.localClasses = pForPackage.getOrScan(pForLoader)
+			this.localClasses = pForPackage.getOrScanCache()
 		} else if (pData != null) {
-			this.localClasses = buildList {
-				pData.forEach {
-					it.classes.forEach { c -> this.add(pForLoader.loadClass(c.clazz.className).kotlin) }
-				}
-			}
+			this.localClasses = pData.piggybackCache()
 		} else {
 			throw IllegalArgumentException("Either a package or list of mod file data must be provided.")
 		}
@@ -108,8 +125,18 @@ class LibraryScanner private constructor(
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	inline fun <reified T : Annotation> getClassesAnnotatedWith(): List<KClass<out Any>> =
-		this.localClasses.filter { it.annotations.any { a -> a.annotationClass == T::class } }
+	fun <T : Annotation> getClassesAnnotatedWith(annotation: KClass<T>): List<KClass<out Any>> {
+		return buildList {
+			for (clazz in this@LibraryScanner.localClasses) {
+				try {
+					if (clazz.annotations.any { a -> a.annotationClass == annotation }) {
+						this.add(clazz)
+					}
+				} catch (_: Throwable) {
+				}
+			}
+		}
+	}
 
 	/**
 	 * Gets all [kotlin.reflect.KProperty1]s from Kotlin Objects in the provided [Package], annotated with [T].
@@ -124,7 +151,7 @@ class LibraryScanner private constructor(
 					it.objectInstance != null
 				} catch (e: Exception) {
 					// NOTE: This is quite inefficient. Look into fixes in the future?
-					this@LibraryScanner.logger.warn("Failure when getting objectInstance: $e")
+					Companion.logger.warn("Failure when getting objectInstance: $e")
 					false
 				}
 			}.forEach {
@@ -143,7 +170,7 @@ class LibraryScanner private constructor(
 						}
 					}
 				} catch (e: Exception) {
-					this@LibraryScanner.logger.error("Failure when reading annotations off: ${it.qualifiedName}", e)
+					Companion.logger.error("Failure when reading annotations off: ${it.qualifiedName}", e)
 				}
 			}
 		}

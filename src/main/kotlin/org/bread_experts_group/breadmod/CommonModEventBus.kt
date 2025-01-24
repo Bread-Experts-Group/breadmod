@@ -107,7 +107,7 @@ internal object CommonModEventBus {
 			this.logger.info("Client datagen")
 			generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))
 			generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
-			scanner.getClassesAnnotatedWith<LanguageDataGenerator>().forEach { clazz ->
+			scanner.getClassesAnnotatedWith(LanguageDataGenerator::class).forEach { clazz ->
 				generator.addProvider(
 					true,
 					(clazz.primaryConstructor ?: return@forEach).call(packOutput) as BaseLanguageProvider

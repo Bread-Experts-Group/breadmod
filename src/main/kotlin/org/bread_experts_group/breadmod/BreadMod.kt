@@ -56,10 +56,11 @@ class BreadMod(container: ModContainer) {
 		 * Loads tool gun modes.
 		 */
 		fun loadToolGunModes() {
-			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith<ToolGunMode>().forEach {
-				val mode = it.createInstance() as IToolGunMode
-				toolGunModes[mode.getUid()] = mode
-			}
+			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
+				.forEach {
+					val mode = it.createInstance() as IToolGunMode
+					toolGunModes[mode.getUid()] = mode
+				}
 		}
 	}
 
