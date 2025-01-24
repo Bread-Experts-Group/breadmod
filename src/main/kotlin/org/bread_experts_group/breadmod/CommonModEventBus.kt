@@ -50,7 +50,7 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModNoiseGen
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModPools
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructureSets
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructures
-import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
 
 @Suppress("unused")
@@ -63,7 +63,7 @@ internal object CommonModEventBus {
 		val generator = event.generator
 		val packOutput = generator.packOutput
 		val existingFileHelper = event.existingFileHelper
-		val scanner = LibraryScanner(BreadMod::class.java.classLoader, ModRecipeProvider::class.java.`package`)
+		val scanner = ModRecipeProvider::class.java.`package`.getScanner()
 		// add all the bootstrap entries to the registry set builder
 		val registrySetBuilder = RegistrySetBuilder()
 			.add(Registries.PAINTING_VARIANT, ModPainting::bootstrap)

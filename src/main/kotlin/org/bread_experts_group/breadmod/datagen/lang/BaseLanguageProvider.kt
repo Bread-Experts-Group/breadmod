@@ -21,7 +21,7 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.ModDamageType
 import org.bread_experts_group.breadmod.registry.Registry
-import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import java.io.Serial
 import java.util.function.Supplier
 
@@ -89,7 +89,7 @@ internal sealed class BaseLanguageProvider(
 
 	protected open fun addManualTranslations() {}
 
-	private val registryScanner = LibraryScanner(BreadMod::class.java.classLoader, Registry::class.java.`package`)
+	private val registryScanner = Registry::class.java.`package`.getScanner()
 	final override fun addTranslations() {
 		this.registryScanner.getObjectPropertiesAnnotatedWith<DataGenerateLanguage>().forEach { (_, data) ->
 			data.second.filter { it.language == this.language }.forEach { annotation ->

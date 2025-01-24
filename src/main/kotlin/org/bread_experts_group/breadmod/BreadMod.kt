@@ -21,8 +21,8 @@ import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
 import org.bread_experts_group.breadmod.logging.ConsoleUnnamedRedirection
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
-import java.lang.annotation.ElementType
 import kotlin.reflect.full.createInstance
 
 /**
@@ -56,11 +56,9 @@ class BreadMod(container: ModContainer) {
 		 * Loads tool gun modes.
 		 */
 		fun loadToolGunModes() {
-			ModList.get().allScanData.forEach { scanData ->
-				scanData.getAnnotatedBy(ToolGunMode::class.java, ElementType.TYPE).forEach { annotationData ->
-					val mode = Class.forName(annotationData.memberName).kotlin.createInstance() as IToolGunMode
-					toolGunModes[mode.getUid()] = mode
-				}
+			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith<ToolGunMode>().forEach {
+				val mode = it.createInstance() as IToolGunMode
+				toolGunModes[mode.getUid()] = mode
 			}
 		}
 	}
