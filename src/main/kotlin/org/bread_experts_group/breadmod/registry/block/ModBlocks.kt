@@ -106,13 +106,13 @@ object ModBlocks {
 	)
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "Prolongs the inevitable.", "tooltip")
+	@DataGenerateLanguage("en_us", "Prolongs the inevitable.", suffix = ".tooltip")
 	val WAR_TERMINAL: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"war_terminal", ::WarTerminalBlock, Properties()
 	)
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "Uses the power of a die to make random noises.", "tooltip")
+	@DataGenerateLanguage("en_us", "Uses the power of a die to make random noises.", suffix = ".tooltip")
 	val RANDOM_SOUND_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"random_sound_block", ::RandomSoundBlock, Properties()
 	)
@@ -148,7 +148,7 @@ object ModBlocks {
 	)
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "I wouldn't cook charcoal in it..", "tooltip")
+	@DataGenerateLanguage("en_us", "I wouldn't cook charcoal in it..", suffix = ".tooltip")
 	val TOASTER: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"toaster",
 		::ToasterBlock,

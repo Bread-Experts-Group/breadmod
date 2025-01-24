@@ -144,12 +144,25 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 		}
 	}
 
+	inline fun <reified T : Annotation> readAnnotations(from: Array<Annotation>?): Array<out Any?>? {
+		val annotationsRaw = from?.firstOrNull { a ->
+			a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
+		}
+		if (annotationsRaw != null) {
+			return if (annotationsRaw is T) arrayOf(annotationsRaw)
+			else annotationsRaw.annotationClass.java.declaredMethods
+				.firstOrNull { m -> m.name == "value" }
+				?.invoke(annotationsRaw) as Array<*>?
+		}
+		return null
+	}
+
 	inline fun <reified T : Annotation> handleProperty(
 		list: MutableList<Pair<T, Any>>,
 		field: KProperty<*>,
 		obj: Any? = null
 	) {
-		val annotations = field.javaField?.annotations?.filter { it is T } ?: return
+		val annotations = this.readAnnotations<T>(field.javaField?.annotations) ?: return
 		if (annotations.isEmpty()) return
 		val returned = field.call(obj)
 		if (returned != null) annotations.forEach { list.add(it as T to returned) }
@@ -161,7 +174,7 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 		vararg args: Any
 	) {
 		if (func.parameters.size != args.size) return
-		val annotations = func.javaMethod?.annotations?.filter { it is T } ?: return
+		val annotations = this.readAnnotations<T>(func.javaMethod?.annotations) ?: return
 		if (annotations.isEmpty()) return
 		val returned = func.call(*args)
 		if (returned != null) annotations.forEach { list.add(it as T to returned) }

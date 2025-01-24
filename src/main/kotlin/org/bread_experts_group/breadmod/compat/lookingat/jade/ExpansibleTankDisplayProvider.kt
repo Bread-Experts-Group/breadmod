@@ -15,7 +15,7 @@ import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 
 object ExpansibleTankDisplayProvider : IBlockComponentProvider {
-	@DataGenerateLanguage("en_us", "Fluid Data Provider")
+	@DataGenerateLanguage("en_us", "Fluid Data Provider", prefix = "config.jade.plugin_")
 	override fun getUid(): ResourceLocation = modLocation("fluid_data_provider")
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		val entity = accessor.blockEntity as? FluidBearingBlockEntity ?: return

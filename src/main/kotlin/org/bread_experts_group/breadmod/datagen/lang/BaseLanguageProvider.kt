@@ -18,7 +18,6 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.registries.DeferredHolder
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.ModDamageType
 import org.bread_experts_group.breadmod.registry.Registry
@@ -42,12 +41,12 @@ internal sealed class BaseLanguageProvider(
 	protected open fun assureName(name: String, otherwise: String): String =
 		if (name == "<null>") throw UnsupportedOperationException() else name
 
-	fun getLanguageID(item: Any, extension: String = "<null>"): String {
+	fun getLanguageID(item: Any, annotation: DataGenerateLanguage = DataGenerateLanguage("")): String {
 		val actualItem = when (item) {
 			is DeferredHolder<*, *> -> item.get()
 			else                    -> item
 		}
-		return when (actualItem) {
+		return (if (annotation.prefix == "<null>") "" else annotation.prefix) + when (actualItem) {
 			is Block            -> actualItem.descriptionId
 			is Item             -> actualItem.descriptionId
 			is ItemStack        -> actualItem.item.descriptionId
@@ -59,7 +58,7 @@ internal sealed class BaseLanguageProvider(
 			is String           -> actualItem
 			is ResourceLocation -> actualItem.toLanguageKey()
 			else                -> throw UnsupportedItemClassException(actualItem::class.java)
-		} + if (extension == "<null>") "" else ".$extension"
+		} + (if (annotation.suffix == "<null>") "" else annotation.suffix)
 	}
 
 	protected fun bmAdd(key: Any, name: String = "<null>") = this.getLanguageID(key).let {
@@ -92,12 +91,10 @@ internal sealed class BaseLanguageProvider(
 
 	private val registryScanner = Registry::class.java.`package`.getScanner()
 	final override fun addTranslations() {
-		val logger = LogManager.getLogger()
-		logger.info(this.registryScanner.resolveAnnotationValuePairs<DataGenerateLanguage>())
 		this.registryScanner.resolveAnnotationValuePairs<DataGenerateLanguage>()
 			.filter { it.first.language == this.language }
 			.forEach { (annotation, data) ->
-				val languageID = this.getLanguageID(data, annotation.extension)
+				val languageID = this.getLanguageID(data, annotation)
 				this.add(languageID, this.assureName(annotation.name, languageID))
 			}
 		this.addManualTranslations()

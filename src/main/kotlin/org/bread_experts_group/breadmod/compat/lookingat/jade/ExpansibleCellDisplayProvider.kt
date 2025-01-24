@@ -15,7 +15,7 @@ import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 
 object ExpansibleCellDisplayProvider : IBlockComponentProvider {
-	@DataGenerateLanguage("en_us", "Energy Data Provider")
+	@DataGenerateLanguage("en_us", "Energy Data Provider", prefix = "config.jade.plugin_")
 	override fun getUid(): ResourceLocation = modLocation("energy_data_provider")
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		val entity = accessor.blockEntity as? EnergyBearingBlockEntity ?: return

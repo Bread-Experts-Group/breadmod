@@ -62,21 +62,21 @@ object ModItems {
 	val FLOUR: DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem("flour")
 
 	@DataGenerateLanguage("en_us", "Music Disc")
-	@DataGenerateLanguage("en_us", "ClascyJitto - Secret Hoppin'", "desc")
+	@DataGenerateLanguage("en_us", "ClascyJitto - Secret Hoppin'", suffix = ".desc")
 	val RECORD_SECRET_HOPPIN: DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem(
 		"music_disc_secret_hoppin",
 		Item.Properties().jukeboxPlayable(ModRecords.TEST_SOUND).stacksTo(1).rarity(Rarity.RARE)
 	)
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "IS THAT A PIZZA TOWER REFERENCE???", "tooltip")
+	@DataGenerateLanguage("en_us", "IS THAT A PIZZA TOWER REFERENCE???", suffix = ".tooltip")
 	val CHEF_HAT: DeferredItem<ChefHatItem> = this.ITEM_REGISTRY.register("chef_hat", ::ChefHatItem)
 
 	@DataGenerateLanguage("en_us")
 	val TOOL_GUN: DeferredItem<ToolGunItem> = this.ITEM_REGISTRY.register("tool_gun", ::ToolGunItem)
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "Identical to bread on the outside - tumors on the inside.", "tooltip")
+	@DataGenerateLanguage("en_us", "Identical to bread on the outside - tumors on the inside.", suffix = ".tooltip")
 	val TEST_BREAD: DeferredItem<TestBreadItem> = this.ITEM_REGISTRY.register("test_bread", ::TestBreadItem)
 
 	@DataGenerateLanguage("en_us")
@@ -84,7 +84,7 @@ object ModItems {
 		this.ITEM_REGISTRY.register("ultimate_bread", ::UltimateBreadItem)
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "No it does NOT look like balsa wood >:(", "tooltip")
+	@DataGenerateLanguage("en_us", "No it does NOT look like balsa wood >:(", suffix = ".tooltip")
 	val BREAD_SHIELD: DeferredItem<ShieldItem> = this.ITEM_REGISTRY.register("bread_shield") { ->
 		object : ShieldItem(Properties().stacksTo(1).durability(256)) {
 			override fun appendHoverText(
@@ -99,7 +99,7 @@ object ModItems {
 	}
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "contains trace amounts of neurotoxin", "tooltip")
+	@DataGenerateLanguage("en_us", "contains trace amounts of neurotoxin", suffix = ".tooltip")
 	val DOPED_BREAD: DeferredItem<Item> = this.ITEM_REGISTRY.register("doped_bread") { ->
 		object : Item(
 			Properties()
@@ -162,7 +162,7 @@ object ModItems {
 	)
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "What? you thought it was gonna be sliced like a normal bagel?", "tooltip")
+	@DataGenerateLanguage("en_us", "What? you thought it was gonna be sliced like a normal bagel?", suffix = ".tooltip")
 	val HALF_BAGEL: DeferredItem<Item> = this.ITEM_REGISTRY.register("half_bagel") { ->
 		object : Item(
 			Properties().food(FoodProperties.Builder().nutrition(2).saturationModifier(0.1f).fast().build())
@@ -185,7 +185,7 @@ object ModItems {
 	val ALUMINA: DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem("alumina")
 
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "Feeds %s every %s", "tooltip")
+	@DataGenerateLanguage("en_us", "Feeds %s every %s", suffix = ".tooltip")
 	@DataGenerateLanguage("en_us", "(stacking!)", "stacks")
 	val BREAD_AMULET: DeferredItem<BreadAmuletItem> =
 		this.ITEM_REGISTRY.register("bread_amulet") { -> BreadAmuletItem(500) }

@@ -6,7 +6,8 @@ package org.bread_experts_group.breadmod.datagen.lang
  * @param language The language the annotation item will be translated against.
  * @param name The name of the language item.
  * If the language provider supports automatic name generation, this can be omitted.
- * @param extension The extension to the language tag (for example, musicCategory.item.<extension>)
+ * @param prefix The prefix to the language tag (for example, `prefix`.musicCategory.item)
+ * @param suffix The extension to the language tag (for example, musicCategory.item.`extension`)
  *
  * @author Miko Elbrecht
  * @since 1.0.0
@@ -17,5 +18,6 @@ package org.bread_experts_group.breadmod.datagen.lang
 internal annotation class DataGenerateLanguage(
 	val language: String,
 	val name: String = "<null>",
-	val extension: String = "<null>"
+	val prefix: String = "<null>",
+	val suffix: String = "<null>"
 )
