@@ -91,7 +91,7 @@ class ModSoundDefinitionsProvider(
 		)
 		this.add(
 			ModSounds.KILL_ENEMY, SoundDefinitionsProvider.definition()
-				.subtitle("sound,${BreadMod.ID}.kill_enemy")
+				.subtitle("sound.${BreadMod.ID}.kill_enemy")
 				.with(SoundDefinitionsProvider.sound(modLocation("kill_enemy")).volume(1.0f))
 		)
 	}

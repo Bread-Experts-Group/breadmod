@@ -13,7 +13,7 @@ package org.bread_experts_group.breadmod.datagen.lang
  * @see LanguageDataGenerator
  */
 @Repeatable
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION)
 internal annotation class DataGenerateLanguage(
 	val language: String,
 	val name: String = "<null>",

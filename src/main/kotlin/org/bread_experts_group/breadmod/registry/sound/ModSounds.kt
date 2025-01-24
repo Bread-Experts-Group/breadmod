@@ -40,11 +40,23 @@ object ModSounds {
 	@DataGenerateLanguage("en_us", "War timer counts up")
 	val WAR_TIMER_UP: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("war_timer_up")
 	val ULTRAMARINE: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("ultramarine")
+
+	@DataGenerateLanguage("en_us", "Speed")
 	val MACH_ONE: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("mach_one")
+
+	@DataGenerateLanguage("en_us", "Speedy")
 	val MACH_TWO: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("mach_two")
+
+	@DataGenerateLanguage("en_us", "Speedier")
 	val MACH_THREE: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("mach_three")
+
+	@DataGenerateLanguage("en_us", "PEPPINO SPEED")
 	val MACH_FOUR: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("mach_four")
+
+	@DataGenerateLanguage("en_us", "death.mp3")
 	val KILL_ENEMY: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("kill_enemy")
+
+	@DataGenerateLanguage("en_us", "Slam")
 	val PUNCH: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("punch")
 	private fun registerSoundEvents(name: String): DeferredHolder<SoundEvent, SoundEvent> {
 		return this.SOUND_REGISTRY.register(name) { ->

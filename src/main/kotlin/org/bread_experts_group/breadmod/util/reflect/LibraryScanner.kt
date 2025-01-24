@@ -12,9 +12,14 @@ import java.nio.file.Files
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.name
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
+import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty
+import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.staticFunctions
+import kotlin.reflect.full.staticProperties
 import kotlin.reflect.jvm.javaField
+import kotlin.reflect.jvm.javaMethod
 
 /**
  * A scanner for JVM packages.
@@ -49,7 +54,8 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 								fs.rootDirectories.forEach { rootDir ->
 									Files.walk(rootDir)
 										.filter(Files::isRegularFile)
-										.filter { f -> f.name.endsWith(".class", false) }
+										.filter { f -> f.name.endsWith(".class", true) }
+										.filter { f -> !f.name.contains("mixin", true) }
 										.forEach { f ->
 											try {
 												this.add(
@@ -138,40 +144,45 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 		}
 	}
 
+	inline fun <reified T : Annotation> handleProperty(
+		list: MutableList<Pair<T, Any>>,
+		field: KProperty<*>,
+		obj: Any? = null
+	) {
+		val annotations = field.javaField?.annotations?.filter { it is T } ?: return
+		if (annotations.isEmpty()) return
+		val returned = field.call(obj)
+		if (returned != null) annotations.forEach { list.add(it as T to returned) }
+	}
+
+	inline fun <reified T : Annotation> handleFunction(
+		list: MutableList<Pair<T, Any>>,
+		func: KFunction<*>,
+		vararg args: Any
+	) {
+		if (func.parameters.size != args.size) return
+		val annotations = func.javaMethod?.annotations?.filter { it is T } ?: return
+		if (annotations.isEmpty()) return
+		val returned = func.call(*args)
+		if (returned != null) annotations.forEach { list.add(it as T to returned) }
+	}
+
 	/**
-	 * Gets all [kotlin.reflect.KProperty1]s from Kotlin Objects in the provided [Package], annotated with [T].
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	@Suppress("UNCHECKED_CAST")
-	inline fun <reified T : Annotation> getObjectPropertiesAnnotatedWith(): Map<KProperty1<*, *>, Pair<*, Array<T>>> =
-		buildMap {
-			this@LibraryScanner.localClasses.filter {
+	inline fun <reified T : Annotation> resolveAnnotationValuePairs(): List<Pair<T, Any>> =
+		buildList {
+			this@LibraryScanner.localClasses.forEach { clazz ->
 				try {
-					it.objectInstance != null
-				} catch (e: Exception) {
-					// NOTE: This is quite inefficient. Look into fixes in the future?
-					Companion.logger.warn("Failure when getting objectInstance: $e")
-					false
-				}
-			}.forEach {
-				try {
-					it.memberProperties.forEach { f ->
-						val annotationsRaw = f.javaField?.annotations?.firstOrNull { a ->
-							a.annotationClass.qualifiedName?.contains(T::class.simpleName!!) == true
-						}
-						if (annotationsRaw != null) {
-							val annotations = if (annotationsRaw is T) arrayOf(annotationsRaw)
-							else annotationsRaw.annotationClass.java.declaredMethods
-								.firstOrNull { m -> m.name == "value" }
-								?.invoke(annotationsRaw) as Array<T>?
-
-							if (annotations != null) this[f] = f.call(it.objectInstance) to annotations
-						}
+					clazz.objectInstance?.let { obj ->
+						for (func in clazz.memberFunctions) this@LibraryScanner.handleFunction(this, func, obj)
+						for (field in clazz.memberProperties) this@LibraryScanner.handleProperty(this, field, obj)
 					}
-				} catch (e: Exception) {
-					Companion.logger.error("Failure when reading annotations off: ${it.qualifiedName}", e)
+				} catch (_: IllegalAccessException) {
 				}
+				for (func in clazz.staticFunctions) this@LibraryScanner.handleFunction(this, func)
+				for (field in clazz.staticProperties) this@LibraryScanner.handleProperty(this, field)
 			}
 		}
 }

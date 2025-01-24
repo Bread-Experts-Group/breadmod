@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.neoforged.neoforge.common.data.LanguageProvider
 import net.neoforged.neoforge.registries.DeferredHolder
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.ModDamageType
 import org.bread_experts_group.breadmod.registry.Registry
@@ -91,13 +92,14 @@ internal sealed class BaseLanguageProvider(
 
 	private val registryScanner = Registry::class.java.`package`.getScanner()
 	final override fun addTranslations() {
-		this.registryScanner.getObjectPropertiesAnnotatedWith<DataGenerateLanguage>().forEach { (_, data) ->
-			data.second.filter { it.language == this.language }.forEach { annotation ->
-				val item = data.first ?: throw IllegalStateException("Item is null")
-				val languageID = this.getLanguageID(item, annotation.extension)
+		val logger = LogManager.getLogger()
+		logger.info(this.registryScanner.resolveAnnotationValuePairs<DataGenerateLanguage>())
+		this.registryScanner.resolveAnnotationValuePairs<DataGenerateLanguage>()
+			.filter { it.first.language == this.language }
+			.forEach { (annotation, data) ->
+				val languageID = this.getLanguageID(data, annotation.extension)
 				this.add(languageID, this.assureName(annotation.name, languageID))
 			}
-		}
 		this.addManualTranslations()
 	}
 

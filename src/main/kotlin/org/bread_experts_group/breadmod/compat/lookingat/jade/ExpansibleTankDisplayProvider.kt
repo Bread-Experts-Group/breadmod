@@ -4,6 +4,7 @@ import net.minecraft.core.Direction
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FacingSensitiveProviderRetriever
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
 import snownee.jade.api.BlockAccessor
@@ -14,6 +15,7 @@ import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 
 object ExpansibleTankDisplayProvider : IBlockComponentProvider {
+	@DataGenerateLanguage("en_us", "Fluid Data Provider")
 	override fun getUid(): ResourceLocation = modLocation("fluid_data_provider")
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
 		val entity = accessor.blockEntity as? FluidBearingBlockEntity ?: return
