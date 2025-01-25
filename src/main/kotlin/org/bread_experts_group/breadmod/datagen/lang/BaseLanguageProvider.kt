@@ -1,5 +1,3 @@
-@file:Suppress("SameReturnValue")
-
 package org.bread_experts_group.breadmod.datagen.lang
 
 import net.minecraft.client.KeyMapping

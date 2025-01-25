@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.logging
 
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.Appender
 import org.apache.logging.log4j.core.Core
 import org.apache.logging.log4j.core.Filter
@@ -196,7 +195,7 @@ class ConsoleColorAppender(
 	 * @since 1.0.0
 	 */
 	override fun append(event: LogEvent?) {
-		if (event != null && event.level.isMoreSpecificThan(Level.INFO)) {
+		if (event != null) {
 			val formattedTime = LocalDateTime.ofEpochSecond(
 				event.instant.epochSecond,
 				event.instant.nanoOfSecond,
