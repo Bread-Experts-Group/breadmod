@@ -128,7 +128,7 @@ class ToasterBlock : BreadModBlockWithEntity(
 			level.setBlockAndUpdate(pos, state)
 		}
 
-		return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
 	}
 
 	// Pretty much a clone of the furnace animateTick code.
