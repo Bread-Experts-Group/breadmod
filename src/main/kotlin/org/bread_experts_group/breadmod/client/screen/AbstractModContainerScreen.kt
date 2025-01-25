@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
@@ -13,6 +14,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderFluid
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
@@ -24,15 +26,20 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 	inventory: Inventory,
 	title: Component
 ) : AbstractContainerScreen<T>(menu, inventory, title) {
-	// TODO: Isolate this to just a power meter
-	val baseTexture: ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
+	companion object {
+		// TODO: Isolate this to just a power meter
+		val baseTexture: ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
+
+		@DataGenerateLanguage("en_us", "Energy")
+		val energyLabel: MutableComponent = modTranslatable(path = arrayOf("energy"))
+	}
 
 	protected fun GuiGraphics.renderEnergyMeter(x: Int, y: Int, w: Int, h: Int, cell: Int? = null) {
 		val energyHandler = (this@AbstractModContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
 		val sap = if (cell == null) energyHandler else energyHandler.getUnit(cell)
 		val scaled = sap.capacity?.let { ((sap.amount.divide(it)).toFloat() * h).toInt() } ?: 0
 		this.blit(
-			this@AbstractModContainerScreen.baseTexture,
+			Companion.baseTexture,
 			this@AbstractModContainerScreen.leftPos + x,
 			this@AbstractModContainerScreen.topPos + y + h - scaled,
 			176,
@@ -57,7 +64,7 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 			this.renderComponentTooltip(
 				this@AbstractModContainerScreen.font,
 				listOf(
-					modTranslatable(path = arrayOf("energy"))
+					Companion.energyLabel
 						.withStyle(ChatFormatting.RED)
 						.withStyle(ChatFormatting.ITALIC),
 					JadeDrawingCommon.fixedLengthScrollingComponent(
