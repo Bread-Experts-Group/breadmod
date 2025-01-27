@@ -5,7 +5,9 @@ import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.block.BlockRenderDispatcher
 import net.minecraft.client.renderer.block.ModelBlockRenderer
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.network.chat.Component
@@ -19,29 +21,36 @@ import org.joml.Vector4f
 
 @Suppress("unused")
 class ToolGunRenderHelper(
-	val modelManager: ModelManager,
-	val itemRenderer: ItemRenderer,
-	val blockModelRenderer: ModelBlockRenderer,
-//	val blockRenderDispatcher: BlockRenderDispatcher = localClient.blockRenderer,
-//	val entityRenderDispatcher: EntityRenderDispatcher = localClient.entityRenderDispatcher,
-	val font: Font
+	val modelManager: ModelManager = localClient.modelManager,
+	val itemRenderer: ItemRenderer = localClient.itemRenderer,
+	val blockModelRenderer: ModelBlockRenderer = localClient.blockRenderer.modelRenderer,
+	val blockRenderDispatcher: BlockRenderDispatcher = localClient.blockRenderer,
+	val entityRenderDispatcher: EntityRenderDispatcher = localClient.entityRenderDispatcher,
+	val font: Font = localClient.font
 ) {
-	companion object {
-		fun init(): ToolGunRenderHelper = ToolGunRenderHelper(
-			localClient.modelManager,
-			localClient.itemRenderer,
-			localClient.blockRenderer.modelRenderer,
-			localClient.font
-		)
-	}
-
 	/**
 	 * Default screen brightness.
 	 */
 	val screenTint: Int = 15728880
+
+	/**
+	 * Toggle for recoil. Resets to true automatically.
+	 */
 	var shouldRecoil: Boolean = true
+
+	/**
+	 * Toggle for coil rendering. Resets to true automatically.
+	 */
 	var shouldRenderCoil: Boolean = true
+
+	/**
+	 * Toggle for main body rendering. Resets to true automatically.
+	 */
 	var shouldRenderMainBody: Boolean = true
+
+	/**
+	 * Toggle for screen contents rendering. Resets to true automatically.
+	 */
 	var shouldRenderScreenContents: Boolean = true
 
 	private fun initialScreenTranslations(
@@ -60,6 +69,9 @@ class ToolGunRenderHelper(
 		poseStack.scaleFlat(scale)
 	}
 
+	/**
+	 * Renders the background for the screen. Supplied [texture] must be scaled in multiples of 9x8.
+	 */
 	fun renderScreenBackground(
 		texture: ResourceLocation,
 		textureWidth: Int,
@@ -128,6 +140,16 @@ class ToolGunRenderHelper(
 		Component.literal(text),
 		color, backgroundColor, dropShadow, fontRenderer, poseStack, buffer, posX, posY, posZ, scale
 	)
+
+	/**
+	 * Resets the render toggles to their default values.
+	 */
+	fun resetRenderToggles() {
+		this.shouldRenderCoil = true
+		this.shouldRecoil = true
+		this.shouldRenderMainBody = true
+		this.shouldRenderScreenContents = true
+	}
 //fun drawWrappedTextOnScreen( // Old wrapped text function using FormattedCharSequence, can possibly be repurposed
 //    pFont: Font,
 //    pText: FormattedText,

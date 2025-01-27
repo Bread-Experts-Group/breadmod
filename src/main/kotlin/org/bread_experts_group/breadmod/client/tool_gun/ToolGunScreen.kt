@@ -13,6 +13,8 @@ import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
+import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen.ScreenTabs.MODE
+import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen.ScreenTabs.SETTINGS
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
@@ -26,14 +28,23 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		}
 	}
 
+	enum class ScreenTabs { MODE, SETTINGS }
+
+	private var currentTab: ScreenTabs = MODE
 	private var leftPos: Int = (this.width - 280) / 2
 	private var topPos: Int = (this.height - 210) / 2
 	private var gridList: List<Pair<Int, Int>> = listOf()
 	private var currentModeWidget: ModeWidget? = null
-	private val modeButton = ModeButton(0, 0) {
+	private val modeButton = GenericButton(0, 0, 80, 20, "Change Mode") {
 		this.currentModeWidget?.let { widget ->
 			PacketDistributor.sendToServer(ToolGunModeChangePacket(widget.id))
 		}
+	}
+	private val modeTabButton = GenericButton(0, 0, 50, 11, "Modes") {
+		this.currentTab = MODE
+	}
+	private val settingsTabButton = GenericButton(0, 0, 50, 11, "Settings") {
+		this.currentTab = SETTINGS
 	}
 
 	override fun isPauseScreen(): Boolean = false
@@ -41,7 +52,27 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
 		ModTextureLocations.FRAME.blitTexture(guiGraphics, this.leftPos, this.topPos)
 		if (this.focused is ModeWidget) this.currentModeWidget = this.focused as ModeWidget
-		this.renderModeTab(guiGraphics)
+		if (this.currentModeWidget == null) this.modeButton.active = false else this.modeButton.active = true
+
+		if (this.currentTab == MODE) {
+			this.renderModeTab(guiGraphics)
+			if (this.modeWidgets.any { !it.visible } || !this.modeButton.visible) {
+				this.modeWidgets.forEach { it.visible = true }
+				this.modeButton.visible = true
+				this.modeTabButton.active = false
+			}
+		} else {
+			this.modeWidgets.forEach { it.visible = false }
+			this.modeButton.visible = false
+			this.modeTabButton.active = true
+		}
+
+		if (this.currentTab == SETTINGS) {
+			this.renderSettingsTab(guiGraphics)
+			this.settingsTabButton.active = false
+		} else {
+			this.settingsTabButton.active = true
+		}
 	}
 
 	private fun renderModeTab(guiGraphics: GuiGraphics) {
@@ -86,12 +117,13 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		poseStack.pushPose()
 		poseStack.translate(this.leftPos + 129.85f, this.topPos + 41.25f, 0f)
 		poseStack.scaleFlat(0.135f)
-		this.currentModeWidget?.previewImage?.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
-			?: BreadModTextureHelper.MISSING_TEXTURE.blitTexture(guiGraphics, 0, 0, width = 854, height = 480)
+		this.currentModeWidget?.previewImage?.blitTexture(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
+			?: BreadModTextureHelper.MISSING_TEXTURE.blitTexture(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
 		poseStack.popPose()
 	}
 
 	private fun renderSettingsTab(guiGraphics: GuiGraphics) {
+
 	}
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean =
@@ -113,7 +145,15 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		// todo make a "screen" button that opens a screen from the selected mode if one is present
 		//  alternative: when the tabs on the top of the tool gun screen eventually exist we can have a new tab appear
 		//  when the selected mode has a valid screen.
-		this.addRenderableWidget(this.modeButton.also { it.setPosition(this.leftPos + 155, this.topPos + 190) })
+		this.addRenderableWidget(this.modeButton.also {
+			it.setPosition(this.leftPos + 155, this.topPos + 190)
+			it.active = false
+		})
+		this.addRenderableWidget(this.modeTabButton.also {
+			it.setPosition(this.leftPos + 7, this.topPos + 27)
+			it.active = false
+		})
+		this.addRenderableWidget(this.settingsTabButton.also { it.setPosition(this.leftPos + 56, this.topPos + 27) })
 
 		repeat(this.modeWidgets.size) { index ->
 			this.modeWidgets[index].x = this.gridList[index].first
@@ -122,6 +162,6 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		this.modeWidgets.forEach(this::addRenderableWidget)
 	}
 
-	private class ModeButton(x: Int, y: Int, onPress: OnPress) :
-		Button(x, y, 80, 20, Component.literal("Change Mode"), onPress, { Component.empty() })
+	private class GenericButton(x: Int, y: Int, width: Int, height: Int, message: String, onPress: OnPress) :
+		Button(x, y, width, height, Component.literal(message), onPress, { Component.empty() })
 }

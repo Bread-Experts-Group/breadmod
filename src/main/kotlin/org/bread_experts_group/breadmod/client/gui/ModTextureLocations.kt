@@ -18,22 +18,10 @@ object ModTextureLocations {
 		this.toolGunHudLocation("mode_overlay_bg"),
 		166, 41
 	)
-	val MOUSE: BreadModTextureHelper = BreadModTextureHelper(
-		this.toolGunHudLocation("mouse"),
-		16, 16
-	)
-	val MOUSE_LEFT: BreadModTextureHelper = BreadModTextureHelper(
-		this.toolGunHudLocation("mouse_left"),
-		16, 16
-	)
-	val MOUSE_RIGHT: BreadModTextureHelper = BreadModTextureHelper(
-		this.toolGunHudLocation("mouse_right"),
-		16, 16
-	)
-	val MOUSE_MIDDLE: BreadModTextureHelper = BreadModTextureHelper(
-		this.toolGunHudLocation("mouse_middle"),
-		16, 16
-	)
+	val MOUSE: BreadModTextureHelper = BreadModTextureHelper(this.toolGunHudLocation("mouse"))
+	val MOUSE_LEFT: BreadModTextureHelper = BreadModTextureHelper(this.toolGunHudLocation("mouse_left"))
+	val MOUSE_RIGHT: BreadModTextureHelper = BreadModTextureHelper(this.toolGunHudLocation("mouse_right"))
+	val MOUSE_MIDDLE: BreadModTextureHelper = BreadModTextureHelper(this.toolGunHudLocation("mouse_middle"))
 	val INFO: BreadModTextureHelper = BreadModTextureHelper(
 		this.toolGunHudLocation("info_icon"),
 		8, 8
@@ -54,13 +42,9 @@ object ModTextureLocations {
 	)
 
 	// todo convert the existing mod guis to this system
-	// todo long term: figure out how to make a nine sliced file that minecraft recognizes to use for gui backgrounds
-	// tab.png.mcmeta / tab.png
 	// Gui Elements
-	val ENERGY_METER_16X47: BreadModTextureHelper = BreadModTextureHelper(
-		this.guiElementLocation("energy_meter_16x47"),
-		16, 47
-	)
+	val ENERGY_METER_16X47: BreadModTextureHelper =
+		BreadModTextureHelper(this.guiElementLocation("energy_meter_16x47"), textureHeight = 47)
 	val VERTICAL_ARROW_9X48: BreadModTextureHelper = BreadModTextureHelper(
 		this.guiElementLocation("vertical_arrow_9x48"),
 		9, 48
@@ -69,6 +53,17 @@ object ModTextureLocations {
 		this.guiElementLocation("filled_vertical_arrow_9x48"),
 		9, 48
 	)
+	val CUBE_BI_DIRECTIONAL: BreadModTextureHelper =
+		BreadModTextureHelper(modLocation("textures", "gui", "cube_sprites.png"), 256, 256)
+	val CUBE_IN_ONLY: BreadModTextureHelper =
+		BreadModTextureHelper(modLocation("textures", "gui", "cube_sprites_in.png"), 256, 256)
+	val CUBE_OUT_ONLY: BreadModTextureHelper =
+		BreadModTextureHelper(modLocation("textures", "gui", "cube_sprites_out.png"), 256, 256)
+
+	// todo figure out nine sliced from vanilla
+	// tab.png.mcmeta / tab.png
+	val NINE_SLICED_BG: BreadModTextureHelper =
+		BreadModTextureHelper(modLocation("textures", "gui", "test.png"), 32, 32)
 
 	private fun toolGunHudLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "hud", "$name.png")

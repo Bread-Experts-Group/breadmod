@@ -7,11 +7,13 @@ import net.minecraft.resources.ResourceLocation
 /**
  * Contains the [location], [textureWidth], and [textureHeight] of a texture.
  * Blit functions are also provided for easy rendering of textures.
+ *
+ * [textureWidth] and [textureHeight] default to 16.
  */
 class BreadModTextureHelper(
 	val location: ResourceLocation,
-	val textureWidth: Int,
-	val textureHeight: Int
+	val textureWidth: Int = 16,
+	val textureHeight: Int = 16
 ) {
 	companion object {
 		val MISSING_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(
@@ -26,8 +28,10 @@ class BreadModTextureHelper(
 	 * @param y the y-coordinate of the top-left corner of the blit position.
 	 * @param uOffset the horizontal texture coordinate offset.
 	 * @param vOffset the vertical texture coordinate offset.
-	 * @param width the width of the blitted portion.
-	 * @param height the height of the blitted portion.
+	 * @param uWidth the width of the blitted portion.
+	 * @param vHeight the height of the blitted portion.
+	 * @param textureWidth  the width of the texture.
+	 * @param textureHeight the height of the texture.
 	 * */
 	fun blitTexture(
 		guiGraphics: GuiGraphics,
@@ -35,10 +39,12 @@ class BreadModTextureHelper(
 		y: Int,
 		uOffset: Float = 0f,
 		vOffset: Float = 0f,
-		width: Int = this.textureWidth,
-		height: Int = this.textureHeight
+		uWidth: Int = this.textureWidth,
+		vHeight: Int = this.textureHeight,
+		textureWidth: Int = this.textureWidth,
+		textureHeight: Int = this.textureHeight
 	): Unit =
-		guiGraphics.blit(this.location, x, y, uOffset, vOffset, width, height, this.textureWidth, this.textureHeight)
+		guiGraphics.blit(this.location, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight)
 
 	/**
 	 * Draws a progressive texture/sprite which defaults drawing from bottom to top.
@@ -55,7 +61,7 @@ class BreadModTextureHelper(
 		x,
 		y + if (!drawFromTop) this.textureHeight - progressInput else 0,
 		vOffset = 0f - if (!drawFromTop) progressInput else 0,
-		height = 0 + progressInput
+		vHeight = 0 + progressInput
 	)
 //	// todo work on mirrored logic
 //	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, energyStored: Int, x: Int, y: Int): Unit =

@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.registry.entity.actual
 
+import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import java.util.*
 
 // todo needs work to be summonable.
@@ -18,6 +20,17 @@ class FakePlayer(
 	type: EntityType<FakePlayer>,
 	level: Level
 ) : LivingEntity(type, level) {
+	constructor(
+		level: Level,
+		pos: BlockPos,
+		owner: LivingEntity?
+	) : this(ModEntityTypes.FAKE_PLAYER.get(), level) {
+		this.setPos(pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
+		this.owner = owner
+		this.entityData.set(Companion.ownerUUID, Optional.ofNullable(owner!!.uuid))
+		this.entityData.set(Companion.ownerID, owner.id)
+	}
+
 	private var owner: LivingEntity? = null
 
 	companion object {

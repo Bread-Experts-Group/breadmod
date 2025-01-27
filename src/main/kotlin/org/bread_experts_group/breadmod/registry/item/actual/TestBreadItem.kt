@@ -13,6 +13,7 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).rarity(Rarity.EPIC)) {
 	val logger: Logger = LogManager.getLogger()
@@ -36,6 +37,9 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
 	}
 
 	override fun onItemUseFirst(stack: ItemStack, context: UseOnContext): InteractionResult {
+		val pos = context.clickedPos.above()
+		val fakePlayer = FakePlayer(context.level, pos, context.player)
+		context.level.addFreshEntity(fakePlayer)
 		return InteractionResult.PASS
 	}
 }

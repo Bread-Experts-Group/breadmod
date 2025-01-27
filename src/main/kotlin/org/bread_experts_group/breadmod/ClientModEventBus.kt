@@ -28,8 +28,10 @@ import org.bread_experts_group.breadmod.client.gui.CameraOverlay
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
+import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
+import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
@@ -108,6 +110,7 @@ internal object ClientModEventBus {
 	fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
 		event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
 		event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
+		event.registerEntityRenderer(ModEntityTypes.FORKLIFT.get(), ::ForkliftRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get(), ::ToasterRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.MICROWAVE.get(), ::MicrowaveRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
@@ -180,6 +183,7 @@ internal object ClientModEventBus {
 			GluonGunBackpackModel.BACKPACK_LAYER,
 			GluonGunBackpackModel::createLayerDefinition
 		)
+		event.registerLayerDefinition(ForkliftModel.FORKLIFT_LAYER, ForkliftModel::createLayerDefinition)
 	}
 
 	@SubscribeEvent

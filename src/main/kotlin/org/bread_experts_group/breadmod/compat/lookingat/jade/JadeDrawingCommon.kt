@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Style
 import net.minecraft.util.Mth
 import net.minecraft.world.inventory.InventoryMenu
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import org.bread_experts_group.breadmod.util.handlers.HandlerLimits
@@ -38,19 +39,18 @@ object JadeDrawingCommon {
 			Direction.EAST,
 		).mapIndexed { index, direction -> direction to index * 16 }.toTypedArray()
 	)
-	private val cubeBidirectionalSprites = modLocation("textures", "gui", "cube_sprites.png")
-	private val cubeInOnlySprites = modLocation("textures", "gui", "cube_sprites_in.png")
-	private val cubeOutOnlySprites = modLocation("textures", "gui", "cube_sprites_out.png")
 
 	fun GuiGraphics.drawDirectionCube(x: Float, y: Float, direction: Direction?, item: HandlerLimits) {
 		RenderSystem.enableBlend()
-		this.blit(
-			if (item.maxIn == BigDecimal.ZERO) JadeDrawingCommon.cubeOutOnlySprites
-			else if (item.maxOut == BigDecimal.ZERO) JadeDrawingCommon.cubeInOnlySprites
-			else JadeDrawingCommon.cubeBidirectionalSprites,
-			x.toInt() + 82, y.toInt() - 1,
-			JadeDrawingCommon.uvs[direction] ?: 0, 0,
-			16, 16
+		(if (item.maxIn == BigDecimal.ZERO) ModTextureLocations.CUBE_OUT_ONLY
+		else if (item.maxOut == BigDecimal.ZERO) ModTextureLocations.CUBE_IN_ONLY
+		else ModTextureLocations.CUBE_BI_DIRECTIONAL).blitTexture(
+			this,
+			x.toInt() + 82,
+			y.toInt() - 1,
+			JadeDrawingCommon.uvs[direction]?.toFloat() ?: 0f,
+			uWidth = 16,
+			vHeight = 16
 		)
 		RenderSystem.disableBlend()
 	}

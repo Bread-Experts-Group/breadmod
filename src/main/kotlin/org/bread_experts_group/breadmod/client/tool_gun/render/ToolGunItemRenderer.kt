@@ -32,7 +32,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
-	private var helper = ToolGunRenderHelper.init()
+	private var helper = ToolGunRenderHelper()
 
 	// Models
 	@Suppress("unused")
@@ -44,7 +44,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/coil"))
 
 	override fun onResourceManagerReload(resourceManager: ResourceManager) {
-		this.helper = ToolGunRenderHelper.init()
+		this.helper = ToolGunRenderHelper()
 	}
 
 	private fun renderToolGun(
@@ -134,6 +134,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			poseStack.popPose()
 			// End Render, pop the final push
 			poseStack.popPose()
+			helper.resetRenderToggles()
 		} else if (displayContext == GUI) {
 			this.renderOtherPerspectives(stack, displayContext, poseStack, buffer, packedOverlay, packedLight, true)
 		} else {
