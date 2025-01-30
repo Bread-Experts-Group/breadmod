@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.registry.item
 import net.minecraft.ChatFormatting
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EquipmentSlotGroup
@@ -28,12 +29,14 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.UseAnim
 import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.item.component.ItemAttributeModifiers
+import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
@@ -337,4 +340,18 @@ object ModItems {
 
 	@DataGenerateLanguage("en_us", "PhysX Test Item")
 	val PHYSX_TEST_ITEM: DeferredItem<Item> = this.ITEM_REGISTRY.register("physx") { _ -> PhysXTestTool }
+
+	@DataGenerateLanguage("en_us")
+	val FORKLIFT: DeferredItem<Item> = this.ITEM_REGISTRY.register("forklift") { ->
+		object : Item(Properties()) {
+			override fun useOn(context: UseOnContext): InteractionResult {
+				val pos = context.clickedPos.above()
+				val level = context.level
+				val rotation = context.player?.yRotO ?: 0f
+				val forklift = Forklift(level, pos, rotation)
+				level.addFreshEntity(forklift)
+				return InteractionResult.sidedSuccess(level.isClientSide)
+			}
+		}
+	}
 }
