@@ -347,7 +347,7 @@ object ModItems {
 			override fun useOn(context: UseOnContext): InteractionResult {
 				val pos = context.clickedPos.above()
 				val level = context.level
-				val rotation = context.player?.yRotO ?: 0f
+				val rotation = context.player?.yHeadRot ?: 0f
 				val forklift = Forklift(level, pos, rotation)
 				level.addFreshEntity(forklift)
 				return InteractionResult.sidedSuccess(level.isClientSide)

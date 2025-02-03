@@ -50,9 +50,6 @@ class ForkliftModel(private val root: ModelPart) : EntityModel<Forklift>(RenderT
 		packedOverlay: Int,
 		color: Int
 	) {
-		poseStack.pushPose()
-		poseStack.translate(0f, 1.5f, 0f)
-		poseStack.mulPose(Axis.XN.rotationDegrees(180f))
 		this.engine.render(poseStack, buffer, packedLight, packedOverlay, color)
 		this.cage.render(poseStack, buffer, packedLight, packedOverlay, color)
 		this.sideTrimLeft.render(poseStack, buffer, packedLight, packedOverlay, color)
@@ -67,21 +64,28 @@ class ForkliftModel(private val root: ModelPart) : EntityModel<Forklift>(RenderT
 		this.steeringShaft.render(poseStack, buffer, packedLight, packedOverlay, color)
 		this.parts.render(poseStack, buffer, packedLight, packedOverlay, color)
 		this.engineExhaust.render(poseStack, buffer, packedLight, packedOverlay, color)
-		poseStack.popPose()
 	}
 
 	fun render(
+		entity: Forklift,
 		poseStack: PoseStack,
 		packedLight: Int,
 		packedOverlay: Int,
 		color: Int
-	): Unit = this.renderToBuffer(
-		poseStack,
-		localClient.renderBuffers().bufferSource().getBuffer(this.renderType(Companion.FORKLIFT_TEXTURE)),
-		packedLight,
-		packedOverlay,
-		color
-	)
+	) {
+		poseStack.pushPose()
+		poseStack.translate(0f, 1.5f, 0f)
+		poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+		poseStack.mulPose(Axis.YN.rotationDegrees(-entity.yRot))
+		this.renderToBuffer(
+			poseStack,
+			localClient.renderBuffers().bufferSource().getBuffer(this.renderType(Companion.FORKLIFT_TEXTURE)),
+			packedLight,
+			packedOverlay,
+			color
+		)
+		poseStack.popPose()
+	}
 
 	companion object {
 		val FORKLIFT_LAYER: ModelLayerLocation = ModelLayerLocation(modLocation("forklift"), "main")

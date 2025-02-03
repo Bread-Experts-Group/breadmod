@@ -5,9 +5,9 @@ import java.security.SecureRandom
 
 internal object ToolGunClientGlobals {
 	// Miscellaneous
-//	internal var helper: ToolGunRenderHelper = ToolGunRenderHelper.init()
 	internal val caseOhInstrument: SecureRandom = SecureRandom()
 	internal var caseOhSize: BigDecimal = BigDecimal.TWO
+	internal var currentModeIndex: Int = 0
 
 	// Recoil and Coil Spin vars
 	internal var coilRotation: Float = 0f

@@ -13,6 +13,8 @@ import java.awt.Color
 class ForkliftRenderer(private val context: Context) : EntityRenderer<Forklift>(context) {
 	override fun getTextureLocation(entity: Forklift): ResourceLocation = ForkliftModel.FORKLIFT_TEXTURE
 
+	private val model = ForkliftModel(this.context.bakeLayer(ForkliftModel.FORKLIFT_LAYER))
+
 	override fun render(
 		forklift: Forklift,
 		entityYaw: Float,
@@ -21,8 +23,7 @@ class ForkliftRenderer(private val context: Context) : EntityRenderer<Forklift>(
 		bufferSource: MultiBufferSource,
 		packedLight: Int
 	) {
-		val model = ForkliftModel(this.context.bakeLayer(ForkliftModel.FORKLIFT_LAYER))
-		model.render(poseStack, packedLight, OverlayTexture.NO_OVERLAY, Color.WHITE.rgb)
+		this.model.render(forklift,poseStack, packedLight, OverlayTexture.NO_OVERLAY, Color.WHITE.rgb)
 		super.render(forklift, entityYaw, partialTick, poseStack, bufferSource, packedLight)
 	}
 

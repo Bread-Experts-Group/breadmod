@@ -2,6 +2,8 @@ package org.bread_experts_group.breadmod.registry.entity.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.InteractionResult.CONSUME
@@ -15,7 +17,10 @@ import net.minecraft.world.entity.vehicle.VehicleEntity
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.entity.PartEntity
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 
 class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(entityType, level) {
@@ -30,7 +35,7 @@ class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(e
 		this.xo = x
 		this.yo = y
 		this.zo = z
-		this.yRotO = rotation
+		this.yRot = rotation
 	}
 
 	constructor(level: Level, pos: BlockPos, rotation: Float = 0f) : this(
@@ -41,6 +46,14 @@ class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(e
 		rotation
 	)
 
+	override fun makeBoundingBox(): AABB {
+		return super.makeBoundingBox()
+	}
+
+	private val parts: Array<PartEntity<Forklift>> = arrayOf(
+		ForkliftPart(this, Vec3(0.0, 3.0, 0.0), 0.5f, 0.5f, Vec3(1.0, 1.0, 1.0))
+	)
+
 	override fun readAdditionalSaveData(compound: CompoundTag) {
 	}
 
@@ -49,17 +62,47 @@ class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(e
 
 	override fun getDropItem(): Item = Items.DIRT
 
+	override fun getParts(): Array<PartEntity<Forklift>> = this.parts
+
+	override fun playStepSound(pos: BlockPos, state: BlockState) {
+	}
+
 	override fun getPassengerRidingPosition(entity: Entity): Vec3 =
 		this.position().add(0.0, 0.3, 0.0)
 
-	override fun canBeCollidedWith(): Boolean = false
+	override fun shouldShowName(): Boolean = true
+
+	override fun hasCustomName(): Boolean = true
+
+	override fun getCustomName(): Component = Component.literal("FORKLIFT")
+
+	override fun canBeCollidedWith(): Boolean = true
+
+	override fun isMultipartEntity(): Boolean = true
+
+	override fun setId(id: Int) {
+		super.setId(id)
+		for (i: Int in this.parts.indices) {
+			this.parts[i].id = id + i + 1
+		}
+	}
+
+	override fun recreateFromPacket(packet: ClientboundAddEntityPacket) {
+		super.recreateFromPacket(packet)
+
+		for (i: Int in this.parts.indices) {
+			this.parts[i].id = i + packet.id
+		}
+	}
 
 	// todo work out friction, maybe make a generic slowdown method to ease back into 0 delta?
 	override fun tick() {
 		super.tick()
-		this.applyGravity()
 		this.deltaMovement = this.deltaMovement.multiply(0.80, 0.0, 0.80)
+		this.applyGravity()
 		this.move(SELF, this.deltaMovement)
+		this.parts.forEach(PartEntity<Forklift>::tick)
+//		if (!this.isPushable) return
 		val list = this.level().getEntities(this, this.boundingBox.inflate(0.1))
 		list.asSequence().filterNot { it.hasPassenger(this) }.forEach<Entity>(this::push)
 	}

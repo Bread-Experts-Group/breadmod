@@ -21,7 +21,11 @@ class ModeWidget(
 	val modeDescription: Component,
 	val id: ResourceLocation
 ) : AbstractWidget(0, 0, 35, 40, modeName) {
+	var isSelected = false
+
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+		val borderColor = if (this.isSelected) Color.GREEN.rgb else
+			if (this.isHovered || this.isFocused) Color(16755200).rgb else Color.GRAY.rgb
 		guiGraphics.pose().pushPose()
 		guiGraphics.fill(
 			RenderType.gui(),
@@ -29,7 +33,7 @@ class ModeWidget(
 			this.y,
 			this.x + 35,
 			this.y + 40,
-			if (this.isHovered || this.isFocused) Color(16755200).rgb else Color.GRAY.rgb
+			borderColor
 		)
 		guiGraphics.fill(RenderType.gui(), this.x + 1, this.y + 1, this.x + 34, this.y + 39, Color.DARK_GRAY.rgb)
 		guiGraphics.drawScrollingString(

@@ -16,11 +16,16 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
+import net.neoforged.neoforge.network.PacketDistributor
+import org.apache.logging.log4j.LogManager
+import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.currentModeIndex
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.triggerDelta
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunItemRenderer
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
@@ -64,6 +69,16 @@ class ToolGunItem : Item(
 
 	override fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {
 		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		if (player.isCrouching) {
+			scrollingEvent.isCanceled = true
+			val deltaY = scrollingEvent.scrollDeltaY
+			val modeSize = toolGunModes.size
+			currentModeIndex = Math.floorMod(currentModeIndex + deltaY.toInt(), modeSize)
+			PacketDistributor.sendToServer(ToolGunModeChangePacket(toolGunModes.toList()[currentModeIndex].first))
+			LogManager.getLogger("mode index").info(currentModeIndex)
+			LogManager.getLogger("modes size").info(toolGunModes.size)
+//			Math.clamp(currentModeIndex.toLong(), 0, toolGunModes.size)
+		}
 		if (mode.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
 	}
 
