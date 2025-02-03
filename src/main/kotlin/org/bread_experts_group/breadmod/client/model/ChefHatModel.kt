@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.model.Model
 import net.minecraft.client.model.geom.EntityModelSet
 import net.minecraft.client.model.geom.ModelLayerLocation
-import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
 import net.minecraft.client.model.geom.builders.CubeListBuilder
 import net.minecraft.client.model.geom.builders.LayerDefinition
@@ -15,8 +14,8 @@ import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.model.ChefHatModel.Companion.HAT_TEXTURE
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
-import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 
 /**
  * Model data for the Chef Hat.
@@ -27,7 +26,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
  * @since 1.0.0
  */
 class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::entityTranslucent) {
-	private val parts: List<ModelPart> = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts.toList()
+	private val parts = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts
 
 	/**
 	 * Bakes and renders this model to the buffer.

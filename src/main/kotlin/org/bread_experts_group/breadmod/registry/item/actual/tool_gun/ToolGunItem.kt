@@ -74,7 +74,7 @@ class ToolGunItem : Item(
 			val deltaY = scrollingEvent.scrollDeltaY
 			val modeSize = toolGunModes.size
 			currentModeIndex = Math.floorMod(currentModeIndex + deltaY.toInt(), modeSize)
-			PacketDistributor.sendToServer(ToolGunModeChangePacket(toolGunModes.toList()[currentModeIndex].first))
+			PacketDistributor.sendToServer(ToolGunModeChangePacket(toolGunModes.keys.elementAt(currentModeIndex)))
 			LogManager.getLogger("mode index").info(currentModeIndex)
 			LogManager.getLogger("modes size").info(toolGunModes.size)
 //			Math.clamp(currentModeIndex.toLong(), 0, toolGunModes.size)

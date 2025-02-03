@@ -47,35 +47,34 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 			return Companion.classes.getOrPut(this) {
 				val loader = Minecraft::class.java.classLoader
 				buildList {
-					loader.getResources(this@getOrScanCache.name.replace(".", "/")).toList()
-						.forEach {
-							try {
-								val fs = Companion.safeGetFileSystem(it.toURI())
-								fs.rootDirectories.forEach { rootDir ->
-									Files.walk(rootDir)
-										.filter(Files::isRegularFile)
-										.filter { f -> f.name.endsWith(".class", true) }
-										.filter { f -> !f.name.contains("mixin", true) }
-										.forEach { f ->
-											try {
-												this.add(
-													loader.loadClass(
-														f
-															.absolutePathString()
-															.substring(1)
-															.removeSuffix(".class")
-															.replace('/', '.')
-													).kotlin
-												)
-											} catch (e: Throwable) {
-												Companion.logger.warn("Failure when loading class: $f", e)
-											}
+					for (resource in loader.getResources(this@getOrScanCache.name.replace(".", "/"))) {
+						try {
+							val fs = Companion.safeGetFileSystem(resource.toURI())
+							fs.rootDirectories.forEach { rootDir ->
+								Files.walk(rootDir)
+									.filter(Files::isRegularFile)
+									.filter { f -> f.name.endsWith(".class", true) }
+									.filter { f -> !f.name.contains("mixin", true) }
+									.forEach { f ->
+										try {
+											this.add(
+												loader.loadClass(
+													f
+														.absolutePathString()
+														.substring(1)
+														.removeSuffix(".class")
+														.replace('/', '.')
+												).kotlin
+											)
+										} catch (e: Throwable) {
+											Companion.logger.warn("Failure when loading class: $f", e)
 										}
-								}
-							} catch (e: Exception) {
-								Companion.logger.warn("Failure when reading from file system", e)
+									}
 							}
+						} catch (e: Exception) {
+							Companion.logger.warn("Failure when reading from file system", e)
 						}
+					}
 				}
 			}
 		}

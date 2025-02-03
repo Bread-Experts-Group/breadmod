@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.model.Model
 import net.minecraft.client.model.geom.EntityModelSet
 import net.minecraft.client.model.geom.ModelLayerLocation
-import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
 import net.minecraft.client.model.geom.builders.CubeDeformation
 import net.minecraft.client.model.geom.builders.CubeListBuilder
@@ -18,7 +17,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 
 class GluonGunBackpackModel(private val modelSet: EntityModelSet) : Model(RenderType::entitySolid) {
-	private val parts: List<ModelPart> = this.modelSet.bakeLayer(Companion.BACKPACK_LAYER).allParts.toList()
+	private val parts = this.modelSet.bakeLayer(Companion.BACKPACK_LAYER).allParts
 
 	override fun renderToBuffer(
 		poseStack: PoseStack,

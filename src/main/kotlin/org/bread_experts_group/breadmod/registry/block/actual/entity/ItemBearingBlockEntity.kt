@@ -36,7 +36,7 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 
 	override fun stillValid(player: Player): Boolean = true
 
-	override fun getSlotsForFace(facing: Direction): IntArray = (0 .. this.itemHandler.slots).toList().toIntArray()
+	override fun getSlotsForFace(facing: Direction): IntArray = (0 .. this.itemHandler.slots).toSet().toIntArray()
 	override fun canPlaceItemThroughFace(slot: Int, stack: ItemStack, facing: Direction?): Boolean = true
 	override fun canTakeItemThroughFace(slot: Int, stack: ItemStack, facing: Direction): Boolean = true
 
