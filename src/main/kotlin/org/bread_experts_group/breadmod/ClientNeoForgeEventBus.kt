@@ -19,10 +19,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
-import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.render.buffer.chunk.ChunkBuffer
 import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask.machTrailMap
@@ -140,17 +138,6 @@ internal object ClientNeoForgeEventBus {
 		if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
 	}
 
-	// todo FIX PHYSX CRASHING
-	@SubscribeEvent
-	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
-		loadToolGunModes()
-//		PhysXTestTool.createPhysX()
-	}
-//
-//	@SubscribeEvent
-//	fun logout(event: PlayerEvent.PlayerLoggedOutEvent) {
-//		PhysXTestTool.destroyPhysX()
-//	}
 	@SubscribeEvent
 	fun clientTick(event: ClientTickEvent.Pre) {
 		if (machTrailMap.isNotEmpty()) {
