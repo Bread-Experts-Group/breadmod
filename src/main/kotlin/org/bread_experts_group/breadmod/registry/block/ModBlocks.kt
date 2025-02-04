@@ -267,7 +267,7 @@ object ModBlocks {
 					.strength(1.0F)
 					.pushReaction(PushReaction.DESTROY)
 					.noOcclusion()
-			) { //todo create item texture
+			) {
 				override fun isFlammable(
 					state: BlockState,
 					level: BlockGetter,
