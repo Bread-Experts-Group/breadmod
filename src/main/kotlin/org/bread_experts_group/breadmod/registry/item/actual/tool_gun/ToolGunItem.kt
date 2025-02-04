@@ -17,7 +17,6 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.network.PacketDistributor
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -75,9 +74,6 @@ class ToolGunItem : Item(
 			val modeSize = toolGunModes.size
 			currentModeIndex = Math.floorMod(currentModeIndex + deltaY.toInt(), modeSize)
 			PacketDistributor.sendToServer(ToolGunModeChangePacket(toolGunModes.keys.elementAt(currentModeIndex)))
-			LogManager.getLogger("mode index").info(currentModeIndex)
-			LogManager.getLogger("modes size").info(toolGunModes.size)
-//			Math.clamp(currentModeIndex.toLong(), 0, toolGunModes.size)
 		}
 		if (mode.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
 	}
