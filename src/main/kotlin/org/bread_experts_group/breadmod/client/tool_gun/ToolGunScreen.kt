@@ -5,7 +5,9 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemDisplayContext
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
@@ -16,12 +18,17 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
 import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen.ScreenTabs.MODE
 import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen.ScreenTabs.SETTINGS
+import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen.SettingsEntries.MAIN
+import org.bread_experts_group.breadmod.client.tool_gun.ToolGunScreen.SettingsEntries.RENDERER
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.currentModeIndex
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.awt.Color
 
 class ToolGunScreen(title: Component) : Screen(title) {
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
+	private val renderHelper = ToolGunRenderHelper()
 
 	init {
 		this.modeWidgets.clear()
@@ -31,8 +38,10 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	}
 
 	enum class ScreenTabs { MODE, SETTINGS }
+	enum class SettingsEntries { MAIN, RENDERER }
 
 	private var currentTab: ScreenTabs = MODE
+	private var currentSettingsEntry: SettingsEntries = MAIN
 	private var leftPos: Int = (this.width - 280) / 2
 	private var topPos: Int = (this.height - 210) / 2
 	private var currentModeWidget: ModeWidget? = null
@@ -41,8 +50,9 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	private val modeButton = GenericButton(0, 0, 80, 20, "Change Mode") {
 		this.currentModeWidget?.let { widget ->
 			PacketDistributor.sendToServer(ToolGunModeChangePacket(widget.id))
-			this.updateModeWidgetSelection()
+			currentModeIndex = toolGunModes.keys.indexOf(widget.id)
 		}
+		this.updateModeWidgetSelection()
 	}
 	private val modeTabButton = GenericButton(0, 0, 50, 11, "Modes") {
 		this.currentTab = MODE
@@ -88,14 +98,12 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	/**
 	 * Update the border color on the widget's mode that is currently active.
 	 */
-	private fun updateModeWidgetSelection() {
-		this.modeWidgets.forEach { widget ->
-			val player = localClient.player ?: return@forEach
-			val mainHand = player.getItemInHand(player.usedItemHand)
-			val currentMode = mainHand.get(ModDataComponents.TOOL_GUN_DATA.get()) ?: return@forEach
-			widget.isSelected = widget.id == currentMode.getUid()
-		}
+	private fun updateModeWidgetSelection() = this.children().filterIsInstance<ModeWidget>().forEach {
+		it.isSelected = it.id == this.getCurrentModeIndex()
 	}
+
+	private fun getCurrentModeIndex() = toolGunModes.keys.elementAt(currentModeIndex)
+	private fun getCurrentMode() = toolGunModes.values.elementAt(currentModeIndex)
 
 	private fun renderModeTab(guiGraphics: GuiGraphics) {
 		val poseStack = guiGraphics.pose()
@@ -160,16 +168,68 @@ class ToolGunScreen(title: Component) : Screen(title) {
 			this.topPos + 223,
 			Color(0, 0, 230, 255).rgb
 		)
-		guiGraphics.fill(this.leftPos + 7, this.topPos + 70, this.leftPos + 250, this.topPos + 72, Color.WHITE.rgb)
-		guiGraphics.fill(this.width / 2, this.topPos + 72, this.width / 2 + 2, this.topPos + 185, Color.WHITE.rgb)
-		guiGraphics.fill(this.leftPos + 7, this.topPos + 185, this.leftPos + 250, this.topPos + 187, Color.WHITE.rgb)
-		guiGraphics.drawCenteredString(
-			this.font,
-			modTranslatable("tool_gun", "settings", "title"),
-			this.width / 2,
-			this.topPos + 50,
-			Color.WHITE.rgb
+//		this.currentSettingsEntry = RENDERER
+		when (this.currentSettingsEntry) {
+			MAIN     -> {
+				guiGraphics.fill(
+					this.leftPos + 7,
+					this.topPos + 70,
+					this.leftPos + 250,
+					this.topPos + 72,
+					Color.WHITE.rgb
+				)
+				guiGraphics.fill(
+					this.width / 2,
+					this.topPos + 72,
+					this.width / 2 + 2,
+					this.topPos + 185,
+					Color.WHITE.rgb
+				)
+				guiGraphics.fill(
+					this.leftPos + 7,
+					this.topPos + 185,
+					this.leftPos + 250,
+					this.topPos + 187,
+					Color.WHITE.rgb
+				)
+				guiGraphics.drawCenteredString(
+					this.font,
+					modTranslatable("tool_gun", "settings", "title"),
+					this.width / 2,
+					this.topPos + 50,
+					Color.WHITE.rgb
+				)
+			}
+			RENDERER -> {
+				// todo add buttons for each settings entry, probably work out a cleaner solution for
+				//  this currentSettingsEntry stuff
+				this.renderSettingsRendererEntry(guiGraphics)
+			}
+		}
+	}
+
+	// todo reevaluate, makes a new renderer instance every time so that's probably bad
+	//  (i think, the hashcode is different every time when you use a logger during this method but that might just be
+	//  standard rendering at work)
+	private fun renderSettingsRendererEntry(guiGraphics: GuiGraphics) {
+		val renderer = this.getCurrentMode().getCustomRenderer()
+		val poseStack = guiGraphics.pose()
+		val context = ItemDisplayContext.NONE
+		val bufferSource = localClient.renderBuffers().bufferSource()
+		val stack = ModItems.TOOL_GUN.toStack()
+		poseStack.pushPose()
+		poseStack.scaleFlat(100.0f)
+//		poseStack.translate(0.0, 20.0, 5000.0)
+		renderer.render(
+			stack,
+			context,
+			poseStack,
+			bufferSource,
+			this.renderHelper.screenTint,
+			OverlayTexture.NO_OVERLAY,
+			this.renderHelper
 		)
+		poseStack.popPose()
 	}
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean =
@@ -195,11 +255,8 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		this.addRenderableWidget(this.modeTabButton.also { it.setPosition(this.leftPos + 7, this.topPos + 27) })
 		this.addRenderableWidget(this.settingsTabButton.also { it.setPosition(this.leftPos + 56, this.topPos + 27) })
 
-		repeat(this.modeWidgets.size) { index ->
-			this.modeWidgets[index].x = gridList[index].first
-			this.modeWidgets[index].y = gridList[index].second
-		}
-		this.modeWidgets.forEach { widget ->
+		this.modeWidgets.forEachIndexed { index, widget ->
+			widget.setPosition(gridList[index].first, gridList[index].second)
 			this.addRenderableWidget(widget)
 			this.updateModeWidgetSelection()
 		}
