@@ -79,7 +79,7 @@ class DecodingUtil(private val processor: IA32Processor) {
 				0b001u -> TODO("[BX+DI]+disp8")
 				0b010u -> TODO("[BP+SI]+disp8")
 				0b011u -> TODO("[BP+DI]+disp8")
-				0b100u -> Optional.of((this.processor.si.t_l + this.readBinaryI(1).toUByte()).toULong())
+				0b100u -> Optional.of((this.processor.si.tl + this.readBinaryI(1).toUByte()).toULong())
 				0b101u -> TODO("[DI]+disp8")
 				0b110u -> TODO("[BP]+disp8")
 				0b111u -> TODO("[BX]+disp8")
@@ -93,7 +93,7 @@ class DecodingUtil(private val processor: IA32Processor) {
 				0b100u -> TODO("[SI]+disp16")
 				0b101u -> TODO("[DI]+disp16")
 				0b110u -> TODO("[BP]+disp16")
-				0b111u -> Optional.of((this.processor.b.t_x + this.readBinaryI(2).toUShort()).toULong())
+				0b111u -> Optional.of((this.processor.b.tx + this.readBinaryI(2).toUShort()).toULong())
 				else -> throw IllegalStateException("Mod 10, RM ${hex(rm)}")
 			}
 			0b11u -> Optional.of(this.getRegRM(rm, length)) to Optional.empty()

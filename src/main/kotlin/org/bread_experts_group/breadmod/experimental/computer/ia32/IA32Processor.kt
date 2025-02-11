@@ -28,6 +28,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBCInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBEInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionSHR
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HCDInstructionINT
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HE8InstructionCALL
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEBInstructionJMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFAInstructionCLI
@@ -63,9 +64,9 @@ class IA32Processor(val computer: Computer) : Processor {
 		var ex: ULong
 			get() = this.rx and 0x00000000FFFFFFFFu
 			set(value) {
-				this.rx = (this.rx and 0xFFFFFFFF00000000u) or (value and 0x00000000FFFFFFFFu).toULong()
+				this.rx = (this.rx and 0xFFFFFFFF00000000u) or (value and 0x00000000FFFFFFFFu)
 			}
-		var t_ex: UInt
+		var tex: UInt
 			get() = this.ex.toUInt()
 			set(value) {
 				this.ex = value.toULong()
@@ -73,9 +74,9 @@ class IA32Processor(val computer: Computer) : Processor {
 		var x: ULong
 			get() = this.rx and 0x000000000000FFFFu
 			set(value) {
-				this.rx = (this.rx and 0xFFFFFFFFFFFF0000u) or (value and 0x000000000000FFFFu).toULong()
+				this.rx = (this.rx and 0xFFFFFFFFFFFF0000u) or (value and 0x000000000000FFFFu)
 			}
-		var t_x: UShort
+		var tx: UShort
 			get() = this.x.toUShort()
 			set(value) {
 				this.x = value.toULong()
@@ -83,9 +84,9 @@ class IA32Processor(val computer: Computer) : Processor {
 		var l: ULong
 			get() = this.rx and 0x00000000000000FFu
 			set(value) {
-				this.rx = (this.rx and 0xFFFFFFFFFFFFFF00u) or (value and 0x00000000000000FFu).toULong()
+				this.rx = (this.rx and 0xFFFFFFFFFFFFFF00u) or (value and 0x00000000000000FFu)
 			}
-		var t_l: UByte
+		var tl: UByte
 			get() = this.l.toUByte()
 			set(value) {
 				this.l = value.toULong()
@@ -93,9 +94,9 @@ class IA32Processor(val computer: Computer) : Processor {
 		var h: ULong
 			get() = (this.rx and 0xFF00u) shr 8
 			set(value) {
-				this.rx = (this.rx and 0xFFFFFFFFFFFF00FFu) or ((value and 0x000000000000FF00u).toULong() shl 8)
+				this.rx = (this.rx and 0xFFFFFFFFFFFF00FFu) or ((value and 0x00000000000000FFu) shl 8)
 			}
-		var t_h: UByte
+		var th: UByte
 			get() = this.h.toUByte()
 			set(value) {
 				this.h = value.toULong()
@@ -125,7 +126,7 @@ class IA32Processor(val computer: Computer) : Processor {
 	var cs: Register = Register(0u)
 	var ds: Register = Register(0u)
 	var ss: Register = Register(0xF000u)
-	var se: Register = Register(0u)
+	var es: Register = Register(0u)
 	var fs: Register = Register(0u)
 	var gs: Register = Register(0u)
 
@@ -148,25 +149,25 @@ class IA32Processor(val computer: Computer) : Processor {
 
 	fun push32(value: UInt) {
 		this.sp.rx -= 4u
-		this.logger.warn("4# ${hex(value)} -> ${hex(this.ss.t_ex)}:${hex(this.sp.t_ex)}")
-		this.computer.setMemoryAt32(((this.ss.t_ex * 0x10u) + this.sp.t_ex).toULong(), value)
+		this.logger.warn("4# ${hex(value)} -> ${hex(this.ss.tex)}:${hex(this.sp.tex)}")
+		this.computer.setMemoryAt32(((this.ss.tex * 0x10u) + this.sp.tex).toULong(), value)
 	}
 
 	fun push16(value: UShort) {
 		this.sp.rx -= 2u
-		this.logger.warn("2# ${hex(value)} -> ${hex(this.ss.t_x)}:${hex(this.sp.t_x)}")
-		this.computer.setMemoryAt16(((this.ss.t_x * 0x10u) + this.sp.t_x).toULong(), value)
+		this.logger.warn("2# ${hex(value)} -> ${hex(this.ss.tx)}:${hex(this.sp.tx)}")
+		this.computer.setMemoryAt16(((this.ss.tx * 0x10u) + this.sp.tx).toULong(), value)
 	}
 
 	fun push8(value: UByte) {
 		this.sp.rx -= 1u
-		this.logger.warn("1# ${hex(value)} -> ${hex(this.ss.t_x)}:${hex(this.sp.t_x)}")
-		this.computer.setMemoryAt(((this.ss.t_x * 0x10u) + this.sp.t_x).toULong(), value)
+		this.logger.warn("1# ${hex(value)} -> ${hex(this.ss.tx)}:${hex(this.sp.tx)}")
+		this.computer.setMemoryAt(((this.ss.tx * 0x10u) + this.sp.tx).toULong(), value)
 	}
 
 	fun pop16(): UShort {
-		val popped = this.computer.requestMemoryAt16(((this.ss.t_x * 0x10u) + this.sp.t_x).toULong())
-		this.logger.warn("2# ${hex(this.ss.t_x)}:${hex(this.sp.t_x)} -> ${hex(popped)}")
+		val popped = this.computer.requestMemoryAt16(((this.ss.tx * 0x10u) + this.sp.tx).toULong())
+		this.logger.warn("2# ${hex(this.ss.tx)}:${hex(this.sp.tx)} -> ${hex(popped)}")
 		this.sp.rx += 2u
 		return popped
 	}
@@ -248,6 +249,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			0xBCu -> HBCInstructionMOV.handle(this)
 			0xBEu -> HBEInstructionMOV.handle(this)
 			0xC1u -> HC1InstructionSHR.handle(this)
+			0xCDu -> HCDInstructionINT.handle(this)
 			0xE8u -> HE8InstructionCALL.handle(this)
 			0xEBu -> HEBInstructionJMP.handle(this)
 			0xFAu -> HFAInstructionCLI.handle(this)

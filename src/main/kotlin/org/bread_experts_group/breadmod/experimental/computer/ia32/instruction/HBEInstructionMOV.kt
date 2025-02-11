@@ -6,6 +6,6 @@ object HBEInstructionMOV {
 	fun handle(processor: IA32Processor) {
 		if (processor.csOverride || processor.bitOverride) TODO("can't support CS/66")
 		val imm16 = processor.decoding.readBinaryI(2).toUShort()
-		processor.si.t_x = imm16
+		processor.si.tx = imm16
 	}
 }

@@ -6,6 +6,6 @@ object HB4InstructionMOV {
 	fun handle(processor: IA32Processor) {
 		if (processor.csOverride || processor.bitOverride) TODO("can't support CS/66")
 		val imm8 = processor.fetch().let { processor.cir.toInt() }
-		processor.a.t_h = imm8.toUByte()
+		processor.a.th = imm8.toUByte()
 	}
 }

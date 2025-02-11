@@ -5,6 +5,6 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 object H5BInstructionPOP {
 	fun handle(processor: IA32Processor) {
 		if (processor.csOverride || processor.bitOverride) TODO("can't support CS/66")
-		processor.b.t_x = processor.pop16()
+		processor.b.tx = processor.pop16()
 	}
 }
