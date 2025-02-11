@@ -10,6 +10,7 @@ import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volum
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H09InstructionOR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H31InstructionXOR
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H39InstructionCMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H46InstructionINC
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H50InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H56InstructionPUSH
@@ -222,6 +223,7 @@ class IA32Processor(val computer: Computer) : Processor {
 				return
 			}
 			0x31u -> H31InstructionXOR.handle(this)
+			0x39u -> H39InstructionCMP.handle(this)
 			0x46u -> H46InstructionINC.handle(this)
 			0x50u -> H50InstructionPUSH.handle(this)
 			0x56u -> H56InstructionPUSH.handle(this)
