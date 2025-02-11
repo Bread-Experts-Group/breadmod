@@ -79,7 +79,7 @@ class DecodingUtil(private val processor: IA32Processor) {
 				0b001u -> TODO("[BX+DI]+disp8")
 				0b010u -> TODO("[BP+SI]+disp8")
 				0b011u -> TODO("[BP+DI]+disp8")
-				0b100u -> TODO("[SI]+disp8")
+				0b100u -> Optional.of((this.processor.si.t_l + this.readBinaryI(1).toUByte()).toULong())
 				0b101u -> TODO("[DI]+disp8")
 				0b110u -> TODO("[BP]+disp8")
 				0b111u -> TODO("[BX]+disp8")
