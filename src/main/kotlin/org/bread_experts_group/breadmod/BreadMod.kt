@@ -8,7 +8,6 @@ import net.neoforged.fml.ModList
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.config.ModConfig
 import net.neoforged.fml.loading.FMLLoader
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.LoggerContext
@@ -85,8 +84,7 @@ class BreadMod(container: ModContainer) {
 
 			ConsoleUnnamedRedirection.setup()
 		}
-
-		this.logger.log(Level.INFO, "Hello world!")
+		this.logger.info("Hello world!")
 
 		container.registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPEC.right, "breadmod-common.toml")
 		container.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPEC.right, "breadmod-client.toml")

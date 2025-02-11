@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.PrintStream
-import java.util.*
+import java.util.Scanner
 
 internal object ConsoleUnnamedRedirection {
 	private val unnamedLoggerOut: Logger = LogManager.getLogger("Unnamed Logger, Standard Out")
@@ -18,7 +18,7 @@ internal object ConsoleUnnamedRedirection {
 			val result = this.intermediateBuilder.toString().split("\n").toMutableList()
 			if (result.size > 1) {
 				val last = result.removeLast()
-				result.forEach(this.logger::info)
+				result.forEach(this.logger::warn)
 				this.intermediateBuilder.clear()
 				this.intermediateBuilder.append(last)
 			}
@@ -28,7 +28,7 @@ internal object ConsoleUnnamedRedirection {
 	}
 
 	fun setup() {
-		System.setOut(Redirector(this.unnamedLoggerOut, Level.INFO))
+		System.setOut(Redirector(this.unnamedLoggerOut, Level.WARN))
 		System.setErr(Redirector(this.unnamedLoggerErr, Level.ERROR))
 		Thread.ofVirtual().start {
 			val sc = Scanner(System.`in`)
