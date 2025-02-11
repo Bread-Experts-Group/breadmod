@@ -24,6 +24,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H89InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8BInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8EInstructionMOV
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB4InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBCInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBEInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionSHR
@@ -243,6 +244,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			0x89u -> H89InstructionMOV.handle(this)
 			0x8Bu -> H8BInstructionMOV.handle(this)
 			0x8Eu -> H8EInstructionMOV.handle(this)
+			0xB4u -> HB4InstructionMOV.handle(this)
 			0xBCu -> HBCInstructionMOV.handle(this)
 			0xBEu -> HBEInstructionMOV.handle(this)
 			0xC1u -> HC1InstructionSHR.handle(this)
