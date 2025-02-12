@@ -2,7 +2,7 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object HC1InstructionSHR {
+object HC1InstructionSHF {
 	fun handle(processor: IA32Processor) {
 		if (processor.csOverride) TODO("can't support CS")
 		processor.fetch()
@@ -11,6 +11,7 @@ object HC1InstructionSHR {
 		val shiftCount = processor.cir.toInt()
 		if (shiftCount == 0) return
 		val result = if (processor.bitOverride) {
+			// SHR 32
 			processor.decoding.getModRM16A(rmRaw, DecodingUtil.AddressingLength.R32).memRM.decide(
 				{ (it.get() shr shiftCount).also { r -> it.set(r) } },
 				{
@@ -20,7 +21,15 @@ object HC1InstructionSHR {
 				}
 			)
 		} else {
-			TODO("16-bit SHR 0xC1")
+			// SHL 16
+			processor.decoding.getModRM16A(rmRaw, DecodingUtil.AddressingLength.R16).memRM.decide(
+				{ (it.get() shl shiftCount).also { r -> it.set(r) } },
+				{
+					(processor.computer.requestMemoryAt16(it).toUInt() shl shiftCount).toUShort().also { r ->
+						processor.computer.setMemoryAt16(it, r)
+					}.toULong()
+				}
+			)
 		}
 
 		processor.setFlag(IA32Processor.FlagType.AUXILIARY_CARRY_FLAG, false) // TODO AUX CARRY

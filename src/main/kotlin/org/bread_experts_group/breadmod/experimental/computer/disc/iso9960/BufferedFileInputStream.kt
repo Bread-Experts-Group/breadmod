@@ -19,6 +19,8 @@ class BufferedFileInputStream(val channel: SeekableByteChannel) : InputStream() 
 		return byteBuf.get().toUByte().toInt()
 	}
 
+	fun readUB(): UByte = this.read().toUByte()
+
 	override fun readNBytes(len: Int): ByteArray {
 		if (len == 0) return byteArrayOf()
 		val newByteBuf: ByteBuffer = ByteBuffer.allocate(len)
@@ -26,19 +28,19 @@ class BufferedFileInputStream(val channel: SeekableByteChannel) : InputStream() 
 		return newByteBuf.array()
 	}
 
-	fun readBinaryS(length: Int, flip: Boolean = false): Int = readBinary(length, this::read, flip)
+	fun readBinaryS(length: Int, flip: Boolean = false): Long = readBinary(length, this::readUB, flip)
 
-	fun readLSB(length: Int): Optional<Int> = this.readBinaryS(length).let {
+	fun readLSB(length: Int): Optional<Long> = this.readBinaryS(length).let {
 		if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) Optional.empty()
 		else Optional.of(it)
 	}
 
-	fun readMSB(length: Int): Optional<Int> = this.readBinaryS(length).let {
+	fun readMSB(length: Int): Optional<Long> = this.readBinaryS(length).let {
 		if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) Optional.empty()
 		else Optional.of(it)
 	}
 
-	fun readLSBMSB(length: Int): Int = if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) {
+	fun readLSBMSB(length: Int): Long = if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) {
 		this.skip(length.toLong())
 		this.readBinaryS(length)
 	} else this.readBinaryS(length).also {

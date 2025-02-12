@@ -8,12 +8,13 @@ object BinaryUtil {
 	fun hex(s: UShort): String = "0x${s.toString(16).padStart(4, '0').uppercase()}"
 	fun hex(b: UByte): String = "0x${b.toString(16).padStart(2, '0').uppercase()}"
 
-	fun readBinary(length: Int, read: () -> Int, flip: Boolean = false): Int {
-		val buffer = IntArray(length) { read() }
+	@OptIn(ExperimentalUnsignedTypes::class)
+	fun readBinary(length: Int, read: () -> UByte, flip: Boolean = false): Long {
+		val buffer = UByteArray(length) { read() }
 		if (flip) buffer.reverse()
-		var final = 0
+		var final: Long = 0
 		buffer.forEachIndexed { i, b ->
-			final = final or (b shl (i * 8))
+			final = final or (b.toLong() shl (i * 8))
 		}
 		return final
 	}

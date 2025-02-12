@@ -117,10 +117,10 @@ class ElToritoBootRecord(
 						Contents.ElToritoEmulationType.OTHER
 					),
 					emulationType.toByte(),
-					stream.readBinaryS(2).let { if (it == 0) 0x7C0 else it.toShort() },
+					stream.readBinaryS(2).toShort().let { if (it == (0).toShort()) 0x7C0 else it.toShort() },
 					stream.read().toByte().also { stream.skip(1) },
 					stream.readBinaryS(2).toShort(),
-					stream.readBinaryS(4),
+					stream.readBinaryS(4).toInt(),
 					stream.readNBytes(20)
 				)
 			)

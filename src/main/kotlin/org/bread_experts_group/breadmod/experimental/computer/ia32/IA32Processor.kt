@@ -18,6 +18,8 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H5BInstructionPOP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H68InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H6AInstructionPUSH
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H72InstructionJB
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H73InstructionJAE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H74InstructionJE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H76InstructionJBE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H81InstructionADD
@@ -27,8 +29,9 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB4InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBCInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBEInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionSHR
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionSHF
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HCDInstructionINT
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HD1InstructionSHR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HE8InstructionCALL
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEBInstructionJMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFAInstructionCLI
@@ -199,6 +202,7 @@ class IA32Processor(val computer: Computer) : Processor {
 				// TODO Send in chunks
 				this.computer.setMemoryAt(offset, disc.discStream.read().toUByte())
 			}
+			this.d.l = 0xE0u
 			this.ip.rx = start.toULong()
 		}
 		this.cir = this.computer.requestMemoryAt(this.ip.rx)
@@ -239,6 +243,8 @@ class IA32Processor(val computer: Computer) : Processor {
 			}
 			0x68u -> H68InstructionPUSH.handle(this)
 			0x6Au -> H6AInstructionPUSH.handle(this)
+			0x72u -> H72InstructionJB.handle(this)
+			0x73u -> H73InstructionJAE.handle(this)
 			0x74u -> H74InstructionJE.handle(this)
 			0x76u -> H76InstructionJBE.handle(this)
 			0x81u -> H81InstructionADD.handle(this)
@@ -248,8 +254,9 @@ class IA32Processor(val computer: Computer) : Processor {
 			0xB4u -> HB4InstructionMOV.handle(this)
 			0xBCu -> HBCInstructionMOV.handle(this)
 			0xBEu -> HBEInstructionMOV.handle(this)
-			0xC1u -> HC1InstructionSHR.handle(this)
+			0xC1u -> HC1InstructionSHF.handle(this)
 			0xCDu -> HCDInstructionINT.handle(this)
+			0xD1u -> HD1InstructionSHR.handle(this)
 			0xE8u -> HE8InstructionCALL.handle(this)
 			0xEBu -> HEBInstructionJMP.handle(this)
 			0xFAu -> HFAInstructionCLI.handle(this)

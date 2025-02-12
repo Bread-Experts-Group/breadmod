@@ -79,7 +79,7 @@ class ISO9660Disc(
 									identifier,
 									version,
 									rawVersion,
-									stream.readBinaryS(4),
+									stream.readBinaryS(4).toInt(),
 									stream.readNBytes(1973)
 								)
 							else
@@ -125,17 +125,21 @@ class ISO9660Disc(
 								stream.readNBytes(32).decodeToString().also {
 									stream.skip(8)
 								},
-								stream.readLSBMSB(4).also {
+								stream.readLSBMSB(4).toInt().also {
 									stream.skip(32)
 								},
 								stream.readLSBMSB(2).toShort(),
 								stream.readLSBMSB(2).toShort(),
 								stream.readLSBMSB(2).toShort(),
-								stream.readLSBMSB(4),
-								stream.readLSB(4),
-								stream.readLSB(4).let { if (it.isPresent && it.get() == 0) Optional.empty() else it },
-								stream.readMSB(4),
-								stream.readMSB(4).let { if (it.isPresent && it.get() == 0) Optional.empty() else it },
+								stream.readLSBMSB(4).toInt(),
+								stream.readLSB(4).map { it.toInt() },
+								stream.readLSB(4)
+									.map { it.toInt() }
+									.let { if (it.isPresent && it.get() == 0) Optional.empty() else it },
+								stream.readMSB(4).map { it.toInt() },
+								stream.readMSB(4)
+									.map { it.toInt() }
+									.let { if (it.isPresent && it.get() == 0) Optional.empty() else it },
 								DirectoryRecord.readRecord(stream),
 								stream.readNBytes(128).decodeToString(),
 								stream.readNBytes(128).decodeToString(),

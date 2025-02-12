@@ -44,12 +44,17 @@ class Computer : SimulationSteppable {
 
 	fun requestMemoryAt16(address: ULong): UShort {
 		var offset = 0u
-		return readBinary(2, { this.requestMemoryAt(address + offset).also { offset++ }.toInt() }).toUShort()
+		return readBinary(2, { this.requestMemoryAt(address + offset).also { offset++ } }).toUShort()
 	}
 
 	fun requestMemoryAt32(address: ULong): UInt {
 		var offset = 0u
-		return readBinary(4, { this.requestMemoryAt(address + offset).also { offset++ }.toInt() }).toUInt()
+		return readBinary(4, { this.requestMemoryAt(address + offset).also { offset++ } }).toUInt()
+	}
+
+	fun requestMemoryAt64(address: ULong): ULong {
+		var offset = 0u
+		return readBinary(8, { this.requestMemoryAt(address + offset).also { offset++ } }).toULong()
 	}
 
 	override fun step() {

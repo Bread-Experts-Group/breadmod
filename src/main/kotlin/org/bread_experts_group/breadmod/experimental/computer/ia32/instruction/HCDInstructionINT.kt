@@ -21,6 +21,15 @@ object HCDInstructionINT {
 		processor.logger.warn("ES:" + hex(processor.es.rx))
 		processor.logger.warn("FS:" + hex(processor.fs.rx))
 		processor.logger.warn("GS:" + hex(processor.gs.rx))
-		TODO("Software INT")
+		if (index == 0x13) {
+			val offset = (processor.ds.ex * 0x10u) + processor.si.ex
+			processor.logger.warn("13 S:" + hex(processor.computer.requestMemoryAt(offset)))
+			processor.logger.warn("SC  :" + hex(processor.computer.requestMemoryAt16(offset + 2u)))
+			processor.logger.warn("SEG :" + hex(processor.computer.requestMemoryAt16(offset + 4u)))
+			processor.logger.warn("OFF :" + hex(processor.computer.requestMemoryAt16(offset + 6u)))
+			processor.logger.warn("LBA :" + hex(processor.computer.requestMemoryAt64(offset + 8u)))
+			processor.setFlag(IA32Processor.FlagType.CARRY_FLAG, false)
+			processor.a.h = 0x00u
+		} else TODO("This interrupt")
 	}
 }

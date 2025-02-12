@@ -41,8 +41,8 @@ class DirectoryRecord(
 			val length = stream.read()
 			/*val extendedAttributeRecordLength = */stream.read()
 			val record = DirectoryRecord(
-				stream.readLSBMSB(4),
-				stream.readLSBMSB(4),
+				stream.readLSBMSB(4).toInt(),
+				stream.readLSBMSB(4).toInt(),
 				ZonedDateTime.of(
 					stream.read() + 1900,
 					stream.read(),

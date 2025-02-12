@@ -52,9 +52,9 @@ class DecodingUtil(private val processor: IA32Processor) {
 			else ifAddress(this.address.get())
 	}
 
-	fun readBinaryI(length: Int, flip: Boolean = false): Int = readBinary(length, {
+	fun readBinaryI(length: Int, flip: Boolean = false): Long = readBinary(length, {
 		this.processor.fetch()
-		this.processor.cir.toInt()
+		this.processor.cir
 	}, flip)
 
 	fun getMemRM(
