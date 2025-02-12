@@ -10,7 +10,7 @@ object H81InstructionADD {
 			processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R32) to
 					processor.decoding.readBinaryI(4).toULong()
 		} else {
-			TODO("16-bit AND 0x81")
+			TODO("16-bit ADD 0x81")
 		}
 		val result = rm.memRM.decide(
 			{ (it.get() + imm).also { r -> it.set(r) } },

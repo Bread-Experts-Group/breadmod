@@ -8,21 +8,26 @@ import org.bread_experts_group.breadmod.experimental.computer.Processor
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.PrimaryVolume
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.boot.ElToritoBootRecord
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H01InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H09InstructionOR
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H29InstructionSUB
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H31InstructionXOR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H39InstructionCMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H46InstructionINC
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H50InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H51InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H56InstructionPUSH
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H59InstructionPOP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H5BInstructionPOP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H68InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H6AInstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H72InstructionJB
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H73InstructionJAE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H74InstructionJE
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H75InstructionJNE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H76InstructionJBE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H81InstructionADD
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H83InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H89InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8BInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8EInstructionMOV
@@ -30,6 +35,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBCInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBEInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionSHF
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC3InstructionRET
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HCDInstructionINT
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HD1InstructionSHR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HE8InstructionCALL
@@ -168,6 +174,13 @@ class IA32Processor(val computer: Computer) : Processor {
 		this.computer.setMemoryAt(((this.ss.tx * 0x10u) + this.sp.tx).toULong(), value)
 	}
 
+	fun pop32(): UInt {
+		val popped = this.computer.requestMemoryAt32(((this.ss.tex * 0x10u) + this.sp.tex).toULong())
+		this.logger.warn("4# ${hex(this.ss.tex)}:${hex(this.sp.tex)} -> ${hex(popped)}")
+		this.sp.rx += 4u
+		return popped
+	}
+
 	fun pop16(): UShort {
 		val popped = this.computer.requestMemoryAt16(((this.ss.tx * 0x10u) + this.sp.tx).toULong())
 		this.logger.warn("2# ${hex(this.ss.tx)}:${hex(this.sp.tx)} -> ${hex(popped)}")
@@ -225,7 +238,9 @@ class IA32Processor(val computer: Computer) : Processor {
 					(if (this.bitOverride) ", 66" else "")
 		)
 		when (this.cir.toUInt()) {
+			0x01u -> H01InstructionADD.handle(this)
 			0x09u -> H09InstructionOR.handle(this)
+			0x29u -> H29InstructionSUB.handle(this)
 			0x2Eu -> {
 				this.csOverride = true
 				return
@@ -236,6 +251,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			0x50u -> H50InstructionPUSH.handle(this)
 			0x51u -> H51InstructionPUSH.handle(this)
 			0x56u -> H56InstructionPUSH.handle(this)
+			0x59u -> H59InstructionPOP.handle(this)
 			0x5Bu -> H5BInstructionPOP.handle(this)
 			0x66u -> {
 				this.bitOverride = true
@@ -246,8 +262,10 @@ class IA32Processor(val computer: Computer) : Processor {
 			0x72u -> H72InstructionJB.handle(this)
 			0x73u -> H73InstructionJAE.handle(this)
 			0x74u -> H74InstructionJE.handle(this)
+			0x75u -> H75InstructionJNE.handle(this)
 			0x76u -> H76InstructionJBE.handle(this)
 			0x81u -> H81InstructionADD.handle(this)
+			0x83u -> H83InstructionADD.handle(this)
 			0x89u -> H89InstructionMOV.handle(this)
 			0x8Bu -> H8BInstructionMOV.handle(this)
 			0x8Eu -> H8EInstructionMOV.handle(this)
@@ -255,6 +273,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			0xBCu -> HBCInstructionMOV.handle(this)
 			0xBEu -> HBEInstructionMOV.handle(this)
 			0xC1u -> HC1InstructionSHF.handle(this)
+			0xC3u -> HC3InstructionRET.handle(this)
 			0xCDu -> HCDInstructionINT.handle(this)
 			0xD1u -> HD1InstructionSHR.handle(this)
 			0xE8u -> HE8InstructionCALL.handle(this)

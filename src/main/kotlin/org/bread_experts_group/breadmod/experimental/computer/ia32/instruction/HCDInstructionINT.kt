@@ -27,9 +27,10 @@ object HCDInstructionINT {
 			processor.logger.warn("SC  :" + hex(processor.computer.requestMemoryAt16(offset + 2u)))
 			processor.logger.warn("SEG :" + hex(processor.computer.requestMemoryAt16(offset + 4u)))
 			processor.logger.warn("OFF :" + hex(processor.computer.requestMemoryAt16(offset + 6u)))
-			processor.logger.warn("LBA :" + hex(processor.computer.requestMemoryAt64(offset + 8u)))
-			processor.setFlag(IA32Processor.FlagType.CARRY_FLAG, false)
-			processor.a.h = 0x00u
+			processor.logger.warn("LBA :" + hex(processor.computer.requestMemoryAt48(offset + 8u)))
+			processor.setFlag(IA32Processor.FlagType.CARRY_FLAG, true)
+			processor.a.h = 0x04u
+			TODO("DISC LOAD INT")
 		} else TODO("This interrupt")
 	}
 }

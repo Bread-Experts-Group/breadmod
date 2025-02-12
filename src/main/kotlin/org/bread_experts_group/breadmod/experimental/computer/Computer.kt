@@ -52,6 +52,11 @@ class Computer : SimulationSteppable {
 		return readBinary(4, { this.requestMemoryAt(address + offset).also { offset++ } }).toUInt()
 	}
 
+	fun requestMemoryAt48(address: ULong): ULong {
+		var offset = 0u
+		return readBinary(6, { this.requestMemoryAt(address + offset).also { offset++ } }).toULong()
+	}
+
 	fun requestMemoryAt64(address: ULong): ULong {
 		var offset = 0u
 		return readBinary(8, { this.requestMemoryAt(address + offset).also { offset++ } }).toULong()
