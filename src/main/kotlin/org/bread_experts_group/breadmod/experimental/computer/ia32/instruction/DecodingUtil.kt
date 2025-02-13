@@ -118,7 +118,7 @@ class DecodingUtil(private val processor: IA32Processor) {
 	}
 
 	fun getFlagForResult(flag: IA32Processor.FlagType, value: ULong): Boolean = when (flag) {
-		IA32Processor.FlagType.SIGN_FLAG   -> value < 0u
+		IA32Processor.FlagType.SIGN_FLAG   -> value.toLong() < 0
 		IA32Processor.FlagType.ZERO_FLAG   -> value == ULong.MIN_VALUE
 		IA32Processor.FlagType.PARITY_FLAG -> value.countOneBits() % 2 == 0
 		else                               -> TODO("Unsupported flag: $flag")

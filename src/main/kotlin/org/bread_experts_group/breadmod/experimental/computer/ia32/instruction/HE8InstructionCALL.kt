@@ -7,7 +7,7 @@ object HE8InstructionCALL {
 		if (processor.csOverride || processor.bitOverride) TODO("can't support CS/66")
 		val relative = processor.decoding.readBinaryI(2).toShort()
 		processor.logger.warn("CALL NEAR/REL $relative")
-		processor.push16(processor.ip.x.toUShort())
-		processor.ip.tx = (processor.ip.x.toInt() + relative).toUShort()
+		processor.push16(processor.ip.tx)
+		processor.ip.ex = (processor.ip.tx.toInt() + relative).toUShort().toULong()
 	}
 }

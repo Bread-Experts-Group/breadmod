@@ -47,6 +47,13 @@ class ISO9660Disc(
 		}
 	}
 
+	fun getBoot(): Pair<PrimaryVolume, ElToritoBootRecord.Contents.StandardEntry> {
+		val primary = this.volumeDescriptors.firstNotNullOf { it as? PrimaryVolume }
+		val boot = this.volumeDescriptors.firstNotNullOf { it as? ElToritoBootRecord }
+		val entry = boot.readContents(primary, this.discStream).standardEntries.first { it.bootable }
+		return primary to entry
+	}
+
 	companion object {
 		// TODO fix reading offset
 		fun getZoneIdFrom15M(offset: Int): ZoneId = ZoneId.ofOffset(

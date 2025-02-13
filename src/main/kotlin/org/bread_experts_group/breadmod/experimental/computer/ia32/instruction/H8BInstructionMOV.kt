@@ -11,8 +11,8 @@ object H8BInstructionMOV {
 				modRm.memRM.decide(
 					{ it.get() },
 					{
-						val physical = ((if (processor.csOverride) processor.cs else processor.ds).ex) * 0x10u
-						processor.computer.requestMemoryAt32(physical + it).toULong()
+						val physical = (if (processor.csOverride) processor.cs else processor.ds).offset(it)
+						processor.computer.requestMemoryAt32(physical).toULong()
 					}
 				)
 			)
@@ -22,8 +22,8 @@ object H8BInstructionMOV {
 				modRm.memRM.decide(
 					{ it.get() },
 					{
-						val physical = ((if (processor.csOverride) processor.cs else processor.ds).x) * 0x10u
-						processor.computer.requestMemoryAt16(physical + it).toULong()
+						val physical = (if (processor.csOverride) processor.cs else processor.ds).offset(it)
+						processor.computer.requestMemoryAt16(physical).toULong()
 					}
 				)
 			)

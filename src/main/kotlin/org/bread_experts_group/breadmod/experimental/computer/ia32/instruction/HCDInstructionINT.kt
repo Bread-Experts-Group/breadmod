@@ -7,30 +7,37 @@ object HCDInstructionINT {
 	fun handle(processor: IA32Processor) {
 		val index = processor.fetch().let { processor.cir.toInt() }
 		processor.logger.warn("INTERRUPT ${hex(index)}")
-		processor.logger.warn("A :" + hex(processor.a.rx))
-		processor.logger.warn("B :" + hex(processor.b.rx))
-		processor.logger.warn("C :" + hex(processor.c.rx))
-		processor.logger.warn("D :" + hex(processor.d.rx))
-		processor.logger.warn("SP:" + hex(processor.sp.rx))
-		processor.logger.warn("BP:" + hex(processor.bp.rx))
-		processor.logger.warn("DI:" + hex(processor.di.rx))
-		processor.logger.warn("SI:" + hex(processor.si.rx))
-		processor.logger.warn("CS:" + hex(processor.cs.rx))
-		processor.logger.warn("DS:" + hex(processor.ds.rx))
-		processor.logger.warn("SS:" + hex(processor.ss.rx))
-		processor.logger.warn("ES:" + hex(processor.es.rx))
-		processor.logger.warn("FS:" + hex(processor.fs.rx))
-		processor.logger.warn("GS:" + hex(processor.gs.rx))
 		if (index == 0x13) {
-			val offset = (processor.ds.ex * 0x10u) + processor.si.ex
-			processor.logger.warn("13 S:" + hex(processor.computer.requestMemoryAt(offset)))
-			processor.logger.warn("SC  :" + hex(processor.computer.requestMemoryAt16(offset + 2u)))
-			processor.logger.warn("SEG :" + hex(processor.computer.requestMemoryAt16(offset + 4u)))
-			processor.logger.warn("OFF :" + hex(processor.computer.requestMemoryAt16(offset + 6u)))
-			processor.logger.warn("LBA :" + hex(processor.computer.requestMemoryAt48(offset + 8u)))
+			val offset = processor.ds.offset(processor.si) and 0xFFFFu
+			val copySectors = processor.computer.requestMemoryAt16(offset + 2u)
+			val toAddress = ((processor.computer.requestMemoryAt16(offset + 4u) * 0x10u) +
+					processor.computer.requestMemoryAt16(offset + 6u)).toULong()
+			val fromDiscLBA = processor.computer.requestMemoryAt48(offset + 8u).toLong()
+			processor.computer.disc?.let { disc ->
+				val (primary, entry) = disc.getBoot()
+				val size = copySectors * primary.logicalBlockSize.toULong()
+				val discStart = (entry.loadRBA.toLong() * primary.logicalBlockSize) + ((fromDiscLBA - 1) * 512)
+				val savedPosition = disc.discStream.channel.position()
+				disc.discStream.channel.position(discStart)
+				processor.logger.warn(
+					"BIOS DISC CPY ${hex(discStart)} -> ${hex(discStart.toULong() + size)} @ ${hex(toAddress)}"
+				)
+				for (offset in toAddress .. toAddress + size) {
+					// TODO Send in chunks
+					processor.computer.setMemoryAt(offset, disc.discStream.read().toUByte())
+				}
+				disc.discStream.channel.position(savedPosition)
+				processor.setFlag(IA32Processor.FlagType.CARRY_FLAG, false)
+				processor.a.h = 0x00u
+				return
+			}
 			processor.setFlag(IA32Processor.FlagType.CARRY_FLAG, true)
 			processor.a.h = 0x04u
-			TODO("DISC LOAD INT")
-		} else TODO("This interrupt")
+		} else if (index == 0x10) {
+			when (processor.a.h.toUInt()) {
+				0x0Eu -> processor.logger.warn("TELETYPE: " + Char(processor.a.l.toUShort()))
+				else  -> TODO("BIOS Video mode control ...")
+			}
+		} else TODO("This interr**upt")
 	}
 }

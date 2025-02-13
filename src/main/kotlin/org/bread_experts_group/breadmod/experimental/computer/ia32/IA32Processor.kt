@@ -2,20 +2,22 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32
 
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.Computer
 import org.bread_experts_group.breadmod.experimental.computer.Processor
-import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.PrimaryVolume
-import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.boot.ElToritoBootRecord
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H00InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H01InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H09InstructionOR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H29InstructionSUB
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H31InstructionXOR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H39InstructionCMP
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H3CInstructionCMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H46InstructionINC
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H50InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H51InstructionPUSH
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H52InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H56InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H59InstructionPOP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H5BInstructionPOP
@@ -24,14 +26,16 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H72InstructionJB
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H73InstructionJAE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H74InstructionJE
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H75InstructionJNE
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H75InstructionJNEoJNZ
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H76InstructionJBE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H81InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H83InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H89InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8BInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8EInstructionMOV
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HACInstructionLODSB
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB4InstructionMOV
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBBInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBCInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBEInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionSHF
@@ -39,6 +43,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HCDInstructionINT
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HD1InstructionSHR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HE8InstructionCALL
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEAInstructionLJMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEBInstructionJMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFAInstructionCLI
 
@@ -69,7 +74,7 @@ class IA32Processor(val computer: Computer) : Processor {
 		CPUID_ALLOWED(0x0020_0000u)
 	}
 
-	class Register(var rx: ULong) {
+	open class Register(var rx: ULong) {
 		var ex: ULong
 			get() = this.rx and 0x00000000FFFFFFFFu
 			set(value) {
@@ -112,6 +117,13 @@ class IA32Processor(val computer: Computer) : Processor {
 			}
 	}
 
+	class SegmentRegister(rx: ULong) : Register(rx) {
+		fun offset(o: ULong): ULong = (this.rx * 0x10u) + o
+		fun offset(r: Register): ULong = this.offset(r.rx)
+		fun hex(o: ULong): String = "${BinaryUtil.hex(this.rx)}:${BinaryUtil.hex(o).substring(2)}"
+		fun hex(r: Register): String = this.hex(r.rx)
+	}
+
 	override fun step() {
 		this.fetch()
 		this.decode()
@@ -132,12 +144,12 @@ class IA32Processor(val computer: Computer) : Processor {
 	var si: Register = Register(0u)
 
 	// Segment
-	var cs: Register = Register(0u)
-	var ds: Register = Register(0u)
-	var ss: Register = Register(0xF000u)
-	var es: Register = Register(0u)
-	var fs: Register = Register(0u)
-	var gs: Register = Register(0u)
+	var cs: SegmentRegister = SegmentRegister(0u)
+	var ds: SegmentRegister = SegmentRegister(0u)
+	var ss: SegmentRegister = SegmentRegister(0xF000u)
+	var es: SegmentRegister = SegmentRegister(0u)
+	var fs: SegmentRegister = SegmentRegister(0u)
+	var gs: SegmentRegister = SegmentRegister(0u)
 
 	/**
 	 * The current instruction pointer of this [IA32Processor].
@@ -158,33 +170,33 @@ class IA32Processor(val computer: Computer) : Processor {
 
 	fun push32(value: UInt) {
 		this.sp.rx -= 4u
-		this.logger.warn("4# ${hex(value)} -> ${hex(this.ss.tex)}:${hex(this.sp.tex)}")
-		this.computer.setMemoryAt32(((this.ss.tex * 0x10u) + this.sp.tex).toULong(), value)
+		this.logger.warn("4# PUSH ${hex(value)} -> ${this.ss.hex(this.sp)}")
+		this.computer.setMemoryAt32(this.ss.offset(this.sp), value)
 	}
 
 	fun push16(value: UShort) {
 		this.sp.rx -= 2u
-		this.logger.warn("2# ${hex(value)} -> ${hex(this.ss.tx)}:${hex(this.sp.tx)}")
-		this.computer.setMemoryAt16(((this.ss.tx * 0x10u) + this.sp.tx).toULong(), value)
+		this.logger.warn("2# PUSH ${hex(value)} -> ${this.ss.hex(this.sp)}")
+		this.computer.setMemoryAt16(this.ss.offset(this.sp), value)
 	}
 
 	fun push8(value: UByte) {
 		this.sp.rx -= 1u
-		this.logger.warn("1# ${hex(value)} -> ${hex(this.ss.tx)}:${hex(this.sp.tx)}")
-		this.computer.setMemoryAt(((this.ss.tx * 0x10u) + this.sp.tx).toULong(), value)
+		this.logger.warn("1# PUSH ${hex(value)} -> ${this.ss.hex(this.sp)}")
+		this.computer.setMemoryAt(this.ss.offset(this.sp), value)
 	}
 
 	fun pop32(): UInt {
-		val popped = this.computer.requestMemoryAt32(((this.ss.tex * 0x10u) + this.sp.tex).toULong())
-		this.logger.warn("4# ${hex(this.ss.tex)}:${hex(this.sp.tex)} -> ${hex(popped)}")
+		val popped = this.computer.requestMemoryAt32(this.ss.offset(this.sp))
 		this.sp.rx += 4u
+		this.logger.warn("4# POP ${this.ss.hex(this.sp)} -> ${hex(popped)}")
 		return popped
 	}
 
 	fun pop16(): UShort {
-		val popped = this.computer.requestMemoryAt16(((this.ss.tx * 0x10u) + this.sp.tx).toULong())
-		this.logger.warn("2# ${hex(this.ss.tx)}:${hex(this.sp.tx)} -> ${hex(popped)}")
+		val popped = this.computer.requestMemoryAt16(this.ss.offset(this.sp))
 		this.sp.rx += 2u
+		this.logger.warn("2# POP ${this.ss.hex(this.sp)} -> ${hex(popped)}")
 		return popped
 	}
 
@@ -202,15 +214,14 @@ class IA32Processor(val computer: Computer) : Processor {
 
 	fun fetch() {
 		if (this.ip.rx == (0xFFFFFFF0u).toULong()) {
-			val disc = this.computer.disc ?: throw IllegalStateException("Please insert a disc")
-			val primary = disc.volumeDescriptors.firstNotNullOf { it as? PrimaryVolume }
-			val boot = disc.volumeDescriptors.firstNotNullOf { it as? ElToritoBootRecord }
-			val entry = boot.readContents(primary, disc.discStream).standardEntries.first { it.bootable }
+			val disc = this.computer.disc!!
+			val (primary, entry) = disc.getBoot()
 			val start = entry.loadSegment * 0x10
 			val size = (entry.sectorCount * primary.logicalBlockSize).toULong()
 			val discStart = entry.loadRBA.toLong() * primary.logicalBlockSize
 			disc.discStream.channel.position(discStart)
-			this.logger.warn("BIOS CPY ${hex(discStart)}")
+
+			this.logger.warn("BIOS CPY ${hex(discStart)} -> ${hex(discStart.toULong() + size)} @ ${hex(start)}")
 			for (offset in start.toULong() .. start.toULong() + size) {
 				// TODO Send in chunks
 				this.computer.setMemoryAt(offset, disc.discStream.read().toUByte())
@@ -218,7 +229,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			this.d.l = 0xE0u
 			this.ip.rx = start.toULong()
 		}
-		this.cir = this.computer.requestMemoryAt(this.ip.rx)
+		this.cir = this.computer.requestMemoryAt(this.cs.offset(this.ip))
 		this.ip.rx++
 	}
 
@@ -233,11 +244,12 @@ class IA32Processor(val computer: Computer) : Processor {
 		// 3.1.1.1 Opcode Column in the Instruction Summary Table
 		// TODO Exceptions
 		this.logger.warn(
-			"AT ${hex(this.ip.ex - 1u)}" +
+			"AT ${this.cs.hex(this.ip.rx - 1u)}" +
 					(if (this.csOverride) ", CS" else "") +
 					(if (this.bitOverride) ", 66" else "")
 		)
 		when (this.cir.toUInt()) {
+			0x00u -> H00InstructionADD.handle(this)
 			0x01u -> H01InstructionADD.handle(this)
 			0x09u -> H09InstructionOR.handle(this)
 			0x29u -> H29InstructionSUB.handle(this)
@@ -247,9 +259,11 @@ class IA32Processor(val computer: Computer) : Processor {
 			}
 			0x31u -> H31InstructionXOR.handle(this)
 			0x39u -> H39InstructionCMP.handle(this)
+			0x3Cu -> H3CInstructionCMP.handle(this)
 			0x46u -> H46InstructionINC.handle(this)
 			0x50u -> H50InstructionPUSH.handle(this)
 			0x51u -> H51InstructionPUSH.handle(this)
+			0x52u -> H52InstructionPUSH.handle(this)
 			0x56u -> H56InstructionPUSH.handle(this)
 			0x59u -> H59InstructionPOP.handle(this)
 			0x5Bu -> H5BInstructionPOP.handle(this)
@@ -262,14 +276,16 @@ class IA32Processor(val computer: Computer) : Processor {
 			0x72u -> H72InstructionJB.handle(this)
 			0x73u -> H73InstructionJAE.handle(this)
 			0x74u -> H74InstructionJE.handle(this)
-			0x75u -> H75InstructionJNE.handle(this)
+			0x75u -> H75InstructionJNEoJNZ.handle(this)
 			0x76u -> H76InstructionJBE.handle(this)
 			0x81u -> H81InstructionADD.handle(this)
 			0x83u -> H83InstructionADD.handle(this)
 			0x89u -> H89InstructionMOV.handle(this)
 			0x8Bu -> H8BInstructionMOV.handle(this)
 			0x8Eu -> H8EInstructionMOV.handle(this)
+			0xACu -> HACInstructionLODSB.handle(this)
 			0xB4u -> HB4InstructionMOV.handle(this)
+			0xBBu -> HBBInstructionMOV.handle(this)
 			0xBCu -> HBCInstructionMOV.handle(this)
 			0xBEu -> HBEInstructionMOV.handle(this)
 			0xC1u -> HC1InstructionSHF.handle(this)
@@ -277,6 +293,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			0xCDu -> HCDInstructionINT.handle(this)
 			0xD1u -> HD1InstructionSHR.handle(this)
 			0xE8u -> HE8InstructionCALL.handle(this)
+			0xEAu -> HEAInstructionLJMP.handle(this)
 			0xEBu -> HEBInstructionJMP.handle(this)
 			0xFAu -> HFAInstructionCLI.handle(this)
 			else  -> TODO("Unrecognized opcode (${hex(this.cir)})")

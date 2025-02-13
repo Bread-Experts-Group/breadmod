@@ -4,7 +4,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
 object H01InstructionADD {
 	fun handle(processor: IA32Processor) {
-		if (processor.csOverride) TODO("can't support CS/66")
+		if (processor.csOverride) TODO("can't support CS")
 		processor.fetch()
 		val result = if (processor.bitOverride) {
 			val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R32)

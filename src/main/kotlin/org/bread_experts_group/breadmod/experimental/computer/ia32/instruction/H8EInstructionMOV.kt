@@ -9,7 +9,7 @@ object H8EInstructionMOV {
 		val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R16)
 		rm.memRM.decide(
 			{ processor.ss.x = it.get() },
-			{ processor.ss.tx = processor.computer.requestMemoryAt16((processor.ds.tx * 0x10u) + it) }
+			{ processor.ss.tx = processor.computer.requestMemoryAt16(processor.ds.offset(it)) }
 		)
 	}
 }

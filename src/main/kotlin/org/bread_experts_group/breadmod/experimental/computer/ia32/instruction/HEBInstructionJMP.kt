@@ -7,6 +7,6 @@ object HEBInstructionJMP {
 		if (processor.csOverride || processor.bitOverride) TODO("can't support CS/66")
 		val relative = processor.fetch().let { processor.cir.toByte() }
 		processor.logger.warn("JMP SHORT $relative")
-		processor.ip.ex = (processor.ip.ex.toInt() + relative).toULong()
+		processor.ip.tex = (processor.ip.tex.toInt() + relative).toUInt()
 	}
 }
