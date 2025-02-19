@@ -2,8 +2,8 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H3CInstructionCMP {
-	fun handle(processor: IA32Processor) {
+object H3CInstructionCMP : Instruction {
+	override fun handle(processor: IA32Processor) {
 		if (processor.bitOverride || processor.csOverride) TODO("can't support CS/66")
 		processor.fetch()
 		val result = (processor.a.tl - processor.cir).toULong()

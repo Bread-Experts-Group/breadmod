@@ -2,8 +2,8 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H8BInstructionMOV {
-	fun handle(processor: IA32Processor) {
+object H8BInstructionMOV : Instruction {
+	override fun handle(processor: IA32Processor) {
 		processor.fetch()
 		if (processor.bitOverride) {
 			val modRm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R32)

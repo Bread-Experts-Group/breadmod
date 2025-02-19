@@ -45,6 +45,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HE8InstructionCALL
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEAInstructionLJMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEBInstructionJMP
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HF6InstructionTEST
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFAInstructionCLI
 
 /**
@@ -180,12 +181,6 @@ class IA32Processor(val computer: Computer) : Processor {
 		this.computer.setMemoryAt16(this.ss.offset(this.sp), value)
 	}
 
-	fun push8(value: UByte) {
-		this.sp.rx -= 1u
-		this.logger.warn("1# PUSH ${hex(value)} -> ${this.ss.hex(this.sp)}")
-		this.computer.setMemoryAt(this.ss.offset(this.sp), value)
-	}
-
 	fun pop32(): UInt {
 		val popped = this.computer.requestMemoryAt32(this.ss.offset(this.sp))
 		this.sp.rx += 4u
@@ -243,61 +238,65 @@ class IA32Processor(val computer: Computer) : Processor {
 		// 2.1.5 Table 2-2. 32-Bit Addressing Forms with the ModR/M Byte
 		// 3.1.1.1 Opcode Column in the Instruction Summary Table
 		// TODO Exceptions
-		this.logger.warn(
-			"AT ${this.cs.hex(this.ip.rx - 1u)}" +
-					(if (this.csOverride) ", CS" else "") +
-					(if (this.bitOverride) ", 66" else "")
-		)
-		when (this.cir.toUInt()) {
-			0x00u -> H00InstructionADD.handle(this)
-			0x01u -> H01InstructionADD.handle(this)
-			0x09u -> H09InstructionOR.handle(this)
-			0x29u -> H29InstructionSUB.handle(this)
+		val instruction = when (this.cir.toUInt()) {
+			0x00u -> H00InstructionADD
+			0x01u -> H01InstructionADD
+			0x09u -> H09InstructionOR
+			0x29u -> H29InstructionSUB
 			0x2Eu -> {
 				this.csOverride = true
 				return
 			}
-			0x31u -> H31InstructionXOR.handle(this)
-			0x39u -> H39InstructionCMP.handle(this)
-			0x3Cu -> H3CInstructionCMP.handle(this)
-			0x46u -> H46InstructionINC.handle(this)
-			0x50u -> H50InstructionPUSH.handle(this)
-			0x51u -> H51InstructionPUSH.handle(this)
-			0x52u -> H52InstructionPUSH.handle(this)
-			0x56u -> H56InstructionPUSH.handle(this)
-			0x59u -> H59InstructionPOP.handle(this)
-			0x5Bu -> H5BInstructionPOP.handle(this)
+			0x31u -> H31InstructionXOR
+			0x39u -> H39InstructionCMP
+			0x3Cu -> H3CInstructionCMP
+			0x46u -> H46InstructionINC
+			0x50u -> H50InstructionPUSH
+			0x51u -> H51InstructionPUSH
+			0x52u -> H52InstructionPUSH
+			0x56u -> H56InstructionPUSH
+			0x59u -> H59InstructionPOP
+			0x5Bu -> H5BInstructionPOP
 			0x66u -> {
 				this.bitOverride = true
 				return
 			}
-			0x68u -> H68InstructionPUSH.handle(this)
-			0x6Au -> H6AInstructionPUSH.handle(this)
-			0x72u -> H72InstructionJB.handle(this)
-			0x73u -> H73InstructionJAE.handle(this)
-			0x74u -> H74InstructionJE.handle(this)
-			0x75u -> H75InstructionJNEoJNZ.handle(this)
-			0x76u -> H76InstructionJBE.handle(this)
-			0x81u -> H81InstructionADD.handle(this)
-			0x83u -> H83InstructionADD.handle(this)
-			0x89u -> H89InstructionMOV.handle(this)
-			0x8Bu -> H8BInstructionMOV.handle(this)
-			0x8Eu -> H8EInstructionMOV.handle(this)
-			0xACu -> HACInstructionLODSB.handle(this)
-			0xB4u -> HB4InstructionMOV.handle(this)
-			0xBBu -> HBBInstructionMOV.handle(this)
-			0xBCu -> HBCInstructionMOV.handle(this)
-			0xBEu -> HBEInstructionMOV.handle(this)
-			0xC1u -> HC1InstructionSHF.handle(this)
-			0xC3u -> HC3InstructionRET.handle(this)
-			0xCDu -> HCDInstructionINT.handle(this)
-			0xD1u -> HD1InstructionSHR.handle(this)
-			0xE8u -> HE8InstructionCALL.handle(this)
-			0xEAu -> HEAInstructionLJMP.handle(this)
-			0xEBu -> HEBInstructionJMP.handle(this)
-			0xFAu -> HFAInstructionCLI.handle(this)
+			0x68u -> H68InstructionPUSH
+			0x6Au -> H6AInstructionPUSH
+			0x72u -> H72InstructionJB
+			0x73u -> H73InstructionJAE
+			0x74u -> H74InstructionJE
+			0x75u -> H75InstructionJNEoJNZ
+			0x76u -> H76InstructionJBE
+			0x81u -> H81InstructionADD
+			0x83u -> H83InstructionADD
+			0x89u -> H89InstructionMOV
+			0x8Bu -> H8BInstructionMOV
+			0x8Eu -> H8EInstructionMOV
+			0xACu -> HACInstructionLODSB
+			0xB4u -> HB4InstructionMOV
+			0xBBu -> HBBInstructionMOV
+			0xBCu -> HBCInstructionMOV
+			0xBEu -> HBEInstructionMOV
+			0xC1u -> HC1InstructionSHF
+			0xC3u -> HC3InstructionRET
+			0xCDu -> HCDInstructionINT
+			0xD1u -> HD1InstructionSHR
+			0xE8u -> HE8InstructionCALL
+			0xEAu -> HEAInstructionLJMP
+			0xEBu -> HEBInstructionJMP
+			0xF6u -> HF6InstructionTEST
+			0xFAu -> HFAInstructionCLI
 			else  -> TODO("Unrecognized opcode (${hex(this.cir)})")
 		}
+		this.logger.warn(
+			"{} ({},{}): {}",
+			this.cs.hex(this.ip.rx - 1u),
+			if (this.csOverride) "CS" else "  ",
+			if (this.bitOverride) "66" else "  ",
+			instruction::class.simpleName
+		)
+		instruction.handle(this)
 		this.csOverride = false
 		this.bitOverride = false
 	}

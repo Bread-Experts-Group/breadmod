@@ -2,8 +2,8 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object HC1InstructionSHF {
-	fun handle(processor: IA32Processor) {
+object HC1InstructionSHF : Instruction {
+	override fun handle(processor: IA32Processor) {
 		if (processor.csOverride) TODO("can't support CS")
 		processor.fetch()
 		val rmRaw = processor.cir
@@ -13,7 +13,7 @@ object HC1InstructionSHF {
 		val result = if (processor.bitOverride) {
 			// SHR 32
 			processor.decoding.getModRM16A(rmRaw, DecodingUtil.AddressingLength.R32).memRM.decide(
-				{ (it.get() shr shiftCount).also { r -> it.set(r) } },
+				{ (it.get() shr shiftCount).also(it::set) },
 				{
 					(processor.computer.requestMemoryAt32(it) shr shiftCount).toULong().also { r ->
 						processor.computer.setMemoryAt32(it, r.toUInt())
@@ -23,7 +23,7 @@ object HC1InstructionSHF {
 		} else {
 			// SHL 16
 			processor.decoding.getModRM16A(rmRaw, DecodingUtil.AddressingLength.R16).memRM.decide(
-				{ (it.get() shl shiftCount).also { r -> it.set(r) } },
+				{ (it.get() shl shiftCount).also(it::set) },
 				{
 					(processor.computer.requestMemoryAt16(it).toUInt() shl shiftCount).toUShort().also { r ->
 						processor.computer.setMemoryAt16(it, r)

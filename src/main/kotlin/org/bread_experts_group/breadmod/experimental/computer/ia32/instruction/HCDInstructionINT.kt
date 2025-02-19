@@ -3,15 +3,18 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object HCDInstructionINT {
-	fun handle(processor: IA32Processor) {
+object HCDInstructionINT : Instruction {
+	override fun handle(processor: IA32Processor) {
 		val index = processor.fetch().let { processor.cir.toInt() }
 		processor.logger.warn("INTERRUPT ${hex(index)}")
 		if (index == 0x13) {
-			val offset = processor.ds.offset(processor.si) and 0xFFFFu
+			val offset = processor.ds.offset(processor.si)
+			// This is reading incorrectly...
+			// pls pet me when i wake up
+			// :pleading_face:
 			val copySectors = processor.computer.requestMemoryAt16(offset + 2u)
-			val toAddress = ((processor.computer.requestMemoryAt16(offset + 4u) * 0x10u) +
-					processor.computer.requestMemoryAt16(offset + 6u)).toULong()
+			val toAddress = ((processor.computer.requestMemoryAt16(offset + 6u) * 0x10u) +
+					processor.computer.requestMemoryAt16(offset + 4u)).toULong()
 			val fromDiscLBA = processor.computer.requestMemoryAt48(offset + 8u).toLong()
 			processor.computer.disc?.let { disc ->
 				val (primary, entry) = disc.getBoot()

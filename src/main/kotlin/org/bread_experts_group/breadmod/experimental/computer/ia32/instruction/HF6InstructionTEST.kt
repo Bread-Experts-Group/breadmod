@@ -2,22 +2,22 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H09InstructionOR : Instruction {
+object HF6InstructionTEST : Instruction {
 	override fun handle(processor: IA32Processor) {
-		if (processor.csOverride) TODO("can't support CS")
-		val rm = if (processor.bitOverride) {
-			processor.fetch()
-			processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R32)
-		} else {
-			TODO("16-bit OR 0x09")
-		}
-		val result = rm.memRM.register.get().get() or rm.register.get()
-		rm.register.set(result)
+		if (processor.csOverride || processor.bitOverride) TODO("can't support CS/66")
+		processor.fetch()
+		val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R8)
+		val imm8 = processor.fetch().let { processor.cir }
+		val result = rm.memRM.decide(
+			{ it.get() and (imm8.toULong()) },
+			{ (processor.computer.requestMemoryAt(it) and imm8).toULong() }
+		)
 
 		processor.setFlag(IA32Processor.FlagType.OVERFLOW_FLAG, false)
 		processor.setFlag(IA32Processor.FlagType.CARRY_FLAG, false)
 		processor.setFlagToResult(IA32Processor.FlagType.SIGN_FLAG, result)
 		processor.setFlagToResult(IA32Processor.FlagType.ZERO_FLAG, result)
 		processor.setFlagToResult(IA32Processor.FlagType.PARITY_FLAG, result)
+		// AF flag is undefined
 	}
 }

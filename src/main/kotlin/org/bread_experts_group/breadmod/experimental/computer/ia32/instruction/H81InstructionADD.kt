@@ -2,8 +2,8 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H81InstructionADD {
-	fun handle(processor: IA32Processor) {
+object H81InstructionADD : Instruction {
+	override fun handle(processor: IA32Processor) {
 		if (processor.csOverride) TODO("can't support CS")
 		val (rm, imm) = if (processor.bitOverride) {
 			processor.fetch()
@@ -13,7 +13,7 @@ object H81InstructionADD {
 			TODO("16-bit ADD 0x81")
 		}
 		val result = rm.memRM.decide(
-			{ (it.get() + imm).also { r -> it.set(r) } },
+			{ (it.get() + imm).also(it::set) },
 			{
 				(processor.computer.requestMemoryAt32(it) + imm).also { r ->
 					processor.computer.setMemoryAt32(it, r.toUInt())

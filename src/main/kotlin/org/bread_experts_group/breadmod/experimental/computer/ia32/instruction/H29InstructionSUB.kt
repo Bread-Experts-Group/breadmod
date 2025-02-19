@@ -2,14 +2,14 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H29InstructionSUB {
-	fun handle(processor: IA32Processor) {
+object H29InstructionSUB : Instruction {
+	override fun handle(processor: IA32Processor) {
 		if (processor.csOverride) TODO("can't support CS/66")
 		processor.fetch()
 		val result = if (processor.bitOverride) {
 			val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R32)
 			rm.memRM.decide(
-				{ (it.get() - rm.register.get()).also { r -> it.set(r) } },
+				{ (it.get() - rm.register.get()).also(it::set) },
 				{
 					(processor.computer.requestMemoryAt32(it) + rm.register.get()).also { r ->
 						processor.computer.setMemoryAt32(it, r.toUInt())
@@ -19,7 +19,7 @@ object H29InstructionSUB {
 		} else {
 			val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R16)
 			rm.memRM.decide(
-				{ (it.get() - rm.register.get()).also { r -> it.set(r) } },
+				{ (it.get() - rm.register.get()).also(it::set) },
 				{
 					(processor.computer.requestMemoryAt16(it) + rm.register.get()).also { r ->
 						processor.computer.setMemoryAt16(it, r.toUShort())

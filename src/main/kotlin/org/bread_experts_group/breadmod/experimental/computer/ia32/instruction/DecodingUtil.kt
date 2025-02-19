@@ -88,7 +88,9 @@ class DecodingUtil(private val processor: IA32Processor) {
 			0b10u -> Optional.empty<KMutableProperty0<ULong>>() to when (rm) {
 				0b000u -> TODO("[BX+SI]+disp16")
 				0b001u -> TODO("[BX+DI]+disp16")
-				0b010u -> TODO("[BP+SI]+disp16")
+				0b010u -> Optional.of(
+					((this.processor.bp.tx + this.processor.si.tx) + this.readBinaryI(2).toUShort()).toULong()
+				)
 				0b011u -> TODO("[BP+DI]+disp16")
 				0b100u -> TODO("[SI]+disp16")
 				0b101u -> TODO("[DI]+disp16")
