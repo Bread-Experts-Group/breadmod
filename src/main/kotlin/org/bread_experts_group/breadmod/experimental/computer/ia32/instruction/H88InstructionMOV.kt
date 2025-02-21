@@ -2,22 +2,17 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H00InstructionADD : ArithmeticInstruction {
+object H88InstructionMOV : Instruction {
 	override fun prepare(processor: IA32Processor) {
 		processor.fetch()
 	}
 
 	override fun handle16(processor: IA32Processor) {
 		val (rm) = processor.decoding.getModRM(processor.cir, DecodingUtil.AddressingLength.R8)
-		val result = rm.memRM.decide(
-			{ (it.get() + rm.register.get()).also(it::set) },
-			{
-				(processor.computer.requestMemoryAt(it) + rm.register.get()).also { r ->
-					processor.computer.setMemoryAt(it, r.toUByte())
-				}
-			}
+		rm.memRM.decide(
+			{ it.set(rm.register.get()) },
+			{ processor.computer.setMemoryAt(it, rm.register.get().toUByte()) }
 		)
-		setFlagsToResult(processor, result)
 	}
 
 	override val supportsCodeSegmentOverride: Boolean = false

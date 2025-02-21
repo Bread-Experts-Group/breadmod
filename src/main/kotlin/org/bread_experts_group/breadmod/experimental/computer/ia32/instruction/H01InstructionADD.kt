@@ -2,37 +2,36 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H01InstructionADD : Instruction {
-    override fun handle(processor: IA32Processor) {
-        if (processor.csOverride) TODO("can't support CS")
-        processor.fetch()
-        val result = if (processor.bitOverride) {
-            val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R32)
-            rm.memRM.decide(
-                { (it.get() + rm.register.get()).also(it::set) },
-                {
-                    (processor.computer.requestMemoryAt32(it) + rm.register.get()).also { r ->
-                        processor.computer.setMemoryAt32(it, r.toUInt())
-                    }
-                }
-            )
-        } else {
-            val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R16)
-            rm.memRM.decide(
-                { (it.get() + rm.register.get()).also(it::set) },
-                {
-                    (processor.computer.requestMemoryAt16(it) + rm.register.get()).also { r ->
-                        processor.computer.setMemoryAt16(it, r.toUShort())
-                    }
-                }
-            )
-        }
+object H01InstructionADD : ArithmeticInstruction {
+	override fun prepare(processor: IA32Processor) {
+		processor.fetch()
+	}
 
-        processor.setFlag(IA32Processor.FlagType.OVERFLOW_FLAG, false) // TODO OVERFLOW
-        processor.setFlagToResult(IA32Processor.FlagType.SIGN_FLAG, result)
-        processor.setFlagToResult(IA32Processor.FlagType.ZERO_FLAG, result)
-        processor.setFlag(IA32Processor.FlagType.AUXILIARY_CARRY_FLAG, false) // TODO AUX CARRY
-        processor.setFlag(IA32Processor.FlagType.CARRY_FLAG, false) // TODO CARRY
-        processor.setFlagToResult(IA32Processor.FlagType.PARITY_FLAG, result)
-    }
+	override fun handle16(processor: IA32Processor) {
+		val (rm) = processor.decoding.getModRM(processor.cir)
+		val result = rm.memRM.decide(
+			{ (it.get() + rm.register.get()).also(it::set) },
+			{
+				(processor.computer.requestMemoryAt16(it) + rm.register.get()).also { r ->
+					processor.computer.setMemoryAt16(it, r.toUShort())
+				}
+			}
+		)
+		setFlagsToResult(processor, result)
+	}
+
+	override fun handle32(processor: IA32Processor) {
+		val (rm) = processor.decoding.getModRM(processor.cir)
+		val result = rm.memRM.decide(
+			{ (it.get() + rm.register.get()).also(it::set) },
+			{
+				(processor.computer.requestMemoryAt32(it) + rm.register.get()).also { r ->
+					processor.computer.setMemoryAt32(it, r.toUInt())
+				}
+			}
+		)
+		setFlagsToResult(processor, result)
+	}
+
+	override val supportsCodeSegmentOverride: Boolean = false
 }

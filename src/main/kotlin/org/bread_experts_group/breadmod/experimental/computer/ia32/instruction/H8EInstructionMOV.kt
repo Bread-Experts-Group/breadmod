@@ -3,13 +3,25 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
 object H8EInstructionMOV : Instruction {
-	override fun handle(processor: IA32Processor) {
-		if (processor.csOverride || processor.bitOverride) TODO("can't support CS/66")
+	override fun prepare(processor: IA32Processor) {
 		processor.fetch()
-		val rm = processor.decoding.getModRM16A(processor.cir, DecodingUtil.AddressingLength.R16)
+	}
+
+	override fun handle16(processor: IA32Processor) {
+		val rm = processor.decoding.getModRMSreg(processor.cir)
 		rm.memRM.decide(
-			{ processor.ss.x = it.get() },
-			{ processor.ss.tx = processor.computer.requestMemoryAt16(processor.ds.offset(it)) }
+			{ rm.register.set(it.get()) },
+			{ rm.register.set(processor.computer.requestMemoryAt16(processor.ds.offset(it)).toULong()) }
 		)
 	}
+
+	override fun handle32(processor: IA32Processor) {
+		val rm = processor.decoding.getModRMSreg(processor.cir)
+		rm.memRM.decide(
+			{ rm.register.set(it.get()) },
+			{ rm.register.set(processor.computer.requestMemoryAt16(processor.ds.offset(it)).toULong()) }
+		)
+	}
+
+	override val supportsCodeSegmentOverride: Boolean = false
 }

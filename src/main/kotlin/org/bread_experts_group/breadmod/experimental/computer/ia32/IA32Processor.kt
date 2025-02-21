@@ -10,6 +10,9 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.D
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H00InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H01InstructionADD
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H09InstructionOR
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H0F01InstructionGROUP
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H0F20InstructionMOVCR
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H0F22InstructionMOVCR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H29InstructionSUB
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H31InstructionXOR
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H39InstructionCMP
@@ -29,16 +32,21 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H75InstructionJNEoJNZ
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H76InstructionJBE
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H81InstructionADD
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H83InstructionADD
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H83InstructionGROUP
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H88InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H89InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8BInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8EInstructionMOV
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HA1InstructionMOV
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HA3InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HACInstructionLODSB
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB4InstructionMOV
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB8InstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBBInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBCInstructionMOV
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBDInstructionMOV
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBEInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionSHF
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionGROUP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC3InstructionRET
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HCDInstructionINT
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HD1InstructionSHR
@@ -47,6 +55,8 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEBInstructionJMP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HF6InstructionTEST
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFAInstructionCLI
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFBInstructionSTI
+import kotlin.reflect.jvm.jvmName
 
 /**
  * A [Processor] capable of virtualizing the IA-32 architecture.
@@ -55,7 +65,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
  * @author Miko Elbrecht
  */
 class IA32Processor(val computer: Computer) : Processor {
-	enum class FlagType(val position: ULong) {
+	enum class FLAGSFlagType(val position: ULong) {
 		CARRY_FLAG(0x0000_0001u),
 		PARITY_FLAG(0x0000_0004u),
 		AUXILIARY_CARRY_FLAG(0x0000_0010u),
@@ -125,6 +135,26 @@ class IA32Processor(val computer: Computer) : Processor {
 		fun hex(r: Register): String = this.hex(r.rx)
 	}
 
+	enum class CR0FlagType(val position: ULong) {
+		PROTECTED_MODE_ENABLE(0x0000_0001u)
+	}
+
+	class ControlRegister0(vararg flags: CR0FlagType) : Register(
+		run {
+			var sum: ULong = 0u
+			flags.forEach { sum = sum or it.position }
+			sum
+		}
+	) {
+		fun setFlag(flag: CR0FlagType, state: Boolean) {
+			var extracted = this.rx and (flag.position.inv())
+			if (state) extracted = extracted or flag.position
+			this.rx = extracted
+		}
+
+		fun getFlag(flag: CR0FlagType) = (this.rx and flag.position) > 0u
+	}
+
 	override fun step() {
 		this.fetch()
 		this.decode()
@@ -151,6 +181,16 @@ class IA32Processor(val computer: Computer) : Processor {
 	var es: SegmentRegister = SegmentRegister(0u)
 	var fs: SegmentRegister = SegmentRegister(0u)
 	var gs: SegmentRegister = SegmentRegister(0u)
+
+	// Global Descriptor Table
+	var gdtrLimit: Register = Register(0u)
+	var gdtrBase: Register = Register(0u)
+
+	// Control
+	val cr0: ControlRegister0 = ControlRegister0()
+	val cr2: Register = Register(0u)
+	val cr3: Register = Register(0u)
+	val cr4: Register = Register(0u)
 
 	/**
 	 * The current instruction pointer of this [IA32Processor].
@@ -195,15 +235,15 @@ class IA32Processor(val computer: Computer) : Processor {
 		return popped
 	}
 
-	fun setFlag(flag: FlagType, state: Boolean) {
+	fun setFlag(flag: FLAGSFlagType, state: Boolean) {
 		var extracted = this.flags.rx and (flag.position.inv())
 		if (state) extracted = extracted or flag.position
 		this.flags.rx = extracted
 	}
 
-	fun getFlag(flag: FlagType): Boolean = (this.flags.rx and flag.position) > 0u
+	fun getFlag(flag: FLAGSFlagType): Boolean = (this.flags.rx and flag.position) > 0u
 
-	fun setFlagToResult(flag: FlagType, result: ULong) {
+	fun setFlagToResult(flag: FLAGSFlagType, result: ULong) {
 		this.setFlag(flag, this.decoding.getFlagForResult(flag, result))
 	}
 
@@ -230,6 +270,15 @@ class IA32Processor(val computer: Computer) : Processor {
 
 	var csOverride: Boolean = false
 	var bitOverride: Boolean = false
+	fun operatingMode(noOverride: Boolean = false): DecodingUtil.AddressingLength =
+		if (this.cr0.getFlag(CR0FlagType.PROTECTED_MODE_ENABLE)) {
+			if (!noOverride && this.bitOverride) DecodingUtil.AddressingLength.R16
+			else DecodingUtil.AddressingLength.R32
+		} else {
+			if (!noOverride && this.bitOverride) DecodingUtil.AddressingLength.R32
+			else DecodingUtil.AddressingLength.R16
+		}
+
 	fun decode() {
 		// Useful links when writing decoding:
 		// Intel® 64 and IA-32 Architectures: Software Developer’s Manual
@@ -242,6 +291,15 @@ class IA32Processor(val computer: Computer) : Processor {
 			0x00u -> H00InstructionADD
 			0x01u -> H01InstructionADD
 			0x09u -> H09InstructionOR
+			0x0Fu -> {
+				this.fetch()
+				when (this.cir.toUInt()) {
+					0x01u -> H0F01InstructionGROUP
+					0x20u -> H0F20InstructionMOVCR
+					0x22u -> H0F22InstructionMOVCR
+					else  -> TODO("Unrecognized 2-byte opcode (${hex(this.cir)})")
+				}
+			}
 			0x29u -> H29InstructionSUB
 			0x2Eu -> {
 				this.csOverride = true
@@ -269,16 +327,21 @@ class IA32Processor(val computer: Computer) : Processor {
 			0x75u -> H75InstructionJNEoJNZ
 			0x76u -> H76InstructionJBE
 			0x81u -> H81InstructionADD
-			0x83u -> H83InstructionADD
+			0x83u -> H83InstructionGROUP
+			0x88u -> H88InstructionMOV
 			0x89u -> H89InstructionMOV
 			0x8Bu -> H8BInstructionMOV
 			0x8Eu -> H8EInstructionMOV
+			0xA1u -> HA1InstructionMOV
+			0xA3u -> HA3InstructionMOV
 			0xACu -> HACInstructionLODSB
 			0xB4u -> HB4InstructionMOV
+			0xB8u -> HB8InstructionMOV
 			0xBBu -> HBBInstructionMOV
 			0xBCu -> HBCInstructionMOV
+			0xBDu -> HBDInstructionMOV
 			0xBEu -> HBEInstructionMOV
-			0xC1u -> HC1InstructionSHF
+			0xC1u -> HC1InstructionGROUP
 			0xC3u -> HC3InstructionRET
 			0xCDu -> HCDInstructionINT
 			0xD1u -> HD1InstructionSHR
@@ -287,6 +350,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			0xEBu -> HEBInstructionJMP
 			0xF6u -> HF6InstructionTEST
 			0xFAu -> HFAInstructionCLI
+			0xFBu -> HFBInstructionSTI
 			else  -> TODO("Unrecognized opcode (${hex(this.cir)})")
 		}
 		this.logger.warn(
@@ -296,7 +360,11 @@ class IA32Processor(val computer: Computer) : Processor {
 			if (this.bitOverride) "66" else "  ",
 			instruction::class.simpleName
 		)
-		instruction.handle(this)
+		if (this.csOverride && !instruction.supportsCodeSegmentOverride)
+			throw UnsupportedOperationException("${instruction::class.jvmName} does not support CS")
+		instruction.prepare(this)
+		(if (this.operatingMode() == DecodingUtil.AddressingLength.R32) instruction::handle32
+		else instruction::handle16)(this)
 		this.csOverride = false
 		this.bitOverride = false
 	}
