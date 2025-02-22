@@ -2,21 +2,18 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object HD1InstructionSHR : ArithmeticInstruction {
+object HF6InstructionTEST : LogicalArithmeticInstruction {
 	override fun prepare(processor: IA32Processor) {
 		processor.fetch()
 	}
 
 	override fun handle16(processor: IA32Processor) {
-		val (rm, r) = processor.decoding.getModRM(processor.cir)
-		if (r != 5u) TODO("ROL, ROR, RCL, RCR, SHL, SAL, SAR /$r!")
+		val (rm, r) = processor.decoding.getModRM(processor.cir, DecodingUtil.AddressingLength.R8)
+		if (r != 0u) TODO("NOT, NEG, MUL, IMUL, DIV, IDIV /$r!")
+		val imm8 = processor.fetch().let { processor.cir }
 		val result = rm.memRM.decide(
-			{ (it.get() shr 1).also(it::set) },
-			{
-				(processor.computer.requestMemoryAt16(it).toULong() shr 1).also { r ->
-					processor.computer.setMemoryAt16(it, r.toUShort())
-				}
-			}
+			{ it.get() and (imm8.toULong()) },
+			{ (processor.computer.requestMemoryAt(it) and imm8).toULong() }
 		)
 
 		this.setFlagsToResult(processor, result)

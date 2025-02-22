@@ -43,6 +43,18 @@ class DecodingUtil(private val processor: IA32Processor) {
 		}
 	}
 
+	fun getRegRMSreg(reg: UInt): KMutableProperty0<ULong> = when (reg) {
+		0b000u -> this.processor.es
+		0b001u -> this.processor.cs
+		0b010u -> this.processor.ss
+		0b011u -> this.processor.ds
+		0b100u -> this.processor.fs
+		0b101u -> this.processor.gs
+		0b110u -> throw IllegalStateException("Unknown segment register for reg 0b110")
+		0b111u -> throw IllegalStateException("Unknown segment register for reg 0b111")
+		else   -> throw IllegalStateException(hex(reg))
+	}::x
+
 	data class MemRMResult(
 		val register: Optional<KMutableProperty0<ULong>>,
 		val address: Optional<ULong>
@@ -57,45 +69,95 @@ class DecodingUtil(private val processor: IA32Processor) {
 		this.processor.cir
 	}, flip)
 
+	fun decodeSIB(): ULong {
+		processor.fetch()
+		val mod = processor.cir.toUInt() shr 6
+		val reg = (processor.cir.toUInt() shr 3) and 0b111u
+		val disp = processor.cir.toUInt() and 0b111u
+		return when (mod) {
+			0b00u -> when (reg) {
+				0b100u -> processor.sp.ex
+				else   -> TODO("SIB mod 00 reg $reg")
+			} + when (disp) {
+				0b100u -> 0u
+				else   -> TODO("SIB mod 00 disp $disp")
+			}
+			0b01u -> TODO("SIB mod 01")
+			0b10u -> TODO("SIB mod 10")
+			0b11u -> TODO("SIB mod 11")
+			else  -> throw IllegalStateException("SIB mod is incorrect: $mod")
+		}
+	}
+
 	fun getMemRM(
 		mod: UInt,
 		rm: UInt,
 		length: AddressingLength
 	): MemRMResult {
 		val pair = when (mod) {
-			0b00u -> Optional.empty<KMutableProperty0<ULong>>() to when (rm) {
-				0b000u -> Optional.of(this.processor.b.x + this.processor.si.x)
-				0b001u -> Optional.of(this.processor.b.x + this.processor.di.x)
-				0b010u -> Optional.of(this.processor.bp.x + this.processor.si.x)
-				0b011u -> Optional.of(this.processor.bp.x + this.processor.di.x)
-				0b100u -> Optional.of(this.processor.si.x)
-				0b101u -> Optional.of(this.processor.di.x)
-				0b110u -> TODO("disp16")
-				0b111u -> Optional.of(this.processor.b.x)
-				else   -> throw IllegalStateException("Mod 00, RM ${hex(rm)}")
-			}
-			0b01u -> Optional.empty<KMutableProperty0<ULong>>() to when (rm) {
-				0b000u -> TODO("[BX+SI]+disp8")
-				0b001u -> TODO("[BX+DI]+disp8")
-				0b010u -> TODO("[BP+SI]+disp8")
-				0b011u -> TODO("[BP+DI]+disp8")
-				0b100u -> Optional.of((this.processor.si.tx + this.readBinaryI(1).toUByte()).toULong())
-				0b101u -> TODO("[DI]+disp8")
-				0b110u -> TODO("[BP]+disp8")
-				0b111u -> TODO("[BX]+disp8")
-				else   -> throw IllegalStateException("Mod 01, RM ${hex(rm)}")
-			}
-			0b10u -> Optional.empty<KMutableProperty0<ULong>>() to when (rm) {
-				0b000u -> TODO("[BX+SI]+disp16")
-				0b001u -> TODO("[BX+DI]+disp16")
-				0b010u -> TODO("[BP+SI]+disp16")
-				0b011u -> TODO("[BP+DI]+disp16")
-				0b100u -> TODO("[SI]+disp16")
-				0b101u -> TODO("[DI]+disp16")
-				0b110u -> TODO("[BP]+disp16")
-				0b111u -> Optional.of((this.processor.b.tx + this.readBinaryI(2).toUShort()).toULong())
-				else   -> throw IllegalStateException("Mod 10, RM ${hex(rm)}")
-			}
+			0b00u -> Optional.empty<KMutableProperty0<ULong>>() to Optional.of(
+				when (rm) {
+					0b000u ->
+						if (length == AddressingLength.R32) this.processor.a.ex
+						else this.processor.b.x + this.processor.si.x
+					0b001u ->
+						if (length == AddressingLength.R32) this.processor.c.ex
+						else this.processor.b.x + this.processor.di.x
+					0b010u ->
+						if (length == AddressingLength.R32) this.processor.d.ex
+						else this.processor.bp.x + this.processor.si.x
+					0b011u ->
+						if (length == AddressingLength.R32) this.processor.b.ex
+						else this.processor.bp.x + this.processor.di.x
+					0b100u ->
+						if (length == AddressingLength.R32) this.decodeSIB()
+						else this.processor.si.x
+					0b101u ->
+						if (length == AddressingLength.R32) this.readBinaryI(4).toUInt().toULong()
+						else this.processor.di.x
+					0b110u ->
+						if (length == AddressingLength.R32) this.processor.si.ex
+						else this.readBinaryI(2).toUShort().toULong()
+					0b111u ->
+						if (length == AddressingLength.R32) this.processor.di.ex
+						else this.processor.b.x
+					else   -> throw IllegalStateException("Mod 00, RM ${hex(rm)}")
+				}
+			)
+			0b01u -> Optional.empty<KMutableProperty0<ULong>>() to Optional.of(
+				when (rm) {
+					0b000u -> TODO("[BX+SI]+disp8")
+					0b001u -> TODO("[BX+DI]+disp8")
+					0b010u -> TODO("[BP+SI]+disp8")
+					0b011u -> TODO("[BP+DI]+disp8")
+					0b100u ->
+						if (length == AddressingLength.R32) (this.decodeSIB() + this.readBinaryI(1).toUByte()).toULong()
+						else (this.processor.si.tx + this.readBinaryI(1).toUByte()).toULong()
+					0b101u -> TODO("[DI]+disp8")
+					0b110u -> TODO("[BP]+disp8")
+					0b111u -> TODO("[BX]+disp8")
+					else   -> throw IllegalStateException("Mod 01, RM ${hex(rm)}")
+				}
+			)
+			0b10u -> Optional.empty<KMutableProperty0<ULong>>() to Optional.of(
+				when (rm) {
+					0b000u -> TODO("[BX+SI]+disp16")
+					0b001u -> TODO("[BX+DI]+disp16")
+					0b010u ->
+						if (length == AddressingLength.R32)
+							(this.processor.d.tex + this.readBinaryI(4).toUInt()).toULong()
+						else ((this.processor.bp.tx + this.processor.si.tx) + this.readBinaryI(2).toUShort()).toULong()
+					0b011u -> TODO("[BP+DI]+disp16")
+					0b100u -> TODO("[SI]+disp16")
+					0b101u -> TODO("[DI]+disp16")
+					0b110u -> TODO("[BP]+disp16")
+					0b111u ->
+						if (length == AddressingLength.R32)
+							(this.processor.di.tex + this.readBinaryI(4).toUInt()).toULong()
+						else (this.processor.b.tx + this.readBinaryI(2).toUShort()).toULong()
+					else   -> throw IllegalStateException("Mod 10, RM ${hex(rm)}")
+				}
+			)
 			0b11u -> Optional.of(this.getRegRM(rm, length)) to Optional.empty()
 			else  -> throw IllegalStateException(hex(mod))
 		}
@@ -107,20 +169,30 @@ class DecodingUtil(private val processor: IA32Processor) {
 		val register: KMutableProperty0<ULong>
 	)
 
-	fun getModRM16A(
+	fun getModRM(
 		modRm: UByte,
-		length: AddressingLength
+		length: AddressingLength = processor.operatingMode(true)
+	): Pair<ModRMResult, UInt> {
+		val mod = modRm.toUInt() shr 6
+		val reg = (modRm.toUInt() shr 3) and 0b111u
+		val rm = modRm.toUInt() and 0b111u
+		return ModRMResult(this.getMemRM(mod, rm, length), this.getRegRM(reg, length)) to reg
+	}
+
+	fun getModRMSreg(
+		modRm: UByte,
+		length: AddressingLength = processor.operatingMode(true)
 	): ModRMResult {
 		val mod = modRm.toUInt() shr 6
 		val reg = (modRm.toUInt() shr 3) and 0b111u
 		val rm = modRm.toUInt() and 0b111u
-		return ModRMResult(this.getMemRM(mod, rm, length), this.getRegRM(reg, length))
+		return ModRMResult(this.getMemRM(mod, rm, length), this.getRegRMSreg(reg))
 	}
 
-	fun getFlagForResult(flag: IA32Processor.FlagType, value: ULong): Boolean = when (flag) {
-		IA32Processor.FlagType.SIGN_FLAG   -> value.toLong() < 0
-		IA32Processor.FlagType.ZERO_FLAG   -> value == ULong.MIN_VALUE
-		IA32Processor.FlagType.PARITY_FLAG -> value.countOneBits() % 2 == 0
-		else                               -> TODO("Unsupported flag: $flag")
+	fun getFlagForResult(flag: IA32Processor.FLAGSFlagType, value: ULong): Boolean = when (flag) {
+		IA32Processor.FLAGSFlagType.SIGN_FLAG   -> value.toLong() < 0
+		IA32Processor.FLAGSFlagType.ZERO_FLAG   -> value == ULong.MIN_VALUE
+		IA32Processor.FLAGSFlagType.PARITY_FLAG -> value.countOneBits() % 2 == 0
+		else                                    -> TODO("Unsupported flag: $flag")
 	}
 }
