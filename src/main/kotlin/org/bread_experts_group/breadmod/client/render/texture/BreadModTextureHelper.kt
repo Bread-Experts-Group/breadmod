@@ -16,10 +16,7 @@ class BreadModTextureHelper(
 	val textureHeight: Int = 16
 ) {
 	companion object {
-		val MISSING_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(
-			MissingTextureAtlasSprite.getLocation(),
-			16, 16
-		)
+		val MISSING_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(MissingTextureAtlasSprite.getLocation())
 	}
 
 	/**
@@ -64,11 +61,11 @@ class BreadModTextureHelper(
 		vHeight = 0 + progressInput
 	)
 //	// todo work on mirrored logic
-//	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, energyStored: Int, x: Int, y: Int): Unit =
+//	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, progressInput: Int, x: Int, y: Int): Unit =
 //		this.blitTexture(
 //			guiGraphics,
 //			x,
 //			y,
-//			width = clamp(energyStored, 0, this.textureWidth)
+//			width = clamp(progressInput, 0, this.textureWidth)
 //		)
 }

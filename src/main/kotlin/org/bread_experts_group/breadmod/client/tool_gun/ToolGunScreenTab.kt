@@ -4,10 +4,8 @@ import org.bread_experts_group.breadmod.client.screen.ContainerWidget
 import java.awt.Color
 
 abstract class ToolGunScreenTab(
-	x: Int,
-	y: Int,
-	id: String,
+	val id: String,
 	val tabBarColor: Color
-) : ContainerWidget(x, y, 243, 185, id) {
+) : ContainerWidget(0, 0, 243, 185, id) {
 	abstract fun getTabButton(): TabButton
 }

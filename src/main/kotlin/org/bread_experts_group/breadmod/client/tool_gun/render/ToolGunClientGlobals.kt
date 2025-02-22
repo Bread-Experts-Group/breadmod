@@ -1,5 +1,8 @@
 package org.bread_experts_group.breadmod.client.tool_gun.render
 
+import net.minecraft.resources.ResourceLocation
+import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import java.math.BigDecimal
 import java.security.SecureRandom
 
@@ -21,4 +24,7 @@ internal object ToolGunClientGlobals {
 		this.coilDelta = 1f
 		this.recoil = 0.1f
 	}
+
+	fun getCurrentMode(): IToolGunMode = toolGunModes.values.elementAt(this.currentModeIndex)
+	fun getCurrentModeID(): ResourceLocation = toolGunModes.keys.elementAt(this.currentModeIndex)
 }

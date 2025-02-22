@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.FormattedText
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
@@ -137,6 +138,14 @@ fun GuiGraphics.drawTiledSprite(
 
 	RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
 	RenderSystem.disableBlend()
+}
+
+fun GuiGraphics.drawCenteredWordWrap(font: Font, text: FormattedText, x: Int, y: Int, lineWidth: Int, color: Int) {
+	var yOffset = y
+	for (charSequence: FormattedCharSequence in font.split(text, lineWidth)) {
+		this.drawCenteredString(font, charSequence, x - font.width(text), yOffset, color)
+		yOffset += 9
+	}
 }
 
 fun GuiGraphics.renderFluid(

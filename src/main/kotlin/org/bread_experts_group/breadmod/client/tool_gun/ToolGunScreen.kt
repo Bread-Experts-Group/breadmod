@@ -31,7 +31,8 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		}
 	}
 
-	fun getTabs(): List<ToolGunScreenTab> = this.children().filterIsInstance<ToolGunScreenTab>()
+	private fun getTabs(): List<ToolGunScreenTab> = this.children().filterIsInstance<ToolGunScreenTab>()
+	private fun getTabByID(id: String): ToolGunScreenTab = this.getTabs().first { it.id == id }
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean =
 		if (keyCode == InputConstants.KEY_E) {
@@ -43,8 +44,8 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		this.leftPos = (this.width - 256) / 2
 		this.topPos = (this.height - 256) / 2
 
-		this.addRenderableWidget(ModeSelectTab(this.leftPos + 7, this.topPos + 38).also { Companion.activeTab = it })
-		this.addRenderableWidget(SettingsTab(this.leftPos + 7, this.topPos + 38))
+		this.addTab(ModeSelectTab(), true)
+		this.addTab(SettingsTab(this.width), false)
 		var tabPosition = this.leftPos + 7
 		this.getTabs().forEach {
 			this.addRenderableWidget(it.getTabButton().also { button ->
@@ -52,5 +53,18 @@ class ToolGunScreen(title: Component) : Screen(title) {
 				tabPosition += button.width
 			})
 		}
+	}
+
+	override fun rebuildWidgets() {
+		val tab = this.getTabByID("mode_select") as? ModeSelectTab ?: return super.rebuildWidgets()
+		Companion.activeTab = tab
+		super.rebuildWidgets()
+	}
+
+	private fun addTab(tab: ToolGunScreenTab, initialTab: Boolean) {
+		if (initialTab) Companion.activeTab = tab
+		tab.setPosition(this.leftPos + 7, this.topPos + 38)
+		tab.init()
+		this.addRenderableWidget(tab)
 	}
 }

@@ -9,16 +9,17 @@ import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
+import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals
 import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.currentModeIndex
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
-class ModeSelectTab(x: Int, y: Int) : ToolGunScreenTab(x, y, "mode_select", Color.GRAY) {
+class ModeSelectTab : ToolGunScreenTab("mode_select", Color.GRAY) {
 	override fun getTabButton(): TabButton = TabButton(Component.literal("Modes"), Color.RED, Color.GRAY, this)
 
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
 	private var currentModeWidget: ModeWidget? = null
-	private val modeButton = GenericButton(this.x + 160, this.y + 162, 80, 20, "Change Mode") {
+	private val modeButton = GenericButton(0, 0, 80, 20, "Change Mode") {
 		this.currentModeWidget?.let { widget ->
 			PacketDistributor.sendToServer(ToolGunModeChangePacket(widget.id))
 			currentModeIndex = toolGunModes.keys.indexOf(widget.id)
@@ -26,7 +27,7 @@ class ModeSelectTab(x: Int, y: Int) : ToolGunScreenTab(x, y, "mode_select", Colo
 		this.updateModeWidgetSelection()
 	}
 
-	init {
+	override fun init() {
 		val gridList = buildList {
 			repeat(5) { y ->
 				repeat(3) { x ->
@@ -38,20 +39,17 @@ class ModeSelectTab(x: Int, y: Int) : ToolGunScreenTab(x, y, "mode_select", Colo
 			this.modeWidgets.add(mode.getCustomRenderer().getModeWidget())
 		}
 		this.modeWidgets.forEachIndexed { index, modeWidget ->
-			modeWidget.setPosition(gridList[index].first, gridList[index].second)
-			this.addChild("mode_widget_$index", modeWidget)
+			this.addChild("mode_widget_$index", modeWidget, gridList[index].first, gridList[index].second)
 		}
-		this.addChild("mode_change_button", this.modeButton, isActive = false)
+		this.addChild("mode_change_button", this.modeButton, this.x + 160, this.y + 162, isActive = false)
 		this.updateModeWidgetSelection()
 	}
-
-	private fun getCurrentModeIndex() = toolGunModes.keys.elementAt(currentModeIndex)
 
 	/**
 	 * Update the border color on the widget's mode that is currently active.
 	 */
 	private fun updateModeWidgetSelection() = this.subWidgets.values.filterIsInstance<ModeWidget>().forEach {
-		it.isSelected = it.id == this.getCurrentModeIndex()
+		it.isSelected = it.id == ToolGunClientGlobals.getCurrentModeID()
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

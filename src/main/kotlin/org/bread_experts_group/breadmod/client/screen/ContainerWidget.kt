@@ -132,11 +132,14 @@ open class ContainerWidget(
 	fun addChild(
 		id: String,
 		widget: AbstractWidget,
+		x: Int = 0,
+		y: Int = 0,
 		shouldRender: Boolean = true,
 		isActive: Boolean = true
 	) {
 		widget.visible = shouldRender
 		widget.active = isActive
+		if (x != 0 || y != 0) widget.setPosition(x, y)
 		this.subWidgets[id] = widget
 	}
 
@@ -145,4 +148,8 @@ open class ContainerWidget(
 	}
 
 	fun removeChild(id: String): AbstractWidget? = this.subWidgets.remove(id)
+
+	fun getChild(id: String): AbstractWidget? = this.subWidgets[id]
+
+	open fun init() {}
 }
