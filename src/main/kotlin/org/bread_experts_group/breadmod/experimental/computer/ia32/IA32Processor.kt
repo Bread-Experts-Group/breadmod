@@ -186,6 +186,10 @@ class IA32Processor(val computer: Computer) : Processor {
 	var gdtrLimit: Register = Register(0u)
 	var gdtrBase: Register = Register(0u)
 
+	// Interrupt Descriptor Table
+	var idtrLimit: Register = Register(0u)
+	var idtrBase: Register = Register(0u)
+
 	// Control
 	val cr0: ControlRegister0 = ControlRegister0()
 	val cr2: Register = Register(0u)
