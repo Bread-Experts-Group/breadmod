@@ -4,7 +4,7 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.WAR_TIMER
+import org.bread_experts_group.breadmod.client.ModTextureLocations.WAR_TIMER
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.ModFonts

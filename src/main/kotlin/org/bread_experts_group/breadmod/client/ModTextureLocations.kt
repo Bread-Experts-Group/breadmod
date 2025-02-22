@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.gui
+package org.bread_experts_group.breadmod.client
 
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation

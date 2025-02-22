@@ -4,13 +4,14 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
+import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderItemModel
@@ -47,7 +48,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		this.helper = ToolGunRenderHelper()
 	}
 
-	private fun renderToolGun(
+	fun renderToolGun(
 		stack: ItemStack,
 		displayContext: ItemDisplayContext,
 		poseStack: PoseStack,
@@ -55,7 +56,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int,
 		currentMode: IToolGunMode,
-		helper: ToolGunRenderHelper
+		helper: ToolGunRenderHelper,
+		overrideRenderType: Boolean = false,
+		renderTypeOverride: RenderType = RenderType.solid()
 	) {
 		val deltaTracker = localClient.timer
 		val partialTick = deltaTracker.gameTimeDeltaTicks
@@ -82,7 +85,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				poseStack,
 				buffer,
 				packedOverlay,
-				packedLight
+				packedLight,
+				overrideRenderType = overrideRenderType,
+				renderTypeOverride = renderTypeOverride
 			)
 			modeRenderer.renderBodyStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			poseStack.popPose()
@@ -128,7 +133,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				poseStack,
 				buffer,
 				packedOverlay,
-				packedLight
+				packedLight,
+				overrideRenderType = overrideRenderType,
+				renderTypeOverride = renderTypeOverride
 			)
 			modeRenderer.renderCoilStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
 			poseStack.popPose()
@@ -149,7 +156,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		buffer: MultiBufferSource,
 		packedOverlay: Int,
 		packedLight: Int,
-		coilSpin: Boolean
+		coilSpin: Boolean,
+		overrideRenderType: Boolean = false,
+		renderTypeOverride: RenderType = RenderType.solid()
 	) {
 		this.helper.itemRenderer.renderItemModel(
 			this.mainModel,
@@ -158,7 +167,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			poseStack,
 			buffer,
 			packedOverlay,
-			packedLight
+			packedLight,
+			overrideRenderType = overrideRenderType,
+			renderTypeOverride = renderTypeOverride
 		)
 		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(coilRotation))
 		this.helper.itemRenderer.renderItemModel(
@@ -168,7 +179,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			poseStack,
 			buffer,
 			packedOverlay,
-			packedLight
+			packedLight,
+			overrideRenderType = overrideRenderType,
+			renderTypeOverride = renderTypeOverride
 		)
 	}
 

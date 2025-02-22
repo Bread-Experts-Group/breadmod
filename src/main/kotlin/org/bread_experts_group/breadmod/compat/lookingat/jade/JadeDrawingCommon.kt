@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Style
 import net.minecraft.util.Mth
 import net.minecraft.world.inventory.InventoryMenu
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.gui.ModTextureLocations
+import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import org.bread_experts_group.breadmod.util.handlers.HandlerLimits
@@ -189,9 +189,9 @@ object JadeDrawingCommon {
 			val tintArray = Color(tint).getComponents(null)
 			Style.EMPTY.withColor(
 				Color(
-					(tintArray[0] * color[0]).toFloat(),
-					(tintArray[1] * color[1]).toFloat(),
-					(tintArray[2] * color[2]).toFloat()
+					(tintArray[0] * color[0]),
+					(tintArray[1] * color[1]),
+					(tintArray[2] * color[2])
 				).rgb
 			)
 		}

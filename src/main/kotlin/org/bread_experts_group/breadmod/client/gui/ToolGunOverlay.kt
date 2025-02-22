@@ -11,8 +11,8 @@ import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.INFO
-import org.bread_experts_group.breadmod.client.gui.ModTextureLocations.MODE_OVERLAY_BG
+import org.bread_experts_group.breadmod.client.ModTextureLocations.INFO
+import org.bread_experts_group.breadmod.client.ModTextureLocations.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.client.render.drawScaledText

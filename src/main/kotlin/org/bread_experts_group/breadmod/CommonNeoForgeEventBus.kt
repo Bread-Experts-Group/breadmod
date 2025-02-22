@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
 import net.neoforged.neoforge.event.RegisterCommandsEvent
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent
 import net.neoforged.neoforge.event.server.ServerStartedEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.network.PacketDistributor
@@ -31,6 +32,11 @@ internal object CommonNeoForgeEventBus {
 		var gracePeriodActive: Boolean = false,
 		var active: Boolean = true
 	)
+
+	@SubscribeEvent
+	fun onPlayerLoginServer(event: PlayerLoggedInEvent) {
+		println("success")
+	}
 
 	@SubscribeEvent
 	fun serverTick(event: ServerTickEvent.Post) {

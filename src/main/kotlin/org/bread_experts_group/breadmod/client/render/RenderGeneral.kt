@@ -111,7 +111,7 @@ fun GuiGraphics.drawTiledSprite(
 ) {
 	if (tiledWidth == 0.0f || tiledHeight == 0.0f || scaledAmount == 0.0f) return
 	RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS)
-	RenderSystem.setShader(Supplier { GameRenderer.getPositionTexShader() })
+	RenderSystem.setShader(Supplier(GameRenderer::getPositionTexShader))
 	val matrix = this.pose().last().pose()
 	setGLColorFromInt(color)
 	RenderSystem.enableBlend()
@@ -150,7 +150,7 @@ fun GuiGraphics.renderFluid(
 		|| tank.capacity == null
 		|| tank.amount == BigDecimal.ZERO
 	) return
-	var scaledAmount = min(tank.amount.divide(tank.capacity).toFloat() * height, height.toFloat())
+	val scaledAmount = min(tank.amount.divide(tank.capacity).toFloat() * height, height.toFloat())
 	val (sprite, tint) = getFluidSpriteAndTint(tank.fluid, flowing)
 	var color = tint
 	if (sprite == null) {
@@ -160,7 +160,7 @@ fun GuiGraphics.renderFluid(
 		DisplayHelper.fill(
 			this,
 			x,
-			maxY - scaledAmount.toFloat(),
+			maxY - scaledAmount,
 			x + width,
 			maxY,
 			color
@@ -172,7 +172,7 @@ fun GuiGraphics.renderFluid(
 			width.toFloat(),
 			height.toFloat(),
 			color,
-			scaledAmount.toFloat(),
+			scaledAmount,
 			sprite
 		)
 	}
@@ -320,6 +320,8 @@ fun ItemRenderer.renderStaticItem(
 	1
 )
 
+internal fun renderTypeDebugLineStrip(): RenderType = RenderType.debugLineStrip(1.0)
+
 /**
  * Renders a provided [model] (as an item model) onto this [BlockEntityWithoutLevelRenderer]
  */
@@ -331,14 +333,26 @@ fun ItemRenderer.renderItemModel(
 	bufferSource: MultiBufferSource,
 	packedOverlay: Int,
 	packedLight: Int,
-	fabulous: Boolean = true
+	fabulous: Boolean = true,
+	overrideRenderType: Boolean = false,
+	renderTypeOverride: RenderType = RenderType.solid()
 ) {
 	model.getRenderPasses(stack, fabulous).forEach { passes ->
 		passes.getRenderTypes(stack, fabulous).forEach { renderType ->
 			val buffer = if (fabulous) {
-				ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, stack.hasFoil())
+				ItemRenderer.getFoilBufferDirect(
+					bufferSource,
+					if (overrideRenderType) renderTypeOverride else renderType,
+					true,
+					stack.hasFoil()
+				)
 			} else
-				ItemRenderer.getFoilBuffer(bufferSource, renderType, true, stack.hasFoil())
+				ItemRenderer.getFoilBuffer(
+					bufferSource,
+					if (overrideRenderType) renderTypeOverride else renderType,
+					true,
+					stack.hasFoil()
+				)
 			passes.applyTransform(
 				displayContext,
 				poseStack,
