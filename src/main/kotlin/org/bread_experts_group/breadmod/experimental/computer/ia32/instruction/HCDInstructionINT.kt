@@ -46,7 +46,12 @@ object HCDInstructionINT : Instruction {
 			0x10u -> {
 				when (processor.a.h.toUInt()) {
 					0x0Eu -> processor.logger.warn("TELETYPE: " + Char(processor.a.l.toUShort()))
-					else  -> TODO("BIOS Video mode control ...")
+					else -> TODO("BIOS Video mode control ... ${processor.a.h.toUInt()}")
+				}
+			}
+			0x15u -> {
+				when (processor.a.h.toUInt()) {
+					else -> TODO("BIOS Misc ... ${processor.a.h.toUInt()}")
 				}
 			}
 			else  -> TODO("Unknown interrupt.")

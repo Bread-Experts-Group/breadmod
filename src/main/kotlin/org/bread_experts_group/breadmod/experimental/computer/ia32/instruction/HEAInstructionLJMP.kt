@@ -17,5 +17,18 @@ object HEAInstructionLJMP : Instruction {
 		processor.cs.tx = tempCS
 	}
 
+	override fun getOperands32(processor: IA32Processor): String {
+		val tempIP = processor.decoding.readBinaryI(4).toUInt()
+		val tempCS = processor.decoding.readBinaryI(2).toUShort()
+		return "${hex(tempCS)}:${hex(tempIP).substring(2)}"
+	}
+
+	override fun handle32(processor: IA32Processor) {
+		val tempIP = processor.decoding.readBinaryI(4).toUInt()
+		val tempCS = processor.decoding.readBinaryI(2).toUShort()
+		processor.ip.tex = tempIP
+		processor.cs.tx = tempCS
+	}
+
 	override val supportsCodeSegmentOverride: Boolean = false
 }

@@ -13,7 +13,7 @@ object H83InstructionGROUP : ArithmeticInstruction {
 		1u -> ULong::or
 		2u -> TODO("ADC")
 		3u -> TODO("SBB")
-		4u -> TODO("AND")
+		4u -> ULong::and
 		5u -> TODO("SUB")
 		6u -> TODO("XOR")
 		7u -> TODO("CMP")
@@ -26,6 +26,7 @@ object H83InstructionGROUP : ArithmeticInstruction {
 		val m = when (r) {
 			0u   -> "add"
 			1u   -> "or"
+			4u -> "and"
 			else -> throw IllegalStateException("/$r")
 		}
 		return m

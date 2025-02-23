@@ -22,6 +22,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H51InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H52InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H53InstructionPUSH
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H55InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H56InstructionPUSH
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H59InstructionPOP
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H5BInstructionPOP
@@ -113,7 +114,10 @@ class IA32Processor(val computer: Computer) : Processor {
 	var idtrBase: Register = Register(this.logger, "idtrBase", 0u)
 
 	// Control
-	val cr0: ControlRegister0 = ControlRegister0(this.logger, "cr0")
+	val cr0: ControlRegister0 = ControlRegister0(
+		this.logger, "cr0",
+		ControlRegister0.FlagType.FPU_80387_OR_HIGHER
+	)
 	val cr2: Register = Register(this.logger, "cr2", 0u)
 	val cr3: Register = Register(this.logger, "cr3", 0u)
 	val cr4: Register = Register(this.logger, "cr4", 0u)
@@ -228,6 +232,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			0x51u -> H51InstructionPUSH
 			0x52u -> H52InstructionPUSH
 			0x53u -> H53InstructionPUSH
+			0x55u -> H55InstructionPUSH
 			0x56u -> H56InstructionPUSH
 			0x59u -> H59InstructionPOP
 			0x5Bu -> H5BInstructionPOP
