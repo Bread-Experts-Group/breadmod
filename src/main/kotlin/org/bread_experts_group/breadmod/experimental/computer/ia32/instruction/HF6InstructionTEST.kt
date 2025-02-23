@@ -8,7 +8,7 @@ object HF6InstructionTEST : LogicalArithmeticInstruction {
 	}
 
 	override fun handle16(processor: IA32Processor) {
-		val (rm, r) = processor.decoding.getModRM(processor.cir, DecodingUtil.AddressingLength.R8)
+		val (rm, r) = processor.decoding.getModRM(processor.cir)
 		if (r != 0u) TODO("NOT, NEG, MUL, IMUL, DIV, IDIV /$r!")
 		val imm8 = processor.fetch().let { processor.cir }
 		val result = rm.memRM.decide(

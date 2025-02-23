@@ -7,6 +7,12 @@ object H09InstructionOR : LogicalArithmeticInstruction {
 		processor.fetch()
 	}
 
+	override fun getOperands32(processor: IA32Processor): String {
+		prepare(processor)
+		val (f, s) = processor.decoding.getModRMDisassembler(processor.cir).first
+		return "$s, $f"
+	}
+
 	override fun handle32(processor: IA32Processor) {
 		val (rm) = processor.decoding.getModRM(processor.cir)
 		val result = rm.memRM.register.get().get() or rm.register.get()

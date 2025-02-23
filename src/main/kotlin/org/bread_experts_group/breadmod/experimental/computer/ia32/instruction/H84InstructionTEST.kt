@@ -2,7 +2,7 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object H88InstructionMOV : Instruction {
+object H84InstructionTEST : LogicalArithmeticInstruction {
 	override fun prepare(processor: IA32Processor) {
 		processor.fetch()
 	}
@@ -10,26 +10,25 @@ object H88InstructionMOV : Instruction {
 	override fun getOperands16(processor: IA32Processor): String {
 		prepare(processor)
 		processor.bit8Override = true
-		val (f, s) = processor.decoding.getModRMDisassembler(processor.cir).first
+		val (m, r) = processor.decoding.getModRMDisassembler(processor.cir).first
 		processor.bit8Override = false
-		return "$f, $s"
+		return "$r, $m"
 	}
 
 	override fun handle16(processor: IA32Processor) {
 		processor.bit8Override = true
-		val (rm) = processor.decoding.getModRM(processor.cir)
+		val (rm, _) = processor.decoding.getModRM(processor.cir)
 		processor.bit8Override = false
-		rm.memRM.decide(
-			{ it.set(rm.register.get()) },
-			{
-				val physical = processor.ds.offset(it)
-				processor.computer.setMemoryAt(physical, rm.register.get().toUByte())
-			}
+		val result = rm.memRM.decide(
+			{ it.get() and rm.register.get() },
+			{ (processor.computer.requestMemoryAt(it) and rm.register.get().toUByte()).toULong() }
 		)
+
+		this.setFlagsToResult(processor, result)
 	}
 
-	override fun getOperands32(processor: IA32Processor): String = getOperands16(processor)
 	override fun handle32(processor: IA32Processor) = handle16(processor)
+	override fun getOperands32(processor: IA32Processor): String = getOperands16(processor)
 
 	override val supportsCodeSegmentOverride: Boolean = false
 }

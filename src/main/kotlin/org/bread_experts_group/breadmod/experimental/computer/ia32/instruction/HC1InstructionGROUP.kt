@@ -14,17 +14,31 @@ object HC1InstructionGROUP : ArithmeticInstruction {
 		1u -> TODO("ROR")
 		2u -> TODO("RCL")
 		3u -> TODO("RCR")
-		4u -> ULong::shl
-		5u -> ULong::shr
+		4u -> ULong::shl to "shl"
+		5u -> ULong::shr to "shr"
 		6u -> TODO("SHL")
 		7u -> TODO("SAR")
 		else -> throw IllegalStateException("/$r")
 	}
 
+	override fun getMnemonic(processor: IA32Processor): String {
+		prepare(processor)
+		val (_, r) = processor.decoding.getModRM(processor.pop16().toUByte())
+		val (_, m) = operation(r)
+		return m
+	}
+
+	override fun getOperands16(processor: IA32Processor): String {
+		prepare(processor)
+		val shfAmt = processor.cir.toInt()
+		val (m, _) = processor.decoding.getModRMDisassembler(processor.pop16().toUByte()).first
+		return "$m, $shfAmt"
+	}
+
 	override fun handle16(processor: IA32Processor) {
 		val shfAmt = processor.cir.toInt()
 		val (rm, r) = processor.decoding.getModRM(processor.pop16().toUByte())
-		val op = operation(r)
+		val (op) = operation(r)
 		val result = rm.memRM.decide(
 			{ op(it.get(), shfAmt).also(it::set) },
 			{
@@ -36,10 +50,12 @@ object HC1InstructionGROUP : ArithmeticInstruction {
 		this.setFlagsToResult(processor, result)
 	}
 
+	override fun getOperands32(processor: IA32Processor): String = getOperands16(processor)
+
 	override fun handle32(processor: IA32Processor) {
 		val shfAmt = processor.cir.toInt()
 		val (rm, r) = processor.decoding.getModRM(processor.pop16().toUByte())
-		val op = operation(r)
+		val (op) = operation(r)
 		val result = rm.memRM.decide(
 			{ op(it.get(), shfAmt).also(it::set) },
 			{

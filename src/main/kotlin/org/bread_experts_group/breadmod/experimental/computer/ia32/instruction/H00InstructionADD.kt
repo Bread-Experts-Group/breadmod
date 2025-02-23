@@ -7,8 +7,14 @@ object H00InstructionADD : ArithmeticInstruction {
 		processor.fetch()
 	}
 
+	override fun getOperands16(processor: IA32Processor): String {
+		prepare(processor)
+		val (f, s) = processor.decoding.getModRMDisassembler(processor.cir).first
+		return "$f, $s"
+	}
+
 	override fun handle16(processor: IA32Processor) {
-		val (rm) = processor.decoding.getModRM(processor.cir, DecodingUtil.AddressingLength.R8)
+		val (rm) = processor.decoding.getModRM(processor.cir)
 		val result = rm.memRM.decide(
 			{ (it.get() + rm.register.get()).also(it::set) },
 			{

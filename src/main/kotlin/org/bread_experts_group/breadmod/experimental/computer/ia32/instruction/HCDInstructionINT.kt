@@ -2,14 +2,19 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
 object HCDInstructionINT : Instruction {
 	override fun prepare(processor: IA32Processor) {
 		processor.fetch()
 	}
 
+	override fun getOperands16(processor: IA32Processor): String {
+		prepare(processor)
+		return hex(processor.cir)
+	}
+
 	override fun handle16(processor: IA32Processor) {
-		processor.logger.warn("INTERRUPT ${hex(processor.cir)}")
 		when (processor.cir.toUInt()) {
 			0x13u -> {
 				val offset = processor.ds.offset(processor.si)
@@ -31,11 +36,11 @@ object HCDInstructionINT : Instruction {
 						processor.computer.setMemoryAt(offset, disc.discStream.read().toUByte())
 					}
 					disc.discStream.channel.position(savedPosition)
-					processor.setFlag(IA32Processor.FLAGSFlagType.CARRY_FLAG, false)
+					processor.flags.setFlag(FlagType.CARRY_FLAG, false)
 					processor.a.h = 0x00u
 					return
 				}
-				processor.setFlag(IA32Processor.FLAGSFlagType.CARRY_FLAG, true)
+				processor.flags.setFlag(FlagType.CARRY_FLAG, true)
 				processor.a.h = 0x04u
 			}
 			0x10u -> {

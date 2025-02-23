@@ -3,9 +3,9 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
-object HFAInstructionCLI : Instruction {
+object HFCInstructionCLD : Instruction {
 	fun handle(processor: IA32Processor) {
-		processor.flags.setFlag(FlagType.INTERRUPT_ENABLE_FLAG, false)
+		processor.flags.setFlag(FlagType.DIRECTION_FLAG, false)
 	}
 
 	override fun getOperands16(processor: IA32Processor): String = ""

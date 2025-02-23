@@ -7,6 +7,12 @@ object HD1InstructionSHR : ArithmeticInstruction {
 		processor.fetch()
 	}
 
+	override fun getOperands16(processor: IA32Processor): String {
+		prepare(processor)
+		val (f, _) = processor.decoding.getModRMDisassembler(processor.cir).first
+		return "$f, 1"
+	}
+
 	override fun handle16(processor: IA32Processor) {
 		val (rm, r) = processor.decoding.getModRM(processor.cir)
 		if (r != 5u) TODO("ROL, ROR, RCL, RCR, SHL, SAL, SAR /$r!")

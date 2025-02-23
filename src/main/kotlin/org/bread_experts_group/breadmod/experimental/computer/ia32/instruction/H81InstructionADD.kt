@@ -1,10 +1,18 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
 object H81InstructionADD : ArithmeticInstruction {
 	override fun prepare(processor: IA32Processor) {
 		processor.fetch()
+	}
+
+	override fun getOperands32(processor: IA32Processor): String {
+		prepare(processor)
+		val (f, _) = processor.decoding.getModRMDisassembler(processor.cir).first
+		// TODO consider reg
+		return "$f, ${hex(processor.decoding.readBinaryI(4).toUInt())}"
 	}
 
 	override fun handle32(processor: IA32Processor) {
