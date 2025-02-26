@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.tool_gun.render
+package org.bread_experts_group.breadmod.client.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -12,10 +12,6 @@ import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
-import org.bread_experts_group.breadmod.client.render.drawQuad
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.renderText
-import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.joml.Vector3f
 import org.joml.Vector4f
 

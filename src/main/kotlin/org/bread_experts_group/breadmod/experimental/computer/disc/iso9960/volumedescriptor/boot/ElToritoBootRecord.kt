@@ -95,7 +95,7 @@ class ElToritoBootRecord(
 
 	fun readContents(parent: PrimaryVolume, stream: BufferedFileInputStream): Contents {
 		stream.channel.position(parent.logicalBlockSize.toLong() * this.bootCatalogPointer)
-		if (stream.read() != 1) throw IllegalArgumentException("Header ID in validation entry must be 1.")
+		require(stream.read() == 1) { "Header ID in validation entry must be 1." }
 		val rawPlatform = stream.read()
 		stream.skip(2)
 		val validationEntry = Contents.ValidationEntry(
@@ -104,8 +104,8 @@ class ElToritoBootRecord(
 			stream.readNBytes(24).decodeToString(),
 			stream.readBinaryS(2).toShort()
 		)
-		if (stream.read() != 0x55) throw IllegalArgumentException("Key byte for 0x1E is incorrect.")
-		if (stream.read() != 0xAA) throw IllegalArgumentException("Key byte for 0x1F is incorrect.")
+		require(stream.read() == 0x55) { "Key byte for 0x1E is incorrect." }
+		require(stream.read() == 0xAA) { "Key byte for 0x1F is incorrect." }
 		val standardEntries = buildList<Contents.StandardEntry> {
 			val bootable = stream.read() == 0x88
 			val emulationType = stream.read()

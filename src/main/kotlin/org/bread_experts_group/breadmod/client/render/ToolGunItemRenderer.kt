@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.tool_gun.render
+package org.bread_experts_group.breadmod.client.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -12,15 +12,11 @@ import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.modelLocation
-import org.bread_experts_group.breadmod.client.render.renderItemModel
-import org.bread_experts_group.breadmod.client.render.transparentColor
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhInstrument
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.caseOhSize
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilDelta
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.coilRotation
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.recoil
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.caseOhInstrument
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.caseOhSize
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.coilDelta
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.coilRotation
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.recoil
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode

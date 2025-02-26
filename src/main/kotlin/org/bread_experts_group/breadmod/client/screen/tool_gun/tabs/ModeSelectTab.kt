@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.tool_gun
+package org.bread_experts_group.breadmod.client.screen.tool_gun.tabs
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderType
@@ -9,12 +9,16 @@ import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals.currentModeIndex
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
+import org.bread_experts_group.breadmod.client.screen.tool_gun.ToolGunScreen
+import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.GenericButton
+import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
+import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.TabButton
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
-class ModeSelectTab : ToolGunScreenTab("mode_select", Color.GRAY) {
+class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Color.GRAY, screen) {
 	override fun getTabButton(): TabButton = TabButton(Component.literal("Modes"), Color.RED, Color.GRAY, this)
 
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()

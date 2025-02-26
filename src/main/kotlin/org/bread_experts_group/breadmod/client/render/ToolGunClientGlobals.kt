@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.tool_gun.render
+package org.bread_experts_group.breadmod.client.render
 
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes

@@ -20,8 +20,8 @@ import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
+import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 
 @ToolGunMode
@@ -44,7 +44,7 @@ class ExplodeMode : AbstractToolGunMode() {
 	override fun getUid(): ResourceLocation = modLocation("tool_gun", "explode_mode")
 	override fun getCustomRenderer(): IToolGunMode.Renderer = ExplodeModeRenderer(this.getUid())
 
-	class ExplodeModeRenderer(val id: ResourceLocation) : AbstractToolGunModeRenderer() {
+	class ExplodeModeRenderer(private val id: ResourceLocation) : AbstractToolGunModeRenderer() {
 		override fun getModeWidget(): ModeWidget = ModeWidget.Builder()
 			.icon(Items.TNT.defaultInstance)
 			.previewImage(ModTextureLocations.EXPLODE_PREVIEW)

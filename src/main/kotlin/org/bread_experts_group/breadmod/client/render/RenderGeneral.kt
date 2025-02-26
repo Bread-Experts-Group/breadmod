@@ -143,7 +143,7 @@ fun GuiGraphics.drawTiledSprite(
 fun GuiGraphics.drawCenteredWordWrap(font: Font, text: FormattedText, x: Int, y: Int, lineWidth: Int, color: Int) {
 	var yOffset = y
 	for (charSequence: FormattedCharSequence in font.split(text, lineWidth)) {
-		this.drawCenteredString(font, charSequence, x - font.width(text), yOffset, color)
+		this.drawCenteredString(font, charSequence, x - font.width(text) / 2, yOffset, color)
 		yOffset += 9
 	}
 }

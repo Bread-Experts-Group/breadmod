@@ -14,8 +14,7 @@ class ExpansibleEnergyHandler(
 		val callingLocation = this::class.java.classLoader.loadClass(stackTrace.first {
 			it.className != this::class.qualifiedName && !it.className.startsWith("java.")
 		}.className)
-		if (!callingLocation.kotlin.isSubclassOf(EnergyBearingBlockEntity::class))
-			throw IllegalStateException("ExpansibleEnergyHandler must be used in an EnergyBearingBlockEntity")
+		check(callingLocation.kotlin.isSubclassOf(EnergyBearingBlockEntity::class)) { "ExpansibleEnergyHandler must be used in an EnergyBearingBlockEntity" }
 	}
 
 	class ExpansibleCell(

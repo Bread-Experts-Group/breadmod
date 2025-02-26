@@ -1,9 +1,8 @@
-package org.bread_experts_group.breadmod.client.tool_gun
+package org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.Button
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
@@ -14,18 +13,21 @@ import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderTypeDebugLineStrip
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.tool_gun.SettingsTab.SettingsEntries.MAIN
-import org.bread_experts_group.breadmod.client.tool_gun.SettingsTab.SettingsEntries.RENDERER
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunClientGlobals
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings.SettingsEntries.MAIN
+import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings.SettingsEntries.RENDERER
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
+import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
+import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.screen.tool_gun.ToolGunScreen
+import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ToolGunScreenTab
+import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.TabButton
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.awt.Color
 
-class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", Color(0, 0, 180)) {
-	private enum class SettingsEntries { MAIN, RENDERER }
-
-	private var currentSettingsEntry: SettingsEntries = MAIN
+class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0, 0, 180), screen) {
+	companion object {
+		var currentSettingsEntry: SettingsEntries = MAIN
+	}
 	private val renderHelper = ToolGunRenderHelper()
 	private val toolGunRenderer = ToolGunItemRenderer()
 
@@ -33,9 +35,10 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 		TabButton(Component.literal("settings"), Color.BLUE, Color(0, 0, 230), this)
 
 	override fun init() {
+		Companion.currentSettingsEntry = MAIN
 		this.addChild(
 			"renderer_entry",
-			this.EntryButton(
+			SettingsEntryButton(
 				Component.literal("Renderer"),
 				Component.literal("Entry for adjusting tool gun rendering parameters."),
 				RENDERER
@@ -43,11 +46,12 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 			this.x + 5,
 			this.y + 30
 		)
+		// todo WHY DON'T YOU WORK AAAAAAAAAAA
 		this.addChild(
 			"main_button",
-			this.MainButton(),
+			SettingsEntryButton(Component.literal("<"), Component.empty(), MAIN),
 			this.x + 5,
-			this.y + 10
+			this.y + 5
 		)
 	}
 
@@ -59,21 +63,24 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 			this.y + 185,
 			Color(0, 0, 230, 255).rgb
 		)
-		this.subWidgets.values.filterIsInstance<EntryButton>()
+		this.subWidgets.values.filterIsInstance<SettingsEntryButton>()
 			.asSequence()
-			.filter { it.isHovered && it.visible }
+			.filter { it.isHovered && it.visible && Companion.currentSettingsEntry == MAIN }
 			.forEach {
 				guiGraphics.drawCenteredWordWrap(
 					localClient.font,
 					it.description,
-					this.screenWidth + 25,
+					this.screen.width / 2 + 133,
 					this.y + 150,
 					260,
 					Color.WHITE.rgb
 				)
 			}
-		if (this.currentSettingsEntry != MAIN) this.entryButtonsVisibility(false) else this.entryButtonsVisibility(true)
-		when (this.currentSettingsEntry) {
+
+		if (Companion.currentSettingsEntry != MAIN) {
+			this.entryButtonsVisibility(false)
+		} else this.entryButtonsVisibility(true)
+		when (Companion.currentSettingsEntry) {
 			MAIN     -> this.drawMainEntry(guiGraphics)
 			RENDERER -> this.drawSettingsRendererEntry(guiGraphics)
 		}
@@ -81,8 +88,8 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 	}
 
 	private fun entryButtonsVisibility(visible: Boolean) {
-		this.subWidgets.values.filterIsInstance<EntryButton>().forEach { it.visible = visible; it.active = visible }
-		this.getChild("main_button")?.let { it.visible = !visible; it.active = !visible }
+		(this.getChild("renderer_entry") ?: return).let { it.visible = visible; it.active = visible }
+		(this.getChild("main_button") ?: return).let { it.active = !visible }
 	}
 
 	private fun drawMainEntry(guiGraphics: GuiGraphics) {
@@ -94,9 +101,9 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 			Color.WHITE.rgb
 		)
 		guiGraphics.fill(
-			this.screenWidth / 2,
+			this.screen.width / 2,
 			this.y + 22,
-			this.screenWidth / 2 + 2,
+			this.screen.width / 2 + 2,
 			this.y + 135,
 			Color.WHITE.rgb
 		)
@@ -110,7 +117,7 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 		guiGraphics.drawCenteredString(
 			localClient.font,
 			modTranslatable("tool_gun", "settings", "title"),
-			this.screenWidth / 2,
+			this.screen.width / 2,
 			this.y + 7,
 			Color.WHITE.rgb
 		)
@@ -121,7 +128,7 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val stack = ModItems.TOOL_GUN.toStack()
 		val gameTime = (localClient.level ?: return).gameTime
-		guiGraphics.vLine(this.screenWidth / 2, this.y + 20, this.y + 200, Color.WHITE.rgb)
+		guiGraphics.vLine(this.screen.width / 2, this.y + 20, this.y + 200, Color.WHITE.rgb)
 		guiGraphics.borderedFill(
 			RenderType.gui(),
 			this.x + 150,
@@ -154,35 +161,4 @@ class SettingsTab(private val screenWidth: Int) : ToolGunScreenTab("settings", C
 		RenderSystem.disableBlend()
 		poseStack.popPose()
 	}
-
-	private inner class EntryButton(
-		message: Component,
-		val description: Component,
-		entry: SettingsEntries
-	) : Button(
-		0,
-		0,
-		localClient.font.width(message) + 4,
-		12,
-		message,
-		{ this.currentSettingsEntry = entry },
-		{ Component.empty() }
-	) {
-		override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-			this.renderString(
-				guiGraphics,
-				localClient.font,
-				if (this.isHovered) Color(16755200).rgb else Color.WHITE.rgb
-			)
-		}
-	}
-
-	private inner class MainButton : Button(
-		0,
-		0,
-		localClient.font.width("<") + 4,
-		12,
-		Component.literal("<"),
-		{ this.currentSettingsEntry = MAIN },
-		{ Component.empty() })
 }

@@ -62,7 +62,7 @@ fun formatNumberBigDecimal(
 
 /**
  * Retrieves an instance of the provided [path]
- * @throws [NoClassDefFoundError] if [path] is invalid.
+ * @throws [NoClassDefFoundError] if [path] is invalid or class does not exist.
  */
 inline fun <reified T> toClass(path: String): T =
 	Class.forName(

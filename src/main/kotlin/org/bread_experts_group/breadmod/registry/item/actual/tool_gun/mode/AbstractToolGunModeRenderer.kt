@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.client.tool_gun.ModeWidget
-import org.bread_experts_group.breadmod.client.tool_gun.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
+import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 
 abstract class AbstractToolGunModeRenderer : IToolGunMode.Renderer {
 	override fun render(

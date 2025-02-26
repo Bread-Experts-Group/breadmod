@@ -27,8 +27,7 @@ class ExpansibleFluidHandler(
 		val callingLocation = this::class.java.classLoader.loadClass(stackTrace.first {
 			it.className != this::class.qualifiedName && !it.className.startsWith("java.")
 		}.className)
-		if (!callingLocation.kotlin.isSubclassOf(FluidBearingBlockEntity::class))
-			throw IllegalStateException("ExpansibleFluidHandler must be used in an FluidBearingBlockEntity")
+		check(callingLocation.kotlin.isSubclassOf(FluidBearingBlockEntity::class)) { "ExpansibleFluidHandler must be used in an FluidBearingBlockEntity" }
 	}
 
 	class ExpansibleTank(

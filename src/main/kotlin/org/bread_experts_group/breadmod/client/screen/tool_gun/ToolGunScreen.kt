@@ -1,18 +1,28 @@
-package org.bread_experts_group.breadmod.client.tool_gun
+package org.bread_experts_group.breadmod.client.screen.tool_gun
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.ModTextureLocations
+import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ModeSelectTab
+import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings.SettingsTab
+import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ToolGunScreenTab
 
 class ToolGunScreen(title: Component) : Screen(title) {
 	companion object {
 		var activeTab: ToolGunScreenTab? = null
 	}
 
-	private var leftPos: Int = (this.width - 256) / 2
-	private var topPos: Int = (this.height - 256) / 2
+	/**
+	 * Starts at the top left of the gui and moves left to right
+	 */
+	var leftPos: Int = (this.width - 256) / 2
+
+	/**
+	 * Starts at the top left of the gui and moves up to down
+	 */
+	var topPos: Int = (this.height - 256) / 2
 
 	override fun isPauseScreen(): Boolean = false
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -44,8 +54,8 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		this.leftPos = (this.width - 256) / 2
 		this.topPos = (this.height - 256) / 2
 
-		this.addTab(ModeSelectTab(), true)
-		this.addTab(SettingsTab(this.width), false)
+		this.addTab(ModeSelectTab(this), true)
+		this.addTab(SettingsTab(this), false)
 		var tabPosition = this.leftPos + 7
 		this.getTabs().forEach {
 			this.addRenderableWidget(it.getTabButton().also { button ->
