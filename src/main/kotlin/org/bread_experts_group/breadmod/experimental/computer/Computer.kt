@@ -2,6 +2,10 @@ package org.bread_experts_group.breadmod.experimental.computer
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.readBinary
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
+import org.bread_experts_group.breadmod.experimental.computer.io.Diagnostics
+import org.bread_experts_group.breadmod.experimental.computer.io.IODevice
+import org.bread_experts_group.breadmod.experimental.computer.io.ps2.PS2Controller
+import org.bread_experts_group.breadmod.experimental.computer.io.ps2.PS2SystemControllerA
 
 /**
  * A Bread Mod computer.
@@ -14,6 +18,13 @@ class Computer : SimulationSteppable {
 	lateinit var memory: List<MemoryModule>
 	lateinit var processor: Processor
 	var disc: ISO9660Disc? = null
+	val ps2 = PS2Controller()
+	val ioMap = mutableMapOf<UInt, IODevice>(
+		0x60u to ps2.data,
+		0x64u to ps2.command,
+		0x80u to Diagnostics(),
+		0x92u to PS2SystemControllerA()
+	)
 
 	fun requestMemoryAt(address: ULong): UByte {
 		var count = 0u
@@ -50,11 +61,6 @@ class Computer : SimulationSteppable {
 	fun requestMemoryAt32(address: ULong): UInt {
 		var offset = 0u
 		return readBinary(4, { this.requestMemoryAt(address + offset).also { offset++ } }).toUInt()
-	}
-
-	fun requestMemoryAt48(address: ULong): ULong {
-		var offset = 0u
-		return readBinary(6, { this.requestMemoryAt(address + offset).also { offset++ } }).toULong()
 	}
 
 	fun requestMemoryAt64(address: ULong): ULong {

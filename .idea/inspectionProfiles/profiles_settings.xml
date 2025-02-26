@@ -1,17 +1,5 @@
 <component name="InspectionProjectProfileManager">
   <settings>
-    <option name="USE_PROJECT_PROFILE" value="false" />
-    <version value="1.0" />
-    <info color="6c00a3">
-      <option name="EFFECT_COLOR" value="6c00a3" />
-      <option name="ERROR_STRIPE_COLOR" value="6c00a3" />
-      <option name="myName" value="Do Not Push" />
-      <option name="myVal" value="50" />
-      <option name="myExternalName" value="Do Not Push" />
-      <option name="myDefaultAttributes">
-        <option name="ERROR_STRIPE_COLOR" value="6c00a3" />
-      </option>
-    </info>
     <info color="2de252">
       <option name="FOREGROUND" value="2de252" />
       <option name="FONT_TYPE" value="2" />
@@ -21,6 +9,16 @@
       <option name="myExternalName" value="Javadoc Needed" />
       <option name="myDefaultAttributes">
         <option name="ERROR_STRIPE_COLOR" value="2de252" />
+      </option>
+    </info>
+    <info color="6c00a3">
+      <option name="EFFECT_COLOR" value="6c00a3" />
+      <option name="ERROR_STRIPE_COLOR" value="6c00a3" />
+      <option name="myName" value="Do Not Push" />
+      <option name="myVal" value="50" />
+      <option name="myExternalName" value="Do Not Push" />
+      <option name="myDefaultAttributes">
+        <option name="ERROR_STRIPE_COLOR" value="6c00a3" />
       </option>
     </info>
     <list size="14">

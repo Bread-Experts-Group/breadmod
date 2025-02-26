@@ -44,12 +44,12 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 		}
 
 		fun Package.getOrScanCache(): List<KClass<out Any>> {
-			return Companion.classes.getOrPut(this) {
+			return this@Companion.classes.getOrPut(this) {
 				val loader = Minecraft::class.java.classLoader
 				buildList {
 					for (resource in loader.getResources(this@getOrScanCache.name.replace(".", "/"))) {
 						try {
-							val fs = Companion.safeGetFileSystem(resource.toURI())
+							val fs = this@Companion.safeGetFileSystem(resource.toURI())
 							fs.rootDirectories.forEach { rootDir ->
 								Files.walk(rootDir)
 									.filter(Files::isRegularFile)
@@ -60,19 +60,19 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 											this.add(
 												loader.loadClass(
 													f
-														.absolutePathString()
-														.substring(1)
-														.removeSuffix(".class")
-														.replace('/', '.')
+														.absolutePathString().let {
+															it.substring(1, it.length - 6)
+																.replace('/', '.')
+														}
 												).kotlin
 											)
 										} catch (e: Throwable) {
-											Companion.logger.warn("Failure when loading class: $f", e)
+											this@Companion.logger.warn("Failure when loading class: $f", e)
 										}
 									}
 							}
 						} catch (e: Exception) {
-							Companion.logger.warn("Failure when reading from file system", e)
+							this@Companion.logger.warn("Failure when reading from file system", e)
 						}
 					}
 				}
@@ -85,7 +85,7 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 			val list = buildList {
 				this@piggybackCache.forEach {
 					this.addAll(
-						Companion.piggybackClasses.getOrPut(it) {
+						this@Companion.piggybackClasses.getOrPut(it) {
 							buildList {
 								count += it.classes.size
 								it.classes.forEach { c ->
@@ -100,7 +100,7 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 					)
 				}
 			}
-			if (failures > 0) Companion.logger.warn(
+			if (failures > 0) this@Companion.logger.warn(
 				"Failed to load $failures piggyback classes, ${count - failures}/${count}"
 			)
 			return list
@@ -191,10 +191,13 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 						for (func in clazz.memberFunctions) this@LibraryScanner.handleFunction(this, func, obj)
 						for (field in clazz.memberProperties) this@LibraryScanner.handleProperty(this, field, obj)
 					}
-				} catch (_: IllegalAccessException) {
+				} catch (_: Throwable) {
 				}
-				for (func in clazz.staticFunctions) this@LibraryScanner.handleFunction(this, func)
-				for (field in clazz.staticProperties) this@LibraryScanner.handleProperty(this, field)
+				try {
+					for (func in clazz.staticFunctions) this@LibraryScanner.handleFunction(this, func)
+					for (field in clazz.staticProperties) this@LibraryScanner.handleProperty(this, field)
+				} catch (_: Throwable) {
+				}
 			}
 		}
 }

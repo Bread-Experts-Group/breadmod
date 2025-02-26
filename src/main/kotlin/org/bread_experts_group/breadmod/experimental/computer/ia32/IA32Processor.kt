@@ -6,69 +6,18 @@ import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.Computer
 import org.bread_experts_group.breadmod.experimental.computer.Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H00InstructionADD
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H01InstructionADD
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H09InstructionOR
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H0F01InstructionGROUP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H0F20InstructionMOVCR
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H0F22InstructionMOVCR
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H28InstructionSUB
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H29InstructionSUB
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H31InstructionXOR
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H39InstructionCMP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H3CInstructionCMP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H46InstructionINC
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H50InstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H51InstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H52InstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H53InstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H55InstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H56InstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H59InstructionPOP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H5BInstructionPOP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H68InstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H6AInstructionPUSH
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H72InstructionJB
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H73InstructionJAE
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H74InstructionJE
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H75InstructionJNZ
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H76InstructionJBE
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H81InstructionADD
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H83InstructionGROUP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H84InstructionTEST
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H88InstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H89InstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8AInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8BInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.H8EInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HA1InstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HA3InstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HACInstructionLODSB
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB4InstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB8InstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HB9InstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBBInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBCInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBDInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HBEInstructionMOV
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC1InstructionGROUP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HC3InstructionRET
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HCDInstructionINT
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HD1InstructionSHR
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HE6InstructionOUT
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HE8InstructionCALL
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEAInstructionLJMP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HEBInstructionJMP
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HF6InstructionTEST
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFAInstructionCLI
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFBInstructionSTI
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFCInstructionCLD
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.HFEInstructionGROUP
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.ControlRegister0
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.SegmentRegister
-import kotlin.reflect.jvm.jvmName
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.primaryConstructor
 
 /**
  * A [Processor] capable of virtualizing the IA-32 architecture.
@@ -142,22 +91,22 @@ class IA32Processor(val computer: Computer) : Processor {
 
 	fun push32(value: UInt) {
 		this.sp.rx -= 4u
-		this.computer.setMemoryAt32(ss.offset(sp), value)
+		this.computer.setMemoryAt32(this.ss.offset(this.sp), value)
 	}
 
 	fun push16(value: UShort) {
 		this.sp.rx -= 2u
-		this.computer.setMemoryAt16(ss.offset(sp), value)
+		this.computer.setMemoryAt16(this.ss.offset(this.sp), value)
 	}
 
 	fun pop32(): UInt {
-		val popped = this.computer.requestMemoryAt32(ss.offset(sp))
+		val popped = this.computer.requestMemoryAt32(this.ss.offset(this.sp))
 		this.sp.rx += 4u
 		return popped
 	}
 
 	fun pop16(): UShort {
-		val popped = this.computer.requestMemoryAt16(ss.offset(sp))
+		val popped = this.computer.requestMemoryAt16(this.ss.offset(this.sp))
 		this.sp.rx += 2u
 		return popped
 	}
@@ -166,18 +115,15 @@ class IA32Processor(val computer: Computer) : Processor {
 		if (this.ip.rx == (0xFFFFFFF0u).toULong()) {
 			val disc = this.computer.disc!!
 			val (primary, entry) = disc.getBoot()
-			val start = entry.loadSegment * 0x10
-			val size = (entry.sectorCount * primary.logicalBlockSize).toULong()
-			val discStart = entry.loadRBA.toLong() * primary.logicalBlockSize
-			disc.discStream.channel.position(discStart)
-
-			this.logger.warn("BIOS CPY ${hex(discStart)} -> ${hex(discStart.toULong() + size)} @ ${hex(start)}")
-			for (offset in start.toULong() .. start.toULong() + size) {
-				// TODO Send in chunks
-				this.computer.setMemoryAt(offset, disc.discStream.read().toUByte())
-			}
+			val discStart = (entry.loadRBA.toLong() * primary.logicalBlockSize).toULong()
+			val memoryStart = (entry.loadSegment * 0x10).toULong()
+			this.decoding.loadDiscIntoMemory(
+				discStart,
+				discStart + (entry.sectorCount * primary.logicalBlockSize).toULong(),
+				memoryStart
+			)
 			this.d.l = 0xE0u
-			this.ip.rx = start.toULong()
+			this.ip.rx = memoryStart
 		}
 		this.cir = this.computer.requestMemoryAt(this.cs.offset(this.ip))
 		this.ip.rx++
@@ -186,16 +132,39 @@ class IA32Processor(val computer: Computer) : Processor {
 	var csOverride: Boolean = false
 	var bitOverride: Boolean = false
 	var bit8Override: Boolean = false
-	val operatingMode: DecodingUtil.AddressingLength
-		get() = if (this.cr0.getFlag(ControlRegister0.FlagType.PROTECTED_MODE_ENABLE)) DecodingUtil.AddressingLength.R32
-		else DecodingUtil.AddressingLength.R16
-	val operatingModeLocal: DecodingUtil.AddressingLength
-		get() = if (bit8Override) DecodingUtil.AddressingLength.R8
+	val operatingMode: AddressingLength
+		get() = if (this.gdtrBase.tex == 0u || this.cs.tex == 0u) AddressingLength.R16
+		else {
+			val descriptor = this.cs.readSegmentDescriptor()
+			if (descriptor.flags and 0b0010u > 0u) TODO("64-bits mode")
+			if (descriptor.flags and 0b0100u > 0u) AddressingLength.R32
+			else AddressingLength.R16
+		}
+	val operatingModeLocal: AddressingLength
+		get() = if (this.bit8Override) AddressingLength.R8
 		else
-			(if (bitOverride)
-				if (operatingMode == DecodingUtil.AddressingLength.R32) DecodingUtil.AddressingLength.R16
-				else DecodingUtil.AddressingLength.R32
-			else operatingMode)
+			(if (this.bitOverride)
+				if (this.operatingMode == AddressingLength.R32) AddressingLength.R16
+				else AddressingLength.R32
+			else this.operatingMode)
+	val instructionMap: MutableMap<UInt, Instruction> = mutableMapOf()
+
+	init {
+		val scanner = this::class.java.`package`.getScanner()
+		scanner.getClassesAnnotatedWith(IA32Instruction::class).forEach {
+			val instructionDescriptor = it.findAnnotation<IA32Instruction>()!!
+			this.instructionMap[instructionDescriptor.opcode] =
+				(it.objectInstance ?: it.primaryConstructor!!.call(this)) as Instruction
+		}
+		scanner.getClassesAnnotatedWith(IA32InstructionCluster::class).forEach {
+			val cluster = it.primaryConstructor!!.call(this)
+			it.declaredMemberProperties.forEach { f ->
+				val instructionDescriptor = f.findAnnotation<IA32Instruction>()!!
+				this.instructionMap[instructionDescriptor.opcode] = f.getter.call(cluster) as Instruction
+			}
+		}
+		this.logger.warn("Understood ${this.instructionMap.size} opcodes.")
+	}
 
 	fun decode() {
 		// Useful links when writing decoding:
@@ -206,93 +175,29 @@ class IA32Processor(val computer: Computer) : Processor {
 		// 3.1.1.1 Opcode Column in the Instruction Summary Table
 		// TODO Exceptions
 		val instruction = when (this.cir.toUInt()) {
-			0x00u -> H00InstructionADD
-			0x01u -> H01InstructionADD
-			0x09u -> H09InstructionOR
-			0x0Fu -> {
-				this.fetch()
-				when (this.cir.toUInt()) {
-					0x01u -> H0F01InstructionGROUP
-					0x20u -> H0F20InstructionMOVCR
-					0x22u -> H0F22InstructionMOVCR
-					else  -> TODO("Unrecognized 2-byte opcode (${hex(this.cir)})")
-				}
-			}
-			0x28u -> H28InstructionSUB
-			0x29u -> H29InstructionSUB
 			0x2Eu -> {
 				this.csOverride = true
 				return
 			}
-			0x31u -> H31InstructionXOR
-			0x39u -> H39InstructionCMP
-			0x3Cu -> H3CInstructionCMP
-			0x46u -> H46InstructionINC
-			0x50u -> H50InstructionPUSH
-			0x51u -> H51InstructionPUSH
-			0x52u -> H52InstructionPUSH
-			0x53u -> H53InstructionPUSH
-			0x55u -> H55InstructionPUSH
-			0x56u -> H56InstructionPUSH
-			0x59u -> H59InstructionPOP
-			0x5Bu -> H5BInstructionPOP
 			0x66u -> {
 				this.bitOverride = true
 				return
 			}
-			0x68u -> H68InstructionPUSH
-			0x6Au -> H6AInstructionPUSH
-			0x72u -> H72InstructionJB
-			0x73u -> H73InstructionJAE
-			0x74u -> H74InstructionJE
-			0x75u -> H75InstructionJNZ
-			0x76u -> H76InstructionJBE
-			0x81u -> H81InstructionADD
-			0x83u -> H83InstructionGROUP
-			0x84u -> H84InstructionTEST
-			0x88u -> H88InstructionMOV
-			0x89u -> H89InstructionMOV
-			0x8Au -> H8AInstructionMOV
-			0x8Bu -> H8BInstructionMOV
-			0x8Eu -> H8EInstructionMOV
-			0xA1u -> HA1InstructionMOV
-			0xA3u -> HA3InstructionMOV
-			0xACu -> HACInstructionLODSB
-			0xB4u -> HB4InstructionMOV
-			0xB8u -> HB8InstructionMOV
-			0xB9u -> HB9InstructionMOV
-			0xBBu -> HBBInstructionMOV
-			0xBCu -> HBCInstructionMOV
-			0xBDu -> HBDInstructionMOV
-			0xBEu -> HBEInstructionMOV
-			0xC1u -> HC1InstructionGROUP
-			0xC3u -> HC3InstructionRET
-			0xCDu -> HCDInstructionINT
-			0xD1u -> HD1InstructionSHR
-			0xE6u -> HE6InstructionOUT
-			0xE8u -> HE8InstructionCALL
-			0xEAu -> HEAInstructionLJMP
-			0xEBu -> HEBInstructionJMP
-			0xF6u -> HF6InstructionTEST
-			0xFAu -> HFAInstructionCLI
-			0xFBu -> HFBInstructionSTI
-			0xFCu -> HFCInstructionCLD
-			0xFEu -> HFEInstructionGROUP
-			else  -> TODO("Unrecognized opcode (${hex(this.cir)})")
+			0x0Fu -> this.instructionMap[(0x0Fu shl 8) or this.decoding.readFetch().toUInt()]
+				?: throw IllegalArgumentException("Missing two-byte opcode for ${hex(this.cir)}")
+			else  -> this.instructionMap[this.cir.toUInt()]
+				?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)}")
 		}
 		this.logger.warn(
 			"{} ({},{}): {}",
-			this.cs.hex(this.ip.rx - 1u),
+			this.cs.hex(this.ip.rx - 1u - (if (this.csOverride) 1u else 0u) - (if (this.bitOverride) 1u else 0u)),
 			if (this.csOverride) "CS" else "  ",
 			if (this.bitOverride) "66" else "  ",
 			instruction.getDisassembly(this)
 		)
-		if (this.csOverride && !instruction.supportsCodeSegmentOverride)
-			throw UnsupportedOperationException("${instruction::class.jvmName} does not support CS")
-		instruction.prepare(this)
-		(if (operatingModeLocal == DecodingUtil.AddressingLength.R32) instruction::handle32
-		else instruction::handle16)(this)
+		instruction.handle(this)
 		this.csOverride = false
 		this.bitOverride = false
+		this.bit8Override = false
 	}
 }

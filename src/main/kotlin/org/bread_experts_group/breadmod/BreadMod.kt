@@ -16,6 +16,10 @@ import org.apache.logging.log4j.core.config.Configurator
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.ToolGunMode
+import org.bread_experts_group.breadmod.experimental.computer.Computer
+import org.bread_experts_group.breadmod.experimental.computer.MemoryModule
+import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
+import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
 import org.bread_experts_group.breadmod.logging.ConsoleUnnamedRedirection
 import org.bread_experts_group.breadmod.registry.ModConfiguration
@@ -23,6 +27,7 @@ import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 import kotlin.reflect.full.createInstance
+import kotlin.system.exitProcess
 
 /**
  * Main mod class.
@@ -85,6 +90,25 @@ class BreadMod(container: ModContainer) {
 			ConsoleUnnamedRedirection.setup()
 		}
 		this.logger.info("Hello world!")
+		val newComputer = Computer()
+		newComputer.memory = listOf(MemoryModule(2097152u))
+		newComputer.processor = IA32Processor(newComputer)
+		newComputer.disc = ISO9660Disc.readDisc(
+			this::class.java.getResource(
+				"/main.iso"
+			)!!.toURI()
+		)
+		try {
+			var a = 0
+			while (true) {
+				a++
+				if (a % 10000 == 0) Thread.sleep(1000)
+				newComputer.step()
+			}
+		} catch (e: Throwable) {
+			this.logger.warn(e.stackTraceToString())
+			exitProcess(0)
+		}
 
 		container.registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPEC.right, "breadmod-common.toml")
 		container.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPEC.right, "breadmod-client.toml")

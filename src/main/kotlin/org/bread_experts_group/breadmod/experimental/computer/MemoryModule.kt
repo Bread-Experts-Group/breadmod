@@ -13,7 +13,7 @@ package org.bread_experts_group.breadmod.experimental.computer
  */
 class MemoryModule(val capacity: UInt) {
 	private val memory = Array(this.capacity.toInt()) {
-		(0x0Fu).toUByte()
+		(0x00u).toUByte()
 	}
 
 	/**
