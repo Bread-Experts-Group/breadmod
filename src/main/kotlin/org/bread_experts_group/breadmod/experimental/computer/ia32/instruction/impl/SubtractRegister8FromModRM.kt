@@ -12,7 +12,7 @@ import kotlin.reflect.KMutableProperty0
 
 @IA32Instruction(0x28u)
 object SubtractRegister8FromModRM : RegisterMemory8SingleOperandInstruction, ArithmeticSubtractionFlagOperations {
-	override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String = "sub"
+	override fun getMnemonic(processor: IA32Processor): String = "sub"
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 		"${rmD.memRM}, ${rmD.register}"
 

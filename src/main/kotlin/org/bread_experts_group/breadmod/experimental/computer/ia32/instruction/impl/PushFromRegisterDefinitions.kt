@@ -5,7 +5,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 
 @IA32InstructionCluster
@@ -17,7 +17,7 @@ class PushFromRegisterDefinitions(processor: IA32Processor) {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	class PushFromRegister(val r32n: String, val r16n: String, val register: Register) : Instruction {
+	class PushFromRegister(val r32n: String, val r16n: String, val register: Register) : ZeroOperandInstruction {
 		override fun getMnemonic(processor: IA32Processor): String = "push"
 		override fun getOperands(processor: IA32Processor): String = when (processor.operatingModeLocal) {
 			AddressingLength.R32 -> "${this.r32n} [${hex(this.register.tex)}]"

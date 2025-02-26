@@ -20,8 +20,7 @@ class MoveImmediateIntoRegisterDefinitions(processor: IA32Processor) {
 	 */
 	class MoveImmediateIntoRegister(val r32n: String, val r16n: String, val register: Register) :
 		ImmediateOperatingLengthSingleOperandInstruction {
-		override fun getMnemonic16(processor: IA32Processor, imm16: UShort): String = "mov"
-		override fun getMnemonic32(processor: IA32Processor, imm32: UInt): String = "mov"
+		override fun getMnemonic(processor: IA32Processor): String = "mov"
 		override fun getOperands16(processor: IA32Processor, imm16: UShort): String = "${this.r16n}, ${hex(imm16)}"
 		override fun getOperands32(processor: IA32Processor, imm32: UInt): String = "${this.r32n}, ${hex(imm32)}"
 		override fun handle16(processor: IA32Processor, imm16: UShort) {
@@ -66,7 +65,7 @@ class MoveImmediateIntoRegisterDefinitions(processor: IA32Processor) {
 	 */
 	class MoveImmediateIntoRegister8(val r8n: String, val register: KMutableProperty0<ULong>) :
 		Immediate8SingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor, imm8: UByte): String = "mov"
+		override fun getMnemonic(processor: IA32Processor): String = "mov"
 		override fun getOperands(processor: IA32Processor, imm8: UByte): String = "${this.r8n}, ${hex(imm8)}"
 		override fun handle(processor: IA32Processor, imm8: UByte) {
 			this.register.set(imm8.toULong())

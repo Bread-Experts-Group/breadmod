@@ -14,7 +14,7 @@ import kotlin.reflect.KMutableProperty0
 @IA32InstructionCluster
 class MoveToRegisterDefinitions(processor: IA32Processor) {
 	class MoveModRMToRegister(type: RegisterType) : RegisterMemorySingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String = "mov"
+		override fun getMnemonic(processor: IA32Processor): String = "mov"
 		override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 			"${rmD.register}, ${rmD.memRM}"
 
@@ -32,7 +32,7 @@ class MoveToRegisterDefinitions(processor: IA32Processor) {
 	val seg: MoveModRMToRegister = MoveModRMToRegister(RegisterType.SEGMENT)
 
 	class MoveModRMToRegister8(type: RegisterType) : RegisterMemory8SingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String = "mov"
+		override fun getMnemonic(processor: IA32Processor): String = "mov"
 		override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 			"${rmD.register}, ${rmD.memRM}"
 

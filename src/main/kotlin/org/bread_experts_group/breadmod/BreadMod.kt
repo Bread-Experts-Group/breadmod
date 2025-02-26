@@ -95,7 +95,7 @@ class BreadMod(container: ModContainer) {
 		newComputer.processor = IA32Processor(newComputer)
 		newComputer.disc = ISO9660Disc.readDisc(
 			this::class.java.getResource(
-				"/main.iso"
+				"/MS-DOS 6.22.iso"
 			)!!.toURI()
 		)
 		try {

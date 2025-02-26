@@ -12,7 +12,7 @@ import kotlin.reflect.KMutableProperty0
 
 @IA32Instruction(0x01u)
 object AddRegisterToModRM : RegisterMemorySingleOperandInstruction, ArithmeticAdditionFlagOperations {
-	override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String = "add"
+	override fun getMnemonic(processor: IA32Processor): String = "add"
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 		"${rmD.memRM}, ${rmD.register}"
 

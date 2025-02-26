@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
  */
 @IA32Instruction(0x0Cu)
 object RegisterALImmediate8OR : Immediate8SingleOperandInstruction, LogicalArithmeticFlagOperations {
-	override fun getMnemonic(processor: IA32Processor, imm8: UByte): String = "or"
+	override fun getMnemonic(processor: IA32Processor): String = "or"
 	override fun getOperands(processor: IA32Processor, imm8: UByte): String = "al, ${hex(imm8)}"
 	override fun handle(processor: IA32Processor, imm8: UByte) {
 		val result = processor.a.tl or imm8

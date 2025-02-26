@@ -2,7 +2,7 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-interface Instruction {
+interface ZeroOperandInstruction {
 	fun handle(processor: IA32Processor)
 	fun getMnemonic(processor: IA32Processor): String
 	fun getOperands(processor: IA32Processor): String

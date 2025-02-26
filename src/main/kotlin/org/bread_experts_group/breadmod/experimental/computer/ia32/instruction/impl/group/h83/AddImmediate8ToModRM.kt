@@ -11,10 +11,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 import kotlin.reflect.KMutableProperty0
 
 object AddImmediate8ToModRM : RegisterMemoryImmediate8DoubleOperandInstruction, ArithmeticAdditionFlagOperations {
-	override fun getMnemonic(
-		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm8: UByte
-	): String = "add"
-
+	override fun getMnemonic(processor: IA32Processor): String = "add"
 	override fun getOperands(
 		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm8: UByte
 	): String = "${rmD.memRM}, ${BinaryUtil.hex(imm8)}"

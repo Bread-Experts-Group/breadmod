@@ -18,7 +18,7 @@ import kotlin.reflect.KMutableProperty0
  */
 @IA32Instruction(0x0F20u)
 object MoveFromControlRegister : RegisterMemorySingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String = "mov"
+	override fun getMnemonic(processor: IA32Processor): String = "mov"
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 		"${rmD.memRM}, ${rmD.register}"
 

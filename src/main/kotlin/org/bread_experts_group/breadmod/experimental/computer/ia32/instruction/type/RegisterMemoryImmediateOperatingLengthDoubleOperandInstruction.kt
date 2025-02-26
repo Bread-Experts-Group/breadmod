@@ -8,13 +8,6 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.jvm.jvmName
 
 interface RegisterMemoryImmediateOperatingLengthDoubleOperandInstruction : RegisterMemorySingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		when (val imm = processor.decoding.readBinaryForMode()) {
-			is UInt   -> this.getMnemonic32(processor, rm, rmD, imm)
-			is UShort -> this.getMnemonic16(processor, rm, rmD, imm)
-			else      -> throw IllegalArgumentException("Cannot support ${imm::class.jvmName}")
-		}
-
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 		when (val imm = processor.decoding.readBinaryForMode()) {
 			is UInt   -> this.getOperands32(processor, rm, rmD, imm)
@@ -28,18 +21,6 @@ interface RegisterMemoryImmediateOperatingLengthDoubleOperandInstruction : Regis
 			is UShort -> this.handle16(processor, rmM, rmR, imm)
 			else      -> throw IllegalArgumentException("Cannot support ${imm::class.jvmName}")
 		}
-
-	fun getMnemonic16(
-		processor: IA32Processor,
-		rm: ModRMResult, rmD: ModRMDisassemblyResult,
-		imm16: UShort
-	): String
-
-	fun getMnemonic32(
-		processor: IA32Processor,
-		rm: ModRMResult, rmD: ModRMDisassemblyResult,
-		imm32: UInt
-	): String
 
 	fun getOperands16(
 		processor: IA32Processor,

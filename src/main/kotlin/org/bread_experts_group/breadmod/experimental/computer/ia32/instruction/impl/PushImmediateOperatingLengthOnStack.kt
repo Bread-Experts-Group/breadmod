@@ -7,9 +7,8 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 
 @IA32Instruction(0x68u)
 object PushImmediateOperatingLengthOnStack : ImmediateOperatingLengthSingleOperandInstruction {
-	override fun getMnemonic16(processor: IA32Processor, imm16: UShort): String = "push"
+	override fun getMnemonic(processor: IA32Processor): String = "push"
 	override fun getOperands16(processor: IA32Processor, imm16: UShort): String = hex(imm16)
-	override fun getMnemonic32(processor: IA32Processor, imm32: UInt): String = "push"
 	override fun getOperands32(processor: IA32Processor, imm32: UInt): String = hex(imm32)
 	override fun handle16(processor: IA32Processor, imm16: UShort) {
 		processor.push16(imm16)

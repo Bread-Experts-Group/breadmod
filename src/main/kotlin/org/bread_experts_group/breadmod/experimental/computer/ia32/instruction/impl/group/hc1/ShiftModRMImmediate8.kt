@@ -14,10 +14,7 @@ import kotlin.reflect.KMutableProperty0
 class ShiftModRMImmediate8(val n: Char, val operation: (ULong, Int) -> ULong) :
 	RegisterMemoryImmediate8DoubleOperandInstruction,
 	LogicalArithmeticFlagOperations {
-	override fun getMnemonic(
-		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm8: UByte
-	): String = "sh${this.n}"
-
+	override fun getMnemonic(processor: IA32Processor): String = "sh${this.n}"
 	override fun getOperands(
 		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm8: UByte
 	): String = "${rmD.memRM}, ${hex(imm8)}"

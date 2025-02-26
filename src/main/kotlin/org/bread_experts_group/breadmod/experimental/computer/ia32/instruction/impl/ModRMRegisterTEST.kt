@@ -1,34 +1,31 @@
-package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.group.h0F.h01
+package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl
 
-import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.MemRMResult
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.LogicalArithmeticFlagOperations
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 import kotlin.reflect.KMutableProperty0
 
 /**
- * Saves a descriptor table from the base/limit registers of [baseR] and [limitR] respectively.
- * The instruction mnemonic takes the form of `s[n]dt r/m(16/32)`. |
- * Flags Modified: `none`
+ * Opcode: `85 /r` |
+ * Instruction: `TEST r/m(16/32), r(16/32)` |
+ * Flags Modified: `OF, CR` (clr) / `SF, ZF, PF` (result dep)
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-class SaveDescriptorTableLocation(
-	val n: Char,
-	val baseR: Register, val limitR: Register
-) : RegisterMemorySingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "s${this.n}dt"
+@IA32Instruction(0x85u)
+object ModRMRegisterTEST : RegisterMemorySingleOperandInstruction, LogicalArithmeticFlagOperations {
+	override fun getMnemonic(processor: IA32Processor): String = "test"
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		"${rmD.memRM} [${hex(this.baseR.tex)} / ${hex(this.limitR.tx)}]"
+		"${rmD.memRM}, ${rmD.register}"
 
 	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		val addr = rmM.address.get()
-		processor.computer.setMemoryAt16(addr, this.limitR.tx)
-		processor.computer.setMemoryAt32(addr + 2u, this.baseR.tex)
+		val result = rmM.getValue() and rmR.get()
+		this.setFlagsForResult(processor, result)
 	}
 
 	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE

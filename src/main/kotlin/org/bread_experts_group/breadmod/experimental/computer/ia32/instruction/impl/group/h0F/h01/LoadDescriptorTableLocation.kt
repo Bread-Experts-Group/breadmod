@@ -21,9 +21,7 @@ class LoadDescriptorTableLocation(
 	val n: Char,
 	val baseR: Register, val limitR: Register
 ) : RegisterMemorySingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		"l${this.n}dt"
-
+	override fun getMnemonic(processor: IA32Processor): String = "l${this.n}dt"
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String {
 		val addr = rm.memRM.address.get()
 		return "${rmD.memRM} [${hex(processor.computer.requestMemoryAt32(addr + 2u))} / " +

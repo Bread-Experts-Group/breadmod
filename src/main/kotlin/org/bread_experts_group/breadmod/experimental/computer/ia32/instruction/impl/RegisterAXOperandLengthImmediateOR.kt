@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 object RegisterAXOperandLengthImmediateOR :
 	ImmediateOperatingLengthSingleOperandInstruction,
 	LogicalArithmeticFlagOperations {
-	override fun getMnemonic32(processor: IA32Processor, imm32: UInt): String = "or"
+	override fun getMnemonic(processor: IA32Processor): String = "or"
 	override fun getOperands32(processor: IA32Processor, imm32: UInt): String = "eax, ${hex(imm32)}"
 	override fun handle32(processor: IA32Processor, imm32: UInt) {
 		val result = processor.a.tex or imm32
@@ -25,7 +25,6 @@ object RegisterAXOperandLengthImmediateOR :
 		this.setFlagsForResult(processor, result)
 	}
 
-	override fun getMnemonic16(processor: IA32Processor, imm16: UShort): String = "or"
 	override fun getOperands16(processor: IA32Processor, imm16: UShort): String = "ax, ${hex(imm16)}"
 	override fun handle16(processor: IA32Processor, imm16: UShort) {
 		val result = processor.a.tx or imm16

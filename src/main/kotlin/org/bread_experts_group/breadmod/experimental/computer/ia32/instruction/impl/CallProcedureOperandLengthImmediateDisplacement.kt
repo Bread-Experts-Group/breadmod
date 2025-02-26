@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
  */
 @IA32Instruction(0xE8u)
 object CallProcedureOperandLengthImmediateDisplacement : ImmediateSignedOperatingLengthSingleOperandInstruction {
-	override fun getMnemonic32(processor: IA32Processor, rel32: Int): String = "call"
+	override fun getMnemonic(processor: IA32Processor): String = "call"
 	override fun getOperands32(processor: IA32Processor, rel32: Int): String =
 		"${hex(rel32)} [${hex((processor.ip.tex.toInt() + rel32).toUInt())}]"
 
@@ -24,7 +24,6 @@ object CallProcedureOperandLengthImmediateDisplacement : ImmediateSignedOperatin
 		processor.ip.tex = (processor.ip.tex.toInt() + rel32).toUInt()
 	}
 
-	override fun getMnemonic16(processor: IA32Processor, rel16: Short): String = "call"
 	override fun getOperands16(processor: IA32Processor, rel16: Short): String =
 		"${hex(rel16)} [${hex((processor.ip.tex.toInt() + rel16).toUShort().toUInt())}]"
 

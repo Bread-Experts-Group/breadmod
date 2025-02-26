@@ -19,7 +19,7 @@ import kotlin.reflect.KMutableProperty0
  */
 @IA32Instruction(0x31u)
 object ModRMRegisterXOR : RegisterMemorySingleOperandInstruction, LogicalArithmeticFlagOperations {
-	override fun getMnemonic(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String = "xor"
+	override fun getMnemonic(processor: IA32Processor): String = "xor"
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 		"${rmD.memRM}, ${rmD.register}"
 

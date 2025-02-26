@@ -2,8 +2,8 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemoryImmediate8DoubleOperandInstruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySelectorSingleOperandGroupInstruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
 
 /**
  * TODO: Write an encompassing Javadoc for all instructions defined in this selector.
@@ -12,8 +12,9 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
  */
 @IA32Instruction(0x83u)
 class Selector(processor: IA32Processor) : RegisterMemorySelectorSingleOperandGroupInstruction {
-	override val instructions: Map<UInt, RegisterMemorySingleOperandInstruction> = mapOf(
+	override val instructions: Map<UInt, RegisterMemoryImmediate8DoubleOperandInstruction> = mapOf(
 		0u to AddImmediate8ToModRM,
-		1u to ORImmediate8ToModRM
+		1u to ORImmediate8ToModRM,
+		5u to SubtractImmediate8FromModRM
 	)
 }

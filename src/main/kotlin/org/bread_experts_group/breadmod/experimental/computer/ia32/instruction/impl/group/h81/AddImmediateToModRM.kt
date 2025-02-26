@@ -12,14 +12,7 @@ import kotlin.reflect.KMutableProperty0
 
 class AddImmediateToModRM : RegisterMemoryImmediateOperatingLengthDoubleOperandInstruction,
 	ArithmeticAdditionFlagOperations {
-	override fun getMnemonic16(
-		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm16: UShort
-	): String = "add"
-
-	override fun getMnemonic32(
-		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm32: UInt
-	): String = "add"
-
+	override fun getMnemonic(processor: IA32Processor): String = "add"
 	override fun getOperands16(
 		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm16: UShort
 	): String = "${rmD.memRM}, ${hex(imm16)}"

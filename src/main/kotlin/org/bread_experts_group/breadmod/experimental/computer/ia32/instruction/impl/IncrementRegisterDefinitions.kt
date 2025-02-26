@@ -5,7 +5,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ArithmeticAdditionFlagOperations
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 
@@ -18,7 +18,7 @@ class IncrementRegisterDefinitions(processor: IA32Processor) {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	class IncrementRegister(val r32n: String, val r16n: String, val register: Register) : Instruction,
+	class IncrementRegister(val r32n: String, val r16n: String, val register: Register) : ZeroOperandInstruction,
 		ArithmeticAdditionFlagOperations {
 		override fun getMnemonic(processor: IA32Processor): String = "inc"
 		override fun getOperands(processor: IA32Processor): String = when (processor.operatingModeLocal) {

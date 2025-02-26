@@ -8,11 +8,6 @@ interface RegisterMemory8SingleOperandInstruction : RegisterMemorySingleOperandI
 		super.handle(processor)
 	}
 
-	override fun getMnemonic(processor: IA32Processor): String {
-		processor.bit8Override = true
-		return super.getMnemonic(processor)
-	}
-
 	override fun getOperands(processor: IA32Processor): String {
 		processor.bit8Override = true
 		return super.getOperands(processor)

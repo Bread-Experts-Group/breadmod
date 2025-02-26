@@ -100,7 +100,8 @@ class ISO9660Disc(
 								)
 						}
 						VolumeDescriptorType.PRIMARY_VOLUME_DESCRIPTOR     -> {
-							fun asciiToInt(length: Int) = stream.readNBytes(length).decodeToString().trim().toInt()
+							fun asciiToInt(length: Int) =
+								stream.readNBytes(length).decodeToString().trim().toIntOrNull() ?: 0
 
 							fun readDecDate(): Optional<ZonedDateTime> {
 								val year = asciiToInt(4)

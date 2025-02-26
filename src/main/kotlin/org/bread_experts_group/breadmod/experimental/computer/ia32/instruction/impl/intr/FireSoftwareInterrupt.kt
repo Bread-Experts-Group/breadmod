@@ -11,7 +11,7 @@ import kotlin.reflect.full.findAnnotation
 
 @IA32Instruction(0xCDu)
 object FireSoftwareInterrupt : Immediate8SingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor, imm8: UByte): String = "int"
+	override fun getMnemonic(processor: IA32Processor): String = "int"
 	override fun getOperands(processor: IA32Processor, imm8: UByte): String = hex(imm8)
 	override fun handle(processor: IA32Processor, imm8: UByte) {
 		val errorLabel = "Need BIOS INT for ${hex(imm8)}:${hex(processor.a.th)}"

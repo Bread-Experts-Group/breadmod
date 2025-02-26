@@ -7,8 +7,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 
 @IA32Instruction(0xA1u)
 object MoveSegmentOffsetToA : ImmediateOperatingLengthSingleOperandInstruction {
-	override fun getMnemonic16(processor: IA32Processor, imm16: UShort): String = "mov"
-	override fun getMnemonic32(processor: IA32Processor, imm32: UInt): String = "mov"
+	override fun getMnemonic(processor: IA32Processor): String = "mov"
 	override fun getOperands16(processor: IA32Processor, imm16: UShort): String =
 		"ax, ds:[${hex(imm16)}] [${hex(processor.ds.offset(imm16.toULong()))}]"
 

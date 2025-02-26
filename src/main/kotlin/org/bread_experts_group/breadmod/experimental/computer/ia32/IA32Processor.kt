@@ -9,7 +9,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.D
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.ControlRegister0
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
@@ -147,20 +147,20 @@ class IA32Processor(val computer: Computer) : Processor {
 				if (this.operatingMode == AddressingLength.R32) AddressingLength.R16
 				else AddressingLength.R32
 			else this.operatingMode)
-	val instructionMap: MutableMap<UInt, Instruction> = mutableMapOf()
+	val instructionMap: MutableMap<UInt, ZeroOperandInstruction> = mutableMapOf()
 
 	init {
 		val scanner = this::class.java.`package`.getScanner()
 		scanner.getClassesAnnotatedWith(IA32Instruction::class).forEach {
 			val instructionDescriptor = it.findAnnotation<IA32Instruction>()!!
 			this.instructionMap[instructionDescriptor.opcode] =
-				(it.objectInstance ?: it.primaryConstructor!!.call(this)) as Instruction
+				(it.objectInstance ?: it.primaryConstructor!!.call(this)) as ZeroOperandInstruction
 		}
 		scanner.getClassesAnnotatedWith(IA32InstructionCluster::class).forEach {
 			val cluster = it.primaryConstructor!!.call(this)
 			it.declaredMemberProperties.forEach { f ->
 				val instructionDescriptor = f.findAnnotation<IA32Instruction>()!!
-				this.instructionMap[instructionDescriptor.opcode] = f.getter.call(cluster) as Instruction
+				this.instructionMap[instructionDescriptor.opcode] = f.getter.call(cluster) as ZeroOperandInstruction
 			}
 		}
 		this.logger.warn("Understood ${this.instructionMap.size} opcodes.")
