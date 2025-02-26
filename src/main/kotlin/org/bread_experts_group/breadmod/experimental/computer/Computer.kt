@@ -18,10 +18,10 @@ class Computer : SimulationSteppable {
 	lateinit var memory: List<MemoryModule>
 	lateinit var processor: Processor
 	var disc: ISO9660Disc? = null
-	val ps2 = PS2Controller()
-	val ioMap = mutableMapOf<UInt, IODevice>(
-		0x60u to ps2.data,
-		0x64u to ps2.command,
+	val ps2: PS2Controller = PS2Controller()
+	val ioMap: MutableMap<UInt, IODevice> = mutableMapOf(
+		0x60u to this.ps2.data,
+		0x64u to this.ps2.command,
 		0x80u to Diagnostics(),
 		0x92u to PS2SystemControllerA()
 	)

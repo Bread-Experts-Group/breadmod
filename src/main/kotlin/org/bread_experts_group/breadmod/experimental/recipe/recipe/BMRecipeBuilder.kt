@@ -57,8 +57,8 @@ abstract class BMRecipeBuilder : RecipeBuilder {
 	}
 
 	abstract class Multi : BMRecipeBuilder() {
-		var items: NonNullList<SizedIngredient> = NonNullList.create<SizedIngredient>()
-		var fluids: NonNullList<SizedFluidIngredient> = NonNullList.create<SizedFluidIngredient>()
+		var items: NonNullList<SizedIngredient> = NonNullList.create()
+		var fluids: NonNullList<SizedFluidIngredient> = NonNullList.create()
 		fun fluidRequired(fluid: Fluid, amount: Int = 1000): Multi =
 			this.also { this.fluids.add(SizedFluidIngredient.of(fluid, amount)) }
 

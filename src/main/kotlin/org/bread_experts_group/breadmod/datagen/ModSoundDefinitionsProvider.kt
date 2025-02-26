@@ -13,86 +13,86 @@ class ModSoundDefinitionsProvider(
 ) : SoundDefinitionsProvider(packOutput, BreadMod.ID, existingFileHelper) {
 	override fun registerSounds() {
 		this.add(
-			ModSounds.TEST_SOUND, SoundDefinitionsProvider.definition()
+			ModSounds.TEST_SOUND, definition()
 				.subtitle("sound.${BreadMod.ID}.test_sound")
-				.with(SoundDefinitionsProvider.sound(modLocation("test_sound")).volume(1f).stream())
+				.with(sound(modLocation("test_sound")).volume(1f).stream())
 		)
 		this.add(
-			ModSounds.HAPPY_BLOCK_FUSE, SoundDefinitionsProvider.definition()
+			ModSounds.HAPPY_BLOCK_FUSE, definition()
 				.subtitle("sound.${BreadMod.ID}.happy_block_fuse")
-				.with(SoundDefinitionsProvider.sound(modLocation("happy_block_fuse")).volume(1f))
+				.with(sound(modLocation("happy_block_fuse")).volume(1f))
 		)
 		this.add(
-			ModSounds.ULTRAMARINE, SoundDefinitionsProvider.definition()
-				.with(SoundDefinitionsProvider.sound(modLocation("ultramarine")).volume(1f).stream())
+			ModSounds.ULTRAMARINE, definition()
+				.with(sound(modLocation("ultramarine")).volume(1f).stream())
 		)
 		this.add(
-			ModSounds.POW, SoundDefinitionsProvider.definition()
+			ModSounds.POW, definition()
 				.subtitle("sound.${BreadMod.ID}.pow")
-				.with(SoundDefinitionsProvider.sound(modLocation("pow")).volume(1f))
+				.with(sound(modLocation("pow")).volume(1f))
 		)
 		this.add(
-			ModSounds.SCREAM, SoundDefinitionsProvider.definition()
+			ModSounds.SCREAM, definition()
 				.subtitle("sound.${BreadMod.ID}.scream")
-				.with(SoundDefinitionsProvider.sound(modLocation("scream")).volume(1f))
+				.with(sound(modLocation("scream")).volume(1f))
 		)
 		this.add(
-			ModSounds.TOOL_GUN, SoundDefinitionsProvider.definition()
+			ModSounds.TOOL_GUN, definition()
 				.subtitle("sound.${BreadMod.ID}.tool_gun")
 				.with(
-					SoundDefinitionsProvider.sound(modLocation("tool_gun_one")).volume(1f),
-					SoundDefinitionsProvider.sound(modLocation("tool_gun_two")).volume(1f)
+					sound(modLocation("tool_gun_one")).volume(1f),
+					sound(modLocation("tool_gun_two")).volume(1f)
 				)
 		)
 		this.add(
-			ModSounds.MINIGUN, SoundDefinitionsProvider.definition()
+			ModSounds.MINIGUN, definition()
 				.subtitle("sound.${BreadMod.ID}.minigun")
-				.with(SoundDefinitionsProvider.sound(modLocation("minigun")).volume(1f))
+				.with(sound(modLocation("minigun")).volume(1f))
 		)
 		this.add(
-			ModSounds.HELL_NAW, SoundDefinitionsProvider.definition()
+			ModSounds.HELL_NAW, definition()
 				.subtitle("sound.${BreadMod.ID}.hell_naw")
-				.with(SoundDefinitionsProvider.sound(modLocation("hell_naw")).volume(1f))
+				.with(sound(modLocation("hell_naw")).volume(1f))
 		)
 		this.add(
-			ModSounds.WAR_TIMER, SoundDefinitionsProvider.definition()
+			ModSounds.WAR_TIMER, definition()
 				.subtitle("sound.${BreadMod.ID}.war_timer")
-				.with(SoundDefinitionsProvider.sound(modLocation("war_timer")).volume(1f))
+				.with(sound(modLocation("war_timer")).volume(1f))
 		)
 		this.add(
-			ModSounds.WAR_TIMER_UP, SoundDefinitionsProvider.definition()
+			ModSounds.WAR_TIMER_UP, definition()
 				.subtitle("sound.${BreadMod.ID}.war_timer_up")
-				.with(SoundDefinitionsProvider.sound(modLocation("war_timer_up")).volume(0.8f))
+				.with(sound(modLocation("war_timer_up")).volume(0.8f))
 		)
 		this.add(
-			ModSounds.MACH_ONE, SoundDefinitionsProvider.definition()
+			ModSounds.MACH_ONE, definition()
 				.subtitle("sound.${BreadMod.ID}.mach_one")
-				.with(SoundDefinitionsProvider.sound(modLocation("mach_one")).volume(1.0f))
+				.with(sound(modLocation("mach_one")).volume(1.0f))
 		)
 		this.add(
-			ModSounds.MACH_TWO, SoundDefinitionsProvider.definition()
+			ModSounds.MACH_TWO, definition()
 				.subtitle("sound.${BreadMod.ID}.mach_two")
-				.with(SoundDefinitionsProvider.sound(modLocation("mach_two")).volume(1.0f))
+				.with(sound(modLocation("mach_two")).volume(1.0f))
 		)
 		this.add(
-			ModSounds.MACH_THREE, SoundDefinitionsProvider.definition()
+			ModSounds.MACH_THREE, definition()
 				.subtitle("sound.${BreadMod.ID}.mach_three")
-				.with(SoundDefinitionsProvider.sound(modLocation("mach_three")).volume(1.0f))
+				.with(sound(modLocation("mach_three")).volume(1.0f))
 		)
 		this.add(
-			ModSounds.MACH_FOUR, SoundDefinitionsProvider.definition()
+			ModSounds.MACH_FOUR, definition()
 				.subtitle("sound.${BreadMod.ID}.mach_four")
-				.with(SoundDefinitionsProvider.sound(modLocation("mach_four")).volume(1.0f))
+				.with(sound(modLocation("mach_four")).volume(1.0f))
 		)
 		this.add(
-			ModSounds.PUNCH, SoundDefinitionsProvider.definition()
+			ModSounds.PUNCH, definition()
 				.subtitle("sound.${BreadMod.ID}.punch")
-				.with(SoundDefinitionsProvider.sound(modLocation("punch")).volume(1.0f))
+				.with(sound(modLocation("punch")).volume(1.0f))
 		)
 		this.add(
-			ModSounds.KILL_ENEMY, SoundDefinitionsProvider.definition()
+			ModSounds.KILL_ENEMY, definition()
 				.subtitle("sound.${BreadMod.ID}.kill_enemy")
-				.with(SoundDefinitionsProvider.sound(modLocation("kill_enemy")).volume(1.0f))
+				.with(sound(modLocation("kill_enemy")).volume(1.0f))
 		)
 	}
 }

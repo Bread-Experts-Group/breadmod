@@ -26,8 +26,8 @@ class PlaceItemInWorldPacket(
 	private val direction: Direction
 ) : CustomPacketPayload {
 	companion object {
-		val TYPE: CustomPacketPayload.Type<PlaceItemInWorldPacket> =
-			CustomPacketPayload.Type(modLocation("place_item_packet"))
+		val TYPE: Type<PlaceItemInWorldPacket> =
+			Type(modLocation("place_item_packet"))
 		val STREAM_CODEC: StreamCodec<ByteBuf, PlaceItemInWorldPacket> = StreamCodec.composite(
 			BlockPos.STREAM_CODEC, PlaceItemInWorldPacket::pos,
 			Direction.STREAM_CODEC, PlaceItemInWorldPacket::direction,

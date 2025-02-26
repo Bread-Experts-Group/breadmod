@@ -26,9 +26,9 @@ object FireSoftwareInterrupt : Immediate8SingleOperandInstruction {
 	init {
 		val scanner = this::class.java.`package`.getScanner()
 		scanner.getClassesAnnotatedWith(BIOSInterrupt::class).forEach {
-			val biosDescriptor = it.findAnnotation<BIOSInterrupt>()!!
-			this.biosInterruptMap.getOrPut(biosDescriptor.int) { mutableMapOf() }[biosDescriptor.ah] =
-				it.objectInstance!! as BIOSInterruptProvider
+			val biosDescriptor = it.findAnnotation<BIOSInterrupt>() ?: return@forEach
+			this.biosInterruptMap.getOrPut(biosDescriptor.int, ::mutableMapOf)[biosDescriptor.ah] =
+				(it.objectInstance ?: return@forEach) as BIOSInterruptProvider
 		}
 		this.logger.warn("Understood ${this.biosInterruptMap.size} BIOS interrupts; ${this.biosInterruptMap.entries.sumOf { it.value.size }} routines.")
 	}

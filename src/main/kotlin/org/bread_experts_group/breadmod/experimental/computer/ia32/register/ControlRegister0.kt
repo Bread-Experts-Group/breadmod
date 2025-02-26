@@ -43,5 +43,5 @@ class ControlRegister0(logger: Logger, name: String, vararg flags: FlagType) : R
 		this.rx = extracted
 	}
 
-	fun getFlag(flag: FlagType) = (this.rx and flag.position) > 0u
+	fun getFlag(flag: FlagType): Boolean = (this.rx and flag.position) > 0u
 }

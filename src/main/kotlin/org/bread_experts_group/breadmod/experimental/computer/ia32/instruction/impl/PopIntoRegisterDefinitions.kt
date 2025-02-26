@@ -25,7 +25,7 @@ class PopIntoRegisterDefinitions(processor: IA32Processor) {
 			else                 -> throw IllegalArgumentException("Unsupported mode")
 		}
 
-		override fun handle(processor: IA32Processor) = when (processor.operatingModeLocal) {
+		override fun handle(processor: IA32Processor): Unit = when (processor.operatingModeLocal) {
 			AddressingLength.R32 -> register.tex = processor.pop32()
 			AddressingLength.R16 -> register.tx = processor.pop16()
 			else                 -> throw IllegalArgumentException("Unsupported mode")
@@ -33,26 +33,26 @@ class PopIntoRegisterDefinitions(processor: IA32Processor) {
 	}
 
 	@IA32Instruction(0x58u)
-	val a = PopIntoRegister("eax", "ax", processor.a)
+	val a: PopIntoRegister = PopIntoRegister("eax", "ax", processor.a)
 
 	@IA32Instruction(0x59u)
-	val c = PopIntoRegister("ecx", "cx", processor.c)
+	val c: PopIntoRegister = PopIntoRegister("ecx", "cx", processor.c)
 
 	@IA32Instruction(0x5Au)
-	val d = PopIntoRegister("edx", "dx", processor.d)
+	val d: PopIntoRegister = PopIntoRegister("edx", "dx", processor.d)
 
 	@IA32Instruction(0x5Bu)
-	val b = PopIntoRegister("ebx", "bx", processor.b)
+	val b: PopIntoRegister = PopIntoRegister("ebx", "bx", processor.b)
 
 	@IA32Instruction(0x5Cu)
-	val sp = PopIntoRegister("esp", "sp", processor.sp)
+	val sp: PopIntoRegister = PopIntoRegister("esp", "sp", processor.sp)
 
 	@IA32Instruction(0x5Du)
-	val bp = PopIntoRegister("ebp", "bp", processor.bp)
+	val bp: PopIntoRegister = PopIntoRegister("ebp", "bp", processor.bp)
 
 	@IA32Instruction(0x5Eu)
-	val si = PopIntoRegister("esi", "si", processor.si)
+	val si: PopIntoRegister = PopIntoRegister("esi", "si", processor.si)
 
 	@IA32Instruction(0x5Fu)
-	val di = PopIntoRegister("edi", "di", processor.di)
+	val di: PopIntoRegister = PopIntoRegister("edi", "di", processor.di)
 }

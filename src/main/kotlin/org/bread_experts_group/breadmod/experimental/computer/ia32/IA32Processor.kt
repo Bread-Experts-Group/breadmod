@@ -25,6 +25,7 @@ import kotlin.reflect.full.primaryConstructor
  * @see Computer
  * @author Miko Elbrecht
  */
+@Suppress("ReplaceNotNullAssertionWithElvisReturn")
 class IA32Processor(val computer: Computer) : Processor {
 	override fun step() {
 		this.fetch()
@@ -113,7 +114,7 @@ class IA32Processor(val computer: Computer) : Processor {
 
 	fun fetch() {
 		if (this.ip.rx == (0xFFFFFFF0u).toULong()) {
-			val disc = this.computer.disc!!
+			val disc = this.computer.disc ?: return
 			val (primary, entry) = disc.getBoot()
 			val discStart = (entry.loadRBA.toLong() * primary.logicalBlockSize).toULong()
 			val memoryStart = (entry.loadSegment * 0x10).toULong()

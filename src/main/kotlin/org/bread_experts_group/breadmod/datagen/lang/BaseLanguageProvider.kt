@@ -107,15 +107,15 @@ internal sealed class BaseLanguageProvider(
 					val languageID = this.getLanguageID(datum, annotation)
 					this.add(languageID, this.assureName(annotation.name, languageID))
 				}
-				when (val dataValue = data) {
+				when (data) {
 					is FluidHolder<*, *> -> {
-						addForDatum(dataValue.block)
-						addForDatum(dataValue.bucket)
-						addForDatum(dataValue.type)
-						addForDatum(dataValue.source)
-						addForDatum(dataValue.flowing)
+						addForDatum(data.block)
+						addForDatum(data.bucket)
+						addForDatum(data.type)
+						addForDatum(data.source)
+						addForDatum(data.flowing)
 					}
-					else                 -> addForDatum(dataValue)
+					else                 -> addForDatum(data)
 				}
 			}
 		this.addManualTranslations()

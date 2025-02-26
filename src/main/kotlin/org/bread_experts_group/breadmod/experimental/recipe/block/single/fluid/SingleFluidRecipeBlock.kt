@@ -42,7 +42,7 @@ class SingleFluidRecipeBlock : BaseEntityBlock(Properties.of()) {
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
+	): BlockEntityTicker<T>? = createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.SINGLE_FLUID_TEST.get()
 	) { tLevel, tPos, tState, tBlockEntity ->

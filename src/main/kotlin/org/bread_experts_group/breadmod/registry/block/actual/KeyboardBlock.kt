@@ -27,7 +27,7 @@ class KeyboardBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion
 		level: BlockGetter,
 		pos: BlockPos,
 		context: CollisionContext
-	): VoxelShape = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0)
+	): VoxelShape = box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0)
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
 		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.WATERLOGGED)

@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.client.render.buffer.chunk
 
-import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.event.level.ChunkEvent.Load
 import net.neoforged.neoforge.event.level.ChunkEvent.Unload
 import org.bread_experts_group.breadmod.client.render.buffer.render.BufferLambda
@@ -25,13 +24,13 @@ object ChunkBuffer {
 	): Boolean = this.unloadBuffer.add(entry to passthrough)
 
 	fun handleLoad(
-		event: ChunkEvent.Load
+		event: Load
 	) {
 		this.loadBuffer.removeIf { it.first(event, it.second) }
 	}
 
 	fun handleUnload(
-		event: ChunkEvent.Unload
+		event: Unload
 	) {
 		this.unloadBuffer.removeIf { it.first(event, it.second) }
 	}

@@ -71,7 +71,7 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 						sap.amount,
 						sap.capacity,
 						"FE",
-						tint = ChatFormatting.RED.color!!
+						tint = ChatFormatting.RED.color ?: return
 					)
 				),
 				mouseX.toInt(), mouseY.toInt()

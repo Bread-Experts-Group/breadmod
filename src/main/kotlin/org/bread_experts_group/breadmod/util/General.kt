@@ -254,12 +254,12 @@ fun dunsxCheck(opposite: Direction, x: Double, z: Double): Direction? {
 	if (x < 0.25) {
 		if (z < 0.25) return opposite
 		if (z > 0.75) return opposite
-		return Direction.WEST
+		return WEST
 	}
 	if (x > 0.75) {
 		if (z < 0.25) return opposite
 		if (z > 0.75) return opposite
-		return Direction.EAST
+		return EAST
 	}
 	return null
 }
@@ -275,15 +275,15 @@ fun targetFace(facing: Direction, x: Double, y: Double, z: Double): Direction {
 	when (facing) {
 		DOWN, UP     -> {
 			return dunsxCheck(opposite, x, z) ?: facing.let {
-				if (z < 0.25) return Direction.NORTH
-				if (z > 0.75) return Direction.SOUTH
+				if (z < 0.25) return NORTH
+				if (z > 0.75) return SOUTH
 				it
 			}
 		}
 		NORTH, SOUTH -> {
 			return dunsxCheck(opposite, x, z) ?: facing.let {
-				if (y < 0.25) return Direction.DOWN
-				if (y > 0.75) return Direction.UP
+				if (y < 0.25) return DOWN
+				if (y > 0.75) return UP
 				it
 			}
 		}
@@ -291,15 +291,15 @@ fun targetFace(facing: Direction, x: Double, y: Double, z: Double): Direction {
 			if (z < 0.25) {
 				if (y < 0.25) return opposite
 				if (y > 0.75) return opposite
-				return Direction.NORTH
+				return NORTH
 			}
 			if (z > 0.75) {
 				if (y < 0.25) return opposite
 				if (y > 0.75) return opposite
-				return Direction.SOUTH
+				return SOUTH
 			}
-			if (y < 0.25) return Direction.DOWN
-			if (y > 0.75) return Direction.UP
+			if (y < 0.25) return DOWN
+			if (y > 0.75) return UP
 			return facing
 		}
 	}

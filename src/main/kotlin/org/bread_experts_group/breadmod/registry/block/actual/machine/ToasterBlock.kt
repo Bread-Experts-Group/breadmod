@@ -46,8 +46,8 @@ class ToasterBlock : BreadModBlockWithEntity(
 		.sound(SoundType.COPPER)
 ) {
 	private companion object {
-		val AABB_X: VoxelShape = Block.box(5.0, 0.0, 2.0, 11.0, 7.0, 14.0)
-		val AABB_Z: VoxelShape = Block.box(2.0, 0.0, 5.0, 14.0, 7.0, 11.0)
+		val AABB_X: VoxelShape = box(5.0, 0.0, 2.0, 11.0, 7.0, 14.0)
+		val AABB_Z: VoxelShape = box(2.0, 0.0, 5.0, 14.0, 7.0, 11.0)
 		val FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
 		val RANDOM: RandomSource = RandomSource.create()
 		val TRIGGERED: BooleanProperty = BlockStateProperties.TRIGGERED

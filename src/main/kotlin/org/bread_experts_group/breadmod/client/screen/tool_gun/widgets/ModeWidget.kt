@@ -21,7 +21,7 @@ class ModeWidget(
 	val modeDescription: Component,
 	val id: ResourceLocation
 ) : AbstractWidget(0, 0, 35, 40, modeName) {
-	var isSelected = false
+	var isSelected: Boolean = false
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		val borderColor = if (this.isSelected) Color.GREEN.rgb else

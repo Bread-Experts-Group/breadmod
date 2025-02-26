@@ -45,7 +45,7 @@ class ElToritoBootRecord(
 			OTHER(256);
 
 			companion object {
-				val mapping: Map<Int, ElToritoPlatform> = ElToritoPlatform.entries.associateBy { it.id }
+				val mapping: Map<Int, ElToritoPlatform> = ElToritoPlatform.entries.associateBy(ElToritoPlatform::id)
 			}
 		}
 
@@ -58,7 +58,8 @@ class ElToritoBootRecord(
 			OTHER(256);
 
 			companion object {
-				val mapping: Map<Int, ElToritoEmulationType> = ElToritoEmulationType.entries.associateBy { it.id }
+				val mapping: Map<Int, ElToritoEmulationType> = ElToritoEmulationType.entries.associateBy(
+					ElToritoEmulationType::id)
 			}
 		}
 
@@ -99,14 +100,14 @@ class ElToritoBootRecord(
 		val rawPlatform = stream.read()
 		stream.skip(2)
 		val validationEntry = Contents.ValidationEntry(
-			Contents.ElToritoPlatform.mapping.getOrDefault(rawPlatform, ElToritoPlatform.OTHER),
+			ElToritoPlatform.mapping.getOrDefault(rawPlatform, ElToritoPlatform.OTHER),
 			rawPlatform,
 			stream.readNBytes(24).decodeToString(),
 			stream.readBinaryS(2).toShort()
 		)
 		require(stream.read() == 0x55) { "Key byte for 0x1E is incorrect." }
 		require(stream.read() == 0xAA) { "Key byte for 0x1F is incorrect." }
-		val standardEntries = buildList<Contents.StandardEntry> {
+		val standardEntries = buildList {
 			val bootable = stream.read() == 0x88
 			val emulationType = stream.read()
 			this.add(
@@ -117,7 +118,7 @@ class ElToritoBootRecord(
 						Contents.ElToritoEmulationType.OTHER
 					),
 					emulationType.toByte(),
-					stream.readBinaryS(2).toShort().let { if (it == (0).toShort()) 0x7C0 else it.toShort() },
+					stream.readBinaryS(2).toShort().let { if (it == (0).toShort()) 0x7C0 else it },
 					stream.read().toByte().also { stream.skip(1) },
 					stream.readBinaryS(2).toShort(),
 					stream.readBinaryS(4).toInt(),

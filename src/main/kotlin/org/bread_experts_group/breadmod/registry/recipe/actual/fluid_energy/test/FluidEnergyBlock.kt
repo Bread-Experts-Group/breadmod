@@ -17,7 +17,7 @@ class FluidEnergyBlock : BreadModBlockWithEntity(Properties.of()) {
 	}
 
 	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
-	override fun codec(): MapCodec<FluidEnergyBlock> = FluidEnergyBlock.Companion.CODEC
+	override fun codec(): MapCodec<FluidEnergyBlock> = CODEC
 
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		FluidEnergyBlockEntity(pos, state)

@@ -18,7 +18,7 @@ data class ModDimensionEntry(
 	val noiseSettings: ResourceKey<NoiseGeneratorSettings> = NoiseGeneratorSettings.OVERWORLD
 ) {
 	companion object {
-		internal val entries: MutableList<ModDimensionEntry> = mutableListOf<ModDimensionEntry>()
+		internal val entries: MutableList<ModDimensionEntry> = mutableListOf()
 		internal var frozen: Boolean = false
 	}
 

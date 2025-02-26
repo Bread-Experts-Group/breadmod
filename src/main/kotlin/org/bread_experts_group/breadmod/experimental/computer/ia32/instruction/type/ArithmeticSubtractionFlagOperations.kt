@@ -5,7 +5,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Flag
 
 interface ArithmeticSubtractionFlagOperations : ArithmeticFlagOperations {
 	fun setFlagsForOperation(processor: IA32Processor, a: ULong, b: ULong) {
-		this.auxCarryCheck(processor, a, b.toULong())
+		this.auxCarryCheck(processor, a, b)
 		processor.flags.setFlag(FlagType.CARRY_FLAG, b > a)
 		val subbed = a - b
 		processor.flags.setFlag(

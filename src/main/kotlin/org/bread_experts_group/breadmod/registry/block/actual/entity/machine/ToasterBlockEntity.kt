@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.registry.block.actual.entity.machine
 
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.sounds.SoundSource
 import net.minecraft.sounds.SoundSource.BLOCKS
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
@@ -62,7 +61,7 @@ class ToasterBlockEntity(
 							null,
 							pos,
 							SoundEvents.NOTE_BLOCK_BELL.value(),
-							SoundSource.BLOCKS,
+							BLOCKS,
 							0.2f,
 							0.8f
 						)
@@ -88,7 +87,7 @@ class ToasterBlockEntity(
 						null,
 						pos,
 						SoundEvents.NOTE_BLOCK_BASS.value(),
-						SoundSource.BLOCKS,
+						BLOCKS,
 						0.2f,
 						0.5f
 					)

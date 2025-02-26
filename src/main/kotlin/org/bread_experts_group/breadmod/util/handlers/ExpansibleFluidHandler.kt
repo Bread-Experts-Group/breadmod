@@ -144,7 +144,7 @@ class ExpansibleFluidHandler(
 	private var subExtractAction: ListenerHandler = { _, _, _, _ -> null }
 	override var extractAction: ListenerHandler
 		get() = { c, s, u, a ->
-			var fluid = a.getOrNull(0) as? Fluid
+			val fluid = a.getOrNull(0) as? Fluid
 			val unit = this.units[u]
 			if (fluid == null) {
 				a.add(0, unit.fluid)

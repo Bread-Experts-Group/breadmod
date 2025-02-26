@@ -15,7 +15,7 @@ import java.text.DecimalFormat
 class BreadAmuletItem(durability: Int) : Item(Properties().durability(durability)) {
 	private companion object {
 		val decimalFormat: DecimalFormat = DecimalFormat("0.#")
-		val timers: MutableMap<String, PlayerData> = mutableMapOf<String, PlayerData>()
+		val timers: MutableMap<String, PlayerData> = mutableMapOf()
 	}
 
 	data class PlayerData(var timeLeft: Int, var lastExec: Int)

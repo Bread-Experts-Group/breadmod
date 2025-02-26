@@ -5,6 +5,7 @@ import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volum
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.VolumeDescriptor
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.boot.BootRecord
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.boot.ElToritoBootRecord
+import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.boot.ElToritoBootRecord.Contents.StandardEntry
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -34,7 +35,7 @@ class ISO9660Disc(
 		OTHER(256);
 
 		companion object {
-			val mapping: Map<Int, VolumeDescriptorType> = entries.associateBy { it.id }
+			val mapping: Map<Int, VolumeDescriptorType> = entries.associateBy(VolumeDescriptorType::id)
 		}
 	}
 
@@ -43,14 +44,14 @@ class ISO9660Disc(
 		OTHER(256);
 
 		companion object {
-			val mapping: Map<Int, VolumeDescriptorVersion> = entries.associateBy { it.version }
+			val mapping: Map<Int, VolumeDescriptorVersion> = entries.associateBy(VolumeDescriptorVersion::version)
 		}
 	}
 
-	fun getBoot(): Pair<PrimaryVolume, ElToritoBootRecord.Contents.StandardEntry> {
+	fun getBoot(): Pair<PrimaryVolume, StandardEntry> {
 		val primary = this.volumeDescriptors.firstNotNullOf { it as? PrimaryVolume }
 		val boot = this.volumeDescriptors.firstNotNullOf { it as? ElToritoBootRecord }
-		val entry = boot.readContents(primary, this.discStream).standardEntries.first { it.bootable }
+		val entry = boot.readContents(primary, this.discStream).standardEntries.first(StandardEntry::bootable)
 		return primary to entry
 	}
 
@@ -81,7 +82,7 @@ class ISO9660Disc(
 						VolumeDescriptorType.BOOT_RECORD_VOLUME_DESCRIPTOR -> {
 							val specCheck = stream.readNBytes(32).decodeToString()
 							val bootID = stream.readNBytes(32)
-							if (specCheck.substring(0, 23) == "EL TORITO SPECIFICATION")
+							if (specCheck.take(23) == "EL TORITO SPECIFICATION")
 								ElToritoBootRecord(
 									identifier,
 									version,
@@ -140,13 +141,13 @@ class ISO9660Disc(
 								stream.readLSBMSB(2).toShort(),
 								stream.readLSBMSB(2).toShort(),
 								stream.readLSBMSB(4).toInt(),
-								stream.readLSB(4).map { it.toInt() },
+								stream.readLSB(4).map(Long::toInt),
 								stream.readLSB(4)
-									.map { it.toInt() }
+									.map(Long::toInt)
 									.let { if (it.isPresent && it.get() == 0) Optional.empty() else it },
-								stream.readMSB(4).map { it.toInt() },
+								stream.readMSB(4).map(Long::toInt),
 								stream.readMSB(4)
-									.map { it.toInt() }
+									.map(Long::toInt)
 									.let { if (it.isPresent && it.get() == 0) Optional.empty() else it },
 								DirectoryRecord.readRecord(stream),
 								stream.readNBytes(128).decodeToString(),

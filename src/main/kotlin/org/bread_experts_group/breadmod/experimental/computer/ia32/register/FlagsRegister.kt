@@ -49,7 +49,7 @@ class FlagsRegister(val processor: IA32Processor, name: String, vararg flags: Fl
 		this.rx = extracted
 	}
 
-	fun getFlag(flag: FlagType) = (this.rx and flag.position) > 0u
+	fun getFlag(flag: FlagType): Boolean = (this.rx and flag.position) > 0u
 
 	fun setFlagToResult(flag: FlagType, result: ULong) {
 		this.setFlag(flag, this.processor.decoding.getFlagForResult(flag, result))

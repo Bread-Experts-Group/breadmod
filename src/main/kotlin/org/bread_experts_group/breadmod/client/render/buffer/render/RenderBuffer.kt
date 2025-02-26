@@ -14,7 +14,7 @@ object RenderBuffer {
 	private val renderBuffer: MutableList<BufferEntry<Stage, RenderLambda>> = mutableListOf()
 
 	fun add(
-		forStage: RenderLevelStageEvent.Stage? = null,
+		forStage: Stage? = null,
 		entry: RenderLambda,
 		passthrough: BufferPassthrough = mutableListOf()
 	): Boolean = this.renderBuffer.add(Triple(forStage, entry, passthrough))

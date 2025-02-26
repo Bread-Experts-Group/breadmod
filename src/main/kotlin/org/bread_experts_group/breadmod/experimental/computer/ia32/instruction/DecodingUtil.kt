@@ -495,7 +495,7 @@ class DecodingUtil(private val processor: IA32Processor) {
 	}
 
 	fun loadDiscIntoMemory(start: ULong, end: ULong, memoryStart: ULong) {
-		val disc = this.processor.computer.disc!!
+		val disc = this.processor.computer.disc ?: return
 		disc.discStream.channel.position(start.toLong())
 		this.processor.logger.warn("BIOS CPY ${hex(start)} -> ${hex(end)} @ ${hex(memoryStart)}")
 		for (offset in memoryStart .. memoryStart + (end - start)) {

@@ -29,14 +29,14 @@ object ModDataComponents {
 			.cacheEncoding()::build
 	)
 	val EXPANSIBLE_CODEC: Codec<BigDecimal> =
-		RecordCodecBuilder.create<BigDecimal> { instance: RecordCodecBuilder.Instance<BigDecimal> ->
+		RecordCodecBuilder.create { instance: RecordCodecBuilder.Instance<BigDecimal> ->
 			instance.group(
 				Codec.STRING.fieldOf("value").forGetter(BigDecimal::toEngineeringString)
-			).apply(instance) { str -> BigDecimal(str) }
+			).apply(instance, ::BigDecimal)
 		}
 	val EXPANSIBLE_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDecimal> = StreamCodec.composite(
-		ByteBufCodecs.STRING_UTF8, BigDecimal::toEngineeringString
-	) { BigDecimal(it) }
+		ByteBufCodecs.STRING_UTF8,
+		BigDecimal::toEngineeringString, ::BigDecimal)
 	val EXPANSIBLE_ITEM_STACK: Supplier<DataComponentType<BigDecimal>> = this.DATA_COMPONENT_REGISTRY.register(
 		"expansible_item_stack", DataComponentType.builder<BigDecimal>()
 			.persistent(this.EXPANSIBLE_CODEC)

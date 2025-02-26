@@ -51,7 +51,7 @@ class MultiFluidRecipeBlock : BaseEntityBlock(Properties.of()) {
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
+	): BlockEntityTicker<T>? = createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.MULTI_FLUID_TEST.get()
 	) { tLevel: Level, tPos: BlockPos, tState: BlockState, tBlockEntity: MultiFluidRecipeBlockEntity ->

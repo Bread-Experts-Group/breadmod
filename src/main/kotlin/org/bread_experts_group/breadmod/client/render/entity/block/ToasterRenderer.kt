@@ -44,7 +44,7 @@ class ToasterRenderer(private val ctx: Context) : BlockEntityRenderer<ToasterBlo
 
 		poseStack.pushPose()
 		when (blockRotation) {
-			Direction.SOUTH -> {
+			SOUTH -> {
 				poseStack.mulPose(Axis.YN.rotationDegrees(180f))
 				poseStack.translate(-1.0, this.triggeredOffset, -1.0)
 			}
@@ -56,7 +56,7 @@ class ToasterRenderer(private val ctx: Context) : BlockEntityRenderer<ToasterBlo
 				poseStack.translate(1.0, this.triggeredOffset, 0.0)
 				poseStack.mulPose(Axis.YN.rotationDegrees(90f))
 			}
-			Direction.NORTH -> {
+			NORTH -> {
 				poseStack.translate(0.0, this.triggeredOffset, 0.0)
 			}
 			else            -> {}

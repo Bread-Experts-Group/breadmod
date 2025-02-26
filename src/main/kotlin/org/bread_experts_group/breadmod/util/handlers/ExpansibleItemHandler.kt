@@ -55,7 +55,7 @@ class ExpansibleItemHandler(
 	}
 
 	val isEmpty: Boolean
-		get() = this.units.all { it.isEmpty }
+		get() = this.units.all(ExpansibleSlot::isEmpty)
 	val filledSlots: Int
 		get() = this.units.count { !it.isEmpty }
 

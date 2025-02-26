@@ -46,7 +46,7 @@ class EnergyBarElement(
 			fixedLengthScrollingComponent(
 				this.cell.amount, this.cell.capacity,
 				"RF",
-				tint = ChatFormatting.RED.color!!
+				tint = ChatFormatting.RED.color ?: return
 			),
 			(x + 2).toInt(),
 			(x + 78).toInt(),

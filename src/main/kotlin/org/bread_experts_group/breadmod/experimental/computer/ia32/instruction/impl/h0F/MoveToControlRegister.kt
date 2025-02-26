@@ -23,7 +23,7 @@ object MoveToControlRegister : RegisterMemorySingleOperandInstruction {
 		"${rmD.register}, ${rmD.memRM}"
 
 	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		rmR.set(rmM.decide({ it.get() }, { processor.computer.requestMemoryAt32(it).toULong() }))
+		rmR.set(rmM.decide(KMutableProperty0<ULong>::get, { processor.computer.requestMemoryAt32(it).toULong() }))
 	}
 
 	override val rmRegisterType: RegisterType = RegisterType.CONTROL_REGISTER

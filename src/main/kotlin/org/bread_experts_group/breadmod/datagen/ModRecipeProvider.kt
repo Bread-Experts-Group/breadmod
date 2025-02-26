@@ -41,7 +41,7 @@ class ModRecipeProvider(
 			.save(recipeOutput, modLocation("special", "machine", "wheat_crushing"))
 
 		ShapelessRecipeBuilder(RecipeCategory.MISC, ModItems.TEST_BREAD.toStack())
-			.unlockedBy("has_item", RecipeProvider.has(Items.BREAD))
+			.unlockedBy("has_item", has(Items.BREAD))
 			.requires(Items.BREAD, 5)
 			.save(recipeOutput, modLocation("special", "test"))
 
