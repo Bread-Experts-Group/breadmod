@@ -69,7 +69,7 @@ abstract class AbstractCuttingRecipe(
 				if (stack.`is`(this.toolTag)) {
 					it[slot] = stack
 					tool = stack
-				} else if (stack.`is`(this.input.item)) count += 1
+				} else if (stack.`is`(this.input.item)) count++
 			}
 			if (tool.damageValue >= tool.maxDamage) {
 				tool.shrink(1)

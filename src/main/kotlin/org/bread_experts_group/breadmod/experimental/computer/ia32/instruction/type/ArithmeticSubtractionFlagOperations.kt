@@ -4,17 +4,51 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
 interface ArithmeticSubtractionFlagOperations : ArithmeticFlagOperations {
-	fun setFlagsForOperation(processor: IA32Processor, a: ULong, b: ULong) {
-		this.auxCarryCheck(processor, a, b)
+	fun setFlagsForOperationR(processor: IA32Processor, a: ULong, b: UByte): ULong {
+		this.auxCarryCheck(processor, a, b.toULong())
+		processor.flags.setFlag(FlagType.CARRY_FLAG, b > a)
+		val subbed = a - b
+		processor.flags.setFlag(
+			FlagType.OVERFLOW_FLAG,
+			((a > 0u && b > 0u && subbed.toByte() < 0)) || ((a.toByte() < 0) && (b.toByte() < 0) && subbed.toByte() > 0)
+		)
+		return subbed
+	}
+
+	fun setFlagsForOperationR(processor: IA32Processor, a: ULong, b: UShort): ULong {
+		this.auxCarryCheck(processor, a, b.toULong())
+		processor.flags.setFlag(FlagType.CARRY_FLAG, b > a)
+		val subbed = a - b
+		processor.flags.setFlag(
+			FlagType.OVERFLOW_FLAG,
+			((a > 0u && b > 0u && subbed.toShort() < 0)) || ((a.toShort() < 0) && (b.toShort() < 0) && subbed.toShort() > 0)
+		)
+		return subbed
+	}
+
+	fun setFlagsForOperationR(processor: IA32Processor, a: ULong, b: UInt): ULong {
+		this.auxCarryCheck(processor, a, b.toULong())
 		processor.flags.setFlag(FlagType.CARRY_FLAG, b > a)
 		val subbed = a - b
 		processor.flags.setFlag(
 			FlagType.OVERFLOW_FLAG,
 			((a > 0u && b > 0u && subbed.toInt() < 0)) || ((a.toInt() < 0) && (b.toInt() < 0) && subbed.toInt() > 0)
 		)
+		return subbed
+	}
+
+	fun setFlagsForOperationR(processor: IA32Processor, a: ULong, b: ULong): ULong {
+		this.auxCarryCheck(processor, a, b)
+		processor.flags.setFlag(FlagType.CARRY_FLAG, b > a)
+		val subbed = a - b
+		processor.flags.setFlag(
+			FlagType.OVERFLOW_FLAG,
+			((a > 0u && b > 0u && subbed.toLong() < 0)) || ((a.toLong() < 0) && (b.toLong() < 0) && subbed.toLong() > 0)
+		)
+		return subbed
 	}
 
 	fun auxCarryCheck(processor: IA32Processor, a: ULong, b: ULong) {
-		processor.flags.setFlag(FlagType.AUXILIARY_CARRY_FLAG, ((a xor (a - b) xor b) and 0x10u) > 0u)
+		processor.flags.setFlag(FlagType.AUXILIARY_CARRY_FLAG, ((a xor (a - b) xor b).toUByte() and 0x10u) > 0u)
 	}
 }

@@ -7,20 +7,29 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.D
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ArithmeticAdditionFlagOperations
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemoryOperatingLengthDependentSingleOperandInstruction
 import kotlin.reflect.KMutableProperty0
 
 @IA32Instruction(0x01u)
-object AddRegisterToModRM : RegisterMemorySingleOperandInstruction, ArithmeticAdditionFlagOperations {
+object AddRegisterToModRM : RegisterMemoryOperatingLengthDependentSingleOperandInstruction,
+	ArithmeticAdditionFlagOperations {
 	override fun getMnemonic(processor: IA32Processor): String = "add"
-	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
+	override fun getOperands16(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
 		"${rmD.memRM}, ${rmD.register}"
 
-	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		val result = rmM.getValue() + rmR.get()
+	override fun getOperands32(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
+		"${rmD.memRM}, ${rmD.register}"
+
+	override fun handle16(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
+		val result = this.setFlagsForOperationR(processor, rmM.getValue(), rmR.get().toUShort())
 		rmM.setValue(result)
 		this.setFlagsForResult(processor, result)
-		this.setFlagsForOperation(processor, rmM.getValue(), rmR.get().toUInt()) // TODO, conversion is bad
+	}
+
+	override fun handle32(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
+		val result = this.setFlagsForOperationR(processor, rmM.getValue(), rmR.get().toUInt())
+		rmM.setValue(result)
+		this.setFlagsForResult(processor, result)
 	}
 
 	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE

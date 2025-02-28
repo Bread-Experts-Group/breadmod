@@ -13,10 +13,9 @@ object DecrementModRM8 : RegisterMemory8SingleOperandInstruction, ArithmeticSubt
 	override fun getMnemonic(processor: IA32Processor): String = "dec"
 	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String = rmD.memRM
 	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		val result = rmM.getValue() - 1u
+		val result = this.setFlagsForOperationR(processor, rmM.getValue(), (1u).toUByte())
 		rmM.setValue(result)
 		this.setFlagsForResult(processor, result)
-		this.setFlagsForOperation(processor, rmM.getValue(), 1u)
 	}
 
 	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE

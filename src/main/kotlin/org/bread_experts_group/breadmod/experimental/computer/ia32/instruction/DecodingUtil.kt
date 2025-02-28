@@ -177,10 +177,7 @@ class DecodingUtil(private val processor: IA32Processor) {
 		fun getValue(): ULong =
 			if (this.register.isPresent) this.register.get().get()
 			else {
-				val addr =
-					(if (this@DecodingUtil.processor.csOverride) this@DecodingUtil.processor.cs else this@DecodingUtil.processor.ds).offset(
-						this.address.get()
-					)
+				val addr = this@DecodingUtil.processor.segOverride.offset(this.address.get())
 				when (this@DecodingUtil.processor.operatingModeLocal) {
 					AddressingLength.R32 -> this@DecodingUtil.processor.computer.requestMemoryAt32(addr).toULong()
 					AddressingLength.R16 -> this@DecodingUtil.processor.computer.requestMemoryAt16(addr).toULong()
@@ -192,8 +189,7 @@ class DecodingUtil(private val processor: IA32Processor) {
 			if (this.register.isPresent) this.register.get().set(v)
 			else {
 				val addr =
-					(if (this@DecodingUtil.processor.csOverride) this@DecodingUtil.processor.cs
-					else this@DecodingUtil.processor.ds).offset(this.address.get())
+					this@DecodingUtil.processor.segOverride.offset(this.address.get())
 				when (this@DecodingUtil.processor.operatingModeLocal) {
 					AddressingLength.R32 -> this@DecodingUtil.processor.computer.setMemoryAt32(addr, v.toUInt())
 					AddressingLength.R16 -> this@DecodingUtil.processor.computer.setMemoryAt16(addr, v.toUShort())
@@ -322,7 +318,10 @@ class DecodingUtil(private val processor: IA32Processor) {
 							(this.processor.bp.tex.toInt() + this.readBinaryFetch(1).toByte()).toULong()
 						else (this.processor.di.tx.toShort() + this.readBinaryFetch(1).toByte()).toULong()
 					0b110u -> TODO("[BP]+disp8")
-					0b111u -> TODO("[BX]+disp8")
+					0b111u ->
+						if (this.processor.operatingMode == AddressingLength.R32)
+							(this.processor.di.tex.toInt() + this.readBinaryFetch(1).toByte()).toULong()
+						else (this.processor.b.tx.toShort() + this.readBinaryFetch(1).toByte()).toULong()
 					else   -> throw IllegalStateException("Mod 01, RM ${hex(rm)}")
 				}
 			)
@@ -336,7 +335,10 @@ class DecodingUtil(private val processor: IA32Processor) {
 						else ((this.processor.bp.tx.toShort() + this.processor.si.tx.toShort()) + this.readBinaryFetch(2)
 							.toShort()).toULong()
 					0b011u -> TODO("[BP+DI]+disp16")
-					0b100u -> TODO("[SI]+disp16") // [sib+disp32], [si]+disp16
+					0b100u ->
+						if (this.processor.operatingMode == AddressingLength.R32)
+							(this.decodeSIB().toInt() + this.readBinaryFetch(4).toInt()).toULong()
+						else (this.processor.si.tx.toShort() + this.readBinaryFetch(2).toShort()).toULong()
 					0b101u ->
 						if (this.processor.operatingMode == AddressingLength.R32)
 							(this.processor.bp.tex.toInt() + this.readBinaryFetch(4).toInt()).toULong()
@@ -406,7 +408,12 @@ class DecodingUtil(private val processor: IA32Processor) {
 					else this.readBinaryFetch(1).toByte()
 						.let { "di+${hex(it)} [${hex(this.processor.di.tx.toShort() + it)}]" }
 				0b110u -> TODO("[BP]+disp8")
-				0b111u -> TODO("[BX]+disp8")
+				0b111u ->
+					if (this.processor.operatingMode == AddressingLength.R32)
+						this.readBinaryFetch(1).toByte()
+							.let { "edi+${hex(it)} [${hex(this.processor.di.tex.toInt() + it)}]" }
+					else this.readBinaryFetch(1).toByte()
+						.let { "bx+${hex(it)} [${hex(this.processor.b.tx.toShort() + it)}]" }
 				else   -> throw IllegalStateException("Mod 01, RM ${hex(rm)}")
 			} + ']'
 		0b10u ->

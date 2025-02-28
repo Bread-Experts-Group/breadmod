@@ -10,4 +10,11 @@ object ModFonts {
 	 * @since 1.0.0
 	 */
 	val WARTIMER_INFILL: Style = Style.EMPTY.withFont(modLocation("wartimer_infill"))
+
+	/**
+	 * IBM EGA 9x14 BIOS font
+	 * @author Miko Elbrecht (this property), IBM (sprites)
+	 * @since 1.0.0
+	 */
+	val IBM_EGA_9_14: Style = Style.EMPTY.withFont(modLocation("bm437_ibm_ega_9_14"))
 }

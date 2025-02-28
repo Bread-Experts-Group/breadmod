@@ -17,10 +17,9 @@ object SubtractRegisterFromModRM : RegisterMemorySingleOperandInstruction, Arith
 		"${rmD.memRM}, ${rmD.register}"
 
 	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		val result = rmM.getValue() - rmR.get()
-		rmM.setValue(result)
+		val result = this.setFlagsForOperationR(processor, rmM.getValue(), rmR.get())
 		this.setFlagsForResult(processor, result)
-		this.setFlagsForOperation(processor, rmM.getValue(), rmR.get()) // TODO, subtract sets CF wrong
+		rmM.setValue(result)
 	}
 
 	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE

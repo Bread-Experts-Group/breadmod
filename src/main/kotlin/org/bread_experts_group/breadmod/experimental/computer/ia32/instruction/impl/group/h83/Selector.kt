@@ -15,6 +15,9 @@ class Selector(processor: IA32Processor) : RegisterMemorySelectorSingleOperandGr
 	override val instructions: Map<UInt, RegisterMemoryImmediate8DoubleOperandInstruction> = mapOf(
 		0u to AddImmediate8ToModRM,
 		1u to ORImmediate8ToModRM,
-		5u to SubtractImmediate8FromModRM
+		2u to AddWithCarryImmediate8ToModRM,
+		4u to ANDImmediate8ToModRM,
+		5u to SubtractImmediate8FromModRM,
+		7u to CompareImmediate8WithModRM
 	)
 }

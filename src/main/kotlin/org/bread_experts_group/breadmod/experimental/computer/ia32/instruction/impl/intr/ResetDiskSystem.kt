@@ -5,6 +5,6 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 @BIOSInterrupt(0x13u, 0x0u)
 object ResetDiskSystem : BIOSInterruptProvider {
 	override fun handle(processor: IA32Processor) {
-		this.setError(processor, 0x01u)
+		this.setOK(processor)
 	}
 }

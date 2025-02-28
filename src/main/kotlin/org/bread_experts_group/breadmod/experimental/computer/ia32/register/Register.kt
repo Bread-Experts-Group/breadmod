@@ -5,7 +5,8 @@ import org.apache.logging.log4j.Logger
 open class Register(val logger: Logger, val name: String, prx: ULong) {
 	open var rx: ULong = prx
 		set(value) {
-//			if (name != "ip") this.logger.warn("$name set ${hex(value)}")
+			if (field == value) return
+//			if (this.name == "sp") this.logger.warn("${this.name} set ${hex(value)}")
 			field = value
 		}
 	var ex: ULong

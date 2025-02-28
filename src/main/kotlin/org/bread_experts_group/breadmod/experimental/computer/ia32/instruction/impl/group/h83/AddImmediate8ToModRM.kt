@@ -17,10 +17,9 @@ object AddImmediate8ToModRM : RegisterMemoryImmediate8DoubleOperandInstruction, 
 	): String = "${rmD.memRM}, ${BinaryUtil.hex(imm8)}"
 
 	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmD: KMutableProperty0<ULong>, imm8: UByte) {
-		val result = rmM.getValue() + imm8
+		val result = this.setFlagsForOperationR(processor, rmM.getValue(), imm8)
 		rmM.setValue(result)
 		this.setFlagsForResult(processor, result)
-		this.setFlagsForOperation(processor, rmM.getValue(), imm8.toUInt()) // TODO, conversion is bad
 	}
 
 	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE

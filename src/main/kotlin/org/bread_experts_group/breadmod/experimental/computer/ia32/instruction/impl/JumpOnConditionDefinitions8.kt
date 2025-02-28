@@ -22,8 +22,23 @@ class JumpOnConditionDefinitions8(processor: IA32Processor) {
 		}
 	}
 
+	@IA32Instruction(0x70u)
+	val jo: JumpOnConditionImmediate8Displacement = JumpOnConditionImmediate8Displacement("o") {
+		it(FlagType.OVERFLOW_FLAG)
+	}
+
+	@IA32Instruction(0x71u)
+	val jno: JumpOnConditionImmediate8Displacement = JumpOnConditionImmediate8Displacement("no") {
+		!it(FlagType.OVERFLOW_FLAG)
+	}
+
+	@IA32Instruction(0x72u)
+	val jc: JumpOnConditionImmediate8Displacement = JumpOnConditionImmediate8Displacement("c") {
+		it(FlagType.CARRY_FLAG)
+	}
+
 	@IA32Instruction(0x73u)
-	val jae: JumpOnConditionImmediate8Displacement = JumpOnConditionImmediate8Displacement("ae") {
+	val jnc: JumpOnConditionImmediate8Displacement = JumpOnConditionImmediate8Displacement("nc") {
 		!it(FlagType.CARRY_FLAG)
 	}
 

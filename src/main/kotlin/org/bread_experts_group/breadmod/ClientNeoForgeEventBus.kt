@@ -30,6 +30,7 @@ import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.redness
 import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
+import org.bread_experts_group.breadmod.experimental.computer.io.BreadModPollingVirtualKeyboard
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
@@ -124,11 +125,13 @@ internal object ClientNeoForgeEventBus {
 		val stack = player.getItemInHand(player.usedItemHand)
 		val item = stack.item
 		if (item is IKeyboardItem) item.onKeyboardPress(event, stack, player)
-
-		if (event.action == InputConstants.PRESS && event.key == KeyMappings.placeItemKey.key.value) {
-			val hitResult = localClient.hitResult as? BlockHitResult ?: return
-			if (level.getBlockState(hitResult.blockPos).isAir) return
-			PacketDistributor.sendToServer(PlaceItemInWorldPacket(hitResult.blockPos, hitResult.direction))
+		if (event.action == InputConstants.PRESS) {
+			BreadModPollingVirtualKeyboard.write(event.key.toUByte())
+			if (event.key == KeyMappings.placeItemKey.key.value) {
+				val hitResult = localClient.hitResult as? BlockHitResult ?: return
+				if (level.getBlockState(hitResult.blockPos).isAir) return
+				PacketDistributor.sendToServer(PlaceItemInWorldPacket(hitResult.blockPos, hitResult.direction))
+			}
 		}
 	}
 

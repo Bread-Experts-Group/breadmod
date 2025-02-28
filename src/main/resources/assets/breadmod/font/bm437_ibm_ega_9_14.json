@@ -1,0 +1,10 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "breadmod:bm437_ibm_ega_9_14.ttf",
+      "size": 8,
+      "oversample": 9.0
+    }
+  ]
+}

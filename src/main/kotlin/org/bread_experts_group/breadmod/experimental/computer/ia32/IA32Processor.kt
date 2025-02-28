@@ -112,8 +112,9 @@ class IA32Processor(val computer: Computer) : Processor {
 		return popped
 	}
 
+	val resetVector: ULong = 0xFFFFFFF0u
 	fun fetch() {
-		if (this.ip.rx == (0xFFFFFFF0u).toULong()) {
+		if (this.ip.rx == this.resetVector) {
 			val disc = this.computer.disc ?: return
 			val (primary, entry) = disc.getBoot()
 			val discStart = (entry.loadRBA.toLong() * primary.logicalBlockSize).toULong()
@@ -130,7 +131,7 @@ class IA32Processor(val computer: Computer) : Processor {
 		this.ip.rx++
 	}
 
-	var csOverride: Boolean = false
+	var segOverride: SegmentRegister = this.ds
 	var bitOverride: Boolean = false
 	var bit8Override: Boolean = false
 	val operatingMode: AddressingLength
@@ -154,6 +155,8 @@ class IA32Processor(val computer: Computer) : Processor {
 		val scanner = this::class.java.`package`.getScanner()
 		scanner.getClassesAnnotatedWith(IA32Instruction::class).forEach {
 			val instructionDescriptor = it.findAnnotation<IA32Instruction>()!!
+			if (this.instructionMap.contains(instructionDescriptor.opcode))
+				throw IllegalArgumentException("Multiple opcodes, ${hex(instructionDescriptor.opcode)}")
 			this.instructionMap[instructionDescriptor.opcode] =
 				(it.objectInstance ?: it.primaryConstructor!!.call(this)) as ZeroOperandInstruction
 		}
@@ -161,6 +164,8 @@ class IA32Processor(val computer: Computer) : Processor {
 			val cluster = it.primaryConstructor!!.call(this)
 			it.declaredMemberProperties.forEach { f ->
 				val instructionDescriptor = f.findAnnotation<IA32Instruction>()!!
+				if (this.instructionMap.contains(instructionDescriptor.opcode))
+					throw IllegalArgumentException("Multiple opcodes, ${hex(instructionDescriptor.opcode)}")
 				this.instructionMap[instructionDescriptor.opcode] = f.getter.call(cluster) as ZeroOperandInstruction
 			}
 		}
@@ -176,8 +181,16 @@ class IA32Processor(val computer: Computer) : Processor {
 		// 3.1.1.1 Opcode Column in the Instruction Summary Table
 		// TODO Exceptions
 		val instruction = when (this.cir.toUInt()) {
+			0x26u -> {
+				this.segOverride = this.es
+				return
+			}
 			0x2Eu -> {
-				this.csOverride = true
+				this.segOverride = this.cs
+				return
+			}
+			0x36u -> {
+				this.segOverride = this.ss
 				return
 			}
 			0x66u -> {
@@ -185,19 +198,23 @@ class IA32Processor(val computer: Computer) : Processor {
 				return
 			}
 			0x0Fu -> this.instructionMap[(0x0Fu shl 8) or this.decoding.readFetch().toUInt()]
-				?: throw IllegalArgumentException("Missing two-byte opcode for ${hex(this.cir)}")
+				?: throw IllegalArgumentException("Missing two-byte opcode (0F) for ${hex(this.cir)}")
+			0xF3u -> this.instructionMap[(0xF3u shl 8) or this.decoding.readFetch().toUInt()]
+				?: throw IllegalArgumentException("Missing two-byte opcode (F3) for ${hex(this.cir)}")
+			0xF2u -> this.instructionMap[(0xF2u shl 8) or this.decoding.readFetch().toUInt()]
+				?: throw IllegalArgumentException("Missing two-byte opcode (F2) for ${hex(this.cir)}")
 			else  -> this.instructionMap[this.cir.toUInt()]
 				?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)}")
 		}
 		this.logger.warn(
 			"{} ({},{}): {}",
-			this.cs.hex(this.ip.rx - 1u - (if (this.csOverride) 1u else 0u) - (if (this.bitOverride) 1u else 0u)),
-			if (this.csOverride) "CS" else "  ",
+			this.cs.hex(this.ip.rx - 1u - (if (this.segOverride != this.ds) 1u else 0u) - (if (this.bitOverride) 1u else 0u)),
+			this.segOverride.name,
 			if (this.bitOverride) "66" else "  ",
 			instruction.getDisassembly(this)
 		)
 		instruction.handle(this)
-		this.csOverride = false
+		this.segOverride = this.ds
 		this.bitOverride = false
 		this.bit8Override = false
 	}

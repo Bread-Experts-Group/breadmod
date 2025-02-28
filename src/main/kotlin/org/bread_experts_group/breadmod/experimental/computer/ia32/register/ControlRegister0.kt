@@ -1,6 +1,9 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.register
 
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 
 class ControlRegister0(logger: Logger, name: String, vararg flags: FlagType) : Register(
@@ -34,7 +37,34 @@ class ControlRegister0(logger: Logger, name: String, vararg flags: FlagType) : R
 			FlagType.entries.forEach {
 				flags += if (this.getFlag(it)) ((if (flags.isNotEmpty()) ", " else "") + it.name) else ""
 			}
-			this.logger.warn("$name set ${hex(value)} [$flags]")
+			object : GuiGraphics(localClient, localClient.renderBuffers().bufferSource()) {
+				override fun blit(
+					atlasLocation: ResourceLocation,
+					x: Int,
+					y: Int,
+					blitOffset: Int,
+					uOffset: Float,
+					vOffset: Float,
+					uWidth: Int,
+					vHeight: Int,
+					textureWidth: Int,
+					textureHeight: Int
+				) {
+					super.blit(
+						atlasLocation,
+						x,
+						y,
+						blitOffset,
+						uOffset,
+						vOffset,
+						uWidth,
+						vHeight,
+						textureWidth,
+						textureHeight
+					)
+				}
+			}
+			this.logger.warn("${this.name} set ${hex(value)} [$flags]")
 		}
 
 	fun setFlag(flag: FlagType, state: Boolean) {

@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.experimental.computer
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.readBinary
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
+import org.bread_experts_group.breadmod.experimental.computer.io.BreadModPollingVirtualKeyboard
 import org.bread_experts_group.breadmod.experimental.computer.io.Diagnostics
 import org.bread_experts_group.breadmod.experimental.computer.io.IODevice
 import org.bread_experts_group.breadmod.experimental.computer.io.ps2.PS2Controller
@@ -23,7 +24,8 @@ class Computer : SimulationSteppable {
 		0x60u to this.ps2.data,
 		0x64u to this.ps2.command,
 		0x80u to Diagnostics(),
-		0x92u to PS2SystemControllerA()
+		0x92u to PS2SystemControllerA(),
+		0xB30D0000u to BreadModPollingVirtualKeyboard
 	)
 
 	fun requestMemoryAt(address: ULong): UByte {

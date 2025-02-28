@@ -25,6 +25,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.CameraOverlay
+import org.bread_experts_group.breadmod.client.gui.IA32ComputerOutputOverlay
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
@@ -120,6 +121,7 @@ internal object ClientModEventBus {
 	fun registerGuiLayers(event: RegisterGuiLayersEvent) {
 		event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
 		event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
+		event.registerAboveAll(modLocation("ia32_output"), IA32ComputerOutputOverlay())
 		event.registerBelow(VanillaGuiLayers.DEBUG_OVERLAY, modLocation("tool_gun_overlay"), ToolGunOverlay())
 	}
 

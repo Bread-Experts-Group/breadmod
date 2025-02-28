@@ -4,6 +4,7 @@ import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO96
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.volumedescriptor.PrimaryVolume
 import java.time.ZonedDateTime
 import java.util.Optional
+import kotlin.math.max
 
 class DirectoryRecord(
 	val extentPointer: Int, // LSB, MSB
@@ -45,8 +46,8 @@ class DirectoryRecord(
 				stream.readLSBMSB(4).toInt(),
 				ZonedDateTime.of(
 					stream.read() + 1900,
-					stream.read(),
-					stream.read(),
+					max(1, stream.read()),
+					max(1, stream.read()),
 					stream.read(),
 					stream.read(),
 					stream.read(),

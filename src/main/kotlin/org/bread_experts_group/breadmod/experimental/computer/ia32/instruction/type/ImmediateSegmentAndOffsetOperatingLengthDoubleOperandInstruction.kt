@@ -4,7 +4,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
 import kotlin.reflect.jvm.jvmName
 
-interface ImmediateSegmentAndOperatingLengthDoubleOperandInstruction : ZeroOperandInstruction {
+interface ImmediateSegmentAndOffsetOperatingLengthDoubleOperandInstruction : ZeroOperandInstruction {
 	override fun handle(processor: IA32Processor) {
 		val imm = processor.decoding.readBinaryForMode()
 		val seg16 = processor.decoding.readBinaryFetch(2).toUShort()

@@ -7,11 +7,12 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.I
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
+import org.bread_experts_group.breadmod.experimental.computer.ia32.register.SegmentRegister
 
 @IA32InstructionCluster
 class PushFromRegisterDefinitions(processor: IA32Processor) {
 	/**
-	 * Opcode: `50+ r(w/d)` |
+	 * Opcode: `50+/9C r(w/d)` |
 	 * Instruction: `PUSH r(16/32)` |
 	 * Flags Modified: `none`
 	 * @author Miko Elbrecht
@@ -55,4 +56,38 @@ class PushFromRegisterDefinitions(processor: IA32Processor) {
 
 	@IA32Instruction(0x57u)
 	val di: PushFromRegister = PushFromRegister("edi", "di", processor.di)
+
+	@IA32Instruction(0x9Cu)
+	val flags: PushFromRegister = PushFromRegister("eflags", "flags", processor.flags)
+
+	/**
+	 * Opcode: `0E/16/1E/06/0FA0/0FA8` |
+	 * Instruction: `PUSH (C/S/D/E/F/G)S` |
+	 * Flags Modified: `none`
+	 * @author Miko Elbrecht
+	 * @since 1.0.0
+	 */
+	class PushFromSegmentRegister(val n: Char, val register: SegmentRegister) : ZeroOperandInstruction {
+		override fun getMnemonic(processor: IA32Processor): String = "push"
+		override fun getOperands(processor: IA32Processor): String = "${this.n}s [${hex(this.register.tx)}]"
+		override fun handle(processor: IA32Processor): Unit = processor.push16(this.register.tx)
+	}
+
+	@IA32Instruction(0x0Eu)
+	val cs: PushFromSegmentRegister = PushFromSegmentRegister('c', processor.cs)
+
+	@IA32Instruction(0x16u)
+	val ss: PushFromSegmentRegister = PushFromSegmentRegister('s', processor.ss)
+
+	@IA32Instruction(0x1Eu)
+	val ds: PushFromSegmentRegister = PushFromSegmentRegister('d', processor.ds)
+
+	@IA32Instruction(0x06u)
+	val es: PushFromSegmentRegister = PushFromSegmentRegister('e', processor.es)
+
+	@IA32Instruction(0x0FA0u)
+	val fs: PushFromSegmentRegister = PushFromSegmentRegister('f', processor.fs)
+
+	@IA32Instruction(0x0FA8u)
+	val gs: PushFromSegmentRegister = PushFromSegmentRegister('g', processor.gs)
 }

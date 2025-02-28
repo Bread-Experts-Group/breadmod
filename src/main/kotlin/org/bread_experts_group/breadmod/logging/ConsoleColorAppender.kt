@@ -80,13 +80,13 @@ class ConsoleColorAppender(
 			(GraphicsModes.RED join this reset GraphicsModesResets.FG_RESET) to mutableListOf(GraphicsModes.RED.value)
 		else {
 			val newLast = last.second.toMutableList()
-			newLast[0] += 1
+			newLast[0]++
 			for (index in 0 .. newLast.size) {
 				val current = newLast.getOrNull(index) ?: break
 				if (current >= GraphicsModes.WHITE.value) {
 					newLast[index] = GraphicsModes.RED.value
 					if (newLast.size == index + 1) newLast.add(GraphicsModes.RED.value)
-					else newLast[index + 1] += 1
+					else newLast[index + 1]++
 				} else break
 			}
 			var newStr = ""

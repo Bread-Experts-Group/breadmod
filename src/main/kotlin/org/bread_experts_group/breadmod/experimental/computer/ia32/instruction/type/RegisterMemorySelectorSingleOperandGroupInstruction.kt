@@ -9,7 +9,7 @@ interface RegisterMemorySelectorSingleOperandGroupInstruction : ZeroOperandInstr
 	private fun getInstruction(processor: IA32Processor): RegisterMemorySingleOperandInstruction {
 		val rmByte = processor.decoding.readFetch()
 		val ins = this.instructions.getValue(processor.decoding.getComponents(rmByte).second)
-		processor.ip.rx -= 1u
+		processor.ip.rx--
 		return ins
 	}
 

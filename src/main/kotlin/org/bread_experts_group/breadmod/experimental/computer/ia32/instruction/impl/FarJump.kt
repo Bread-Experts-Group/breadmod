@@ -3,10 +3,10 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ImmediateSegmentAndOperatingLengthDoubleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ImmediateSegmentAndOffsetOperatingLengthDoubleOperandInstruction
 
 @IA32Instruction(0xEAu)
-object FarJump : ImmediateSegmentAndOperatingLengthDoubleOperandInstruction {
+object FarJump : ImmediateSegmentAndOffsetOperatingLengthDoubleOperandInstruction {
 	override fun getMnemonic(processor: IA32Processor): String = "ljmp"
 	override fun getOperands16(processor: IA32Processor, seg16: UShort, imm16: UShort): String =
 		"${hex(seg16)}:${hex(imm16).substring(2)}"

@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemoryImmediateOperatingLengthDoubleOperandInstruction
 import kotlin.reflect.KMutableProperty0
 
-class AddImmediateToModRM : RegisterMemoryImmediateOperatingLengthDoubleOperandInstruction,
+object AddImmediateToModRM : RegisterMemoryImmediateOperatingLengthDoubleOperandInstruction,
 	ArithmeticAdditionFlagOperations {
 	override fun getMnemonic(processor: IA32Processor): String = "add"
 	override fun getOperands16(
@@ -24,19 +24,17 @@ class AddImmediateToModRM : RegisterMemoryImmediateOperatingLengthDoubleOperandI
 	override fun handle16(
 		processor: IA32Processor, rmM: MemRMResult, rmD: KMutableProperty0<ULong>, imm16: UShort
 	) {
-		val result = rmM.getValue() + imm16
+		val result = this.setFlagsForOperationR(processor, rmM.getValue(), imm16)
 		rmM.setValue(result)
 		this.setFlagsForResult(processor, result)
-		this.setFlagsForOperation(processor, rmM.getValue(), imm16)
 	}
 
 	override fun handle32(
 		processor: IA32Processor, rmM: MemRMResult, rmD: KMutableProperty0<ULong>, imm32: UInt
 	) {
-		val result = rmM.getValue() + imm32
+		val result = this.setFlagsForOperationR(processor, rmM.getValue(), imm32)
 		rmM.setValue(result)
 		this.setFlagsForResult(processor, result)
-		this.setFlagsForOperation(processor, rmM.getValue(), imm32)
 	}
 
 	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
