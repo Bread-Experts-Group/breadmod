@@ -1,9 +1,10 @@
-package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.intr
+package org.bread_experts_group.breadmod.experimental.computer.bios.h13
 
+import org.bread_experts_group.breadmod.experimental.computer.bios.BIOSInterruptProvider
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.InterruptReturn
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
-@BIOSInterrupt(0x13u, 0x02u)
 object Read : BIOSInterruptProvider {
 	override fun handle(processor: IA32Processor) {
 		val (primary, bootEntry) = processor.computer.disc!!.getBoot()
@@ -14,6 +15,8 @@ object Read : BIOSInterruptProvider {
 			loc + (processor.a.l * 512u),
 			processor.es.offset(processor.b.x)
 		)
+
+		InterruptReturn.handle(processor)
 		processor.a.h = 0x00u
 		processor.flags.setFlag(FlagType.CARRY_FLAG, false)
 	}

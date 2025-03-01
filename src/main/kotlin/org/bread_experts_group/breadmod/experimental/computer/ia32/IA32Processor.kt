@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32
 
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.BreadMod.Companion.processor
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.Computer
 import org.bread_experts_group.breadmod.experimental.computer.Processor
@@ -12,6 +13,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.I
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.ControlRegister0
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister
+import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.SegmentRegister
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
@@ -48,7 +50,7 @@ class IA32Processor(val computer: Computer) : Processor {
 	var si: Register = Register(this.logger, "si", 0u)
 
 	// Segment
-	var cs: SegmentRegister = SegmentRegister(this, "cs", 0u)
+	var cs: SegmentRegister = SegmentRegister(this, "cs", 0xF000u)
 	var ds: SegmentRegister = SegmentRegister(this, "ds", 0u)
 	var ss: SegmentRegister = SegmentRegister(this, "ss", 0u)
 	var es: SegmentRegister = SegmentRegister(this, "es", 0u)
@@ -87,7 +89,7 @@ class IA32Processor(val computer: Computer) : Processor {
 	 * @since 1.0.0
 	 * @author Miko Elbrecht
 	 */
-	var ip: Register = Register(this.logger, "ip", 0xFFFFFFF0u)
+	var ip: Register = Register(this.logger, "ip", 0xFFF0u)
 	var cir: UByte = 0u
 
 	fun push32(value: UInt) {
@@ -112,21 +114,34 @@ class IA32Processor(val computer: Computer) : Processor {
 		return popped
 	}
 
-	val resetVector: ULong = 0xFFFFFFF0u
-	fun fetch() {
-		if (this.ip.rx == this.resetVector) {
-			val disc = this.computer.disc ?: return
-			val (primary, entry) = disc.getBoot()
-			val discStart = (entry.loadRBA.toLong() * primary.logicalBlockSize).toULong()
-			val memoryStart = (entry.loadSegment * 0x10).toULong()
-			this.decoding.loadDiscIntoMemory(
-				discStart,
-				discStart + (entry.sectorCount * primary.logicalBlockSize).toULong(),
-				memoryStart
-			)
-			this.d.l = 0xE0u
-			this.ip.rx = memoryStart
+	override fun reset() {
+		this.cs.rx = 0xF000u
+		this.ip.rx = 0xFFF0u
+	}
+
+	val biosHooks: MutableMap<ULong, MutableMap<ULong, (IA32Processor) -> Unit>> = mutableMapOf()
+	fun setHook(cs: ULong, ip: ULong, r: (IA32Processor) -> Unit) {
+		this.biosHooks.getOrPut(cs) { mutableMapOf() }[ip] = r
+	}
+
+	fun initiateInterrupt(selector: UByte): Unit = when (this.operatingMode) {
+		AddressingLength.R16 -> {
+			this.logger.warn("!!! INTERRUPT RECEIVED (${hex(selector)}) !!!")
+			this.push16(this.flags.tx)
+			this.flags.setFlag(FlagType.INTERRUPT_ENABLE_FLAG, false)
+			this.flags.setFlag(FlagType.TRAP_FLAG, false)
+			this.flags.setFlag(FlagType.AUXILIARY_CARRY_FLAG, false)
+			this.push16(this.cs.tx)
+			this.push16(this.ip.tx)
+			val addr = selector.toULong() * 4u
+			processor.ip.tex = processor.computer.requestMemoryAt16(addr).toUInt()
+			processor.cs.tx = processor.computer.requestMemoryAt16(addr + 2u)
 		}
+		else                 -> throw IllegalArgumentException("Meow")
+	}
+
+	fun fetch() {
+		if (this.operatingMode == AddressingLength.R16) this.biosHooks[this.cs.rx]?.get(this.ip.rx)?.invoke(this)
 		this.cir = this.computer.requestMemoryAt(this.cs.offset(this.ip))
 		this.ip.rx++
 	}

@@ -40,7 +40,7 @@ class FlagsRegister(val processor: IA32Processor, name: String, vararg flags: Fl
 			FlagType.entries.forEach {
 				flags += if (this.getFlag(it)) ((if (flags.isNotEmpty()) ", " else "") + it.name) else ""
 			}
-			this.logger.warn("$name set ${hex(value)} [$flags]")
+			this.logger.warn("${this.name} set ${hex(value)} [$flags]")
 		}
 
 	fun setFlag(flag: FlagType, state: Boolean) {

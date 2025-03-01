@@ -19,6 +19,7 @@ import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.Computer
 import org.bread_experts_group.breadmod.experimental.computer.MemoryModule
+import org.bread_experts_group.breadmod.experimental.computer.bios.StandardBIOS
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
@@ -73,15 +74,17 @@ class BreadMod(container: ModContainer) {
 		val computerExp: Thread = Thread.ofPlatform().unstarted {
 			this.newComputer.memory = listOf(MemoryModule(2097152u))
 			this.newComputer.processor = this.processor
+			this.newComputer.bios = StandardBIOS
 			try {
 				this.newComputer.disc = ISO9660Disc.readDisc(
 					this::class.java.getResource(
-						"/MS-DOS 6.22.iso"
+						"/main.iso"
 					)!!.toURI()
 				)
+				this.newComputer.reset()
 				while (true) {
 					this.newComputer.step()
-					Thread.sleep(10)
+//					Thread.sleep(10)
 				}
 			} catch (e: Throwable) {
 				this.logger.fatal("a: ${hex(this.processor.a.rx)}")

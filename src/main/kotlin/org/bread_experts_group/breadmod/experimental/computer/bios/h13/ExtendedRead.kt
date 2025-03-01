@@ -1,8 +1,9 @@
-package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.intr
+package org.bread_experts_group.breadmod.experimental.computer.bios.h13
 
+import org.bread_experts_group.breadmod.experimental.computer.bios.BIOSInterruptProvider
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.InterruptReturn
 
-@BIOSInterrupt(0x13u, 0x42u)
 object ExtendedRead : BIOSInterruptProvider {
 	override fun handle(processor: IA32Processor) {
 		if (processor.d.tl != (0xE0u).toUByte()) {
@@ -19,6 +20,7 @@ object ExtendedRead : BIOSInterruptProvider {
 			((processor.computer.requestMemoryAt16(dapAddr + 6u) * 0x10u) +
 					processor.computer.requestMemoryAt16(dapAddr + 4u)).toULong()
 		)
+		InterruptReturn.handle(processor)
 		this.setOK(processor)
 	}
 }

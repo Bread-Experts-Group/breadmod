@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.computer
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.readBinary
+import org.bread_experts_group.breadmod.experimental.computer.bios.BIOSProvider
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
 import org.bread_experts_group.breadmod.experimental.computer.io.BreadModPollingVirtualKeyboard
 import org.bread_experts_group.breadmod.experimental.computer.io.Diagnostics
@@ -18,6 +19,7 @@ import org.bread_experts_group.breadmod.experimental.computer.io.ps2.PS2SystemCo
 class Computer : SimulationSteppable {
 	lateinit var memory: List<MemoryModule>
 	lateinit var processor: Processor
+	lateinit var bios: BIOSProvider
 	var disc: ISO9660Disc? = null
 	val ps2: PS2Controller = PS2Controller()
 	val ioMap: MutableMap<UInt, IODevice> = mutableMapOf(
@@ -68,6 +70,11 @@ class Computer : SimulationSteppable {
 	fun requestMemoryAt64(address: ULong): ULong {
 		var offset = 0u
 		return readBinary(8, { this.requestMemoryAt(address + offset).also { offset++ } }).toULong()
+	}
+
+	override fun reset() {
+		this.bios.initialize(this)
+		this.processor.reset()
 	}
 
 	override fun step() {

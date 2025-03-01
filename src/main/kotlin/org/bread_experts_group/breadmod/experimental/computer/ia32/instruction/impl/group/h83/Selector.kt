@@ -16,6 +16,7 @@ class Selector(processor: IA32Processor) : RegisterMemorySelectorSingleOperandGr
 		0u to AddImmediate8ToModRM,
 		1u to ORImmediate8ToModRM,
 		2u to AddWithCarryImmediate8ToModRM,
+		3u to SubtractWithBorrowImmediate8FromModRM,
 		4u to ANDImmediate8ToModRM,
 		5u to SubtractImmediate8FromModRM,
 		7u to CompareImmediate8WithModRM

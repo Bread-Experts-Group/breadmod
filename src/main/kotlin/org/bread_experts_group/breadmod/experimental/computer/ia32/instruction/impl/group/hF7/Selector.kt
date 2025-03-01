@@ -13,6 +13,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 @IA32Instruction(0xF7u)
 class Selector(processor: IA32Processor) : RegisterMemorySelectorSingleOperandGroupInstruction {
 	override val instructions: Map<UInt, RegisterMemorySingleOperandInstruction> = mapOf(
+		0u to TestModRM,
 		3u to NegateModRM,
 		4u to MultiplyModRM,
 		6u to DivideModRM
