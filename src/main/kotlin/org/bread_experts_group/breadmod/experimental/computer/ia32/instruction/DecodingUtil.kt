@@ -1,10 +1,10 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
-import org.bread_experts_group.breadmod.BreadMod.Companion.processor
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.readBinary
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity.Companion.processor
 import kotlin.reflect.KMutableProperty0
 
 class DecodingUtil(private val processor: IA32Processor) {

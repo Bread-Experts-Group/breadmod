@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.hF3
 
-import org.bread_experts_group.breadmod.BreadMod.Companion.processor
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
@@ -8,9 +7,11 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.I
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.flag.ArithmeticSubtractionFlagOperations
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
 import kotlin.reflect.KMutableProperty0
 
 @IA32Instruction(0xF3A6u)
+@Suppress("unused")
 object CompareBytes : Instruction("repe cmps"), ArithmeticSubtractionFlagOperations {
 	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
 		AddressingLength.R32 -> "ds:[esi], es:[edi [${hex(processor.ds.offset(processor.si.x))}] + ecx [${hex(processor.c.tex)}]]"
@@ -32,25 +33,25 @@ object CompareBytes : Instruction("repe cmps"), ArithmeticSubtractionFlagOperati
 		}
 	}
 
-	override fun handle(p: IA32Processor): Unit = when (processor.operandSize) {
-		AddressingLength.R32 -> this.handle(p, { si, di ->
+	override fun handle(processor: IA32Processor): Unit = when (BreadScreenBlockEntity.processor.operandSize) {
+		AddressingLength.R32 -> this.handle(processor, { si, di ->
 			val result = this.setFlagsForOperationR(
-				processor,
-				processor.computer.requestMemoryAt32(di),
-				processor.computer.requestMemoryAt32(si)
+				BreadScreenBlockEntity.processor,
+				BreadScreenBlockEntity.processor.computer.requestMemoryAt32(di),
+				BreadScreenBlockEntity.processor.computer.requestMemoryAt32(si)
 			)
-			this.setFlagsForResult(processor, result)
+			this.setFlagsForResult(BreadScreenBlockEntity.processor, result)
 			4u
-		}, p.c::ex, p.si::ex, p.di::ex)
-		AddressingLength.R16 -> this.handle(p, { si, di ->
+		}, processor.c::ex, processor.si::ex, processor.di::ex)
+		AddressingLength.R16 -> this.handle(processor, { si, di ->
 			val result = this.setFlagsForOperationR(
-				processor,
-				processor.computer.requestMemoryAt16(di),
-				processor.computer.requestMemoryAt16(si)
+				BreadScreenBlockEntity.processor,
+				BreadScreenBlockEntity.processor.computer.requestMemoryAt16(di),
+				BreadScreenBlockEntity.processor.computer.requestMemoryAt16(si)
 			)
-			this.setFlagsForResult(processor, result)
+			this.setFlagsForResult(BreadScreenBlockEntity.processor, result)
 			2u
-		}, p.c::x, p.si::x, p.di::x)
+		}, processor.c::x, processor.si::x, processor.di::x)
 		else                 -> throw UnsupportedOperationException()
 	}
 }

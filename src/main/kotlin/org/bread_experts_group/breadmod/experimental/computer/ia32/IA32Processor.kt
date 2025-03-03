@@ -2,7 +2,7 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32
 
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.BreadMod.Companion.processor
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity.Companion.processor
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.Computer
 import org.bread_experts_group.breadmod.experimental.computer.Processor
@@ -177,8 +177,9 @@ class IA32Processor(val computer: Computer) : Processor {
 		val scanner = this::class.java.`package`.getScanner()
 		scanner.getClassesAnnotatedWith(IA32Instruction::class).forEach {
 			val instructionDescriptor = it.findAnnotation<IA32Instruction>()!!
-			if (this.instructionMap.contains(instructionDescriptor.opcode))
-				throw IllegalArgumentException("Multiple opcodes, ${hex(instructionDescriptor.opcode)}")
+			require(!this.instructionMap.contains(instructionDescriptor.opcode)) {
+				"Multiple opcodes, ${hex(instructionDescriptor.opcode)}"
+			}
 			this.instructionMap[instructionDescriptor.opcode] =
 				(it.objectInstance ?: it.primaryConstructor!!.call(this)) as Instruction
 		}
@@ -186,8 +187,9 @@ class IA32Processor(val computer: Computer) : Processor {
 			val cluster = it.primaryConstructor!!.call(this)
 			it.declaredMemberProperties.forEach { f ->
 				val instructionDescriptor = f.findAnnotation<IA32Instruction>()!!
-				if (this.instructionMap.contains(instructionDescriptor.opcode))
-					throw IllegalArgumentException("Multiple opcodes, ${hex(instructionDescriptor.opcode)}")
+				require(!this.instructionMap.contains(instructionDescriptor.opcode)) {
+					"Multiple opcodes, ${hex(instructionDescriptor.opcode)}"
+				}
 				this.instructionMap[instructionDescriptor.opcode] = f.getter.call(cluster) as Instruction
 			}
 		}

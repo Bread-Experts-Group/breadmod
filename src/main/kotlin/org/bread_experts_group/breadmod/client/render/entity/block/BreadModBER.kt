@@ -18,6 +18,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import java.awt.Color
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Bread Mod Specific [BlockEntityRenderer] with an extremely cursed "in-world" [GuiGraphics] implementation.
@@ -99,9 +100,8 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	private fun translateGraphicsToBlockSide(blockEntity: BlockEntity) {
 		val lgPoseStack = Companion.LEVEL_GRAPHICS.pose()
 		val facing =
-			blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING) ?: blockEntity.blockState.getValue(
-				BlockStateProperties.FACING
-			) ?: return
+			blockEntity.blockState.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).getOrNull()
+				?: blockEntity.blockState.getOptionalValue(BlockStateProperties.FACING).getOrNull() ?: return
 		when (facing) {
 			DOWN, UP -> {} // todo work on down/up for the FACING property
 			NORTH    -> lgPoseStack.translate(0.0, 0.0, -Companion.TRANSLATE_OFFSET)

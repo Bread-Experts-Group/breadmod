@@ -25,7 +25,6 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.CameraOverlay
-import org.bread_experts_group.breadmod.client.gui.IA32ComputerOutputOverlay
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
@@ -34,6 +33,7 @@ import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.BreadScreenRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
@@ -65,9 +65,6 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunIte
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyScreen
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
-import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
-import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
-import kotlin.reflect.full.createInstance
 
 @Suppress("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = BreadMod.ID, value = [Dist.CLIENT])
@@ -120,13 +117,13 @@ internal object ClientModEventBus {
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.MICROWAVE.get(), ::MicrowaveRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get(), ::BreadScreenRenderer)
 	}
 
 	@SubscribeEvent
 	fun registerGuiLayers(event: RegisterGuiLayersEvent) {
 		event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
 		event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
-		event.registerAboveAll(modLocation("ia32_output"), IA32ComputerOutputOverlay())
 		event.registerBelow(VanillaGuiLayers.DEBUG_OVERLAY, modLocation("tool_gun_overlay"), ToolGunOverlay())
 	}
 

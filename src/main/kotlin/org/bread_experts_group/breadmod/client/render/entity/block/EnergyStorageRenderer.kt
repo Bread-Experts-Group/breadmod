@@ -51,5 +51,19 @@ class EnergyStorageRenderer(context: Context) : BreadModBER<EnergyStorageBlockEn
 			scale = 0.0105f,
 			color = Color.GREEN.rgb
 		)
+		super.render(blockEntity, partialTick, poseStack, bufferSource, packedLight, packedOverlay)
+	}
+
+	override fun renderWithGraphics(
+		blockEntity: EnergyStorageBlockEntity,
+		partialTick: Float,
+		poseStack: PoseStack,
+		lgPoseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		levelGraphics: GuiGraphics,
+		packedLight: Int,
+		packedOverlay: Int
+	) {
+		ModTextureLocations.MOUSE_LEFT.blitTexture(levelGraphics, 0, 0)
 	}
 }

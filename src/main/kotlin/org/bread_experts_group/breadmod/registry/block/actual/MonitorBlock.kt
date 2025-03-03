@@ -26,5 +26,5 @@ class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBloc
 	}
 
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
-		this.defaultBlockState().setValue(DirectionalBlock.FACING, context.nearestLookingDirection)
+		this.defaultBlockState().setValue(DirectionalBlock.FACING, context.nearestLookingDirection.opposite)
 }
