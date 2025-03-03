@@ -22,6 +22,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockE
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.storage.EnergyStorageBlockEntity
 import java.util.function.Supplier
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -59,6 +60,10 @@ object ModBlockEntityTypes {
 	val ITEM_IN_WORLD: Supplier<BlockEntityType<ItemInWorldBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("item_in_world_entity") { ->
 			this.buildBlockEntity(::ItemInWorldBlockEntity, ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock())
+		}
+	val ENERGY_STORAGE: Supplier<BlockEntityType<EnergyStorageBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("energy_storage_entity") { ->
+			this.buildBlockEntity(::EnergyStorageBlockEntity, ModBlocks.ENERGY_STORAGE.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(

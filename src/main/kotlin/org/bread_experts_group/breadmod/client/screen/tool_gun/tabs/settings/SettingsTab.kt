@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
@@ -18,6 +19,7 @@ import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings.Set
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.screen.tool_gun.ToolGunScreen
 import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ToolGunScreenTab
 import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.TabButton
@@ -28,8 +30,11 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 	companion object {
 		var currentSettingsEntry: SettingsEntries = MAIN
 	}
+
 	private val renderHelper = ToolGunRenderHelper()
 	private val toolGunRenderer = ToolGunItemRenderer()
+	private val deltaTracker = localClient.timer
+	private val partialTick = this.deltaTracker.gameTimeDeltaTicks
 
 	override fun getTabButton(): TabButton =
 		TabButton(Component.literal("settings"), Color.BLUE, Color(0, 0, 230), this)
@@ -46,7 +51,6 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 			this.x + 5,
 			this.y + 30
 		)
-		// todo WHY DON'T YOU WORK AAAAAAAAAAA
 		this.addChild(
 			"main_button",
 			SettingsEntryButton(Component.literal("<"), Component.empty(), MAIN),
@@ -63,7 +67,7 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 			this.y + 185,
 			Color(0, 0, 230, 255).rgb
 		)
-		this.subWidgets.values.filterIsInstance<SettingsEntryButton>()
+		this.getWidgets().filterIsInstance<SettingsEntryButton>()
 			.asSequence()
 			.filter { it.isHovered && it.visible && Companion.currentSettingsEntry == MAIN }
 			.forEach {
@@ -77,9 +81,7 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 				)
 			}
 
-		if (Companion.currentSettingsEntry != MAIN) {
-			this.entryButtonsVisibility(false)
-		} else this.entryButtonsVisibility(true)
+		this.entryButtonsVisibility(Companion.currentSettingsEntry == MAIN)
 		when (Companion.currentSettingsEntry) {
 			MAIN     -> this.drawMainEntry(guiGraphics)
 			RENDERER -> this.drawSettingsRendererEntry(guiGraphics)
@@ -89,7 +91,7 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 
 	private fun entryButtonsVisibility(visible: Boolean) {
 		(this.getChild("renderer_entry") ?: return).let { it.visible = visible; it.active = visible }
-		(this.getChild("main_button") ?: return).let { it.active = !visible }
+		(this.getChild("main_button") ?: return).let { it.active = !visible; it.visible = !visible }
 	}
 
 	private fun drawMainEntry(guiGraphics: GuiGraphics) {
@@ -123,25 +125,29 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 		)
 	}
 
+	private var rotation = 0f
 	private fun drawSettingsRendererEntry(guiGraphics: GuiGraphics) {
 		val poseStack = guiGraphics.pose()
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val stack = ModItems.TOOL_GUN.toStack()
 		val gameTime = (localClient.level ?: return).gameTime
-		guiGraphics.vLine(this.screen.width / 2, this.y + 20, this.y + 200, Color.WHITE.rgb)
-		guiGraphics.borderedFill(
-			RenderType.gui(),
-			this.x + 150,
-			this.y + 50,
-			this.x + 220,
-			this.y + 120,
-			Color.WHITE.rgb,
-			Color.BLACK.rgb
-		)
+		guiGraphics.vLine(this.screen.width / 2, this.y, this.y + 185, Color.WHITE.rgb)
+//		guiGraphics.borderedFill(
+//			RenderType.gui(),
+//			this.x + 150,
+//			this.y + 50,
+//			this.x + 220,
+//			this.y + 120,
+//			Color.WHITE.rgb,
+//			Color.BLACK.rgb
+//		)
+		guiGraphics.borderedFillPositioned(this.x + 125, this.y + 5, 115, 115, Color.WHITE, Color.BLACK)
 		poseStack.pushPose()
 		poseStack.translate(this.x + 350.0, this.y + 100.0, 200.0)
 		poseStack.translate(-180.0, 0.0, 0.0)
-		poseStack.mulPose(Axis.YN.rotationDegrees(gameTime.toFloat() % 360))
+		if (this.rotation >= 360f) this.rotation = 0f
+		this.rotation += 2f * this.partialTick
+		poseStack.mulPose(Axis.YN.rotationDegrees(this.rotation))
 		poseStack.mulPose(Axis.ZP.rotationDegrees(10f))
 		poseStack.translate(180.0, 0.0, 0.0)
 		poseStack.scaleFlat(-180.0f)

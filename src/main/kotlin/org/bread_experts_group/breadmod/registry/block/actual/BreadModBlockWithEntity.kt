@@ -54,7 +54,7 @@ abstract class BreadModBlockWithEntity(
 			val stack = player.getItemInHand(hand)
 			val item = stack.item
 			if (entity is FluidBearingBlockEntity) {
-				val fluidStack: FluidStack
+				var fluidStack: FluidStack = FluidStack.EMPTY // todo test this to make sure it isn't broken
 				val cap = stack.getCapability(Capabilities.FluidHandler.ITEM)
 				if (item is BucketItem) {
 					fluidStack = FluidStack(item.content, FluidType.BUCKET_VOLUME)

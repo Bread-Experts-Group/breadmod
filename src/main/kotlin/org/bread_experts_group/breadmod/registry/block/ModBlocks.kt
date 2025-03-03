@@ -52,6 +52,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.ToasterBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
+import org.bread_experts_group.breadmod.registry.block.actual.storage.EnergyStorageBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
@@ -72,8 +73,7 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	val BREAD_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"bread_block", ::BreadBlock, Properties().also {
-			val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null)
-				?: throw IllegalArgumentException("Bread has no food properties?")
+			val breadFoodStats = Items.BREAD.getFoodProperties(Items.BREAD.defaultInstance, null) ?: return@also
 			it.food(
 				FoodProperties.Builder()
 					.nutrition(breadFoodStats.nutrition * 9)
@@ -166,6 +166,13 @@ object ModBlocks {
 	val ITEM_IN_WORLD_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"item_in_world",
 		::ItemInWorldBlock,
+		Properties()
+	)
+
+	@DataGenerateLanguage("en_us")
+	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"energy_storage",
+		::EnergyStorageBlock,
 		Properties()
 	)
 

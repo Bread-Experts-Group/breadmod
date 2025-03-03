@@ -8,8 +8,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.core.Direction
+import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
+import net.minecraft.core.Direction.WEST
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -19,15 +21,15 @@ import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 
-class ToasterRenderer(private val ctx: Context) : BlockEntityRenderer<ToasterBlockEntity> {
+class ToasterRenderer(context: Context) : BreadModBER<ToasterBlockEntity>(context) {
 	private companion object {
 		val HANDLE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
 		val HANDLE_MODEL: BakedModel = localClient.modelManager.getModel(this.HANDLE_MODEL_LOC)
 	}
 
 	private var triggeredOffset: Double = 0.0
-	private val blockModelRenderer = this.ctx.blockRenderDispatcher.modelRenderer
-	private val itemRenderer = this.ctx.itemRenderer
+	private val blockModelRenderer = this.context.blockRenderDispatcher.modelRenderer
+	private val itemRenderer = this.context.itemRenderer
 
 	override fun render(
 		entity: ToasterBlockEntity,
@@ -48,18 +50,18 @@ class ToasterRenderer(private val ctx: Context) : BlockEntityRenderer<ToasterBlo
 				poseStack.mulPose(Axis.YN.rotationDegrees(180f))
 				poseStack.translate(-1.0, this.triggeredOffset, -1.0)
 			}
-			Direction.WEST  -> {
+			WEST  -> {
 				poseStack.translate(0.0, this.triggeredOffset, 1.0)
 				poseStack.mulPose(Axis.YN.rotationDegrees(-90f))
 			}
-			Direction.EAST  -> {
+			EAST  -> {
 				poseStack.translate(1.0, this.triggeredOffset, 0.0)
 				poseStack.mulPose(Axis.YN.rotationDegrees(90f))
 			}
 			NORTH -> {
 				poseStack.translate(0.0, this.triggeredOffset, 0.0)
 			}
-			else            -> {}
+			else  -> {}
 		}
 
 		this.blockModelRenderer.renderBlockModel(

@@ -17,6 +17,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 
 class ModBlockStateProvider(
 	packOutput: PackOutput,
@@ -144,8 +145,29 @@ class ModBlockStateProvider(
 			this.models().getBuilder("breadmod:block/dough_machine")
 		)
 
+		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
+			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
+			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
+				1 -> "_one"; 2 -> "_two"; 3 -> "_three"; 4 -> "_four"
+				else -> ""
+			}
+			val name = "breadmod:block/energy_storage$storedLevel"
+			val model = this.models().orientableWithBottom(
+				name,
+				this.modLoc("$blockFolder/side"),
+				this.modLoc("$blockFolder/front$storedLevel"),
+				this.modLoc("$blockFolder/bottom"),
+				this.modLoc("$blockFolder/top")
+			)
+			return@horizontalBlock model
+		}
 		this.simpleBlockItem(
-			ModBlocks.FLOUR_LAYER_BLOCK.get().block,
+			ModBlocks.ENERGY_STORAGE.asBlock(),
+			this.models().getBuilder("breadmod:block/energy_storage")
+		)
+
+		this.simpleBlockItem(
+			ModBlocks.FLOUR_LAYER_BLOCK.asBlock(),
 			this.models().getBuilder("breadmod:block/flour_layer_1")
 		)
 

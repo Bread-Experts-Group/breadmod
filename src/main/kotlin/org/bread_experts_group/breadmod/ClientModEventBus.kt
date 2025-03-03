@@ -34,6 +34,7 @@ import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRenderer
@@ -64,6 +65,9 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunIte
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyScreen
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
+import kotlin.reflect.full.createInstance
 
 @Suppress("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = BreadMod.ID, value = [Dist.CLIENT])
@@ -115,6 +119,7 @@ internal object ClientModEventBus {
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get(), ::ToasterRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.MICROWAVE.get(), ::MicrowaveRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
 	}
 
 	@SubscribeEvent

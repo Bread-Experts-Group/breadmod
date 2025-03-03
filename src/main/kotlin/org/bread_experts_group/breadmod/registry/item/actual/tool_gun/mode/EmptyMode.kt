@@ -11,7 +11,6 @@ import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
 import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget.Builder
 
-@ToolGunMode
 class EmptyMode : AbstractToolGunMode() {
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 	}

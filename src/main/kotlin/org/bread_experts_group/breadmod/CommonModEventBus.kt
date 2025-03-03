@@ -202,6 +202,10 @@ internal object CommonModEventBus {
 				else                         -> null
 			}
 		}
+		event.registerBlockEntity(
+			Capabilities.EnergyStorage.BLOCK,
+			ModBlockEntityTypes.ENERGY_STORAGE.get()
+		) { entity, _ -> entity.energyHandler }
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
@@ -221,7 +225,7 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get()
-		) { entity, direction: Direction? ->
+		) { entity, _: Direction? ->
 			entity.fluidHandler
 		}
 

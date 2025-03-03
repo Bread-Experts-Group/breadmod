@@ -16,7 +16,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 
-class MicrowaveRenderer(private val ctx: Context) : BlockEntityRenderer<MicrowaveBlockEntity> {
+class MicrowaveRenderer(context: Context) : BreadModBER<MicrowaveBlockEntity>(context) {
 	private companion object {
 		val DOOR_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door")
 		val PLATE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate")
@@ -24,7 +24,7 @@ class MicrowaveRenderer(private val ctx: Context) : BlockEntityRenderer<Microwav
 		val PLATE_MODEL: BakedModel = localClient.modelManager.getModel(this.PLATE_MODEL_LOC)
 	}
 
-	private val blockModelRenderer = this.ctx.blockRenderDispatcher.modelRenderer
+	private val blockModelRenderer = this.context.blockRenderDispatcher.modelRenderer
 	private val random = RandomSource.create(1)
 
 	override fun render(

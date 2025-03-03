@@ -30,6 +30,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.entityModels
 ) {
 	private var helper = ToolGunRenderHelper()
+	private val deltaTracker = localClient.timer
+	private val partialTick = this.deltaTracker.gameTimeDeltaTicks
 
 	// Models
 	@Suppress("unused")
@@ -56,12 +58,10 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val deltaTracker = localClient.timer
-		val partialTick = deltaTracker.gameTimeDeltaTicks
 		if (coilDelta > 0f) {
-			coilDelta -= 0.025f * partialTick
-			coilRotation += (40f * coilDelta) * partialTick
-			recoil -= 0.025f * partialTick * coilDelta / 3.5f
+			coilDelta -= 0.025f * this.partialTick
+			coilRotation += (40f * coilDelta) * this.partialTick
+			recoil -= 0.025f * this.partialTick * coilDelta / 3.5f
 		}
 
 		if (displayContext.firstPerson()) {

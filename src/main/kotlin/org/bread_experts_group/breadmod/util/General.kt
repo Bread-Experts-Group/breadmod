@@ -232,6 +232,24 @@ sealed class RaycastResult(
 }
 
 /**
+ * Translates a [Direction] to a side relative to another [Direction].
+ * @return The relativized [Direction].
+ * @param translateFor The [Direction] to translate for.
+ * @param side The side to translate in relation to.
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+fun translateDirection(translateFor: Direction, side: Direction): Direction =
+	if (side.axis == Direction.Axis.Y) side
+	else when (translateFor) {
+		NORTH -> side.opposite
+		SOUTH -> side
+		EAST  -> side.clockWise
+		WEST  -> side.counterClockWise
+		else  -> translateFor
+	}
+
+/**
  * Adds a [Vec3] to this [Vec3].
  * @return The sum of this [Vec3] and [other].
  * @param other The [Vec3] to add to this [Vec3].

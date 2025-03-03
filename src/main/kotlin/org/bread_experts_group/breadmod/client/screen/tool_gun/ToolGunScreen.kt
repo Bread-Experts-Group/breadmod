@@ -5,9 +5,10 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.ModTextureLocations
+import org.bread_experts_group.breadmod.client.screen.ContainerWidget
 import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ModeSelectTab
-import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings.SettingsTab
 import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ToolGunScreenTab
+import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings.SettingsTab
 
 class ToolGunScreen(title: Component) : Screen(title) {
 	companion object {
@@ -39,6 +40,7 @@ class ToolGunScreen(title: Component) : Screen(title) {
 				it.tabBarColor.rgb
 			)
 		}
+		println(focused)
 	}
 
 	private fun getTabs(): List<ToolGunScreenTab> = this.children().filterIsInstance<ToolGunScreenTab>()
@@ -62,6 +64,24 @@ class ToolGunScreen(title: Component) : Screen(title) {
 				button.setPosition(tabPosition, this.topPos + 27)
 				tabPosition += button.width
 			})
+		}
+	}
+
+	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+		this.children().any { child ->
+			if (child.mouseClicked(mouseX, mouseY, button)) {
+				if (child !is ContainerWidget<*>) this.focused = child
+				if (button == 0) this.isDragging = true
+				return true
+			} else false
+		}
+
+		return false
+	}
+
+	override fun tick() {
+		this.children().forEach {
+			if (it is ContainerWidget<*>) it.tick()
 		}
 	}
 

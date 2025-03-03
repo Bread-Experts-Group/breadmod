@@ -68,6 +68,7 @@ class ModBlockLootProvider(
 		this.dropSelf(ModBlocks.FLUID_ENERGY.asBlock())
 		this.dropSelf(ModBlocks.TOASTER.asBlock())
 		this.dropSelf(ModBlocks.MICROWAVE.asBlock())
+		this.dropSelf(ModBlocks.ENERGY_STORAGE.asBlock())
 		this.add(ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock(), noDrop())
 		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock(), noDrop())
 		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock(), noDrop())

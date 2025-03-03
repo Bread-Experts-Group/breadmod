@@ -8,7 +8,7 @@ import java.awt.Color
 abstract class ToolGunScreenTab(
 	val id: String,
 	val tabBarColor: Color,
-	val screen: ToolGunScreen
-) : ContainerWidget(0, 0, 243, 185, id) {
+	screen: ToolGunScreen
+) : ContainerWidget<ToolGunScreen>(0, 0, 243, 185, id, screen) {
 	abstract fun getTabButton(): TabButton
 }

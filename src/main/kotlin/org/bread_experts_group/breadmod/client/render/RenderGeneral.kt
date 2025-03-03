@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.Tesselator
 import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.math.Axis
 import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.color.item.ItemColor
@@ -23,6 +24,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelResourceLocation
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import net.minecraft.util.FormattedCharSequence
@@ -32,6 +34,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
@@ -41,6 +44,7 @@ import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
+import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
 import snownee.jade.overlay.DisplayHelper
@@ -201,6 +205,18 @@ fun GuiGraphics.borderedFill(
 ) {
 	this.fill(renderType, minX, minY, maxX, maxY, borderColor)
 	this.fill(renderType, minX + 1, minY + 1, maxX - 1, maxY - 1, innerColor)
+}
+
+fun GuiGraphics.borderedFillPositioned(
+	x: Int,
+	y: Int,
+	width: Int,
+	height: Int,
+	borderColor: Color,
+	innerColor: Color
+) {
+	this.fill(RenderType.gui(), x, y, x + width, y + height, borderColor.rgb)
+	this.fill(RenderType.gui(), x + 1, y + 1, x + width - 1, y + height - 1, innerColor.rgb)
 }
 
 /**
@@ -415,6 +431,102 @@ fun renderText(
 		packedLight
 	)
 }
+
+private const val TRANSLATE_OFFSET = 0.0001
+
+/**
+ * [posX], [posY], [posZ] translates the [PoseStack] on the facing side of the block. *(not required)*
+ * ### translated [PoseStack] starts at the top left of the facing side
+ *
+ * @see translateDirection
+ */
+fun PoseStack.translateOnBlockSide(
+	blockState: BlockState,
+	direction: Direction? = null,
+	posX: Double = 0.0,
+	posY: Double = 0.0,
+	posZ: Double = 0.0
+) {
+	var facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+		?: throw IllegalArgumentException("Provided block state must have a HORIZONTAL_FACING property")
+	if (direction != null) facing = translateDirection(facing, direction)
+
+	this.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
+	this.translate(posX, posY, posZ)
+	when (facing) {
+		Direction.NORTH              -> this.translate(-1.0, 1.0, TRANSLATE_OFFSET)
+		Direction.EAST               -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
+		Direction.WEST               -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
+		Direction.SOUTH              -> this.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
+		Direction.UP, Direction.DOWN -> {
+			this.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
+			this.mulPose(Axis.XN.rotationDegrees(90F))
+		}
+	}
+}
+
+val TRANSPARENT: Int = Color(0f, 0f, 0f, 0f).rgb
+
+fun PoseStack.drawTextOnSide(
+	fontRenderer: Font,
+	component: Component,
+	posX: Double,
+	posY: Double,
+	posZ: Double = 0.0,
+	bufferSource: MultiBufferSource,
+	blockState: BlockState,
+	color: Int = Color.WHITE.rgb,
+	backgroundColor: Int = TRANSPARENT,
+	dropShadow: Boolean = false,
+	direction: Direction? = null,
+	scale: Float = 1f
+) {
+	this.pushPose()
+	this.translateOnBlockSide(blockState, direction, posX, posY, posZ)
+	this.mulPose(Axis.XN.rotationDegrees(180f))
+	this.scaleFlat(scale)
+	renderText(
+		component.visualOrderText,
+		color,
+		backgroundColor,
+		fontRenderer,
+		this,
+		bufferSource,
+		dropShadow,
+		15728880
+	)
+	this.popPose()
+}
+
+fun PoseStack.drawCenteredTextOnSide(
+	fontRenderer: Font,
+	component: Component,
+	posX: Double,
+	posY: Double,
+	posZ: Double = 0.0,
+	bufferSource: MultiBufferSource,
+	blockState: BlockState,
+	color: Int = Color.WHITE.rgb,
+	backgroundColor: Int = TRANSPARENT,
+	dropShadow: Boolean = false,
+	direction: Direction? = null,
+	scale: Float = 1f
+) {
+	this.pushPose()
+	this.translateOnBlockSide(
+		blockState, direction,
+		posX - fontRenderer.width(component.visualOrderText) / 2,
+		posY, posZ
+	)
+	this.mulPose(Axis.XN.rotationDegrees(180f))
+	this.scaleFlat(scale)
+	renderText(
+		component.visualOrderText, color, backgroundColor, fontRenderer,
+		this, bufferSource, dropShadow, 15728880
+	)
+	this.popPose()
+}
+
 //fun renderEntityInInventoryFollowsMouse(
 //    pGuiGraphics: GuiGraphics,
 //    pX: Int,

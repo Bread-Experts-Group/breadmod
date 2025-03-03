@@ -32,6 +32,7 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 	}
 
 	override fun init() {
+		this.currentModeWidget = null
 		val gridList = buildList {
 			repeat(5) { y ->
 				repeat(3) { x ->
@@ -52,15 +53,14 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 	/**
 	 * Update the border color on the widget's mode that is currently active.
 	 */
-	private fun updateModeWidgetSelection() = this.subWidgets.values.filterIsInstance<ModeWidget>().forEach {
+	private fun updateModeWidgetSelection() = this.getWidgets().filterIsInstance<ModeWidget>().forEach {
 		it.isSelected = it.id == ToolGunClientGlobals.getCurrentModeID()
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		this.currentModeWidget = this.focusedWidget as? ModeWidget
+		this.currentModeWidget = this.screen.focused as? ModeWidget
 		this.modeButton.active = this.currentModeWidget != null
 		val poseStack = guiGraphics.pose()
-//		guiGraphics.fill(this.x, this.y, this.x + 250, this.y + 38, Color.DARK_GRAY.rgb) // tab selector bg color
 		guiGraphics.borderedFill(
 			RenderType.gui(),
 			this.x,
@@ -71,7 +71,7 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 			Color(150, 150, 150).rgb
 		)
 		guiGraphics.vLine(this.x + 120, this.y, this.y + 184, Color.RED.rgb)
-
+		// todo move this to the main screen class for the title
 //		guiGraphics.drawString(localClient.font, this.title, this.x + 2, this.y + 2, Color.BLACK.rgb, false)
 		guiGraphics.fill(
 			RenderType.gui(),
