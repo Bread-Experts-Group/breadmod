@@ -10,13 +10,14 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.D
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.ControlRegister0
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.SegmentRegister
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
+import kotlin.reflect.KProperty0
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
@@ -27,7 +28,6 @@ import kotlin.reflect.full.primaryConstructor
  * @see Computer
  * @author Miko Elbrecht
  */
-@Suppress("ReplaceNotNullAssertionWithElvisReturn")
 class IA32Processor(val computer: Computer) : Processor {
 	override fun step() {
 		this.fetch()
@@ -124,8 +124,8 @@ class IA32Processor(val computer: Computer) : Processor {
 		this.biosHooks.getOrPut(cs) { mutableMapOf() }[ip] = r
 	}
 
-	fun initiateInterrupt(selector: UByte): Unit = when (this.operatingMode) {
-		AddressingLength.R16 -> {
+	fun initiateInterrupt(selector: UByte) {
+		if (this.realMode()) {
 			this.logger.warn("!!! INTERRUPT RECEIVED (${hex(selector)}) !!!")
 			this.push16(this.flags.tx)
 			this.flags.setFlag(FlagType.INTERRUPT_ENABLE_FLAG, false)
@@ -136,35 +136,42 @@ class IA32Processor(val computer: Computer) : Processor {
 			val addr = selector.toULong() * 4u
 			processor.ip.tex = processor.computer.requestMemoryAt16(addr).toUInt()
 			processor.cs.tx = processor.computer.requestMemoryAt16(addr + 2u)
+		} else {
+			throw TODO("Protected mode interrupts")
 		}
-		else                 -> throw IllegalArgumentException("Meow")
 	}
 
 	fun fetch() {
-		if (this.operatingMode == AddressingLength.R16) this.biosHooks[this.cs.rx]?.get(this.ip.rx)?.invoke(this)
+		if (this.realMode()) this.biosHooks[this.cs.rx]?.get(this.ip.rx)?.invoke(this)
 		this.cir = this.computer.requestMemoryAt(this.cs.offset(this.ip))
 		this.ip.rx++
 	}
 
-	var segOverride: SegmentRegister = this.ds
-	var bitOverride: Boolean = false
-	var bit8Override: Boolean = false
-	val operatingMode: AddressingLength
-		get() = if (this.gdtrBase.tex == 0u || this.cs.tex == 0u) AddressingLength.R16
-		else {
-			val descriptor = this.cs.readSegmentDescriptor()
-			if (descriptor.flags and 0b0010u > 0u) TODO("64-bits mode")
-			if (descriptor.flags and 0b0100u > 0u) AddressingLength.R32
+	val instructionMap: MutableMap<UInt, Instruction> = mutableMapOf()
+	var segmentOverride: SegmentRegister = this.ds
+	private var operandSizeOverride: Boolean = false
+	private var addressSizeOverride: Boolean = false
+	fun realMode(): Boolean = !processor.cr0.getFlag(ControlRegister0.FlagType.PROTECTED_MODE_ENABLE)
+
+	fun getAddressingLengthForSpecifier(specifier: KProperty0<Boolean>): AddressingLength {
+		if (!this.realMode()) {
+			// Protected Mode
+			if (processor.cs.readSegmentDescriptor().flags and 0b0100u > 0u) {
+				return if (specifier.get()) AddressingLength.R16
+				else AddressingLength.R32
+			}
+			return if (specifier.get()) AddressingLength.R32
 			else AddressingLength.R16
 		}
-	val operatingModeLocal: AddressingLength
-		get() = if (this.bit8Override) AddressingLength.R8
-		else
-			(if (this.bitOverride)
-				if (this.operatingMode == AddressingLength.R32) AddressingLength.R16
-				else AddressingLength.R32
-			else this.operatingMode)
-	val instructionMap: MutableMap<UInt, ZeroOperandInstruction> = mutableMapOf()
+		// Real Mode
+		return if (specifier.get()) AddressingLength.R32
+		else AddressingLength.R16
+	}
+
+	val operandSize: AddressingLength
+		get() = this.getAddressingLengthForSpecifier(this::operandSizeOverride)
+	val addressSize: AddressingLength
+		get() = this.getAddressingLengthForSpecifier(this::addressSizeOverride)
 
 	init {
 		val scanner = this::class.java.`package`.getScanner()
@@ -173,7 +180,7 @@ class IA32Processor(val computer: Computer) : Processor {
 			if (this.instructionMap.contains(instructionDescriptor.opcode))
 				throw IllegalArgumentException("Multiple opcodes, ${hex(instructionDescriptor.opcode)}")
 			this.instructionMap[instructionDescriptor.opcode] =
-				(it.objectInstance ?: it.primaryConstructor!!.call(this)) as ZeroOperandInstruction
+				(it.objectInstance ?: it.primaryConstructor!!.call(this)) as Instruction
 		}
 		scanner.getClassesAnnotatedWith(IA32InstructionCluster::class).forEach {
 			val cluster = it.primaryConstructor!!.call(this)
@@ -181,35 +188,44 @@ class IA32Processor(val computer: Computer) : Processor {
 				val instructionDescriptor = f.findAnnotation<IA32Instruction>()!!
 				if (this.instructionMap.contains(instructionDescriptor.opcode))
 					throw IllegalArgumentException("Multiple opcodes, ${hex(instructionDescriptor.opcode)}")
-				this.instructionMap[instructionDescriptor.opcode] = f.getter.call(cluster) as ZeroOperandInstruction
+				this.instructionMap[instructionDescriptor.opcode] = f.getter.call(cluster) as Instruction
 			}
 		}
 		this.logger.warn("Understood ${this.instructionMap.size} opcodes.")
 	}
 
 	fun decode() {
-		// Useful links when writing decoding:
-		// Intel® 64 and IA-32 Architectures: Software Developer’s Manual
-		// Volume 2A: Instruction Set Reference, A-L
-		// 2.1.5 Table 2-1. 16-Bit Addressing Forms with the ModR/M Byte
-		// 2.1.5 Table 2-2. 32-Bit Addressing Forms with the ModR/M Byte
-		// 3.1.1.1 Opcode Column in the Instruction Summary Table
-		// TODO Exceptions
 		val instruction = when (this.cir.toUInt()) {
 			0x26u -> {
-				this.segOverride = this.es
+				this.segmentOverride = this.es
 				return
 			}
 			0x2Eu -> {
-				this.segOverride = this.cs
+				this.segmentOverride = this.cs
 				return
 			}
 			0x36u -> {
-				this.segOverride = this.ss
+				this.segmentOverride = this.ss
+				return
+			}
+			0x3Eu -> {
+				this.segmentOverride = this.ds
+				return
+			}
+			0x64u -> {
+				this.segmentOverride = this.fs
+				return
+			}
+			0x65u -> {
+				this.segmentOverride = this.gs
 				return
 			}
 			0x66u -> {
-				this.bitOverride = true
+				this.operandSizeOverride = true
+				return
+			}
+			0x67u -> {
+				this.addressSizeOverride = true
 				return
 			}
 			0x0Fu -> this.instructionMap[(0x0Fu shl 8) or this.decoding.readFetch().toUInt()]
@@ -222,15 +238,14 @@ class IA32Processor(val computer: Computer) : Processor {
 				?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)}")
 		}
 		this.logger.warn(
-			"{} ({},{}): {}",
-			this.cs.hex(this.ip.rx - 1u - (if (this.segOverride != this.ds) 1u else 0u) - (if (this.bitOverride) 1u else 0u)),
-			this.segOverride.name,
-			if (this.bitOverride) "66" else "  ",
+			"{} {}: {}",
+			this.cs.hex(this.ip.rx - 1u),
+			hex(this.cir),
 			instruction.getDisassembly(this)
 		)
 		instruction.handle(this)
-		this.segOverride = this.ds
-		this.bitOverride = false
-		this.bit8Override = false
+		this.segmentOverride = this.ds
+		this.operandSizeOverride = false
+		this.addressSizeOverride = false
 	}
 }

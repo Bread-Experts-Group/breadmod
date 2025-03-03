@@ -5,7 +5,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.SegmentRegister
 
@@ -18,15 +18,14 @@ class PushFromRegisterDefinitions(processor: IA32Processor) {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	class PushFromRegister(val r32n: String, val r16n: String, val register: Register) : ZeroOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "push"
-		override fun getOperands(processor: IA32Processor): String = when (processor.operatingModeLocal) {
+	class PushFromRegister(val r32n: String, val r16n: String, val register: Register) : Instruction("push") {
+		override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
 			AddressingLength.R32 -> "${this.r32n} [${hex(this.register.tex)}]"
 			AddressingLength.R16 -> "${this.r16n} [${hex(this.register.tx)}]"
 			else                 -> throw IllegalArgumentException("Unsupported mode")
 		}
 
-		override fun handle(processor: IA32Processor): Unit = when (processor.operatingModeLocal) {
+		override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
 			AddressingLength.R32 -> processor.push32(this.register.tex)
 			AddressingLength.R16 -> processor.push16(this.register.tx)
 			else                 -> throw IllegalArgumentException("Unsupported mode")
@@ -67,9 +66,8 @@ class PushFromRegisterDefinitions(processor: IA32Processor) {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	class PushFromSegmentRegister(val n: Char, val register: SegmentRegister) : ZeroOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "push"
-		override fun getOperands(processor: IA32Processor): String = "${this.n}s [${hex(this.register.tx)}]"
+	class PushFromSegmentRegister(val n: Char, val register: SegmentRegister) : Instruction("push") {
+		override fun operands(processor: IA32Processor): String = "${this.n}s [${hex(this.register.tx)}]"
 		override fun handle(processor: IA32Processor): Unit = processor.push16(this.register.tx)
 	}
 

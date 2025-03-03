@@ -1,13 +1,11 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.h0F
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.MemRMResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
-import kotlin.reflect.KMutableProperty0
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 
 /**
  * Opcode: `0F 20 /r` |
@@ -17,14 +15,15 @@ import kotlin.reflect.KMutableProperty0
  * @since 1.0.0
  */
 @IA32Instruction(0x0F20u)
-object MoveFromControlRegister : RegisterMemorySingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "mov"
-	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		"${rmD.memRM}, ${rmD.register}"
-
-	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		rmM.decide({ it.set(rmR.get()) }, { processor.computer.setMemoryAt32(it, rmR.get().toUInt()) })
+object MoveFromControlRegister : Instruction("mov"), ModRM {
+	override fun operands(processor: IA32Processor): String = processor.rmD(AddressingLength.R32).let {
+		"${it.regMem}, ${it.register}"
 	}
 
-	override val rmRegisterType: RegisterType = RegisterType.CONTROL_REGISTER
+	override fun handle(processor: IA32Processor) {
+		val (memRM, register) = processor.rm(AddressingLength.R32)
+		memRM.setRMi(register.get().toUInt())
+	}
+
+	override val registerType: RegisterType = RegisterType.CONTROL_REGISTER
 }

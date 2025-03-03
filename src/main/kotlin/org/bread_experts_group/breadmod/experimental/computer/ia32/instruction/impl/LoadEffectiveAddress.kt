@@ -1,23 +1,18 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.MemRMResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
-import kotlin.reflect.KMutableProperty0
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 
 @IA32Instruction(0x8Du)
-object LoadEffectiveAddress : RegisterMemorySingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "lea"
-	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		"${rmD.register}, ${rmD.memRM}"
-
-	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		rmR.set(rmM.address.get())
+object LoadEffectiveAddress : Instruction("lea"), ModRM {
+	override fun operands(processor: IA32Processor): String = processor.rmD().let { "${it.register}, ${it.regMem}" }
+	override fun handle(processor: IA32Processor) {
+		val (memRM, register) = processor.rm()
+		register.set(memRM.memory!!)
 	}
 
-	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
+	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 }

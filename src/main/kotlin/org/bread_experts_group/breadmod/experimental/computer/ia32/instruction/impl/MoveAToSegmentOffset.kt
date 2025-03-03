@@ -2,23 +2,31 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ImmediateOperatingLengthSingleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate16
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate32
 
 @IA32Instruction(0xA3u)
-object MoveAToSegmentOffset : ImmediateOperatingLengthSingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "mov"
-	override fun getOperands16(processor: IA32Processor, imm16: UShort): String =
-		"${processor.segOverride.name}:[${hex(imm16)}] [${hex(processor.segOverride.offset(imm16.toULong()))}], ax"
-
-	override fun getOperands32(processor: IA32Processor, imm32: UInt): String =
-		"${processor.segOverride.name}:[${hex(imm32)}] [${hex(processor.segOverride.offset(imm32.toULong()))}], eax"
-
-	override fun handle16(processor: IA32Processor, imm16: UShort) {
-		processor.computer.setMemoryAt16(processor.segOverride.offset(imm16.toULong()), processor.a.tx)
+object MoveAToSegmentOffset : Instruction("mov"), Immediate32, Immediate16 {
+	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
+		AddressingLength.R32 -> processor.imm32().let {
+			"${processor.segmentOverride.name}:[${hex(it)}] [${hex(processor.segmentOverride.offset(it.toULong()))}], eax"
+		}
+		AddressingLength.R16 -> processor.imm16().let {
+			"${processor.segmentOverride.name}:[${hex(it)}] [${hex(processor.segmentOverride.offset(it.toULong()))}], ax"
+		}
+		else                 -> throw UnsupportedOperationException()
 	}
 
-	override fun handle32(processor: IA32Processor, imm32: UInt) {
-		processor.computer.setMemoryAt32(processor.segOverride.offset(imm32.toULong()), processor.a.tex)
+	override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
+		AddressingLength.R32 -> processor.imm32().let {
+			processor.computer.setMemoryAt32(processor.segmentOverride.offset(it.toULong()), processor.a.tex)
+		}
+		AddressingLength.R16 -> processor.imm16().let {
+			processor.computer.setMemoryAt16(processor.segmentOverride.offset(it.toULong()), processor.a.tx)
+		}
+		else                 -> throw UnsupportedOperationException()
 	}
 }

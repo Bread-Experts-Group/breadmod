@@ -4,21 +4,24 @@ import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ImmediateSigned8SingleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate8
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
 @IA32InstructionCluster
 class JumpOnConditionDefinitions8(processor: IA32Processor) {
 	class JumpOnConditionImmediate8Displacement(
-		val name: String,
+		name: String,
 		val condition: ((FlagType) -> Boolean) -> Boolean
-	) : ImmediateSigned8SingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "j${this.name}"
-		override fun getOperands(processor: IA32Processor, rel8: Byte): String =
-			"${hex(rel8)} [${hex((processor.ip.tex.toInt() + rel8).toUInt())}]"
+	) : Instruction("j$name"), Immediate8 {
+		override fun operands(processor: IA32Processor): String = processor.rel8().let {
+			"${hex(it)} [${hex((processor.ip.tex.toInt() + it).toUInt())}]"
+		}
 
-		override fun handle(processor: IA32Processor, rel8: Byte) {
-			if (this.condition(processor.flags::getFlag)) processor.ip.tex = (processor.ip.tex.toInt() + rel8).toUInt()
+		override fun handle(processor: IA32Processor) {
+			val rel8 = processor.rel8()
+			if (this.condition(processor.flags::getFlag))
+				processor.ip.tex = (processor.ip.tex.toInt() + rel8).toUInt()
 		}
 	}
 

@@ -3,14 +3,14 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
 @IA32InstructionCluster
 class SpecificFlagModificationDefinitions(processor: IA32Processor) {
-	class SpecificFlagModification(val n: Char, val flag: FlagType, val state: Boolean) : ZeroOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "${if (this.state) "st" else "cl"}${this.n}"
-		override fun getOperands(processor: IA32Processor): String = ""
+	class SpecificFlagModification(n: Char, val flag: FlagType, val state: Boolean) :
+		Instruction("${if (state) "st" else "cl"}$n") {
+		override fun operands(processor: IA32Processor): String = ""
 		override fun handle(processor: IA32Processor) {
 			processor.flags.setFlag(this.flag, this.state)
 		}

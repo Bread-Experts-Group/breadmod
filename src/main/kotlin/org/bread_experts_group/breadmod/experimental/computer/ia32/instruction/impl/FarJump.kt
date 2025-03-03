@@ -2,25 +2,27 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ImmediateSegmentAndOffsetOperatingLengthDoubleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate16
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate32
 
 @IA32Instruction(0xEAu)
-object FarJump : ImmediateSegmentAndOffsetOperatingLengthDoubleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "ljmp"
-	override fun getOperands16(processor: IA32Processor, seg16: UShort, imm16: UShort): String =
-		"${hex(seg16)}:${hex(imm16).substring(2)}"
-
-	override fun getOperands32(processor: IA32Processor, seg16: UShort, imm32: UInt): String =
-		"${hex(seg16)}:${hex(imm32).substring(2)}"
-
-	override fun handle16(processor: IA32Processor, seg16: UShort, imm16: UShort) {
-		processor.cs.tx = seg16
-		processor.ip.tex = imm16.toUInt()
+object FarJump : Instruction("ljmp"), Immediate32, Immediate16 {
+	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
+		AddressingLength.R32 -> hex(processor.imm32()).substring(2).let { "${hex(processor.imm16())}:$it" }
+		AddressingLength.R16 -> hex(processor.imm16()).substring(2).let { "${hex(processor.imm16())}:$it" }
+		else                 -> throw UnsupportedOperationException()
 	}
 
-	override fun handle32(processor: IA32Processor, seg16: UShort, imm32: UInt) {
-		processor.cs.tx = seg16
-		processor.ip.tex = imm32
+	override fun handle(processor: IA32Processor) {
+		val (ip, cs) = when (processor.operandSize) {
+			AddressingLength.R32 -> processor.imm32() to processor.imm16()
+			AddressingLength.R16 -> processor.imm16().toUInt() to processor.imm16()
+			else                 -> throw UnsupportedOperationException()
+		}
+		processor.ip.tex = ip
+		processor.cs.tx = cs
 	}
 }

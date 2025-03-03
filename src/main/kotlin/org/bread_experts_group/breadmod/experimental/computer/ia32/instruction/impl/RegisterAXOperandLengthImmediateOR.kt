@@ -2,9 +2,12 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ImmediateOperatingLengthSingleOperandInstruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.LogicalArithmeticFlagOperations
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.flag.LogicalArithmeticFlagOperations
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate16
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate32
 
 /**
  * Opcode: `0D i(w/d)` |
@@ -14,21 +17,25 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
  * @since 1.0.0
  */
 @IA32Instruction(0x0Du)
-object RegisterAXOperandLengthImmediateOR :
-	ImmediateOperatingLengthSingleOperandInstruction,
+object RegisterAXOperandLengthImmediateOR : Instruction("or"), Immediate16, Immediate32,
 	LogicalArithmeticFlagOperations {
-	override fun getMnemonic(processor: IA32Processor): String = "or"
-	override fun getOperands32(processor: IA32Processor, imm32: UInt): String = "eax, ${hex(imm32)}"
-	override fun handle32(processor: IA32Processor, imm32: UInt) {
-		val result = processor.a.tex or imm32
-		processor.a.tex = result
-		this.setFlagsForResult(processor, result)
+	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
+		AddressingLength.R32 -> "eax, ${hex(processor.imm32())}"
+		AddressingLength.R16 -> "ax, ${hex(processor.imm16())}"
+		else                 -> throw UnsupportedOperationException()
 	}
 
-	override fun getOperands16(processor: IA32Processor, imm16: UShort): String = "ax, ${hex(imm16)}"
-	override fun handle16(processor: IA32Processor, imm16: UShort) {
-		val result = processor.a.tx or imm16
-		processor.a.tx = result
-		this.setFlagsForResult(processor, result)
+	override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
+		AddressingLength.R32 -> {
+			val result = processor.a.tex or processor.imm32()
+			processor.a.tex = result
+			this.setFlagsForResult(processor, result)
+		}
+		AddressingLength.R16 -> {
+			val result = processor.a.tx or processor.imm16()
+			processor.a.tx = result
+			this.setFlagsForResult(processor, result)
+		}
+		else                 -> throw UnsupportedOperationException()
 	}
 }

@@ -1,29 +1,24 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.h0F
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemory8SingleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
-import kotlin.reflect.KMutableProperty0
 
 @IA32InstructionCluster
 class SetByteToFlagDefinitions(processor: IA32Processor) {
-	class SetByteToFlag(val condition: ((FlagType) -> Boolean) -> Boolean, val n: String) :
-		RegisterMemory8SingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "set${this.n}"
-		override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-			rmD.memRM
-
-		override fun handle(processor: IA32Processor, rmM: DecodingUtil.MemRMResult, rmR: KMutableProperty0<ULong>) {
-			rmM.setValue(if (this.condition(processor.flags::getFlag)) 1u else 0u)
+	class SetByteToFlag(val condition: ((FlagType) -> Boolean) -> Boolean, n: String) : Instruction("set$n"), ModRM {
+		override fun operands(processor: IA32Processor): String = processor.rmD(AddressingLength.R8).regMem
+		override fun handle(processor: IA32Processor) {
+			val (memRm, _) = processor.rm(AddressingLength.R8)
+			memRm.setRMb(if (this.condition(processor.flags::getFlag)) 1u else 0u)
 		}
 
-		override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
+		override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 	}
 
 	@IA32Instruction(0x0F90u)

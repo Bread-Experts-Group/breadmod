@@ -3,15 +3,11 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Immediate8SingleOperandOperatingLengthDependentInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate8
 
 @IA32Instruction(0xCDu)
-object FireSoftwareInterrupt : Immediate8SingleOperandOperatingLengthDependentInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "int"
-	override fun getOperands16(processor: IA32Processor, imm8: UByte): String = hex(imm8)
-	override fun getOperands32(processor: IA32Processor, imm8: UByte): String = hex(imm8)
-	override fun handle16(processor: IA32Processor, imm8: UByte): Unit = processor.initiateInterrupt(imm8)
-	override fun handle32(processor: IA32Processor, imm8: UByte) {
-		TODO("Not yet implemented")
-	}
+object FireSoftwareInterrupt : Instruction("int"), Immediate8 {
+	override fun operands(processor: IA32Processor): String = hex(processor.imm8())
+	override fun handle(processor: IA32Processor): Unit = processor.initiateInterrupt(processor.imm8())
 }

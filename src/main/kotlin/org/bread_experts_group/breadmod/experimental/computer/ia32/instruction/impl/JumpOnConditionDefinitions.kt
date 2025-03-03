@@ -2,30 +2,36 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ImmediateSignedOperatingLengthSingleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate16
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate32
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
 @IA32InstructionCluster
 class JumpOnConditionDefinitions(processor: IA32Processor) {
 	class JumpOnConditionImmediateDisplacement(
-		val name: String,
+		name: String,
 		val condition: ((FlagType) -> Boolean) -> Boolean
-	) : ImmediateSignedOperatingLengthSingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "j${this.name}"
-		override fun getOperands16(processor: IA32Processor, rel16: Short): String =
-			"${hex(rel16)} [${hex((processor.ip.tex.toInt() + rel16).toUInt())}]"
-
-		override fun getOperands32(processor: IA32Processor, rel32: Int): String =
-			"${hex(rel32)} [${hex((processor.ip.tex.toInt() + rel32).toUInt())}]"
-
-		override fun handle16(processor: IA32Processor, rel16: Short) {
-			if (this.condition(processor.flags::getFlag)) processor.ip.tex = (processor.ip.tex.toInt() + rel16).toUInt()
+	) : Instruction("j$name"), Immediate16, Immediate32 {
+		override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
+			AddressingLength.R32 -> processor.rel32()
+				.let { "${hex(it)} [${hex((processor.ip.tex.toInt() + it).toUInt())}]" }
+			AddressingLength.R16 -> processor.rel16()
+				.let { "${hex(it)} [${hex((processor.ip.tex.toInt() + it).toUInt())}]" }
+			else                 -> throw UnsupportedOperationException()
 		}
 
-		override fun handle32(processor: IA32Processor, rel32: Int) {
-			if (this.condition(processor.flags::getFlag)) processor.ip.tex = (processor.ip.tex.toInt() + rel32).toUInt()
+		override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
+			AddressingLength.R32 -> if (this.condition(processor.flags::getFlag))
+				processor.ip.tex = (processor.ip.tex.toInt() + processor.rel32()).toUInt() else {
+			}
+			AddressingLength.R16 -> if (this.condition(processor.flags::getFlag))
+				processor.ip.tex = (processor.ip.tex.toInt() + processor.rel16()).toUInt() else {
+			}
+			else                 -> throw UnsupportedOperationException()
 		}
 	}
 

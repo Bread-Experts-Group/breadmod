@@ -78,13 +78,13 @@ class BreadMod(container: ModContainer) {
 			try {
 				this.newComputer.disc = ISO9660Disc.readDisc(
 					this::class.java.getResource(
-						"/main.iso"
+						"/MS-DOS 6.22.iso"
 					)!!.toURI()
 				)
 				this.newComputer.reset()
 				while (true) {
 					this.newComputer.step()
-//					Thread.sleep(10)
+//					Thread.sleep(100)
 				}
 			} catch (e: Throwable) {
 				this.logger.fatal("a: ${hex(this.processor.a.rx)}")

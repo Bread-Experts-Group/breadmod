@@ -1,25 +1,25 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.group.hD2
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.shl
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.LogicalArithmeticFlagOperations
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemory8SingleOperandInstruction
-import kotlin.reflect.KMutableProperty0
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.flag.LogicalArithmeticFlagOperations
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 
-object ShiftModRMLeft8CL : RegisterMemory8SingleOperandInstruction, LogicalArithmeticFlagOperations {
-	override fun getMnemonic(processor: IA32Processor): String = "shl"
-	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		"${rmD.memRM}, cl [${hex(processor.c.tl)}]"
+object ShiftModRMLeft8CL : Instruction("shl"), ModRM, LogicalArithmeticFlagOperations {
+	override fun operands(processor: IA32Processor): String = processor.rmD(AddressingLength.R8).let {
+		"${it.regMem}, cl [${hex(processor.c.tl)}]"
+	}
 
-	override fun handle(processor: IA32Processor, rmM: DecodingUtil.MemRMResult, rmR: KMutableProperty0<ULong>) {
-		val result = rmM.getValue() shl processor.c.tl.toInt()
-		rmM.setValue(result)
+	override fun handle(processor: IA32Processor) {
+		val (memRM, _) = processor.rm(AddressingLength.R8)
+		val result = memRM.getRMb() shl processor.c.tl.toInt()
+		memRM.setRMb(result)
 		this.setFlagsForResult(processor, result)
 	}
 
-	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
+	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 }

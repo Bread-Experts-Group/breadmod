@@ -2,10 +2,10 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.ZeroOperandInstruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ZeroOperandOperatingLengthDependentInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.SegmentRegister
 
@@ -18,17 +18,17 @@ class PopIntoRegisterDefinitions(processor: IA32Processor) {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	class PopIntoRegister(val r32n: String, val r16n: String, val register: Register) :
-		ZeroOperandOperatingLengthDependentInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "pop"
-		override fun getOperands16(processor: IA32Processor): String = "${this.r16n} [${hex(processor.pop16())}]"
-		override fun getOperands32(processor: IA32Processor): String = "${this.r32n} [${hex(processor.pop32())}]"
-		override fun handle16(processor: IA32Processor) {
-			this.register.tx = processor.pop16()
+	class PopIntoRegister(val r32n: String, val r16n: String, val register: Register) : Instruction("pop") {
+		override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
+			AddressingLength.R32 -> "${this.r32n} [${hex(processor.pop32())}]"
+			AddressingLength.R16 -> "${this.r16n} [${hex(processor.pop16())}]"
+			else                 -> throw UnsupportedOperationException()
 		}
 
-		override fun handle32(processor: IA32Processor) {
-			this.register.tex = processor.pop32()
+		override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
+			AddressingLength.R32 -> this.register.tex = processor.pop32()
+			AddressingLength.R16 -> this.register.tx = processor.pop16()
+			else                 -> throw UnsupportedOperationException()
 		}
 	}
 
@@ -66,9 +66,8 @@ class PopIntoRegisterDefinitions(processor: IA32Processor) {
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
-	class PopIntoSegmentRegister(val n: Char, val register: SegmentRegister) : ZeroOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "pop"
-		override fun getOperands(processor: IA32Processor): String = "${this.n}s [${hex(processor.pop16())}]"
+	class PopIntoSegmentRegister(val n: Char, val register: SegmentRegister) : Instruction("pop") {
+		override fun operands(processor: IA32Processor): String = "${this.n}s [${hex(processor.pop16())}]"
 		override fun handle(processor: IA32Processor) {
 			this.register.tx = processor.pop16()
 		}

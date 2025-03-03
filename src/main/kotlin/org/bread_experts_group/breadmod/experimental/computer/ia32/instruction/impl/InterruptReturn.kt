@@ -2,20 +2,16 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.ZeroOperandOperatingLengthDependentInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
 
 @IA32Instruction(0xCFu)
-object InterruptReturn : ZeroOperandOperatingLengthDependentInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "iret"
-	override fun getOperands16(processor: IA32Processor): String = ""
-	override fun getOperands32(processor: IA32Processor): String = ""
-	override fun handle16(processor: IA32Processor) {
-		processor.ip.tex = processor.pop16().toUInt()
-		processor.cs.tx = processor.pop16()
-		processor.flags.tx = processor.pop16()
-	}
-
-	override fun handle32(processor: IA32Processor) {
-		TODO("Not yet implemented")
+object InterruptReturn : Instruction("iret") {
+	override fun operands(processor: IA32Processor): String = ""
+	override fun handle(processor: IA32Processor) {
+		if (processor.realMode()) {
+			processor.ip.tex = processor.pop16().toUInt()
+			processor.cs.tx = processor.pop16()
+			processor.flags.tx = processor.pop16()
+		} else throw TODO("PROTECTED IRET")
 	}
 }

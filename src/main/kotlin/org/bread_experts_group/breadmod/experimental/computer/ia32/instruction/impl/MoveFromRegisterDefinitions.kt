@@ -1,28 +1,27 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.MemRMResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32InstructionCluster
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemory8SingleOperandInstruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
-import kotlin.reflect.KMutableProperty0
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 
 @IA32InstructionCluster
 class MoveFromRegisterDefinitions(processor: IA32Processor) {
-	class MoveRegisterToModRM(type: RegisterType) : RegisterMemorySingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "mov"
-		override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-			"${rmD.memRM}, ${rmD.register}"
-
-		override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-			rmM.setValue(rmR.get())
+	class MoveRegisterToModRM(type: RegisterType) : Instruction("mov"), ModRM {
+		override fun operands(processor: IA32Processor): String = processor.rmD().let { "${it.regMem}, ${it.register}" }
+		override fun handle(processor: IA32Processor) {
+			val (memRM, register) = processor.rm()
+			when (processor.operandSize) {
+				AddressingLength.R32 -> memRM.setRMi(register.get().toUInt())
+				AddressingLength.R16 -> memRM.setRMs(register.get().toUShort())
+				else                 -> throw UnsupportedOperationException()
+			}
 		}
 
-		override val rmRegisterType: RegisterType = type
+		override val registerType: RegisterType = type
 	}
 
 	@IA32Instruction(0x89u)
@@ -31,16 +30,17 @@ class MoveFromRegisterDefinitions(processor: IA32Processor) {
 	@IA32Instruction(0x8Cu)
 	val seg: MoveRegisterToModRM = MoveRegisterToModRM(RegisterType.SEGMENT)
 
-	class MoveRegister8ToModRM(type: RegisterType) : RegisterMemory8SingleOperandInstruction {
-		override fun getMnemonic(processor: IA32Processor): String = "mov"
-		override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-			"${rmD.memRM}, ${rmD.register}"
-
-		override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-			rmM.setValue(rmR.get())
+	class MoveRegister8ToModRM(type: RegisterType) : Instruction("mov"), ModRM {
+		override fun operands(processor: IA32Processor): String = processor.rmD(AddressingLength.R8).let {
+			"${it.regMem}, ${it.register}"
 		}
 
-		override val rmRegisterType: RegisterType = type
+		override fun handle(processor: IA32Processor) {
+			val (memRM, register) = processor.rm(AddressingLength.R8)
+			memRM.setRMb(register.get().toUByte())
+		}
+
+		override val registerType: RegisterType = type
 	}
 
 	@IA32Instruction(0x88u)

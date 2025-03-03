@@ -1,26 +1,32 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.group.h83
 
-import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.MemRMResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.LogicalArithmeticFlagOperations
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemoryImmediate8DoubleOperandInstruction
-import kotlin.reflect.KMutableProperty0
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.flag.LogicalArithmeticFlagOperations
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate8
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 
-object ORImmediate8ToModRM : RegisterMemoryImmediate8DoubleOperandInstruction, LogicalArithmeticFlagOperations {
-	override fun getMnemonic(processor: IA32Processor): String = "or"
-	override fun getOperands(
-		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm8: UByte
-	): String = "${rmD.memRM}, ${BinaryUtil.hex(imm8)}"
-
-	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmD: KMutableProperty0<ULong>, imm8: UByte) {
-		val result = rmM.getValue() or imm8.toULong()
-		rmM.setValue(result)
-		this.setFlagsForResult(processor, result)
+object ORImmediate8ToModRM : Instruction("or"), ModRM, Immediate8, LogicalArithmeticFlagOperations {
+	override fun operands(processor: IA32Processor): String = "${processor.rmD().regMem}, ${hex(processor.imm8())}"
+	override fun handle(processor: IA32Processor) {
+		val (memRM, _) = processor.rm()
+		when (processor.operandSize) {
+			AddressingLength.R32 -> {
+				val result = memRM.getRMi() or processor.imm8().toUInt()
+				memRM.setRMi(result)
+				this.setFlagsForResult(processor, result)
+			}
+			AddressingLength.R16 -> {
+				val result = memRM.getRMs() or processor.imm8().toUShort()
+				memRM.setRMs(result)
+				this.setFlagsForResult(processor, result)
+			}
+			else                 -> throw UnsupportedOperationException()
+		}
 	}
 
-	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
+	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 }

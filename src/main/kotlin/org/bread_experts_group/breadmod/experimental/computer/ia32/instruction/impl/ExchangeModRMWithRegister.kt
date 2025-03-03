@@ -1,25 +1,25 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.MemRMResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
-import kotlin.reflect.KMutableProperty0
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 
 @IA32Instruction(0x87u)
-object ExchangeModRMWithRegister : RegisterMemorySingleOperandInstruction {
-	override fun getMnemonic(processor: IA32Processor): String = "xchg"
-	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		"${rmD.register}, ${rmD.memRM}"
-
-	override fun handle(processor: IA32Processor, rmM: MemRMResult, rmR: KMutableProperty0<ULong>) {
-		val tmp = rmM.getValue()
-		rmM.setValue(rmR.get())
-		rmR.set(tmp)
+object ExchangeModRMWithRegister : Instruction("xchg"), ModRM {
+	override fun operands(processor: IA32Processor): String = processor.rmD().let { "${it.register}, ${it.regMem}" }
+	override fun handle(processor: IA32Processor) {
+		val (memRM, register) = processor.rm()
+		val tmp = memRM.getRMMode()
+		when (processor.operandSize) {
+			AddressingLength.R32 -> memRM.setRMi(register.get().toUInt())
+			AddressingLength.R16 -> memRM.setRMs(register.get().toUShort())
+			else                 -> throw UnsupportedOperationException()
+		}
+		register.set(tmp)
 	}
 
-	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
+	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 }

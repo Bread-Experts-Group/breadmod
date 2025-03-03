@@ -10,6 +10,27 @@ object BinaryUtil {
 	fun hex(s: UShort): String = "0x${s.toString(16).padStart(4, '0').uppercase()}"
 	fun hex(b: UByte): String = "0x${b.toString(16).padStart(2, '0').uppercase()}"
 
+	fun iandbDef(a: UInt, b: UByte): UInt = a and (b.toUInt())
+	infix fun UInt.and(b: UByte): UInt = this@BinaryUtil.iandbDef(this, b)
+
+	fun sandbDef(a: UShort, b: UByte): UShort = a and (b.toUShort())
+	infix fun UShort.and(b: UByte): UShort = this@BinaryUtil.sandbDef(this, b)
+
+	fun shrDef(s: UShort, c: Int): UShort = (s.toUInt() shr c).toUShort()
+	fun shlDef(s: UShort, c: Int): UShort = (s.toUInt() shl c).toUShort()
+	infix fun UShort.shr(c: Int): UShort = this@BinaryUtil.shrDef(this, c)
+	infix fun UShort.shl(c: Int): UShort = this@BinaryUtil.shlDef(this, c)
+
+	fun shrDef(b: UByte, c: Int): UByte = (b.toUInt() shr c).toUByte()
+	fun shlDef(b: UByte, c: Int): UByte = (b.toUInt() shl c).toUByte()
+	infix fun UByte.shr(c: Int): UByte = this@BinaryUtil.shrDef(this, c)
+	infix fun UByte.shl(c: Int): UByte = this@BinaryUtil.shlDef(this, c)
+
+	fun Boolean.toULong(): ULong = if (this) 1u else 0u
+	fun Boolean.toUInt(): UInt = if (this) 1u else 0u
+	fun Boolean.toUShort(): UShort = if (this) 1u else 0u
+	fun Boolean.toUByte(): UByte = if (this) 1u else 0u
+
 	@OptIn(ExperimentalUnsignedTypes::class)
 	fun readBinary(length: Int, read: () -> UByte, flip: Boolean = false): Long {
 		val buffer = UByteArray(length) { read() }

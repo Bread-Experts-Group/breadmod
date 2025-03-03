@@ -2,34 +2,52 @@ package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.
 
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.MemRMResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.LogicalArithmeticFlagOperations
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemoryImmediate8DoubleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.flag.LogicalArithmeticFlagOperations
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.Immediate8
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
-import kotlin.reflect.KMutableProperty0
 
-class ShiftModRMImmediate8(val n: Char, val operation: (ULong, Int) -> ULong) :
-	RegisterMemoryImmediate8DoubleOperandInstruction,
-	LogicalArithmeticFlagOperations {
-	override fun getMnemonic(processor: IA32Processor): String = "sh${this.n}"
-	override fun getOperands(
-		processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult, imm8: UByte
-	): String = "${rmD.memRM}, ${hex(imm8)}"
+class ShiftModRMImmediate8(
+	n: Char,
+	val op16: (UShort, Int) -> UShort,
+	val op32: (UInt, Int) -> UInt
+) : Instruction("sh$n"), ModRM, Immediate8, LogicalArithmeticFlagOperations {
+	override fun operands(processor: IA32Processor): String = processor.rmD().let {
+		"${it.regMem}, ${hex(processor.imm8())}"
+	}
 
-	override fun handle(
-		processor: IA32Processor, rmM: MemRMResult, rmD: KMutableProperty0<ULong>, imm8: UByte
-	) {
-		if (imm8 > 0u) {
-			val saved = rmM.getValue()
-			val result = this.operation(saved, imm8.toInt())
-			rmM.setValue(result)
-			this.setFlagsForResult(processor, result)
-			processor.flags.setFlag(FlagType.CARRY_FLAG, (saved shr (imm8 - 1u).toInt() and 0x1u) > 0u)
+	override fun handle(processor: IA32Processor) {
+		val (memRM, _) = processor.rm()
+		val shiftCount = processor.imm8().toInt()
+		if (shiftCount > 0) {
+			when (processor.operandSize) {
+				AddressingLength.R32 -> {
+					val saved32 = memRM.getRMi()
+					val result = this.op32(saved32, shiftCount)
+					memRM.setRMi(result)
+					this.setFlagsForResult(processor, result)
+					processor.flags.setFlag(
+						FlagType.CARRY_FLAG,
+						(saved32 and (1u shl 32 - (shiftCount))) > 0u
+					)
+				}
+				AddressingLength.R16 -> {
+					val saved16 = memRM.getRMs()
+					val result = this.op16(saved16, shiftCount)
+					memRM.setRMs(result)
+					this.setFlagsForResult(processor, result)
+					processor.flags.setFlag(
+						FlagType.CARRY_FLAG,
+						(saved16 and (1u shl 16 - (shiftCount)).toUShort()) > 0u
+					)
+				}
+				else                 -> throw UnsupportedOperationException()
+			}
 		}
 	}
 
-	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
+	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 }

@@ -1,27 +1,36 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.group.hD1
 
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.shr
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMDisassemblyResult
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.ModRMResult
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.LogicalArithmeticFlagOperations
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.RegisterMemorySingleOperandInstruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.flag.LogicalArithmeticFlagOperations
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
-import kotlin.reflect.KMutableProperty0
 
-object ShiftModRMRightOnce : RegisterMemorySingleOperandInstruction, LogicalArithmeticFlagOperations {
-	override fun getMnemonic(processor: IA32Processor): String = "shr"
-	override fun getOperands(processor: IA32Processor, rm: ModRMResult, rmD: ModRMDisassemblyResult): String =
-		"${rmD.memRM}, 1"
-
-	override fun handle(processor: IA32Processor, rmM: DecodingUtil.MemRMResult, rmR: KMutableProperty0<ULong>) {
-		val a = rmM.getValue()
-		val result = a shr 1
-		rmM.setValue(result)
-		this.setFlagsForResult(processor, result)
-		processor.flags.setFlag(FlagType.CARRY_FLAG, a.takeLowestOneBit() > 0u)
+object ShiftModRMRightOnce : Instruction("shr"), ModRM, LogicalArithmeticFlagOperations {
+	override fun operands(processor: IA32Processor): String = "${processor.rmD().regMem}, 1"
+	override fun handle(processor: IA32Processor) {
+		val (memRM, _) = processor.rm()
+		when (processor.operandSize) {
+			AddressingLength.R32 -> {
+				val tmp = memRM.getRMi()
+				val result = tmp shr 1
+				memRM.setRMi(result)
+				this.setFlagsForResult(processor, result)
+				processor.flags.setFlag(FlagType.CARRY_FLAG, tmp.takeLowestOneBit() > 0u)
+			}
+			AddressingLength.R16 -> {
+				val tmp = memRM.getRMs()
+				val result = tmp shr 1
+				memRM.setRMs(result)
+				this.setFlagsForResult(processor, result)
+				processor.flags.setFlag(FlagType.CARRY_FLAG, tmp.takeLowestOneBit() > 0u)
+			}
+			else                 -> throw UnsupportedOperationException()
+		}
 	}
 
-	override val rmRegisterType: RegisterType = RegisterType.GENERAL_PURPOSE
+	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 }
