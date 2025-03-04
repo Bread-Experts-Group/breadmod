@@ -51,6 +51,7 @@ import snownee.jade.overlay.DisplayHelper
 import java.awt.Color
 import java.math.BigDecimal
 import java.util.function.Supplier
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.min
 
 /**
@@ -447,17 +448,20 @@ fun PoseStack.translateOnBlockSide(
 	posY: Double = 0.0,
 	posZ: Double = 0.0
 ) {
-	var facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
-		?: throw IllegalArgumentException("Provided block state must have a HORIZONTAL_FACING property")
+	var facing =
+		blockState.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).getOrNull() ?: blockState.getOptionalValue(
+			BlockStateProperties.FACING
+		).getOrNull()
+		?: return
 	if (direction != null) facing = translateDirection(facing, direction)
 
 	this.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
 	this.translate(posX, posY, posZ)
 	when (facing) {
-		Direction.NORTH              -> this.translate(-1.0, 1.0, TRANSLATE_OFFSET)
-		Direction.EAST               -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
-		Direction.WEST               -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
-		Direction.SOUTH              -> this.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
+		Direction.NORTH -> this.translate(-1.0, 1.0, TRANSLATE_OFFSET)
+		Direction.EAST -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
+		Direction.WEST -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
+		Direction.SOUTH -> this.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
 		Direction.UP, Direction.DOWN -> {
 			this.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
 			this.mulPose(Axis.XN.rotationDegrees(90F))

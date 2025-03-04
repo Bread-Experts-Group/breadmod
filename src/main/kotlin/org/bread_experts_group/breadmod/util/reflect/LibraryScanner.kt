@@ -1,6 +1,9 @@
 package org.bread_experts_group.breadmod.util.reflect
 
 import net.minecraft.client.Minecraft
+import net.minecraft.server.MinecraftServer
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.fml.loading.FMLLoader
 import net.neoforged.neoforgespi.language.ModFileScanData
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -24,7 +27,7 @@ import kotlin.reflect.jvm.javaMethod
 /**
  * A scanner for JVM packages.
  *
- * @property pForPackage The package to scan for.
+ * @property pforPackage The package to scan for.
  * @property localClasses The [KClass]
  * (note, classes don't need to be Kotlin) contained within the provided [Package].
  * @author Miko Elbrecht
@@ -90,7 +93,11 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 								count += it.classes.size
 								it.classes.forEach { c ->
 									try {
-										this.add(Minecraft::class.java.classLoader.loadClass(c.clazz.className).kotlin)
+										// todo band-aid fix to stop LibraryScanner from infinitely erroring on server.
+										//  Replace with some kind of Dist separation system.
+										if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
+											this.add(MinecraftServer::class.java.classLoader.loadClass(c.clazz.className).kotlin)
+										else this.add(Minecraft::class.java.classLoader.loadClass(c.clazz.className).kotlin)
 									} catch (_: Throwable) {
 										failures++
 									}

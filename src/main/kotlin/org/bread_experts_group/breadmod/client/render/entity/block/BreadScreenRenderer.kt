@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.drawTextOnSide
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.registry.ModFonts
@@ -27,13 +27,17 @@ class BreadScreenRenderer(context: Context) : BreadModBER<BreadScreenBlockEntity
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		levelGraphics.fill(0, 0, 16, 16, 1, Color.BLACK.rgb)
+		levelGraphics.fill(0, 0, 64, 48, 1, Color.BLACK.rgb)
 		lgPoseStack.scaleFlat(0.025f)
 		Companion.output.split('\n').forEachIndexed { i, s ->
-			levelGraphics.drawString(
-				localClient.font,
+			poseStack.drawTextOnSide(
+				this.context.font,
 				Component.literal(s).withStyle(ModFonts.IBM_EGA_9_14),
-				0, i * 9, Color.LIGHT_GRAY.rgb, false
+				0.0, -i * 0.1,
+				bufferSource = bufferSource,
+				blockState = blockEntity.blockState,
+				scale = 0.0105f,
+				color = Color.LIGHT_GRAY.rgb
 			)
 		}
 		listOf(
@@ -56,10 +60,14 @@ class BreadScreenRenderer(context: Context) : BreadModBER<BreadScreenBlockEntity
 			BreadScreenBlockEntity.processor.cr0
 		).forEachIndexed { i, r ->
 			val component = Component.literal("${r.name}: ${hex(r.rx)}").withStyle(ModFonts.IBM_EGA_9_14)
-			levelGraphics.drawString(
-				localClient.font, component,
-				localClient.window.guiScaledWidth - localClient.font.width(component), i * 9,
-				Color.ORANGE.rgb, false
+			poseStack.drawTextOnSide(
+				this.context.font,
+				component,
+				2.5, -i * 0.1,
+				bufferSource = bufferSource,
+				blockState = blockEntity.blockState,
+				scale = 0.0105f,
+				color = Color.ORANGE.rgb
 			)
 		}
 	}
