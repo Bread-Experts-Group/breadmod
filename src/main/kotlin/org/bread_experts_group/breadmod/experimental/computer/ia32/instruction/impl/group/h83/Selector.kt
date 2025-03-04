@@ -19,6 +19,6 @@ class Selector(processor: IA32Processor) : InstructionSelector(processor) {
 //		3u to SubtractWithBorrowImmediate8FromModRM,
 		4u to ANDImmediate8ToModRM,
 		5u to SubtractImmediate8FromModRM,
-//		7u to CompareImmediate8WithModRM
+		7u to CompareImmediate8WithModRM
 	)
 }

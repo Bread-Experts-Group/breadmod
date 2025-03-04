@@ -241,12 +241,14 @@ class IA32Processor : Processor {
 			else  -> this.instructionMap[this.cir.toUInt()]
 				?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)} [${hex(this.ip.rx)}]")
 		}
+//		if (this.ip.rx > 0x100000u) {
 		this.logger.warn(
 			"{} {}: {}",
 			this.cs.hex(this.ip.rx - 1u),
 			hex(this.cir),
 			instruction.getDisassembly(this)
 		)
+//		}
 		instruction.handle(this)
 		this.segmentOverride = this.ds
 		this.operandSizeOverride = false

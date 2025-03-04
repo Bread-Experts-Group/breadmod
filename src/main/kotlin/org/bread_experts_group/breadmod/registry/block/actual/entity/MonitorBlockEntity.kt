@@ -21,7 +21,7 @@ class MonitorBlockEntity(
 	// TODO, move computer to a computer block
 	val logger: Logger = LogManager.getLogger("Bread Computer")
 	val computer: Computer = Computer(
-		listOf(MemoryModule(1572864u)),
+		listOf(MemoryModule(2097152u)),
 		IA32Processor(),
 		StandardBIOS
 	)
@@ -29,7 +29,7 @@ class MonitorBlockEntity(
 		this.computer.processor.computer = this.computer
 		this.computer.disc = ISO9660Disc.readDisc(
 			this::class.java.getResource(
-				"/main.iso"
+				"/bootable.iso"
 			)!!.toURI()
 		)
 		this.computer.reset()

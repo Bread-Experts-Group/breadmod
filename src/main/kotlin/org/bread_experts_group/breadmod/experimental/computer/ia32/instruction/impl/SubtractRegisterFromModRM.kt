@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
@@ -14,19 +14,19 @@ object SubtractRegisterFromModRM : Instruction("sub"), ModRM, ArithmeticSubtract
 	override fun handle(processor: IA32Processor) {
 		val (memRM, register) = processor.rm()
 		when (processor.operandSize) {
-			DecodingUtil.AddressingLength.R32 -> {
+			AddressingLength.R32 -> {
 				this.setFlagsForOperationR(processor, memRM.getRMi(), register.get().toUInt()).also {
 					memRM.setRMi(it)
 					this.setFlagsForResult(processor, it)
 				}
 			}
-			DecodingUtil.AddressingLength.R16 -> {
+			AddressingLength.R16 -> {
 				this.setFlagsForOperationR(processor, memRM.getRMs(), register.get().toUShort()).also {
 					memRM.setRMs(it)
 					this.setFlagsForResult(processor, it)
 				}
 			}
-			else                              -> throw UnsupportedOperationException()
+			else                 -> throw UnsupportedOperationException()
 		}
 	}
 

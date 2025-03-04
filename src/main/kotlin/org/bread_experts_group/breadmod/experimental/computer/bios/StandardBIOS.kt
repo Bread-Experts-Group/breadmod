@@ -4,6 +4,7 @@ import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.Computer
 import org.bread_experts_group.breadmod.experimental.computer.bios.h10.TeletypeOutput
 import org.bread_experts_group.breadmod.experimental.computer.bios.h13.ExtendedRead
+import org.bread_experts_group.breadmod.experimental.computer.bios.h13.InstallationCheck
 import org.bread_experts_group.breadmod.experimental.computer.bios.h13.Read
 import org.bread_experts_group.breadmod.experimental.computer.bios.h13.ResetDiskSystem
 import org.bread_experts_group.breadmod.experimental.computer.bios.h16.GetKeystroke
@@ -43,6 +44,7 @@ object StandardBIOS : BIOSProvider {
 			when (processor.a.h.toUInt()) {
 				0x00u -> ResetDiskSystem
 				0x02u -> Read
+				0x41u -> InstallationCheck
 				0x42u -> ExtendedRead
 				else  -> throw IllegalArgumentException("Unknown 0x13 ah: ${hex(processor.a.th)}")
 			}.handle(processor)
