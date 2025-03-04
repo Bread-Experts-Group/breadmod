@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.core.Direction.DOWN
@@ -34,6 +35,33 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 				override fun enableScissor(minX: Int, minY: Int, maxX: Int, maxY: Int) {}
 				override fun disableScissor() {}
 				override fun containsPointInScissor(x: Int, y: Int): Boolean = false
+				override fun fill(
+					renderType: RenderType, minX: Int, minY: Int, maxX: Int, maxY: Int, z: Int, color: Int
+				) {
+					var minX = minX
+					var maxX = maxX
+					var minY = minY
+					var maxY = maxY
+					val matrix4f = this.pose().last()
+					if (minX < maxX) {
+						val i = minX
+						minX = maxX
+						maxX = i
+					}
+
+					if (minY < maxY) {
+						val j = minY
+						minY = maxY
+						maxY = j
+					}
+					val consumer = this.bufferSource().getBuffer(renderType)
+					val plane = z * 0.001f
+					consumer.addVertex(matrix4f, minX.toFloat(), minY.toFloat(), plane).setColor(color)
+					consumer.addVertex(matrix4f, minX.toFloat(), maxY.toFloat(), plane).setColor(color)
+					consumer.addVertex(matrix4f, maxX.toFloat(), maxY.toFloat(), plane).setColor(color)
+					consumer.addVertex(matrix4f, maxX.toFloat(), minY.toFloat(), plane).setColor(color)
+					this.flush()
+				}
 			}
 	}
 

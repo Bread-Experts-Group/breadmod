@@ -27,14 +27,13 @@ class BreadScreenRenderer(context: Context) : BreadModBER<BreadScreenBlockEntity
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-//		if (BreadScreenBlockEntity.computerExp.state == Thread.State.NEW) BreadScreenBlockEntity.computerExp.start()
-//		levelGraphics.fill(0, 0, 16, 16, Color.BLACK.rgb)
+		levelGraphics.fill(0, 0, 16, 16, 1, Color.BLACK.rgb)
 		lgPoseStack.scaleFlat(0.025f)
 		Companion.output.split('\n').forEachIndexed { i, s ->
 			levelGraphics.drawString(
 				localClient.font,
 				Component.literal(s).withStyle(ModFonts.IBM_EGA_9_14),
-				0, i * 9, Color.LIGHT_GRAY.rgb
+				0, i * 9, Color.LIGHT_GRAY.rgb, false
 			)
 		}
 		listOf(
@@ -60,7 +59,7 @@ class BreadScreenRenderer(context: Context) : BreadModBER<BreadScreenBlockEntity
 			levelGraphics.drawString(
 				localClient.font, component,
 				localClient.window.guiScaledWidth - localClient.font.width(component), i * 9,
-				Color.ORANGE.rgb
+				Color.ORANGE.rgb, false
 			)
 		}
 	}
