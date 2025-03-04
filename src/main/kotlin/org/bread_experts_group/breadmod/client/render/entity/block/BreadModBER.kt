@@ -30,39 +30,44 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 ) : BlockEntityRenderer<T> {
 	private companion object {
 		const val TRANSLATE_OFFSET = 0.0001
-		val LEVEL_GRAPHICS: GuiGraphics =
-			object : GuiGraphics(localClient, localClient.renderBuffers().bufferSource()) {
-				override fun enableScissor(minX: Int, minY: Int, maxX: Int, maxY: Int) {}
-				override fun disableScissor() {}
-				override fun containsPointInScissor(x: Int, y: Int): Boolean = false
-				override fun fill(
-					renderType: RenderType, minX: Int, minY: Int, maxX: Int, maxY: Int, z: Int, color: Int
-				) {
-					var minX = minX
-					var maxX = maxX
-					var minY = minY
-					var maxY = maxY
-					val matrix4f = this.pose().last()
-					if (minX < maxX) {
-						val i = minX
-						minX = maxX
-						maxX = i
-					}
-
-					if (minY < maxY) {
-						val j = minY
-						minY = maxY
-						maxY = j
-					}
-					val consumer = this.bufferSource().getBuffer(renderType)
-					val plane = z * 0.001f
-					consumer.addVertex(matrix4f, minX.toFloat(), minY.toFloat(), plane).setColor(color)
-					consumer.addVertex(matrix4f, minX.toFloat(), maxY.toFloat(), plane).setColor(color)
-					consumer.addVertex(matrix4f, maxX.toFloat(), maxY.toFloat(), plane).setColor(color)
-					consumer.addVertex(matrix4f, maxX.toFloat(), minY.toFloat(), plane).setColor(color)
-					this.flush()
+		val LEVEL_GRAPHICS: GuiGraphics = object : GuiGraphics(
+			localClient,
+			localClient.renderBuffers().bufferSource()
+		) {
+			override fun containsPointInScissor(x: Int, y: Int): Boolean = TODO("Scissor")
+			override fun enableScissor(minX: Int, minY: Int, maxX: Int, maxY: Int) = TODO("Scissor")
+			override fun disableScissor() = TODO("Scissor")
+			override fun fill(
+				renderType: RenderType,
+				minX: Int, minY: Int,
+				maxX: Int, maxY: Int, z: Int,
+				color: Int
+			) {
+				val matrix4f = this.pose().last()
+				var minX = minX.toFloat()
+				var maxX = maxX.toFloat()
+				var minY = minY.toFloat()
+				var maxY = maxY.toFloat()
+				if (minX < maxX) {
+					val i = minX
+					minX = maxX
+					maxX = i
 				}
+
+				if (minY < maxY) {
+					val j = minY
+					minY = maxY
+					maxY = j
+				}
+				val plane = z * this@Companion.TRANSLATE_OFFSET.toFloat()
+				val consumer = this.bufferSource().getBuffer(renderType)
+				consumer.addVertex(matrix4f, minX, minY, plane).setColor(color)
+				consumer.addVertex(matrix4f, minX, maxY, plane).setColor(color)
+				consumer.addVertex(matrix4f, maxX, maxY, plane).setColor(color)
+				consumer.addVertex(matrix4f, maxX, minY, plane).setColor(color)
+				this.flush()
 			}
+		}
 	}
 
 	override fun render(
