@@ -1,5 +1,9 @@
 package org.bread_experts_group.breadmod.experimental.computer
 
+import net.minecraft.core.HolderLookup
+import net.minecraft.nbt.ByteArrayTag
+import net.neoforged.neoforge.common.util.INBTSerializable
+
 /**
  * A memory module for a Bread Mod computer, with a settable capacity.
  *
@@ -11,8 +15,9 @@ package org.bread_experts_group.breadmod.experimental.computer
  * @since 1.0.0
  * @author Miko Elbrecht
  */
-class MemoryModule(val capacity: UInt) {
-	private val memory = Array(this.capacity.toInt()) {
+class MemoryModule(val capacity: UInt) : INBTSerializable<ByteArrayTag> {
+	@OptIn(ExperimentalUnsignedTypes::class)
+	private var memory = UByteArray(this.capacity.toInt()) {
 		(0x00u).toUByte()
 	}
 
@@ -27,6 +32,7 @@ class MemoryModule(val capacity: UInt) {
 	 * @since 1.0.0
 	 * @author Miko Elbrecht
 	 */
+	@OptIn(ExperimentalUnsignedTypes::class)
 	operator fun get(address: Int): UByte = this.memory[address]
 
 	/**
@@ -40,7 +46,17 @@ class MemoryModule(val capacity: UInt) {
 	 * @since 1.0.0
 	 * @author Miko Elbrecht
 	 */
+	@OptIn(ExperimentalUnsignedTypes::class)
 	operator fun set(address: Int, value: UByte) {
 		this.memory[address] = value
+	}
+
+	@OptIn(ExperimentalUnsignedTypes::class)
+	override fun serializeNBT(provider: HolderLookup.Provider): ByteArrayTag =
+		ByteArrayTag(this.memory.toByteArray())
+
+	@OptIn(ExperimentalUnsignedTypes::class)
+	override fun deserializeNBT(provider: HolderLookup.Provider, tag: ByteArrayTag) {
+		this.memory = tag.asByteArray.toUByteArray()
 	}
 }

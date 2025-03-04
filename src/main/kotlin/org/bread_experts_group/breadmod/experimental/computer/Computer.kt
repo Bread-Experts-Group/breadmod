@@ -1,5 +1,9 @@
 package org.bread_experts_group.breadmod.experimental.computer
 
+import net.minecraft.core.HolderLookup
+import net.minecraft.nbt.ByteArrayTag
+import net.minecraft.nbt.CompoundTag
+import net.neoforged.neoforge.common.util.INBTSerializable
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.readBinary
 import org.bread_experts_group.breadmod.experimental.computer.bios.BIOSProvider
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
@@ -16,10 +20,12 @@ import org.bread_experts_group.breadmod.experimental.computer.io.ps2.PS2SystemCo
  * @see Processor
  * @author Miko Elbrecht
  */
-class Computer : SimulationSteppable {
-	lateinit var memory: List<MemoryModule>
-	lateinit var processor: Processor
-	lateinit var bios: BIOSProvider
+class Computer(
+	val memory: List<MemoryModule>,
+	val processor: Processor,
+	val bios: BIOSProvider
+) : SimulationSteppable, INBTSerializable<CompoundTag> {
+	var buffer: String = "Bread BIOS v1.0\nStarting up... (DL = 0xE0, CD)\n\n"
 	var disc: ISO9660Disc? = null
 	val ps2: PS2Controller = PS2Controller()
 	val ioMap: MutableMap<UInt, IODevice> = mutableMapOf(
@@ -70,6 +76,23 @@ class Computer : SimulationSteppable {
 	fun requestMemoryAt64(address: ULong): ULong {
 		var offset = 0u
 		return readBinary(8, { this.requestMemoryAt(address + offset).also { offset++ } }).toULong()
+	}
+
+	override fun serializeNBT(provider: HolderLookup.Provider): CompoundTag = CompoundTag().also {
+		it.put("processor", this.processor.serializeNBT(provider))
+		it.put("memory", CompoundTag().also { mt ->
+			this.memory.forEachIndexed { i, m ->
+				mt.put(i.toString(), m.serializeNBT(provider))
+			}
+		})
+	}
+
+	override fun deserializeNBT(provider: HolderLookup.Provider, tag: CompoundTag) {
+		this.processor.deserializeNBT(provider, tag)
+		val memoryTag = tag.getCompound("memory")
+		memoryTag.allKeys.forEach {
+			this.memory[it.toInt()].deserializeNBT(provider, memoryTag.get(it) as ByteArrayTag)
+		}
 	}
 
 	override fun reset() {

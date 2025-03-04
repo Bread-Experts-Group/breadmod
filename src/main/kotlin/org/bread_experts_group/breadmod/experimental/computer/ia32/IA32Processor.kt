@@ -1,8 +1,9 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32
 
+import net.minecraft.core.HolderLookup
+import net.minecraft.nbt.CompoundTag
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity.Companion.processor
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.Computer
 import org.bread_experts_group.breadmod.experimental.computer.Processor
@@ -28,7 +29,8 @@ import kotlin.reflect.full.primaryConstructor
  * @see Computer
  * @author Miko Elbrecht
  */
-class IA32Processor(val computer: Computer) : Processor {
+class IA32Processor : Processor {
+	override lateinit var computer: Computer
 	override fun step() {
 		this.fetch()
 		this.decode()
@@ -134,8 +136,8 @@ class IA32Processor(val computer: Computer) : Processor {
 			this.push16(this.cs.tx)
 			this.push16(this.ip.tx)
 			val addr = selector.toULong() * 4u
-			processor.ip.tex = processor.computer.requestMemoryAt16(addr).toUInt()
-			processor.cs.tx = processor.computer.requestMemoryAt16(addr + 2u)
+			this.ip.tex = this.computer.requestMemoryAt16(addr).toUInt()
+			this.cs.tx = this.computer.requestMemoryAt16(addr + 2u)
 		} else {
 			throw TODO("Protected mode interrupts")
 		}
@@ -151,12 +153,12 @@ class IA32Processor(val computer: Computer) : Processor {
 	var segmentOverride: SegmentRegister = this.ds
 	private var operandSizeOverride: Boolean = false
 	private var addressSizeOverride: Boolean = false
-	fun realMode(): Boolean = !processor.cr0.getFlag(ControlRegister0.FlagType.PROTECTED_MODE_ENABLE)
+	fun realMode(): Boolean = !this.cr0.getFlag(ControlRegister0.FlagType.PROTECTED_MODE_ENABLE)
 
 	fun getAddressingLengthForSpecifier(specifier: KProperty0<Boolean>): AddressingLength {
 		if (!this.realMode()) {
 			// Protected Mode
-			if (processor.cs.readSegmentDescriptor().flags and 0b0100u > 0u) {
+			if (this.cs.readSegmentDescriptor().flags and 0b0100u > 0u) {
 				return if (specifier.get()) AddressingLength.R16
 				else AddressingLength.R32
 			}
@@ -249,5 +251,61 @@ class IA32Processor(val computer: Computer) : Processor {
 		this.segmentOverride = this.ds
 		this.operandSizeOverride = false
 		this.addressSizeOverride = false
+	}
+
+	override fun serializeNBT(provider: HolderLookup.Provider): CompoundTag = CompoundTag().also {
+		it.putLong("a", this.a.rx.toLong())
+		it.putLong("b", this.c.rx.toLong())
+		it.putLong("c", this.b.rx.toLong())
+		it.putLong("d", this.d.rx.toLong())
+		it.putLong("sp", this.sp.rx.toLong())
+		it.putLong("bp", this.bp.rx.toLong())
+		it.putLong("di", this.di.rx.toLong())
+		it.putLong("si", this.si.rx.toLong())
+		it.putLong("cs", this.cs.rx.toLong())
+		it.putLong("ds", this.ds.rx.toLong())
+		it.putLong("ss", this.ss.rx.toLong())
+		it.putLong("es", this.es.rx.toLong())
+		it.putLong("fs", this.fs.rx.toLong())
+		it.putLong("gs", this.gs.rx.toLong())
+		it.putLong("gdtrLimit", this.gdtrLimit.rx.toLong())
+		it.putLong("gdtrBase", this.gdtrBase.rx.toLong())
+		it.putLong("idtrLimit", this.idtrLimit.rx.toLong())
+		it.putLong("idtrBase", this.idtrBase.rx.toLong())
+		it.putLong("cr0", this.cr0.rx.toLong())
+		it.putLong("cr2", this.cr2.rx.toLong())
+		it.putLong("cr3", this.cr3.rx.toLong())
+		it.putLong("cr4", this.cr4.rx.toLong())
+		it.putLong("flags", this.flags.rx.toLong())
+		it.putLong("ip", this.ip.rx.toLong())
+		it.putByte("cir", this.cir.toByte())
+	}
+
+	override fun deserializeNBT(provider: HolderLookup.Provider, tag: CompoundTag) {
+		this.a.rx = tag.getLong("a").toULong()
+		this.b.rx = tag.getLong("b").toULong()
+		this.c.rx = tag.getLong("c").toULong()
+		this.d.rx = tag.getLong("d").toULong()
+		this.sp.rx = tag.getLong("sp").toULong()
+		this.bp.rx = tag.getLong("bp").toULong()
+		this.di.rx = tag.getLong("di").toULong()
+		this.si.rx = tag.getLong("si").toULong()
+		this.cs.rx = tag.getLong("cs").toULong()
+		this.ds.rx = tag.getLong("ds").toULong()
+		this.ss.rx = tag.getLong("ss").toULong()
+		this.es.rx = tag.getLong("es").toULong()
+		this.fs.rx = tag.getLong("fs").toULong()
+		this.gs.rx = tag.getLong("gs").toULong()
+		this.gdtrLimit.rx = tag.getLong("gdtrLimit").toULong()
+		this.gdtrBase.rx = tag.getLong("gdtrBase").toULong()
+		this.idtrLimit.rx = tag.getLong("idtrLimit").toULong()
+		this.idtrBase.rx = tag.getLong("idtrBase").toULong()
+		this.cr0.rx = tag.getLong("cr0").toULong()
+		this.cr2.rx = tag.getLong("cr2").toULong()
+		this.cr3.rx = tag.getLong("cr3").toULong()
+		this.cr4.rx = tag.getLong("cr4").toULong()
+		this.flags.rx = tag.getLong("flags").toULong()
+		this.ip.rx = tag.getLong("ip").toULong()
+		this.cir = tag.getByte("cir").toUByte()
 	}
 }

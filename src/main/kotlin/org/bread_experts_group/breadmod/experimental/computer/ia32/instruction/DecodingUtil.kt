@@ -4,7 +4,6 @@ import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.readBinary
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
-import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity.Companion.processor
 import kotlin.reflect.KMutableProperty0
 
 class DecodingUtil(private val processor: IA32Processor) {
@@ -317,23 +316,23 @@ class DecodingUtil(private val processor: IA32Processor) {
 		else                -> throw IllegalArgumentException("Bad mod: ${hex(mod)}")
 	}
 
-	class MemRM(
+	inner class MemRM(
 		val register: KMutableProperty0<ULong>?,
 		val memory: ULong?
 	) {
 		fun setRMi(value: UInt): Unit =
 			if (this.register != null) this.register.set(value.toULong())
-			else processor.computer.setMemoryAt32(this.memory!!, value)
+			else this@DecodingUtil.processor.computer.setMemoryAt32(this.memory!!, value)
 
 		fun setRMs(value: UShort): Unit =
 			if (this.register != null) this.register.set(value.toULong())
-			else processor.computer.setMemoryAt16(this.memory!!, value)
+			else this@DecodingUtil.processor.computer.setMemoryAt16(this.memory!!, value)
 
 		fun setRMb(value: UByte): Unit =
 			if (this.register != null) this.register.set(value.toULong())
-			else processor.computer.setMemoryAt(this.memory!!, value)
+			else this@DecodingUtil.processor.computer.setMemoryAt(this.memory!!, value)
 
-		fun getRMMode(): ULong = when (processor.operandSize) {
+		fun getRMMode(): ULong = when (this@DecodingUtil.processor.operandSize) {
 			AddressingLength.R32 -> this.getRMi().toULong()
 			AddressingLength.R16 -> this.getRMs().toULong()
 			else                 -> throw UnsupportedOperationException()
@@ -341,15 +340,15 @@ class DecodingUtil(private val processor: IA32Processor) {
 
 		fun getRMi(): UInt =
 			if (this.register != null) this.register.get().toUInt()
-			else processor.computer.requestMemoryAt32(this.memory!!)
+			else this@DecodingUtil.processor.computer.requestMemoryAt32(this.memory!!)
 
 		fun getRMs(): UShort =
 			if (this.register != null) this.register.get().toUShort()
-			else processor.computer.requestMemoryAt16(this.memory!!)
+			else this@DecodingUtil.processor.computer.requestMemoryAt16(this.memory!!)
 
 		fun getRMb(): UByte =
 			if (this.register != null) this.register.get().toUByte()
-			else processor.computer.requestMemoryAt(this.memory!!)
+			else this@DecodingUtil.processor.computer.requestMemoryAt(this.memory!!)
 	}
 
 	data class ModRMResult(
