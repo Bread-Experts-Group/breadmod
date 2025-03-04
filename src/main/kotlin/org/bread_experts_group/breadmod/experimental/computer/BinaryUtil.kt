@@ -9,6 +9,8 @@ object BinaryUtil {
 	fun hex(i: UInt): String = "0x${i.toString(16).padStart(8, '0').uppercase()}"
 	fun hex(s: UShort): String = "0x${s.toString(16).padStart(4, '0').uppercase()}"
 	fun hex(b: UByte): String = "0x${b.toString(16).padStart(2, '0').uppercase()}"
+	fun absb(b: Byte): Byte = if (b < 0) (-b).toByte() else b
+	fun abss(s: Short): Short = if (s < 0) (-s).toShort() else s
 
 	fun iandbDef(a: UInt, b: UByte): UInt = a and (b.toUInt())
 	infix fun UInt.and(b: UByte): UInt = this@BinaryUtil.iandbDef(this, b)

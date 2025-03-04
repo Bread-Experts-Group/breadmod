@@ -1,9 +1,12 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction
 
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.absb
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.abss
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.readBinary
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
+import kotlin.math.abs
 import kotlin.reflect.KMutableProperty0
 
 class DecodingUtil(private val processor: IA32Processor) {
@@ -231,14 +234,17 @@ class DecodingUtil(private val processor: IA32Processor) {
 					0b010u -> this.processor.d.ex
 					0b011u -> this.processor.b.ex
 					0b100u -> this.decodeSIB()
-					0b101u -> this.readBinaryFetch(4).toULong()
+					0b101u -> when (mod) {
+						0b00u -> this.readBinaryFetch(4).toULong()
+						else  -> this.processor.bp.ex
+					}
 					0b110u -> this.processor.si.ex
 					0b111u -> this.processor.di.ex
 					else   -> throw IllegalArgumentException(hex(rm))
-				} + when (mod) {
-					0b00u -> 0u
-					0b01u -> this.readFetch().toULong()
-					0b10u -> this.readBinaryFetch(4).toULong()
+				}.toLong() + when (mod) {
+					0b00u -> 0
+					0b01u -> this.readBinaryFetch(1)
+					0b10u -> this.readBinaryFetch(4)
 					else  -> throw IllegalArgumentException(hex(mod))
 				}
 				AddressingLength.R16 -> when (rm) {
@@ -254,15 +260,15 @@ class DecodingUtil(private val processor: IA32Processor) {
 					}
 					0b111u -> this.processor.b.x
 					else   -> throw IllegalArgumentException(hex(rm))
-				} + when (mod) {
-					0b00u -> 0u
-					0b01u -> this.readFetch().toULong()
-					0b10u -> this.readBinaryFetch(2).toULong()
+				}.toLong() + when (mod) {
+					0b00u -> 0
+					0b01u -> this.readBinaryFetch(1)
+					0b10u -> this.readBinaryFetch(2)
 					else  -> throw IllegalArgumentException(hex(mod))
 				}
 				else                 -> throw UnsupportedOperationException()
 			}
-			MemRM(null, memRm)
+			MemRM(null, memRm.toULong())
 		}
 		0b11u               -> MemRM(this.getRegRM(rm, regRMType, operandLength), null)
 		else                -> throw IllegalArgumentException("Bad mod: ${hex(mod)}")
@@ -280,14 +286,17 @@ class DecodingUtil(private val processor: IA32Processor) {
 					0b010u -> "edx [${hex(this.processor.d.tex)}]"
 					0b011u -> "ebx [${hex(this.processor.b.tex)}]"
 					0b100u -> this.decodeSIBDisassembler()
-					0b101u -> hex(this.readBinaryFetch(4).toUInt())
+					0b101u -> when (mod) {
+						0b00u -> hex(this.readBinaryFetch(4).toUInt())
+						else  -> "ebp [${hex(this.processor.bp.tex)}]"
+					}
 					0b110u -> "esi [${hex(this.processor.si.tex)}]"
 					0b111u -> "edi [${hex(this.processor.di.tex)}]"
 					else   -> throw IllegalArgumentException(hex(rm))
 				} + when (mod) {
 					0b00u -> ""
-					0b01u -> "+${hex(this.readFetch())}"
-					0b10u -> "+${hex(this.readBinaryFetch(4).toUInt())}"
+					0b01u -> this.readFetch().toByte().let { "${if (it < 0) "-" else "+"}${hex(absb(it))}" }
+					0b10u -> this.readBinaryFetch(4).toInt().let { "${if (it < 0) "-" else "+"}${hex(abs(it))}" }
 					else  -> throw IllegalArgumentException(hex(mod))
 				}
 				AddressingLength.R16 -> when (rm) {
@@ -305,8 +314,8 @@ class DecodingUtil(private val processor: IA32Processor) {
 					else   -> throw IllegalArgumentException(hex(rm))
 				} + when (mod) {
 					0b00u -> ""
-					0b01u -> "+${hex(this.readFetch())}"
-					0b10u -> "+${hex(this.readBinaryFetch(2).toUShort())}"
+					0b01u -> this.readFetch().toByte().let { "${if (it < 0) "-" else "+"}${hex(absb(it))}" }
+					0b10u -> this.readBinaryFetch(2).toShort().let { "${if (it < 0) "-" else "+"}${hex(abss(it))}" }
 					else  -> throw IllegalArgumentException(hex(mod))
 				}
 				else                 -> throw UnsupportedOperationException()

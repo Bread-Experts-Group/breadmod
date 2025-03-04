@@ -9,13 +9,18 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 
 @IA32Instruction(0x0FB7u)
 object MoveWithZeroExtension16 : Instruction("movzx"), ModRM {
-	override fun operands(processor: IA32Processor): String = processor.rmD(AddressingLength.R32).let {
-		"${it.register}, ${it.regMem}"
+	override fun operands(processor: IA32Processor): String {
+		val rmByte = processor.decoding.readFetch()
+		val rm16D = processor.decoding.getModRMDisassembler(rmByte, RegisterType.GENERAL_PURPOSE, AddressingLength.R16)
+		val rmD = processor.decoding.getModRMDisassembler(rmByte, RegisterType.GENERAL_PURPOSE)
+		return "${rmD.register}, ${rm16D.regMem}"
 	}
 
 	override fun handle(processor: IA32Processor) {
-		val (memRM, register) = processor.rm(AddressingLength.R32)
-		register.set(memRM.getRMs().toULong())
+		val rmByte = processor.decoding.readFetch()
+		val (regMem16) = processor.decoding.getModRM(rmByte, RegisterType.GENERAL_PURPOSE, AddressingLength.R16)
+		val (_, reg) = processor.decoding.getModRM(rmByte, RegisterType.GENERAL_PURPOSE)
+		reg.set(regMem16.getRMs().toULong())
 	}
 
 	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE

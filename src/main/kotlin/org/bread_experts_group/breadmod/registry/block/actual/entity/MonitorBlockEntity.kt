@@ -21,7 +21,7 @@ class MonitorBlockEntity(
 	// TODO, move computer to a computer block
 	val logger: Logger = LogManager.getLogger("Bread Computer")
 	val computer: Computer = Computer(
-		listOf(MemoryModule(2097152u)),
+		listOf(MemoryModule(1572864u)),
 		IA32Processor(),
 		StandardBIOS
 	)

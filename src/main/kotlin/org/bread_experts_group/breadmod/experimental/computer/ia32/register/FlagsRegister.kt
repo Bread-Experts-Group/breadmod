@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.register
 
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
 class FlagsRegister(val processor: IA32Processor, name: String, vararg flags: FlagType) : Register(
@@ -35,11 +36,11 @@ class FlagsRegister(val processor: IA32Processor, name: String, vararg flags: Fl
 		set(value) {
 			if (field == value) return
 			field = value
-//			var flags = ""
-//			FlagType.entries.forEach {
-//				flags += if (this.getFlag(it)) ((if (flags.isNotEmpty()) ", " else "") + it.name) else ""
-//			}
-//			this.logger.warn("${this.name} set ${hex(value)} [$flags]")
+			var flags = ""
+			FlagType.entries.forEach {
+				flags += if (this.getFlag(it)) ((if (flags.isNotEmpty()) ", " else "") + it.name) else ""
+			}
+			this.logger.warn("${this.name} set ${hex(value)} [$flags]")
 		}
 
 	fun setFlag(flag: FlagType, state: Boolean) {

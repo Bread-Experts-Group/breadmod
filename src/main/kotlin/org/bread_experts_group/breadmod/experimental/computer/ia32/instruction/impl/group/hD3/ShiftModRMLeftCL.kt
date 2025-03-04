@@ -15,18 +15,20 @@ object ShiftModRMLeftCL : Instruction("shl"), ModRM, LogicalArithmeticFlagOperat
 		val (memRM, _) = processor.rm()
 		when (processor.operandSize) {
 			AddressingLength.R32 -> {
-				val result = memRM.getRMi() shl processor.c.tl.toInt()
+				val saved32 = memRM.getRMi()
+				val result = saved32 shl processor.c.tl.toInt()
 				memRM.setRMi(result)
 				this.setFlagsForResult(processor, result)
 			}
 			AddressingLength.R16 -> {
-				val result = memRM.getRMs() shl processor.c.tl.toInt()
+				val saved16 = memRM.getRMs()
+				val result = saved16 shl processor.c.tl.toInt()
 				memRM.setRMs(result)
 				this.setFlagsForResult(processor, result)
 			}
 			else                 -> throw UnsupportedOperationException()
 		}
-		TODO("Carry flag")
+//		TODO("CARRY FLAG")
 	}
 
 	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE

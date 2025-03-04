@@ -233,13 +233,13 @@ class IA32Processor : Processor {
 				return
 			}
 			0x0Fu -> this.instructionMap[(0x0Fu shl 8) or this.decoding.readFetch().toUInt()]
-				?: throw IllegalArgumentException("Missing two-byte opcode (0F) for ${hex(this.cir)}")
+				?: throw IllegalArgumentException("Missing two-byte opcode (0F) for ${hex(this.cir)} [${hex(this.ip.rx)}]")
 			0xF3u -> this.instructionMap[(0xF3u shl 8) or this.decoding.readFetch().toUInt()]
-				?: throw IllegalArgumentException("Missing two-byte opcode (F3) for ${hex(this.cir)}")
+				?: throw IllegalArgumentException("Missing two-byte opcode (F3) for ${hex(this.cir)} [${hex(this.ip.rx)}]")
 			0xF2u -> this.instructionMap[(0xF2u shl 8) or this.decoding.readFetch().toUInt()]
-				?: throw IllegalArgumentException("Missing two-byte opcode (F2) for ${hex(this.cir)}")
+				?: throw IllegalArgumentException("Missing two-byte opcode (F2) for ${hex(this.cir)} [${hex(this.ip.rx)}]")
 			else  -> this.instructionMap[this.cir.toUInt()]
-				?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)}")
+				?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)} [${hex(this.ip.rx)}]")
 		}
 		this.logger.warn(
 			"{} {}: {}",

@@ -25,11 +25,19 @@ class JumpOnConditionDefinitions(processor: IA32Processor) {
 		}
 
 		override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
-			AddressingLength.R32 -> if (this.condition(processor.flags::getFlag))
-				processor.ip.tex = (processor.ip.tex.toInt() + processor.rel32()).toUInt() else {
+			AddressingLength.R32 -> {
+				val rel32 = processor.rel32()
+				if (this.condition(processor.flags::getFlag))
+					processor.ip.tex = (processor.ip.tex.toInt() + rel32).toUInt()
+				else {
+				}
 			}
-			AddressingLength.R16 -> if (this.condition(processor.flags::getFlag))
-				processor.ip.tex = (processor.ip.tex.toInt() + processor.rel16()).toUInt() else {
+			AddressingLength.R16 -> {
+				val rel16 = processor.rel16()
+				if (this.condition(processor.flags::getFlag))
+					processor.ip.tex = (processor.ip.tex.toInt() + rel16).toUInt()
+				else {
+				}
 			}
 			else                 -> throw UnsupportedOperationException()
 		}

@@ -5,18 +5,20 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.D
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
-import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.operand.ModRM
 
 @IA32Instruction(0x0FB6u)
-object MoveWithZeroExtension8 : Instruction("movzx"), ModRM {
-	override fun operands(processor: IA32Processor): String = processor.rmD(AddressingLength.R8).let {
-		"${it.register}, ${it.regMem}"
+object MoveWithZeroExtension8 : Instruction("movzx") {
+	override fun operands(processor: IA32Processor): String {
+		val rmByte = processor.decoding.readFetch()
+		val rm8D = processor.decoding.getModRMDisassembler(rmByte, RegisterType.GENERAL_PURPOSE, AddressingLength.R8)
+		val rmD = processor.decoding.getModRMDisassembler(rmByte, RegisterType.GENERAL_PURPOSE)
+		return "${rmD.register}, ${rm8D.regMem}"
 	}
 
 	override fun handle(processor: IA32Processor) {
-		val (memRM, register) = processor.rm(AddressingLength.R8)
-		register.set(memRM.getRMb().toULong())
+		val rmByte = processor.decoding.readFetch()
+		val (regMem8) = processor.decoding.getModRM(rmByte, RegisterType.GENERAL_PURPOSE, AddressingLength.R8)
+		val (_, reg) = processor.decoding.getModRM(rmByte, RegisterType.GENERAL_PURPOSE)
+		reg.set(regMem8.getRMb().toULong())
 	}
-
-	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE
 }
