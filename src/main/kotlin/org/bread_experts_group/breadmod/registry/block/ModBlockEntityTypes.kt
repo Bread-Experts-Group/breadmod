@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlockEntity
 import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemRecipeBlockEntity
@@ -15,23 +14,24 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.S
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item.SingleFluidItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
-import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.storage.EnergyStorageBlockEntity
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlockEntity
 import java.util.function.Supplier
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 object ModBlockEntityTypes {
 	val BLOCK_ENTITY_REGISTRY: DeferredRegister<BlockEntityType<*>> =
 		DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, BreadMod.ID)
-	val MONITOR: Supplier<BlockEntityType<BreadScreenBlockEntity>> =
+	val MONITOR: Supplier<BlockEntityType<MonitorBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("monitor_entity") { ->
-			this.buildBlockEntity(::BreadScreenBlockEntity, ModBlocks.MONITOR.asBlock())
+			this.buildBlockEntity(::MonitorBlockEntity, ModBlocks.MONITOR.asBlock())
 		}
 	val SOUND_BLOCK: Supplier<BlockEntityType<SoundBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("sound_block_entity") { ->

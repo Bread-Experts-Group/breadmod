@@ -9,12 +9,12 @@ import org.bread_experts_group.breadmod.client.render.drawTextOnSide
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.registry.ModFonts
-import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import java.awt.Color
 
-class BreadScreenRenderer(context: Context) : BreadModBER<BreadScreenBlockEntity>(context) {
+class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(context) {
 	override fun renderWithGraphics(
-		blockEntity: BreadScreenBlockEntity,
+		blockEntity: MonitorBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		lgPoseStack: PoseStack,
@@ -23,12 +23,13 @@ class BreadScreenRenderer(context: Context) : BreadModBER<BreadScreenBlockEntity
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		levelGraphics.fill(1, 1, 14, 14, 1, Color.BLACK.rgb)
+		levelGraphics.fill(2, 2, 14, 14, 1, Color.BLACK.rgb)
+		levelGraphics.fill(13, 15, 14, 16, 1, Color.ORANGE.rgb)
 		blockEntity.computer.buffer.split('\n').forEachIndexed { i, s ->
 			poseStack.drawTextOnSide(
 				this.context.font,
 				Component.literal(s).withStyle(ModFonts.IBM_EGA_9_14),
-				0.065, (-i * 0.025) - 0.07,
+				0.13, (-i * 0.025) - 0.14,
 				bufferSource = bufferSource,
 				blockState = blockEntity.blockState,
 				scale = 0.0025f,
@@ -59,12 +60,21 @@ class BreadScreenRenderer(context: Context) : BreadModBER<BreadScreenBlockEntity
 			poseStack.drawTextOnSide(
 				this.context.font,
 				component,
-				0.66, (-i * 0.015) - 0.07,
+				0.66, (-i * 0.015) - 0.14,
 				bufferSource = bufferSource,
 				blockState = blockEntity.blockState,
 				scale = 0.0015f,
 				color = Color.ORANGE.rgb
 			)
 		}
+		// TODO figure out how to render frost
+//		RenderSystem.setShader(GameRenderer::getRendertypeGlintShader)
+//		levelGraphics.blit(
+//			modLocation("textures", "block", "monitor_face.png"),
+//			2, 2,
+//			2f, 2f,
+//			12, 12,
+//			16, 16
+//		)
 	}
 }

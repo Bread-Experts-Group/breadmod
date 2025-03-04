@@ -8,20 +8,20 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.DirectionalBlock
 import net.minecraft.world.level.block.EntityBlock
+import net.minecraft.world.level.block.HorizontalDirectionalBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.phys.BlockHitResult
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes.MONITOR
-import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadScreenBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 
 class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBlock {
 	init {
 		this.registerDefaultState(
 			this.stateDefinition.any()
-				.setValue(DirectionalBlock.FACING, Direction.NORTH)
+				.setValue(HorizontalDirectionalBlock.FACING, Direction.NORTH)
 		)
 	}
 
@@ -38,11 +38,14 @@ class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBloc
 		return super.useWithoutItem(state, level, pos, player, hitResult)
 	}
 
-	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = BreadScreenBlockEntity(pos, state)
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MonitorBlockEntity(pos, state)
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
-		builder.add(DirectionalBlock.FACING)
+		builder.add(HorizontalDirectionalBlock.FACING)
 	}
 
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
-		this.defaultBlockState().setValue(DirectionalBlock.FACING, context.nearestLookingDirection.opposite)
+		this.defaultBlockState().setValue(
+			HorizontalDirectionalBlock.FACING,
+			context.horizontalDirection.opposite
+		)
 }

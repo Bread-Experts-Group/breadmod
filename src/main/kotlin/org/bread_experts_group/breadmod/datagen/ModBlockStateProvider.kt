@@ -43,19 +43,19 @@ class ModBlockStateProvider(
 		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock())
 		this.blockWithItem(ModBlocks.JADE_FLUID_TANK.asBlock())
 
-		this.directionalBlock(ModBlocks.MONITOR.get().block) {
+		this.horizontalBlock(ModBlocks.MONITOR.get().block) {
 			val name = "breadmod:block/monitor"
 			val model = this.models().cube(
 				name,
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
 			).renderType("minecraft:cutout")
 
-			return@directionalBlock model
+			return@horizontalBlock model
 		}
 		this.simpleBlockItem(
 			ModBlocks.MONITOR.get().block,

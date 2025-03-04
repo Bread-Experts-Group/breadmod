@@ -13,10 +13,10 @@ import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO96
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes.MONITOR
 
-class BreadScreenBlockEntity(
+class MonitorBlockEntity(
 	pos: BlockPos,
 	state: BlockState
-) : BreadModBlockEntity<BreadScreenBlockEntity>(MONITOR.get(), pos, state) {
+) : BreadModBlockEntity<MonitorBlockEntity>(MONITOR.get(), pos, state) {
 	// TODO, real VGA buffer
 	// TODO, move computer to a computer block
 	val logger: Logger = LogManager.getLogger("Bread Computer")
@@ -29,7 +29,7 @@ class BreadScreenBlockEntity(
 		this.computer.processor.computer = this.computer
 		this.computer.disc = ISO9660Disc.readDisc(
 			this::class.java.getResource(
-				"/MS-DOS 6.22.iso"
+				"/main.iso"
 			)!!.toURI()
 		)
 		this.computer.reset()
