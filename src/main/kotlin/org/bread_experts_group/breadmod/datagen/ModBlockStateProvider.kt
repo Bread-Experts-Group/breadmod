@@ -48,12 +48,12 @@ class ModBlockStateProvider(
 			val model = this.models().cube(
 				name,
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
-			)
+			).renderType("minecraft:cutout")
 
 			return@directionalBlock model
 		}

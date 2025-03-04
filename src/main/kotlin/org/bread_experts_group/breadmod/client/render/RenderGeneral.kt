@@ -441,6 +441,7 @@ private const val TRANSLATE_OFFSET = 0.0001
  *
  * @see translateDirection
  */
+// todo check to make sure the rotated PoseStack aligns and rotates properly.
 fun PoseStack.translateOnBlockSide(
 	blockState: BlockState,
 	direction: Direction? = null,
@@ -459,18 +460,23 @@ fun PoseStack.translateOnBlockSide(
 	this.translate(posX, posY, posZ)
 	when (facing) {
 		Direction.NORTH -> this.translate(-1.0, 1.0, TRANSLATE_OFFSET)
-		Direction.EAST -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
-		Direction.WEST -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
+		Direction.EAST  -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
+		Direction.WEST  -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
 		Direction.SOUTH -> this.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
-		Direction.UP, Direction.DOWN -> {
+		Direction.UP    -> {
 			this.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
 			this.mulPose(Axis.XN.rotationDegrees(90F))
+		}
+		Direction.DOWN  -> {
+			this.translate(-1.0, 0 - TRANSLATE_OFFSET, 0.0)
+			this.mulPose(Axis.XP.rotationDegrees(90f))
 		}
 	}
 }
 
 val TRANSPARENT: Int = Color(0f, 0f, 0f, 0f).rgb
 
+// todo proper text rotation on up and down axis.
 fun PoseStack.drawTextOnSide(
 	fontRenderer: Font,
 	component: Component,
