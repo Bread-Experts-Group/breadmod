@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_i
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
@@ -32,6 +33,10 @@ object ModBlockEntityTypes {
 	val MONITOR: Supplier<BlockEntityType<MonitorBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("monitor_entity") { ->
 			this.buildBlockEntity(::MonitorBlockEntity, ModBlocks.MONITOR.asBlock())
+		}
+	val KEYBOARD: Supplier<BlockEntityType<KeyboardBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("keyboard_entity") { ->
+			this.buildBlockEntity(::KeyboardBlockEntity, ModBlocks.KEYBOARD.asBlock())
 		}
 	val SOUND_BLOCK: Supplier<BlockEntityType<SoundBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("sound_block_entity") { ->

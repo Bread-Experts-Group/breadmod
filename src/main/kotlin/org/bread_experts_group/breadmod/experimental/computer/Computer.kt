@@ -25,6 +25,7 @@ class Computer(
 	val processor: Processor,
 	val bios: BIOSProvider
 ) : SimulationSteppable, INBTSerializable<CompoundTag> {
+	val keyboard: BreadModPollingVirtualKeyboard = BreadModPollingVirtualKeyboard()
 	var buffer: String = "Bread BIOS v1.0\nStarting up... (DL = 0xE0, CD)\n\n"
 	var disc: ISO9660Disc? = null
 	val ps2: PS2Controller = PS2Controller()
@@ -33,7 +34,7 @@ class Computer(
 		0x64u to this.ps2.command,
 		0x80u to Diagnostics(),
 		0x92u to PS2SystemControllerA(),
-		0xB30D0000u to BreadModPollingVirtualKeyboard
+		0xB30D0000u to this.keyboard
 	)
 
 	fun requestMemoryAt(address: ULong): UByte {

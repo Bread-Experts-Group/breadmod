@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.BlockPlaceContext
@@ -14,7 +15,9 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.phys.BlockHitResult
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes.MONITOR
+import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 
 class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBlock {
@@ -32,9 +35,7 @@ class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBloc
 		player: Player,
 		hitResult: BlockHitResult
 	): InteractionResult {
-		level.getBlockEntity(pos, MONITOR.get()).ifPresent {
-			it.start()
-		}
+		level.getBlockEntity(pos, MONITOR.get()).ifPresent(MonitorBlockEntity::start)
 		return super.useWithoutItem(state, level, pos, player, hitResult)
 	}
 
@@ -48,4 +49,20 @@ class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBloc
 			HorizontalDirectionalBlock.FACING,
 			context.horizontalDirection.opposite
 		)
+
+	override fun onRemove(
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		newState: BlockState,
+		movedByPiston: Boolean
+	) {
+		if (!state.`is`(newState.block)) {
+			val monitorEntity = level.getBlockEntity(pos) as MonitorBlockEntity
+			val keyboardEntity = level.getBlockEntity(monitorEntity.keyboardPos) as? KeyboardBlockEntity
+			keyboardEntity?.monitorPos = BlockPos.ZERO
+			if (level.isClientSide) localClient.player?.sendSystemMessage(Component.literal("unbinding keyboard from removed monitor."))
+		}
+		super.onRemove(state, level, pos, newState, movedByPiston)
+	}
 }

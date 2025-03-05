@@ -160,10 +160,7 @@ internal object ClientModEventBus {
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
-		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/sphere"))
 		event.register(this.modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
-		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/outline/outline_wrong"))
-		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/outline/outline_right"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate"))
 	}

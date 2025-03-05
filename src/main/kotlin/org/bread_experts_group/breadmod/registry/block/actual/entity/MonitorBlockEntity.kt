@@ -12,6 +12,8 @@ import org.bread_experts_group.breadmod.experimental.computer.bios.StandardBIOS
 import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes.MONITOR
+import org.bread_experts_group.breadmod.util.toBlockPos
+import org.bread_experts_group.breadmod.util.toIntArray
 
 class MonitorBlockEntity(
 	pos: BlockPos,
@@ -20,6 +22,7 @@ class MonitorBlockEntity(
 	// TODO, real VGA buffer
 	// TODO, move computer to a computer block
 	val logger: Logger = LogManager.getLogger("Bread Computer")
+	var keyboardPos: BlockPos = BlockPos.ZERO
 	val computer: Computer = Computer(
 		listOf(MemoryModule(2097152u)),
 		IA32Processor(),
@@ -42,14 +45,23 @@ class MonitorBlockEntity(
 		}
 	}
 
+	fun isKeyboardBound(): Boolean = this.keyboardPos != BlockPos.ZERO
+
+	fun keyboardStillValid(): Boolean {
+		val level = this.level ?: return false
+		return level.getBlockEntity(this.keyboardPos) != null
+	}
+
 	fun start(): Unit? = if (this.computerStepper.state == Thread.State.NEW) this.computerStepper.start() else null
 
 	override fun loadAdditionalBM(tag: CompoundTag, registries: Provider) {
 		this.computer.deserializeNBT(registries, tag.getCompound("computer"))
+		this.keyboardPos = tag.getIntArray("keyboard").toBlockPos()
 	}
 
 	override fun saveAdditionalBM(tag: CompoundTag, registries: Provider) {
 		this.computerStepper.interrupt()
 		tag.put("computer", this.computer.serializeNBT(registries))
+		tag.putIntArray("keyboard", this.keyboardPos.toIntArray())
 	}
 }

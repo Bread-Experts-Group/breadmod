@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.experimental.computer.bios.h13
 import org.bread_experts_group.breadmod.experimental.computer.bios.BIOSInterruptProvider
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl.InterruptReturn
-import org.bread_experts_group.breadmod.experimental.computer.ia32.register.FlagsRegister.FlagType
 
 object Read : BIOSInterruptProvider {
 	override fun handle(processor: IA32Processor) {
@@ -17,8 +16,8 @@ object Read : BIOSInterruptProvider {
 		)
 
 		InterruptReturn.handle(processor)
-		processor.flags.setFlag(FlagType.CARRY_FLAG, false)
-		processor.a.h = 0x00u
-//		this.setError(processor, 0x04u)
+//		processor.flags.setFlag(FlagType.CARRY_FLAG, false)
+//		processor.a.h = 0x00u
+		this.setError(processor, 0x04u)
 	}
 }

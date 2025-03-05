@@ -161,6 +161,11 @@ internal object CommonModEventBus {
 			PlaceItemInWorldPacket.STREAM_CODEC,
 			PlaceItemInWorldPacket::handleServerboundPacket
 		)
+//		registrar.playToServer(
+//			ComputerKeystrokePacket.TYPE,
+//			ComputerKeystrokePacket.STREAM_CODEC,
+//			ComputerKeystrokePacket::handleServerboundPacket
+//		)
 	}
 
 	@SubscribeEvent

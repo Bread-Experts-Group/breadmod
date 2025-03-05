@@ -267,6 +267,24 @@ operator fun Vec3.plus(other: Vec3): Vec3 = Vec3(this.x + other.x, this.y + othe
  */
 operator fun Vec3.times(scale: Double): Vec3 = this.scale(scale)
 
+/// AABB Operations ///
+fun centerAABB(pos: BlockPos): AABB = AABB(pos.center, pos.center)
+fun AABB.threeByThree(): AABB = this.inflate(1.0, 1.0, 1.0)
+fun threeByThreeAABB(pos: BlockPos): AABB = centerAABB(pos).threeByThree()
+/// End AABB Operations ///
+/**
+ * Converts this [BlockPos] to an [IntArray].
+ */
+fun BlockPos.toIntArray(): IntArray = intArrayOf(this.x, this.y, this.z)
+
+/**
+ * Converts this [IntArray] to a [BlockPos].
+ */
+fun IntArray.toBlockPos(): BlockPos {
+	if (this.size != 3) return BlockPos.ZERO
+	return BlockPos(this[0], this[1], this[2])
+}
+
 /// Face Targeting Functions ///
 fun dunsxCheck(opposite: Direction, x: Double, z: Double): Direction? {
 	if (x < 0.25) {

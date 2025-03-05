@@ -1,6 +1,6 @@
 package org.bread_experts_group.breadmod.experimental.computer.io
 
-object BreadModPollingVirtualKeyboard : IODevice {
+class BreadModPollingVirtualKeyboard : IODevice {
 	private val waiter: Object = Object()
 	private var char: UByte = 0u
 
