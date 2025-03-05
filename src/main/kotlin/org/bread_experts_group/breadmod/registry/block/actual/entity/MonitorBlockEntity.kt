@@ -32,7 +32,7 @@ class MonitorBlockEntity(
 		this.computer.processor.computer = this.computer
 		this.computer.disc = ISO9660Disc.readDisc(
 			this::class.java.getResource(
-				"/bootable.iso"
+				"/breadsplashicon.iso"
 			)!!.toURI()
 		)
 		this.computer.reset()
@@ -52,7 +52,9 @@ class MonitorBlockEntity(
 		return level.getBlockEntity(this.keyboardPos) != null
 	}
 
-	fun start(): Unit? = if (this.computerStepper.state == Thread.State.NEW) this.computerStepper.start() else null
+	fun isRunning(): Boolean = this.computerStepper.state != Thread.State.NEW
+
+	fun start(): Unit? = if (!this.isRunning()) this.computerStepper.start() else null
 
 	override fun loadAdditionalBM(tag: CompoundTag, registries: Provider) {
 		this.computer.deserializeNBT(registries, tag.getCompound("computer"))

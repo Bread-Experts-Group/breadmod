@@ -354,6 +354,29 @@ fun targetFaceSection(
  * Normalizes the absolute location of the hit result to two decimal places.
  */
 fun normalizeHitLoc(hitLoc: Double, blockPos: Int): Double = round((hitLoc - blockPos) * 100) / 100
+fun normalizedHitPos(hitLoc: Vec3, blockPos: BlockPos): Vec3 {
+	val x = normalizeHitLoc(hitLoc.x, blockPos.x)
+	val y = normalizeHitLoc(hitLoc.y, blockPos.y)
+	val z = normalizeHitLoc(hitLoc.z, blockPos.z)
+	return Vec3(x, y, z)
+}
+
+fun horizontalDirectionalTargetFaceSection(
+	direction: Direction,
+	targetPos: Vec3,
+	minxXNorthEast: Double,
+	maxXNorthEast: Double,
+	minxXSouthWest: Double,
+	maxXSouthWest: Double,
+	minY: Double,
+	maxY: Double
+): Boolean = when (direction) {
+	NORTH -> targetFaceSection(targetPos.x, targetPos.y, minxXNorthEast, minY, maxXNorthEast, maxY)
+	SOUTH -> targetFaceSection(targetPos.x, targetPos.y, minxXSouthWest, minY, maxXSouthWest, maxY)
+	WEST  -> targetFaceSection(targetPos.z, targetPos.y, minxXSouthWest, minY, maxXSouthWest, maxY)
+	EAST  -> targetFaceSection(targetPos.z, targetPos.y, minxXNorthEast, minY, maxXNorthEast, maxY)
+	else  -> false
+}
 /// End Face Targeting Functions ///
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!

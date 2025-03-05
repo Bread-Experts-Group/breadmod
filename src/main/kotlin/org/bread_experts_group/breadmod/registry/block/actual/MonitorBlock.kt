@@ -3,7 +3,11 @@ package org.bread_experts_group.breadmod.registry.block.actual
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource.BLOCKS
 import net.minecraft.world.InteractionResult
+import net.minecraft.world.InteractionResult.FAIL
+import net.minecraft.world.InteractionResult.sidedSuccess
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
@@ -19,6 +23,8 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes.MONITOR
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
+import org.bread_experts_group.breadmod.util.horizontalDirectionalTargetFaceSection
+import org.bread_experts_group.breadmod.util.normalizedHitPos
 
 class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBlock {
 	init {
@@ -35,7 +41,16 @@ class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBloc
 		player: Player,
 		hitResult: BlockHitResult
 	): InteractionResult {
-		level.getBlockEntity(pos, MONITOR.get()).ifPresent(MonitorBlockEntity::start)
+		val direction = hitResult.direction ?: return FAIL
+		val normalizedPos = normalizedHitPos(hitResult.location, pos)
+
+		if (horizontalDirectionalTargetFaceSection(direction, normalizedPos, 0.12, 0.18, 0.82, 0.88, 0.00, 0.06)) {
+			level.getBlockEntity(pos, MONITOR.get()).ifPresent {
+				if (!it.isRunning()) it.start()
+				level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BIT.value(), BLOCKS, 1f, 1f)
+			}
+			return sidedSuccess(level.isClientSide)
+		}
 		return super.useWithoutItem(state, level, pos, player, hitResult)
 	}
 

@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
-import org.bread_experts_group.breadmod.util.normalizeHitLoc
+import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.targetFaceSection
 import java.util.stream.Stream
 
@@ -133,22 +133,19 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		hitResult: BlockHitResult
 	): InteractionResult {
 		val direction = hitResult.direction ?: return FAIL
-		val hitLoc = hitResult.location
-		val hitX = normalizeHitLoc(hitLoc.x, pos.x)
-		val hitY = normalizeHitLoc(hitLoc.y, pos.y)
-		val hitZ = normalizeHitLoc(hitLoc.z, pos.z)
+		val normalizedPos = normalizedHitPos(hitResult.location, pos)
 		when (direction) {
 			NORTH -> {
-				this.buttonPress(hitX, hitY, 0.23, 0.27, level, pos, NORTH)
+				this.buttonPress(normalizedPos.x, normalizedPos.y, 0.23, 0.27, level, pos, NORTH)
 			}
 			EAST  -> {
-				this.buttonPress(hitZ, hitY, 0.23, 0.27, level, pos, EAST)
+				this.buttonPress(normalizedPos.z, normalizedPos.y, 0.23, 0.27, level, pos, EAST)
 			}
 			SOUTH -> {
-				this.buttonPress(hitX, hitY, 0.73, 0.77, level, pos, SOUTH)
+				this.buttonPress(normalizedPos.x, normalizedPos.y, 0.73, 0.77, level, pos, SOUTH)
 			}
 			WEST  -> {
-				this.buttonPress(hitZ, hitY, 0.73, 0.77, level, pos, WEST)
+				this.buttonPress(normalizedPos.z, normalizedPos.y, 0.73, 0.77, level, pos, WEST)
 			}
 			else  -> {}
 		}
