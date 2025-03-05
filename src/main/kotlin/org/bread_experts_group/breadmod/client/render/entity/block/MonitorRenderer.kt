@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.drawTextOnSide
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
+import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.shr
+import org.bread_experts_group.breadmod.experimental.computer.bios.h10.TeletypeOutput
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.registry.ModFonts
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
@@ -24,17 +26,34 @@ class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(contex
 		packedOverlay: Int
 	) {
 		levelGraphics.fill(2, 2, 14, 14, 1, Color.BLACK.rgb)
-		levelGraphics.fill(13, 15, 14, 16, 1, Color.ORANGE.rgb)
-		blockEntity.computer.buffer.split('\n').forEachIndexed { i, s ->
-			poseStack.drawTextOnSide(
-				this.context.font,
-				Component.literal(s).withStyle(ModFonts.IBM_EGA_9_14),
-				0.13, (-i * 0.025) - 0.14,
-				bufferSource = bufferSource,
-				blockState = blockEntity.blockState,
-				scale = 0.0025f,
-				color = Color.LIGHT_GRAY.rgb
-			)
+		levelGraphics.fill(
+			13, 15, 14, 16, 1,
+			when (blockEntity.computerStepper.state) {
+				Thread.State.NEW           -> Color.YELLOW
+				Thread.State.TIMED_WAITING -> Color.LIGHT_GRAY
+				Thread.State.WAITING       -> Color.GRAY
+				Thread.State.BLOCKED       -> Color.ORANGE
+				Thread.State.RUNNABLE      -> Color.GREEN
+				Thread.State.TERMINATED    -> Color.RED
+			}.rgb
+		)
+		for (x in 0 ..< TeletypeOutput.ROWS) {
+			for (y in 0 ..< TeletypeOutput.COLS) {
+				val data = blockEntity.computer.requestMemoryAt16(
+					0xB8000u + ((y * 80) + (x * 2)).toULong()
+				)
+				val character = Char(data shr 8)
+//				val color = data and 0xFu
+				poseStack.drawTextOnSide(
+					this.context.font,
+					Component.literal(character.toString()).withStyle(ModFonts.IBM_EGA_9_14),
+					0.13 + (0.0185 * x.toDouble()), (y.toDouble() * -0.025) - 0.13,
+					bufferSource = bufferSource,
+					blockState = blockEntity.blockState,
+					scale = 0.0034f,
+					color = Color.LIGHT_GRAY.rgb
+				)
+			}
 		}
 		val processor = blockEntity.computer.processor as IA32Processor
 		listOf(
@@ -60,7 +79,7 @@ class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(contex
 			poseStack.drawTextOnSide(
 				this.context.font,
 				component,
-				0.66, (-i * 0.015) - 0.14,
+				0.66, (-i * 0.015) + 0.5,
 				bufferSource = bufferSource,
 				blockState = blockEntity.blockState,
 				scale = 0.0015f,

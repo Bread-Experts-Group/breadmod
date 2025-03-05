@@ -11,7 +11,7 @@ object ExtendedRead : BIOSInterruptProvider {
 			return
 		}
 		val (primary, _) = (processor.computer.disc ?: return).getBoot()
-		val dapAddr = processor.segmentOverride.offset(processor.si)
+		val dapAddr = processor.segment.offset(processor.si)
 		val lbs = primary.logicalBlockSize.toULong()
 		val lba = processor.computer.requestMemoryAt64(dapAddr + 8u) * lbs
 		processor.decoding.loadDiscIntoMemory(

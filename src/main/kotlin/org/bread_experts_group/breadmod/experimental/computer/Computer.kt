@@ -26,7 +26,6 @@ class Computer(
 	val bios: BIOSProvider
 ) : SimulationSteppable, INBTSerializable<CompoundTag> {
 	val keyboard: BreadModPollingVirtualKeyboard = BreadModPollingVirtualKeyboard()
-	var buffer: String = "Bread BIOS v1.0\nStarting up... (DL = 0xE0, CD)\n\n"
 	var disc: ISO9660Disc? = null
 	val ps2: PS2Controller = PS2Controller()
 	val ioMap: MutableMap<UInt, IODevice> = mutableMapOf(

@@ -150,7 +150,7 @@ class IA32Processor : Processor {
 	}
 
 	val instructionMap: MutableMap<UInt, Instruction> = mutableMapOf()
-	var segmentOverride: SegmentRegister = this.ds
+	var segment: SegmentRegister = this.ds
 	private var operandSizeOverride: Boolean = false
 	private var addressSizeOverride: Boolean = false
 	fun realMode(): Boolean = !this.cr0.getFlag(ControlRegister0.FlagType.PROTECTED_MODE_ENABLE)
@@ -198,30 +198,31 @@ class IA32Processor : Processor {
 		this.logger.warn("Understood ${this.instructionMap.size} opcodes.")
 	}
 
+	private var readingOffPrefix = 0u
 	fun decode() {
 		val instruction = when (this.cir.toUInt()) {
 			0x26u -> {
-				this.segmentOverride = this.es
+				this.segment = this.es
 				return
 			}
 			0x2Eu -> {
-				this.segmentOverride = this.cs
+				this.segment = this.cs
 				return
 			}
 			0x36u -> {
-				this.segmentOverride = this.ss
+				this.segment = this.ss
 				return
 			}
 			0x3Eu -> {
-				this.segmentOverride = this.ds
+				this.segment = this.ds
 				return
 			}
 			0x64u -> {
-				this.segmentOverride = this.fs
+				this.segment = this.fs
 				return
 			}
 			0x65u -> {
-				this.segmentOverride = this.gs
+				this.segment = this.gs
 				return
 			}
 			0x66u -> {
@@ -234,23 +235,34 @@ class IA32Processor : Processor {
 			}
 			0x0Fu -> this.instructionMap[(0x0Fu shl 8) or this.decoding.readFetch().toUInt()]
 				?: throw IllegalArgumentException("Missing two-byte opcode (0F) for ${hex(this.cir)} [${hex(this.ip.rx)}]")
-			0xF3u -> this.instructionMap[(0xF3u shl 8) or this.decoding.readFetch().toUInt()]
-				?: throw IllegalArgumentException("Missing two-byte opcode (F3) for ${hex(this.cir)} [${hex(this.ip.rx)}]")
-			0xF2u -> this.instructionMap[(0xF2u shl 8) or this.decoding.readFetch().toUInt()]
-				?: throw IllegalArgumentException("Missing two-byte opcode (F2) for ${hex(this.cir)} [${hex(this.ip.rx)}]")
-			else  -> this.instructionMap[this.cir.toUInt()]
-				?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)} [${hex(this.ip.rx)}]")
+			0xF2u -> {
+				this.readingOffPrefix = 0xF2u
+				return
+			}
+			0xF3u -> {
+				this.readingOffPrefix = 0xF3u
+				return
+			}
+			else  -> {
+				if (this.readingOffPrefix > 0u) {
+					(this.instructionMap[(this.readingOffPrefix shl 8) or this.decoding.readFetch().toUInt()]
+						?: throw IllegalArgumentException(
+							"Missing two-byte opcode (${hex(this.readingOffPrefix)}) for ${hex(this.cir)} [${hex(this.ip.rx)}]"
+						)).also { this.readingOffPrefix = 0u }
+				} else {
+					this.instructionMap[this.cir.toUInt()]
+						?: throw IllegalArgumentException("Missing opcode for ${hex(this.cir)} [${hex(this.ip.rx)}]")
+				}
+			}
 		}
-//		if (this.ip.rx > 0x100000u) {
 		this.logger.warn(
 			"{} {}: {}",
 			this.cs.hex(this.ip.rx - 1u),
 			hex(this.cir),
 			instruction.getDisassembly(this)
 		)
-//		}
 		instruction.handle(this)
-		this.segmentOverride = this.ds
+		this.segment = this.ds
 		this.operandSizeOverride = false
 		this.addressSizeOverride = false
 	}

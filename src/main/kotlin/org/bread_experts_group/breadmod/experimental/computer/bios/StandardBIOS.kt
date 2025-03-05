@@ -11,7 +11,9 @@ import org.bread_experts_group.breadmod.experimental.computer.bios.h16.GetKeystr
 import org.bread_experts_group.breadmod.experimental.computer.bios.h19.BootstrapLoader
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 
-object StandardBIOS : BIOSProvider {
+class StandardBIOS : BIOSProvider {
+	val teletype: TeletypeOutput = TeletypeOutput()
+
 	override fun initialize(computer: Computer) {
 		val processor = computer.processor as IA32Processor
 		// See Intel® Platform Innovation Framework for UEFI, Compatibility Support Module Specification, Rev 0.98
@@ -53,7 +55,7 @@ object StandardBIOS : BIOSProvider {
 		processor.computer.setMemoryAt32(0x0040u, 0xF000F065u)
 		processor.setHook(0xF000u, 0xF065u) {
 			when (processor.a.h.toUInt()) {
-				0x0Eu -> TeletypeOutput
+				0x0Eu -> teletype
 				else  -> throw IllegalArgumentException("Unknown 0x10 ah: ${hex(processor.a.th)}")
 			}.handle(processor)
 		}

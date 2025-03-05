@@ -6,6 +6,10 @@ open class Register(val logger: Logger, val name: String, prx: ULong) {
 	open var rx: ULong = prx
 		set(value) {
 			if (field == value) return
+//			if (this.name == "ip") {
+//				this.logger.warn("${this.name} set ${hex(value)}")
+//				Thread.dumpStack()
+//			}
 			field = value
 		}
 	var ex: ULong

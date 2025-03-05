@@ -26,7 +26,7 @@ class MonitorBlockEntity(
 	val computer: Computer = Computer(
 		listOf(MemoryModule(2097152u)),
 		IA32Processor(),
-		StandardBIOS
+		StandardBIOS()
 	)
 	val computerStepper: Thread = Thread.ofPlatform().unstarted {
 		this.computer.processor.computer = this.computer
@@ -39,7 +39,7 @@ class MonitorBlockEntity(
 		try {
 			while (!this.computerStepper.isInterrupted) {
 				this.computer.step()
-//			Thread.sleep(100)
+//				Thread.sleep(2)
 			}
 		} catch (_: InterruptedException) {
 		}

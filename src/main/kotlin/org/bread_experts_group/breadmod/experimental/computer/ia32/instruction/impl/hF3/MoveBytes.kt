@@ -23,7 +23,7 @@ object MoveBytes : Instruction("rep movs") {
 			c.set(c.get() - 1u)
 			processor.computer.setMemoryAt(
 				processor.es.offset(si.get()),
-				processor.computer.requestMemoryAt(processor.segmentOverride.offset(di.get()))
+				processor.computer.requestMemoryAt(processor.segment.offset(di.get()))
 			)
 			si.set(si.get() + 1u)
 			di.set(di.get() + 1u)

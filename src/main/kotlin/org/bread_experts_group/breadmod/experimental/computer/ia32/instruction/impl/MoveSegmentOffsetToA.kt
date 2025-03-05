@@ -10,21 +10,34 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 
 @IA32Instruction(0xA1u)
 object MoveSegmentOffsetToA : Instruction("mov"), Immediate32, Immediate16 {
-	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
-		AddressingLength.R32 -> processor.imm32().let {
-			"eax, ${processor.segmentOverride.name}:[${hex(it)}] [${hex(processor.segmentOverride.offset(it.toULong()))}]"
+	override fun operands(processor: IA32Processor): String {
+		val operand = when (processor.operandSize) {
+			AddressingLength.R32 -> "eax"
+			AddressingLength.R16 -> "ax"
+			else                 -> throw UnsupportedOperationException()
 		}
-		AddressingLength.R16 -> processor.imm16().let {
-			"ax, ${processor.segmentOverride.name}:[${hex(it)}] [${hex(processor.segmentOverride.offset(it.toULong()))}]"
+		val address = when (processor.addressSize) {
+			AddressingLength.R32 -> processor.imm32().let {
+				"${processor.segment.name}:[${hex(it)}] [${hex(processor.segment.offset(it.toULong()))}]"
+			}
+			AddressingLength.R16 -> processor.imm16().let {
+				"${processor.segment.name}:[${hex(it)}] [${hex(processor.segment.offset(it.toULong()))}]"
+			}
+			else                 -> throw UnsupportedOperationException()
 		}
-		else                 -> throw UnsupportedOperationException()
+		return "$operand, $address"
 	}
 
-	override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
-		AddressingLength.R32 -> processor.a.tex =
-			processor.computer.requestMemoryAt32(processor.segmentOverride.offset(processor.imm32().toULong()))
-		AddressingLength.R16 -> processor.a.tx =
-			processor.computer.requestMemoryAt16(processor.segmentOverride.offset(processor.imm16().toULong()))
-		else                 -> throw UnsupportedOperationException()
+	override fun handle(processor: IA32Processor) {
+		val address = when (processor.addressSize) {
+			AddressingLength.R32 -> processor.segment.offset(processor.imm32().toULong())
+			AddressingLength.R16 -> processor.segment.offset(processor.imm16().toULong())
+			else                 -> throw UnsupportedOperationException()
+		}
+		when (processor.operandSize) {
+			AddressingLength.R32 -> processor.a.tex = processor.computer.requestMemoryAt32(address)
+			AddressingLength.R16 -> processor.a.tx = processor.computer.requestMemoryAt16(address)
+			else                 -> throw UnsupportedOperationException()
+		}
 	}
 }

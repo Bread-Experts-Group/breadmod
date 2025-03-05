@@ -12,20 +12,20 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 object MoveAToSegmentOffset : Instruction("mov"), Immediate32, Immediate16 {
 	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
 		AddressingLength.R32 -> processor.imm32().let {
-			"${processor.segmentOverride.name}:[${hex(it)}] [${hex(processor.segmentOverride.offset(it.toULong()))}], eax"
+			"${processor.segment.name}:[${hex(it)}] [${hex(processor.segment.offset(it.toULong()))}], eax"
 		}
 		AddressingLength.R16 -> processor.imm16().let {
-			"${processor.segmentOverride.name}:[${hex(it)}] [${hex(processor.segmentOverride.offset(it.toULong()))}], ax"
+			"${processor.segment.name}:[${hex(it)}] [${hex(processor.segment.offset(it.toULong()))}], ax"
 		}
 		else                 -> throw UnsupportedOperationException()
 	}
 
 	override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
 		AddressingLength.R32 -> processor.imm32().let {
-			processor.computer.setMemoryAt32(processor.segmentOverride.offset(it.toULong()), processor.a.tex)
+			processor.computer.setMemoryAt32(processor.segment.offset(it.toULong()), processor.a.tex)
 		}
 		AddressingLength.R16 -> processor.imm16().let {
-			processor.computer.setMemoryAt16(processor.segmentOverride.offset(it.toULong()), processor.a.tx)
+			processor.computer.setMemoryAt16(processor.segment.offset(it.toULong()), processor.a.tx)
 		}
 		else                 -> throw UnsupportedOperationException()
 	}

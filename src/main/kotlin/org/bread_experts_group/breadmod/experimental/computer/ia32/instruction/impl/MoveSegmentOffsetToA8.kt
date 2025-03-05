@@ -11,20 +11,20 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 @IA32Instruction(0xA0u)
 object MoveSegmentOffsetToA8 : Instruction("mov"), Immediate32, Immediate16 {
 	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
-		AddressingLength.R32 -> "al, [${hex(processor.segmentOverride.offset(processor.imm32().toULong()))}]"
-		AddressingLength.R16 -> "al, [${hex(processor.segmentOverride.offset(processor.imm16().toULong()))}]"
+		AddressingLength.R32 -> "al, [${hex(processor.segment.offset(processor.imm32().toULong()))}]"
+		AddressingLength.R16 -> "al, [${hex(processor.segment.offset(processor.imm16().toULong()))}]"
 		else                 -> throw UnsupportedOperationException()
 	}
 
 	override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
 		AddressingLength.R32 -> {
 			processor.a.tl = processor.computer.requestMemoryAt(
-				processor.segmentOverride.offset(processor.imm32().toULong())
+				processor.segment.offset(processor.imm32().toULong())
 			)
 		}
 		AddressingLength.R16 -> {
 			processor.a.tl = processor.computer.requestMemoryAt(
-				processor.segmentOverride.offset(processor.imm16().toULong())
+				processor.segment.offset(processor.imm16().toULong())
 			)
 		}
 		else                 -> throw UnsupportedOperationException()

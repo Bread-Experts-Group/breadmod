@@ -14,7 +14,7 @@ class LoadFarPointerFromMemoryDefinitions(processor: IA32Processor) {
 	class LoadFarPointerWithSegment(segmentN: Char, val segmentRegister: SegmentRegister) :
 		Instruction("l${segmentN}s"), ModRM {
 		override fun operands(processor: IA32Processor): String = processor.rmD().let {
-			"${it.register}, ${processor.segmentOverride.name}:${it.regMem}"
+			"${it.register}, ${processor.segment.name}:${it.regMem}"
 		}
 
 		override fun handle(processor: IA32Processor) {
