@@ -32,7 +32,7 @@ class MonitorBlockEntity(
 		this.computer.processor.computer = this.computer
 		this.computer.disc = ISO9660Disc.readDisc(
 			this::class.java.getResource(
-				"/breadsplashicon.iso"
+				"/bootable.iso"
 			)!!.toURI()
 		)
 		this.computer.reset()

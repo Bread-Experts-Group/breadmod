@@ -18,6 +18,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Flag
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Register
 import org.bread_experts_group.breadmod.experimental.computer.ia32.register.SegmentRegister
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
+import java.util.concurrent.CountDownLatch
 import kotlin.reflect.KProperty0
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
@@ -119,6 +120,7 @@ class IA32Processor : Processor {
 	override fun reset() {
 		this.cs.rx = 0xF000u
 		this.ip.rx = 0xFFF0u
+		this.halt.countDown()
 	}
 
 	val biosHooks: MutableMap<ULong, MutableMap<ULong, (IA32Processor) -> Unit>> = mutableMapOf()
@@ -126,7 +128,9 @@ class IA32Processor : Processor {
 		this.biosHooks.getOrPut(cs) { mutableMapOf() }[ip] = r
 	}
 
+	var halt: CountDownLatch = CountDownLatch(1)
 	fun initiateInterrupt(selector: UByte) {
+		this.halt.countDown()
 		if (this.realMode()) {
 			this.logger.warn("!!! INTERRUPT RECEIVED (${hex(selector)}) !!!")
 			this.push16(this.flags.tx)
@@ -144,6 +148,7 @@ class IA32Processor : Processor {
 	}
 
 	fun fetch() {
+		this.halt.await()
 		if (this.realMode()) this.biosHooks[this.cs.rx]?.get(this.ip.rx)?.invoke(this)
 		this.cir = this.computer.requestMemoryAt(this.cs.offset(this.ip))
 		this.ip.rx++
@@ -245,7 +250,7 @@ class IA32Processor : Processor {
 			}
 			else  -> {
 				if (this.readingOffPrefix > 0u) {
-					(this.instructionMap[(this.readingOffPrefix shl 8) or this.decoding.readFetch().toUInt()]
+					(this.instructionMap[(this.readingOffPrefix shl 8) or this.cir.toUInt()]
 						?: throw IllegalArgumentException(
 							"Missing two-byte opcode (${hex(this.readingOffPrefix)}) for ${hex(this.cir)} [${hex(this.ip.rx)}]"
 						)).also { this.readingOffPrefix = 0u }

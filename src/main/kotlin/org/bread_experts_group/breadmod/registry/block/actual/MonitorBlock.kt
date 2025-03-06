@@ -47,6 +47,7 @@ class MonitorBlock : Block(Properties.ofFullCopy(Blocks.IRON_BLOCK)), EntityBloc
 		if (horizontalDirectionalTargetFaceSection(direction, normalizedPos, 0.12, 0.18, 0.82, 0.88, 0.00, 0.06)) {
 			level.getBlockEntity(pos, MONITOR.get()).ifPresent {
 				if (!it.isRunning()) it.start()
+				else it.computer.reset()
 				level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BIT.value(), BLOCKS, 1f, 1f)
 			}
 			return sidedSuccess(level.isClientSide)
