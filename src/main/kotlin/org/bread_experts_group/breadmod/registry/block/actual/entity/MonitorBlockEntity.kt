@@ -32,14 +32,14 @@ class MonitorBlockEntity(
 		this.computer.processor.computer = this.computer
 		this.computer.disc = ISO9660Disc.readDisc(
 			this::class.java.getResource(
-				"/bootable.iso"
+				"/bootloader/bootable.iso"
 			)!!.toURI()
 		)
 		this.computer.reset()
 		try {
 			while (!this.computerStepper.isInterrupted) {
 				this.computer.step()
-//				Thread.sleep(2)
+				Thread.sleep(0, 10)
 			}
 		} catch (_: InterruptedException) {
 		}

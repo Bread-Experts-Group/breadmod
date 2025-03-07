@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
@@ -19,8 +20,11 @@ object ModRMRegisterTEST : Instruction("test"), ModRM, LogicalArithmeticFlagOper
 	override fun operands(processor: IA32Processor): String = processor.rmD().let { "${it.regMem}, ${it.register}" }
 	override fun handle(processor: IA32Processor) {
 		val (memRM, register) = processor.rm()
-		val result = memRM.getRMMode() and register.get()
-		this.setFlagsForResult(processor, result)
+		when (processor.operandSize) {
+			AddressingLength.R32 -> this.setFlagsForResult(processor, memRM.getRMi() and register.get().toUInt())
+			AddressingLength.R16 -> this.setFlagsForResult(processor, memRM.getRMs() and register.get().toUShort())
+			else                 -> throw UnsupportedOperationException()
+		}
 	}
 
 	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE

@@ -6,29 +6,43 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.D
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
 
-@IA32Instruction(0xF3ABu)
-object MoveWords : Instruction("rep stos") {
+@IA32Instruction(0xF3A5u)
+object MoveWords : Instruction("rep movs") {
 	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
 		AddressingLength.R32 ->
-			"es:[edi] -> es:[edi [${hex(processor.es.offset(processor.di.ex))}] + ecx [${hex(processor.c.tex)}]], " +
-					"eax [${hex(processor.a.tex)}]"
+			"[esi [${processor.ds.hex(processor.si.ex)}]], es:[edi [${processor.es.hex(processor.d.ex)}]" +
+					" + ecx [${hex(processor.c.tex)}]]"
 		AddressingLength.R16 ->
-			"es:[di] -> es:[di [${hex(processor.es.offset(processor.di.x))}] + cx [${hex(processor.c.tx)}]], " +
-					"ax [${hex(processor.a.tx)}]"
+			"[si [${processor.ds.hex(processor.si.x)}]], es:[di [${processor.es.hex(processor.d.x)}]" +
+					" + cx [${hex(processor.c.tx)}]]"
 		else                 -> throw UnsupportedOperationException()
 	}
 
-	override fun handle(processor: IA32Processor): Unit = when (processor.operandSize) {
-		AddressingLength.R32 -> while (processor.c.ex > 0u) {
-			processor.c.ex--
-			processor.computer.setMemoryAt32(processor.es.offset(processor.di), processor.a.tex)
-			processor.di.ex += 4u
+	override fun handle(processor: IA32Processor) {
+		when (processor.operandSize) {
+			AddressingLength.R32 -> while (processor.c.ex > 0u) {
+				processor.c.ex--
+				processor.computer.setMemoryAt32(
+					processor.es.offset(processor.di),
+					processor.computer.requestMemoryAt32(
+						processor.ds.offset(processor.si)
+					)
+				)
+				processor.si.ex += 4u
+				processor.di.ex += 4u
+			}
+			AddressingLength.R16 -> while (processor.c.x > 0u) {
+				processor.c.x--
+				processor.computer.setMemoryAt16(
+					processor.es.offset(processor.di),
+					processor.computer.requestMemoryAt16(
+						processor.ds.offset(processor.si)
+					)
+				)
+				processor.si.x += 2u
+				processor.di.x += 2u
+			}
+			else                 -> throw UnsupportedOperationException()
 		}
-		AddressingLength.R16 -> while (processor.c.x > 0u) {
-			processor.c.x--
-			processor.computer.setMemoryAt16(processor.es.offset(processor.di), processor.a.tx)
-			processor.di.x += 2u
-		}
-		else                 -> throw UnsupportedOperationException()
 	}
 }

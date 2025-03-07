@@ -21,8 +21,9 @@ object LoopAccordingToC : Instruction("loop"), Immediate8 {
 		processor.c.ex--
 		val r8 = processor.rel8()
 		when (processor.operandSize) {
-			AddressingLength.R16 -> if (processor.c.x > 0u) processor.ip.tex = (processor.ip.tex.toInt() + r8).toUInt()
 			AddressingLength.R32 -> if (processor.c.ex > 0u) processor.ip.tex = (processor.ip.tex.toInt() + r8).toUInt()
+			AddressingLength.R16 -> if (processor.c.x > 0u) processor.ip.tex =
+				(processor.ip.tex.toInt() + r8).toUShort().toUInt()
 			else                 -> throw UnsupportedOperationException()
 		}
 	}

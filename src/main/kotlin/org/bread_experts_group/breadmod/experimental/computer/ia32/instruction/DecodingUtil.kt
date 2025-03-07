@@ -241,11 +241,13 @@ class DecodingUtil(private val processor: IA32Processor) {
 					0b110u -> this.processor.si.ex
 					0b111u -> this.processor.di.ex
 					else   -> throw IllegalArgumentException(hex(rm))
-				}.toLong() + when (mod) {
-					0b00u -> 0
-					0b01u -> this.readBinaryFetch(1)
-					0b10u -> this.readBinaryFetch(4)
-					else  -> throw IllegalArgumentException(hex(mod))
+				}.toLong().let {
+					when (mod) {
+						0b00u -> it
+						0b01u -> it + this.readBinaryFetch(1).toByte()
+						0b10u -> it + this.readBinaryFetch(4).toInt()
+						else  -> throw IllegalArgumentException(hex(mod))
+					}
 				}
 				AddressingLength.R16 -> when (rm) {
 					0b000u -> this.processor.b.x + this.processor.si.x
@@ -260,11 +262,13 @@ class DecodingUtil(private val processor: IA32Processor) {
 					}
 					0b111u -> this.processor.b.x
 					else   -> throw IllegalArgumentException(hex(rm))
-				}.toLong() + when (mod) {
-					0b00u -> 0
-					0b01u -> this.readBinaryFetch(1)
-					0b10u -> this.readBinaryFetch(2)
-					else  -> throw IllegalArgumentException(hex(mod))
+				}.toLong().let {
+					when (mod) {
+						0b00u -> it
+						0b01u -> it + this.readBinaryFetch(1).toByte()
+						0b10u -> it + this.readBinaryFetch(2).toShort()
+						else  -> throw IllegalArgumentException(hex(mod))
+					}
 				}
 				else                 -> throw UnsupportedOperationException()
 			}
@@ -340,12 +344,6 @@ class DecodingUtil(private val processor: IA32Processor) {
 		fun setRMb(value: UByte): Unit =
 			if (this.register != null) this.register.set(value.toULong())
 			else this@DecodingUtil.processor.computer.setMemoryAt(this.memory!!, value)
-
-		fun getRMMode(): ULong = when (this@DecodingUtil.processor.operandSize) {
-			AddressingLength.R32 -> this.getRMi().toULong()
-			AddressingLength.R16 -> this.getRMs().toULong()
-			else                 -> throw UnsupportedOperationException()
-		}
 
 		fun getRMi(): UInt =
 			if (this.register != null) this.register.get().toUInt()

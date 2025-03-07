@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.impl
 
 import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
+import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.AddressingLength
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.DecodingUtil.RegisterType
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.IA32Instruction
 import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.type.Instruction
@@ -19,9 +20,19 @@ object RegisterModRMXOR : Instruction("xor"), ModRM, LogicalArithmeticFlagOperat
 	override fun operands(processor: IA32Processor): String = processor.rmD().let { "${it.register}, ${it.regMem}" }
 	override fun handle(processor: IA32Processor) {
 		val (memRM, register) = processor.rm()
-		val result = register.get() xor memRM.getRMMode()
-		register.set(result)
-		this.setFlagsForResult(processor, result)
+		when (processor.operandSize) {
+			AddressingLength.R32 -> {
+				val result = register.get().toUInt() xor memRM.getRMi()
+				this.setFlagsForResult(processor, result)
+				register.set(result.toULong())
+			}
+			AddressingLength.R16 -> {
+				val result = register.get().toUShort() xor memRM.getRMs()
+				this.setFlagsForResult(processor, result)
+				register.set(result.toULong())
+			}
+			else                 -> throw UnsupportedOperationException()
+		}
 	}
 
 	override val registerType: RegisterType = RegisterType.GENERAL_PURPOSE

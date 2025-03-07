@@ -9,6 +9,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.t
 @IA32Instruction(0x0FB6u)
 object MoveWithZeroExtension8 : Instruction("movzx") {
 	override fun operands(processor: IA32Processor): String {
+		TODO("AMIS")
 		val rmByte = processor.decoding.readFetch()
 		val rm8D = processor.decoding.getModRMDisassembler(rmByte, RegisterType.GENERAL_PURPOSE, AddressingLength.R8)
 		val rmD = processor.decoding.getModRMDisassembler(rmByte, RegisterType.GENERAL_PURPOSE)
@@ -16,6 +17,7 @@ object MoveWithZeroExtension8 : Instruction("movzx") {
 	}
 
 	override fun handle(processor: IA32Processor) {
+		TODO("AMIS")
 		val rmByte = processor.decoding.readFetch()
 		val (regMem8) = processor.decoding.getModRM(rmByte, RegisterType.GENERAL_PURPOSE, AddressingLength.R8)
 		val (_, reg) = processor.decoding.getModRM(rmByte, RegisterType.GENERAL_PURPOSE)

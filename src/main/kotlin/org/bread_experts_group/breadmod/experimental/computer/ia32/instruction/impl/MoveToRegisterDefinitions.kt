@@ -17,7 +17,11 @@ class MoveToRegisterDefinitions(processor: IA32Processor) {
 
 		override fun handle(processor: IA32Processor) {
 			val (memRM, register) = processor.rm()
-			register.set(memRM.getRMMode())
+			when (processor.operandSize) {
+				AddressingLength.R32 -> register.set(memRM.getRMi().toULong())
+				AddressingLength.R16 -> register.set(memRM.getRMs().toULong())
+				else                 -> throw UnsupportedOperationException()
+			}
 		}
 
 		override val registerType: RegisterType = type

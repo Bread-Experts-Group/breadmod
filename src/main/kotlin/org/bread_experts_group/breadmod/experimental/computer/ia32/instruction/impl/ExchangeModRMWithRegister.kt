@@ -12,7 +12,11 @@ object ExchangeModRMWithRegister : Instruction("xchg"), ModRM {
 	override fun operands(processor: IA32Processor): String = processor.rmD().let { "${it.register}, ${it.regMem}" }
 	override fun handle(processor: IA32Processor) {
 		val (memRM, register) = processor.rm()
-		val tmp = memRM.getRMMode()
+		val tmp = when (processor.operandSize) {
+			AddressingLength.R32 -> memRM.getRMi().toULong()
+			AddressingLength.R16 -> memRM.getRMs().toULong()
+			else                 -> throw UnsupportedOperationException()
+		}
 		when (processor.operandSize) {
 			AddressingLength.R32 -> memRM.setRMi(register.get().toUInt())
 			AddressingLength.R16 -> memRM.setRMs(register.get().toUShort())
