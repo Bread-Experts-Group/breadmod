@@ -1,14 +1,14 @@
-package org.bread_experts_group.breadmod.client.screen.tool_gun
+package org.bread_experts_group.breadmod.client.gui.screens
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.ModTextureLocations
-import org.bread_experts_group.breadmod.client.screen.ContainerWidget
-import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ModeSelectTab
-import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ToolGunScreenTab
-import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.settings.SettingsTab
+import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
+import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ModeSelectTab
+import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ToolGunScreenTab
+import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsTab
 
 class ToolGunScreen(title: Component) : Screen(title) {
 	companion object {
@@ -40,7 +40,6 @@ class ToolGunScreen(title: Component) : Screen(title) {
 				it.tabBarColor.rgb
 			)
 		}
-		println(focused)
 	}
 
 	private fun getTabs(): List<ToolGunScreenTab> = this.children().filterIsInstance<ToolGunScreenTab>()

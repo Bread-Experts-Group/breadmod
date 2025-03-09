@@ -2,7 +2,7 @@
 <Configuration packages="bread.mod.breadmod.logging">
     <!-- Appenders are done in breadmod.ModMain -->
     <Loggers>
-        <Root level="WARN" additivity="false">
+        <Root level="INFO" additivity="false">
             <AppenderRef ref="ConsoleColorAppender"/>
         </Root>
     </Loggers>

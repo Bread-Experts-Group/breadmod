@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.screen.tool_gun.widgets
+package org.bread_experts_group.breadmod.client.gui.components
 
 import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.Component

@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.api.IToolGunMode.Renderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
+import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 
 @ToolGunMode
 @Suppress("unused")

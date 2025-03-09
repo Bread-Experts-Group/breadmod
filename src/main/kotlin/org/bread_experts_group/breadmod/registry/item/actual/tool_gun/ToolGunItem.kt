@@ -23,7 +23,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.triggerDelta
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.client.screen.tool_gun.ToolGunScreen
+import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents

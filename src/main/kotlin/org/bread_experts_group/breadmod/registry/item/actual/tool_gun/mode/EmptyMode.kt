@@ -7,9 +7,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget.Builder
+import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
+import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
 
 class EmptyMode : AbstractToolGunMode() {
 	override fun action(level: Level, player: Player, stack: ItemStack) {

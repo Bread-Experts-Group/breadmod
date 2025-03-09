@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.screen
+package org.bread_experts_group.breadmod.client.gui.screens
 
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics

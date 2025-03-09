@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.screen
+package org.bread_experts_group.breadmod.client.gui.screens
 
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.gui.GuiGraphics

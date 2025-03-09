@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.screen.tool_gun.tabs
+package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderType
@@ -11,10 +11,10 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
-import org.bread_experts_group.breadmod.client.screen.tool_gun.ToolGunScreen
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.GenericButton
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.TabButton
+import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
+import org.bread_experts_group.breadmod.client.gui.components.GenericButton
+import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
+import org.bread_experts_group.breadmod.client.gui.components.TabButton
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 

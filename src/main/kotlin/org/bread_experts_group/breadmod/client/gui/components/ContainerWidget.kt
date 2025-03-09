@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.screen
+package org.bread_experts_group.breadmod.client.gui.components
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget

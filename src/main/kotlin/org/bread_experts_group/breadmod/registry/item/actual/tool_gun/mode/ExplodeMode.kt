@@ -20,7 +20,7 @@ import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
+import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 

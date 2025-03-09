@@ -1,9 +1,10 @@
-package org.bread_experts_group.breadmod.client.screen.tool_gun.widgets
+package org.bread_experts_group.breadmod.client.gui.components
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.renderer.RenderType
+import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ModeSelectTab
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
@@ -12,9 +13,12 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
-import org.bread_experts_group.breadmod.client.screen.tool_gun.tabs.ModeSelectTab
 import java.awt.Color
 
+/**
+ * Widget for holding tool gun mode data.
+ * This should only be instantiated in [ModeSelectTab].
+ */
 class ModeWidget(
 	val icon: ItemStack,
 	val previewImage: BreadModTextureHelper,

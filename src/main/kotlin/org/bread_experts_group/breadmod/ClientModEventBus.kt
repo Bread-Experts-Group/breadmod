@@ -25,6 +25,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.CameraOverlay
+import org.bread_experts_group.breadmod.client.gui.TestOverlay
 import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
@@ -41,8 +42,8 @@ import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRender
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.render.itemColor
-import org.bread_experts_group.breadmod.client.screen.DoughMachineScreen
-import org.bread_experts_group.breadmod.client.screen.WheatCrusherScreen
+import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
+import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen
@@ -124,6 +125,7 @@ internal object ClientModEventBus {
 	fun registerGuiLayers(event: RegisterGuiLayersEvent) {
 		event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
 		event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
+		event.registerAboveAll(modLocation("test_overlay"), TestOverlay())
 		event.registerBelow(VanillaGuiLayers.DEBUG_OVERLAY, modLocation("tool_gun_overlay"), ToolGunOverlay())
 	}
 

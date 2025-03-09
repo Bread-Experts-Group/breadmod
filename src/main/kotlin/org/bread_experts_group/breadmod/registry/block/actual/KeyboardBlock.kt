@@ -18,16 +18,18 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.screen.KeyboardScreen
+import org.bread_experts_group.breadmod.client.gui.screens.KeyboardScreen
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
-import org.bread_experts_group.breadmod.util.threeByThreeAABB
+import org.bread_experts_group.breadmod.util.BlockScanner
+import org.bread_experts_group.breadmod.util.BlockScanner.filterPositions
 
 class KeyboardBlock : BreadModBlockWithEntity(
 	Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
 ), SimpleWaterloggedBlock {
+	// todo redo binding logic, create BlockScanner object to ease scanning blocks in a radius
 	override fun useWithoutItem(
 		state: BlockState,
 		level: Level,
@@ -35,15 +37,11 @@ class KeyboardBlock : BreadModBlockWithEntity(
 		player: Player,
 		hitResult: BlockHitResult
 	): InteractionResult {
+		val keyboardEntity = level.getBlockEntity(pos) as KeyboardBlockEntity
 		if (player.isShiftKeyDown) {
-			val keyboardEntity = level.getBlockEntity(pos) as KeyboardBlockEntity
-			val posList: List<BlockPos> = buildList {
-				BlockPos.betweenClosedStream(threeByThreeAABB(pos)).forEach { this.add(it.immutable()) }
-			}.filter {
-				val subState = level.getBlockState(it)
-				val entity = level.getBlockEntity(it) as? MonitorBlockEntity ?: return@filter false
-				subState.`is`(ModBlocks.MONITOR.asBlock()) && !entity.isKeyboardBound()
-			}
+			val opposite = state.getValue(BlockStateProperties.HORIZONTAL_FACING).opposite
+			val posList = BlockScanner.scanAdjacent(listOf(opposite), pos)
+				.filterPositions(level, ModBlocks.MONITOR.asBlock())
 			if (posList.isEmpty()) {
 				if (level.isClientSide) player.sendSystemMessage(Component.literal("no unbound monitors found, cancelling bind."))
 				return super.useWithoutItem(state, level, pos, player, hitResult)
@@ -69,7 +67,6 @@ class KeyboardBlock : BreadModBlockWithEntity(
 				break
 			}
 		} else {
-			val keyboardEntity = level.getBlockEntity(pos) as KeyboardBlockEntity
 			if (level.isClientSide) {
 				if (!keyboardEntity.isMonitorBound()) {
 					player.sendSystemMessage(Component.literal("keyboard is not bound yet."))

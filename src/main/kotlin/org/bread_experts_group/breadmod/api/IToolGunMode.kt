@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
-import org.bread_experts_group.breadmod.client.screen.tool_gun.widgets.ModeWidget
+import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.util.fromClass
 import org.bread_experts_group.breadmod.util.toClass
