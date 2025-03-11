@@ -10,7 +10,7 @@ import java.awt.Color
 class SettingsEntryButton(
 	message: Component,
 	val description: Component,
-	entry: SettingsEntries
+	val entry: SettingsEntryEnums
 ) : Button(
 	0,
 	0,

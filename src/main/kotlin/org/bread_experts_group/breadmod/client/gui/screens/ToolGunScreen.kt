@@ -79,9 +79,7 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	}
 
 	override fun tick() {
-		this.children().forEach {
-			if (it is ContainerWidget<*>) it.tick()
-		}
+		this.children().filterIsInstance<ContainerWidget<*>>().forEach(ContainerWidget<*>::tick)
 	}
 
 	override fun rebuildWidgets() {
