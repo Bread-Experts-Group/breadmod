@@ -6,38 +6,40 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.instruction.i
 
 class TeletypeOutput : BIOSInterruptProvider {
 	companion object {
-		const val ROWS: Int = 40
-		const val COLS: Int = 25
+		const val ROWS: ULong = 80u
+		const val COLS: ULong = 25u
+		val ROWS_D: ULong = 160u
+		val RES_D: ULong = this.ROWS * this.COLS
+		const val COLOR_ADDR: ULong = 0xB8000u
 	}
 
-	private var x: Int = 0
-	private var y: Int = 0
+	private var x: ULong = 0u
+	private var y: ULong = 0u
 
 	override fun handle(processor: IA32Processor) {
 		InterruptReturn.handle(processor)
-		if (processor.a.tl == (0x0D).toUByte()) return
-		if (processor.a.tl == (0x0Au).toUByte() || (this.x == Companion.ROWS)) {
+		if (this.x == Companion.ROWS) {
 			this.y++
-			this.x = 0
-			if (processor.a.tl == (0x0Au).toUByte()) return
+			this.x = 0u
 		}
-
 		if (this.y == Companion.COLS) {
-			this.y--
-			for (ly in 0 ..< TeletypeOutput.COLS) {
-				for (lx in 0 ..< TeletypeOutput.ROWS) {
-					processor.computer.setMemoryAt16(
-						0xB8000u + ((ly * Companion.ROWS * 2) + (lx * 2)).toULong(),
-						if (ly == TeletypeOutput.COLS - 1) 0u
-						else processor.computer.requestMemoryAt16(
-							0xB8000u + (((ly + 1) * Companion.ROWS * 2) + (lx * 2)).toULong()
-						)
-					)
-				}
+			for (pos in Companion.COLOR_ADDR .. Companion.COLOR_ADDR + (TeletypeOutput.RES_D * 2u) step 2) {
+				processor.computer.setMemoryAt16(
+					pos,
+					processor.computer.requestMemoryAt16(pos + TeletypeOutput.ROWS_D)
+				)
 			}
+			this.y--
+		}
+		if (processor.a.tl == (0x0Au).toUByte()) {
+			this.y++
+			return
+		} else if (processor.a.tl == (0x0Du).toUByte()) {
+			this.x = 0u
+			return
 		}
 		processor.computer.setMemoryAt16(
-			0xB8000u + ((this.y * Companion.ROWS * 2) + (this.x * 2)).toULong(),
+			Companion.COLOR_ADDR + (((this.y * Companion.ROWS) + this.x) * 2u),
 			((processor.a.l shl 8) or 0xFu).toUShort()
 		)
 		this.x++

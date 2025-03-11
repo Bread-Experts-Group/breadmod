@@ -37,20 +37,20 @@ class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(contex
 				Thread.State.TERMINATED    -> Color.RED
 			}.rgb
 		)
-		for (x in 0 ..< TeletypeOutput.ROWS) {
-			for (y in 0 ..< TeletypeOutput.COLS) {
+		for (x in (0u).toULong() ..< TeletypeOutput.ROWS) {
+			for (y in (0u).toULong() ..< TeletypeOutput.COLS) {
 				val data = blockEntity.computer.requestMemoryAt16(
-					0xB8000u + ((y * 80) + (x * 2)).toULong()
+					TeletypeOutput.COLOR_ADDR + (((y * TeletypeOutput.ROWS) + x) * 2u).toULong()
 				)
 				val character = Char(data shr 8)
 //				val color = data and 0xFu
 				poseStack.drawTextOnSide(
 					this.context.font,
-					Component.literal(character.toString()).withStyle(ModFonts.IBM_EGA_9_14),
-					0.13 + (0.0185 * x.toDouble()), (y.toDouble() * -0.025) - 0.13,
+					Component.literal(character.toString()).withStyle(ModFonts.IBM_VGA_9_14),
+					0.13 + (0.00925 * x.toDouble()), (y.toDouble() * -0.0125) - 0.13,
 					bufferSource = bufferSource,
 					blockState = blockEntity.blockState,
-					scale = 0.0034f,
+					scale = 0.0017f,
 					color = Color.LIGHT_GRAY.rgb
 				)
 			}
@@ -75,7 +75,7 @@ class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(contex
 			processor.gs,
 			processor.cr0
 		).forEachIndexed { i, r ->
-			val component = Component.literal("${r.name}: ${hex(r.rx)}").withStyle(ModFonts.IBM_EGA_9_14)
+			val component = Component.literal("${r.name}: ${hex(r.rx)}").withStyle(ModFonts.IBM_VGA_9_14)
 			poseStack.drawTextOnSide(
 				this.context.font,
 				component,

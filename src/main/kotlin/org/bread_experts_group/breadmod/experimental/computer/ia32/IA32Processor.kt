@@ -118,8 +118,31 @@ class IA32Processor : Processor {
 	}
 
 	override fun reset() {
+		this.a.rx = 0u
+		this.b.rx = 0u
+		this.c.rx = 0u
+		this.d.rx = 0u
+		this.sp.rx = 0x6F40u
+		this.bp.rx = 0u
+		this.di.rx = 0u
+		this.si.rx = 0u
 		this.cs.rx = 0xF000u
+		this.gdtrLimit.rx = 0u
+		this.gdtrBase.rx = 0u
+		this.idtrLimit.rx = 0u
+		this.idtrBase.rx = 0u
 		this.ip.rx = 0xFFF0u
+		this.ds.rx = 0u
+		this.ss.rx = 0u
+		this.es.rx = 0u
+		this.fs.rx = 0u
+		this.gs.rx = 0u
+		this.cr0.rx = 0u
+		this.cr2.rx = 0u
+		this.cr3.rx = 0u
+		this.cr4.rx = 0u
+		this.flags.rx = 0u
+		this.cir = 0u
 		this.halt.countDown()
 	}
 

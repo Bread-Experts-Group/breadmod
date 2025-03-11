@@ -28,7 +28,16 @@ class MonitorBlockEntity(
 		IA32Processor(),
 		StandardBIOS()
 	)
+
+	@OptIn(ExperimentalUnsignedTypes::class)
 	val computerStepper: Thread = Thread.ofPlatform().unstarted {
+		if (!(this.level ?: return@unstarted).isClientSide) return@unstarted
+//		val stream = Assembler(
+//			this::class.java.getResource(
+//				"/bootloader/fs/boot/loader.asm"
+//			)!!.openStream()
+//		)
+//		this.logger.warn(stream.assemble())
 		this.computer.processor.computer = this.computer
 		this.computer.disc = ISO9660Disc.readDisc(
 			this::class.java.getResource(
@@ -37,10 +46,7 @@ class MonitorBlockEntity(
 		)
 		this.computer.reset()
 		try {
-			while (!this.computerStepper.isInterrupted) {
-				this.computer.step()
-				Thread.sleep(0, 10)
-			}
+			while (!this.computerStepper.isInterrupted) this.computer.step()
 		} catch (_: InterruptedException) {
 		}
 	}
