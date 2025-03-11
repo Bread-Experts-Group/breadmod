@@ -27,6 +27,10 @@ open class ContainerWidget<T : Screen>(
 
 	fun getWidgets(): MutableCollection<AbstractWidget> = this.subWidgets.values
 
+	fun getContainerWidgets(): List<ContainerWidget<*>> = this.getWidgets().filterIsInstance<ContainerWidget<*>>()
+
+	fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
+
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		if (this.visible) {
 			if (this.debug) guiGraphics.borderedFill(
@@ -54,6 +58,7 @@ open class ContainerWidget<T : Screen>(
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused) {
+			// todo this is the return causing this ContainerWidget from allowing interactions with itself
 			return this.getWidgets().any { widget ->
 				widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button).also {
 					if (it) this.screen.focused = widget

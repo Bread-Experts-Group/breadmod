@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.MultiBufferSource
 import org.apache.logging.log4j.LogManager
@@ -26,13 +25,11 @@ Only allow zooming when mouse is within the preview window
 Make this whole thing a widget and invoke a lambda containing the model rendering code
  */
 
-typealias ModelRenderLambda = (PoseStack, MultiBufferSource) -> Unit
-
-open class ModelViewerWidget(
+class ModelViewerWidget(
 	x: Int = 0,
 	y: Int = 0,
 	screen: Screen,
-	val model: ModelRenderLambda
+	val model: (PoseStack, MultiBufferSource) -> Unit
 ) : ContainerWidget<Screen>(x, y, 115, 140, "model_viewer", screen) {
 	companion object {
 		var xRot: Float = 0f
@@ -62,7 +59,6 @@ open class ModelViewerWidget(
 	override fun init() {
 		Companion.xRot = 0f
 		Companion.yRot = 0f
-		super.init()
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -118,10 +114,6 @@ open class ModelViewerWidget(
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
 	}
 
-	override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
-	}
-
-	// todo figure out
 	private fun isMouseOverPreview(mouseX: Double, mouseY: Double): Boolean =
 		this.active && this.visible
 				&& mouseX >= this.previewX + this.x
