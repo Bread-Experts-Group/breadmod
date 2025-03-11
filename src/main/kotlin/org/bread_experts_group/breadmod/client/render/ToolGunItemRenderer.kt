@@ -29,7 +29,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
-	private var helper = ToolGunRenderHelper()
+	var helper = ToolGunRenderHelper()
 	private val deltaTracker = localClient.timer
 	private val partialTick = this.deltaTracker.gameTimeDeltaTicks
 

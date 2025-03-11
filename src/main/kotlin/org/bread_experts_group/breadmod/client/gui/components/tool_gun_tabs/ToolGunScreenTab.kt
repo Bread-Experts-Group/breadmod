@@ -6,7 +6,7 @@ import org.bread_experts_group.breadmod.client.gui.components.TabButton
 import java.awt.Color
 
 abstract class ToolGunScreenTab(
-	val id: String,
+	id: String,
 	val tabBarColor: Color,
 	screen: ToolGunScreen
 ) : ContainerWidget<ToolGunScreen>(0, 0, 243, 185, id, screen) {

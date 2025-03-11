@@ -19,11 +19,11 @@ open class ContainerWidget<T : Screen>(
 	y: Int,
 	width: Int,
 	height: Int,
-	id: String,
+	val id: String,
 	val screen: T
 ) : AbstractWidget(x, y, width, height, Component.literal(id)) {
 	var debug: Boolean = false
-	val subWidgets: MutableMap<String, AbstractWidget> = mutableMapOf()
+	private val subWidgets: MutableMap<String, AbstractWidget> = mutableMapOf()
 
 	fun getWidgets(): MutableCollection<AbstractWidget> = this.subWidgets.values
 
@@ -54,7 +54,7 @@ open class ContainerWidget<T : Screen>(
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused) {
-			this.getWidgets().any { widget ->
+			return this.getWidgets().any { widget ->
 				widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button).also {
 					if (it) this.screen.focused = widget
 				}
@@ -65,7 +65,7 @@ open class ContainerWidget<T : Screen>(
 
 	override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
-		if (this.isHoveredOrFocused) this.getWidgets().any {
+		if (this.isHoveredOrFocused) return this.getWidgets().any {
 			it.isHoveredOrFocused && it.mouseReleased(
 				mouseX,
 				mouseY,
@@ -78,7 +78,8 @@ open class ContainerWidget<T : Screen>(
 	override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused)
-			this.getWidgets().any { it.isHoveredOrFocused && it.mouseDragged(mouseX, mouseY, button, dragX, dragY) }
+			return this.getWidgets()
+				.any { it.isHoveredOrFocused && it.mouseDragged(mouseX, mouseY, button, dragX, dragY) }
 
 		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
 	}
@@ -91,7 +92,7 @@ open class ContainerWidget<T : Screen>(
 	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused)
-			this.getWidgets().any { it.isHoveredOrFocused && it.mouseScrolled(mouseX, mouseY, scrollX, scrollY) }
+			return this.getWidgets().any { it.isHoveredOrFocused && it.mouseScrolled(mouseX, mouseY, scrollX, scrollY) }
 
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
 	}
@@ -104,7 +105,7 @@ open class ContainerWidget<T : Screen>(
 	override fun charTyped(codePoint: Char, modifiers: Int): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused)
-			this.getWidgets().any { it.isHoveredOrFocused && it.charTyped(codePoint, modifiers) }
+			return this.getWidgets().any { it.isHoveredOrFocused && it.charTyped(codePoint, modifiers) }
 		return super.charTyped(codePoint, modifiers)
 	}
 
