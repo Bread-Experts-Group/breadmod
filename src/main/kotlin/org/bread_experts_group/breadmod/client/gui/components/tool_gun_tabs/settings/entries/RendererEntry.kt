@@ -26,7 +26,6 @@ class RendererEntry(screen: ToolGunScreen) : SettingsEntry(
 	override fun init() {
 		this.addChild(
 			"model_viewer",
-			// todo look into why it's not responding to inputs, probably related to SettingsEntry's input methods
 			ModelViewerWidget(screen = this.screen) { poseStack, bufferSource ->
 				ModelViewerWidget.setupRender(235.0, 30.0, 180.0, poseStack)
 				this.toolGunRenderer.renderToolGun(

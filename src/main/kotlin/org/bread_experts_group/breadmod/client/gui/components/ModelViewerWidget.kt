@@ -4,9 +4,12 @@ import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.MultiBufferSource
-import org.apache.logging.log4j.LogManager
+import net.minecraft.client.sounds.SoundManager
+import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import java.awt.Color
@@ -51,73 +54,106 @@ class ModelViewerWidget(
 		}
 	}
 
-	private var previewWidth = 113
-	private var previewHeight = 80
-	private var previewX = 1
-	private var previewY = 1
+	private var offsetX = 0.0
+	private var offsetY = 0.0
 
 	override fun init() {
 		Companion.xRot = 0f
 		Companion.yRot = 0f
+		Companion.scale = 1f
+
+		this.addChild("dragger", this.Dragger())
+		this.addChild(
+			"move_left",
+			GenericButton(0, 0, 20, 20, "<") {
+				this.offsetX -= 1.0
+			},
+			this.x + 2,
+			this.y + 85
+		)
+		this.addChild(
+			"move_right",
+			GenericButton(0, 0, 20, 20, ">") {
+				this.offsetX += 1.0
+			},
+			this.x + 24,
+			this.y + 85
+		)
+	}
+
+	override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		val poseStack = guiGraphics.pose()
 		guiGraphics.borderedFillPositioned(this.x, this.y, this.width, this.height, Color.WHITE, Color.BLACK)
-		guiGraphics.borderedFillPositioned(
-			this.previewX + this.x,
-			this.previewY + this.y,
-			this.previewWidth,
-			this.previewHeight,
-			Color.RED,
-			Color.BLACK
-		)
-		poseStack.pushPose()
-		guiGraphics.enableScissor(
-			this.x + this.previewX,
-			this.y + this.previewY,
-			this.x + this.previewWidth,
-			this.y + this.previewHeight
-		)
-		poseStack.translate(this.x.toDouble(), this.y.toDouble(), 0.0)
-		poseStack.scaleFlat(Companion.scale)
-		this.model.invoke(poseStack, guiGraphics.bufferSource())
-		guiGraphics.flush()
-		guiGraphics.disableScissor()
-		poseStack.popPose()
+		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
 	}
 
-	private var flag = false
-	override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
-		if (this.isHoveredOrFocused && (this.isMouseOverPreview(mouseX, mouseY) || this.flag)
-			&& this.isValidClickButton(button)
-		) {
-			this.flag = true
-			Companion.xRot -= dragX.toFloat()
-			Companion.yRot -= dragY.toFloat()
+	private inner class Dragger : AbstractWidget(this.x + 1, this.y + 1, 113, 80, Component.empty()) {
+		override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+			guiGraphics.borderedFillPositioned(
+				this.x,
+				this.y,
+				this.width,
+				this.height,
+				if (this.isHoveredOrFocused) Color.GREEN else Color.RED,
+				Color.BLACK
+			)
+			val poseStack = guiGraphics.pose()
+			poseStack.pushPose()
+			guiGraphics.enableScissor(
+				this.x,
+				this.y,
+				this.x + this.width - 1,
+				this.y + this.height - 1
+			)
+			poseStack.translate(this.x.toDouble(), this.y.toDouble(), 0.0)
+			poseStack.translate(this@ModelViewerWidget.offsetX, this@ModelViewerWidget.offsetY, 0.0)
+			poseStack.scaleFlat(Companion.scale)
+			this@ModelViewerWidget.model.invoke(poseStack, guiGraphics.bufferSource())
+			guiGraphics.flush()
+			guiGraphics.disableScissor()
+			poseStack.popPose()
+		}
+
+		override fun playDownSound(handler: SoundManager) {
+		}
+
+		override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {}
+
+		override fun isValidClickButton(button: Int): Boolean = button == 0 || button == 1
+
+		private var flag = false
+		override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
+			if (this.isHoveredOrFocused && (this.isMouseOverPreview(mouseX, mouseY) || this.flag)
+				&& this.isValidClickButton(button)
+			) {
+				this.flag = true
+				Companion.xRot -= dragX.toFloat()
+				Companion.yRot -= dragY.toFloat()
+				return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
+			}
 			return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
 		}
-		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
-	}
 
-	override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
-		this.flag = false
-		return super.mouseReleased(mouseX, mouseY, button)
-	}
+		override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
+			this.flag = false
+			return super.mouseReleased(mouseX, mouseY, button)
+		}
 
-	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
-		if (this.isHoveredOrFocused && (this.isMouseOverPreview(mouseX, mouseY))) {
-			Companion.scale += scrollY.toFloat()
-			LogManager.getLogger().warn(scrollY)
+		override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
+			if (this.isHoveredOrFocused && (this.isMouseOverPreview(mouseX, mouseY))) {
+				Companion.scale += scrollY.toFloat() - 0.9f
+				return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
+			}
 			return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
 		}
-		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
-	}
 
-	private fun isMouseOverPreview(mouseX: Double, mouseY: Double): Boolean =
-		this.active && this.visible
-				&& mouseX >= this.previewX + this.x
-				&& mouseY >= this.previewY + this.y
-				&& mouseX < this.previewX + this.x + this.previewWidth
-				&& mouseY < this.previewY + this.y + this.previewHeight
+		private fun isMouseOverPreview(mouseX: Double, mouseY: Double): Boolean =
+			this.active && this.visible
+					&& mouseX >= this.x
+					&& mouseY >= this.y
+					&& mouseX < this.x + this.width
+					&& mouseY < this.y + this.height
+	}
 }

@@ -39,6 +39,7 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 	}
 
 	override fun tick() {
+		super.tick()
 		this.tickContainerWidgets()
 		(this.getChild("setting_entry_main_button") ?: return).let {
 			it.active = Companion.currentSettingsEntry != MAIN

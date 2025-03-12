@@ -12,7 +12,10 @@ import java.awt.Color
 
 /**
  * Container for holding "sub" widgets.
+ *
  * All actions of this [ContainerWidget] are delegated to its children.
+ *
+ * Interactions with this [ContainerWidget] itself are not possible.
  */
 open class ContainerWidget<T : Screen>(
 	x: Int,
@@ -26,9 +29,7 @@ open class ContainerWidget<T : Screen>(
 	private val subWidgets: MutableMap<String, AbstractWidget> = mutableMapOf()
 
 	fun getWidgets(): MutableCollection<AbstractWidget> = this.subWidgets.values
-
 	fun getContainerWidgets(): List<ContainerWidget<*>> = this.getWidgets().filterIsInstance<ContainerWidget<*>>()
-
 	fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -47,7 +48,12 @@ open class ContainerWidget<T : Screen>(
 		}
 	}
 
-	open fun tick() {}
+	open fun tick() {
+		if (this.getWidgets().isNotEmpty()) this.getWidgets().forEach {
+			it.active = this.active
+			it.visible = this.visible
+		}
+	}
 
 	override fun playDownSound(handler: SoundManager) {
 	}
@@ -131,6 +137,7 @@ open class ContainerWidget<T : Screen>(
 		widget.visible = shouldRender
 		widget.active = isActive
 		if (x != 0 || y != 0) widget.setPosition(x, y)
+		if (widget is ContainerWidget<*>) widget.init()
 		this.subWidgets[id] = widget
 	}
 
