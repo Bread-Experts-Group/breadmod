@@ -81,9 +81,6 @@ class ModelViewerWidget(
 		)
 	}
 
-	override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
-	}
-
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.borderedFillPositioned(this.x, this.y, this.width, this.height, Color.WHITE, Color.BLACK)
 		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
@@ -101,7 +98,7 @@ class ModelViewerWidget(
 			)
 			val poseStack = guiGraphics.pose()
 			poseStack.pushPose()
-			guiGraphics.enableScissor(
+			if (!this@ModelViewerWidget.debug) guiGraphics.enableScissor(
 				this.x,
 				this.y,
 				this.x + this.width - 1,
@@ -112,7 +109,7 @@ class ModelViewerWidget(
 			poseStack.scaleFlat(Companion.scale)
 			this@ModelViewerWidget.model.invoke(poseStack, guiGraphics.bufferSource())
 			guiGraphics.flush()
-			guiGraphics.disableScissor()
+			if (!this@ModelViewerWidget.debug) guiGraphics.disableScissor()
 			poseStack.popPose()
 		}
 

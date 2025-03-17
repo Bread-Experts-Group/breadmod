@@ -19,11 +19,13 @@ import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.client.event.ScreenEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
-import org.bread_experts_group.breadmod.client.gui.WarOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
 import org.bread_experts_group.breadmod.client.render.buffer.chunk.ChunkBuffer
 import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask.machTrailMap
 import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
@@ -49,6 +51,11 @@ internal object ClientNeoForgeEventBus {
 	@SubscribeEvent
 	fun onChunkUnload(event: ChunkEvent.Unload) {
 		ChunkBuffer.handleUnload(event)
+	}
+
+	@SubscribeEvent
+	fun onScreenRender(event: ScreenEvent.Render.Post) {
+		ScreenBleedOverlay.renderBleed(event.guiGraphics)
 	}
 
 	@SubscribeEvent

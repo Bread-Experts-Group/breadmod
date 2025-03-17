@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.gui
+package org.bread_experts_group.breadmod.client.gui.overlays
 
 import com.mojang.blaze3d.pipeline.MainTarget
 import com.mojang.blaze3d.systems.RenderSystem

@@ -29,6 +29,9 @@ import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
+import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSet
+import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSynchronization
+import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedToggle
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
@@ -149,6 +152,21 @@ internal object CommonModEventBus {
 			BeamPacket.TYPE,
 			BeamPacket.STREAM_CODEC,
 			BeamPacket::handleClientboundPacket
+		)
+		registrar.playToClient(
+			ScreenBleedToggle.TYPE,
+			ScreenBleedToggle.STREAM_CODEC,
+			ScreenBleedToggle::handleClientboundPacket
+		)
+		registrar.playToClient(
+			ScreenBleedSet.TYPE,
+			ScreenBleedSet.STREAM_CODEC,
+			ScreenBleedSet::handleClientboundPacket
+		)
+		registrar.playToClient(
+			ScreenBleedSynchronization.TYPE,
+			ScreenBleedSynchronization.STREAM_CODEC,
+			ScreenBleedSynchronization::handleClientboundPacket
 		)
 
 		registrar.playToServer(

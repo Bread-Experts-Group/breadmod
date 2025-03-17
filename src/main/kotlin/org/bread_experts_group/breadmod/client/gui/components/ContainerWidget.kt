@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.sounds.SoundManager
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.borderedFill
+import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
 /**
@@ -45,6 +46,7 @@ open class ContainerWidget<T : Screen>(
 			)
 
 			this.getWidgets().forEach { if (it.visible) it.render(guiGraphics, mouseX, mouseY, partialTick) }
+			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN.rgb)
 		}
 	}
 
@@ -53,6 +55,7 @@ open class ContainerWidget<T : Screen>(
 			it.active = this.active
 			it.visible = this.visible
 		}
+		if (this.getContainerWidgets().isNotEmpty() && this.active && this.visible) this.tickContainerWidgets()
 	}
 
 	override fun playDownSound(handler: SoundManager) {

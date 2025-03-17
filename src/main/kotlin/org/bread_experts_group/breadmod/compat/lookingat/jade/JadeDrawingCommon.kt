@@ -56,22 +56,22 @@ object JadeDrawingCommon {
 	}
 
 	fun GuiGraphics.fill(minX: Float, minY: Float, maxX: Float, maxY: Float) {
-		var minX = minX
-		var minY = minY
-		var maxX = maxX
-		var maxY = maxY
+		var minX1 = minX
+		var minY1 = minY
+		var maxX1 = maxX
+		var maxY1 = maxY
 		val matrix = this.pose().last().pose()
 		var j: Float
-		if (minX < maxX) {
-			j = minX
-			minX = maxX
-			maxX = j
+		if (minX1 < maxX1) {
+			j = minX1
+			minX1 = maxX1
+			maxX1 = j
 		}
 
-		if (minY < maxY) {
-			j = minY
-			minY = maxY
-			maxY = j
+		if (minY1 < maxY1) {
+			j = minY1
+			minY1 = maxY1
+			maxY1 = j
 		}
 		val color = IConfigOverlay.applyAlpha(Color.WHITE.rgb, OverlayRenderer.alpha)
 		val sprite = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(modLocation("block", "bread_block"))
@@ -82,10 +82,10 @@ object JadeDrawingCommon {
 			.setNormal(0f, 0f, 0f)
 			.setLight(0x0F000F0)
 			.setColor(color)
-		addVertex(minX, maxY, sprite.u0, sprite.v1)
-		addVertex(maxX, maxY, sprite.u1, sprite.v1)
-		addVertex(maxX, minY, sprite.u1, sprite.v0)
-		addVertex(minX, minY, sprite.u0, sprite.v0)
+		addVertex(minX1, maxY1, sprite.u0, sprite.v1)
+		addVertex(maxX1, maxY1, sprite.u1, sprite.v1)
+		addVertex(maxX1, minY1, sprite.u1, sprite.v0)
+		addVertex(minX1, minY1, sprite.u0, sprite.v0)
 		this.flush()
 	}
 

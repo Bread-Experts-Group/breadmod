@@ -1,11 +1,9 @@
 package org.bread_experts_group.breadmod.client.render.entity.block
 
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.drawTextOnSide
 import org.bread_experts_group.breadmod.registry.block.actual.entity.storage.EnergyStorageBlockEntity
 import java.awt.Color
@@ -52,18 +50,5 @@ class EnergyStorageRenderer(context: Context) : BreadModBER<EnergyStorageBlockEn
 			color = Color.GREEN.rgb
 		)
 		super.render(blockEntity, partialTick, poseStack, bufferSource, packedLight, packedOverlay)
-	}
-
-	override fun renderWithGraphics(
-		blockEntity: EnergyStorageBlockEntity,
-		partialTick: Float,
-		poseStack: PoseStack,
-		lgPoseStack: PoseStack,
-		bufferSource: MultiBufferSource,
-		levelGraphics: GuiGraphics,
-		packedLight: Int,
-		packedOverlay: Int
-	) {
-		ModTextureLocations.MOUSE_LEFT.blitTexture(levelGraphics, 0, 0)
 	}
 }

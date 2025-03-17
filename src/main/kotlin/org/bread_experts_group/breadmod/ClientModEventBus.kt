@@ -24,10 +24,11 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.gui.CameraOverlay
-import org.bread_experts_group.breadmod.client.gui.TestOverlay
-import org.bread_experts_group.breadmod.client.gui.ToolGunOverlay
-import org.bread_experts_group.breadmod.client.gui.WarOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.CameraOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
@@ -126,6 +127,7 @@ internal object ClientModEventBus {
 		event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
 		event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
 		event.registerAboveAll(modLocation("test_overlay"), TestOverlay())
+		event.registerAboveAll(modLocation("screen_bleed_overlay"), ScreenBleedOverlay())
 		event.registerBelow(VanillaGuiLayers.DEBUG_OVERLAY, modLocation("tool_gun_overlay"), ToolGunOverlay())
 	}
 

@@ -13,6 +13,7 @@
     "common.MixinLightningBolt"
   ],
   "client": [
+    "client.ClientPacketListenerMixin",
     "client.IAccessorDirectoryLister",
     "client.MixinClientLanguage",
     "client.MixinDirectoryListener",

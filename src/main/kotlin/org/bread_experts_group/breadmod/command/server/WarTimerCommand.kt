@@ -72,9 +72,9 @@ internal object WarTimerCommand {
 				Command.SINGLE_SUCCESS
 			}
 			.then(
-				Commands.argument("amount", IntegerArgumentType.integer(1))
+				Commands.argument("seconds", IntegerArgumentType.integer(1))
 					.executes { ctx ->
-						val amount = IntegerArgumentType.getInteger(ctx, "amount")
+						val amount = IntegerArgumentType.getInteger(ctx, "seconds")
 						this.increaseTimeLogic(ctx, amount)
 						Command.SINGLE_SUCCESS
 					}
