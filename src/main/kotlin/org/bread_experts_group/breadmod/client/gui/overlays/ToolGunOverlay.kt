@@ -9,7 +9,6 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
-import net.minecraft.world.InteractionHand
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations.INFO
 import org.bread_experts_group.breadmod.client.ModTextureLocations.MODE_OVERLAY_BG
@@ -18,6 +17,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunIte
 import org.bread_experts_group.breadmod.client.render.drawScaledText
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.awt.Color
 
 class ToolGunOverlay : LayeredDraw.Layer {
@@ -31,12 +31,10 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		val screenHeight = localClient.window.screenHeight
 		val x = screenWidth - (screenWidth - 3)
 		val y = screenHeight - (screenHeight - 3)
-		val player = localClient.player ?: return
-		val handStack = player.getItemInHand(InteractionHand.MAIN_HAND) ?: return
-		val item = handStack.item
+		val handStack = getStackInPlayerHand(localClient.player)
 
-		if (!localClient.options.hideGui && item is ToolGunItem) {
-			val currentMode = handStack.get(ModDataComponents.TOOL_GUN_DATA) ?: EmptyMode()
+		if (!localClient.options.hideGui && handStack.item is ToolGunItem) {
+			val currentMode = handStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
 			this.renderMode(currentMode, currentMode.getUid().namespace, guiGraphics, poseStack, x, y)

@@ -39,6 +39,7 @@ import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
+import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
@@ -311,6 +312,10 @@ object ModItems {
 	@DataGenerateLanguage("en_us")
 	val WRENCH: DeferredItem<Item> =
 		this.ITEM_REGISTRY.register("wrench", ::WrenchItem)
+
+	@DataGenerateLanguage("en_us")
+	val BULK_BLOCK_ITEM: DeferredItem<Item> =
+		this.ITEM_REGISTRY.register("bulk_block_creator", ::BulkBlockItem)
 
 	// End Tools
 	@DataGenerateLanguage("en_us")

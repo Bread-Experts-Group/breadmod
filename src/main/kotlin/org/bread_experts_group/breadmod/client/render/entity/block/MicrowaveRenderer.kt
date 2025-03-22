@@ -4,13 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.Sheets
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.core.Direction
-import net.minecraft.util.RandomSource
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
@@ -25,7 +22,6 @@ class MicrowaveRenderer(context: Context) : BreadModBER<MicrowaveBlockEntity>(co
 	}
 
 	private val blockModelRenderer = this.context.blockRenderDispatcher.modelRenderer
-	private val random = RandomSource.create(1)
 
 	override fun render(
 		blockEntity: MicrowaveBlockEntity,
@@ -56,14 +52,9 @@ class MicrowaveRenderer(context: Context) : BreadModBER<MicrowaveBlockEntity>(co
 			bufferSource.getBuffer(Sheets.translucentCullBlockSheet()),
 			false,
 			this.random,
-			42,
+			801234,
 			packedOverlay,
-			Companion.DOOR_MODEL.getModelData(
-				blockEntity.level ?: return,
-				blockEntity.blockPos,
-				blockEntity.blockState,
-				ModelData.EMPTY
-			),
+			this.modelData,
 			Sheets.translucentCullBlockSheet()
 		)
 		poseStack.popPose()

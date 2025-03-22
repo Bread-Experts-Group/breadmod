@@ -33,6 +33,7 @@ import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTa
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.util.function.Supplier
 
 // todo complete re-implementation of tool gun features
@@ -47,7 +48,7 @@ class ToolGunItem : Item(
 	}
 
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
-		val stack = player.getItemInHand(usedHand)
+		val stack = getStackInPlayerHand(player)
 		if (stack.`is`(ModItems.TOOL_GUN) && !level.isClientSide) {
 			val mode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: return InteractionResultHolder.fail(stack)
 			mode.action(level, player, stack)
@@ -67,7 +68,7 @@ class ToolGunItem : Item(
 	}
 
 	override fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {
-		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		val mode = heldStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
 		if (player.isCrouching) {
 			scrollingEvent.isCanceled = true
 			val deltaY = scrollingEvent.scrollDeltaY
@@ -79,18 +80,18 @@ class ToolGunItem : Item(
 	}
 
 	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
-		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		val mode = heldStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
 		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
 
 	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {
-		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		val mode = heldStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
 		mode.mouseButtonPreAction(mouseEvent, heldStack, player)
 	}
 
 	// todo figure out key modifiers in the if statement
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
-		val mode = heldStack.get(ModDataComponents.TOOL_GUN_DATA) ?: return
+		val mode = heldStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
 		if (keyEvent.key == openModeGui.key.value && localClient.screen == null) {
 			localClient.setScreen(ToolGunScreen(Component.literal("Tool Gun: Mode Select")))
 		}

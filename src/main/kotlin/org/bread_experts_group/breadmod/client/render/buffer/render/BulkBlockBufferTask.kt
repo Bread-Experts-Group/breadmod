@@ -1,11 +1,15 @@
 package org.bread_experts_group.breadmod.client.render.buffer.render
 
+import com.mojang.math.Axis
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
-import net.minecraft.world.InteractionHand.MAIN_HAND
-import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
+import net.minecraft.world.level.block.RenderShape.INVISIBLE
+import net.minecraft.world.level.block.RenderShape.MODEL
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.ExtraFaceData
@@ -15,15 +19,13 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem.BulkBlockData
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
+import kotlin.jvm.optionals.getOrNull
 
-/*
-https://github.com/PandaMods-Dev/Pandas-Falling-Trees/blob/Dev/1.21.2/common/src/main/java/me/pandamods/fallingtrees/client/render/TreeRenderer.java
-https://github.com/PandaMods-Dev/Pandas-Falling-Trees/blob/Dev/1.21.2/common/src/main/java/me/pandamods/fallingtrees/utils/RenderUtils.java
- */
-
-// todo figure out how to offset the position of the rendered structure after rendering it at it's origin BlockPos
 object BulkBlockBufferTask {
-	fun create(pos: Vec3, blocks: Map<Vec3, BlockState>) {
+	fun create(originPos: Vec3, blockData: BulkBlockData) {
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
 		val random = RandomSource.create()
@@ -32,34 +34,72 @@ object BulkBlockBufferTask {
 		RenderBuffer.add(
 			Stage.AFTER_TRANSLUCENT_BLOCKS,
 			{ event, passthrough ->
+				val rotation = passthrough[0] as Float
 				val poseStack = event.poseStack
 				val camera = event.camera
 				val level = localClient.level ?: return@add true
 
 				poseStack.pushPose()
-				poseStack.offsetRenderToCameraPos(pos, camera, false)
+				poseStack.offsetRenderToCameraPos(originPos, camera, false)
 
-				blocks.forEach { (offset, blockState) ->
+				poseStack.translate(0.5, 0.5, 0.5)
+				poseStack.translate(-blockData.aabbCenter)
+				poseStack.mulPose(Axis.YN.rotationDegrees(rotation))
+				poseStack.translate(blockData.aabbCenter)
+				poseStack.translate(-0.5, -0.5, -0.5)
+
+				blockData.blocks.forEach { (offset, pair) ->
 					poseStack.pushPose()
-					val model = blockRenderer.getBlockModel(blockState)
+					val model = blockRenderer.getBlockModel(pair.first)
 					poseStack.translate(offset)
-					model.getRenderTypes(blockState, random, modelData).forEach {
-						blockRenderer.renderSingleBlock(
-							blockState,
-							poseStack,
-							bufferSource,
-							LevelRenderer.getLightColor(level, BlockPos.containing(pos)),
-							NO_OVERLAY,
-							modelData,
-							it
-						)
+					val direction =
+						pair.first.getOptionalValue(HORIZONTAL_FACING) ?: pair.first.getOptionalValue(FACING)
+						?: return@forEach
+					val facing = direction.getOrNull()
+					if (facing != null && pair.first.renderShape == ENTITYBLOCK_ANIMATED) {
+						poseStack.translate(0.5f, 0.5f, 0.5f)
+						poseStack.mulPose(Axis.YP.rotationDegrees(-(facing.toYRot())))
+						poseStack.translate(-0.5f, -0.5f, -0.5f)
+					}
+					model.getRenderTypes(pair.first, random, modelData).forEach {
+						when (pair.first.renderShape ?: return@add true) {
+							INVISIBLE            -> {}
+							ENTITYBLOCK_ANIMATED -> {
+								blockRenderer.renderSingleBlock(
+									pair.first,
+									poseStack,
+									bufferSource,
+									LevelRenderer.getLightColor(level, BlockPos.containing(offset)),
+									NO_OVERLAY,
+									modelData,
+									it
+								)
+							}
+							MODEL                -> {
+								blockRenderer.renderBatched(
+									pair.first,
+									pair.second,
+									level,
+									poseStack,
+									bufferSource.getBuffer(it),
+									false,
+									random,
+									modelData,
+									it
+								)
+							}
+						}
 					}
 					poseStack.popPose()
 				}
 				poseStack.popPose()
-				val item = localClient.player!!.getItemInHand(MAIN_HAND)
-				!item.`is`(ModItems.WRENCH)
-			}
+				passthrough[0] = rotation + 5f * event.partialTick.gameTimeDeltaTicks
+				val stack = getStackInPlayerHand(localClient.player)
+				!stack.`is`(ModItems.BULK_BLOCK_ITEM)
+			},
+			mutableListOf(
+				0f
+			)
 		)
 	}
 }

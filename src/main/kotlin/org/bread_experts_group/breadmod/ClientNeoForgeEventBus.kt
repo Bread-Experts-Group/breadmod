@@ -36,6 +36,7 @@ import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPack
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
@@ -142,9 +143,17 @@ internal object ClientNeoForgeEventBus {
 	}
 
 	@SubscribeEvent
-	fun onMouseInput(event: InputEvent.MouseButton.Post) {
+	fun onMouseInputPre(event: InputEvent.MouseButton.Pre) {
 		val player = localClient.player ?: return
-		val stack = player.getItemInHand(player.usedItemHand)
+		val stack = getStackInPlayerHand(player)
+		val item = stack.item
+		if (item is IMouseItem) item.onMouseInputPre(event, stack, player)
+	}
+
+	@SubscribeEvent
+	fun onMouseInputPost(event: InputEvent.MouseButton.Post) {
+		val player = localClient.player ?: return
+		val stack = getStackInPlayerHand(player)
 		val item = stack.item
 		if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
 	}

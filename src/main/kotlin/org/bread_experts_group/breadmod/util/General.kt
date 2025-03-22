@@ -11,6 +11,10 @@ import net.minecraft.core.Direction.WEST
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.tags.TagKey
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionHand.MAIN_HAND
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.Fluids
@@ -291,6 +295,11 @@ fun BlockPos.toIntArray(): IntArray = intArrayOf(this.x, this.y, this.z)
 fun IntArray.toBlockPos(): BlockPos {
 	if (this.size != 3) return BlockPos.ZERO
 	return BlockPos(this[0], this[1], this[2])
+}
+
+fun getStackInPlayerHand(player: Player?, hand: InteractionHand = player?.usedItemHand ?: MAIN_HAND): ItemStack {
+	if (player == null) return ItemStack.EMPTY
+	return player.getItemInHand(hand)
 }
 
 /// Face Targeting Functions ///

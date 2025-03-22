@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.client.render.entity.block
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.core.Direction.EAST
@@ -14,7 +13,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
-import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
@@ -30,15 +28,15 @@ class ToasterRenderer(context: Context) : BreadModBER<ToasterBlockEntity>(contex
 	private val itemRenderer = this.context.itemRenderer
 
 	override fun render(
-		entity: ToasterBlockEntity,
+		blockEntity: ToasterBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val blockRotation = entity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
-		val triggered = entity.blockState.getValue(BlockStateProperties.TRIGGERED)
+		val blockRotation = blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
+		val triggered = blockEntity.blockState.getValue(BlockStateProperties.TRIGGERED)
 
 		this.triggeredOffset = if (triggered) -0.13 else 0.0
 
@@ -62,17 +60,33 @@ class ToasterRenderer(context: Context) : BreadModBER<ToasterBlockEntity>(contex
 			else  -> {}
 		}
 
-		this.blockModelRenderer.renderBlockModel(
-			poseStack.last(),
-			bufferSource,
-			entity,
-			Companion.HANDLE_MODEL,
-			packedLight,
-			packedOverlay,
-			Sheets.solidBlockSheet()
-		)
+//		this.blockModelRenderer.renderBlockModel(
+//			poseStack.last(),
+//			bufferSource,
+//			entity,
+//			Companion.HANDLE_MODEL,
+//			packedLight,
+//			packedOverlay,
+//			Sheets.solidBlockSheet()
+//		)
+		Companion.HANDLE_MODEL.getRenderTypes(blockEntity.blockState, this.random, this.modelData).forEach {
+			this.blockModelRenderer.tesselateWithAO(
+				blockEntity.level ?: return,
+				Companion.HANDLE_MODEL,
+				blockEntity.blockState,
+				blockEntity.blockPos,
+				poseStack,
+				bufferSource.getBuffer(it),
+				true,
+				this.random,
+				801234,
+				packedOverlay,
+				this.modelData,
+				it
+			)
+		}
 		poseStack.popPose()
-		val stack = entity.itemHandler.getStackInSlot(0)
+		val stack = blockEntity.itemHandler.getStackInSlot(0)
 
 		poseStack.pushPose()
 		poseStack.translate(0.5, 0.3, 0.61)
@@ -83,10 +97,10 @@ class ToasterRenderer(context: Context) : BreadModBER<ToasterBlockEntity>(contex
 		}
 		if (!triggered) {
 			if (stack.count == 2) {
-				this.itemRenderer.renderStaticItem(stack, poseStack, bufferSource, entity, packedLight)
+				this.itemRenderer.renderStaticItem(stack, poseStack, bufferSource, blockEntity, packedLight)
 				poseStack.translate(0.0, 0.0, -0.37)
-				this.itemRenderer.renderStaticItem(stack, poseStack, bufferSource, entity, packedLight)
-			} else this.itemRenderer.renderStaticItem(stack, poseStack, bufferSource, entity, packedLight)
+				this.itemRenderer.renderStaticItem(stack, poseStack, bufferSource, blockEntity, packedLight)
+			} else this.itemRenderer.renderStaticItem(stack, poseStack, bufferSource, blockEntity, packedLight)
 		}
 		poseStack.popPose()
 	}

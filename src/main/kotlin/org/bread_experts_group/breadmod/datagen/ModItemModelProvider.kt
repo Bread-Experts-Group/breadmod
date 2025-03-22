@@ -54,6 +54,7 @@ class ModItemModelProvider(
 		this.fenceInventory("bread_fence", this.modLoc("${BLOCK_FOLDER}/bread_block"))
 
 		this.handheldItem(ModItems.WRENCH)
+		this.handheldItem(ModItems.BULK_BLOCK_ITEM)
 		this.handheldItem(ModItems.KNIFE)
 
 		this.multiLayeredTexture(

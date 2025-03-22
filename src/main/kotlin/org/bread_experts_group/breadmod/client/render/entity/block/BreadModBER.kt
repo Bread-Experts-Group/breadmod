@@ -13,8 +13,12 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.util.RandomSource
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.neoforged.neoforge.client.model.ExtraFaceData
+import net.neoforged.neoforge.client.model.data.ModelData
+import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
@@ -28,6 +32,9 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	val context: Context,
 	private val snapGraphicsToBlockSide: Boolean = true
 ) : BlockEntityRenderer<T> {
+	protected val random: RandomSource = RandomSource.create()
+	protected val modelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
+
 	private companion object {
 		const val TRANSLATE_OFFSET = 0.0001
 		val LEVEL_GRAPHICS: GuiGraphics = object : GuiGraphics(
