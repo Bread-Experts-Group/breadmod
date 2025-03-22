@@ -15,7 +15,6 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.util.subtract
 
 /*
 https://github.com/PandaMods-Dev/Pandas-Falling-Trees/blob/Dev/1.21.2/common/src/main/java/me/pandamods/fallingtrees/client/render/TreeRenderer.java
@@ -24,7 +23,7 @@ https://github.com/PandaMods-Dev/Pandas-Falling-Trees/blob/Dev/1.21.2/common/src
 
 // todo figure out how to offset the position of the rendered structure after rendering it at it's origin BlockPos
 object BulkBlockBufferTask {
-	fun create(pos: Vec3, blocks: Map<BlockPos, BlockState>) {
+	fun create(pos: Vec3, blocks: Map<Vec3, BlockState>) {
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
 		val random = RandomSource.create()
@@ -40,10 +39,9 @@ object BulkBlockBufferTask {
 				poseStack.pushPose()
 				poseStack.offsetRenderToCameraPos(pos, camera, false)
 
-				blocks.forEach { (blockPos, blockState) ->
+				blocks.forEach { (offset, blockState) ->
 					poseStack.pushPose()
 					val model = blockRenderer.getBlockModel(blockState)
-					val offset = blockPos.subtract(pos)
 					poseStack.translate(offset)
 					model.getRenderTypes(blockState, random, modelData).forEach {
 						blockRenderer.renderSingleBlock(

@@ -14,15 +14,17 @@ import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask
 import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.util.normalizeHitLoc
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
-import org.bread_experts_group.breadmod.util.BlockScanner
 import org.bread_experts_group.breadmod.util.targetFace
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 
 class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
@@ -80,7 +82,7 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMous
 
 	var firstPos: BlockPos? = null
 	var secondPos: BlockPos? = null
-	var blockMap: MutableMap<BlockPos, BlockState> = mutableMapOf()
+	var blockMap: MutableMap<Vec3, BlockState> = mutableMapOf()
 	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
 		if (mouseEvent.action == InputConstants.PRESS) {
 			when (mouseEvent.button) {
@@ -102,8 +104,11 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMous
 						player.sendSystemMessage(Component.literal("second pos selected"))
 					}
 					if (this.firstPos != null && this.secondPos != null && !player.isShiftKeyDown) {
-						BlockScanner.scanArea(this.firstPos ?: return, this.secondPos ?: return).forEach {
-							this.blockMap[it] = level.getBlockState(it)
+						BlockPos.betweenClosedStream(AABB(this.firstPos!!.toVec3(), this.secondPos!!.toVec3())).forEach {
+							val x = it.x - this.firstPos!!.x
+							val y = it.y - this.firstPos!!.y
+							val z = it.z - this.firstPos!!.z
+							this.blockMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = level.getBlockState(it)
 						}
 						player.sendSystemMessage(Component.literal("block map created"))
 					}
