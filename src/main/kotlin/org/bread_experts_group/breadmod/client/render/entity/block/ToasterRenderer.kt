@@ -4,10 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.Sheets
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
-import net.minecraft.core.Direction
 import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH

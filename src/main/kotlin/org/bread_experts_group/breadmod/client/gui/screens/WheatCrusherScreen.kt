@@ -30,6 +30,8 @@ class WheatCrusherScreen(
 
 		guiGraphics.blit(this.texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight)
 		ModTextureLocations.VERTICAL_ARROW_9X48.blitTexture(guiGraphics, this.leftPos + 83, this.topPos + 33)
+
+		BMRecipeDebugger.renderDebug(guiGraphics, partialTick, mouseX, mouseY, this.menu.parent)
 	}
 
 	private var step: Int = -32

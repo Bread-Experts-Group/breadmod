@@ -20,8 +20,12 @@ object BlockScanner {
 
 	fun scanAdjacent(list: List<Direction>, pos: BlockPos): List<BlockPos> = list.map(pos::relative)
 
-	fun scanArea(pos: BlockPos, radius: Double): List<BlockPos> = buildList {
+	fun scanRadius(pos: BlockPos, radius: Double): List<BlockPos> = buildList {
 		BlockPos.betweenClosedStream(AABB(pos).inflate(radius, radius, radius)).forEach { this.add(it.immutable()) }
+	}
+
+	fun scanArea(firstPos: BlockPos, secondPos: BlockPos): List<BlockPos> = buildList {
+		BlockPos.betweenClosed(firstPos, secondPos).forEach { this.add(it.immutable()) }
 	}
 
 	fun List<BlockPos>.filterPositions(level: Level, filter: Block): List<BlockPos> =

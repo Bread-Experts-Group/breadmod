@@ -9,17 +9,20 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
 
-class ScreenBleedSet(private val seconds: Int) : CustomPacketPayload {
+class ScreenBleedSet(private val seconds: Int, private val maxSeconds: Int) : CustomPacketPayload {
 	companion object {
 		val TYPE: CustomPacketPayload.Type<ScreenBleedSet> =
 			CustomPacketPayload.Type(modLocation("screen_bleed_set"))
 		val STREAM_CODEC: StreamCodec<ByteBuf, ScreenBleedSet> = StreamCodec.composite(
-			ByteBufCodecs.INT, ScreenBleedSet::seconds, ::ScreenBleedSet
+			ByteBufCodecs.VAR_INT, ScreenBleedSet::seconds,
+			ByteBufCodecs.VAR_INT, ScreenBleedSet::maxSeconds,
+			::ScreenBleedSet
 		)
 
 		fun handleClientboundPacket(data: ScreenBleedSet, context: IPayloadContext) {
 			context.enqueueWork {
-				ScreenBleedOverlay.maxProgress = data.seconds
+				ScreenBleedOverlay.maxProgress = data.maxSeconds
+				ScreenBleedOverlay.progress = data.seconds
 			}
 		}
 	}

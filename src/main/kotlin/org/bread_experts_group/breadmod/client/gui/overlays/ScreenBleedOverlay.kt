@@ -5,7 +5,6 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.util.RandomSource
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.localClient
 
 class ScreenBleedOverlay : LayeredDraw.Layer {
@@ -27,7 +26,6 @@ class ScreenBleedOverlay : LayeredDraw.Layer {
 			val poseStack = guiGraphics.pose()
 
 			if (this.lastTick != guiTicks) this.lastTick = guiTicks.also {
-				LogManager.getLogger().warn("${this.progress}, ${this.maxProgress}")
 				this.alpha = this.random.nextInt(50, 85)
 			}
 

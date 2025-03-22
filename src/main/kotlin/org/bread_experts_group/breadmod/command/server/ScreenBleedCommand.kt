@@ -13,6 +13,8 @@ import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.screenBleedMap
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSet
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedToggle
 
+// todo bugs
+//  setting the timer after the screen bleed already completed does not re-toggle the effect until toggle is ran again
 object ScreenBleedCommand {
 	fun register(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("screenBleed")
@@ -21,6 +23,7 @@ object ScreenBleedCommand {
 				Commands.argument("targets", EntityArgument.players())
 					.then(this.toggle())
 					.then(this.set())
+					.then(this.reset())
 			)
 
 	private fun toggle(): ArgumentBuilder<CommandSourceStack, *> =
@@ -32,16 +35,27 @@ object ScreenBleedCommand {
 					if (check != null) {
 						check.active = !check.active
 						PacketDistributor.sendToPlayer(player, ScreenBleedToggle(check.active, false))
-					} else this.reset(player)
+					} else this.init(player, true)
 				}
 				Command.SINGLE_SUCCESS
 			}
 
-	private fun reset(player: ServerPlayer) {
+	private fun reset(): ArgumentBuilder<CommandSourceStack, *> =
+		Commands.literal("reset")
+			.executes { ctx ->
+				val targets = EntityArgument.getPlayers(ctx, "targets")
+				targets.forEach { player ->
+					PacketDistributor.sendToPlayer(player, ScreenBleedToggle(active = false, reset = true))
+					screenBleedMap.remove(player)
+				}
+				Command.SINGLE_SUCCESS
+			}
+
+	private fun init(player: ServerPlayer, startBleed: Boolean) {
 		screenBleedMap[player] = ScreenBleedData()
 		val data = screenBleedMap[player] ?: return
-		PacketDistributor.sendToPlayer(player, ScreenBleedSet(data.maxProgress))
-		PacketDistributor.sendToPlayer(player, ScreenBleedToggle(active = true, reset = false))
+		PacketDistributor.sendToPlayer(player, ScreenBleedSet(data.progress, data.maxProgress))
+		PacketDistributor.sendToPlayer(player, ScreenBleedToggle(active = startBleed, reset = false))
 	}
 
 	private fun set(): ArgumentBuilder<CommandSourceStack, *> =
@@ -52,7 +66,10 @@ object ScreenBleedCommand {
 						val amount = IntegerArgumentType.getInteger(ctx, "seconds")
 						val targets = EntityArgument.getPlayers(ctx, "targets")
 						targets.forEach { player ->
-							PacketDistributor.sendToPlayer(player, ScreenBleedSet(amount * 20))
+							val check = screenBleedMap[player]
+							if (check != null) {
+								PacketDistributor.sendToPlayer(player, ScreenBleedSet(0, amount * 20))
+							} else this.init(player, false)
 						}
 						Command.SINGLE_SUCCESS
 					}

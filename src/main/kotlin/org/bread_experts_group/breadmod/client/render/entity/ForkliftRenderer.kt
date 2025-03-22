@@ -23,7 +23,7 @@ class ForkliftRenderer(private val context: Context) : EntityRenderer<Forklift>(
 		bufferSource: MultiBufferSource,
 		packedLight: Int
 	) {
-		this.model.render(forklift,poseStack, packedLight, OverlayTexture.NO_OVERLAY, Color.WHITE.rgb)
+		this.model.render(forklift, poseStack, packedLight, OverlayTexture.NO_OVERLAY, Color.WHITE.rgb)
 		super.render(forklift, entityYaw, partialTick, poseStack, bufferSource, packedLight)
 	}
 

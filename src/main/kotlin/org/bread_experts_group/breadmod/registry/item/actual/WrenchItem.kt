@@ -1,5 +1,7 @@
 package org.bread_experts_group.breadmod.registry.item.actual
 
+import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
@@ -11,13 +13,18 @@ import net.minecraft.world.item.Rarity
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
+import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
+import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask
 import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.util.normalizeHitLoc
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.registry.item.IMouseItem
+import org.bread_experts_group.breadmod.util.BlockScanner
 import org.bread_experts_group.breadmod.util.targetFace
 
-class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
+class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		if (level.isClientSide) {
 			val partialTick = localClient.timer.gameTimeDeltaTicks
@@ -66,6 +73,44 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 //						loc.z,
 //						0.0, 0.0, 0.0
 //					)
+				}
+			}
+		}
+	}
+
+	var firstPos: BlockPos? = null
+	var secondPos: BlockPos? = null
+	var blockMap: MutableMap<BlockPos, BlockState> = mutableMapOf()
+	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
+		if (mouseEvent.action == InputConstants.PRESS) {
+			when (mouseEvent.button) {
+				InputConstants.MOUSE_BUTTON_LEFT -> {
+//					TestCubeBufferTask.create(player.position())
+					this.blockMap.clear()
+					this.firstPos = null
+					this.secondPos = null
+				}
+				InputConstants.MOUSE_BUTTON_RIGHT -> {
+					val result = localClient.hitResult as? BlockHitResult ?: return
+					val level = localClient.level ?: return
+					if (this.firstPos == null) {
+						this.firstPos = result.blockPos
+						player.sendSystemMessage(Component.literal("first pos selected"))
+					}
+					if (this.secondPos == null && player.isShiftKeyDown) {
+						this.secondPos = result.blockPos
+						player.sendSystemMessage(Component.literal("second pos selected"))
+					}
+					if (this.firstPos != null && this.secondPos != null && !player.isShiftKeyDown) {
+						BlockScanner.scanArea(this.firstPos ?: return, this.secondPos ?: return).forEach {
+							this.blockMap[it] = level.getBlockState(it)
+						}
+						player.sendSystemMessage(Component.literal("block map created"))
+					}
+				}
+				InputConstants.MOUSE_BUTTON_MIDDLE -> {
+					BulkBlockBufferTask.create(player.position(), this.blockMap)
+					player.sendSystemMessage(Component.literal("renderer created"))
 				}
 			}
 		}

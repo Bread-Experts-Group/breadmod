@@ -14,6 +14,7 @@ import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
@@ -225,6 +226,9 @@ fun GuiGraphics.borderedFillPositioned(
  */
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
 
+fun PoseStack.translate(x: Int, y: Int, z: Int): Unit = this.translate(x.toFloat(), y.toFloat(), z.toFloat())
+fun PoseStack.translate(vec3: Vec3): Unit = this.translate(vec3.x, vec3.y, vec3.z)
+
 /**
  * Translates the [PoseStack] of the added [RenderBuffer] to the player's camera.
  * Used for initial model positions in-world.
@@ -240,10 +244,11 @@ fun PoseStack.initialTranslate(camera: Camera): Unit =
  * Offsets the current [PoseStack] to [pos] by subtracting [pos] from the [camera] position.
  * @see initialTranslate
  */
-fun PoseStack.offsetRenderToCameraPos(pos: Vec3, camera: Camera) {
+fun PoseStack.offsetRenderToCameraPos(pos: Vec3, camera: Camera, workaround: Boolean = true) {
 	val offset = pos.subtract(camera.position)
+	val fix = if (workaround) 0.5 else 0.0
 	// the -0.5 is a temp workaround for the render being positioned in the corner instead of centered
-	this.translate(offset.x - 0.5, offset.y, offset.z - 0.5)
+	this.translate(offset.x - fix, offset.y, offset.z - fix)
 }
 
 /**
@@ -296,7 +301,8 @@ fun ModelBlockRenderer.renderBlockModel(
 		blue,
 		packedLight,
 		packedOverlay,
-		ModelData.builder().with(ModelProperty(), ExtraFaceData(Color.WHITE.rgb, 0, 0, true)).build(),
+		ModelData.builder()
+			.with(ModelProperty(), ExtraFaceData(Color.WHITE.rgb, LightTexture.block(packedLight), 0, true)).build(),
 		renderType
 	)
 }

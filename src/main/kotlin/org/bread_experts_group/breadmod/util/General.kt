@@ -18,7 +18,9 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.util.RaycastResult.Companion.blockRaycast
 import org.bread_experts_group.breadmod.util.RaycastResult.Companion.entityRaycast
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import java.math.BigDecimal
 import java.util.function.Supplier
 import kotlin.math.round
@@ -266,6 +268,12 @@ operator fun Vec3.plus(other: Vec3): Vec3 = Vec3(this.x + other.x, this.y + othe
  * @since 1.0.0
  */
 operator fun Vec3.times(scale: Double): Vec3 = this.scale(scale)
+
+fun BlockPos.offset(vec3: Vec3): Vec3 =
+	if (vec3.x == 0.0 && vec3.y == 0.0 && vec3.z == 0.0) this.toVec3() else
+		Vec3(this.x.toDouble() + vec3.x, this.y.toDouble() + vec3.y, this.z.toDouble() + vec3.z)
+
+fun BlockPos.subtract(vec3: Vec3): Vec3 = this.offset(-vec3)
 
 /// AABB Operations ///
 fun centerAABB(pos: BlockPos): AABB = AABB(pos.center, pos.center)
