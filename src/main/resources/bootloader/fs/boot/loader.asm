@@ -52,6 +52,7 @@ loader32:
     mov gs, eax
     mov ss, eax
 ; Program Header Reading
+    push DWORD [esi + 0x18] ; entry point
 .program_headers:
     movzx ecx, WORD [esi + 0x2C] ; entry count
     mov edx, DWORD [esi + 0x1C] ; first entry offset in file
@@ -71,7 +72,9 @@ loader32:
     movzx eax, WORD [esi + 0x2A]
     add edx, eax
     loop .program_header_action
-    jmp DWORD [esi + 0x18]
+.kernel_jump:
+    pop esi
+    jmp esi
 bits 16
 ;;;;;;;;;;;;;;;;;;;;;;;;; GDT
 gdtloc: dw 0x0024
@@ -80,7 +83,6 @@ gdt_nl: dq 0x0000000000000000
 gdt_kc: dq 0x00CF9A000000FFFF
 gdt_kd: dq 0x00CF92000000FFFF
 ;;;;;;;;;;;;;;;;;;;;;;;;; GDT
-
 iso_9660_directory_read:
     mov di, 0x7E01
     mov cx, 0xFFFF

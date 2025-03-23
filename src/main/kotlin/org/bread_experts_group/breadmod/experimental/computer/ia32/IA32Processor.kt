@@ -289,6 +289,9 @@ class IA32Processor : Processor {
 			hex(this.cir),
 			instruction.getDisassembly(this)
 		)
+		if (this.ip.rx == (0x7E11u).toULong()) {
+			this.logger.warn("A@)")
+		}
 		instruction.handle(this)
 		this.segment = this.ds
 		this.operandSizeOverride = false

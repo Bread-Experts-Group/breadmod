@@ -10,8 +10,10 @@ import kotlin.reflect.KMutableProperty0
 @IA32Instruction(0xF3A4u)
 object MoveBytes : Instruction("rep movs") {
 	override fun operands(processor: IA32Processor): String = when (processor.operandSize) {
-		AddressingLength.R32 -> "es:[edi], ds:[esi] -> ds:[esi [${hex(processor.si.tex)}] + ecx [${hex(processor.c.tex)}]]"
-		AddressingLength.R16 -> "es:[di], ds:[si] -> ds:[si [${hex(processor.si.tx)}] + cx [${hex(processor.c.tx)}]]"
+		AddressingLength.R32 -> "es:[edi [${hex(processor.di.tex)}]], ds:[esi] -> " +
+				"ds:[esi [${hex(processor.si.tex)}] + ecx [${hex(processor.c.tex)}]]"
+		AddressingLength.R16 -> "es:[di [${hex(processor.di.tx)}]], ds:[si] -> " +
+				"ds:[si [${hex(processor.si.tx)}] + cx [${hex(processor.c.tx)}]]"
 		else                 -> throw UnsupportedOperationException()
 	}
 

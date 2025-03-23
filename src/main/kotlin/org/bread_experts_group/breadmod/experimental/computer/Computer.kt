@@ -31,6 +31,7 @@ class Computer(
 	val ioMap: MutableMap<UInt, IODevice> = mutableMapOf(
 		0x60u to this.ps2.data,
 		0x64u to this.ps2.command,
+		0x70u to Diagnostics(),
 		0x80u to Diagnostics(),
 		0x92u to PS2SystemControllerA(),
 		0xB30D0000u to this.keyboard
