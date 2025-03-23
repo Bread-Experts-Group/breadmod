@@ -15,7 +15,6 @@ import java.math.BigDecimal
 import java.util.function.Predicate
 import kotlin.math.min
 
-// todo calling insertItem, grow, and shrink on ItemStacks using this handler yields no changes to the stack.
 @Suppress("ConvertLambdaToReference")
 class ExpansibleItemHandler(
 	override val units: MutableList<ExpansibleSlot>

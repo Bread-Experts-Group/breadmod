@@ -34,10 +34,10 @@ import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTa
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
+import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.util.function.Supplier
 
-// todo complete re-implementation of tool gun features
 class ToolGunItem : Item(
 	Properties()
 		.stacksTo(1)
@@ -55,6 +55,7 @@ class ToolGunItem : Item(
 			mode.action(level, player, stack)
 		} else {
 			triggerDelta()
+			player.playSound(ModSounds.TOOL_GUN.get(), 0.8f, 1f)
 		}
 		return super.use(level, player, usedHand)
 	}
