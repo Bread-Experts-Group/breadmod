@@ -17,6 +17,9 @@ import java.awt.Color
  * All actions of this [ContainerWidget] are delegated to its children.
  *
  * Interactions with this [ContainerWidget] itself are not possible.
+ *
+ * TODO: mouseClicked would need it's logic adjusted to allow clicking on this [ContainerWidget],
+ *   while also preserving child logic
  */
 open class ContainerWidget<T : Screen>(
 	x: Int,
@@ -67,7 +70,6 @@ open class ContainerWidget<T : Screen>(
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused) {
-			// todo this is the return causing this ContainerWidget from allowing interactions with itself
 			return this.getWidgets().any { widget ->
 				widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button).also {
 					if (it) this.screen.focused = widget

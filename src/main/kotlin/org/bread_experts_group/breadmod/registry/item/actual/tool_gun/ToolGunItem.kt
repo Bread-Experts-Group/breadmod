@@ -10,6 +10,7 @@ import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
@@ -99,5 +100,14 @@ class ToolGunItem : Item(
 		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {
 			TestCubeBufferTask.create(player.position())
 		}
+	}
+
+	override fun appendHoverText(
+		stack: ItemStack,
+		context: TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
+	) {
+		tooltipComponents.add(Component.literal("Press PERIOD to spawn a bread block!"))
 	}
 }

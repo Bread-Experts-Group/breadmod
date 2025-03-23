@@ -9,9 +9,11 @@ import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.AirBlock
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BedPart.FOOT
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -26,11 +28,12 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.minus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import kotlin.jvm.optionals.getOrNull
 
-class BulkBlockItem : Item(Properties()), IMouseItem {
+class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var firstPos: BlockPos? = null
 	private var secondPos: BlockPos? = null
-	private var blockMap: MutableMap<Vec3, Pair<BlockState, BlockPos>> = mutableMapOf()
-	var blockData: BulkBlockData? = null
+	private val blockMap: MutableMap<Vec3, Pair<BlockState, BlockPos>> = mutableMapOf()
+	private val blockEntityMap: MutableMap<Vec3, BlockEntity> = mutableMapOf()
+	private var blockData: BulkBlockData? = null
 	private var clearFlag = false
 
 	override fun useOn(context: UseOnContext): InteractionResult {
@@ -52,6 +55,7 @@ class BulkBlockItem : Item(Properties()), IMouseItem {
 		if (usedHand != InteractionHand.MAIN_HAND) return super.use(level, player, usedHand)
 		if (player.isShiftKeyDown && this.clearFlag) {
 			this.blockMap.clear()
+			this.blockEntityMap.clear()
 			this.firstPos = null
 			this.secondPos = null
 			this.clearFlag = false
@@ -69,10 +73,12 @@ class BulkBlockItem : Item(Properties()), IMouseItem {
 					val y = it.y - (this.firstPos ?: return@forEach).y
 					val z = it.z - (this.firstPos ?: return@forEach).z
 					this.blockMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockState to it
+					val blockEntity = level.getBlockEntity(it) ?: return@forEach
+					this.blockEntityMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockEntity
 				}
 			player.sendSystemMessage(Component.literal("block map created"))
 			val center = this.firstPos!!.toVec3().div(2.0) - this.secondPos!!.toVec3().div(2.0)
-			this.blockData = BulkBlockData(this.blockMap, center, level)
+			this.blockData = BulkBlockData(this.blockMap, this.blockEntityMap, center, level)
 			this.clearFlag = true
 		}
 		return InteractionResultHolder.sidedSuccess(getStackInPlayerHand(player), level.isClientSide)
@@ -89,6 +95,7 @@ class BulkBlockItem : Item(Properties()), IMouseItem {
 
 	data class BulkBlockData(
 		val blocks: Map<Vec3, Pair<BlockState, BlockPos>>,
+		val blockEntities: Map<Vec3, BlockEntity>,
 		val aabbCenter: Vec3,
 		val level: Level
 	)

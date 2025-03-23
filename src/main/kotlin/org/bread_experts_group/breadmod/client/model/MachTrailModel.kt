@@ -17,6 +17,8 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 // todo Item Rendering: get the item model using ItemRenderer or something similar to render it
 //  (issue: can't choose the color the item renders with)
 // todo hat and player model rendering is already taken care of in the render function, move those to this class
+
+// todo holy shit figure out how to make this better it's ass
 class MachTrailModel(
 	playerProfile: GameProfile,
 	var currentColor: Int

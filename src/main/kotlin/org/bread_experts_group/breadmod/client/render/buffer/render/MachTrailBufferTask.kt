@@ -9,6 +9,7 @@ import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
+// todo revamp with better translation and rotation logic
 object MachTrailBufferTask {
 	/**
 	 * A map holding mach trail data for each player currently running with the chef hat.

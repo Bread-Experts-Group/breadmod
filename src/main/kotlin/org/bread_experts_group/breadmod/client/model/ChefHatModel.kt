@@ -26,7 +26,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
  * @since 1.0.0
  */
 class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::entityTranslucent) {
-	private val parts = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts
+	private val parts = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts.toList()
 
 	/**
 	 * Bakes and renders this model to the buffer.

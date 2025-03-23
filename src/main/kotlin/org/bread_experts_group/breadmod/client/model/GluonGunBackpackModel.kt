@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 
 class GluonGunBackpackModel(private val modelSet: EntityModelSet) : Model(RenderType::entitySolid) {
-	private val parts = this.modelSet.bakeLayer(Companion.BACKPACK_LAYER).allParts
+	private val parts = this.modelSet.bakeLayer(Companion.BACKPACK_LAYER).allParts.toList()
 
 	override fun renderToBuffer(
 		poseStack: PoseStack,
