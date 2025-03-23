@@ -46,11 +46,15 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 	}
 
 	fun growItem(slot: Int, count: Int) {
-		this.getItem(slot).grow(count)
+		val stack = this.getItem(slot)
+		stack.grow(count)
+		this.itemHandler.setStackInSlot(slot, stack)
 	}
 
 	fun shrinkItem(slot: Int, count: Int) {
-		this.getItem(slot).shrink(count)
+		val stack = this.getItem(slot)
+		stack.shrink(count)
+		this.itemHandler.setStackInSlot(slot, stack)
 	}
 
 	override fun getItem(slot: Int): ItemStack = this.itemHandler.getStackInSlot(slot)

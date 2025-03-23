@@ -36,7 +36,7 @@ class WheatCrusherBlockEntity(
 	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(2)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		mutableListOf(
-			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(100000))
+			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(100_000))
 		)
 	)
 	private var energyDivision: Int = -1
@@ -115,9 +115,9 @@ class WheatCrusherBlockEntity(
 			), level.registryAccess()
 		)
 
-		recipe.consumeItems(inputList)
 		if (this.getItem(1).isEmpty) this.setItem(1, assemble) else
 			this.growItem(1, assemble.count)
+		recipe.consumeItems(inputList).forEachIndexed(this::setItem)
 	}
 
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =

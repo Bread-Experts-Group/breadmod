@@ -37,9 +37,9 @@ class ExpansibleItemHandler(
 		val isEmpty: Boolean
 			get() = this.item == Items.AIR || this.amount == BigDecimal.ZERO
 		var asStack: ItemStack
-			get() = ItemStack(this.item, min(this.amount.capInt(), 99)).also {
+			get() = ItemStack(this.item, min(this.amount.capInt(), 99))/*.also {
 				it.update(ModDataComponents.EXPANSIBLE_ITEM_STACK, BigDecimal.ZERO) { this.amount }
-			}
+			}*/
 			set(value) {
 				this.item = value.item
 				this.amount = value.get(ModDataComponents.EXPANSIBLE_ITEM_STACK) ?: value.count.toBigDecimal()

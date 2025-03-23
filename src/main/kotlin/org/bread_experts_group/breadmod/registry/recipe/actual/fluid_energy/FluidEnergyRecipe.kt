@@ -74,21 +74,21 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 	override fun getResultItem(registries: HolderLookup.Provider): ItemStack = this.rItemOutputs[0].copy()
 
-	fun consumeInputs(items: List<ItemStack>, fluids: List<FluidStack>) {
-		this.consumeItems(items)
-		this.consumeFluids(fluids)
-	}
+	fun consumeInputs(items: List<ItemStack>, fluids: List<FluidStack>): Pair<List<ItemStack>, List<FluidStack>> =
+		this.consumeItems(items) to this.consumeFluids(fluids)
 
-	fun consumeItems(items: List<ItemStack>) {
+	fun consumeItems(items: List<ItemStack>): List<ItemStack> {
 		val itemList: MutableList<ItemStack> = mutableListOf()
 		this.rItemInputs.forEach { itemList.add(items.find(it::test) ?: return@forEach) }
 		itemList.forEach { item -> this.rItemInputs.forEach { if (it.test(item)) item.shrink(it.count()) } }
+		return itemList
 	}
 
-	fun consumeFluids(fluids: List<FluidStack>) {
+	fun consumeFluids(fluids: List<FluidStack>): List<FluidStack> {
 		val fluidList: MutableList<FluidStack> = mutableListOf()
 		this.rFluidInputs.forEach { fluidList.add(fluids.find(it::test) ?: return@forEach) }
 		fluidList.forEach { fluid -> this.rFluidInputs.forEach { if (it.test(fluid)) fluid.shrink(it.amount()) } }
+		return fluidList
 	}
 
 	/**
