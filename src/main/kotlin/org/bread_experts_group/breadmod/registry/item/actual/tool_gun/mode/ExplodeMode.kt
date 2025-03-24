@@ -23,6 +23,8 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.util.blocks
+import org.bread_experts_group.breadmod.util.rayCast
 
 @ToolGunMode
 @Suppress("unused")
@@ -36,7 +38,10 @@ class ExplodeMode : AbstractToolGunMode() {
 	}
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
-		level.explode(player, player.x, player.y, player.z, 20f, Level.ExplosionInteraction.MOB)
+		val targetBlock = player.rayCast(50, blocks(Blocks.AIR))
+		targetBlock?.let {
+			level.explode(player, it.position.x, it.position.y, it.position.z, 20f, Level.ExplosionInteraction.MOB)
+		}
 	}
 
 	override fun getDisplayName(): Component = Component.literal("explode")

@@ -13,15 +13,16 @@ import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionHand.MAIN_HAND
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
-import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import org.bread_experts_group.breadmod.util.RaycastResult.Companion.blockRaycast
-import org.bread_experts_group.breadmod.util.RaycastResult.Companion.entityRaycast
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
@@ -93,150 +94,48 @@ fun isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).ge
 inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 
-/**
- * A result of a raycast operation.
- * @author Miko Elbrecht
- * @since 1.0.0
- */
-sealed class RaycastResult(
-	/**
-	 * The type of the result; either [RayCastResultType.ENTITY] or [RayCastResultType.BLOCK].
-	 * @author Miko Elbrecht
-	 * @since 1.0.0
-	 * @see RayCastResultType
-	 */
-	val type: RayCastResultType,
-	/**
-	 * The [Vec3] this raycast started at.
-	 * @author Miko Elbrecht
-	 * @since 1.0.0
-	 */
-	@Suppress("unused")
-	val startPosition: Vec3,
-	/**
-	 * The [Vec3] this raycast ended at (either by missing or hitting something).
-	 * @author Miko Elbrecht
-	 * @since 1.0.0
-	 */
-	@Suppress("unused")
-	val endPosition: Vec3,
-	/**
-	 * The unit direction this raycast was aimed towards.
-	 * @author Miko Elbrecht
-	 * @since 1.0.0
-	 */
-	val direction: Vec3
-) {
-	/**
-	 * The type of the result; either [RayCastResultType.ENTITY] or [RayCastResultType.BLOCK].
-	 * @author Miko Elbrecht
-	 * @since 1.0.0
-	 */
-	enum class RayCastResultType {
-		/**
-		 * The result was for detecting an [Entity].
-		 * @author Miko Elbrecht
-		 * @since 1.0.0
-		 */
-		ENTITY,
+/// Start raycast functions ///
+class HitResult<T>(val position: Vec3, val length: Int, val hit: T)
 
-		/**
-		 * The result was for detecting [Block]s.
-		 * @author Miko Elbrecht
-		 * @since 1.0.0
-		 */
-		BLOCK
-	}
-
-	/**
-	 * A result of a raycast operation for [Block]s.
-	 * @author Miko Elbrecht
-	 * @since 1.0.0
-	 */
-	class Block(
-		startPosition: Vec3, endPosition: Vec3, direction: Vec3
-	) : RaycastResult(RayCastResultType.BLOCK, startPosition, endPosition, direction)
-
-	/**
-	 * A result of a raycast operation for an [Entity].
-	 * @author Miko Elbrecht
-	 * @since 1.0.0
-	 */
-	class Entity(
-		startPosition: Vec3, endPosition: Vec3, direction: Vec3
-	) : RaycastResult(RayCastResultType.ENTITY, startPosition, endPosition, direction)
-
-	companion object {
-		/**
-		 * Raycasts from [origin] in [direction] for [length] in a [Level],
-		 * returning the first [Entity] hit (if any).
-		 * @return The [Entity] hit by this raycast, or `null` if no [Entity] was hit.
-		 * @param exclude The [Entity] to exclude from the raycast.
-		 * @param origin The [Vec3] to start the raycast from.
-		 * @param direction The unit direction to raycast in.
-		 * @param length The maximum length of the raycast.
-		 * @author Miko Elbrecht
-		 * @since 1.0.0
-		 * @see blockRaycast
-		 * @see Entity
-		 */
-		fun Level.entityRaycast(
-			exclude: net.minecraft.world.entity.Entity?,
-			origin: Vec3,
-			direction: Vec3,
-			length: Double
-		): Entity? {
-			var distance = 0.0
-			while (true) {
-				val position = origin + (direction * distance)
-				val entities = this.getEntities(exclude, AABB.ofSize(position, 10.0, 10.0, 10.0))
-				if (entities.isNotEmpty()) entities.forEach {
-					if (it.getDimensions(it.pose).makeBoundingBox(it.position()).contains(position)) return Entity(
-						origin,
-						position,
-						direction
-					)
-				}
-				if (distance > length) return null
-				distance += 0.1
-			}
+private fun <T> rayCast(
+	position: Vec3, direction: Vec3,
+	length: Int,
+	selector: (Vec3) -> T?
+): HitResult<T>? {
+	var result: HitResult<T>? = null
+	var distance = 0.0
+	do {
+		val localPosition = position.add(direction.scale(distance))
+		val hit = selector(localPosition)
+		if (hit != null) {
+			result = HitResult(localPosition, length, hit)
+			break
 		}
-
-		/**
-		 * Raycasts from [origin] in [direction] for [length] in a [Level],
-		 * returning the first [Block] hit (if any).
-		 * @return The [Block] hit by this raycast, or `null` if no [Block] was hit.
-		 * @param origin The [Vec3] to start the raycast from.
-		 * @param direction The unit direction to raycast in.
-		 * @param length The maximum length of the raycast.
-		 * @param countFluid If fluids should be counted as hits.
-		 * @author Miko Elbrecht
-		 * @since 1.0.0
-		 * @see entityRaycast
-		 * @see Block
-		 */
-		fun Level.blockRaycast(
-			origin: Vec3,
-			direction: Vec3,
-			length: Double,
-			countFluid: Boolean
-		): Block? {
-			var distance = 0.0
-			while (true) {
-				val position = origin + (direction * distance)
-				val state = this.getBlockState(BlockPos(position.toVec3i()))
-				if (!state.isAir && (countFluid || state.fluidState.type != Fluids.EMPTY)) return Block(
-					origin,
-					position,
-					direction
-				)
-				if (distance > length) return null
-				distance += 0.1
-			}
-		}
-	}
+		distance++
+	} while (distance < length)
+	return result
 }
 
+fun <T> Entity.rayCast(length: Int, selector: (Level, Vec3) -> T?): HitResult<T>? = rayCast(
+	this.eyePosition,
+	this.calculateViewVector(this.xRot, this.yRot),
+	length
+) { selector(this.level(), it) }
+
+fun blocks(vararg filterBlocks: Block): (Level, Vec3) -> BlockState? = { level, position ->
+	val blockPos = BlockPos(position.toVec3i())
+	val state = level.getBlockState(blockPos)
+	if (filterBlocks.contains(state.block)) null
+	else state
+}
+
+fun entities(vararg filterTypes: EntityType<*>): (Level, Vec3) -> Entity? = { level, position ->
+	val entities = level.getEntities(null, AABB.ofSize(position, 1.0, 1.0, 1.0))
+		.firstOrNull()
+	if (entities == null || filterTypes.contains(entities.type)) null
+	else entities
+}
+/// End raycast functions ///
 /**
  * Translates a [Direction] to a side relative to another [Direction].
  * @return The relativized [Direction].

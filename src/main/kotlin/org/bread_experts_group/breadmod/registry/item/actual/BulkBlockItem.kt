@@ -31,7 +31,7 @@ import kotlin.jvm.optionals.getOrNull
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var firstPos: BlockPos? = null
 	private var secondPos: BlockPos? = null
-	private val blockMap: MutableMap<Vec3, Pair<BlockState, BlockPos>> = mutableMapOf()
+	private val blockMap: MutableMap<Vec3, BlockState> = mutableMapOf()
 	private val blockEntityMap: MutableMap<Vec3, BlockEntity> = mutableMapOf()
 	private var blockData: BulkBlockData? = null
 	private var clearFlag = false
@@ -72,7 +72,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 					val x = it.x - (this.firstPos ?: return@forEach).x
 					val y = it.y - (this.firstPos ?: return@forEach).y
 					val z = it.z - (this.firstPos ?: return@forEach).z
-					this.blockMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockState to it
+					this.blockMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockState
 					val blockEntity = level.getBlockEntity(it) ?: return@forEach
 					this.blockEntityMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockEntity
 				}
@@ -94,7 +94,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 	}
 
 	data class BulkBlockData(
-		val blocks: Map<Vec3, Pair<BlockState, BlockPos>>,
+		val blocks: Map<Vec3, BlockState>,
 		val blockEntities: Map<Vec3, BlockEntity>,
 		val aabbCenter: Vec3,
 		val level: Level

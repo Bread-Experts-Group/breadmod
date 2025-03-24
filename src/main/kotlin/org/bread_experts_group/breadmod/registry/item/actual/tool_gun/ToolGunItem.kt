@@ -1,10 +1,12 @@
 package org.bread_experts_group.breadmod.registry.item.actual.tool_gun
 
 import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.client.model.HumanoidModel.ArmPose
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
@@ -25,6 +27,7 @@ import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.curre
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.triggerDelta
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
+import org.bread_experts_group.breadmod.client.render.buffer.render.BeamBufferTask
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -46,6 +49,8 @@ class ToolGunItem : Item(
 ), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
 	class ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
+		override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose =
+			ArmPose.BOW_AND_ARROW
 	}
 
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
@@ -56,6 +61,12 @@ class ToolGunItem : Item(
 		} else {
 			triggerDelta()
 			player.playSound(ModSounds.TOOL_GUN.get(), 0.8f, 1f)
+
+			BeamBufferTask.create(
+				player.position(),
+				player.calculateViewVector(player.xRot, player.yRot),
+				localClient.options.cameraType.isFirstPerson
+			)
 		}
 		return super.use(level, player, usedHand)
 	}

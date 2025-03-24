@@ -55,17 +55,17 @@ object BulkBlockBufferTask {
 					poseStack.translate(blockData.aabbCenter)
 					poseStack.translate(-0.5, -0.5, -0.5)
 
-					blockData.blocks.forEach { (offset, pair) ->
+					blockData.blocks.forEach { (offset, state) ->
 						poseStack.pushPose()
-						val model = blockRenderer.getBlockModel(pair.first)
+						val model = blockRenderer.getBlockModel(state)
 						poseStack.translate(offset)
-						this.rotateBlocks(pair.first, poseStack)
-						model.getRenderTypes(pair.first, random, modelData).forEach {
-							when (pair.first.renderShape ?: return@add true) {
+						this.rotateBlocks(state, poseStack)
+						model.getRenderTypes(state, random, modelData).forEach {
+							when (state.renderShape ?: return@add true) {
 								INVISIBLE            -> {}
 								ENTITYBLOCK_ANIMATED -> {
 									blockRenderer.renderSingleBlock(
-										pair.first,
+										state,
 										poseStack,
 										bufferSource,
 										this.getLight(level, offset),
@@ -76,8 +76,8 @@ object BulkBlockBufferTask {
 								}
 								MODEL                -> {
 									blockRenderer.renderBatched(
-										pair.first,
-										pair.second,
+										state,
+										BlockPos.containing(offset),
 										level,
 										poseStack,
 										bufferSource.getBuffer(it),
