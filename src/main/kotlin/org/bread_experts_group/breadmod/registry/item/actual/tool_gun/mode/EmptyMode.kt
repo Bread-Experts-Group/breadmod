@@ -20,12 +20,9 @@ class EmptyMode : AbstractToolGunMode() {
 	override fun getTooltip(): Component =
 		Component.literal("If you see this mode then something probably went wrong!")
 
-	class EmptyModeRenderer(val id: ResourceLocation) : AbstractToolGunModeRenderer() {
-		override fun getModeWidget(): ModeWidget =
-			Builder()
-				.id(this.id)
-				.name(this.id.path.substringAfter("/"))
-				.description("<missing mode>")
-				.build()
+	class EmptyModeRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
+		override fun buildModeWidget(): Builder = ModeWidget.Builder()
+			.name(this.id.path.substringAfter("/"))
+			.description("<missing mode>")
 	}
 }

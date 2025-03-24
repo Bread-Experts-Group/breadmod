@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.serialization.Codec
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
@@ -17,6 +18,7 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.fromClass
 import org.bread_experts_group.breadmod.util.toClass
 
@@ -69,6 +71,16 @@ interface IToolGunMode {
 	fun getTooltip(): Component
 
 	fun getUid(): ResourceLocation
+
+	fun saveAdditional(tag: CompoundTag)
+
+	fun loadAdditional(tag: CompoundTag)
+
+	fun getUpdateTag(): CompoundTag = CompoundTag().also(this::saveAdditional)
+
+	fun shouldPlayToolGunSound(stack: ItemStack, player: Player): Boolean = true
+
+	fun playToolGunSound(player: Player): Unit = player.playSound(ModSounds.TOOL_GUN.get(), 0.8f, 1f)
 
 	fun getCustomRenderer(): Renderer
 
@@ -138,6 +150,8 @@ interface IToolGunMode {
 		)
 
 		fun getModeWidget(): ModeWidget
+
+		fun getScreenTexture(): ResourceLocation
 
 		fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean
 	}

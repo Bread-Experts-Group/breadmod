@@ -95,7 +95,7 @@ inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 
 /// Start raycast functions ///
-class HitResult<T>(val position: Vec3, val length: Int, val hit: T)
+class HitResult<T>(val position: Vec3, val length: Int, val direction: Direction, val hit: T)
 
 private fun <T> rayCast(
 	position: Vec3, direction: Vec3,
@@ -108,7 +108,7 @@ private fun <T> rayCast(
 		val localPosition = position.add(direction.scale(distance))
 		val hit = selector(localPosition)
 		if (hit != null) {
-			result = HitResult(localPosition, length, hit)
+			result = HitResult(localPosition, length, Direction.getNearest(position).opposite, hit)
 			break
 		}
 		distance++

@@ -11,7 +11,6 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.caseOhInstrument
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.caseOhSize
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.coilDelta
@@ -90,7 +89,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			// Render Screen Stage
 			poseStack.pushPose()
 			if (helper.shouldRenderScreenContents) {
-				helper.renderScreenBackground(ModTextureLocations.SCREEN.location, 9, 8, poseStack, buffer)
+				helper.renderScreenBackground(modeRenderer.getScreenTexture(), 9, 8, poseStack, buffer)
 				helper.drawTextOnScreen(
 					currentMode.getDisplayName(),
 					Color.RED.rgb, transparentColor().rgb,

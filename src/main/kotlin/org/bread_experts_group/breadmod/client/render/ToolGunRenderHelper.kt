@@ -95,6 +95,10 @@ class ToolGunRenderHelper(
 		poseStack.popPose()
 	}
 
+	val screenTextX: Double = -0.0434
+	val screenTextY: Double = 0.4215
+	val screenTextZ: Double = 0.8317
+
 	fun drawTextOnScreen(
 		component: Component,
 		color: Int,
@@ -103,9 +107,9 @@ class ToolGunRenderHelper(
 		fontRenderer: Font,
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
-		posX: Double = -0.0434,
-		posY: Double = 0.4215,
-		posZ: Double = 0.8317,
+		posX: Double = this.screenTextX,
+		posY: Double = this.screenTextY,
+		posZ: Double = this.screenTextZ,
 		scale: Float = 0.0007f
 	) {
 		this.initialScreenTranslations(poseStack, posX, posY, posZ, scale)
@@ -128,9 +132,9 @@ class ToolGunRenderHelper(
 		fontRenderer: Font,
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
-		posX: Double = -0.0434,
-		posY: Double = 0.4215,
-		posZ: Double = 0.8317,
+		posX: Double = this.screenTextX,
+		posY: Double = this.screenTextY,
+		posZ: Double = this.screenTextZ,
 		scale: Float = 0.0007f
 	): Unit = this.drawTextOnScreen(
 		Component.literal(text),

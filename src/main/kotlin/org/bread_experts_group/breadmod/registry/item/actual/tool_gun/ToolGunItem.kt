@@ -27,7 +27,6 @@ import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.curre
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.triggerDelta
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
-import org.bread_experts_group.breadmod.client.render.buffer.render.BeamBufferTask
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -37,7 +36,6 @@ import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTa
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.util.function.Supplier
 
@@ -55,19 +53,19 @@ class ToolGunItem : Item(
 
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		val stack = getStackInPlayerHand(player)
-		if (stack.`is`(ModItems.TOOL_GUN) && !level.isClientSide) {
+		if (stack.`is`(ModItems.TOOL_GUN)) {
 			val mode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: return InteractionResultHolder.fail(stack)
 			mode.action(level, player, stack)
-		} else {
-			triggerDelta()
-			player.playSound(ModSounds.TOOL_GUN.get(), 0.8f, 1f)
-
-			BeamBufferTask.create(
-				player.position(),
-				player.calculateViewVector(player.xRot, player.yRot),
-				localClient.options.cameraType.isFirstPerson
-			)
+			if (level.isClientSide) {
+				triggerDelta()
+				if (mode.shouldPlayToolGunSound(stack, player)) mode.playToolGunSound(player)
+			}
 		}
+//			BeamBufferTask.create(
+//				player.position(),
+//				player.calculateViewVector(player.xRot, player.yRot),
+//				localClient.options.cameraType.isFirstPerson
+//			)
 		return super.use(level, player, usedHand)
 	}
 
@@ -92,14 +90,14 @@ class ToolGunItem : Item(
 		if (mode.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
 	}
 
-	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
-		val mode = heldStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
-		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
-	}
-
 	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {
 		val mode = heldStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
 		mode.mouseButtonPreAction(mouseEvent, heldStack, player)
+	}
+
+	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
+		val mode = heldStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
+		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
 
 	// todo figure out key modifiers in the if statement

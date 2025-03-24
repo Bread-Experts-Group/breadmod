@@ -29,6 +29,7 @@ import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
+import org.bread_experts_group.breadmod.network.clientbound.ToolGunModeSyncPacket
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSet
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedToggle
@@ -167,6 +168,11 @@ internal object CommonModEventBus {
 			ScreenBleedSynchronization.TYPE,
 			ScreenBleedSynchronization.STREAM_CODEC,
 			ScreenBleedSynchronization::handleClientboundPacket
+		)
+		registrar.playToClient(
+			ToolGunModeSyncPacket.TYPE,
+			ToolGunModeSyncPacket.STREAM_CODEC,
+			ToolGunModeSyncPacket::handleClientboundPacket
 		)
 
 		registrar.playToServer(
