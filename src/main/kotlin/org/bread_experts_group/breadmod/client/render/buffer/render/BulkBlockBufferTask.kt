@@ -1,11 +1,17 @@
 package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.block.ModelBlockRenderer.AmbientOcclusionFace
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
+import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
@@ -18,6 +24,9 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
+import net.neoforged.neoforge.common.util.TriState.DEFAULT
+import net.neoforged.neoforge.common.util.TriState.FALSE
+import net.neoforged.neoforge.common.util.TriState.TRUE
 import org.bread_experts_group.breadmod.client.render.entity.block.BreadModBER
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
@@ -27,6 +36,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem.BulkB
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
+import java.util.BitSet
 import kotlin.jvm.optionals.getOrNull
 
 object BulkBlockBufferTask {
@@ -55,17 +65,17 @@ object BulkBlockBufferTask {
 					poseStack.translate(blockData.aabbCenter)
 					poseStack.translate(-0.5, -0.5, -0.5)
 
-					blockData.blocks.forEach { (offset, state) ->
+					blockData.blocks.forEach { (offset, pair) ->
 						poseStack.pushPose()
-						val model = blockRenderer.getBlockModel(state)
+						val model = blockRenderer.getBlockModel(pair.first)
 						poseStack.translate(offset)
-						this.rotateBlocks(state, poseStack)
-						model.getRenderTypes(state, random, modelData).forEach {
-							when (state.renderShape ?: return@add true) {
+						this.rotateBlocks(pair.first, poseStack)
+						model.getRenderTypes(pair.first, random, modelData).forEach {
+							when (pair.first.renderShape ?: return@add true) {
 								INVISIBLE            -> {}
 								ENTITYBLOCK_ANIMATED -> {
 									blockRenderer.renderSingleBlock(
-										state,
+										pair.first,
 										poseStack,
 										bufferSource,
 										this.getLight(level, offset),
@@ -75,17 +85,28 @@ object BulkBlockBufferTask {
 									)
 								}
 								MODEL                -> {
-									blockRenderer.renderBatched(
-										state,
+									this.tessellateBlockTest(
+										pair.first,
 										BlockPos.containing(offset),
 										level,
 										poseStack,
 										bufferSource.getBuffer(it),
-										false,
 										random,
 										modelData,
-										it
+										it,
+										pair.second
 									)
+//									blockRenderer.renderBatched(
+//										pair.first,
+//										BlockPos.containing(offset),
+//										level,
+//										poseStack,
+//										bufferSource.getBuffer(it),
+//										false,
+//										random,
+//										modelData,
+//										it
+//									)
 								}
 							}
 						}
@@ -137,4 +158,71 @@ object BulkBlockBufferTask {
 		Vec3.atCenterOf(originPos.toVec3i()).closerThan(cameraPos, this.getViewDistance())
 
 	fun getViewDistance(): Double = 64.0
+
+	fun tessellateBlockTest(
+		state: BlockState,
+		pos: BlockPos,
+		level: BlockAndTintGetter,
+		poseStack: PoseStack,
+		consumer: VertexConsumer,
+		randomSource: RandomSource,
+		modelData: ModelData,
+		renderType: RenderType,
+		directionList: List<Direction>
+	) {
+		val model = localClient.modelManager.blockModelShaper.getBlockModel(state)
+		val modelRenderer = localClient.blockRenderer.modelRenderer
+		val ambientOcclusionFlag =
+			Minecraft.useAmbientOcclusion() && when (model.useAmbientOcclusion(state, modelData, renderType)) {
+				TRUE    -> true
+				DEFAULT -> state.getLightEmission(level, pos) == 0
+				FALSE   -> false
+				else    -> false
+			}
+
+		if (ambientOcclusionFlag) {
+			val floatArray = FloatArray(Direction.entries.size * 2)
+			val bitSet = BitSet(3)
+			val ambientOcclusionFace = AmbientOcclusionFace()
+
+			for (direction in directionList.listIterator()) {
+				randomSource.setSeed(42)
+				val quadList = model.getQuads(state, direction, randomSource, modelData, renderType)
+				if (quadList.isNotEmpty()) {
+					modelRenderer.renderModelFaceAO(
+						level,
+						state,
+						pos,
+						poseStack,
+						consumer,
+						quadList,
+						floatArray,
+						bitSet,
+						ambientOcclusionFace,
+						NO_OVERLAY
+					)
+				}
+			}
+
+			randomSource.setSeed(42)
+			val quadList = model.getQuads(state, null, randomSource, modelData, renderType)
+			if (quadList.isNotEmpty()) modelRenderer.renderModelFaceAO(
+				level,
+				state,
+				pos,
+				poseStack,
+				consumer,
+				quadList,
+				floatArray,
+				bitSet,
+				ambientOcclusionFace,
+				NO_OVERLAY
+			)
+		} else {
+//			modelRenderer.renderModelFaceFlat()
+			// non-AO codes come later
+		}
+
+		poseStack.translate(state.getOffset(level, pos))
+	}
 }

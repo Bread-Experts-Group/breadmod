@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.registry.item.actual
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -13,6 +14,7 @@ import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.AirBlock
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BedPart.FOOT
@@ -31,7 +33,7 @@ import kotlin.jvm.optionals.getOrNull
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var firstPos: BlockPos? = null
 	private var secondPos: BlockPos? = null
-	private val blockMap: MutableMap<Vec3, BlockState> = mutableMapOf()
+	private val blockMap: MutableMap<Vec3, Pair<BlockState, List<Direction>>> = mutableMapOf()
 	private val blockEntityMap: MutableMap<Vec3, BlockEntity> = mutableMapOf()
 	private var blockData: BulkBlockData? = null
 	private var clearFlag = false
@@ -72,7 +74,13 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 					val x = it.x - (this.firstPos ?: return@forEach).x
 					val y = it.y - (this.firstPos ?: return@forEach).y
 					val z = it.z - (this.firstPos ?: return@forEach).z
-					this.blockMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockState
+					val directions: MutableList<Direction> = mutableListOf()
+					for (direction in Direction.entries) {
+						val mutable = it.mutable()
+						mutable.setWithOffset(it, direction)
+						if (Block.shouldRenderFace(blockState, level, it, direction, mutable)) directions.add(direction)
+					}
+					this.blockMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockState to directions
 					val blockEntity = level.getBlockEntity(it) ?: return@forEach
 					this.blockEntityMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockEntity
 				}
@@ -94,7 +102,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 	}
 
 	data class BulkBlockData(
-		val blocks: Map<Vec3, BlockState>,
+		val blocks: Map<Vec3, Pair<BlockState, List<Direction>>>,
 		val blockEntities: Map<Vec3, BlockEntity>,
 		val aabbCenter: Vec3,
 		val level: Level
