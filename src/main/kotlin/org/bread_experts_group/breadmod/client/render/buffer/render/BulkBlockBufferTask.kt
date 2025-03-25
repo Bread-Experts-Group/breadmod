@@ -113,12 +113,12 @@ object BulkBlockBufferTask {
 						poseStack.popPose()
 					}
 					blockData.blockEntities.forEach { (offset, entity) ->
-						poseStack.pushPose()
-						poseStack.translate(offset)
-						this.rotateBlocks(entity.blockState, poseStack)
 						val renderer = entityRenderDispatcher.getRenderer(entity) ?: return@forEach
 						// todo BERs filtered to just ours for now until i revamp all this rendering code to render all BERs properly
-						if (renderer is BreadModBER)
+						if (renderer is BreadModBER) {
+							poseStack.pushPose()
+							poseStack.translate(offset)
+							this.rotateBlocks(entity.blockState, poseStack)
 							renderer.render(
 								entity,
 								event.partialTick.gameTimeDeltaTicks,
@@ -127,7 +127,8 @@ object BulkBlockBufferTask {
 								this.getLight(level, offset),
 								NO_OVERLAY
 							)
-						poseStack.popPose()
+							poseStack.popPose()
+						}
 					}
 					poseStack.popPose()
 					passthrough[0] = rotation + 5f * event.partialTick.gameTimeDeltaTicks
