@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.RenderShape.MODEL
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
+import net.minecraft.world.level.levelgen.PositionalRandomFactory
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.ExtraFaceData
@@ -44,7 +45,6 @@ object BulkBlockBufferTask {
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
 		val entityRenderDispatcher = localClient.blockEntityRenderDispatcher
-		val random = RandomSource.create(42)
 		val modelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
 
 		RenderBuffer.add(
@@ -70,7 +70,7 @@ object BulkBlockBufferTask {
 						val model = blockRenderer.getBlockModel(pair.first)
 						poseStack.translate(offset)
 						this.rotateBlocks(pair.first, poseStack)
-						model.getRenderTypes(pair.first, random, modelData).forEach {
+						model.getRenderTypes(pair.first, NullRandom, modelData).forEach {
 							when (pair.first.renderShape ?: return@add true) {
 								INVISIBLE            -> {}
 								ENTITYBLOCK_ANIMATED -> {
@@ -91,7 +91,6 @@ object BulkBlockBufferTask {
 										level,
 										poseStack,
 										bufferSource.getBuffer(it),
-										random,
 										modelData,
 										it,
 										pair.second
@@ -160,17 +159,37 @@ object BulkBlockBufferTask {
 
 	fun getViewDistance(): Double = 64.0
 
+	object NullRandom : RandomSource {
+		override fun fork(): RandomSource = NullRandom
+		override fun forkPositional(): PositionalRandomFactory = object : PositionalRandomFactory {
+			override fun fromHashOf(p0: String): RandomSource = NullRandom
+			override fun fromSeed(p0: Long): RandomSource = NullRandom
+			override fun at(p0: Int, p1: Int, p2: Int): RandomSource = NullRandom
+			override fun parityConfigString(p0: StringBuilder) {}
+		}
+
+		override fun setSeed(p0: Long) {}
+		override fun nextInt(): Int = 0
+		override fun nextInt(p0: Int): Int = 0
+		override fun nextLong(): Long = 0
+		override fun nextBoolean(): Boolean = false
+		override fun nextFloat(): Float = 0f
+		override fun nextDouble(): Double = 0.0
+		override fun nextGaussian(): Double = 1.0
+	}
+
 	fun tessellateBlockTest(
 		state: BlockState,
 		pos: BlockPos,
 		level: BlockAndTintGetter,
 		poseStack: PoseStack,
 		consumer: VertexConsumer,
-		randomSource: RandomSource,
 		modelData: ModelData,
 		renderType: RenderType,
-		directionList: List<Direction>
+		directionList: List<Direction>,
+		randomSource: RandomSource = NullRandom
 	) {
+		val directions = directionList + listOf(null)
 		val model = localClient.modelManager.blockModelShaper.getBlockModel(state)
 		val modelRenderer = localClient.blockRenderer.modelRenderer
 		val ambientOcclusionFlag =
@@ -185,10 +204,8 @@ object BulkBlockBufferTask {
 			val floatArray = FloatArray(Direction.entries.size * 2)
 			val bitSet = BitSet(3)
 			val ambientOcclusionFace = AmbientOcclusionFace()
-
-			for (direction in directionList.listIterator()) {
-				randomSource.setSeed(42)
-				val quadList = model.getQuads(state, direction, randomSource, modelData, renderType)
+			directions.forEach {
+				val quadList = model.getQuads(state, it, randomSource, modelData, renderType)
 				if (quadList.isNotEmpty()) {
 					modelRenderer.renderModelFaceAO(
 						level,
@@ -204,24 +221,25 @@ object BulkBlockBufferTask {
 					)
 				}
 			}
-
-			randomSource.setSeed(42)
-			val quadList = model.getQuads(state, null, randomSource, modelData, renderType)
-			if (quadList.isNotEmpty()) modelRenderer.renderModelFaceAO(
-				level,
-				state,
-				pos,
-				poseStack,
-				consumer,
-				quadList,
-				floatArray,
-				bitSet,
-				ambientOcclusionFace,
-				NO_OVERLAY
-			)
 		} else {
-//			modelRenderer.renderModelFaceFlat()
-			// non-AO codes come later
+			val bitSet = BitSet(3)
+			directions.forEach {
+				val quadList = model.getQuads(state, it, randomSource, modelData, renderType)
+				if (quadList.isNotEmpty()) {
+					modelRenderer.renderModelFaceFlat(
+						level,
+						state,
+						pos,
+						0,
+						NO_OVERLAY,
+						true,
+						poseStack,
+						consumer,
+						quadList,
+						bitSet
+					)
+				}
+			}
 		}
 
 		poseStack.translate(state.getOffset(level, pos))
