@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.block.ModelBlockRenderer.AmbientOcclusionFace
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
@@ -12,7 +11,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.BlockAndTintGetter
-import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.RenderShape.MODEL
@@ -44,7 +42,6 @@ object BulkBlockBufferTask {
 	fun create(originPos: Vec3, blockData: BulkBlockData) {
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
-		val entityRenderDispatcher = localClient.blockEntityRenderDispatcher
 		val modelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
 
 		RenderBuffer.add(
@@ -65,20 +62,21 @@ object BulkBlockBufferTask {
 					poseStack.translate(blockData.aabbCenter)
 					poseStack.translate(-0.5, -0.5, -0.5)
 
-					blockData.blocks.forEach { (offset, pair) ->
+					blockData.blocks.forEach { (offset, data) ->
+						val (state, directions, packedLight, blockEntityData) = data
 						poseStack.pushPose()
-						val model = blockRenderer.getBlockModel(pair.first)
+						val model = blockRenderer.getBlockModel(state)
 						poseStack.translate(offset)
-						this.rotateBlocks(pair.first, poseStack)
-						model.getRenderTypes(pair.first, NullRandom, modelData).forEach {
-							when (pair.first.renderShape ?: return@add true) {
+						this.rotateBlocks(state, poseStack)
+						model.getRenderTypes(state, NullRandom, modelData).forEach {
+							when (state.renderShape ?: return@add true) {
 								INVISIBLE            -> {}
 								ENTITYBLOCK_ANIMATED -> {
 									blockRenderer.renderSingleBlock(
-										pair.first,
+										state,
 										poseStack,
 										bufferSource,
-										this.getLight(level, offset),
+										packedLight,
 										NO_OVERLAY,
 										modelData,
 										it
@@ -86,47 +84,35 @@ object BulkBlockBufferTask {
 								}
 								MODEL                -> {
 									this.tessellateBlockTest(
-										pair.first,
+										state,
 										BlockPos.containing(offset),
 										level,
 										poseStack,
 										bufferSource.getBuffer(it),
 										modelData,
 										it,
-										pair.second
+										directions
 									)
-//									blockRenderer.renderBatched(
-//										pair.first,
-//										BlockPos.containing(offset),
-//										level,
-//										poseStack,
-//										bufferSource.getBuffer(it),
-//										false,
-//										random,
-//										modelData,
-//										it
-//									)
 								}
 							}
 						}
 						poseStack.popPose()
-					}
-					blockData.blockEntities.forEach { (offset, entity) ->
-						val renderer = entityRenderDispatcher.getRenderer(entity) ?: return@forEach
-						// todo BERs filtered to just ours for now until i revamp all this rendering code to render all BERs properly
-						if (renderer is BreadModBER) {
-							poseStack.pushPose()
-							poseStack.translate(offset)
-							this.rotateBlocks(entity.blockState, poseStack)
-							renderer.render(
-								entity,
-								event.partialTick.gameTimeDeltaTicks,
-								poseStack,
-								bufferSource,
-								this.getLight(level, offset),
-								NO_OVERLAY
-							)
-							poseStack.popPose()
+						blockEntityData?.let { (entity, renderer) ->
+							// todo BERs filtered to just ours for now until i revamp all this rendering code to render all BERs properly
+							if (renderer is BreadModBER) {
+								poseStack.pushPose()
+								poseStack.translate(offset)
+								this.rotateBlocks(state, poseStack)
+								renderer.render(
+									entity,
+									event.partialTick.gameTimeDeltaTicks,
+									poseStack,
+									bufferSource,
+									packedLight,
+									NO_OVERLAY
+								)
+								poseStack.popPose()
+							}
 						}
 					}
 					poseStack.popPose()
@@ -150,9 +136,6 @@ object BulkBlockBufferTask {
 			poseStack.translate(-0.5f, -0.5f, -0.5f)
 		}
 	}
-
-	fun getLight(level: Level, pos: Vec3): Int =
-		LevelRenderer.getLightColor(level, BlockPos.containing(pos))
 
 	fun shouldRender(cameraPos: Vec3, originPos: Vec3): Boolean =
 		Vec3.atCenterOf(originPos.toVec3i()).closerThan(cameraPos, this.getViewDistance())

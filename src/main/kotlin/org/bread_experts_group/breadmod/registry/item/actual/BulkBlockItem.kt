@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod.registry.item.actual
 
 import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
@@ -23,6 +25,7 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
@@ -33,8 +36,7 @@ import kotlin.jvm.optionals.getOrNull
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var firstPos: BlockPos? = null
 	private var secondPos: BlockPos? = null
-	private val blockMap: MutableMap<Vec3, Pair<BlockState, List<Direction>>> = mutableMapOf()
-	private val blockEntityMap: MutableMap<Vec3, BlockEntity> = mutableMapOf()
+	private val blockMap: MutableMap<Vec3, BlockData> = mutableMapOf()
 	private var blockData: BulkBlockData? = null
 	private var clearFlag = false
 
@@ -57,7 +59,6 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		if (usedHand != InteractionHand.MAIN_HAND) return super.use(level, player, usedHand)
 		if (player.isShiftKeyDown && this.clearFlag) {
 			this.blockMap.clear()
-			this.blockEntityMap.clear()
 			this.firstPos = null
 			this.secondPos = null
 			this.clearFlag = false
@@ -68,6 +69,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			BlockPos.betweenClosedStream(aabb)
 				.forEach {
 					val blockState = level.getBlockState(it)
+					val packedLight = LevelRenderer.getLightColor(level, it)
 					if (blockState.getOptionalValue(BlockStateProperties.BED_PART)
 							.getOrNull() == FOOT || blockState.block is AirBlock
 					) return@forEach
@@ -80,13 +82,20 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 						mutable.setWithOffset(it, direction)
 						if (Block.shouldRenderFace(blockState, level, it, direction, mutable)) directions.add(direction)
 					}
-					this.blockMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockState to directions
-					val blockEntity = level.getBlockEntity(it) ?: return@forEach
-					this.blockEntityMap[Vec3(x.toDouble(), y.toDouble(), z.toDouble())] = blockEntity
+					val offset = Vec3(x.toDouble(), y.toDouble(), z.toDouble())
+					this.blockMap[offset] = BlockData(
+						blockState,
+						directions,
+						packedLight,
+						level.getBlockEntity(it)?.let {
+							val renderer = localClient.blockEntityRenderDispatcher.getRenderer(it)
+							if (renderer != null) BlockEntityData(it, renderer) else null
+						}
+					)
 				}
 			player.sendSystemMessage(Component.literal("block map created"))
 			val center = this.firstPos!!.toVec3().div(2.0) - this.secondPos!!.toVec3().div(2.0)
-			this.blockData = BulkBlockData(this.blockMap, this.blockEntityMap, center, level)
+			this.blockData = BulkBlockData(this.blockMap, center, level)
 			this.clearFlag = true
 		}
 		return InteractionResultHolder.sidedSuccess(getStackInPlayerHand(player), level.isClientSide)
@@ -101,9 +110,20 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		}
 	}
 
+	data class BlockData(
+		val state: BlockState,
+		val sides: List<Direction>,
+		val packedLight: Int,
+		val entity: BlockEntityData<BlockEntity>?
+	)
+
+	data class BlockEntityData<T : BlockEntity>(
+		val entity: T,
+		val renderer: BlockEntityRenderer<T>
+	)
+
 	data class BulkBlockData(
-		val blocks: Map<Vec3, Pair<BlockState, List<Direction>>>,
-		val blockEntities: Map<Vec3, BlockEntity>,
+		val blocks: Map<Vec3, BlockData>,
 		val aabbCenter: Vec3,
 		val level: Level
 	)
