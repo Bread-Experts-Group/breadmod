@@ -70,19 +70,19 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			player.sendSystemMessage(Component.literal("data cleared"))
 		} else if (this.firstPos != null && this.secondPos != null && !player.isShiftKeyDown && !this.clearFlag) {
 			val aabb = AABB(this.firstPos!!.toVec3(), this.secondPos!!.toVec3())
-			BlockPos.betweenClosedStream(aabb).forEach {
-				val state = level.getBlockState(it)
+			BlockPos.betweenClosedStream(aabb).forEach { blockPos ->
+				val state = level.getBlockState(blockPos)
 				if (state.renderShape == RenderShape.INVISIBLE) return@forEach
-				val x = it.x - (this.firstPos ?: return@forEach).x
-				val y = it.y - (this.firstPos ?: return@forEach).y
-				val z = it.z - (this.firstPos ?: return@forEach).z
+				val x = blockPos.x - (this.firstPos ?: return@forEach).x
+				val y = blockPos.y - (this.firstPos ?: return@forEach).y
+				val z = blockPos.z - (this.firstPos ?: return@forEach).z
 				val offset = Vec3(x.toDouble(), y.toDouble(), z.toDouble())
 				this.blockMap[offset] = BlockData(
 					state,
-					LevelRenderer.getLightColor(level, it),
-					level.getBlockEntity(it)?.let {
-						val renderer = localClient.blockEntityRenderDispatcher.getRenderer(it)
-						if (renderer != null) BlockEntityData(it, renderer) else null
+					LevelRenderer.getLightColor(level, blockPos),
+					level.getBlockEntity(blockPos)?.let { entity ->
+						val renderer = localClient.blockEntityRenderDispatcher.getRenderer(entity)
+						if (renderer != null) BlockEntityData(entity, renderer) else null
 					},
 					buildMap {
 						val model = localClient.modelManager.blockModelShaper.getBlockModel(state)
@@ -96,17 +96,17 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 							).forEach { quad ->
 								val face = AmbientOcclusionFace()
 								localClient.blockRenderer.modelRenderer.calculateShape(
-									level, state, it,
+									level, state, blockPos,
 									quad.vertices, quad.direction,
 									shape, shapeFlags
 								)
 								if (
 									!ClientHooks.calculateFaceWithoutAO(
-										level, state, it, quad, shapeFlags.get(0),
+										level, state, blockPos, quad, shapeFlags.get(0),
 										face.brightness, face.lightmap
 									)
 								) face.calculate(
-									level, state, it, quad.direction, shape, shapeFlags,
+									level, state, blockPos, quad.direction, shape, shapeFlags,
 									quad.isShade
 								)
 								map[quad] = face
@@ -115,9 +115,9 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 						}
 
 						for (direction in Direction.entries) {
-							val mutable = it.mutable()
-							mutable.setWithOffset(it, direction)
-							if (Block.shouldRenderFace(state, level, it, direction, mutable))
+							val mutable = blockPos.mutable()
+							mutable.setWithOffset(blockPos, direction)
+							if (Block.shouldRenderFace(state, level, blockPos, direction, mutable))
 								calculateForDir(direction)
 						}
 						calculateForDir(null)

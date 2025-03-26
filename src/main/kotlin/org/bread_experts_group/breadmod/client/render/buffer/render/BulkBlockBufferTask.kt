@@ -63,11 +63,11 @@ object BulkBlockBufferTask {
 					poseStack.translate(-0.5, -0.5, -0.5)
 
 					blockData.blocks.forEach { (offset, data) ->
-						val (state, packedLight, blockEntityData) = data
+						val (state, packedLight, blockEntityData, ao) = data
 						poseStack.pushPose()
 						val model = blockRenderer.getBlockModel(state)
 						poseStack.translate(offset)
-						this.rotateBlocks(state, poseStack)
+//						this.rotateBlocks(state, poseStack)
 						model.getRenderTypes(state, NullRandom, this.modelData).forEach {
 							when (state.renderShape ?: return@add true) {
 								INVISIBLE            -> throw IllegalStateException("Bad set! Had invisible state")
