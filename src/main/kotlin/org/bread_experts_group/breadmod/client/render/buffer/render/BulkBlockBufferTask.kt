@@ -70,7 +70,7 @@ object BulkBlockBufferTask {
 						this.rotateBlocks(state, poseStack)
 						model.getRenderTypes(state, NullRandom, this.modelData).forEach {
 							when (state.renderShape ?: return@add true) {
-								INVISIBLE            -> {}
+								INVISIBLE -> throw IllegalStateException("Bad set! Had invisible state")
 								ENTITYBLOCK_ANIMATED -> {
 									blockRenderer.renderSingleBlock(
 										state,
@@ -167,8 +167,7 @@ object BulkBlockBufferTask {
 		poseStack: PoseStack,
 		consumer: VertexConsumer,
 		modelData: ModelData,
-		renderType: RenderType,
-		randomSource: RandomSource = NullRandom
+		renderType: RenderType
 	) {
 		val model = localClient.modelManager.blockModelShaper.getBlockModel(data.state)
 		val modelRenderer = localClient.blockRenderer.modelRenderer
@@ -196,7 +195,7 @@ object BulkBlockBufferTask {
 				}
 			}
 		} else {
-			data.ao.forEach { (direction, _) ->
+			data.ao.forEach { (_, quads) ->
 				modelRenderer.renderModelFaceFlat(
 					level,
 					data.state,
@@ -206,7 +205,7 @@ object BulkBlockBufferTask {
 					true,
 					poseStack,
 					consumer,
-					model.getQuads(data.state, direction, randomSource, modelData, renderType),
+					quads.keys.toList(),
 					bitSet
 				)
 			}

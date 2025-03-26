@@ -18,12 +18,10 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.AirBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.properties.BedPart.FOOT
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.ClientHooks
@@ -38,7 +36,6 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.minus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import java.util.BitSet
-import kotlin.jvm.optionals.getOrNull
 
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var firstPos: BlockPos? = null
@@ -76,17 +73,14 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			BlockPos.betweenClosedStream(aabb)
 				.forEach {
 					val state = level.getBlockState(it)
-					val packedLight = LevelRenderer.getLightColor(level, it)
-					if (state.getOptionalValue(BlockStateProperties.BED_PART)
-							.getOrNull() == FOOT || state.block is AirBlock
-					) return@forEach
+					if (state.renderShape == RenderShape.INVISIBLE) return@forEach
 					val x = it.x - (this.firstPos ?: return@forEach).x
 					val y = it.y - (this.firstPos ?: return@forEach).y
 					val z = it.z - (this.firstPos ?: return@forEach).z
 					val offset = Vec3(x.toDouble(), y.toDouble(), z.toDouble())
 					this.blockMap[offset] = BlockData(
 						state,
-						packedLight,
+						LevelRenderer.getLightColor(level, it),
 						level.getBlockEntity(it)?.let {
 							val renderer = localClient.blockEntityRenderDispatcher.getRenderer(it)
 							if (renderer != null) BlockEntityData(it, renderer) else null
@@ -143,7 +137,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		if (mouseEvent.action == InputConstants.PRESS) {
 			if (mouseEvent.button == InputConstants.MOUSE_BUTTON_MIDDLE) {
 				BulkBlockBufferTask.create(player.position(), this.blockData ?: return)
-				player.sendSystemMessage(Component.literal("renderer created"))
+				player.sendSystemMessage(Component.literal("renderer created (${this.blockData!!.blocks.size})"))
 			}
 		}
 	}

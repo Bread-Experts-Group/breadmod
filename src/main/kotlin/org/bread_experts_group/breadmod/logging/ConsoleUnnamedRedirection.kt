@@ -4,11 +4,9 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.PrintStream
-import java.util.Scanner
 
 internal object ConsoleUnnamedRedirection {
 	private val unnamedLoggerOut: Logger = LogManager.getLogger("Unnamed Logger, Standard Out")
-	private val unnamedLoggerIn: Logger = LogManager.getLogger("Unnamed Logger, Standard In")
 	private val unnamedLoggerErr: Logger = LogManager.getLogger("Unnamed Logger, Error")
 
 	class Redirector(val logger: Logger, val level: Level) : PrintStream(nullOutputStream()) {
@@ -30,9 +28,5 @@ internal object ConsoleUnnamedRedirection {
 	fun setup() {
 		System.setOut(Redirector(this.unnamedLoggerOut, Level.WARN))
 		System.setErr(Redirector(this.unnamedLoggerErr, Level.ERROR))
-		Thread.ofVirtual().start {
-			val sc = Scanner(System.`in`)
-			while (true) if (sc.hasNext()) this.unnamedLoggerIn.info(sc.next())
-		}
 	}
 }
