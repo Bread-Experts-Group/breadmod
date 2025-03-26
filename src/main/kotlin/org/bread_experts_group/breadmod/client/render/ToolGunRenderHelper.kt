@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.client.render
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.gui.Font
+import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.block.BlockRenderDispatcher
@@ -27,7 +28,7 @@ class ToolGunRenderHelper(
 	/**
 	 * Default screen brightness.
 	 */
-	val screenTint: Int = 15728880
+	val screenTint: Int = FULL_BRIGHT
 
 	/**
 	 * Toggle for recoil. Resets to true automatically.

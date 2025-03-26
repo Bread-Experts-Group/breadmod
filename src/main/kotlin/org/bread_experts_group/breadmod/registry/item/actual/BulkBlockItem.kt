@@ -2,6 +2,9 @@ package org.bread_experts_group.breadmod.registry.item.actual
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.block.ModelBlockRenderer.AmbientOcclusionFace
+import net.minecraft.client.renderer.block.model.BakedQuad
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -23,14 +26,18 @@ import net.minecraft.world.level.block.state.properties.BedPart.FOOT
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.client.ClientHooks
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask
+import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.NullRandom
+import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.modelData
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.minus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
+import java.util.BitSet
 import kotlin.jvm.optionals.getOrNull
 
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
@@ -68,28 +75,59 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			val aabb = AABB(this.firstPos!!.toVec3(), this.secondPos!!.toVec3())
 			BlockPos.betweenClosedStream(aabb)
 				.forEach {
-					val blockState = level.getBlockState(it)
+					val state = level.getBlockState(it)
 					val packedLight = LevelRenderer.getLightColor(level, it)
-					if (blockState.getOptionalValue(BlockStateProperties.BED_PART)
-							.getOrNull() == FOOT || blockState.block is AirBlock
+					if (state.getOptionalValue(BlockStateProperties.BED_PART)
+							.getOrNull() == FOOT || state.block is AirBlock
 					) return@forEach
 					val x = it.x - (this.firstPos ?: return@forEach).x
 					val y = it.y - (this.firstPos ?: return@forEach).y
 					val z = it.z - (this.firstPos ?: return@forEach).z
-					val directions: MutableList<Direction> = mutableListOf()
-					for (direction in Direction.entries) {
-						val mutable = it.mutable()
-						mutable.setWithOffset(it, direction)
-						if (Block.shouldRenderFace(blockState, level, it, direction, mutable)) directions.add(direction)
-					}
 					val offset = Vec3(x.toDouble(), y.toDouble(), z.toDouble())
 					this.blockMap[offset] = BlockData(
-						blockState,
-						directions,
+						state,
 						packedLight,
 						level.getBlockEntity(it)?.let {
 							val renderer = localClient.blockEntityRenderDispatcher.getRenderer(it)
 							if (renderer != null) BlockEntityData(it, renderer) else null
+						},
+						buildMap {
+							val model = localClient.modelManager.blockModelShaper.getBlockModel(state)
+							val shape = FloatArray(Direction.entries.size * 2)
+							val shapeFlags = BitSet(3)
+							fun calculateForDir(direction: Direction?) {
+								val map = mutableMapOf<BakedQuad, AmbientOcclusionFace>()
+								model.getQuads(
+									state, direction, NullRandom,
+									modelData, RenderType.solid()
+								).forEach { quad ->
+									val face = AmbientOcclusionFace()
+									localClient.blockRenderer.modelRenderer.calculateShape(
+										level, state, it,
+										quad.vertices, quad.direction,
+										shape, shapeFlags
+									)
+									if (
+										!ClientHooks.calculateFaceWithoutAO(
+											level, state, it, quad, shapeFlags.get(0),
+											face.brightness, face.lightmap
+										)
+									) face.calculate(
+										level, state, it, quad.direction, shape, shapeFlags,
+										quad.isShade
+									)
+									map[quad] = face
+								}
+								this[direction] = map
+							}
+
+							for (direction in Direction.entries) {
+								val mutable = it.mutable()
+								mutable.setWithOffset(it, direction)
+								if (Block.shouldRenderFace(state, level, it, direction, mutable))
+									calculateForDir(direction)
+							}
+							calculateForDir(null)
 						}
 					)
 				}
@@ -112,9 +150,9 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 
 	data class BlockData(
 		val state: BlockState,
-		val sides: List<Direction>,
 		val packedLight: Int,
-		val entity: BlockEntityData<BlockEntity>?
+		val entity: BlockEntityData<BlockEntity>?,
+		val ao: Map<Direction?, Map<BakedQuad, AmbientOcclusionFace>>
 	)
 
 	data class BlockEntityData<T : BlockEntity>(

@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.LightTexture
+import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
@@ -509,7 +510,7 @@ fun PoseStack.drawTextOnSide(
 		this,
 		bufferSource,
 		dropShadow,
-		15728880
+		FULL_BRIGHT
 	)
 	this.popPose()
 }
@@ -538,7 +539,7 @@ fun PoseStack.drawCenteredTextOnSide(
 	this.scaleFlat(scale)
 	renderText(
 		component.visualOrderText, color, backgroundColor, fontRenderer,
-		this, bufferSource, dropShadow, 15728880
+		this, bufferSource, dropShadow, FULL_BRIGHT
 	)
 	this.popPose()
 }
@@ -618,7 +619,7 @@ fun PoseStack.drawCenteredTextOnSide(
 //            1.0f,
 //            pGuiGraphics.pose(),
 //            pGuiGraphics.bufferSource(),
-//            15728880
+//            FULL_BRIGHT
 //        )
 //    }
 //    pGuiGraphics.flush()

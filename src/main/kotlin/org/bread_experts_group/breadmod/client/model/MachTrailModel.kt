@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.PlayerModel
 import net.minecraft.client.model.geom.ModelLayers
+import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.PlayerSkin
@@ -54,10 +55,10 @@ class MachTrailModel(
 			-1f, 0f, 0f
 		)
 		val playerModelBuffer = this.bufferSource.getBuffer(RenderType.entityTranslucent(this.playerTexture))
-		this.playerModel.renderToBuffer(poseStack, playerModelBuffer, 15728880, NO_OVERLAY, this.currentColor)
+		this.playerModel.renderToBuffer(poseStack, playerModelBuffer, FULL_BRIGHT, NO_OVERLAY, this.currentColor)
 
 		poseStack.translate(0.0, -0.5, 0.0)
-		this.chefHatModel.render(poseStack, 15728880, NO_OVERLAY, this.currentColor)
+		this.chefHatModel.render(poseStack, FULL_BRIGHT, NO_OVERLAY, this.currentColor)
 		poseStack.translate(0.0, 0.5, 0.0)
 	}
 }

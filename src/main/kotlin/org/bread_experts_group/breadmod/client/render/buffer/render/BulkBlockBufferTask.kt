@@ -5,10 +5,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.block.ModelBlockRenderer.AmbientOcclusionFace
+import net.minecraft.client.renderer.block.model.BakedQuad
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
@@ -31,6 +30,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem.BulkBlockData
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
@@ -39,10 +39,10 @@ import java.util.BitSet
 import kotlin.jvm.optionals.getOrNull
 
 object BulkBlockBufferTask {
+	val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
 	fun create(originPos: Vec3, blockData: BulkBlockData) {
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
-		val modelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
 
 		RenderBuffer.add(
 			Stage.AFTER_TRANSLUCENT_BLOCKS,
@@ -63,12 +63,12 @@ object BulkBlockBufferTask {
 					poseStack.translate(-0.5, -0.5, -0.5)
 
 					blockData.blocks.forEach { (offset, data) ->
-						val (state, directions, packedLight, blockEntityData) = data
+						val (state, packedLight, blockEntityData) = data
 						poseStack.pushPose()
 						val model = blockRenderer.getBlockModel(state)
 						poseStack.translate(offset)
 						this.rotateBlocks(state, poseStack)
-						model.getRenderTypes(state, NullRandom, modelData).forEach {
+						model.getRenderTypes(state, NullRandom, this.modelData).forEach {
 							when (state.renderShape ?: return@add true) {
 								INVISIBLE            -> {}
 								ENTITYBLOCK_ANIMATED -> {
@@ -78,20 +78,19 @@ object BulkBlockBufferTask {
 										bufferSource,
 										packedLight,
 										NO_OVERLAY,
-										modelData,
+										this.modelData,
 										it
 									)
 								}
 								MODEL                -> {
 									this.tessellateBlockTest(
-										state,
+										data,
 										BlockPos.containing(offset),
 										level,
 										poseStack,
 										bufferSource.getBuffer(it),
-										modelData,
-										it,
-										directions
+										this.modelData,
+										it
 									)
 								}
 							}
@@ -162,69 +161,98 @@ object BulkBlockBufferTask {
 	}
 
 	fun tessellateBlockTest(
-		state: BlockState,
+		data: BulkBlockItem.BlockData,
 		pos: BlockPos,
 		level: BlockAndTintGetter,
 		poseStack: PoseStack,
 		consumer: VertexConsumer,
 		modelData: ModelData,
 		renderType: RenderType,
-		directionList: List<Direction>,
 		randomSource: RandomSource = NullRandom
 	) {
-		val directions = directionList + listOf(null)
-		val model = localClient.modelManager.blockModelShaper.getBlockModel(state)
+		val model = localClient.modelManager.blockModelShaper.getBlockModel(data.state)
 		val modelRenderer = localClient.blockRenderer.modelRenderer
 		val ambientOcclusionFlag =
-			Minecraft.useAmbientOcclusion() && when (model.useAmbientOcclusion(state, modelData, renderType)) {
+			Minecraft.useAmbientOcclusion() && when (model.useAmbientOcclusion(data.state, modelData, renderType)) {
 				TRUE    -> true
-				DEFAULT -> state.getLightEmission(level, pos) == 0
+				DEFAULT -> data.state.getLightEmission(level, pos) == 0
 				FALSE   -> false
 				else    -> false
 			}
-
+		val bitSet = BitSet(3)
 		if (ambientOcclusionFlag) {
-			val floatArray = FloatArray(Direction.entries.size * 2)
-			val bitSet = BitSet(3)
-			val ambientOcclusionFace = AmbientOcclusionFace()
-			directions.forEach {
-				val quadList = model.getQuads(state, it, randomSource, modelData, renderType)
-				if (quadList.isNotEmpty()) {
-					modelRenderer.renderModelFaceAO(
+			data.ao.forEach { (_, quads) ->
+				quads.forEach { (quad, ao) ->
+					this.putQuadData(
 						level,
-						state,
+						data.state,
 						pos,
-						poseStack,
 						consumer,
-						quadList,
-						floatArray,
-						bitSet,
-						ambientOcclusionFace,
-						NO_OVERLAY
+						poseStack.last(),
+						quad,
+						ao.brightness,
+						ao.lightmap
 					)
 				}
 			}
 		} else {
-			val bitSet = BitSet(3)
-			directions.forEach {
-				val quadList = model.getQuads(state, it, randomSource, modelData, renderType)
-				if (quadList.isNotEmpty()) {
-					modelRenderer.renderModelFaceFlat(
-						level,
-						state,
-						pos,
-						0,
-						NO_OVERLAY,
-						true,
-						poseStack,
-						consumer,
-						quadList,
-						bitSet
-					)
-				}
+			data.ao.forEach { (direction, _) ->
+				modelRenderer.renderModelFaceFlat(
+					level,
+					data.state,
+					pos,
+					0,
+					NO_OVERLAY,
+					true,
+					poseStack,
+					consumer,
+					model.getQuads(data.state, direction, randomSource, modelData, renderType),
+					bitSet
+				)
 			}
 		}
 
-		poseStack.translate(state.getOffset(level, pos))
+		poseStack.translate(data.state.getOffset(level, pos))
+	}
+
+	private fun putQuadData(
+		level: BlockAndTintGetter,
+		state: BlockState,
+		pos: BlockPos,
+		consumer: VertexConsumer,
+		pose: PoseStack.Pose,
+		quad: BakedQuad,
+		brightness: FloatArray,
+		lightmap: IntArray
+	) {
+		val red: Float
+		val green: Float
+		val blue: Float
+		if (quad.isTinted) {
+			val i: Int = localClient.blockRenderer.modelRenderer.blockColors.getColor(
+				state, level, pos,
+				quad.tintIndex
+			)
+			red = (i shr 16 and 255).toFloat() / 255.0f
+			green = (i shr 8 and 255).toFloat() / 255.0f
+			blue = (i and 255).toFloat() / 255.0f
+		} else {
+			red = 1.0f
+			green = 1.0f
+			blue = 1.0f
+		}
+
+		consumer.putBulkData(
+			pose,
+			quad,
+			brightness,
+			red,
+			green,
+			blue,
+			1.0f,
+			lightmap,
+			NO_OVERLAY,
+			true
+		)
 	}
 }
