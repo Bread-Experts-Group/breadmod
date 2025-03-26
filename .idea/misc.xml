@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
     <list size="3">
@@ -5,6 +6,9 @@
       <item index="1" class="java.lang.String" itemvalue="org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage" />
       <item index="2" class="java.lang.String" itemvalue="org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator" />
     </list>
+    <writeAnnotations>
+      <writeAnnotation name="org.spongepowered.asm.mixin.Unique" />
+    </writeAnnotations>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">

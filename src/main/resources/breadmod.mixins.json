@@ -8,6 +8,7 @@
     "common.IAccessorEntity",
     "common.MixinActiveProfiler",
     "common.MixinEntity",
+    "common.MixinLevel",
     "common.MixinLightningBolt"
   ],
   "client": [
