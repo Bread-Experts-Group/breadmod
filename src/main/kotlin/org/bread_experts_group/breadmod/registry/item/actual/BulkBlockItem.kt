@@ -70,61 +70,60 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			player.sendSystemMessage(Component.literal("data cleared"))
 		} else if (this.firstPos != null && this.secondPos != null && !player.isShiftKeyDown && !this.clearFlag) {
 			val aabb = AABB(this.firstPos!!.toVec3(), this.secondPos!!.toVec3())
-			BlockPos.betweenClosedStream(aabb)
-				.forEach {
-					val state = level.getBlockState(it)
-					if (state.renderShape == RenderShape.INVISIBLE) return@forEach
-					val x = it.x - (this.firstPos ?: return@forEach).x
-					val y = it.y - (this.firstPos ?: return@forEach).y
-					val z = it.z - (this.firstPos ?: return@forEach).z
-					val offset = Vec3(x.toDouble(), y.toDouble(), z.toDouble())
-					this.blockMap[offset] = BlockData(
-						state,
-						LevelRenderer.getLightColor(level, it),
-						level.getBlockEntity(it)?.let {
-							val renderer = localClient.blockEntityRenderDispatcher.getRenderer(it)
-							if (renderer != null) BlockEntityData(it, renderer) else null
-						},
-						buildMap {
-							val model = localClient.modelManager.blockModelShaper.getBlockModel(state)
-							val shape = FloatArray(Direction.entries.size * 2)
-							val shapeFlags = BitSet(3)
-							fun calculateForDir(direction: Direction?) {
-								val map = mutableMapOf<BakedQuad, AmbientOcclusionFace>()
-								model.getQuads(
-									state, direction, NullRandom,
-									modelData, RenderType.solid()
-								).forEach { quad ->
-									val face = AmbientOcclusionFace()
-									localClient.blockRenderer.modelRenderer.calculateShape(
-										level, state, it,
-										quad.vertices, quad.direction,
-										shape, shapeFlags
+			BlockPos.betweenClosedStream(aabb).forEach {
+				val state = level.getBlockState(it)
+				if (state.renderShape == RenderShape.INVISIBLE) return@forEach
+				val x = it.x - (this.firstPos ?: return@forEach).x
+				val y = it.y - (this.firstPos ?: return@forEach).y
+				val z = it.z - (this.firstPos ?: return@forEach).z
+				val offset = Vec3(x.toDouble(), y.toDouble(), z.toDouble())
+				this.blockMap[offset] = BlockData(
+					state,
+					LevelRenderer.getLightColor(level, it),
+					level.getBlockEntity(it)?.let {
+						val renderer = localClient.blockEntityRenderDispatcher.getRenderer(it)
+						if (renderer != null) BlockEntityData(it, renderer) else null
+					},
+					buildMap {
+						val model = localClient.modelManager.blockModelShaper.getBlockModel(state)
+						val shape = FloatArray(Direction.entries.size * 2)
+						val shapeFlags = BitSet(3)
+						fun calculateForDir(direction: Direction?) {
+							val map = mutableMapOf<BakedQuad, AmbientOcclusionFace>()
+							model.getQuads(
+								state, direction, NullRandom,
+								modelData, RenderType.solid()
+							).forEach { quad ->
+								val face = AmbientOcclusionFace()
+								localClient.blockRenderer.modelRenderer.calculateShape(
+									level, state, it,
+									quad.vertices, quad.direction,
+									shape, shapeFlags
+								)
+								if (
+									!ClientHooks.calculateFaceWithoutAO(
+										level, state, it, quad, shapeFlags.get(0),
+										face.brightness, face.lightmap
 									)
-									if (
-										!ClientHooks.calculateFaceWithoutAO(
-											level, state, it, quad, shapeFlags.get(0),
-											face.brightness, face.lightmap
-										)
-									) face.calculate(
-										level, state, it, quad.direction, shape, shapeFlags,
-										quad.isShade
-									)
-									map[quad] = face
-								}
-								this[direction] = map
+								) face.calculate(
+									level, state, it, quad.direction, shape, shapeFlags,
+									quad.isShade
+								)
+								map[quad] = face
 							}
-
-							for (direction in Direction.entries) {
-								val mutable = it.mutable()
-								mutable.setWithOffset(it, direction)
-								if (Block.shouldRenderFace(state, level, it, direction, mutable))
-									calculateForDir(direction)
-							}
-							calculateForDir(null)
+							this[direction] = map
 						}
-					)
-				}
+
+						for (direction in Direction.entries) {
+							val mutable = it.mutable()
+							mutable.setWithOffset(it, direction)
+							if (Block.shouldRenderFace(state, level, it, direction, mutable))
+								calculateForDir(direction)
+						}
+						calculateForDir(null)
+					}
+				)
+			}
 			player.sendSystemMessage(Component.literal("block map created"))
 			val center = this.firstPos!!.toVec3().div(2.0) - this.secondPos!!.toVec3().div(2.0)
 			this.blockData = BulkBlockData(this.blockMap, center, level)
