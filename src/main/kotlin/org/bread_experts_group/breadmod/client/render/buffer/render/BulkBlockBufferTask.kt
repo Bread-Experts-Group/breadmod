@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
 import net.minecraft.world.level.levelgen.PositionalRandomFactory
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.ExtraFaceData
@@ -33,6 +34,7 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem.BulkBlockData
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
+import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import java.util.BitSet
@@ -51,6 +53,7 @@ object BulkBlockBufferTask {
 				val poseStack = event.poseStack
 				val camera = event.camera
 				val level = localClient.level ?: return@add true
+				val frustum = event.frustum
 
 				if (this.shouldRender(camera.position, originPos)) {
 					poseStack.pushPose()
@@ -62,7 +65,9 @@ object BulkBlockBufferTask {
 					poseStack.translate(blockData.aabbCenter)
 					poseStack.translate(-0.5, -0.5, -0.5)
 
+//					val consumer = bufferSource.getBuffer(RenderType.solid())
 					blockData.blocks.forEach { (offset, data) ->
+						if (!frustum.isVisible(AABB(BlockPos.containing(originPos + offset)).inflate(0.7))) return@forEach
 						val (state, packedLight, blockEntityData, _) = data
 						poseStack.pushPose()
 						val model = blockRenderer.getBlockModel(state)
@@ -127,7 +132,7 @@ object BulkBlockBufferTask {
 	fun shouldRender(cameraPos: Vec3, originPos: Vec3): Boolean =
 		Vec3.atCenterOf(originPos.toVec3i()).closerThan(cameraPos, this.getViewDistance())
 
-	fun getViewDistance(): Double = 64.0
+	fun getViewDistance(): Double = 256.0
 
 	object NullRandom : RandomSource {
 		override fun fork(): RandomSource = NullRandom
