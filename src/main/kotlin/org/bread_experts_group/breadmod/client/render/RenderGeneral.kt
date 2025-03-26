@@ -308,31 +308,6 @@ fun ModelBlockRenderer.renderBlockModel(
 	)
 }
 
-fun ModelBlockRenderer.renderBlockModel(
-	lasePose: PoseStack.Pose,
-	buffer: MultiBufferSource,
-	blockEntity: BlockEntity,
-	model: BakedModel,
-	packedLight: Int,
-	packedOverlay: Int,
-	renderType: RenderType = RenderType.solid(),
-	red: Float = 1f,
-	green: Float = 1f,
-	blue: Float = 1f
-): Unit = this.renderModel(
-	lasePose,
-	buffer.getBuffer(renderType),
-	blockEntity.blockState,
-	model,
-	red,
-	green,
-	blue,
-	packedLight,
-	packedOverlay,
-	ModelData.EMPTY,
-	renderType
-)
-
 /**
  * Renders a provided [stack] onto a [BlockEntityRenderer]
  */
@@ -352,8 +327,6 @@ fun ItemRenderer.renderStaticItem(
 	blockEntity.level,
 	1
 )
-
-internal fun renderTypeDebugLineStrip(): RenderType = RenderType.debugLineStrip(1.0)
 
 /**
  * Renders a provided [model] (as an item model) onto this [BlockEntityWithoutLevelRenderer]
@@ -514,116 +487,3 @@ fun PoseStack.drawTextOnSide(
 	)
 	this.popPose()
 }
-
-fun PoseStack.drawCenteredTextOnSide(
-	fontRenderer: Font,
-	component: Component,
-	posX: Double,
-	posY: Double,
-	posZ: Double = 0.0,
-	bufferSource: MultiBufferSource,
-	blockState: BlockState,
-	color: Int = Color.WHITE.rgb,
-	backgroundColor: Int = TRANSPARENT,
-	dropShadow: Boolean = false,
-	direction: Direction? = null,
-	scale: Float = 1f
-) {
-	this.pushPose()
-	this.translateOnBlockSide(
-		blockState, direction,
-		posX - fontRenderer.width(component.visualOrderText) / 2,
-		posY, posZ
-	)
-	this.mulPose(Axis.XN.rotationDegrees(180f))
-	this.scaleFlat(scale)
-	renderText(
-		component.visualOrderText, color, backgroundColor, fontRenderer,
-		this, bufferSource, dropShadow, FULL_BRIGHT
-	)
-	this.popPose()
-}
-
-//fun renderEntityInInventoryFollowsMouse(
-//    pGuiGraphics: GuiGraphics,
-//    pX: Int,
-//    pY: Int,
-//    pScale: Double,
-//    pMouseX: Float,
-//    pMouseY: Float,
-//    pEntity: Entity
-//) {
-//    val f = atan((pMouseX / 40.0f).toDouble()).toFloat()
-//    val f1 = atan((pMouseY / 40.0f).toDouble()).toFloat()
-//    renderEntityInInventoryFollowsAngle(pGuiGraphics, pX, pY, pScale, f, f1, pEntity)
-//}
-//
-//fun renderEntityInInventoryFollowsAngle(
-//    pGuiGraphics: GuiGraphics,
-//    pX: Int,
-//    pY: Int,
-//    pScale: Double,
-//    angleXComponent: Float,
-//    angleYComponent: Float,
-//    pEntity: Entity
-//) {
-//    val quaternionF = Quaternionf().rotateZ(Math.PI.toFloat())
-//    val quaternionF1 = Quaternionf().rotateX(angleYComponent * 20.0f * (Math.PI.toFloat() / 180f))
-//    quaternionF.mul(quaternionF1)
-//    val f2 = if (pEntity is LivingEntity) pEntity.yBodyRot else 0f
-//    val f3 = pEntity.yRot
-//    val f4 = pEntity.xRot
-//    val f5 = if (pEntity is LivingEntity) pEntity.yHeadRotO else 0f
-//    val f6 = pEntity.yHeadRot
-//    if (pEntity is LivingEntity) pEntity.yBodyRot = 180.0f + angleXComponent * 20.0f
-//    pEntity.yRot = 180.0f + angleXComponent * 40.0f
-//    pEntity.xRot = -angleYComponent * 20.0f
-//    pEntity.yHeadRot = pEntity.yRot
-//    if (pEntity is LivingEntity) pEntity.yHeadRotO = pEntity.yRot
-//    renderEntityInInventory(pGuiGraphics, pX, pY, pScale, quaternionF, quaternionF1, pEntity)
-//    pEntity.yRot = f3
-//    pEntity.xRot = f4
-//    pEntity.yHeadRot = f6
-//    if (pEntity is LivingEntity) {
-//        pEntity.yBodyRot = f2
-//        pEntity.yHeadRotO = f5
-//    }
-//}
-//
-//fun renderEntityInInventory(
-//    pGuiGraphics: GuiGraphics,
-//    pX: Int,
-//    pY: Int,
-//    pScale: Double,
-//    pPose: Quaternionf,
-//    pCameraOrientation: Quaternionf,
-//    pEntity: Entity
-//) {
-//    pGuiGraphics.pose().pushPose()
-//    pGuiGraphics.pose().translate(pX.toDouble(), pY.toDouble(), 50.0)
-//    pGuiGraphics.pose().mulPoseMatrix(Matrix4f().scaling(pScale.toFloat(), pScale.toFloat(), (-pScale).toFloat()))
-//    pGuiGraphics.pose().mulPose(pPose)
-//    Lighting.setupForEntityInInventory()
-//    val entityRenderDispatcher = rgMinecraft.entityRenderDispatcher
-//    pCameraOrientation.conjugate()
-//    entityRenderDispatcher.overrideCameraOrientation(pCameraOrientation)
-//
-//    entityRenderDispatcher.setRenderShadow(false)
-//    RenderSystem.runAsFancy {
-//        entityRenderDispatcher.render(
-//            pEntity,
-//            0.0,
-//            0.0,
-//            0.0,
-//            0.0f,
-//            1.0f,
-//            pGuiGraphics.pose(),
-//            pGuiGraphics.bufferSource(),
-//            FULL_BRIGHT
-//        )
-//    }
-//    pGuiGraphics.flush()
-//    entityRenderDispatcher.setRenderShadow(true)
-//    pGuiGraphics.pose().popPose()
-//    Lighting.setupFor3DItems()
-//}

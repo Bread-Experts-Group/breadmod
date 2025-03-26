@@ -89,27 +89,31 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 						val shape = FloatArray(Direction.entries.size * 2)
 						val shapeFlags = BitSet(3)
 						fun calculateForDir(direction: Direction?) {
-							val map = mutableMapOf<BakedQuad, AmbientOcclusionFace>()
-							model.getQuads(
-								state, direction, NullRandom,
-								modelData, RenderType.solid()
-							).forEach { quad ->
-								val face = AmbientOcclusionFace()
-								localClient.blockRenderer.modelRenderer.calculateShape(
-									level, state, blockPos,
-									quad.vertices, quad.direction,
-									shape, shapeFlags
-								)
-								if (
-									!ClientHooks.calculateFaceWithoutAO(
-										level, state, blockPos, quad, shapeFlags.get(0),
-										face.brightness, face.lightmap
+							val map = mutableMapOf<RenderType, MutableMap<BakedQuad, AmbientOcclusionFace>>()
+							model.getRenderTypes(state, NullRandom, modelData).forEach { type ->
+								val typeMap = mutableMapOf<BakedQuad, AmbientOcclusionFace>()
+								model.getQuads(
+									state, direction, NullRandom,
+									modelData, type
+								).forEach { quad ->
+									val face = AmbientOcclusionFace()
+									localClient.blockRenderer.modelRenderer.calculateShape(
+										level, state, blockPos,
+										quad.vertices, quad.direction,
+										shape, shapeFlags
 									)
-								) face.calculate(
-									level, state, blockPos, quad.direction, shape, shapeFlags,
-									quad.isShade
-								)
-								map[quad] = face
+									if (
+										!ClientHooks.calculateFaceWithoutAO(
+											level, state, blockPos, quad, shapeFlags.get(0),
+											face.brightness, face.lightmap
+										)
+									) face.calculate(
+										level, state, blockPos, quad.direction, shape, shapeFlags,
+										quad.isShade
+									)
+									typeMap[quad] = face
+								}
+								map[type] = typeMap
 							}
 							this[direction] = map
 						}
@@ -145,7 +149,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		val state: BlockState,
 		val packedLight: Int,
 		val entity: BlockEntityData<BlockEntity>?,
-		val ao: Map<Direction?, Map<BakedQuad, AmbientOcclusionFace>>
+		val ao: Map<Direction?, Map<RenderType, Map<BakedQuad, AmbientOcclusionFace>>>
 	)
 
 	data class BlockEntityData<T : BlockEntity>(

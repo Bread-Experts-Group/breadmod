@@ -25,7 +25,6 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import java.math.BigDecimal
 import java.util.function.Supplier
 import kotlin.math.round
@@ -164,6 +163,15 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
 operator fun Vec3.plus(other: Vec3): Vec3 = Vec3(this.x + other.x, this.y + other.y, this.z + other.z)
 
 /**
+ * Subtracts a [Vec3] from this [Vec3].
+ * @return The difference of this [Vec3] and [other].
+ * @param other The [Vec3] to subtract from this [Vec3].
+ * @author Miko Elbrecht
+ * @since 1.0.0
+ */
+operator fun Vec3.minus(other: Vec3): Vec3 = Vec3(this.x - other.x, this.y - other.y, this.z - other.z)
+
+/**
  * Scales this [Vec3] by the specified factor.
  * @return The scaled [Vec3].
  * @param scale The factor to scale this [Vec3] by.
@@ -176,13 +184,6 @@ fun BlockPos.offset(vec3: Vec3): Vec3 =
 	if (vec3.x == 0.0 && vec3.y == 0.0 && vec3.z == 0.0) this.toVec3() else
 		Vec3(this.x.toDouble() + vec3.x, this.y.toDouble() + vec3.y, this.z.toDouble() + vec3.z)
 
-fun BlockPos.subtract(vec3: Vec3): Vec3 = this.offset(-vec3)
-
-/// AABB Operations ///
-fun centerAABB(pos: BlockPos): AABB = AABB(pos.center, pos.center)
-fun AABB.threeByThree(): AABB = this.inflate(1.0, 1.0, 1.0)
-fun threeByThreeAABB(pos: BlockPos): AABB = centerAABB(pos).threeByThree()
-/// End AABB Operations ///
 /**
  * Converts this [BlockPos] to an [IntArray].
  */
