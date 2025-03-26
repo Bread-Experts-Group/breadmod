@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
-import com.mojang.math.Axis
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.block.model.BakedQuad
@@ -15,8 +14,6 @@ import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.RenderShape.MODEL
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING
-import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
 import net.minecraft.world.level.levelgen.PositionalRandomFactory
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -38,7 +35,6 @@ import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import java.util.BitSet
-import kotlin.jvm.optionals.getOrNull
 
 object BulkBlockBufferTask {
 	val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
@@ -119,16 +115,15 @@ object BulkBlockBufferTask {
 		)
 	}
 
-	fun rotateBlocks(state: BlockState, poseStack: PoseStack) {
-		val direction = state.getOptionalValue(HORIZONTAL_FACING) ?: state.getOptionalValue(FACING) ?: return
-		val facing = direction.getOrNull()
-		if (facing != null && state.renderShape == ENTITYBLOCK_ANIMATED) {
-			poseStack.translate(0.5f, 0.5f, 0.5f)
-			poseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
-			poseStack.translate(-0.5f, -0.5f, -0.5f)
-		}
-	}
-
+	//	fun rotateBlocks(state: BlockState, poseStack: PoseStack) {
+//		val direction = state.getOptionalValue(HORIZONTAL_FACING) ?: state.getOptionalValue(FACING) ?: return
+//		val facing = direction.getOrNull()
+//		if (facing != null && state.renderShape == ENTITYBLOCK_ANIMATED) {
+//			poseStack.translate(0.5f, 0.5f, 0.5f)
+//			poseStack.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
+//			poseStack.translate(-0.5f, -0.5f, -0.5f)
+//		}
+//	}
 	fun shouldRender(cameraPos: Vec3, originPos: Vec3): Boolean =
 		Vec3.atCenterOf(originPos.toVec3i()).closerThan(cameraPos, this.getViewDistance())
 
@@ -193,7 +188,7 @@ object BulkBlockBufferTask {
 				pos,
 				data.packedLight,
 				NO_OVERLAY,
-				true,
+				false,
 				poseStack,
 				consumer,
 				model.getQuads(
