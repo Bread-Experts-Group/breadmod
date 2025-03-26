@@ -63,7 +63,7 @@ object BulkBlockBufferTask {
 					poseStack.translate(-0.5, -0.5, -0.5)
 
 					blockData.blocks.forEach { (offset, data) ->
-						val (state, packedLight, blockEntityData, ao) = data
+						val (state, packedLight, blockEntityData, _) = data
 						poseStack.pushPose()
 						val model = blockRenderer.getBlockModel(state)
 						poseStack.translate(offset)
@@ -186,7 +186,7 @@ object BulkBlockBufferTask {
 				level,
 				data.state,
 				pos,
-				0,
+				data.packedLight,
 				NO_OVERLAY,
 				true,
 				poseStack,
