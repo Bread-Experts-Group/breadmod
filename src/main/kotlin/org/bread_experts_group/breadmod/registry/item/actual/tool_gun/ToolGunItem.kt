@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.ChatFormatting
 import net.minecraft.client.model.HumanoidModel.ArmPose
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
@@ -22,6 +23,8 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.network.PacketDistributor
+import org.apache.logging.log4j.LogManager
+import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -93,6 +96,13 @@ class ToolGunItem : Item(
 
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		val newData = ToolGunData.get(stack)
+		if (newData.extraData.isEmpty) {
+			LogManager.getLogger().info("Tool gun data is empty! initializing...")
+			CommonNeoForgeEventBus.toolGunModes.forEach { (_, mode) ->
+				newData.extraData.put(mode.getModeName(), CompoundTag().also(mode::saveExtraData))
+			}
+			stack.set(ModDataComponents.TOOL_GUN_DATA, newData)
+		}
 		if (!newData.dataLoaded) newData.loadData()
 	}
 

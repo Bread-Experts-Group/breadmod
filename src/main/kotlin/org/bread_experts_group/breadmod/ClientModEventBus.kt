@@ -17,6 +17,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.client.event.ModelEvent
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
+import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
@@ -45,6 +46,7 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBack
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen
@@ -62,6 +64,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
@@ -79,6 +82,20 @@ internal object ClientModEventBus {
 			) { itemStack, _, livingEntity, _ ->
 				if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack) 1f else 0f
 			}
+		}
+	}
+
+	@SubscribeEvent
+	fun registerItemDecorations(event: RegisterItemDecorationsEvent) {
+		event.register(ModItems.TOOL_GUN.asItem()) { guiGraphics, _, stack, xOffset, yOffset ->
+			val (mode, _) = ToolGunData.get(stack)
+			val poseStack = guiGraphics.pose()
+			poseStack.pushPose()
+			poseStack.scaleFlat(0.4f)
+			poseStack.translate(xOffset * 2.5 + 2, yOffset * 2.5 + 22, 0.0)
+			guiGraphics.renderFakeItem(mode.getCustomRenderer().getModeWidget().icon, 0, 0)
+			poseStack.popPose()
+			true
 		}
 	}
 
