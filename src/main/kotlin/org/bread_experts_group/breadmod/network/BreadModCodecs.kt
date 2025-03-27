@@ -1,0 +1,37 @@
+package org.bread_experts_group.breadmod.network
+
+import com.mojang.serialization.Codec
+import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
+import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import java.math.BigDecimal
+
+object BreadModCodecs {
+	val EXPANSIBLE_CODEC: Codec<BigDecimal> =
+		RecordCodecBuilder.create { instance: RecordCodecBuilder.Instance<BigDecimal> ->
+			instance.group(
+				Codec.STRING.fieldOf("value").forGetter(BigDecimal::toEngineeringString)
+			).apply(instance, ::BigDecimal)
+		}
+	val EXPANSIBLE_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDecimal> = StreamCodec.composite(
+		ByteBufCodecs.STRING_UTF8,
+		BigDecimal::toEngineeringString, ::BigDecimal
+	)
+	val TOOL_GUN_CODEC: Codec<ToolGunData> =
+		RecordCodecBuilder.create { instance ->
+			instance.group(
+				IToolGunMode.CODEC.fieldOf("mode").forGetter(ToolGunData::mode),
+				CompoundTag.CODEC.fieldOf("extra_data").forGetter(ToolGunData::extraData)
+			).apply(instance, ::ToolGunData)
+		}
+	val TOOL_GUN_STREAM_CODEC: StreamCodec<FriendlyByteBuf, ToolGunData> = StreamCodec.composite(
+		IToolGunMode.STREAM_CODEC, ToolGunData::mode,
+		ByteBufCodecs.TRUSTED_COMPOUND_TAG, ToolGunData::extraData,
+		::ToolGunData
+	)
+}

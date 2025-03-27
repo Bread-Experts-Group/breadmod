@@ -38,8 +38,7 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 		(this.getChild("setting_entry_main_button") ?: return).setPosition(this.x + 5, this.y + 5)
 	}
 
-	override fun tick() {
-		super.tick()
+	override fun tickAdditional() {
 		(this.getChild("setting_entry_main_button") ?: return).let {
 			it.active = Companion.currentSettingsEntry != MAIN
 			it.visible = Companion.currentSettingsEntry != MAIN

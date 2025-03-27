@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.util.handlers
 
 import net.minecraft.core.HolderLookup
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.material.Fluid
@@ -16,6 +15,7 @@ import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler.ExpansibleTank
 import java.math.BigDecimal
 import java.util.function.Predicate
+import kotlin.jvm.optionals.getOrElse
 import kotlin.reflect.full.isSubclassOf
 
 class ExpansibleFluidHandler(
@@ -123,13 +123,13 @@ class ExpansibleFluidHandler(
 
 		override fun serializeNBT(registries: HolderLookup.Provider): CompoundTag =
 			super.serializeNBT(registries).also {
-				it.putString("fluid", this.fluidType.descriptionId)
+				if (this.asStack.isEmpty) return@also
+				it.put("fluid", this.asStack.save(registries))
 			}
 
-		override fun deserializeNBT(registries: HolderLookup.Provider, tag: CompoundTag): Unit =
-			super.deserializeNBT(registries, tag).also {
-				this.fluid = BuiltInRegistries.FLUID.first { it.fluidType.descriptionId == tag.getString("fluid") }
-			}
+		override fun deserializeNBT(registries: HolderLookup.Provider, tag: CompoundTag) {
+			this.fluid = FluidStack.parse(registries, tag.get("fluid") ?: return).getOrElse(FluidStack::EMPTY).fluid
+		}
 	}
 
 	override fun fill(

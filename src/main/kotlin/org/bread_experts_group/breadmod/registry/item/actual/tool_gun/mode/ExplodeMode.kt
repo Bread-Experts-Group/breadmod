@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
-import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.ToolGunMode
@@ -39,20 +38,22 @@ class ExplodeMode : AbstractToolGunMode() {
 	}
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
-		val targetBlock = player.rayCast(50, blocks(Blocks.AIR))
-		targetBlock?.let {
-			level.explode(player, it.position.x, it.position.y, it.position.z, 20f, Level.ExplosionInteraction.MOB)
+		if (!level.isClientSide) {
+			val targetBlock = player.rayCast(50, blocks(Blocks.AIR))
+			targetBlock?.let {
+				level.explode(player, it.position.x, it.position.y, it.position.z, 20f, Level.ExplosionInteraction.MOB)
+			}
 		}
 	}
 
 	override fun getDisplayName(): Component = Component.literal("explode")
 	override fun getTooltip(): Component = Component.literal("kaboom")
-	override fun getUid(): ResourceLocation = modLocation("tool_gun", "explode_mode")
+	override fun getUid(): ResourceLocation = this.toolGunLocation("explode_mode")
 	override fun getCustomRenderer(): IToolGunMode.Renderer = ExplodeModeRenderer(this.getUid())
 
 	class ExplodeModeRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
 		override fun buildModeWidget(): Builder = ModeWidget.Builder()
-			.icon(Items.TNT.defaultInstance)
+			.icon(Items.TNT)
 			.previewImage(ModTextureLocations.EXPLODE_PREVIEW)
 			.name(Companion.name)
 			.description(Companion.description)

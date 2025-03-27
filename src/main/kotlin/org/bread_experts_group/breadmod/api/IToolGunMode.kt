@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
@@ -72,17 +73,19 @@ interface IToolGunMode {
 
 	fun getUid(): ResourceLocation
 
-	fun saveAdditional(tag: CompoundTag)
+	fun getModeName(): String = this.getUid().path.substringAfter('/')
 
-	fun loadAdditional(tag: CompoundTag)
+	fun saveExtraData(tag: CompoundTag) {}
 
-	fun getUpdateTag(): CompoundTag = CompoundTag().also(this::saveAdditional)
+	fun loadExtraData(tag: CompoundTag) {}
 
 	fun shouldPlayToolGunSound(stack: ItemStack, player: Player): Boolean = true
 
 	fun playToolGunSound(player: Player): Unit = player.playSound(ModSounds.TOOL_GUN.get(), 0.8f, 1f)
 
 	fun getCustomRenderer(): Renderer
+
+	fun toolGunLocation(modeName: String): ResourceLocation = modLocation(modeName)
 
 	interface Renderer {
 		/**

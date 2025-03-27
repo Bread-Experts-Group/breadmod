@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.util.handlers
 
 import net.minecraft.core.HolderLookup
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -13,6 +12,7 @@ import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler.ExpansibleSlot
 import java.math.BigDecimal
 import java.util.function.Predicate
+import kotlin.jvm.optionals.getOrElse
 import kotlin.math.min
 
 @Suppress("ConvertLambdaToReference")
@@ -46,13 +46,13 @@ class ExpansibleItemHandler(
 
 		override fun serializeNBT(registries: HolderLookup.Provider): CompoundTag =
 			super.serializeNBT(registries).also {
-				it.putString("item", this.item.descriptionId)
+				if (this.asStack.isEmpty) return@also
+				it.put("item", this.asStack.save(registries))
 			}
 
-		override fun deserializeNBT(registries: HolderLookup.Provider, tag: CompoundTag): Unit =
-			super.deserializeNBT(registries, tag).also {
-				this.item = BuiltInRegistries.ITEM.first { it.descriptionId == tag.getString("item") }
-			}
+		override fun deserializeNBT(registries: HolderLookup.Provider, tag: CompoundTag) {
+			this.item = ItemStack.parse(registries, tag.get("item") ?: return).getOrElse(ItemStack::EMPTY).item
+		}
 	}
 
 	val isEmpty: Boolean

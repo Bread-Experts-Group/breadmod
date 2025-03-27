@@ -17,8 +17,8 @@ import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.coilD
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.coilRotation
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.recoil
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
 import java.lang.Math.clamp
@@ -28,7 +28,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
-	var helper = ToolGunRenderHelper()
+	var helper: ToolGunRenderHelper = ToolGunRenderHelper()
 	private val deltaTracker = localClient.timer
 	private val partialTick = this.deltaTracker.gameTimeDeltaTicks
 
@@ -188,7 +188,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val currentMode = stack.get(ModDataComponents.TOOL_GUN_DATA) ?: EmptyMode()
+		val (currentMode, _) = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 		this.renderToolGun(
 			stack,
 			displayContext,

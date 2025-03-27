@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
@@ -15,7 +14,7 @@ class EmptyMode : AbstractToolGunMode() {
 	}
 
 	override fun getDisplayName(): Component = Component.literal("???")
-	override fun getUid(): ResourceLocation = modLocation("tool_gun", "empty_mode")
+	override fun getUid(): ResourceLocation = this.toolGunLocation("empty_mode")
 	override fun getCustomRenderer(): IToolGunMode.Renderer = EmptyModeRenderer(this.getUid())
 	override fun getTooltip(): Component =
 		Component.literal("If you see this mode then something probably went wrong!")

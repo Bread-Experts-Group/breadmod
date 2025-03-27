@@ -68,22 +68,22 @@ abstract class AbstractExpansibleHandler<T : HandlerSerializable> : HandlerSeria
 		return count - actualCount to additional
 	}
 
-	override fun serializeNBT(registies: HolderLookup.Provider): CompoundTag = CompoundTag().also { tag ->
+	override fun serializeNBT(registries: HolderLookup.Provider): CompoundTag = CompoundTag().also { tag ->
 		this.units.forEachIndexed { index, unit ->
 			tag.put("$index", CompoundTag().also { unitTag ->
-				unitTag.put("additional", unit.serializeNBT(registies))
+				unitTag.put("additional", unit.serializeNBT(registries))
 				unitTag.putString("amount", unit.amount.toEngineeringString())
 				unit.capacity?.let { unitTag.putString("capacity", it.toEngineeringString()) }
 			})
 		}
 	}
 
-	override fun deserializeNBT(registries: HolderLookup.Provider, from: CompoundTag) {
+	override fun deserializeNBT(registries: HolderLookup.Provider, tag: CompoundTag) {
 		// SGI more like
 		// SGay
-		from.allKeys.forEach {
+		tag.allKeys.forEach {
 			val unit = this.units[it.toInt()]
-			val thisCompound = from.getCompound(it)
+			val thisCompound = tag.getCompound(it)
 			unit.deserializeNBT(registries, thisCompound.getCompound("additional"))
 			unit.capacity =
 				if (thisCompound.contains("capacity")) BigDecimal(thisCompound.getString("capacity"))

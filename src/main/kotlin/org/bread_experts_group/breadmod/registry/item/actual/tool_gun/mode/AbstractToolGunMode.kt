@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
@@ -33,13 +32,4 @@ abstract class AbstractToolGunMode : IToolGunMode {
 	override fun mouseButtonPreAction(event: Pre, stack: ItemStack, player: Player) {}
 
 	override fun keyboardInputAction(event: Key, stack: ItemStack, player: Player) {}
-
-	override fun saveAdditional(tag: CompoundTag) {}
-
-	override fun loadAdditional(tag: CompoundTag) {}
-
-	override fun equals(other: Any?): Boolean =
-		if (other is IToolGunMode) other.getUid() == this.getUid() else false
-
-	override fun hashCode(): Int = this.getUid().hashCode()
 }

@@ -11,6 +11,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 
 class ToolGunModeChangePacket(private val id: ResourceLocation) : CustomPacketPayload {
@@ -26,12 +27,14 @@ class ToolGunModeChangePacket(private val id: ResourceLocation) : CustomPacketPa
 			val player = context.player()
 			val mainHand = player.getItemInHand(MAIN_HAND)
 			val offHand = player.getItemInHand(OFF_HAND)
-			val handStack = if (mainHand.isEmpty) offHand else mainHand
+			val stack = if (mainHand.isEmpty) offHand else mainHand
 
-			if (handStack.`is`(ModItems.TOOL_GUN)) handStack.set(
-				ModDataComponents.TOOL_GUN_DATA,
-				CommonNeoForgeEventBus.toolGunModes[data.id] ?: EmptyMode()
-			)
+			if (stack.`is`(ModItems.TOOL_GUN)) {
+				val toolGunData = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
+				toolGunData.saveData()
+				val newMode = CommonNeoForgeEventBus.toolGunModes[data.id] ?: EmptyMode()
+				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(newMode, toolGunData.extraData))
+			}
 		}
 	}
 

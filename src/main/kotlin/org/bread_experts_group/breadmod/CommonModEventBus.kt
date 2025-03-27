@@ -29,7 +29,6 @@ import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
-import org.bread_experts_group.breadmod.network.clientbound.ToolGunModeSyncPacket
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSet
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedToggle
@@ -38,6 +37,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSe
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
@@ -169,16 +169,16 @@ internal object CommonModEventBus {
 			ScreenBleedSynchronization.STREAM_CODEC,
 			ScreenBleedSynchronization::handleClientboundPacket
 		)
-		registrar.playToClient(
-			ToolGunModeSyncPacket.TYPE,
-			ToolGunModeSyncPacket.STREAM_CODEC,
-			ToolGunModeSyncPacket::handleClientboundPacket
-		)
 
 		registrar.playToServer(
 			ToolGunModeChangePacket.TYPE,
 			ToolGunModeChangePacket.STREAM_CODEC,
 			ToolGunModeChangePacket::handleServerboundPacket
+		)
+		registrar.playToServer(
+			ToolGunDataSyncPacket.TYPE,
+			ToolGunDataSyncPacket.STREAM_CODEC,
+			ToolGunDataSyncPacket::handleServerboundPacket
 		)
 		registrar.playToServer(
 			PlaceItemInWorldPacket.TYPE,

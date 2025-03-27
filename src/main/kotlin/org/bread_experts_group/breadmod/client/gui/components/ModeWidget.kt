@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ModeSelectTab
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
@@ -67,6 +68,7 @@ class ModeWidget(
 		private var id: ResourceLocation = modLocation()
 
 		fun icon(stack: ItemStack): Builder = this.also { this.icon = stack }
+		fun icon(item: Item): Builder = this.icon(item.defaultInstance)
 		fun previewImage(
 			location: ResourceLocation,
 			width: Int,

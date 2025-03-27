@@ -16,7 +16,7 @@ import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.client.render.drawScaledText
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.awt.Color
 
@@ -34,7 +34,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		val handStack = getStackInPlayerHand(localClient.player)
 
 		if (!localClient.options.hideGui && handStack.item is ToolGunItem) {
-			val currentMode = handStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EmptyMode())
+			val (currentMode, _) = handStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
 			this.renderMode(currentMode, currentMode.getUid().namespace, guiGraphics, poseStack, x, y)

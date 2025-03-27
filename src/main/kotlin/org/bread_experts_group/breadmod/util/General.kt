@@ -10,6 +10,9 @@ import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.Tag
+import net.minecraft.nbt.TagType
 import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionHand.MAIN_HAND
@@ -26,6 +29,7 @@ import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.math.BigDecimal
+import java.util.UUID
 import java.util.function.Supplier
 import kotlin.math.round
 import kotlin.reflect.full.createInstance
@@ -71,11 +75,7 @@ fun formatNumberBigDecimal(
  * @throws [NoClassDefFoundError] if [path] is invalid or class does not exist.
  */
 inline fun <reified T> toClass(path: String): T =
-	Class.forName(
-		path,
-		true,
-		T::class.java.classLoader
-	).kotlin.createInstance() as T
+	Class.forName(path, true, T::class.java.classLoader).kotlin.createInstance() as T
 
 /**
  * Converts a given [Class] to it's qualified name.
@@ -295,6 +295,46 @@ fun horizontalDirectionalTargetFaceSection(
 	else  -> false
 }
 /// End Face Targeting Functions ///
+
+inline fun <reified T> CompoundTag.getValue(value: String): T = when (T::class) {
+	Tag::class         -> this.get(value) as T
+	CompoundTag::class -> this.getCompound(value) as T
+	Boolean::class     -> this.getBoolean(value) as T
+	Int::class         -> this.getInt(value) as T
+	Float::class       -> this.getFloat(value) as T
+	Byte::class        -> this.getByte(value) as T
+	ByteArray::class   -> this.getByteArray(value) as T
+	Double::class      -> this.getDouble(value) as T
+	IntArray::class    -> this.getIntArray(value) as T
+	Long::class        -> this.getLong(value) as T
+	LongArray::class   -> this.getLongArray(value) as T
+	Short::class       -> this.getShort(value) as T
+	String::class      -> this.getString(value) as T
+	TagType::class     -> this.getTagType(value) as T
+	UUID::class        -> this.getUUID(value) as T
+	else               -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
+}
+
+inline fun <reified T> CompoundTag.putValue(key: String, value: T) {
+	when (T::class) {
+		Tag::class         -> this.put(key, value as Tag)
+		CompoundTag::class -> this.put(key, value as CompoundTag)
+		Boolean::class     -> this.putBoolean(key, value as Boolean)
+		Int::class         -> this.putInt(key, value as Int)
+		Float::class       -> this.putFloat(key, value as Float)
+		Byte::class        -> this.putByte(key, value as Byte)
+		ByteArray::class   -> this.putByteArray(key, value as ByteArray)
+		Double::class      -> this.putDouble(key, value as Double)
+		IntArray::class    -> this.putIntArray(key, value as IntArray)
+		Long::class        -> this.putLong(key, value as Long)
+		LongArray::class   -> this.putLongArray(key, value as LongArray)
+		Short::class       -> this.putShort(key, value as Short)
+		String::class      -> this.putString(key, value as String)
+		UUID::class        -> this.putUUID(key, value as UUID)
+		else               -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
+	}
+}
+
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!
 // Make sure to write good Javadoc for them!

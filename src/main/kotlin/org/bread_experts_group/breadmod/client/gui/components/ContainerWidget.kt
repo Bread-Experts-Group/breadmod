@@ -53,13 +53,16 @@ open class ContainerWidget<T : Screen>(
 		}
 	}
 
-	open fun tick() {
+	fun tick() {
 		if (this.getWidgets().isNotEmpty()) this.getWidgets().forEach {
 			it.active = this.active
 			it.visible = this.visible
 		}
 		if (this.getContainerWidgets().isNotEmpty() && this.active && this.visible) this.tickContainerWidgets()
+		this.tickAdditional()
 	}
+
+	open fun tickAdditional() {}
 
 	override fun playDownSound(handler: SoundManager) {
 	}

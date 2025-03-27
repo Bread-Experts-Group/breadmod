@@ -13,8 +13,7 @@ abstract class SettingsEntry(
 	screen: ToolGunScreen,
 	val entryButton: SettingsEntryButton
 ) : ContainerWidget<ToolGunScreen>(0, 0, 143, 185, "setting_entry_$id", screen) {
-	override fun tick() {
-		super.tick()
+	override fun tickAdditional() {
 		this.visible = SettingsTab.currentSettingsEntry == this.entry
 		this.active = SettingsTab.currentSettingsEntry == this.entry
 		this.entryButton.let {

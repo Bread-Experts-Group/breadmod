@@ -1,15 +1,15 @@
 package org.bread_experts_group.breadmod.registry.component
 
 import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.Registries
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
-import net.minecraft.network.codec.StreamCodec
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.network.BreadModCodecs
+import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_STREAM_CODEC
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import java.math.BigDecimal
 import java.util.function.Supplier
 
@@ -22,25 +22,16 @@ object ModDataComponents {
 			.networkSynchronized(ByteBufCodecs.VAR_LONG)
 			.cacheEncoding()::build
 	)
-	val TOOL_GUN_DATA: Supplier<DataComponentType<IToolGunMode>> = this.DATA_COMPONENT_REGISTRY.register(
-		"current_mode", DataComponentType.builder<IToolGunMode>()
-			.persistent(IToolGunMode.CODEC)
-			.networkSynchronized(IToolGunMode.STREAM_CODEC)
+	val TOOL_GUN_DATA: Supplier<DataComponentType<ToolGunData>> = this.DATA_COMPONENT_REGISTRY.register(
+		"current_mode", DataComponentType.builder<ToolGunData>()
+			.persistent(BreadModCodecs.TOOL_GUN_CODEC)
+			.networkSynchronized(BreadModCodecs.TOOL_GUN_STREAM_CODEC)
 			.cacheEncoding()::build
 	)
-	val EXPANSIBLE_CODEC: Codec<BigDecimal> =
-		RecordCodecBuilder.create { instance: RecordCodecBuilder.Instance<BigDecimal> ->
-			instance.group(
-				Codec.STRING.fieldOf("value").forGetter(BigDecimal::toEngineeringString)
-			).apply(instance, ::BigDecimal)
-		}
-	val EXPANSIBLE_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDecimal> = StreamCodec.composite(
-		ByteBufCodecs.STRING_UTF8,
-		BigDecimal::toEngineeringString, ::BigDecimal)
 	val EXPANSIBLE_ITEM_STACK: Supplier<DataComponentType<BigDecimal>> = this.DATA_COMPONENT_REGISTRY.register(
 		"expansible_item_stack", DataComponentType.builder<BigDecimal>()
-			.persistent(this.EXPANSIBLE_CODEC)
-			.networkSynchronized(this.EXPANSIBLE_STREAM_CODEC)
+			.persistent(EXPANSIBLE_CODEC)
+			.networkSynchronized(EXPANSIBLE_STREAM_CODEC)
 			.cacheEncoding()::build
 	)
 }

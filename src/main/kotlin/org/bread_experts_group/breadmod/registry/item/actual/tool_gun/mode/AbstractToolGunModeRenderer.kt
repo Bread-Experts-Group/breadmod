@@ -9,7 +9,6 @@ import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 
 abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunMode.Renderer {
 	override fun render(
@@ -55,9 +54,6 @@ abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunM
 		helper: ToolGunRenderHelper
 	) {
 	}
-
-	inline fun <reified T : IToolGunMode> getToolGunMode(stack: ItemStack): T =
-		stack.get(ModDataComponents.TOOL_GUN_DATA) as T
 
 	final override fun getModeWidget(): ModeWidget = this.buildModeWidget().id(this.id).build()
 
