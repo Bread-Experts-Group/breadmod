@@ -58,9 +58,7 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 	}
 
 	override fun getItem(slot: Int): ItemStack = this.itemHandler.getStackInSlot(slot)
-	override fun setItem(slot: Int, stack: ItemStack) {
-		if (!this.itemHandler.isEmpty) this.itemHandler.setStackInSlot(slot, stack)
-	}
+	override fun setItem(slot: Int, stack: ItemStack): Unit = this.itemHandler.setStackInSlot(slot, stack)
 
 	fun serializeItemsNBT(to: CompoundTag, registries: Provider) {
 		to.put(this::class.simpleName + "_items", this.itemHandler.serializeNBT(registries))

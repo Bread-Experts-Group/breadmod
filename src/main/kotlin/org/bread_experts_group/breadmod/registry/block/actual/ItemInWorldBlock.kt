@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.block.actual
 
-import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction.DOWN
 import net.minecraft.core.Direction.EAST
@@ -11,10 +10,9 @@ import net.minecraft.core.Direction.WEST
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -24,8 +22,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 
-class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noCollission().pushReaction(PUSH_ONLY)) {
-	override fun codec(): MapCodec<out BaseEntityBlock> = BlockBehaviour.simpleCodec { this }
+class ItemInWorldBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().noCollission().pushReaction(PUSH_ONLY)) {
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		ItemInWorldBlockEntity(pos, state)
 
@@ -54,6 +51,8 @@ class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noColliss
 		}
 	}
 
+	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
+
 	override fun onRemove(
 		state: BlockState,
 		level: Level,
@@ -65,5 +64,6 @@ class ItemInWorldBlock : BaseEntityBlock(Properties.of().noOcclusion().noColliss
 			val entity = level.getBlockEntity(pos) as ItemInWorldBlockEntity
 			entity.dropContents(level, pos)
 		}
+		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 }

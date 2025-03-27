@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
+import kotlin.jvm.optionals.getOrNull
 
 class ItemInWorldRenderer(context: Context) : BreadModBER<ItemInWorldBlockEntity>(context) {
 	override fun render(
@@ -27,7 +28,7 @@ class ItemInWorldRenderer(context: Context) : BreadModBER<ItemInWorldBlockEntity
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val direction = blockEntity.blockState.getValue(BlockStateProperties.FACING) ?: return
+		val direction = blockEntity.blockState.getOptionalValue(BlockStateProperties.FACING).getOrNull() ?: return
 		poseStack.pushPose()
 		poseStack.scaleFlat(0.5f)
 		when (direction) {
