@@ -35,6 +35,12 @@ class ExplodeMode : AbstractToolGunMode() {
 
 		@DataGenerateLanguage("en_us", "goes kaboom and probably blows a fuse in your house or two")
 		val description: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "description")
+
+		@DataGenerateLanguage("en_us", "Explode")
+		val displayName: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "display_name")
+
+		@DataGenerateLanguage("en_us", "Kaboom")
+		val tooltip: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "tooltip")
 	}
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
@@ -46,8 +52,8 @@ class ExplodeMode : AbstractToolGunMode() {
 		}
 	}
 
-	override fun getDisplayName(): Component = Component.literal("explode")
-	override fun getTooltip(): Component = Component.literal("kaboom")
+	override fun getDisplayName(): Component = Companion.displayName
+	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("explode_mode")
 	override fun getCustomRenderer(): IToolGunMode.Renderer = ExplodeModeRenderer(this.getUid())
 

@@ -130,7 +130,7 @@ internal object ClientModEventBus {
 	@SubscribeEvent
 	fun registerClientExtensions(event: RegisterClientExtensionsEvent) {
 		event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
-		event.registerItem(ToolGunItem.ToolGunItemExtensions(), ModItems.TOOL_GUN)
+		event.registerItem(ToolGunItem.ToolGunItemExtensions, ModItems.TOOL_GUN)
 		event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
 	}
 

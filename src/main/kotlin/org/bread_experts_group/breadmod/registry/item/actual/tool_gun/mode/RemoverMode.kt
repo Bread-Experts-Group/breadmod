@@ -2,14 +2,17 @@ package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.sounds.SoundEvents
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -18,33 +21,97 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.client.event.InputEvent.Key
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode.Renderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.util.blocks
+import org.bread_experts_group.breadmod.util.entities
 import org.bread_experts_group.breadmod.util.rayCast
 import java.awt.Color
 
 @ToolGunMode
 @Suppress("unused")
 class RemoverMode : AbstractToolGunMode() {
-	var test: Boolean = false
+	companion object {
+		@DataGenerateLanguage("en_us", "Remover Mode")
+		val name: MutableComponent = modTranslatable("tool_gun", "remover", "mode", "name")
+
+		@DataGenerateLanguage("en_us", "Mode for removing entities and blocks from the world... humanely of course.")
+		val description: MutableComponent = modTranslatable("tool_gun", "remover", "mode", "description")
+
+		@DataGenerateLanguage("en_us", "Remover")
+		val displayName: MutableComponent = modTranslatable("tool_gun", "remover", "mode", "display_name")
+
+		@DataGenerateLanguage("en_us", "Remove Entities and Blocks.")
+		val tooltip: MutableComponent = modTranslatable("tool_gun", "remover", "mode", "tooltip")
+
+		@DataGenerateLanguage("en_us", "BreadMod: Disconnect: Client 0 overflowed reliable channel.")
+		val playerDisconnectMessage: MutableComponent =
+			modTranslatable("item", TOOL_GUN_DEF, "remover", "player_left_game")
+	}
+
+	var targetEntities: Boolean = false
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!player.isShiftKeyDown) {
-			val block = player.rayCast(50, blocks(Blocks.AIR))
-//		val entity = player.rayCast(50, entities(EntityType.PLAYER))
-			block?.let {
-				level.setBlockAndUpdate(BlockPos.containing(it.position), Blocks.AIR.defaultBlockState())
-				if (level is ServerLevel) {
-					level.sendParticles(
-						ParticleTypes.CRIT,
-						it.position.x, it.position.y, it.position.z, 20,
-						this.rand(player), player.random.nextDouble(), this.rand(player), 1.0
-					)
+			if (this.targetEntities) {
+				val entity = player.rayCast(50, entities(EntityType.PLAYER))
+				entity?.let {
+					if (level is ServerLevel) {
+						level.sendParticles(
+							ParticleTypes.END_ROD,
+							it.position.x,
+							it.position.y,
+							it.position.z,
+							40,
+							this.rand(player),
+							player.random.nextDouble(),
+							this.rand(player),
+							1.0
+						)
+						if (it.hit is ServerPlayer) {
+							it.hit.connection.disconnect(
+								modTranslatable(
+									"item",
+									TOOL_GUN_DEF,
+									"remover",
+									"player_left_game"
+								)
+							)
+						} else {
+							it.hit.discard()
+							level.server.playerList.players.forEach { player ->
+								player.sendSystemMessage(
+									Component.translatable("multiplayer.player.left", it.hit.displayName)
+										.withStyle(ChatFormatting.YELLOW)
+								)
+							}
+						}
+					}
+				}
+			} else {
+				val block = player.rayCast(50, blocks(Blocks.AIR))
+				block?.let {
+					level.setBlockAndUpdate(BlockPos.containing(it.position), Blocks.AIR.defaultBlockState())
+					if (level is ServerLevel) {
+						level.sendParticles(
+							ParticleTypes.CRIT,
+							it.position.x,
+							it.position.y,
+							it.position.z,
+							20,
+							this.rand(player),
+							player.random.nextDouble(),
+							this.rand(player),
+							1.0
+						)
+					}
 				}
 			}
 		}
@@ -54,36 +121,31 @@ class RemoverMode : AbstractToolGunMode() {
 
 	override fun keyboardInputAction(event: Key, stack: ItemStack, player: Player) {
 		if (event.key == KeyMappings.toolGunAltOne.key.value && event.action == InputConstants.PRESS) {
-			player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 0.5f, 1f)
-			player.sendSystemMessage(Component.literal("modifying value"))
 			val data = ToolGunData.get(stack)
-			data.modifyValueAndSync<Boolean>("test", !this.test)
+			data.modifyValueAndSync<Boolean>("test", !this.targetEntities)
 		}
 	}
 
 	private fun rand(player: Player) = (player.random.nextDouble() - 0.5) * 1.2
 
-	override fun getDisplayName(): Component = Component.literal("Remover")
-
-	override fun getTooltip(): Component = Component.literal("Remove Entities and Blocks.")
-
+	override fun getDisplayName(): Component = Companion.displayName
+	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("remover_mode")
-
 	override fun getCustomRenderer(): Renderer = RemoverRenderer(this.getUid())
 
 	override fun saveExtraData(tag: CompoundTag) {
-		tag.putBoolean("test", this.test)
+		tag.putBoolean("test", this.targetEntities)
 	}
 
 	override fun loadExtraData(tag: CompoundTag) {
-		this.test = tag.getBoolean("test")
+		this.targetEntities = tag.getBoolean("test")
 	}
 
 	class RemoverRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
 		override fun buildModeWidget(): Builder = ModeWidget.Builder()
 			.icon(Items.STRUCTURE_VOID)
-			.description("Mode for removing entities and blocks from the world... humanely of course.")
-			.name("Remover Mode")
+			.description(Companion.description)
+			.name(Companion.name)
 
 		override fun renderScreenStage(
 			stack: ItemStack,
@@ -97,7 +159,7 @@ class RemoverMode : AbstractToolGunMode() {
 			val (mode, _) = ToolGunData.get(stack)
 			if (mode !is RemoverMode) return
 			helper.drawTextOnScreen(
-				"${mode.test}",
+				"Targeting: ${if (mode.targetEntities) "Entity" else "Block"}",
 				Color.WHITE.rgb,
 				Color(0f, 0f, 0f, 0f).rgb,
 				false,

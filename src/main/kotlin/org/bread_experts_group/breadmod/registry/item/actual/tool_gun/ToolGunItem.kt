@@ -49,7 +49,7 @@ class ToolGunItem : Item(
 		.component(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 		.rarity(Rarity.RARE)
 ), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
-	class ToolGunItemExtensions : IClientItemExtensions {
+	object ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
 		override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose =
 			ArmPose.BOW_AND_ARROW

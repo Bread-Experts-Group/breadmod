@@ -57,7 +57,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		if (coilDelta > 0f) {
+		val playerItemHash = (localClient.player ?: return).mainHandItem.hashCode()
+		val stackHash = stack.hashCode()
+		if (coilDelta > 0f && playerItemHash == stackHash) {
 			coilDelta -= 0.025f * this.partialTick
 			coilRotation += (40f * coilDelta) * this.partialTick
 			recoil -= 0.025f * this.partialTick * coilDelta / 3.5f
