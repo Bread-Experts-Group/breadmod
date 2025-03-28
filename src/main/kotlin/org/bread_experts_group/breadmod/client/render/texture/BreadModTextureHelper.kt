@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.client.render.texture
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.resources.ResourceLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
 /**
  * Contains the [location], [textureWidth], and [textureHeight] of a texture.
@@ -17,6 +18,10 @@ class BreadModTextureHelper(
 ) {
 	companion object {
 		val MISSING_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(MissingTextureAtlasSprite.getLocation())
+		val BLOCKHEAD_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(
+			modLocation("textures", "tool_gun", "gui", "blockhead.png"),
+			256, 256
+		)
 	}
 
 	/**

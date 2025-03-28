@@ -22,10 +22,12 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.ClientHooks
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.NullRandom
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.modelData
@@ -41,6 +43,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 	private var firstPos: BlockPos? = null
 	private var secondPos: BlockPos? = null
 	private val blockMap: MutableMap<Vec3, BlockData> = mutableMapOf()
+	private val fluidMap: MutableMap<Vec3, FluidData> = mutableMapOf()
 	private var blockData: BulkBlockData? = null
 	private var clearFlag = false
 
@@ -63,20 +66,27 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		if (usedHand != InteractionHand.MAIN_HAND) return super.use(level, player, usedHand)
 		if (player.isShiftKeyDown && this.clearFlag) {
 			this.blockMap.clear()
+			this.fluidMap.clear()
 			this.firstPos = null
 			this.secondPos = null
 			this.clearFlag = false
 			this.blockData = null
 			player.sendSystemMessage(Component.literal("data cleared"))
 		} else if (this.firstPos != null && this.secondPos != null && !player.isShiftKeyDown && !this.clearFlag) {
-			val aabb = AABB(this.firstPos!!.toVec3(), this.secondPos!!.toVec3())
+			val first = this.firstPos!!
+			val aabb = AABB(first.toVec3(), this.secondPos!!.toVec3())
 			BlockPos.betweenClosedStream(aabb).forEach { blockPos ->
 				val state = level.getBlockState(blockPos)
-				if (state.renderShape == RenderShape.INVISIBLE) return@forEach
-				val x = blockPos.x - (this.firstPos ?: return@forEach).x
-				val y = blockPos.y - (this.firstPos ?: return@forEach).y
-				val z = blockPos.z - (this.firstPos ?: return@forEach).z
-				val offset = Vec3(x.toDouble(), y.toDouble(), z.toDouble())
+				val offset = (blockPos - first).toVec3()
+				if (state.renderShape == RenderShape.INVISIBLE) {
+					if (!state.fluidState.isEmpty)
+						this.fluidMap[offset] = FluidData(
+							state.fluidState,
+							state,
+							IClientFluidTypeExtensions.of(state.fluidState)
+						)
+					return@forEach
+				}
 				this.blockMap[offset] = BlockData(
 					state,
 					LevelRenderer.getLightColor(level, blockPos),
@@ -130,7 +140,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			}
 			player.sendSystemMessage(Component.literal("block map created"))
 			val center = this.firstPos!!.toVec3().div(2.0) - this.secondPos!!.toVec3().div(2.0)
-			this.blockData = BulkBlockData(this.blockMap, center, level)
+			this.blockData = BulkBlockData(this.blockMap, this.fluidMap, center, level)
 			this.clearFlag = true
 		}
 		return InteractionResultHolder.sidedSuccess(getStackInPlayerHand(player), level.isClientSide)
@@ -152,6 +162,12 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		val ao: Map<Direction?, Map<RenderType, Map<BakedQuad, AmbientOcclusionFace>>>
 	)
 
+	data class FluidData(
+		val fluidState: FluidState,
+		val state: BlockState,
+		val extensions: IClientFluidTypeExtensions
+	)
+
 	data class BlockEntityData<T : BlockEntity>(
 		val entity: T,
 		val renderer: BlockEntityRenderer<T>
@@ -159,6 +175,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 
 	data class BulkBlockData(
 		val blocks: Map<Vec3, BlockData>,
+		val fluids: Map<Vec3, FluidData>,
 		val aabbCenter: Vec3,
 		val level: Level
 	)

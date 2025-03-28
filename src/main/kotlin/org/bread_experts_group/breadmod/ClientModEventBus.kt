@@ -26,10 +26,12 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.overlays.CameraOverlay
-import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
+import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
+import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
@@ -44,8 +46,6 @@ import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRender
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.render.itemColor
-import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
-import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
@@ -93,9 +93,16 @@ internal object ClientModEventBus {
 			poseStack.pushPose()
 			poseStack.scaleFlat(0.4f)
 			poseStack.translate(xOffset * 2.5 + 2, yOffset * 2.5 + 22, 0.0)
-			guiGraphics.renderFakeItem(mode.getCustomRenderer().getModeWidget().icon, 0, 0)
+			mode.getCustomRenderer().getModeWidget().icon.select({
+				guiGraphics.renderFakeItem(it, 0, 0)
+			}, {
+				poseStack.pushPose()
+				poseStack.scaleFlat(16f / it.textureWidth)
+				it.blitTexture(guiGraphics, 0, 0)
+				poseStack.popPose()
+			})
 			poseStack.popPose()
-			true
+			false
 		}
 	}
 

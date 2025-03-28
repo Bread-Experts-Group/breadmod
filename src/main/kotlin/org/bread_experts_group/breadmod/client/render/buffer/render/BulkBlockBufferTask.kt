@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.block.model.BakedQuad
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
@@ -52,21 +53,10 @@ object BulkBlockBufferTask {
 						if (!frustum.isVisible(AABB(proximal).inflate(0.7))) return@forEach
 						val (state, packedLight, blockEntityData, _) = data
 						poseStack.pushPose()
-						val model = blockRenderer.getBlockModel(state)
 						poseStack.translate(offset)
 						when (state.renderShape ?: return@add true) {
 							INVISIBLE            -> throw IllegalStateException("Bad set! Had invisible state")
-							ENTITYBLOCK_ANIMATED -> model.getRenderTypes(state, NullRandom, this.modelData).forEach {
-								blockRenderer.renderSingleBlock(
-									state,
-									poseStack,
-									this.bufferSource,
-									packedLight,
-									NO_OVERLAY,
-									this.modelData,
-									it
-								)
-							}
+							ENTITYBLOCK_ANIMATED -> {}
 							MODEL                -> this.tessellateBlockTest(
 								data,
 								BlockPos.containing(offset),
@@ -85,6 +75,22 @@ object BulkBlockBufferTask {
 							)
 						}
 						poseStack.popPose()
+					}
+					blockData.fluids.forEach { (_, fluid) ->
+						val (_, blockState, _) = fluid
+						val model = blockRenderer.getBlockModel(blockState)
+						model.getRenderTypes(blockState, NullRandom, this.modelData).forEach {
+							println(it.name)
+							blockRenderer.renderSingleBlock(
+								blockState,
+								poseStack,
+								this.bufferSource,
+								FULL_BRIGHT,
+								NO_OVERLAY,
+								this.modelData,
+								it
+							)
+						}
 					}
 					poseStack.popPose()
 					passthrough[0] = rotation + 5f * event.partialTick.gameTimeDeltaTicks

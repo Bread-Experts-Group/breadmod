@@ -16,7 +16,7 @@ data class ToolGunData(
 	var dataLoaded: Boolean = false
 
 	companion object {
-		val EMPTY: ToolGunData = ToolGunData(EmptyMode(), CompoundTag())
+		val EMPTY: ToolGunData = ToolGunData(EmptyMode, CompoundTag())
 		fun get(stack: ItemStack): ToolGunData = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, this.EMPTY)
 	}
 

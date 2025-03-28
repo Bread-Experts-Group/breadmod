@@ -5,34 +5,35 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
-import org.bread_experts_group.breadmod.client.render.borderedFill
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
-import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
+import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
+import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
+import org.bread_experts_group.breadmod.client.render.borderedFill
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import java.awt.Color
 
 class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Color.GRAY, screen) {
-	override fun getTabButton(): TabButton = TabButton(Component.literal("Modes"), Color.RED, Color.GRAY, this)
+	override fun getTabButton(): TabButton = TabButton(
+		Component.literal("Modes"),
+		Color.RED, Color.GRAY,
+		this
+	)
 
+	private var currentModeWidget: ModeWidget = ModeWidget.noWidget
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
-	private var currentModeWidget: ModeWidget? = null
 	private val modeButton = GenericButton(0, 0, 80, 20, "Change Mode") {
-		this.currentModeWidget?.let { widget ->
-			PacketDistributor.sendToServer(ToolGunModeChangePacket(widget.id))
-			currentModeIndex = toolGunModes.keys.indexOf(widget.id)
-		}
+		PacketDistributor.sendToServer(ToolGunModeChangePacket(this.currentModeWidget.id))
+		currentModeIndex = toolGunModes.keys.indexOf(this.currentModeWidget.id)
 		this.updateModeWidgetSelection()
 	}
 
 	override fun init() {
-		this.currentModeWidget = null
+		this.currentModeWidget = ModeWidget.noWidget
 		val gridList = buildList {
 			repeat(5) { y ->
 				repeat(3) { x ->
@@ -58,8 +59,8 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		this.currentModeWidget = this.screen.focused as? ModeWidget
-		this.modeButton.active = this.currentModeWidget != null
+		this.currentModeWidget = this.screen.focused as? ModeWidget ?: ModeWidget.noWidget
+		this.modeButton.active = this.currentModeWidget != ModeWidget.noWidget
 		val poseStack = guiGraphics.pose()
 		guiGraphics.borderedFill(
 			RenderType.gui(),
@@ -83,7 +84,7 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 		)
 		guiGraphics.drawString(
 			localClient.font,
-			this.currentModeWidget?.modeName ?: Component.literal("???"),
+			this.currentModeWidget.modeName,
 			this.x + 123,
 			this.y + 74,
 			Color.BLACK.rgb,
@@ -92,7 +93,7 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 		guiGraphics.hLine(this.x + 120, this.x + 241, this.y + 83, Color.RED.rgb)
 		guiGraphics.drawWordWrap(
 			localClient.font,
-			this.currentModeWidget?.modeDescription ?: Component.literal("???"),
+			this.currentModeWidget.modeDescription,
 			this.x + 123,
 			this.y + 85,
 			120,
@@ -101,8 +102,11 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 		poseStack.pushPose()
 		poseStack.translate(this.x + 123.85f, this.y + 6.25f, 0f)
 		poseStack.scaleFlat(0.135f)
-		this.currentModeWidget?.previewImage?.blitTexture(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
-			?: BreadModTextureHelper.MISSING_TEXTURE.blitTexture(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
+		this.currentModeWidget.previewImage.select({
+			TODO("Stretch icon")
+		}, {
+			it.blitTexture(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
+		})
 		poseStack.popPose()
 		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
 	}

@@ -32,7 +32,7 @@ class ToolGunModeChangePacket(private val id: ResourceLocation) : CustomPacketPa
 			if (stack.`is`(ModItems.TOOL_GUN)) {
 				val toolGunData = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 				toolGunData.saveData()
-				val newMode = CommonNeoForgeEventBus.toolGunModes[data.id] ?: EmptyMode()
+				val newMode = CommonNeoForgeEventBus.toolGunModes[data.id] ?: EmptyMode
 				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(newMode, toolGunData.extraData))
 			}
 		}
