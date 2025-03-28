@@ -29,9 +29,9 @@ import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.triggerDelta
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
+import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -50,7 +50,7 @@ class ToolGunItem : Item(
 		.rarity(Rarity.RARE)
 ), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
 	object ToolGunItemExtensions : IClientItemExtensions {
-		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer()
+		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer
 		override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose =
 			ArmPose.BOW_AND_ARROW
 	}
@@ -61,7 +61,7 @@ class ToolGunItem : Item(
 			val (mode, _) = ToolGunData.get(stack)
 			mode.action(level, player, stack)
 			if (level.isClientSide) {
-				triggerDelta()
+				triggerDelta(stack.hashCode())
 				if (mode.shouldPlayToolGunSound(stack, player)) mode.playToolGunSound(player)
 			}
 		}

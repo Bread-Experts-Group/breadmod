@@ -21,7 +21,7 @@ class RendererEntry(screen: ToolGunScreen) : SettingsEntry(
 		RENDERER
 	)
 ) {
-	private val toolGunRenderer = ToolGunItemRenderer()
+	private val toolGunRenderer = ToolGunItemRenderer
 
 	override fun init() {
 		this.addChild(

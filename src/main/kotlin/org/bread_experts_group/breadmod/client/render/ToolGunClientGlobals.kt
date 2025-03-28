@@ -12,19 +12,6 @@ internal object ToolGunClientGlobals {
 	internal var caseOhSize: BigDecimal = BigDecimal.TWO
 	internal var currentModeIndex: Int = 0
 
-	// Recoil and Coil Spin vars
-	internal var coilRotation: Float = 0f
-	internal var coilDelta: Float = 0f
-	internal var recoil: Float = 0f
-	// Operations
-	/**
-	 * Sets the delta and recoil to their triggered values.
-	 */
-	fun triggerDelta() {
-		this.coilDelta = 1f
-		this.recoil = 0.1f
-	}
-
 	fun getCurrentMode(): IToolGunMode = toolGunModes.values.elementAt(this.currentModeIndex)
 	fun getCurrentModeID(): ResourceLocation = toolGunModes.keys.elementAt(this.currentModeIndex)
 }
