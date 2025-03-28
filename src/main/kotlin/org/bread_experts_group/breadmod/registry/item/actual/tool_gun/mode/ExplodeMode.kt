@@ -17,12 +17,13 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
-import org.bread_experts_group.breadmod.client.render.renderBlockModel
-import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
+import org.bread_experts_group.breadmod.client.render.renderBlockModel
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.experimental.BreadModExplosion
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.rayCast
 
@@ -45,10 +46,10 @@ class ExplodeMode : AbstractToolGunMode() {
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!level.isClientSide) {
-			val targetBlock = player.rayCast(50, blocks(Blocks.AIR))
-			targetBlock?.let {
-				level.explode(player, it.position.x, it.position.y, it.position.z, 20f, Level.ExplosionInteraction.MOB)
-			}
+			val targetBlock = player.rayCast(500, blocks(Blocks.AIR)) ?: return
+			BreadModExplosion
+				.calculate(level, targetBlock.position, 20f)
+				.explode(player)
 		}
 	}
 
