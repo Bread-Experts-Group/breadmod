@@ -22,6 +22,8 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.entity.PartEntity
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(entityType, level) {
 	constructor(
@@ -95,16 +97,25 @@ class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(e
 		}
 	}
 
-	// todo work out friction, maybe make a generic slowdown method to ease back into 0 delta?
+	private val sideFriction = 0.99
+	private val forwardFriction = 0.01
+
 	override fun tick() {
 		super.tick()
-		this.deltaMovement = this.deltaMovement.multiply(0.80, 0.0, 0.80)
-		this.applyGravity()
+		val radians = Math.toRadians(this.yRotO.toDouble())
+		val forward = Vec3(cos(radians), 0.0, sin(radians))
+		val right = Vec3(-forward.z, 0.0, forward.x)
+		val forwardComponent = forward.scale(this.deltaMovement.dot(forward) * this.forwardFriction)
+		val sideComponent = right.scale(this.deltaMovement.dot(right) * this.sideFriction)
+		val combined = forwardComponent.add(sideComponent)
+		this.deltaMovement = Vec3(combined.x, this.deltaMovement.y - 0.05, combined.z)
 		this.move(SELF, this.deltaMovement)
+		this.applyGravity()
 		this.parts.forEach(PartEntity<Forklift>::tick)
-//		if (!this.isPushable) return
-		val list = this.level().getEntities(this, this.boundingBox.inflate(0.1))
-		list.asSequence().filterNot { it.hasPassenger(this) }.forEach<Entity>(this::push)
+		this.level().getEntities(
+			this,
+			this.boundingBox.inflate(0.1)
+		).forEach(this::push)
 	}
 
 	override fun isPushable(): Boolean = true
@@ -118,6 +129,4 @@ class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(e
 			if (player.startRiding(this)) CONSUME else PASS
 		} else SUCCESS
 	}
-
-	override fun getDefaultGravity(): Double = 0.05
 }

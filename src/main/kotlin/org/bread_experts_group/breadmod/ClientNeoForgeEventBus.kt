@@ -133,7 +133,6 @@ internal object ClientNeoForgeEventBus {
 		val item = stack.item
 		if (item is IKeyboardItem) item.onKeyboardPress(event, stack, player)
 		if (event.action == InputConstants.PRESS) {
-//			BreadModPollingVirtualKeyboard.write(event.key.toUByte()) // todo move to keyboard screen logic
 			if (event.key == KeyMappings.placeItemKey.key.value) {
 				val hitResult = localClient.hitResult as? BlockHitResult ?: return
 				if (level.getBlockState(hitResult.blockPos).isAir) return

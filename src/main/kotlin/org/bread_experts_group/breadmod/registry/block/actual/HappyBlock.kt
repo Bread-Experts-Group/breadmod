@@ -3,7 +3,10 @@ package org.bread_experts_group.breadmod.registry.block.actual
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.TntBlock
@@ -12,32 +15,56 @@ import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
+import org.bread_experts_group.breadmod.util.minus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
+import java.util.function.BiConsumer
 
 class HappyBlock : TntBlock(Properties.ofFullCopy(Blocks.TNT)) {
-	private fun BlockPos.adjust() = this.toVec3().plus(Vec3(0.5, 0.0, 0.5))
+	fun prime(level: Level, pos: BlockPos, igniter: Entity?, delta: Vec3 = Vec3.ZERO) {
+		if (level.isClientSide) return
+		level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState())
+		val primedHappyBlock = PrimedHappyBlock(
+			level,
+			pos.toVec3().plus(Vec3(0.5, 0.0, 0.5)),
+			delta,
+			igniter,
+			true
+		)
+		level.addFreshEntity(primedHappyBlock)
+		level.playSound(
+			null,
+			primedHappyBlock.x,
+			primedHappyBlock.y,
+			primedHappyBlock.z,
+			ModSounds.HAPPY_BLOCK_FUSE.get(),
+			SoundSource.BLOCKS,
+			1.0f,
+			1.0f
+		)
+		level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos)
+	}
+
 	override fun onCaughtFire(
 		state: BlockState,
 		level: Level,
 		pos: BlockPos,
 		face: Direction?,
 		igniter: LivingEntity?
-	) {
-		if (!level.isClientSide) {
-			val primedHappyBlock = PrimedHappyBlock(level, pos.adjust(), owner = igniter, shouldSpread = true)
-			level.addFreshEntity(primedHappyBlock)
-			level.playSound(
-				null,
-				primedHappyBlock.x,
-				primedHappyBlock.y,
-				primedHappyBlock.z,
-				ModSounds.HAPPY_BLOCK_FUSE.get(),
-				SoundSource.BLOCKS,
-				1.0f,
-				1.0f
-			)
-			level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos)
+	): Unit = this.prime(level, pos, igniter)
+
+	override fun onExplosionHit(
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		explosion: Explosion,
+		dropConsumer: BiConsumer<ItemStack, BlockPos>
+	): Unit = this.prime(
+		level, pos, explosion.indirectSourceEntity ?: explosion.directSourceEntity,
+		pos.toVec3().let {
+			it
+				.minus(explosion.center())
+				.scale((explosion.radius() / it.distanceTo(explosion.center())) * 0.1)
 		}
-	}
+	)
 }

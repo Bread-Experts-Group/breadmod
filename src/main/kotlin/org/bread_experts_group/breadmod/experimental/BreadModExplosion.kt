@@ -1,6 +1,9 @@
 package org.bread_experts_group.breadmod.experimental
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
@@ -10,12 +13,14 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.ExplosionDamageCalculator
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.event.EventHooks
+import net.neoforged.neoforge.network.PacketDistributor
+import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
 import kotlin.math.sqrt
 
 object BreadModExplosion {
@@ -29,10 +34,29 @@ object BreadModExplosion {
 	data class ExplosionResults(
 		val level: Level,
 		val pos: Vec3,
+		val radius: Float,
 		val toDetonate: Set<BlockPos>,
-		val hitEntities: Map<Entity, EntityExplosionResult>
+		val hitEntities: Map<Entity, EntityExplosionResult>,
+		private val simExplosion: Explosion
 	) {
-		fun explode(source: Entity) {
+		fun explode(source: Entity?) {
+			if (this.level.isClientSide) throw IllegalStateException("BreadModExplosion must not be on the client!")
+			val random = this.level.random
+			this.level.playSound(
+				null,
+				this.pos.x, this.pos.y, this.pos.z,
+				SoundEvents.GENERIC_EXPLODE.value(),
+				SoundSource.BLOCKS,
+				this.radius,
+				(1.0f + random.nextFloat() * 0.2f) * 0.7f
+			)
+			PacketDistributor.sendToAllPlayers(
+				SpreadParticlesPacket(
+					this.level, ParticleTypes.EXPLOSION_EMITTER,
+					this.pos.toVector3f(),
+					this.radius, this.radius.toInt()
+				)
+			)
 			val damageSource = this.level.damageSources().explosion(source, source)
 			this.level.gameEvent(source, GameEvent.EXPLODE, this.pos)
 			this.hitEntities.forEach { entity, result ->
@@ -40,7 +64,10 @@ object BreadModExplosion {
 				entity.addDeltaMovement(result.knockback)
 			}
 			this.toDetonate.forEach { blockPos ->
-				this.level.setBlockAndUpdate(blockPos, Blocks.AIR.defaultBlockState())
+				this.level
+					.getBlockState(blockPos)
+					.onExplosionHit(this.level, blockPos, this.simExplosion)
+					{ stack, pos -> Block.popResource(this.level, pos, stack) }
 			}
 		}
 	}
@@ -150,6 +177,6 @@ object BreadModExplosion {
 				}
 			}
 		}
-		return ExplosionResults(level, pos, toDetonate, hitEntities)
+		return ExplosionResults(level, pos, radius, toDetonate, hitEntities, simExplosion)
 	}
 }
