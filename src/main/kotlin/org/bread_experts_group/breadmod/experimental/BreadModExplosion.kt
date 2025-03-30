@@ -14,13 +14,15 @@ import net.minecraft.world.level.Explosion
 import net.minecraft.world.level.ExplosionDamageCalculator
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.gameevent.GameEvent
+import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.event.EventHooks
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
+import org.joml.Math
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import kotlin.math.sqrt
 
 object BreadModExplosion {
@@ -72,6 +74,25 @@ object BreadModExplosion {
 		}
 	}
 
+	// THANK YOU Fnord @ https://stackoverflow.com/a/26127012
+	// https://arxiv.org/pdf/0912.4540
+	val fibonacciSpherePoints: Set<Vec3> = buildSet<Vec3> {
+		val phi = Math.PI * (Math.sqrt(5.0) - 1.0)
+		val samples = 1000 // Move this to a configuration option?
+		repeat(samples) { i ->
+			val y = 1.0 - (i / (samples - 1.0)) * 2.0
+			val radius = Math.sqrt(1.0 - y * y)
+			val theta = phi * i
+			this.add(
+				Vec3(
+					Math.cos(theta) * radius,
+					y,
+					Math.sin(theta) * radius
+				)
+			)
+		}
+	}
+
 	fun calculate(
 		level: Level,
 		pos: Vec3,
@@ -82,49 +103,26 @@ object BreadModExplosion {
 			true, Explosion.BlockInteraction.DESTROY
 		)
 		val toDetonate = buildSet {
-			for (j in 0 .. 15) {
-				for (k in 0 .. 15) {
-					for (l in 0 .. 15) {
-						if (j == 0 || j == 15 || k == 0 || k == 15 || l == 0 || l == 15) {
-							var d0 = (j.toFloat() / 15.0f * 2.0f - 1.0f).toDouble()
-							var d1 = (k.toFloat() / 15.0f * 2.0f - 1.0f).toDouble()
-							var d2 = (l.toFloat() / 15.0f * 2.0f - 1.0f).toDouble()
-							val d3 = sqrt(d0 * d0 + d1 * d1 + d2 * d2)
-							d0 /= d3
-							d1 /= d3
-							d2 /= d3
-							var f: Float = radius * (0.7f + level.random.nextFloat() * 0.6f)
-							var d4: Double = pos.x
-							var d6: Double = pos.y
-							var d8: Double = pos.z
-							while (f > 0.0f) {
-								val blockpos = BlockPos.containing(d4, d6, d8)
-								val blockstate: BlockState = level.getBlockState(blockpos)
-								level.getFluidState(blockpos)
-								if (!level.isInWorldBounds(blockpos)) break
-//								this@BreadModExplosion.calculator.getBlockExplosionResistance(
-//									simExplosion,
-//									level,
-//									blockpos,
-//									blockstate,
-//									fluidstate
-//								).ifPresent { f -= (it + 0.3f) * 0.3f }
-								if (f > 0.0f && this@BreadModExplosion.calculator.shouldBlockExplode(
-										simExplosion,
-										level,
-										blockpos,
-										blockstate,
-										f
-									)
-								) this.add(blockpos)
-
-								d4 += d0 * 0.3
-								d6 += d1 * 0.3
-								d8 += d2 * 0.3
-								f -= 0.22500001f
-							}
-						}
+			this@BreadModExplosion.fibonacciSpherePoints.forEach { direction ->
+				var currentPos = pos
+				var power = radius
+				for (@Suppress("unused") depth in 0 until radius.toInt()) {
+					val thisBlockPos = BlockPos(currentPos.toVec3i())
+					val blockState = level.getBlockState(thisBlockPos)
+					if (blockState.isAir) {
+						power -= 0.75f
+					} else {
+						this@BreadModExplosion.calculator.getBlockExplosionResistance(
+							simExplosion,
+							level,
+							thisBlockPos,
+							blockState,
+							Fluids.EMPTY.defaultFluidState()
+						).ifPresent { power -= (it + 0.3f) * 0.3f }
+						if (power < 0f) break
+						this.add(thisBlockPos)
 					}
+					currentPos = currentPos.add(direction.offsetRandom(level.random, 0.5f))
 				}
 			}
 		}
