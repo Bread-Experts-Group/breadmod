@@ -36,11 +36,11 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.experimental.particle.RadioactiveMaterial
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
 import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
-import org.bread_experts_group.breadmod.registry.item.actual.PhysXTestTool
 import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.WrenchItem
@@ -343,8 +343,12 @@ object ModItems {
 	@DataGenerateLanguage("en_us")
 	val GLUON_GUN: DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem("gluon_gun")
 
-	@DataGenerateLanguage("en_us", "PhysX Test Item")
-	val PHYSX_TEST_ITEM: DeferredItem<Item> = this.ITEM_REGISTRY.register("physx") { _ -> PhysXTestTool }
+	@DataGenerateLanguage("en_us")
+	@DataGenerateLanguage("en_us", "Free Energy: %s eV", suffix = ".energy")
+	@DataGenerateLanguage("en_us", "Total Energy: %s J", suffix = ".total_energy")
+	val RADIOACTIVE_MATERIAL: DeferredItem<Item> = this.ITEM_REGISTRY.register("radioactive_material") { _ ->
+		RadioactiveMaterial
+	}
 
 	@DataGenerateLanguage("en_us")
 	val FORKLIFT: DeferredItem<Item> = this.ITEM_REGISTRY.register("forklift") { ->

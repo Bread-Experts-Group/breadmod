@@ -8,12 +8,13 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import java.math.BigDecimal
 
 object BreadModCodecs {
 	val EXPANSIBLE_CODEC: Codec<BigDecimal> =
-		RecordCodecBuilder.create { instance: RecordCodecBuilder.Instance<BigDecimal> ->
+		RecordCodecBuilder.create { instance ->
 			instance.group(
 				Codec.STRING.fieldOf("value").forGetter(BigDecimal::toEngineeringString)
 			).apply(instance, ::BigDecimal)
@@ -33,5 +34,15 @@ object BreadModCodecs {
 		IToolGunMode.STREAM_CODEC, ToolGunData::mode,
 		ByteBufCodecs.TRUSTED_COMPOUND_TAG, ToolGunData::extraData,
 		::ToolGunData
+	)
+	val CLOSED_SYSTEM_CODEC: Codec<ClosedSystem> =
+		RecordCodecBuilder.create { instance ->
+			instance.group(
+				CompoundTag.CODEC.fieldOf("value").forGetter(ClosedSystem::toNBT)
+			).apply(instance, ClosedSystem::createFromTag)
+		}
+	val CLOSED_SYSTEM_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ClosedSystem> = StreamCodec.composite(
+		ByteBufCodecs.TRUSTED_COMPOUND_TAG,
+		ClosedSystem::toNBT, ClosedSystem::createFromTag
 	)
 }
