@@ -1,45 +1,65 @@
 package org.bread_experts_group.breadmod.registry.shader
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
-import net.minecraft.Util
+import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.RenderStateShard.CULL
-import net.minecraft.client.renderer.RenderStateShard.LIGHTMAP
 import net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
-import net.minecraft.client.renderer.RenderStateShard.TextureStateShard
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.ShaderInstance
-import net.minecraft.resources.ResourceLocation
-import java.util.function.Function
+
+/**
+ * ## SHADER UNIFORM AND IN/OUT INFO
+ *
+ * #### // ShaderInstance uniforms //
+ *
+ * - frustumMatrix -> uniform mat4 ModelViewMat
+ * - projectionMatrix -> uniform mat4 ProjMat
+ * - RenderSystem#getShaderColor -> uniform vec4 ColorModulator
+ * - RenderSystem#getShaderGlintAlpha -> uniform float GlintAlpha
+ * - RenderSystem#getShaderFogStart -> uniform float FogStart (almost 1 all the time)
+ * - RenderSystem#getShaderFogEnd -> uniform float FogEnd
+ * - RenderSystem#getShaderFogShape#getIndex -> uniform int FogShape
+ * - RenderSystem#getTextureMatrix -> uniform mat4 TextureMat
+ * - RenderSystem#getShaderGameTime -> uniform float GameTime
+ * - Window#getWidth, Window#getHight -> uniform vec2 ScreenSize
+ * - RenderSystem#getShaderLineWidth -> uniform float LineWidth
+ *
+ * #### // DefaultVertexFormat inputs //
+ *
+ * Samplers are obtained via the UV inputs of VertexFormat
+ * - UV0 (texture UVs) -> uniform sampler2D Sampler0
+ * - UV1 (packed overlay) -> uniform sampler2D Sampler1
+ * - UV2 (packed light) -> uniform sampler2D Sampler2
+ *
+ * - POSITION -> in vec3 Position
+ * - COLOR -> in vec4 Color
+ * - NORMAL -> in vec3 Normal
+ */
 
 @Suppress("INACCESSIBLE_TYPE")
 object ModRenderType {
-	var solidInstance: ShaderInstance? = null
-	private val solidTextureShader = ShaderStateShard(this::solidInstance)
-	private val solidTextureRenderType: Function<ResourceLocation, RenderType> =
-		Util.memoize { location: ResourceLocation ->
-			val compositeState: RenderType.CompositeState = RenderType.CompositeState.builder()
-				.setLightmapState(LIGHTMAP)
-				.setCullState(CULL)
-				.setTransparencyState(NO_TRANSPARENCY)
-				.setShaderState(this.solidTextureShader)
-				.setTextureState(TextureStateShard(location, false, true))
-				.createCompositeState(true)
-			RenderType.create(
-				"solid_texture",
-				DefaultVertexFormat.BLOCK,
-				VertexFormat.Mode.QUADS,
-				4194304,
-				true,
-				false,
-				compositeState
-			)
-		}
+	var rainbowInstance: ShaderInstance? = null
+	private val rainbowShader = ShaderStateShard(this::rainbowInstance)
+	val rainbowVertexFormat: VertexFormat = VertexFormat.builder()
+		.add("Position", VertexFormatElement.POSITION)
+		.build()
+	private val solidTextureRenderType: RenderType = RenderType.create(
+		"rainbow",
+		this.rainbowVertexFormat,
+		VertexFormat.Mode.QUADS,
+		1536,
+		true,
+		false,
+		RenderType.CompositeState.builder()
+			.setCullState(CULL)
+			.setTransparencyState(NO_TRANSPARENCY)
+			.setShaderState(this.rainbowShader)
+			.createCompositeState(false)
+	)
 
 	/**
-	 * Replica of [RenderType.solid] that takes in a [textureLocation]
+	 * Rainbow shader.
 	 */
-	fun solidTextured(textureLocation: ResourceLocation): RenderType =
-		this.solidTextureRenderType.apply(textureLocation)
+	fun rainbow(): RenderType = this.solidTextureRenderType
 }

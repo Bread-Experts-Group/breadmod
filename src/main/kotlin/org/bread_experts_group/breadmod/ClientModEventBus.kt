@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
@@ -89,7 +88,7 @@ internal object ClientModEventBus {
 	@SubscribeEvent
 	fun registerItemDecorations(event: RegisterItemDecorationsEvent) {
 		event.register(ModItems.TOOL_GUN.asItem()) { guiGraphics, _, stack, xOffset, yOffset ->
-			val (mode, _) = ToolGunData.get(stack)
+			val (mode, _, _) = ToolGunData.get(stack)
 			val poseStack = guiGraphics.pose()
 			poseStack.pushPose()
 			poseStack.scaleFlat(0.4f)
@@ -122,10 +121,10 @@ internal object ClientModEventBus {
 		event.registerShader(
 			ShaderInstance(
 				event.resourceProvider,
-				modLocation("rendertype_solid_texture"),
-				DefaultVertexFormat.BLOCK
+				modLocation("rendertype_rainbow"),
+				ModRenderType.rainbowVertexFormat
 			)
-		) { ModRenderType.solidInstance = it }
+		) { ModRenderType.rainbowInstance = it }
 	}
 
 	@SubscribeEvent

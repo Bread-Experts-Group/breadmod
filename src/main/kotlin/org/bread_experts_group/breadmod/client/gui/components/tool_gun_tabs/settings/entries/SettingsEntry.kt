@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries
 
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryButton
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums
@@ -11,6 +12,7 @@ abstract class SettingsEntry(
 	id: String,
 	val entry: SettingsEntryEnums,
 	screen: ToolGunScreen,
+	val stack: ItemStack,
 	val entryButton: SettingsEntryButton
 ) : ContainerWidget<ToolGunScreen>(0, 0, 143, 185, "setting_entry_$id", screen) {
 	override fun tickAdditional() {

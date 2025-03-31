@@ -28,7 +28,6 @@ import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
@@ -58,7 +57,7 @@ class ToolGunItem : Item(
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		val stack = getStackInPlayerHand(player)
 		if (stack.`is`(ModItems.TOOL_GUN)) {
-			val (mode, _) = ToolGunData.get(stack)
+			val (mode, _, _) = ToolGunData.get(stack)
 			mode.action(level, player, stack)
 			if (level.isClientSide) {
 				triggerDelta(stack.hashCode())
@@ -83,13 +82,18 @@ class ToolGunItem : Item(
 	}
 
 	override fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {
-		val (mode, _) = ToolGunData.get(heldStack)
+		val (mode, _, index) = ToolGunData.get(heldStack)
 		if (player.isCrouching) {
 			scrollingEvent.isCanceled = true
 			val deltaY = scrollingEvent.scrollDeltaY
 			val modeSize = toolGunModes.size
-			currentModeIndex = Math.floorMod(currentModeIndex + deltaY.toInt(), modeSize)
-			PacketDistributor.sendToServer(ToolGunModeChangePacket(toolGunModes.keys.elementAt(currentModeIndex)))
+			val currentIndex = Math.floorMod(index + deltaY.toInt(), modeSize)
+			PacketDistributor.sendToServer(
+				ToolGunModeChangePacket(
+					toolGunModes.keys.elementAt(currentIndex),
+					currentIndex
+				)
+			)
 		}
 		if (mode.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
 	}
@@ -107,20 +111,20 @@ class ToolGunItem : Item(
 	}
 
 	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {
-		val (mode, _) = ToolGunData.get(heldStack)
+		val (mode, _, _) = ToolGunData.get(heldStack)
 		mode.mouseButtonPreAction(mouseEvent, heldStack, player)
 	}
 
 	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
-		val (mode, _) = ToolGunData.get(heldStack)
+		val (mode, _, _) = ToolGunData.get(heldStack)
 		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
 
 	// todo figure out key modifiers in the if statement
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
-		val (mode, _) = ToolGunData.get(heldStack)
+		val (mode, _, _) = ToolGunData.get(heldStack)
 		if (keyEvent.key == openModeGui.key.value && localClient.screen == null) {
-			localClient.setScreen(ToolGunScreen(Component.literal("Tool Gun: Mode Select")))
+			localClient.setScreen(ToolGunScreen(Component.literal("Tool Gun: Mode Select"), heldStack))
 		}
 		mode.keyboardInputAction(keyEvent, heldStack, player)
 		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {
@@ -134,7 +138,7 @@ class ToolGunItem : Item(
 		tooltipComponents: MutableList<Component>,
 		tooltipFlag: TooltipFlag
 	) {
-		val (mode, _) = ToolGunData.get(stack)
+		val (mode, _, _) = ToolGunData.get(stack)
 		tooltipComponents.addAll(
 			listOf(
 				Component.literal("Current Mode: ")

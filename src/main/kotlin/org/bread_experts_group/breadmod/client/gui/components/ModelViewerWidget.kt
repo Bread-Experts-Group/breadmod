@@ -81,9 +81,8 @@ class ModelViewerWidget(
 		)
 	}
 
-	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.borderedFillPositioned(this.x, this.y, this.width, this.height, Color.WHITE, Color.BLACK)
-		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
 	}
 
 	private inner class Dragger : AbstractWidget(this.x + 1, this.y + 1, 113, 80, Component.empty()) {

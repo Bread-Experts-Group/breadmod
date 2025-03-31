@@ -36,7 +36,9 @@ open class ContainerWidget<T : Screen>(
 	fun getContainerWidgets(): List<ContainerWidget<*>> = this.getWidgets().filterIsInstance<ContainerWidget<*>>()
 	fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
 
-	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+	open fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {}
+
+	final override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		if (this.visible) {
 			if (this.debug) guiGraphics.borderedFill(
 				RenderType.gui(),
@@ -47,19 +49,23 @@ open class ContainerWidget<T : Screen>(
 				Color.GREEN.rgb,
 				Color.WHITE.rgb
 			)
-
+			this.renderContainer(guiGraphics, mouseX, mouseY, partialTick)
 			this.getWidgets().forEach { if (it.visible) it.render(guiGraphics, mouseX, mouseY, partialTick) }
 			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN.rgb)
 		}
 	}
 
-	fun tick() {
+	private fun setChildrenVisibility() {
 		if (this.getWidgets().isNotEmpty()) this.getWidgets().forEach {
 			it.active = this.active
 			it.visible = this.visible
 		}
+	}
+
+	fun tick() {
+		this.setChildrenVisibility()
 		if (this.getContainerWidgets().isNotEmpty() && this.active && this.visible) this.tickContainerWidgets()
-		this.tickAdditional()
+		if (this.active && this.visible) this.tickAdditional()
 	}
 
 	open fun tickAdditional() {}

@@ -22,11 +22,10 @@ import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.client.event.InputEvent.Key
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.api.IToolGunMode.Renderer
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
-import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
@@ -131,7 +130,7 @@ class RemoverMode : AbstractToolGunMode() {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("remover_mode")
-	override fun getCustomRenderer(): Renderer = RemoverRenderer(this.getUid())
+	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this.getUid())
 
 	override fun saveExtraData(tag: CompoundTag) {
 		tag.putBoolean("test", this.targetEntities)
@@ -154,20 +153,19 @@ class RemoverMode : AbstractToolGunMode() {
 			buffer: MultiBufferSource,
 			packedLight: Int,
 			packedOverlay: Int,
-			helper: ToolGunRenderHelper
 		) {
-			val (mode, _) = ToolGunData.get(stack)
+			val (mode, _, _) = ToolGunData.get(stack)
 			if (mode !is RemoverMode) return
-			helper.drawTextOnScreen(
+			this.drawTextOnScreen(
 				"Targeting: ${if (mode.targetEntities) "Entity" else "Block"}",
 				Color.WHITE.rgb,
 				Color(0f, 0f, 0f, 0f).rgb,
 				false,
-				helper.font,
+				IToolGunModeRenderer.font,
 				poseStack,
 				buffer,
-				helper.screenTextX + 0.008,
-				helper.screenTextY - 0.015
+				IToolGunModeRenderer.screenTextX + 0.008,
+				IToolGunModeRenderer.screenTextY - 0.015
 			)
 		}
 

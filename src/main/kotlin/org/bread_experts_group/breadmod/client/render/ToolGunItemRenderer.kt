@@ -11,24 +11,26 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.caseOhInstrument
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.caseOhSize
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
 import java.lang.Math.clamp
+import java.math.BigDecimal
 import java.math.RoundingMode
+import java.security.SecureRandom
 
 object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
-	var helper: ToolGunRenderHelper = ToolGunRenderHelper()
 	private val deltaTracker = localClient.timer
 	private val partialTick = this.deltaTracker.gameTimeDeltaTicks
-	val rotationMap: MutableMap<Int, Triple<Float, Float, Float>> = mutableMapOf()
+	private val caseOhInstrument: SecureRandom = SecureRandom()
+	private var caseOhSize: BigDecimal = BigDecimal.TWO
+	private val rotationMap: MutableMap<Int, Triple<Float, Float, Float>> = mutableMapOf()
 
 	/**
 	 * Sets the delta and recoil to their triggered values.
@@ -48,7 +50,12 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/coil"))
 
 	override fun onResourceManagerReload(resourceManager: ResourceManager) {
-		this.helper = ToolGunRenderHelper()
+		IToolGunModeRenderer.modelManager = localClient.modelManager
+		IToolGunModeRenderer.itemRenderer = localClient.itemRenderer
+		IToolGunModeRenderer.blockModelRenderer = localClient.blockRenderer.modelRenderer
+		IToolGunModeRenderer.blockRenderDispatcher = localClient.blockRenderer
+		IToolGunModeRenderer.entityRenderDispatcher = localClient.entityRenderDispatcher
+		IToolGunModeRenderer.font = localClient.font
 	}
 
 	fun renderToolGun(
@@ -59,7 +66,6 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int,
 		currentMode: IToolGunMode,
-		helper: ToolGunRenderHelper,
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
@@ -85,16 +91,21 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			poseStack.pushPose()
 			// Main recoil translations
 			// todo improve recoil
-			if (helper.shouldRecoil) poseStack.translate(
+			if (modeRenderer.shouldRecoil(stack, displayContext, currentMode)) poseStack.translate(
 				-clamp((this.rotationMap[stackHash] ?: return).third, 0f, 1f),
 				0f,
 				0f
 			)
 
 			poseStack.pushPose()
-			modeRenderer.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
 			// Render Body Stage
-			if (helper.shouldRenderMainBody) helper.itemRenderer.renderItemModel(
+			if (modeRenderer.shouldRenderMainBody(
+					stack,
+					displayContext,
+					currentMode
+				)
+			) IToolGunModeRenderer.itemRenderer.renderItemModel(
 				this.mainModel,
 				stack,
 				displayContext,
@@ -105,44 +116,49 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				overrideRenderType = overrideRenderType,
 				renderTypeOverride = renderTypeOverride
 			)
-			modeRenderer.renderBodyStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.renderBodyStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
 			poseStack.popPose()
 			// Render Screen Stage
 			poseStack.pushPose()
-			if (helper.shouldRenderScreenContents) {
-				helper.renderScreenBackground(modeRenderer.getScreenTexture(), 9, 8, poseStack, buffer)
-				helper.drawTextOnScreen(
+			if (modeRenderer.shouldRenderScreenContents(stack, displayContext, currentMode)) {
+				modeRenderer.renderScreenBackground(modeRenderer.getScreenTexture(), 9, 8, poseStack, buffer)
+				modeRenderer.drawTextOnScreen(
 					currentMode.getDisplayName(),
 					Color.RED.rgb, transparentColor().rgb,
 					false,
-					helper.font,
+					IToolGunModeRenderer.font,
 					poseStack,
 					buffer,
 					posX = -0.035,
 					posY = 0.414
 				)
-				caseOhSize = caseOhSize.add(caseOhInstrument.nextDouble(0.0, 1234511121314.0).toBigDecimal())
-				val (truncated, unit) = formatNumberBigDecimal(caseOhSize)
-				helper.drawTextOnScreen(
+				this.caseOhSize = this.caseOhSize.add(this.caseOhInstrument.nextDouble(0.0, 1234511121314.0).toBigDecimal())
+				val (truncated, unit) = formatNumberBigDecimal(this.caseOhSize)
+				modeRenderer.drawTextOnScreen(
 					"CASEOH: ${truncated.setScale(2, RoundingMode.DOWN)} ${unit}g",
 					Color.RED.rgb,
 					transparentColor().rgb,
 					false,
-					helper.font,
+					IToolGunModeRenderer.font,
 					poseStack,
 					buffer,
 					posX = -0.035,
 					posY = 0.361
 				)
 			}
-			modeRenderer.renderScreenStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.renderScreenStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
 			poseStack.popPose()
 			// Render Coil Stage
 			poseStack.pushPose()
 			if (modeRenderer.shouldCoilSpin(stack, displayContext)) {
 				poseStack.mulPose(Axis.XN.rotationDegrees((this.rotationMap[stackHash] ?: return).second))
 			}
-			if (helper.shouldRenderCoil) helper.itemRenderer.renderItemModel(
+			if (modeRenderer.shouldRenderCoil(
+					stack,
+					displayContext,
+					currentMode
+				)
+			) IToolGunModeRenderer.itemRenderer.renderItemModel(
 				this.coilModel,
 				stack,
 				displayContext,
@@ -153,11 +169,10 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				overrideRenderType = overrideRenderType,
 				renderTypeOverride = renderTypeOverride
 			)
-			modeRenderer.renderCoilStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay, helper)
+			modeRenderer.renderCoilStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
 			poseStack.popPose()
 			// End Render, pop the final push
 			poseStack.popPose()
-			helper.resetRenderToggles()
 		} else if (displayContext == GUI) {
 			this.renderOtherPerspectives(stack, displayContext, poseStack, buffer, packedOverlay, packedLight, true)
 		} else {
@@ -177,7 +192,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
 		val stackHash = stack.hashCode()
-		this.helper.itemRenderer.renderItemModel(
+		IToolGunModeRenderer.itemRenderer.renderItemModel(
 			this.mainModel,
 			stack,
 			displayContext,
@@ -189,7 +204,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			renderTypeOverride = renderTypeOverride
 		)
 		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees((this.rotationMap[stackHash] ?: return).second))
-		this.helper.itemRenderer.renderItemModel(
+		IToolGunModeRenderer.itemRenderer.renderItemModel(
 			this.coilModel,
 			stack,
 			displayContext,
@@ -210,7 +225,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val (currentMode, _) = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
+		val (currentMode, _, _) = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 		this.renderToolGun(
 			stack,
 			displayContext,
@@ -218,8 +233,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			buffer,
 			packedLight,
 			packedOverlay,
-			currentMode,
-			this.helper
+			currentMode
 		)
 	}
 }

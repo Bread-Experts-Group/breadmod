@@ -3,21 +3,24 @@ package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals.currentModeIndex
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import java.awt.Color
 
-class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Color.GRAY, screen) {
+class ModeSelectTab(
+	screen: ToolGunScreen,
+	stack: ItemStack
+) : ToolGunScreenTab("mode_select", Color.GRAY, screen, stack) {
 	override fun getTabButton(): TabButton = TabButton(
 		Component.literal("Modes"),
 		Color.RED, Color.GRAY,
@@ -27,12 +30,13 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 	private var currentModeWidget: ModeWidget = ModeWidget.noWidget
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
 	private val modeButton = GenericButton(0, 0, 80, 20, "Change Mode") {
-		PacketDistributor.sendToServer(ToolGunModeChangePacket(this.currentModeWidget.id))
-		currentModeIndex = toolGunModes.keys.indexOf(this.currentModeWidget.id)
-		this.updateModeWidgetSelection()
+		val index = toolGunModes.keys.indexOf(this.currentModeWidget.id)
+		PacketDistributor.sendToServer(ToolGunModeChangePacket(this.currentModeWidget.id, index))
+		this.updateModeWidgetSelection(index)
 	}
 
 	override fun init() {
+		val (_, _, index) = ToolGunData.get(this.stack)
 		this.currentModeWidget = ModeWidget.noWidget
 		val gridList = buildList {
 			repeat(5) { y ->
@@ -44,21 +48,21 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 		toolGunModes.forEach { (_, mode) ->
 			this.modeWidgets.add(mode.getCustomRenderer().getModeWidget())
 		}
-		this.modeWidgets.forEachIndexed { index, modeWidget ->
-			this.addChild("mode_widget_$index", modeWidget, gridList[index].first, gridList[index].second)
+		this.modeWidgets.forEachIndexed { mIndex, modeWidget ->
+			this.addChild("mode_widget_$mIndex", modeWidget, gridList[mIndex].first, gridList[mIndex].second)
 		}
 		this.addChild("mode_change_button", this.modeButton, this.x + 160, this.y + 162, isActive = false)
-		this.updateModeWidgetSelection()
+		this.updateModeWidgetSelection(index)
 	}
 
 	/**
 	 * Update the border color on the widget's mode that is currently active.
 	 */
-	private fun updateModeWidgetSelection() = this.getWidgets().filterIsInstance<ModeWidget>().forEach {
-		it.isSelected = it.id == ToolGunClientGlobals.getCurrentModeID()
+	private fun updateModeWidgetSelection(index: Int) = this.getWidgets().filterIsInstance<ModeWidget>().forEach {
+		it.isSelected = it.id == toolGunModes.keys.elementAt(index)
 	}
 
-	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		this.currentModeWidget = this.screen.focused as? ModeWidget ?: ModeWidget.noWidget
 		this.modeButton.active = this.currentModeWidget != ModeWidget.noWidget
 		val poseStack = guiGraphics.pose()
@@ -108,6 +112,5 @@ class ModeSelectTab(screen: ToolGunScreen) : ToolGunScreenTab("mode_select", Col
 			it.blitTexture(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
 		})
 		poseStack.popPose()
-		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
 	}
 }

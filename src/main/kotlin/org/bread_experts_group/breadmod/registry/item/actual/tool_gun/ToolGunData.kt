@@ -6,18 +6,23 @@ import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.putValue
 
 data class ToolGunData(
 	val mode: IToolGunMode,
 	val extraData: CompoundTag,
+	val modeIndex: Int
 ) {
 	var dataLoaded: Boolean = false
 
 	companion object {
-		val EMPTY: ToolGunData = ToolGunData(EmptyMode, CompoundTag())
-		fun get(stack: ItemStack): ToolGunData = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, this.EMPTY)
+		val EMPTY: ToolGunData = ToolGunData(EmptyMode, CompoundTag(), 0)
+		fun get(stack: ItemStack): ToolGunData {
+			check(stack.`is`(ModItems.TOOL_GUN.asItem())) { "Provided ItemStack is not ToolGunItem!" }
+			return stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, this.EMPTY)
+		}
 	}
 
 	fun saveData() {

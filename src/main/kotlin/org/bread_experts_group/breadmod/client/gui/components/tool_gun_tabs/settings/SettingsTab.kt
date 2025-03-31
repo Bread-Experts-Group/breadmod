@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.set
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
@@ -13,7 +14,10 @@ import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.sett
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries.SettingsEntry
 import java.awt.Color
 
-class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0, 0, 180), screen) {
+class SettingsTab(
+	screen: ToolGunScreen,
+	stack: ItemStack
+) : ToolGunScreenTab("settings", Color(0, 0, 180), screen, stack) {
 	companion object {
 		var currentSettingsEntry: SettingsEntryEnums = MAIN
 	}
@@ -23,8 +27,8 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 
 	override fun init() {
 		Companion.currentSettingsEntry = MAIN
-		this.addSettingsEntry(RendererEntry(this.screen))
-		this.addSettingsEntry(MainEntry(this.screen))
+		this.addSettingsEntry(RendererEntry(this.screen, this.stack))
+		this.addSettingsEntry(MainEntry(this.screen, this.stack))
 		var entryPos = 30
 		this.getWidgets().filterIsInstance<SettingsEntry>().forEach { entry ->
 			this.addChild(
@@ -47,11 +51,10 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 
 	private fun addSettingsEntry(entry: SettingsEntry) {
 		entry.setPosition(this.x, this.y)
-		entry.init()
 		this.addChild(entry.id, entry)
 	}
 
-	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.fill(
 			this.x,
 			this.y,
@@ -72,6 +75,5 @@ class SettingsTab(screen: ToolGunScreen) : ToolGunScreenTab("settings", Color(0,
 					Color.WHITE.rgb
 				)
 			}
-		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
 	}
 }

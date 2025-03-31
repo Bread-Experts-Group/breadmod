@@ -1,24 +1,18 @@
 package org.bread_experts_group.breadmod.api
 
-import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.serialization.Codec
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
-import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
-import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.fromClass
 import org.bread_experts_group.breadmod.util.toClass
@@ -83,79 +77,7 @@ interface IToolGunMode {
 
 	fun playToolGunSound(player: Player): Unit = player.playSound(ModSounds.TOOL_GUN.get(), 0.8f, 1f)
 
-	fun getCustomRenderer(): Renderer
+	fun getCustomRenderer(): IToolGunModeRenderer
 
 	fun toolGunLocation(modeName: String): ResourceLocation = modLocation(modeName)
-
-	interface Renderer {
-		/**
-		 * Used to render special effects and/or models on the tool gun's [BlockEntityWithoutLevelRenderer].
-		 * Fires before the other render stages.
-		 * @see renderScreenStage
-		 * @see renderCoilStage
-		 * @see renderBodyStage
-		 */
-		fun render(
-			stack: ItemStack,
-			displayContext: ItemDisplayContext,
-			poseStack: PoseStack,
-			buffer: MultiBufferSource,
-			packedLight: Int,
-			packedOverlay: Int,
-			helper: ToolGunRenderHelper
-		)
-
-		/**
-		 * Used to render text and/or icons positioned to the tool gun screen.
-		 * Fires after all other stages have rendered.
-		 * @see render
-		 */
-		fun renderScreenStage(
-			stack: ItemStack,
-			displayContext: ItemDisplayContext,
-			poseStack: PoseStack,
-			buffer: MultiBufferSource,
-			packedLight: Int,
-			packedOverlay: Int,
-			helper: ToolGunRenderHelper
-		)
-
-		/**
-		 * Used to render effects and/or models to the tool gun's coil.
-		 * Fires after [render] and [renderBodyStage].
-		 * This rotates along with the coil.
-		 * @see render
-		 * @see renderBodyStage
-		 */
-		fun renderCoilStage(
-			stack: ItemStack,
-			displayContext: ItemDisplayContext,
-			poseStack: PoseStack,
-			buffer: MultiBufferSource,
-			packedLight: Int,
-			packedOverlay: Int,
-			helper: ToolGunRenderHelper
-		)
-
-		/**
-		 * Used to render effects and/or models to the tool gun's main body.
-		 * Fires after [render].
-		 * @see render
-		 */
-		fun renderBodyStage(
-			stack: ItemStack,
-			displayContext: ItemDisplayContext,
-			poseStack: PoseStack,
-			buffer: MultiBufferSource,
-			packedLight: Int,
-			packedOverlay: Int,
-			helper: ToolGunRenderHelper
-		)
-
-		fun getModeWidget(): ModeWidget
-
-		fun getScreenTexture(): ResourceLocation
-
-		fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean
-	}
 }

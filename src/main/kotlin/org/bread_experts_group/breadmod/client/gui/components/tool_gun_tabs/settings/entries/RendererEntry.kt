@@ -3,18 +3,23 @@ package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.set
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+import net.minecraft.world.item.ItemStack
+import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.gui.components.ModelViewerWidget
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryButton
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.RENDERER
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
-import org.bread_experts_group.breadmod.client.render.ToolGunClientGlobals
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 
-class RendererEntry(screen: ToolGunScreen) : SettingsEntry(
+class RendererEntry(
+	screen: ToolGunScreen,
+	stack: ItemStack
+) : SettingsEntry(
 	"renderer",
 	RENDERER,
 	screen,
+	stack,
 	SettingsEntryButton(
 		Component.literal("Renderer"),
 		Component.literal("Entry for adjusting tool gun rendering parameters."),
@@ -24,19 +29,19 @@ class RendererEntry(screen: ToolGunScreen) : SettingsEntry(
 	private val toolGunRenderer = ToolGunItemRenderer
 
 	override fun init() {
+		val (_, _, index) = ToolGunData.get(this.stack)
 		this.addChild(
 			"model_viewer",
 			ModelViewerWidget(screen = this.screen) { poseStack, bufferSource ->
 				ModelViewerWidget.setupRender(235.0, 30.0, 180.0, poseStack)
 				this.toolGunRenderer.renderToolGun(
-					ModItems.TOOL_GUN.toStack(),
+					this.stack,
 					FIRST_PERSON_RIGHT_HAND,
 					poseStack,
 					bufferSource,
 					0XFFFFFF,
 					OverlayTexture.NO_OVERLAY,
-					ToolGunClientGlobals.getCurrentMode(),
-					this.toolGunRenderer.helper
+					toolGunModes.values.elementAt(index)
 				)
 			},
 			this.x + 125,

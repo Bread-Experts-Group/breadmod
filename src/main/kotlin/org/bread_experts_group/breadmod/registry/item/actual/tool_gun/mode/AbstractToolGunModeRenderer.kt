@@ -5,20 +5,18 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
-import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 
-abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunMode.Renderer {
+abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunModeRenderer {
 	override fun render(
 		stack: ItemStack,
 		displayContext: ItemDisplayContext,
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
 		packedLight: Int,
-		packedOverlay: Int,
-		helper: ToolGunRenderHelper
+		packedOverlay: Int
 	) {
 	}
 
@@ -28,8 +26,7 @@ abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunM
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
 		packedLight: Int,
-		packedOverlay: Int,
-		helper: ToolGunRenderHelper
+		packedOverlay: Int
 	) {
 	}
 
@@ -39,8 +36,7 @@ abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunM
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
 		packedLight: Int,
-		packedOverlay: Int,
-		helper: ToolGunRenderHelper
+		packedOverlay: Int
 	) {
 	}
 
@@ -50,8 +46,7 @@ abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunM
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
 		packedLight: Int,
-		packedOverlay: Int,
-		helper: ToolGunRenderHelper
+		packedOverlay: Int
 	) {
 	}
 

@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.network.serverbound
 
 import net.minecraft.network.RegistryFriendlyByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.ResourceLocation
@@ -14,12 +15,13 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 
-class ToolGunModeChangePacket(private val id: ResourceLocation) : CustomPacketPayload {
+class ToolGunModeChangePacket(private val id: ResourceLocation, private val index: Int) : CustomPacketPayload {
 	companion object {
 		val TYPE: CustomPacketPayload.Type<ToolGunModeChangePacket> =
 			CustomPacketPayload.Type(modLocation("tool_gun_packet"))
 		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ToolGunModeChangePacket> = StreamCodec.composite(
 			ResourceLocation.STREAM_CODEC, ToolGunModeChangePacket::id,
+			ByteBufCodecs.VAR_INT, ToolGunModeChangePacket::index,
 			::ToolGunModeChangePacket
 		)
 
@@ -33,7 +35,7 @@ class ToolGunModeChangePacket(private val id: ResourceLocation) : CustomPacketPa
 				val toolGunData = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 				toolGunData.saveData()
 				val newMode = CommonNeoForgeEventBus.toolGunModes[data.id] ?: EmptyMode
-				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(newMode, toolGunData.extraData))
+				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(newMode, toolGunData.extraData, data.index))
 			}
 		}
 	}

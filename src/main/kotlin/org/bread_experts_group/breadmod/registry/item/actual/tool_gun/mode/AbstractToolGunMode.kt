@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 
 /**
  * Base abstract implementation of [IToolGunMode], use this class for your own modes.
@@ -23,7 +24,7 @@ abstract class AbstractToolGunMode : IToolGunMode {
 
 	abstract override fun getUid(): ResourceLocation
 
-	override fun getCustomRenderer(): IToolGunMode.Renderer = EmptyMode.EmptyModeRenderer(this.getUid())
+	override fun getCustomRenderer(): IToolGunModeRenderer = EmptyMode.EmptyModeRenderer(this.getUid())
 
 	override fun mouseScrollAction(event: MouseScrollingEvent, stack: ItemStack, player: Player): Boolean = false
 

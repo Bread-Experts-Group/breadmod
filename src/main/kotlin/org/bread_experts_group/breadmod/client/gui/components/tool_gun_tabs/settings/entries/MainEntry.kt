@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.set
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryButton
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
@@ -9,13 +10,17 @@ import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
-class MainEntry(screen: ToolGunScreen) : SettingsEntry(
+class MainEntry(
+	screen: ToolGunScreen,
+	stack: ItemStack
+) : SettingsEntry(
 	"main",
 	MAIN,
 	screen,
+	stack,
 	SettingsEntryButton(Component.literal("<"), Component.empty(), MAIN)
 ) {
-	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.fill(
 			this.x,
 			this.y + 22,
@@ -44,6 +49,5 @@ class MainEntry(screen: ToolGunScreen) : SettingsEntry(
 			this.y + 7,
 			Color.WHITE.rgb
 		)
-		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
 	}
 }

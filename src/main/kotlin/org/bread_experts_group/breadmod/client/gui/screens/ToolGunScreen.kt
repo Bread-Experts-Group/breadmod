@@ -4,13 +4,15 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ModeSelectTab
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ToolGunScreenTab
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsTab
+import org.bread_experts_group.breadmod.registry.item.ModItems
 
-class ToolGunScreen(title: Component) : Screen(title) {
+class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(title) {
 	companion object {
 		var activeTab: ToolGunScreenTab? = null
 	}
@@ -43,7 +45,6 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	}
 
 	private fun getTabs(): List<ToolGunScreenTab> = this.children().filterIsInstance<ToolGunScreenTab>()
-	private fun getTabByID(id: String): ToolGunScreenTab = this.getTabs().first { it.id == id }
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean =
 		if (keyCode == InputConstants.KEY_E) {
@@ -52,11 +53,12 @@ class ToolGunScreen(title: Component) : Screen(title) {
 		} else super.keyPressed(keyCode, scanCode, modifiers)
 
 	override fun init() {
+		check(this.stack.`is`(ModItems.TOOL_GUN.asItem())) { "Provided ItemStack must be ToolGunItem!" }
 		this.leftPos = (this.width - 256) / 2
 		this.topPos = (this.height - 256) / 2
 
-		this.addTab(ModeSelectTab(this), true)
-		this.addTab(SettingsTab(this), false)
+		this.addTab(ModeSelectTab(this, this.stack), true)
+		this.addTab(SettingsTab(this, this.stack), false)
 		var tabPosition = this.leftPos + 7
 		this.getTabs().forEach {
 			this.addRenderableWidget(it.getTabButton().also { button ->
@@ -83,7 +85,7 @@ class ToolGunScreen(title: Component) : Screen(title) {
 	}
 
 	override fun rebuildWidgets() {
-		val tab = this.getTabByID("mode_select") as? ModeSelectTab ?: return super.rebuildWidgets()
+		val tab = this.getTabs().first { it.id == "mode_select" } as? ModeSelectTab ?: return super.rebuildWidgets()
 		Companion.activeTab = tab
 		super.rebuildWidgets()
 	}

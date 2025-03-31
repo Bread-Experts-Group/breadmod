@@ -27,12 +27,14 @@ object BreadModCodecs {
 		RecordCodecBuilder.create { instance ->
 			instance.group(
 				IToolGunMode.CODEC.fieldOf("mode").forGetter(ToolGunData::mode),
-				CompoundTag.CODEC.fieldOf("extra_data").forGetter(ToolGunData::extraData)
+				CompoundTag.CODEC.fieldOf("extra_data").forGetter(ToolGunData::extraData),
+				Codec.INT.fieldOf("index").forGetter(ToolGunData::modeIndex)
 			).apply(instance, ::ToolGunData)
 		}
 	val TOOL_GUN_STREAM_CODEC: StreamCodec<FriendlyByteBuf, ToolGunData> = StreamCodec.composite(
 		IToolGunMode.STREAM_CODEC, ToolGunData::mode,
 		ByteBufCodecs.TRUSTED_COMPOUND_TAG, ToolGunData::extraData,
+		ByteBufCodecs.VAR_INT, ToolGunData::modeIndex,
 		::ToolGunData
 	)
 	val CLOSED_SYSTEM_CODEC: Codec<ClosedSystem> =

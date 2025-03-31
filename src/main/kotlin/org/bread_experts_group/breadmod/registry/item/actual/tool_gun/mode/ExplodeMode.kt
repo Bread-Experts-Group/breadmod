@@ -14,12 +14,11 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
-import org.bread_experts_group.breadmod.client.render.ToolGunRenderHelper
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
@@ -56,7 +55,7 @@ class ExplodeMode : AbstractToolGunMode() {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("explode_mode")
-	override fun getCustomRenderer(): IToolGunMode.Renderer = ExplodeModeRenderer(this.getUid())
+	override fun getCustomRenderer(): IToolGunModeRenderer = ExplodeModeRenderer(this.getUid())
 
 	class ExplodeModeRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
 		override fun buildModeWidget(): Builder = ModeWidget.Builder()
@@ -71,8 +70,7 @@ class ExplodeMode : AbstractToolGunMode() {
 			poseStack: PoseStack,
 			buffer: MultiBufferSource,
 			packedLight: Int,
-			packedOverlay: Int,
-			helper: ToolGunRenderHelper
+			packedOverlay: Int
 		) {
 			val millis = Util.getMillis()
 			poseStack.pushPose()
@@ -81,7 +79,7 @@ class ExplodeMode : AbstractToolGunMode() {
 			poseStack.translate(0.5, 0.0, 0.5)
 			poseStack.mulPose(Axis.YP.rotationDegrees((millis.toFloat() / 50f) % 360f))
 			poseStack.translate(-0.5, 0.0, -0.5)
-			helper.blockModelRenderer.renderBlockModel(
+			IToolGunModeRenderer.blockModelRenderer.renderBlockModel(
 				poseStack.last(),
 				buffer,
 				Blocks.TNT.defaultBlockState(),
