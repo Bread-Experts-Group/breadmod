@@ -24,8 +24,7 @@ void main() {
     vec3 pos = Position + ChunkOffset;
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 
-    vertexDistance = fog_distance(pos, FogShape);
+    vertexDistance = fog_distance(Position, 1);
     vertexColor = Color * minecraft_sample_lightmap(Sampler2, UV2);
-    // NeoForge UVs.
-    texCoord0 = vec2(UV0.x * 256.0, UV0.y * 256.0);
+    texCoord0 = UV0;
 }

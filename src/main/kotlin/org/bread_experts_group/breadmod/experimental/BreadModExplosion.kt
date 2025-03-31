@@ -42,7 +42,7 @@ object BreadModExplosion {
 		private val simExplosion: Explosion
 	) {
 		fun explode(source: Entity?) {
-			if (this.level.isClientSide) throw IllegalStateException("BreadModExplosion must not be on the client!")
+			check(!this.level.isClientSide) { "BreadModExplosion must not be on the client!" }
 			val random = this.level.random
 			this.level.playSound(
 				null,
@@ -61,9 +61,9 @@ object BreadModExplosion {
 			)
 			val damageSource = this.level.damageSources().explosion(source, source)
 			this.level.gameEvent(source, GameEvent.EXPLODE, this.pos)
-			this.hitEntities.forEach { entity, result ->
-				entity.hurt(damageSource, result.damage)
-				entity.addDeltaMovement(result.knockback)
+			this.hitEntities.forEach { entity, (damage, knockBack) ->
+				entity.hurt(damageSource, damage)
+				entity.addDeltaMovement(knockBack)
 			}
 			this.toDetonate.forEach { blockPos ->
 				this.level

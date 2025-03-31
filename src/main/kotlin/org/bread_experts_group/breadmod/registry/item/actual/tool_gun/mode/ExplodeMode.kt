@@ -48,7 +48,7 @@ class ExplodeMode : AbstractToolGunMode() {
 		if (!level.isClientSide) {
 			val targetBlock = player.rayCast(500, blocks(Blocks.AIR)) ?: return
 			BreadModExplosion
-				.calculate(level, targetBlock.position, 20f)
+				.calculate(level, targetBlock.position.subtract(targetBlock.direction), 20f)
 				.explode(player)
 		}
 	}

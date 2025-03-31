@@ -14,6 +14,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.S
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item.SingleFluidItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
+import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
@@ -69,6 +70,10 @@ object ModBlockEntityTypes {
 	val ENERGY_STORAGE: Supplier<BlockEntityType<EnergyStorageBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("energy_storage_entity") { ->
 			this.buildBlockEntity(::EnergyStorageBlockEntity, ModBlocks.ENERGY_STORAGE.asBlock())
+		}
+	val DOUBLE_OR_NOTHING: Supplier<BlockEntityType<DoubleOrNothingBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("double_or_nothing_entity") { ->
+			this.buildBlockEntity(::DoubleOrNothingBlockEntity, ModBlocks.DOUBLE_OR_NOTHING.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(

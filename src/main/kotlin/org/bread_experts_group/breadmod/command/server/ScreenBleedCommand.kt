@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenB
 
 // todo bugs
 //  setting the timer after the screen bleed already completed does not re-toggle the effect until toggle is ran again
+//  effect moving past it's intended end point on the bottom of the screen
 object ScreenBleedCommand {
 	fun register(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("screenBleed")

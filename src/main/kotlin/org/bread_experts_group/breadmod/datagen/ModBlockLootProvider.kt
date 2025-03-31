@@ -25,6 +25,8 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.FLOUR_BLOCK
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.FLOUR_LAYER_BLOCK
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
+import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.concurrent.CompletableFuture
 
@@ -64,7 +66,6 @@ class ModBlockLootProvider(
 		this.dropSelf(ModBlocks.RICARD_BLOCK.asBlock())
 		this.dropSelf(ModBlocks.UNFUNNYLAD_BLOCK.asBlock())
 		this.dropSelf(ModBlocks.BREAD_FENCE.asBlock())
-		this.dropSelf(ModBlocks.BREAD_DOOR.asBlock())
 		this.dropSelf(ModBlocks.FLUID_ENERGY.asBlock())
 		this.dropSelf(ModBlocks.TOASTER.asBlock())
 		this.dropSelf(ModBlocks.MICROWAVE.asBlock())
@@ -74,6 +75,13 @@ class ModBlockLootProvider(
 		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock(), noDrop())
 		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock(), noDrop())
 		this.add(ModBlocks.JADE_FLUID_TANK.asBlock(), noDrop())
+		val breadDoor = ModBlocks.BREAD_DOOR.asBlock()
+		this.add(breadDoor, this.createDoorTable(breadDoor))
+		val doubleOrNothing = ModBlocks.DOUBLE_OR_NOTHING.asBlock()
+		this.add(
+			doubleOrNothing,
+			this.createSinglePropConditionTable(doubleOrNothing, DoubleOrNothingBlock.HALF, TripleBlockHalf.LOWER)
+		)
 
 		this.add(
 			FLOUR_BLOCK.asBlock(),

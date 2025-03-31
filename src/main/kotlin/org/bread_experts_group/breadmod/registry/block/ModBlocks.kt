@@ -37,6 +37,7 @@ import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_i
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
+import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlammableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
@@ -290,6 +291,13 @@ object ModBlocks {
 				): Boolean = !player.isCreative
 			}
 		},
+		Properties()
+	)
+
+	@DataGenerateLanguage("en_us", "Double or Nothing")
+	val DOUBLE_OR_NOTHING: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"double_or_nothing",
+		::DoubleOrNothingBlock,
 		Properties()
 	)
 

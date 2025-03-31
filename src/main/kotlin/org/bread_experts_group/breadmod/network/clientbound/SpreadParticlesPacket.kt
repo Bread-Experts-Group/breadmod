@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.joml.Vector3f
 
 class SpreadParticlesPacket(
@@ -38,7 +37,7 @@ class SpreadParticlesPacket(
 
 		fun handleClientboundPacket(data: SpreadParticlesPacket, context: IPayloadContext) {
 			context.enqueueWork {
-				localClient.level?.let {
+				context.player().level().let {
 					if (data.level != it.dimension().location().toString()) return@let
 					val random = it.random
 					repeat(data.count) { _ ->

@@ -38,6 +38,7 @@ import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
@@ -144,6 +145,7 @@ internal object ClientModEventBus {
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get(), ::MonitorRenderer)
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(), ::DoubleOrNothingRenderer)
 	}
 
 	@SubscribeEvent

@@ -17,7 +17,11 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
+import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.MIDDLE
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.UPPER
 
 class ModBlockStateProvider(
 	packOutput: PackOutput,
@@ -43,7 +47,7 @@ class ModBlockStateProvider(
 		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock())
 		this.blockWithItem(ModBlocks.JADE_FLUID_TANK.asBlock())
 
-		this.horizontalBlock(ModBlocks.MONITOR.get().block) {
+		this.horizontalBlock(ModBlocks.MONITOR.asBlock()) {
 			val name = "breadmod:block/monitor"
 			val model = this.models().cube(
 				name,
@@ -58,7 +62,7 @@ class ModBlockStateProvider(
 			return@horizontalBlock model
 		}
 		this.simpleBlockItem(
-			ModBlocks.MONITOR.get().block,
+			ModBlocks.MONITOR.asBlock(),
 			this.models().getBuilder("breadmod:block/monitor")
 		)
 
@@ -78,14 +82,14 @@ class ModBlockStateProvider(
 			this.models().getBuilder("breadmod:block/sound_block")
 		)
 
-		this.getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.get().block).forAllStates { state ->
+		this.getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.asBlock()).forAllStates { state ->
 			val layer = state.getValue(BlockStateProperties.LAYERS)
 			ConfiguredModel.builder()
 				.modelFile(
 					this.models().getBuilder("breadmod:block/flour_layer_${layer}")
 						.parent(
 							this.models().withExistingParent(
-								ModBlocks.getLocation(ModBlocks.FLOUR_LAYER_BLOCK.get().block).path,
+								ModBlocks.getLocation(ModBlocks.FLOUR_LAYER_BLOCK.asBlock()).path,
 								this.mcLoc("${ModelProvider.BLOCK_FOLDER}/thin_block")
 							)
 						)
@@ -212,9 +216,21 @@ class ModBlockStateProvider(
 		}
 
 		this.simpleBlockItem(
-			ModBlocks.HELL_NAW_BUTTON.get().block,
+			ModBlocks.HELL_NAW_BUTTON.asBlock(),
 			this.models().getBuilder("breadmod:block/hell_naw_button")
 		)
+		// Double or Nothing
+		this.horizontalBlock(ModBlocks.DOUBLE_OR_NOTHING.asBlock()) { state ->
+			val half = state.getValue(DoubleOrNothingBlock.HALF)
+			val segment = when (half) {
+				UPPER  -> "upper"
+				MIDDLE -> "middle"
+				LOWER  -> "lower"
+				else   -> ""
+			}
+			val model = this.blockBenchBlockModel("double_or_nothing_$segment")
+			return@horizontalBlock model
+		}
 	}
 
 	private fun blockWithItem(blockRegistryObject: Block) {
