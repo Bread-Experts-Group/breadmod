@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
+import java.util.function.Consumer
 
 /**
  * Container for holding "sub" widgets.
@@ -78,48 +79,45 @@ open class ContainerWidget<T : Screen>(
 
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
-		if (this.isHoveredOrFocused) {
-			return this.getWidgets().any { widget ->
-				widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button).also {
-					if (it) this.screen.focused = widget
-				}
+		return this.getWidgets().any { widget ->
+			widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button).also {
+				if (it) this.screen.focused = widget
 			}
 		}
-		return super.mouseClicked(mouseX, mouseY, button)
 	}
+
+	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		if (!this.active) return false
+		return this.getWidgets().any { it.keyPressed(keyCode, scanCode, modifiers) }
+	}
+
+	override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+		if (!this.active) return false
+		return this.getWidgets().any { it.keyReleased(keyCode, scanCode, modifiers) }
+	}
+
+	override fun visitWidgets(consumer: Consumer<AbstractWidget>): Unit = this.getWidgets().forEach(consumer)
 
 	override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
-		if (this.isHoveredOrFocused) return this.getWidgets().any {
-			it.isHoveredOrFocused && it.mouseReleased(
-				mouseX,
-				mouseY,
-				button
-			)
-		}
-		return super.mouseReleased(mouseX, mouseY, button)
+		return this.getWidgets().any { it.mouseReleased(mouseX, mouseY, button) }
 	}
 
 	override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
 		if (!this.active) return false
-		if (this.isHoveredOrFocused)
-			return this.getWidgets()
-				.any { it.isHoveredOrFocused && it.mouseDragged(mouseX, mouseY, button, dragX, dragY) }
-
-		return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
+		return this.getWidgets().any { it.mouseDragged(mouseX, mouseY, button, dragX, dragY) }
 	}
 
-	override fun mouseMoved(mouseX: Double, mouseY: Double): Unit = this.subWidgets.values
-		.firstOrNull()
-		?.let { if (it.isHoveredOrFocused) it.mouseMoved(mouseX, mouseY) else super.mouseMoved(mouseX, mouseY) }
-		?: super.mouseMoved(mouseX, mouseY)
+	override fun mouseMoved(mouseX: Double, mouseY: Double) {
+		if (!this.active) return
+		this.getWidgets().any { widget ->
+			widget.isHoveredOrFocused.also { if (it) widget.mouseMoved(mouseX, mouseY) }
+		}
+	}
 
 	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
 		if (!this.active) return false
-		if (this.isHoveredOrFocused)
-			return this.getWidgets().any { it.isHoveredOrFocused && it.mouseScrolled(mouseX, mouseY, scrollX, scrollY) }
-
-		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
+		return this.getWidgets().any { it.isHoveredOrFocused && it.mouseScrolled(mouseX, mouseY, scrollX, scrollY) }
 	}
 
 	override fun setPosition(x: Int, y: Int) {
@@ -129,15 +127,11 @@ open class ContainerWidget<T : Screen>(
 
 	override fun charTyped(codePoint: Char, modifiers: Int): Boolean {
 		if (!this.active) return false
-		if (this.isHoveredOrFocused)
-			return this.getWidgets().any { it.isHoveredOrFocused && it.charTyped(codePoint, modifiers) }
-		return super.charTyped(codePoint, modifiers)
+		return this.getWidgets().any { it.isHoveredOrFocused && it.charTyped(codePoint, modifiers) }
 	}
 
 	override fun isMouseOver(mouseX: Double, mouseY: Double): Boolean {
-		if (this.isHovered) this.getWidgets().any { return it.isMouseOver(mouseX, mouseY) }
-
-		return super.isMouseOver(mouseX, mouseY)
+		return this.getWidgets().any { it.isMouseOver(mouseX, mouseY) }
 	}
 
 	fun addChild(

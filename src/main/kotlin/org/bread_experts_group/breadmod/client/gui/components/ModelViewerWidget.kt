@@ -121,15 +121,13 @@ class ModelViewerWidget(
 
 		private var flag = false
 		override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
-			if (this.isHoveredOrFocused && (this.isMouseOverPreview(mouseX, mouseY) || this.flag)
-				&& this.isValidClickButton(button)
+			return if ((this.isMouseOverPreview(mouseX, mouseY) || this.flag) && this.isValidClickButton(button)
 			) {
 				this.flag = true
 				Companion.xRot -= dragX.toFloat()
 				Companion.yRot -= dragY.toFloat()
-				return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
-			}
-			return super.mouseDragged(mouseX, mouseY, button, dragX, dragY)
+				true
+			} else false
 		}
 
 		override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {

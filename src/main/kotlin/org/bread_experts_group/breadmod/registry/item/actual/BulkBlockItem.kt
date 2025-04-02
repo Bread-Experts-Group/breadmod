@@ -44,8 +44,11 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 	private var secondPos: BlockPos? = null
 	private val blockMap: MutableMap<Vec3, BlockData> = mutableMapOf()
 	private val fluidMap: MutableMap<Vec3, FluidData> = mutableMapOf()
-	private var blockData: BulkBlockData? = null
 	private var clearFlag = false
+
+	companion object {
+		var blockData: BulkBlockData? = null
+	}
 
 	override fun useOn(context: UseOnContext): InteractionResult {
 		val player = context.player ?: return super.useOn(context)
@@ -70,7 +73,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			this.firstPos = null
 			this.secondPos = null
 			this.clearFlag = false
-			this.blockData = null
+			Companion.blockData = null
 			player.sendSystemMessage(Component.literal("data cleared"))
 		} else if (this.firstPos != null && this.secondPos != null && !player.isShiftKeyDown && !this.clearFlag) {
 			val first = this.firstPos!!
@@ -140,7 +143,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			}
 			player.sendSystemMessage(Component.literal("block map created"))
 			val center = this.firstPos!!.toVec3().div(2.0) - this.secondPos!!.toVec3().div(2.0)
-			this.blockData = BulkBlockData(this.blockMap, this.fluidMap, center, level)
+			Companion.blockData = BulkBlockData(this.blockMap, this.fluidMap, center, level)
 			this.clearFlag = true
 		}
 		return InteractionResultHolder.sidedSuccess(getStackInPlayerHand(player), level.isClientSide)
@@ -149,8 +152,8 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
 		if (mouseEvent.action == InputConstants.PRESS) {
 			if (mouseEvent.button == InputConstants.MOUSE_BUTTON_MIDDLE) {
-				BulkBlockBufferTask.create(player.position(), this.blockData ?: return)
-				player.sendSystemMessage(Component.literal("renderer created (${this.blockData!!.blocks.size})"))
+				BulkBlockBufferTask.create(player.position(), Companion.blockData ?: return)
+				player.sendSystemMessage(Component.literal("renderer created (${Companion.blockData!!.blocks.size})"))
 			}
 		}
 	}

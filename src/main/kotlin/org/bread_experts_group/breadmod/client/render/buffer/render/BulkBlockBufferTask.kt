@@ -44,12 +44,22 @@ object BulkBlockBufferTask {
 				val camera = event.camera
 				val level = localClient.level ?: return@add true
 				val frustum = event.frustum
+				val player = localClient.player ?: return@add true
 
-				if (this.shouldRender(camera.position, originPos)) {
+				if (this.shouldRender(camera.position, blockData.aabbCenter)) {
 					poseStack.pushPose()
 					poseStack.offsetRenderToCameraPos(originPos, camera, false)
 					blockData.blocks.forEach { (offset, data) ->
 						val proximal = BlockPos.containing(originPos + offset)
+						if (player.isColliding(proximal.above(), data.state)) {
+							val delta = player.deltaMovement
+							player.setDeltaMovement(delta.x, 0.0, delta.z)
+							player.setPos(
+								player.x,
+								proximal.y.toDouble() + 1.2,
+								player.z
+							)
+						}
 						if (!frustum.isVisible(AABB(proximal).inflate(0.7))) return@forEach
 						val (state, packedLight, blockEntityData, _) = data
 						poseStack.pushPose()
