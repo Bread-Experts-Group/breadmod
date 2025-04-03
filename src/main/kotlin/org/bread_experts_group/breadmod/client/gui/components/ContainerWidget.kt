@@ -13,14 +13,11 @@ import java.awt.Color
 import java.util.function.Consumer
 
 /**
- * Container for holding "sub" widgets.
+ * Container for holding "sub" or "child" widgets.
  *
  * All actions of this [ContainerWidget] are delegated to its children.
  *
  * Interactions with this [ContainerWidget] itself are not possible.
- *
- * TODO: mouseClicked would need it's logic adjusted to allow clicking on this [ContainerWidget],
- *   while also preserving child logic
  */
 open class ContainerWidget<T : Screen>(
 	x: Int,
@@ -34,12 +31,14 @@ open class ContainerWidget<T : Screen>(
 	private val subWidgets: MutableMap<String, AbstractWidget> = mutableMapOf()
 
 	fun getWidgets(): MutableCollection<AbstractWidget> = this.subWidgets.values
-	fun getContainerWidgets(): List<ContainerWidget<*>> = this.getWidgets().filterIsInstance<ContainerWidget<*>>()
-	fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
+	private fun getContainerWidgets(): List<ContainerWidget<*>> =
+		this.getWidgets().filterIsInstance<ContainerWidget<*>>()
 
-	open fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {}
+	private fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
 
-	final override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+	protected open fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {}
+
+	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		if (this.visible) {
 			if (this.debug) guiGraphics.borderedFill(
 				RenderType.gui(),
@@ -131,7 +130,8 @@ open class ContainerWidget<T : Screen>(
 	}
 
 	override fun isMouseOver(mouseX: Double, mouseY: Double): Boolean {
-		return this.getWidgets().any { it.isMouseOver(mouseX, mouseY) }
+		return if (this.getWidgets().any { it.isMouseOver(mouseX, mouseY) }) true
+		else super.isMouseOver(mouseX, mouseY)
 	}
 
 	fun addChild(
