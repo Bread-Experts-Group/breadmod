@@ -23,9 +23,9 @@ import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
+import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket.Companion.BlockData
+import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket.Companion.BulkBlockData
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
-import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem.BulkBlockData
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
@@ -139,7 +139,7 @@ object BulkBlockBufferTask {
 	}
 
 	fun tessellateBlockTest(
-		data: BulkBlockItem.BlockData,
+		data: BlockData,
 		pos: BlockPos,
 		level: BlockAndTintGetter,
 		poseStack: PoseStack

@@ -29,6 +29,7 @@ import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
+import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSet
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSynchronization
@@ -37,6 +38,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
+import org.bread_experts_group.breadmod.network.serverbound.PhysicsGridRequestPacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
@@ -175,6 +177,11 @@ internal object CommonModEventBus {
 			SpreadParticlesPacket.STREAM_CODEC,
 			SpreadParticlesPacket::handleClientboundPacket
 		)
+		registrar.playToClient(
+			PhysicsGridPacket.TYPE,
+			PhysicsGridPacket.STREAM_CODEC,
+			PhysicsGridPacket::handleClientboundPacket
+		)
 		registrar.playToServer(
 			ToolGunModeChangePacket.TYPE,
 			ToolGunModeChangePacket.STREAM_CODEC,
@@ -189,6 +196,11 @@ internal object CommonModEventBus {
 			PlaceItemInWorldPacket.TYPE,
 			PlaceItemInWorldPacket.STREAM_CODEC,
 			PlaceItemInWorldPacket::handleServerboundPacket
+		)
+		registrar.playToServer(
+			PhysicsGridRequestPacket.TYPE,
+			PhysicsGridRequestPacket.STREAM_CODEC,
+			PhysicsGridRequestPacket::handleServerboundPacket
 		)
 //		registrar.playToServer(
 //			ComputerKeystrokePacket.TYPE,

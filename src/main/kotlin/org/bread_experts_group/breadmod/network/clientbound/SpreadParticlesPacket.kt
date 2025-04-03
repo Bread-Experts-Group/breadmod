@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.joml.Vector3f
 
-class SpreadParticlesPacket(
+class SpreadParticlesPacket private constructor(
 	val level: String,
 	val particleType: ParticleOptions,
 	val position: Vector3f,
