@@ -1,21 +1,22 @@
 package org.bread_experts_group.breadmod.experimental.particle
 
+import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Rarity.RARE
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.experimental.particle.Isotopes
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.pow
 
-object RadioactiveMaterial : Item(Properties()) {
-	fun getClosedSystem(stack: ItemStack): ClosedSystem = stack.getOrDefault(
+object RadioactiveMaterial : Item(Properties().rarity(RARE)) {
+	private fun getClosedSystem(stack: ItemStack): ClosedSystem = stack.getOrDefault(
 		ModDataComponents.CLOSED_SYSTEM,
 		ClosedSystem(
 			BigDecimal.ZERO,
@@ -26,7 +27,6 @@ object RadioactiveMaterial : Item(Properties()) {
 	)
 
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
-		if (level.isClientSide) return
 		val system = this.getClosedSystem(stack)
 		for ((isotope, atoms) in system.substances) {
 			if (isotope.halfLifeSeconds == null || atoms <= BigInteger.ZERO) continue
@@ -61,10 +61,11 @@ object RadioactiveMaterial : Item(Properties()) {
 			modTranslatable(
 				"item", "radioactive_material",
 				"energy", args = listOf(system.energy)
-			)
+			).withStyle(ChatFormatting.RED)
 		)
 		tooltipComponents.add(Component.empty())
 		system.substances.forEach { (isotope, atoms) ->
+			if (atoms <= BigInteger.ZERO) return@forEach
 			tooltipComponents.add(Component.literal("${isotope.getTag()}: $atoms atoms"))
 		}
 		tooltipComponents.add(Component.empty())
@@ -72,7 +73,7 @@ object RadioactiveMaterial : Item(Properties()) {
 			modTranslatable(
 				"item", "radioactive_material",
 				"total_energy", args = listOf(system.calculateEnergy())
-			)
+			).withStyle(ChatFormatting.GREEN)
 		)
 	}
 }
