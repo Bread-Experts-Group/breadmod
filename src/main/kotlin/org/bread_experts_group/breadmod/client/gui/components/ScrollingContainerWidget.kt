@@ -9,7 +9,6 @@ import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
-import java.lang.Math.clamp
 import kotlin.math.max
 
 open class ScrollingContainerWidget<T : Screen>(

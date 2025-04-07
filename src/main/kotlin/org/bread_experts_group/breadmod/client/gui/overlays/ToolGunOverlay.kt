@@ -34,7 +34,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		val handStack = getStackInPlayerHand(localClient.player)
 
 		if (!localClient.options.hideGui && handStack.item is ToolGunItem) {
-			val (currentMode, _) = handStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
+			val (currentMode, _, _) = handStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
 			this.renderMode(currentMode, currentMode.getUid().namespace, guiGraphics, poseStack, x, y)

@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.client.render.buffer.render
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
-import net.minecraft.world.item.ItemDisplayContext.NONE
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
@@ -11,10 +10,6 @@ import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
-import org.bread_experts_group.breadmod.client.render.renderBlockModel
-import org.bread_experts_group.breadmod.client.render.renderItemModel
-import org.bread_experts_group.breadmod.client.render.translate
-import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 
 object BeamBufferTask {
 	var xOffset = 0.0

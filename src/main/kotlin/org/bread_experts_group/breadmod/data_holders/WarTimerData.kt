@@ -5,7 +5,6 @@ import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.registry.ModDamageType
-import org.bread_experts_group.breadmod.registry.ModDamageType.Companion
 
 data class WarTimerData(
 	var timeLeft: Int = 30,
