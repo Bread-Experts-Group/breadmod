@@ -28,7 +28,7 @@ import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.entities

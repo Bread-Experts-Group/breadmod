@@ -2,9 +2,10 @@ package org.bread_experts_group.breadmod.client.render.buffer.render
 
 import com.mojang.authlib.GameProfile
 import com.mojang.math.Axis
+import net.minecraft.client.renderer.entity.player.PlayerRenderer
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import org.bread_experts_group.breadmod.client.model.MachTrailModel
-import org.bread_experts_group.breadmod.registry.MachTrailData
+import org.bread_experts_group.breadmod.data_holders.MachTrailData
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color

@@ -9,7 +9,7 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import java.math.BigDecimal
 
 object BreadModCodecs {

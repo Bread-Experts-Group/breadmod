@@ -5,6 +5,7 @@ import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.localClient
 
 class MachSoundInstance(
@@ -15,13 +16,20 @@ class MachSoundInstance(
 ) : AbstractTickableSoundInstance(soundEvent, SoundSource.AMBIENT, SoundInstance.createUnseededRandom()) {
 	private var stopped = false
 	var shouldLoop: Boolean = false
+	var kill: Boolean = false
 
 	init {
 		this.delay = 0
 	}
 
 	override fun tick() {
+		if (this.kill) {
+			this.stop()
+			this.volume = 0f
+			return
+		}
 		val currentPlayer = this.player ?: localClient.player ?: return
+		LogManager.getLogger().warn("ticking sound instance")
 		if (!currentPlayer.isRemoved && this.timer in this.range && !this.stopped) {
 			this.stopped = false
 			this.looping = true

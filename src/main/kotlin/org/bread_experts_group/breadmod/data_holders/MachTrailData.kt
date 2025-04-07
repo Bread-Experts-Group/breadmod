@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry
+package org.bread_experts_group.breadmod.data_holders
 
 import com.mojang.authlib.GameProfile
 import net.minecraft.world.entity.player.Player

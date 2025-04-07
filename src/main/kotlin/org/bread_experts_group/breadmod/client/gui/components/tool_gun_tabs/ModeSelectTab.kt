@@ -14,7 +14,7 @@ import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import java.awt.Color
 
 class ModeSelectTab(

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.item.actual.tool_gun
+package org.bread_experts_group.breadmod.data_holders
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack

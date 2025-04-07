@@ -3,21 +3,30 @@ package org.bread_experts_group.breadmod.client.render.buffer.render
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
+import net.minecraft.world.item.ItemDisplayContext.NONE
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
+import org.bread_experts_group.breadmod.client.render.renderBlockModel
+import org.bread_experts_group.breadmod.client.render.renderItemModel
+import org.bread_experts_group.breadmod.client.render.translate
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 
 object BeamBufferTask {
-	fun create(initialPos: Vec3, direction: Vec3, isFirstPerson: Boolean) {
-		val level = localClient.level ?: return
+	var xOffset = 0.0
+	var yOffset = 0.0
+	var zOffset = 0.0
+	var rotationEnabled = false
+	var usePlayerRot = false
+	fun create(initialPos: Vec3, yRot: Float, xRot: Float, isFirstPerson: Boolean) {
 		val player = localClient.player ?: return
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
-		val yRot = player.getViewYRot(0f)
-		val xRot = player.getViewXRot(0f)
+		val axisModel = localClient.modelManager.getModel(modelLocation("block/axis"))
 
 		RenderBuffer.add(
 			Stage.AFTER_SOLID_BLOCKS,
@@ -26,16 +35,37 @@ object BeamBufferTask {
 				val poseStack = event.poseStack
 				val partialTick = event.partialTick.gameTimeDeltaTicks
 				val opacity = passthrough[0] as Float
+				val pyRot = player.getViewYRot(partialTick)
+				val pxRot = player.getViewXRot(partialTick)
 
 				if (opacity > 0f) {
 					poseStack.pushPose()
-					poseStack.offsetRenderToCameraPos(initialPos, camera)
-					poseStack.translate(0.0 + 0.5, 1.07 + 0.5, -0.07 + 0.5)
-					poseStack.mulPose(Axis.YN.rotationDegrees(yRot + 90f))
-					poseStack.mulPose(Axis.ZN.rotationDegrees(xRot))
-					poseStack.translate(0.0 - 0.5, -1.07 - 0.5, 0.07 - 0.5)
-					poseStack.translate(0.9, 1.52, 0.52)
+					poseStack.offsetRenderToCameraPos(initialPos, camera, false)
+					poseStack.translate(this.xOffset, this.yOffset, this.zOffset)
+					if (this.rotationEnabled) {
+						if (!usePlayerRot) {
+							poseStack.mulPose(Axis.YN.rotationDegrees(yRot + 90f))
+							poseStack.mulPose(Axis.ZN.rotationDegrees(xRot))
+						} else {
+							poseStack.mulPose(Axis.YN.rotationDegrees(pyRot + 90f))
+							poseStack.mulPose(Axis.ZN.rotationDegrees(pxRot))
+						}
+					}
+					poseStack.translate(-this.xOffset, -this.yOffset, -this.zOffset)
+					poseStack.translate(this.xOffset, this.yOffset, this.zOffset)
+					blockRenderer.modelRenderer.renderModel(
+						poseStack.last(),
+						bufferSource.getBuffer(RenderType.translucent()),
+						Blocks.AIR.defaultBlockState(),
+						axisModel,
+						1f,
+						1f,
+						1f,
+						15728880,
+						NO_OVERLAY
+					)
 					poseStack.scale(20f, 0.1f, 0.1f)
+					poseStack.translate(0.0, -0.5, -0.5)
 					blockRenderer.renderSingleBlock(
 						Blocks.LIGHT_BLUE_STAINED_GLASS.defaultBlockState(),
 						poseStack,

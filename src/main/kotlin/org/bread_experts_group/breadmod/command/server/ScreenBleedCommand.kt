@@ -8,7 +8,7 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.ScreenBleedData
+import org.bread_experts_group.breadmod.data_holders.ScreenBleedData
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.screenBleedMap
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSet
 import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedToggle

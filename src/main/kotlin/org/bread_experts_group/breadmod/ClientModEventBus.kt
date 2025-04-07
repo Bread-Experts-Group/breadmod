@@ -64,7 +64,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
@@ -192,14 +192,15 @@ internal object ClientModEventBus {
 		event.register(this.modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate"))
+		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/axis"))
 	}
 
 	@SubscribeEvent
 	fun registerEntityLayers(event: EntityRenderersEvent.AddLayers) {
 		for (skin: PlayerSkin.Model in event.skins) {
-			val entity: LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>? = event.getSkin(skin)
-			entity?.addLayer(ChefHatArmorLayer(entity))
-			entity?.addLayer(GluonGunBackpackArmorLayer(entity))
+			val entity: LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>> = event.getSkin(skin) ?: return
+			entity.addLayer(ChefHatArmorLayer(entity))
+			entity.addLayer(GluonGunBackpackArmorLayer(entity))
 		}
 //        addHatLayer(EntityType.ZOMBIE, event)
 		this.addHatLayer(EntityType.ARMOR_STAND, event)

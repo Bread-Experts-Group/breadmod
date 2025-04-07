@@ -31,6 +31,8 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
+import org.bread_experts_group.breadmod.client.render.buffer.render.BeamBufferTask
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -61,6 +63,15 @@ class ToolGunItem : Item(
 			mode.action(level, player, stack)
 			if (level.isClientSide) {
 				triggerDelta(stack.hashCode())
+//				ToolGunItemRenderer.offset = player.position()
+//				ToolGunItemRenderer.yRot = player.getViewYRot(0f)
+//				ToolGunItemRenderer.xRot = player.getViewYRot(0f)
+				BeamBufferTask.create(
+					player.position(),
+					player.getViewYRot(0f),
+					player.getViewXRot(0f),
+					localClient.options.cameraType.isFirstPerson
+				)
 				if (mode.shouldPlayToolGunSound(stack, player)) mode.playToolGunSound(player)
 			}
 		}
@@ -130,6 +141,21 @@ class ToolGunItem : Item(
 		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {
 			TestCubeBufferTask.create(player.position())
 		}
+		if (keyEvent.action == InputConstants.PRESS)
+			when (keyEvent.key) {
+				InputConstants.KEY_NUMPAD8 -> BeamBufferTask.yOffset += 0.01
+				InputConstants.KEY_NUMPAD5 -> BeamBufferTask.yOffset -= 0.01
+				InputConstants.KEY_NUMPAD4 -> BeamBufferTask.zOffset -= 0.01
+				InputConstants.KEY_NUMPAD6 -> BeamBufferTask.zOffset += 0.01
+				InputConstants.KEY_NUMPAD7 -> BeamBufferTask.xOffset -= 0.01
+				InputConstants.KEY_NUMPAD9 -> BeamBufferTask.xOffset += 0.01
+				InputConstants.KEY_NUMPADENTER -> BeamBufferTask.rotationEnabled = !BeamBufferTask.rotationEnabled
+				InputConstants.KEY_MULTIPLY -> BeamBufferTask.usePlayerRot = !BeamBufferTask.usePlayerRot
+			}
+//		player.displayClientMessage(
+//			Component.literal("x: ${BeamBufferTask.xOffset}, y: ${BeamBufferTask.yOffset}, z: ${BeamBufferTask.zOffset}, rotating: ${BeamBufferTask.rotationEnabled}, usingPlayerRot: ${BeamBufferTask.usePlayerRot}"),
+//			true
+//		)
 	}
 
 	override fun appendHoverText(

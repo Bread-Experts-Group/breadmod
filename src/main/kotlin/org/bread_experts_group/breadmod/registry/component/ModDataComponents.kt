@@ -13,7 +13,8 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_STREAM_CODEC
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import org.bread_experts_group.breadmod.data_holders.MachSpeedData
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import java.math.BigDecimal
 import java.util.function.Supplier
 
@@ -42,6 +43,11 @@ object ModDataComponents {
 		"closed_system", DataComponentType.builder<ClosedSystem>()
 			.persistent(CLOSED_SYSTEM_CODEC)
 			.networkSynchronized(CLOSED_SYSTEM_STREAM_CODEC)
+			.cacheEncoding()::build
+	)
+	val MACH_SPEED: Supplier<DataComponentType<MachSpeedData>> = this.DATA_COMPONENT_REGISTRY.register(
+		"mach_speed", DataComponentType.builder<MachSpeedData>()
+			.networkSynchronized(MachSpeedData.STREAM_CODEC)
 			.cacheEncoding()::build
 	)
 }

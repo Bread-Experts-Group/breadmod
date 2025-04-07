@@ -9,6 +9,7 @@ import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
+import java.lang.Math.clamp
 import kotlin.math.max
 
 open class ScrollingContainerWidget<T : Screen>(
@@ -20,19 +21,16 @@ open class ScrollingContainerWidget<T : Screen>(
 	screen: T
 ) : ContainerWidget<T>(x, y, width, height, id, screen) {
 	private var scrollAmount: Double = 0.0
+		set(value) {
+			field = Mth.clamp(value, 0.0, this.getMaxScrollAmount().toDouble())
+		}
 	var scrolling: Boolean = false
 
 	override fun init() {
-		this.addChild("test", GenericButton(this.x + 5, this.y + 25, 15, 15, "x") {})
+		this.addChild("test", GenericButton(this.x + 5, this.y + 80, 15, 15, "x") {})
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		val scrollY = mouseY - this.scrollAmount
-		this.isHovered = guiGraphics.containsPointInScissor(mouseX, scrollY.toInt()) &&
-				mouseX >= this.x &&
-				scrollY >= this.y &&
-				mouseX < this.x + this.width &&
-				scrollY < this.y + this.height
 		val poseStack = guiGraphics.pose()
 		if (this.visible) {
 			if (this.debug) guiGraphics.borderedFill(
@@ -57,10 +55,6 @@ open class ScrollingContainerWidget<T : Screen>(
 		}
 	}
 
-	override fun isMouseOver(mouseX: Double, mouseY: Double): Boolean {
-		return super.isMouseOver(mouseX, mouseY - this.scrollAmount)
-	}
-
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		LogManager.getLogger().info("clicked")
 		return super.mouseClicked(mouseX, mouseY, button)
@@ -74,15 +68,17 @@ open class ScrollingContainerWidget<T : Screen>(
 	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused) {
-			this.setScrollAmount(this.scrollAmount - scrollY * this.scrollRate())
-			// todo impl child widget movement after scrolling here
+			val scrollDirection = scrollY * this.scrollRate()
+			this.scrollAmount -= scrollDirection
+			this.getWidgets().forEach { widget ->
+				if (this.scrollAmount != 0.0 && this.scrollAmount < this.getMaxScrollAmount())
+					widget.y += scrollDirection.toInt()
+				LogManager.getLogger()
+					.info("${widget.x}, ${widget.y}, ${this.getMaxScrollAmount()}, ${this.scrollAmount}")
+			}
 			return true
 		}
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
-	}
-
-	private fun setScrollAmount(scrollAmount: Double) {
-		this.scrollAmount = Mth.clamp(scrollAmount, 0.0, this.getMaxScrollAmount().toDouble())
 	}
 
 	private fun getMaxScrollAmount(): Int = max(0.0, (this.getContentHeight() - (this.height - 4)).toDouble()).toInt()

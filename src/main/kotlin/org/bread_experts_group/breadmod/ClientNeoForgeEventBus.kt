@@ -15,12 +15,12 @@ import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.SubscribeEvent
 import net.neoforged.fml.common.EventBusSubscriber
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.event.ScreenEvent
-import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
@@ -158,7 +158,7 @@ internal object ClientNeoForgeEventBus {
 	}
 
 	@SubscribeEvent
-	fun login(event: PlayerEvent.PlayerLoggedInEvent) {
+	fun login(event: ClientPlayerNetworkEvent.LoggingIn) {
 		loadToolGunModes()
 	}
 
@@ -167,10 +167,11 @@ internal object ClientNeoForgeEventBus {
 		if (machTrailMap.isNotEmpty()) {
 			machTrailMap.forEach { (_, machTrailData) ->
 				machTrailData.tick()
-				if (!machTrailData.player.isSprinting) {
-					machTrailData.machFourSound.shouldLoop = false
+				if (!machTrailData.player.isSprinting || machTrailData.player.attackAnim > 0f) {
+					machTrailData.machFourSound.kill = true
 					localClient.soundManager.stop(machTrailData.machFourSound)
 					machTrailMap.remove(machTrailData.playerProfile)
+					return
 				}
 			}
 		}

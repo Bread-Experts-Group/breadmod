@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.sett
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.RENDERER
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunData
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 
 class RendererEntry(
 	screen: ToolGunScreen,

@@ -9,8 +9,8 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.warTimerMap
+import org.bread_experts_group.breadmod.data_holders.WarTimerData
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
@@ -27,7 +27,7 @@ internal object WarTimerCommand {
 			)
 
 	private fun reset(player: ServerPlayer) {
-		warTimerMap[player] = CommonNeoForgeEventBus.WarTimerData()
+		warTimerMap[player] = WarTimerData()
 		PacketDistributor.sendToPlayer(player, WarTimerToggle(true))
 	}
 
@@ -45,12 +45,12 @@ internal object WarTimerCommand {
 				Command.SINGLE_SUCCESS
 			}
 
-	fun increaseTime(player: ServerPlayer, data: CommonNeoForgeEventBus.WarTimerData, amount: Int) {
+	fun increaseTime(player: ServerPlayer, data: WarTimerData, amount: Int) {
 		data.increaseTime += amount
 		PacketDistributor.sendToPlayer(player, WarTimerIncrement(true, data.increaseTime))
 	}
 
-	private fun setTime(player: ServerPlayer, data: CommonNeoForgeEventBus.WarTimerData, amount: Int) {
+	private fun setTime(player: ServerPlayer, data: WarTimerData, amount: Int) {
 		data.timeLeft = amount
 		data.ticker = 70
 		PacketDistributor.sendToPlayer(player, WarTimerSet(amount))
