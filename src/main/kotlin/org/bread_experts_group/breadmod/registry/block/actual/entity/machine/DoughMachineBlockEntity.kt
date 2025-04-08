@@ -45,12 +45,12 @@ class DoughMachineBlockEntity(
 	)
 
 	override fun commonTick(
-		clientLevel: Level,
+		level: Level,
 		pos: BlockPos,
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
 	) {
-		super.commonTick(clientLevel, pos, state, entity)
+		super.commonTick(level, pos, state, entity)
 	}
 
 	override fun finalizeRecipe(recipe: DoughMachineRecipe, level: Level) {

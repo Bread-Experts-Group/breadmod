@@ -130,12 +130,12 @@ dependencies {
     runtimeOnly("mezz.jei:jei-1.21.1-neoforge:19.10.0.126")
 
     // Mekanism
-//    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
-//
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}")
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}:additions")
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}:generators")
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}:tools")
+    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+
+    runtimeOnly("mekanism:Mekanism:${mekanism_version}")
+    runtimeOnly("mekanism:Mekanism:${mekanism_version}:additions")
+    runtimeOnly("mekanism:Mekanism:${mekanism_version}:generators")
+    runtimeOnly("mekanism:Mekanism:${mekanism_version}:tools")
 
     // Create
 //    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }

@@ -21,7 +21,7 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	pos: BlockPos,
 	state: BlockState
 ) : AbstractTickingBlockEntity<T>(type, pos, state) {
-	protected fun updateClients() {
+	private fun updateClients() {
 		this.setChanged()
 		this@BreadModBlockEntity.level?.sendBlockUpdated(
 			this@BreadModBlockEntity.blockPos,

@@ -33,7 +33,6 @@ class ColorMode : AbstractToolGunMode() {
 	}
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
-		println("todo...")
 	}
 
 	override fun getDisplayName(): Component = Companion.displayName

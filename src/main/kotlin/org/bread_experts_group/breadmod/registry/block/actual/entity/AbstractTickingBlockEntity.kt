@@ -12,7 +12,7 @@ abstract class AbstractTickingBlockEntity<T : AbstractTickingBlockEntity<T>>(
 	blockState: BlockState
 ) : BlockEntity(type, pos, blockState) {
 	open fun commonTick(
-		clientLevel: Level,
+		level: Level,
 		pos: BlockPos,
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>

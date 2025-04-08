@@ -41,7 +41,7 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	/**
 	 * Resets the current recipe.
 	 */
-	open fun resetRecipe() {
+	open fun resetRecipe(level: Level) {
 		this.currentRecipe = Optional.empty()
 		this.maxProgress = 0; this.progress = 0
 	}

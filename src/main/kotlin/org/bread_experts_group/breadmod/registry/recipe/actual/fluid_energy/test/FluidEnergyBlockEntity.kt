@@ -81,7 +81,7 @@ class FluidEnergyBlockEntity(
 
 	override fun getDisplayName(): Component = Component.literal("Fluid Energy Recipe")
 	override fun commonTick(
-		clientLevel: Level,
+		level: Level,
 		pos: BlockPos,
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
@@ -90,7 +90,7 @@ class FluidEnergyBlockEntity(
 			val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
 			val itemInputs =
 				listOf(this.getItem(0), this.getItem(1), this.getItem(2), this.getItem(3))
-			if (!activeRecipe.inputsStillValid(itemInputs, fluidInputs)) this.resetRecipe()
+			if (!activeRecipe.inputsStillValid(itemInputs, fluidInputs)) this.resetRecipe(level)
 			if (activeRecipe.canFitResults(
 					listOf(this.getItem(4), this.getItem(5), this.getItem(6), this.getItem(7)),
 					listOf(this.getFluid(2), this.getFluid(3)),
@@ -99,10 +99,10 @@ class FluidEnergyBlockEntity(
 			) {
 				val recipeTime = activeRecipe.rTime ?: 0
 				if (this.progress >= recipeTime) {
-					this.finalizeRecipe(activeRecipe, clientLevel)
-					this.resetRecipe()
+					this.finalizeRecipe(activeRecipe, level)
+					this.resetRecipe(level)
 				} else this.progress++
-			} else this.resetRecipe()
+			} else this.resetRecipe(level)
 		}, {
 			val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
 			val itemInputs =
@@ -113,7 +113,7 @@ class FluidEnergyBlockEntity(
 					buildList { itemInputs.forEach { this.add(it.count) } },
 					fluidInputs,
 					buildList { fluidInputs.forEach { this.add(it.amount) } }
-				), clientLevel
+				), level
 			)
 
 			check.ifPresent { present ->

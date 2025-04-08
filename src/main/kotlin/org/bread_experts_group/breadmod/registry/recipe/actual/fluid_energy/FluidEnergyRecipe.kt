@@ -11,6 +11,7 @@ import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.BreadModRecipes
+import kotlin.math.max
 
 typealias FluidEnergyRecipeMulti = FluidEnergyRecipe<FluidEnergyInput>
 
@@ -50,6 +51,8 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 
 	override fun assemble(input: T, registries: HolderLookup.Provider): ItemStack =
 		this.rItemOutputs[0].copyWithCount(this.rItemOutputs[0].count)
+
+	fun assemble(input: T, level: Level): ItemStack = this.assemble(input, level.registryAccess())
 
 	fun assembleFluid(input: T): FluidStack =
 		this.rFluidOutputs[0].copyWithAmount(this.rFluidOutputs[0].amount)
@@ -91,6 +94,18 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 		return fluidList
 	}
 
+	fun setOutputsWithOverflow(items: List<ItemStack>): List<ItemStack> {
+		val resultList: List<ItemStack> = this.consumeItems(items)
+		val slots = items.size
+		this.rItemOutputs.all { rItem ->
+			repeat(slots) {
+				return@all rItem.count <= items[it].count || items[it].isEmpty
+			}
+			false
+		}
+		return listOf()
+	}
+
 	/**
 	 * @return True if both items and fluids are still valid.
 	 */
@@ -103,11 +118,18 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	fun itemsStillValid(items: List<ItemStack>): Boolean =
 		this.rItemInputs.all { rItem -> items.any(rItem::test) }
 
+	fun itemStillValid(stack: ItemStack): Boolean =
+		this.rItemInputs.all { rItem -> rItem.test(stack) }
+
 	/**
 	 * @return True if the input fluids are still valid.
 	 */
 	fun fluidsStillValid(fluids: List<FluidStack>): Boolean =
 		this.rFluidInputs.all { rFluid -> fluids.any(rFluid::test) }
+
+	fun getTime(): Int = this.rTime ?: 0
+
+	fun setEnergyDivision(): Int = (this.rEnergy ?: 0) / max(this.getTime(), 1)
 
 	/**
 	 * @return True if items fit in result slots and fluids fit in result tanks.

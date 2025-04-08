@@ -29,7 +29,7 @@ class ToasterBlockEntity(
 	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1)
 
 	override fun commonTick(
-		clientLevel: Level,
+		level: Level,
 		pos: BlockPos,
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
@@ -37,9 +37,9 @@ class ToasterBlockEntity(
 		if (this.itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
 			this.maxProgress = 60
 			this.progress++
-			if (this.progress == 35) clientLevel.playSound(null, pos, SoundEvents.TNT_PRIMED, BLOCKS)
+			if (this.progress == 35) level.playSound(null, pos, SoundEvents.TNT_PRIMED, BLOCKS)
 			if (this.progress >= 60) {
-				clientLevel.explode(
+				level.explode(
 					null,
 					pos.x.toDouble(),
 					pos.y.toDouble(),
@@ -50,14 +50,14 @@ class ToasterBlockEntity(
 			}
 		} else {
 			this.currentRecipe.ifPresentOrElse({ activeRecipe ->
-				val inputList = listOf(this.getItem(0))
-				if (!activeRecipe.itemsStillValid(inputList)) this.resetRecipe()
-				if (activeRecipe.canFitItemResults(inputList)) {
+				val stack = this.getItem(0)
+				if (!activeRecipe.itemStillValid(stack)) this.resetRecipe(level)
+				if (activeRecipe.canFitItemResults(listOf(stack))) {
 					val recipeTime = activeRecipe.rTime ?: 0
 					if (this.progress >= recipeTime) {
-						this.finalizeRecipe(activeRecipe, clientLevel)
-						this.resetRecipe()
-						clientLevel.playSound(
+						this.finalizeRecipe(activeRecipe, level)
+						this.resetRecipe(level)
+						level.playSound(
 							null,
 							pos,
 							SoundEvents.NOTE_BLOCK_BELL.value(),
@@ -65,25 +65,19 @@ class ToasterBlockEntity(
 							0.2f,
 							0.8f
 						)
-						clientLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.TRIGGERED, false))
+						level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.TRIGGERED, false))
 					} else this.progress++
-				} else this.resetRecipe()
+				} else this.resetRecipe(level)
 			}, {
-				val check = this.recipeDial.getRecipeFor(
-					FluidEnergyInput(
-						listOf(this.getItem(0)),
-						listOf(this.getItem(0).count),
-						listOf(),
-						listOf()
-					), clientLevel
-				)
+				val stack = this.getItem(0)
+				val check = this.recipeDial.getRecipeFor(FluidEnergyInput(stack, stack.count), level)
 
 				check.ifPresentOrElse({ present ->
 					val recipe = present.value
 					this.maxProgress = recipe.rTime ?: 0
 					this.currentRecipe = Optional.of(recipe)
 				}, {
-					clientLevel.playSound(
+					level.playSound(
 						null,
 						pos,
 						SoundEvents.NOTE_BLOCK_BASS.value(),
@@ -91,24 +85,17 @@ class ToasterBlockEntity(
 						0.2f,
 						0.5f
 					)
-					clientLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.TRIGGERED, false))
+					level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.TRIGGERED, false))
 				})
 			})
 		}
 	}
 
 	override fun finalizeRecipe(recipe: ToasterRecipe, level: Level) {
-		val inputList = listOf(this.getItem(0))
-		val assemble = recipe.assemble(
-			FluidEnergyInput(
-				inputList,
-				listOf(inputList[0].count),
-				listOf(),
-				listOf()
-			), level.registryAccess()
-		)
+		val stack = this.getItem(0)
+		val assemble = recipe.assemble(FluidEnergyInput(stack, stack.count), level)
 
-		recipe.consumeItems(inputList)
+		recipe.consumeItems(listOf(stack))
 		this.setItem(0, assemble)
 	}
 }

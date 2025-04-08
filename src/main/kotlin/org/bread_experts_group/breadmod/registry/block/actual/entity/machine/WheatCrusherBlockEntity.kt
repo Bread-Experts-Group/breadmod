@@ -23,7 +23,6 @@ import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 import java.math.BigDecimal
 import java.util.Optional
-import kotlin.math.max
 
 class WheatCrusherBlockEntity(
 	pos: BlockPos, state: BlockState
@@ -40,22 +39,20 @@ class WheatCrusherBlockEntity(
 		)
 	)
 	private var energyDivision: Int = -1
+		set(value) {
+			if (field == -1) field = value
+		}
 
 	override fun commonTick(
-		clientLevel: Level,
+		level: Level,
 		pos: BlockPos,
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
 	) {
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
-			if (!activeRecipe.itemsStillValid(listOf(this.getItem(0)))) this.resetRecipe()
-			val recipeTime = activeRecipe.rTime ?: 0
-			if (this.energyDivision == -1) {
-				this.energyDivision = (activeRecipe.rEnergy ?: 0) / max(
-					recipeTime,
-					1
-				)
-			}
+			if (!activeRecipe.itemStillValid(this.getItem(0))) this.resetRecipe(level)
+			val recipeTime = activeRecipe.getTime()
+			this.energyDivision = activeRecipe.setEnergyDivision()
 			if (
 				(this.energyDivision < 0) &&
 				(this.energyHandler.energyStored + this.energyDivision > this.energyHandler.maxEnergyStored)
@@ -66,58 +63,37 @@ class WheatCrusherBlockEntity(
 				extractEnergy >= this.energyDivision &&
 				activeRecipe.canFitItemResults(listOf(this.getItem(1)))
 			) {
-				clientLevel.setBlockAndUpdate(
-					pos,
-					state.setValue(BlockStateProperties.POWERED, true)
-				)
+				level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
 				if (this.progress >= recipeTime) {
-					this.finalizeRecipe(activeRecipe, clientLevel)
-					this.resetRecipe()
+					this.finalizeRecipe(activeRecipe, level)
+					this.resetRecipe(level)
 				} else this.progress++
 			}
 		}, {
-			val inputList = listOf(this.getItem(0))
-			val check = this.recipeDial.getRecipeFor(
-				FluidEnergyInput(
-					inputList,
-					listOf(inputList[0].count),
-					listOf(),
-					listOf()
-				), clientLevel
-			)
+			val stack = this.getItem(0)
+			val check = this.recipeDial.getRecipeFor(FluidEnergyInput(stack, stack.count), level)
 
 			check.ifPresent { present ->
 				val recipe = present.value
 				this.currentRecipe = Optional.of(recipe)
 				this.maxProgress = recipe.rTime ?: 0
 			}
-			clientLevel.setBlockAndUpdate(
-				pos,
-				state.setValue(BlockStateProperties.POWERED, false)
-			)
+			level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false))
 		})
 	}
 
-	override fun resetRecipe() {
-		this.level?.setBlockAndUpdate(this.blockPos, this.blockState.setValue(BlockStateProperties.POWERED, false))
+	override fun resetRecipe(level: Level) {
+		level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(BlockStateProperties.POWERED, false))
 		this.energyDivision = -1
-		super.resetRecipe()
+		super.resetRecipe(level)
 	}
 
 	override fun finalizeRecipe(recipe: WheatCrusherRecipe, level: Level) {
-		val inputList = listOf(this.getItem(0))
-		val assemble = recipe.assemble(
-			FluidEnergyInput(
-				inputList,
-				listOf(inputList[0].count),
-				listOf(),
-				listOf()
-			), level.registryAccess()
-		)
-
-		if (this.getItem(1).isEmpty) this.setItem(1, assemble) else
-			this.growItem(1, assemble.count)
-		recipe.consumeItems(inputList).forEachIndexed(this::setItem)
+		val stack = this.getItem(0)
+		val assemble = recipe.assemble(FluidEnergyInput(stack, stack.count), level)
+		recipe.consumeItems(listOf(this.getItem(0))).forEachIndexed(this::setItem)
+//		if (this.getItem(1).isEmpty) this.setItem(1, assemble) else this.growItem(1, assemble.count)
+		this.setOrGrow(1, assemble, assemble.count)
 	}
 
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =

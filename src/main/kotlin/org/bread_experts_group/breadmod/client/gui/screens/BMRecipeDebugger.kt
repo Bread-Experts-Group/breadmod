@@ -11,16 +11,37 @@ import kotlin.jvm.optionals.getOrNull
 
 // todo work on adding debug info
 object BMRecipeDebugger {
-	fun <T : BreadModRecipeBlockEntity<I, R, T>, I : FluidEnergyInput,  R : FluidEnergyRecipe<I>> renderDebug(
+	fun <T : BreadModRecipeBlockEntity<I, R, T>, I : FluidEnergyInput, R : FluidEnergyRecipe<I>> renderDebug(
 		guiGraphics: GuiGraphics,
 		partialTick: Float,
 		mouseX: Int,
 		mouseY: Int,
 		blockEntity: T
 	) {
-		guiGraphics.borderedFillPositioned(0, 0, 150, 150, Color.RED, Color.WHITE)
-		blockEntity.currentRecipe.getOrNull().let { recipe ->
-			guiGraphics.string(recipe, 2, 2)
+		var y = 40
+		guiGraphics.borderedFillPositioned(0, y, 150, 150, Color.RED, Color.WHITE)
+		blockEntity.currentRecipe.getOrNull()?.let { recipe ->
+			y += 2
+			guiGraphics.string(recipe.type, 2, y)
+			y += 8
+			guiGraphics.string("time: ${recipe.rTime}", 2, y)
+			y += 8
+			guiGraphics.string("energy: ${recipe.rEnergy}", 2, y)
+			y += 8
+			guiGraphics.string("inputs:", 2, y)
+			y += 8
+			recipe.rItemInputs.forEachIndexed { index, sizedIngredient ->
+				val stack = sizedIngredient.ingredient().items.first()
+				y += (index * 8)
+				guiGraphics.string("${stack.count}x ${stack.item}", 2, y)
+			}
+			y += 8
+			guiGraphics.string("outputs:", 2, y)
+			y += 8
+			recipe.rItemOutputs.forEachIndexed { index, itemStack ->
+				y += (index * 8)
+				guiGraphics.string("${itemStack.count}x ${itemStack.item}", 2, y)
+			}
 		}
 	}
 

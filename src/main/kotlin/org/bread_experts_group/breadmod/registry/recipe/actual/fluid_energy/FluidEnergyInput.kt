@@ -10,6 +10,15 @@ open class FluidEnergyInput(
 	val iFluids: List<FluidStack>,
 	val iAmount: List<Int>
 ) : BMRecipeInputs(1) {
+	constructor(item: ItemStack, count: Int) : this(listOf(item), listOf(count), listOf(), listOf())
+	constructor(fluid: FluidStack, amount: Int) : this(listOf(), listOf(), listOf(fluid), listOf(amount))
+	constructor(item: ItemStack, count: Int, fluid: FluidStack, amount: Int) : this(
+		listOf(item),
+		listOf(count),
+		listOf(fluid),
+		listOf(amount)
+	)
+
 	override fun getItem(index: Int): ItemStack = this.iItems[index]
 	override fun isEmpty(): Boolean = (super.isEmpty() || this.iItems.isEmpty()) && this.iFluids.isEmpty()
 }
