@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 
 class PlaceItemInWorldPacket(
@@ -39,7 +38,7 @@ class PlaceItemInWorldPacket(
 			val level = player.level()
 			val stack = player.getItemInHand(MAIN_HAND)
 			val blockState = level.getBlockState(data.pos)
-			val pos = if (!blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock())) when (data.direction) {
+			val pos = if (!blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.get())) when (data.direction) {
 				UP    -> data.pos.above()
 				DOWN  -> data.pos.below()
 				NORTH -> data.pos.north()
@@ -50,10 +49,10 @@ class PlaceItemInWorldPacket(
 			val checkState = level.getBlockState(pos)
 
 			if (!stack.isEmpty) {
-				if (!blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock()) && checkState.`is`(Blocks.AIR)) {
+				if (!blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.get()) && checkState.`is`(Blocks.AIR)) {
 					level.setBlockAndUpdate(
 						pos,
-						ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock().defaultBlockState().setValue(
+						ModBlocks.ITEM_IN_WORLD_BLOCK.get().defaultBlockState().setValue(
 							BlockStateProperties.FACING,
 							data.direction
 						)

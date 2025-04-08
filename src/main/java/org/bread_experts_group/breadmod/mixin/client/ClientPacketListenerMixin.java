@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ClientPacketListener.class)
-abstract class ClientPacketListenerMixin {
+abstract class MixinClientPacketListener {
 	@Redirect(
 			method = "handlePlayerCombatKill",
 			at = @At(
@@ -18,7 +18,7 @@ abstract class ClientPacketListenerMixin {
 					target = "Lnet/minecraft/client/Minecraft;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V"
 			)
 	)
-	public void handlePlayerCombatKill(final Minecraft instance, final Screen old) {
+	private void handlePlayerCombatKill(Minecraft instance, Screen old) {
 		if (ScreenBleedOverlay.Companion.getOverrideDeathScreen()) {
 			instance.setScreen(new BlueScreen());
 		} else instance.setScreen(old);

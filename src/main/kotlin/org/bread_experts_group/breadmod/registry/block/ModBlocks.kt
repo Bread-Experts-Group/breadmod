@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.material.PushReaction
+import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
@@ -164,11 +165,8 @@ object ModBlocks {
 	)
 
 	@DataGenerateLanguage("en_us")
-	val ITEM_IN_WORLD_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"item_in_world",
-		::ItemInWorldBlock,
-		Properties()
-	)
+	val ITEM_IN_WORLD_BLOCK: DeferredBlock<ItemInWorldBlock> =
+		this.BLOCK_REGISTRY.registerBlock("item_in_world") { ItemInWorldBlock() }
 
 	@DataGenerateLanguage("en_us")
 	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(

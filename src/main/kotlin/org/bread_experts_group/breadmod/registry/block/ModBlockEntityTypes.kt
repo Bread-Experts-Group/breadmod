@@ -65,7 +65,7 @@ object ModBlockEntityTypes {
 		}
 	val ITEM_IN_WORLD: Supplier<BlockEntityType<ItemInWorldBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("item_in_world_entity") { ->
-			this.buildBlockEntity(::ItemInWorldBlockEntity, ModBlocks.ITEM_IN_WORLD_BLOCK.asBlock())
+			this.buildBlockEntity(::ItemInWorldBlockEntity, ModBlocks.ITEM_IN_WORLD_BLOCK.get())
 		}
 	val ENERGY_STORAGE: Supplier<BlockEntityType<EnergyStorageBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("energy_storage_entity") { ->

@@ -14,8 +14,8 @@ class ScreenBleedSet(private val seconds: Int, private val maxSeconds: Int) : Cu
 		val TYPE: CustomPacketPayload.Type<ScreenBleedSet> =
 			CustomPacketPayload.Type(modLocation("screen_bleed_set"))
 		val STREAM_CODEC: StreamCodec<ByteBuf, ScreenBleedSet> = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT, ScreenBleedSet::seconds,
-			ByteBufCodecs.VAR_INT, ScreenBleedSet::maxSeconds,
+			ByteBufCodecs.INT, ScreenBleedSet::seconds,
+			ByteBufCodecs.INT, ScreenBleedSet::maxSeconds,
 			::ScreenBleedSet
 		)
 
@@ -26,5 +26,6 @@ class ScreenBleedSet(private val seconds: Int, private val maxSeconds: Int) : Cu
 			}
 		}
 	}
+
 	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE
 }

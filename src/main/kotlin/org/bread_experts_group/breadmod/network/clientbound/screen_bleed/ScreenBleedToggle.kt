@@ -29,5 +29,6 @@ class ScreenBleedToggle(private val active: Boolean, private val reset: Boolean)
 			}
 		}
 	}
+
 	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE
 }

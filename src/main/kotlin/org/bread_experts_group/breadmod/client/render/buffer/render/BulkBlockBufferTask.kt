@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
@@ -16,6 +17,9 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.levelgen.PositionalRandomFactory
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.minecraft.world.phys.shapes.BooleanOp
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
@@ -51,12 +55,12 @@ object BulkBlockBufferTask {
 					poseStack.offsetRenderToCameraPos(originPos, camera, false)
 					blockData.blocks.forEach { (offset, data) ->
 						val proximal = BlockPos.containing(originPos + offset)
-						if (player.isColliding(proximal.above(), data.state)) {
+						if (player.isColliding(proximal.above(), data.state, originPos + offset)) {
 							val delta = player.deltaMovement
 							player.setDeltaMovement(delta.x, 0.0, delta.z)
 							player.setPos(
 								player.x,
-								proximal.y.toDouble() + 1.2,
+								proximal.y.toDouble() + 1.8,
 								player.z
 							)
 						}
@@ -112,6 +116,12 @@ object BulkBlockBufferTask {
 				0f
 			)
 		)
+	}
+
+	fun Player.isColliding(pos: BlockPos, state: BlockState, offset: Vec3): Boolean {
+		val voxelShape = state.getCollisionShape(this.level(), pos, CollisionContext.of(this))
+		val voxelShape1 = voxelShape.move(offset.x, offset.y, offset.z)
+		return Shapes.joinIsNotEmpty(voxelShape1, Shapes.create(this.boundingBox), BooleanOp.AND)
 	}
 
 	fun shouldRender(cameraPos: Vec3, originPos: Vec3): Boolean =

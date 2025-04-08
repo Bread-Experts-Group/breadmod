@@ -20,8 +20,8 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.warTimerMap
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand.increaseTime
+import org.bread_experts_group.breadmod.data_holders.WarTimerData.Companion.warTimerMap
 import java.util.stream.Stream
 
 class WarTerminalBlock : Block(Properties.of()) {

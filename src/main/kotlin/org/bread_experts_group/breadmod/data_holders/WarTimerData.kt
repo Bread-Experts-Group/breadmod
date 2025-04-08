@@ -14,6 +14,13 @@ data class WarTimerData(
 	var gracePeriodActive: Boolean = false,
 	var active: Boolean = true
 ) {
+	companion object {
+		/**
+		 * A map holding a war timer for every player on the server.
+		 */
+		val warTimerMap: MutableMap<ServerPlayer, WarTimerData> = mutableMapOf()
+	}
+
 	fun tick(player: ServerPlayer) {
 		if (this.active && this.increaseTime == 0) {
 			if (this.ticker == 0 && this.timeLeft > 0 && !this.gracePeriodActive) {
