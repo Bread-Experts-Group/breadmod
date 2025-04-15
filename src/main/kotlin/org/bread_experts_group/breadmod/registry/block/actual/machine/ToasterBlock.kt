@@ -20,6 +20,8 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
@@ -130,6 +132,8 @@ class ToasterBlock : BreadModBlockWithEntity(
 
 		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
 	}
+
+	override fun getRenderShape(state: BlockState): RenderShape = ENTITYBLOCK_ANIMATED
 
 	// Pretty much a clone of the furnace animateTick code.
 	override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: RandomSource) {

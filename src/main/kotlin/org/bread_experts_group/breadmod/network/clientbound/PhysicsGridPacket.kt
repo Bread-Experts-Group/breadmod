@@ -21,6 +21,7 @@ import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.ClientHooks
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.NullRandom
@@ -101,6 +102,9 @@ class PhysicsGridPacket private constructor(
 				)
 			}
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToClient(this.TYPE, this.STREAM_CODEC, this::handleClientboundPacket)
 
 		fun computeFakeBlockMap(
 			level: Level,

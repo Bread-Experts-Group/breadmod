@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.InteractionHand.OFF_HAND
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -38,6 +39,9 @@ class ToolGunModeChangePacket(private val id: ResourceLocation, private val inde
 				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(newMode, toolGunData.extraData, data.index))
 			}
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToServer(this.TYPE, this.STREAM_CODEC, this::handleServerboundPacket)
 	}
 
 	override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE

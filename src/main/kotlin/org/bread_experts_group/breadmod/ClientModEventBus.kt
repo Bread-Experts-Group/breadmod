@@ -125,6 +125,13 @@ internal object ClientModEventBus {
 				ModRenderType.rainbowVertexFormat
 			)
 		) { ModRenderType.rainbowInstance = it }
+		event.registerShader(
+			ShaderInstance(
+				event.resourceProvider,
+				modLocation("rendertype_astral"),
+				ModRenderType.astralVertexFormat
+			)
+		) { ModRenderType.astralInstance = it }
 	}
 
 	@SubscribeEvent

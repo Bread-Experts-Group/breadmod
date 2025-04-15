@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type
 import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.InteractionHand.OFF_HAND
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -30,6 +31,9 @@ class ToolGunDataSyncPacket(private val data: ToolGunData) : CustomPacketPayload
 
 			if (stack.`is`(ModItems.TOOL_GUN)) stack.set(ModDataComponents.TOOL_GUN_DATA, data.data)
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToServer(this.TYPE, this.STREAM_CODEC, this::handleServerboundPacket)
 	}
 
 	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE

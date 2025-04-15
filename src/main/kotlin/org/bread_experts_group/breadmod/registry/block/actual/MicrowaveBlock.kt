@@ -18,6 +18,8 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
@@ -134,6 +136,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 	): InteractionResult {
 		val direction = hitResult.direction ?: return FAIL
 		val normalizedPos = normalizedHitPos(hitResult.location, pos)
+		val entity = level.getBlockEntity(pos) as MicrowaveBlockEntity
 		when (direction) {
 			NORTH -> {
 				this.buttonPress(normalizedPos.x, normalizedPos.y, 0.23, 0.27, level, pos, NORTH)
@@ -149,6 +152,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			}
 			else  -> {}
 		}
+		if (entity.getItem(0).isEmpty) entity.setItem(0, player.getItemInHand(player.usedItemHand))
 		return sidedSuccess(level.isClientSide)
 	}
 
@@ -194,6 +198,8 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		this.defaultBlockState()
 			.setValue(Companion.HORIZONTAL_FACING, context.horizontalDirection.opposite)
 			.setValue(Companion.OPEN, false)
+
+	override fun getRenderShape(state: BlockState): RenderShape = ENTITYBLOCK_ANIMATED
 
 	override fun getShape(
 		state: BlockState,

@@ -8,6 +8,7 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.joml.Vector3f
 
@@ -52,6 +53,9 @@ class SpreadParticlesPacket private constructor(
 				}
 			}
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToClient(this.TYPE, this.STREAM_CODEC, this::handleClientboundPacket)
 	}
 
 	override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE

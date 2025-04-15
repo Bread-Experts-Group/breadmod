@@ -2,12 +2,14 @@ package org.bread_experts_group.breadmod.data_holders
 
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedSynchronization
-import org.bread_experts_group.breadmod.network.clientbound.screen_bleed.ScreenBleedToggle
+import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
+import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket.ScreenBleedSetType.ACTIVE
+import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket.ScreenBleedSetType.MAX_PROGRESS
+import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket.ScreenBleedSetType.PROGRESS
 
 data class ScreenBleedData(
-	var progress: Int = 0,
-	var maxProgress: Int = 169 * 20,
+	var progress: Float = 0f,
+	var maxProgress: Float = 169f * 20,
 	var active: Boolean = true,
 	var shouldOverrideDeathScreen: Boolean = false
 ) {
@@ -18,12 +20,16 @@ data class ScreenBleedData(
 		val screenBleedMap: MutableMap<ServerPlayer, ScreenBleedData> = mutableMapOf()
 	}
 
+	private fun isProgressMaxed(): Boolean = this.progress >= this.maxProgress
+
 	fun tick(player: ServerPlayer) {
-		if (this.active && this.progress <= this.maxProgress) {
-			PacketDistributor.sendToPlayer(player, ScreenBleedSynchronization(this.progress))
+		if (this.active && !this.isProgressMaxed()) {
+			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(PROGRESS, number = this.progress))
 			this.progress++
-		} else if (this.active && this.progress > this.maxProgress) {
-			PacketDistributor.sendToPlayer(player, ScreenBleedToggle(active = false, reset = true))
+		} else if (this.active && this.isProgressMaxed()) {
+			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(ACTIVE))
+			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(PROGRESS))
+			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(MAX_PROGRESS))
 			Companion.screenBleedMap.remove(player)
 		}
 	}

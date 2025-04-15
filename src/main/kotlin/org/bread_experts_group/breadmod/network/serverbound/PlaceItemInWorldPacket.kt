@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
@@ -67,6 +68,9 @@ class PlaceItemInWorldPacket(
 				level.sendBlockUpdated(pos, blockState, blockState, 3)
 			}
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToServer(this.TYPE, this.STREAM_CODEC, this::handleServerboundPacket)
 	}
 
 	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE

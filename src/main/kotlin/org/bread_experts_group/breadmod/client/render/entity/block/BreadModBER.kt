@@ -7,6 +7,9 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
+import net.minecraft.client.renderer.texture.OverlayTexture
+import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.core.Direction
 import net.minecraft.core.Direction.DOWN
 import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
@@ -19,8 +22,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
+import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.tessellateModel
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import java.awt.Color
 import kotlin.jvm.optionals.getOrNull
@@ -30,10 +36,63 @@ import kotlin.jvm.optionals.getOrNull
  */
 abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	val context: Context,
+	private val originalModel: BakedModel? = null,
 	private val snapGraphicsToBlockSide: Boolean = true
 ) : BlockEntityRenderer<T> {
 	protected val random: RandomSource = RandomSource.create()
-	protected val modelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
+	protected val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
+	private val debugAxisModel = localClient.modelManager.getModel(modelLocation("${ModelProvider.BLOCK_FOLDER}/axis"))
+
+	fun renderOriginalModel(
+		blockEntity: T,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedOverlay: Int
+	) {
+		if (this.originalModel == null) return
+		localClient.blockRenderer.modelRenderer.tessellateModel(
+			blockEntity,
+			this.originalModel,
+			poseStack,
+			bufferSource,
+			this.random,
+			packedOverlay,
+			this.modelData
+		)
+	}
+
+	protected fun renderModel(
+		blockEntity: T,
+		model: BakedModel,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedOverlay: Int
+	) {
+		localClient.blockRenderer.modelRenderer.tessellateModel(
+			blockEntity,
+			model,
+			poseStack,
+			bufferSource,
+			this.random,
+			packedOverlay,
+			this.modelData
+		)
+	}
+
+	protected fun renderDebugAxis(blockEntity: T, poseStack: PoseStack, bufferSource: MultiBufferSource) {
+		this.renderModel(
+			blockEntity,
+			this.debugAxisModel,
+			poseStack,
+			bufferSource,
+			OverlayTexture.NO_OVERLAY
+		)
+	}
+
+	protected fun Direction.toYRotFixed(): Float {
+		val rotFix = if (this == SOUTH || this == NORTH) 180f else 0f
+		return this.toYRot() + rotFix
+	}
 
 	private companion object {
 		const val TRANSLATE_OFFSET = 0.0001

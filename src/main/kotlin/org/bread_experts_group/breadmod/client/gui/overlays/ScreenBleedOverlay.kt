@@ -10,19 +10,19 @@ import org.bread_experts_group.breadmod.client.render.localClient
 class ScreenBleedOverlay : LayeredDraw.Layer {
 	companion object {
 		private val window = localClient.window
-		private val random = RandomSource.create(15081237)
+		private val random = RandomSource.create(404)
 		private var alpha: Int = 0
 		private var lastTick = 0
-		var progress: Int = 0
-		var maxProgress: Int = 0
+		var progress: Float = 0f
+		var maxProgress: Float = 0f
 		var active: Boolean = false
 		var overrideDeathScreen: Boolean = false
 		fun renderBleed(guiGraphics: GuiGraphics) {
-			if (localClient.level == null || this.maxProgress == 0 || !this.active) return
+			if (localClient.level == null || this.maxProgress == 0f || !this.active) return
 			val guiTicks = localClient.gui.guiTicks
 			val scaledHeight = this.window.guiScaledHeight
 			val scaledWidth = this.window.guiScaledWidth
-			val scaled = ((this.progress.toFloat() / this.maxProgress) * scaledHeight)
+			val scaled = ((this.progress / this.maxProgress) * scaledHeight)
 			val poseStack = guiGraphics.pose()
 
 			if (this.lastTick != guiTicks) this.lastTick = guiTicks.also {

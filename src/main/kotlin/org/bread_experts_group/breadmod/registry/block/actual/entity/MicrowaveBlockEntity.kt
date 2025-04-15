@@ -1,13 +1,22 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.HolderLookup.Provider
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.item.crafting.CampfireCookingRecipe
+import net.minecraft.world.item.crafting.RecipeManager
+import net.minecraft.world.item.crafting.RecipeManager.CachedCheck
+import net.minecraft.world.item.crafting.RecipeType
+import net.minecraft.world.item.crafting.SingleRecipeInput
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
+import java.util.Optional
 
 class MicrowaveBlockEntity(
 	pos: BlockPos,
@@ -19,6 +28,9 @@ class MicrowaveBlockEntity(
 	ModRecipeTypes.MICROWAVE.get()
 ), ItemBearingBlockEntity {
 	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1)
+	private val campfireRecipeCache: CachedCheck<SingleRecipeInput, CampfireCookingRecipe> =
+		RecipeManager.createCheck(RecipeType.CAMPFIRE_COOKING)
+	private var currentCampfireRecipe: Optional<CampfireCookingRecipe> = Optional.empty()
 
 	override fun commonTick(
 		level: Level,
@@ -26,7 +38,14 @@ class MicrowaveBlockEntity(
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
 	) {
-		super.commonTick(level, pos, state, entity)
+		val open = state.getValue(BlockStateProperties.OPEN)
+		val stack = this.getItem(0)
+		this.currentCampfireRecipe.ifPresentOrElse({ recipe ->
+			this.setItem(0, recipe.assemble(SingleRecipeInput(stack), level.registryAccess()))
+		}, {
+			val check = this.campfireRecipeCache.getRecipeFor(SingleRecipeInput(stack), level)
+			check.ifPresent { this.currentCampfireRecipe = Optional.of(it.value) }
+		})
 	}
 
 	override fun finalizeRecipe(recipe: MicrowaveRecipe, level: Level) {

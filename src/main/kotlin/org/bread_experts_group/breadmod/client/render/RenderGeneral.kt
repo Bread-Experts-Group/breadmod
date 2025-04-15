@@ -30,6 +30,7 @@ import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import net.minecraft.util.FormattedCharSequence
+import net.minecraft.util.RandomSource
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -306,6 +307,33 @@ fun ModelBlockRenderer.renderBlockModel(
 			.with(ModelProperty(), ExtraFaceData(Color.WHITE.rgb, LightTexture.block(packedLight), 0, true)).build(),
 		renderType
 	)
+}
+
+fun ModelBlockRenderer.tessellateModel(
+	blockEntity: BlockEntity,
+	model: BakedModel,
+	poseStack: PoseStack,
+	buffer: MultiBufferSource,
+	randomSource: RandomSource,
+	packedOverlay: Int,
+	modelData: ModelData
+) {
+	model.getRenderTypes(blockEntity.blockState, randomSource, modelData).forEach { renderType ->
+		this.tesselateWithAO(
+			blockEntity.level ?: return,
+			model,
+			blockEntity.blockState,
+			blockEntity.blockPos,
+			poseStack,
+			buffer.getBuffer(renderType),
+			true,
+			randomSource,
+			64,
+			packedOverlay,
+			modelData,
+			renderType
+		)
+	}
 }
 
 /**

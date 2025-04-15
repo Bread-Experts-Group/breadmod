@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
@@ -54,6 +55,9 @@ class PhysicsGridRequestPacket(
 				)
 			}
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToServer(this.TYPE, this.STREAM_CODEC, this::handleServerboundPacket)
 	}
 
 	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE

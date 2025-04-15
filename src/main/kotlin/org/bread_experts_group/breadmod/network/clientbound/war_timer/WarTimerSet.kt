@@ -5,6 +5,7 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
@@ -26,6 +27,9 @@ internal data class WarTimerSet(private val time: Int) : CustomPacketPayload {
 				player.playSound(ModSounds.WAR_TIMER.get(), 0.8f, 0.8f)
 			}
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToClient(this.TYPE, this.STREAM_CODEC, this::handleClientboundPacket)
 	}
 
 	override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = Companion.TYPE

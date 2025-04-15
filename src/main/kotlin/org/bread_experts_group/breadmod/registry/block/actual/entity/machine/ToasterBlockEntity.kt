@@ -34,7 +34,7 @@ class ToasterBlockEntity(
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
 	) {
-		if (this.itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
+		if (this.getItem(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
 			this.maxProgress = 60
 			this.progress++
 			if (this.progress == 35) level.playSound(null, pos, SoundEvents.TNT_PRIMED, BLOCKS)

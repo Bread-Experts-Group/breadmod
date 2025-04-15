@@ -19,8 +19,11 @@ import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
+import org.bread_experts_group.breadmod.client.render.renderItemModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.tessellateModel
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.experimental.BreadModExplosion
 import org.bread_experts_group.breadmod.util.blocks
@@ -58,6 +61,7 @@ class ExplodeMode : AbstractToolGunMode() {
 	override fun getCustomRenderer(): IToolGunModeRenderer = ExplodeModeRenderer(this.getUid())
 
 	class ExplodeModeRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
+		private val tntModel = localClient.blockRenderer.getBlockModel(Blocks.TNT.defaultBlockState())
 		override fun buildModeWidget(): Builder = ModeWidget.Builder()
 			.icon(Items.TNT)
 			.previewImage(ModTextureLocations.EXPLODE_PREVIEW)
@@ -76,9 +80,9 @@ class ExplodeMode : AbstractToolGunMode() {
 			poseStack.pushPose()
 			poseStack.translate(1.1, 0.06, -0.05)
 			poseStack.scaleFlat(0.08f)
-			poseStack.translate(0.5, 0.0, 0.5)
+			poseStack.translate(0.5, 0.5, 0.5)
 			poseStack.mulPose(Axis.YP.rotationDegrees((millis.toFloat() / 50f) % 360f))
-			poseStack.translate(-0.5, 0.0, -0.5)
+			poseStack.translate(-0.5, -0.5, -0.5)
 			IToolGunModeRenderer.blockModelRenderer.renderBlockModel(
 				poseStack.last(),
 				buffer,

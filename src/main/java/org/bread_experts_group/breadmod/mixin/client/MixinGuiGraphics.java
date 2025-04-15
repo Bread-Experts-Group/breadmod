@@ -51,10 +51,10 @@ public abstract class MixinGuiGraphics {
 	) {
 		if (!stack.isEmpty()) {
 			this.pose.pushPose();
-			final BigDecimal read = stack.get(ModDataComponents.INSTANCE.getEXPANSIBLE_ITEM_STACK());
+			BigDecimal read = stack.get(ModDataComponents.INSTANCE.getEXPANSIBLE_ITEM_STACK());
 			if (stack.getCount() != 1 && text == null && read != null) {
 				Pair<BigDecimal, String> a = formatNumberBigDecimal(read, 0, BigDecimal.valueOf(1000));
-				String s = breadmod$decimalFormatter.format(a.component1()) + a.component2();
+				String s = this.breadmod$decimalFormatter.format(a.component1()) + a.component2();
 
 				this.pose.translate(0.0F, 0.0F, 200.0F);
 				this.drawString(
@@ -66,7 +66,7 @@ public abstract class MixinGuiGraphics {
 				);
 				ci.cancel();
 			} else {
-				pose.popPose();
+				this.pose.popPose();
 				return;
 			}
 

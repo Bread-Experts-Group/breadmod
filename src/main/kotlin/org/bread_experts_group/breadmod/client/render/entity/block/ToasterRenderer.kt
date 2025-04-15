@@ -15,16 +15,21 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.registry.block.ModBlocks
+import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 
-class ToasterRenderer(context: Context) : BreadModBER<ToasterBlockEntity>(context) {
+class ToasterRenderer(
+	context: Context
+) : BreadModBER<ToasterBlockEntity>(
+	context,
+	context.blockRenderDispatcher.getBlockModel(ModBlocks.TOASTER.asBlock().defaultBlockState())
+) {
 	private companion object {
 		val HANDLE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
 		val HANDLE_MODEL: BakedModel = localClient.modelManager.getModel(this.HANDLE_MODEL_LOC)
 	}
 
-	private var triggeredOffset: Double = 0.0
-	private val blockModelRenderer = this.context.blockRenderDispatcher.modelRenderer
 	private val itemRenderer = this.context.itemRenderer
 
 	override fun render(
@@ -38,53 +43,11 @@ class ToasterRenderer(context: Context) : BreadModBER<ToasterBlockEntity>(contex
 		val blockRotation = blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
 		val triggered = blockEntity.blockState.getValue(BlockStateProperties.TRIGGERED)
 
-		this.triggeredOffset = if (triggered) -0.13 else 0.0
-
 		poseStack.pushPose()
-		when (blockRotation) {
-			SOUTH -> {
-				poseStack.mulPose(Axis.YN.rotationDegrees(180f))
-				poseStack.translate(-1.0, this.triggeredOffset, -1.0)
-			}
-			WEST  -> {
-				poseStack.translate(0.0, this.triggeredOffset, 1.0)
-				poseStack.mulPose(Axis.YN.rotationDegrees(-90f))
-			}
-			EAST  -> {
-				poseStack.translate(1.0, this.triggeredOffset, 0.0)
-				poseStack.mulPose(Axis.YN.rotationDegrees(90f))
-			}
-			NORTH -> {
-				poseStack.translate(0.0, this.triggeredOffset, 0.0)
-			}
-			else  -> {}
-		}
-
-//		this.blockModelRenderer.renderBlockModel(
-//			poseStack.last(),
-//			bufferSource,
-//			entity,
-//			Companion.HANDLE_MODEL,
-//			packedLight,
-//			packedOverlay,
-//			Sheets.solidBlockSheet()
-//		)
-		Companion.HANDLE_MODEL.getRenderTypes(blockEntity.blockState, this.random, this.modelData).forEach {
-			this.blockModelRenderer.tesselateWithAO(
-				blockEntity.level ?: return,
-				Companion.HANDLE_MODEL,
-				blockEntity.blockState,
-				blockEntity.blockPos,
-				poseStack,
-				bufferSource.getBuffer(it),
-				true,
-				this.random,
-				801234,
-				packedOverlay,
-				this.modelData,
-				it
-			)
-		}
+		poseStack.mulPose(Axis.YP.rotationDegrees(blockRotation.toYRotFixed()))
+		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
+		poseStack.translate(0.0, if (triggered) -0.13 else 0.0, 0.0)
+		this.renderModel(blockEntity, Companion.HANDLE_MODEL, poseStack, bufferSource, packedOverlay)
 		poseStack.popPose()
 		val stack = blockEntity.itemHandler.getStackInSlot(0)
 

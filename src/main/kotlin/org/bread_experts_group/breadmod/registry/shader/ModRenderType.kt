@@ -57,9 +57,32 @@ object ModRenderType {
 			.setShaderState(this.rainbowShader)
 			.createCompositeState(false)
 	)
+	var astralInstance: ShaderInstance? = null
+	private val astralShader = ShaderStateShard(this::astralInstance)
+	val astralVertexFormat: VertexFormat = VertexFormat.builder()
+		.add("Position", VertexFormatElement.POSITION)
+		.build()
+	private val astralRenderType: RenderType = RenderType.create(
+		"astral",
+		this.astralVertexFormat,
+		VertexFormat.Mode.QUADS,
+		1536,
+		false,
+		false,
+		RenderType.CompositeState.builder()
+			.setCullState(CULL)
+			.setTransparencyState(NO_TRANSPARENCY)
+			.setShaderState(this.astralShader)
+			.createCompositeState(false)
+	)
 
 	/**
 	 * Rainbow shader.
 	 */
 	fun rainbow(): RenderType = this.solidTextureRenderType
+
+	/**
+	 * Astral Shader.
+	 */
+	fun astral(): RenderType = this.astralRenderType
 }
