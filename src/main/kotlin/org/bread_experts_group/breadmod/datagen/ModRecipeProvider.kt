@@ -99,6 +99,14 @@ class ModRecipeProvider(
 
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
+			listOf(Items.BREAD to 16, Items.STRING to 16)
+		)
+			.itemRequired(ModItems.FLOUR.get(), 8)
+			.itemRequired(Items.APPLE, 8)
+			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
+
+		FluidEnergyBuilder(
+			::FluidEnergyRecipeTest,
 			listOf(Items.COOKED_BEEF to 16)
 		)
 			.itemRequired(ModItems.FLOUR.get(), 8)

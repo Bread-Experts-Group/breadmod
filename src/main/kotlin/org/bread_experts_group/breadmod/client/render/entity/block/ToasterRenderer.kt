@@ -13,15 +13,12 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 
 class ToasterRenderer(
 	context: Context
 ) : BreadModBER<ToasterBlockEntity>(
-	context,
-	context.blockRenderDispatcher.getBlockModel(ModBlocks.TOASTER.asBlock().defaultBlockState())
+	context
 ) {
 	private companion object {
 		val HANDLE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
@@ -42,8 +39,8 @@ class ToasterRenderer(
 		val triggered = blockEntity.blockState.getValue(BlockStateProperties.TRIGGERED)
 
 		poseStack.pushPose()
-		poseStack.mulPose(Axis.YP.rotationDegrees(blockRotation.toYRotFixed()))
 		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
+		poseStack.mulPose(Axis.YP.rotationDegrees(blockRotation.toYRotFixed()))
 		poseStack.translate(0.0, if (triggered) -0.13 else 0.0, 0.0)
 		this.renderModel(blockEntity, Companion.HANDLE_MODEL, poseStack, bufferSource, packedOverlay)
 		poseStack.popPose()

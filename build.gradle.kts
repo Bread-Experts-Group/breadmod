@@ -1,5 +1,7 @@
 @file:Suppress("ImplicitThis")
 
+import net.neoforged.moddevgradle.dsl.RunModel
+import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
 import java.util.Properties
 
 plugins {
@@ -15,8 +17,18 @@ plugins {
 group = project.properties["mod_group_id"] as String
 version = project.properties["mod_version"] as String
 
+private fun getModId() = project.properties["mod_id"] as String
+private fun RunModel.enableTestNamespaces() = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
+
+idea {
+	module {
+		isDownloadSources = true
+		isDownloadJavadoc = true
+	}
+}
+
 base {
-	archivesName = project.properties["mod_id"] as String
+	archivesName = getModId()
 }
 
 repositories {
@@ -61,33 +73,34 @@ neoForge {
 	runs {
 		create("client") {
 			client()
-			systemProperty("neoforge.enabledGameTestNamespaces", project.properties["mod_id"] as String)
+			enableTestNamespaces()
 		}
-//		client {
-//			client()
-//			systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
-//		}
-//
-//		server {
-//			server()
-//			programArgument("--nogui")
-//			systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
-//		}
-//
-//		gameTestServer {
-//			type = "gameTestServer"
-//			systemProperty("neoforge.enabledGameTestNamespaces", project.mod_id)
-//		}
-//
-//		data {
-//			data()
-//			programArguments.addAll(
-//				'--mod', project.mod_id,
-//				'--all',
-//				'--output', file('src/generated/resources/').getAbsolutePath(),
-//				'--existing', file('src/main/resources/').getAbsolutePath()
-//			)
-//		}
+		create("client_PizzaTime65") {
+			client()
+			enableTestNamespaces()
+			programArguments.addAll(
+				"--username", "PizzaTime65",
+				"--uuid", "30cdf636-82ed-47ee-9a9c-4d820c0d76a9"
+			)
+		}
+		create("server") {
+			server()
+			programArgument("--nogui")
+			enableTestNamespaces()
+		}
+		create("gameTestServer") {
+			type = "gameTestServer"
+			enableTestNamespaces()
+		}
+		create("data") {
+			data()
+			programArguments.addAll(
+				"--mod", getModId(),
+				"--all",
+				"--output", file("src/generated/resources/").absolutePath,
+				"--existing", file("src/main/resources/").absolutePath
+			)
+		}
 		configureEach {
 			// Logging data for a UserDev environment
 			// "SCAN": For mods scan.
@@ -99,9 +112,9 @@ neoForge {
 	}
 
 	mods {
-//		"${mod_id}" {
-//			sourceSet(sourceSets.main)
-//		}
+		create(getModId()) {
+			sourceSet(sourceSets.main.get())
+		}
 	}
 }
 
@@ -121,10 +134,10 @@ dependencies {
 	// Mekanism
 	val mekanismVersion = "1.21.1-10.7.8.70"
 	compileOnly("mekanism:Mekanism:${mekanismVersion}:api")
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}")
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}:additions")
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}:generators")
-//    runtimeOnly("mekanism:Mekanism:${mekanism_version}:tools")
+	runtimeOnly("mekanism:Mekanism:${mekanismVersion}")
+	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:additions")
+	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
+	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 	// Create
 //    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
 //    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
@@ -141,7 +154,7 @@ kotlin {
 }
 tasks.register<Jar>("dokkaJavadocJar") {
 	dependsOn(tasks.dokkaGeneratePublicationJavadoc)
-	from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
+	from(tasks.dokkaGeneratePublicationJavadoc.flatMap(DokkaGeneratePublicationTask::outputDirectory))
 	archiveClassifier.set("javadoc")
 }
 val localProperties: Properties = Properties().apply {

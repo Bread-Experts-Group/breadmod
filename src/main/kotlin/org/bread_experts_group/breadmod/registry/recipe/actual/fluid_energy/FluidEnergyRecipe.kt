@@ -60,14 +60,16 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	fun assembleItems(input: T): List<ItemStack> =
 		buildList {
 			repeat(this@FluidEnergyRecipe.rItemOutputs.size) { index ->
-				this.add(this@FluidEnergyRecipe.rItemOutputs[index].copyWithCount(input.iCount[index]))
+				val count = this@FluidEnergyRecipe.rItemOutputs[index].count
+				this.add(this@FluidEnergyRecipe.rItemOutputs[index].copyWithCount(count))
 			}
 		}
 
 	fun assembleFluids(input: T): List<FluidStack> =
 		buildList {
 			repeat(this@FluidEnergyRecipe.rFluidOutputs.size) { index ->
-				this.add(this@FluidEnergyRecipe.rFluidOutputs[index].copyWithAmount(input.iAmount[index]))
+				val amount = this@FluidEnergyRecipe.rFluidOutputs[index].amount
+				this.add(this@FluidEnergyRecipe.rFluidOutputs[index].copyWithAmount(amount))
 			}
 		}
 
@@ -86,6 +88,8 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 		itemList.forEach { item -> this.rItemInputs.forEach { if (it.test(item)) item.shrink(it.count()) } }
 		return itemList
 	}
+
+	fun consumeItemsAndSet(items: List<ItemStack>, set: (Int, ItemStack) -> Unit) = items.forEachIndexed(set)
 
 	fun consumeFluids(fluids: List<FluidStack>): List<FluidStack> {
 		val fluidList: MutableList<FluidStack> = mutableListOf()

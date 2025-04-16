@@ -11,15 +11,12 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 
 class MicrowaveRenderer(
 	context: Context
 ) : BreadModBER<MicrowaveBlockEntity>(
-	context,
-	context.blockRenderDispatcher.getBlockModel(ModBlocks.MICROWAVE.asBlock().defaultBlockState())
+	context
 ) {
 	private companion object {
 		val DOOR_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door")
@@ -45,11 +42,10 @@ class MicrowaveRenderer(
 		val rotation = this.plateRots[blockEntity.hashCode()] ?: return
 
 		poseStack.pushPose()
+		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
 		poseStack.translate(0.5, 0.5, 0.5)
 		poseStack.mulPose(Axis.YP.rotationDegrees(blockRotation.toYRotFixed()))
 		poseStack.translate(-0.5, -0.5, -0.5)
-
-		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
 
 		poseStack.pushPose()
 		poseStack.scaleFlat(0.9f)

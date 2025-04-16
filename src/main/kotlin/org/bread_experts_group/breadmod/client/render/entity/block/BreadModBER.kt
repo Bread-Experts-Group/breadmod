@@ -36,23 +36,25 @@ import kotlin.jvm.optionals.getOrNull
  */
 abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	val context: Context,
-	private val originalModel: BakedModel? = null,
 	private val snapGraphicsToBlockSide: Boolean = true
 ) : BlockEntityRenderer<T> {
 	protected val random: RandomSource = RandomSource.create()
-	protected val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
+	private val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
 	private val debugAxisModel = localClient.modelManager.getModel(modelLocation("${ModelProvider.BLOCK_FOLDER}/axis"))
 
+	/**
+	 * Make sure to place this before the yRot mulPose,since this model's orientation is pulled from the blockstate.
+	 */
 	fun renderOriginalModel(
 		blockEntity: T,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
 		packedOverlay: Int
 	) {
-		if (this.originalModel == null) return
+		val originalModel = this.context.blockRenderDispatcher.getBlockModel(blockEntity.blockState)
 		localClient.blockRenderer.modelRenderer.tessellateModel(
 			blockEntity,
-			this.originalModel,
+			originalModel,
 			poseStack,
 			bufferSource,
 			this.random,
