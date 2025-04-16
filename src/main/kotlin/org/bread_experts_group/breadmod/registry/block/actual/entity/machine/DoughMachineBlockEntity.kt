@@ -53,7 +53,7 @@ class DoughMachineBlockEntity(
 		super.commonTick(level, pos, state, entity)
 	}
 
-	override fun finalizeRecipe(recipe: DoughMachineRecipe, level: Level) {
+	override fun finalizeRecipe(recipe: DoughMachineRecipe, level: Level): Boolean {
 		TODO("Not yet implemented")
 	}
 

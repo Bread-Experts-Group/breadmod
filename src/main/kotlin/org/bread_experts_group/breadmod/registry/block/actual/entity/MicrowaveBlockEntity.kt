@@ -1,8 +1,6 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.HolderLookup.Provider
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.crafting.CampfireCookingRecipe
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.item.crafting.RecipeManager.CachedCheck
@@ -48,7 +46,7 @@ class MicrowaveBlockEntity(
 		})
 	}
 
-	override fun finalizeRecipe(recipe: MicrowaveRecipe, level: Level) {
+	override fun finalizeRecipe(recipe: MicrowaveRecipe, level: Level): Boolean {
 		TODO("Not yet implemented")
 	}
 }

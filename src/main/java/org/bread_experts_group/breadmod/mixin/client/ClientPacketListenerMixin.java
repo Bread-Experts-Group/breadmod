@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.player.Player;
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay;
 import org.bread_experts_group.breadmod.client.gui.screens.BlueScreen;
 import org.spongepowered.asm.mixin.Mixin;

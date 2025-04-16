@@ -5,10 +5,8 @@ import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
-import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
-import net.minecraft.core.Direction.WEST
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.client.render.localClient

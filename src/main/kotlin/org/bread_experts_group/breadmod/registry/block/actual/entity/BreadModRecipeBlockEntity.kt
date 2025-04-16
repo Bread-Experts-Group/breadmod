@@ -36,7 +36,7 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	/**
 	 * Finalizes this recipe.
 	 */
-	abstract fun finalizeRecipe(recipe: R, level: Level)
+	abstract fun finalizeRecipe(recipe: R, level: Level): Boolean
 
 	/**
 	 * Resets the current recipe.
@@ -44,5 +44,10 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	open fun resetRecipe(level: Level) {
 		this.currentRecipe = Optional.empty()
 		this.maxProgress = 0; this.progress = 0
+	}
+
+	fun finalizeAndReset(recipe: R, level: Level) {
+		this.finalizeRecipe(recipe, level)
+		this.resetRecipe(level)
 	}
 }

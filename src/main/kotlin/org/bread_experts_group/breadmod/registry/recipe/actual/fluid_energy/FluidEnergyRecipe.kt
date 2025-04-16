@@ -147,6 +147,8 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 			}
 		} || this.rItemOutputs.isEmpty()
 
+	fun canFitItemResult(stack: ItemStack): Boolean = this.canFitItemResults(listOf(stack))
+
 	/**
 	 * @return True if fluids fit in result tanks, false otherwise.
 	 */

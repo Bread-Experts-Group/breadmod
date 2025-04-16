@@ -91,11 +91,12 @@ class ToasterBlockEntity(
 		}
 	}
 
-	override fun finalizeRecipe(recipe: ToasterRecipe, level: Level) {
+	override fun finalizeRecipe(recipe: ToasterRecipe, level: Level): Boolean {
 		val stack = this.getItem(0)
 		val assemble = recipe.assemble(FluidEnergyInput(stack, stack.count), level)
 
 		recipe.consumeItems(listOf(stack))
 		this.setItem(0, assemble)
+		return true
 	}
 }

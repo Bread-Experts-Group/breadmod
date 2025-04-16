@@ -4,9 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
-import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.joml.Vector3f

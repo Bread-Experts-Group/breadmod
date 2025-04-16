@@ -5,8 +5,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.joml.Vector3f
-import java.awt.Color
 
 class TestOverlay : LayeredDraw.Layer {
 //	private val camera = Camera()

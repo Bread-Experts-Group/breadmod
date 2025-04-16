@@ -49,6 +49,8 @@ class WheatCrusherBlockEntity(
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
 	) {
+		if (this.getItem(0).isEmpty) return
+		val powered = state.getValue(BlockStateProperties.POWERED)
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
 			if (!activeRecipe.itemStillValid(this.getItem(0))) this.resetRecipe(level)
 			val recipeTime = activeRecipe.getTime()
@@ -59,40 +61,32 @@ class WheatCrusherBlockEntity(
 			) return@ifPresentOrElse
 			val extractEnergy = this.energyHandler.extractEnergy(this.energyDivision, false)
 
-			if (
-				extractEnergy >= this.energyDivision &&
-				activeRecipe.canFitItemResults(listOf(this.getItem(1)))
-			) {
-				level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
-				if (this.progress >= recipeTime) {
-					this.finalizeRecipe(activeRecipe, level)
-					this.resetRecipe(level)
-				} else this.progress++
+			if (extractEnergy >= this.energyDivision && activeRecipe.canFitItemResult(this.getItem(1))) {
+				if (!powered) level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, true))
+				if (this.progress >= recipeTime) this.finalizeAndReset(activeRecipe, level) else this.progress++
 			}
 		}, {
 			val stack = this.getItem(0)
 			val check = this.recipeDial.getRecipeFor(FluidEnergyInput(stack, stack.count), level)
 
-			check.ifPresent { present ->
-				val recipe = present.value
-				this.currentRecipe = Optional.of(recipe)
-				this.maxProgress = recipe.rTime ?: 0
-			}
-			level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false))
+			check.ifPresentOrElse({ present ->
+				this.currentRecipe = Optional.of(present.value)
+				this.maxProgress = present.value.getTime()
+			}, { level.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.POWERED, false)) })
 		})
 	}
 
 	override fun resetRecipe(level: Level) {
-		level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(BlockStateProperties.POWERED, false))
 		this.energyDivision = -1
 		super.resetRecipe(level)
 	}
 
-	override fun finalizeRecipe(recipe: WheatCrusherRecipe, level: Level) {
+	override fun finalizeRecipe(recipe: WheatCrusherRecipe, level: Level): Boolean {
 		val stack = this.getItem(0)
 		val assemble = recipe.assemble(FluidEnergyInput(stack, stack.count), level)
 		recipe.consumeItems(listOf(this.getItem(0))).forEachIndexed(this::setItem)
 		this.setOrGrow(1, assemble, assemble.count)
+		return true
 	}
 
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
