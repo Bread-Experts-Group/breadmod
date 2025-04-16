@@ -163,7 +163,7 @@ val localProperties: Properties = Properties().apply {
 publishing {
 	publications {
 		create<MavenPublication>("mavenKotlin") {
-			artifactId = "$artifactId-code"
+			artifactId = "breadmod"
 			from(components["kotlin"])
 			artifact(tasks.kotlinSourcesJar)
 			artifact(tasks["dokkaJavadocJar"])
