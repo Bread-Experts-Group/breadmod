@@ -157,7 +157,7 @@ tasks.register<Jar>("dokkaJavadocJar") {
 	from(tasks.dokkaGeneratePublicationJavadoc.flatMap(DokkaGeneratePublicationTask::outputDirectory))
 	archiveClassifier.set("javadoc")
 }
-val localProperties: Properties = Properties().apply {
+private val localProperties: Properties = Properties().apply {
 	rootProject.file("local.properties").reader().use(::load)
 }
 publishing {
