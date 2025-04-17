@@ -54,10 +54,10 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 
 	fun assemble(input: T, level: Level): ItemStack = this.assemble(input, level.registryAccess())
 
-	fun assembleFluid(input: T): FluidStack =
+	fun assembleFluid(): FluidStack =
 		this.rFluidOutputs[0].copyWithAmount(this.rFluidOutputs[0].amount)
 
-	fun assembleItems(input: T): List<ItemStack> =
+	fun assembleItems(): List<ItemStack> =
 		buildList {
 			repeat(this@FluidEnergyRecipe.rItemOutputs.size) { index ->
 				val count = this@FluidEnergyRecipe.rItemOutputs[index].count
@@ -65,7 +65,7 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 			}
 		}
 
-	fun assembleFluids(input: T): List<FluidStack> =
+	fun assembleFluids(): List<FluidStack> =
 		buildList {
 			repeat(this@FluidEnergyRecipe.rFluidOutputs.size) { index ->
 				val amount = this@FluidEnergyRecipe.rFluidOutputs[index].amount
@@ -73,8 +73,8 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 			}
 		}
 
-	fun assembleOutputs(input: T): Pair<List<ItemStack>, List<FluidStack>> =
-		this.assembleItems(input) to this.assembleFluids(input)
+	fun assembleOutputs(): Pair<List<ItemStack>, List<FluidStack>> =
+		this.assembleItems() to this.assembleFluids()
 
 	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 	override fun getResultItem(registries: HolderLookup.Provider): ItemStack = this.rItemOutputs[0].copy()
@@ -89,25 +89,13 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 		return itemList
 	}
 
-	fun consumeItemsAndSet(items: List<ItemStack>, set: (Int, ItemStack) -> Unit) = items.forEachIndexed(set)
+	fun consumeItemsAndSet(items: List<ItemStack>, set: (Int, ItemStack) -> Unit): Unit = items.forEachIndexed(set)
 
 	fun consumeFluids(fluids: List<FluidStack>): List<FluidStack> {
 		val fluidList: MutableList<FluidStack> = mutableListOf()
 		this.rFluidInputs.forEach { fluidList.add(fluids.find(it::test) ?: return@forEach) }
 		fluidList.forEach { fluid -> this.rFluidInputs.forEach { if (it.test(fluid)) fluid.shrink(it.amount()) } }
 		return fluidList
-	}
-
-	fun setOutputsWithOverflow(items: List<ItemStack>): List<ItemStack> {
-		val resultList: List<ItemStack> = this.consumeItems(items)
-		val slots = items.size
-		this.rItemOutputs.all { rItem ->
-			repeat(slots) {
-				return@all rItem.count <= items[it].count || items[it].isEmpty
-			}
-			false
-		}
-		return listOf()
 	}
 
 	/**
@@ -140,6 +128,46 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	 */
 	fun canFitResults(items: List<ItemStack>, fluids: List<FluidStack>, tankCapacity: Int): Boolean =
 		this.canFitItemResults(items) && this.canFitFluidResults(fluids, tankCapacity)
+
+	// start overflow
+	fun canFitItemsOverflow(items: List<ItemStack>): Boolean =
+		this.rItemOutputs.all { outputItem ->
+			items.indices.any { this.checkItemsCanFit(items[it], outputItem) }
+		}
+
+	fun checkItemsCanFit(source: ItemStack, target: ItemStack): Boolean =
+		(source.`is`(target.item) || source.isEmpty) && (source.count + target.count <= target.maxStackSize)
+
+	fun setItemsOverflow(outputItems: List<ItemStack>, set: (Int, ItemStack, Int) -> Unit) {
+		for (outputItem in this.assembleItems())
+			for (i in outputItems.indices)
+				if (this.checkItemsCanFit(outputItems[i], outputItem)) {
+					set(i, outputItem, outputItem.count)
+					break
+				}
+	}
+
+	fun canFitFluidsOverflow(fluids: List<FluidStack>, tankCapacity: Int): Boolean =
+		this.rFluidOutputs.all { outputFluid ->
+			fluids.indices.any { this.checkFluidsCanFit(fluids[it], outputFluid, tankCapacity) }
+		}
+
+	fun checkFluidsCanFit(source: FluidStack, target: FluidStack, tankCapacity: Int): Boolean =
+		(source.`is`(target.fluid) || source.isEmpty) && (source.amount + target.amount <= tankCapacity)
+
+	fun setFluidsOverflow(
+		outputFluids: List<FluidStack>,
+		tankCapacity: Int,
+		set: (Int, FluidStack, Int) -> Unit
+	) {
+		for (outputFluid in this.assembleFluids())
+			for (i in outputFluids.indices)
+				if (this.checkFluidsCanFit(outputFluids[i], outputFluid, tankCapacity)) {
+					set(i, outputFluid, outputFluid.amount)
+					break
+				}
+	}
+	// end overflow
 
 	/**
 	 * @return True if items fit in result slots, false otherwise.

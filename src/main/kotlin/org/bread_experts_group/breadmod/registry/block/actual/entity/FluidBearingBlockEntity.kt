@@ -23,6 +23,13 @@ interface FluidBearingBlockEntity {
 		it.amount = stack.amount.toBigDecimal()
 	}
 
+	fun getFluidsInRange(range: IntRange): List<FluidStack> = buildList {
+		range.forEach { this.add(this@FluidBearingBlockEntity.getFluid(it)) }
+	}
+
+	fun setOrGrowFluid(tank: Int, fluid: FluidStack, growAmount: Int): Unit =
+		if (this.getFluid(tank).isEmpty) this.setFluid(tank, fluid) else this.growFluid(tank, growAmount)
+
 	fun serializeFluidsNBT(registries: HolderLookup.Provider, to: CompoundTag): Unit = CompoundTag().let {
 		to.put(this::class.simpleName + "_fluids", this.fluidHandler.serializeNBT(registries))
 	}

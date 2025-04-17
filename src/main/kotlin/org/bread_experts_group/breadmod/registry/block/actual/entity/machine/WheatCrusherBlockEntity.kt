@@ -85,7 +85,7 @@ class WheatCrusherBlockEntity(
 		val stack = this.getItem(0)
 		val assemble = recipe.assemble(FluidEnergyInput(stack, stack.count), level)
 		recipe.consumeItems(listOf(this.getItem(0))).forEachIndexed(this::setItem)
-		this.setOrGrow(1, assemble, assemble.count)
+		this.setOrGrowItem(1, assemble, assemble.count)
 		return true
 	}
 

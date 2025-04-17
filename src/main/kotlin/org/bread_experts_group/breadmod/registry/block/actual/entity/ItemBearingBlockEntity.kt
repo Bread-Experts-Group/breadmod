@@ -60,7 +60,11 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 	override fun getItem(slot: Int): ItemStack = this.itemHandler.getStackInSlot(slot)
 	override fun setItem(slot: Int, stack: ItemStack): Unit = this.itemHandler.setStackInSlot(slot, stack)
 
-	fun setOrGrow(slot: Int, stack: ItemStack, growCount: Int): Unit =
+	fun getItemsInRange(range: IntRange): List<ItemStack> = buildList {
+		range.forEach { this.add(this@ItemBearingBlockEntity.getItem(it)) }
+	}
+
+	fun setOrGrowItem(slot: Int, stack: ItemStack, growCount: Int): Unit =
 		if (this.getItem(slot).isEmpty) this.setItem(slot, stack) else this.growItem(slot, growCount)
 
 	fun serializeItemsNBT(to: CompoundTag, registries: Provider) {

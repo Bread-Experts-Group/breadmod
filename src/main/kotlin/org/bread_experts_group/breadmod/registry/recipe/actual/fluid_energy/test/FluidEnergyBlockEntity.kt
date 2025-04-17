@@ -39,33 +39,14 @@ class FluidEnergyBlockEntity(
 	)
 
 	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level): Boolean {
-		val inputItems = listOf(this.getItem(0), this.getItem(1), this.getItem(2), this.getItem(3))
-		val inputFluids = listOf(this.getFluid(0), this.getFluid(1))
-		val outputSlots = listOf(this.getItem(4), this.getItem(5), this.getItem(6), this.getItem(7))
-		val (items, fluids) = recipe.assembleOutputs(
-			FluidEnergyInput(
-				inputItems,
-				buildList { inputItems.filter { !it.isEmpty }.forEach { this.add(it.count) } },
-				inputFluids,
-				buildList { inputFluids.filter { !it.isEmpty }.forEach { this.add(it.amount) } }
-			)
-		)
-		items.forEach { outputItem ->
-			for (i in outputSlots.indices) {
-				if (
-					(outputSlots[i].`is`(outputItem.item) || outputSlots[i].isEmpty) &&
-					(outputSlots[i].count + outputItem.count <= outputItem.maxStackSize)
-				) {
-					this.setOrGrow(i + 4, outputItem, outputItem.count)
-					recipe.consumeItemsAndSet(inputItems, this::setItem)
-					break
-				}
-			}
+		recipe.consumeItems(this.getItemsInRange(0 .. 3)).forEachIndexed(this::setItem)
+		recipe.setItemsOverflow(this.getItemsInRange(4 .. 7)) { slot, item, count ->
+			this.setOrGrowItem(slot + 4, item, count)
 		}
-		// todo fluids come later
-//		fluids.forEach { outputFluid ->
-//			val match =
-//		}
+		recipe.consumeFluids(this.getFluidsInRange(0 .. 1)).forEachIndexed(this::setFluid)
+		recipe.setFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000) { tank, fluid, amount ->
+			this.setOrGrowFluid(tank + 2, fluid, amount)
+		}
 		return true
 	}
 
@@ -79,29 +60,25 @@ class FluidEnergyBlockEntity(
 		state: BlockState,
 		entity: AbstractTickingBlockEntity<*>
 	) {
+		if (this.itemHandler.isEmpty && this.fluidHandler.isEmpty) return
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
-			val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
-			val itemInputs =
-				listOf(this.getItem(0), this.getItem(1), this.getItem(2), this.getItem(3))
+			val fluidInputs = this.getFluidsInRange(0 .. 1)
+			val itemInputs = this.getItemsInRange(0 .. 3)
+
 			if (!activeRecipe.inputsStillValid(itemInputs, fluidInputs)) this.resetRecipe(level)
-			// todo work on slot emptiness / fullness check
-			//  (aka new canFitResults that accounts for overflow)
-//			if (activeRecipe.canFitResults(
-//					listOf(this.getItem(4), this.getItem(5), this.getItem(6), this.getItem(7)),
-//					listOf(this.getFluid(2), this.getFluid(3)),
-//					10000
-//				)
-//			) {
+			if (
+				activeRecipe.canFitItemsOverflow(this.getItemsInRange(4 .. 7)) &&
+				activeRecipe.canFitFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000)
+			) {
 				val recipeTime = activeRecipe.rTime ?: 0
 				if (this.progress >= recipeTime) {
 					this.finalizeRecipe(activeRecipe, level)
 					this.resetRecipe(level)
 				} else this.progress++
-//			} else this.resetRecipe(level)
+			} else this.resetRecipe(level)
 		}, {
-			val fluidInputs = listOf(this.getFluid(0), this.getFluid(1))
-			val itemInputs =
-				listOf(this.getItem(0), this.getItem(1), this.getItem(2), this.getItem(3))
+			val fluidInputs = this.getFluidsInRange(0 .. 1)
+			val itemInputs = this.getItemsInRange(0 .. 3)
 			val check = this.recipeDial.getRecipeFor(
 				FluidEnergyInput(
 					itemInputs,

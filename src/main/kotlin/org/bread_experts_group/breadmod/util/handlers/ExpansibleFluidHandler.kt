@@ -18,6 +18,7 @@ import java.util.function.Predicate
 import kotlin.jvm.optionals.getOrElse
 import kotlin.reflect.full.isSubclassOf
 
+@Suppress("ConvertLambdaToReference")
 class ExpansibleFluidHandler(
 	override val units: MutableList<ExpansibleTank>,
 	val itemContainer: ItemStack = ItemStack.EMPTY
@@ -131,6 +132,9 @@ class ExpansibleFluidHandler(
 			this.fluid = FluidStack.parse(registries, tag.get("fluid") ?: return).getOrElse(FluidStack::EMPTY).fluid
 		}
 	}
+
+	val isEmpty: Boolean
+		get() = this.units.all { it.isEmpty }
 
 	override fun fill(
 		stack: FluidStack,

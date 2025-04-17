@@ -118,7 +118,7 @@ class ToasterBlock : BreadModBlockWithEntity(
 			(stack.`is`(ModItemTags.TOASTABLE) || stack.`is`(ModItemTags.EXPLODES_IN_TOASTER))
 		) {
 			if (!player.isCreative) stack.shrink(1)
-			entity.setOrGrow(0, ItemStack(stack.item, 1), 1)
+			entity.setOrGrowItem(0, ItemStack(stack.item, 1), 1)
 			level.playSound(
 				null,
 				pos,
