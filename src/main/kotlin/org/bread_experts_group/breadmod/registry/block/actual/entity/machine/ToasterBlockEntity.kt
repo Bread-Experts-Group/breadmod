@@ -70,7 +70,7 @@ class ToasterBlockEntity(
 				} else this.resetRecipe(level)
 			}, {
 				val stack = this.getItem(0)
-				val check = this.recipeDial.getRecipeFor(FluidEnergyInput(stack, stack.count), level)
+				val check = this.recipeDial.getRecipeFor(FluidEnergyInput(stack), level)
 
 				check.ifPresentOrElse({ present ->
 					val recipe = present.value
@@ -93,7 +93,7 @@ class ToasterBlockEntity(
 
 	override fun finalizeRecipe(recipe: ToasterRecipe, level: Level): Boolean {
 		val stack = this.getItem(0)
-		val assemble = recipe.assemble(FluidEnergyInput(stack, stack.count), level)
+		val assemble = recipe.assembleItem(FluidEnergyInput(stack), level)
 
 		recipe.consumeItems(listOf(stack))
 		this.setItem(0, assemble)

@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestRecipeBlockEntity
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.multi.MultiFluidTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
@@ -60,7 +60,6 @@ class MultiFluidRecipeBlockEntity(
 			val check = this.recipeDial.getRecipeFor(
 				BMRecipeInputs.MultiFluid(
 					inputList,
-					buildList { inputList.forEach { this.add(it.amount) } },
 					0
 				), level
 			)
@@ -79,13 +78,7 @@ class MultiFluidRecipeBlockEntity(
 	override fun getDisplayName(): Component = Component.literal("MultiFluidTestRecipe")
 	override fun finalizeRecipe(recipe: MultiFluidTestRecipe, level: Level) {
 		val inputList = listOf(this.getFluid(0), this.getFluid(1))
-		val assemble = recipe.assembleFluids(
-			BMRecipeInputs.MultiFluid(
-				inputList.filter { !it.isEmpty },
-				buildList { inputList.filter { it.amount != 0 }.forEach { this.add(it.amount) } },
-				0
-			)
-		)
+		val assemble = recipe.assembleFluids()
 		// Index 0 for multi-item/fluid recipes should always exist.
 		// If it doesn't, then something seriously went wrong...
 		if (this.getFluid(2).isEmpty) {

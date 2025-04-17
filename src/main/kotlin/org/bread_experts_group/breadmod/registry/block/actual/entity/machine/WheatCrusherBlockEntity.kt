@@ -43,6 +43,7 @@ class WheatCrusherBlockEntity(
 			if (field == -1) field = value
 		}
 
+	// todo revamp ticking and recipe finalization to take advantage of refined logic in FER.
 	override fun commonTick(
 		level: Level,
 		pos: BlockPos,
@@ -67,7 +68,7 @@ class WheatCrusherBlockEntity(
 			}
 		}, {
 			val stack = this.getItem(0)
-			val check = this.recipeDial.getRecipeFor(FluidEnergyInput(stack, stack.count), level)
+			val check = this.recipeDial.getRecipeFor(FluidEnergyInput(stack), level)
 
 			check.ifPresentOrElse({ present ->
 				this.currentRecipe = Optional.of(present.value)
@@ -83,7 +84,7 @@ class WheatCrusherBlockEntity(
 
 	override fun finalizeRecipe(recipe: WheatCrusherRecipe, level: Level): Boolean {
 		val stack = this.getItem(0)
-		val assemble = recipe.assemble(FluidEnergyInput(stack, stack.count), level)
+		val assemble = recipe.assembleItem(FluidEnergyInput(stack), level)
 		recipe.consumeItems(listOf(this.getItem(0))).forEachIndexed(this::setItem)
 		this.setOrGrowItem(1, assemble, assemble.count)
 		return true

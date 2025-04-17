@@ -4,7 +4,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.Slot
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestRecipeMenu
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidItemRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes

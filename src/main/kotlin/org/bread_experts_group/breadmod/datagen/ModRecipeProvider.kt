@@ -85,7 +85,7 @@ class ModRecipeProvider(
 			.fluidRequired(Fluids.WATER, 500)
 			.timeRequired(100)
 			.save(recipeOutput, modLocation("experimental", "single_fluid_item_test"))
-
+		// FluidEnergyRecipe
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
 			listOf(Items.BREAD to 16),
@@ -96,15 +96,6 @@ class ModRecipeProvider(
 			.fluidRequired(Fluids.LAVA, 500)
 			.timeRequired(100)
 			.save(recipeOutput, modLocation("fluid_energy", "test_one"))
-
-		FluidEnergyBuilder(
-			::FluidEnergyRecipeTest,
-			listOf(Items.BREAD to 16, Items.STRING to 16)
-		)
-			.itemRequired(ModItems.FLOUR.get(), 8)
-			.itemRequired(Items.APPLE, 8)
-			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
-
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
 			listOf(Items.COOKED_BEEF to 16)
@@ -114,6 +105,15 @@ class ModRecipeProvider(
 			.timeRequired(100)
 			.save(recipeOutput, modLocation("fluid_energy", "test_two"))
 
+		FluidEnergyBuilder(
+			::FluidEnergyRecipeTest,
+			listOf(Items.BREAD to 16, Items.STRING to 16)
+		)
+			.itemRequired(ModItems.FLOUR.get(), 8)
+			.itemRequired(Items.REDSTONE, 8)
+			.timeRequired(50)
+			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
+		// Toaster
 		FluidEnergyBuilder(
 			::ToasterRecipe,
 			listOf(ModItems.TOASTED_BREAD.get() to 2)

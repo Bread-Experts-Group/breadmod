@@ -15,9 +15,9 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.material.Fluid
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeBuilder
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeSerializer
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BreadModRecipes
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeBuilder
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeSerializer
+import org.bread_experts_group.breadmod.registry.recipe.BreadModRecipes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 

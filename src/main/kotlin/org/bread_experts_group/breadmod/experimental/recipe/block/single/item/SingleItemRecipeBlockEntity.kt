@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestItemRecipeBlockEntity
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleItemTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
@@ -37,7 +37,6 @@ class SingleItemRecipeBlockEntity(
 			val check = this.recipeDial.getRecipeFor(
 				BMRecipeInputs.SingleItem(
 					this.items[0],
-					this.items[0].count,
 					1
 				), level
 			)
@@ -60,7 +59,7 @@ class SingleItemRecipeBlockEntity(
 	override fun getDisplayName(): Component = Component.literal("SingleItemRecipe")
 	override fun finalizeRecipe(recipe: SingleItemTestRecipe, level: Level) {
 		val assemble =
-			recipe.assemble(BMRecipeInputs.SingleItem(this.items[0], this.items[0].count, 1), level.registryAccess())
+			recipe.assemble(BMRecipeInputs.SingleItem(this.items[0], 1), level.registryAccess())
 		if (this.itemSlots[1].isEmpty) this.itemSlots[1] =
 			assemble.copyWithCount(recipe.rItemOutput.count) else this.itemSlots[1].grow(recipe.rItemOutput.count)
 		recipe.consumeInput(this.items)

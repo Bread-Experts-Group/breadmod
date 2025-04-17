@@ -6,6 +6,8 @@ import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.RenderShape.MODEL
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -29,6 +31,8 @@ class MultiItemRecipeBlock : BaseEntityBlock(Properties.of()) {
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
+
+	override fun getRenderShape(state: BlockState): RenderShape = MODEL
 
 	override fun useWithoutItem(
 		state: BlockState,

@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestRecipeBlockEntity
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidTestRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
@@ -50,11 +50,7 @@ class SingleFluidRecipeBlockEntity(
 			}
 		}, {
 			val check = this.recipeDial.getRecipeFor(
-				BMRecipeInputs.SingleFluid(
-					this.fluidHandler.getFluidInTank(0),
-					this.fluidHandler.getFluidInTank(0).amount,
-					0
-				), level
+				BMRecipeInputs.SingleFluid(this.fluidHandler.getFluidInTank(0), 0), level
 			)
 
 			check.ifPresent { present ->
@@ -68,13 +64,7 @@ class SingleFluidRecipeBlockEntity(
 	}
 
 	override fun finalizeRecipe(recipe: SingleFluidTestRecipe, level: Level) {
-		val assemble = recipe.assembleFluid(
-			BMRecipeInputs.SingleFluid(
-				this.fluidHandler.getFluidInTank(0),
-				this.fluidHandler.getFluidInTank(0).amount,
-				0
-			)
-		)
+		val assemble = recipe.assembleFluid()
 		if (this.fluidHandler.getFluidInTank(1).isEmpty) {
 			this.fluidHandler.getUnit(1).asStack = assemble.copyWithAmount(recipe.rFluidOutput.amount)
 		} else this.fluidHandler.getFluidInTank(1).amount += recipe.rFluidOutput.amount

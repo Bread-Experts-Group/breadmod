@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.experimental.recipe.AbstractTestItemRecipeBlockEntity
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeInputs
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeInputs
 import org.bread_experts_group.breadmod.experimental.recipe.recipe.single.SingleFluidItemRecipe
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
@@ -56,9 +56,8 @@ class SingleFluidItemRecipeBlockEntity(
 			val check = this.recipeDial.getRecipeFor(
 				BMRecipeInputs.SingleFluidItem(
 					this.items[0],
-					this.items[0].count,
 					this.fluidHandler.getUnit(0).asStack,
-					this.fluidHandler.getUnit(0).fluidAmount, 1
+					1
 				), level
 			)
 
@@ -84,14 +83,7 @@ class SingleFluidItemRecipeBlockEntity(
 	override fun getWidth(): Int = 1
 	override fun getHeight(): Int = 1
 	override fun finalizeRecipe(recipe: SingleFluidItemRecipe, level: Level) {
-		val assemble = recipe.assembleOutputs(
-			BMRecipeInputs.SingleFluidItem(
-				this.items[0],
-				this.items[0].count,
-				this.fluidHandler.getUnit(0).asStack,
-				this.fluidHandler.getUnit(0).fluidAmount, 1
-			)
-		)
+		val assemble = recipe.assembleOutputs()
 		if (this.itemSlots[1].isEmpty) this.itemSlots[1] = assemble.second.copyWithCount(recipe.rItemOutput.count)
 		else this.itemSlots[1].grow(recipe.rItemOutput.count)
 		if (this.fluidHandler.getUnit(1).isEmpty)

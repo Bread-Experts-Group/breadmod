@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.material.Fluid
 import net.neoforged.neoforge.fluids.FluidStack
-import org.bread_experts_group.breadmod.experimental.recipe.recipe.BMRecipeBuilder
+import org.bread_experts_group.breadmod.registry.recipe.BMRecipeBuilder
 
 class FluidEnergyBuilder(
 	private val recipe: RecipeFunctionMulti,
@@ -20,25 +20,11 @@ class FluidEnergyBuilder(
 			this.recipe.invoke(
 				this.items,
 				buildList {
-					this@FluidEnergyBuilder.itemResults.forEach {
-						this.add(
-							ItemStack(
-								it.first,
-								it.second
-							)
-						)
-					}
+					this@FluidEnergyBuilder.itemResults.forEach { this.add(ItemStack(it.first, it.second)) }
 				}.toMutableList(),
 				this.fluids,
 				buildList {
-					this@FluidEnergyBuilder.fluidResults.forEach {
-						this.add(
-							FluidStack(
-								it.first,
-								it.second
-							)
-						)
-					}
+					this@FluidEnergyBuilder.fluidResults.forEach { this.add(FluidStack(it.first, it.second)) }
 				}.toMutableList(),
 				this.time,
 				this.energy

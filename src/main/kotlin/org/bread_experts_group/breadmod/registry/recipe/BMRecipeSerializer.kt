@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.recipe.recipe
+package org.bread_experts_group.breadmod.registry.recipe
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
@@ -16,9 +16,9 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import java.util.function.Function
 
-typealias StreamByteBufCodec<T> = StreamCodec<RegistryFriendlyByteBuf, T>
 typealias NotNullListCodec<T> = StreamCodec<RegistryFriendlyByteBuf, NonNullList<T>>
 typealias KListCodec<T> = StreamCodec<RegistryFriendlyByteBuf, List<T>>
+typealias StreamByteBufCodec<T> = StreamCodec<RegistryFriendlyByteBuf, T>
 
 // todo look into more efficient codec practices such as Codec#pair
 //  also figure out more efficient ways of writing these methods

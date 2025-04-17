@@ -40,13 +40,10 @@ class FluidEnergyBlockEntity(
 
 	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level): Boolean {
 		recipe.consumeItems(this.getItemsInRange(0 .. 3)).forEachIndexed(this::setItem)
-		recipe.setItemsOverflow(this.getItemsInRange(4 .. 7)) { slot, item, count ->
-			this.setOrGrowItem(slot + 4, item, count)
-		}
+		recipe.setItemsOverflow(4 .. 7, this::getItemsInRange, this::setOrGrowItem, 4)
+
 		recipe.consumeFluids(this.getFluidsInRange(0 .. 1)).forEachIndexed(this::setFluid)
-		recipe.setFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000) { tank, fluid, amount ->
-			this.setOrGrowFluid(tank + 2, fluid, amount)
-		}
+		recipe.setFluidsOverflow(2 .. 3, this::getFluidsInRange, this::setOrGrowFluid, 10000, 2)
 		return true
 	}
 
@@ -66,32 +63,25 @@ class FluidEnergyBlockEntity(
 			val itemInputs = this.getItemsInRange(0 .. 3)
 
 			if (!activeRecipe.inputsStillValid(itemInputs, fluidInputs)) this.resetRecipe(level)
-			if (
-				activeRecipe.canFitItemsOverflow(this.getItemsInRange(4 .. 7)) &&
-				activeRecipe.canFitFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000)
-			) {
-				val recipeTime = activeRecipe.rTime ?: 0
-				if (this.progress >= recipeTime) {
-					this.finalizeRecipe(activeRecipe, level)
-					this.resetRecipe(level)
-				} else this.progress++
-			} else this.resetRecipe(level)
+			val recipeTime = activeRecipe.rTime ?: 0
+			if (this.progress >= recipeTime) {
+				this.finalizeRecipe(activeRecipe, level)
+				this.resetRecipe(level)
+			} else this.progress++
 		}, {
 			val fluidInputs = this.getFluidsInRange(0 .. 1)
 			val itemInputs = this.getItemsInRange(0 .. 3)
-			val check = this.recipeDial.getRecipeFor(
-				FluidEnergyInput(
-					itemInputs,
-					buildList { itemInputs.forEach { this.add(it.count) } },
-					fluidInputs,
-					buildList { fluidInputs.forEach { this.add(it.amount) } }
-				), level
-			)
+			val check = this.recipeDial.getRecipeFor(FluidEnergyInput(itemInputs, fluidInputs), level)
 
 			check.ifPresent { present ->
 				val recipe = present.value
-				this.maxProgress = recipe.rTime ?: 0
-				this.currentRecipe = Optional.of(recipe)
+				if (
+					recipe.canFitItemsOverflow(this.getItemsInRange(4 .. 7)) &&
+					recipe.canFitFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000)
+				) {
+					this.maxProgress = recipe.rTime ?: 0
+					this.currentRecipe = Optional.of(recipe)
+				}
 			}
 		})
 	}

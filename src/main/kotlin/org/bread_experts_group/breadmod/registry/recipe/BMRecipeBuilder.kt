@@ -1,8 +1,8 @@
-package org.bread_experts_group.breadmod.experimental.recipe.recipe
+package org.bread_experts_group.breadmod.registry.recipe
 
 import net.minecraft.advancements.AdvancementHolder
-import net.minecraft.advancements.AdvancementRequirements
-import net.minecraft.advancements.AdvancementRewards
+import net.minecraft.advancements.AdvancementRequirements.Strategy
+import net.minecraft.advancements.AdvancementRewards.Builder
 import net.minecraft.advancements.Criterion
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger
 import net.minecraft.core.NonNullList
@@ -35,8 +35,8 @@ abstract class BMRecipeBuilder : RecipeBuilder {
 	protected fun buildAdvancement(recipeOutput: RecipeOutput, id: ResourceLocation): AdvancementHolder {
 		val advancement = recipeOutput.advancement()
 			.addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
-			.rewards(AdvancementRewards.Builder.recipe(id))
-			.requirements(AdvancementRequirements.Strategy.OR)
+			.rewards(Builder.recipe(id))
+			.requirements(Strategy.OR)
 		return advancement.build(id.withPrefix("recipes/"))
 	}
 
