@@ -12,27 +12,24 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.material.Fluids
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
+import org.bread_experts_group.breadmod.registry.ModDamageType
 import org.joml.Math
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.util.function.Function
+import kotlin.random.Random
 
 object BreadModExplosion {
 	val calculator: ExplosionDamageCalculator = ExplosionDamageCalculator()
-
-	data class EntityExplosionResult(
-		val damage: Float,
-		val knockback: Vec3
-	)
 
 	data class ExplosionResults(
 		val level: Level,
 		val pos: Vec3,
 		val radius: Float,
 		val toDetonate: Set<BlockPos>,
-		val hitEntities: Map<Entity, EntityExplosionResult>,
+		val hitEntities: Map<Entity, Float>,
 		private val simExplosion: Explosion
 	) {
 		fun explode(source: Entity?) {
@@ -53,11 +50,19 @@ object BreadModExplosion {
 					this.radius, this.radius.toInt()
 				)
 			)
-			val damageSource = this.level.damageSources().explosion(source, source)
 			this.level.gameEvent(source, GameEvent.EXPLODE, this.pos)
-			this.hitEntities.forEach { entity, (damage, knockBack) ->
-				entity.hurt(damageSource, damage)
-				entity.addDeltaMovement(knockBack)
+			val damageSourceLow = this.level.damageSources().explosion(source, source)
+			val damageSourceHigh = ModDamageType.EXPLOSION_DAMAGE_HIGH.source(this.level)
+			val damageSourceVeryHigh = ModDamageType.EXPLOSION_DAMAGE_VERY_HIGH.source(this.level)
+			this.hitEntities.forEach { entity, rayPower ->
+				entity.hurt(
+					when (rayPower) {
+						in 0f .. 500f     -> damageSourceLow
+						in 501f .. 10000f -> damageSourceHigh
+						else              -> damageSourceVeryHigh
+					},
+					rayPower
+				)
 			}
 			this.toDetonate.forEach { blockPos ->
 				this.level
@@ -99,21 +104,23 @@ object BreadModExplosion {
 			level, null, pos.x, pos.y, pos.z, radius,
 			true, Explosion.BlockInteraction.DESTROY
 		)
+		val hitEntities = mutableMapOf<Entity, Float>()
 		val toDetonate = buildSet {
+			var currentBlockPos = BlockPos.MutableBlockPos()
 			this@BreadModExplosion.getPoints.apply(points).forEach { direction ->
 				var currentPos = pos
 				var power = radius
-				val localTracerAttenuate = (level.random.nextFloat() * 3.0f) + 0.5f
+				val localTracerAttenuate = (Random.nextFloat() * 3.0f) + 0.5f
 				for (@Suppress("unused") depth in 0 until radius.toInt()) {
-					val thisBlockPos = BlockPos(currentPos.toVec3i())
-					val blockState = level.getBlockState(thisBlockPos)
+					currentBlockPos.set(currentPos.x, currentPos.y, currentPos.z)
+					val blockState = level.getBlockState(currentBlockPos)
 					val offset = if (blockState.isAir) {
 						0.75f
 					} else {
 						val calculated = this@BreadModExplosion.calculator.getBlockExplosionResistance(
 							simExplosion,
 							level,
-							thisBlockPos,
+							currentBlockPos,
 							blockState,
 							Fluids.EMPTY.defaultFluidState()
 						)
@@ -121,60 +128,15 @@ object BreadModExplosion {
 					}
 					power -= offset + localTracerAttenuate
 					if (power < 0f) break
-					if (!blockState.isAir) this.add(thisBlockPos)
+					if (!blockState.isAir) this.add(currentBlockPos.immutable())
+					val entities = level.getEntities(null, AABB.ofSize(currentPos, 1.0, 1.0, 1.0))
+					entities.forEach { entity ->
+						hitEntities[entity] = hitEntities.getOrPut(entity) { 0f } + power
+					}
 					currentPos = currentPos.add(direction.offsetRandom(level.random, offset))
 				}
 			}
 		}
-//		val f2: Float = radius * 2.0f
-//		val k1 = Mth.floor(pos.x - f2.toDouble() - 1.0)
-//		val l1 = Mth.floor(pos.x + f2.toDouble() + 1.0)
-//		val i2 = Mth.floor(pos.y - f2.toDouble() - 1.0)
-//		val i1 = Mth.floor(pos.y + f2.toDouble() + 1.0)
-//		val j2 = Mth.floor(pos.z - f2.toDouble() - 1.0)
-//		val j1 = Mth.floor(pos.z + f2.toDouble() + 1.0)
-//		val list: MutableList<Entity> = level.getEntities(
-//			null,
-//			AABB(
-//				k1.toDouble(), i2.toDouble(), j2.toDouble(),
-//				l1.toDouble(), i1.toDouble(), j1.toDouble()
-//			)
-//		)
-//		EventHooks.onExplosionDetonate(level, simExplosion, list, f2.toDouble())
-		val hitEntities = mutableMapOf<Entity, EntityExplosionResult>()
-//		for (entity in list) {
-//			if (entity is Player && (entity.isSpectator || entity.isCreative || entity.abilities.flying)) continue
-//			if (!entity.ignoreExplosion(simExplosion)) {
-//				val d11 = sqrt(entity.distanceToSqr(pos)) / f2.toDouble()
-//				if (d11 <= 1.0) {
-//					var d5: Double = entity.x - pos.x
-//					var d7: Double = (if (entity is PrimedTnt) entity.y else entity.eyeY) - pos.y
-//					var d9: Double = entity.z - pos.z
-//					val d12 = sqrt(d5 * d5 + d7 * d7 + d9 * d9)
-//					if (d12 == 0.0) continue
-//					d5 /= d12
-//					d7 /= d12
-//					d9 /= d12
-//					val d13 = (1.0 - d11) * Explosion.getSeenPercent(pos, entity)
-//						.toDouble() * this.calculator.getKnockbackMultiplier(entity).toDouble()
-//					if (entity is LivingEntity)
-//						d13 * (1.0 - entity.getAttributeValue(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE))
-//					else d13
-//
-//					d5 *= d13
-//					d7 *= d13
-//					d9 *= d13
-//					hitEntities[entity] = EntityExplosionResult(
-//						if (this.calculator.shouldDamageEntity(simExplosion, entity))
-//							this.calculator.getEntityDamageAmount(simExplosion, entity) else 0f,
-//						EventHooks.getExplosionKnockback(
-//							level, simExplosion, entity,
-//							Vec3(d5, d7, d9)
-//						)
-//					)
-//				}
-//			}
-//		}
 		return ExplosionResults(level, pos, radius, toDetonate, hitEntities, simExplosion)
 	}
 }

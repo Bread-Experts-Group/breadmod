@@ -33,7 +33,6 @@ class ModBlockStateProvider(
 		this.blockWithItem(ModBlocks.FLOUR_BLOCK.asBlock())
 		this.blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
 		this.blockWithItem(ModBlocks.HAPPY_BLOCK.asBlock())
-		this.blockWithItem(ModBlocks.NUKE.asBlock())
 		this.blockWithItem(ModBlocks.CHARCOAL_BLOCK.asBlock())
 		this.blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
 
@@ -48,10 +47,23 @@ class ModBlockStateProvider(
 		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock())
 		this.blockWithItem(ModBlocks.JADE_FLUID_TANK.asBlock())
 
+		this.simpleBlock(
+			ModBlocks.NUKE.asBlock(),
+			this.models().cubeBottomTop(
+				"breadmod:block/nuke",
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/nuke"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/nuke_bottom"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/nuke_top"),
+			)
+		)
+		this.simpleBlockItem(
+			ModBlocks.NUKE.asBlock(),
+			this.models().getBuilder("breadmod:block/nuke")
+		)
+
 		this.horizontalBlock(ModBlocks.MONITOR.asBlock()) {
-			val name = "breadmod:block/monitor"
 			val model = this.models().cube(
-				name,
+				"breadmod:block/monitor",
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
@@ -68,9 +80,8 @@ class ModBlockStateProvider(
 		)
 
 		this.horizontalBlock(ModBlocks.SOUND_BLOCK.asBlock()) {
-			val name = "breadmod:block/sound_block"
 			val model = this.models().orientable(
-				name,
+				"breadmod:block/sound_block",
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side")
@@ -114,9 +125,8 @@ class ModBlockStateProvider(
 
 		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.asBlock()) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-			val name = "breadmod:block/wheat_crusher$machineOn"
 			val model = this.models().cube(
-				name,
+				"breadmod:block/wheat_crusher$machineOn",
 				machineTop,
 				machineTop,
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
@@ -133,9 +143,8 @@ class ModBlockStateProvider(
 
 		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.asBlock()) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-			val name = "breadmod:block/dough_machine$machineOn"
 			val model = this.models().cube(
-				name,
+				"breadmod:block/dough_machine$machineOn",
 				machineTop,
 				machineTop,
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
@@ -153,12 +162,14 @@ class ModBlockStateProvider(
 		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
 			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
 			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
-				1 -> "_one"; 2 -> "_two"; 3 -> "_three"; 4 -> "_four"
+				1 -> "_one"
+				2 -> "_two"
+				3 -> "_three"
+				4 -> "_four"
 				else -> ""
 			}
-			val name = "breadmod:block/energy_storage$storedLevel"
 			val model = this.models().orientableWithBottom(
-				name,
+				"breadmod:block/energy_storage$storedLevel",
 				this.modLoc("$blockFolder/side"),
 				this.modLoc("$blockFolder/front$storedLevel"),
 				this.modLoc("$blockFolder/bottom"),
@@ -182,7 +193,6 @@ class ModBlockStateProvider(
 		this.horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.asBlock(), "omaneko_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
-
 
 		this.horizontalBlockBenchModel(ModBlocks.TOASTER.asBlock(), "toaster")
 		this.simpleBlockItem(ModBlocks.TOASTER.asBlock(), this.blockBenchItemModel("toaster_item"))

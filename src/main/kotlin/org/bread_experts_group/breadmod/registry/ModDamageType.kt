@@ -24,5 +24,11 @@ data class ModDamageType(val key: ResourceKey<DamageType>) {
 	companion object {
 		@DataGenerateLanguage("en_us", "%1\$s ran out of time!")
 		val TIMER_RAN_OUT: ModDamageType = ModDamageType("timer")
+
+		@DataGenerateLanguage("en_us", "%1\$s was vaporized by an explosion")
+		val EXPLOSION_DAMAGE_VERY_HIGH: ModDamageType = ModDamageType("explosion_dmg_very_high")
+
+		@DataGenerateLanguage("en_us", "%1\$s was obliterated by an explosion")
+		val EXPLOSION_DAMAGE_HIGH: ModDamageType = ModDamageType("explosion_dmg_high")
 	}
 }

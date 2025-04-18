@@ -14,10 +14,9 @@ in vec2 texCoord0;
 out vec4 fragColor;
 
 #define u_color vec3(0.3137254901960784,0,1)
-#define u_background vec4(0,0,0,1)
+#define u_background vec4(0, 0, 0, 0)
 #define u_detail 0.4
 #define u_speed 100.0
-#define u_resolution vec2(200, 200)
 
 /*
 * @author Hazsi (kinda)
