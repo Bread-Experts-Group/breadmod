@@ -61,6 +61,7 @@ object ModRenderType {
 	private val astralShader = ShaderStateShard(this::astralInstance)
 	val astralVertexFormat: VertexFormat = VertexFormat.builder()
 		.add("Position", VertexFormatElement.POSITION)
+		.add("UV0", VertexFormatElement.UV0)
 		.build()
 	private val astralRenderType: RenderType = RenderType.create(
 		"astral",

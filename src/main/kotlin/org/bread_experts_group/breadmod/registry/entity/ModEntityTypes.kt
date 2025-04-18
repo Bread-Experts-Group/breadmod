@@ -10,6 +10,7 @@ import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
+import org.bread_experts_group.breadmod.registry.entity.actual.PrimedNukeBlock
 import java.util.function.Supplier
 
 object ModEntityTypes {
@@ -23,6 +24,15 @@ object ModEntityTypes {
 			.clientTrackingRange(10)
 			.updateInterval(10)
 			.build(modLocation("happy_block").toString())
+	}
+
+	@DataGenerateLanguage("en_us", "Nuke Block")
+	val NUKE_BLOCK_ENTITY: Supplier<EntityType<PrimedNukeBlock>> = this.ENTITY_REGISTRY.register("nuke_block") { ->
+		EntityType.Builder.of({ _, level -> PrimedNukeBlock(level) }, MobCategory.MISC)
+			.sized(0.98f, 0.98f)
+			.clientTrackingRange(10)
+			.updateInterval(10)
+			.build(modLocation("nuke_block").toString())
 	}
 
 	@DataGenerateLanguage("en_us")

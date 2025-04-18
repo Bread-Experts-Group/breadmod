@@ -33,6 +33,7 @@ class ModBlockStateProvider(
 		this.blockWithItem(ModBlocks.FLOUR_BLOCK.asBlock())
 		this.blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
 		this.blockWithItem(ModBlocks.HAPPY_BLOCK.asBlock())
+		this.blockWithItem(ModBlocks.NUKE.asBlock())
 		this.blockWithItem(ModBlocks.CHARCOAL_BLOCK.asBlock())
 		this.blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
 

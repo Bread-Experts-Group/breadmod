@@ -48,6 +48,7 @@ class ModBlockLootProvider(
 		this.dropSelf(ModBlocks.MONITOR.asBlock())
 		this.dropSelf(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
 		this.dropSelf(ModBlocks.HAPPY_BLOCK.asBlock())
+		this.dropSelf(ModBlocks.NUKE.asBlock())
 		this.dropSelf(ModBlocks.CHARCOAL_BLOCK.asBlock())
 		this.dropSelf(ModBlocks.KEYBOARD.asBlock())
 		this.dropSelf(ModBlocks.HELL_NAW_BUTTON.asBlock())

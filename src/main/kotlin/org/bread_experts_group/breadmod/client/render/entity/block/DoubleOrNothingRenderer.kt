@@ -8,7 +8,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNot
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.joml.Vector3f
 
-// todo on the backburner until i figure out the shader code...
 class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRenderer<DoubleOrNothingBlockEntity> {
 	private val vertexes: Array<Vector3f> = arrayOf(
 		Vector3f(1f, 0f, 0f),
@@ -48,9 +47,9 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 	) {
 		val buffer = bufferSource.getBuffer(ModRenderType.astral())
 		val pose = poseStack.last().pose()
-		buffer.addVertex(pose, topLeft.x, topLeft.y, topLeft.z)
-		buffer.addVertex(pose, bottomLeft.x, bottomLeft.y, bottomLeft.z)
-		buffer.addVertex(pose, bottomRight.x, bottomRight.y, bottomRight.z)
-		buffer.addVertex(pose, topRight.x, topRight.y, topRight.z)
+		buffer.addVertex(pose, topLeft.x, topLeft.y, topLeft.z).setUv(0f, 0f)
+		buffer.addVertex(pose, bottomLeft.x, bottomLeft.y, bottomLeft.z).setUv(0f, 1f)
+		buffer.addVertex(pose, bottomRight.x, bottomRight.y, bottomRight.z).setUv(1f, 1f)
+		buffer.addVertex(pose, topRight.x, topRight.y, topRight.z).setUv(1f, 0f)
 	}
 }

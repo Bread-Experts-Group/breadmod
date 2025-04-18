@@ -1,12 +1,22 @@
 #version 150
 
-precision mediump float;
-//uniform vec2 u_resolution;
+#moj_import <minecraft:fog.glsl>
+
 uniform float GameTime;
+uniform vec4 ColorModulator;
+uniform float FogStart;
+uniform float FogEnd;
+uniform vec4 FogColor;
+
+in float vertexDistance;
+in vec2 texCoord0;
+
+out vec4 fragColor;
+
 #define u_color vec3(0.3137254901960784,0,1)
 #define u_background vec4(0,0,0,1)
 #define u_detail 0.4
-#define u_speed 0.1
+#define u_speed 100.0
 #define u_resolution vec2(200, 200)
 
 /*
@@ -37,17 +47,15 @@ float luma(in vec4 v) { return rgb2luma(v.rgb); }
 #endif
 
 float map(vec3 p) {
-    float time = GameTime * 40.0;
-    float t = time * u_speed;
+    float t = GameTime * u_speed;
     p.xz *= m(t * 0.4);p.xy*= m(t * 0.1);
     vec3 q = p * 2.0 + t;
     return length(p+vec3(sin((t*u_speed) * 0.1))) * log(length(p) + 0.9) + cos(q.x + sin(q.z + cos(q.y))) * 0.5 - 1.0;
 
 }
 
-void main()
-{
-    vec2 a = gl_FragCoord.xy / vec2(1920, 1080).x - vec2(0.5, 0.5);
+void main() {
+    vec2 a = texCoord0.xy - vec2(0.5, 0.5);
     vec3 cl = vec3(0.0);
     float d = 2.5;
     for (float i = 0.; i <= (1. + 20. * u_detail); i++) {
@@ -63,6 +71,6 @@ void main()
     color.r = max(u_background.r,color.r);
     color.g = max(u_background.g,color.g);
     color.b = max(u_background.b,color.b);
-    gl_FragColor = color;
+    fragColor = linear_fog(color, vertexDistance, FogStart, FogEnd, FogColor);
 }
 

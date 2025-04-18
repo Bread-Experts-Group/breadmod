@@ -83,6 +83,14 @@ neoForge {
 				"--uuid", "30cdf636-82ed-47ee-9a9c-4d820c0d76a9"
 			)
 		}
+		create("client_Meownium") {
+			client()
+			enableTestNamespaces()
+			programArguments.addAll(
+				"--username", "Meownium",
+				"--uuid", "34e8274a-c02c-4c32-9311-2bccc9f6ba7d"
+			)
+		}
 		create("server") {
 			server()
 			programArgument("--nogui")

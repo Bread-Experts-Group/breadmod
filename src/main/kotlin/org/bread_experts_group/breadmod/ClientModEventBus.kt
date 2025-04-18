@@ -37,6 +37,7 @@ import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
@@ -47,6 +48,7 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
 import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen
@@ -64,7 +66,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
-import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
@@ -144,6 +145,7 @@ internal object ClientModEventBus {
 	@SubscribeEvent
 	fun registerRenderers(event: EntityRenderersEvent.RegisterRenderers) {
 		event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
+		event.registerEntityRenderer(ModEntityTypes.NUKE_BLOCK_ENTITY.get(), ::PrimedNukeBlockRenderer)
 		event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
 		event.registerEntityRenderer(ModEntityTypes.FORKLIFT.get(), ::ForkliftRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get(), ::ToasterRenderer)

@@ -48,6 +48,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
 import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
+import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.SoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
@@ -190,6 +191,11 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	val HAPPY_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"happy_block", ::HappyBlock, Properties()
+	)
+
+	@DataGenerateLanguage("en_us")
+	val NUKE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"nuke", ::NukeBlock, Properties()
 	)
 
 	@DataGenerateLanguage("en_us")

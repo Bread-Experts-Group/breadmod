@@ -31,7 +31,7 @@ class PrimedHappyBlock(
 
 	override fun explode(): Unit = this.level().let {
 		BreadModExplosion
-			.calculate(it, this.position(), 30f)
+			.calculate(it, this.position(), 30f, 1000)
 			.explode(null)
 		if (this.shouldSpread) {
 			repeat(this.divisions) { arc ->
