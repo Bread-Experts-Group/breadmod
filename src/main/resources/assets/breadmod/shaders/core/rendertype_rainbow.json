@@ -3,12 +3,6 @@
   "fragment": "breadmod:rendertype_rainbow",
   "uniforms": [
     {
-      "name": "ScreenSize",
-      "type": "float",
-      "count": 2,
-      "values": [1.0, 1.0]
-    },
-    {
       "name": "GameTime",
       "type": "float",
       "count": 1,
@@ -31,6 +25,41 @@
       "type": "float",
       "count": 3,
       "values": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "ColorModulator",
+      "type": "float",
+      "count": 4,
+      "values": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "FogStart",
+      "type": "float",
+      "count": 1,
+      "values": [0.0]
+    },
+    {
+      "name": "FogEnd",
+      "type": "float",
+      "count": 1,
+      "values": [1.0]
+    },
+    {
+      "name": "FogColor",
+      "type": "float",
+      "count": 4,
+      "values": [0.0, 0.0, 0.0, 0.0]
+    },
+    {
+      "name": "FogShape",
+      "type": "int",
+      "count": 1,
+      "values": [0]
     }
   ]
 }

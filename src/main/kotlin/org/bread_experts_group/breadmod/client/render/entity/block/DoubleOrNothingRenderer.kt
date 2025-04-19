@@ -45,7 +45,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 		bottomLeft: Vector3f,
 		bottomRight: Vector3f,
 	) {
-		val buffer = bufferSource.getBuffer(ModRenderType.astral())
+		val buffer = bufferSource.getBuffer(ModRenderType.rainbow())
 		val pose = poseStack.last().pose()
 		buffer.addVertex(pose, topLeft.x, topLeft.y, topLeft.z).setUv(0f, 0f)
 		buffer.addVertex(pose, bottomLeft.x, bottomLeft.y, bottomLeft.z).setUv(0f, 1f)

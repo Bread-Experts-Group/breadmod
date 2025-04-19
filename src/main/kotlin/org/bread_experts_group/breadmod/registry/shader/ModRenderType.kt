@@ -43,6 +43,7 @@ object ModRenderType {
 	private val rainbowShader = ShaderStateShard(this::rainbowInstance)
 	val rainbowVertexFormat: VertexFormat = VertexFormat.builder()
 		.add("Position", VertexFormatElement.POSITION)
+		.add("UV0", VertexFormatElement.UV0)
 		.build()
 	private val solidTextureRenderType: RenderType = RenderType.create(
 		"rainbow",
