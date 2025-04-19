@@ -16,12 +16,11 @@ class SpreadParticlesPacket private constructor(
 	val level: String,
 	val particleType: ParticleOptions,
 	val position: Vector3f,
-	val radius: Float,
-	val count: Int
+	val radius: Float
 ) : CustomPacketPayload {
-	constructor(level: Level, particleType: ParticleOptions, position: Vector3f, radius: Float, count: Int) : this(
+	constructor(level: Level, particleType: ParticleOptions, position: Vector3f, radius: Float) : this(
 		level.dimension().location().toString(),
-		particleType, position, radius, count
+		particleType, position, radius
 	)
 
 	companion object {
@@ -32,7 +31,6 @@ class SpreadParticlesPacket private constructor(
 			ParticleTypes.STREAM_CODEC, SpreadParticlesPacket::particleType,
 			ByteBufCodecs.VECTOR3F, SpreadParticlesPacket::position,
 			ByteBufCodecs.FLOAT, SpreadParticlesPacket::radius,
-			ByteBufCodecs.INT, SpreadParticlesPacket::count,
 			::SpreadParticlesPacket
 		)
 
@@ -41,7 +39,7 @@ class SpreadParticlesPacket private constructor(
 				context.player().level().let {
 					if (data.level != it.dimension().location().toString()) return@let
 					val random = it.random
-					repeat(data.count) { _ ->
+					repeat((data.radius * 2).toInt()) { _ ->
 						it.addParticle(
 							data.particleType,
 							data.position.x + ((random.nextFloat() - 0.5) * data.radius * 2),

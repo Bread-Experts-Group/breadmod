@@ -1,12 +1,14 @@
 {
-  "vertex": "breadmod:rendertype_astral",
-  "fragment": "breadmod:rendertype_astral",
+  "vertex": "breadmod:fullbright_foggable",
+  "fragment": "breadmod:astral",
   "uniforms": [
     {
       "name": "GameTime",
       "type": "float",
       "count": 1,
-      "values": [0.0]
+      "values": [
+        0.0
+      ]
     },
     {
       "name": "ModelViewMat",
@@ -58,7 +60,11 @@
       "name": "ChunkOffset",
       "type": "float",
       "count": 3,
-      "values": [0.0, 0.0, 0.0]
+      "values": [
+        0.0,
+        0.0,
+        0.0
+      ]
     },
     {
       "name": "ColorModulator",

@@ -47,7 +47,7 @@ object BreadModExplosion {
 				SpreadParticlesPacket(
 					this.level, ParticleTypes.EXPLOSION_EMITTER,
 					this.pos.toVector3f(),
-					this.radius, this.radius.toInt()
+					this.radius
 				)
 			)
 			this.level.gameEvent(source, GameEvent.EXPLODE, this.pos)
