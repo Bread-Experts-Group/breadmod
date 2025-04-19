@@ -37,11 +37,6 @@ class ModBlockStateProvider(
 		this.blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
 
 		this.blockWithItem(ModBlocks.FLUID_ENERGY.asBlock())
-		this.blockWithItem(ModBlocks.MULTI_ITEM_TEST.asBlock())
-		this.blockWithItem(ModBlocks.MULTI_FLUID_TEST.asBlock())
-		this.blockWithItem(ModBlocks.SINGLE_ITEM_TEST.asBlock())
-		this.blockWithItem(ModBlocks.SINGLE_FLUID_TEST.asBlock())
-		this.blockWithItem(ModBlocks.SINGLE_FLUID_ITEM_TEST.asBlock())
 		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock())
 		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock())
 		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock())

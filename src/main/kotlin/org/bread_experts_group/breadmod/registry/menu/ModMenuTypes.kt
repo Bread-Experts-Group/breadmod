@@ -8,11 +8,6 @@ import net.neoforged.neoforge.network.IContainerFactory
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyMenu
-import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidRecipeMenu
-import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemRecipeMenu
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidRecipeMenu
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item.SingleFluidItemRecipeMenu
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import java.util.function.Supplier
@@ -25,16 +20,6 @@ object ModMenuTypes {
 		this.registerMenuType("dough_machine_menu", ::DoughMachineMenu)
 
 	// Exp.
-	val MULTI_ITEM: Supplier<MenuType<MultiItemRecipeMenu>> =
-		this.registerMenuType("multi_item", ::MultiItemRecipeMenu)
-	val MULTI_FLUID: Supplier<MenuType<MultiFluidRecipeMenu>> =
-		this.registerMenuType("multi_fluid", ::MultiFluidRecipeMenu)
-	val SINGLE_ITEM: Supplier<MenuType<SingleItemRecipeMenu>> =
-		this.registerMenuType("single_item", ::SingleItemRecipeMenu)
-	val SINGLE_FLUID: Supplier<MenuType<SingleFluidRecipeMenu>> =
-		this.registerMenuType("single_fluid", ::SingleFluidRecipeMenu)
-	val SINGLE_FLUID_ITEM: Supplier<MenuType<SingleFluidItemRecipeMenu>> =
-		this.registerMenuType("single_fluid_item", ::SingleFluidItemRecipeMenu)
 	val FLUID_ENERGY_TEST: Supplier<MenuType<FluidEnergyMenu>> =
 		this.registerMenuType("fluid_energy", ::FluidEnergyMenu)
 

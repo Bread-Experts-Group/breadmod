@@ -31,11 +31,6 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
-import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidRecipeBlock
-import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemRecipeBlock
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidRecipeBlock
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item.SingleFluidItemRecipeBlock
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemRecipeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
@@ -338,36 +333,6 @@ object ModBlocks {
 	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 
 	// EXPERIMENTAL PAST THIS POINT
-	@DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (MULTI)")
-	val MULTI_ITEM_TEST: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"multi_item_recipe",
-		::MultiItemRecipeBlock
-	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
-
-	@DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (MULTI, FLUID)")
-	val MULTI_FLUID_TEST: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"multi_fluid_recipe",
-		::MultiFluidRecipeBlock
-	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
-
-	@DataGenerateLanguage("en_us", "EXPERIMENTAL RECIPE TEST BLOCK (SINGLE)")
-	val SINGLE_ITEM_TEST: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"single_item_recipe",
-		::SingleItemRecipeBlock
-	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
-
-	@DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK (SINGLE, FLUID)")
-	val SINGLE_FLUID_TEST: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"single_fluid_recipe",
-		::SingleFluidRecipeBlock
-	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
-
-	@DataGenerateLanguage("en_us", "EXPERIMENTAL MACHINE TEST BLOCK(SINGLE, FLUID/ITEM")
-	val SINGLE_FLUID_ITEM_TEST: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"single_fluid_item_recipe",
-		::SingleFluidItemRecipeBlock
-	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
-
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, RED")
 	val COLORED_EMISSIVE_LIGHT_RED: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"colored_emissive_light_red",

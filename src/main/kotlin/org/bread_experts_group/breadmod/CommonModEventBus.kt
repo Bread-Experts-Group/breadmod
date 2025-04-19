@@ -187,21 +187,6 @@ internal object CommonModEventBus {
 
 		event.registerBlockEntity(
 			Capabilities.FluidHandler.BLOCK,
-			ModBlockEntityTypes.SINGLE_FLUID_TEST.get()
-		) { entity, _: Direction? -> entity.fluidHandler }
-
-		event.registerBlockEntity(
-			Capabilities.FluidHandler.BLOCK,
-			ModBlockEntityTypes.MULTI_FLUID_TEST.get()
-		) { entity, _: Direction? -> entity.fluidHandler }
-
-		event.registerBlockEntity(
-			Capabilities.FluidHandler.BLOCK,
-			ModBlockEntityTypes.SINGLE_FLUID_ITEM_TEST.get()
-		) { entity, _: Direction? -> entity.fluidHandler }
-
-		event.registerBlockEntity(
-			Capabilities.FluidHandler.BLOCK,
 			ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get()
 		) { entity, _: Direction? ->
 			entity.fluidHandler

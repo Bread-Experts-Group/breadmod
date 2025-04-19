@@ -49,11 +49,6 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBack
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.data_holders.ToolGunData
-import org.bread_experts_group.breadmod.experimental.recipe.block.multi.fluid.MultiFluidScreen
-import org.bread_experts_group.breadmod.experimental.recipe.block.multi.item.MultiItemScreen
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid.SingleFluidScreen
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.fluid_item.SingleFluidItemScreen
-import org.bread_experts_group.breadmod.experimental.recipe.block.single.item.SingleItemScreen
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.KeyMappings.placeItemKey
 import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltFour
@@ -231,12 +226,6 @@ internal object ClientModEventBus {
 		event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
 		event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
 		// Experimental stuff
-		event.register(ModMenuTypes.MULTI_ITEM.get(), ::MultiItemScreen)
-		event.register(ModMenuTypes.MULTI_FLUID.get(), ::MultiFluidScreen)
-		event.register(ModMenuTypes.SINGLE_ITEM.get(), ::SingleItemScreen)
-		event.register(ModMenuTypes.SINGLE_FLUID.get(), ::SingleFluidScreen)
-		event.register(ModMenuTypes.SINGLE_FLUID_ITEM.get(), ::SingleFluidItemScreen)
-
 		event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
 	}
 }
