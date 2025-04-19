@@ -19,6 +19,7 @@ class PrimedNukeBlock(
 	init {
 		this.setPos(pos)
 		this.deltaMovement = delta
+		this.fuse = 200
 	}
 
 	override fun explode(): Unit = this.level().let {

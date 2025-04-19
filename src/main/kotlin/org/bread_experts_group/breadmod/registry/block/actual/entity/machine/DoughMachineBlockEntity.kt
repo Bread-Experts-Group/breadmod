@@ -1,13 +1,18 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity.machine
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.item.BucketItem
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.block.state.properties.BooleanProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
@@ -21,6 +26,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.Flui
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
+import java.math.BigDecimal
 
 class DoughMachineBlockEntity(
 	pos: BlockPos, state: BlockState
@@ -30,6 +36,10 @@ class DoughMachineBlockEntity(
 	state,
 	ModRecipeTypes.DOUGH_MACHINE.get()
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity, EnergyBearingBlockEntity {
+	private companion object {
+		val POWERED: BooleanProperty = BlockStateProperties.POWERED
+	}
+
 	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
@@ -39,21 +49,9 @@ class DoughMachineBlockEntity(
 	)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		mutableListOf(
-			ExpansibleEnergyHandler.ExpansibleCell(1_000_000, true, false)
+			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(1_000_000))
 		)
 	)
-
-	override fun commonTick(
-		level: Level,
-		pos: BlockPos,
-		state: BlockState,
-		entity: DoughMachineBlockEntity
-	) {
-	}
-
-	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState, entity: DoughMachineBlockEntity) {
-		TODO("Not yet implemented")
-	}
 
 	override fun runCurrentRecipe(
 		recipe: DoughMachineRecipe,
@@ -62,15 +60,62 @@ class DoughMachineBlockEntity(
 		state: BlockState,
 		entity: DoughMachineBlockEntity
 	) {
-		TODO("Not yet implemented")
+		val powered = state.getValue(Companion.POWERED)
+		val fluidInput = listOf(this.getFluid(0))
+		val itemInputs = this.getItemsInRange(0 .. 1)
+
+		if (!recipe.inputsStillValid(itemInputs, fluidInput)) this.resetRecipe(level)
+		val recipeTime = recipe.getTime()
+
+		this.energyDivision = recipe.setEnergyDivision()
+		if (this.handleEnergy(this.energyHandler)) return
+		if (this.energyHandler.extractEnergy(this.energyDivision, false) < this.energyDivision) return
+
+		if (!powered) level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, true))
+		if (this.progress >= recipeTime) this.finalizeAndReset(recipe, level) else this.progress++
 	}
 
-	override fun checkIsEmpty(level: Level): Boolean {
-		TODO("Not yet implemented")
+	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState, entity: DoughMachineBlockEntity) {
+		level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, false))
+		val fluidInput = listOf(this.getFluid(0))
+		val itemInputs = this.getItemsInRange(0 .. 1)
+		val check = this.getOptionalRecipe(FluidEnergyInput(itemInputs, fluidInput), level)
+
+		check.ifPresent { present ->
+			val recipe = present.value
+			if (
+				recipe.canFitFluidResult(this.getFluid(1), this.fluidHandler.getTankCapacity(1)) &&
+				recipe.canFitItemResult(this.getItem(2))
+			) {
+				this.setRecipe(recipe)
+				this.maxProgress = recipe.getTime()
+				level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, true))
+			}
+		}
 	}
+
+	override fun canPlaceItemThroughFace(slot: Int, stack: ItemStack, facing: Direction?): Boolean =
+		when (slot) {
+			0    -> true
+			1    -> true
+			2    -> false
+			3    -> stack.item is BucketItem
+			else -> false
+		}
+
+	override fun canTakeItemThroughFace(slot: Int, stack: ItemStack, facing: Direction): Boolean = false
+
+	override fun checkIsEmpty(level: Level): Boolean =
+		this.getItemsInRange(0 .. 1).isEmpty() || this.getFluid(0).isEmpty
 
 	override fun finalizeRecipe(recipe: DoughMachineRecipe, level: Level): Boolean {
-		TODO("Not yet implemented")
+		val assemble = recipe.assembleOutputs()
+		recipe.consumeItems(this.getItemsInRange(0 .. 1)).forEachIndexed(this::setItem)
+		recipe.consumeFluids(listOf(this.getFluid(0))).forEachIndexed(this::setFluid)
+		this.setOrGrowItem(2, assemble.first[0], assemble.first[0].count)
+		// todo fluid setting works, but not growing (works in FluidEnergyBlockEntity)
+		this.setOrGrowFluid(1, assemble.second[0], assemble.second[0].amount)
+		return true
 	}
 
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =

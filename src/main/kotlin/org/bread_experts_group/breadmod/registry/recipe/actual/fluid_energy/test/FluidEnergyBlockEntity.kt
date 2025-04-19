@@ -77,7 +77,7 @@ class FluidEnergyBlockEntity(
 				recipe.canFitFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000)
 			) {
 				this.setRecipe(recipe)
-				this.maxProgress = recipe.rTime ?: 0
+				this.maxProgress = recipe.getTime()
 			}
 		}
 	}

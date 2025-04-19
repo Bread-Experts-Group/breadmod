@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.client.render.entity.block
 
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.PoseStack.Pose
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
@@ -10,9 +9,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.toYRotFixed
-import org.joml.Matrix4f
 import org.joml.Vector3f
-import java.awt.Color
 
 class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRenderer<DoubleOrNothingBlockEntity> {
 	private val vertexes: Array<Vector3f> = arrayOf(

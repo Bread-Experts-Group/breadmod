@@ -37,6 +37,7 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 	override fun stillValid(player: Player): Boolean = true
 
 	override fun getSlotsForFace(facing: Direction): IntArray = (0 .. this.itemHandler.slots).toSet().toIntArray()
+	// todo these two methods aren't being respected when this handler is exposed to blocks that insert or extract items
 	override fun canPlaceItemThroughFace(slot: Int, stack: ItemStack, facing: Direction?): Boolean = true
 	override fun canTakeItemThroughFace(slot: Int, stack: ItemStack, facing: Direction): Boolean = true
 

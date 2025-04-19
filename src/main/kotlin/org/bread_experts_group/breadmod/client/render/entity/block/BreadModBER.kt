@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.resources.model.BakedModel
-import net.minecraft.core.Direction
 import net.minecraft.core.Direction.DOWN
 import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH

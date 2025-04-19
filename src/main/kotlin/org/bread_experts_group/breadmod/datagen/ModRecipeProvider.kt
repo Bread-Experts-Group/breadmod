@@ -12,33 +12,20 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyBuilder
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
-import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 import java.util.concurrent.CompletableFuture
-
-typealias ItemResults = List<ItemResult>
-typealias ItemResult = Pair<Item, Int>
-typealias FluidResults = List<FluidResult>
-typealias FluidResult = Pair<Fluid, Int>
 
 class ModRecipeProvider(
 	output: PackOutput,
 	registries: CompletableFuture<HolderLookup.Provider>
 ) : RecipeProvider(output, registries) {
 	override fun buildRecipes(recipeOutput: RecipeOutput) {
-		FluidEnergyBuilder(
-			::WheatCrusherRecipe,
-			listOf(ModItems.FLOUR.get() to 2)
-		)
-			.itemRequired(Items.WHEAT)
-			.timeRequired(100)
-			.energyRequired(2000)
-			.save(recipeOutput, modLocation("special", "machine", "wheat_crushing"))
-
 		ShapelessRecipeBuilder(RecipeCategory.MISC, ModItems.TEST_BREAD.toStack())
 			.unlockedBy("has_item", has(Items.BREAD))
 			.requires(Items.BREAD, 5)
@@ -46,40 +33,40 @@ class ModRecipeProvider(
 
 		SpecialRecipeBuilder.special { BreadSlicingRecipe() }
 			.save(recipeOutput, modLocation("special", "crafting", "bread_slicing"))
-
 		// Toaster
-		FluidEnergyBuilder(
-			::ToasterRecipe,
-			listOf(ModItems.TOASTED_BREAD.get() to 2)
+		this.toasting(Items.BREAD, ModItems.TOASTED_BREAD.get(), recipeOutput, "bread_to_toasted_bread")
+		this.toasting(ModItems.BREAD_SLICE.get(), ModItems.TOAST_SLICE.get(), recipeOutput, "slice_to_toast")
+		this.toasting(ModItems.TOASTED_BREAD.get(), Items.CHARCOAL, recipeOutput, "toasted_bread_to_charcoal")
+		this.toasting(ModItems.TOAST_SLICE.get(), Items.CHARCOAL, recipeOutput, "toast_slice_to_charcoal")
+		// Wheat Crushing
+		this.wheatCrushing(
+			Items.WHEAT to 1,
+			ModItems.FLOUR.get() to 2,
+			5,
+			2000,
+			recipeOutput,
+			"wheat_to_flour"
 		)
-			.itemRequired(Items.BREAD, 2)
-			.timeRequired(100)
-			.save(recipeOutput, modLocation("toaster", "bread_to_toasted_bread"))
-
-		FluidEnergyBuilder(
-			::ToasterRecipe,
-			listOf(ModItems.TOAST_SLICE.get() to 2)
+		this.wheatCrushing(
+			Items.HAY_BLOCK to 1,
+			ModItems.FLOUR.get() to 18,
+			15,
+			6000,
+			recipeOutput,
+			"hay_block_to_flour"
 		)
-			.itemRequired(ModItems.BREAD_SLICE.get(), 2)
-			.timeRequired(100)
-			.save(recipeOutput, modLocation("toaster", "slice_to_toast"))
-
-		FluidEnergyBuilder(
-			::ToasterRecipe,
-			listOf(Items.CHARCOAL to 2)
+		// Dough Crafting
+		this.doughCrafting(
+			ModItems.FLOUR.get() to 1,
+			Items.GUNPOWDER to 1,
+			Fluids.WATER to 100,
+			Items.TNT to 1,
+			Fluids.LAVA to 500,
+			10,
+			5000,
+			recipeOutput,
+			"dough_machine_test"
 		)
-			.itemRequired(ModItems.TOASTED_BREAD.get(), 2)
-			.timeRequired(100)
-			.save(recipeOutput, modLocation("toaster", "toasted_bread_to_charcoal"))
-
-		FluidEnergyBuilder(
-			::ToasterRecipe,
-			listOf(Items.CHARCOAL to 2)
-		)
-			.itemRequired(ModItems.TOAST_SLICE.get(), 2)
-			.timeRequired(100)
-			.save(recipeOutput, modLocation("toaster", "toast_slice_to_charcoal"))
-
 		// FluidEnergyRecipe
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
@@ -109,4 +96,41 @@ class ModRecipeProvider(
 			.timeRequired(50)
 			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
 	}
+
+	private fun toasting(input: Item, result: Item, output: RecipeOutput, name: String) =
+		FluidEnergyBuilder(::ToasterRecipe, listOf(result to 2))
+			.itemRequired(input, 2)
+			.timeRequiredInSeconds(5)
+			.save(output, modLocation("machine", "toasting", name))
+
+	private fun wheatCrushing(
+		input: Pair<Item, Int>,
+		result: Pair<Item, Int>,
+		seconds: Int,
+		energy: Int,
+		output: RecipeOutput,
+		name: String
+	) = FluidEnergyBuilder(::WheatCrusherRecipe, listOf(result))
+		.itemRequired(input.first, input.second)
+		.timeRequiredInSeconds(seconds)
+		.energyRequired(energy)
+		.save(output, modLocation("machine", "wheat_crushing", name))
+
+	private fun doughCrafting(
+		inputOne: Pair<Item, Int>,
+		inputTwo: Pair<Item, Int>,
+		fluidInput: Pair<Fluid, Int>,
+		itemOutput: Pair<Item, Int>,
+		fluidOutput: Pair<Fluid, Int>,
+		seconds: Int,
+		energy: Int,
+		output: RecipeOutput,
+		name: String
+	) = FluidEnergyBuilder(::DoughMachineRecipe, listOf(itemOutput), listOf(fluidOutput))
+		.itemRequired(inputOne.first, inputOne.second)
+		.itemRequired(inputTwo.first, inputTwo.second)
+		.fluidRequired(fluidInput.first, fluidInput.second)
+		.timeRequiredInSeconds(seconds)
+		.energyRequired(energy)
+		.save(output, modLocation("machine", "dough_crafting", name))
 }

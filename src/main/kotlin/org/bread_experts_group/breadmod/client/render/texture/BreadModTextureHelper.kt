@@ -67,7 +67,14 @@ class BreadModTextureHelper(
 		vHeight = 0 + progressInput
 	)
 
-	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, progressInput: Int, x: Int, y: Int): Unit =
+	// todo flipped logic
+	fun drawProgressiveSpriteHorizontal(
+		guiGraphics: GuiGraphics,
+		progressInput: Int,
+		x: Int,
+		y: Int,
+		drawFromRight: Boolean = false
+	): Unit =
 		this.blitTexture(
 			guiGraphics,
 			x,

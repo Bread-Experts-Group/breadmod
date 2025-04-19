@@ -6,10 +6,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.material.Fluid
 import net.neoforged.neoforge.fluids.FluidStack
-import org.bread_experts_group.breadmod.datagen.FluidResults
-import org.bread_experts_group.breadmod.datagen.ItemResults
 import org.bread_experts_group.breadmod.registry.recipe.BMRecipeBuilder
-import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 
 class FluidEnergyBuilder(
 	private val recipe: RecipeFunctionMulti,

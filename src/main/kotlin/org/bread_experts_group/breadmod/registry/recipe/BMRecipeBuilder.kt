@@ -16,6 +16,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.Fluids
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
+import net.neoforged.neoforge.registries.DeferredItem
 
 @Suppress("unused")
 abstract class BMRecipeBuilder : RecipeBuilder {
@@ -31,6 +32,7 @@ abstract class BMRecipeBuilder : RecipeBuilder {
 
 	override fun group(groupName: String?): RecipeBuilder = this
 	fun timeRequired(time: Int): BMRecipeBuilder = this.also { this.time = time }
+	fun timeRequiredInSeconds(seconds: Int): BMRecipeBuilder = this.also { this.time = seconds * 20 }
 	fun energyRequired(energy: Int): BMRecipeBuilder = this.also { this.energy = energy }
 	protected fun buildAdvancement(recipeOutput: RecipeOutput, id: ResourceLocation): AdvancementHolder {
 		val advancement = recipeOutput.advancement()
@@ -67,6 +69,9 @@ abstract class BMRecipeBuilder : RecipeBuilder {
 
 		fun itemRequired(item: Item, count: Int = 1): Multi =
 			this.also { this.items.add(SizedIngredient.of(item, count)) }
+
+		fun itemRequired(item: DeferredItem<Item>, count: Int = 1): Multi =
+			this.itemRequired(item.get(), count)
 
 		fun itemRequired(tag: TagKey<Item>, count: Int = 1): Multi =
 			this.also { this.items.add(SizedIngredient.of(tag, count)) }
