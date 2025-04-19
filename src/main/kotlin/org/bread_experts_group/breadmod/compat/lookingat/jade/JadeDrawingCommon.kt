@@ -48,7 +48,7 @@ object JadeDrawingCommon {
 			this,
 			x.toInt() + 82,
 			y.toInt() - 1,
-			uvs[direction]?.toFloat() ?: 0f,
+			this@JadeDrawingCommon.uvs[direction]?.toFloat() ?: 0f,
 			uWidth = 16,
 			vHeight = 16
 		)

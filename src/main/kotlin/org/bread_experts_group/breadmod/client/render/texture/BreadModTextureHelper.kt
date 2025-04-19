@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.client.render.texture
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.Mth.clamp
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
 /**
@@ -65,12 +66,12 @@ class BreadModTextureHelper(
 		vOffset = 0f - if (!drawFromTop) progressInput else 0,
 		vHeight = 0 + progressInput
 	)
-//	// todo work on mirrored logic
-//	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, progressInput: Int, x: Int, y: Int): Unit =
-//		this.blitTexture(
-//			guiGraphics,
-//			x,
-//			y,
-//			width = clamp(progressInput, 0, this.textureWidth)
-//		)
+
+	fun drawProgressiveSpriteHorizontal(guiGraphics: GuiGraphics, progressInput: Int, x: Int, y: Int): Unit =
+		this.blitTexture(
+			guiGraphics,
+			x,
+			y,
+			uWidth = clamp(progressInput, 0, this.textureWidth)
+		)
 }

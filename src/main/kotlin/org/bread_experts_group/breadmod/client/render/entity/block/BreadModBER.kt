@@ -91,11 +91,6 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 		)
 	}
 
-	protected fun Direction.toYRotFixed(): Float {
-		val rotFix = if (this == SOUTH || this == NORTH) 180f else 0f
-		return this.toYRot() + rotFix
-	}
-
 	private companion object {
 		const val TRANSLATE_OFFSET = 0.0001
 		val LEVEL_GRAPHICS: GuiGraphics = object : GuiGraphics(

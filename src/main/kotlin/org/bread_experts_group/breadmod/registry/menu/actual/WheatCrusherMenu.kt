@@ -22,6 +22,8 @@ class WheatCrusherMenu(
 
 	fun isCrafting(): Boolean = this.parent.progress > 1
 
+	override val containerSlotCount: Int = 2
+
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)
 		this.addSlot(SlotItemHandler(this.parent.itemHandler, 0, 80, 15))

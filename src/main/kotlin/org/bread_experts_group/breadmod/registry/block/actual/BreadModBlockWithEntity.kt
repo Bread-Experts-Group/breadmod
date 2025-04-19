@@ -118,19 +118,15 @@ abstract class BreadModBlockWithEntity(
 		return this.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
 	}
 
-	fun <T : BreadModBlockEntity<T>> tickBreadModBlockEntity(
+	protected fun <T : BreadModBlockEntity<T>> tickBreadModBlockEntity(
 		level: Level,
 		pos: BlockPos,
 		state: BlockState,
 		blockEntity: T
 	) {
-		if (level.isClientSide) {
-			blockEntity.commonTick(level, pos, state, blockEntity)
-			blockEntity.clientTick(level, pos, state, blockEntity)
-		} else {
-			blockEntity.commonTick(level, pos, state, blockEntity)
-			blockEntity.serverTick(level, pos, state, blockEntity)
-		}
+		if (level.isClientSide) blockEntity.clientTick(level, pos, state, blockEntity)
+		else blockEntity.serverTick(level, pos, state, blockEntity)
+		blockEntity.commonTick(level, pos, state, blockEntity)
 	}
 
 	override fun <T : BlockEntity> getTicker(

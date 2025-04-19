@@ -1,18 +1,21 @@
 package org.bread_experts_group.breadmod.client.gui.screens
 
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
-import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderFluid
+import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
@@ -27,25 +30,28 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 	title: Component
 ) : AbstractContainerScreen<T>(menu, inventory, title) {
 	companion object {
-		// TODO: Isolate this to just a power meter
-		val baseTexture: ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
+		val baseTexture: BreadModTextureHelper = ModTextureLocations.ENERGY_METER_16X47
 
 		@DataGenerateLanguage("en_us", "Energy")
 		val energyLabel: MutableComponent = modTranslatable(path = arrayOf("energy"))
 	}
 
-	protected fun GuiGraphics.renderEnergyMeter(x: Int, y: Int, w: Int, h: Int, cell: Int? = null) {
+	protected fun setupRender(texture: ResourceLocation) {
+		RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
+		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+		RenderSystem.setShaderTexture(0, texture)
+	}
+
+	protected fun GuiGraphics.renderEnergyMeter(x: Int, y: Int, h: Int, cell: Int? = null) {
 		val energyHandler = (this@AbstractModContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
 		val sap = if (cell == null) energyHandler else energyHandler.getUnit(cell)
 		val scaled = sap.capacity?.let { ((sap.amount.divide(it)).toFloat() * h).toInt() } ?: 0
-		this.blit(
-			Companion.baseTexture,
+		Companion.baseTexture.blitTexture(
+			this,
 			this@AbstractModContainerScreen.leftPos + x,
 			this@AbstractModContainerScreen.topPos + y + h - scaled,
-			176,
-			64 - scaled,
-			w,
-			h
+			vOffset = 47f - scaled,
+			vHeight = scaled
 		)
 	}
 
@@ -106,7 +112,7 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		cell: Int? = null
 	) {
 		this.drawFillBox(x, y, w, h)
-		this.renderEnergyMeter(x, y, w, h, cell)
+		this.renderEnergyMeter(x, y, h, cell)
 		this.renderEnergyTooltip(x, y, w, h, mouseX, mouseY, cell)
 	}
 

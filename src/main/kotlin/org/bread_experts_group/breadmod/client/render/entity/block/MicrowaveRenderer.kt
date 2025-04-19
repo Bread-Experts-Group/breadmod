@@ -12,6 +12,7 @@ import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
+import org.bread_experts_group.breadmod.util.toYRotFixed
 
 class MicrowaveRenderer(
 	context: Context

@@ -152,6 +152,8 @@ dependencies {
 //    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
 //    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
 //    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+	// WorldEdit
+	runtimeOnly("curse.maven:worldedit-225608:5830452")
 }
 
 tasks.test {

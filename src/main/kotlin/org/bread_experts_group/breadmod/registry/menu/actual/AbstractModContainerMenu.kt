@@ -6,6 +6,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
+import net.neoforged.neoforge.items.IItemHandler
+import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 
 abstract class AbstractModContainerMenu<T : BreadModBlockEntity<T>>(
@@ -27,6 +29,14 @@ abstract class AbstractModContainerMenu<T : BreadModBlockEntity<T>>(
 				)
 			}
 		}
+	}
+
+	fun addHandlerSlot(handler: IItemHandler, slot: Int, x: Int, y: Int) {
+		this.addSlot(SlotItemHandler(handler, slot, x, y))
+	}
+
+	fun addResultHandlerSlot(handler: IItemHandler, slot: Int, x: Int, y: Int) {
+		this.addSlot(ResultSlotItemHandler(handler, slot, x, y))
 	}
 
 	override fun stillValid(player: Player): Boolean = player.containerMenu == this

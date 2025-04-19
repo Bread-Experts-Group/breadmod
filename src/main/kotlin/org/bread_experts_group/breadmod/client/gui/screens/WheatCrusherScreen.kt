@@ -24,9 +24,7 @@ class WheatCrusherScreen(
 	}
 
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-		RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-		RenderSystem.setShaderTexture(0, this.texture)
+		this.setupRender(this.texture)
 
 		guiGraphics.blit(this.texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight)
 		ModTextureLocations.VERTICAL_ARROW_9X48.blitTexture(guiGraphics, this.leftPos + 83, this.topPos + 33)

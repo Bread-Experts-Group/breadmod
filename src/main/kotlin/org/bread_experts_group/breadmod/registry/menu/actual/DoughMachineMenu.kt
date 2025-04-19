@@ -29,9 +29,9 @@ class DoughMachineMenu(
 		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 24).toInt()
 
 	fun isCrafting(): Boolean = this.parent.progress > 0
-	override val containerSlotCount: Int = 3
+	override val containerSlotCount: Int = 4
 
-	class DoughMachineBucketSlot(handler: IItemHandler) : SlotItemHandler(handler, 2, 153, 7) {
+	private inner class DoughMachineBucketSlot : SlotItemHandler(this.parent.itemHandler, 3, 153, 7) {
 		override fun mayPlace(stack: ItemStack): Boolean =
 			stack.item.let { it is BucketItem && isTag(FluidTags.WATER) } ||
 					FluidUtil.getFluidHandler(stack).getOrNull().let {
@@ -42,8 +42,10 @@ class DoughMachineMenu(
 
 	init {
 		this.addInventorySlots(inventory, 8, 142, 84)
-		this.addSlot(SlotItemHandler(this.parent.itemHandler, 0, 26, 34))
-		this.addSlot(ResultSlotItemHandler(this.parent.itemHandler, 1, 78, 35))
-		this.addSlot(DoughMachineBucketSlot(this.parent.itemHandler))
+		val handler = this.parent.itemHandler
+		this.addHandlerSlot(handler, 0, 10, 34)
+		this.addHandlerSlot(handler, 1, 45, 34)
+		this.addResultHandlerSlot(handler, 2, 98, 35)
+		this.addSlot(this.DoughMachineBucketSlot())
 	}
 }

@@ -153,6 +153,11 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
 		else  -> translateFor
 	}
 
+fun Direction.toYRotFixed(): Float {
+	val rotFix = if (this == SOUTH || this == NORTH) 180f else 0f
+	return this.toYRot() + rotFix
+}
+
 /**
  * Adds a [Vec3] to this [Vec3].
  * @return The sum of this [Vec3] and [other].

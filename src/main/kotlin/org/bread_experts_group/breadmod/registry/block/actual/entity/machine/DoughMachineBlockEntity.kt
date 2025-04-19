@@ -30,7 +30,7 @@ class DoughMachineBlockEntity(
 	state,
 	ModRecipeTypes.DOUGH_MACHINE.get()
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity, EnergyBearingBlockEntity {
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(3)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
 			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),

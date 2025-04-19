@@ -18,6 +18,6 @@ out vec4 fragColor;
 void main() {
     float texPosition = (texCoord0.x * RainbowDirection.x) + (texCoord0.y * RainbowDirection.y);
     float time = (GameTime * RainbowSpeed);
-    float huePosition = mod(texPosition + time, 1);
+    float huePosition = mod(texPosition - time, 1);
     fragColor = linear_fog(hsv2rgb(vec3(huePosition, 1, 1), 1), vertexDistance, FogStart, FogEnd, FogColor);
 }
