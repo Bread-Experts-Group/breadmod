@@ -9,7 +9,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
-import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
@@ -17,7 +16,6 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
-import java.util.Optional
 
 class FluidEnergyBlockEntity(
 	pos: BlockPos,
@@ -51,38 +49,40 @@ class FluidEnergyBlockEntity(
 		FluidEnergyMenu(containerId, playerInventory, this)
 
 	override fun getDisplayName(): Component = Component.literal("Fluid Energy Recipe")
-	override fun commonTick(
+
+	override fun runCurrentRecipe(
+		recipe: FluidEnergyRecipeTest,
 		level: Level,
 		pos: BlockPos,
 		state: BlockState,
-		entity: AbstractTickingBlockEntity<*>
+		entity: FluidEnergyBlockEntity
 	) {
-		if (this.itemHandler.isEmpty && this.fluidHandler.isEmpty) return
-		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
-			val fluidInputs = this.getFluidsInRange(0 .. 1)
-			val itemInputs = this.getItemsInRange(0 .. 3)
+		val fluidInputs = this.getFluidsInRange(0 .. 1)
+		val itemInputs = this.getItemsInRange(0 .. 3)
 
-			if (!activeRecipe.inputsStillValid(itemInputs, fluidInputs)) this.resetRecipe(level)
-			val recipeTime = activeRecipe.rTime ?: 0
-			if (this.progress >= recipeTime) {
-				this.finalizeRecipe(activeRecipe, level)
-				this.resetRecipe(level)
-			} else this.progress++
-		}, {
-			val fluidInputs = this.getFluidsInRange(0 .. 1)
-			val itemInputs = this.getItemsInRange(0 .. 3)
-			val check = this.recipeDial.getRecipeFor(FluidEnergyInput(itemInputs, fluidInputs), level)
-
-			check.ifPresent { present ->
-				val recipe = present.value
-				if (
-					recipe.canFitItemsOverflow(this.getItemsInRange(4 .. 7)) &&
-					recipe.canFitFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000)
-				) {
-					this.maxProgress = recipe.rTime ?: 0
-					this.currentRecipe = Optional.of(recipe)
-				}
-			}
-		})
+		if (!recipe.inputsStillValid(itemInputs, fluidInputs)) this.resetRecipe(level)
+		val recipeTime = recipe.getTime()
+		if (this.progress >= recipeTime) this.finalizeAndReset(recipe, level) else this.progress++
 	}
+
+	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState, entity: FluidEnergyBlockEntity) {
+		val fluidInputs = this.getFluidsInRange(0 .. 1)
+		val itemInputs = this.getItemsInRange(0 .. 3)
+		val check = this.getOptionalRecipe(FluidEnergyInput(itemInputs, fluidInputs), level)
+
+		check.ifPresent { present ->
+			val recipe = present.value
+			if (
+				recipe.canFitItemsOverflow(this.getItemsInRange(4 .. 7)) &&
+				recipe.canFitFluidsOverflow(this.getFluidsInRange(2 .. 3), 10000)
+			) {
+				this.setRecipe(recipe)
+				this.maxProgress = recipe.rTime ?: 0
+			}
+		}
+	}
+
+	override fun checkIsEmpty(level: Level): Boolean =
+		this.getItemsInRange(0 .. 3).all { it.isEmpty } &&
+				this.getFluidsInRange(0 .. 1).all { it.isEmpty }
 }

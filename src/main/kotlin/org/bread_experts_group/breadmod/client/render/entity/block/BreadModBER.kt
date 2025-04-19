@@ -43,7 +43,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	private val debugAxisModel = localClient.modelManager.getModel(modelLocation("${ModelProvider.BLOCK_FOLDER}/axis"))
 
 	/**
-	 * Make sure to place this before the yRot mulPose,since this model's orientation is pulled from the blockstate.
+	 * Make sure to place this before the yRot mulPose, since this model's orientation is pulled from the BlockState.
 	 */
 	fun renderOriginalModel(
 		blockEntity: T,

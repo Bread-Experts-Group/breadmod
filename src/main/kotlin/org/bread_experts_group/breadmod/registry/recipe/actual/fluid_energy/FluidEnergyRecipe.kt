@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
+import net.minecraft.world.item.crafting.RecipeManager
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
@@ -28,9 +29,13 @@ typealias RecipeFunctionDataFixer<R> =
 				Int?, Int?, R>
 
 abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
+	/** Input list of items for this recipe. Populated via [FluidEnergyInput]. */
 	val rItemInputs: NonNullList<SizedIngredient>,
+	/** Output list of items for this recipe. Populated via [RecipeManager]. */
 	val rItemOutputs: MutableList<ItemStack>,
+	/** Input list of fluids for this recipe. Populated via [FluidEnergyInput]. */
 	val rFluidInputs: NonNullList<SizedFluidIngredient>,
+	/** Output list of fluids for this recipe. Populated via [RecipeManager]. */
 	val rFluidOutputs: MutableList<FluidStack>,
 	rTime: Int?,
 	rEnergy: Int?
@@ -93,8 +98,6 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	 */
 	fun assembleOutputs(): Pair<List<ItemStack>, List<FluidStack>> =
 		this.assembleItems() to this.assembleFluids()
-
-	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
 	/**
 	 * @return A copy of the first item in [rItemOutputs]
@@ -179,6 +182,9 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	 */
 	fun getTime(): Int = this.rTime ?: 0
 
+	/**
+	 * Sets the energy division for [rEnergy].
+	 */
 	fun setEnergyDivision(): Int = (this.rEnergy ?: 0) / max(this.getTime(), 1)
 
 	/**
@@ -303,6 +309,9 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	fun canFitFluidResult(fluid: FluidStack, tankCapacity: Int): Boolean =
 		this.canFitFluidResults(listOf(fluid), tankCapacity)
 
+	/** Returns the [RecipeSerializer] for this recipe. */
 	abstract override fun getSerializer(): RecipeSerializer<*>
+
+	/** Returns the [RecipeType] for this recipe. */
 	abstract override fun getType(): RecipeType<*>
 }

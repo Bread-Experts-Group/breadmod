@@ -37,8 +37,8 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
+import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 
 class ToasterBlock : BreadModBlockWithEntity(
@@ -213,18 +213,9 @@ class ToasterBlock : BreadModBlockWithEntity(
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T> = if (level.isClientSide)
-		BlockEntityTicker<T> { clientLevel: Level, pos: BlockPos, tState: BlockState, entity: T ->
-			if (state.getValue(Companion.TRIGGERED)) {
-				(entity as AbstractTickingBlockEntity<*>).commonTick(clientLevel, pos, tState, entity)
-				entity.clientTick(clientLevel, pos, tState, entity)
-			}
-		}
-	else
-		BlockEntityTicker<T> { serverLevel: Level, pos: BlockPos, tState: BlockState, entity: T ->
-			if (state.getValue(Companion.TRIGGERED)) {
-				(entity as AbstractTickingBlockEntity<*>).commonTick(serverLevel, pos, tState, entity)
-				entity.serverTick(serverLevel, pos, tState, entity)
-			}
-		}
+	): BlockEntityTicker<T>? = createTickerHelper(
+		blockEntityType,
+		ModBlockEntityTypes.TOASTER.get(),
+		this::tickBreadModBlockEntity
+	)
 }

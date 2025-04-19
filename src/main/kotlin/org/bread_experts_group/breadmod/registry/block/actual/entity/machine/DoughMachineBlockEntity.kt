@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
-import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
@@ -48,9 +47,26 @@ class DoughMachineBlockEntity(
 		level: Level,
 		pos: BlockPos,
 		state: BlockState,
-		entity: AbstractTickingBlockEntity<*>
+		entity: DoughMachineBlockEntity
 	) {
-		super.commonTick(level, pos, state, entity)
+	}
+
+	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState, entity: DoughMachineBlockEntity) {
+		TODO("Not yet implemented")
+	}
+
+	override fun runCurrentRecipe(
+		recipe: DoughMachineRecipe,
+		level: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: DoughMachineBlockEntity
+	) {
+		TODO("Not yet implemented")
+	}
+
+	override fun checkIsEmpty(level: Level): Boolean {
+		TODO("Not yet implemented")
 	}
 
 	override fun finalizeRecipe(recipe: DoughMachineRecipe, level: Level): Boolean {

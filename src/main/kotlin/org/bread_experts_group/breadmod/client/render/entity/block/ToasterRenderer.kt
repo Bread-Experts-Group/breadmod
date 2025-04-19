@@ -5,8 +5,10 @@ import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
+import net.minecraft.core.Direction.WEST
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -40,11 +42,25 @@ class ToasterRenderer(
 
 		poseStack.pushPose()
 		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
-		poseStack.mulPose(Axis.YP.rotationDegrees(blockRotation.toYRotFixed()))
+		when (blockRotation) {
+			SOUTH -> {
+				poseStack.mulPose(Axis.YP.rotationDegrees(180f))
+				poseStack.translate(-1.0, 0.0, -1.0)
+			}
+			WEST  -> {
+				poseStack.mulPose(Axis.YP.rotationDegrees(90f))
+				poseStack.translate(-1.0, 0.0, 0.0)
+			}
+			EAST  -> {
+				poseStack.mulPose(Axis.YN.rotationDegrees(90f))
+				poseStack.translate(0.0, 0.0, -1.0)
+			}
+			else  -> {}
+		}
 		poseStack.translate(0.0, if (triggered) -0.13 else 0.0, 0.0)
 		this.renderModel(blockEntity, Companion.HANDLE_MODEL, poseStack, bufferSource, packedOverlay)
 		poseStack.popPose()
-		val stack = blockEntity.itemHandler.getStackInSlot(0)
+		val stack = blockEntity.getItem(0)
 
 		poseStack.pushPose()
 		poseStack.translate(0.5, 0.3, 0.61)

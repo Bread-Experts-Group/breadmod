@@ -34,7 +34,7 @@ class MicrowaveBlockEntity(
 		level: Level,
 		pos: BlockPos,
 		state: BlockState,
-		entity: AbstractTickingBlockEntity<*>
+		entity: MicrowaveBlockEntity
 	) {
 		val open = state.getValue(BlockStateProperties.OPEN)
 		val stack = this.getItem(0)
@@ -44,6 +44,24 @@ class MicrowaveBlockEntity(
 			val check = this.campfireRecipeCache.getRecipeFor(SingleRecipeInput(stack), level)
 			check.ifPresent { this.currentCampfireRecipe = Optional.of(it.value) }
 		})
+	}
+
+	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState, entity: MicrowaveBlockEntity) {
+		TODO("Not yet implemented")
+	}
+
+	override fun runCurrentRecipe(
+		recipe: MicrowaveRecipe,
+		level: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: MicrowaveBlockEntity
+	) {
+		TODO("Not yet implemented")
+	}
+
+	override fun checkIsEmpty(level: Level): Boolean {
+		TODO("Not yet implemented")
 	}
 
 	override fun finalizeRecipe(recipe: MicrowaveRecipe, level: Level): Boolean {

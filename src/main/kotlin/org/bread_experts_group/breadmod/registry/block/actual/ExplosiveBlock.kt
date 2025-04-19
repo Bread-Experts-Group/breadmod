@@ -20,10 +20,10 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import java.util.function.BiConsumer
 
 abstract class ExplosiveBlock(
-	val entity: (level: Level, pos: BlockPos, igniter: Entity?, delta: Vec3) -> PrimedTnt,
-	val sound: SoundEvent
+	private val entity: (level: Level, pos: BlockPos, igniter: Entity?, delta: Vec3) -> PrimedTnt,
+	private val sound: SoundEvent
 ) : TntBlock(Properties.ofFullCopy(Blocks.TNT)) {
-	fun prime(level: Level, pos: BlockPos, igniter: Entity?, delta: Vec3 = Vec3.ZERO) {
+	private fun prime(level: Level, pos: BlockPos, igniter: Entity?, delta: Vec3 = Vec3.ZERO) {
 		if (level.isClientSide) return
 		level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState())
 		val primedBlock = this.entity(level, pos, igniter, delta)

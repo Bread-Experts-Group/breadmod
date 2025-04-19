@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.registry.block.actual
 
+import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -10,8 +11,9 @@ import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.EntityBlock
+import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.RenderShape.MODEL
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -22,13 +24,15 @@ import net.neoforged.neoforge.common.SoundActions
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.FluidType
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.AbstractTickingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
 
 abstract class BreadModBlockWithEntity(
 	properties: Properties
-) : Block(properties), EntityBlock {
+) : BaseEntityBlock(properties) {
+	override fun codec(): MapCodec<out BaseEntityBlock> = simpleCodec { this }
+	override fun getRenderShape(state: BlockState): RenderShape = MODEL
+
 	open fun useItemOnBM(
 		stack: ItemStack,
 		state: BlockState,
@@ -51,15 +55,15 @@ abstract class BreadModBlockWithEntity(
 		if (level.isClientSide || hand == InteractionHand.OFF_HAND)
 			return this.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
 		(level.getBlockEntity(pos) as? BreadModBlockEntity<*>)?.let { entity ->
-			val stack = player.getItemInHand(hand)
-			val item = stack.item
+			val handStack = player.getItemInHand(hand)
+			val item = handStack.item
 			if (entity is FluidBearingBlockEntity) {
 				var fluidStack: FluidStack = FluidStack.EMPTY // todo test this to make sure it isn't broken
-				val cap = stack.getCapability(Capabilities.FluidHandler.ITEM)
+				val cap = handStack.getCapability(Capabilities.FluidHandler.ITEM)
 				if (item is BucketItem) {
 					fluidStack = FluidStack(item.content, FluidType.BUCKET_VOLUME)
 				} else cap?.let { fluidStack = it.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.SIMULATE) }
-					?: return this.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
+					?: return this.useItemOnBM(handStack, state, level, pos, player, hand, hitResult)
 				val sim = entity.fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE)
 				if (sim >= FluidType.BUCKET_VOLUME) {
 					entity.fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE)
@@ -72,11 +76,11 @@ abstract class BreadModBlockWithEntity(
 						1.0f
 					)
 					if (item is BucketItem) {
-						if (stack.count == 1) {
+						if (handStack.count == 1) {
 							player.setItemInHand(hand, ItemStack(Items.BUCKET))
 						} else {
 							player.addItem(ItemStack(Items.BUCKET))
-							stack.shrink(1)
+							handStack.shrink(1)
 						}
 					} else cap?.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE)
 					return ItemInteractionResult.SUCCESS
@@ -91,11 +95,11 @@ abstract class BreadModBlockWithEntity(
 						entity.fluidHandler.drain(FluidType.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE)
 						if (item is BucketItem) {
 							val newStack = drainSim.fluidType.getBucket(drainSim)
-							if (stack.count == 1) {
+							if (handStack.count == 1) {
 								player.setItemInHand(hand, newStack)
 							} else {
 								player.addItem(newStack)
-								stack.shrink(1)
+								handStack.shrink(1)
 							}
 						} else cap?.fill(drainSim, IFluidHandler.FluidAction.EXECUTE)
 						level.playSound(
@@ -114,18 +118,24 @@ abstract class BreadModBlockWithEntity(
 		return this.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
 	}
 
+	fun <T : BreadModBlockEntity<T>> tickBreadModBlockEntity(
+		level: Level,
+		pos: BlockPos,
+		state: BlockState,
+		blockEntity: T
+	) {
+		if (level.isClientSide) {
+			blockEntity.commonTick(level, pos, state, blockEntity)
+			blockEntity.clientTick(level, pos, state, blockEntity)
+		} else {
+			blockEntity.commonTick(level, pos, state, blockEntity)
+			blockEntity.serverTick(level, pos, state, blockEntity)
+		}
+	}
+
 	override fun <T : BlockEntity> getTicker(
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T> = if (level.isClientSide)
-		BlockEntityTicker<T> { clientLevel: Level, pos: BlockPos, tState: BlockState, entity: T ->
-			(entity as AbstractTickingBlockEntity<*>).commonTick(clientLevel, pos, tState, entity)
-			entity.clientTick(clientLevel, pos, tState, entity)
-		}
-	else
-		BlockEntityTicker<T> { serverLevel: Level, pos: BlockPos, tState: BlockState, entity: T ->
-			(entity as AbstractTickingBlockEntity<*>).commonTick(serverLevel, pos, tState, entity)
-			entity.serverTick(serverLevel, pos, tState, entity)
-		}
+	): BlockEntityTicker<T>? = null
 }

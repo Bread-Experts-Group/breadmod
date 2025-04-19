@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -20,7 +21,7 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 	type: BlockEntityType<T>,
 	pos: BlockPos,
 	state: BlockState
-) : AbstractTickingBlockEntity<T>(type, pos, state) {
+) : BlockEntity(type, pos, state) {
 	private fun updateClients() {
 		this.setChanged()
 		this@BreadModBlockEntity.level?.sendBlockUpdated(
@@ -45,6 +46,27 @@ abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
 			this.energyHandler.extractAction = update
 		}
 	}
+
+	open fun commonTick(
+		level: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: T
+	): Unit = Unit
+
+	open fun clientTick(
+		clientLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: T
+	): Unit = Unit
+
+	open fun serverTick(
+		serverLevel: Level,
+		pos: BlockPos,
+		state: BlockState,
+		entity: T
+	): Unit = Unit
 
 	open fun saveAdditionalBM(tag: CompoundTag, registries: Provider) {}
 	open fun loadAdditionalBM(tag: CompoundTag, registries: Provider) {}

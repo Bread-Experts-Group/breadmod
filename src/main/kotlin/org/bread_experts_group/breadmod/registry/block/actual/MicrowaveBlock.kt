@@ -21,6 +21,8 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityTicker
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -31,6 +33,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.targetFaceSection
@@ -224,4 +227,14 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			UP, DOWN -> Shapes.block()
 		}
 	}
+
+	override fun <T : BlockEntity> getTicker(
+		level: Level,
+		state: BlockState,
+		blockEntityType: BlockEntityType<T>
+	): BlockEntityTicker<T>? = createTickerHelper(
+		blockEntityType,
+		ModBlockEntityTypes.MICROWAVE.get(),
+		this::tickBreadModBlockEntity
+	)
 }

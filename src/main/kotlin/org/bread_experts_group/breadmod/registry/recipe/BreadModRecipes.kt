@@ -14,6 +14,11 @@ import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler.Exp
 
 abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: Int?) : Recipe<T> {
 	override fun matches(input: T, level: Level): Boolean = this.rTime!! >= 0 && this.rEnergy!! >= 0
+
+	/**
+	 * Used to determine if this recipe can fit in a grid of the given width/height
+	 */
+	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 	abstract class SingleFluid(
 		val rFluidInput: SizedFluidIngredient,
 		val rFluidOutput: FluidStack,

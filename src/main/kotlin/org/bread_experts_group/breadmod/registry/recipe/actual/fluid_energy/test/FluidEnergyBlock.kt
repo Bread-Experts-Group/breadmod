@@ -7,8 +7,11 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityTicker
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
+import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 
 class FluidEnergyBlock : BreadModBlockWithEntity(Properties.of()) {
@@ -50,4 +53,14 @@ class FluidEnergyBlock : BreadModBlockWithEntity(Properties.of()) {
 		level.invalidateCapabilities(pos)
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
+
+	override fun <T : BlockEntity> getTicker(
+		level: Level,
+		state: BlockState,
+		blockEntityType: BlockEntityType<T>
+	): BlockEntityTicker<T>? = createTickerHelper(
+		blockEntityType,
+		ModBlockEntityTypes.FLUID_ENERGY.get(),
+		this::tickBreadModBlockEntity
+	)
 }

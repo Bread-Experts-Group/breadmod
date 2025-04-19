@@ -9,10 +9,13 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityTicker
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
+import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 
@@ -65,4 +68,14 @@ class DoughMachineBlock : BreadModBlockWithEntity(Properties.of()) {
 
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		DoughMachineBlockEntity(pos, state)
+
+	override fun <T : BlockEntity> getTicker(
+		level: Level,
+		state: BlockState,
+		blockEntityType: BlockEntityType<T>
+	): BlockEntityTicker<T>? = createTickerHelper(
+		blockEntityType,
+		ModBlockEntityTypes.DOUGH_MACHINE.get(),
+		this::tickBreadModBlockEntity
+	)
 }
