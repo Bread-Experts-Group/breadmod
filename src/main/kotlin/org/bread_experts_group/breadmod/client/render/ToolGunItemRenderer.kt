@@ -12,8 +12,8 @@ import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.data_holders.ToolGunData
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import java.awt.Color
@@ -132,7 +132,8 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					posX = -0.035,
 					posY = 0.414
 				)
-				this.caseOhSize = this.caseOhSize.add(this.caseOhInstrument.nextDouble(0.0, 1234511121314.0).toBigDecimal())
+				this.caseOhSize =
+					this.caseOhSize.add(this.caseOhInstrument.nextDouble(0.0, 1234511121314.0).toBigDecimal())
 				val (truncated, unit) = formatNumberBigDecimal(this.caseOhSize)
 				modeRenderer.drawTextOnScreen(
 					"CASEOH: ${truncated.setScale(2, RoundingMode.DOWN)} ${unit}g",

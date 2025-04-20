@@ -8,6 +8,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
@@ -28,6 +29,7 @@ object Registry {
 		ModFluids.FLUID_REGISTRY,
 		ModFluids.FLUID_TYPE_REGISTRY,
 		ModEntityTypes.ENTITY_REGISTRY,
+		ModEntityDataSerializers.ENTITY_DATA_SERIALIZER_REGISTRY,
 		ModArmorMaterials.ARMOR_REGISTRY,
 		ModDataComponents.DATA_COMPONENT_REGISTRY,
 		ModAttachments.ATTACHMENT_REGISTRY,

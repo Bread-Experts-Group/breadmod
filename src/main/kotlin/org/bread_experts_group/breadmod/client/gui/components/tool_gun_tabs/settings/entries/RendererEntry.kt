@@ -66,10 +66,9 @@ class RendererEntry(
 				100,
 				"test_container",
 				this.screen
-			).also(ScrollingContainerWidget<ToolGunScreen>::init)
+			)
 		)
 	}
-
 //	class Test(x: Int, y: Int) : AbstractScrollWidget(x, y, 100, 100, Component.empty()) {
 //		override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
 //		}

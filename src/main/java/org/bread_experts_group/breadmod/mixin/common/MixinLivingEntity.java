@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 abstract class MixinLivingEntity {
 	@Unique
-	private final AttachmentType<Boolean> breadmod$kiAttachment = ModAttachments.INSTANCE.getKEEP_INVENTORY_NEXT_DEATH().get();
+	private final AttachmentType<Boolean> breadmod$kiAttachment = ModAttachments.getKEEP_INVENTORY_NEXT_DEATH().get();
 
 	@Unique
 	private LivingEntity breadmod$getThis() {

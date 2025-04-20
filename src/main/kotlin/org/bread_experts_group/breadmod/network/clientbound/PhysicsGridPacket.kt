@@ -27,6 +27,7 @@ import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBuf
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.NullRandom
 import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.modelData
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.joml.Vector3f
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
@@ -72,11 +73,7 @@ class PhysicsGridPacket private constructor(
 			CustomPacketPayload.Type(BreadMod.Companion.modLocation("physics_grid"))
 		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, PhysicsGridPacket> = StreamCodec.composite(
 			ByteBufCodecs.STRING_UTF8, PhysicsGridPacket::level,
-			ByteBufCodecs.map(
-				::HashMap,
-				BlockPos.STREAM_CODEC,
-				ByteBufCodecs.fromCodec(BlockState.CODEC)
-			), PhysicsGridPacket::grid,
+			BreadModCodecs.BLOCK_MAP_STREAM_CODEC, PhysicsGridPacket::grid,
 			ByteBufCodecs.VECTOR3F, PhysicsGridPacket::position,
 			BlockPos.STREAM_CODEC, PhysicsGridPacket::from,
 			::PhysicsGridPacket

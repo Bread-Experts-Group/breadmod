@@ -11,6 +11,7 @@ import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedNukeBlock
+import org.bread_experts_group.breadmod.registry.entity.actual.Rocket
 import java.util.function.Supplier
 
 object ModEntityTypes {
@@ -52,5 +53,12 @@ object ModEntityTypes {
 			.eyeHeight(2f)
 			.clientTrackingRange(10)
 			.build(modLocation("forklift").toString())
+	}
+
+	@DataGenerateLanguage("en_us")
+	val ROCKET: Supplier<EntityType<Rocket>> = this.ENTITY_REGISTRY.register("rocket") { ->
+		EntityType.Builder.of(::Rocket, MobCategory.MISC)
+			.clientTrackingRange(20)
+			.build(modLocation("rocket").toString())
 	}
 }

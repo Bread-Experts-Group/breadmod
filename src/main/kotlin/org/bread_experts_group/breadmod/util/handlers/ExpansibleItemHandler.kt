@@ -83,7 +83,7 @@ class ExpansibleItemHandler(
 		stack: ItemStack,
 		simulate: Boolean
 	): ItemStack {
-		val sides = this.units[slot].sides
+//		val sides = this.units[slot].sides
 		// todo this locks up the game somehow
 //		if (sides.isNotEmpty() && !sides.any { !this.inv.canPlaceItemThroughFace(slot, stack, it) }) return stack
 		val moved = this.units[slot].fillDecimal(
@@ -100,7 +100,6 @@ class ExpansibleItemHandler(
 //		val sides = unit.sides
 //		if (sides.isNotEmpty() && sides.any { !this.inv.canTakeItemThroughFace(slot, this.getStackInSlot(slot), it) })
 //			return ItemStack.EMPTY
-
 		val (count, _) = unit.drainDecimal(count.toBigDecimal(), simulate)
 		return ItemStack(unit.item, count.capInt())
 	}

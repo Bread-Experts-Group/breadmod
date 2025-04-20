@@ -2,14 +2,17 @@ package org.bread_experts_group.breadmod.network
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.data_holders.ToolGunData
+import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import java.math.BigDecimal
 
 object BreadModCodecs {
@@ -47,4 +50,14 @@ object BreadModCodecs {
 		ByteBufCodecs.TRUSTED_COMPOUND_TAG,
 		ClosedSystem::toNBT, ClosedSystem::createFromTag
 	)
+	val BLOCK_MAP_STREAM_CODEC: StreamCodec<FriendlyByteBuf, Map<BlockPos, BlockState>> =
+		object : StreamCodec<FriendlyByteBuf, Map<BlockPos, BlockState>> {
+			private val stateCodec = ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY)
+			override fun decode(buffer: FriendlyByteBuf): Map<BlockPos, BlockState> =
+				buffer.readMap(BlockPos.STREAM_CODEC, this.stateCodec)
+
+			override fun encode(buffer: FriendlyByteBuf, value: Map<BlockPos, BlockState>) {
+				buffer.writeMap(value, BlockPos.STREAM_CODEC, this.stateCodec)
+			}
+		}
 }

@@ -57,7 +57,9 @@ object BeamBufferTask {
 						1f,
 						1f,
 						15728880,
-						NO_OVERLAY
+						NO_OVERLAY,
+						ModelData.EMPTY,
+						RenderType.translucent()
 					)
 					poseStack.scale(20f, 0.1f, 0.1f)
 					poseStack.translate(0.0, -0.5, -0.5)

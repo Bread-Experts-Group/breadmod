@@ -19,6 +19,7 @@ version = project.properties["mod_version"] as String
 
 private fun getModId() = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces() = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
+private fun mcVersion() = project.properties["minecraft_version"] as String
 
 idea {
 	module {
@@ -62,7 +63,7 @@ neoForge {
 	version = project.properties["neo_version"] as String
 
 	parchment {
-		minecraftVersion = "1.21.1"
+		minecraftVersion = mcVersion()
 		mappingsVersion = "2024.11.17"
 	}
 
@@ -137,21 +138,25 @@ dependencies {
 	runtimeOnly("curse.maven:packet-fixer-689467:6195911")
 	// Just Enough Items (JEI)
 	val jeiVersion = "19.10.0.126"
-	compileOnly("mezz.jei:jei-1.21.1-neoforge-api:${jeiVersion}")
-	runtimeOnly("mezz.jei:jei-1.21.1-neoforge:${jeiVersion}")
+	compileOnly("mezz.jei:jei-${mcVersion()}-neoforge-api:${jeiVersion}")
+	runtimeOnly("mezz.jei:jei-${mcVersion()}-neoforge:${jeiVersion}")
 	// Mekanism
-	val mekanismVersion = "1.21.1-10.7.8.70"
+	val mekanismVersion = "${mcVersion()}-10.7.8.70"
 	compileOnly("mekanism:Mekanism:${mekanismVersion}:api")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:additions")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 	// Create
-//    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}") { transitive = false }
-//    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
-//    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
-//    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
-//    implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+//	val createVersion = "6.0.0-4"
+//	val ponderVersion = "1.0.39"
+//	val flywheelVersion = "1.0.0-9"
+//	val registrateVersion = "MC1.21-1.3.0+62"
+//	implementation("com.simibubi.create:create-${mcVersion()}:$createVersion") { isTransitive = false }
+//	implementation("net.createmod.ponder:Ponder-NeoForge-${mcVersion()}:$ponderVersion")
+//	compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${mcVersion()}:$flywheelVersion")
+//	runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${mcVersion()}:$flywheelVersion")
+//	implementation("com.tterrag.registrate:Registrate:$registrateVersion")
 	// WorldEdit
 	runtimeOnly("curse.maven:worldedit-225608:5830452")
 }

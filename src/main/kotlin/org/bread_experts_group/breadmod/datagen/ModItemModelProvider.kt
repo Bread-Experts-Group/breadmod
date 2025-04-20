@@ -55,6 +55,7 @@ class ModItemModelProvider(
 
 		this.handheldItem(ModItems.WRENCH)
 		this.handheldItem(ModItems.BULK_BLOCK_ITEM)
+		this.handheldItem(ModItems.ROCKET_WRENCH)
 		this.handheldItem(ModItems.KNIFE)
 
 		this.multiLayeredTexture(

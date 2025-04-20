@@ -21,6 +21,6 @@ void main() {
     gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 
     vertexDistance = fog_distance(pos, FogShape);\
-    vertexColor = Color * vec4(1, 1, 0, 1);// TODO COLOR
+    vertexColor = Color * vec4(1, 1, 1, 1);// TODO COLOR
     texCoord0 = UV0;
 }
