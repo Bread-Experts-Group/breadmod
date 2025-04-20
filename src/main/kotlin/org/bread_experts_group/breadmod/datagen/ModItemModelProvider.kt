@@ -36,6 +36,7 @@ class ModItemModelProvider(
 		this.singleItem(ModItems.RF_BREAD_LEGGINGS)
 		this.singleItem(ModItems.RF_BREAD_BOOTS)
 		this.singleItem(ModItems.BREAD_AMULET)
+		this.singleItem(ModItems.AMULET_OF_KEEPING)
 		this.singleItem(ModItems.BREAD_PICKAXE)
 		this.singleItem(ModItems.BREAD_SHOVEL)
 		this.singleItem(ModItems.BREAD_AXE)

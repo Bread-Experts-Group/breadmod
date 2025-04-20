@@ -9,7 +9,9 @@
     "common.MixinActiveProfiler",
     "common.MixinEntity",
     "common.MixinLevel",
-    "common.MixinLightningBolt"
+    "common.MixinLightningBolt",
+    "common.MixinLivingEntity",
+    "common.MixinServerPlayer"
   ],
   "client": [
     "client.IAccessorDirectoryLister",

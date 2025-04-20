@@ -194,6 +194,12 @@ object ModItems {
 	val BREAD_AMULET: DeferredItem<BreadAmuletItem> =
 		this.ITEM_REGISTRY.register("bread_amulet") { -> BreadAmuletItem(500) }
 
+	@DataGenerateLanguage("en_us", "Amulet of Keeping")
+	val AMULET_OF_KEEPING: DeferredItem<Item> =
+		this.ITEM_REGISTRY.register("keep_inventory_amulet") { ->
+			Item(Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON))
+		}
+
 	// Bread Armor
 	@DataGenerateLanguage("en_us")
 	val BREAD_HELMET: DeferredItem<BreadArmorItem> =

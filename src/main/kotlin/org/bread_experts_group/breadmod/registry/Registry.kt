@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.registry
 import net.neoforged.bus.api.IEventBus
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.registry.attachment.ModAttachments
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModFluids
@@ -29,6 +30,7 @@ object Registry {
 		ModEntityTypes.ENTITY_REGISTRY,
 		ModArmorMaterials.ARMOR_REGISTRY,
 		ModDataComponents.DATA_COMPONENT_REGISTRY,
+		ModAttachments.ATTACHMENT_REGISTRY,
 		ModRecipeSerializers.RECIPE_SERIALIZER_REGISTRY,
 		ModRecipeTypes.RECIPE_TYPE_REGISTRY,
 		ModMenuTypes.MENU_TYPE_REGISTRY
