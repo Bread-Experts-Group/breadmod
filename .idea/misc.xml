@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="3">
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="org.bread_experts_group.breadmod.api.PublicAPI" />
       <item index="1" class="java.lang.String" itemvalue="org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage" />
       <item index="2" class="java.lang.String" itemvalue="org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator" />
+      <item index="3" class="java.lang.String" itemvalue="org.spongepowered.asm.mixin.Unique" />
     </list>
     <writeAnnotations>
       <writeAnnotation name="org.spongepowered.asm.mixin.Unique" />
