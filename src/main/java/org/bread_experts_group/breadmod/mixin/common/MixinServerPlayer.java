@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerPlayer.class)
 abstract class MixinServerPlayer {
 	@Unique
-	private final AttachmentType<Boolean> breadmod$kiAttachment = ModAttachments.INSTANCE.getKEEP_INVENTORY_NEXT_DEATH();
+	private final AttachmentType<Boolean> breadmod$kiAttachment = ModAttachments.INSTANCE.getKEEP_INVENTORY_NEXT_DEATH().get();
 
 	@Unique
 	private ServerPlayer breadmod$getThis() {

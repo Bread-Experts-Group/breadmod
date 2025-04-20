@@ -10,12 +10,8 @@ import org.bread_experts_group.breadmod.BreadMod
 object ModAttachments {
 	val ATTACHMENT_REGISTRY: DeferredRegister<AttachmentType<*>> =
 		DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, BreadMod.ID)
-	val KEEP_INVENTORY_TEST: DeferredHolder<AttachmentType<*>, AttachmentType<Boolean>> =
-		this.ATTACHMENT_REGISTRY.register("keep_inventory_test", AttachmentType.builder { _ -> true }
+	val KEEP_INVENTORY_NEXT_DEATH: DeferredHolder<AttachmentType<*>, AttachmentType<Boolean>> =
+		this.ATTACHMENT_REGISTRY.register("keep_inventory_test", AttachmentType.builder { _ -> false }
 			.serialize(Codec.BOOL)
 			.copyOnDeath()::build)
-	val KEEP_INVENTORY_NEXT_DEATH: AttachmentType<Boolean> = AttachmentType.builder { _ -> true }
-		.serialize(Codec.BOOL)
-		.copyOnDeath()
-		.build()
 }
