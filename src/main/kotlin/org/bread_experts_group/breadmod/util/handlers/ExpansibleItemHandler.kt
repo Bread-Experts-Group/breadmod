@@ -1,7 +1,15 @@
 package org.bread_experts_group.breadmod.util.handlers
 
+import net.minecraft.core.Direction
+import net.minecraft.core.Direction.DOWN
+import net.minecraft.core.Direction.EAST
+import net.minecraft.core.Direction.NORTH
+import net.minecraft.core.Direction.SOUTH
+import net.minecraft.core.Direction.UP
+import net.minecraft.core.Direction.WEST
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.world.WorldlyContainer
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -15,11 +23,14 @@ import java.util.function.Predicate
 import kotlin.jvm.optionals.getOrElse
 import kotlin.math.min
 
+// todo figure out sidedness later i guess..
+//  rewrite maybe???
 @Suppress("ConvertLambdaToReference")
 class ExpansibleItemHandler(
-	override val units: MutableList<ExpansibleSlot>
+	override val units: MutableList<ExpansibleSlot>,
+	private val inv: WorldlyContainer
 ) : AbstractExpansibleHandler<ExpansibleSlot>(), IItemHandler, IItemHandlerModifiable {
-	constructor(slots: Int) : this(MutableList(slots) { ExpansibleSlot() })
+	constructor(slots: Int, inv: WorldlyContainer) : this(MutableList(slots) { ExpansibleSlot() }, inv)
 
 	class ExpansibleSlot(
 		capacity: BigDecimal? = null,
@@ -27,8 +38,13 @@ class ExpansibleItemHandler(
 		override var maxOut: BigDecimal? = null,
 		var filter: Predicate<ItemStack> = Predicate { _ -> true },
 		var item: Item = Items.AIR,
-		override var amount: BigDecimal = BigDecimal.ZERO
+		override var amount: BigDecimal = BigDecimal.ZERO,
+		var sides: List<Direction> = Companion.ALL_SIDES
 	) : HandlerSerializable {
+		companion object {
+			val ALL_SIDES: List<Direction> = listOf(NORTH, SOUTH, EAST, WEST, UP, DOWN)
+		}
+
 		override var capacity: BigDecimal? = capacity
 			set(value) {
 				field = if (value != null && value <= BigDecimal.ZERO) null else value
@@ -67,6 +83,9 @@ class ExpansibleItemHandler(
 		stack: ItemStack,
 		simulate: Boolean
 	): ItemStack {
+		val sides = this.units[slot].sides
+		// todo this locks up the game somehow
+//		if (sides.isNotEmpty() && !sides.any { !this.inv.canPlaceItemThroughFace(slot, stack, it) }) return stack
 		val moved = this.units[slot].fillDecimal(
 			stack.count.toBigDecimal(),
 			simulate,
@@ -77,14 +96,13 @@ class ExpansibleItemHandler(
 
 	override fun extractItem(slot: Int, count: Int, simulate: Boolean): ItemStack {
 		val unit = this.units[slot]
-		val (count, _) = unit.drainDecimal(
-			count.toBigDecimal(),
-			simulate
-		)
-		return ItemStack(
-			unit.item,
-			count.capInt()
-		)
+		// todo this locks up the game somehow
+//		val sides = unit.sides
+//		if (sides.isNotEmpty() && sides.any { !this.inv.canTakeItemThroughFace(slot, this.getStackInSlot(slot), it) })
+//			return ItemStack.EMPTY
+
+		val (count, _) = unit.drainDecimal(count.toBigDecimal(), simulate)
+		return ItemStack(unit.item, count.capInt())
 	}
 
 	override fun getSlots(): Int = this.units.size

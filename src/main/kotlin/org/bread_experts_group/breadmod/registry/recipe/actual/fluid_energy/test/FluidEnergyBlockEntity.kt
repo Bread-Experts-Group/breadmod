@@ -26,7 +26,7 @@ class FluidEnergyBlockEntity(
 	state,
 	ModRecipeTypes.FLUID_ENERGY_TEST.get()
 ), MenuProvider, ItemBearingBlockEntity, FluidBearingBlockEntity {
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(8)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(8, this)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
 			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),

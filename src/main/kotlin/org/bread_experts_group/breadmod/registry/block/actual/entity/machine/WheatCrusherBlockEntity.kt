@@ -35,7 +35,7 @@ class WheatCrusherBlockEntity(
 		val POWERED: BooleanProperty = BlockStateProperties.POWERED
 	}
 
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(2)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(2, this)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		mutableListOf(
 			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(100_000))

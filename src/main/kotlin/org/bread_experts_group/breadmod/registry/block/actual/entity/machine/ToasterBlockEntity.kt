@@ -29,7 +29,7 @@ class ToasterBlockEntity(
 		val TRIGGERED: BooleanProperty = BlockStateProperties.TRIGGERED
 	}
 
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1, this)
 
 	override fun commonTick(
 		level: Level,

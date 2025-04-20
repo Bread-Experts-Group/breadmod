@@ -40,7 +40,7 @@ class DoughMachineBlockEntity(
 		val POWERED: BooleanProperty = BlockStateProperties.POWERED
 	}
 
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4, this)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
 			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),
