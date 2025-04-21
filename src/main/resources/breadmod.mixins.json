@@ -17,7 +17,6 @@
     "client.IAccessorDirectoryLister",
     "client.InvokerIVertexConsumerExtension",
     "client.MixinClientLanguage",
-    "client.MixinClientPacketListener",
     "client.MixinDirectoryListener",
     "client.MixinFallbackResourceManager",
     "client.MixinGuiGraphics",

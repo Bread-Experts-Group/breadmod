@@ -251,7 +251,6 @@
     <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MarkerInterface" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MavenCoroutinesDeprecation" enabled="true" level="ERROR" enabled_by_default="true" />
-    <inspection_tool class="MethodCallInLoopCondition" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MethodCount" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="20" />
       <option name="ignoreGettersAndSetters" value="false" />
@@ -386,6 +385,7 @@
     <inspection_tool class="RandomDoubleForRandomInteger" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReadObjectAndWriteObjectPrivate" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ReadResolveAndWriteReplaceProtected" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="RedundantCast" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantCompanionReference" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantElseInIf" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="RedundantEmptyInitializerBlock" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
@@ -523,7 +523,6 @@
     <inspection_tool class="UnconditionalWait" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnknownGuard" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessarilyQualifiedStaticallyImportedElement" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="UnnecessaryExplicitNumericCast" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryFinalOnLocalVariableOrParameter" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryJavaDocLink" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreInlineLinkToSuper" value="false" />
