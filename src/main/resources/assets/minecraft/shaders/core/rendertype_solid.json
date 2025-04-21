@@ -1,6 +1,6 @@
 {
-  "vertex": "rendertype_coloredlight",
-  "fragment": "rendertype_solid",
+  "vertex": "rendertype_fullbright",
+  "fragment": "rendertype_solid_colored_light",
   "samplers": [
     {
       "name": "Sampler0"

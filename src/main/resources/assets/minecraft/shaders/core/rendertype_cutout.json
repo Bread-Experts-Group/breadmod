@@ -1,5 +1,5 @@
 {
-  "vertex": "rendertype_coloredlight",
+  "vertex": "rendertype_fullbright",
   "fragment": "rendertype_cutout",
   "samplers": [
     {

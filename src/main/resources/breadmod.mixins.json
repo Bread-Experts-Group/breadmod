@@ -7,7 +7,7 @@
   "mixins": [
     "common.IAccessorEntity",
     "common.MixinActiveProfiler",
-    "common.MixinEntity",
+    "common.MixinBlockCollisions",
     "common.MixinLevel",
     "common.MixinLightningBolt",
     "common.MixinLivingEntity",
@@ -21,7 +21,6 @@
     "client.MixinDirectoryListener",
     "client.MixinFallbackResourceManager",
     "client.MixinGuiGraphics",
-    "client.MixinLevelRenderer",
     "client.MixinSoundManager",
     "client.MixinSpriteResourceLoader",
     "client.MixinTranslatableContents",
