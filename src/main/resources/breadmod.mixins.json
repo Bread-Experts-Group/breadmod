@@ -22,6 +22,7 @@
     "client.MixinDirectoryListener",
     "client.MixinFallbackResourceManager",
     "client.MixinGuiGraphics",
+    "client.MixinMinecraft",
     "client.MixinSoundManager",
     "client.MixinSpriteResourceLoader",
     "client.MixinTranslatableContents",

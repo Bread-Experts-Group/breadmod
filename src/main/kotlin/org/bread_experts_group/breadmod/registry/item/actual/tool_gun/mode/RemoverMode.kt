@@ -26,9 +26,9 @@ import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
+import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
-import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.entities
@@ -60,7 +60,7 @@ class RemoverMode : AbstractToolGunMode() {
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!player.isShiftKeyDown) {
 			if (this.targetEntities) {
-				val entity = player.rayCast(50, entities(EntityType.PLAYER))
+				val entity = player.rayCast(500.0, entities(EntityType.PLAYER))
 				entity?.let {
 					if (level is ServerLevel) {
 						level.sendParticles(
@@ -95,7 +95,7 @@ class RemoverMode : AbstractToolGunMode() {
 					}
 				}
 			} else {
-				val block = player.rayCast(50, blocks(Blocks.AIR))
+				val block = player.rayCast(500.0, blocks(Blocks.AIR))
 				block?.let {
 					level.setBlockAndUpdate(BlockPos.containing(it.position), Blocks.AIR.defaultBlockState())
 					if (level is ServerLevel) {

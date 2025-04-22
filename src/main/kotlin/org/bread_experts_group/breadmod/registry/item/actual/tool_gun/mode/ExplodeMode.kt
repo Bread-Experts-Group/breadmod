@@ -46,7 +46,7 @@ class ExplodeMode : AbstractToolGunMode() {
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!level.isClientSide) {
-			val targetBlock = player.rayCast(500, blocks(Blocks.AIR)) ?: return
+			val targetBlock = player.rayCast(500.0, blocks(Blocks.AIR)) ?: return
 			BreadModExplosion
 				.calculate(level, targetBlock.position.subtract(targetBlock.direction), 20f, 1000)
 				.explode(player)

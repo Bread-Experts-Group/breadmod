@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
@@ -17,16 +18,21 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 
 class PhysicsGrid(
-//	val level: Level,
-	val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf(),
-	val fluids: MutableMap<BlockPos, FluidState> = mutableMapOf(),
-//	val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
+	val level: String,
+	blocks: Map<BlockPos, BlockState> = emptyMap(),
+	fluids: Map<BlockPos, FluidState> = emptyMap()
 ) {
+	constructor(
+		level: Level,
+		blocks: Map<BlockPos, BlockState> = emptyMap(),
+		fluids: Map<BlockPos, FluidState> = emptyMap(),
+	) : this(level.dimension().location().toString(), blocks.toMutableMap(), fluids.toMutableMap())
+
+	val blocks: MutableMap<BlockPos, BlockState> = blocks.toMutableMap()
+	val fluids: MutableMap<BlockPos, FluidState> = fluids.toMutableMap()
 	var position: Vec3 = Vec3.ZERO
 	var center: Vec3 = Vec3.ZERO
-	var xRot: Double = 0.0
-	var yRot: Double = 0.0
-	var zRot: Double = 0.0
+	var rotation: Vec3 = Vec3.ZERO
 
 	companion object {
 		fun create(from: BlockPos, to: BlockPos, level: Level): PhysicsGrid {
@@ -38,14 +44,15 @@ class PhysicsGrid(
 				if (state.renderShape == INVISIBLE) return@forEach
 				map[offset.immutable()] = state
 			}
-			val grid = PhysicsGrid(/*level,*/ map)
+			val grid = PhysicsGrid(level, map)
 			grid.center = from.toVec3().div(2.0).subtract(to.toVec3().div(2.0))
 			grid.position = from.toVec3()
 
-			return PhysicsGrid(/*level,*/ map)
+			return PhysicsGrid(level, map)
 		}
 
 		val STREAM_CODEC: StreamCodec<FriendlyByteBuf, PhysicsGrid> = StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8, PhysicsGrid::level,
 			BreadModCodecs.BLOCK_MAP_STREAM_CODEC, PhysicsGrid::blocks,
 			BreadModCodecs.FLUID_MAP_STREAM_CODEC, PhysicsGrid::fluids,
 			::PhysicsGrid

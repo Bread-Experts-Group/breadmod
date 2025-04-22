@@ -20,11 +20,15 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
@@ -94,11 +98,21 @@ inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 
 /// Start raycast functions ///
-class HitResult<T>(val position: Vec3, val length: Int, val side: Direction, val direction: Vec3, val hit: T)
+class HitResult<T>(val position: Vec3, val length: Double, val side: Direction, val direction: Vec3, val hit: T) {
+	val blockPosition: BlockPos
+		get() = BlockPos.containing(this.position)
+	val directionEnum: Direction
+		get() = Direction.getNearest(this.direction)
 
-private fun <T> rayCast(
+	fun HitResult<BlockState>.getAsMinecraftHitResult(): BlockHitResult = BlockHitResult(
+		this.position, this.directionEnum,
+		this.blockPosition, true
+	)
+}
+
+fun <T> rayCast(
 	position: Vec3, direction: Vec3,
-	length: Int,
+	length: Double,
 	selector: (Vec3) -> T?
 ): HitResult<T>? {
 	var result: HitResult<T>? = null
@@ -107,7 +121,10 @@ private fun <T> rayCast(
 		val localPosition = position.add(direction.scale(distance))
 		val hit = selector(localPosition)
 		if (hit != null) {
-			result = HitResult(localPosition, length, Direction.getNearest(position).opposite, direction, hit)
+			result = HitResult(
+				localPosition, length,
+				Direction.getNearest(position).opposite, direction, hit
+			)
 			break
 		}
 		distance++
@@ -115,20 +132,24 @@ private fun <T> rayCast(
 	return result
 }
 
-fun <T> Entity.rayCast(length: Int, selector: (Level, Vec3) -> T?): HitResult<T>? = rayCast(
+fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult<T>? = rayCast(
 	this.eyePosition,
 	this.calculateViewVector(this.xRot, this.yRot),
 	length
 ) { selector(this.level(), it) }
 
-fun blocks(vararg filterBlocks: Block): (Level, Vec3) -> BlockState? = { level, position ->
+fun blocksPhysicsGrids(): (Level, Vec3) -> BlockState? = { level, position ->
+	Blocks.DIAMOND_BLOCK.defaultBlockState()
+}
+
+fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())
 	val state = level.getBlockState(blockPos)
 	if (filterBlocks.contains(state.block)) null
 	else state
 }
 
-fun entities(vararg filterTypes: EntityType<*>): (Level, Vec3) -> Entity? = { level, position ->
+fun entities(vararg filterTypes: EntityType<*>): (EntityGetter, Vec3) -> Entity? = { level, position ->
 	val entities = level.getEntities(null, AABB.ofSize(position, 1.0, 1.0, 1.0))
 		.firstOrNull()
 	if (entities == null || filterTypes.contains(entities.type)) null
