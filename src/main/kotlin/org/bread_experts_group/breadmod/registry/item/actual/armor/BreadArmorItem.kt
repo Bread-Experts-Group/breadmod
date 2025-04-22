@@ -14,7 +14,6 @@ import net.minecraft.world.item.ArmorItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.alchemy.PotionContents
-import net.minecraft.world.item.alchemy.Potions
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
@@ -24,11 +23,12 @@ import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.random.Random
 
+// todo reimplement potion crafting recipe
 class BreadArmorItem(type: Type) : ArmorItem(
 	ModArmorMaterials.BREAD,
 	type,
 	Properties()
-		.component(DataComponents.POTION_CONTENTS, PotionContents(Potions.SWIFTNESS))
+		.component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
 		.component(DataComponents.DYED_COLOR, DyedItemColor(Color(216, 196, 170).rgb, false))
 		.stacksTo(1)
 ) {
@@ -42,7 +42,7 @@ class BreadArmorItem(type: Type) : ArmorItem(
 		tooltipComponents: MutableList<Component>,
 		tooltipFlag: TooltipFlag
 	) {
-		val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents(Potions.SWIFTNESS))
+		val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
 		if (potion.customEffects.isEmpty() || potion.customEffects.first() == null) return
 		val range = COMMON.dopedArmorEffectDistanceMultiplier.get() * potion.customEffects.first().amplifier
 		tooltipComponents.add(

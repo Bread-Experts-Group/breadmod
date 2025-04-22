@@ -148,15 +148,15 @@ dependencies {
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 	// Create
-//	val createVersion = "6.0.0-4"
-//	val ponderVersion = "1.0.39"
-//	val flywheelVersion = "1.0.0-9"
-//	val registrateVersion = "MC1.21-1.3.0+62"
-//	implementation("com.simibubi.create:create-${mcVersion()}:$createVersion") { isTransitive = false }
-//	implementation("net.createmod.ponder:Ponder-NeoForge-${mcVersion()}:$ponderVersion")
-//	compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${mcVersion()}:$flywheelVersion")
-//	runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${mcVersion()}:$flywheelVersion")
-//	implementation("com.tterrag.registrate:Registrate:$registrateVersion")
+	val createVersion = "6.0.0-4"
+	val ponderVersion = "1.0.39"
+	val flywheelVersion = "1.0.0-9"
+	val registrateVersion = "MC1.21-1.3.0+62"
+	implementation("com.simibubi.create:create-${mcVersion()}:$createVersion") { isTransitive = false }
+	implementation("net.createmod.ponder:Ponder-NeoForge-${mcVersion()}:$ponderVersion")
+	compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${mcVersion()}:$flywheelVersion")
+	runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${mcVersion()}:$flywheelVersion")
+	implementation("com.tterrag.registrate:Registrate:$registrateVersion")
 	// WorldEdit
 	runtimeOnly("curse.maven:worldedit-225608:5830452")
 }

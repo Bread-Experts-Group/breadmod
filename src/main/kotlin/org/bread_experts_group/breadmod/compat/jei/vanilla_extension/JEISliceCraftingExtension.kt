@@ -31,12 +31,12 @@ class JEISliceCraftingExtension(
 			builder,
 			listOf(
 				itemTagToList(ItemTags.SWORDS),
-				recipeList(this.input, this.inputMulti, this.inputRepeatCount)
+				recipeList(this.input, this.inputMulti, this.inputRepeatCount).sortedBy { it.count }
 			), this.getWidth(recipeHolder), this.getHeight(recipeHolder)
 		)
 		craftingGridHelper.createAndSetOutputs(
 			builder,
-			recipeList(this.output, this.outputMulti, this.outputRepeatCount)
+			recipeList(this.output, this.outputMulti, this.outputRepeatCount).sortedBy { it.count }
 		)
 	}
 }

@@ -17,6 +17,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecip
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyBuilder
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
 import java.util.concurrent.CompletableFuture
@@ -33,6 +34,8 @@ class ModRecipeProvider(
 
 		SpecialRecipeBuilder.special { BreadSlicingRecipe() }
 			.save(recipeOutput, modLocation("special", "crafting", "bread_slicing"))
+		SpecialRecipeBuilder.special { ToastSlicingRecipe() }
+			.save(recipeOutput, modLocation("special", "crafting", "toast_slicing"))
 		// Toaster
 		this.toasting(Items.BREAD, ModItems.TOASTED_BREAD.get(), recipeOutput, "bread_to_toasted_bread")
 		this.toasting(ModItems.BREAD_SLICE.get(), ModItems.TOAST_SLICE.get(), recipeOutput, "slice_to_toast")

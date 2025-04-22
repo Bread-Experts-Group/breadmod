@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.gui.screens.KeyboardScreen
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
@@ -40,7 +40,7 @@ class KeyboardBlock : BreadModBlockWithEntity(
 		val keyboardEntity = level.getBlockEntity(pos) as KeyboardBlockEntity
 		if (player.isShiftKeyDown) {
 			val opposite = state.getValue(BlockStateProperties.HORIZONTAL_FACING).opposite
-			val posList = BlockScanner.scanAdjacent(listOf(opposite), pos)
+			val posList = BlockScanner.scanAdjacent(pos, opposite)
 				.filterPositions(level, ModBlocks.MONITOR.asBlock())
 			if (posList.isEmpty()) {
 				if (level.isClientSide) player.sendSystemMessage(Component.literal("no unbound monitors found, cancelling bind."))

@@ -5,22 +5,27 @@ import com.google.common.cache.CacheLoader
 import com.google.common.cache.LoadingCache
 import mezz.jei.api.gui.drawable.IDrawableAnimated
 import mezz.jei.api.helpers.IGuiHelper
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 
 /**
  * Draws a recipe time string
  */
-//fun drawRecipeTime(recipe: WheatCrusherRecipe, guiGraphics: GuiGraphics, x: Int, y: Int) {
-//    if (recipe.recipeTime > 0) {
-//        val recipeTimeSeconds = recipe.recipeTime / 20
-//        val timeString = modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
-//        guiGraphics.drawString(rgMinecraft.font, timeString, x, y, -8355712, false)
-//    }
-//}
+fun drawRecipeTime(recipe: FluidEnergyRecipe<*>, guiGraphics: GuiGraphics, x: Int, y: Int) {
+	if (recipe.getTime() > 0) {
+		val recipeTimeSeconds = recipe.getTime() / 20
+		val timeString = modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
+		guiGraphics.drawString(localClient.font, timeString, x, y, -8355712, false)
+	}
+}
+
 /**
  * Builder for creating a progressive arrow sprite based on recipe time
  */
@@ -42,10 +47,11 @@ fun createCachedArrows(
 /**
  * @see createCachedArrows
  */
-//fun drawArrow(
-//    recipe: WheatCrusherRecipe,
-//    cachedArrows: LoadingCache<Int, IDrawableAnimated>
-//): IDrawableAnimated = cachedArrows.getUnchecked(recipe.recipeTime)
+fun drawArrow(
+	recipe: FluidEnergyRecipe<*>,
+	cachedArrows: LoadingCache<Int, IDrawableAnimated>
+): IDrawableAnimated = cachedArrows.getUnchecked(recipe.getTime())
+
 fun recipeList(item: Item, multiplier: Int, repeatCount: Int): List<ItemStack> =
 	List(repeatCount) { ItemStack(item, (it + 1) * multiplier) }
 

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ClientPacketListener.class)
-abstract class MixinClientPacketListener {
+abstract class MixinClientPacket {
 	@Redirect(
 			method = "handlePlayerCombatKill",
 			at = @At(

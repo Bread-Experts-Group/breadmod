@@ -18,7 +18,7 @@ import net.minecraft.world.phys.AABB
 object BlockScanner {
 	val ALL_SIDES: List<Direction> = listOf(NORTH, SOUTH, EAST, WEST, UP, DOWN)
 
-	fun scanAdjacent(list: List<Direction>, pos: BlockPos): List<BlockPos> = list.map(pos::relative)
+	fun scanAdjacent(pos: BlockPos, vararg directions: Direction): List<BlockPos> = directions.map(pos::relative)
 
 	fun scanRadius(pos: BlockPos, radius: Double): List<BlockPos> = buildList {
 		BlockPos.betweenClosedStream(AABB(pos).inflate(radius, radius, radius)).forEach { this.add(it.immutable()) }

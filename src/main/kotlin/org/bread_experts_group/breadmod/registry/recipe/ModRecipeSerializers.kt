@@ -5,16 +5,17 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeMulti
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergySerializer
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
-import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.AbstractCuttingRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.AbstractCuttingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeMulti
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergySerializer
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.RecipeFunctionDataFixer
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
 import java.util.function.Supplier
 
 object ModRecipeSerializers {
@@ -39,6 +40,10 @@ object ModRecipeSerializers {
 	val BREAD_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
 		this.RECIPE_SERIALIZER_REGISTRY.register("bread_slice_crafting") { ->
 			SimpleCraftingRecipeSerializer { BreadSlicingRecipe() }
+		}
+	val TOAST_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
+		this.RECIPE_SERIALIZER_REGISTRY.register("toast_slice_crafting") { ->
+			SimpleCraftingRecipeSerializer { ToastSlicingRecipe() }
 		}
 
 	// Exp.

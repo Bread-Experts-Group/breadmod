@@ -8,11 +8,9 @@ import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.network.syncher.SynchedEntityData.Builder
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
-import net.minecraft.world.entity.MoverType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
-import net.minecraft.world.phys.Vec3
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -28,6 +26,7 @@ class Rocket(
 	constructor(level: Level, posA: BlockPos, posB: BlockPos) : this(ModEntityTypes.ROCKET.get(), level) {
 		val aabb = AABB.encapsulatingFullBlocks(posA, posB)
 		val map: Map<BlockPos, BlockState> = buildMap {
+			BlockPos.betweenClosed(posA, posB)
 			BlockPos.betweenClosedStream(aabb).forEach { pos ->
 				val immutable = pos.immutable()
 				this[immutable] = level.getBlockState(immutable)
@@ -43,8 +42,8 @@ class Rocket(
 	}
 
 	override fun tick() {
-		this.move(MoverType.SELF, Vec3(0.0, 0.1, 0.0))
-		this.level().getEntities(this, this.boundingBox).forEach(this::push)
+//		this.move(MoverType.SELF, Vec3(0.0, 0.1, 0.0))
+//		this.level().getEntities(this, this.boundingBox).forEach(this::push)
 	}
 
 	override fun makeBoundingBox(): AABB {
