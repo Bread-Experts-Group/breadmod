@@ -17,12 +17,9 @@ import java.util.List;
 abstract class MixinEntity {
 	@Inject(method = "collectColliders", at = @At(value = "TAIL"), cancellable = true)
 	private static void collectColliders(Entity entity, Level level, List<VoxelShape> collisions, AABB boundingBox, CallbackInfoReturnable<List<VoxelShape>> cir) {
-		var shapes = PhysicsGridRequestPacket.Companion.getVoxelShapes();
-		List<VoxelShape> newList = new ArrayList<>();
-		if (!shapes.isEmpty()) {
-			newList.addAll(shapes);
-			newList.addAll(cir.getReturnValue());
-			cir.setReturnValue(newList);
-		}
+		var gridShapes = PhysicsGridRequestPacket.Companion.getGridShapes();
+		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
+		for (List<VoxelShape> shapes : gridShapes) allShapes.addAll(shapes);
+		cir.setReturnValue(allShapes);
 	}
 }

@@ -15,7 +15,6 @@ import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.LogManager
-import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
 import org.joml.Vector3f
@@ -36,12 +35,10 @@ class PhysicsGridRequestPacket(
 			BlockPos.STREAM_CODEC, PhysicsGridRequestPacket::to,
 			::PhysicsGridRequestPacket
 		)
-		val voxelShapes: MutableList<VoxelShape> = mutableListOf()
+		val gridShapes: MutableList<List<VoxelShape>> = mutableListOf()
 
 		fun handleServerboundPacket(data: PhysicsGridRequestPacket, context: IPayloadContext) {
-			BreadMod.logger.warn("Dont hit it joe ${data.position} ${data.from}-${data.to}")
 			context.enqueueWork {
-				this.voxelShapes.clear()
 				val grid = buildMap<BlockPos, BlockState> {
 					BlockPos.betweenClosedStream(
 						AABB.encapsulatingFullBlocks(data.from, data.to)
@@ -52,21 +49,25 @@ class PhysicsGridRequestPacket(
 						this[BlockPos(it)] = state
 					}
 				}
-				if (this.voxelShapes.isEmpty()) grid.forEach { (pos, state) ->
-					val offset = pos.offset(-data.from).toVec3()
-					this.voxelShapes.add(
-						state.getCollisionShape(
-							context.player().level(),
-							BlockPos.containing(pos.offset(-data.from).toVec3()),
-							CollisionContext.of(context.player())
-						).move(
-							data.position.x.toDouble() + offset.x,
-							data.position.y.toDouble() + offset.y,
-							data.position.z.toDouble() + offset.z
-						)
-					)
-				}
-				LogManager.getLogger().info(this.voxelShapes)
+				this.gridShapes.add(
+					buildList {
+						grid.forEach { (pos, state) ->
+							val offset = pos.offset(-data.from).toVec3()
+							this.add(
+								state.getCollisionShape(
+									context.player().level(),
+									BlockPos.containing(pos.offset(-data.from).toVec3()),
+									CollisionContext.of(context.player())
+								).move(
+									data.position.x.toDouble() + offset.x,
+									data.position.y.toDouble() + offset.y,
+									data.position.z.toDouble() + offset.z
+								)
+							)
+						}
+					}
+				)
+				LogManager.getLogger().info(this.gridShapes)
 				PacketDistributor.sendToAllPlayers(
 					PhysicsGridPacket(
 						context.player().level(),
