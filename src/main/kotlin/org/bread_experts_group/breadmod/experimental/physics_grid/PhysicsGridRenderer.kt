@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Position
 import net.minecraft.util.RandomSource
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -33,7 +34,7 @@ class PhysicsGridRenderer(private val grid: PhysicsGrid) {
 				val camera = event.camera
 				val level = localClient.level ?: return@add true
 				val frustum = event.frustum
-				this.render(poseStack, camera, bufferSource, frustum)
+				this.render(poseStack, camera, bufferSource, frustum, level)
 				false
 			}
 		)
@@ -43,7 +44,8 @@ class PhysicsGridRenderer(private val grid: PhysicsGrid) {
 		poseStack: PoseStack,
 		camera: Camera,
 		bufferSource: MultiBufferSource,
-		frustum: Frustum
+		frustum: Frustum,
+		level: Level
 	) {
 		if (!this.shouldRender(camera.position, this.grid.center)) return
 		poseStack.pushPose()
@@ -52,7 +54,7 @@ class PhysicsGridRenderer(private val grid: PhysicsGrid) {
 			if (this.shouldFrustumCull(this.grid.position.plus(pos.toVec3()), frustum)) return@forEach
 			poseStack.pushPose()
 			poseStack.translate(pos.toVec3())
-			this.renderBlock(pos, state, poseStack, bufferSource)
+			this.renderBlock(pos, state, poseStack, bufferSource, level)
 			poseStack.popPose()
 		}
 		poseStack.popPose()
@@ -62,14 +64,15 @@ class PhysicsGridRenderer(private val grid: PhysicsGrid) {
 		pos: BlockPos,
 		state: BlockState,
 		poseStack: PoseStack,
-		bufferSource: MultiBufferSource
+		bufferSource: MultiBufferSource,
+		level: Level
 	) {
 		val model = this.blockRenderer.getBlockModel(state)
 		model.getRenderTypes(state, this.random, ModelData.EMPTY).forEach {
 			this.blockRenderer.renderBatched(
 				state,
 				pos,
-				this.grid.level,
+				level,
 				poseStack,
 				bufferSource.getBuffer(it),
 				true,

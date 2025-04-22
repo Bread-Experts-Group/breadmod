@@ -10,6 +10,8 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.material.Fluid
+import net.minecraft.world.level.material.FluidState
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
@@ -57,6 +59,16 @@ object BreadModCodecs {
 				buffer.readMap(BlockPos.STREAM_CODEC, this.stateCodec)
 
 			override fun encode(buffer: FriendlyByteBuf, value: Map<BlockPos, BlockState>) {
+				buffer.writeMap(value, BlockPos.STREAM_CODEC, this.stateCodec)
+			}
+		}
+	val FLUID_MAP_STREAM_CODEC: StreamCodec<FriendlyByteBuf, Map<BlockPos, FluidState>> =
+		object : StreamCodec<FriendlyByteBuf, Map<BlockPos, FluidState>> {
+			private val stateCodec = ByteBufCodecs.idMapper(Fluid.FLUID_STATE_REGISTRY)
+			override fun decode(buffer: FriendlyByteBuf): Map<BlockPos, FluidState> =
+				buffer.readMap(BlockPos.STREAM_CODEC, this.stateCodec)
+
+			override fun encode(buffer: FriendlyByteBuf, value: Map<BlockPos, FluidState>) {
 				buffer.writeMap(value, BlockPos.STREAM_CODEC, this.stateCodec)
 			}
 		}

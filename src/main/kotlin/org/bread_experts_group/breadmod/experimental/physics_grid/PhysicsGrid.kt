@@ -1,24 +1,26 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.core.BlockPos
+import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.div
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 
 class PhysicsGrid(
-	val level: Level,
+//	val level: Level,
 	val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf(),
 	val fluids: MutableMap<BlockPos, FluidState> = mutableMapOf(),
-	val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
+//	val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
 ) {
 	var position: Vec3 = Vec3.ZERO
 	var center: Vec3 = Vec3.ZERO
@@ -36,12 +38,18 @@ class PhysicsGrid(
 				if (state.renderShape == INVISIBLE) return@forEach
 				map[offset.immutable()] = state
 			}
-			val grid = PhysicsGrid(level, map)
+			val grid = PhysicsGrid(/*level,*/ map)
 			grid.center = from.toVec3().div(2.0).subtract(to.toVec3().div(2.0))
 			grid.position = from.toVec3()
 
-			return PhysicsGrid(level, map)
+			return PhysicsGrid(/*level,*/ map)
 		}
+
+		val STREAM_CODEC: StreamCodec<FriendlyByteBuf, PhysicsGrid> = StreamCodec.composite(
+			BreadModCodecs.BLOCK_MAP_STREAM_CODEC, PhysicsGrid::blocks,
+			BreadModCodecs.FLUID_MAP_STREAM_CODEC, PhysicsGrid::fluids,
+			::PhysicsGrid
+		)
 	}
 
 	fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
