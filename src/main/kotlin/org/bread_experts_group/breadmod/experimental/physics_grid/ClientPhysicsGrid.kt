@@ -22,8 +22,6 @@ class ClientPhysicsGrid(level: ClientLevel) : PhysicsGrid(level) {
 		//  maybe tick the pos on client instead of sending it?
 		//  Mth.lerp maybe?
 		this.position -= this.position - newPos
-		this.center -= this.center - newPos
-		this.boundingBox.move(this.center)
 		return this
 	}
 }

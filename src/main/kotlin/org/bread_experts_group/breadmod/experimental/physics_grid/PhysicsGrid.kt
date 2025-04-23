@@ -25,7 +25,6 @@ abstract class PhysicsGrid(val level: Level) {
 	val voxelShapes: MutableMap<BlockPos, VoxelShape> = mutableMapOf()
 	var boundingBox: AABB = AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5)
 	var position: Vec3 = Vec3.ZERO
-	var center: Vec3 = Vec3.ZERO // todo center is busted, it's placed on the corner
 	var rotation: Vec3 = Vec3.ZERO
 	var gridSize: Vec3 = Vec3.ZERO
 
@@ -54,7 +53,6 @@ abstract class PhysicsGrid(val level: Level) {
 	fun recomputeGridData(from: BlockPos, to: BlockPos): PhysicsGrid {
 		val aabb = AABB.encapsulatingFullBlocks(from, to)
 		this.position = from.toVec3()
-		this.center = aabb.center
 		this.gridSize = Vec3(aabb.xsize, aabb.ysize, aabb.zsize)
 		this.boundingBox = AABB.encapsulatingFullBlocks(from, to)
 		return this
@@ -62,8 +60,6 @@ abstract class PhysicsGrid(val level: Level) {
 
 	open fun setPos(newPos: Vec3): PhysicsGrid {
 		this.position -= this.position - newPos
-		this.center -= this.center - newPos
-		this.boundingBox.move(this.center)
 		return this
 	}
 

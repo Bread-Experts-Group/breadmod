@@ -20,6 +20,7 @@ import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
+import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.minus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
@@ -51,7 +52,7 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 		frustum: Frustum,
 		level: Level
 	) {
-		if (!this.shouldRender(camera.position, this.grid.center)) return
+		if (!this.shouldRender(camera.position, this.grid.boundingBox.center)) return
 		poseStack.pushPose()
 		poseStack.offsetRenderToCameraPos(this.grid.position, camera, false)
 		this.grid.blocks.forEach { (pos, state) ->
@@ -72,18 +73,33 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 				0.8f,
 				0.8f,
 				1f,
-				1f,
+				0.5f,
 				false
 			)
 		}
+		val center = this.grid.position.minus(this.grid.boundingBox.center)
+		DebugRenderer.renderFilledBox(
+			poseStack,
+			bufferSource,
+			center.x - 0.25,
+			center.y - 0.25,
+			center.z - 0.25,
+			center.x + 0.25,
+			center.y + 0.25,
+			center.z + 0.25,
+			0f,
+			1f,
+			0f,
+			0.5f
+		)
 		DebugRenderer.renderFloatingText(
 			poseStack,
 			bufferSource,
 			"PHYSICS GRID #${this.grid.id}",
-			this.grid.center.x,
+			this.grid.position.x,
 			this.grid.position.y + 5.0,
-			this.grid.center.z,
-			Color.BLACK.rgb,
+			this.grid.position.z,
+			Color.WHITE.rgb,
 			0.1f,
 			true,
 			0f,

@@ -64,7 +64,7 @@ object ModBlocks {
 	fun getLocation(block: Block): ResourceLocation = BuiltInRegistries.BLOCK.getKey(block)
 
 	/**
-	 * Convenience function for directly getting a block from a [DeferredItem]
+	 * Convenience function for directly getting a block from a [BlockItem] in a [DeferredItem]
 	 */
 	fun DeferredItem<BlockItem>.asBlock(): Block = this.get().block
 

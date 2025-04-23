@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.phys.AABB
 
 class ServerPhysicsGrid(level: ServerLevel) : PhysicsGrid(level) {
 	val players: MutableList<Player> = mutableListOf()
@@ -15,9 +14,11 @@ class ServerPhysicsGrid(level: ServerLevel) : PhysicsGrid(level) {
 	}
 
 	override fun tick() {
-		val aabb = AABB.ofSize(this.center, this.gridSize.x, this.gridSize.y, this.gridSize.z)
 		this.players.clear()
-		this.level.getEntitiesOfClass(Player::class.java, aabb.inflate(20.0)).forEach { player ->
+		this.level.getEntitiesOfClass(
+			Player::class.java,
+			this.boundingBox.inflate(20.0)
+		).forEach { player ->
 			if (this.players.indexOf(player) == -1) this.players.add(player)
 		}
 		this.players.forEach { player ->
