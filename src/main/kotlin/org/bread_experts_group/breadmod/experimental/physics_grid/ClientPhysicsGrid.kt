@@ -1,0 +1,34 @@
+package org.bread_experts_group.breadmod.experimental.physics_grid
+
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.world.phys.Vec3
+import org.apache.logging.log4j.LogManager
+import org.bread_experts_group.breadmod.util.minus
+
+class ClientPhysicsGrid(level: ClientLevel) : PhysicsGrid(level) {
+	val renderer: PhysicsGridRenderer = PhysicsGridRenderer(this)
+
+	init {
+		check(PhysicsGridGlobals.clientGrids[this.id] == null) { "Client Physics Grid with ID ${this.id} already exists!" }
+		PhysicsGridGlobals.clientGrids[this.id] = this
+		LogManager.getLogger().info("initializing renderer")
+		this.renderer.createRenderTask()
+	}
+
+	override fun tick() {
+	}
+
+	override fun setPos(newPos: Vec3): PhysicsGrid {
+		// todo figure out interpolation to smooth this out on clientside,
+		//  maybe tick the pos on client instead of sending it?
+		//  Mth.lerp maybe?
+		this.position -= this.position - newPos
+		this.center -= this.center - newPos
+		this.boundingBox.move(this.center)
+		return this
+	}
+
+	override fun discard() {
+		PhysicsGridGlobals.clientGrids.remove(this.id)
+	}
+}

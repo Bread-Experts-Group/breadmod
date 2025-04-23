@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.network
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import io.netty.buffer.ByteBuf
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
+import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
@@ -72,4 +74,12 @@ object BreadModCodecs {
 				buffer.writeMap(value, BlockPos.STREAM_CODEC, this.stateCodec)
 			}
 		}
+
+	@Suppress("ConvertLambdaToReference") // necessary because of overload ambiguity.
+	val VEC3_STREAM_CODEC: StreamCodec<ByteBuf, Vec3> = StreamCodec.composite(
+		ByteBufCodecs.DOUBLE, { it.x },
+		ByteBufCodecs.DOUBLE, { it.y },
+		ByteBufCodecs.DOUBLE, { it.z },
+		::Vec3
+	)
 }

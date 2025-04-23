@@ -13,6 +13,7 @@ import org.bread_experts_group.breadmod.command.server.ScreenBleedCommand
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand
 import org.bread_experts_group.breadmod.data_holders.ScreenBleedData.Companion.screenBleedMap
 import org.bread_experts_group.breadmod.data_holders.WarTimerData.Companion.warTimerMap
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME)
 internal object CommonNeoForgeEventBus {
@@ -24,6 +25,9 @@ internal object CommonNeoForgeEventBus {
 	fun serverTick(event: ServerTickEvent.Post) {
 		warTimerMap.forEach { (player, data) -> data.tick(player) }
 		screenBleedMap.forEach { (player, data) -> data.tick(player) }
+		PhysicsGridGlobals.serverGrids.forEach { (id, grid) ->
+			grid.tick()
+		}
 	}
 
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()

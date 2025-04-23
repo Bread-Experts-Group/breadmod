@@ -2,8 +2,11 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Camera
+import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.culling.Frustum
+import net.minecraft.client.renderer.debug.DebugRenderer
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Position
 import net.minecraft.util.RandomSource
@@ -20,8 +23,9 @@ import org.bread_experts_group.breadmod.client.render.translate
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
+import java.awt.Color
 
-class PhysicsGridRenderer(private val grid: PhysicsGrid) {
+class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 	private val blockRenderer = localClient.blockRenderer
 	private val random = RandomSource.create()
 
@@ -32,7 +36,7 @@ class PhysicsGridRenderer(private val grid: PhysicsGrid) {
 			{ event, _ ->
 				val poseStack = event.poseStack
 				val camera = event.camera
-				val level = localClient.level ?: return@add true
+				val level = this.grid.level
 				val frustum = event.frustum
 				this.render(poseStack, camera, bufferSource, frustum, level)
 				false
@@ -57,6 +61,34 @@ class PhysicsGridRenderer(private val grid: PhysicsGrid) {
 			this.renderBlock(pos, state, poseStack, bufferSource, level)
 			poseStack.popPose()
 		}
+		this.grid.voxelShapes.forEach { (pos, shape) ->
+			LevelRenderer.renderVoxelShape(
+				poseStack,
+				bufferSource.getBuffer(RenderType.lines()),
+				shape,
+				pos.x.toDouble(),
+				pos.y.toDouble(),
+				pos.z.toDouble(),
+				0.8f,
+				0.8f,
+				1f,
+				1f,
+				false
+			)
+		}
+		DebugRenderer.renderFloatingText(
+			poseStack,
+			bufferSource,
+			"PHYSICS GRID #${this.grid.id}",
+			this.grid.center.x,
+			this.grid.position.y + 5.0,
+			this.grid.center.z,
+			Color.BLACK.rgb,
+			0.1f,
+			true,
+			0f,
+			true
+		)
 		poseStack.popPose()
 	}
 
@@ -83,12 +115,12 @@ class PhysicsGridRenderer(private val grid: PhysicsGrid) {
 		}
 	}
 
-	fun shouldFrustumCull(position: Position, frustum: Frustum): Boolean {
+	private fun shouldFrustumCull(position: Position, frustum: Frustum): Boolean {
 		val proximal = BlockPos.containing(position)
 		return !frustum.isVisible(AABB(proximal).inflate(0.7))
 	}
 
-	fun shouldRender(cameraPos: Vec3, originPos: Vec3): Boolean =
+	private fun shouldRender(cameraPos: Vec3, originPos: Vec3): Boolean =
 		Vec3.atCenterOf(originPos.toVec3i()).closerThan(cameraPos, this.getViewDistance())
 
 	fun getViewDistance(): Double = 256.0
