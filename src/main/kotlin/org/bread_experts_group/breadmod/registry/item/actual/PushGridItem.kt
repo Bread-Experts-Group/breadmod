@@ -17,7 +17,7 @@ class PushGridItem : Item(Item.Properties().stacksTo(1).rarity(Rarity.RARE)) {
 		val result = player.rayCast(50.0, blockPhysicsGridLV)
 		if (result != null) {
 			val (grid) = result.hit
-			grid.velocity = grid.velocity.add(0.1, 0.0, 0.0)
+			grid.velocity = grid.velocity.add(0.25, 0.0, 0.0)
 		}
 		return InteractionResultHolder.consume(stack)
 	}

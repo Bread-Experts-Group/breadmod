@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals;
 import org.bread_experts_group.breadmod.util.GeneralKt;
@@ -38,7 +39,19 @@ abstract class MixinEntity {
 	@Unique
 	private @Nullable Vec3 breadmod$lastPlatformPos;
 
-	@Inject(method = "baseTick", at = @At("TAIL"), cancellable = true)
+	@Inject(method = "collectColliders", at = @At("TAIL"), cancellable = true)
+	private static void collectColliders(
+			Entity entity, Level level, List<VoxelShape> collisions, AABB boundingBox,
+			CallbackInfoReturnable<List<VoxelShape>> cir
+	) {
+		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
+		for (PhysicsGrid grid : PhysicsGridGlobals.INSTANCE.getGrids().values()) {
+			if (grid instanceof ClientPhysicsGrid) allShapes.addAll(grid.getWorldVoxelShapes());
+		}
+		cir.setReturnValue(allShapes);
+	}
+
+	@Inject(method = "baseTick", at = @At("TAIL"))
 	private void baseTick(CallbackInfo ci) {
 		HitResult<Pair<PhysicsGrid, BlockState>> result = GeneralKt.rayCast(
 				this.position(), new Vec3(0.0, -0.1, 0.0),
@@ -56,29 +69,12 @@ abstract class MixinEntity {
 		} else this.breadmod$lastPlatformPos = null;
 	}
 
-	@Inject(method = "collectColliders", at = @At("TAIL"), cancellable = true)
-	private static void collectColliders(
-			Entity entity, Level level, List<VoxelShape> collisions, AABB boundingBox,
-			CallbackInfoReturnable<List<VoxelShape>> cir
-	) {
-		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
-		for (PhysicsGrid grid : PhysicsGridGlobals.INSTANCE.getGrids().values())
-			allShapes.addAll(grid.getWorldVoxelShapes());
-		cir.setReturnValue(allShapes);
-	}
-
 	@Shadow
 	public abstract Vec3 getEyePosition();
-
 	@Shadow
 	public abstract Vec3 position();
-
-	@Shadow
-	public abstract void moveRelative(float amount, Vec3 relative);
-
 	@Shadow
 	public abstract void addDeltaMovement(Vec3 addend);
-
 	@Unique
 	private Entity breadmod$getThis() {
 		return (Entity) (Object) this;

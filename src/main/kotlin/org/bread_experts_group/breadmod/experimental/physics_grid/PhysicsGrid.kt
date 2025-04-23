@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.util.minus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
+import kotlin.math.pow
 
 abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	val id: Int = ++PhysicsGridGlobals.idCounter
@@ -79,7 +80,15 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 
 	override fun getLightEngine(): LevelLightEngine = this.level.lightEngine
 
+	private val airDensity = 1.225
+	private val dragCoefficient = 1.05
+	private val crossSectionArea = 25 // TODO calculate
+	private val mass = 1 // TODO calculate
 	open fun tick() {
+		val dragAcceleration = (0.5 * this.airDensity * this.dragCoefficient * this.crossSectionArea *
+				this.velocity.length().pow(2.0)) / this.mass
+		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
+		// Apply Velocity
 		this.position = this.position.add(this.velocity)
 	}
 
