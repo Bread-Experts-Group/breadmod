@@ -29,6 +29,7 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
@@ -104,7 +105,7 @@ class HitResult<T>(val position: Vec3, val length: Double, val side: Direction, 
 	val directionEnum: Direction
 		get() = Direction.getNearest(this.direction)
 
-	fun HitResult<BlockState>.getAsMinecraftHitResult(): BlockHitResult = BlockHitResult(
+	fun HitResult<*>.getAsBlockHitResult(): BlockHitResult = BlockHitResult(
 		this.position, this.directionEnum,
 		this.blockPosition, true
 	)
@@ -138,13 +139,13 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 	length
 ) { selector(this.level(), it) }
 
-fun blocksPhysicsGrids(): (Level, Vec3) -> BlockState? = { level, position ->
+fun blocksPhysicsGrids(): (Level, Vec3) -> Pair<PhysicsGrid, BlockState>? = { level, position ->
 	// TODO! This is very inefficient! Look into other methods common for raytracing like what NVIDIA PhysX does!
-	var capturedState: BlockState? = null
+	var capturedState: Pair<PhysicsGrid, BlockState>? = null
 	grid@ for ((_, grid) in PhysicsGridGlobals.grids)
 		for ((offset, state) in grid.blocks)
 			if ((position - (offset.center + grid.position)).length() < 1) {
-				capturedState = state
+				capturedState = grid to state
 				break@grid
 			}
 	capturedState

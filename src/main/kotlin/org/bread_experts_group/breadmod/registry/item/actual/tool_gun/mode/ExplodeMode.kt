@@ -23,7 +23,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.experimental.BreadModExplosion
+import org.bread_experts_group.breadmod.util.BreadModExplosion
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.rayCast
 

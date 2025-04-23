@@ -1,10 +1,15 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.world.level.BlockAndTintGetter
+import net.minecraft.world.level.ColorResolver
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.AABB
@@ -13,11 +18,10 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.util.minus
-import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 
-abstract class PhysicsGrid(val level: Level) {
+abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	val id: Int = ++PhysicsGridGlobals.idCounter
 	val logger: Logger = LogManager.getLogger("PhysicsGrid ${this.id}")
 	val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
@@ -44,7 +48,7 @@ abstract class PhysicsGrid(val level: Level) {
 			if (state.renderShape == INVISIBLE) return@forEach
 			if (state.fluidState.`is`(Fluids.EMPTY)) {
 				this.blocks[offset] = state
-				this.voxelShapes[offset] = state.getShape(this.level, pos)
+				this.voxelShapes[offset] = state.getShape(this, pos)
 			} else this.fluids[offset] = state.fluidState
 		}
 		return this
@@ -64,20 +68,18 @@ abstract class PhysicsGrid(val level: Level) {
 	}
 
 	fun getBlockState(x: Int, y: Int, z: Int): BlockState = this.getBlockState(BlockPos(x, y, z))
-	fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
-	fun setBlockState(pos: BlockPos, newState: BlockState): Boolean {
-		val oldState = this.getBlockState(pos)
-		if (oldState == newState) return false
-		this.blocks[pos] = newState
-		return true
-	}
+	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
+	override fun getBlockEntity(pos: BlockPos): BlockEntity? = null // TODO BlockEntity support?
+	override fun getFluidState(pos: BlockPos): FluidState = this.fluids[pos] ?: Fluids.EMPTY.defaultFluidState()
+	override fun getHeight(): Int = 999
+	override fun getMinBuildHeight(): Int = -999
+	override fun getShade(direction: Direction, shade: Boolean): Float =
+		this.level.getShade(direction, shade)
 
-	open fun removeBlock(pos: BlockPos) {
-		this.blocks.remove(pos)
-		this.logger.info("Removed the block at $pos")
-	}
+	override fun getBlockTint(blockPos: BlockPos, colorResolver: ColorResolver): Int =
+		this.level.getBlockTint(blockPos, colorResolver)
 
-	fun getBlockPosAbsolute(pos: BlockPos): Vec3 = this.position.plus(pos.toVec3())
+	override fun getLightEngine(): LevelLightEngine = this.level.lightEngine
 
 	abstract fun tick()
 

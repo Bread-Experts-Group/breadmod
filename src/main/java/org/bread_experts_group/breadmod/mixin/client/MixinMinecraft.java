@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.mixin.client;
 
+import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
@@ -7,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.bread_experts_group.breadmod.util.GeneralKt;
 import org.bread_experts_group.breadmod.util.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,13 +33,13 @@ public class MixinMinecraft {
 	private void pickBlock(CallbackInfo ci) {
 		Objects.requireNonNull(this.player);
 		Objects.requireNonNull(this.gameMode);
-		HitResult<BlockState> selected = GeneralKt.rayCast(
+		HitResult<Pair<PhysicsGrid, BlockState>> selected = GeneralKt.rayCast(
 				this.player, this.player.blockInteractionRange(),
 				GeneralKt.blocksPhysicsGrids()
 		);
 		if (selected != null) {
-			ItemStack stack = selected.getHit().getCloneItemStack(
-					selected.getAsMinecraftHitResult(selected),
+			ItemStack stack = selected.getHit().component2().getCloneItemStack(
+					selected.getAsBlockHitResult(selected),
 					this.player.level(),
 					selected.getBlockPosition(),
 					this.player

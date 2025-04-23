@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental
+package org.bread_experts_group.breadmod.util
 
 import net.minecraft.Util
 import net.minecraft.core.BlockPos
@@ -52,8 +52,8 @@ object BreadModExplosion {
 			)
 			this.level.gameEvent(source, GameEvent.EXPLODE, this.pos)
 			val damageSourceLow = this.level.damageSources().explosion(source, source)
-			val damageSourceHigh = ModDamageType.EXPLOSION_DAMAGE_HIGH.source(this.level)
-			val damageSourceVeryHigh = ModDamageType.EXPLOSION_DAMAGE_VERY_HIGH.source(this.level)
+			val damageSourceHigh = ModDamageType.Companion.EXPLOSION_DAMAGE_HIGH.source(this.level)
+			val damageSourceVeryHigh = ModDamageType.Companion.EXPLOSION_DAMAGE_VERY_HIGH.source(this.level)
 			this.hitEntities.forEach { entity, rayPower ->
 				entity.hurt(
 					when (rayPower) {
@@ -110,7 +110,7 @@ object BreadModExplosion {
 			this@BreadModExplosion.getPoints.apply(points).forEach { direction ->
 				var currentPos = pos
 				var power = radius
-				val localTracerAttenuate = (Random.nextFloat() * 3.0f) + 0.5f
+				val localTracerAttenuate = (Random.Default.nextFloat() * 3.0f) + 0.5f
 				for (@Suppress("unused") depth in 0 until radius.toInt()) {
 					currentBlockPos.set(currentPos.x, currentPos.y, currentPos.z)
 					val blockState = level.getBlockState(currentBlockPos)

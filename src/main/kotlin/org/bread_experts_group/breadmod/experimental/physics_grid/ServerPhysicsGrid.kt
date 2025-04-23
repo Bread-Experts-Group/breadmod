@@ -27,11 +27,6 @@ class ServerPhysicsGrid(level: ServerLevel) : PhysicsGrid(level) {
 //		this.setPos(this.position.plus(Vec3(0.0, 0.1, 0.0)))
 	}
 
-	override fun removeBlock(pos: BlockPos) {
-		super.removeBlock(pos)
-		this.syncBlockUpdate(pos)
-	}
-
 	// todo sync logic to client, get the specific client grid using this instance's id
 	fun syncBlockUpdate(pos: BlockPos) {}
 }

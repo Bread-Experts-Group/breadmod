@@ -6,9 +6,9 @@ import net.minecraft.world.entity.item.PrimedTnt
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
-import org.bread_experts_group.breadmod.experimental.BreadModExplosion
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
+import org.bread_experts_group.breadmod.util.BreadModExplosion
 
 class PrimedNukeBlock(
 	level: Level,
