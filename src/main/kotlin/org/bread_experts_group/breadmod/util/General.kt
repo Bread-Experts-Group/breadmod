@@ -24,12 +24,12 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.math.BigDecimal
@@ -139,7 +139,15 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 ) { selector(this.level(), it) }
 
 fun blocksPhysicsGrids(): (Level, Vec3) -> BlockState? = { level, position ->
-	Blocks.DIAMOND_BLOCK.defaultBlockState()
+	// TODO! This is very inefficient! Look into other methods common for raytracing like what NVIDIA PhysX does!
+	var capturedState: BlockState? = null
+	grid@ for ((_, grid) in PhysicsGridGlobals.grids)
+		for ((offset, state) in grid.blocks)
+			if ((position - (offset.center + grid.position)).length() < 1) {
+				capturedState = state
+				break@grid
+			}
+	capturedState
 }
 
 fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->
@@ -320,8 +328,8 @@ fun horizontalDirectionalTargetFaceSection(
 	EAST  -> targetFaceSection(targetPos.z, targetPos.y, minxXNorthEast, minY, maxXNorthEast, maxY)
 	else  -> false
 }
-/// End Face Targeting Functions ///
 
+/// End Face Targeting Functions ///
 inline fun <reified T> CompoundTag.getValue(value: String): T = when (T::class) {
 	Tag::class         -> this.get(value) as T
 	CompoundTag::class -> this.getCompound(value) as T
@@ -360,7 +368,6 @@ inline fun <reified T> CompoundTag.putValue(key: String, value: T) {
 		else               -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
 	}
 }
-
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!
 // Make sure to write good Javadoc for them!
