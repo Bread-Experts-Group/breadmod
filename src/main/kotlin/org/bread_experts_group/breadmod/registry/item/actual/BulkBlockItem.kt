@@ -34,8 +34,8 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		val serverPlayer = context.player as? ServerPlayer ?: return super.useOn(context)
 		if (!level.isClientSide) {
 			ServerPhysicsGrid(level as ServerLevel)
-				.setGridData(this.posA!!, this.posB!!)
-				.setBlockData(this.posA!!, this.posB!!)
+				.recomputeGridData(this.posA!!, this.posB!!)
+				.recomputeBlockData(this.posA!!, this.posB!!)
 				.setPos(serverPlayer.position())
 			PacketDistributor.sendToPlayer(
 				serverPlayer,

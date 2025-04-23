@@ -37,21 +37,21 @@ abstract class PhysicsGrid(val level: Level) {
 		)
 	}
 
-	fun setBlockData(from: BlockPos, to: BlockPos): PhysicsGrid {
+	fun recomputeBlockData(from: BlockPos, to: BlockPos): PhysicsGrid {
 		val aabb = AABB.encapsulatingFullBlocks(from, to)
 		BlockPos.betweenClosedStream(aabb).forEach { pos ->
 			val state = this.level.getBlockState(pos)
-			val offset = pos.offset(-from)
+			val offset = pos.offset(-from).immutable()
 			if (state.renderShape == INVISIBLE) return@forEach
 			if (state.fluidState.`is`(Fluids.EMPTY)) {
-				this.blocks[offset.immutable()] = state
-				this.voxelShapes[offset.immutable()] = state.getShape(this.level, pos)
-			} else this.fluids[offset.immutable()] = state.fluidState
+				this.blocks[offset] = state
+				this.voxelShapes[offset] = state.getShape(this.level, pos)
+			} else this.fluids[offset] = state.fluidState
 		}
 		return this
 	}
 
-	fun setGridData(from: BlockPos, to: BlockPos): PhysicsGrid {
+	fun recomputeGridData(from: BlockPos, to: BlockPos): PhysicsGrid {
 		val aabb = AABB.encapsulatingFullBlocks(from, to)
 		this.position = from.toVec3()
 		this.center = aabb.center
