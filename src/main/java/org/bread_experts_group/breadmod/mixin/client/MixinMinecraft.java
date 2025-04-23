@@ -35,7 +35,7 @@ public class MixinMinecraft {
 		Objects.requireNonNull(this.gameMode);
 		HitResult<Pair<PhysicsGrid, BlockState>> selected = GeneralKt.rayCast(
 				this.player, this.player.blockInteractionRange(),
-				GeneralKt.blocksPhysicsGrids()
+				GeneralKt.getBlockPhysicsGridLV()
 		);
 		if (selected != null) {
 			ItemStack stack = selected.getHit().component2().getCloneItemStack(

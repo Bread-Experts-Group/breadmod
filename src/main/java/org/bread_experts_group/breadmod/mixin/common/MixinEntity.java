@@ -15,11 +15,13 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals;
 import org.bread_experts_group.breadmod.util.GeneralKt;
 import org.bread_experts_group.breadmod.util.HitResult;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
@@ -33,6 +35,26 @@ abstract class MixinEntity {
 	private EntityDimensions dimensions;
 	@Shadow
 	private Level level;
+	@Unique
+	private @Nullable Vec3 breadmod$lastPlatformPos;
+
+	@Inject(method = "baseTick", at = @At("TAIL"), cancellable = true)
+	private void baseTick(CallbackInfo ci) {
+		HitResult<Pair<PhysicsGrid, BlockState>> result = GeneralKt.rayCast(
+				this.position(), new Vec3(0.0, -0.1, 0.0),
+				0.1, GeneralKt.getBlockPhysicsGrid()
+		);
+		if (result != null) {
+			Vec3 gridPosition = result.getHit().component1().getPosition();
+			if (gridPosition != this.breadmod$lastPlatformPos) {
+				if (this.breadmod$lastPlatformPos != null) {
+					Vec3 delta = gridPosition.subtract(this.breadmod$lastPlatformPos).scale(0.5);
+					this.addDeltaMovement(delta);
+				}
+				this.breadmod$lastPlatformPos = gridPosition;
+			}
+		} else this.breadmod$lastPlatformPos = null;
+	}
 
 	@Inject(method = "collectColliders", at = @At("TAIL"), cancellable = true)
 	private static void collectColliders(
@@ -47,6 +69,15 @@ abstract class MixinEntity {
 
 	@Shadow
 	public abstract Vec3 getEyePosition();
+
+	@Shadow
+	public abstract Vec3 position();
+
+	@Shadow
+	public abstract void moveRelative(float amount, Vec3 relative);
+
+	@Shadow
+	public abstract void addDeltaMovement(Vec3 addend);
 
 	@Unique
 	private Entity breadmod$getThis() {
@@ -75,7 +106,7 @@ abstract class MixinEntity {
 			if (inWorldWall) cir.setReturnValue(true);
 			else {
 				HitResult<Pair<PhysicsGrid, BlockState>> result = GeneralKt.rayCast(
-						breadmod$getThis(), 1.0, GeneralKt.blocksPhysicsGrids()
+						breadmod$getThis(), 1.0, GeneralKt.getBlockPhysicsGridLV()
 				);
 				if (result != null) {
 					BlockState blockState = result.getHit().component2();

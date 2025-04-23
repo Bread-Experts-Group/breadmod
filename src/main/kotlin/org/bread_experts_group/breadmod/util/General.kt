@@ -139,7 +139,7 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 	length
 ) { selector(this.level(), it) }
 
-fun blocksPhysicsGrids(): (Level, Vec3) -> Pair<PhysicsGrid, BlockState>? = { level, position ->
+val blockPhysicsGrid: (Vec3) -> Pair<PhysicsGrid, BlockState>? = { position ->
 	// TODO! This is very inefficient! Look into other methods common for raytracing like what NVIDIA PhysX does!
 	var capturedState: Pair<PhysicsGrid, BlockState>? = null
 	grid@ for ((_, grid) in PhysicsGridGlobals.grids)
@@ -150,6 +150,7 @@ fun blocksPhysicsGrids(): (Level, Vec3) -> Pair<PhysicsGrid, BlockState>? = { le
 			}
 	capturedState
 }
+val blockPhysicsGridLV: (Level, Vec3) -> Pair<PhysicsGrid, BlockState>? = { _, v -> blockPhysicsGrid.invoke(v) }
 
 fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())
