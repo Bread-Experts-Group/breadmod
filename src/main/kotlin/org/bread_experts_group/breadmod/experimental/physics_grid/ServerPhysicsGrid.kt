@@ -9,8 +9,9 @@ class ServerPhysicsGrid(level: ServerLevel) : PhysicsGrid(level) {
 	val players: MutableList<Player> = mutableListOf()
 
 	init {
-		check(PhysicsGridGlobals.serverGrids[this.id] == null) { "Server Physics Grid with ID ${this.id} already exists!" }
-		PhysicsGridGlobals.serverGrids[this.id] = this
+		check(PhysicsGridGlobals.grids[this.id] == null) { "Server Physics Grid with ID ${this.id} already exists!" }
+		PhysicsGridGlobals.grids[this.id] = this
+		this.logger.warn("New server sided grid created.")
 	}
 
 	override fun tick() {
@@ -32,8 +33,4 @@ class ServerPhysicsGrid(level: ServerLevel) : PhysicsGrid(level) {
 
 	// todo sync logic to client, get the specific client grid using this instance's id
 	fun syncBlockUpdate(pos: BlockPos) {}
-
-	override fun discard() {
-		PhysicsGridGlobals.serverGrids.remove(this.id)
-	}
 }

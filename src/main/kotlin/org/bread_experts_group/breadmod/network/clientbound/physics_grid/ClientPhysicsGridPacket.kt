@@ -16,8 +16,9 @@ class ClientPhysicsGridPacket(
 	private val posB: BlockPos
 ) : CustomPacketPayload {
 	companion object {
-		val TYPE: CustomPacketPayload.Type<ClientPhysicsGridPacket> =
-			CustomPacketPayload.Type(modLocation("client_physics_packet"))
+		val TYPE: CustomPacketPayload.Type<ClientPhysicsGridPacket> = CustomPacketPayload.Type(
+			modLocation("client_physics_packet")
+		)
 		val STREAM_CODEC: StreamCodec<ByteBuf, ClientPhysicsGridPacket> = StreamCodec.composite(
 			BlockPos.STREAM_CODEC, ClientPhysicsGridPacket::posA,
 			BlockPos.STREAM_CODEC, ClientPhysicsGridPacket::posB,
@@ -29,7 +30,6 @@ class ClientPhysicsGridPacket(
 			ClientPhysicsGrid(level)
 				.setGridData(data.posA, data.posB)
 				.setBlockData(data.posA, data.posB)
-				.setVoxelShapes(data.posA, data.posB)
 				.setPos(context.player().position())
 		}
 

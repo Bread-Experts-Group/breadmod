@@ -7,7 +7,6 @@
   "mixins": [
     "common.IAccessorEntity",
     "common.MixinActiveProfiler",
-    "common.MixinBlockCollision",
     "common.MixinEntity",
     "common.MixinLevel",
     "common.MixinLightningBolt",

@@ -11,22 +11,31 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.util.minus
 import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 
 abstract class PhysicsGrid(val level: Level) {
+	val id: Int = PhysicsGridGlobals.idCounter
+	val logger: Logger = LogManager.getLogger("PhysicsGrid ${this.id}")
 	val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
 	val fluids: MutableMap<BlockPos, FluidState> = mutableMapOf()
 	val voxelShapes: MutableMap<BlockPos, VoxelShape> = mutableMapOf()
 	var boundingBox: AABB = AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5)
 	var position: Vec3 = Vec3.ZERO
-	// todo center is busted, it's placed on the corner
-	var center: Vec3 = Vec3.ZERO
+	var center: Vec3 = Vec3.ZERO // todo center is busted, it's placed on the corner
 	var rotation: Vec3 = Vec3.ZERO
 	var gridSize: Vec3 = Vec3.ZERO
-	val id: Int = PhysicsGridGlobals.idCounter
+
+	fun getWorldVoxelShapes(): List<VoxelShape> = this.voxelShapes.map { (local, shape) ->
+		shape.move(
+			local.x + this.position.x,
+			local.y + this.position.y,
+			local.z + this.position.z
+		)
+	}
 
 	fun setBlockData(from: BlockPos, to: BlockPos): PhysicsGrid {
 		val aabb = AABB.encapsulatingFullBlocks(from, to)
@@ -34,18 +43,10 @@ abstract class PhysicsGrid(val level: Level) {
 			val state = this.level.getBlockState(pos)
 			val offset = pos.offset(-from)
 			if (state.renderShape == INVISIBLE) return@forEach
-			if (state.fluidState.`is`(Fluids.EMPTY)) this.blocks[offset.immutable()] = state
-			else this.fluids[offset.immutable()] = state.fluidState
-		}
-		return this
-	}
-
-	fun setVoxelShapes(from: BlockPos, to: BlockPos): PhysicsGrid {
-		val aabb = AABB.encapsulatingFullBlocks(from, to)
-		BlockPos.betweenClosedStream(aabb).forEach { pos ->
-			val state = this.level.getBlockState(pos)
-			val offset = pos.offset(-from)
-			this.voxelShapes[offset.immutable()] = state.getShape(this.level, pos)
+			if (state.fluidState.`is`(Fluids.EMPTY)) {
+				this.blocks[offset.immutable()] = state
+				this.voxelShapes[offset.immutable()] = state.getShape(this.level, pos)
+			} else this.fluids[offset.immutable()] = state.fluidState
 		}
 		return this
 	}
@@ -77,12 +78,14 @@ abstract class PhysicsGrid(val level: Level) {
 
 	open fun removeBlock(pos: BlockPos) {
 		this.blocks.remove(pos)
-		LogManager.getLogger().info("removed the block at $pos")
+		this.logger.info("Removed the block at $pos")
 	}
 
 	fun getBlockPosAbsolute(pos: BlockPos): Vec3 = this.position.plus(pos.toVec3())
 
 	abstract fun tick()
 
-	abstract fun discard()
+	fun discard() {
+		PhysicsGridGlobals.grids.remove(this.id)
+	}
 }

@@ -14,7 +14,6 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
 import org.joml.Vector3f
@@ -27,8 +26,7 @@ class PhysicsGridRequestPacket(
 	val to: BlockPos
 ) : CustomPacketPayload {
 	companion object {
-		val TYPE: Type<PhysicsGridRequestPacket> =
-			Type(modLocation("physics_grid_request"))
+		val TYPE: Type<PhysicsGridRequestPacket> = Type(modLocation("physics_grid_request"))
 		val STREAM_CODEC: StreamCodec<ByteBuf, PhysicsGridRequestPacket> = StreamCodec.composite(
 			ByteBufCodecs.VECTOR3F, PhysicsGridRequestPacket::position,
 			BlockPos.STREAM_CODEC, PhysicsGridRequestPacket::from,
@@ -67,7 +65,6 @@ class PhysicsGridRequestPacket(
 						}
 					}
 				)
-				LogManager.getLogger().info(this.gridShapes)
 				PacketDistributor.sendToAllPlayers(
 					PhysicsGridPacket(
 						context.player().level(),
@@ -79,8 +76,10 @@ class PhysicsGridRequestPacket(
 			}
 		}
 
-		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
-			registrar.playToServer(this.TYPE, this.STREAM_CODEC, this::handleServerboundPacket)
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar = registrar.playToServer(
+			this.TYPE, this.STREAM_CODEC,
+			this::handleServerboundPacket
+		)
 	}
 
 	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE

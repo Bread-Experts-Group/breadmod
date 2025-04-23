@@ -27,7 +27,7 @@ class GridPosUpdatePacket(
 		)
 
 		fun handleClientboundPacket(data: GridPosUpdatePacket, context: IPayloadContext) {
-			PhysicsGridGlobals.clientGrids[data.id]?.setPos(data.newPos)
+			PhysicsGridGlobals.grids[data.id]?.setPos(data.newPos)
 		}
 
 		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
