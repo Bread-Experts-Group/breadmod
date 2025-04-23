@@ -30,7 +30,7 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	var boundingBox: AABB = AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5)
 	var position: Vec3 = Vec3.ZERO
 	var rotation: Vec3 = Vec3.ZERO
-	var gridSize: Vec3 = Vec3.ZERO
+	var velocity: Vec3 = Vec3.ZERO
 
 	fun getWorldVoxelShapes(): List<VoxelShape> = this.voxelShapes.map { (local, shape) ->
 		shape.move(
@@ -55,9 +55,7 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	}
 
 	fun recomputeGridData(from: BlockPos, to: BlockPos): PhysicsGrid {
-		val aabb = AABB.encapsulatingFullBlocks(from, to)
 		this.position = from.toVec3()
-		this.gridSize = Vec3(aabb.xsize, aabb.ysize, aabb.zsize)
 		this.boundingBox = AABB.encapsulatingFullBlocks(from, to)
 		return this
 	}
@@ -81,7 +79,9 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 
 	override fun getLightEngine(): LevelLightEngine = this.level.lightEngine
 
-	abstract fun tick()
+	open fun tick() {
+		this.position = this.position.add(this.velocity)
+	}
 
 	fun discard() {
 		PhysicsGridGlobals.grids.remove(this.id)

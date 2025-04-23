@@ -14,9 +14,6 @@ class ClientPhysicsGrid(level: ClientLevel) : PhysicsGrid(level) {
 		this.renderer.createRenderTask()
 	}
 
-	override fun tick() {
-	}
-
 	override fun setPos(newPos: Vec3): PhysicsGrid {
 		// todo figure out interpolation to smooth this out on clientside,
 		//  maybe tick the pos on client instead of sending it?

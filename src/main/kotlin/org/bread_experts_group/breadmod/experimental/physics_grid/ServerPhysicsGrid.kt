@@ -14,16 +14,17 @@ class ServerPhysicsGrid(level: ServerLevel) : PhysicsGrid(level) {
 	}
 
 	override fun tick() {
-		this.players.clear()
-		this.level.getEntitiesOfClass(
-			Player::class.java,
-			this.boundingBox.inflate(20.0)
-		).forEach { player ->
-			if (this.players.indexOf(player) == -1) this.players.add(player)
-		}
-		this.players.forEach { player ->
+		super.tick()
+//		this.players.clear()
+//		this.level.getEntitiesOfClass(
+//			Player::class.java,
+//			this.boundingBox.inflate(20.0)
+//		).forEach { player ->
+//			if (this.players.indexOf(player) == -1) this.players.add(player)
+//		}
+//		this.players.forEach { player ->
 //			PacketDistributor.sendToPlayer(player as ServerPlayer, GridPosUpdatePacket(this.position, this.id + 1))
-		}
+//		}
 //		this.setPos(this.position.plus(Vec3(0.0, 0.1, 0.0)))
 	}
 
