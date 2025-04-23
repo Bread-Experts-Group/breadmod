@@ -69,8 +69,8 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
 	override fun getBlockEntity(pos: BlockPos): BlockEntity? = null // TODO BlockEntity support?
 	override fun getFluidState(pos: BlockPos): FluidState = this.fluids[pos] ?: Fluids.EMPTY.defaultFluidState()
-	override fun getHeight(): Int = 999
-	override fun getMinBuildHeight(): Int = -999
+	override fun getHeight(): Int = Int.MAX_VALUE
+	override fun getMinBuildHeight(): Int = Int.MIN_VALUE
 	override fun getShade(direction: Direction, shade: Boolean): Float =
 		this.level.getShade(direction, shade)
 
