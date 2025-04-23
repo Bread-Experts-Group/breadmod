@@ -9,7 +9,6 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.bread_experts_group.breadmod.experimental.physics_grid.ServerPhysicsGrid
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.ClientPhysicsGridPacket
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
@@ -42,7 +41,6 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 				ClientPhysicsGridPacket(this.posA!!, this.posB!!)
 			)
 		}
-		PhysicsGridGlobals.idCounter++
 		this.posA = null
 		this.posB = null
 		context.player?.sendSystemMessage(Component.literal("Created physics grid."))

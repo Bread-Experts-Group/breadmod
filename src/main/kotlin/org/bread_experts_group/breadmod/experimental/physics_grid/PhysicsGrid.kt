@@ -18,7 +18,7 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 
 abstract class PhysicsGrid(val level: Level) {
-	val id: Int = PhysicsGridGlobals.idCounter
+	val id: Int = ++PhysicsGridGlobals.idCounter
 	val logger: Logger = LogManager.getLogger("PhysicsGrid ${this.id}")
 	val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
 	val fluids: MutableMap<BlockPos, FluidState> = mutableMapOf()
