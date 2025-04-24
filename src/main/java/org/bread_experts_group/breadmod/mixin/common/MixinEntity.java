@@ -1,5 +1,7 @@
 package org.bread_experts_group.breadmod.mixin.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import kotlin.Triple;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -67,6 +69,22 @@ abstract class MixinEntity {
 				this.breadmod$lastPlatformPos = gridPosition;
 			}
 		} else this.breadmod$lastPlatformPos = null;
+	}
+
+	@Inject(
+			method = "spawnSprintParticle",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;addRunningEffects(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Z",
+					shift = At.Shift.BEFORE
+			)
+	)
+	private void spawnSprintParticle(CallbackInfo ci, @Local LocalRef<BlockState> blockstate) {
+		HitResult<Triple<PhysicsGrid, BlockPos, BlockState>> result = GeneralKt.rayCast(
+				this.position(), new Vec3(0.0, -0.1, 0.0),
+				0.1, GeneralKt.blockPhysicsGridV(this.level)
+		);
+		if (result != null) blockstate.set(result.getHit().component3());
 	}
 
 	@Shadow
