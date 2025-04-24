@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod.mixin.common;
 
+import kotlin.Triple;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -10,15 +12,21 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.CommonHooks;
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.bread_experts_group.breadmod.registry.attachment.ModAttachments;
 import org.bread_experts_group.breadmod.registry.item.ModItems;
+import org.bread_experts_group.breadmod.util.GeneralKt;
+import org.bread_experts_group.breadmod.util.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -63,5 +71,24 @@ abstract class MixinLivingEntity {
 	private void dropAllDeathLoot(ServerLevel level, DamageSource damageSource, CallbackInfo ci) {
 		LivingEntity me = breadmod$getThis();
 		if (me.getData(this.breadmod$kiAttachment)) ci.cancel();
+	}
+
+	@ModifyVariable(
+			method = "checkFallDamage",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;isAir()Z",
+					shift = At.Shift.BEFORE
+			),
+			argsOnly = true
+	)
+	private BlockState checkFallDamage(BlockState state) {
+		LivingEntity me = breadmod$getThis();
+		HitResult<Triple<PhysicsGrid, BlockPos, BlockState>> result = GeneralKt.rayCast(
+				me.position(), new Vec3(0.0, -0.1, 0.0),
+				0.1, GeneralKt.blockPhysicsGridV(me.level())
+		);
+		if (result != null) return result.getHit().component3();
+		return state;
 	}
 }
