@@ -1,10 +1,11 @@
 package org.bread_experts_group.breadmod.mixin.client;
 
-import kotlin.Pair;
+import kotlin.Triple;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -39,12 +40,12 @@ public class MixinMinecraft {
 		Objects.requireNonNull(this.player);
 		Objects.requireNonNull(this.gameMode);
 		Objects.requireNonNull(this.level);
-		HitResult<Pair<PhysicsGrid, BlockState>> selected = GeneralKt.rayCast(
+		HitResult<Triple<PhysicsGrid, BlockPos, BlockState>> selected = GeneralKt.rayCast(
 				this.player, this.player.blockInteractionRange(),
 				GeneralKt.blockPhysicsGridLV(this.level)
 		);
 		if (selected != null) {
-			ItemStack stack = selected.getHit().component2().getCloneItemStack(
+			ItemStack stack = selected.getHit().component3().getCloneItemStack(
 					selected.getAsBlockHitResult(selected),
 					this.player.level(),
 					selected.getBlockPosition(),

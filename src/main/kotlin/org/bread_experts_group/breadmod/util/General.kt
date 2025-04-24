@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
-import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
@@ -107,10 +106,14 @@ class HitResult<T>(val position: Vec3, val length: Double, val side: Direction, 
 	val directionEnum: Direction
 		get() = Direction.getNearest(this.direction)
 
-	fun HitResult<*>.getAsBlockHitResult(): BlockHitResult = BlockHitResult(
-		this.position, this.directionEnum,
-		this.blockPosition, true
-	)
+	fun HitResult<Triple<PhysicsGrid, BlockPos, BlockState>>.getAsBlockHitResult(): GridBlockHitResult =
+		GridBlockHitResult(
+			this.position, this.directionEnum,
+			this.blockPosition,
+			this.hit.first,
+			this.hit.second,
+			this.hit.third
+		)
 }
 
 fun <T> rayCast(
@@ -141,21 +144,22 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 	length
 ) { selector(this.level(), it) }
 
-fun blockPhysicsGrid(filter: (PhysicsGrid) -> Boolean): (Vec3) -> Pair<PhysicsGrid, BlockState>? = { position ->
-	// TODO! This is very inefficient! Look into other methods common for raytracing like what NVIDIA PhysX does!
-	var capturedState: Pair<PhysicsGrid, BlockState>? = null
-	grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
-		if (!filter.invoke(grid)) continue@grid
-		for ((offset, state) in grid.blocks)
-			if ((position - (offset.center + grid.position)).length() < 1) {
-				capturedState = grid to state
-				break@grid
-			}
+fun blockPhysicsGrid(filter: (PhysicsGrid) -> Boolean): (Vec3) -> Triple<PhysicsGrid, BlockPos, BlockState>? =
+	{ position ->
+		// TODO! This is very inefficient! Look into other methods common for raytracing like what NVIDIA PhysX does!
+		var capturedState: Triple<PhysicsGrid, BlockPos, BlockState>? = null
+		grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
+			if (!filter.invoke(grid)) continue@grid
+			for ((offset, state) in grid.blocks)
+				if ((position - (offset.center + grid.position)).length() < 1) {
+					capturedState = Triple(grid, offset, state)
+					break@grid
+				}
+		}
+		capturedState
 	}
-	capturedState
-}
 
-fun blockPhysicsGridV(level: Level): (Vec3) -> Pair<PhysicsGrid, BlockState>? {
+fun blockPhysicsGridV(level: Level): (Vec3) -> Triple<PhysicsGrid, BlockPos, BlockState>? {
 	val filter: (PhysicsGrid) -> Boolean =
 		if (level.isClientSide) {
 			{ it is ClientPhysicsGrid }
@@ -165,7 +169,7 @@ fun blockPhysicsGridV(level: Level): (Vec3) -> Pair<PhysicsGrid, BlockState>? {
 	return blockPhysicsGrid(filter)
 }
 
-fun blockPhysicsGridLV(level: Level): (Level, Vec3) -> Pair<PhysicsGrid, BlockState>? {
+fun blockPhysicsGridLV(level: Level): (Level, Vec3) -> Triple<PhysicsGrid, BlockPos, BlockState>? {
 	val filter: (PhysicsGrid) -> Boolean =
 		if (level.isClientSide) {
 			{ it is ClientPhysicsGrid }
