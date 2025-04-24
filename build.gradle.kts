@@ -13,7 +13,6 @@ plugins {
 	`maven-publish`
 	`java-library`
 	signing
-	id("com.gradleup.shadow") version "9.0.0-beta12"
 }
 
 group = project.properties["mod_group_id"] as String
@@ -129,10 +128,11 @@ neoForge {
 		}
 	}
 }
-
 dependencies {
 	// Mod Dependencies //
-	implementation("org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT")
+	val breadLibServer = "org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT"
+	jarJar(implementation(breadLibServer) {})
+	additionalRuntimeClasspath(breadLibServer) { isTransitive = false }
 	// KFF
 	implementation("thedarkcolour:kotlinforforge-neoforge:5.7.0")
 	// Mod Compatibility //
@@ -164,13 +164,6 @@ dependencies {
 	// WorldEdit
 	runtimeOnly("curse.maven:worldedit-225608:5830452")
 }
-tasks.build {
-	dependsOn(tasks.shadowJar)
-}
-tasks.shadowJar {
-	minimize()
-	configurations = listOf()
-}
 kotlin {
 	jvmToolchain(21)
 }
@@ -184,9 +177,6 @@ private val localProperties: Properties = Properties().apply {
 }
 publishing {
 	publications {
-		create<MavenPublication>("shadow") {
-			from(components["shadow"])
-		}
 		create<MavenPublication>("mavenKotlin") {
 			artifactId = "breadmod"
 			from(components["kotlin"])
