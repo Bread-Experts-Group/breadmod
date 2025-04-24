@@ -79,9 +79,9 @@ public abstract class MixinLevelRenderer {
 									gbHitResult.getLocalBlockPos(),
 									CollisionContext.of(camera.getEntity())
 							),
-							(double) gbHitResult.getLocation().x - camera.getPosition().x,
-							(double) gbHitResult.getLocation().y - camera.getPosition().y,
-							(double) gbHitResult.getLocation().z - camera.getPosition().z,
+							(double) gbHitResult.getLocationGridRelative().x - camera.getPosition().x,
+							(double) gbHitResult.getLocationGridRelative().y - camera.getPosition().y,
+							(double) gbHitResult.getLocationGridRelative().z - camera.getPosition().z,
 							0.0F,
 							0.0F,
 							0.0F,

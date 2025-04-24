@@ -15,5 +15,7 @@ class GridBlockHitResult(
 	val localBlockPos: BlockPos,
 	val state: BlockState
 ) : BlockHitResult(location, direction, blockPos, true) {
+	val locationGridRelative: Vec3 = Vec3.atLowerCornerOf(this.localBlockPos) + this.grid.position
+
 	override fun getBlockPos(): BlockPos = BlockPos.ZERO
 }
