@@ -15,16 +15,17 @@ internal class EnglishUSLangProvider(
 		else name
 
 	override fun addManualTranslations() {
-		this.bmAdd(modTranslatable("irc", "connected"), "Connected to host \"%1\$s:%2\$s\"")
+		this.bmAdd(modTranslatable("irc", "connected"), "Connected to host [%1\$s]")
+		this.bmAdd(modTranslatable("irc", "disconnected"), "Host disconnected [%1\$s]")
 		this.bmAdd(modTranslatable("irc", "unknown_host"), "Cannot connect, unknown host \"%1\$s:%2\$s\"")
-		this.bmAdd(modTranslatable("irc", "timed_out"), "Cannot connect, timed out \"%1\$s:%2\$s\"")
+		this.bmAdd(modTranslatable("irc", "timed_out"), "Cannot connect, timed out \"[%1\$s]:%2\$s\"")
 		this.bmAdd(
 			modTranslatable("irc", "connection_failed"),
-			"Cannot connect to host \"%1\$s:%2\$s\": [%3\$s] \"%4\$s\""
+			"Cannot connect to host \"[%1\$s]:%2\$s\": [%3\$s] \"%4\$s\""
 		)
 		this.bmAdd(
 			modTranslatable("irc", "connection_failure"),
-			"Host \"%1\$s:%2\$s\" connection failure: [%3\$s] \"%4\$s\""
+			"Host [%1\$s] connection failure: [%2\$s] \"%3\$s\""
 		)
 		this.bmAdd(modTranslatable("tool_gun", "settings", "title"), "Tool Gun Setup Utility V1.0")
 		this.add("modmenu.nameTranslation.breadmod", "Bread Mod")
