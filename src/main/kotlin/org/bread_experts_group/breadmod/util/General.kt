@@ -29,8 +29,10 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.Vec3
+import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
+import org.bread_experts_group.breadmod.experimental.physics_grid.ServerPhysicsGrid
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.math.BigDecimal
@@ -139,18 +141,40 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 	length
 ) { selector(this.level(), it) }
 
-val blockPhysicsGrid: (Vec3) -> Pair<PhysicsGrid, BlockState>? = { position ->
+fun blockPhysicsGrid(filter: (PhysicsGrid) -> Boolean): (Vec3) -> Pair<PhysicsGrid, BlockState>? = { position ->
 	// TODO! This is very inefficient! Look into other methods common for raytracing like what NVIDIA PhysX does!
 	var capturedState: Pair<PhysicsGrid, BlockState>? = null
-	grid@ for ((_, grid) in PhysicsGridGlobals.grids)
+	grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
+		if (!filter.invoke(grid)) continue@grid
 		for ((offset, state) in grid.blocks)
 			if ((position - (offset.center + grid.position)).length() < 1) {
 				capturedState = grid to state
 				break@grid
 			}
+	}
 	capturedState
 }
-val blockPhysicsGridLV: (Level, Vec3) -> Pair<PhysicsGrid, BlockState>? = { _, v -> blockPhysicsGrid.invoke(v) }
+
+fun blockPhysicsGridV(level: Level): (Vec3) -> Pair<PhysicsGrid, BlockState>? {
+	val filter: (PhysicsGrid) -> Boolean =
+		if (level.isClientSide) {
+			{ it is ClientPhysicsGrid }
+		} else {
+			{ it is ServerPhysicsGrid }
+		}
+	return blockPhysicsGrid(filter)
+}
+
+fun blockPhysicsGridLV(level: Level): (Level, Vec3) -> Pair<PhysicsGrid, BlockState>? {
+	val filter: (PhysicsGrid) -> Boolean =
+		if (level.isClientSide) {
+			{ it is ClientPhysicsGrid }
+		} else {
+			{ it is ServerPhysicsGrid }
+		}
+	val gridSearcher = blockPhysicsGrid(filter)
+	return { _, v -> gridSearcher.invoke(v) }
+}
 
 fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())

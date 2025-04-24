@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.mixin.client;
 
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
@@ -29,13 +30,18 @@ public class MixinMinecraft {
 	@Nullable
 	public MultiPlayerGameMode gameMode;
 
+	@Shadow
+	@Nullable
+	public ClientLevel level;
+
 	@Inject(method = "pickBlock", at = @At("HEAD"), cancellable = true)
 	private void pickBlock(CallbackInfo ci) {
 		Objects.requireNonNull(this.player);
 		Objects.requireNonNull(this.gameMode);
+		Objects.requireNonNull(this.level);
 		HitResult<Pair<PhysicsGrid, BlockState>> selected = GeneralKt.rayCast(
 				this.player, this.player.blockInteractionRange(),
-				GeneralKt.getBlockPhysicsGridLV()
+				GeneralKt.blockPhysicsGridLV(this.level)
 		);
 		if (selected != null) {
 			ItemStack stack = selected.getHit().component2().getCloneItemStack(

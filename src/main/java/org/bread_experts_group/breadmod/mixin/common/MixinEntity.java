@@ -55,7 +55,7 @@ abstract class MixinEntity {
 	private void baseTick(CallbackInfo ci) {
 		HitResult<Pair<PhysicsGrid, BlockState>> result = GeneralKt.rayCast(
 				this.position(), new Vec3(0.0, -0.1, 0.0),
-				0.1, GeneralKt.getBlockPhysicsGrid()
+				0.1, GeneralKt.blockPhysicsGridV(this.level)
 		);
 		if (result != null) {
 			Vec3 gridPosition = result.getHit().component1().getPosition();
@@ -101,19 +101,21 @@ abstract class MixinEntity {
 			);
 			if (inWorldWall) cir.setReturnValue(true);
 			else {
+				Vec3 eyePosition = this.getEyePosition();
 				HitResult<Pair<PhysicsGrid, BlockState>> result = GeneralKt.rayCast(
-						breadmod$getThis(), 1.0, GeneralKt.getBlockPhysicsGridLV()
+						eyePosition, new Vec3(0.0, -0.001, 0.0),
+						0.001, GeneralKt.blockPhysicsGridV(this.level)
 				);
 				if (result != null) {
+					PhysicsGrid grid = result.getHit().component1();
 					BlockState blockState = result.getHit().component2();
-					Vec3 eyePosition = this.getEyePosition();
 					BlockPos eyeBlockPosition = BlockPos.containing(eyePosition);
 					cir.setReturnValue(
 							!blockState.isAir()
-									&& blockState.isSuffocating(this.level, eyeBlockPosition)
+									&& blockState.isSuffocating(grid, eyeBlockPosition)
 									&& Shapes.joinIsNotEmpty(
 									blockState
-											.getCollisionShape(this.level, eyeBlockPosition)
+											.getCollisionShape(grid, eyeBlockPosition)
 											.move(eyePosition.x, eyePosition.y, eyePosition.z),
 									Shapes.create(aabb),
 									BooleanOp.AND
