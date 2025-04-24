@@ -34,7 +34,7 @@ internal object InternetRelayChatCommand {
 					if (this.messagingStack.isEmpty()) continue
 					val toSend = this.messagingStack.pop()
 					ctx.source.sendSystemMessage(
-						Component.literal(toSend).withStyle(ChatFormatting.BLUE)
+						Component.literal("< " + toSend.take(toSend.length - 2)).withStyle(ChatFormatting.LIGHT_PURPLE)
 					)
 					fqOut.writeString(toSend)
 				}
