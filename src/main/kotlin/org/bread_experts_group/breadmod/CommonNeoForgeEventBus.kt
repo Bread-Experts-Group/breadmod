@@ -9,6 +9,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
 import org.bread_experts_group.breadmod.command.server.ScreenBleedCommand
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand
 import org.bread_experts_group.breadmod.data_holders.ScreenBleedData.Companion.screenBleedMap
@@ -18,7 +19,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlo
 
 @EventBusSubscriber(modid = BreadMod.ID, bus = EventBusSubscriber.Bus.GAME)
 internal object CommonNeoForgeEventBus {
-//	@SubscribeEvent
+	//	@SubscribeEvent
 //	fun onPlayerLoginServer(event: PlayerLoggedInEvent) {
 //		println("server player login success")
 //	}
@@ -26,7 +27,7 @@ internal object CommonNeoForgeEventBus {
 	fun serverTick(event: ServerTickEvent.Post) {
 		warTimerMap.forEach { (player, data) -> data.tick(player) }
 		screenBleedMap.forEach { (player, data) -> data.tick(player) }
-	PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
+		PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
 	}
 
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
@@ -42,6 +43,7 @@ internal object CommonNeoForgeEventBus {
 			Commands.literal(BreadMod.ID)
 				.then(WarTimerCommand.register())
 				.then(ScreenBleedCommand.register())
+				.then(InternetRelayChatCommand.register())
 		)
 	}
 }

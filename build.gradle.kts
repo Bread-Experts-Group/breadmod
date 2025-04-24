@@ -2,6 +2,7 @@
 
 import net.neoforged.moddevgradle.dsl.RunModel
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
+import org.slf4j.event.Level
 import java.util.Properties
 
 plugins {
@@ -12,14 +13,15 @@ plugins {
 	`maven-publish`
 	`java-library`
 	signing
+	id("com.gradleup.shadow") version "9.0.0-beta12"
 }
 
 group = project.properties["mod_group_id"] as String
 version = project.properties["mod_version"] as String
 
-private fun getModId() = project.properties["mod_id"] as String
-private fun RunModel.enableTestNamespaces() = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
-private fun mcVersion() = project.properties["minecraft_version"] as String
+private fun getModId(): String = project.properties["mod_id"] as String
+private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
+private fun mcVersion(): String = project.properties["minecraft_version"] as String
 
 idea {
 	module {
@@ -57,6 +59,7 @@ repositories {
 	maven { url = uri("https://maven.createmod.net") } // Create, Ponder, Flywheel
 	maven { url = uri("https://mvn.devos.one/snapshots") } // Registrate
 	maven { url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") } // ForgeConfigAPIPort
+	maven { url = uri("https://maven.javart.zip/") } // Us
 }
 
 neoForge {
@@ -116,7 +119,7 @@ neoForge {
 			// "REGISTRIES": For firing of registry events.
 			// "REGISTRYDUMP": For getting the contents of all registries.
 			// systemProperty 'forge.logging.markers', 'REGISTRIES'
-			logLevel = org.slf4j.event.Level.INFO
+			logLevel = Level.INFO
 		}
 	}
 
@@ -129,13 +132,14 @@ neoForge {
 
 dependencies {
 	// Mod Dependencies //
+	implementation("org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT")
 	// KFF
 	implementation("thedarkcolour:kotlinforforge-neoforge:5.7.0")
 	// Mod Compatibility //
 	// Jade (WAILA)
 	implementation("curse.maven:jade-324717:5976517")
 //    runtimeOnly "curse.maven:the-one-probe-245211:5836106"
-	runtimeOnly("curse.maven:packet-fixer-689467:6195911")
+	compileOnly("curse.maven:packet-fixer-689467:6195911")
 	// Just Enough Items (JEI)
 	val jeiVersion = "19.10.0.126"
 	compileOnly("mezz.jei:jei-${mcVersion()}-neoforge-api:${jeiVersion}")
@@ -148,21 +152,24 @@ dependencies {
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
 	// Create
-	val createVersion = "6.0.0-4"
-	val ponderVersion = "1.0.39"
-	val flywheelVersion = "1.0.0-9"
+//	val createVersion = "6.0.0-4"
+//	val ponderVersion = "1.0.39"
+//	val flywheelVersion = "1.0.0-9"
 	val registrateVersion = "MC1.21-1.3.0+62"
-	implementation("com.simibubi.create:create-${mcVersion()}:$createVersion") { isTransitive = false }
-	implementation("net.createmod.ponder:Ponder-NeoForge-${mcVersion()}:$ponderVersion")
-	compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${mcVersion()}:$flywheelVersion")
-	runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${mcVersion()}:$flywheelVersion")
+//	implementation("com.simibubi.create:create-${mcVersion()}:$createVersion") { isTransitive = false }
+//	implementation("net.createmod.ponder:Ponder-NeoForge-${mcVersion()}:$ponderVersion")
+//	compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${mcVersion()}:$flywheelVersion")
+//	runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${mcVersion()}:$flywheelVersion")
 	implementation("com.tterrag.registrate:Registrate:$registrateVersion")
 	// WorldEdit
 	runtimeOnly("curse.maven:worldedit-225608:5830452")
 }
-
-tasks.test {
-	useJUnitPlatform()
+tasks.build {
+	dependsOn(tasks.shadowJar)
+}
+tasks.shadowJar {
+	minimize()
+	configurations = listOf()
 }
 kotlin {
 	jvmToolchain(21)
@@ -177,6 +184,9 @@ private val localProperties: Properties = Properties().apply {
 }
 publishing {
 	publications {
+		create<MavenPublication>("shadow") {
+			from(components["shadow"])
+		}
 		create<MavenPublication>("mavenKotlin") {
 			artifactId = "breadmod"
 			from(components["kotlin"])
