@@ -103,55 +103,55 @@ internal object InternetRelayChatCommand {
 						.executes { ctx ->
 							this.managingThread?.interrupt()
 							this.managingThread?.join()
-							val address = InetSocketAddress(
-								StringArgumentType.getString(ctx, "Server Address"),
-								IntegerArgumentType.getInteger(ctx, "Server Port")
-							)
-							try {
-								this.currentSocket = Socket()
-								if (address.isUnresolved) throw UnknownHostException()
-								this.currentSocket.connect(address, 3500)
-								ctx.source.sendSuccess({
-									modTranslatable(
-										"irc", "connected",
-										args = listOf(this.currentSocket.remoteSocketAddress.toString())
-									).withStyle(ChatFormatting.GREEN)
-								}, true)
-								this.managingThread = Thread.ofVirtual().start {
+							this.managingThread = Thread.ofVirtual().start {
+								val address = InetSocketAddress(
+									StringArgumentType.getString(ctx, "Server Address"),
+									IntegerArgumentType.getInteger(ctx, "Server Port")
+								)
+								try {
+									this.currentSocket = Socket()
+									if (address.isUnresolved) throw UnknownHostException()
+									this.currentSocket.connect(address, 3500)
+									ctx.source.sendSuccess({
+										modTranslatable(
+											"irc", "connected",
+											args = listOf(this.currentSocket.remoteSocketAddress.toString())
+										).withStyle(ChatFormatting.GREEN)
+									}, true)
 									this.socketListener(ctx)
+								} catch (_: UnknownHostException) {
+									ctx.source.sendFailure(
+										modTranslatable(
+											"irc", "unknown_host",
+											args = listOf(
+												StringArgumentType.getString(ctx, "Server Address"),
+												IntegerArgumentType.getInteger(ctx, "Server Port")
+											)
+										)
+									)
+								} catch (_: SocketTimeoutException) {
+									ctx.source.sendFailure(
+										modTranslatable(
+											"irc", "timed_out",
+											args = listOf(
+												address.address.toString(),
+												IntegerArgumentType.getInteger(ctx, "Server Port")
+											)
+										)
+									)
+								} catch (e: IOException) {
+									ctx.source.sendFailure(
+										modTranslatable(
+											"irc", "connection_failed",
+											args = listOf(
+												address.address.toString(),
+												IntegerArgumentType.getInteger(ctx, "Server Port"),
+												e::class.simpleName ?: "General Fault",
+												e.localizedMessage
+											)
+										)
+									)
 								}
-							} catch (_: UnknownHostException) {
-								ctx.source.sendFailure(
-									modTranslatable(
-										"irc", "unknown_host",
-										args = listOf(
-											StringArgumentType.getString(ctx, "Server Address"),
-											IntegerArgumentType.getInteger(ctx, "Server Port")
-										)
-									)
-								)
-							} catch (_: SocketTimeoutException) {
-								ctx.source.sendFailure(
-									modTranslatable(
-										"irc", "timed_out",
-										args = listOf(
-											address.address.toString(),
-											IntegerArgumentType.getInteger(ctx, "Server Port")
-										)
-									)
-								)
-							} catch (e: IOException) {
-								ctx.source.sendFailure(
-									modTranslatable(
-										"irc", "connection_failed",
-										args = listOf(
-											address.address.toString(),
-											IntegerArgumentType.getInteger(ctx, "Server Port"),
-											e::class.simpleName ?: "General Fault",
-											e.localizedMessage
-										)
-									)
-								)
 							}
 							Command.SINGLE_SUCCESS
 						}
