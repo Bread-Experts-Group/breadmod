@@ -116,8 +116,8 @@ neoForge {
 
 dependencies {
 	// Mod Dependencies //
-	val breadLibServer = "org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT"
-	jarJar(implementation(breadLibServer) {})
+//	val breadLibServer = "org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT"
+//	jarJar(implementation(breadLibServer) {})
 //	additionalRuntimeClasspath(breadLibServer) { isTransitive = false }
 	// KFF
 	implementation("thedarkcolour:kotlinforforge-neoforge:5.7.0")

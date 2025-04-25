@@ -9,7 +9,6 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
 import org.bread_experts_group.breadmod.command.server.ScreenBleedCommand
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand
 import org.bread_experts_group.breadmod.data_holders.ScreenBleedData.Companion.screenBleedMap
@@ -43,7 +42,6 @@ internal object CommonNeoForgeEventBus {
 			Commands.literal(BreadMod.ID)
 				.then(WarTimerCommand.register())
 				.then(ScreenBleedCommand.register())
-				.then(InternetRelayChatCommand.register())
 		)
 	}
 }

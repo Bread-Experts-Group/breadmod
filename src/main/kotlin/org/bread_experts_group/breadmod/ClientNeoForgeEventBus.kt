@@ -10,6 +10,7 @@ import com.mojang.math.Axis
 import net.minecraft.Util
 import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.commands.Commands
 import net.minecraft.util.Mth.clamp
 import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.api.distmarker.Dist
@@ -19,6 +20,7 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.client.event.ScreenEvent
 import net.neoforged.neoforge.event.level.ChunkEvent
@@ -32,6 +34,7 @@ import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.redness
 import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
+import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
@@ -175,5 +178,13 @@ internal object ClientNeoForgeEventBus {
 				}
 			}
 		}
+	}
+
+	@SubscribeEvent
+	fun registerClientCommands(event: RegisterClientCommandsEvent) {
+		event.dispatcher.register(
+			Commands.literal(BreadMod.ID)
+				.then(InternetRelayChatCommand.register())
+		)
 	}
 }
