@@ -12,9 +12,9 @@ import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.BlockHitResult
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.util.normalizeHitLoc
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.targetFace
 
 class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
@@ -35,7 +35,7 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		if (level.isClientSide && isSelected) {
-			val result = localClient.hitResult
+			val result = localClient.hitResult ?: return
 			if (result is BlockHitResult) {
 				val state = level.getBlockState(result.blockPos)
 				if (!state.`is`(Blocks.AIR)) {

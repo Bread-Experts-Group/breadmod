@@ -13,7 +13,7 @@ object ModAttachments {
 
 	@JvmStatic
 	val KEEP_INVENTORY_NEXT_DEATH: DeferredHolder<AttachmentType<*>, AttachmentType<Boolean>> =
-		this.ATTACHMENT_REGISTRY.register("keep_inventory_test", AttachmentType.builder { _ -> false }
+		this.ATTACHMENT_REGISTRY.register("keep_inventory_next_death", AttachmentType.builder { _ -> false }
 			.serialize(Codec.BOOL)
 			.copyOnDeath()::build)
 }

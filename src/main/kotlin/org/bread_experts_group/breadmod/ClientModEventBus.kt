@@ -25,6 +25,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.overlays.CameraOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.InternetChatRelayOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
@@ -154,6 +155,7 @@ internal object ClientModEventBus {
 	@SubscribeEvent
 	fun registerGuiLayers(event: RegisterGuiLayersEvent) {
 		event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
+		event.registerAbove(VanillaGuiLayers.CHAT, modLocation("irc_overlay"), InternetChatRelayOverlay())
 		event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
 		event.registerAboveAll(modLocation("test_overlay"), TestOverlay())
 		event.registerAboveAll(modLocation("screen_bleed_overlay"), ScreenBleedOverlay())

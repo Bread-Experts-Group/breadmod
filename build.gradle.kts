@@ -9,7 +9,7 @@ plugins {
 	kotlin("jvm") version "2.1.10"
 	id("org.jetbrains.dokka-javadoc") version "2.0.0"
 	id("idea")
-	id("net.neoforged.moddev") version "2.0.42-beta"
+	id("net.neoforged.moddev") version "2.0.80"
 	`maven-publish`
 	`java-library`
 	signing
@@ -77,22 +77,7 @@ neoForge {
 		create("client") {
 			client()
 			enableTestNamespaces()
-		}
-		create("client_PizzaTime65") {
-			client()
-			enableTestNamespaces()
-			programArguments.addAll(
-				"--username", "PizzaTime65",
-				"--uuid", "30cdf636-82ed-47ee-9a9c-4d820c0d76a9"
-			)
-		}
-		create("client_Meownium") {
-			client()
-			enableTestNamespaces()
-			programArguments.addAll(
-				"--username", "Meownium",
-				"--uuid", "34e8274a-c02c-4c32-9311-2bccc9f6ba7d"
-			)
+			devLogin = true
 		}
 		create("server") {
 			server()
@@ -128,11 +113,12 @@ neoForge {
 		}
 	}
 }
+
 dependencies {
 	// Mod Dependencies //
 	val breadLibServer = "org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT"
 	jarJar(implementation(breadLibServer) {})
-	additionalRuntimeClasspath(breadLibServer) { isTransitive = false }
+//	additionalRuntimeClasspath(breadLibServer) { isTransitive = false }
 	// KFF
 	implementation("thedarkcolour:kotlinforforge-neoforge:5.7.0")
 	// Mod Compatibility //
