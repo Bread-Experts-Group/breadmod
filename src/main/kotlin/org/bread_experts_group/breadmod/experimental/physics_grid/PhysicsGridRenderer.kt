@@ -2,7 +2,9 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Camera
+import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.client.renderer.debug.DebugRenderer
 import net.minecraft.core.BlockPos
@@ -35,7 +37,7 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 				val camera = event.camera
 				val frustum = event.frustum
 				this.render(poseStack, camera, bufferSource, frustum)
-				false
+				PhysicsGridGlobals.grids[this.grid.id] == null
 			}
 		)
 	}
@@ -56,11 +58,11 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 			this.renderBlock(pos, state, poseStack, bufferSource)
 			poseStack.popPose()
 		}
-//		this.grid.voxelShapes.forEach { (pos, shape) ->
+//		this.grid.blocks.forEach { (pos, state) ->
 //			LevelRenderer.renderVoxelShape(
 //				poseStack,
 //				bufferSource.getBuffer(RenderType.lines()),
-//				shape,
+//				state.getShape(this.grid, pos),
 //				pos.x.toDouble(),
 //				pos.y.toDouble(),
 //				pos.z.toDouble(),
@@ -71,21 +73,33 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 //				false
 //			)
 //		}
-//		val center = this.grid.position.minus(this.grid.boundingBox.center)
-//		DebugRenderer.renderFilledBox(
-//			poseStack,
-//			bufferSource,
-//			center.x - 0.25,
-//			center.y - 0.25,
-//			center.z - 0.25,
-//			center.x + 0.25,
-//			center.y + 0.25,
-//			center.z + 0.25,
-//			0f,
-//			1f,
-//			0f,
-//			0.5f
+		val transform = this.grid.transform
+//		val size = transform.size
+//		val center = this.grid.transform.center
+		val player = localClient.player ?: return
+//		val playerPos = player.position()
+		poseStack.pushPose()
+		poseStack.mulPose(this.grid.transform.rotation)
+		poseStack.translate(0, 4, 0)
+//		player.displayClientMessage(
+//			Component.literal(""),
+//			true
 //		)
+		LevelRenderer.renderLineBox(
+			poseStack,
+			bufferSource.getBuffer(RenderType.lines()),
+			-transform.size.x / 2,
+			-transform.size.y / 2,
+			-transform.size.z / 2,
+			transform.size.x / 2,
+			transform.size.y / 2,
+			transform.size.z / 2,
+			1f,
+			1f,
+			1f,
+			1f
+		)
+		poseStack.popPose()
 		DebugRenderer.renderFloatingText(
 			poseStack,
 			bufferSource,

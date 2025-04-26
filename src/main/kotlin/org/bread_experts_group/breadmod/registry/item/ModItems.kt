@@ -71,7 +71,7 @@ object ModItems {
 	@DataGenerateLanguage("en_us", "ClascyJitto - Secret Hoppin'", suffix = ".desc")
 	val RECORD_SECRET_HOPPIN: DeferredItem<Item> = this.ITEM_REGISTRY.registerSimpleItem(
 		"music_disc_secret_hoppin",
-		Item.Properties().jukeboxPlayable(ModRecords.TEST_SOUND).stacksTo(1).rarity(Rarity.RARE)
+		Item.Properties().jukeboxPlayable(ModRecords.SECRET_HOPPIN).stacksTo(1).rarity(Rarity.RARE)
 	)
 
 	@DataGenerateLanguage("en_us")
@@ -331,6 +331,14 @@ object ModItems {
 	@DataGenerateLanguage("en_us")
 	val PUSH_GRID_ITEM: DeferredItem<Item> =
 		this.ITEM_REGISTRY.register("push_grid_tool", ::PushGridItem)
+
+	@DataGenerateLanguage("en_us")
+	val SPEED_COIL: DeferredItem<Item> =
+		this.ITEM_REGISTRY.registerSimpleItem("speed_coil")
+
+	@DataGenerateLanguage("en_us")
+	val GRAVITY_COIL: DeferredItem<Item> =
+		this.ITEM_REGISTRY.registerSimpleItem("gravity_coil")
 
 	// End Tools
 	@DataGenerateLanguage("en_us")

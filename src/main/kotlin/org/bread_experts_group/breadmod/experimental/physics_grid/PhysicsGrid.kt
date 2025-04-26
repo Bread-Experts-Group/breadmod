@@ -17,6 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.util.minus
+import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import kotlin.math.pow
@@ -31,6 +32,7 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	var position: Vec3 = Vec3.ZERO
 	var rotation: Vec3 = Vec3.ZERO
 	var velocity: Vec3 = Vec3.ZERO
+	val transform: Transform = Transform(position = this.position, size = Vec3(1.0, 1.0, 1.0))
 
 	fun getWorldVoxelShapes(): List<VoxelShape> = this.voxelShapes.map { (local, shape) ->
 		shape.move(
@@ -70,6 +72,8 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	private val crossSectionArea: Int = 25 // TODO calculate
 	private val mass: Int = 1 // TODO calculate
 	open fun tick() {
+		this.transform.rotation.rotateY(0.01f)
+		this.transform.position = this.position.plus(Vec3(0.0, 4.0, 0.0))
 		val dragAcceleration = (0.5 * this.airDensity * this.dragCoefficient * this.crossSectionArea *
 				this.velocity.length().pow(2.0)) / this.mass
 		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
