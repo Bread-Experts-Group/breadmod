@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.command.client.bslpack
+package org.bread_experts_group.breadmod.command.client.bslpack.socket
 
 import java.io.EOFException
 import java.io.IOException

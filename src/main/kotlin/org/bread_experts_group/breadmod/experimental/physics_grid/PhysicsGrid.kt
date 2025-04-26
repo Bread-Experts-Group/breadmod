@@ -1,11 +1,16 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.world.level.BlockAndTintGetter
+import net.minecraft.world.level.ColorResolver
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.FluidState
-import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -16,11 +21,11 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import kotlin.math.pow
 
-abstract class PhysicsGrid(val level: Level) : GridBlockAndTintGetter {
+abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	val id: Int = ++PhysicsGridGlobals.idCounter
 	val logger: Logger = LogManager.getLogger("PhysicsGrid ${this.id}")
 	val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
-	val fluids: MutableMap<BlockPos, FluidState> = mutableMapOf()
+	val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
 	val voxelShapes: MutableMap<BlockPos, VoxelShape> = mutableMapOf()
 	var boundingBox: AABB = AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5)
 	var position: Vec3 = Vec3.ZERO
@@ -41,10 +46,10 @@ abstract class PhysicsGrid(val level: Level) : GridBlockAndTintGetter {
 			val state = this.level.getBlockState(pos)
 			val offset = pos.offset(-from).immutable()
 			if (state.renderShape == INVISIBLE) return@forEach
-			if (state.fluidState.`is`(Fluids.EMPTY)) {
-				this.blocks[offset] = state
-				this.voxelShapes[offset] = state.getShape(this, pos)
-			} else this.fluids[offset] = state.fluidState
+			this.blocks[offset] = state
+			this.voxelShapes[offset] = state.getShape(this, pos)
+			val blockEntity = this.level.getBlockEntity(pos)
+			if (blockEntity != null) this.blockEntities[offset] = blockEntity
 		}
 		return this
 	}
@@ -60,19 +65,30 @@ abstract class PhysicsGrid(val level: Level) : GridBlockAndTintGetter {
 		return this
 	}
 
-	private val airDensity = 1.225
-	private val dragCoefficient = 1.05
-	private val crossSectionArea = 25 // TODO calculate
-	private val mass = 1 // TODO calculate
+	private val airDensity: Double = 1.225
+	private val dragCoefficient: Double = 1.05
+	private val crossSectionArea: Int = 25 // TODO calculate
+	private val mass: Int = 1 // TODO calculate
 	open fun tick() {
 		val dragAcceleration = (0.5 * this.airDensity * this.dragCoefficient * this.crossSectionArea *
 				this.velocity.length().pow(2.0)) / this.mass
 		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
-		// Apply Velocity
 		this.position = this.position.add(this.velocity)
 	}
 
 	fun discard() {
 		PhysicsGridGlobals.grids.remove(this.id)
 	}
+
+	fun getBlockState(x: Int, y: Int, z: Int): BlockState = this.getBlockState(BlockPos(x, y, z))
+	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
+	override fun getFluidState(pos: BlockPos): FluidState = this.getBlockState(pos).fluidState
+	override fun getBlockEntity(pos: BlockPos): BlockEntity? = this.blockEntities[pos]
+	override fun getHeight(): Int = Int.MAX_VALUE
+	override fun getMinBuildHeight(): Int = Int.MIN_VALUE
+	override fun getShade(direction: Direction, shade: Boolean): Float = this.level.getShade(direction, shade)
+	override fun getLightEngine(): LevelLightEngine = this.level.lightEngine
+	override fun getBlockTint(blockPos: BlockPos, colorResolver: ColorResolver): Int = this.level.getBlockTint(
+		blockPos, colorResolver
+	)
 }

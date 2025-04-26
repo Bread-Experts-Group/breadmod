@@ -1,5 +1,7 @@
-package org.bread_experts_group.breadmod.command.client.bslpack
+package org.bread_experts_group.breadmod.command.client.bslpack.irc
 
+import org.bread_experts_group.breadmod.command.client.bslpack.socket.scanDelimiter
+import org.bread_experts_group.breadmod.command.client.bslpack.socket.writeString
 import java.io.InputStream
 import java.io.OutputStream
 

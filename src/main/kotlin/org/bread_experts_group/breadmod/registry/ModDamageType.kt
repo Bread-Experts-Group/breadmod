@@ -30,5 +30,8 @@ data class ModDamageType(val key: ResourceKey<DamageType>) {
 
 		@DataGenerateLanguage("en_us", "%1\$s was obliterated by an explosion")
 		val EXPLOSION_DAMAGE_HIGH: ModDamageType = ModDamageType("explosion_dmg_high")
+
+		@DataGenerateLanguage("en_us", "%1\$s stepped on the gas")
+		val GAS_GAS_GAS: ModDamageType = ModDamageType("gas_gas_gas")
 	}
 }

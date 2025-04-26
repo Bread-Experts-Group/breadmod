@@ -49,8 +49,8 @@ data class MachSpeedData(
 			movementSpeed.removeModifier(this.speedModifiers[modifierIndex])
 	}
 
-	private fun applySpeedBoost(player: Player) = this.applyIfNotPresent(this.machStage - 1, player)
-	private fun removeSpeedBoost(player: Player) = repeat(4) { index -> this.removeIfPresent(index, player) }
+	private fun applySpeedBoost(player: Player): Unit = this.applyIfNotPresent(this.machStage - 1, player)
+	private fun removeSpeedBoost(player: Player): Unit = repeat(4) { index -> this.removeIfPresent(index, player) }
 
 	private fun setMachStage() {
 		this.machStage = if (this.sprintTimer >= 70) 4

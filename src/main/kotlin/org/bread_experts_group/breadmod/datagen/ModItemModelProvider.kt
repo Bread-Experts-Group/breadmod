@@ -21,6 +21,7 @@ class ModItemModelProvider(
 		this.singleItem(ModFluids.BREAD_LIQUID.bucket)
 		this.singleItem(ModItems.RECORD_SECRET_HOPPIN)
 		this.singleItem(ModItems.CHEF_HAT)
+		this.singleItem(ModItems.OIL_DRUM)
 		this.singleItem(ModItems.TEST_BREAD)
 		this.singleItem(ModItems.ULTIMATE_BREAD)
 		this.singleItem(ModItems.TOASTED_BREAD)

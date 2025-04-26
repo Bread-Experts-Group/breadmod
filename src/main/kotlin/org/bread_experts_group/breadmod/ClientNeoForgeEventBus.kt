@@ -35,6 +35,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.redness
 import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
 import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
+import org.bread_experts_group.breadmod.command.client.PingCommand
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
@@ -185,6 +186,7 @@ internal object ClientNeoForgeEventBus {
 		event.dispatcher.register(
 			Commands.literal(BreadMod.ID)
 				.then(InternetRelayChatCommand.register())
+				.then(PingCommand.register())
 		)
 	}
 }

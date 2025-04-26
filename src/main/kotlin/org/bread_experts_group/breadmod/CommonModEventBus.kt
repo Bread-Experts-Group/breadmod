@@ -28,6 +28,7 @@ import org.bread_experts_group.breadmod.datagen.tag.ModFluidTags
 import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
 import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
+import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
@@ -38,6 +39,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
+import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.PhysicsGridRequestPacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
@@ -138,11 +140,13 @@ internal object CommonModEventBus {
 		ScreenBleedSetPacket.register(registrar)
 		ClientPhysicsGridPacket.register(registrar)
 		GridPosUpdatePacket.register(registrar)
+		GasGasGasSoundPacket.register(registrar)
 		// Serverbound packets
 		ToolGunModeChangePacket.register(registrar)
 		ToolGunDataSyncPacket.register(registrar)
 		PlaceItemInWorldPacket.register(registrar)
 		PhysicsGridRequestPacket.register(registrar)
+		GasGasGasNukePacket.register(registrar)
 	}
 
 	@SubscribeEvent

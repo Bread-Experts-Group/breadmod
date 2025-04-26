@@ -41,6 +41,7 @@ import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
 import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
+import org.bread_experts_group.breadmod.registry.item.actual.OilDrumItem
 import org.bread_experts_group.breadmod.registry.item.actual.PushGridItem
 import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
@@ -76,6 +77,9 @@ object ModItems {
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "IS THAT A PIZZA TOWER REFERENCE???", suffix = ".tooltip")
 	val CHEF_HAT: DeferredItem<ChefHatItem> = this.ITEM_REGISTRY.register("chef_hat", ::ChefHatItem)
+
+	@DataGenerateLanguage("en_us")
+	val OIL_DRUM: DeferredItem<OilDrumItem> = this.ITEM_REGISTRY.register("oil_drum", ::OilDrumItem)
 
 	@DataGenerateLanguage("en_us")
 	val TOOL_GUN: DeferredItem<ToolGunItem> = this.ITEM_REGISTRY.register("tool_gun", ::ToolGunItem)
