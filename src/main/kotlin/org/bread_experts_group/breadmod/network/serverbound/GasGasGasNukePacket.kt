@@ -30,10 +30,10 @@ class GasGasGasNukePacket(
 			val movementSpeed = player.attributes.getInstance(Attributes.MOVEMENT_SPEED)!!
 			if (movementSpeed.hasModifier(OilDrumItem.DRUM_SPEED_ID)) {
 				movementSpeed.removeModifier(OilDrumItem.DRUM_SPEED_ID)
+				player.hurt(ModDamageType.GAS_GAS_GAS.source(player.level()), 20000f)
 				BreadModExplosion
 					.calculate(player.level(), player.position(), 200f, 100000)
 					.explode(null)
-				player.hurt(ModDamageType.GAS_GAS_GAS.source(player.level()), 20000f)
 			}
 		}
 
