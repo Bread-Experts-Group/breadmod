@@ -160,7 +160,7 @@ internal object CommonModEventBus {
 		event.registerBlockEntity(
 			Capabilities.ItemHandler.BLOCK,
 			ModBlockEntityTypes.WHEAT_CRUSHER.get()
-		) { entity, _: Direction? -> entity.itemHandler }
+		) { entity, direction: Direction? -> entity.itemHandler.getThisForSide(direction) }
 
 		event.registerBlockEntity(
 			Capabilities.EnergyStorage.BLOCK,

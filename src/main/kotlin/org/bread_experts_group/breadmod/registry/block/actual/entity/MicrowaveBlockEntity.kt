@@ -25,7 +25,7 @@ class MicrowaveBlockEntity(
 	state,
 	ModRecipeTypes.MICROWAVE.get()
 ), ItemBearingBlockEntity {
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1, this)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1)
 	private val campfireRecipeCache: CachedCheck<SingleRecipeInput, CampfireCookingRecipe> =
 		RecipeManager.createCheck(RecipeType.CAMPFIRE_COOKING)
 	private var currentCampfireRecipe: Optional<CampfireCookingRecipe> = Optional.empty()

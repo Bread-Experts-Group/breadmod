@@ -13,5 +13,5 @@ class ItemInWorldBlockEntity(
 	pos,
 	state
 ), ItemBearingBlockEntity {
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4, this)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4)
 }

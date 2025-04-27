@@ -1,19 +1,17 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.core.NonNullList
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.Containers
-import net.minecraft.world.WorldlyContainer
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 
+// todo remove WorldlyContainer (it isn't needed since we have the item handler in here)
 @Suppress("unused")
-interface ItemBearingBlockEntity : WorldlyContainer {
+interface ItemBearingBlockEntity {
 	val itemHandler: ExpansibleItemHandler
 
 	fun dropContents(level: Level, position: BlockPos) {
@@ -23,29 +21,6 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 			this.itemHandler.setStackInSlot(it, ItemStack.EMPTY)
 		}
 		Containers.dropContents(level, position, list)
-	}
-
-	override fun getContainerSize(): Int = this.itemHandler.slots
-	override fun isEmpty(): Boolean = this.itemHandler.isEmpty
-	override fun removeItem(slot: Int, count: Int): ItemStack = this.itemHandler.extractItem(slot, count, false)
-	override fun removeItemNoUpdate(slot: Int): ItemStack = this.itemHandler.extractItem(
-		slot,
-		this.itemHandler.getStackInSlot(slot).maxStackSize,
-		false
-	)
-
-	override fun stillValid(player: Player): Boolean = true
-
-	override fun getSlotsForFace(facing: Direction): IntArray = (0 .. this.itemHandler.slots).toSet().toIntArray()
-
-	// todo these two methods aren't being respected when this handler is exposed to blocks that insert or extract items
-	//  scratch the top part, it just locks up the game now whenever these are called, look into ExpansibleItemHandler for more
-	override fun canPlaceItemThroughFace(slot: Int, stack: ItemStack, facing: Direction?): Boolean = true
-	override fun canTakeItemThroughFace(slot: Int, stack: ItemStack, facing: Direction): Boolean = true
-
-	override fun clearContent() {
-		if (!this.itemHandler.isEmpty)
-			repeat(this.itemHandler.slots) { this.itemHandler.setStackInSlot(it, ItemStack.EMPTY) }
 	}
 
 	fun growItem(slot: Int, count: Int) {
@@ -60,8 +35,8 @@ interface ItemBearingBlockEntity : WorldlyContainer {
 		this.itemHandler.setStackInSlot(slot, stack)
 	}
 
-	override fun getItem(slot: Int): ItemStack = this.itemHandler.getStackInSlot(slot)
-	override fun setItem(slot: Int, stack: ItemStack): Unit = this.itemHandler.setStackInSlot(slot, stack)
+	fun getItem(slot: Int): ItemStack = this.itemHandler.getStackInSlot(slot)
+	fun setItem(slot: Int, stack: ItemStack): Unit = this.itemHandler.setStackInSlot(slot, stack)
 
 	fun getItemsInRange(range: IntRange): List<ItemStack> = buildList {
 		range.forEach { this.add(this@ItemBearingBlockEntity.getItem(it)) }

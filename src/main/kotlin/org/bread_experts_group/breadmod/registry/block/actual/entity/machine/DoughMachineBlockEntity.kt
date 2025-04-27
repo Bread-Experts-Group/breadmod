@@ -1,14 +1,11 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity.machine
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
-import net.minecraft.world.item.BucketItem
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -40,7 +37,7 @@ class DoughMachineBlockEntity(
 		val POWERED: BooleanProperty = BlockStateProperties.POWERED
 	}
 
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4, this)
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
 			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),
@@ -93,17 +90,6 @@ class DoughMachineBlockEntity(
 			}
 		}
 	}
-
-	override fun canPlaceItemThroughFace(slot: Int, stack: ItemStack, facing: Direction?): Boolean =
-		when (slot) {
-			0    -> true
-			1    -> true
-			2    -> false
-			3    -> stack.item is BucketItem
-			else -> false
-		}
-
-	override fun canTakeItemThroughFace(slot: Int, stack: ItemStack, facing: Direction): Boolean = false
 
 	override fun checkIsEmpty(level: Level): Boolean =
 		this.getItemsInRange(0 .. 1).isEmpty() || this.getFluid(0).isEmpty
