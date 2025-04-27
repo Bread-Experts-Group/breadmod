@@ -23,8 +23,8 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.CarvedPumpkinBlock
 import net.minecraft.world.level.block.state.BlockState
-import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags.Companion.MINEABLE_WITH_KNIFE
-import org.bread_experts_group.breadmod.datagen.tag.ModItemTags.Companion.KNIVES
+import org.bread_experts_group.breadmod.datagen.tag.KNIVES
+import org.bread_experts_group.breadmod.datagen.tag.MINEABLE_WITH_KNIFE
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 

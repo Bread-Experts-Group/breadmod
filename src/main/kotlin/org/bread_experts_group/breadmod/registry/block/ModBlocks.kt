@@ -30,6 +30,11 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.datagen.loot.DataGenerateLootDropNothing
+import org.bread_experts_group.breadmod.datagen.loot.DataGenerateLootDropSelf
+import org.bread_experts_group.breadmod.datagen.model.block.DataGenerateModelBlockAndItem
+import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
+import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagBlock
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
@@ -68,6 +73,14 @@ object ModBlocks {
 	 */
 	fun DeferredItem<BlockItem>.asBlock(): Block = this.get().block
 
+	@DataGenerateTagBlock(
+		"minecraft:mineable/hoe",
+		"minecraft:stone_ore_replaceables",
+		"breadmod:mineable/knife",
+		"c:storage_blocks/bread"
+	)
+	@DataGenerateLootDropSelf
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us")
 	val BREAD_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"bread_block", ::BreadBlock, Properties().also {
@@ -81,6 +94,12 @@ object ModBlocks {
 		}
 	)
 
+	@DataGenerateTagBlock(
+		"minecraft:mineable/pickaxe",
+		"minecraft:beacon_base_blocks"
+	)
+	@DataGenerateLootDropSelf
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us")
 	val REINFORCED_BREAD_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"reinforced_bread_block",
@@ -88,10 +107,18 @@ object ModBlocks {
 		Properties().fireResistant()
 	)
 
+	@DataGenerateLootDropSelf
+	@DataGenerateTagBlock("minecraft:mineable/pickaxe")
 	@DataGenerateLanguage("en_us")
 	val MONITOR: DeferredItem<BlockItem> =
 		this.BLOCK_REGISTRY.registerBlockItem("monitor", ::MonitorBlock, Properties())
 
+	@DataGenerateTagBlock(
+		"minecraft:mineable/hoe",
+		"c:storage_blocks/low_density_charcoal"
+	)
+	@DataGenerateLootDropSelf
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us", "Low-Density Charcoal Block")
 	val LOW_DENSITY_CHARCOAL_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"ld_charcoal_block",
@@ -103,23 +130,30 @@ object ModBlocks {
 		}
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Prolongs the inevitable.", suffix = ".tooltip")
 	val WAR_TERMINAL: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"war_terminal", ::WarTerminalBlock, Properties()
 	)
 
+	@DataGenerateLootDropSelf
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Uses the power of a die to make random noises.", suffix = ".tooltip")
 	val RANDOM_SOUND_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"random_sound_block", ::RandomSoundBlock, Properties()
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val SOUND_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"sound_block", ::SoundBlock, Properties()
 	)
 
+	@DataGenerateLootDropSelf
+	@DataGenerateTagBlock("c:storage_blocks/charcoal")
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us")
 	val CHARCOAL_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"charcoal_block",
@@ -131,6 +165,7 @@ object ModBlocks {
 		}
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val WHEAT_CRUSHER: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"wheat_crusher",
@@ -138,6 +173,7 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val DOUGH_MACHINE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"dough_machine",
@@ -145,6 +181,7 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "I wouldn't cook charcoal in it..", suffix = ".tooltip")
 	val TOASTER: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
@@ -153,6 +190,7 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val MICROWAVE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"microwave",
@@ -160,10 +198,12 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateLootDropNothing
 	@DataGenerateLanguage("en_us")
 	val ITEM_IN_WORLD_BLOCK: DeferredBlock<ItemInWorldBlock> =
 		this.BLOCK_REGISTRY.registerBlock("item_in_world") { ItemInWorldBlock() }
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"energy_storage",
@@ -171,6 +211,8 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateTagBlock("minecraft:mineable/shovel")
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us")
 	val FLOUR_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"flour_block",
@@ -178,21 +220,26 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateTagBlock("minecraft:mineable/shovel")
 	@DataGenerateLanguage("en_us", "Flour")
 	val FLOUR_LAYER_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"flour_layer", ::FlourLayeredBlock, Properties()
 	)
 
+	@DataGenerateLootDropSelf
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us")
 	val HAPPY_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"happy_block", ::HappyBlock, Properties()
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val NUKE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"nuke", ::NukeBlock, Properties()
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val KEYBOARD: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"keyboard",
@@ -200,6 +247,7 @@ object ModBlocks {
 		Properties().stacksTo(1)
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val HELL_NAW_BUTTON: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"hell_naw_button",
@@ -207,6 +255,7 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us", "NIKO TENSHOT")
 	val NIKO_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"niko_block",
@@ -214,6 +263,7 @@ object ModBlocks {
 		Properties().rarity(Rarity.EPIC)
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us", "OMANEKO")
 	val OMANEKO_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"omaneko_block",
@@ -221,6 +271,7 @@ object ModBlocks {
 		Properties().rarity(Rarity.EPIC)
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us", "Ricard")
 	val RICARD_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"ricard_block",
@@ -228,6 +279,7 @@ object ModBlocks {
 		Properties().rarity(Rarity.EPIC)
 	)
 
+	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us", "Unfunnylad")
 	val UNFUNNYLAD_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"unfunnylad_block",
@@ -235,6 +287,8 @@ object ModBlocks {
 		Properties().rarity(Rarity.EPIC)
 	)
 
+	@DataGenerateLootDropSelf
+	@DataGenerateTagBlock("minecraft:fences")
 	@DataGenerateLanguage("en_us")
 	val BREAD_FENCE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"bread_fence",
@@ -263,6 +317,7 @@ object ModBlocks {
 		Properties()
 	)
 
+	@DataGenerateModelSingleItem
 	@DataGenerateLanguage("en_us")
 	val BREAD_DOOR: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"bread_door",
@@ -326,6 +381,8 @@ object ModBlocks {
 		}
 	}
 
+	@DataGenerateLootDropSelf
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us", "Fluid Energy Recipe")
 	val FLUID_ENERGY: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"fluid_energy_block",
@@ -333,6 +390,8 @@ object ModBlocks {
 	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 
 	// EXPERIMENTAL PAST THIS POINT
+	@DataGenerateLootDropNothing
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, RED")
 	val COLORED_EMISSIVE_LIGHT_RED: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"colored_emissive_light_red",
@@ -348,6 +407,8 @@ object ModBlocks {
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 
+	@DataGenerateLootDropNothing
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, GREEN")
 	val COLORED_EMISSIVE_LIGHT_GREEN: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"colored_emissive_light_green",
@@ -363,6 +424,8 @@ object ModBlocks {
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 
+	@DataGenerateLootDropNothing
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us", "EXPERIMENTAL COLORED EMISSIVE LIGHT, BLUE")
 	val COLORED_EMISSIVE_LIGHT_BLUE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"colored_emissive_light_blue",
@@ -378,6 +441,8 @@ object ModBlocks {
 		{ block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
 	)
 
+	@DataGenerateLootDropNothing
+	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage("en_us", "JadeFluidTank")
 	val JADE_FLUID_TANK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"jade_fluid_tank",

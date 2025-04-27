@@ -5,7 +5,8 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.Tier
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.block.Block
-import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
+import org.bread_experts_group.breadmod.datagen.tag.INCORRECT_FOR_BREAD_TOOL
+import org.bread_experts_group.breadmod.datagen.tag.INCORRECT_FOR_REINFORCED_BREAD_TOOL
 
 enum class ToolTier(
 	private val incorrectTool: TagKey<Block>,
@@ -16,7 +17,7 @@ enum class ToolTier(
 	private val getRepairIngredient: Ingredient
 ) : Tier {
 	BREAD(
-		ModBlockTags.INCORRECT_FOR_BREAD_TOOL,
+		INCORRECT_FOR_BREAD_TOOL,
 		100,
 		3f,
 		0.0f,
@@ -24,7 +25,7 @@ enum class ToolTier(
 		Ingredient.of(Items.BREAD)
 	),
 	RF_BREAD(
-		ModBlockTags.INCORRECT_FOR_REINFORCED_BREAD_TOOL,
+		INCORRECT_FOR_REINFORCED_BREAD_TOOL,
 		1500,
 		8f,
 		3f,

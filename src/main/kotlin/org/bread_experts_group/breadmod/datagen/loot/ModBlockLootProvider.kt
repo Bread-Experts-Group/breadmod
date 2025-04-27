@@ -1,14 +1,14 @@
-package org.bread_experts_group.breadmod.datagen
+package org.bread_experts_group.breadmod.datagen.loot
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.data.loot.LootTableProvider
-import net.minecraft.data.loot.LootTableProvider.SubProviderEntry
 import net.minecraft.world.flag.FeatureFlags
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.SnowLayerBlock
 import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.level.storage.loot.LootPool
@@ -21,18 +21,22 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
+import org.bread_experts_group.breadmod.datagen.getBlock
+import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.FLOUR_BLOCK
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.FLOUR_LAYER_BLOCK
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
-import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import java.util.concurrent.CompletableFuture
 
 class ModBlockLootProvider(
 	lookupProvider: CompletableFuture<HolderLookup.Provider>
 ) : BlockLootSubProvider(emptySet<Item>(), FeatureFlags.REGISTRY.allFlags(), lookupProvider.get()) {
+	private val registryScanner: LibraryScanner = Registry::class.java.`package`.getScanner()
+
 	override fun getKnownBlocks(): MutableIterable<Block> = object : MutableIterable<Block> {
 		override fun iterator(): MutableIterator<Block> {
 			return ModBlocks.BLOCK_REGISTRY.entries
@@ -43,52 +47,34 @@ class ModBlockLootProvider(
 	}
 
 	override fun generate() {
-		this.dropSelf(ModBlocks.BREAD_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.REINFORCED_BREAD_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.MONITOR.asBlock())
-		this.dropSelf(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.HAPPY_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.NUKE.asBlock())
-		this.dropSelf(ModBlocks.CHARCOAL_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.KEYBOARD.asBlock())
-		this.dropSelf(ModBlocks.HELL_NAW_BUTTON.asBlock())
-		this.dropSelf(ModBlocks.WAR_TERMINAL.asBlock())
-		this.dropSelf(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.SOUND_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.WHEAT_CRUSHER.asBlock())
-		this.dropSelf(ModBlocks.DOUGH_MACHINE.asBlock())
-		this.dropSelf(ModBlocks.NIKO_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.OMANEKO_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.RICARD_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.UNFUNNYLAD_BLOCK.asBlock())
-		this.dropSelf(ModBlocks.BREAD_FENCE.asBlock())
-		this.dropSelf(ModBlocks.FLUID_ENERGY.asBlock())
-		this.dropSelf(ModBlocks.TOASTER.asBlock())
-		this.dropSelf(ModBlocks.MICROWAVE.asBlock())
-		this.dropSelf(ModBlocks.ENERGY_STORAGE.asBlock())
-		this.add(ModBlocks.ITEM_IN_WORLD_BLOCK.get(), noDrop())
-		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock(), noDrop())
-		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock(), noDrop())
-		this.add(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock(), noDrop())
-		this.add(ModBlocks.JADE_FLUID_TANK.asBlock(), noDrop())
+		this.registryScanner.resolveAnnotationValuePairs<DataGenerateLootDropSelf>().forEach { (_, data) ->
+			this.dropSelf(data.getBlock("Block loot generation (drop self)"))
+		}
+		this.registryScanner.resolveAnnotationValuePairs<DataGenerateLootDropNothing>().forEach { (_, data) ->
+			this.dropOther(data.getBlock("Block loot generation (drop nothing)"), Blocks.AIR)
+		}
 		val breadDoor = ModBlocks.BREAD_DOOR.asBlock()
 		this.add(breadDoor, this.createDoorTable(breadDoor))
 		val doubleOrNothing = ModBlocks.DOUBLE_OR_NOTHING.asBlock()
 		this.add(
 			doubleOrNothing,
-			this.createSinglePropConditionTable(doubleOrNothing, DoubleOrNothingBlock.HALF, TripleBlockHalf.LOWER)
+			this.createSinglePropConditionTable(
+				doubleOrNothing,
+				DoubleOrNothingBlock.Companion.HALF,
+				ModBlockStateProperties.TripleBlockHalf.LOWER
+			)
 		)
 
 		this.add(
-			FLOUR_BLOCK.asBlock(),
+			ModBlocks.FLOUR_BLOCK.asBlock(),
 			this.createSingleItemTableWithSilkTouch(
-				FLOUR_BLOCK.asBlock(),
+				ModBlocks.FLOUR_BLOCK.asBlock(),
 				ModItems.FLOUR.get(), ConstantValue.exactly(4f)
 			)
 		)
 
 		this.add(
-			FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
+			ModBlocks.FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
 				LootPool.lootPool()
 					.`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
 					.add(
@@ -96,7 +82,7 @@ class ModBlockLootProvider(
 							AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
 								LootItem.lootTableItem(ModItems.FLOUR.get()).`when`(
 									LootItemBlockStatePropertyCondition
-										.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block)
+										.hasBlockStateProperties(ModBlocks.FLOUR_LAYER_BLOCK.get().block)
 										.setProperties(
 											StatePropertiesPredicate.Builder.properties().hasProperty(
 												SnowLayerBlock.LAYERS, pValue
@@ -106,12 +92,12 @@ class ModBlockLootProvider(
 							}.`when`(this.hasSilkTouch()),
 							AlternativesEntry.alternatives(SnowLayerBlock.LAYERS.possibleValues) { pValue: Int ->
 								(if (pValue == 8)
-									LootItem.lootTableItem(FLOUR_BLOCK.get().block)
+									LootItem.lootTableItem(ModBlocks.FLOUR_BLOCK.get().block)
 								else LootItem.lootTableItem(ModItems.FLOUR.get()).apply(
 									SetItemCountFunction.setCount(ConstantValue.exactly(pValue.toFloat() / 2))
 								).`when`(
 									LootItemBlockStatePropertyCondition
-										.hasBlockStateProperties(FLOUR_LAYER_BLOCK.get().block)
+										.hasBlockStateProperties(ModBlocks.FLOUR_LAYER_BLOCK.get().block)
 										.setProperties(
 											StatePropertiesPredicate.Builder.properties()
 												.hasProperty(SnowLayerBlock.LAYERS, pValue)
@@ -124,7 +110,6 @@ class ModBlockLootProvider(
 	}
 
 	companion object {
-		val dropNone: MutableList<Block> = mutableListOf()
 		fun constructLootProvider(
 			blockLootProvider: BlockLootSubProvider,
 			output: PackOutput,
@@ -133,7 +118,7 @@ class ModBlockLootProvider(
 			LootTableProvider(
 				output,
 				setOf(),
-				listOf(SubProviderEntry({ blockLootProvider }, LootContextParamSets.BLOCK)),
+				listOf(LootTableProvider.SubProviderEntry({ blockLootProvider }, LootContextParamSets.BLOCK)),
 				registries
 			)
 	}

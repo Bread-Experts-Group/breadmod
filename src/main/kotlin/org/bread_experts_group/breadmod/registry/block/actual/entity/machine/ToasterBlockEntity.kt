@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
-import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
+import org.bread_experts_group.breadmod.datagen.tag.EXPLODES_IN_TOASTER
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
@@ -37,7 +37,7 @@ class ToasterBlockEntity(
 		state: BlockState,
 		entity: ToasterBlockEntity
 	) {
-		if (this.getItem(0).`is`(ModItemTags.EXPLODES_IN_TOASTER) && state.getValue(Companion.TRIGGERED)) {
+		if (this.getItem(0).`is`(EXPLODES_IN_TOASTER) && state.getValue(Companion.TRIGGERED)) {
 			this.maxProgress = 60
 			this.progress++
 			if (this.progress == 35) level.playSound(null, pos, SoundEvents.TNT_PRIMED, BLOCKS)

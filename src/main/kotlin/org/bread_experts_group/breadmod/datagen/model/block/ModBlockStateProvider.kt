@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.datagen
+package org.bread_experts_group.breadmod.datagen.model.block
 
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
@@ -15,33 +15,25 @@ import net.neoforged.neoforge.client.model.generators.ModelFile
 import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.datagen.getBlock
+import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
-import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
-import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.MIDDLE
-import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.UPPER
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 
 class ModBlockStateProvider(
 	packOutput: PackOutput,
 	private val existingFileHelper: ExistingFileHelper
-) : BlockStateProvider(packOutput, BreadMod.ID, existingFileHelper) {
+) : BlockStateProvider(packOutput, BreadMod.Companion.ID, existingFileHelper) {
+	private val registryScanner: LibraryScanner = Registry::class.java.`package`.getScanner()
 	override fun registerStatesAndModels() {
-		this.blockWithItem(ModBlocks.BREAD_BLOCK.asBlock())
-		this.blockWithItem(ModBlocks.REINFORCED_BREAD_BLOCK.asBlock())
-		this.blockWithItem(ModBlocks.FLOUR_BLOCK.asBlock())
-		this.blockWithItem(ModBlocks.LOW_DENSITY_CHARCOAL_BLOCK.asBlock())
-		this.blockWithItem(ModBlocks.HAPPY_BLOCK.asBlock())
-		this.blockWithItem(ModBlocks.CHARCOAL_BLOCK.asBlock())
-		this.blockWithItem(ModBlocks.RANDOM_SOUND_BLOCK.asBlock())
-
-		this.blockWithItem(ModBlocks.FLUID_ENERGY.asBlock())
-		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_RED.asBlock())
-		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_GREEN.asBlock())
-		this.blockWithItem(ModBlocks.COLORED_EMISSIVE_LIGHT_BLUE.asBlock())
-		this.blockWithItem(ModBlocks.JADE_FLUID_TANK.asBlock())
-
+		this.registryScanner.resolveAnnotationValuePairs<DataGenerateModelBlockAndItem>().forEach { (_, data) ->
+			val block = data.getBlock("Block model generation (block / item, cubeAll)")
+			this.simpleBlockWithItem(block, this.cubeAll(block))
+		}
 		this.simpleBlock(
 			ModBlocks.NUKE.asBlock(),
 			this.models().cubeBottomTop(
@@ -157,10 +149,10 @@ class ModBlockStateProvider(
 		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
 			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
 			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
-				1 -> "_one"
-				2 -> "_two"
-				3 -> "_three"
-				4 -> "_four"
+				1    -> "_one"
+				2    -> "_two"
+				3    -> "_three"
+				4    -> "_four"
 				else -> ""
 			}
 			val model = this.models().orientableWithBottom(
@@ -227,20 +219,16 @@ class ModBlockStateProvider(
 		)
 		// Double or Nothing
 		this.horizontalBlock(ModBlocks.DOUBLE_OR_NOTHING.asBlock()) { state ->
-			val half = state.getValue(DoubleOrNothingBlock.HALF)
+			val half = state.getValue(DoubleOrNothingBlock.Companion.HALF)
 			val segment = when (half) {
-				UPPER  -> "upper"
-				MIDDLE -> "middle"
-				LOWER  -> "lower"
-				else   -> ""
+				ModBlockStateProperties.TripleBlockHalf.UPPER  -> "upper"
+				ModBlockStateProperties.TripleBlockHalf.MIDDLE -> "middle"
+				ModBlockStateProperties.TripleBlockHalf.LOWER  -> "lower"
+				else                                           -> ""
 			}
 			val model = this.blockBenchBlockModel("double_or_nothing_$segment")
 			return@horizontalBlock model
 		}
-	}
-
-	private fun blockWithItem(blockRegistryObject: Block) {
-		this.simpleBlockWithItem(blockRegistryObject, this.cubeAll(blockRegistryObject))
 	}
 
 	private fun blockBenchBlockModel(model: String): ModelFile.ExistingModelFile =

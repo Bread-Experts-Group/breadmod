@@ -36,7 +36,8 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
+import org.bread_experts_group.breadmod.datagen.tag.EXPLODES_IN_TOASTER
+import org.bread_experts_group.breadmod.datagen.tag.TOASTABLE
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
@@ -115,7 +116,7 @@ class ToasterBlock : BreadModBlockWithEntity(
 
 		if (!triggeredState && entity.progress <= 0 && !stack.isEmpty &&
 			entity.itemHandler.getStackInSlot(0).count != 2 &&
-			(stack.`is`(ModItemTags.TOASTABLE) || stack.`is`(ModItemTags.EXPLODES_IN_TOASTER))
+			(stack.`is`(TOASTABLE) || stack.`is`(EXPLODES_IN_TOASTER))
 		) {
 			if (!player.isCreative) stack.shrink(1)
 			entity.setOrGrowItem(0, ItemStack(stack.item, 1), 1)
@@ -149,7 +150,7 @@ class ToasterBlock : BreadModBlockWithEntity(
 		val d2 = if (axis == Direction.Axis.Z) direction.stepX * 0.52 else d1 // Z
 
 		if (state.getValue(Companion.TRIGGERED)) {
-			if (entity.itemHandler.getStackInSlot(0).`is`(ModItemTags.EXPLODES_IN_TOASTER)) {
+			if (entity.itemHandler.getStackInSlot(0).`is`(EXPLODES_IN_TOASTER)) {
 				level.addParticle(
 					ParticleTypes.LAVA,
 					posX + d2,

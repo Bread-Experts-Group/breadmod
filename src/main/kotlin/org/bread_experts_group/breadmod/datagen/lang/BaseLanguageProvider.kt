@@ -23,6 +23,7 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.ModDamageType
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModFluids.FluidHolder
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import java.io.Serial
 import java.util.function.Supplier
@@ -36,7 +37,7 @@ import java.util.function.Supplier
  * @see DataGenerateLanguage
  */
 @Suppress("SameReturnValue", "SameReturnValue")
-internal sealed class BaseLanguageProvider(
+internal abstract class BaseLanguageProvider(
 	output: PackOutput,
 	@Suppress("SameParameterValue") val language: String
 ) : LanguageProvider(output, BreadMod.ID, language) {
@@ -98,7 +99,7 @@ internal sealed class BaseLanguageProvider(
 
 	protected open fun addManualTranslations() {}
 
-	private val registryScanner = Registry::class.java.`package`.getScanner()
+	private val registryScanner: LibraryScanner = Registry::class.java.`package`.getScanner()
 	final override fun addTranslations() {
 		this.registryScanner.resolveAnnotationValuePairs<DataGenerateLanguage>()
 			.filter { it.first.language == this.language }

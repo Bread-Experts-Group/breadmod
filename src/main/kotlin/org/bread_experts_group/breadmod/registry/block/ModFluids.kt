@@ -13,8 +13,9 @@ import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
+import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagFluid
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.function.Supplier
@@ -34,12 +35,7 @@ object ModFluids {
 	): FluidHolder<S, F> {
 		val source = this.FLUID_REGISTRY.register(id, sourceSupplier)
 		val flowing = this.FLUID_REGISTRY.register("flowing_$id", flowingSupplier)
-		val block = ModBlocks.BLOCK_REGISTRY.register(id) { ->
-			LiquidBlock(
-				source.get(),
-				blockProperties
-			).also(ModBlockLootProvider.dropNone::add)
-		}
+		val block = ModBlocks.BLOCK_REGISTRY.register(id) { -> LiquidBlock(source.get(), blockProperties) }
 		val fluidType: Supplier<FluidType> = this.FLUID_TYPE_REGISTRY.register(id) { -> FluidType(fluidProperties) }
 
 		return FluidHolder(
@@ -50,6 +46,8 @@ object ModFluids {
 		)
 	}
 
+	@DataGenerateTagFluid("minecraft:water")
+	@DataGenerateModelSingleItem
 	@DataGenerateLanguage("en_us")
 	val BREAD_LIQUID: FluidHolder<BreadLiquidBlock.Source, BreadLiquidBlock.Flowing> = this.registerWithBucket(
 		"bread_liquid",

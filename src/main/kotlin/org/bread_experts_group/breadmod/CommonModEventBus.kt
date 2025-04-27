@@ -15,18 +15,15 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider
-import org.bread_experts_group.breadmod.datagen.ModBlockLootProvider.Companion.constructLootProvider
-import org.bread_experts_group.breadmod.datagen.ModBlockStateProvider
-import org.bread_experts_group.breadmod.datagen.ModItemModelProvider
 import org.bread_experts_group.breadmod.datagen.ModRecipeProvider
-import org.bread_experts_group.breadmod.datagen.ModSoundDefinitionsProvider
 import org.bread_experts_group.breadmod.datagen.lang.BaseLanguageProvider
 import org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator
-import org.bread_experts_group.breadmod.datagen.tag.ModBlockTags
-import org.bread_experts_group.breadmod.datagen.tag.ModFluidTags
-import org.bread_experts_group.breadmod.datagen.tag.ModItemTags
-import org.bread_experts_group.breadmod.datagen.tag.ModPaintingTags
+import org.bread_experts_group.breadmod.datagen.loot.ModBlockLootProvider
+import org.bread_experts_group.breadmod.datagen.loot.ModBlockLootProvider.Companion.constructLootProvider
+import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider
+import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
+import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
+import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
@@ -96,21 +93,13 @@ internal object CommonModEventBus {
 			this.logger.info("Server datagen")
 			// actually run the provider for the datapack entries
 			generator.addProvider(true, datapackEntriesProvider)
-
-			generator.addProvider(true, ModPaintingTags(packOutput, lookupProvider, existingFileHelper))
 			generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, existingFileHelper))
 			generator.addProvider(
 				true,
 				constructLootProvider(ModBlockLootProvider(lookupProvider), packOutput, lookupProvider)
 			)
-			generator.addProvider(true, ModFluidTags(packOutput, lookupProvider, existingFileHelper))
-			val blockTagGenerator =
-				generator.addProvider(true, ModBlockTags(packOutput, lookupProvider, existingFileHelper))
-			generator.addProvider(
-				true,
-				ModItemTags(packOutput, lookupProvider, blockTagGenerator.contentsGetter(), existingFileHelper)
-			)
 			generator.addProvider(true, ModRecipeProvider(packOutput, lookupProvider))
+			generator.addProvider(true, ModTagProvider(packOutput))
 		}
 		if (event.includeClient()) {
 			this.logger.info("Client datagen")
