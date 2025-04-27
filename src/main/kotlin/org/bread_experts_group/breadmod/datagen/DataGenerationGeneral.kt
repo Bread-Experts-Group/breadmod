@@ -1,5 +1,7 @@
 package org.bread_experts_group.breadmod.datagen
 
+import net.minecraft.core.Registry
+import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.BlockItem
@@ -8,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredItem
 import org.bread_experts_group.breadmod.registry.block.ModFluids
+import java.nio.file.Path
 
 fun Any.getBlock(stage: String): Block = when (this) {
 	is Block            -> this
@@ -22,3 +25,7 @@ fun Any.getLocation(stage: String): ResourceLocation = when (this) {
 	is ResourceKey<*>              -> this.location()
 	else                           -> throw UnsupportedOperationException("$stage: ${this::class.simpleName}")
 }
+
+fun ResourceKey<out Registry<*>>.path(packOutput: PackOutput, path: String): Path = packOutput
+	.createRegistryTagsPathProvider(this)
+	.json(ResourceLocation.parse(path))

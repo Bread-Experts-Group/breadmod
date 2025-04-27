@@ -16,6 +16,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.datagen.ModRecipeProvider
+import org.bread_experts_group.breadmod.datagen.damage_type.ModDamageTypeProvider
 import org.bread_experts_group.breadmod.datagen.lang.BaseLanguageProvider
 import org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator
 import org.bread_experts_group.breadmod.datagen.loot.ModBlockLootProvider
@@ -99,6 +100,7 @@ internal object CommonModEventBus {
 				constructLootProvider(ModBlockLootProvider(lookupProvider), packOutput, lookupProvider)
 			)
 			generator.addProvider(true, ModRecipeProvider(packOutput, lookupProvider))
+			generator.addProvider(true, ModDamageTypeProvider(packOutput))
 			generator.addProvider(true, ModTagProvider(packOutput))
 		}
 		if (event.includeClient()) {
