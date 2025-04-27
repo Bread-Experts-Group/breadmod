@@ -4,7 +4,11 @@ import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
 
-class ServerPhysicsGrid(level: ServerLevel) : PhysicsGrid(level) {
+class ServerPhysicsGrid(
+	level: ServerLevel,
+	posA: BlockPos,
+	posB: BlockPos
+) : PhysicsGrid(level, posA, posB, false) {
 	val players: MutableList<Player> = mutableListOf()
 
 	init {

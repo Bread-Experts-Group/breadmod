@@ -137,10 +137,10 @@ abstract class MixinEntity {
 					BlockPos eyeBlockPosition = BlockPos.containing(eyePosition);
 					cir.setReturnValue(
 							!blockState.isAir()
-									&& blockState.isSuffocating(grid, eyeBlockPosition)
+									&& blockState.isSuffocating(grid.getLevel(), eyeBlockPosition)
 									&& Shapes.joinIsNotEmpty(
 									blockState
-											.getCollisionShape(grid, eyeBlockPosition)
+											.getCollisionShape(grid.getLevel(), eyeBlockPosition)
 											.move(eyePosition.x, eyePosition.y, eyePosition.z),
 									Shapes.create(aabb),
 									BooleanOp.AND

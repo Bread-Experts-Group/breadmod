@@ -2,9 +2,7 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Camera
-import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.client.renderer.debug.DebugRenderer
 import net.minecraft.core.BlockPos
@@ -51,7 +49,7 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 		if (!this.shouldRender(camera.position, this.grid.boundingBox.center)) return
 		poseStack.pushPose()
 		poseStack.offsetRenderToCameraPos(this.grid.position, camera, false)
-		this.grid.blocks.forEach { (pos, state) ->
+		this.grid.level.blockMap.forEach { (pos, state) ->
 			if (this.shouldFrustumCull(this.grid.position.plus(pos.toVec3()), frustum)) return@forEach
 			poseStack.pushPose()
 			poseStack.translate(pos.toVec3())
@@ -73,33 +71,6 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 //				false
 //			)
 //		}
-		val transform = this.grid.transform
-//		val size = transform.size
-//		val center = this.grid.transform.center
-		val player = localClient.player ?: return
-//		val playerPos = player.position()
-		poseStack.pushPose()
-		poseStack.mulPose(this.grid.transform.rotation)
-		poseStack.translate(0, 4, 0)
-//		player.displayClientMessage(
-//			Component.literal(""),
-//			true
-//		)
-		LevelRenderer.renderLineBox(
-			poseStack,
-			bufferSource.getBuffer(RenderType.lines()),
-			-transform.size.x / 2,
-			-transform.size.y / 2,
-			-transform.size.z / 2,
-			transform.size.x / 2,
-			transform.size.y / 2,
-			transform.size.z / 2,
-			1f,
-			1f,
-			1f,
-			1f
-		)
-		poseStack.popPose()
 		DebugRenderer.renderFloatingText(
 			poseStack,
 			bufferSource,
@@ -127,7 +98,7 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 			this.blockRenderer.renderBatched(
 				state,
 				pos,
-				this.grid,
+				this.grid.level,
 				poseStack,
 				bufferSource.getBuffer(it),
 				true,

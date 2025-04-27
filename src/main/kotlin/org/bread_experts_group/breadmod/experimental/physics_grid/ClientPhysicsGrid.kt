@@ -1,10 +1,15 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.util.minus
 
-class ClientPhysicsGrid(level: ClientLevel) : PhysicsGrid(level) {
+class ClientPhysicsGrid(
+	level: ClientLevel,
+	posA: BlockPos,
+	posB: BlockPos
+) : PhysicsGrid(level, posA, posB, true) {
 	val renderer: PhysicsGridRenderer = PhysicsGridRenderer(this)
 
 	init {

@@ -27,9 +27,7 @@ class ClientPhysicsGridPacket(
 
 		fun handleClientboundPacket(data: ClientPhysicsGridPacket, context: IPayloadContext) {
 			val level = context.player().level() as ClientLevel
-			ClientPhysicsGrid(level)
-				.recomputeGridData(data.posA, data.posB)
-				.recomputeBlockData(data.posA, data.posB)
+			ClientPhysicsGrid(level, data.posA, data.posB)
 				.setPos(context.player().position())
 		}
 

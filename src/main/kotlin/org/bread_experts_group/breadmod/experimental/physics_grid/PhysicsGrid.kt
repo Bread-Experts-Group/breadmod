@@ -1,38 +1,48 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
-import net.minecraft.world.level.BlockAndTintGetter
-import net.minecraft.world.level.ColorResolver
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.lighting.LevelLightEngine
-import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.experimental.physics_grid.dummy_level.DummyLevel
 import org.bread_experts_group.breadmod.util.minus
-import org.bread_experts_group.breadmod.util.plus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import kotlin.math.pow
 
-abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
+abstract class PhysicsGrid(level: Level, posA: BlockPos, posB: BlockPos, isClientSide: Boolean) {
 	val id: Int = ++PhysicsGridGlobals.idCounter
 	val logger: Logger = LogManager.getLogger("PhysicsGrid ${this.id}")
-	val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
-	val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
 	val voxelShapes: MutableMap<BlockPos, VoxelShape> = mutableMapOf()
 	var boundingBox: AABB = AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5)
 	var position: Vec3 = Vec3.ZERO
 	var rotation: Vec3 = Vec3.ZERO
 	var velocity: Vec3 = Vec3.ZERO
-	val transform: Transform = Transform(position = this.position, size = Vec3(1.0, 1.0, 1.0))
+	val level: DummyLevel = DummyLevel(level, isClientSide)
+
+	init {
+		val aabb = AABB.encapsulatingFullBlocks(posA, posB)
+		// Populating Block and VoxelShape Data
+		BlockPos.betweenClosedStream(aabb).forEach { pos ->
+			val immutablePos = pos.immutable()
+			val state = level.getBlockState(immutablePos)
+			val offset = immutablePos.offset(-posA)
+			if (state.renderShape == INVISIBLE) return@forEach
+			this.level.setBlock(offset, state)
+			LogManager.getLogger().info("without offset: ${this.level.getBlockState(immutablePos)}")
+			LogManager.getLogger().info("with offset: ${this.level.getBlockState(offset)}")
+			this.voxelShapes[offset] = state.getShape(this.level, pos)
+			val blockEntity = level.getBlockEntity(pos)
+			if (blockEntity != null) this.level.setBlockEntity(blockEntity)
+		}
+		// Recomputing Grid Position and BoundingBox
+		this.position = posA.toVec3()
+		this.boundingBox = aabb
+	}
 
 	fun getWorldVoxelShapes(): List<VoxelShape> = this.voxelShapes.map { (local, shape) ->
 		shape.move(
@@ -40,26 +50,6 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 			local.y + this.position.y,
 			local.z + this.position.z
 		)
-	}
-
-	fun recomputeBlockData(from: BlockPos, to: BlockPos): PhysicsGrid {
-		val aabb = AABB.encapsulatingFullBlocks(from, to)
-		BlockPos.betweenClosedStream(aabb).forEach { pos ->
-			val state = this.level.getBlockState(pos)
-			val offset = pos.offset(-from).immutable()
-			if (state.renderShape == INVISIBLE) return@forEach
-			this.blocks[offset] = state
-			this.voxelShapes[offset] = state.getShape(this, pos)
-			val blockEntity = this.level.getBlockEntity(pos)
-			if (blockEntity != null) this.blockEntities[offset] = blockEntity
-		}
-		return this
-	}
-
-	fun recomputeGridData(from: BlockPos, to: BlockPos): PhysicsGrid {
-		this.position = from.toVec3()
-		this.boundingBox = AABB.encapsulatingFullBlocks(from, to)
-		return this
 	}
 
 	open fun setPos(newPos: Vec3): PhysicsGrid {
@@ -72,8 +62,6 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	private val crossSectionArea: Int = 25 // TODO calculate
 	private val mass: Int = 1 // TODO calculate
 	open fun tick() {
-		this.transform.rotation.rotateY(0.01f)
-		this.transform.position = this.position.plus(Vec3(0.0, 4.0, 0.0))
 		val dragAcceleration = (0.5 * this.airDensity * this.dragCoefficient * this.crossSectionArea *
 				this.velocity.length().pow(2.0)) / this.mass
 		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
@@ -83,16 +71,4 @@ abstract class PhysicsGrid(val level: Level) : BlockAndTintGetter {
 	fun discard() {
 		PhysicsGridGlobals.grids.remove(this.id)
 	}
-
-	fun getBlockState(x: Int, y: Int, z: Int): BlockState = this.getBlockState(BlockPos(x, y, z))
-	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
-	override fun getFluidState(pos: BlockPos): FluidState = this.getBlockState(pos).fluidState
-	override fun getBlockEntity(pos: BlockPos): BlockEntity? = this.blockEntities[pos]
-	override fun getHeight(): Int = Int.MAX_VALUE
-	override fun getMinBuildHeight(): Int = Int.MIN_VALUE
-	override fun getShade(direction: Direction, shade: Boolean): Float = this.level.getShade(direction, shade)
-	override fun getLightEngine(): LevelLightEngine = this.level.lightEngine
-	override fun getBlockTint(blockPos: BlockPos, colorResolver: ColorResolver): Int = this.level.getBlockTint(
-		blockPos, colorResolver
-	)
 }

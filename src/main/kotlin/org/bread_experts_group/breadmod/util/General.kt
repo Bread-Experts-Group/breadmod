@@ -150,7 +150,7 @@ fun blockPhysicsGrid(filter: (PhysicsGrid) -> Boolean): (Vec3) -> Triple<Physics
 		var capturedState: Triple<PhysicsGrid, BlockPos, BlockState>? = null
 		grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
 			if (!filter.invoke(grid)) continue@grid
-			for ((offset, state) in grid.blocks)
+			for ((offset, state) in grid.level.blockMap)
 				if ((position - (offset.center + grid.position)).length() < 1) {
 					capturedState = Triple(grid, offset, state)
 					break@grid

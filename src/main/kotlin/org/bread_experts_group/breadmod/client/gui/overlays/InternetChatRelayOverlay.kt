@@ -21,7 +21,7 @@ class InternetChatRelayOverlay : LayeredDraw.Layer {
 			field = clamp(value, 0.0, 3.0)
 		}
 	private var shouldShow = false // Should only be true when the ChatScreen is active
-	private var showEdge = true // Should only be true when an IRC connection is active
+	private var showEdge = false // Should only be true when an IRC connection is active
 	private val texture = modLocation("textures", "gui", "hud", "irc_overlay.png")
 
 	override fun render(guiGraphics: GuiGraphics, deltaTracker: DeltaTracker) {
@@ -31,8 +31,8 @@ class InternetChatRelayOverlay : LayeredDraw.Layer {
 		val scaledWidth = localClient.window.guiScaledWidth.toDouble()
 		val poseStack = guiGraphics.pose()
 
-		this.showEdge = true
-		this.shouldShow = flag
+//		this.showEdge = true
+//		this.shouldShow = flag
 
 		if (this.shouldShow) {
 			if (this.animationProgress == 5.5 || this.animationProgress == 0.0) this.animationDelta = 0.0
