@@ -1,7 +1,8 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity.machine
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
+import net.minecraft.core.Direction.DOWN
+import net.minecraft.core.Direction.UP
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
@@ -36,7 +37,7 @@ class WheatCrusherBlockEntity(
 		val POWERED: BooleanProperty = BlockStateProperties.POWERED
 	}
 
-	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(2, listOf(0), listOf(1))
+	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(2)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		mutableListOf(
 			ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(100_000))
@@ -44,7 +45,10 @@ class WheatCrusherBlockEntity(
 	)
 
 	init {
-		this.itemHandler.allowedSides = listOf(Direction.UP, Direction.DOWN)
+		val handler = this.itemHandler
+		handler.setAllowedSides(UP, DOWN)
+		handler.setMaxInOut(0, 64, 0)
+		handler.setMaxInOut(1, 0, 64)
 	}
 
 	override fun runCurrentRecipe(

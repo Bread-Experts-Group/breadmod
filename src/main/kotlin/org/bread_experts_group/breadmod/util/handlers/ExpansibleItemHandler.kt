@@ -16,38 +16,43 @@ import java.util.function.Predicate
 import kotlin.jvm.optionals.getOrElse
 import kotlin.math.min
 
-// todo figure out sidedness later i guess..
-//  rewrite maybe???
 @Suppress("ConvertLambdaToReference")
 class ExpansibleItemHandler(
-	override val units: MutableList<ExpansibleSlot>,
-	insertSlots: List<Int> = listOf(),
-	extractSlots: List<Int> = listOf()
+	override val units: MutableList<ExpansibleSlot>
 ) : AbstractExpansibleHandler<ExpansibleSlot>(), IItemHandler, IItemHandlerModifiable {
-	constructor(
-		slots: Int,
-		insertSlots: List<Int> = listOf(),
-		extractSlots: List<Int> = listOf()
-	) : this(MutableList(slots) { ExpansibleSlot() }, insertSlots, extractSlots)
+	constructor(slots: Int) : this(MutableList(slots) { ExpansibleSlot() })
 
-	var allowedSides: List<Direction?> = listOf(null)
+	private var allowedSides: List<Direction?> = listOf(null)
 	fun getThisForSide(direction: Direction?): ExpansibleItemHandler? =
 		if (this.allowedSides.contains(direction) || this.allowedSides.contains(null)) this else null
 
-	var allowedExtractSlots: List<Int> = extractSlots.ifEmpty { this.defaultSlots() }
-	var allowedInsertSlots: List<Int> = insertSlots.ifEmpty { this.defaultSlots() }
+	fun setMaxIn(slot: Int, maxIn: Int) {
+		val amount = if (maxIn == 0) null else BigDecimal(maxIn)
+		this.units[slot].maxIn = amount
+	}
 
-	private fun defaultSlots(): List<Int> = buildList { repeat(this@ExpansibleItemHandler.units.size) { this.add(it) } }
+	fun setMaxOut(slot: Int, maxOut: Int) {
+		val amount = if (maxOut == 0) null else BigDecimal(maxOut)
+		this.units[slot].maxOut = amount
+	}
+
+	fun setMaxInOut(slot: Int, maxIn: Int, maxOut: Int) {
+		this.setMaxIn(slot, maxIn)
+		this.setMaxOut(slot, maxOut)
+	}
+
+	fun setAllowedSides(vararg direction: Direction?) {
+		this.allowedSides = direction.toList()
+	}
 
 	class ExpansibleSlot(
-		capacity: BigDecimal? = null,
-		override var maxIn: BigDecimal? = null,
-		override var maxOut: BigDecimal? = null,
+		override var maxIn: BigDecimal? = BigDecimal(64),
+		override var maxOut: BigDecimal? = BigDecimal(64),
 		var filter: Predicate<ItemStack> = Predicate { _ -> true },
 		var item: Item = Items.AIR,
 		override var amount: BigDecimal = BigDecimal.ZERO
 	) : HandlerSerializable {
-		override var capacity: BigDecimal? = capacity
+		override var capacity: BigDecimal? = BigDecimal(this.asStack.maxStackSize)
 			set(value) {
 				field = if (value != null && value <= BigDecimal.ZERO) null else value
 			}
@@ -85,12 +90,12 @@ class ExpansibleItemHandler(
 		stack: ItemStack,
 		simulate: Boolean
 	): ItemStack {
-		return if (!this.allowedInsertSlots.contains(slot)) {
-			val target = this.units[slot]
+		val target = this.units[slot]
+		return if (target.maxIn != null && !simulate && this.isItemValid(slot, stack)) {
 			if (stack.count + target.asStack.count > target.asStack.maxStackSize) return ItemStack.EMPTY
 			val moved = target.fillDecimal(
 				stack.count.toBigDecimal(),
-				simulate,
+				false,
 				mutableListOf(stack.item)
 			).first.capInt()
 			stack.copy().also {
@@ -99,16 +104,19 @@ class ExpansibleItemHandler(
 		} else ItemStack.EMPTY
 	}
 
-	override fun extractItem(slot: Int, count: Int, simulate: Boolean): ItemStack =
-		if (this.allowedExtractSlots.contains(slot)) {
-			val unit = this.units[slot]
-			val (bCount, _) = unit.drainDecimal(count.toBigDecimal(), simulate)
-			ItemStack(unit.item, bCount.capInt())
+	override fun extractItem(slot: Int, count: Int, simulate: Boolean): ItemStack {
+		val target = this.units[slot]
+		return if (target.maxOut != null) {
+			val (bCount, _) = target.drainDecimal(count.toBigDecimal(), false)
+			ItemStack(target.item, bCount.capInt())
 		} else ItemStack.EMPTY
+	}
 
 	override fun getSlots(): Int = this.units.size
 	override fun getStackInSlot(slot: Int): ItemStack = this.units[slot].asStack
-	override fun getSlotLimit(slot: Int): Int = this.units[slot].capacity?.capInt() ?: 99
+	override fun getSlotLimit(slot: Int): Int =
+		this.units[slot].capacity?.capInt() ?: this.units[slot].asStack.maxStackSize
+
 	override fun isItemValid(slot: Int, stack: ItemStack): Boolean = this.units[slot].filter.test(stack)
 	override fun setStackInSlot(slot: Int, stack: ItemStack) {
 		this.units[slot].asStack = stack
