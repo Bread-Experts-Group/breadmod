@@ -8,28 +8,13 @@ class ServerPhysicsGrid(
 	level: ServerLevel,
 	posA: BlockPos,
 	posB: BlockPos
-) : PhysicsGrid(level, posA, posB, false) {
+) : PhysicsGrid(level, posA, posB) {
 	val players: MutableList<Player> = mutableListOf()
 
 	init {
 		check(PhysicsGridGlobals.grids[this.id] == null) { "Server Physics Grid with ID ${this.id} already exists!" }
 		PhysicsGridGlobals.grids[this.id] = this
 		this.logger.warn("New server sided grid created.")
-	}
-
-	override fun tick() {
-		super.tick()
-//		this.players.clear()
-//		this.level.getEntitiesOfClass(
-//			Player::class.java,
-//			this.boundingBox.inflate(20.0)
-//		).forEach { player ->
-//			if (this.players.indexOf(player) == -1) this.players.add(player)
-//		}
-//		this.players.forEach { player ->
-//			PacketDistributor.sendToPlayer(player as ServerPlayer, GridPosUpdatePacket(this.position, this.id + 1))
-//		}
-//		this.setPos(this.position.plus(Vec3(0.0, 0.1, 0.0)))
 	}
 
 	// todo sync logic to client, get the specific client grid using this instance's id

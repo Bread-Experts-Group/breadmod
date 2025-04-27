@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Camera
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.block.BlockRenderDispatcher
 import net.minecraft.client.renderer.culling.Frustum
 import net.minecraft.client.renderer.debug.DebugRenderer
 import net.minecraft.core.BlockPos
@@ -23,8 +24,8 @@ import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.awt.Color
 
 class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
-	private val blockRenderer = localClient.blockRenderer
-	private val random = RandomSource.create()
+	private val blockRenderer: BlockRenderDispatcher = localClient.blockRenderer
+	private val random: RandomSource = RandomSource.create()
 
 	fun createRenderTask() {
 		val bufferSource = localClient.renderBuffers().bufferSource()
@@ -49,13 +50,14 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 		if (!this.shouldRender(camera.position, this.grid.boundingBox.center)) return
 		poseStack.pushPose()
 		poseStack.offsetRenderToCameraPos(this.grid.position, camera, false)
-		this.grid.level.blockMap.forEach { (pos, state) ->
-			if (this.shouldFrustumCull(this.grid.position.plus(pos.toVec3()), frustum)) return@forEach
+
+		this.grid.getChunk(0, 0).findBlocks({ !it.isAir }, { pos, state ->
+			if (this.shouldFrustumCull(this.grid.position.plus(pos.toVec3()), frustum)) return@findBlocks
 			poseStack.pushPose()
 			poseStack.translate(pos.toVec3())
 			this.renderBlock(pos, state, poseStack, bufferSource)
 			poseStack.popPose()
-		}
+		})
 //		this.grid.blocks.forEach { (pos, state) ->
 //			LevelRenderer.renderVoxelShape(
 //				poseStack,
@@ -98,7 +100,7 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 			this.blockRenderer.renderBatched(
 				state,
 				pos,
-				this.grid.level,
+				this.grid,
 				poseStack,
 				bufferSource.getBuffer(it),
 				true,

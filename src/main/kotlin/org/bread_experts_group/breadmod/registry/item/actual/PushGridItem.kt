@@ -7,17 +7,23 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.level.Level
-import org.bread_experts_group.breadmod.util.blockPhysicsGridLV
-import org.bread_experts_group.breadmod.util.rayCast
+import net.minecraft.world.phys.shapes.CollisionContext
+import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid
+import org.bread_experts_group.breadmod.util.blockPhysicsGrid
 
 class PushGridItem : Item(Item.Properties().stacksTo(1).rarity(Rarity.RARE)) {
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		val stack = player.getItemInHand(usedHand)
 		if (!level.isClientSide) return InteractionResultHolder.pass(stack) // TODO, proper sync of the grids
-		val result = player.rayCast(50.0, blockPhysicsGridLV(level))
+		val result = blockPhysicsGrid(
+			{ it is ClientPhysicsGrid },
+			player.eyePosition,
+			player.calculateViewVector(player.xRot, player.yRot),
+			false,
+			CollisionContext.of(player)
+		)
 		if (result != null) {
-			val (grid) = result.hit
-			grid.velocity = grid.velocity.add(0.25, 0.0, 0.0)
+			result.grid.velocity = result.grid.velocity.add(0.25, 0.0, 0.0)
 		}
 		return InteractionResultHolder.consume(stack)
 	}

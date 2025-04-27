@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.mixin.client;
 
-import kotlin.Triple;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -9,10 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid;
 import org.bread_experts_group.breadmod.util.GeneralKt;
-import org.bread_experts_group.breadmod.util.HitResult;
+import org.bread_experts_group.breadmod.util.GridHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,15 +39,18 @@ public class MixinMinecraft {
 		Objects.requireNonNull(this.player);
 		Objects.requireNonNull(this.gameMode);
 		Objects.requireNonNull(this.level);
-		HitResult<Triple<PhysicsGrid, BlockPos, BlockState>> selected = GeneralKt.rayCast(
-				this.player, this.player.blockInteractionRange(),
-				GeneralKt.blockPhysicsGridLV(this.level)
+		GridHitResult selected = GeneralKt.blockPhysicsGrid(
+				(grid) -> grid instanceof ClientPhysicsGrid,
+				this.player.getEyePosition(),
+				this.player.calculateViewVector(this.player.getXRot(), this.player.getYRot()),
+				false,
+				CollisionContext.of(this.player)
 		);
 		if (selected != null) {
-			ItemStack stack = selected.getHit().component3().getCloneItemStack(
-					selected.getAsBlockHitResult(selected),
+			ItemStack stack = selected.getState().getCloneItemStack(
+					selected.getHitResult(),
 					this.player.level(),
-					selected.getBlockPosition(),
+					BlockPos.containing(selected.getHitResult().getLocation()),
 					this.player
 			);
 			if (stack.isEmpty()) return;

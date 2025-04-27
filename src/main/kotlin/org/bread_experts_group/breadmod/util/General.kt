@@ -21,6 +21,7 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -28,10 +29,9 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid
+import net.minecraft.world.phys.shapes.CollisionContext
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
-import org.bread_experts_group.breadmod.experimental.physics_grid.ServerPhysicsGrid
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
 import java.math.BigDecimal
@@ -144,40 +144,30 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 	length
 ) { selector(this.level(), it) }
 
-fun blockPhysicsGrid(filter: (PhysicsGrid) -> Boolean): (Vec3) -> Triple<PhysicsGrid, BlockPos, BlockState>? =
-	{ position ->
-		// TODO! This is very inefficient! Look into other methods common for raytracing like what NVIDIA PhysX does!
-		var capturedState: Triple<PhysicsGrid, BlockPos, BlockState>? = null
-		grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
-			if (!filter.invoke(grid)) continue@grid
-			for ((offset, state) in grid.level.blockMap)
-				if ((position - (offset.center + grid.position)).length() < 1) {
-					capturedState = Triple(grid, offset, state)
-					break@grid
-				}
-		}
-		capturedState
+data class GridHitResult(
+	val grid: PhysicsGrid,
+	val state: BlockState,
+	val hitResult: net.minecraft.world.phys.HitResult
+)
+
+fun blockPhysicsGrid(
+	filter: (PhysicsGrid) -> Boolean,
+	from: Vec3, to: Vec3, hitFluids: Boolean,
+	collisionContext: CollisionContext
+): GridHitResult? {
+	grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
+		if (!filter.invoke(grid)) continue@grid
+		val hitResult = grid.clip(
+			ClipContext(
+				from, to, ClipContext.Block.OUTLINE,
+				if (hitFluids) ClipContext.Fluid.ANY else ClipContext.Fluid.NONE,
+				collisionContext
+			)
+		)
+		if (hitResult.type != net.minecraft.world.phys.HitResult.Type.MISS)
+			return GridHitResult(grid, grid.getBlockState(hitResult.blockPos), hitResult)
 	}
-
-fun blockPhysicsGridV(level: Level): (Vec3) -> Triple<PhysicsGrid, BlockPos, BlockState>? {
-	val filter: (PhysicsGrid) -> Boolean =
-		if (level.isClientSide) {
-			{ it is ClientPhysicsGrid }
-		} else {
-			{ it is ServerPhysicsGrid }
-		}
-	return blockPhysicsGrid(filter)
-}
-
-fun blockPhysicsGridLV(level: Level): (Level, Vec3) -> Triple<PhysicsGrid, BlockPos, BlockState>? {
-	val filter: (PhysicsGrid) -> Boolean =
-		if (level.isClientSide) {
-			{ it is ClientPhysicsGrid }
-		} else {
-			{ it is ServerPhysicsGrid }
-		}
-	val gridSearcher = blockPhysicsGrid(filter)
-	return { _, v -> gridSearcher.invoke(v) }
+	return null
 }
 
 fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->

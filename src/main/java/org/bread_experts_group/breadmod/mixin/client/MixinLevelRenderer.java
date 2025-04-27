@@ -75,7 +75,7 @@ public abstract class MixinLevelRenderer {
 							posestack,
 							lineConsumer,
 							gbHitResult.getState().getShape(
-									gbHitResult.getGrid().getLevel(),
+									gbHitResult.getGrid(),
 									gbHitResult.getLocalBlockPos(),
 									CollisionContext.of(camera.getEntity())
 							),

@@ -1,8 +1,6 @@
 package org.bread_experts_group.breadmod.mixin.common;
 
-import kotlin.Triple;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -14,14 +12,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.CommonHooks;
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
+import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid;
 import org.bread_experts_group.breadmod.registry.attachment.ModAttachments;
 import org.bread_experts_group.breadmod.registry.item.ModItems;
 import org.bread_experts_group.breadmod.util.GeneralKt;
-import org.bread_experts_group.breadmod.util.HitResult;
+import org.bread_experts_group.breadmod.util.GridHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -84,11 +82,14 @@ abstract class MixinLivingEntity {
 	)
 	private BlockState checkFallDamage(BlockState state) {
 		LivingEntity me = breadmod$getThis();
-		HitResult<Triple<PhysicsGrid, BlockPos, BlockState>> result = GeneralKt.rayCast(
-				me.position(), new Vec3(0.0, -0.1, 0.0),
-				0.1, GeneralKt.blockPhysicsGridV(me.level())
+		GridHitResult selected = GeneralKt.blockPhysicsGrid(
+				(grid) -> grid instanceof ClientPhysicsGrid,
+				me.position(),
+				me.position().subtract(0.0, -0.1, 0.0),
+				false,
+				CollisionContext.of(me)
 		);
-		if (result != null) return result.getHit().component3();
+		if (selected != null) return selected.getState();
 		return state;
 	}
 }

@@ -9,7 +9,7 @@ class ClientPhysicsGrid(
 	level: ClientLevel,
 	posA: BlockPos,
 	posB: BlockPos
-) : PhysicsGrid(level, posA, posB, true) {
+) : PhysicsGrid(level, posA, posB) {
 	val renderer: PhysicsGridRenderer = PhysicsGridRenderer(this)
 
 	init {
