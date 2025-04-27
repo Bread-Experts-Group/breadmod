@@ -13,7 +13,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
 // todo needs work to be summonable.
 class FakePlayer(
@@ -38,11 +39,12 @@ class FakePlayer(
 			SynchedEntityData.defineId(FakePlayer::class.java, EntityDataSerializers.OPTIONAL_UUID)
 		val ownerID: EntityDataAccessor<Int> =
 			SynchedEntityData.defineId(FakePlayer::class.java, EntityDataSerializers.INT)
+		val defaultUUID: UUID = UUID.fromString("880485d4-bea0-4689-b5cb-d4d419bcc923")
 
 		fun createAttributes(): AttributeSupplier.Builder = createLivingAttributes()
 	}
 
-	fun getOwnerUUID(): UUID = this.entityData.get(Companion.ownerUUID).orElse(null)
+	fun getOwnerUUID(): UUID = this.entityData.get(Companion.ownerUUID).orElse(Companion.defaultUUID)
 	override fun defineSynchedData(builder: SynchedEntityData.Builder) {
 		super.defineSynchedData(builder)
 		builder.define(Companion.ownerUUID, Optional.empty())
