@@ -16,7 +16,6 @@ import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import java.util.Optional
 import java.util.UUID
 
-// todo needs work to be summonable.
 class FakePlayer(
 	type: EntityType<FakePlayer>,
 	level: Level
