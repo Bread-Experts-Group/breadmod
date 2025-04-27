@@ -40,7 +40,6 @@ interface IToolGunModeRenderer {
 		var font: Font = localClient.font
 	}
 
-	// todo consider leaving these as methods or just make them vars in the companion object
 	fun shouldRecoil(
 		stack: ItemStack,
 		displayContext: ItemDisplayContext,

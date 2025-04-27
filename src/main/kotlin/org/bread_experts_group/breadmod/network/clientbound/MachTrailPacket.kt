@@ -8,12 +8,10 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.data_holders.MachTrailData
 import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask.machTrailMap
+import org.bread_experts_group.breadmod.data_holders.client.MachTrailData
 
-data class MachTrailPacket(
-	private val playerProfile: GameProfile
-) : CustomPacketPayload {
+data class MachTrailPacket(private val playerProfile: GameProfile) : CustomPacketPayload {
 	companion object {
 		val TYPE: CustomPacketPayload.Type<MachTrailPacket> =
 			CustomPacketPayload.Type(modLocation("mach_trail_packet"))
@@ -22,7 +20,8 @@ data class MachTrailPacket(
 		)
 
 		fun handleClientboundPacket(data: MachTrailPacket, context: IPayloadContext) {
-			machTrailMap[data.playerProfile] = MachTrailData(data.playerProfile)
+			val targetPlayer = context.player().level().getPlayerByUUID(data.playerProfile.id) ?: return
+			machTrailMap[targetPlayer] = MachTrailData(targetPlayer)
 		}
 
 		fun register(registrar: PayloadRegistrar): PayloadRegistrar =

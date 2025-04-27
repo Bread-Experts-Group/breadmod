@@ -1,9 +1,9 @@
 package org.bread_experts_group.breadmod.client.model
 
-import com.mojang.authlib.GameProfile
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.PlayerModel
 import net.minecraft.client.model.geom.ModelLayers
+import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
@@ -12,25 +12,15 @@ import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 
-// todo collection of hat, player, armor, and item held models to be rendered in the mach trail
-// todo Armor Rendering: use a combination of HumanoidArmorLayer and HumanoidArmorModel to recreate the
-//  model rendering with proper material
-// todo Item Rendering: get the item model using ItemRenderer or something similar to render it
-//  (issue: can't choose the color the item renders with)
-// todo hat and player model rendering is already taken care of in the render function, move those to this class
-
-// todo holy shit figure out how to make this better it's ass
+// todo completely rewrite with better model getting
 class MachTrailModel(
-	playerProfile: GameProfile,
+	val player: Player,
+	private val playerInfo: PlayerInfo,
 	var currentColor: Int
 ) {
-	private val playerId = playerProfile.id
-	private val connection = localClient.connection!!
-	private val playerInfo = this.connection.getPlayerInfo(this.playerId)!!
 	private val playerSkin = this.playerInfo.skin
 	private val playerTexture = this.playerSkin.texture
 	private val playerModelType = this.playerSkin.model
-	private val player = localClient.level!!.getPlayerByUUID(this.playerId)!!
 	private val limbSwing = this.player.walkAnimation.position()
 	private val entityModels = localClient.entityModels
 	private val bufferSource = localClient.renderBuffers().bufferSource()

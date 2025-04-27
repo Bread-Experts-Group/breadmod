@@ -10,8 +10,8 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.data_holders.ScreenBleedData
-import org.bread_experts_group.breadmod.data_holders.ScreenBleedData.Companion.screenBleedMap
+import org.bread_experts_group.breadmod.data_holders.server.ScreenBleedData
+import org.bread_experts_group.breadmod.data_holders.server.ScreenBleedData.Companion.screenBleedMap
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket.ScreenBleedSetType.ACTIVE
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket.ScreenBleedSetType.BLUE_SCREEN

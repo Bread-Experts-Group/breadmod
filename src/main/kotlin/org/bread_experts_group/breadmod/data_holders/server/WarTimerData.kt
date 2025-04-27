@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.data_holders
+package org.bread_experts_group.breadmod.data_holders.server
 
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor

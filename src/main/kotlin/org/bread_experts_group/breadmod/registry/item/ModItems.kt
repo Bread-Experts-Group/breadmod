@@ -332,10 +332,12 @@ object ModItems {
 	val PUSH_GRID_ITEM: DeferredItem<Item> =
 		this.ITEM_REGISTRY.register("push_grid_tool", ::PushGridItem)
 
+	// todo models/textures
 	@DataGenerateLanguage("en_us")
 	val SPEED_COIL: DeferredItem<Item> =
 		this.ITEM_REGISTRY.registerSimpleItem("speed_coil")
 
+	// todo models/textures
 	@DataGenerateLanguage("en_us")
 	val GRAVITY_COIL: DeferredItem<Item> =
 		this.ITEM_REGISTRY.registerSimpleItem("gravity_coil")

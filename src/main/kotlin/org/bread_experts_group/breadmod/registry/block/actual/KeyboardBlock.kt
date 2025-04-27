@@ -26,6 +26,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBloc
 import org.bread_experts_group.breadmod.util.BlockScanner
 import org.bread_experts_group.breadmod.util.BlockScanner.filterPositions
 
+// todo proper VoxelShape, fix facing placement
 class KeyboardBlock : BreadModBlockWithEntity(
 	Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
 ), SimpleWaterloggedBlock {

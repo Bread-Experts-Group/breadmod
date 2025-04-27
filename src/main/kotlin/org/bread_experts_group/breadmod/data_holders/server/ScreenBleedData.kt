@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.data_holders
+package org.bread_experts_group.breadmod.data_holders.server
 
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor
@@ -30,7 +30,7 @@ data class ScreenBleedData(
 			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(ACTIVE))
 			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(PROGRESS))
 			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(MAX_PROGRESS))
-			Companion.screenBleedMap.remove(player)
+			screenBleedMap.remove(player)
 		}
 	}
 }

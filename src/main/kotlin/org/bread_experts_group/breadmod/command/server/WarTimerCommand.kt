@@ -9,8 +9,8 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.data_holders.WarTimerData
-import org.bread_experts_group.breadmod.data_holders.WarTimerData.Companion.warTimerMap
+import org.bread_experts_group.breadmod.data_holders.server.WarTimerData
+import org.bread_experts_group.breadmod.data_holders.server.WarTimerData.Companion.warTimerMap
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle

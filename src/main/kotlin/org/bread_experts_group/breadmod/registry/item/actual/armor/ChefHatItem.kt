@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
-import org.bread_experts_group.breadmod.data_holders.MachSpeedData
+import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 
 /**
@@ -40,7 +40,7 @@ class ChefHatItem : ArmorItem(ModArmorMaterials.CHEF, Type.HELMET, Properties().
 		val player = entity as? Player ?: return
 		val data = MachSpeedData.get(stack)
 		if (entity.isSprinting) {
-			data.tick(player, slotId)
+			data.tick(player, level, slotId)
 		} else data.reset(entity)
 		stack.set(ModDataComponents.MACH_SPEED, data)
 	}

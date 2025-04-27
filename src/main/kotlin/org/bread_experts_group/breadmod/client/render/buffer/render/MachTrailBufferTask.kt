@@ -1,12 +1,12 @@
 package org.bread_experts_group.breadmod.client.render.buffer.render
 
-import com.mojang.authlib.GameProfile
 import com.mojang.math.Axis
+import net.minecraft.world.entity.player.Player
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import org.bread_experts_group.breadmod.client.model.MachTrailModel
-import org.bread_experts_group.breadmod.data_holders.MachTrailData
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.data_holders.client.MachTrailData
 import java.awt.Color
 
 // todo revamp with better translation and rotation logic
@@ -14,7 +14,7 @@ object MachTrailBufferTask {
 	/**
 	 * A map holding mach trail data for each player currently running with the chef hat.
 	 */
-	val machTrailMap: MutableMap<GameProfile, MachTrailData> = mutableMapOf()
+	val machTrailMap: MutableMap<Player, MachTrailData> = mutableMapOf()
 
 	/**
 	 * Renders a single instance of the mach trail behind the player.
@@ -24,15 +24,14 @@ object MachTrailBufferTask {
 	 * @see org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 	 */
 	// todo head rotations
-	fun create(playerProfile: GameProfile) {
-		val playerId = playerProfile.id
-		val level = localClient.level ?: return
-		val player = level.getPlayerByUUID(playerId) ?: return
+	fun create(player: Player) {
 		val x = player.x
 		val y = player.y
 		val z = player.z
 		val yRot = -player.rotationVector.y
-		val machTrailModel = MachTrailModel(playerProfile, 0)
+		val connection = localClient.connection ?: return
+		val info = connection.getPlayerInfo(player.uuid) ?: return
+		val machTrailModel = MachTrailModel(player, info, 0)
 
 		RenderBuffer.add(
 			Stage.AFTER_PARTICLES,

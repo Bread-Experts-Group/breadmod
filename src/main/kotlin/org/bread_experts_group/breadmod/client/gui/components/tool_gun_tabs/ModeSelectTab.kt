@@ -13,8 +13,8 @@ import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
-import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import java.awt.Color
 
 class ModeSelectTab(

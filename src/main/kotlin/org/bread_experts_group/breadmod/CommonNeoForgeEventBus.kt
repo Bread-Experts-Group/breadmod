@@ -11,8 +11,8 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.command.server.ScreenBleedCommand
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand
-import org.bread_experts_group.breadmod.data_holders.ScreenBleedData.Companion.screenBleedMap
-import org.bread_experts_group.breadmod.data_holders.WarTimerData.Companion.warTimerMap
+import org.bread_experts_group.breadmod.data_holders.server.ScreenBleedData.Companion.screenBleedMap
+import org.bread_experts_group.breadmod.data_holders.server.WarTimerData.Companion.warTimerMap
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 

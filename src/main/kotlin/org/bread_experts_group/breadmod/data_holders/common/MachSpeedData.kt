@@ -1,10 +1,11 @@
-package org.bread_experts_group.breadmod.data_holders
+package org.bread_experts_group.breadmod.data_holders.common
 
 import io.netty.buffer.ByteBuf
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource.AMBIENT
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
@@ -12,9 +13,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
+import org.bread_experts_group.breadmod.registry.ModDamageType
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
@@ -66,52 +69,51 @@ data class MachSpeedData(
 		this.removeSpeedBoost(player)
 	}
 
-	fun tick(player: Player, slotId: Int) {
+	fun tick(player: Player, level: Level, slotId: Int) {
 		if (slotId != 39) return
-		val level = player.level() as? ServerLevel ?: return
 		if (player.isSprinting) {
 			this.sprintTimer++
 			this.setMachStage()
 			this.applySpeedBoost(player)
 			if (player.attackAnim > 0f) this.reset(player)
-			if (this.sprintTimer == 1) PacketDistributor.sendToPlayersTrackingChunk(
+			if (level is ServerLevel && this.sprintTimer == 1) PacketDistributor.sendToPlayersTrackingChunk(
 				level,
 				player.chunkPosition(),
 				MachTrailPacket(player.gameProfile)
 			)
-			val aabb = player.hitbox
-			level.getEntities(player, aabb).forEach { target ->
-				if (target is LivingEntity && !target.isDeadOrDying) {
-					fun rand() = (target.random.nextDouble() - 0.5) * 1.1
-					level.playSound(
-						null,
-						target.x, target.y, target.z,
-						ModSounds.PUNCH.get(),
-						AMBIENT
-					)
-					level.playSound(
-						null,
-						target.x, target.y, target.z,
-						ModSounds.KILL_ENEMY.get(),
-						AMBIENT
-					)
-					val vector = player.calculateViewVector(
-						player.getViewXRot(0f),
-						player.getViewYRot(0f)
-					).multiply(5.0, 0.0, 5.0)
-					target.addDeltaMovement(vector.add(0.0, 3.0, 0.0))
-					target.kill()
-					level.sendParticles(
-						ParticleTypes.CLOUD,
-						target.x, target.y, target.z,
-						50,
-						rand(), target.random.nextDouble(), rand(),
-						0.5
-					)
+			if (this.machStage > 2) {
+				val aabb = player.hitbox.inflate(0.15)
+				level.getEntities(player, aabb).forEach { target ->
+					if (target is LivingEntity && !target.isDeadOrDying) {
+						fun rand() = (target.random.nextDouble() - 0.5) * 1.1
+						val vector = player.calculateViewVector(
+							player.getViewXRot(0f),
+							player.getViewYRot(0f)
+						).multiply(4.0, 0.0, 4.0)
+						target.addDeltaMovement(vector.add(0.0, 2.5, 0.0))
+						if (this.machStage >= 4) {
+							target.hurt(ModDamageType.MACH.source(player.level()), 100f)
+							this.playSound(target, ModSounds.PUNCH.get(), level)
+							this.playSound(target, ModSounds.KILL_ENEMY.get(), level)
+						} else {
+							target.hurt(ModDamageType.MACH.source(player.level()), 5f)
+							this.playSound(target, ModSounds.PUNCH.get(), level)
+						}
+						if (level is ServerLevel) level.sendParticles(
+							ParticleTypes.CLOUD,
+							target.x, target.y, target.z,
+							50,
+							rand(), target.random.nextDouble(), rand(),
+							0.5
+						)
+					}
 				}
 			}
 		} else {
 			this.removeSpeedBoost(player)
 		}
 	}
+
+	private fun playSound(target: LivingEntity, sound: SoundEvent, level: Level) =
+		level.playSound(null, target.x, target.y, target.z, sound, AMBIENT)
 }

@@ -26,13 +26,13 @@ import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
 import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
-import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
+import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
 import org.bread_experts_group.breadmod.client.render.buffer.render.BeamBufferTask
-import org.bread_experts_group.breadmod.data_holders.ToolGunData
+import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents

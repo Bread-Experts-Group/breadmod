@@ -171,10 +171,9 @@ internal object ClientNeoForgeEventBus {
 		if (machTrailMap.isNotEmpty()) {
 			machTrailMap.forEach { (_, machTrailData) ->
 				machTrailData.tick()
-				if (!machTrailData.player.isSprinting || machTrailData.player.attackAnim > 0f) {
-					machTrailData.machFourSound.kill = true
-					localClient.soundManager.stop(machTrailData.machFourSound)
-					machTrailMap.remove(machTrailData.playerProfile)
+				if (!machTrailData.targetPlayer.isSprinting || machTrailData.targetPlayer.attackAnim > 0f) {
+					machTrailData.killAllSounds()
+					machTrailMap.remove(machTrailData.targetPlayer)
 					return
 				}
 			}

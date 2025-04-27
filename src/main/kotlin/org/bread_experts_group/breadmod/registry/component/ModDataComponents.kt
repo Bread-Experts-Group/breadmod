@@ -6,6 +6,8 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.network.codec.ByteBufCodecs
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.network.BreadModCodecs.CLOSED_SYSTEM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.CLOSED_SYSTEM_STREAM_CODEC
@@ -13,8 +15,6 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_STREAM_CODEC
-import org.bread_experts_group.breadmod.data_holders.MachSpeedData
-import org.bread_experts_group.breadmod.data_holders.ToolGunData
 import java.math.BigDecimal
 import java.util.function.Supplier
 
