@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod
 
 import net.minecraft.client.model.EntityModel
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
@@ -20,6 +21,7 @@ import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import net.neoforged.neoforge.client.model.generators.ModelProvider
@@ -35,10 +37,12 @@ import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
+import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
@@ -57,6 +61,7 @@ import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltOne
 import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltThree
 import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltTwo
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
+import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -136,6 +141,9 @@ internal object ClientModEventBus {
 		event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
 		event.registerItem(ToolGunItem.ToolGunItemExtensions, ModItems.TOOL_GUN)
 		event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
+		event.registerItem(object : IClientItemExtensions {
+			override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = CreativeGeneratorItemRenderer
+		}, ModBlocks.CREATIVE_GENERATOR.asItem())
 	}
 
 	@SubscribeEvent
@@ -150,6 +158,7 @@ internal object ClientModEventBus {
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get(), ::MonitorRenderer)
 		event.registerBlockEntityRenderer(ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(), ::DoubleOrNothingRenderer)
+		event.registerBlockEntityRenderer(ModBlockEntityTypes.CREATIVE_GENERATOR.get(), ::CreativeGeneratorRenderer)
 	}
 
 	@SubscribeEvent
@@ -193,7 +202,7 @@ internal object ClientModEventBus {
 		event.register(this.modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/generator_on"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
-		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator/creative_generator_star"))
+		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator_star"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
 		event.register(this.modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
 		event.register(this.modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door"))

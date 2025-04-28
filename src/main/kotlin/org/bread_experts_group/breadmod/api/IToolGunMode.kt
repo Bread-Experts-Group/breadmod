@@ -6,6 +6,7 @@ import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -35,6 +36,16 @@ interface IToolGunMode {
 	 * Triggered using right click.
 	 */
 	fun action(level: Level, player: Player, stack: ItemStack)
+
+	/**
+	 * Fired when the tool gun's use function is called, fired before [action].
+	 */
+	fun onUsePre(level: Level, player: Player, usedHand: InteractionHand)
+
+	/**
+	 * Fired when the tool gun's use function is called, fired after [action].
+	 */
+	fun onUsePost(level: Level, player: Player, usedHand: InteractionHand)
 
 	/**
 	 * Event bridge for [MouseScrollingEvent], used for handling mouse scrolling while holding the tool gun.

@@ -60,12 +60,11 @@ class ToolGunItem : Item(
 		val stack = getStackInPlayerHand(player)
 		if (stack.`is`(ModItems.TOOL_GUN)) {
 			val (mode, _, _) = ToolGunData.get(stack)
+			mode.onUsePre(level, player, usedHand)
 			mode.action(level, player, stack)
+			mode.onUsePost(level, player, usedHand)
 			if (level.isClientSide) {
 				triggerDelta(stack.hashCode())
-//				ToolGunItemRenderer.offset = player.position()
-//				ToolGunItemRenderer.yRot = player.getViewYRot(0f)
-//				ToolGunItemRenderer.xRot = player.getViewYRot(0f)
 				BeamBufferTask.create(
 					player.position(),
 					player.getViewYRot(0f),
@@ -75,18 +74,13 @@ class ToolGunItem : Item(
 				if (mode.shouldPlayToolGunSound(stack, player)) mode.playToolGunSound(player)
 			}
 		}
-//			BeamBufferTask.create(
-//				player.position(),
-//				player.calculateViewVector(player.xRot, player.yRot),
-//				localClient.options.cameraType.isFirstPerson
-//			)
 		return super.use(level, player, usedHand)
 	}
 
 	override val creativeModeTabs: List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
 
 	override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean =
-		false
+		slotChanged
 
 	companion object {
 		const val TOOL_GUN_DEF: String = "tool_gun"

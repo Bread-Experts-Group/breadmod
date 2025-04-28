@@ -229,6 +229,8 @@ class ModBlockStateProvider(
 			val model = this.blockBenchBlockModel("double_or_nothing_$segment")
 			return@horizontalBlock model
 		}
+		// Creative Generator
+		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.asBlock(), "creative_generator")
 	}
 
 	private fun blockBenchBlockModel(model: String): ModelFile.ExistingModelFile =

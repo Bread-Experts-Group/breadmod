@@ -52,6 +52,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.SoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
+import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.ToasterBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
@@ -178,6 +179,14 @@ object ModBlocks {
 	val DOUGH_MACHINE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"dough_machine",
 		::DoughMachineBlock,
+		Properties()
+	)
+
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage("en_us")
+	val CREATIVE_GENERATOR: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"creative_generator",
+		::CreativeGeneratorBlock,
 		Properties()
 	)
 

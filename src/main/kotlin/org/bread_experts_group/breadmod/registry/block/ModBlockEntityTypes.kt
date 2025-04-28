@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
+import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
@@ -65,6 +66,10 @@ object ModBlockEntityTypes {
 	val DOUBLE_OR_NOTHING: Supplier<BlockEntityType<DoubleOrNothingBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("double_or_nothing_entity") { ->
 			this.buildBlockEntity(::DoubleOrNothingBlockEntity, ModBlocks.DOUBLE_OR_NOTHING.asBlock())
+		}
+	val CREATIVE_GENERATOR: Supplier<BlockEntityType<CreativeGeneratorBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("creative_generator_entity") { ->
+			this.buildBlockEntity(::CreativeGeneratorBlockEntity, ModBlocks.CREATIVE_GENERATOR.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(
