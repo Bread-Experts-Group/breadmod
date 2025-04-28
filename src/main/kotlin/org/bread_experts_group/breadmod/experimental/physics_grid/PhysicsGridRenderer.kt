@@ -50,8 +50,8 @@ class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {
 		if (!this.shouldRender(camera.position, this.grid.boundingBox.center)) return
 		poseStack.pushPose()
 		poseStack.offsetRenderToCameraPos(this.grid.position, camera, false)
-
-		this.grid.getChunk(0, 0).findBlocks({ !it.isAir }, { pos, state ->
+		// Broad Filter -> Fine Filter -> Void Consumer
+		this.grid.getChunk(0, 0).findBlocks({ !it.isAir }, { _, _ -> true }, { pos, state ->
 			if (this.shouldFrustumCull(this.grid.position.plus(pos.toVec3()), frustum)) return@findBlocks
 			poseStack.pushPose()
 			poseStack.translate(pos.toVec3())
