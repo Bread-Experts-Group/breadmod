@@ -3,16 +3,21 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Holder
+import net.minecraft.server.ServerScoreboard
+import net.minecraft.server.level.ServerChunkCache
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.server.level.ThreadedLevelLightEngine
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.AbortableIterationConsumer
+import net.minecraft.util.profiling.ProfilerFiller
+import net.minecraft.util.profiling.metrics.MetricCategory
 import net.minecraft.world.TickRateManager
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.item.alchemy.PotionBrewing
 import net.minecraft.world.item.crafting.RecipeManager
-import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.biome.Biome
@@ -20,10 +25,10 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.ChunkAccess
-import net.minecraft.world.level.chunk.ChunkSource
 import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.chunk.status.ChunkStatus
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes
+import net.minecraft.world.level.dimension.LevelStem
 import net.minecraft.world.level.entity.EntityTypeTest
 import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.gameevent.GameEvent
@@ -32,39 +37,67 @@ import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.saveddata.maps.MapId
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData
-import net.minecraft.world.level.storage.WritableLevelData
+import net.minecraft.world.level.storage.LevelStorageSource
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.VoxelShape
-import net.minecraft.world.scores.Scoreboard
-import net.minecraft.world.ticks.LevelTickAccess
+import net.minecraft.world.ticks.LevelTicks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.util.minus
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
 import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import java.util.UUID
+import java.util.concurrent.Executors
 import java.util.function.BooleanSupplier
 import java.util.function.Consumer
+import java.util.function.Supplier
 import kotlin.math.pow
 
 @Suppress("UnstableApiUsage")
-abstract class PhysicsGrid(level: Level, posA: BlockPos, posB: BlockPos) : Level(
-	level.levelData as WritableLevelData,
-	level.dimension(),
-	level.registryAccess(),
-	level.registryAccess().holderOrThrow(BuiltinDimensionTypes.OVERWORLD),
-	level.profilerSupplier,
-	level.isClientSide,
+abstract class PhysicsGrid(level: Level, posA: BlockPos, posB: BlockPos) : ServerLevel(
+	level.server,
+	Executors.newVirtualThreadPerTaskExecutor(),
+	LevelStorageSource(
+		null,
+		null,
+		null,
+		null
+	).LevelStorageAccess(
+		"breadmod:highly_experimental",
+		null
+	),
+	null,
+	null,
+	LevelStem(
+		level.registryAccess().holderOrThrow(BuiltinDimensionTypes.OVERWORLD),
+		null
+	),
+	null,
 	false,
 	0L,
-	1000000
+	emptyList(),
+	true,
+	null
 ), LevelEntityGetter<Entity> {
-	val localChunkSource: ChunkSource = object : ChunkSource() {
+	val localChunkSource: ServerChunkCache = object : ServerChunkCache(
+		this@PhysicsGrid,
+		null,
+		null,
+		null,
+		null,
+		null,
+		10,
+		10,
+		false,
+		null,
+		null,
+		null
+	) {
 		inner class LocalChunk(x: Int, z: Int) : LevelChunk(this@PhysicsGrid, ChunkPos(x, z))
 
 		val chunks: MutableMap<Long, LocalChunk> = mutableMapOf()
-		override fun getLevel(): BlockGetter = this@PhysicsGrid
+		override fun getLevel(): Level = this@PhysicsGrid
 		override fun getChunk(x: Int, z: Int, chunkStatus: ChunkStatus, requireChunk: Boolean): ChunkAccess =
 			this.chunks.getOrPut((x.toLong() shl 32) or z.toLong()) { LocalChunk(x, z) }
 
@@ -73,9 +106,61 @@ abstract class PhysicsGrid(level: Level, posA: BlockPos, posB: BlockPos) : Level
 
 		override fun gatherStats(): String = throw UnsupportedOperationException()
 		override fun getLoadedChunksCount(): Int = throw UnsupportedOperationException()
-		override fun getLightEngine(): LevelLightEngine = this@PhysicsGrid.localLightEngine
+		override fun getLightEngine(): ThreadedLevelLightEngine = this@PhysicsGrid.localLightEngine
 	}
-	val localLightEngine: LevelLightEngine = LevelLightEngine(this.localChunkSource, true, true)
+	val localLightEngine: ThreadedLevelLightEngine = ThreadedLevelLightEngine(
+		this.localChunkSource,
+		null,
+		true,
+		null,
+		null
+	)
+	val localProfilerFiller: ProfilerFiller = object : ProfilerFiller {
+		override fun startTick() {
+			TODO("Not yet implemented")
+		}
+
+		override fun endTick() {
+			TODO("Not yet implemented")
+		}
+
+		override fun push(name: String) {
+			TODO("Not yet implemented")
+		}
+
+		override fun push(nameSupplier: Supplier<String?>) {
+			TODO("Not yet implemented")
+		}
+
+		override fun pop() {
+			TODO("Not yet implemented")
+		}
+
+		override fun popPush(name: String) {
+			TODO("Not yet implemented")
+		}
+
+		override fun popPush(nameSupplier: Supplier<String?>) {
+			TODO("Not yet implemented")
+		}
+
+		override fun markForCharting(category: MetricCategory) {
+			TODO("Not yet implemented")
+		}
+
+		override fun incrementCounter(counterName: String, increment: Int) {
+			TODO("Not yet implemented")
+		}
+
+		override fun incrementCounter(
+			counterNameSupplier: Supplier<String?>,
+			increment: Int
+		) {
+			TODO("Not yet implemented")
+		}
+	}
+	val localTickManager: TickRateManager = TickRateManager()
+	val localBlockTicker: LevelTicks<Block> = LevelTicks({ true }, { this.localProfilerFiller })
 	val id: Int = ++PhysicsGridGlobals.idCounter
 	val logger: Logger = LogManager.getLogger("PhysicsGrid ${this.id}")
 	val voxelShapes: MutableMap<BlockPos, VoxelShape> = mutableMapOf()
@@ -126,10 +211,14 @@ abstract class PhysicsGrid(level: Level, posA: BlockPos, posB: BlockPos) : Level
 				this.velocity.length().pow(2.0)) / this.mass
 		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
 		this.position = this.position.add(this.velocity)
+		this.localBlockTicker.tick(this.gameTime, 65536) { pos: BlockPos, block: Block ->
+			val blockstate = this.getBlockState(pos)
+			if (blockstate.`is`(block)) blockstate.tick(this, pos, this.random)
+		}
+//		this.fluidTicks.tick(k, 65536, BiConsumer { pos: BlockPos?, fluid: Fluid? -> this.tickFluid(pos, fluid) })
 	}
 
 	override fun getEntities(): LevelEntityGetter<Entity> = this
-	override fun players(): MutableList<out Player> = throw UnsupportedOperationException()
 	override fun getShade(direction: Direction, shade: Boolean): Float {
 		if (!shade) return 1f
 		return when (direction) {
@@ -143,9 +232,9 @@ abstract class PhysicsGrid(level: Level, posA: BlockPos, posB: BlockPos) : Level
 	override fun getLightEngine(): LevelLightEngine = this.localLightEngine
 	override fun getUncachedNoiseBiome(x: Int, y: Int, z: Int): Holder<Biome> = throw UnsupportedOperationException()
 	override fun enabledFeatures(): FeatureFlagSet = throw UnsupportedOperationException()
-	override fun getBlockTicks(): LevelTickAccess<Block> = throw UnsupportedOperationException()
-	override fun getFluidTicks(): LevelTickAccess<Fluid> = throw UnsupportedOperationException()
-	override fun getChunkSource(): ChunkSource = this.localChunkSource
+	override fun getBlockTicks(): LevelTicks<Block> = this.localBlockTicker
+	override fun getFluidTicks(): LevelTicks<Fluid> = throw UnsupportedOperationException()
+	override fun getChunkSource(): ServerChunkCache = this.localChunkSource
 
 	override fun levelEvent(player: Player?, type: Int, pos: BlockPos, data: Int): Unit =
 		throw UnsupportedOperationException()
@@ -180,14 +269,14 @@ abstract class PhysicsGrid(level: Level, posA: BlockPos, posB: BlockPos) : Level
 
 	override fun gatherChunkSourceStats(): String = throw UnsupportedOperationException()
 	override fun getEntity(id: Int): Entity = throw UnsupportedOperationException()
-	override fun tickRateManager(): TickRateManager = TickRateManager()
+	override fun tickRateManager(): TickRateManager = this.localTickManager
 	override fun getMapData(mapId: MapId): MapItemSavedData = throw UnsupportedOperationException()
 	override fun setMapData(mapId: MapId, mapData: MapItemSavedData): Unit = throw UnsupportedOperationException()
 	override fun getFreeMapId(): MapId = throw UnsupportedOperationException()
 	override fun destroyBlockProgress(breakerId: Int, pos: BlockPos, progress: Int): Unit =
 		throw UnsupportedOperationException()
 
-	override fun getScoreboard(): Scoreboard = throw UnsupportedOperationException()
+	override fun getScoreboard(): ServerScoreboard = throw UnsupportedOperationException()
 	override fun getRecipeManager(): RecipeManager = throw UnsupportedOperationException()
 	override fun potionBrewing(): PotionBrewing = throw UnsupportedOperationException()
 	override fun setDayTimeFraction(dayTimeFraction: Float): Unit = throw UnsupportedOperationException()

@@ -36,6 +36,7 @@ import org.bread_experts_group.breadmod.client.render.redness
 import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
 import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
 import org.bread_experts_group.breadmod.command.client.PingCommand
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
@@ -177,6 +178,9 @@ internal object ClientNeoForgeEventBus {
 					return
 				}
 			}
+		}
+		PhysicsGridGlobals.grids.values.forEach {
+			it.localChunkSource.tick({ true }, true)
 		}
 	}
 
