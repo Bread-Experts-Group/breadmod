@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_neoforge.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_neoforge.iml" />
