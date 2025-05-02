@@ -18,6 +18,10 @@ object ModSounds {
 	@DataGenerateLanguage("en_us", "Test Sound plays")
 	val TEST_SOUND: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("test_sound")
 
+	@DataGenerateSound
+	@DataGenerateLanguage("en_us", "LOUD INCORRECT BUZZER")
+	val WRONG: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("wrong")
+
 	@DataGenerateSound(stream = true)
 	@DataGenerateLanguage("en_us", "GAS GAS GAS")
 	val GAS_GAS_GAS: DeferredHolder<SoundEvent, SoundEvent> = this.registerSoundEvents("gas_gas_gas")
