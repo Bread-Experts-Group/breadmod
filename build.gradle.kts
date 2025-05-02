@@ -84,21 +84,6 @@ neoForge {
 			client()
 			enableTestNamespaces()
 			devLogin = true
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create(breadServerLib) { isTransitive = false }
-			)
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.1.10") { isTransitive = false }
-			)
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.1.10") { isTransitive = false }
-			)
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10") { isTransitive = false }
-			)
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10") { isTransitive = false }
-			)
 		}
 		create("server") {
 			server()
@@ -125,6 +110,21 @@ neoForge {
 			// "REGISTRYDUMP": For getting the contents of all registries.
 			// systemProperty 'forge.logging.markers', 'REGISTRIES'
 			logLevel = Level.INFO
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create(breadServerLib) { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.1.10") { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.1.10") { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10") { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10") { isTransitive = false }
+			)
 		}
 	}
 
