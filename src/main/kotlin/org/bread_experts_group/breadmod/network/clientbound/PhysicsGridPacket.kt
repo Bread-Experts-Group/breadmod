@@ -23,14 +23,14 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask
-import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.NullRandom
-import org.bread_experts_group.breadmod.client.render.buffer.render.BulkBlockBufferTask.modelData
+import org.bread_experts_group.breadmod.client.render.buffer.BulkBlockBufferTask
+import org.bread_experts_group.breadmod.client.render.buffer.BulkBlockBufferTask.NullRandom
+import org.bread_experts_group.breadmod.client.render.buffer.BulkBlockBufferTask.modelData
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.network.BreadModCodecs
+import org.bread_experts_group.breadmod.util.toVec3
+import org.bread_experts_group.breadmod.util.unaryMinus
 import org.joml.Vector3f
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 import java.util.BitSet
 
 class PhysicsGridPacket private constructor(

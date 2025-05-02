@@ -1,11 +1,9 @@
 package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries
 
-import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.gui.components.ModelViewerWidget
 import org.bread_experts_group.breadmod.client.gui.components.ScrollingContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryButton
@@ -13,6 +11,7 @@ import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.sett
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
+import org.bread_experts_group.breadmod.registry.Registry
 
 class RendererEntry(
 	screen: ToolGunScreen,
@@ -30,10 +29,6 @@ class RendererEntry(
 ) {
 	private val toolGunRenderer = ToolGunItemRenderer
 
-	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		super.renderContainer(guiGraphics, mouseX, mouseY, partialTick)
-	}
-
 	override fun init() {
 		val (_, _, index) = ToolGunData.get(this.stack)
 		this.addChild(
@@ -47,7 +42,7 @@ class RendererEntry(
 					bufferSource,
 					0XFFFFFF,
 					OverlayTexture.NO_OVERLAY,
-					toolGunModes.values.elementAt(index)
+					Registry.toolGunModes.values.elementAt(index)
 				)
 			},
 			this.x + 125,

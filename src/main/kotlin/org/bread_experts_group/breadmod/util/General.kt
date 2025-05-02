@@ -8,6 +8,7 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.core.Vec3i
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.nbt.CompoundTag
@@ -32,12 +33,12 @@ import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.CollisionContext
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
+import org.joml.Vector3f
 import java.math.BigDecimal
 import java.util.UUID
 import java.util.function.Supplier
 import kotlin.math.round
+import kotlin.math.roundToInt
 import kotlin.reflect.full.createInstance
 
 internal val formatArray: List<String> =
@@ -169,6 +170,11 @@ fun blockPhysicsGrid(
 	}
 	return null
 }
+
+fun Vec3.toVec3i(): Vec3i = Vec3i(x.roundToInt(), y.roundToInt(), z.roundToInt())
+fun Vector3f.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
+fun Vec3i.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
+operator fun Vec3i.unaryMinus(): Vec3i = Vec3i(-this.x, -this.y, -this.z)
 
 fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())

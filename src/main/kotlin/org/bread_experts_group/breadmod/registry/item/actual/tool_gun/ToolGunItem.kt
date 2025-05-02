@@ -24,17 +24,16 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
-import org.bread_experts_group.breadmod.client.render.buffer.render.BeamBufferTask
-import org.bread_experts_group.breadmod.client.render.buffer.render.TestCubeBufferTask
+import org.bread_experts_group.breadmod.client.render.buffer.BeamBufferTask
+import org.bread_experts_group.breadmod.client.render.buffer.TestCubeBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
+import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
@@ -90,12 +89,10 @@ class ToolGunItem : Item(
 		val (mode, _, index) = ToolGunData.get(heldStack)
 		if (player.isCrouching) {
 			scrollingEvent.isCanceled = true
-			val deltaY = scrollingEvent.scrollDeltaY
-			val modeSize = toolGunModes.size
-			val currentIndex = Math.floorMod(index + deltaY.toInt(), modeSize)
+			val currentIndex = Math.floorMod(index + scrollingEvent.scrollDeltaY.toInt(), Registry.toolGunModes.size)
 			PacketDistributor.sendToServer(
 				ToolGunModeChangePacket(
-					toolGunModes.keys.elementAt(currentIndex),
+					Registry.toolGunModes.keys.elementAt(currentIndex),
 					currentIndex
 				)
 			)
@@ -107,7 +104,7 @@ class ToolGunItem : Item(
 		val newData = ToolGunData.get(stack)
 		if (newData.extraData.isEmpty) {
 			LogManager.getLogger().info("Tool gun data is empty! initializing...")
-			CommonNeoForgeEventBus.toolGunModes.forEach { (_, mode) ->
+			Registry.toolGunModes.forEach { (_, mode) ->
 				newData.extraData.put(mode.getModeName(), CompoundTag().also(mode::saveExtraData))
 			}
 			stack.set(ModDataComponents.TOOL_GUN_DATA, newData)

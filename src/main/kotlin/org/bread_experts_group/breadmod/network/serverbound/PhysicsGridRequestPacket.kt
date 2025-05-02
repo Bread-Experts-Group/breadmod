@@ -16,9 +16,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
+import org.bread_experts_group.breadmod.util.toVec3
+import org.bread_experts_group.breadmod.util.unaryMinus
 import org.joml.Vector3f
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
 
 class PhysicsGridRequestPacket(
 	val position: Vector3f,

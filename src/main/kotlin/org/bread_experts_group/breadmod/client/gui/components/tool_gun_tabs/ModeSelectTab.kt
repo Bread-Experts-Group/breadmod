@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
@@ -15,6 +14,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
+import org.bread_experts_group.breadmod.registry.Registry
 import java.awt.Color
 
 class ModeSelectTab(
@@ -29,8 +29,8 @@ class ModeSelectTab(
 
 	private var currentModeWidget: ModeWidget = ModeWidget.noWidget
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
-	private val modeButton = GenericButton(0, 0, 80, 20, "Change Mode") {
-		val index = toolGunModes.keys.indexOf(this.currentModeWidget.id)
+	private val modeButton: GenericButton = GenericButton(0, 0, 80, 20, "Change Mode") {
+		val index = Registry.toolGunModes.keys.indexOf(this.currentModeWidget.id)
 		PacketDistributor.sendToServer(ToolGunModeChangePacket(this.currentModeWidget.id, index))
 		this.updateModeWidgetSelection(index)
 	}
@@ -45,7 +45,7 @@ class ModeSelectTab(
 				}
 			}
 		}
-		toolGunModes.forEach { (_, mode) ->
+		Registry.toolGunModes.forEach { (_, mode) ->
 			this.modeWidgets.add(mode.getCustomRenderer().getModeWidget())
 		}
 		this.modeWidgets.forEachIndexed { mIndex, modeWidget ->
@@ -58,8 +58,8 @@ class ModeSelectTab(
 	/**
 	 * Update the border color on the widget's mode that is currently active.
 	 */
-	private fun updateModeWidgetSelection(index: Int) = this.getWidgets().filterIsInstance<ModeWidget>().forEach {
-		it.isSelected = it.id == toolGunModes.keys.elementAt(index)
+	private fun updateModeWidgetSelection(index: Int): Unit = this.getWidgets().filterIsInstance<ModeWidget>().forEach {
+		it.isSelected = it.id == Registry.toolGunModes.keys.elementAt(index)
 	}
 
 	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.util.minus
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
+import org.bread_experts_group.breadmod.util.toVec3
 import java.util.function.BiConsumer
 
 abstract class ExplosiveBlock(

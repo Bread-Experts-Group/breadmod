@@ -5,28 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "breadmod_neoforge.refmap.json",
   "mixins": [
-    "common.IAccessorEntity",
-    "common.MixinActiveProfiler",
-    "common.MixinEntity",
-    "common.MixinLightningBolt",
-    "common.MixinLivingEntity",
-    "common.MixinRayTracing",
-    "common.MixinServerPlayer"
   ],
   "client": [
-    "client.IAccessorDirectoryLister",
-    "client.InvokerIVertexConsumerExtension",
-    "client.MixinClientLanguage",
-    "client.MixinClientPacket",
-    "client.MixinDirectoryListener",
-    "client.MixinFallbackResourceManager",
-    "client.MixinGuiGraphics",
-    "client.MixinLevelRenderer",
-    "client.MixinMinecraft",
-    "client.MixinSoundManager",
-    "client.MixinSpriteResourceLoader",
-    "client.MixinTranslatableContents",
-    "client.MixinVertexConsumer"
   ],
   "injectors": {
     "defaultRequire": 1

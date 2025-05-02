@@ -45,7 +45,7 @@ import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
+import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal

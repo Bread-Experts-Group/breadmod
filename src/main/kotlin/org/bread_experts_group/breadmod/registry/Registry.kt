@@ -1,26 +1,193 @@
 package org.bread_experts_group.breadmod.registry
 
+import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.BufferUploader
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import com.mojang.blaze3d.vertex.Tesselator
+import com.mojang.blaze3d.vertex.VertexFormat
+import com.mojang.math.Axis
+import net.minecraft.Util
+import net.minecraft.client.model.EntityModel
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
+import net.minecraft.client.renderer.FogRenderer
+import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.client.renderer.ShaderInstance
+import net.minecraft.client.renderer.entity.LivingEntityRenderer
+import net.minecraft.client.renderer.item.ItemProperties
+import net.minecraft.client.resources.PlayerSkin
+import net.minecraft.commands.Commands
+import net.minecraft.core.Direction
+import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.Mth.clamp
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.phys.BlockHitResult
+import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
+import net.neoforged.fml.loading.FMLEnvironment
+import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
+import net.neoforged.neoforge.client.event.ClientTickEvent
+import net.neoforged.neoforge.client.event.EntityRenderersEvent
+import net.neoforged.neoforge.client.event.InputEvent
+import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
+import net.neoforged.neoforge.client.event.ModelEvent
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
+import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
+import net.neoforged.neoforge.client.event.RegisterShadersEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.client.event.ScreenEvent
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers
+import net.neoforged.neoforge.client.model.generators.ModelProvider
+import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider
+import net.neoforged.neoforge.data.event.GatherDataEvent
+import net.neoforged.neoforge.event.RegisterCommandsEvent
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
+import net.neoforged.neoforge.event.server.ServerStartedEvent
+import net.neoforged.neoforge.event.tick.ServerTickEvent
+import net.neoforged.neoforge.items.wrapper.InvWrapper
+import net.neoforged.neoforge.network.PacketDistributor
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
+import net.neoforged.neoforge.registries.DeferredRegister
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.BreadMod.Companion.modModelLoc
+import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.client.gui.overlays.CameraOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.InternetChatRelayOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
+import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
+import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
+import org.bread_experts_group.breadmod.client.model.ChefHatModel
+import org.bread_experts_group.breadmod.client.model.ForkliftModel
+import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
+import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
+import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
+import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
+import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
+import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
+import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.MonitorRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRenderer
+import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
+import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
+import org.bread_experts_group.breadmod.client.render.itemColor
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.redness
+import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
+import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
+import org.bread_experts_group.breadmod.command.client.PingCommand
+import org.bread_experts_group.breadmod.command.server.ScreenBleedCommand
+import org.bread_experts_group.breadmod.command.server.WarTimerCommand
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
+import org.bread_experts_group.breadmod.data_holders.server.ScreenBleedData.Companion.screenBleedMap
+import org.bread_experts_group.breadmod.data_holders.server.WarTimerData.Companion.warTimerMap
+import org.bread_experts_group.breadmod.datagen.ModRecipeProvider
+import org.bread_experts_group.breadmod.datagen.damage_type.ModDamageTypeProvider
+import org.bread_experts_group.breadmod.datagen.lang.BaseLanguageProvider
+import org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator
+import org.bread_experts_group.breadmod.datagen.loot.ModBlockLootProvider
+import org.bread_experts_group.breadmod.datagen.loot.ModBlockLootProvider.Companion.constructLootProvider
+import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider
+import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
+import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
+import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
+import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
+import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
+import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
+import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
+import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
+import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.ClientPhysicsGridPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.GridPosUpdatePacket
+import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
+import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
+import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
+import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
+import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
+import org.bread_experts_group.breadmod.network.serverbound.PhysicsGridRequestPacket
+import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
+import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
+import org.bread_experts_group.breadmod.registry.KeyMappings.placeItemKey
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltFour
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltOne
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltThree
+import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltTwo
 import org.bread_experts_group.breadmod.registry.attachment.ModAttachments
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
+import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.ModFluids
+import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
+import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
+import org.bread_experts_group.breadmod.registry.entity.ModPainting
+import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
+import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
+import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.item.ModRecords
+import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyScreen
+import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
+import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModBiomes
+import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModDimensions
+import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModFeatures
+import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModNoiseGenerators
+import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModPools
+import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructureSets
+import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructures
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.sin
+import kotlin.reflect.full.primaryConstructor
 
 object Registry {
+	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger()
-	private val registerList = listOf(
+	private val registerList: List<DeferredRegister<out Any>> = listOf(
 		ModItems.ITEM_REGISTRY,
 		ModBlocks.BLOCK_REGISTRY,
 		ModSounds.SOUND_REGISTRY,
@@ -38,10 +205,443 @@ object Registry {
 		ModMenuTypes.MENU_TYPE_REGISTRY
 	)
 
-	fun registerAll(bus: IEventBus) {
+	fun registerAll(modBus: IEventBus) {
 		this.registerList.forEach {
 			this.logger.info("Pushing register for ${it.registryName}")
-			it.register(bus)
+			it.register(modBus)
+		}
+		// Sided Event Registration
+		when (FMLEnvironment.dist) {
+			Dist.CLIENT           -> {
+				// Game Bus
+				NeoForge.EVENT_BUS.addListener { event: ScreenEvent.Render.Post ->
+					ScreenBleedOverlay.renderBleed(event.guiGraphics)
+				}
+				NeoForge.EVENT_BUS.addListener { event: RenderLevelStageEvent ->
+					if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {
+						val poseStack = event.poseStack
+						val bufferBuilder =
+							Tesselator.getInstance()
+								.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
+						val millis = Util.getMillis()
+
+						RenderSystem.setShader(GameRenderer::getPositionColorShader)
+						RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+						RenderSystem.enableBlend()
+						poseStack.pushPose()
+						poseStack.mulPose(Axis.XP.rotationDegrees(-17f))
+						val matrix = poseStack.last().pose()
+						bufferBuilder.addVertex(matrix, 0f, 100f, 0f)
+							.setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
+
+						for (j: Int in 0 .. 16) {
+							val f1 = j * (Math.PI.toFloat() * 2f) / 16f
+							val f2: Float = sin(f1)
+							val f3: Float = cos(f1)
+							bufferBuilder.addVertex(matrix, f2, -1f, -f3)
+								.setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
+						}
+						val shaderFogColor = RenderSystem.getShaderFogColor()
+						RenderSystem.setShaderFogColor(
+							shaderFogColor[0] + redness,
+							shaderFogColor[1] - redness,
+							shaderFogColor[2] - redness,
+							1f
+						)
+						FogRenderer.setupFog(
+							event.camera,
+							FogRenderer.FogMode.FOG_SKY,
+							256f,
+							true,
+							event.partialTick.realtimeDeltaTicks
+						)
+						FogRenderer.setupFog(
+							event.camera,
+							FogRenderer.FogMode.FOG_TERRAIN,
+							max(256f, 32f),
+							true,
+							event.partialTick.realtimeDeltaTicks
+						)
+
+						redness = clamp((sin(millis.toFloat() / 1800) + 1) / 2, 0f, 1f)
+						skyColorMixinActive = true
+
+						BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
+						RenderSystem.disableBlend()
+						poseStack.popPose()
+					} else if (!WarOverlay.timerActive) {
+						redness = 0.0f
+						skyColorMixinActive = false
+					}
+
+					RenderBuffer.handle(event)
+				}
+				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
+					val player = localClient.player ?: return@addListener
+					val stack = player.getItemInHand(player.usedItemHand)
+					val item = stack.item
+					if (item is IMouseItem) item.onMouseScroll(event, stack, player)
+				}
+				NeoForge.EVENT_BUS.addListener { event: InputEvent.Key ->
+					val player = localClient.player ?: return@addListener
+					val level = localClient.level ?: return@addListener
+					val stack = player.getItemInHand(player.usedItemHand)
+					val item = stack.item
+					if (item is IKeyboardItem) item.onKeyboardPress(event, stack, player)
+					if (event.action == InputConstants.PRESS) {
+						if (event.key == KeyMappings.placeItemKey.key.value) {
+							val hitResult = localClient.hitResult as? BlockHitResult ?: return@addListener
+							if (level.getBlockState(hitResult.blockPos).isAir) return@addListener
+							PacketDistributor.sendToServer(
+								PlaceItemInWorldPacket(
+									hitResult.blockPos,
+									hitResult.direction
+								)
+							)
+						}
+					}
+				}
+				NeoForge.EVENT_BUS.addListener { event: InputEvent.MouseButton.Pre ->
+					val player = localClient.player ?: return@addListener
+					val stack = getStackInPlayerHand(player)
+					val item = stack.item
+					if (item is IMouseItem) item.onMouseInputPre(event, stack, player)
+				}
+				NeoForge.EVENT_BUS.addListener { event: InputEvent.MouseButton.Post ->
+					val player = localClient.player ?: return@addListener
+					val stack = getStackInPlayerHand(player)
+					val item = stack.item
+					if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
+				}
+				NeoForge.EVENT_BUS.addListener { event: ClientPlayerNetworkEvent.LoggingIn ->
+					loadToolGunModes()
+				}
+				NeoForge.EVENT_BUS.addListener { event: ClientTickEvent.Pre ->
+					if (machTrailMap.isNotEmpty()) {
+						machTrailMap.forEach { (_, machTrailData) ->
+							machTrailData.tick()
+							if (!machTrailData.targetPlayer.isSprinting || machTrailData.targetPlayer.attackAnim > 0f) {
+								machTrailData.killAllSounds()
+								machTrailMap.remove(machTrailData.targetPlayer)
+								return@addListener
+							}
+						}
+					}
+					PhysicsGridGlobals.grids.values.forEach {
+						it.localChunkSource.tick({ true }, true)
+					}
+				}
+				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
+					event.dispatcher.register(
+						Commands.literal(BreadMod.ID)
+							.then(InternetRelayChatCommand.register())
+							.then(PingCommand.register())
+					)
+				}
+				// Mod Bus
+				modBus.addListener { event: FMLClientSetupEvent ->
+					event.enqueueWork {
+						ItemProperties.register(
+							ModItems.BREAD_SHIELD.get(), modLocation("blocking")
+						) { itemStack, _, livingEntity, _ ->
+							if (livingEntity != null && livingEntity.isUsingItem && livingEntity.useItem == itemStack)
+								1f else 0f
+						}
+					}
+				}
+				modBus.addListener { event: RegisterItemDecorationsEvent ->
+					event.register(ModItems.TOOL_GUN.asItem()) { guiGraphics, _, stack, xOffset, yOffset ->
+						val (mode, _, _) = ToolGunData.get(stack)
+						val poseStack = guiGraphics.pose()
+						poseStack.pushPose()
+						poseStack.scaleFlat(0.4f)
+						poseStack.translate(xOffset * 2.5 + 2, yOffset * 2.5 + 22, 0.0)
+						mode.getCustomRenderer().getModeWidget().icon.select({
+							guiGraphics.renderFakeItem(it, 0, 0)
+						}, {
+							poseStack.pushPose()
+							poseStack.scaleFlat(16f / it.textureWidth)
+							it.blitTexture(guiGraphics, 0, 0)
+							poseStack.popPose()
+						})
+						poseStack.popPose()
+						false
+					}
+				}
+				modBus.addListener { event: RegisterKeyMappingsEvent ->
+					event.register(openModeGui)
+					event.register(toolGunAltOne)
+					event.register(toolGunAltTwo)
+					event.register(toolGunAltThree)
+					event.register(toolGunAltFour)
+					event.register(placeItemKey)
+				}
+				modBus.addListener { event: RegisterShadersEvent ->
+					event.registerShader(
+						ShaderInstance(
+							event.resourceProvider,
+							modLocation("rendertype_rainbow"),
+							ModRenderType.rainbowVertexFormat
+						)
+					) { ModRenderType.rainbowInstance = it }
+					event.registerShader(
+						ShaderInstance(
+							event.resourceProvider,
+							modLocation("rendertype_astral"),
+							ModRenderType.astralVertexFormat
+						)
+					) { ModRenderType.astralInstance = it }
+				}
+				modBus.addListener { event: RegisterClientExtensionsEvent ->
+					event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
+					event.registerItem(ToolGunItem.ToolGunItemExtensions, ModItems.TOOL_GUN)
+					event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
+					event.registerItem(object : IClientItemExtensions {
+						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+							CreativeGeneratorItemRenderer
+					}, ModBlocks.CREATIVE_GENERATOR.asItem())
+				}
+				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
+					event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
+					event.registerEntityRenderer(ModEntityTypes.NUKE_BLOCK_ENTITY.get(), ::PrimedNukeBlockRenderer)
+					event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
+					event.registerEntityRenderer(ModEntityTypes.FORKLIFT.get(), ::ForkliftRenderer)
+					event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get(), ::ToasterRenderer)
+					event.registerBlockEntityRenderer(ModBlockEntityTypes.MICROWAVE.get(), ::MicrowaveRenderer)
+					event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
+					event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
+					event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get(), ::MonitorRenderer)
+					event.registerBlockEntityRenderer(
+						ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(),
+						::DoubleOrNothingRenderer
+					)
+					event.registerBlockEntityRenderer(
+						ModBlockEntityTypes.CREATIVE_GENERATOR.get(),
+						::CreativeGeneratorRenderer
+					)
+				}
+				modBus.addListener { event: RegisterGuiLayersEvent ->
+					event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
+					event.registerAbove(VanillaGuiLayers.CHAT, modLocation("irc_overlay"), InternetChatRelayOverlay())
+					event.registerAboveAll(modLocation("camera_overlay"), CameraOverlay())
+					event.registerAboveAll(modLocation("test_overlay"), TestOverlay())
+					event.registerAboveAll(modLocation("screen_bleed_overlay"), ScreenBleedOverlay())
+					event.registerBelow(
+						VanillaGuiLayers.DEBUG_OVERLAY,
+						modLocation("tool_gun_overlay"),
+						ToolGunOverlay()
+					)
+				}
+				modBus.addListener { event: RegisterColorHandlersEvent.Item ->
+					event.register(
+						itemColor,
+						ModItems.CHEF_HAT.get(), ModItems.DOPED_BREAD.get()
+					)
+				}
+				modBus.addListener { event: ModelEvent.RegisterAdditional ->
+					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
+					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
+					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/generator_on"))
+					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
+					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator_star"))
+					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator"))
+					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/alt/tool_gun_alt"))
+					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door"))
+					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate"))
+					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/axis"))
+				}
+				modBus.addListener { event: EntityRenderersEvent.AddLayers ->
+					@Suppress("UNCHECKED_CAST")
+					fun addHatLayer(type: EntityType<*>, event: EntityRenderersEvent.AddLayers) {
+						if (event.getRenderer(type) is LivingEntityRenderer<*, *>) {
+							val renderer = event.getRenderer(type)
+									as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
+							renderer.addLayer(ChefHatArmorLayer(renderer))
+						} else throw IllegalArgumentException(
+							"Expected LivingEntityRenderer, got ${event.getRenderer(type)}"
+						)
+					}
+
+					for (skin: PlayerSkin.Model in event.skins) {
+						val entity: LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>> =
+							event.getSkin(skin) ?: return@addListener
+						entity.addLayer(ChefHatArmorLayer(entity))
+						entity.addLayer(GluonGunBackpackArmorLayer(entity))
+					}
+//                    addHatLayer(EntityType.ZOMBIE, event)
+					addHatLayer(EntityType.ARMOR_STAND, event)
+					addHatLayer(EntityType.FOX, event)
+				}
+				modBus.addListener { event: EntityRenderersEvent.RegisterLayerDefinitions ->
+					event.registerLayerDefinition(ChefHatModel.HAT_LAYER, ChefHatModel::createLayerDefinition)
+					event.registerLayerDefinition(
+						GluonGunBackpackModel.BACKPACK_LAYER,
+						GluonGunBackpackModel::createLayerDefinition
+					)
+					event.registerLayerDefinition(ForkliftModel.FORKLIFT_LAYER, ForkliftModel::createLayerDefinition)
+				}
+				modBus.addListener { event: RegisterMenuScreensEvent ->
+					event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
+					event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
+					// Experimental stuff
+					event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
+				}
+			}
+			Dist.DEDICATED_SERVER -> {
+				// Nothing for dedicated servers yet ...
+			}
+		}
+		// Common Event Registration
+		// Game Bus
+		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
+			warTimerMap.forEach { (player, data) -> data.tick(player) }
+			screenBleedMap.forEach { (player, data) -> data.tick(player) }
+			PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
+		}
+		NeoForge.EVENT_BUS.addListener { event: ServerStartedEvent ->
+			loadToolGunModes()
+		}
+		NeoForge.EVENT_BUS.addListener { event: RegisterCommandsEvent ->
+			event.dispatcher.register(
+				Commands.literal(BreadMod.ID)
+					.then(WarTimerCommand.register())
+					.then(ScreenBleedCommand.register())
+			)
+		}
+		// Mod Bus
+		modBus.addListener { event: GatherDataEvent ->
+			val generator = event.generator
+			val packOutput = generator.packOutput
+			val existingFileHelper = event.existingFileHelper
+			val scanner = ModRecipeProvider::class.java.`package`.getScanner()
+			// add all the bootstrap entries to the registry set builder
+			val registrySetBuilder = RegistrySetBuilder()
+				.add(Registries.PAINTING_VARIANT, ModPainting::bootstrap)
+				.add(Registries.TEMPLATE_POOL, ModPools::bootstrap)
+				.add(Registries.STRUCTURE, ModStructures::bootstrap)
+				.add(Registries.STRUCTURE_SET, ModStructureSets::bootstrap)
+				.add(Registries.NOISE_SETTINGS, ModNoiseGenerators::bootstrapNoiseGenerators)
+				.add(Registries.CONFIGURED_FEATURE, ModFeatures::bootstrapConfiguredFeatures)
+				.add(Registries.PLACED_FEATURE, ModFeatures::bootstrapPlacedFeatures)
+				.add(Registries.BIOME, ModBiomes::bootstrapBiomes)
+				.add(Registries.DIMENSION_TYPE, ModDimensions::bootstrapDimensionTypes)
+				.add(Registries.LEVEL_STEM, ModDimensions::bootstrapLevelStems)
+				.add(Registries.JUKEBOX_SONG, ModRecords::bootstrap)
+			// bootstrap all the datapack entries and create the provider
+			val datapackEntriesProvider = DatapackBuiltinEntriesProvider(
+				packOutput, event.lookupProvider, registrySetBuilder, setOf(BreadMod.ID)
+			)
+			val lookupProvider = datapackEntriesProvider.registryProvider
+
+			if (event.includeServer()) {
+				this.logger.info("Server datagen")
+				// actually run the provider for the datapack entries
+				generator.addProvider(true, datapackEntriesProvider)
+				generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, existingFileHelper))
+				generator.addProvider(
+					true,
+					constructLootProvider(ModBlockLootProvider(lookupProvider), packOutput, lookupProvider)
+				)
+				generator.addProvider(true, ModRecipeProvider(packOutput, lookupProvider))
+				generator.addProvider(true, ModDamageTypeProvider(packOutput))
+				generator.addProvider(true, ModTagProvider(packOutput))
+			}
+			if (event.includeClient()) {
+				this.logger.info("Client datagen")
+				generator.addProvider(true, ModBlockStateProvider(packOutput, existingFileHelper))
+				generator.addProvider(true, ModItemModelProvider(packOutput, existingFileHelper))
+				scanner.getClassesAnnotatedWith(LanguageDataGenerator::class).forEach { clazz ->
+					generator.addProvider(
+						true,
+						(clazz.primaryConstructor ?: return@forEach).call(packOutput) as BaseLanguageProvider
+					)
+				}
+			}
+		}
+		modBus.addListener { event: RegisterPayloadHandlersEvent ->
+			val registrar: PayloadRegistrar = event.registrar("1.4.0")
+			// Clientbound packets
+			WarTimerIncrement.register(registrar)
+			WarTimerSet.register(registrar)
+			WarTimerSynchronization.register(registrar)
+			WarTimerToggle.register(registrar)
+			MachTrailPacket.register(registrar)
+			BeamPacket.register(registrar)
+			SpreadParticlesPacket.register(registrar)
+			PhysicsGridPacket.register(registrar)
+			ScreenBleedSetPacket.register(registrar)
+			ClientPhysicsGridPacket.register(registrar)
+			GridPosUpdatePacket.register(registrar)
+			GasGasGasSoundPacket.register(registrar)
+			// Serverbound packets
+			ToolGunModeChangePacket.register(registrar)
+			ToolGunDataSyncPacket.register(registrar)
+			PlaceItemInWorldPacket.register(registrar)
+			PhysicsGridRequestPacket.register(registrar)
+			GasGasGasNukePacket.register(registrar)
+		}
+		modBus.addListener { event: EntityAttributeCreationEvent ->
+			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())
+		}
+		modBus.addListener { event: RegisterCapabilitiesEvent ->
+			event.registerBlock(
+				Capabilities.ItemHandler.BLOCK,
+				{ _, _, _, entity, _: Direction? -> InvWrapper(entity as SoundBlockEntity) },
+				ModBlocks.SOUND_BLOCK.asBlock()
+			)
+			event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				ModBlockEntityTypes.WHEAT_CRUSHER.get()
+			) { entity, _: Direction? -> entity.energyHandler }
+			event.registerBlockEntity(
+				Capabilities.ItemHandler.BLOCK,
+				ModBlockEntityTypes.WHEAT_CRUSHER.get()
+			) { entity, direction: Direction? -> entity.itemHandler.getThisForSide(direction) }
+			event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				ModBlockEntityTypes.CREATIVE_GENERATOR.get()
+			) { entity, _ -> entity.energyHandler }
+			event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				ModBlockEntityTypes.DOUGH_MACHINE.get(),
+			) { entity, _: Direction? -> entity.energyHandler }
+			event.registerBlockEntity(
+				Capabilities.ItemHandler.BLOCK,
+				ModBlockEntityTypes.DOUGH_MACHINE.get()
+			) { entity, _: Direction? -> entity.itemHandler }
+			event.registerBlockEntity(
+				Capabilities.FluidHandler.BLOCK,
+				ModBlockEntityTypes.DOUGH_MACHINE.get()
+			) { entity, direction: Direction? ->
+				when (direction) {
+					Direction.UP, Direction.DOWN -> entity.fluidHandler
+					else                         -> null
+				}
+			}
+			event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				ModBlockEntityTypes.ENERGY_STORAGE.get()
+			) { entity, _ -> entity.energyHandler }
+
+			event.registerBlockEntity(
+				Capabilities.FluidHandler.BLOCK,
+				ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get()
+			) { entity, _: Direction? ->
+				entity.fluidHandler
+			}
+			event.registerBlockEntity(
+				Capabilities.FluidHandler.BLOCK,
+				ModBlockEntityTypes.FLUID_ENERGY.get()
+			) { entity, direction: Direction? ->
+				when (direction) {
+					Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN -> entity.fluidHandler
+					else                                                         -> null
+				}
+			}
+			event.registerBlockEntity(
+				Capabilities.ItemHandler.BLOCK,
+				ModBlockEntityTypes.FLUID_ENERGY.get()
+			) { entity, _: Direction? -> entity.itemHandler }
 		}
 	}
 }

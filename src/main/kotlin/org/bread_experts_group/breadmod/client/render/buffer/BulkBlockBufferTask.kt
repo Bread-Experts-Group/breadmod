@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.render.buffer.render
+package org.bread_experts_group.breadmod.client.render.buffer
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
@@ -26,7 +26,7 @@ import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket.Companion.BlockData
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket.Companion.BulkBlockData
 import org.bread_experts_group.breadmod.util.plus
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
+import org.bread_experts_group.breadmod.util.toVec3i
 
 object BulkBlockBufferTask {
 	val bufferSource: MultiBufferSource.BufferSource = localClient.renderBuffers().bufferSource()

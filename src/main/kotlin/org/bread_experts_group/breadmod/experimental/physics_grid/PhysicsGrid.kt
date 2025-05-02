@@ -80,8 +80,8 @@ import net.neoforged.fml.loading.FMLPaths
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.util.minus
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.unaryMinus
+import org.bread_experts_group.breadmod.util.toVec3
+import org.bread_experts_group.breadmod.util.unaryMinus
 import java.nio.file.Path
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -378,10 +378,10 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 	override fun getShade(direction: Direction, shade: Boolean): Float {
 		if (!shade) return 1f
 		return when (direction) {
-			Direction.DOWN                   -> 0.5f
-			Direction.UP                     -> 1.0f
+			Direction.DOWN                 -> 0.5f
+			Direction.UP                   -> 1.0f
 			Direction.NORTH, Direction.SOUTH -> 0.8f
-			Direction.WEST, Direction.EAST   -> 0.6f
+			Direction.WEST, Direction.EAST -> 0.6f
 		}
 	}
 

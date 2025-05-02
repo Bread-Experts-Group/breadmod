@@ -3,8 +3,8 @@ package org.bread_experts_group.breadmod.registry.block.actual
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
+import org.bread_experts_group.breadmod.util.plus
+import org.bread_experts_group.breadmod.util.toVec3
 
 class HappyBlock : ExplosiveBlock(
 	{ level, pos, igniter, delta ->

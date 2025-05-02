@@ -1,8 +1,10 @@
 package org.bread_experts_group.breadmod
 
+import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
+import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModContainer
 import net.neoforged.fml.ModList
 import net.neoforged.fml.common.Mod
@@ -13,7 +15,6 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.config.ConfigurationFactory
 import org.apache.logging.log4j.core.config.Configurator
-import org.bread_experts_group.breadmod.CommonNeoForgeEventBus.toolGunModes
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
@@ -21,17 +22,20 @@ import org.bread_experts_group.breadmod.logging.ConsoleUnnamedRedirection
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
-import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 import kotlin.reflect.full.createInstance
 
 /**
  * Main mod class.
  */
 @Mod(BreadMod.ID)
-class BreadMod(container: ModContainer) {
+class BreadMod(eventBus: IEventBus, container: ModContainer) {
 	companion object {
 		const val ID: String = "breadmod"
 		val logger: Logger = LogManager.getLogger()
+
+		fun modModelLoc(id: String): ModelResourceLocation = ModelResourceLocation.standalone(
+			this.modLocation(id)
+		)
 
 		/**
 		 * @param override Only use this when you need to refer to a namespace outside breadmod
@@ -59,7 +63,7 @@ class BreadMod(container: ModContainer) {
 			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
 				.forEach {
 					val mode = it.createInstance() as IToolGunMode
-					toolGunModes[mode.getUid()] = mode
+					Registry.toolGunModes[mode.getUid()] = mode
 				}
 		}
 	}
@@ -87,7 +91,7 @@ class BreadMod(container: ModContainer) {
 
 		container.registerConfig(ModConfig.Type.COMMON, ModConfiguration.COMMON_SPEC.right, "breadmod-common.toml")
 		container.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPEC.right, "breadmod-client.toml")
-		// Register the KDeferredRegister to the mod-specific event bus
-		Registry.registerAll(MOD_BUS)
+
+		Registry.registerAll(eventBus)
 	}
 }

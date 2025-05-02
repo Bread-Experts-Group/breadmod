@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.render.buffer.render
+package org.bread_experts_group.breadmod.client.render.buffer
 
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.LevelRenderer
@@ -8,10 +8,10 @@ import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.render.buildTexturedBakedQuad
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.renderBakedQuads
-import org.bread_experts_group.breadmod.client.render.buildTexturedBakedQuad
 import org.joml.Vector3f
 
 object TestCubeBufferTask {

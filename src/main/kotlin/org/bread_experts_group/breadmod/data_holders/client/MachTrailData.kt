@@ -3,7 +3,7 @@ package org.bread_experts_group.breadmod.data_holders.client
 import net.minecraft.world.entity.EquipmentSlot.HEAD
 import net.minecraft.world.entity.player.Player
 import org.apache.logging.log4j.LogManager
-import org.bread_experts_group.breadmod.client.render.buffer.render.MachTrailBufferTask
+import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData

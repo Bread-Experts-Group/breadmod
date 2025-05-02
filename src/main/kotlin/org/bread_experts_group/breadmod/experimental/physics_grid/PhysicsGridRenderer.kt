@@ -14,13 +14,13 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.data.ModelData
-import org.bread_experts_group.breadmod.client.render.buffer.render.RenderBuffer
+import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.plus
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3
-import thedarkcolour.kotlinforforge.neoforge.forge.vectorutil.v3d.toVec3i
+import org.bread_experts_group.breadmod.util.plus
+import org.bread_experts_group.breadmod.util.toVec3
+import org.bread_experts_group.breadmod.util.toVec3i
 import java.awt.Color
 
 class PhysicsGridRenderer(private val grid: ClientPhysicsGrid) {

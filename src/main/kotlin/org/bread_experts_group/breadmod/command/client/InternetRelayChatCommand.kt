@@ -10,10 +10,10 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.command.client.bslpack.irc.IRCMessage
-import org.bread_experts_group.breadmod.command.client.bslpack.socket.FailQuickInputStream
-import org.bread_experts_group.breadmod.command.client.bslpack.socket.FailQuickOutputStream
-import org.bread_experts_group.breadmod.command.client.bslpack.socket.writeString
+import org.bread_experts_group.irc.IRCMessage
+import org.bread_experts_group.socket.failquick.FailQuickInputStream
+import org.bread_experts_group.socket.failquick.FailQuickOutputStream
+import org.bread_experts_group.socket.writeString
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket

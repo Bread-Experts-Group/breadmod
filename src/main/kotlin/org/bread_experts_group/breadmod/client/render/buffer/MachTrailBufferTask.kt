@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.render.buffer.render
+package org.bread_experts_group.breadmod.client.render.buffer
 
 import com.mojang.math.Axis
 import net.minecraft.world.entity.player.Player

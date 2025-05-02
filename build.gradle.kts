@@ -21,7 +21,7 @@ version = project.properties["mod_version"] as String
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadLibServer = "org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT"
+private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:1.4.1-exp"
 
 idea {
 	module {
@@ -36,30 +36,35 @@ base {
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 	maven {
-		name = "Kotlin for Forge"
-		url = uri("https://thedarkcolour.github.io/KotlinForForge/")
-		content { includeGroup("thedarkcolour") }
-	}
-	maven {
-		// location of the maven that hosts JEI files since January 2023
-		name = "Jared's maven"
+		name = "JEI Maven"
 		url = uri("https://maven.blamejared.com/")
 	}
 	maven {
-		// location of a maven mirror for JEI files, as a fallback
-		name = "ModMaven"
+		name = "JEI Backup Maven / ModMaven"
 		url = uri("https://modmaven.dev")
 	}
 	maven {
+		name = "CurseForge Maven"
 		url = uri("https://www.cursemaven.com")
 		content { includeGroup("curse.maven") }
 	}
-	maven { url = uri("https://maven.createmod.net") } // Create, Ponder, Flywheel
-	maven { url = uri("https://mvn.devos.one/snapshots") } // Registrate
-	maven { url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") } // ForgeConfigAPIPort
-	maven { url = uri("https://maven.javart.zip/") } // Us
+	maven {
+		name = "Create Maven"
+		url = uri("https://maven.createmod.net")
+	}
+	maven {
+		name = "Registrate Maven"
+		url = uri("https://mvn.devos.one/snapshots")
+	}
+	maven {
+		name = "ForgeConfigAPIPort"
+		url = uri("https://raw.githubusercontnt.com/Fuzss/modresources/main/maven/")
+	}
+	maven {
+		name = "Bread Experts Group Maven"
+		url = uri("https://maven.javart.zip/")
+	}
 }
 
 neoForge {
@@ -80,7 +85,19 @@ neoForge {
 			enableTestNamespaces()
 			devLogin = true
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create(breadLibServer) { isTransitive = false }
+				dependencies.create(breadServerLib) { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.1.10") { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.1.10") { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10") { isTransitive = false }
+			)
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10") { isTransitive = false }
 			)
 		}
 		create("server") {
@@ -120,9 +137,11 @@ neoForge {
 
 dependencies {
 	// Mod Dependencies //
-	jarJar(implementation(breadLibServer) {})
-	// KFF
-	implementation("thedarkcolour:kotlinforforge-neoforge:5.7.0")
+	jarJar(implementation(breadServerLib) {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.10") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.10") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10") {})
 	// Mod Compatibility //
 	// Jade (WAILA)
 	implementation("curse.maven:jade-324717:5976517")
