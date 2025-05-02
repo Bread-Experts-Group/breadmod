@@ -81,5 +81,10 @@
       <option name="name" value="maven5" />
       <option name="url" value="https://maven.javart.zip/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="ForgeConfigAPIPort" />
+      <option name="name" value="ForgeConfigAPIPort" />
+      <option name="url" value="https://raw.githubusercontnt.com/Fuzss/modresources/main/maven/" />
+    </remote-repository>
   </component>
 </project>
