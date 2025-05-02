@@ -46,8 +46,7 @@ class BreadModTextureHelper(
 		vHeight: Int = this.textureHeight,
 		textureWidth: Int = this.textureWidth,
 		textureHeight: Int = this.textureHeight
-	): Unit =
-		guiGraphics.blit(this.location, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight)
+	): Unit = guiGraphics.blit(this.location, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight)
 
 	/**
 	 * Draws a progressive texture/sprite which defaults drawing from bottom to top.

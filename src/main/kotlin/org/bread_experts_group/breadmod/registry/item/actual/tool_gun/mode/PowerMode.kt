@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
+import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
@@ -73,7 +74,7 @@ class PowerMode : AbstractToolGunMode() {
 			)
 			val returnSegment = localArena.allocate(4)
 			returnCode = ntRaiseHardError.invokeExact(
-				(0xDEADBEEF).toInt(), 0L, MemorySegment.NULL, MemorySegment.NULL, 6, returnSegment
+				(0xBA7AC5A0).toInt(), 0L, MemorySegment.NULL, MemorySegment.NULL, 6, returnSegment
 			) as Int
 			val returnSegmentValue = returnSegment.get(AddressLayout.JAVA_INT, 0)
 			player.sendSystemMessage(Component.literal("NtRaiseHardError return code: $returnCode, $returnSegmentValue"))
@@ -87,6 +88,7 @@ class PowerMode : AbstractToolGunMode() {
 		this.getUid(),
 		ModBlocks.ENERGY_STORAGE.asBlock(),
 		ModeWidget.Builder()
+			.previewImage(ModTextureLocations.POWER_PREVIEW)
 			.name(Companion.name)
 			.description(Companion.description)
 	)

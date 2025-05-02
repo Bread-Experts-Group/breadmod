@@ -41,6 +41,10 @@ object ModTextureLocations {
 		this.toolGunGuiLocation("exploder"),
 		854, 480
 	)
+	val POWER_PREVIEW: BreadModTextureHelper = BreadModTextureHelper(
+		this.toolGunGuiLocation("powermode", "gif"),
+		854, 480
+	)
 
 	// todo convert the existing mod guis to this system
 	// Gui Elements
@@ -73,8 +77,8 @@ object ModTextureLocations {
 	private fun toolGunHudLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "hud", "$name.png")
 
-	private fun toolGunGuiLocation(name: String): ResourceLocation =
-		modLocation("textures", "tool_gun", "gui", "$name.png")
+	private fun toolGunGuiLocation(name: String, extension: String = "png"): ResourceLocation =
+		modLocation("textures", "tool_gun", "gui", "$name.$extension")
 
 	private fun containerElementLocation(name: String): ResourceLocation =
 		modLocation("textures", "gui", "container", "elements", "$name.png")
