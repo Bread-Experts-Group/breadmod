@@ -29,12 +29,12 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.block.state.properties.DirectionProperty
 import net.minecraft.world.phys.BlockHitResult
-import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
+import org.bread_experts_group.breadmod.util.join
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.targetFaceSection
 import java.util.stream.Stream
@@ -50,7 +50,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5),
 			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
-		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_SOUTH: VoxelShape = Stream.of(
 			box(1.0, 1.0, 3.0, 15.0, 9.0, 13.0),
 			box(2.0, 2.0, 2.0, 14.0, 8.0, 3.0),
@@ -58,7 +58,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5),
 			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_WEST: VoxelShape = Stream.of(
 			box(3.0, 1.0, 1.0, 13.0, 9.0, 15.0),
 			box(13.0, 2.0, 2.0, 14.0, 8.0, 14.0),
@@ -66,7 +66,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_EAST: VoxelShape = Stream.of(
 			box(3.0, 1.0, 1.0, 13.0, 9.0, 15.0),
 			box(2.0, 2.0, 2.0, 3.0, 8.0, 14.0),
@@ -74,7 +74,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_NORTH_OPEN: VoxelShape = Stream.of(
 			box(1.0, 1.0, 3.0, 5.0, 9.0, 13.0),
 			box(5.0, 1.0, 3.0, 15.0, 2.0, 13.0),
@@ -87,7 +87,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5),
 			box(1.5, 0.0, 10.5, 3.5, 1.0, 12.5),
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_SOUTH_OPEN: VoxelShape = Stream.of(
 			box(11.0, 1.0, 3.0, 15.0, 9.0, 13.0),
 			box(1.0, 1.0, 3.0, 11.0, 2.0, 13.0),
@@ -100,7 +100,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5),
 			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_WEST_OPEN: VoxelShape = Stream.of(
 			box(3.0, 1.0, 11.0, 13.0, 9.0, 15.0),
 			box(3.0, 1.0, 1.0, 13.0, 2.0, 11.0),
@@ -113,7 +113,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_EAST_OPEN: VoxelShape = Stream.of(
 			box(3.0, 1.0, 1.0, 13.0, 9.0, 5.0),
 			box(3.0, 1.0, 5.0, 13.0, 2.0, 15.0),
@@ -126,7 +126,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5),
 			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
 			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 	}
 
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MicrowaveBlockEntity(pos, state)
@@ -140,20 +140,12 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		val direction = hitResult.direction ?: return FAIL
 		val normalizedPos = normalizedHitPos(hitResult.location, pos)
 		val entity = level.getBlockEntity(pos) as MicrowaveBlockEntity
-		when (direction) {
-			NORTH -> {
-				this.buttonPress(normalizedPos.x, normalizedPos.y, 0.23, 0.27, level, pos, NORTH)
-			}
-			EAST  -> {
-				this.buttonPress(normalizedPos.z, normalizedPos.y, 0.23, 0.27, level, pos, EAST)
-			}
-			SOUTH -> {
-				this.buttonPress(normalizedPos.x, normalizedPos.y, 0.73, 0.77, level, pos, SOUTH)
-			}
-			WEST  -> {
-				this.buttonPress(normalizedPos.z, normalizedPos.y, 0.73, 0.77, level, pos, WEST)
-			}
-			else  -> {}
+		val buttonPressed: Int = when (direction) {
+			NORTH -> this.buttonPress(normalizedPos.x, normalizedPos.y, 0.23, 0.27, level, pos, NORTH)
+			EAST  -> this.buttonPress(normalizedPos.z, normalizedPos.y, 0.23, 0.27, level, pos, EAST)
+			SOUTH -> this.buttonPress(normalizedPos.x, normalizedPos.y, 0.73, 0.77, level, pos, SOUTH)
+			WEST  -> this.buttonPress(normalizedPos.z, normalizedPos.y, 0.73, 0.77, level, pos, WEST)
+			else  -> -1
 		}
 		if (entity.getItem(0).isEmpty) entity.setItem(0, player.getItemInHand(player.usedItemHand))
 		return sidedSuccess(level.isClientSide)

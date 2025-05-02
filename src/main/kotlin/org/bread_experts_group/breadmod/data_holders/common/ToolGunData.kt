@@ -21,7 +21,7 @@ data class ToolGunData(
 		val EMPTY: ToolGunData = ToolGunData(EmptyMode, CompoundTag(), 0)
 		fun get(stack: ItemStack): ToolGunData {
 			check(stack.`is`(ModItems.TOOL_GUN.asItem())) { "Provided ItemStack is not ToolGunItem!" }
-			return stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, EMPTY)
+			return stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, this.EMPTY)
 		}
 	}
 

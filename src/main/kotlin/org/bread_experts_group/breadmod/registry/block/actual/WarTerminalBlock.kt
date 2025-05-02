@@ -15,13 +15,12 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
-import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand.increaseTime
 import org.bread_experts_group.breadmod.data_holders.server.WarTimerData.Companion.warTimerMap
+import org.bread_experts_group.breadmod.util.join
 import java.util.stream.Stream
 
 class WarTerminalBlock : Block(Properties.of()) {
@@ -30,22 +29,22 @@ class WarTerminalBlock : Block(Properties.of()) {
 			box(0.0, 6.0, 0.0, 16.0, 7.0, 1.0),
 			box(0.0, 0.0, 1.0, 16.0, 7.0, 5.0),
 			box(0.0, 0.0, 5.0, 16.0, 16.0, 16.0)
-		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val southAABB: VoxelShape = Stream.of(
 			box(0.0, 6.0, 15.0, 16.0, 7.0, 16.0),
 			box(0.0, 0.0, 11.0, 16.0, 7.0, 15.0),
 			box(0.0, 0.0, 0.0, 16.0, 16.0, 11.0)
-		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val eastAABB: VoxelShape = Stream.of(
 			box(15.0, 6.0, 0.0, 16.0, 7.0, 16.0),
 			box(11.0, 0.0, 0.0, 15.0, 7.0, 16.0),
 			box(0.0, 0.0, 0.0, 11.0, 16.0, 16.0)
-		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val westAABB: VoxelShape = Stream.of(
 			box(0.0, 6.0, 0.0, 1.0, 7.0, 16.0),
 			box(1.0, 0.0, 0.0, 5.0, 7.0, 16.0),
 			box(5.0, 0.0, 0.0, 16.0, 16.0, 16.0)
-		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 	}
 
 	init {

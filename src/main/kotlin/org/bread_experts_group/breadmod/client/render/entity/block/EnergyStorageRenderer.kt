@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.client.render.drawTextOnSide
+import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.registry.block.actual.entity.storage.EnergyStorageBlockEntity
 import java.awt.Color
 
@@ -19,7 +19,7 @@ class EnergyStorageRenderer(context: Context) : BreadModBER<EnergyStorageBlockEn
 	) {
 		val energyStored = blockEntity.energyHandler.energyStored
 		val maxEnergyStored = blockEntity.energyHandler.maxEnergyStored
-		poseStack.drawTextOnSide(
+		poseStack.drawTextOnBlockSide(
 			this.context.font,
 			Component.literal("$energyStored FE"),
 			0.1,
@@ -29,7 +29,7 @@ class EnergyStorageRenderer(context: Context) : BreadModBER<EnergyStorageBlockEn
 			scale = 0.0105f,
 			color = Color.GREEN.rgb
 		)
-		poseStack.drawTextOnSide(
+		poseStack.drawTextOnBlockSide(
 			this.context.font,
 			Component.literal("-------------"),
 			0.095,
@@ -39,7 +39,7 @@ class EnergyStorageRenderer(context: Context) : BreadModBER<EnergyStorageBlockEn
 			scale = 0.0105f,
 			color = Color.GREEN.rgb
 		)
-		poseStack.drawTextOnSide(
+		poseStack.drawTextOnBlockSide(
 			this.context.font,
 			Component.literal("$maxEnergyStored FE"),
 			0.1,

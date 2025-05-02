@@ -81,6 +81,7 @@ import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
+import org.bread_experts_group.breadmod.client.render.DieselGeneratorItemRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
@@ -88,6 +89,7 @@ import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.DieselGeneratorRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
@@ -313,10 +315,10 @@ object Registry {
 					val item = stack.item
 					if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
 				}
-				NeoForge.EVENT_BUS.addListener { event: ClientPlayerNetworkEvent.LoggingIn ->
+				NeoForge.EVENT_BUS.addListener { _: ClientPlayerNetworkEvent.LoggingIn ->
 					loadToolGunModes()
 				}
-				NeoForge.EVENT_BUS.addListener { event: ClientTickEvent.Pre ->
+				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Pre ->
 					if (machTrailMap.isNotEmpty()) {
 						machTrailMap.forEach { (_, machTrailData) ->
 							machTrailData.tick()
@@ -400,6 +402,10 @@ object Registry {
 						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
 							CreativeGeneratorItemRenderer
 					}, ModBlocks.CREATIVE_GENERATOR.asItem())
+					event.registerItem(object : IClientItemExtensions {
+						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+							DieselGeneratorItemRenderer
+					}, ModBlocks.DIESEL_GENERATOR.asItem())
 				}
 				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
 					event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
@@ -418,6 +424,10 @@ object Registry {
 					event.registerBlockEntityRenderer(
 						ModBlockEntityTypes.CREATIVE_GENERATOR.get(),
 						::CreativeGeneratorRenderer
+					)
+					event.registerBlockEntityRenderer(
+						ModBlockEntityTypes.DIESEL_GENERATOR.get(),
+						::DieselGeneratorRenderer
 					)
 				}
 				modBus.addListener { event: RegisterGuiLayersEvent ->
@@ -449,6 +459,12 @@ object Registry {
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door"))
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate"))
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/axis"))
+					val dieselGeneratorPath = "${ModelProvider.BLOCK_FOLDER}/diesel_generator"
+					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator"))
+					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_door"))
+					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_charging_upgrade"))
+					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_turbo_upgrade"))
+					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_battery_upgrade"))
 				}
 				modBus.addListener { event: EntityRenderersEvent.AddLayers ->
 					@Suppress("UNCHECKED_CAST")
@@ -490,6 +506,7 @@ object Registry {
 			Dist.DEDICATED_SERVER -> {
 				// Nothing for dedicated servers yet ...
 			}
+			else -> throw UnsupportedOperationException()
 		}
 		// Common Event Registration
 		// Game Bus

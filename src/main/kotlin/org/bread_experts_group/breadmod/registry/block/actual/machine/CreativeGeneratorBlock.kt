@@ -15,6 +15,7 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -26,16 +27,19 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.block.state.properties.EnumProperty
-import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGeneratorBlockEntity
+import org.bread_experts_group.breadmod.util.join
 import java.util.stream.Stream
 
-class CreativeGeneratorBlock : BreadModBlockWithEntity(BlockBehaviour.Properties.of().lightLevel { 6 }) {
+class CreativeGeneratorBlock : BreadModBlockWithEntity(
+	BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK)
+		.lightLevel { 6 }
+) {
 	companion object {
 		val FACING: EnumProperty<Direction> = BlockStateProperties.HORIZONTAL_FACING
 		val ENABLED: BooleanProperty = BlockStateProperties.ENABLED
@@ -70,7 +74,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(BlockBehaviour.Properties
 			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0),
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0)
-		).reduce { v1, v2 -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_SOUTH: VoxelShape = Stream.of(
 			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
 			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
@@ -102,7 +106,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(BlockBehaviour.Properties
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0),
 			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0),
 			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_EAST: VoxelShape = Stream.of(
 			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
 			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
@@ -134,7 +138,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(BlockBehaviour.Properties
 			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0),
 			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0),
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 		val SHAPE_WEST: VoxelShape = Stream.of(
 			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
 			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
@@ -166,7 +170,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(BlockBehaviour.Properties
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0),
 			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0)
-		).reduce { v1: VoxelShape, v2: VoxelShape -> Shapes.join(v1, v2, BooleanOp.OR) }.get()
+		).reduce(::join).get()
 	}
 
 	private val random = RandomSource.create()

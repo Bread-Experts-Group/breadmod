@@ -124,10 +124,10 @@ interface IToolGunModeRenderer {
 		scale: Float = 0.0007f
 	) {
 		this.initialScreenTranslations(poseStack, posX, posY, posZ, scale)
-		renderText(
-			component.visualOrderText, color, backgroundColor, fontRenderer,
-			poseStack, buffer,
-			dropShadow, Companion.screenTint
+		fontRenderer.renderText(
+			component.visualOrderText, color, backgroundColor, poseStack,
+			buffer, dropShadow,
+			Companion.screenTint
 		)
 		poseStack.popPose()
 	}

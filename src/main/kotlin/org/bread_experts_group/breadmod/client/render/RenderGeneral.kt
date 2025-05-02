@@ -11,6 +11,7 @@ import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.Font.DisplayMode
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
@@ -403,6 +404,40 @@ fun ItemRenderer.renderItemModel(
 fun modelLocation(location: String): ModelResourceLocation =
 	ModelResourceLocation(modLocation(location), "standalone")
 
+private fun Font.drawAdjustableShadowText(
+	text: FormattedCharSequence,
+	x: Float,
+	y: Float,
+	color: Int,
+	dropShadow: Boolean,
+	matrix: Matrix4f,
+	buffer: MultiBufferSource,
+	displayMode: DisplayMode,
+	backgroundColor: Int,
+	packedLightCoords: Int,
+	dropShadowOffset: Float = 0.03f
+) {
+	val adjustedColor = if ((color and -67108864) == 0) color or -0x1000000 else color
+	val matrix4f = Matrix4f(matrix)
+	if (dropShadow) {
+		this.renderText(
+			text,
+			x,
+			y,
+			adjustedColor,
+			true,
+			matrix,
+			buffer,
+			displayMode,
+			backgroundColor,
+			packedLightCoords
+		)
+		matrix4f.translate(0f, 0f, dropShadowOffset)
+	}
+
+	this.renderText(text, x, y, adjustedColor, false, matrix4f, buffer, displayMode, backgroundColor, packedLightCoords)
+}
+
 /**
  * Renders a given [Component] onto a [BlockEntityWithoutLevelRenderer] or [BlockEntityRenderer]
  *
@@ -410,36 +445,34 @@ fun modelLocation(location: String): ModelResourceLocation =
  * to be rendered onto the target block or item.
  * @param color The primary text color as an integer.
  * @param backgroundColor Secondary text color as an integer, applies to the background
- * @param fontRenderer Draws the text onto the target block or item
- * @param postStack Positions the text onto the target block or item
+ * @param poseStack Positions the text onto the target block or item
  * @param dropShadow draws a drop shadow behind the text
  *
  * @see Font.drawInBatch
  * @since 0.0.1
  */
-fun renderText(
+fun Font.renderText(
 	component: FormattedCharSequence,
 	color: Int,
 	backgroundColor: Int,
-	fontRenderer: Font,
-	postStack: PoseStack,
+	poseStack: PoseStack,
 	buffer: MultiBufferSource,
 	dropShadow: Boolean,
-	packedLight: Int
-) {
-	fontRenderer.drawInBatch(
-		component,
-		0f,
-		0f,
-		color,
-		dropShadow,
-		postStack.last().pose(),
-		buffer,
-		Font.DisplayMode.NORMAL,
-		backgroundColor,
-		packedLight
-	)
-}
+	packedLight: Int,
+	dropShadowOffset: Float = 0.03f
+): Unit = this.drawAdjustableShadowText(
+	component,
+	0f,
+	0f,
+	color,
+	dropShadow,
+	poseStack.last().pose(),
+	buffer,
+	Font.DisplayMode.NORMAL,
+	backgroundColor,
+	packedLight,
+	dropShadowOffset
+)
 
 private const val TRANSLATE_OFFSET = 0.0001
 
@@ -485,7 +518,7 @@ fun PoseStack.translateOnBlockSide(
 val TRANSPARENT: Int = Color(0f, 0f, 0f, 0f).rgb
 
 // todo proper text rotation on up and down axis.
-fun PoseStack.drawTextOnSide(
+fun PoseStack.drawTextOnBlockSide(
 	fontRenderer: Font,
 	component: Component,
 	posX: Double,
@@ -497,21 +530,22 @@ fun PoseStack.drawTextOnSide(
 	backgroundColor: Int = TRANSPARENT,
 	dropShadow: Boolean = false,
 	direction: Direction? = null,
-	scale: Float = 1f
+	scale: Float = 1f,
+	dropShadowOffset: Float = 0.03f
 ) {
 	this.pushPose()
 	this.translateOnBlockSide(blockState, direction, posX, posY, posZ)
 	this.mulPose(Axis.XN.rotationDegrees(180f))
 	this.scaleFlat(scale)
-	renderText(
+	fontRenderer.renderText(
 		component.visualOrderText,
 		color,
 		backgroundColor,
-		fontRenderer,
 		this,
 		bufferSource,
 		dropShadow,
-		FULL_BRIGHT
+		FULL_BRIGHT,
+		dropShadowOffset
 	)
 	this.popPose()
 }

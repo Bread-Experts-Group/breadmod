@@ -146,6 +146,20 @@ class ModBlockStateProvider(
 			this.models().getBuilder("breadmod:block/dough_machine")
 		)
 
+		this.horizontalBlock(ModBlocks.GENERATOR.asBlock()) { state ->
+			val active = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+			this.blockBenchBlockModel("generator$active")
+		}
+		this.simpleBlockItem(
+			ModBlocks.GENERATOR.asBlock(),
+			this.models().getBuilder("breadmod:block/generator")
+		)
+
+		this.horizontalBlockBenchModelWithItem(
+			ModBlocks.DIESEL_GENERATOR.asBlock(),
+			"diesel_generator/diesel_generator"
+		)
+
 		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
 			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
 			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
@@ -219,7 +233,7 @@ class ModBlockStateProvider(
 		)
 		// Double or Nothing
 		this.horizontalBlock(ModBlocks.DOUBLE_OR_NOTHING.asBlock()) { state ->
-			val half = state.getValue(DoubleOrNothingBlock.Companion.HALF)
+			val half = state.getValue(DoubleOrNothingBlock.Companion.TRIPLE_HALF)
 			val segment = when (half) {
 				ModBlockStateProperties.TripleBlockHalf.UPPER  -> "upper"
 				ModBlockStateProperties.TripleBlockHalf.MIDDLE -> "middle"

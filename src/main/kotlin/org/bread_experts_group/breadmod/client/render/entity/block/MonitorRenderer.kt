@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.client.render.drawTextOnSide
+import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.shr
 import org.bread_experts_group.breadmod.experimental.computer.bios.h10.TeletypeOutput
@@ -35,16 +35,17 @@ class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(contex
 				Thread.State.BLOCKED       -> Color.ORANGE
 				Thread.State.RUNNABLE      -> Color.GREEN
 				Thread.State.TERMINATED    -> Color.RED
+				else                       -> Color.WHITE
 			}.rgb
 		)
 		for (x in (0u).toULong() ..< TeletypeOutput.ROWS) {
 			for (y in (0u).toULong() ..< TeletypeOutput.COLS) {
 				val data = blockEntity.computer.requestMemoryAt16(
-					TeletypeOutput.COLOR_ADDR + (((y * TeletypeOutput.ROWS) + x) * 2u).toULong()
+					TeletypeOutput.COLOR_ADDR + (((y * TeletypeOutput.ROWS) + x) * 2u)
 				)
 				val character = Char(data shr 8)
 //				val color = data and 0xFu
-				poseStack.drawTextOnSide(
+				poseStack.drawTextOnBlockSide(
 					this.context.font,
 					Component.literal(character.toString()).withStyle(ModFonts.IBM_VGA_9_14),
 					0.13 + (0.00925 * x.toDouble()), (y.toDouble() * -0.0125) - 0.13,
@@ -76,7 +77,7 @@ class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(contex
 			processor.cr0
 		).forEachIndexed { i, r ->
 			val component = Component.literal("${r.name}: ${hex(r.rx)}").withStyle(ModFonts.IBM_VGA_9_14)
-			poseStack.drawTextOnSide(
+			poseStack.drawTextOnBlockSide(
 				this.context.font,
 				component,
 				0.66, (-i * 0.015) + 0.5,

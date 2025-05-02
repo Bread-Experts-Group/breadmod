@@ -30,7 +30,10 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
+import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.joml.Vector3f
@@ -99,6 +102,8 @@ inline fun <reified T> fromClass(clazz: T): String = (clazz ?: "")::class.qualif
 fun isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).get() == tag) /*?: false*/
 inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
+
+fun join(v1: VoxelShape, v2: VoxelShape): VoxelShape = Shapes.join(v1, v2, BooleanOp.OR)
 
 /// Start raycast functions ///
 class HitResult<T>(val position: Vec3, val length: Double, val side: Direction, val direction: Vec3, val hit: T) {
@@ -338,7 +343,8 @@ fun normalizedHitPos(hitLoc: Vec3, blockPos: BlockPos): Vec3 {
 	return Vec3(x, y, z)
 }
 
-fun horizontalDirectionalTargetFaceSection(
+// Note the up and down cases are probably not very accurate.
+fun directionalTargetFaceSection(
 	direction: Direction,
 	targetPos: Vec3,
 	minxXNorthEast: Double,
@@ -352,7 +358,8 @@ fun horizontalDirectionalTargetFaceSection(
 	SOUTH -> targetFaceSection(targetPos.x, targetPos.y, minxXSouthWest, minY, maxXSouthWest, maxY)
 	WEST  -> targetFaceSection(targetPos.z, targetPos.y, minxXSouthWest, minY, maxXSouthWest, maxY)
 	EAST  -> targetFaceSection(targetPos.z, targetPos.y, minxXNorthEast, minY, maxXNorthEast, maxY)
-	else  -> false
+	UP    -> targetFaceSection(targetPos.x, targetPos.z, minxXNorthEast, minY, maxXNorthEast, maxY)
+	DOWN  -> targetFaceSection(targetPos.x, targetPos.z, minxXSouthWest, minY, minxXSouthWest, maxY)
 }
 
 /// End Face Targeting Functions ///

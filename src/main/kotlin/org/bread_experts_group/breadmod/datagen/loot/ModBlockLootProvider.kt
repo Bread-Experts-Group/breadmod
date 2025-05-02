@@ -60,7 +60,7 @@ class ModBlockLootProvider(
 			doubleOrNothing,
 			this.createSinglePropConditionTable(
 				doubleOrNothing,
-				DoubleOrNothingBlock.Companion.HALF,
+				DoubleOrNothingBlock.Companion.TRIPLE_HALF,
 				ModBlockStateProperties.TripleBlockHalf.LOWER
 			)
 		)

@@ -5,11 +5,12 @@ class Selector<A, B>(
 	val b: B? = null
 ) {
 	init {
-		if (this.a == null && this.b == null) throw IllegalArgumentException("An existing option must be provided")
-		if (this.a != null && this.b != null) throw IllegalArgumentException("Only one option must be given")
+		require(!(this.a == null && this.b == null)) { "An existing option must be provided" }
+		require(!(this.a != null && this.b != null)) { "Only one option must be given" }
 	}
 
-	fun <R> select(a: (A) -> R, b: (B) -> R): R =
-		if (this.a != null) a(this.a)
-		else b(this.b!!)
+	fun <R> select(a: (A) -> R, b: (B) -> R): R? {
+		return if (this.a != null) a(this.a)
+		else b(this.b ?: return null)
+	}
 }

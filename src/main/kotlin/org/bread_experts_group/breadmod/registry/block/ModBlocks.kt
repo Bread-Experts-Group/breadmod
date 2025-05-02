@@ -53,7 +53,9 @@ import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.SoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
+import org.bread_experts_group.breadmod.registry.block.actual.machine.DieselGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
+import org.bread_experts_group.breadmod.registry.block.actual.machine.GeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.ToasterBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.block.actual.storage.EnergyStorageBlock
@@ -217,6 +219,22 @@ object ModBlocks {
 	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"energy_storage",
 		::EnergyStorageBlock,
+		Properties()
+	)
+
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage("en_us")
+	val GENERATOR: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"generator",
+		::GeneratorBlock,
+		Properties()
+	)
+
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage("en_us")
+	val DIESEL_GENERATOR: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"diesel_generator",
+		::DieselGeneratorBlock,
 		Properties()
 	)
 
