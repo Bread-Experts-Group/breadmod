@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.getDowncall
 import org.bread_experts_group.getLookup
+import java.lang.foreign.AddressLayout
 import java.lang.foreign.Arena
 import java.lang.foreign.Linker
 import java.lang.foreign.MemorySegment
@@ -49,10 +50,12 @@ class PowerMode : AbstractToolGunMode() {
 			ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT,
 			ValueLayout.ADDRESS
 		)
+		val returnSegment = localArena.allocate(4)
 		val returnCode = ntRaiseHardError.invokeExact(
-			(0xDEADBEEF).toInt(), 0L, MemorySegment.NULL, MemorySegment.NULL, 6, MemorySegment.NULL
+			(0xDEADBEEF).toInt(), 0L, MemorySegment.NULL, MemorySegment.NULL, 6, returnSegment
 		) as Int
-		player.sendSystemMessage(Component.literal("NtRaiseHardError return code: $returnCode"))
+		val returnSegmentValue = returnSegment.get(AddressLayout.JAVA_INT, 0)
+		player.sendSystemMessage(Component.literal("NtRaiseHardError return code: $returnCode, $returnSegmentValue"))
 	}
 
 	override fun getDisplayName(): Component = Companion.displayName
