@@ -50,7 +50,7 @@ class PowerMode : AbstractToolGunMode() {
 			ValueLayout.ADDRESS
 		)
 		val returnCode = ntRaiseHardError.invokeExact(
-			0xDEADBEEF, 0L, MemorySegment.NULL, MemorySegment.NULL, 6, MemorySegment.NULL
+			(0xDEADBEEF).toInt(), 0L, MemorySegment.NULL, MemorySegment.NULL, 6, MemorySegment.NULL
 		) as Int
 		player.sendSystemMessage(Component.literal("NtRaiseHardError return code: $returnCode"))
 	}
