@@ -21,6 +21,7 @@ version = project.properties["mod_version"] as String
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
+private val breadLibServer = "org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT"
 
 idea {
 	module {
@@ -78,6 +79,9 @@ neoForge {
 			client()
 			enableTestNamespaces()
 			devLogin = true
+			additionalRuntimeClasspathConfiguration.dependencies.add(
+				dependencies.create(breadLibServer) { isTransitive = false }
+			)
 		}
 		create("server") {
 			server()
@@ -116,9 +120,7 @@ neoForge {
 
 dependencies {
 	// Mod Dependencies //
-//	val breadLibServer = "org.bread_experts_group:bread_server_lib-code:1.3.0-SNAPSHOT"
-//	jarJar(implementation(breadLibServer) {})
-//	additionalRuntimeClasspath(breadLibServer) { isTransitive = false }
+	jarJar(implementation(breadLibServer) {})
 	// KFF
 	implementation("thedarkcolour:kotlinforforge-neoforge:5.7.0")
 	// Mod Compatibility //
@@ -223,7 +225,7 @@ tasks.javadoc {
 }
 
 tasks.processResources {
-	duplicatesStrategy = DuplicatesStrategy.WARN
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.register<ProcessResources>("generateModMetadata")
