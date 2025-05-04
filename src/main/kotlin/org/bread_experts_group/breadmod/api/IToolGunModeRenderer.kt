@@ -21,7 +21,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.joml.Vector3f
-import org.joml.Vector4f
+import java.awt.Color
 
 interface IToolGunModeRenderer {
 	companion object {
@@ -96,7 +96,7 @@ interface IToolGunModeRenderer {
 			poseStack,
 			buffer,
 			RenderType.text(texture),
-			Vector4f(1f, 1f, 1f, 1f),
+			Color.WHITE.rgb,
 			Vector3f(1f, 0f, 0f),
 			Vector3f(0f, 0f, 0f),
 			Vector3f(1f, -1f, 0f),

@@ -11,8 +11,8 @@ import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.WEST
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.generators.ModelProvider
+import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
@@ -23,8 +23,7 @@ class ToasterRenderer(
 	context
 ) {
 	private companion object {
-		val HANDLE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
-		val HANDLE_MODEL: BakedModel = localClient.modelManager.getModel(this.HANDLE_MODEL_LOC)
+		val HANDLE_MODEL: BakedModel = localClient.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
 	}
 
 	private val itemRenderer = this.context.itemRenderer

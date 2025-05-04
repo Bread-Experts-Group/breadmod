@@ -43,11 +43,11 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	// Models
 	@Suppress("unused")
 	private val altModel: BakedModel =
-		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/alt/tool_gun_alt"))
+		localClient.modelManager.getModel("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
 	private val mainModel: BakedModel =
-		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/item"))
+		localClient.modelManager.getModel("item/$TOOL_GUN_DEF/item")
 	private val coilModel: BakedModel =
-		localClient.modelManager.getModel(modelLocation("item/$TOOL_GUN_DEF/coil"))
+		localClient.modelManager.getModel("item/$TOOL_GUN_DEF/coil")
 
 	override fun onResourceManagerReload(resourceManager: ResourceManager) {
 		IToolGunModeRenderer.modelManager = localClient.modelManager

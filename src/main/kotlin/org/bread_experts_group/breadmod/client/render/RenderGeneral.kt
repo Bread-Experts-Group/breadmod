@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
@@ -399,10 +400,10 @@ fun ItemRenderer.renderItemModel(
 }
 
 /**
- * [ModelResourceLocation] with [modLocation] present.
+ * Convenience function for getting a model with just a string.
  */
-fun modelLocation(location: String): ModelResourceLocation =
-	ModelResourceLocation(modLocation(location), "standalone")
+fun ModelManager.getModel(location: String): BakedModel =
+	this.getModel(ModelResourceLocation(modLocation(location), "standalone"))
 
 private fun Font.drawAdjustableShadowText(
 	text: FormattedCharSequence,

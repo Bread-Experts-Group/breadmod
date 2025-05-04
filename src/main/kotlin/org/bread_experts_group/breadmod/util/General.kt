@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.util
 
+import io.netty.buffer.ByteBuf
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.DOWN
@@ -8,12 +9,15 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.core.NonNullList
 import net.minecraft.core.Vec3i
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
 import net.minecraft.nbt.TagType
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionHand.MAIN_HAND
@@ -261,6 +265,16 @@ fun IntArray.toBlockPos(): BlockPos {
 	if (this.size != 3) return BlockPos.ZERO
 	return BlockPos(this[0], this[1], this[2])
 }
+
+// Codec shenanigans
+@Suppress("ConvertLambdaToReference")
+fun <T : ByteBuf, V> StreamCodec<T, V>.toNonNullList(): StreamCodec<T, NonNullList<V>> =
+	this.apply(ByteBufCodecs.collection { NonNullList.createWithCapacity(it) })
+
+fun <T : ByteBuf, V> StreamCodec<T, V>.toMutableList(): StreamCodec<T, MutableList<V>> =
+	this.apply(ByteBufCodecs.collection { NonNullList.createWithCapacity<V>(it).toMutableList() })
+
+fun <T> List<T>.toNonNullList(): NonNullList<T> = NonNullList.copyOf(this)
 
 fun getStackInPlayerHand(player: Player?, hand: InteractionHand = player?.usedItemHand ?: MAIN_HAND): ItemStack {
 	if (player == null) return ItemStack.EMPTY

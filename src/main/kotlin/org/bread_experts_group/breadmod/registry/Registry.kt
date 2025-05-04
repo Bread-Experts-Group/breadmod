@@ -123,6 +123,7 @@ import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
+import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
@@ -590,6 +591,7 @@ object Registry {
 			ClientPhysicsGridPacket.register(registrar)
 			GridPosUpdatePacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
+			DoubleOrNothingPacket.register(registrar)
 			// Serverbound packets
 			ToolGunModeChangePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)

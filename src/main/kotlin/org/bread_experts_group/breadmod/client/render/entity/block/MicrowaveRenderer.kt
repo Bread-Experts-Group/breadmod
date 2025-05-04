@@ -5,10 +5,11 @@ import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.generators.ModelProvider
+import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
@@ -20,10 +21,11 @@ class MicrowaveRenderer(
 	context
 ) {
 	private companion object {
-		val DOOR_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door")
-		val PLATE_MODEL_LOC = modelLocation("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate")
-		val DOOR_MODEL: BakedModel = localClient.modelManager.getModel(this.DOOR_MODEL_LOC)
-		val PLATE_MODEL: BakedModel = localClient.modelManager.getModel(this.PLATE_MODEL_LOC)
+		val modelManager: ModelManager = localClient.modelManager
+		val DOOR_MODEL: BakedModel =
+			this.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_door")
+		val PLATE_MODEL: BakedModel =
+			this.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate")
 	}
 
 	private var plateRots: MutableMap<Int, Float> = mutableMapOf()

@@ -41,9 +41,15 @@ import net.minecraft.client.renderer.ShaderInstance
 object ModRenderType {
 	var rainbowInstance: ShaderInstance? = null
 	private val rainbowShader = ShaderStateShard(this::rainbowInstance)
+	val SPEED_VERTEX_ELEMENT: VertexFormatElement =
+		VertexFormatElement.register(6, 0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 1)
+	val DIRECTION_VERTEX_ELEMENT: VertexFormatElement =
+		VertexFormatElement.register(7, 0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 2)
 	val rainbowVertexFormat: VertexFormat = VertexFormat.builder()
 		.add("Position", VertexFormatElement.POSITION)
 		.add("UV0", VertexFormatElement.UV0)
+		.add("Speed", this.SPEED_VERTEX_ELEMENT)
+		.add("Direction", this.DIRECTION_VERTEX_ELEMENT)
 		.build()
 	private val solidTextureRenderType: RenderType = RenderType.create(
 		"rainbow",

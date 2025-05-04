@@ -13,7 +13,8 @@ object DieselGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 ) {
 	private val modelManager = localClient.modelManager
 	private val itemRenderer = localClient.itemRenderer
-	private val originalModel = this.modelManager.getModel(modelLocation("block/diesel_generator/diesel_generator"))
+	private val originalModel = this.modelManager.getModel("block/diesel_generator/diesel_generator")
+	private val doorModel = this.modelManager.getModel("block/diesel_generator/diesel_generator_door")
 
 	override fun renderByItem(
 		stack: ItemStack,

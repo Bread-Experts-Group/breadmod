@@ -13,8 +13,8 @@ object CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 ) {
 	private val modelManager = localClient.modelManager
 	private val itemRenderer = localClient.itemRenderer
-	private val originalModel = this.modelManager.getModel(modelLocation("block/creative_generator"))
-	private val starModel = this.modelManager.getModel(modelLocation("block/creative_generator_star"))
+	private val originalModel = this.modelManager.getModel("block/creative_generator")
+	private val starModel = this.modelManager.getModel("block/creative_generator_star")
 
 	override fun renderByItem(
 		stack: ItemStack,

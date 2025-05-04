@@ -7,8 +7,8 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
 import net.neoforged.neoforge.client.model.data.ModelData
+import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 
 object BeamBufferTask {
@@ -21,7 +21,7 @@ object BeamBufferTask {
 		val player = localClient.player ?: return
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
-		val axisModel = localClient.modelManager.getModel(modelLocation("block/axis"))
+		val axisModel = localClient.modelManager.getModel("block/axis")
 
 		RenderBuffer.add(
 			Stage.AFTER_SOLID_BLOCKS,

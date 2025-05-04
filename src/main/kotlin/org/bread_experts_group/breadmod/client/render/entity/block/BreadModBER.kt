@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.core.Direction.DOWN
 import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
@@ -22,8 +23,8 @@ import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
 import net.neoforged.neoforge.client.model.generators.ModelProvider
+import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.tessellateModel
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
@@ -38,8 +39,9 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	private val snapGraphicsToBlockSide: Boolean = true
 ) : BlockEntityRenderer<T> {
 	protected val random: RandomSource = RandomSource.create()
+	protected val modelManager: ModelManager = localClient.modelManager
 	private val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
-	private val debugAxisModel = localClient.modelManager.getModel(modelLocation("${ModelProvider.BLOCK_FOLDER}/axis"))
+	private val debugAxisModel = localClient.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/axis")
 
 	/**
 	 * Make sure to place this before the yRot mulPose, since this model's orientation is pulled from the BlockState.

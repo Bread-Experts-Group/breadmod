@@ -9,10 +9,15 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource.BLOCKS
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
+import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -286,20 +291,42 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		player: Player,
 		hitResult: BlockHitResult
 	): InteractionResult {
-		if (state.getValue(Companion.TRIPLE_HALF) != LOWER)
-			return super.useWithoutItem(state, level, pos, player, hitResult)
+		val half = state.getValue(Companion.TRIPLE_HALF)
+		val newPos = if (half == MIDDLE) pos.below() else if (half == UPPER) pos.below().below() else pos
 		val normalizedPos = normalizedHitPos(hitResult.location, pos)
 		val direction = state.getValue(Companion.FACING)
 		val doubleButtonState =
 			directionalTargetFaceSection(direction, normalizedPos, 0.29, 0.46, 0.62, 0.81, 0.49, 0.59)
 		val cashOutButtonState =
 			directionalTargetFaceSection(direction, normalizedPos, 0.29, 0.46, 0.19, 0.38, 0.49, 0.59)
-		val entity = level.getBlockEntity(pos) as DoubleOrNothingBlockEntity
+		val entity = level.getBlockEntity(newPos) as DoubleOrNothingBlockEntity
 
-		if (doubleButtonState) entity.double(level, player, pos)
+		if (doubleButtonState || half == MIDDLE || half == UPPER) entity.double(level, player, pos)
 		else if (cashOutButtonState) entity.cashout(level, player, pos)
 
 		return InteractionResult.sidedSuccess(level.isClientSide)
+	}
+
+	override fun useItemOn(
+		stack: ItemStack,
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hand: InteractionHand,
+		hitResult: BlockHitResult
+	): ItemInteractionResult {
+		if (state.getValue(Companion.TRIPLE_HALF) == LOWER) {
+			val entity = level.getBlockEntity(pos) as DoubleOrNothingBlockEntity
+			if (stack.`is`(Items.SHEARS)) {
+				level.playSound(null, pos, SoundEvents.BEE_STING, BLOCKS, 1f, 1f)
+				entity.rewired = !entity.rewired
+			} else if (stack.`is`(Items.BOW)) {
+				level.playSound(null, pos, SoundEvents.VILLAGER_NO, BLOCKS, 1f, 1f)
+				entity.blockhead = !entity.blockhead
+			}
+		}
+		return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
 	}
 
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = DoubleOrNothingBlockEntity(pos, state)
@@ -311,5 +338,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 	): BlockEntityTicker<T>? = createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.DOUBLE_OR_NOTHING.get()
-	) { tLevel, tPos, tState, tEntity -> tEntity.tick(tLevel, tPos, tState) }
+	) { tLevel, tPos, tState, tEntity ->
+		if (tState.getValue(Companion.TRIPLE_HALF) == LOWER) tEntity.tick(tLevel, tPos, tState)
+	}
 }

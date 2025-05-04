@@ -7,15 +7,14 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.neoforged.neoforge.client.model.data.ModelData
+import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.modelLocation
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
 
 class CreativeGeneratorRenderer(context: Context) : BreadModBER<CreativeGeneratorBlockEntity>(context) {
-	private val modelManager = localClient.modelManager
-	private val starModel = this.modelManager.getModel(modelLocation("block/creative_generator_star"))
+	private val starModel = this.modelManager.getModel("block/creative_generator_star")
 
 	override fun render(
 		blockEntity: CreativeGeneratorBlockEntity,

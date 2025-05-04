@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.inventory.InventoryMenu
 import net.neoforged.neoforge.client.model.pipeline.QuadBakingVertexConsumer
 import org.joml.Vector3f
-import org.joml.Vector4f
 import java.awt.Color
 
 // todo vertex coords need to be redone and renamed on drawTexturedQuad and drawQuad
@@ -28,7 +27,7 @@ fun drawTexturedQuad(
 	renderType: RenderType,
 	poseStack: PoseStack,
 	buffer: MultiBufferSource,
-	color: Vector4f = Vector4f(1f, 1f, 1f, 1f),
+	color: Int = Color.WHITE.rgb,
 	topLeft: Vector3f = Vector3f(1f, 0f, 0f),
 	topRight: Vector3f = Vector3f(0f, 0f, 0f),
 	bottomLeft: Vector3f = Vector3f(0f, 0f, 1f),
@@ -61,14 +60,14 @@ fun drawQuad(
 	poseStack: PoseStack,
 	buffer: MultiBufferSource,
 	renderType: RenderType,
-	color: Vector4f,
+	color: Int,
 	topLeft: Vector3f,
 	topRight: Vector3f,
 	bottomLeft: Vector3f,
 	bottomRight: Vector3f,
 	u0: Float, v0: Float,
 	u1: Float, v1: Float,
-	packedLight: Int = 0xFFFFFF,
+	packedLight: Int = LightTexture.FULL_BRIGHT,
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY
 ) {
 	drawVertex(
@@ -104,7 +103,7 @@ fun drawVertex(
 	poseStack: PoseStack,
 	pBuffer: MultiBufferSource,
 	renderType: RenderType,
-	color: Vector4f,
+	color: Int,
 	x: Float,
 	y: Float,
 	z: Float,
@@ -115,7 +114,7 @@ fun drawVertex(
 ) {
 	val buffer = pBuffer.getBuffer(renderType)
 	buffer.addVertex(poseStack.last().pose(), x, y, z)
-		.setColor(color.x, color.y, color.z, color.w)
+		.setColor(color)
 		.setUv(u, v)
 		.setOverlay(packedOverlay)
 		.setLight(packedLight)

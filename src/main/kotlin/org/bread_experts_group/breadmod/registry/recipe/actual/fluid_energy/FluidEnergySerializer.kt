@@ -10,6 +10,8 @@ import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.registry.recipe.BMRecipeSerializer
+import org.bread_experts_group.breadmod.util.toMutableList
+import org.bread_experts_group.breadmod.util.toNonNullList
 
 class FluidEnergySerializer<R : FluidEnergyRecipeMulti>(
 	private val recipe: RecipeFunctionDataFixer<R>
@@ -27,9 +29,9 @@ class FluidEnergySerializer<R : FluidEnergyRecipeMulti>(
 
 	override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, R> =
 		StreamCodec.composite(
-			this.nonNullListStreamCodec(SizedIngredient.STREAM_CODEC), FluidEnergyRecipeMulti::rItemInputs,
+			SizedIngredient.STREAM_CODEC.toNonNullList(), FluidEnergyRecipeMulti::rItemInputs,
 			ItemStack.LIST_STREAM_CODEC, FluidEnergyRecipeMulti::rItemOutputs,
-			this.nonNullListStreamCodec(SizedFluidIngredient.STREAM_CODEC), FluidEnergyRecipeMulti::rFluidInputs,
+			SizedFluidIngredient.STREAM_CODEC.toNonNullList(), FluidEnergyRecipeMulti::rFluidInputs,
 			FluidStack.STREAM_CODEC.toMutableList(), FluidEnergyRecipeMulti::rFluidOutputs,
 			ByteBufCodecs.INT, FluidEnergyRecipeMulti::rTime,
 			ByteBufCodecs.INT, FluidEnergyRecipeMulti::rEnergy,
