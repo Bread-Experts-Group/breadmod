@@ -30,7 +30,7 @@ typealias biomeBuilder = (
 ) -> Biome
 
 object ModBiomes {
-	private val entries = mutableListOf<Pair<ResourceKey<Biome>, biomeBuilder>>()
+	private val entries: MutableList<Pair<ResourceKey<Biome>, biomeBuilder>> = mutableListOf()
 	fun register(name: String, builder: biomeBuilder): ResourceKey<Biome> = ResourceKey.create(
 		Registries.BIOME,
 		modLocation(name)

@@ -8,8 +8,8 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
-import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 
@@ -36,7 +36,7 @@ class ToolGunSpinningBlockRenderer(
 		poseStack.translate(0.5, 0.5, 0.5)
 		poseStack.mulPose(Axis.YP.rotationDegrees((millis.toFloat() / 50f) % 360f))
 		poseStack.translate(-0.5, -0.5, -0.5)
-		IToolGunModeRenderer.blockModelRenderer.renderBlockModel(
+		localClient.blockRenderer.modelRenderer.renderBlockModel(
 			poseStack.last(),
 			buffer,
 			this.block.defaultBlockState(),

@@ -29,10 +29,13 @@ class ModeWidget(
 	val id: ResourceLocation
 ) : AbstractWidget(0, 0, 35, 40, modeName) {
 	var isSelected: Boolean = false
+	private val hoverColor: Int = Color(255, 170, 0).rgb
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		val borderColor = if (this.isSelected) Color.GREEN.rgb else
-			if (this.isHovered || this.isFocused) Color(16755200).rgb else Color.GRAY.rgb
+		val borderColor =
+			if (this.isSelected) Color.GREEN.rgb
+			else if (this.isHovered || this.isFocused) this.hoverColor
+			else Color.GRAY.rgb
 		guiGraphics.pose().pushPose()
 		guiGraphics.fill(
 			RenderType.gui(),
@@ -76,10 +79,6 @@ class ModeWidget(
 
 		fun icon(item: Item): Builder = this.icon(item.defaultInstance)
 		fun icon(stack: ItemStack): Builder = this.also { this.icon = Selector(a = stack) }
-		fun icon(helper: BreadModTextureHelper): Builder = this.also { this.icon = Selector(b = helper) }
-
-		fun previewImage(stack: ItemStack): Builder =
-			this.also { this.previewImage = Selector(a = stack) }
 
 		fun previewImage(helper: BreadModTextureHelper): Builder =
 			this.also { this.previewImage = Selector(b = helper) }

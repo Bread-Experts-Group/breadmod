@@ -28,7 +28,7 @@ class FluidEnergyScreen(
 			this.topPos + 1,
 			this.leftPos + 172,
 			this.topPos + 199,
-			Color(150, 150, 150).rgb
+			Color.GRAY.rgb
 		)
 
 		guiGraphics.drawString(

@@ -73,7 +73,7 @@ class ModeSelectTab(
 			this.x + 243,
 			this.y + 185,
 			Color.RED.rgb,
-			Color(150, 150, 150).rgb
+			Color.GRAY.rgb
 		)
 		guiGraphics.vLine(this.x + 120, this.y, this.y + 184, Color.RED.rgb)
 		// todo move this to the main screen class for the title

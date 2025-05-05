@@ -101,15 +101,20 @@ object ModItems {
 	@DataGenerateModelSingleItem
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Identical to bread on the outside - tumors on the inside.", suffix = ".tooltip")
+	@DataGenerateLanguage("ja_jp", "実験的なパン")
+	@DataGenerateLanguage("ja_jp", "ほとんどパンだ、だけど中に腫瘍ら。", suffix = ".tooltip")
 	val TEST_BREAD: DeferredItem<TestBreadItem> = this.ITEM_REGISTRY.register("test_bread", ::TestBreadItem)
 
 	@DataGenerateModelSingleItem
 	@DataGenerateLanguage("en_us")
+	@DataGenerateLanguage("ja_jp", "最終的なパン")
 	val ULTIMATE_BREAD: DeferredItem<UltimateBreadItem> =
 		this.ITEM_REGISTRY.register("ultimate_bread", ::UltimateBreadItem)
 
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "No it does NOT look like balsa wood >:(", suffix = ".tooltip")
+	@DataGenerateLanguage("ja_jp", "パン盾")
+	@DataGenerateLanguage("ja_jp", "英語訳は偽っている。バルサ木だ", suffix = ".tooltip")
 	val BREAD_SHIELD: DeferredItem<ShieldItem> = this.ITEM_REGISTRY.register("bread_shield") { ->
 		object : ShieldItem(Properties().stacksTo(1).durability(256)) {
 			override fun appendHoverText(

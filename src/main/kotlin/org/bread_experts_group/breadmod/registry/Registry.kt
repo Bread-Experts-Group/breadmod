@@ -184,6 +184,7 @@ import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.reflect.full.primaryConstructor
 
@@ -234,15 +235,18 @@ object Registry {
 						poseStack.pushPose()
 						poseStack.mulPose(Axis.XP.rotationDegrees(-17f))
 						val matrix = poseStack.last().pose()
-						bufferBuilder.addVertex(matrix, 0f, 100f, 0f)
-							.setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
+						val alpha = (clamp(redness - 0.2f, 0f, 1f) * 255).roundToInt()
+						bufferBuilder
+							.addVertex(matrix, 0f, 100f, 0f)
+							.setColor(230, 0, 26, alpha)
 
 						for (j: Int in 0 .. 16) {
 							val f1 = j * (Math.PI.toFloat() * 2f) / 16f
 							val f2: Float = sin(f1)
 							val f3: Float = cos(f1)
-							bufferBuilder.addVertex(matrix, f2, -1f, -f3)
-								.setColor(0.9f, 0f, 0.1f, clamp(redness - 0.2f, 0f, 1f))
+							bufferBuilder
+								.addVertex(matrix, f2, -1f, -f3)
+								.setColor(230, 0, 26, alpha)
 						}
 						val shaderFogColor = RenderSystem.getShaderFogColor()
 						RenderSystem.setShaderFogColor(
@@ -507,7 +511,7 @@ object Registry {
 			Dist.DEDICATED_SERVER -> {
 				// Nothing for dedicated servers yet ...
 			}
-			else -> throw UnsupportedOperationException()
+			else                  -> throw UnsupportedOperationException()
 		}
 		// Common Event Registration
 		// Game Bus

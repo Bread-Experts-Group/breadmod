@@ -10,8 +10,8 @@ internal class EnglishUSLangProvider(
 	private fun String.joinUnderscoreWithCaps(): String = this.split("_")
 		.joinToString(" ") { it.replaceFirstChar(Char::uppercaseChar) }
 
-	override fun assureName(name: String, otherwise: String) =
-		if (name == "<null>") otherwise.substringAfterLast('.').joinUnderscoreWithCaps()
+	override fun assureName(name: String, languageID: String) =
+		if (name == "<null>") languageID.substringAfterLast('.').joinUnderscoreWithCaps()
 		else name
 
 	override fun addManualTranslations() {

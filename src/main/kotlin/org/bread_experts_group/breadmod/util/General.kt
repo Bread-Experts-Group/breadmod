@@ -48,6 +48,9 @@ import kotlin.math.round
 import kotlin.math.roundToInt
 import kotlin.reflect.full.createInstance
 
+val Vector3fZero: Vector3f = Vector3f(0f, 0f, 0f)
+val Vector3fAxisX: Vector3f = Vector3f(1f, 0f, 0f)
+val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
 internal val formatArray: List<String> =
 	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
 
@@ -110,21 +113,7 @@ inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier
 fun join(v1: VoxelShape, v2: VoxelShape): VoxelShape = Shapes.join(v1, v2, BooleanOp.OR)
 
 /// Start raycast functions ///
-class HitResult<T>(val position: Vec3, val length: Double, val side: Direction, val direction: Vec3, val hit: T) {
-	val blockPosition: BlockPos
-		get() = BlockPos.containing(this.position)
-	val directionEnum: Direction
-		get() = Direction.getNearest(this.direction)
-
-	fun HitResult<Triple<PhysicsGrid, BlockPos, BlockState>>.getAsBlockHitResult(): GridBlockHitResult =
-		GridBlockHitResult(
-			this.position, this.directionEnum,
-			this.blockPosition,
-			this.hit.first,
-			this.hit.second,
-			this.hit.third
-		)
-}
+class HitResult<T>(val position: Vec3, val length: Double, val side: Direction, val direction: Vec3, val hit: T)
 
 fun <T> rayCast(
 	position: Vec3, direction: Vec3,

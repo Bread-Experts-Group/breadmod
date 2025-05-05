@@ -469,13 +469,13 @@ fun Font.renderText(
 	dropShadow,
 	poseStack.last().pose(),
 	buffer,
-	Font.DisplayMode.NORMAL,
+	DisplayMode.NORMAL,
 	backgroundColor,
 	packedLight,
 	dropShadowOffset
 )
 
-private const val TRANSLATE_OFFSET = 0.0001
+private const val TRANSLATE_OFFSET: Double = 0.0001
 
 /**
  * [posX], [posY], [posZ] translates the [PoseStack] on the facing side of the block. *(not required)*
@@ -516,8 +516,6 @@ fun PoseStack.translateOnBlockSide(
 	}
 }
 
-val TRANSPARENT: Int = Color(0f, 0f, 0f, 0f).rgb
-
 // todo proper text rotation on up and down axis.
 fun PoseStack.drawTextOnBlockSide(
 	fontRenderer: Font,
@@ -528,7 +526,7 @@ fun PoseStack.drawTextOnBlockSide(
 	bufferSource: MultiBufferSource,
 	blockState: BlockState,
 	color: Int = Color.WHITE.rgb,
-	backgroundColor: Int = TRANSPARENT,
+	backgroundColor: Int = 0,
 	dropShadow: Boolean = false,
 	direction: Direction? = null,
 	scale: Float = 1f,

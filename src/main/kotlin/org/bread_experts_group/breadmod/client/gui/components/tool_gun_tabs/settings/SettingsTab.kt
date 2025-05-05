@@ -3,15 +3,15 @@ package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.set
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
-import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ToolGunScreenTab
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
+import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ToolGunScreenTab
+import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries.MainEntry
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries.RendererEntry
 import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries.SettingsEntry
+import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
+import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
+import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
 class SettingsTab(
@@ -26,7 +26,7 @@ class SettingsTab(
 		TabButton(Component.literal("settings"), Color.BLUE, Color(0, 0, 230), this)
 
 	override fun init() {
-		Companion.currentSettingsEntry = MAIN
+		currentSettingsEntry = MAIN
 		this.addSettingsEntry(RendererEntry(this.screen, this.stack))
 		this.addSettingsEntry(MainEntry(this.screen, this.stack))
 		var entryPos = 30
@@ -44,8 +44,8 @@ class SettingsTab(
 
 	override fun tickAdditional() {
 		(this.getChild("setting_entry_main_button") ?: return).let {
-			it.active = Companion.currentSettingsEntry != MAIN
-			it.visible = Companion.currentSettingsEntry != MAIN
+			it.active = currentSettingsEntry != MAIN
+			it.visible = currentSettingsEntry != MAIN
 		}
 	}
 
@@ -54,17 +54,18 @@ class SettingsTab(
 		this.addChild(entry.id, entry)
 	}
 
+	private val color: Int = Color(0, 0, 230, 255).rgb
 	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.fill(
 			this.x,
 			this.y,
 			this.x + 243,
 			this.y + 185,
-			Color(0, 0, 230, 255).rgb
+			this.color
 		)
 		this.getWidgets().filterIsInstance<SettingsEntryButton>()
 			.asSequence()
-			.filter { it.isHovered && it.visible && Companion.currentSettingsEntry == MAIN }
+			.filter { it.isHovered && it.visible && currentSettingsEntry == MAIN }
 			.forEach {
 				guiGraphics.drawCenteredWordWrap(
 					localClient.font,

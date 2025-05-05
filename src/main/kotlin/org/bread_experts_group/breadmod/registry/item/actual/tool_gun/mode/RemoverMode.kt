@@ -24,8 +24,8 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
@@ -125,10 +125,10 @@ class RemoverMode : AbstractToolGunMode() {
 		}
 	}
 
-	private fun rand(player: Player) = (player.random.nextDouble() - 0.5) * 1.2
+	private fun rand(player: Player): Double = (player.random.nextDouble() - 0.5) * 1.2
 
-	override fun getDisplayName(): Component = Companion.displayName
-	override fun getTooltip(): Component = Companion.tooltip
+	override fun getDisplayName(): Component = displayName
+	override fun getTooltip(): Component = tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("remover_mode")
 	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this.getUid())
 
@@ -141,10 +141,10 @@ class RemoverMode : AbstractToolGunMode() {
 	}
 
 	class RemoverRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
-		override fun buildModeWidget(): Builder = ModeWidget.Builder()
+		override fun buildModeWidget(): Builder = Builder()
 			.icon(Items.STRUCTURE_VOID)
-			.description(Companion.description)
-			.name(Companion.name)
+			.description(description)
+			.name(name)
 
 		override fun renderScreenStage(
 			stack: ItemStack,
@@ -159,13 +159,13 @@ class RemoverMode : AbstractToolGunMode() {
 			this.drawTextOnScreen(
 				"Targeting: ${if (mode.targetEntities) "Entity" else "Block"}",
 				Color.WHITE.rgb,
-				Color(0f, 0f, 0f, 0f).rgb,
+				Color.BLACK.rgb,
 				false,
-				IToolGunModeRenderer.font,
+				localClient.font,
 				poseStack,
 				buffer,
-				IToolGunModeRenderer.screenTextX + 0.008,
-				IToolGunModeRenderer.screenTextY - 0.015
+				IToolGunModeRenderer.SCREEN_TEXT_X + 0.008,
+				IToolGunModeRenderer.SCREEN_TEXT_Y - 0.015
 			)
 		}
 

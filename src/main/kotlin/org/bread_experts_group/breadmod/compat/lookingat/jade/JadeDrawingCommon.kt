@@ -176,10 +176,10 @@ object JadeDrawingCommon {
 		return Component.literal("∞").withStyle(ChatFormatting.GOLD) to ""
 	}
 
-	private val darkGrayArray = Color(ChatFormatting.DARK_GRAY.color!!).getComponents(null)
-	private val grayArray = Color(ChatFormatting.GRAY.color!!).getComponents(null)
-	private val offWhiteArray = Color(230, 230, 230).getComponents(null)
-	private val savedColors = mutableMapOf<FloatArray, MutableMap<Int, Style>>()
+	private val darkGrayArray: FloatArray = Color(ChatFormatting.DARK_GRAY.color!!).getComponents(null)
+	private val grayArray: FloatArray = Color(ChatFormatting.GRAY.color!!).getComponents(null)
+	private val offWhiteArray: FloatArray = Color(230, 230, 230).getComponents(null)
+	private val savedColors: MutableMap<FloatArray, MutableMap<Int, Style>> = mutableMapOf()
 
 	fun computeColor(
 		tint: Int,

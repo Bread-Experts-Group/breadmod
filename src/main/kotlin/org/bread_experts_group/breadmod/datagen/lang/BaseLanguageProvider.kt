@@ -41,7 +41,7 @@ internal abstract class BaseLanguageProvider(
 	output: PackOutput,
 	@Suppress("SameParameterValue") val language: String
 ) : LanguageProvider(output, BreadMod.ID, language) {
-	protected open fun assureName(name: String, otherwise: String): String =
+	protected open fun assureName(name: String, languageID: String): String =
 		if (name == "<null>") throw UnsupportedOperationException() else name
 
 	fun getLanguageID(item: Any, annotation: DataGenerateLanguage = DataGenerateLanguage("")): String {

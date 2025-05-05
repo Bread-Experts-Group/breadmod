@@ -30,6 +30,8 @@ import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlo
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
+import org.bread_experts_group.breadmod.util.Vector3fAxisZ
+import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.bread_experts_group.breadmod.util.toVec3
 import org.bread_experts_group.breadmod.util.toYRotFixed
 import org.joml.Vector3f
@@ -37,8 +39,8 @@ import org.lwjgl.system.MemoryUtil
 import java.awt.Color
 
 class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRenderer<DoubleOrNothingBlockEntity> {
-	private val random = RandomSource.create()
-	private val modelData = ModelData.EMPTY
+	private val random: RandomSource = RandomSource.create()
+	private val modelData: ModelData = ModelData.EMPTY
 	private val vertexes: Array<Vector3f> = arrayOf(
 		Vector3f(0.95f, 2.375f, 0.0f),
 		Vector3f(0.05f, 2.375f, 0f),
@@ -46,21 +48,27 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 		Vector3f(0.05f, 0.55f, 0f)
 	)
 	private val colors: IntArray = intArrayOf(
-		Color(1f, 0.224f, 0f, 1f).rgb,
-		Color(1f, 0.31f, 0.23f, 1f).rgb,
-		Color(1f, 0.231f, 0.416f, 1f).rgb,
-		Color(1f, 0.231f, 0.529f, 1f).rgb,
-		Color(1f, 0.231f, 0.6f, 1f).rgb,
-		Color(0.91f, 0.275f, 0.667f, 1f).rgb,
-		Color(0.778f, 0.208f, 0.678f, 1f).rgb,
-		Color(0.788f, 0.208f, 0.788f, 1f).rgb,
-		Color(0.643f, 0.286f, 0.89f, 1f).rgb,
+		Color(255, 57, 0).rgb,
+		Color(255, 79, 59).rgb,
+		Color(255, 59, 106).rgb,
+		Color(255, 59, 135).rgb,
+		Color(255, 59, 153).rgb,
+		Color(232, 70, 170).rgb,
+		Color(198, 53, 173).rgb,
+		Color(198, 53, 201).rgb,
+		Color(164, 73, 227).rgb,
 		Color.BLACK.rgb
 	)
-	private val backgroundTexture = modLocation("textures/block/double_or_nothing/background.png")
-	private val blockhead = modLocation("textures/tool_gun/gui/blockhead.png")
-	private val bluesScreenTexture = modLocation("textures/block/double_or_nothing/background_bluescreen.png")
-	private val redTexture = modLocation("textures/block/double_or_nothing/background_colorable.png")
+	private val backgroundTexture: ResourceLocation = modLocation("textures/block/double_or_nothing/background.png")
+	private val blockhead: ResourceLocation = modLocation("textures/tool_gun/gui/blockhead.png")
+	private val redTexture: ResourceLocation = modLocation("textures/block/double_or_nothing/background_colorable.png")
+	private val bluesScreenTexture: ResourceLocation = modLocation(
+		"textures/block/double_or_nothing/background_bluescreen.png"
+	)
+	private val nothingColor: Int = Color(128, 0, 0).rgb
+	private val good1Color: Int = Color(102, 204, 102).rgb
+	private val good2Color: Int = Color(52, 240, 0).rgb
+	private val jackpotColor: Int = Color(255, 207, 0).rgb
 
 	override fun render(
 		blockEntity: DoubleOrNothingBlockEntity,
@@ -98,8 +106,8 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 		if (blockEntity.counter != 10 && !blockEntity.cashout) {
 			if (!blockEntity.nothing) this.drawRainbowQuad(poseStack, bufferSource, blockEntity, blockRotation)
 			else this.drawColorable(poseStack, bufferSource, blockRotation, Color.RED.rgb)
-			val bgColor = if (blockEntity.counter == 0 && !blockEntity.nothing) Color(0.4f, 0.8f, 0.4f, 1f).rgb
-			else if (!blockEntity.nothing) this.colors[8 - (blockEntity.counter - 1)] else Color(0.5f, 0f, 0f, 1f).rgb
+			val bgColor = if (blockEntity.counter == 0 && !blockEntity.nothing) this.good1Color
+			else if (!blockEntity.nothing) this.colors[8 - (blockEntity.counter - 1)] else this.nothingColor
 			this.drawBackground(poseStack, bufferSource, blockRotation, blockHeadMode, bgColor)
 			// pop the pose for block rotation cause the text is translated onto the side automatically.
 			poseStack.popPose()
@@ -112,13 +120,13 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 
 			this.drawCurrentPlayer(poseStack, blockEntity, bufferSource)
 		} else if (blockEntity.cashout) {
-			this.drawColorable(poseStack, bufferSource, blockRotation, Color(0.204f, 0.941f, 0f, 1f).rgb)
+			this.drawColorable(poseStack, bufferSource, blockRotation, this.good2Color)
 			this.drawBackground(
 				poseStack,
 				bufferSource,
 				blockRotation,
 				blockHeadMode,
-				Color(0.4f, 0.8f, 0.4f, 1f).rgb
+				this.good1Color
 			)
 			poseStack.popPose()
 
@@ -239,8 +247,8 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 			bufferSource,
 			RenderType.text(texture),
 			color,
-			Vector3f(0f, 0f, 1f),
-			Vector3f(0f, 0f, 0f),
+			Vector3fAxisZ,
+			Vector3fZero,
 			Vector3f(2f, 0f, 1f),
 			Vector3f(2f, 0f, 0f),
 			0f,
@@ -273,8 +281,8 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 			bufferSource,
 			RenderType.text(this.redTexture),
 			color,
-			Vector3f(0f, 0f, 1f),
-			Vector3f(0f, 0f, 0f),
+			Vector3fAxisZ,
+			Vector3fZero,
 			Vector3f(2f, 0f, 1f),
 			Vector3f(2f, 0f, 0f),
 			0f,
@@ -466,7 +474,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 				bufferSource,
 				blockRotation,
 				blockHeadMode,
-				Color(1f, 0.812f, 0f, 1f).rgb
+				this.jackpotColor
 			)
 			poseStack.popPose()
 			// todo figure out tilt later
@@ -477,7 +485,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 			this.drawText(
 				poseStack,
 				"JACK",
-				Color(1f, 0.839f, 0.149f, 1f).rgb,
+				this.jackpotColor,
 				blockEntity,
 				0.23,
 				0.65,
@@ -488,7 +496,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 			this.drawText(
 				poseStack,
 				"POT",
-				Color(1f, 0.839f, 0.149f, 1f).rgb,
+				this.jackpotColor,
 				blockEntity,
 				0.33,
 				0.49,

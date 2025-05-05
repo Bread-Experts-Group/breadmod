@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.client.render.buffer
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
@@ -12,6 +11,9 @@ import org.bread_experts_group.breadmod.client.render.buildTexturedBakedQuad
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.renderBakedQuads
+import org.bread_experts_group.breadmod.util.Vector3fAxisX
+import org.bread_experts_group.breadmod.util.Vector3fAxisZ
+import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.joml.Vector3f
 
 object TestCubeBufferTask {
@@ -44,28 +46,28 @@ object TestCubeBufferTask {
 						),
 						buildTexturedBakedQuad( // Top
 							modLocation("block", "bread_block"),
-							topLeft = Vector3f(0f, 0f, 0f),
-							topRight = Vector3f(1f, 0f, 0f),
-							bottomLeft = Vector3f(0f, 0f, 1f),
+							topLeft = Vector3fZero,
+							topRight = Vector3fAxisX,
+							bottomLeft = Vector3fAxisZ,
 							bottomRight = Vector3f(1f, 0f, 1f)
 						),
 						buildTexturedBakedQuad( // East
 							modLocation("block", "bread_block"),
 							topLeft = Vector3f(1f, 0f, 1f),
-							topRight = Vector3f(1f, 0f, 0f),
+							topRight = Vector3fAxisX,
 							bottomLeft = Vector3f(1f, -1f, 1f),
 							bottomRight = Vector3f(1f, -1f, 0f)
 						),
 						buildTexturedBakedQuad( // West
 							modLocation("block", "bread_block"),
-							topLeft = Vector3f(0f, 0f, 0f),
-							topRight = Vector3f(0f, 0f, 1f),
+							topLeft = Vector3fZero,
+							topRight = Vector3fAxisZ,
 							bottomLeft = Vector3f(0f, -1f, 0f),
 							bottomRight = Vector3f(0f, -1f, 1f)
 						),
 						buildTexturedBakedQuad( // South
 							modLocation("block", "bread_block"),
-							topLeft = Vector3f(0f, 0f, 1f),
+							topLeft = Vector3fAxisZ,
 							topRight = Vector3f(1f, 0f, 1f),
 							bottomLeft = Vector3f(0f, -1f, 1f),
 							bottomRight = Vector3f(1f, -1f, 1f)
@@ -79,7 +81,6 @@ object TestCubeBufferTask {
 						)
 					),
 					LevelRenderer.getLightColor(level, blockPos),
-					OverlayTexture.NO_OVERLAY,
 				)
 				poseStack.popPose()
 

@@ -6,20 +6,16 @@ import net.minecraft.client.gui.Font
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.block.BlockRenderDispatcher
-import net.minecraft.client.renderer.block.ModelBlockRenderer
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher
-import net.minecraft.client.renderer.entity.ItemRenderer
-import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.render.drawQuad
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.util.Vector3fAxisX
+import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.joml.Vector3f
 import java.awt.Color
 
@@ -28,16 +24,10 @@ interface IToolGunModeRenderer {
 		/**
 		 * Default screen brightness.
 		 */
-		const val screenTint: Int = LightTexture.FULL_BRIGHT
-		const val screenTextX: Double = -0.0434
-		const val screenTextY: Double = 0.4215
-		const val screenTextZ: Double = 0.8317
-		var modelManager: ModelManager = localClient.modelManager
-		var itemRenderer: ItemRenderer = localClient.itemRenderer
-		var blockModelRenderer: ModelBlockRenderer = localClient.blockRenderer.modelRenderer
-		var blockRenderDispatcher: BlockRenderDispatcher = localClient.blockRenderer
-		var entityRenderDispatcher: EntityRenderDispatcher = localClient.entityRenderDispatcher
-		var font: Font = localClient.font
+		const val SCREEN_TINT: Int = LightTexture.FULL_BRIGHT
+		const val SCREEN_TEXT_X: Double = -0.0434
+		const val SCREEN_TEXT_Y: Double = 0.4215
+		const val SCREEN_TEXT_Z: Double = 0.8317
 	}
 
 	fun shouldRecoil(
@@ -97,15 +87,14 @@ interface IToolGunModeRenderer {
 			buffer,
 			RenderType.text(texture),
 			Color.WHITE.rgb,
-			Vector3f(1f, 0f, 0f),
-			Vector3f(0f, 0f, 0f),
+			Vector3fAxisX,
+			Vector3fZero,
 			Vector3f(1f, -1f, 0f),
 			Vector3f(0f, -1f, 0f),
 			textureWidth.toFloat(),
 			textureWidth.toFloat(),
 			textureHeight.toFloat(),
-			textureHeight.toFloat(),
-			Companion.screenTint
+			textureHeight.toFloat()
 		)
 		poseStack.popPose()
 	}
@@ -118,16 +107,16 @@ interface IToolGunModeRenderer {
 		fontRenderer: Font,
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
-		posX: Double = Companion.screenTextX,
-		posY: Double = Companion.screenTextY,
-		posZ: Double = Companion.screenTextZ,
+		posX: Double = Companion.SCREEN_TEXT_X,
+		posY: Double = Companion.SCREEN_TEXT_Y,
+		posZ: Double = Companion.SCREEN_TEXT_Z,
 		scale: Float = 0.0007f
 	) {
 		this.initialScreenTranslations(poseStack, posX, posY, posZ, scale)
 		fontRenderer.renderText(
 			component.visualOrderText, color, backgroundColor, poseStack,
 			buffer, dropShadow,
-			Companion.screenTint
+			Companion.SCREEN_TINT
 		)
 		poseStack.popPose()
 	}
@@ -143,9 +132,9 @@ interface IToolGunModeRenderer {
 		fontRenderer: Font,
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
-		posX: Double = Companion.screenTextX,
-		posY: Double = Companion.screenTextY,
-		posZ: Double = Companion.screenTextZ,
+		posX: Double = Companion.SCREEN_TEXT_X,
+		posY: Double = Companion.SCREEN_TEXT_Y,
+		posZ: Double = Companion.SCREEN_TEXT_Z,
 		scale: Float = 0.0007f
 	): Unit = this.drawTextOnScreen(
 		Component.literal(text),
@@ -153,7 +142,8 @@ interface IToolGunModeRenderer {
 	)
 
 	/**
-	 * Used to render special effects and/or models on the tool gun's [BlockEntityWithoutLevelRenderer].
+	 * Used to render special effects and/or models on the tool gun's
+	 * [net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer].
 	 * Fires before the other render stages.
 	 * @see renderScreenStage
 	 * @see renderCoilStage

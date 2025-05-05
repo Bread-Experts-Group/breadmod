@@ -11,6 +11,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.inventory.InventoryMenu
 import net.neoforged.neoforge.client.model.pipeline.QuadBakingVertexConsumer
+import org.bread_experts_group.breadmod.util.Vector3fAxisX
+import org.bread_experts_group.breadmod.util.Vector3fAxisZ
+import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.joml.Vector3f
 import java.awt.Color
 
@@ -28,9 +31,9 @@ fun drawTexturedQuad(
 	poseStack: PoseStack,
 	buffer: MultiBufferSource,
 	color: Int = Color.WHITE.rgb,
-	topLeft: Vector3f = Vector3f(1f, 0f, 0f),
-	topRight: Vector3f = Vector3f(0f, 0f, 0f),
-	bottomLeft: Vector3f = Vector3f(0f, 0f, 1f),
+	topLeft: Vector3f = Vector3fAxisX,
+	topRight: Vector3f = Vector3fZero,
+	bottomLeft: Vector3f = Vector3fAxisZ,
 	bottomRight: Vector3f = Vector3f(1f, 0f, 1f),
 	packedLight: Int = 0xFFFFFF,
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY
@@ -121,15 +124,15 @@ fun drawVertex(
 		.setNormal(0f, 1f, 0f)
 }
 
-private val quadBuilder = QuadBakingVertexConsumer()
+private val quadBuilder: QuadBakingVertexConsumer = QuadBakingVertexConsumer()
 
 /**
  * Creates a [BakedQuad].
  */
 fun buildBakedQuad(
 	color: Int,
-	topLeft: Vector3f = Vector3f(1f, 0f, 0f), // top left
-	topRight: Vector3f = Vector3f(0f, 0f, 0f), // top right
+	topLeft: Vector3f = Vector3fAxisX, // top left
+	topRight: Vector3f = Vector3fZero, // top right
 	bottomLeft: Vector3f = Vector3f(1f, -1f, 0f), // bottom left
 	bottomRight: Vector3f = Vector3f(0f, -1f, 0f), // bottom right
 	u0: Float, v0: Float,
@@ -155,8 +158,8 @@ fun buildTexturedBakedQuad(
 	textureLocation: ResourceLocation,
 	color: Int = Color.WHITE.rgb,
 	useAmbientOcclusion: Boolean = false,
-	topLeft: Vector3f = Vector3f(1f, 0f, 0f), // top left
-	topRight: Vector3f = Vector3f(0f, 0f, 0f), // top right
+	topLeft: Vector3f = Vector3fAxisX, // top left
+	topRight: Vector3f = Vector3fZero, // top right
 	bottomLeft: Vector3f = Vector3f(1f, -1f, 0f), // bottom left
 	bottomRight: Vector3f = Vector3f(0f, -1f, 0f), // bottom right
 	packedLight: Int = 0xFFFFFF,
@@ -179,8 +182,6 @@ fun buildTexturedBakedQuad(
 	)
 }
 
-fun transparentColor(): Color = Color(0f, 0f, 0f, 0f)
-
 @Suppress("SameParameterValue")
 private fun QuadBakingVertexConsumer.addVertex(
 	x: Float,
@@ -198,7 +199,7 @@ fun renderBakedQuads(
 	pose: Pose, consumer: VertexConsumer,
 	red: Float, green: Float, blue: Float,
 	quads: List<BakedQuad>,
-	packedLight: Int, packedOverlay: Int
+	packedLight: Int
 ) {
 	val light = LightTexture.pack(0, 15)
 	quads.forEach {
