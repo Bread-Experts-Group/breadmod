@@ -11,7 +11,9 @@ import java.awt.Color
 
 class KeyboardScreen(private val monitorPos: BlockPos) : Screen(Component.empty()) {
 	// todo remove after fixing packet not notifying the BER
-	private val monitorEntity = localClient.level?.getBlockEntity(this.monitorPos) as MonitorBlockEntity
+	private val monitorEntity: MonitorBlockEntity = localClient.level?.getBlockEntity(this.monitorPos)
+			as MonitorBlockEntity
+
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
 		this.monitorEntity.computer.keyboard.write(keyCode.toUByte())
 		// todo figure out why this isn't sending the change to clients later

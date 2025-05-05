@@ -40,8 +40,8 @@ class DoughMachineBlockEntity(
 	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(4)
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
-			ExpansibleFluidHandler.ExpansibleTank(10_000, true, false),
-			ExpansibleFluidHandler.ExpansibleTank(10_000, false, true)
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = true, allowOut = false),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = false, allowOut = true)
 		)
 	)
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(

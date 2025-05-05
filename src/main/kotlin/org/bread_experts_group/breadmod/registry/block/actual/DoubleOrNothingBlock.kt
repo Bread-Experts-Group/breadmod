@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -134,8 +135,6 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(3.0, 7.0, 15.0, 4.0, 8.0, 16.0),
 			box(4.0, 7.0, 15.0, 5.0, 9.0, 16.0)
 		).reduce(::join).get()
-
-		// shapes middle
 		val SHAPE_MIDDLE_NORTH: VoxelShape = Stream.of(
 			box(15.0, 0.0, 8.0, 16.0, 16.0, 16.0),
 			box(1.0, 0.0, 9.0, 15.0, 16.0, 16.0),
@@ -200,7 +199,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		).reduce(::join).get()
 	}
 
-	override fun codec(): MapCodec<out BaseEntityBlock> = simpleCodec { this }
+	override fun codec(): MapCodec<out BaseEntityBlock> = BlockBehaviour.simpleCodec { this }
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
 		builder.add(Companion.TRIPLE_HALF, Companion.FACING)
@@ -335,7 +334,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = createTickerHelper(
+	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.DOUBLE_OR_NOTHING.get()
 	) { tLevel, tPos, tState, tEntity ->

@@ -30,7 +30,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearin
 abstract class BreadModBlockWithEntity(
 	properties: Properties
 ) : BaseEntityBlock(properties) {
-	override fun codec(): MapCodec<out BaseEntityBlock> = simpleCodec { this }
+	override fun codec(): MapCodec<out BaseEntityBlock> = BaseEntityBlock.simpleCodec { this }
 	override fun getRenderShape(state: BlockState): RenderShape = MODEL
 
 	open fun useItemOnBM(

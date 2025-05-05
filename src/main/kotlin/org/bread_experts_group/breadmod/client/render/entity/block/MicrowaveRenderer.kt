@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
+import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -29,7 +30,7 @@ class MicrowaveRenderer(
 	}
 
 	private var plateRots: MutableMap<Int, Float> = mutableMapOf()
-	private val itemRenderer = this.context.itemRenderer
+	private val itemRenderer: ItemRenderer = this.context.itemRenderer
 
 	override fun render(
 		blockEntity: MicrowaveBlockEntity,

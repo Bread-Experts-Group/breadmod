@@ -378,8 +378,8 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 	override fun getShade(direction: Direction, shade: Boolean): Float {
 		if (!shade) return 1f
 		return when (direction) {
-			Direction.DOWN                 -> 0.5f
-			Direction.UP                   -> 1.0f
+			Direction.DOWN -> 0.5f
+			Direction.UP   -> 1.0f
 			Direction.NORTH, Direction.SOUTH -> 0.8f
 			Direction.WEST, Direction.EAST -> 0.6f
 		}

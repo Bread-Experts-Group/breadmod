@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
@@ -140,7 +141,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		val direction = hitResult.direction ?: return FAIL
 		val normalizedPos = normalizedHitPos(hitResult.location, pos)
 		val entity = level.getBlockEntity(pos) as MicrowaveBlockEntity
-		val buttonPressed: Int = when (direction) {
+		when (direction) {
 			NORTH -> this.buttonPress(normalizedPos.x, normalizedPos.y, 0.23, 0.27, level, pos, NORTH)
 			EAST  -> this.buttonPress(normalizedPos.z, normalizedPos.y, 0.23, 0.27, level, pos, EAST)
 			SOUTH -> this.buttonPress(normalizedPos.x, normalizedPos.y, 0.73, 0.77, level, pos, SOUTH)
@@ -151,7 +152,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		return sidedSuccess(level.isClientSide)
 	}
 
-	private fun sound(level: Level, pos: BlockPos, pitch: Float) =
+	private fun sound(level: Level, pos: BlockPos, pitch: Float): Unit =
 		level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BIT.value(), BLOCKS, 1f, pitch)
 
 	private fun buttonPress(
@@ -224,7 +225,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = createTickerHelper(
+	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.MICROWAVE.get(),
 		this::tickBreadModBlockEntity

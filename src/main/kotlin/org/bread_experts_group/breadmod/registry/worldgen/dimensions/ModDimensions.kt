@@ -17,7 +17,7 @@ import net.minecraft.world.level.dimension.LevelStem
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
 import org.bread_experts_group.breadmod.BreadMod
-import java.util.*
+import java.util.OptionalLong
 
 object ModDimensions {
 	fun register(

@@ -97,5 +97,4 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 			this.runMissingRecipe(level, pos, state, entity)
 		})
 	}
-
 }

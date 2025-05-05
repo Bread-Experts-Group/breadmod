@@ -10,7 +10,7 @@ abstract class InstructionSelector(private val processor: IA32Processor) : Instr
 		return read
 	}
 
-	private fun getIns() = this.instructions.getValue(this.getReg())
+	private fun getIns(): Instruction = this.instructions.getValue(this.getReg())
 	override fun operands(processor: IA32Processor): String = this.getIns().operands(processor)
 	override fun handle(processor: IA32Processor): Unit = this.getIns().handle(processor)
 

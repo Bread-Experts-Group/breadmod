@@ -12,6 +12,6 @@ object InterruptReturn : Instruction("iret") {
 			processor.ip.tex = processor.pop16().toUInt()
 			processor.cs.tx = processor.pop16()
 			processor.flags.tx = processor.pop16()
-		} else throw TODO("PROTECTED IRET")
+		} else TODO("PROTECTED IRET")
 	}
 }

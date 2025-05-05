@@ -27,7 +27,7 @@ import java.awt.Color
 class GluonGunBackpackArmorLayer(
 	renderer: RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
 ) : RenderLayer<LivingEntity, EntityModel<LivingEntity>>(renderer) {
-	private val backpackModel = GluonGunBackpackModel(localClient.entityModels)
+	private val backpackModel: GluonGunBackpackModel = GluonGunBackpackModel(localClient.entityModels)
 	override fun render(
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,

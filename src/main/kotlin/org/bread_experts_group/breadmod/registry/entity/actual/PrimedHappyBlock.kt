@@ -26,8 +26,8 @@ class PrimedHappyBlock(
 		this.deltaMovement = delta
 	}
 
-	private val spreadRadius = ModConfiguration.COMMON.happyBlockExplosionSpreadRadius.get()
-	private val divisions = ModConfiguration.COMMON.happyBlockExplosionDivisions.get()
+	private val spreadRadius: Double = ModConfiguration.COMMON.happyBlockExplosionSpreadRadius.get()
+	private val divisions: Int = ModConfiguration.COMMON.happyBlockExplosionDivisions.get()
 
 	override fun explode(): Unit = this.level().let {
 		BreadModExplosion

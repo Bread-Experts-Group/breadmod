@@ -28,7 +28,7 @@ class ModRecipeProvider(
 ) : RecipeProvider(output, registries) {
 	override fun buildRecipes(recipeOutput: RecipeOutput) {
 		ShapelessRecipeBuilder(RecipeCategory.MISC, ModItems.TEST_BREAD.toStack())
-			.unlockedBy("has_item", has(Items.BREAD))
+			.unlockedBy("has_item", RecipeProvider.has(Items.BREAD))
 			.requires(Items.BREAD, 5)
 			.save(recipeOutput, modLocation("special", "test"))
 
@@ -100,7 +100,7 @@ class ModRecipeProvider(
 			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
 	}
 
-	private fun toasting(input: Item, result: Item, output: RecipeOutput, name: String) =
+	private fun toasting(input: Item, result: Item, output: RecipeOutput, name: String): Unit =
 		FluidEnergyBuilder(::ToasterRecipe, listOf(result to 2))
 			.itemRequired(input, 2)
 			.timeRequiredInSeconds(5)
@@ -113,7 +113,7 @@ class ModRecipeProvider(
 		energy: Int,
 		output: RecipeOutput,
 		name: String
-	) = FluidEnergyBuilder(::WheatCrusherRecipe, listOf(result))
+	): Unit = FluidEnergyBuilder(::WheatCrusherRecipe, listOf(result))
 		.itemRequired(input.first, input.second)
 		.timeRequiredInSeconds(seconds)
 		.energyRequired(energy)
@@ -129,7 +129,7 @@ class ModRecipeProvider(
 		energy: Int,
 		output: RecipeOutput,
 		name: String
-	) = FluidEnergyBuilder(::DoughMachineRecipe, listOf(itemOutput), listOf(fluidOutput))
+	): Unit = FluidEnergyBuilder(::DoughMachineRecipe, listOf(itemOutput), listOf(fluidOutput))
 		.itemRequired(inputOne.first, inputOne.second)
 		.itemRequired(inputTwo.first, inputTwo.second)
 		.fluidRequired(fluidInput.first, fluidInput.second)

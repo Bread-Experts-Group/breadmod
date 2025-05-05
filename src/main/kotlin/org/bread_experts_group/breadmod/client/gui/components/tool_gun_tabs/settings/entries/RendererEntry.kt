@@ -27,7 +27,7 @@ class RendererEntry(
 		RENDERER
 	)
 ) {
-	private val toolGunRenderer = ToolGunItemRenderer
+	private val toolGunRenderer: ToolGunItemRenderer = ToolGunItemRenderer
 
 	override fun init() {
 		val (_, _, index) = ToolGunData.get(this.stack)

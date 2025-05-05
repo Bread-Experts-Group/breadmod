@@ -67,8 +67,7 @@ class ToolGunItem : Item(
 				BeamBufferTask.create(
 					player.position(),
 					player.getViewYRot(0f),
-					player.getViewXRot(0f),
-					localClient.options.cameraType.isFirstPerson
+					player.getViewXRot(0f)
 				)
 				if (mode.shouldPlayToolGunSound(stack, player)) mode.playToolGunSound(player)
 			}

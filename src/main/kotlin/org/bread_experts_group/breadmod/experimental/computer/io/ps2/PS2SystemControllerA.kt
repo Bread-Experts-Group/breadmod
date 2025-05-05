@@ -6,11 +6,11 @@ import org.bread_experts_group.breadmod.experimental.computer.io.IODevice
 class PS2SystemControllerA : IODevice {
 	var status: UByte = 0x2u
 
-	override fun read(): UByte = status
+	override fun read(): UByte = this.status
 
 	override fun write(d: UByte) {
 		if (d.toUInt() == 0x2u) {
-			status = d
+			this.status = d
 		} else TODO(hex(d))
 	}
 	/*

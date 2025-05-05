@@ -26,7 +26,7 @@ class SettingsTab(
 		TabButton(Component.literal("settings"), Color.BLUE, Color(0, 0, 230), this)
 
 	override fun init() {
-		currentSettingsEntry = MAIN
+		Companion.currentSettingsEntry = MAIN
 		this.addSettingsEntry(RendererEntry(this.screen, this.stack))
 		this.addSettingsEntry(MainEntry(this.screen, this.stack))
 		var entryPos = 30
@@ -44,8 +44,8 @@ class SettingsTab(
 
 	override fun tickAdditional() {
 		(this.getChild("setting_entry_main_button") ?: return).let {
-			it.active = currentSettingsEntry != MAIN
-			it.visible = currentSettingsEntry != MAIN
+			it.active = Companion.currentSettingsEntry != MAIN
+			it.visible = Companion.currentSettingsEntry != MAIN
 		}
 	}
 

@@ -11,10 +11,11 @@ typealias PlacedFeatureBuilder = (configuredFeaturesHolder: HolderGetter<Configu
 typealias ConfiguredFeatureBuilder = () -> ConfiguredFeature<*, *>
 
 object ModFeatures {
-	private val entries = Pair(
-		mutableListOf<Pair<ResourceKey<PlacedFeature>, PlacedFeatureBuilder>>(),
-		mutableListOf<Pair<ResourceKey<ConfiguredFeature<*, *>>, ConfiguredFeatureBuilder>>()
-	)
+	private val entries: Pair<MutableList<Pair<ResourceKey<PlacedFeature>, PlacedFeatureBuilder>>, MutableList<Pair<ResourceKey<ConfiguredFeature<*, *>>, ConfiguredFeatureBuilder>>> =
+		Pair(
+			mutableListOf(),
+			mutableListOf()
+		)
 
 	//	fun registerPlacedFeature(name: String, builder: PlacedFeatureBuilder): ResourceKey<PlacedFeature> =
 //		ResourceKey.create(

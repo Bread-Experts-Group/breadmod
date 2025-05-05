@@ -166,7 +166,7 @@ class IA32Processor : Processor {
 			this.ip.tex = this.computer.requestMemoryAt16(addr).toUInt()
 			this.cs.tx = this.computer.requestMemoryAt16(addr + 2u)
 		} else {
-			throw TODO("Protected mode interrupts")
+			TODO("Protected mode interrupts")
 		}
 	}
 
@@ -226,7 +226,7 @@ class IA32Processor : Processor {
 		this.logger.warn("Understood ${this.instructionMap.size} opcodes.")
 	}
 
-	private var readingOffPrefix = 0u
+	private var readingOffPrefix: UInt = 0u
 	fun decode() {
 		val instruction = when (this.cir.toUInt()) {
 			0x26u -> {

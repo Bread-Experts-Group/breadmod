@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.client.gui.screens
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.ModTextureLocations
@@ -14,7 +15,7 @@ class WheatCrusherScreen(
 	inventory: Inventory,
 	title: Component
 ) : AbstractModContainerScreen<WheatCrusherMenu, WheatCrusherBlockEntity>(menu, inventory, title) {
-	private val texture = modLocation("textures", "gui", "container", "wheat_crusher.png")
+	private val texture: ResourceLocation = modLocation("textures", "gui", "container", "wheat_crusher.png")
 
 	init {
 		this.imageWidth = 176
@@ -30,8 +31,7 @@ class WheatCrusherScreen(
 	}
 
 	private var step: Int = -32
-	private var timer: Int = 20
-	private var lastTick = 0
+	private var lastTick: Int = 0
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
 		val guiTicks = localClient.gui.guiTicks

@@ -114,6 +114,6 @@ data class MachSpeedData(
 		}
 	}
 
-	private fun playSound(target: LivingEntity, sound: SoundEvent, level: Level) =
+	private fun playSound(target: LivingEntity, sound: SoundEvent, level: Level): Unit =
 		level.playSound(null, target.x, target.y, target.z, sound, AMBIENT)
 }

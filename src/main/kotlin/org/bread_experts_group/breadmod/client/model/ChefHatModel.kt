@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.model.Model
 import net.minecraft.client.model.geom.EntityModelSet
 import net.minecraft.client.model.geom.ModelLayerLocation
+import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
 import net.minecraft.client.model.geom.builders.CubeListBuilder
 import net.minecraft.client.model.geom.builders.LayerDefinition
@@ -26,7 +27,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
  * @since 1.0.0
  */
 class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::entityTranslucent) {
-	private val parts = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts.toList()
+	private val parts: List<ModelPart> = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts.toList()
 
 	/**
 	 * Bakes and renders this model to the buffer.

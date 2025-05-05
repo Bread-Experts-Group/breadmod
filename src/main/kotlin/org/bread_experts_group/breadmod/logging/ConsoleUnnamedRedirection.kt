@@ -10,7 +10,7 @@ internal object ConsoleUnnamedRedirection {
 	private val unnamedLoggerErr: Logger = LogManager.getLogger("Unnamed Logger, Error")
 
 	class Redirector(val logger: Logger, val level: Level) : PrintStream(nullOutputStream()) {
-		private val intermediateBuilder = StringBuilder()
+		private val intermediateBuilder: StringBuilder = StringBuilder()
 		override fun print(x: Any?) {
 			this.intermediateBuilder.append(x)
 			val result = this.intermediateBuilder.toString().split("\n").toMutableList()

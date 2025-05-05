@@ -101,7 +101,7 @@ class DoubleOrNothingBlockEntity(
 		}
 	}
 
-	private fun updateClients(level: ServerLevel, nothing: Boolean) =
+	private fun updateClients(level: ServerLevel, nothing: Boolean): Unit =
 		PacketDistributor.sendToPlayersTrackingChunk(
 			level,
 			ChunkPos(this.blockPos),

@@ -12,12 +12,12 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 
 object BeamBufferTask {
-	var xOffset = 0.0
-	var yOffset = 0.0
-	var zOffset = 0.0
-	var rotationEnabled = false
-	var usePlayerRot = false
-	fun create(initialPos: Vec3, yRot: Float, xRot: Float, isFirstPerson: Boolean) {
+	var xOffset: Double = 0.0
+	var yOffset: Double = 0.0
+	var zOffset: Double = 0.0
+	var rotationEnabled: Boolean = false
+	var usePlayerRot: Boolean = false
+	fun create(initialPos: Vec3, yRot: Float, xRot: Float) {
 		val player = localClient.player ?: return
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
@@ -38,7 +38,7 @@ object BeamBufferTask {
 					poseStack.offsetRenderToCameraPos(initialPos, camera, false)
 					poseStack.translate(this.xOffset, this.yOffset, this.zOffset)
 					if (this.rotationEnabled) {
-						if (!usePlayerRot) {
+						if (!this.usePlayerRot) {
 							poseStack.mulPose(Axis.YN.rotationDegrees(yRot + 90f))
 							poseStack.mulPose(Axis.ZN.rotationDegrees(xRot))
 						} else {

@@ -2,12 +2,15 @@ package org.bread_experts_group.breadmod.client.model
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.PlayerModel
+import net.minecraft.client.model.geom.EntityModelSet
 import net.minecraft.client.model.geom.ModelLayers
 import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
+import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.resources.PlayerSkin
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
@@ -18,14 +21,14 @@ class MachTrailModel(
 	private val playerInfo: PlayerInfo,
 	var currentColor: Int
 ) {
-	private val playerSkin = this.playerInfo.skin
-	private val playerTexture = this.playerSkin.texture
-	private val playerModelType = this.playerSkin.model
-	private val limbSwing = this.player.walkAnimation.position()
-	private val entityModels = localClient.entityModels
-	private val bufferSource = localClient.renderBuffers().bufferSource()
-	private val chefHatModel = ChefHatModel(this.entityModels)
-	private val playerModel = PlayerModel<Player>(
+	private val playerSkin: PlayerSkin = this.playerInfo.skin
+	private val playerTexture: ResourceLocation = this.playerSkin.texture
+	private val playerModelType: PlayerSkin.Model = this.playerSkin.model
+	private val limbSwing: Float = this.player.walkAnimation.position()
+	private val entityModels: EntityModelSet = localClient.entityModels
+	private val bufferSource: MultiBufferSource.BufferSource = localClient.renderBuffers().bufferSource()
+	private val chefHatModel: ChefHatModel = ChefHatModel(this.entityModels)
+	private val playerModel: PlayerModel<Player> = PlayerModel<Player>(
 		this.entityModels.bakeLayer(
 			if (this.playerModelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
 		),

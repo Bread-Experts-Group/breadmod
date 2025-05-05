@@ -99,7 +99,7 @@ class KeyboardBlock : BreadModBlockWithEntity(
 		level: BlockGetter,
 		pos: BlockPos,
 		context: CollisionContext
-	): VoxelShape = box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0)
+	): VoxelShape = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0)
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
 		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.WATERLOGGED)

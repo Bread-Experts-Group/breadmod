@@ -54,8 +54,8 @@ class ModelViewerWidget(
 		}
 	}
 
-	private var offsetX = 0.0
-	private var offsetY = 0.0
+	private var offsetX: Double = 0.0
+	private var offsetY: Double = 0.0
 
 	override fun init() {
 		Companion.xRot = 0f
@@ -119,7 +119,7 @@ class ModelViewerWidget(
 
 		override fun isValidClickButton(button: Int): Boolean = button == 0 || button == 1
 
-		private var flag = false
+		private var flag: Boolean = false
 		override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
 			return if ((this.isMouseOverPreview(mouseX, mouseY) || this.flag) && this.isValidClickButton(button)
 			) {

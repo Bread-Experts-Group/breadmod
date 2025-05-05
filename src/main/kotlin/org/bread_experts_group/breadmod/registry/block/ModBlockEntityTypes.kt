@@ -80,7 +80,7 @@ object ModBlockEntityTypes {
 	private fun <T : BlockEntity> buildBlockEntity(
 		supplier: BlockEntitySupplier<T>,
 		vararg block: Block
-	) = BlockEntityType.Builder.of(supplier, *block).build(null)
+	): BlockEntityType<T> = BlockEntityType.Builder.of(supplier, *block).build(null)
 
 	// EXPERIMENTAL PAST THIS POINT
 	val FLUID_TANK_JADE_ENTITY: Supplier<BlockEntityType<SidedFluidTankJadeBlockEntity>> =

@@ -8,7 +8,6 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.item.crafting.SingleRecipeInput
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
@@ -36,7 +35,6 @@ class MicrowaveBlockEntity(
 		state: BlockState,
 		entity: MicrowaveBlockEntity
 	) {
-		val open = state.getValue(BlockStateProperties.OPEN)
 		val stack = this.getItem(0)
 		this.currentCampfireRecipe.ifPresentOrElse({ recipe ->
 			this.setItem(0, recipe.assemble(SingleRecipeInput(stack), level.registryAccess()))

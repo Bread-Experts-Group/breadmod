@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.registry.shader
 
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
+import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderStateShard.CULL
 import net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
@@ -36,11 +37,10 @@ import net.minecraft.client.renderer.ShaderInstance
  * - COLOR -> in vec4 Color
  * - NORMAL -> in vec3 Normal
  */
-
 @Suppress("INACCESSIBLE_TYPE")
 object ModRenderType {
 	var rainbowInstance: ShaderInstance? = null
-	private val rainbowShader = ShaderStateShard(this::rainbowInstance)
+	private val rainbowShader: RenderStateShard.ShaderStateShard = ShaderStateShard(this::rainbowInstance)
 	val SPEED_VERTEX_ELEMENT: VertexFormatElement =
 		VertexFormatElement.register(6, 0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 1)
 	val DIRECTION_VERTEX_ELEMENT: VertexFormatElement =
@@ -65,7 +65,7 @@ object ModRenderType {
 			.createCompositeState(false)
 	)
 	var astralInstance: ShaderInstance? = null
-	private val astralShader = ShaderStateShard(this::astralInstance)
+	private val astralShader: RenderStateShard.ShaderStateShard = ShaderStateShard(this::astralInstance)
 	val astralVertexFormat: VertexFormat = VertexFormat.builder()
 		.add("Position", VertexFormatElement.POSITION)
 		.add("UV0", VertexFormatElement.UV0)
@@ -88,9 +88,8 @@ object ModRenderType {
 	 * Rainbow shader.
 	 */
 	fun rainbow(): RenderType = this.solidTextureRenderType
-
-	/**
-	 * Astral Shader.
-	 */
-	fun astral(): RenderType = this.astralRenderType
+//	/**
+//	 * Astral Shader.
+//	 */
+//	fun astral(): RenderType = this.astralRenderType
 }

@@ -21,7 +21,7 @@ import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.awt.Color
 
 class ToolGunOverlay : LayeredDraw.Layer {
-	private val textColor = Color.WHITE.rgb
+	private val textColor: Int = Color.WHITE.rgb
 	override fun render(
 		guiGraphics: GuiGraphics,
 		deltaTracker: DeltaTracker

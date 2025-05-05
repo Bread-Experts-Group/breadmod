@@ -15,14 +15,12 @@ class DoughMachineScreen(
 	title: Component
 ) : AbstractModContainerScreen<DoughMachineMenu, DoughMachineBlockEntity>(menu, inventory, title) {
 	private val texture: ResourceLocation = modLocation("textures", "gui", "container", "dough_machine.png")
-	private val progressArrow = ModTextureLocations.DOUGH_MACHINE_ARROW
-	private val progressArrowFilled = ModTextureLocations.DOUGH_MACHINE_ARROW_FILLED
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		this.setupRender(this.texture)
 
 		guiGraphics.blit(this.texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight)
-		this.progressArrow.blitTexture(guiGraphics, this.leftPos + 66, this.topPos + 33)
-		if (this.menu.isCrafting()) this.progressArrowFilled.drawProgressiveSpriteHorizontal(
+		ModTextureLocations.DOUGH_MACHINE_ARROW.blitTexture(guiGraphics, this.leftPos + 66, this.topPos + 33)
+		if (this.menu.isCrafting()) ModTextureLocations.DOUGH_MACHINE_ARROW_FILLED.drawProgressiveSpriteHorizontal(
 			guiGraphics,
 			this.menu.scaledProgress,
 			this.leftPos + 66,

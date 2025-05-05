@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.compat.jei.category
 
+import com.google.common.cache.LoadingCache
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.drawable.IDrawable
 import mezz.jei.api.gui.drawable.IDrawableAnimated
@@ -12,6 +13,7 @@ import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
@@ -22,8 +24,8 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 
 class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<WheatCrusherRecipe> {
-	private val texture = modLocation("textures", "gui", "jei", "gui_wheat_crusher.png")
-	private val cachedArrows = createCachedArrows(
+	private val texture: ResourceLocation = modLocation("textures", "gui", "jei", "gui_wheat_crusher.png")
+	private val cachedArrows: LoadingCache<Int, IDrawableAnimated> = createCachedArrows(
 		this.guiHelper,
 		48,
 		this.texture,
@@ -48,7 +50,7 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 	}
 
 	private var step: Int = -32
-	private var lastTick = 0
+	private var lastTick: Int = 0
 	override fun draw(
 		recipe: WheatCrusherRecipe,
 		recipeSlotsView: IRecipeSlotsView,

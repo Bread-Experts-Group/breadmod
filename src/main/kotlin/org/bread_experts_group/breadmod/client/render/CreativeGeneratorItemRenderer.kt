@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 
@@ -11,10 +12,8 @@ object CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
-	private val modelManager = localClient.modelManager
-	private val itemRenderer = localClient.itemRenderer
-	private val originalModel = this.modelManager.getModel("block/creative_generator")
-	private val starModel = this.modelManager.getModel("block/creative_generator_star")
+	private val originalModel: BakedModel = localClient.modelManager.getModel("block/creative_generator")
+	private val starModel: BakedModel = localClient.modelManager.getModel("block/creative_generator_star")
 
 	override fun renderByItem(
 		stack: ItemStack,
@@ -27,7 +26,7 @@ object CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 		val level = localClient.level ?: return
 		val partialTick = localClient.timer.gameTimeDeltaTicks
 		poseStack.pushPose()
-		this.itemRenderer.renderItemModel(
+		localClient.itemRenderer.renderItemModel(
 			this.originalModel,
 			stack,
 			displayContext,
@@ -40,7 +39,7 @@ object CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 		poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360) + partialTick))
 		poseStack.mulPose(Axis.XN.rotationDegrees(Math.floorMod(level.gameTime, 360) + partialTick))
 		poseStack.scaleFlat(0.95f)
-		this.itemRenderer.renderItemModel(
+		localClient.itemRenderer.renderItemModel(
 			this.starModel,
 			stack,
 			displayContext,

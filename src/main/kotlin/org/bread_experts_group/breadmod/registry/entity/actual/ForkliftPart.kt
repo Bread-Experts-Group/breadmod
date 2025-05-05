@@ -17,7 +17,7 @@ class ForkliftPart(
 	height: Float,
 	collisionBox: Vec3
 ) : PartEntity<Forklift>(parent) {
-	private val size = EntityDimensions.scalable(width, height)
+	private val size: EntityDimensions = EntityDimensions.scalable(width, height)
 
 	init {
 		this.size.makeBoundingBox(collisionBox)

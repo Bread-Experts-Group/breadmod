@@ -55,7 +55,7 @@ class StandardBIOS : BIOSProvider {
 		processor.computer.setMemoryAt32(0x0040u, 0xF000F065u)
 		processor.setHook(0xF000u, 0xF065u) {
 			when (processor.a.h.toUInt()) {
-				0x0Eu -> teletype
+				0x0Eu -> this.teletype
 				else  -> throw IllegalArgumentException("Unknown 0x10 ah: ${hex(processor.a.th)}")
 			}.handle(processor)
 		}

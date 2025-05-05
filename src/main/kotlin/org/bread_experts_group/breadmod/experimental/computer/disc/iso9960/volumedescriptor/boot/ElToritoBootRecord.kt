@@ -59,7 +59,8 @@ class ElToritoBootRecord(
 
 			companion object {
 				val mapping: Map<Int, ElToritoEmulationType> = ElToritoEmulationType.entries.associateBy(
-					ElToritoEmulationType::id)
+					ElToritoEmulationType::id
+				)
 			}
 		}
 

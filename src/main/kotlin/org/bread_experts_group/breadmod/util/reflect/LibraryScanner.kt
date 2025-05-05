@@ -27,7 +27,6 @@ import kotlin.reflect.jvm.javaMethod
 /**
  * A scanner for JVM packages.
  *
- * @property pforPackage The package to scan for.
  * @property localClasses The [KClass]
  * (note, classes don't need to be Kotlin) contained within the provided [Package].
  * @author Miko Elbrecht

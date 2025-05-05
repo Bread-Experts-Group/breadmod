@@ -18,12 +18,12 @@ class SidedFluidTankJadeBlockEntity(
 ) : BlockEntity(ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get(), pos, state), FluidBearingBlockEntity {
 	override val fluidHandler: ExpansibleFluidHandler = ExpansibleFluidHandler(
 		mutableListOf(
-			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
-			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
-			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
-			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
-			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
-			ExpansibleFluidHandler.ExpansibleTank(10_000, true, true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = true, allowOut = true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = true, allowOut = true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = true, allowOut = true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = true, allowOut = true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = true, allowOut = true),
+			ExpansibleFluidHandler.ExpansibleTank(10_000, allowIn = true, allowOut = true),
 		)
 	)
 

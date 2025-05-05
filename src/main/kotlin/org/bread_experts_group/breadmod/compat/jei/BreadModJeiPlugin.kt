@@ -69,7 +69,7 @@ class BreadModJeiPlugin : IModPlugin {
 	private fun <I : FluidEnergyInput, T : FluidEnergyRecipe<I>> getRecipesForType(
 		recipeManager: RecipeManager,
 		type: Supplier<RecipeType<T>>
-	) = recipeManager.getAllRecipesFor(type.get()).map { it.value }
+	): List<T> = recipeManager.getAllRecipesFor(type.get()).map { it.value }
 
 	override fun registerRecipes(registration: IRecipeRegistration) {
 		val recipeManager = (localClient.level ?: return).recipeManager ?: return

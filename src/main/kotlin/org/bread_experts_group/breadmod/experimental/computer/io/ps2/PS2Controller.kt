@@ -4,14 +4,14 @@ import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
 import org.bread_experts_group.breadmod.experimental.computer.io.IODevice
 
 class PS2Controller {
-	val inputBuffer: MutableList<UByte> = mutableListOf<UByte>()
-	val outputBuffer: MutableList<UByte> = mutableListOf<UByte>()
+	//	val inputBuffer: MutableList<UByte> = mutableListOf()
+//	val outputBuffer: MutableList<UByte> = mutableListOf()
 	var executor: ((UByte) -> Unit)? = null
 	val data: IODevice = object : IODevice {
 		override fun read(): UByte = TODO("Not yet implemented")
 		override fun write(d: UByte) {
-			executor?.invoke(d)
-			executor = null
+			this@PS2Controller.executor?.invoke(d)
+			this@PS2Controller.executor = null
 		}
 	}
 	val command: IODevice = object : IODevice {
@@ -40,7 +40,7 @@ class PS2Controller {
 
 		override fun write(d: UByte) = when (d.toUInt()) {
 			0xD1u -> {
-				executor = ::println // TODO Write output
+				this@PS2Controller.executor = ::println // TODO Write output
 			}
 			0xF0u, 0xF1u, 0xF2u, 0xF3u, 0xF4u, 0xF5u, 0xF6u, 0xF7u, 0xF8u, 0xF9u, 0xFAu, 0xFBu, 0xFCu, 0xFDu, 0xFEu,
 			0xFFu -> {

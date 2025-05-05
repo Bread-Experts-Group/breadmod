@@ -14,7 +14,7 @@ object ModStructureSets {
 	fun createKey(id: String): ResourceKey<StructureSet> =
 		ResourceKey.create(Registries.STRUCTURE_SET, modLocation(id))
 
-	private val RANDOM = Random(39245)
+	private val RANDOM: Random = Random(39245)
 	private val FARMHOUSE: ResourceKey<StructureSet> = this.createKey("farmhouse")
 	fun bootstrap(pContext: BootstrapContext<StructureSet>) {
 		val structureHolder = pContext.lookup(Registries.STRUCTURE)

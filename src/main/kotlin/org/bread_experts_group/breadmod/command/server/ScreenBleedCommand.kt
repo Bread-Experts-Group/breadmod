@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
@@ -103,14 +104,19 @@ object ScreenBleedCommand {
 				}
 			)
 
-	private fun toggle() = Commands.argument("toggle", BoolArgumentType.bool())
-	private fun getToggle(ctx: CommandContext<CommandSourceStack>) = BoolArgumentType.getBool(ctx, "toggle")
+	private fun toggle(): RequiredArgumentBuilder<CommandSourceStack, Boolean> =
+		Commands.argument("toggle", BoolArgumentType.bool())
 
-	private fun seconds() = Commands.argument("seconds", IntegerArgumentType.integer())
-	private fun getSeconds(ctx: CommandContext<CommandSourceStack>) =
+	private fun getToggle(ctx: CommandContext<CommandSourceStack>): Boolean = BoolArgumentType.getBool(ctx, "toggle")
+
+	private fun seconds(): RequiredArgumentBuilder<CommandSourceStack, Int> =
+		Commands.argument("seconds", IntegerArgumentType.integer())
+
+	private fun getSeconds(ctx: CommandContext<CommandSourceStack>): Int =
 		IntegerArgumentType.getInteger(ctx, "seconds") * 20
 
-	private fun getTargets(ctx: CommandContext<CommandSourceStack>) = EntityArgument.getPlayers(ctx, "targets")
+	private fun getTargets(ctx: CommandContext<CommandSourceStack>): Collection<ServerPlayer> =
+		EntityArgument.getPlayers(ctx, "targets")
 
 	private fun reset(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("reset")

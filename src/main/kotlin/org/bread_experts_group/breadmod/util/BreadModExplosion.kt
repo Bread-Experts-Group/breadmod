@@ -106,7 +106,7 @@ object BreadModExplosion {
 		)
 		val hitEntities = mutableMapOf<Entity, Float>()
 		val toDetonate = buildSet {
-			var currentBlockPos = BlockPos.MutableBlockPos()
+			val currentBlockPos = BlockPos.MutableBlockPos()
 			this@BreadModExplosion.getPoints.apply(points).forEach { direction ->
 				var currentPos = pos
 				var power = radius

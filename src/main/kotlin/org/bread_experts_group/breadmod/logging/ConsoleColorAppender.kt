@@ -29,7 +29,7 @@ private enum class ColorBanks {
 	THREAD
 }
 
-private val colors = mapOf(
+private val colors: Map<StandardLevel, MutableList<GraphicsModes>> = mapOf(
 	StandardLevel.TRACE to (GraphicsModes.BRIGHT set GraphicsModes.BLACK),
 	StandardLevel.DEBUG to mutableListOf(GraphicsModes.WHITE),
 	StandardLevel.INFO to (GraphicsModes.BRIGHT set GraphicsModes.GREEN),
@@ -37,10 +37,10 @@ private val colors = mapOf(
 	StandardLevel.ERROR to (GraphicsModes.BRIGHT set GraphicsModes.RED),
 	StandardLevel.FATAL to (GraphicsModes.BRIGHT set GraphicsModes.BACKGROUND set GraphicsModes.RED)
 )
-private val background = GraphicsModes.BLACK set GraphicsModes.BACKGROUND
-private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss;SSS")
-private val threadColorBanks = mutableMapOf<ColorBanks, ColorBankWithLastColor>()
-private val DEFAULT_OUT = PrintStream(FileOutputStream(FileDescriptor.out))
+private val background: ChainedMode = GraphicsModes.BLACK set GraphicsModes.BACKGROUND
+private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss;SSS")
+private val threadColorBanks: MutableMap<ColorBanks, ColorBankWithLastColor> = mutableMapOf()
+private val DEFAULT_OUT: PrintStream = PrintStream(FileOutputStream(FileDescriptor.out))
 
 /**
  * A console appender that colors the output based on the log level.

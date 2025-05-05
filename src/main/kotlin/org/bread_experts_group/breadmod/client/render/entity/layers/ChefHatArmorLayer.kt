@@ -15,9 +15,9 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.component.DyedItemColor
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ChefHatModel.Companion.HAT_TEXTURE
-import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import java.awt.Color
 
 /**
@@ -31,7 +31,7 @@ import java.awt.Color
 class ChefHatArmorLayer(
 	renderer: RenderLayerParent<LivingEntity, EntityModel<LivingEntity>>
 ) : RenderLayer<LivingEntity, EntityModel<LivingEntity>>(renderer) {
-	private val chefHatModel = ChefHatModel(localClient.entityModels)
+	private val chefHatModel: ChefHatModel = ChefHatModel(localClient.entityModels)
 	override fun render(
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,

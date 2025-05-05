@@ -18,7 +18,6 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.entity.PartEntity
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -47,10 +46,6 @@ class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(e
 		pos.z.toDouble() + 0.5,
 		rotation
 	)
-
-	override fun makeBoundingBox(): AABB {
-		return super.makeBoundingBox()
-	}
 
 	private val parts: Array<PartEntity<Forklift>> = arrayOf(
 		ForkliftPart(this, Vec3(0.0, 3.0, 0.0), 0.5f, 0.5f, Vec3(1.0, 1.0, 1.0))
@@ -97,8 +92,8 @@ class Forklift(entityType: EntityType<Forklift>, level: Level) : VehicleEntity(e
 		}
 	}
 
-	private val sideFriction = 0.99
-	private val forwardFriction = 0.01
+	private val sideFriction: Double = 0.99
+	private val forwardFriction: Double = 0.01
 
 	override fun tick() {
 		super.tick()

@@ -1,2 +1,2 @@
-all the classes in this package are subject to rewrites, changes, deleted, etc..
+all the classes in this package are subject to rewrites, changes, deleted, etc...
 move the packages out of experimental if they're stable enough to use in the mod

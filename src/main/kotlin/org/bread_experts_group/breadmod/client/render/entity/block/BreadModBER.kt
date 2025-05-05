@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
-import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.core.Direction.DOWN
@@ -22,8 +21,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
-import net.neoforged.neoforge.client.model.generators.ModelProvider
-import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.tessellateModel
@@ -41,8 +38,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	protected val random: RandomSource = RandomSource.create()
 	protected val modelManager: ModelManager = localClient.modelManager
 	private val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
-	private val debugAxisModel = localClient.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/axis")
-
+//	private val debugAxisModel: BakedModel = localClient.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/axis")
 	/**
 	 * Make sure to place this before the yRot mulPose, since this model's orientation is pulled from the BlockState.
 	 */
@@ -82,16 +78,15 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 		)
 	}
 
-	protected fun renderDebugAxis(blockEntity: T, poseStack: PoseStack, bufferSource: MultiBufferSource) {
-		this.renderModel(
-			blockEntity,
-			this.debugAxisModel,
-			poseStack,
-			bufferSource,
-			OverlayTexture.NO_OVERLAY
-		)
-	}
-
+	//	protected fun renderDebugAxis(blockEntity: T, poseStack: PoseStack, bufferSource: MultiBufferSource) {
+//		this.renderModel(
+//			blockEntity,
+//			this.debugAxisModel,
+//			poseStack,
+//			bufferSource,
+//			OverlayTexture.NO_OVERLAY
+//		)
+//	}
 	private companion object {
 		const val TRANSLATE_OFFSET = 0.0001
 		val LEVEL_GRAPHICS: GuiGraphics = object : GuiGraphics(

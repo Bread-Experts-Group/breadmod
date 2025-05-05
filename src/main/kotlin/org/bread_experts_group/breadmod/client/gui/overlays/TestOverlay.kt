@@ -7,7 +7,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.item.ModItems
 
 class TestOverlay : LayeredDraw.Layer {
-//	private val camera = Camera()
+	//	private val camera = Camera()
 //	private val target = TestTarget()
 	override fun render(guiGraphics: GuiGraphics, deltaTracker: DeltaTracker) {
 		val player = localClient.player ?: return
@@ -46,6 +46,5 @@ class TestOverlay : LayeredDraw.Layer {
 //			this.target.bindWrite(true)
 //		}
 	}
-
 //	class TestTarget : MainTarget(1500, 1000)
 }

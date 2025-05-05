@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.registry.entity
 
+import net.minecraft.core.Holder
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
@@ -47,7 +48,7 @@ object ModPainting {
 		key: ResourceKey<PaintingVariant>,
 		width: Int,
 		height: Int
-	) = context.register(key, PaintingVariant(width, height, key.location()))
+	): Holder.Reference<PaintingVariant> = context.register(key, PaintingVariant(width, height, key.location()))
 
 	private fun create(name: String): ResourceKey<PaintingVariant> =
 		ResourceKey.create(Registries.PAINTING_VARIANT, modLocation(name))

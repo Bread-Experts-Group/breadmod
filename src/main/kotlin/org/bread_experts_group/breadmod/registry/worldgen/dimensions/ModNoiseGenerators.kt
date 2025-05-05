@@ -19,7 +19,8 @@ typealias NoiseGeneratorBuilder = (
 ) -> NoiseGeneratorSettings
 
 object ModNoiseGenerators : NoiseRouterData() {
-	private val entries = mutableListOf<Pair<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorBuilder>>()
+	private val entries: MutableList<Pair<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorBuilder>> =
+		mutableListOf<Pair<ResourceKey<NoiseGeneratorSettings>, NoiseGeneratorBuilder>>()
 	fun register(name: String, builder: NoiseGeneratorBuilder): ResourceKey<NoiseGeneratorSettings> =
 		ResourceKey.create(
 			Registries.NOISE_SETTINGS,

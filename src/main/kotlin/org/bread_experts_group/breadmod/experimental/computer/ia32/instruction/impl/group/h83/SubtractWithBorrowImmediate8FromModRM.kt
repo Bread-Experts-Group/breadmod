@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.experimental.computer.ia32.register.Flag
 object SubtractWithBorrowImmediate8FromModRM : Instruction("sbb"), ModRM, Immediate8,
 	ArithmeticSubtractionFlagOperations {
 	override fun operands(processor: IA32Processor): String = "${processor.rmD().regMem}, ${hex(processor.imm8())}"
-	private fun carryStat(processor: IA32Processor) = if (processor.flags.getFlag(FlagType.CARRY_FLAG)) 1u else 0u
+	private fun carryStat(processor: IA32Processor): UInt = if (processor.flags.getFlag(FlagType.CARRY_FLAG)) 1u else 0u
 	override fun handle(processor: IA32Processor) {
 		val (memRM, _) = processor.rm()
 		val result = this.setFlagsForOperationR(

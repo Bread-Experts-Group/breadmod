@@ -30,7 +30,7 @@ data class ScreenBleedData(
 			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(ACTIVE))
 			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(PROGRESS))
 			PacketDistributor.sendToPlayer(player, ScreenBleedSetPacket(MAX_PROGRESS))
-			screenBleedMap.remove(player)
+			Companion.screenBleedMap.remove(player)
 		}
 	}
 }

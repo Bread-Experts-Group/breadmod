@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
@@ -20,7 +21,7 @@ class FluidEnergyBlock : BreadModBlockWithEntity(Properties.of()) {
 	}
 
 	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
-	override fun codec(): MapCodec<FluidEnergyBlock> = CODEC
+	override fun codec(): MapCodec<FluidEnergyBlock> = Companion.CODEC
 
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		FluidEnergyBlockEntity(pos, state)
@@ -58,7 +59,7 @@ class FluidEnergyBlock : BreadModBlockWithEntity(Properties.of()) {
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = createTickerHelper(
+	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.FLUID_ENERGY.get(),
 		this::tickBreadModBlockEntity

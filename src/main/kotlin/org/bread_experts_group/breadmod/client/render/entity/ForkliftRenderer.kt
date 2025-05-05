@@ -13,7 +13,7 @@ import java.awt.Color
 class ForkliftRenderer(private val context: Context) : EntityRenderer<Forklift>(context) {
 	override fun getTextureLocation(entity: Forklift): ResourceLocation = ForkliftModel.FORKLIFT_TEXTURE
 
-	private val model = ForkliftModel(this.context.bakeLayer(ForkliftModel.FORKLIFT_LAYER))
+	private val model: ForkliftModel = ForkliftModel(this.context.bakeLayer(ForkliftModel.FORKLIFT_LAYER))
 
 	override fun render(
 		forklift: Forklift,

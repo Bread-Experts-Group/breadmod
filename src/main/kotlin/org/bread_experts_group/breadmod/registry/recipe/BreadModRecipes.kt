@@ -165,7 +165,10 @@ abstract class BreadModRecipes<T : RecipeInput>(val rTime: Int?, val rEnergy: In
 		val rFluidOutput: FluidStack,
 		rTime: Int?,
 		rEnergy: Int?
-	) : BreadModRecipes<org.bread_experts_group.breadmod.registry.recipe.BMRecipeInputs.SingleFluidItem>(rTime, rEnergy) {
+	) : BreadModRecipes<org.bread_experts_group.breadmod.registry.recipe.BMRecipeInputs.SingleFluidItem>(
+		rTime,
+		rEnergy
+	) {
 		override fun matches(input: BMRecipeInputs.SingleFluidItem, level: Level): Boolean =
 			this.rFluidInput.test(input.iFluid) && this.rItemInput.test(input.iItem) && super.matches(input, level)
 

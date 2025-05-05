@@ -17,7 +17,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable
  */
 class MemoryModule(val capacity: UInt) : INBTSerializable<ByteArrayTag> {
 	@OptIn(ExperimentalUnsignedTypes::class)
-	private var memory = UByteArray(this.capacity.toInt()) {
+	private var memory: UByteArray = UByteArray(this.capacity.toInt()) {
 		(0x00u).toUByte()
 	}
 

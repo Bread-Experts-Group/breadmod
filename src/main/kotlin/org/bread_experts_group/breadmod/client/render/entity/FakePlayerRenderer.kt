@@ -9,14 +9,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.resources.DefaultPlayerSkin
 import net.minecraft.resources.ResourceLocation
-import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 
 class FakePlayerRenderer(
 	context: EntityRendererProvider.Context,
 ) : LivingEntityRenderer<FakePlayer, PlayerModel<FakePlayer>>(
 	context,
-	PlayerModel<FakePlayer>(
+	PlayerModel(
 		context.bakeLayer(if (this.useSlimModel) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER),
 		this.useSlimModel,
 	), 0.5f

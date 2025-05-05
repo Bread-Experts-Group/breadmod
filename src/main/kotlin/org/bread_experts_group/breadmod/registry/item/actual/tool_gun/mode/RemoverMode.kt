@@ -127,8 +127,8 @@ class RemoverMode : AbstractToolGunMode() {
 
 	private fun rand(player: Player): Double = (player.random.nextDouble() - 0.5) * 1.2
 
-	override fun getDisplayName(): Component = displayName
-	override fun getTooltip(): Component = tooltip
+	override fun getDisplayName(): Component = Companion.displayName
+	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("remover_mode")
 	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this.getUid())
 
@@ -143,8 +143,8 @@ class RemoverMode : AbstractToolGunMode() {
 	class RemoverRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
 		override fun buildModeWidget(): Builder = Builder()
 			.icon(Items.STRUCTURE_VOID)
-			.description(description)
-			.name(name)
+			.description(Companion.description)
+			.name(Companion.name)
 
 		override fun renderScreenStage(
 			stack: ItemStack,

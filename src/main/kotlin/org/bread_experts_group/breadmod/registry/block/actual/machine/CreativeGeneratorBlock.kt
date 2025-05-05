@@ -14,6 +14,7 @@ import net.minecraft.util.RandomSource
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
@@ -21,7 +22,6 @@ import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
-import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -37,7 +37,7 @@ import org.bread_experts_group.breadmod.util.join
 import java.util.stream.Stream
 
 class CreativeGeneratorBlock : BreadModBlockWithEntity(
-	BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK)
+	Properties.ofFullCopy(Blocks.COPPER_BLOCK)
 		.lightLevel { 6 }
 ) {
 	companion object {
@@ -173,8 +173,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 		).reduce(::join).get()
 	}
 
-	private val random = RandomSource.create()
-
+	private val random: RandomSource = RandomSource.create()
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		CreativeGeneratorBlockEntity(pos, state)
 
@@ -237,7 +236,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = createTickerHelper(
+	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
 		blockEntityType,
 		ModBlockEntityTypes.CREATIVE_GENERATOR.get(),
 		this::tickBreadModBlockEntity
