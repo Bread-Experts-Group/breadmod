@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.api
 
 import com.mojang.serialization.Codec
+import net.minecraft.client.KeyMapping
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
@@ -11,9 +12,14 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
+import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
+import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
+import org.bread_experts_group.breadmod.data_holders.common.KeyData
+import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.fromClass
 import org.bread_experts_group.breadmod.util.toClass
@@ -21,6 +27,10 @@ import org.bread_experts_group.breadmod.util.toClass
 interface IToolGunMode {
 	companion object {
 		val CODEC: Codec<IToolGunMode> = Codec.STRING.xmap(::toClass, ::fromClass)
+
+		/**
+		 * Encodes this [IToolGunMode]'s qualifying name to a string and decodes back into a class.
+		 */
 		val STREAM_CODEC: StreamCodec<FriendlyByteBuf, IToolGunMode> =
 			object : StreamCodec<FriendlyByteBuf, IToolGunMode> {
 				override fun decode(buffer: FriendlyByteBuf): IToolGunMode = toClass(buffer.readUtf())
@@ -68,27 +78,62 @@ interface IToolGunMode {
 	fun mouseButtonPreAction(event: MouseButton.Pre, stack: ItemStack, player: Player)
 
 	/**
-	 * Event bridge for [InputEvent.Key], used for handling keyboard inputs while holding the tool gun.
+	 * Used for registering custom key inputs to this [IToolGunMode].
+	 *
+	 * Serves as an event bridge for [InputEvent.Key], handles keyboard inputs for this [IToolGunMode].
+	 *
+	 * - [KeyData] is passed into the [ToolGunOverlay] to display info about the specified key.
+	 * - if [KeyData] returns true, a data sync is triggered to send [saveExtraData] to the server.
 	 */
-	fun keyboardInputAction(event: InputEvent.Key, stack: ItemStack, player: Player)
+	fun registerKeys(into: MutableMap<Int, KeyData>) {}
 
+	/** @return true if [event] action is equal to 1. */
+	fun isKeyboardPress(event: Key): Boolean = event.action == 1
+	fun keyMatchesInput(key: KeyMapping, event: Key): Boolean = event.key == key.key.value
+	fun keyMatchesInput(key: Int, event: Key): Boolean = event.key == key
+
+	/**
+	 * Used in the [ToolGunOverlay] and [ToolGunItemRenderer] for displaying this [IToolGunMode]'s name.
+	 */
 	fun getDisplayName(): Component
 
+	/**
+	 * Used in the [ToolGunOverlay] for displaying this [IToolGunMode]'s tooltip.
+	 */
 	fun getTooltip(): Component
 
+	/**
+	 * The unique ID of this [IToolGunMode].
+	 */
 	fun getUid(): ResourceLocation
 
 	fun getModeName(): String = this.getUid().path.substringAfter('/')
 
+	/**
+	 * Used to save define extra saved data in this [IToolGunMode].
+	 *
+	 * Fired when the tool gun is changing modes, or when saved data is being populated on a fresh tool gun.
+	 */
 	fun saveExtraData(tag: CompoundTag) {}
 
+	/**
+	 * Used to load extra saved data upon instantiating or syncing this [IToolGunMode].
+	 */
 	fun loadExtraData(tag: CompoundTag) {}
 
 	fun shouldPlayToolGunSound(stack: ItemStack, player: Player): Boolean = true
 
 	fun playToolGunSound(player: Player): Unit = player.playSound(ModSounds.TOOL_GUN.get(), 0.8f, 1f)
 
-	fun getCustomRenderer(): IToolGunModeRenderer
+	/**
+	 * Returns the custom renderer for this [IToolGunMode].
+	 *
+	 * Defaults to [EmptyMode]'s Renderer.
+	 */
+	fun getCustomRenderer(): IToolGunModeRenderer = EmptyMode.EmptyModeRenderer(this.getUid())
 
+	/**
+	 * Convenience function for setting up tool gun ids.
+	 */
 	fun toolGunLocation(modeName: String): ResourceLocation = modLocation(modeName)
 }

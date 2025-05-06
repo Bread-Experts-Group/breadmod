@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.registry.block.actual
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.Direction.Axis
 import net.minecraft.core.Direction.DOWN
 import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
@@ -205,6 +206,21 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		builder.add(Companion.TRIPLE_HALF, Companion.FACING)
 	}
 
+	override fun playerDestroy(
+		level: Level,
+		player: Player,
+		pos: BlockPos,
+		state: BlockState,
+		blockEntity: BlockEntity?,
+		tool: ItemStack
+	) {
+		super.playerDestroy(level, player, pos, state, blockEntity, tool)
+	}
+
+	override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
+		return super.playerWillDestroy(level, pos, state, player)
+	}
+
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState? {
 		val pos = context.clickedPos
 		val level = context.level
@@ -228,7 +244,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 
 	override fun updateShape(
 		state: BlockState,
-		direction: Direction,
+		facing: Direction,
 		neighborState: BlockState,
 		level: LevelAccessor,
 		pos: BlockPos,
@@ -237,9 +253,10 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		val half = state.getValue(Companion.TRIPLE_HALF)
 		// todo only breaks all three blocks when the middle or lower block is broken, upper block doesn't break the other two.
 		//  look into DoorBlock and try to make a three block tall variant that works properly..
-		return if (direction.axis != Direction.Axis.Y || half == LOWER != (direction == UP)) {
-			if (half == LOWER && direction == DOWN && !state.canSurvive(level, pos)) Blocks.AIR.defaultBlockState()
-			else super.updateShape(state, direction, neighborState, level, pos, neighborPos)
+		return if (facing.axis != Axis.Y || (half == LOWER != (facing == UP))) {
+			if (half == LOWER && facing == DOWN) {
+				Blocks.AIR.defaultBlockState()
+			} else super.updateShape(state, facing, neighborState, level, pos, neighborPos)
 		} else {
 			if (neighborState.block is DoubleOrNothingBlock && neighborState.getValue(Companion.TRIPLE_HALF) != half)
 				neighborState.setValue(Companion.TRIPLE_HALF, half) else Blocks.AIR.defaultBlockState()

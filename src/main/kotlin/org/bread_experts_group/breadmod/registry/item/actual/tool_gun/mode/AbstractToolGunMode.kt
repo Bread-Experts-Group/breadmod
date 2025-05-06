@@ -6,12 +6,10 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Post
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton.Pre
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 
 /**
  * Base abstract implementation of [IToolGunMode], use this class for your own modes.
@@ -28,13 +26,9 @@ abstract class AbstractToolGunMode : IToolGunMode {
 
 	abstract override fun getUid(): ResourceLocation
 
-	override fun getCustomRenderer(): IToolGunModeRenderer = EmptyMode.EmptyModeRenderer(this.getUid())
-
 	override fun mouseScrollAction(event: MouseScrollingEvent, stack: ItemStack, player: Player): Boolean = false
 
 	override fun mouseButtonPostAction(event: Post, stack: ItemStack, player: Player) {}
 
 	override fun mouseButtonPreAction(event: Pre, stack: ItemStack, player: Player) {}
-
-	override fun keyboardInputAction(event: Key, stack: ItemStack, player: Player) {}
 }

@@ -63,7 +63,9 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
 				.forEach {
 					val mode = it.createInstance() as IToolGunMode
-					Registry.toolGunModes[mode.getUid()] = mode
+					if (Registry.toolGunModes[mode.getUid()] == null) {
+						Registry.toolGunModes[mode.getUid()] = mode
+					} else Companion.logger.warn("Mode [${mode.getModeName()}] with id ${mode.getUid()} already exists, skipping.")
 				}
 		}
 	}

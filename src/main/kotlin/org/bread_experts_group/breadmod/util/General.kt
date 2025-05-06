@@ -19,6 +19,7 @@ import net.minecraft.nbt.TagType
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.tags.TagKey
+import net.minecraft.util.Mth
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.entity.Entity
@@ -45,7 +46,6 @@ import java.math.BigDecimal
 import java.util.UUID
 import java.util.function.Supplier
 import kotlin.math.round
-import kotlin.math.roundToInt
 import kotlin.reflect.full.createInstance
 
 val Vector3fZero: Vector3f = Vector3f(0f, 0f, 0f)
@@ -169,10 +169,14 @@ fun blockPhysicsGrid(
 	return null
 }
 
-fun Vec3.toVec3i(): Vec3i = Vec3i(x.roundToInt(), y.roundToInt(), z.roundToInt())
+fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 fun Vector3f.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 fun Vec3i.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 operator fun Vec3i.unaryMinus(): Vec3i = Vec3i(-this.x, -this.y, -this.z)
+
+operator fun Vec3.component1(): Double = this.x
+operator fun Vec3.component2(): Double = this.y
+operator fun Vec3.component3(): Double = this.z
 
 fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())

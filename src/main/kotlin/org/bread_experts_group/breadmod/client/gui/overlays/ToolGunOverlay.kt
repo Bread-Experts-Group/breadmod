@@ -1,7 +1,9 @@
 package org.bread_experts_group.breadmod.client.gui.overlays
 
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.ChatFormatting
 import net.minecraft.ChatFormatting.BLUE
 import net.minecraft.ChatFormatting.BOLD
 import net.minecraft.ChatFormatting.ITALIC
@@ -9,13 +11,11 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations.INFO
 import org.bread_experts_group.breadmod.client.ModTextureLocations.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.client.render.drawScaledText
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.awt.Color
@@ -34,10 +34,10 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		val handStack = getStackInPlayerHand(localClient.player)
 
 		if (!localClient.options.hideGui && handStack.item is ToolGunItem) {
-			val (currentMode, _, _) = handStack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
+			val data = ToolGunData.get(handStack)
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
-			this.renderMode(currentMode, currentMode.getUid().namespace, guiGraphics, poseStack, x, y)
+			this.renderMode(data, guiGraphics, poseStack, x, y)
 
 			RenderSystem.disableBlend()
 		}
@@ -50,13 +50,13 @@ class ToolGunOverlay : LayeredDraw.Layer {
 	}
 
 	private fun renderMode(
-		mode: IToolGunMode,
-		namespace: String,
+		data: ToolGunData,
 		guiGraphics: GuiGraphics,
 		poseStack: PoseStack,
 		x: Int,
 		y: Int
 	) {
+		val mode = data.mode
 		poseStack.pushPose()
 		// Icon renders
 		INFO.blitTexture(guiGraphics, x + 1, y + 33)
@@ -64,7 +64,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		// controls, set up 9-sliced key texture for wider keys
 		// Action source
 		drawScaledText(
-			Component.literal(namespace).withStyle(BLUE, ITALIC),
+			Component.literal(mode.getUid().namespace).withStyle(BLUE, ITALIC),
 			poseStack, guiGraphics, x + 2, y + 2, this.textColor, 0.8f, true
 		)
 		// Action Name
@@ -83,6 +83,24 @@ class ToolGunOverlay : LayeredDraw.Layer {
 			0.4f,
 			true
 		)
+		var offset = 0
+		data.keyData.forEach { (keyId, data) ->
+			val key = InputConstants.Type.KEYSYM.getOrCreate(keyId)
+			drawScaledText(
+				key.displayName.copy()
+					.withStyle(ChatFormatting.ITALIC, ChatFormatting.GOLD)
+					.append("... ")
+					.append(data.first.copy().withStyle(ChatFormatting.WHITE)),
+				poseStack,
+				guiGraphics,
+				x + 10,
+				y + 54 + offset,
+				this.textColor,
+				1f,
+				true
+			)
+			offset += 12
+		}
 		// KeyBinds
 //        mode?.keyBinds?.forEachIndexed { index, control ->
 //            val moved = ((index + 1) * 12) + 2

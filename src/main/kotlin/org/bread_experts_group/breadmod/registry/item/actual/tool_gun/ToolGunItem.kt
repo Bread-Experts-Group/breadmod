@@ -31,6 +31,7 @@ import org.bread_experts_group.breadmod.client.render.buffer.BeamBufferTask
 import org.bread_experts_group.breadmod.client.render.buffer.TestCubeBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.Registry
@@ -102,7 +103,7 @@ class ToolGunItem : Item(
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		val newData = ToolGunData.get(stack)
 		if (newData.extraData.isEmpty) {
-			LogManager.getLogger().info("Tool gun data is empty! initializing...")
+			LogManager.getLogger().info("Tool gun data is empty! Populating mode saved data...")
 			Registry.toolGunModes.forEach { (_, mode) ->
 				newData.extraData.put(mode.getModeName(), CompoundTag().also(mode::saveExtraData))
 			}
@@ -123,29 +124,16 @@ class ToolGunItem : Item(
 
 	// todo figure out key modifiers in the if statement
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
-		val (mode, _, _) = ToolGunData.get(heldStack)
-		if (keyEvent.key == openModeGui.key.value && localClient.screen == null) {
+		val data = ToolGunData.get(heldStack)
+		val mode = data.mode
+		if (mode.keyMatchesInput(openModeGui, keyEvent) && localClient.screen == null) {
 			localClient.setScreen(ToolGunScreen(Component.literal("Tool Gun: Mode Select"), heldStack))
 		}
-		mode.keyboardInputAction(keyEvent, heldStack, player)
-		if (keyEvent.key == InputConstants.KEY_PERIOD && keyEvent.action == InputConstants.PRESS) {
+		if (data.keyData[keyEvent.key]?.second?.invoke(keyEvent, heldStack, player, data) == true)
+			PacketDistributor.sendToServer(ToolGunDataSyncPacket(data))
+		if (mode.keyMatchesInput(InputConstants.KEY_PERIOD, keyEvent) && mode.isKeyboardPress(keyEvent)) {
 			TestCubeBufferTask.create(player.position())
 		}
-		if (keyEvent.action == InputConstants.PRESS)
-			when (keyEvent.key) {
-				InputConstants.KEY_NUMPAD8 -> BeamBufferTask.yOffset += 0.01
-				InputConstants.KEY_NUMPAD5 -> BeamBufferTask.yOffset -= 0.01
-				InputConstants.KEY_NUMPAD4 -> BeamBufferTask.zOffset -= 0.01
-				InputConstants.KEY_NUMPAD6 -> BeamBufferTask.zOffset += 0.01
-				InputConstants.KEY_NUMPAD7 -> BeamBufferTask.xOffset -= 0.01
-				InputConstants.KEY_NUMPAD9 -> BeamBufferTask.xOffset += 0.01
-				InputConstants.KEY_NUMPADENTER -> BeamBufferTask.rotationEnabled = !BeamBufferTask.rotationEnabled
-				InputConstants.KEY_MULTIPLY -> BeamBufferTask.usePlayerRot = !BeamBufferTask.usePlayerRot
-			}
-//		player.displayClientMessage(
-//			Component.literal("x: ${BeamBufferTask.xOffset}, y: ${BeamBufferTask.yOffset}, z: ${BeamBufferTask.zOffset}, rotating: ${BeamBufferTask.rotationEnabled}, usingPlayerRot: ${BeamBufferTask.usePlayerRot}"),
-//			true
-//		)
 	}
 
 	override fun appendHoverText(

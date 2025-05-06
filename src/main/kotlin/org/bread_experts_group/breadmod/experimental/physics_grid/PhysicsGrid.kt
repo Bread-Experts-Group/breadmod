@@ -10,17 +10,22 @@ import net.minecraft.core.Holder
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.ServerScoreboard
+import net.minecraft.server.level.ChunkMap
 import net.minecraft.server.level.ServerChunkCache
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ThreadedLevelLightEngine
 import net.minecraft.server.level.WorldGenRegion
 import net.minecraft.server.level.progress.ChunkProgressListener
-import net.minecraft.server.packs.resources.ResourceManager
+import net.minecraft.server.packs.PackType.SERVER_DATA
+import net.minecraft.server.packs.resources.ReloadableResourceManager
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.AbortableIterationConsumer
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.util.profiling.metrics.MetricCategory
+import net.minecraft.util.thread.BlockableEventLoop
+import net.minecraft.util.thread.ProcessorHandle
+import net.minecraft.util.thread.ProcessorMailbox
 import net.minecraft.world.Difficulty
 import net.minecraft.world.TickRateManager
 import net.minecraft.world.entity.Entity
@@ -47,6 +52,8 @@ import net.minecraft.world.level.border.WorldBorder.Settings
 import net.minecraft.world.level.chunk.ChunkAccess
 import net.minecraft.world.level.chunk.ChunkGenerator
 import net.minecraft.world.level.chunk.LevelChunk
+import net.minecraft.world.level.chunk.LightChunk
+import net.minecraft.world.level.chunk.LightChunkGetter
 import net.minecraft.world.level.chunk.status.ChunkStatus
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes
 import net.minecraft.world.level.dimension.LevelStem
@@ -92,7 +99,7 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 import kotlin.math.pow
 
-@Suppress("UnstableApiUsage")
+@Suppress("UnstableApiUsage", "LeakingThis")
 abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, posB: BlockPos) : ServerLevel(
 	level.server!!,
 	Executors.newVirtualThreadPerTaskExecutor(),
@@ -109,7 +116,7 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 	emptyList(),
 	true,
 	null
-), LevelEntityGetter<Entity> {
+), LevelEntityGetter<Entity>, LightChunkGetter {
 	companion object {
 		val PHYSICS_GRID_PATH: Path = FMLPaths.GAMEDIR.get().resolve("PhysicsGrid")
 		val BLANK_FIXER_UPPER: DataFixerUpper =
@@ -117,7 +124,7 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 		val STORAGE_ACCESS: LevelStorageAccess = LevelStorageSource(
 			Companion.PHYSICS_GRID_PATH,
 			Companion.PHYSICS_GRID_PATH.resolve("backup"),
-			DirectoryValidator { it.endsWith(Companion.PHYSICS_GRID_PATH.resolve("validator")) },
+			DirectoryValidator { true },
 			Companion.BLANK_FIXER_UPPER
 		).createAccess("breadmod_highly_experimental")
 
@@ -227,16 +234,24 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 			}
 	}
 
+	override fun getChunkForLighting(chunkX: Int, chunkZ: Int): LightChunk = this.getChunk(chunkX, chunkZ)
+
+	private val templateManager = StructureTemplateManager(
+		ReloadableResourceManager(SERVER_DATA),
+		Companion.STORAGE_ACCESS,
+		Companion.BLANK_FIXER_UPPER,
+		BuiltInRegistries.BLOCK.asLookup()
+	)
+	private val dimensionStorage = DimensionDataStorage(
+		Companion.PHYSICS_GRID_PATH.resolve("storage").toFile(),
+		Companion.BLANK_FIXER_UPPER,
+		level.registryAccess()
+	)
 	val localChunkSource: ServerChunkCache = object : ServerChunkCache(
 		this@PhysicsGrid,
 		Companion.STORAGE_ACCESS,
 		Companion.BLANK_FIXER_UPPER,
-		StructureTemplateManager(
-			ResourceManager.Empty.INSTANCE,
-			Companion.STORAGE_ACCESS,
-			Companion.BLANK_FIXER_UPPER,
-			BuiltInRegistries.BLOCK.asLookup()
-		),
+		this.templateManager,
 		Executor { },
 		Companion.createChunkGenerator(this@PhysicsGrid),
 		10,
@@ -244,13 +259,7 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 		false,
 		Companion.PROGRESS_LISTENER,
 		ChunkStatusUpdateListener { _, _ -> },
-		{
-			DimensionDataStorage(
-				Companion.PHYSICS_GRID_PATH.resolve("storage").toFile(),
-				Companion.BLANK_FIXER_UPPER,
-				level.registryAccess()
-			)
-		}
+		this::dimensionStorage
 	) {
 		inner class LocalChunk(x: Int, z: Int) : LevelChunk(this@PhysicsGrid, ChunkPos(x, z))
 
@@ -266,55 +275,46 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 		override fun getLoadedChunksCount(): Int = throw UnsupportedOperationException()
 		override fun getLightEngine(): ThreadedLevelLightEngine = this@PhysicsGrid.localLightEngine
 	}
+	private val blockableEventLoop = object : BlockableEventLoop<Runnable>("dummy loop") {
+		override fun wrapRunnable(runnable: Runnable): Runnable = Runnable { }
+		override fun getRunningThread(): Thread = Thread.currentThread()
+		override fun shouldRun(runnable: Runnable): Boolean = false
+	}
 	val localLightEngine: ThreadedLevelLightEngine = ThreadedLevelLightEngine(
 		this.localChunkSource,
-		null,
+		ChunkMap(
+			this@PhysicsGrid,
+			Companion.STORAGE_ACCESS,
+			Companion.BLANK_FIXER_UPPER,
+			this.templateManager,
+			{},
+			this.blockableEventLoop,
+			this,
+			Companion.createChunkGenerator(this),
+			Companion.PROGRESS_LISTENER,
+			{ _, _ -> },
+			this::dimensionStorage,
+			5,
+			true
+		),
 		true,
-		null,
-		null
+		ProcessorMailbox.create({}, ""),
+		ProcessorHandle.of("") {}
 	)
 	val localProfilerFiller: ProfilerFiller = object : ProfilerFiller {
-		override fun startTick() {
-			TODO("Not yet implemented")
-		}
-
-		override fun endTick() {
-			TODO("Not yet implemented")
-		}
-
-		override fun push(name: String) {
-			TODO("Not yet implemented")
-		}
-
-		override fun push(nameSupplier: Supplier<String?>) {
-			TODO("Not yet implemented")
-		}
-
-		override fun pop() {
-			TODO("Not yet implemented")
-		}
-
-		override fun popPush(name: String) {
-			TODO("Not yet implemented")
-		}
-
-		override fun popPush(nameSupplier: Supplier<String?>) {
-			TODO("Not yet implemented")
-		}
-
-		override fun markForCharting(category: MetricCategory) {
-			TODO("Not yet implemented")
-		}
-
-		override fun incrementCounter(counterName: String, increment: Int) {
-			TODO("Not yet implemented")
-		}
-
+		override fun startTick() {}
+		override fun endTick() {}
+		override fun push(name: String) {}
+		override fun push(nameSupplier: Supplier<String?>) {}
+		override fun pop() {}
+		override fun popPush(name: String) {}
+		override fun popPush(nameSupplier: Supplier<String?>) {}
+		override fun markForCharting(category: MetricCategory) {}
+		override fun incrementCounter(counterName: String, increment: Int) {}
 		override fun incrementCounter(
 			counterNameSupplier: Supplier<String?>,
 			increment: Int
 		) {
-			TODO("Not yet implemented")
 		}
 	}
 	val localTickManager: TickRateManager = TickRateManager()
@@ -330,7 +330,7 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 	init {
 		val aabb = AABB.encapsulatingFullBlocks(posA, posB)
 		// Populating Block and VoxelShape Data
-		BlockPos.betweenClosedStream(aabb).forEach { pos ->
+		BlockPos.betweenClosed(posA, posB).forEach { pos ->
 			val immutablePos = pos.immutable()
 			val state = level.getBlockState(immutablePos)
 			val offset = immutablePos.offset(-posA)
@@ -379,7 +379,7 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 		if (!shade) return 1f
 		return when (direction) {
 			Direction.DOWN -> 0.5f
-			Direction.UP   -> 1.0f
+			Direction.UP -> 1.0f
 			Direction.NORTH, Direction.SOUTH -> 0.8f
 			Direction.WEST, Direction.EAST -> 0.6f
 		}

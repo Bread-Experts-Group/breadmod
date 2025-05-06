@@ -149,6 +149,7 @@ class DoubleOrNothingBlockEntity(
 				this.hasJackpot = false
 				this.jackpotTimer = 0
 				this.reset()
+				this.zoom = 0.3f
 			}
 		}
 

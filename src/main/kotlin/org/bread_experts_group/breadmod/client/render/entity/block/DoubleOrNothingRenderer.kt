@@ -62,13 +62,13 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 	private val backgroundTexture: ResourceLocation = modLocation("textures/block/double_or_nothing/background.png")
 	private val blockhead: ResourceLocation = modLocation("textures/tool_gun/gui/blockhead.png")
 	private val redTexture: ResourceLocation = modLocation("textures/block/double_or_nothing/background_colorable.png")
-	private val bluesScreenTexture: ResourceLocation = modLocation(
-		"textures/block/double_or_nothing/background_bluescreen.png"
-	)
+	private val bluesScreenTexture: ResourceLocation =
+		modLocation("textures/block/double_or_nothing/background_bluescreen.png")
 	private val nothingColor: Int = Color(128, 0, 0).rgb
 	private val good1Color: Int = Color(102, 204, 102).rgb
 	private val good2Color: Int = Color(52, 240, 0).rgb
-	private val jackpotColor: Int = Color(255, 207, 0).rgb
+	private val jackpotColor: Int = Color(255, 214, 38).rgb
+	private val jackpotBGColor: Int = Color(255, 207, 0).rgb
 
 	override fun render(
 		blockEntity: DoubleOrNothingBlockEntity,
@@ -183,6 +183,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 		return this
 	}
 
+	private val direction: Vec2 = Vec2(1.0f, -1.0f)
 	private fun drawRainbowQuad(
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
@@ -213,13 +214,13 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 			else -> 1000f
 		}
 		buffer.addVertex(pose, topLeft.x, topLeft.y, topLeft.z).setUv(0f, 0f)
-			.setSpeed(speed).setDirection(Vec2(1.0f, -1.0f))
+			.setSpeed(speed).setDirection(this.direction)
 		buffer.addVertex(pose, bottomLeft.x, bottomLeft.y, bottomLeft.z).setUv(0f, 1f)
-			.setSpeed(speed).setDirection(Vec2(1.0f, -1.0f))
+			.setSpeed(speed).setDirection(this.direction)
 		buffer.addVertex(pose, bottomRight.x, bottomRight.y, bottomRight.z).setUv(1f, 1f)
-			.setSpeed(speed).setDirection(Vec2(1.0f, -1.0f))
+			.setSpeed(speed).setDirection(this.direction)
 		buffer.addVertex(pose, topRight.x, topRight.y, topRight.z).setUv(1f, 0f)
-			.setSpeed(speed).setDirection(Vec2(1.0f, -1.0f))
+			.setSpeed(speed).setDirection(this.direction)
 		poseStack.popPose()
 	}
 
@@ -474,7 +475,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 				bufferSource,
 				blockRotation,
 				blockHeadMode,
-				this.jackpotColor
+				this.jackpotBGColor
 			)
 			poseStack.popPose()
 			// todo figure out tilt later

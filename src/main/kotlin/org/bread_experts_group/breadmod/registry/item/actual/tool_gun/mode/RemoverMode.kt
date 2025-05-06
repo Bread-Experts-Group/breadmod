@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
 
-import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.MultiBufferSource
@@ -19,13 +18,13 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
-import net.neoforged.neoforge.client.event.InputEvent.Key
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.data_holders.common.KeyData
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
@@ -56,7 +55,7 @@ class RemoverMode : AbstractToolGunMode() {
 			modTranslatable("item", TOOL_GUN_DEF, "remover", "player_left_game")
 	}
 
-	var targetEntities: Boolean = false
+	private var targetEntities: Boolean = false
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!player.isShiftKeyDown) {
 			if (this.targetEntities) {
@@ -114,15 +113,16 @@ class RemoverMode : AbstractToolGunMode() {
 				}
 			}
 		}
-//		player.sendSystemMessage(Component.literal("$block"))
-//		player.sendSystemMessage(Component.literal("$entity"))
 	}
 
-	override fun keyboardInputAction(event: Key, stack: ItemStack, player: Player) {
-		if (event.key == KeyMappings.toolGunAltOne.key.value && event.action == InputConstants.PRESS) {
-			val data = ToolGunData.get(stack)
-			data.modifyValueAndSync<Boolean>("test", !this.targetEntities)
-		}
+	override fun registerKeys(into: MutableMap<Int, KeyData>) {
+		into[KeyMappings.toolGunAltOne.key.value] =
+			KeyData(Component.literal("test")) { event, _, _, data ->
+				if (this.keyMatchesInput(KeyMappings.toolGunAltOne, event) && this.isKeyboardPress(event)) {
+					data.modifyValue("targetAlt", !this.targetEntities)
+				}
+				true
+			}
 	}
 
 	private fun rand(player: Player): Double = (player.random.nextDouble() - 0.5) * 1.2
@@ -133,11 +133,11 @@ class RemoverMode : AbstractToolGunMode() {
 	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this.getUid())
 
 	override fun saveExtraData(tag: CompoundTag) {
-		tag.putBoolean("test", this.targetEntities)
+		tag.putBoolean("targetAlt", this.targetEntities)
 	}
 
 	override fun loadExtraData(tag: CompoundTag) {
-		this.targetEntities = tag.getBoolean("test")
+		this.targetEntities = tag.getBoolean("targetAlt")
 	}
 
 	class RemoverRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
