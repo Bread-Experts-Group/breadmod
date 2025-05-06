@@ -1,9 +1,7 @@
 package org.bread_experts_group.breadmod.util.reflect
 
-import net.minecraft.client.Minecraft
-import net.minecraft.server.MinecraftServer
-import net.neoforged.api.distmarker.Dist
-import net.neoforged.fml.loading.FMLLoader
+import net.minecraft.util.thread.ReentrantBlockableEventLoop
+import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforgespi.language.ModFileScanData
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -12,8 +10,8 @@ import java.nio.file.FileSystem
 import java.nio.file.FileSystemNotFoundException
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.name
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
@@ -35,7 +33,7 @@ import kotlin.reflect.jvm.javaMethod
 class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModFileScanData>?) {
 	companion object {
 		private val classes: MutableMap<Package, List<KClass<out Any>>> = mutableMapOf()
-		private val piggybackClasses: MutableMap<ModFileScanData, List<KClass<out Any>>> = mutableMapOf()
+		private val coreLoader: ClassLoader = ReentrantBlockableEventLoop::class.java.classLoader
 		val logger: Logger = LogManager.getLogger()
 
 		private fun safeGetFileSystem(uri: URI): FileSystem = try {
@@ -47,76 +45,64 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 
 		fun Package.getOrScanCache(): List<KClass<out Any>> {
 			return this@Companion.classes.getOrPut(this) {
-				val loader = Minecraft::class.java.classLoader
-				buildList {
-					for (resource in loader.getResources(this@getOrScanCache.name.replace(".", "/"))) {
-						try {
-							val fs = this@Companion.safeGetFileSystem(resource.toURI())
-							fs.rootDirectories.forEach { rootDir ->
-								Files.walk(rootDir)
-									.filter(Files::isRegularFile)
-									.filter { f -> f.name.endsWith(".class", true) }
-									.filter { f -> !f.name.contains("mixin", true) }
-									.forEach { f ->
-										try {
-											this.add(
-												loader.loadClass(
-													f
-														.absolutePathString().let {
-															it.substring(1, it.length - 6)
-																.replace('/', '.')
-														}
-												).kotlin
-											)
-										} catch (e: Throwable) {
-											this@Companion.logger.warn("Failure when loading class: $f", e)
-										}
+				val cList = ConcurrentLinkedQueue<KClass<out Any>>()
+				for (resource in this@Companion.coreLoader.getResources(
+					this@getOrScanCache.name.replace(
+						".",
+						"/"
+					)
+				)) {
+					try {
+						val fs = this@Companion.safeGetFileSystem(resource.toURI())
+						fs.rootDirectories.forEach { rootDir ->
+							this@Companion.logger.info("Walking the directory at [$rootDir]")
+							Files.walk(rootDir)
+								.parallel()
+								.filter(Files::isRegularFile)
+								.map { p -> p.absolutePathString() }
+								.filter { p -> p.endsWith(".class", true) }
+								.filter { p -> !p.contains("mixin", true) }
+								.map { p -> p.substring(1, p.length - 6).replace('/', '.', true) }
+								.forEach { p ->
+									try {
+										cList.add(this@Companion.coreLoader.loadClass(p).kotlin)
+									} catch (_: Throwable) {
 									}
-							}
-						} catch (e: Exception) {
-							this@Companion.logger.warn("Failure when reading from file system", e)
+								}
 						}
+					} catch (e: Exception) {
+						this@Companion.logger.warn("Failure when reading from file system", e)
 					}
 				}
+				cList.toList()
 			}
 		}
 
 		fun List<ModFileScanData>.piggybackCache(): List<KClass<out Any>> {
-			var failures = 0
-			var count = 0
-			val list = buildList {
-				this@piggybackCache.forEach {
-					this.addAll(
-						this@Companion.piggybackClasses.getOrPut(it) {
-							buildList {
-								count += it.classes.size
-								it.classes.forEach { c ->
-									try {
-										// todo band-aid fix to stop LibraryScanner from infinitely erroring on server.
-										//  Replace with some kind of Dist separation system.
-										if (FMLLoader.getDist() == Dist.DEDICATED_SERVER)
-											this.add(MinecraftServer::class.java.classLoader.loadClass(c.clazz.className).kotlin)
-										else this.add(Minecraft::class.java.classLoader.loadClass(c.clazz.className).kotlin)
-									} catch (_: Throwable) {
-										failures++
-									}
-								}
-							}
+			val cList = ConcurrentLinkedQueue<KClass<out Any>>()
+			val blacklist = ConcurrentLinkedQueue<String>()
+			this.forEach {
+				it.annotations
+					.parallelStream()
+					.filter { a -> a.annotationType.className.contains("OnlyIn", true) }
+					.filter { a -> a.annotationData["value"]!! != FMLEnvironment.dist }
+					.forEach { a -> blacklist.add(a.memberName) }
+				it.classes
+					.parallelStream()
+					.map { c -> c.clazz.className }
+					.filter { c -> !blacklist.contains(c) }
+					.forEach { c ->
+						try {
+							cList.add(this@Companion.coreLoader.loadClass(c).kotlin)
+						} catch (_: Throwable) {
 						}
-					)
-				}
+					}
 			}
-			if (failures > 0) this@Companion.logger.warn(
-				"Failed to load $failures piggyback classes, ${count - failures}/${count}"
-			)
-			return list
+			return cList.toList()
 		}
 
-		fun Package.getScanner(): LibraryScanner =
-			LibraryScanner(this, null)
-
-		fun piggyback(data: List<ModFileScanData>): LibraryScanner =
-			LibraryScanner(null, data)
+		fun Package.getScanner(): LibraryScanner = LibraryScanner(this, null)
+		fun piggyback(data: List<ModFileScanData>): LibraryScanner = LibraryScanner(null, data)
 	}
 
 	val localClasses: List<KClass<out Any>>
