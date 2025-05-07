@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecip
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.AbstractCuttingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeMulti
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergySerializer
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.RecipeFunctionDataFixer
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
@@ -23,10 +23,10 @@ object ModRecipeSerializers {
 		Registries.RECIPE_SERIALIZER, BreadMod.ID
 	)
 
-	private fun <T : FluidEnergyRecipeMulti> registerFERSupplier(
+	private fun <R : FluidEnergyRecipe> registerFERSupplier(
 		name: String,
-		recipe: RecipeFunctionDataFixer<T>
-	): Supplier<RecipeSerializer<T>> =
+		recipe: RecipeFunctionDataFixer<R>
+	): Supplier<RecipeSerializer<R>> =
 		this.RECIPE_SERIALIZER_REGISTRY.register(name) { -> FluidEnergySerializer(recipe) }
 
 	val WHEAT_CRUSHING: Supplier<RecipeSerializer<WheatCrusherRecipe>> =
@@ -47,6 +47,6 @@ object ModRecipeSerializers {
 		}
 
 	// Exp.
-	val FLUID_ENERGY_TEST: Supplier<RecipeSerializer<FluidEnergyRecipeMulti>> =
+	val FLUID_ENERGY_TEST: Supplier<RecipeSerializer<FluidEnergyRecipe>> =
 		this.registerFERSupplier("fluid_energy", ::FluidEnergyRecipeTest)
 }

@@ -9,7 +9,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipeMulti
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 
 class ToasterRecipe(
 	rItemInputs: NonNullList<SizedIngredient>,
@@ -18,7 +18,7 @@ class ToasterRecipe(
 	rFluidOutputs: MutableList<FluidStack>,
 	rTime: Int?,
 	rEnergy: Int?
-) : FluidEnergyRecipeMulti(rItemInputs, rItemOutputs, rFluidInputs, rFluidOutputs, rTime, rEnergy) {
+) : FluidEnergyRecipe(rItemInputs, rItemOutputs, rFluidInputs, rFluidOutputs, rTime, rEnergy) {
 	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.TOASTER.get()
 	override fun getType(): RecipeType<*> = ModRecipeTypes.TOASTING.get()
 }

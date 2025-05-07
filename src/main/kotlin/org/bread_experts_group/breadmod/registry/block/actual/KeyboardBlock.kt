@@ -63,7 +63,6 @@ class KeyboardBlock : BreadModBlockWithEntity(
 		).reduce(::join).get()
 	}
 
-	// todo redo binding logic, create BlockScanner object to ease scanning blocks in a radius
 	override fun useWithoutItem(
 		state: BlockState,
 		level: Level,

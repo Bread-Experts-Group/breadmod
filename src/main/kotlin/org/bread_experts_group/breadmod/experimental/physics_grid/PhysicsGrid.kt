@@ -1,13 +1,11 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import com.mojang.datafixers.DataFixerUpper
-import com.mojang.serialization.MapCodec
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap
 import it.unimi.dsi.fastutil.ints.IntSortedSets
 import net.minecraft.core.BlockPos
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.server.level.WorldGenRegion
 import net.minecraft.server.level.progress.ChunkProgressListener
 import net.minecraft.world.Difficulty
 import net.minecraft.world.level.ChunkPos
@@ -15,24 +13,14 @@ import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.GameType
 import net.minecraft.world.level.GameType.SURVIVAL
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.LevelHeightAccessor
-import net.minecraft.world.level.NoiseColumn
-import net.minecraft.world.level.StructureManager
-import net.minecraft.world.level.biome.BiomeManager
 import net.minecraft.world.level.biome.Biomes
-import net.minecraft.world.level.biome.FixedBiomeSource
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.border.WorldBorder.Settings
-import net.minecraft.world.level.chunk.ChunkAccess
-import net.minecraft.world.level.chunk.ChunkGenerator
 import net.minecraft.world.level.chunk.status.ChunkStatus
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes
 import net.minecraft.world.level.dimension.LevelStem
 import net.minecraft.world.level.levelgen.FlatLevelSource
-import net.minecraft.world.level.levelgen.GenerationStep.Carving
-import net.minecraft.world.level.levelgen.Heightmap.Types
-import net.minecraft.world.level.levelgen.RandomState
-import net.minecraft.world.level.levelgen.blending.Blender
+import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings
 import net.minecraft.world.level.storage.LevelStorageSource
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess
 import net.minecraft.world.level.storage.ServerLevelData
@@ -50,8 +38,8 @@ import org.bread_experts_group.breadmod.util.minus
 import org.bread_experts_group.breadmod.util.toVec3
 import org.bread_experts_group.breadmod.util.unaryMinus
 import java.nio.file.Path
+import java.util.Optional
 import java.util.UUID
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import kotlin.math.pow
 
@@ -63,7 +51,13 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 	Level.OVERWORLD,
 	LevelStem(
 		level.registryAccess().holderOrThrow(BuiltinDimensionTypes.OVERWORLD),
-		Companion.createChunkGenerator(level)
+		FlatLevelSource(
+			FlatLevelGeneratorSettings(
+				Optional.empty(),
+				level.registryAccess().holderOrThrow(Biomes.PLAINS),
+				listOf()
+			)
+		)
 	),
 	object : ChunkProgressListener {
 		override fun updateSpawnPos(center: ChunkPos) {}
@@ -130,61 +124,6 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 			override fun setDayTimeFraction(dayTimeFraction: Float) {}
 			override fun setDayTimePerTick(dayTimePerTick: Float) {}
 		}
-
-		fun createChunkGenerator(level: Level): ChunkGenerator =
-			object : ChunkGenerator(FixedBiomeSource(level.registryAccess().holderOrThrow(Biomes.PLAINS))) {
-				override fun codec(): MapCodec<out ChunkGenerator> = FlatLevelSource.CODEC
-
-				override fun applyCarvers(
-					level: WorldGenRegion,
-					seed: Long,
-					random: RandomState,
-					biomeManager: BiomeManager,
-					structureManager: StructureManager,
-					chunk: ChunkAccess,
-					step: Carving
-				) {
-				}
-
-				override fun buildSurface(
-					level: WorldGenRegion,
-					structureManager: StructureManager,
-					random: RandomState,
-					chunk: ChunkAccess
-				) {
-				}
-
-				override fun spawnOriginalMobs(level: WorldGenRegion) {}
-				override fun getGenDepth(): Int = 0
-
-				override fun fillFromNoise(
-					blender: Blender,
-					randomState: RandomState,
-					structureManager: StructureManager,
-					chunk: ChunkAccess
-				): CompletableFuture<ChunkAccess> = CompletableFuture.completedFuture(chunk)
-
-				override fun getSeaLevel(): Int = 0
-
-				override fun getMinY(): Int = -64
-
-				override fun getBaseHeight(
-					x: Int,
-					z: Int,
-					type: Types,
-					level: LevelHeightAccessor,
-					random: RandomState
-				): Int = 0
-
-				override fun getBaseColumn(
-					x: Int,
-					z: Int,
-					height: LevelHeightAccessor,
-					random: RandomState
-				): NoiseColumn = NoiseColumn(0, arrayOf())
-
-				override fun addDebugScreenInfo(info: MutableList<String>, random: RandomState, pos: BlockPos) {}
-			}
 	}
 
 	val id: Int = ++PhysicsGridGlobals.idCounter
@@ -198,7 +137,7 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 	init {
 		val aabb = AABB.encapsulatingFullBlocks(posA, posB)
 		// Populating Block and VoxelShape Data
-		BlockPos.betweenClosedStream(aabb).forEach { pos ->
+		BlockPos.betweenClosed(posA, posB).forEach { pos ->
 			val immutablePos = pos.immutable()
 			val state = level.getBlockState(immutablePos)
 			val offset = immutablePos.offset(-posA)
@@ -235,6 +174,6 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 				this.velocity.length().pow(2.0)) / this.mass
 		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
 		this.position = this.position.add(this.velocity)
-//		this.tick { true }
+		this.tick { true }
 	}
 }

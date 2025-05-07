@@ -5,8 +5,10 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.client.event.InputEvent
+import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
@@ -33,6 +35,8 @@ data class ToolGunData(
 			return stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, this.EMPTY)
 		}
 	}
+
+	fun syncToServer(): Unit = PacketDistributor.sendToServer(ToolGunDataSyncPacket(this))
 
 	/**
 	 * Called when the tool gun is changing modes.

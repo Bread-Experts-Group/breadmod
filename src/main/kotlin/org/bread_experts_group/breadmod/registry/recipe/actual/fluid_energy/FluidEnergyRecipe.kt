@@ -4,31 +4,29 @@ import com.mojang.datafixers.util.Function6
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
-import net.minecraft.world.item.crafting.RecipeManager
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
-import org.bread_experts_group.breadmod.registry.recipe.BreadModRecipes
 import kotlin.math.max
-
-typealias FluidEnergyRecipeMulti = FluidEnergyRecipe<FluidEnergyInput>
 
 typealias RecipeFunctionMulti =
 			(
 			NonNullList<SizedIngredient>, MutableList<ItemStack>,
 			NonNullList<SizedFluidIngredient>, MutableList<FluidStack>,
 			Int?, Int?
-		) -> FluidEnergyRecipeMulti
+		) -> FluidEnergyRecipe
 
 typealias RecipeFunctionDataFixer<R> =
 		Function6<NonNullList<SizedIngredient>, MutableList<ItemStack>,
 				NonNullList<SizedFluidIngredient>, MutableList<FluidStack>,
 				Int?, Int?, R>
 
-abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
+abstract class FluidEnergyRecipe(
 	/** Input list of items for this recipe. Populated via [FluidEnergyInput]. */
 	val rItemInputs: NonNullList<SizedIngredient>,
 	/** Output list of items for this recipe. Populated via [RecipeManager]. */
@@ -37,29 +35,30 @@ abstract class FluidEnergyRecipe<T : FluidEnergyInput>(
 	val rFluidInputs: NonNullList<SizedFluidIngredient>,
 	/** Output list of fluids for this recipe. Populated via [RecipeManager]. */
 	val rFluidOutputs: MutableList<FluidStack>,
-	rTime: Int?,
-	rEnergy: Int?
-) : BreadModRecipes<T>(rTime, rEnergy) {
+	val rTime: Int?,
+	val rEnergy: Int?
+) : Recipe<FluidEnergyInput> {
 	/**
 	 * Compares [rItemInputs] and [rFluidInputs] with the [input]s items and fluids.
 	 */
-	override fun matches(input: T, level: Level): Boolean =
-		this.rItemInputs.all { rItem ->
-			input.iItems.any(rItem::test)
-		} && this.rFluidInputs.all { rFluid ->
-			input.iFluids.any(rFluid::test)
-		} && super.matches(input, level)
+	override fun matches(input: FluidEnergyInput, level: Level): Boolean =
+		this.rTime!! >= 0
+				&& this.rEnergy!! >= 0
+				&& this.rItemInputs.all { rItem -> input.iItems.any(rItem::test) }
+				&& this.rFluidInputs.all { rFluid -> input.iFluids.any(rFluid::test) }
+
+	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
 	/**
 	 * Assembles the first item in [rItemOutputs].
 	 */
-	override fun assemble(input: T, registries: HolderLookup.Provider): ItemStack =
+	override fun assemble(input: FluidEnergyInput, registries: HolderLookup.Provider): ItemStack =
 		this.rItemOutputs[0].copyWithCount(this.rItemOutputs[0].count)
 
 	/**
 	 * @see assemble
 	 */
-	fun assembleItem(input: T, level: Level): ItemStack = this.assemble(input, level.registryAccess())
+	fun assembleItem(input: FluidEnergyInput, level: Level): ItemStack = this.assemble(input, level.registryAccess())
 
 	/**
 	 * Assembles the first fluid in [rFluidOutputs].

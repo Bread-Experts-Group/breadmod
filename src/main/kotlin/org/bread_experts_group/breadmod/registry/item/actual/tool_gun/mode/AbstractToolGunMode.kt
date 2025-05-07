@@ -17,8 +17,8 @@ import org.bread_experts_group.breadmod.api.IToolGunMode
 abstract class AbstractToolGunMode : IToolGunMode {
 	abstract override fun action(level: Level, player: Player, stack: ItemStack)
 
-	override fun onUsePre(level: Level, player: Player, usedHand: InteractionHand) {}
-	override fun onUsePost(level: Level, player: Player, usedHand: InteractionHand) {}
+	override fun actionPre(level: Level, player: Player, usedHand: InteractionHand) {}
+	override fun actionPost(level: Level, player: Player, usedHand: InteractionHand) {}
 
 	abstract override fun getDisplayName(): Component
 

@@ -60,9 +60,9 @@ class ToolGunItem : Item(
 		val stack = getStackInPlayerHand(player)
 		if (stack.`is`(ModItems.TOOL_GUN)) {
 			val (mode, _, _) = ToolGunData.get(stack)
-			mode.onUsePre(level, player, usedHand)
+			mode.actionPre(level, player, usedHand)
 			mode.action(level, player, stack)
-			mode.onUsePost(level, player, usedHand)
+			mode.actionPost(level, player, usedHand)
 			if (level.isClientSide) {
 				triggerDelta(stack.hashCode())
 				BeamBufferTask.create(
@@ -122,7 +122,6 @@ class ToolGunItem : Item(
 		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
 
-	// todo figure out key modifiers in the if statement
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
 		val data = ToolGunData.get(heldStack)
 		val mode = data.mode

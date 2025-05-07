@@ -18,7 +18,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.Flui
 /**
  * Draws a recipe time string
  */
-fun drawRecipeTime(recipe: FluidEnergyRecipe<*>, guiGraphics: GuiGraphics, x: Int, y: Int) {
+fun drawRecipeTime(recipe: FluidEnergyRecipe, guiGraphics: GuiGraphics, x: Int, y: Int) {
 	if (recipe.getTime() > 0) {
 		val recipeTimeSeconds = recipe.getTime() / 20
 		val timeString = modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
@@ -48,7 +48,7 @@ fun createCachedArrows(
  * @see createCachedArrows
  */
 fun drawArrow(
-	recipe: FluidEnergyRecipe<*>,
+	recipe: FluidEnergyRecipe,
 	cachedArrows: LoadingCache<Int, IDrawableAnimated>
 ): IDrawableAnimated = cachedArrows.getUnchecked(recipe.getTime())
 

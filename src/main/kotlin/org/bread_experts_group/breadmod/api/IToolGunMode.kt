@@ -50,12 +50,12 @@ interface IToolGunMode {
 	/**
 	 * Fired when the tool gun's use function is called, fired before [action].
 	 */
-	fun onUsePre(level: Level, player: Player, usedHand: InteractionHand)
+	fun actionPre(level: Level, player: Player, usedHand: InteractionHand)
 
 	/**
 	 * Fired when the tool gun's use function is called, fired after [action].
 	 */
-	fun onUsePost(level: Level, player: Player, usedHand: InteractionHand)
+	fun actionPost(level: Level, player: Player, usedHand: InteractionHand)
 
 	/**
 	 * Event bridge for [MouseScrollingEvent], used for handling mouse scrolling while holding the tool gun.

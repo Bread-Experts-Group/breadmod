@@ -25,7 +25,6 @@ import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import java.util.function.Supplier
 
@@ -66,7 +65,7 @@ class BreadModJeiPlugin : IModPlugin {
 		)
 	}
 
-	private fun <I : FluidEnergyInput, T : FluidEnergyRecipe<I>> getRecipesForType(
+	private fun <T : FluidEnergyRecipe> getRecipesForType(
 		recipeManager: RecipeManager,
 		type: Supplier<RecipeType<T>>
 	): List<T> = recipeManager.getAllRecipesFor(type.get()).map { it.value }

@@ -2,7 +2,9 @@ package org.bread_experts_group.breadmod.api
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.Font
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -11,9 +13,11 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
+import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.render.drawQuad
 import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.util.Vector3fAxisX
 import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.joml.Vector3f
@@ -207,4 +211,15 @@ interface IToolGunModeRenderer {
 	fun getScreenTexture(): ResourceLocation
 
 	fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean
+
+	/**
+	 * Used for rendering additional elements onto the [ToolGunOverlay].
+	 */
+	fun renderOverlayAdditions(
+		guiGraphics: GuiGraphics,
+		deltaTracker: DeltaTracker,
+		stack: ItemStack,
+		data: ToolGunData
+	) {
+	}
 }

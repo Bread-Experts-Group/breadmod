@@ -11,6 +11,7 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.ModTextureLocations.INFO
 import org.bread_experts_group.breadmod.client.ModTextureLocations.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.client.render.drawScaledText
@@ -37,7 +38,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 			val data = ToolGunData.get(handStack)
 			RenderSystem.enableBlend()
 			this.renderBackground(guiGraphics, poseStack, x, y)
-			this.renderMode(data, guiGraphics, poseStack, x, y)
+			this.renderMode(data, guiGraphics, poseStack, deltaTracker, handStack, x, y)
 
 			RenderSystem.disableBlend()
 		}
@@ -53,6 +54,8 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		data: ToolGunData,
 		guiGraphics: GuiGraphics,
 		poseStack: PoseStack,
+		deltaTracker: DeltaTracker,
+		stack: ItemStack,
 		x: Int,
 		y: Int
 	) {
@@ -101,6 +104,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 			)
 			offset += 12
 		}
+		mode.getCustomRenderer().renderOverlayAdditions(guiGraphics, deltaTracker, stack, data)
 		// KeyBinds
 //        mode?.keyBinds?.forEachIndexed { index, control ->
 //            val moved = ((index + 1) * 12) + 2
