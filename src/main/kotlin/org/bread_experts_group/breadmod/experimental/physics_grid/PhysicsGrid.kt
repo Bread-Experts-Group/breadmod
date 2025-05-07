@@ -174,6 +174,15 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 				this.velocity.length().pow(2.0)) / this.mass
 		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
 		this.position = this.position.add(this.velocity)
-		this.tick { true }
+//		this.tick { true }
+		this.tickTime()
+//		this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
+		this.tickChunk(this.getChunk(0, 0), 320)
+		this.getChunk(0, 0).findBlocks(
+			{ !it.isAir },
+			{ _, _ -> true },
+			{ pos, state ->
+			})
+		this.chunkSource.distanceManager.runAllUpdates(this.chunkSource.chunkMap)
 	}
 }

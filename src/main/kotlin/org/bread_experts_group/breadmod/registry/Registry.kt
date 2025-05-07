@@ -126,7 +126,6 @@ import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
-import org.bread_experts_group.breadmod.network.clientbound.PhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.ClientPhysicsGridPacket
@@ -136,7 +135,6 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSe
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
-import org.bread_experts_group.breadmod.network.serverbound.PhysicsGridRequestPacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
@@ -324,18 +322,18 @@ object Registry {
 					loadToolGunModes()
 				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Pre ->
-					if (machTrailMap.isNotEmpty()) {
-						machTrailMap.forEach { (_, machTrailData) ->
-							machTrailData.tick()
-							if (!machTrailData.targetPlayer.isSprinting || machTrailData.targetPlayer.attackAnim > 0f) {
-								machTrailData.killAllSounds()
-								machTrailMap.remove(machTrailData.targetPlayer)
-								return@addListener
+					if (!localClient.isPaused || !localClient.isLocalServer) {
+						if (machTrailMap.isNotEmpty()) {
+							machTrailMap.forEach { (_, machTrailData) ->
+								machTrailData.tick()
+								if (!machTrailData.targetPlayer.isSprinting || machTrailData.targetPlayer.attackAnim > 0f) {
+									machTrailData.killAllSounds()
+									machTrailMap.remove(machTrailData.targetPlayer)
+									return@addListener
+								}
 							}
 						}
-					}
-					PhysicsGridGlobals.grids.values.forEach {
-						it.tick()
+						PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
@@ -518,7 +516,7 @@ object Registry {
 		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
-			PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
+//			PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
 		}
 		NeoForge.EVENT_BUS.addListener { event: ServerStartedEvent ->
 			loadToolGunModes()
@@ -590,7 +588,6 @@ object Registry {
 			MachTrailPacket.register(registrar)
 			BeamPacket.register(registrar)
 			SpreadParticlesPacket.register(registrar)
-			PhysicsGridPacket.register(registrar)
 			ScreenBleedSetPacket.register(registrar)
 			ClientPhysicsGridPacket.register(registrar)
 			GridPosUpdatePacket.register(registrar)
@@ -600,7 +597,6 @@ object Registry {
 			ToolGunModeChangePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
-			PhysicsGridRequestPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
 		}
 		modBus.addListener { event: EntityAttributeCreationEvent ->
