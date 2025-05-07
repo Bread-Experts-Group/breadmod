@@ -335,7 +335,7 @@ object Registry {
 						}
 					}
 					PhysicsGridGlobals.grids.values.forEach {
-						it.localChunkSource.tick({ true }, true)
+						it.tick()
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->

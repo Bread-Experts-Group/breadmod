@@ -154,6 +154,7 @@ fun blockPhysicsGrid(
 	from: Vec3, to: Vec3, hitFluids: Boolean,
 	collisionContext: CollisionContext
 ): GridHitResult? {
+	return null
 	grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
 		if (!filter.invoke(grid)) continue@grid
 		val hitResult = grid.clip(
