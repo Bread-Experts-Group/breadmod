@@ -4,6 +4,13 @@ import com.mojang.datafixers.DataFixerUpper
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap
 import it.unimi.dsi.fastutil.ints.IntSortedSets
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.core.Direction.DOWN
+import net.minecraft.core.Direction.EAST
+import net.minecraft.core.Direction.NORTH
+import net.minecraft.core.Direction.SOUTH
+import net.minecraft.core.Direction.UP
+import net.minecraft.core.Direction.WEST
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.progress.ChunkProgressListener
@@ -169,20 +176,31 @@ abstract class PhysicsGrid protected constructor(level: Level, posA: BlockPos, p
 	private val dragCoefficient: Double = 1.05
 	private val crossSectionArea: Int = 25 // TODO calculate
 	private val mass: Int = 1 // TODO calculate
+	private val updateShapeOrder: Array<Direction> = arrayOf(WEST, EAST, NORTH, SOUTH, DOWN, UP)
 	open fun tick() {
 		val dragAcceleration = (0.5 * this.airDensity * this.dragCoefficient * this.crossSectionArea *
 				this.velocity.length().pow(2.0)) / this.mass
 		this.velocity = this.velocity.subtract(this.velocity.scale(dragAcceleration / 20))
 		this.position = this.position.add(this.velocity)
 //		this.tick { true }
+		this.handlingTick = true
 		this.tickTime()
-//		this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
-		this.tickChunk(this.getChunk(0, 0), 320)
+		this.profiler.popPush("tickPending")
+		this.profiler.push("blockTicks")
+		this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
+		this.profiler.pop()
+		this.handlingTick = false
+		this.tickChunk(this.getChunk(0, 0), 3) // random ticks
 		this.getChunk(0, 0).findBlocks(
 			{ !it.isAir },
 			{ _, _ -> true },
 			{ pos, state ->
+//				state.tick(this, pos, this.random)
+//				Block.updateFromNeighbourShapes(state, this, pos)
 			})
-		this.chunkSource.distanceManager.runAllUpdates(this.chunkSource.chunkMap)
+//		this.chunkSource.tick({ true }, true)
+//		this.chunkSource.chunkMap.getVisibleChunkIfPresent(ChunkPos.asLong(0, 0))
+//			?.let(this.chunkSource.chunkMap::prepareTickingChunk)
+//		this.chunkSource.distanceManager.runAllUpdates(this.chunkSource.chunkMap)
 	}
 }
