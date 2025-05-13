@@ -60,29 +60,29 @@ object BreadModCodecs {
 		ByteBufCodecs.TRUSTED_COMPOUND_TAG,
 		ClosedSystem::toNBT, ClosedSystem::createFromTag
 	)
+	val BLOCKSTATE_STREAM_CODEC: StreamCodec<ByteBuf, BlockState> = ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY)
 	val BLOCK_MAP_STREAM_CODEC: StreamCodec<FriendlyByteBuf, Map<BlockPos, BlockState>> =
 		object : StreamCodec<FriendlyByteBuf, Map<BlockPos, BlockState>> {
-			private val stateCodec = ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY)
 			override fun decode(buffer: FriendlyByteBuf): Map<BlockPos, BlockState> =
-				buffer.readMap(BlockPos.STREAM_CODEC, this.stateCodec)
+				buffer.readMap(BlockPos.STREAM_CODEC, this@BreadModCodecs.BLOCKSTATE_STREAM_CODEC)
 
 			override fun encode(buffer: FriendlyByteBuf, value: Map<BlockPos, BlockState>) {
-				buffer.writeMap(value, BlockPos.STREAM_CODEC, this.stateCodec)
+				buffer.writeMap(value, BlockPos.STREAM_CODEC, this@BreadModCodecs.BLOCKSTATE_STREAM_CODEC)
 			}
 		}
+	val FLUIDSTATE_STREAM_CODEC: StreamCodec<ByteBuf, FluidState> = ByteBufCodecs.idMapper(Fluid.FLUID_STATE_REGISTRY)
 	val FLUID_MAP_STREAM_CODEC: StreamCodec<FriendlyByteBuf, Map<BlockPos, FluidState>> =
 		object : StreamCodec<FriendlyByteBuf, Map<BlockPos, FluidState>> {
-			private val stateCodec = ByteBufCodecs.idMapper(Fluid.FLUID_STATE_REGISTRY)
 			override fun decode(buffer: FriendlyByteBuf): Map<BlockPos, FluidState> =
-				buffer.readMap(BlockPos.STREAM_CODEC, this.stateCodec)
+				buffer.readMap(BlockPos.STREAM_CODEC, this@BreadModCodecs.FLUIDSTATE_STREAM_CODEC)
 
 			override fun encode(buffer: FriendlyByteBuf, value: Map<BlockPos, FluidState>) {
-				buffer.writeMap(value, BlockPos.STREAM_CODEC, this.stateCodec)
+				buffer.writeMap(value, BlockPos.STREAM_CODEC, this@BreadModCodecs.FLUIDSTATE_STREAM_CODEC)
 			}
 		}
 
 	@Suppress("ConvertLambdaToReference") // necessary because of overload ambiguity.
-	val VEC3_STREAM_CODEC: StreamCodec<ByteBuf, Vec3> = StreamCodec.composite(
+	val VEC3: StreamCodec<ByteBuf, Vec3> = StreamCodec.composite(
 		ByteBufCodecs.DOUBLE, { it.x },
 		ByteBufCodecs.DOUBLE, { it.y },
 		ByteBufCodecs.DOUBLE, { it.z },

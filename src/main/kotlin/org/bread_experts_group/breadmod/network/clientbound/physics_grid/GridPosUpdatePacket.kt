@@ -21,7 +21,7 @@ class GridPosUpdatePacket(
 		val TYPE: CustomPacketPayload.Type<GridPosUpdatePacket> =
 			CustomPacketPayload.Type(modLocation("grid_pos_update"))
 		val STREAM_CODEC: StreamCodec<FriendlyByteBuf, GridPosUpdatePacket> = StreamCodec.composite(
-			BreadModCodecs.VEC3_STREAM_CODEC, GridPosUpdatePacket::newPos,
+			BreadModCodecs.VEC3, GridPosUpdatePacket::newPos,
 			ByteBufCodecs.INT, GridPosUpdatePacket::id,
 			::GridPosUpdatePacket
 		)

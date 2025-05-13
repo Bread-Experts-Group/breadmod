@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.gui.screens
+package org.bread_experts_group.breadmod.tool_gun.gui.screen
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
@@ -7,10 +7,10 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ModeSelectTab
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ToolGunScreenTab
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ModeSelectTab
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab
 
 class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(title) {
 	companion object {
@@ -29,7 +29,7 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 
 	override fun isPauseScreen(): Boolean = false
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		this.getTabs().forEach { it.active = Companion.activeTab == it; it.visible = Companion.activeTab == it }
+		this.getTabs().forEach { if (Companion.activeTab == it) it.enable() else it.disable() }
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
 		ModTextureLocations.FRAME.blitTexture(guiGraphics, this.leftPos, this.topPos)
 
@@ -39,7 +39,7 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 				this.topPos + 27,
 				this.leftPos + 250,
 				this.topPos + 38,
-				it.tabBarColor.rgb
+				it.tabBarColor
 			)
 		}
 	}

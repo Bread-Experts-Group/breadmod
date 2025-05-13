@@ -1,17 +1,8 @@
 package org.bread_experts_group.breadmod.registry
 
 import com.mojang.blaze3d.platform.InputConstants
-import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.BufferUploader
-import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import com.mojang.blaze3d.vertex.Tesselator
-import com.mojang.blaze3d.vertex.VertexFormat
-import com.mojang.math.Axis
-import net.minecraft.Util
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
-import net.minecraft.client.renderer.FogRenderer
-import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
@@ -21,7 +12,6 @@ import net.minecraft.core.Direction
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.Mth.clamp
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.BlockHitResult
@@ -73,7 +63,6 @@ import org.bread_experts_group.breadmod.client.gui.overlays.CameraOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.InternetChatRelayOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
-import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
 import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
@@ -82,6 +71,7 @@ import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
 import org.bread_experts_group.breadmod.client.render.DieselGeneratorItemRenderer
+import org.bread_experts_group.breadmod.client.render.WarRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
@@ -100,9 +90,7 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmor
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.redness
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.render.skyColorMixinActive
 import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
 import org.bread_experts_group.breadmod.command.client.PingCommand
 import org.bread_experts_group.breadmod.command.server.ScreenBleedCommand
@@ -162,8 +150,6 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.ModRecords
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
@@ -178,12 +164,11 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModNoiseGen
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModPools
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructureSets
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructures
+import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.roundToInt
-import kotlin.math.sin
 import kotlin.reflect.full.primaryConstructor
 
 object Registry {
@@ -220,65 +205,7 @@ object Registry {
 					ScreenBleedOverlay.renderBleed(event.guiGraphics)
 				}
 				NeoForge.EVENT_BUS.addListener { event: RenderLevelStageEvent ->
-					if (event.stage == RenderLevelStageEvent.Stage.AFTER_SKY && WarOverlay.timerActive) {
-						val poseStack = event.poseStack
-						val bufferBuilder =
-							Tesselator.getInstance()
-								.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR)
-						val millis = Util.getMillis()
-
-						RenderSystem.setShader(GameRenderer::getPositionColorShader)
-						RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-						RenderSystem.enableBlend()
-						poseStack.pushPose()
-						poseStack.mulPose(Axis.XP.rotationDegrees(-17f))
-						val matrix = poseStack.last().pose()
-						val alpha = (clamp(redness - 0.2f, 0f, 1f) * 255).roundToInt()
-						bufferBuilder
-							.addVertex(matrix, 0f, 100f, 0f)
-							.setColor(230, 0, 26, alpha)
-
-						for (j: Int in 0 .. 16) {
-							val f1 = j * (Math.PI.toFloat() * 2f) / 16f
-							val f2: Float = sin(f1)
-							val f3: Float = cos(f1)
-							bufferBuilder
-								.addVertex(matrix, f2, -1f, -f3)
-								.setColor(230, 0, 26, alpha)
-						}
-						val shaderFogColor = RenderSystem.getShaderFogColor()
-						RenderSystem.setShaderFogColor(
-							shaderFogColor[0] + redness,
-							shaderFogColor[1] - redness,
-							shaderFogColor[2] - redness,
-							1f
-						)
-						FogRenderer.setupFog(
-							event.camera,
-							FogRenderer.FogMode.FOG_SKY,
-							256f,
-							true,
-							event.partialTick.realtimeDeltaTicks
-						)
-						FogRenderer.setupFog(
-							event.camera,
-							FogRenderer.FogMode.FOG_TERRAIN,
-							max(256f, 32f),
-							true,
-							event.partialTick.realtimeDeltaTicks
-						)
-
-						redness = clamp((sin(millis.toFloat() / 1800) + 1) / 2, 0f, 1f)
-						skyColorMixinActive = true
-
-						BufferUploader.drawWithShader(bufferBuilder.buildOrThrow())
-						RenderSystem.disableBlend()
-						poseStack.popPose()
-					} else if (!WarOverlay.timerActive) {
-						redness = 0.0f
-						skyColorMixinActive = false
-					}
-
+					WarRenderer.render(event)
 					RenderBuffer.handle(event)
 				}
 				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
@@ -526,6 +453,7 @@ object Registry {
 				Commands.literal(BreadMod.ID)
 					.then(WarTimerCommand.register())
 					.then(ScreenBleedCommand.register())
+					.then(Commands.literal("clearGrids").executes { PhysicsGridGlobals.grids.clear(); 1 })
 			)
 		}
 		// Mod Bus

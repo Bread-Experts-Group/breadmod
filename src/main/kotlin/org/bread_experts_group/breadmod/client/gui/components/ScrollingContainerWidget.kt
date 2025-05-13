@@ -2,15 +2,15 @@ package org.bread_experts_group.breadmod.client.gui.components
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.util.Mth
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
-import java.awt.Color
+import org.bread_experts_group.breadmod.util.Color
 import kotlin.math.max
 
+// todo actually make widget positioning function with scrolling
 open class ScrollingContainerWidget<T : Screen>(
 	x: Int,
 	y: Int,
@@ -33,13 +33,12 @@ open class ScrollingContainerWidget<T : Screen>(
 		val poseStack = guiGraphics.pose()
 		if (this.visible) {
 			if (this.debug) guiGraphics.borderedFill(
-				RenderType.gui(),
 				this.x,
 				this.y,
 				this.x + this.width,
 				this.y + this.height,
-				Color.GREEN.rgb,
-				Color.WHITE.rgb
+				Color.GREEN,
+				Color.WHITE
 			)
 			guiGraphics.borderedFillPositioned(this.x, this.y, this.width, this.height, Color.GRAY, Color.DARK_GRAY)
 			guiGraphics.enableScissor(this.x + 1, this.y + 1, this.x + this.width - 1, this.y + this.height - 1)
@@ -50,7 +49,7 @@ open class ScrollingContainerWidget<T : Screen>(
 			poseStack.popPose()
 			guiGraphics.disableScissor()
 			if (this.scrollbarVisible()) this.renderScrollBar(guiGraphics)
-			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN.rgb)
+			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN)
 		}
 	}
 

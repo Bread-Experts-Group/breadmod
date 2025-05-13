@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth.clamp
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper.ImageType.SIMPLE
 
 /**
  * Contains the [location], [textureWidth], and [textureHeight] of a texture.
@@ -15,8 +16,10 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 class BreadModTextureHelper(
 	val location: ResourceLocation,
 	val textureWidth: Int = 16,
-	val textureHeight: Int = 16
+	val textureHeight: Int = 16,
+	val imageType: ImageType = SIMPLE
 ) {
+	enum class ImageType { SIMPLE, SPRITE }
 	companion object {
 		val MISSING_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(MissingTextureAtlasSprite.getLocation())
 		val BLOCKHEAD_TEXTURE: BreadModTextureHelper = BreadModTextureHelper(
@@ -46,7 +49,21 @@ class BreadModTextureHelper(
 		vHeight: Int = this.textureHeight,
 		textureWidth: Int = this.textureWidth,
 		textureHeight: Int = this.textureHeight
-	): Unit = guiGraphics.blit(this.location, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight)
+	) {
+		if (this.imageType == SIMPLE)
+			guiGraphics.blit(this.location, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight)
+		else guiGraphics.blitSprite(
+			this.location,
+			textureWidth,
+			textureHeight,
+			uOffset.toInt(),
+			vOffset.toInt(),
+			x,
+			y,
+			uWidth,
+			vHeight
+		)
+	}
 
 	/**
 	 * Draws a progressive texture/sprite which defaults drawing from bottom to top.
@@ -73,11 +90,10 @@ class BreadModTextureHelper(
 		x: Int,
 		y: Int,
 		drawFromRight: Boolean = false
-	): Unit =
-		this.blitTexture(
-			guiGraphics,
-			x,
-			y,
-			uWidth = clamp(progressInput, 0, this.textureWidth)
-		)
+	): Unit = this.blitTexture(
+		guiGraphics,
+		x,
+		y,
+		uWidth = clamp(progressInput, 0, this.textureWidth)
+	)
 }

@@ -1,13 +1,13 @@
-package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries
+package org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryButton
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
-import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import java.awt.Color
 
 class MainEntry(

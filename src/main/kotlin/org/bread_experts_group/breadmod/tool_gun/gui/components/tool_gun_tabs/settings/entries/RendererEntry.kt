@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries
+package org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries
 
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
@@ -6,12 +6,12 @@ import net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.ModelViewerWidget
 import org.bread_experts_group.breadmod.client.gui.components.ScrollingContainerWidget
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryButton
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.RENDERER
-import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.Registry
+import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.RENDERER
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 
 class RendererEntry(
 	screen: ToolGunScreen,
@@ -48,10 +48,7 @@ class RendererEntry(
 			this.x + 125,
 			this.y + 5
 		)
-//		this.addChild(
-//			"test_list",
-//			Test(this.x + 5, this.y + 17)
-//		)
+
 		this.addChild(
 			"test_scroll_container",
 			ScrollingContainerWidget(
@@ -64,33 +61,4 @@ class RendererEntry(
 			)
 		)
 	}
-//	class Test(x: Int, y: Int) : AbstractScrollWidget(x, y, 100, 100, Component.empty()) {
-//		override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {
-//		}
-//
-//		override fun getInnerHeight(): Int = 200
-//
-//		override fun scrollRate(): Double = 10.0
-//
-//		override fun scrollbarWidth(): Int = 3
-//
-//		override fun renderContents(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-//			guiGraphics.borderedFillPositioned(this.x, this.y, 100, this.innerHeight, Color.BLACK, Color.GRAY)
-//		}
-//
-//		override fun renderDecorations(guiGraphics: GuiGraphics) {
-//			if (this.scrollbarVisible()) this.renderScrollBar(guiGraphics)
-//		}
-//
-//		override fun renderScrollBar(guiGraphics: GuiGraphics) {
-//			val height = this.scrollBarHeight
-//			val width = this.scrollbarWidth()
-//			val x = this.x + this.width - width
-//			val y = max(
-//				this.y.toDouble(),
-//				(this.scrollAmount() * (this.height - height) / this.maxScrollAmount + this.y)
-//			).toInt()
-//			guiGraphics.borderedFillPositioned(x, y, width, height, Color.DARK_GRAY, Color.BLACK)
-//		}
-//	}
 }

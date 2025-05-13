@@ -14,6 +14,7 @@ import net.minecraft.core.Vec3i
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.Tag
 import net.minecraft.nbt.TagType
 import net.minecraft.network.codec.ByteBufCodecs
@@ -24,6 +25,8 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
@@ -31,6 +34,7 @@ import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
@@ -39,12 +43,14 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.joml.Vector3f
 import java.math.BigDecimal
 import java.util.UUID
 import java.util.function.Supplier
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.round
 import kotlin.reflect.full.createInstance
 
@@ -113,7 +119,14 @@ inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier
 fun join(v1: VoxelShape, v2: VoxelShape): VoxelShape = Shapes.join(v1, v2, BooleanOp.OR)
 
 /// Start raycast functions ///
-class HitResult<T>(val position: Vec3, val length: Double, val side: Direction, val direction: Vec3, val hit: T)
+class HitResult<T>(
+	val position: Vec3,
+	val blockPosition: BlockPos,
+	val length: Double,
+	val side: Direction,
+	val direction: Vec3,
+	val hit: T
+)
 
 fun <T> rayCast(
 	position: Vec3, direction: Vec3,
@@ -127,8 +140,8 @@ fun <T> rayCast(
 		val hit = selector(localPosition)
 		if (hit != null) {
 			result = HitResult(
-				localPosition, length,
-				Direction.getNearest(position).opposite, direction, hit
+				localPosition, BlockPos.containing(Vec3.atLowerCornerOf(localPosition.toVec3i())), length,
+				Direction.getNearest(position), direction, hit
 			)
 			break
 		}
@@ -179,19 +192,20 @@ operator fun Vec3.component1(): Double = this.x
 operator fun Vec3.component2(): Double = this.y
 operator fun Vec3.component3(): Double = this.z
 
-fun blocks(vararg filterBlocks: Block): (BlockGetter, Vec3) -> BlockState? = { level, position ->
+fun blocks(vararg filterBlocks: Block = arrayOf(Blocks.AIR)): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())
 	val state = level.getBlockState(blockPos)
 	if (filterBlocks.contains(state.block)) null
 	else state
 }
 
-fun entities(vararg filterTypes: EntityType<*>): (EntityGetter, Vec3) -> Entity? = { level, position ->
-	val entities = level.getEntities(null, AABB.ofSize(position, 1.0, 1.0, 1.0))
-		.firstOrNull()
-	if (entities == null || filterTypes.contains(entities.type)) null
-	else entities
-}
+fun entities(vararg filterTypes: EntityType<*> = arrayOf(EntityType.PLAYER)): (EntityGetter, Vec3) -> Entity? =
+	{ level, position ->
+		val entities = level.getEntities(null, AABB.ofSize(position, 1.0, 1.0, 1.0))
+			.firstOrNull()
+		if (entities == null || filterTypes.contains(entities.type)) null
+		else entities
+	}
 /// End raycast functions ///
 /**
  * Translates a [Direction] to a side relative to another [Direction].
@@ -224,6 +238,8 @@ fun Direction.toYRotFixed(): Float {
  * @since 1.0.0
  */
 operator fun Vec3.plus(other: Vec3): Vec3 = Vec3(this.x + other.x, this.y + other.y, this.z + other.z)
+
+fun Vec3.plus(x: Double, y: Double, z: Double): Vec3 = Vec3(this.x + x, this.y + y, this.z + z)
 
 /**
  * Subtracts a [Vec3] from this [Vec3].
@@ -408,6 +424,44 @@ inline fun <reified T> CompoundTag.putValue(key: String, value: T) {
 		UUID::class        -> this.putUUID(key, value as UUID)
 		else               -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
 	}
+}
+
+fun CompoundTag.putBlockState(key: String, value: BlockState) {
+	this.put(key, BlockState.CODEC.encodeStart(NbtOps.INSTANCE, value).result().get())
+}
+
+fun CompoundTag.getBlockState(key: String): BlockState =
+	BlockState.CODEC.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull()?.first
+		?: Blocks.AIR.defaultBlockState()
+
+fun CompoundTag.putEntity(key: String, value: Entity?): CompoundTag {
+	if (value == null) {
+		LogManager.getLogger().warn("provided entity is null...")
+		return CompoundTag()
+	}
+	this.put(key, CompoundTag().also { rootTag ->
+		rootTag.putBoolean("isLivingEntity", value is LivingEntity)
+		rootTag.putString("type", value.type.toString())
+		if (value is LivingEntity) {
+			rootTag.putFloat("health", value.health)
+			rootTag.putDouble("maxHealth", value.maxHealth.toDouble())
+		}
+	})
+	return this
+}
+
+@Suppress("ConvertLambdaToReference")
+fun CompoundTag.createEntity(level: Level): Entity? {
+	if (!this.contains("type")) return null
+	val typeString = this.getString("type")
+	val type =
+		BuiltInRegistries.ENTITY_TYPE.get(EntityType.byString(typeString).getOrNull()?.let { EntityType.getKey(it) })
+	val entity = type.create(level) ?: return null
+	if (entity is LivingEntity) {
+		entity.health = this.getFloat("health")
+		entity.getAttribute(Attributes.MAX_HEALTH)?.let { it.baseValue = this.getDouble("maxHealth") }
+	}
+	return entity
 }
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!

@@ -12,7 +12,7 @@ import net.minecraft.client.sounds.SoundManager
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import java.awt.Color
+import org.bread_experts_group.breadmod.util.Color
 
 /*
 Holding left click rotates the model

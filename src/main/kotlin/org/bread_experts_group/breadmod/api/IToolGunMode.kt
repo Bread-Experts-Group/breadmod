@@ -16,11 +16,11 @@ import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
+import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
+import org.bread_experts_group.breadmod.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.fromClass
 import org.bread_experts_group.breadmod.util.toClass
 
@@ -83,7 +83,7 @@ interface IToolGunMode {
 	 * Serves as an event bridge for [InputEvent.Key], handles keyboard inputs for this [IToolGunMode].
 	 *
 	 * - [KeyData] is passed into the [ToolGunOverlay] to display info about the specified key.
-	 * - if [KeyData] returns true, a data sync is triggered to send [saveExtraData] to the server.
+	 * - Any extra data that's set here is automatically synced to the server.
 	 */
 	fun registerKeys(into: MutableMap<Int, KeyData>) {}
 
@@ -114,12 +114,12 @@ interface IToolGunMode {
 	 *
 	 * Fired when the tool gun is changing modes, or when saved data is being populated on a fresh tool gun.
 	 */
-	fun saveExtraData(tag: CompoundTag) {}
+	fun saveExtraData(tag: CompoundTag, level: Level) {}
 
 	/**
 	 * Used to load extra saved data upon instantiating or syncing this [IToolGunMode].
 	 */
-	fun loadExtraData(tag: CompoundTag) {}
+	fun loadExtraData(tag: CompoundTag, level: Level) {}
 
 	fun shouldPlayToolGunSound(stack: ItemStack, player: Player): Boolean = true
 

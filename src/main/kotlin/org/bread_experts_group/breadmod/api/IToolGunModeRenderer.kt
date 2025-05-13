@@ -12,12 +12,12 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
-import org.bread_experts_group.breadmod.client.gui.overlays.ToolGunOverlay
 import org.bread_experts_group.breadmod.client.render.drawQuad
 import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
+import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
+import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.util.Vector3fAxisX
 import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.joml.Vector3f

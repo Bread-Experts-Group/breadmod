@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.gui.overlays
+package org.bread_experts_group.breadmod.tool_gun.gui
 
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.systems.RenderSystem
@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.client.ModTextureLocations.MODE_OVERLAY_
 import org.bread_experts_group.breadmod.client.render.drawScaledText
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.awt.Color
 

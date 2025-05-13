@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.gui.components
+package org.bread_experts_group.breadmod.tool_gun.gui.components
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
@@ -10,10 +10,10 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.ModeSelectTab
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ModeSelectTab
 import org.bread_experts_group.breadmod.util.Selector
 import java.awt.Color
 
@@ -59,7 +59,7 @@ class ModeWidget(
 		this.icon.select({
 			guiGraphics.renderFakeItem(it, 0, 0)
 		}, {
-			TODO(it.location.toString())
+			it.blitTexture(guiGraphics, 0, 0, uWidth = 16, vHeight = 16, textureWidth = 16, textureHeight = 16)
 		})
 		guiGraphics.pose().popPose()
 	}

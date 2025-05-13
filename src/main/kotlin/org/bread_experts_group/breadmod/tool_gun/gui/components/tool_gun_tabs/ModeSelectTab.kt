@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs
+package org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.RenderType
@@ -6,16 +6,16 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
-import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
-import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.Registry
-import java.awt.Color
+import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
+import org.bread_experts_group.breadmod.util.Color
 
 class ModeSelectTab(
 	screen: ToolGunScreen,
@@ -66,16 +66,8 @@ class ModeSelectTab(
 		this.currentModeWidget = this.screen.focused as? ModeWidget ?: ModeWidget.noWidget
 		this.modeButton.active = this.currentModeWidget != ModeWidget.noWidget
 		val poseStack = guiGraphics.pose()
-		guiGraphics.borderedFill(
-			RenderType.gui(),
-			this.x,
-			this.y,
-			this.x + 243,
-			this.y + 185,
-			Color.RED.rgb,
-			Color.GRAY.rgb
-		)
-		guiGraphics.vLine(this.x + 120, this.y, this.y + 184, Color.RED.rgb)
+		guiGraphics.borderedFill(this.x, this.y, this.x + 243, this.y + 185, Color.RED, Color.GRAY)
+		guiGraphics.vLine(this.x + 120, this.y, this.y + 184, Color.RED)
 		// todo move this to the main screen class for the title
 //		guiGraphics.drawString(localClient.font, this.title, this.x + 2, this.y + 2, Color.BLACK.rgb, false)
 		guiGraphics.fill(
@@ -84,24 +76,24 @@ class ModeSelectTab(
 			this.y + 5,
 			this.x + 240,
 			this.y + 72,
-			Color.BLACK.rgb
+			Color.BLACK
 		)
 		guiGraphics.drawString(
 			localClient.font,
 			this.currentModeWidget.modeName,
 			this.x + 123,
 			this.y + 74,
-			Color.BLACK.rgb,
+			Color.BLACK,
 			false
 		)
-		guiGraphics.hLine(this.x + 120, this.x + 241, this.y + 83, Color.RED.rgb)
+		guiGraphics.hLine(this.x + 120, this.x + 241, this.y + 83, Color.RED)
 		guiGraphics.drawWordWrap(
 			localClient.font,
 			this.currentModeWidget.modeDescription,
 			this.x + 123,
 			this.y + 85,
 			120,
-			Color.BLACK.rgb
+			Color.BLACK
 		)
 		poseStack.pushPose()
 		poseStack.translate(this.x + 123.85f, this.y + 6.25f, 0f)

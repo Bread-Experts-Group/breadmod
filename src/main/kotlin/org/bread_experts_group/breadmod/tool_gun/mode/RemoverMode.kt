@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
+package org.bread_experts_group.breadmod.tool_gun.mode
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
@@ -11,7 +11,6 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -22,15 +21,17 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.entities
+import org.bread_experts_group.breadmod.util.getValue
+import org.bread_experts_group.breadmod.util.putValue
 import org.bread_experts_group.breadmod.util.rayCast
 import java.awt.Color
 
@@ -59,7 +60,7 @@ class RemoverMode : AbstractToolGunMode() {
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!player.isShiftKeyDown) {
 			if (this.targetEntities) {
-				val entity = player.rayCast(500.0, entities(EntityType.PLAYER))
+				val entity = player.rayCast(500.0, entities())
 				entity?.let {
 					if (level is ServerLevel) {
 						level.sendParticles(
@@ -94,7 +95,7 @@ class RemoverMode : AbstractToolGunMode() {
 					}
 				}
 			} else {
-				val block = player.rayCast(500.0, blocks(Blocks.AIR))
+				val block = player.rayCast(500.0, blocks())
 				block?.let {
 					level.setBlockAndUpdate(BlockPos.containing(it.position), Blocks.AIR.defaultBlockState())
 					if (level is ServerLevel) {
@@ -119,9 +120,8 @@ class RemoverMode : AbstractToolGunMode() {
 		into[KeyMappings.toolGunAltOne.key.value] =
 			KeyData(Component.literal("test")) { event, _, _, data ->
 				if (this.keyMatchesInput(KeyMappings.toolGunAltOne, event) && this.isKeyboardPress(event)) {
-					data.modifyValue("targetAlt", !this.targetEntities)
+					data.setValue("targetAlt", !this.targetEntities)
 				}
-				true
 			}
 	}
 
@@ -132,12 +132,12 @@ class RemoverMode : AbstractToolGunMode() {
 	override fun getUid(): ResourceLocation = this.toolGunLocation("remover_mode")
 	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this.getUid())
 
-	override fun saveExtraData(tag: CompoundTag) {
-		tag.putBoolean("targetAlt", this.targetEntities)
+	override fun saveExtraData(tag: CompoundTag, level: Level) {
+		tag.putValue("targetAlt", this.targetEntities)
 	}
 
-	override fun loadExtraData(tag: CompoundTag) {
-		this.targetEntities = tag.getBoolean("targetAlt")
+	override fun loadExtraData(tag: CompoundTag, level: Level) {
+		this.targetEntities = tag.getValue("targetAlt")
 	}
 
 	class RemoverRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {

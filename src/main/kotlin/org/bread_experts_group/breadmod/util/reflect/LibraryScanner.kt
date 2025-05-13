@@ -10,6 +10,7 @@ import java.nio.file.FileSystem
 import java.nio.file.FileSystemNotFoundException
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.io.path.absolutePathString
 import kotlin.reflect.KClass
@@ -59,7 +60,7 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 							Files.walk(rootDir)
 								.parallel()
 								.filter(Files::isRegularFile)
-								.map { p -> p.absolutePathString() }
+								.map(Path::absolutePathString)
 								.filter { p -> p.endsWith(".class", true) }
 								.filter { p -> !p.contains("mixin", true) }
 								.map { p -> p.substring(1, p.length - 6).replace('/', '.', true) }

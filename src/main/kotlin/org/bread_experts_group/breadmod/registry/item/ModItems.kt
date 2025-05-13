@@ -55,7 +55,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.item.actual.tool.KnifeItem
-import org.bread_experts_group.breadmod.registry.item.actual.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import kotlin.reflect.KClass
 
 /**

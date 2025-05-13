@@ -1,10 +1,11 @@
-package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings
+package org.bread_experts_group.breadmod.tool_gun.gui.components
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsTab.Companion.currentSettingsEntry
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab.Companion.currentSettingsEntry
 import java.awt.Color
 
 class SettingsEntryButton(

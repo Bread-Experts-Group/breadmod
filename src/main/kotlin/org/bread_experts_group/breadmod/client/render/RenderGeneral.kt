@@ -201,13 +201,13 @@ fun GuiGraphics.renderFluid(
  * Fills in a square area with a border.
  */
 fun GuiGraphics.borderedFill(
-	renderType: RenderType,
 	minX: Int,
 	minY: Int,
 	maxX: Int,
 	maxY: Int,
 	borderColor: Int,
-	innerColor: Int
+	innerColor: Int,
+	renderType: RenderType = RenderType.gui()
 ) {
 	this.fill(renderType, minX, minY, maxX, maxY, borderColor)
 	this.fill(renderType, minX + 1, minY + 1, maxX - 1, maxY - 1, innerColor)
@@ -218,11 +218,33 @@ fun GuiGraphics.borderedFillPositioned(
 	y: Int,
 	width: Int,
 	height: Int,
-	borderColor: Color,
-	innerColor: Color
+	borderColor: Int,
+	innerColor: Int,
+	renderType: RenderType = RenderType.gui()
 ) {
-	this.fill(RenderType.gui(), x, y, x + width, y + height, borderColor.rgb)
-	this.fill(RenderType.gui(), x + 1, y + 1, x + width - 1, y + height - 1, innerColor.rgb)
+	this.fill(renderType, x, y, x + width, y + height, borderColor)
+	this.fill(renderType, x + 1, y + 1, x + width - 1, y + height - 1, innerColor)
+}
+
+fun GuiGraphics.fillPositioned(
+	x: Int,
+	y: Int,
+	width: Int,
+	height: Int,
+	color: Int,
+	renderType: RenderType = RenderType.gui()
+): Unit = this.fill(renderType, x, y, x + width, y + height, color)
+
+fun GuiGraphics.enablePositionedScissor(
+	x: Int,
+	y: Int,
+	width: Int,
+	height: Int
+): Unit = this.enableScissor(x, y, x + width, y + height)
+
+fun GuiGraphics.flushAndFinishScissor() {
+	this.flush()
+	this.disableScissor()
 }
 
 /**

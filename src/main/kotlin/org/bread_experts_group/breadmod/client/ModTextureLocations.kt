@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.client
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
+import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper.ImageType.SPRITE
 
 // todo GuiBuilder will be a reality soon...
 /**
@@ -69,10 +70,9 @@ object ModTextureLocations {
 	val CUBE_OUT_ONLY: BreadModTextureHelper =
 		BreadModTextureHelper(this.guiElementLocation("cube_sprites_out"), 256, 256)
 
-	// todo figure out nine sliced from vanilla
-	// tab.png.mcmeta / tab.png
+	// all sprites go into the sprites folder in the mod assets
 	val NINE_SLICED_BG: BreadModTextureHelper =
-		BreadModTextureHelper(modLocation("textures", "gui", "test.png"), 32, 32)
+		BreadModTextureHelper(modLocation("textures", "gui", "test.png"), 32, 32, SPRITE)
 
 	private fun toolGunHudLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "hud", "$name.png")

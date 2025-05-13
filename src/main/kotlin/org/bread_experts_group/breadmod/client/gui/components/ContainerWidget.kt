@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.sounds.SoundManager
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.borderedFill
@@ -37,11 +36,17 @@ open class ContainerWidget<T : Screen>(
 	private fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
 
 	protected open fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {}
+	protected open fun renderContainerAfterWidgets(
+		guiGraphics: GuiGraphics,
+		mouseX: Int,
+		mouseY: Int,
+		partialTick: Float
+	) {
+	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		if (this.visible) {
 			if (this.debug) guiGraphics.borderedFill(
-				RenderType.gui(),
 				this.x,
 				this.y,
 				this.x + this.width,
@@ -51,6 +56,7 @@ open class ContainerWidget<T : Screen>(
 			)
 			this.renderContainer(guiGraphics, mouseX, mouseY, partialTick)
 			this.getWidgets().forEach { if (it.visible) it.render(guiGraphics, mouseX, mouseY, partialTick) }
+			this.renderContainerAfterWidgets(guiGraphics, mouseX, mouseY, partialTick)
 			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN.rgb)
 		}
 	}
@@ -60,6 +66,16 @@ open class ContainerWidget<T : Screen>(
 			it.active = this.active
 			it.visible = this.visible
 		}
+	}
+
+	fun disable() {
+		this.active = false
+		this.visible = false
+	}
+
+	fun enable() {
+		this.active = true
+		this.visible = true
 	}
 
 	fun tick() {

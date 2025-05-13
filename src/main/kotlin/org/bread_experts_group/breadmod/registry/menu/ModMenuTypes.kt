@@ -7,9 +7,9 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.network.IContainerFactory
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyMenu
 import java.util.function.Supplier
 
 object ModMenuTypes {

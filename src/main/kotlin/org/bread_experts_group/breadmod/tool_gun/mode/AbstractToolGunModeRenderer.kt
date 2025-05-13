@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
+package org.bread_experts_group.breadmod.tool_gun.mode
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.client.ModTextureLocations
-import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
+import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 
 abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunModeRenderer {
 	override fun render(

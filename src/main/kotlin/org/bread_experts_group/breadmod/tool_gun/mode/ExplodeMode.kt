@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.item.actual.tool_gun.mode
+package org.bread_experts_group.breadmod.tool_gun.mode
 
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -11,8 +11,8 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.ModTextureLocations
-import org.bread_experts_group.breadmod.client.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.util.BreadModExplosion
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.rayCast
@@ -36,7 +36,7 @@ class ExplodeMode : AbstractToolGunMode() {
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		if (!level.isClientSide) {
-			val targetBlock = player.rayCast(500.0, blocks(Blocks.AIR)) ?: return
+			val targetBlock = player.rayCast(500.0, blocks()) ?: return
 			BreadModExplosion
 				.calculate(level, targetBlock.position.subtract(targetBlock.direction), 20f, 1000)
 				.explode(player)
@@ -49,7 +49,7 @@ class ExplodeMode : AbstractToolGunMode() {
 	override fun getCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
 		this.getUid(),
 		Blocks.TNT,
-		ModeWidget.Builder()
+		Builder()
 			.previewImage(ModTextureLocations.EXPLODE_PREVIEW)
 			.name(Companion.name)
 			.description(Companion.description)

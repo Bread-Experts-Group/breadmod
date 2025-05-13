@@ -64,6 +64,9 @@ object ModSounds {
 	@DataGenerateSound(stream = true)
 	val ULTRAMARINE: SoundHolder = this.registerSoundEvents("ultramarine")
 
+	@DataGenerateSound(stream = true)
+	val KSP_BUILDMODE: SoundHolder = this.registerSoundEvents("ksp_buildmode")
+
 	@DataGenerateSound
 	@DataGenerateLanguage("en_us", "Speed")
 	val MACH_ONE: SoundHolder = this.registerSoundEvents("mach_one")

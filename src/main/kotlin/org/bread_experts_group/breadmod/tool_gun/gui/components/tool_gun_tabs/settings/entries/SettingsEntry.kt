@@ -1,12 +1,12 @@
-package org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.entries
+package org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries
 
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryButton
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
-import org.bread_experts_group.breadmod.client.gui.components.tool_gun_tabs.settings.SettingsTab
-import org.bread_experts_group.breadmod.client.gui.screens.ToolGunScreen
+import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 
 abstract class SettingsEntry(
 	id: String,
