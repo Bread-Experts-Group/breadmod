@@ -5,12 +5,16 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.MenuProvider
+import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
+import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
@@ -18,9 +22,10 @@ import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.tool_gun.ToolGunScreenPacket
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorMenu
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.createEntity
 import org.bread_experts_group.breadmod.util.getBlockState
@@ -31,7 +36,7 @@ import org.bread_experts_group.breadmod.util.rayCast
 
 @ToolGunMode
 @Suppress("unused")
-class CreatorMode : AbstractToolGunMode() {
+class CreatorMode : AbstractToolGunMode(), MenuProvider {
 	companion object {
 		@DataGenerateLanguage("en_us", "Create/Edit blocks and entities.")
 		val description: MutableComponent = modTranslatable("tool_gun", "creator", "mode", "description")
@@ -58,14 +63,17 @@ class CreatorMode : AbstractToolGunMode() {
 		level.addFreshEntity(entity)
 	}
 
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
+		CreatorMenu(containerId, playerInventory)
+
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getCustomRenderer(): IToolGunModeRenderer = CreatorRenderer(this.getUid())
 	override fun getUid(): ResourceLocation = this.toolGunLocation("creator_mode")
 
 	override fun registerKeys(into: MutableMap<Int, KeyData>) {
-		into[InputConstants.KEY_F] = KeyData(Component.literal("open screen")) { _, _, player, data ->
-			if (localClient.screen == null) localClient.setScreen(CreatorScreen(player.level(), data))
+		into[InputConstants.KEY_F] = KeyData(Component.literal("open screen")) { _, _, _, _ ->
+			if (localClient.screen == null) PacketDistributor.sendToServer(ToolGunScreenPacket(this))
 		}
 	}
 

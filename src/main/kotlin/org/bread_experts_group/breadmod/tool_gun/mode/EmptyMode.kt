@@ -11,13 +11,13 @@ import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 
-object EmptyMode : AbstractToolGunMode() {
+class EmptyMode : AbstractToolGunMode() {
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 	}
 
 	override fun getDisplayName(): Component = Component.literal("???")
 	override fun getUid(): ResourceLocation = this.toolGunLocation("empty_mode")
-	override fun getCustomRenderer(): IToolGunModeRenderer = EmptyModeRenderer(getUid())
+	override fun getCustomRenderer(): IToolGunModeRenderer = EmptyModeRenderer(this.getUid())
 
 	@DataGenerateLanguage("en_us", "If you see this mode then something probably went wrong!")
 	override fun getTooltip(): Component = modTranslatable("tool_gun", "empty", "mode", "tooltip")

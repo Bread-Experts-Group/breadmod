@@ -5,14 +5,19 @@ import net.minecraft.world.entity.player.Inventory
 import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
-import org.bread_experts_group.breadmod.registry.menu.actual.AbstractModContainerMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.BMContainerMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.ResultSlotItemHandler
 
 class FluidEnergyMenu(
 	id: Int,
 	inventory: Inventory,
 	parent: FluidEnergyBlockEntity
-) : AbstractModContainerMenu<FluidEnergyBlockEntity>(ModMenuTypes.FLUID_ENERGY_TEST.get(), id, parent) {
+) : BMContainerMenu.RecipeEntity<FluidEnergyRecipeTest, FluidEnergyBlockEntity>(
+	ModMenuTypes.FLUID_ENERGY_TEST.get(),
+	id,
+	inventory,
+	parent
+) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
 		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.FLUID_ENERGY.get()).get()

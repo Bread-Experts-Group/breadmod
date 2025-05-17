@@ -6,22 +6,24 @@ import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
+import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 
 class WheatCrusherMenu(
 	id: Int,
 	inventory: Inventory,
 	parent: WheatCrusherBlockEntity
-) : AbstractModContainerMenu<WheatCrusherBlockEntity>(ModMenuTypes.WHEAT_CRUSHER.get(), id, parent) {
+) : BMContainerMenu.RecipeEntity<WheatCrusherRecipe, WheatCrusherBlockEntity>(
+	ModMenuTypes.WHEAT_CRUSHER.get(),
+	id,
+	inventory,
+	parent
+) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
-		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.WHEAT_CRUSHER.get()).get()
+		BMContainerMenu.blockEntityFromByteBuf(inventory, byteBuf, ModBlockEntityTypes.WHEAT_CRUSHER)
 	)
 
-	val scaledProgress: Int
-		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 48).toInt()
-
-	fun isCrafting(): Boolean = this.parent.progress > 1
-
+	override val progressWidth: Int = 48
 	override val containerSlotCount: Int = 2
 
 	init {

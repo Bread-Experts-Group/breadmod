@@ -6,7 +6,6 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModContainer
-import net.neoforged.fml.ModList
 import net.neoforged.fml.common.Mod
 import net.neoforged.fml.config.ModConfig
 import net.neoforged.fml.loading.FMLLoader
@@ -15,14 +14,11 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.config.ConfigurationFactory
 import org.apache.logging.log4j.core.config.Configurator
-import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.api.ToolGunMode
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
 import org.bread_experts_group.breadmod.logging.ConsoleUnnamedRedirection
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
-import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
-import kotlin.reflect.full.createInstance
 
 /**
  * Main mod class.
@@ -55,19 +51,6 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 			"$type.${this.ID}.${path.joinToString(".")}",
 			*args.toTypedArray()
 		)
-
-		/**
-		 * Loads tool gun modes.
-		 */
-		fun loadToolGunModes() {
-			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
-				.forEach {
-					val mode = it.createInstance() as IToolGunMode
-					if (Registry.toolGunModes[mode.getUid()] == null) {
-						Registry.toolGunModes[mode.getUid()] = mode
-					} else Companion.logger.warn("Mode [${mode.getModeName()}] with id ${mode.getUid()} already exists, skipping.")
-				}
-		}
 	}
 
 	init {
@@ -95,5 +78,6 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 		container.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPEC.right, "breadmod-client.toml")
 
 		Registry.registerAll(eventBus)
+		ToolGunData.loadToolGunModes()
 	}
 }

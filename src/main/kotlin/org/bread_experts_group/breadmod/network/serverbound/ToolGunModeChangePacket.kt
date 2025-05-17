@@ -36,7 +36,7 @@ class ToolGunModeChangePacket(private val id: ResourceLocation, private val inde
 			if (stack.`is`(ModItems.TOOL_GUN)) {
 				val toolGunData = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 				toolGunData.saveData(player.level())
-				val newMode = Registry.toolGunModes[data.id] ?: EmptyMode
+				val newMode = Registry.toolGunModes[data.id] ?: EmptyMode()
 				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(newMode, toolGunData.extraData, data.index))
 			}
 		}

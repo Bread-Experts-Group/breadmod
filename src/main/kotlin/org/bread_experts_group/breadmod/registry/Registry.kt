@@ -21,7 +21,6 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.client.event.InputEvent
@@ -45,7 +44,6 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
-import net.neoforged.neoforge.event.server.ServerStartedEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.items.wrapper.InvWrapper
 import net.neoforged.neoforge.network.PacketDistributor
@@ -55,7 +53,6 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod
-import org.bread_experts_group.breadmod.BreadMod.Companion.loadToolGunModes
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modModelLoc
 import org.bread_experts_group.breadmod.api.IToolGunMode
@@ -166,7 +163,10 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructures
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
+import org.bread_experts_group.breadmod.tool_gun.ToolGunScreenPacket
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
@@ -245,9 +245,9 @@ object Registry {
 					val item = stack.item
 					if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
 				}
-				NeoForge.EVENT_BUS.addListener { _: ClientPlayerNetworkEvent.LoggingIn ->
-					loadToolGunModes()
-				}
+//				NeoForge.EVENT_BUS.addListener { _: ClientPlayerNetworkEvent.LoggingIn ->
+//					loadToolGunModes()
+//				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Pre ->
 					if (!localClient.isPaused || !localClient.isLocalServer) {
 						if (machTrailMap.isNotEmpty()) {
@@ -293,7 +293,7 @@ object Registry {
 						}, {
 							poseStack.pushPose()
 							poseStack.scaleFlat(16f / it.textureWidth)
-							it.blitTexture(guiGraphics, 0, 0)
+							it.blit(guiGraphics, 0, 0)
 							poseStack.popPose()
 						})
 						poseStack.popPose()
@@ -429,6 +429,8 @@ object Registry {
 				modBus.addListener { event: RegisterMenuScreensEvent ->
 					event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
 					event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
+					event.register(ModMenuTypes.CREATOR.get(), ::CreatorScreen)
+					event.register(ModMenuTypes.TOOL_GUN.get(), ::ToolGunScreen)
 					// Experimental stuff
 					event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
 				}
@@ -445,9 +447,9 @@ object Registry {
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
 //			PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
 		}
-		NeoForge.EVENT_BUS.addListener { event: ServerStartedEvent ->
-			loadToolGunModes()
-		}
+//		NeoForge.EVENT_BUS.addListener { event: ServerAboutToStartEvent ->
+//			loadToolGunModes()
+//		}
 		NeoForge.EVENT_BUS.addListener { event: RegisterCommandsEvent ->
 			event.dispatcher.register(
 				Commands.literal(BreadMod.ID)
@@ -526,6 +528,7 @@ object Registry {
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
+			ToolGunScreenPacket.register(registrar)
 		}
 		modBus.addListener { event: EntityAttributeCreationEvent ->
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())

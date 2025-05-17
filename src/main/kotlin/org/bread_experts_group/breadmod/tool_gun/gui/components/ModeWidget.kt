@@ -12,7 +12,7 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
+import org.bread_experts_group.breadmod.client.render.texture.GuiElement
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ModeSelectTab
 import org.bread_experts_group.breadmod.util.Selector
 import java.awt.Color
@@ -22,8 +22,8 @@ import java.awt.Color
  * This should only be instantiated in [ModeSelectTab].
  */
 class ModeWidget(
-	val icon: Selector<ItemStack, BreadModTextureHelper>,
-	val previewImage: Selector<ItemStack, BreadModTextureHelper>,
+	val icon: Selector<ItemStack, GuiElement>,
+	val previewImage: Selector<ItemStack, GuiElement>,
 	val modeName: Component,
 	val modeDescription: Component,
 	val id: ResourceLocation
@@ -59,7 +59,7 @@ class ModeWidget(
 		this.icon.select({
 			guiGraphics.renderFakeItem(it, 0, 0)
 		}, {
-			it.blitTexture(guiGraphics, 0, 0, uWidth = 16, vHeight = 16, textureWidth = 16, textureHeight = 16)
+			it.blit(guiGraphics, 0, 0, uWidth = 16, vHeight = 16, textureWidth = 16, textureHeight = 16)
 		})
 		guiGraphics.pose().popPose()
 	}
@@ -69,10 +69,10 @@ class ModeWidget(
 	}
 
 	class Builder {
-		private var icon: Selector<ItemStack, BreadModTextureHelper> =
-			Selector(b = BreadModTextureHelper.BLOCKHEAD_TEXTURE)
-		private var previewImage: Selector<ItemStack, BreadModTextureHelper> =
-			Selector(b = BreadModTextureHelper.MISSING_TEXTURE)
+		private var icon: Selector<ItemStack, GuiElement> =
+			Selector(b = GuiElement.BLOCKHEAD)
+		private var previewImage: Selector<ItemStack, GuiElement> =
+			Selector(b = GuiElement.MISSING)
 		private var modeName: Component? = null
 		private var modeDescription: Component? = null
 		private var id: ResourceLocation = modLocation()
@@ -80,7 +80,7 @@ class ModeWidget(
 		fun icon(item: Item): Builder = this.icon(item.defaultInstance)
 		fun icon(stack: ItemStack): Builder = this.also { this.icon = Selector(a = stack) }
 
-		fun previewImage(helper: BreadModTextureHelper): Builder =
+		fun previewImage(helper: GuiElement): Builder =
 			this.also { this.previewImage = Selector(b = helper) }
 
 		fun name(name: Component): Builder = this.also { this.modeName = name }
@@ -106,8 +106,8 @@ class ModeWidget(
 
 	companion object {
 		val noWidget: ModeWidget = ModeWidget(
-			Selector(b = BreadModTextureHelper.BLOCKHEAD_TEXTURE),
-			Selector(b = BreadModTextureHelper.MISSING_TEXTURE),
+			Selector(b = GuiElement.BLOCKHEAD),
+			Selector(b = GuiElement.MISSING),
 			Component.literal("???"),
 			Component.literal("???"),
 			ResourceLocation.fromNamespaceAndPath(BreadMod.ID, "missing")

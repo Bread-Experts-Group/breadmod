@@ -101,7 +101,7 @@ class ModeSelectTab(
 		this.currentModeWidget.previewImage.select({
 			TODO("Stretch icon")
 		}, {
-			it.blitTexture(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
+			it.blit(guiGraphics, 0, 0, uWidth = 854, vHeight = 480)
 		})
 		poseStack.popPose()
 	}

@@ -13,8 +13,8 @@ import net.minecraft.network.chat.Style
 import net.minecraft.util.Mth
 import net.minecraft.world.inventory.InventoryMenu
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import org.bread_experts_group.breadmod.util.handlers.HandlerLimits
 import org.joml.Math.clamp
@@ -44,7 +44,7 @@ object JadeDrawingCommon {
 		RenderSystem.enableBlend()
 		(if (item.maxIn == BigDecimal.ZERO) ModTextureLocations.CUBE_OUT_ONLY
 		else if (item.maxOut == BigDecimal.ZERO) ModTextureLocations.CUBE_IN_ONLY
-		else ModTextureLocations.CUBE_BI_DIRECTIONAL).blitTexture(
+		else ModTextureLocations.CUBE_BI_DIRECTIONAL).blit(
 			this,
 			x.toInt() + 82,
 			y.toInt() - 1,

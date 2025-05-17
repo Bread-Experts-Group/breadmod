@@ -2,36 +2,35 @@ package org.bread_experts_group.breadmod.tool_gun.gui.screen
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
+import org.bread_experts_group.breadmod.client.gui.screens.AbstractElementHolderScreen
+import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ModeSelectTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 
-class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(title) {
+class ToolGunScreen(
+	menu: ToolGunMenu,
+	inventory: Inventory,
+	title: Component
+) : AbstractElementHolderScreen<ToolGunMenu>(menu, inventory, title) {
 	companion object {
 		var activeTab: ToolGunScreenTab? = null
 	}
 
-	/**
-	 * Starts at the top left of the gui and moves left to right
-	 */
-	var leftPos: Int = (this.width - 256) / 2
+	val stack: ItemStack = getStackInPlayerHand(this.menu.inventory.player)
 
-	/**
-	 * Starts at the top left of the gui and moves up to down
-	 */
-	var topPos: Int = (this.height - 256) / 2
+	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {}
 
-	override fun isPauseScreen(): Boolean = false
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		this.getTabs().forEach { if (Companion.activeTab == it) it.enable() else it.disable() }
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
-		ModTextureLocations.FRAME.blitTexture(guiGraphics, this.leftPos, this.topPos)
+		ModTextureLocations.FRAME.blit(guiGraphics, this.leftPos, this.topPos)
 
 		Companion.activeTab?.let {
 			guiGraphics.fill(
@@ -80,7 +79,8 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 		return false
 	}
 
-	override fun tick(): Unit = this.children().filterIsInstance<ContainerWidget<*>>().forEach(ContainerWidget<*>::tick)
+	override fun containerTick(): Unit =
+		this.children().filterIsInstance<ContainerWidget<*>>().forEach(ContainerWidget<*>::tick)
 
 	override fun rebuildWidgets() {
 		val tab = this.getTabs().first { it.id == "mode_select" } as? ModeSelectTab ?: return super.rebuildWidgets()

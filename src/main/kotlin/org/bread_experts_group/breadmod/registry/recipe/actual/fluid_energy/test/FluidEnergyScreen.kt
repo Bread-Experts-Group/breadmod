@@ -1,10 +1,10 @@
 package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test
 
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import org.bread_experts_group.breadmod.client.gui.screens.AbstractRecipeContainerScreen
 import org.bread_experts_group.breadmod.client.render.localClient
 import java.awt.Color
 
@@ -12,7 +12,7 @@ class FluidEnergyScreen(
 	menu: FluidEnergyMenu,
 	inventory: Inventory,
 	title: Component
-) : AbstractContainerScreen<FluidEnergyMenu>(menu, inventory, title) {
+) : AbstractRecipeContainerScreen<FluidEnergyMenu, FluidEnergyBlockEntity>(menu, inventory, title) {
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		guiGraphics.fill(
 			RenderType.gui(),

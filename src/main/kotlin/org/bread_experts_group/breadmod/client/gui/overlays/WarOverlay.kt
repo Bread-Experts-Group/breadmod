@@ -4,9 +4,9 @@ import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
-import org.bread_experts_group.breadmod.client.ModTextureLocations.WAR_TIMER
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations.WAR_TIMER
 import org.bread_experts_group.breadmod.registry.ModFonts
 import java.awt.Color
 
@@ -41,7 +41,7 @@ internal class WarOverlay : LayeredDraw.Layer {
 			poseStack.pushPose()
 			poseStack.translate((scaledWidth.toDouble() - 200) / 2, Companion.timerPosition.toDouble(), 0.0)
 			poseStack.scaleFlat(0.5f)
-			WAR_TIMER.blitTexture(guiGraphics, 0, 0)
+			WAR_TIMER.blit(guiGraphics, 0, 0)
 			poseStack.scaleFlat(1.7f)
 			poseStack.translate(54.0, 17.0, 0.0)
 			guiGraphics.setColor(colorPair.first, colorPair.second, colorPair.third, 1f)

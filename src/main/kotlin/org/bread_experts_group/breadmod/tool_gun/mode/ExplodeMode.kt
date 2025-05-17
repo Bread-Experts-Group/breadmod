@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Blocks
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.ModTextureLocations
+import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.util.BreadModExplosion

@@ -8,7 +8,10 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.MenuProvider
+import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
@@ -24,7 +27,7 @@ import org.bread_experts_group.breadmod.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.fromClass
 import org.bread_experts_group.breadmod.util.toClass
 
-interface IToolGunMode {
+interface IToolGunMode : MenuProvider {
 	companion object {
 		val CODEC: Codec<IToolGunMode> = Codec.STRING.xmap(::toClass, ::fromClass)
 
@@ -40,6 +43,9 @@ interface IToolGunMode {
 				}
 			}
 	}
+
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu? =
+		null
 
 	/**
 	 * Main action method for this [IToolGunMode].
@@ -95,7 +101,7 @@ interface IToolGunMode {
 	/**
 	 * Used in the [ToolGunOverlay] and [ToolGunItemRenderer] for displaying this [IToolGunMode]'s name.
 	 */
-	fun getDisplayName(): Component
+	override fun getDisplayName(): Component
 
 	/**
 	 * Used in the [ToolGunOverlay] for displaying this [IToolGunMode]'s tooltip.

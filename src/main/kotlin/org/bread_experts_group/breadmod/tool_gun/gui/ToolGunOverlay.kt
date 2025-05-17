@@ -12,10 +12,10 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.client.ModTextureLocations.INFO
-import org.bread_experts_group.breadmod.client.ModTextureLocations.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.client.render.drawScaledText
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations.INFO
+import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
@@ -46,7 +46,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 
 	private fun renderBackground(guiGraphics: GuiGraphics, poseStack: PoseStack, x: Int, y: Int) {
 		poseStack.pushPose()
-		MODE_OVERLAY_BG.blitTexture(guiGraphics, x, y)
+		MODE_OVERLAY_BG.blit(guiGraphics, x, y)
 		poseStack.popPose()
 	}
 
@@ -62,7 +62,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		val mode = data.mode
 		poseStack.pushPose()
 		// Icon renders
-		INFO.blitTexture(guiGraphics, x + 1, y + 33)
+		INFO.blit(guiGraphics, x + 1, y + 33)
 		// start rendering key (with the key letter on them) and mouse icons, fix positioning on description and
 		// controls, set up 9-sliced key texture for wider keys
 		// Action source

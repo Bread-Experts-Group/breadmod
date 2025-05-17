@@ -11,6 +11,7 @@ import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
+import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.util.isTag
 import kotlin.jvm.optionals.getOrNull
 
@@ -18,16 +19,18 @@ class DoughMachineMenu(
 	id: Int,
 	inventory: Inventory,
 	parent: DoughMachineBlockEntity
-) : AbstractModContainerMenu<DoughMachineBlockEntity>(ModMenuTypes.DOUGH_MACHINE.get(), id, parent) {
+) : BMContainerMenu.RecipeEntity<DoughMachineRecipe, DoughMachineBlockEntity>(
+	ModMenuTypes.DOUGH_MACHINE.get(),
+	id,
+	inventory,
+	parent
+) {
 	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
 		id, inventory,
-		inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), ModBlockEntityTypes.DOUGH_MACHINE.get()).get()
+		BMContainerMenu.blockEntityFromByteBuf(inventory, byteBuf, ModBlockEntityTypes.DOUGH_MACHINE)
 	)
 
-	val scaledProgress: Int
-		get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * 24).toInt()
-
-	fun isCrafting(): Boolean = this.parent.progress > 0
+	override val progressWidth: Int = 24
 	override val containerSlotCount: Int = 4
 
 	private inner class DoughMachineBucketSlot : SlotItemHandler(this.parent.itemHandler, 3, 153, 7) {

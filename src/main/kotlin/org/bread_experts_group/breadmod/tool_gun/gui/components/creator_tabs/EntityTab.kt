@@ -7,17 +7,18 @@ import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.putEntity
 
 class EntityTab(screen: CreatorScreen, private val level: Level) : ContainerWidget<CreatorScreen>(
-	screen.leftPos,
-	screen.topPos + 12,
+	screen.getLeftPos(),
+	screen.getTopPos() + 12,
 	256,
 	244,
 	"entity_tab",
 	screen
 ) {
-	var currentEntity: Entity = Cow(EntityType.COW, this.level)
+	private var currentEntity: Entity = Cow(EntityType.COW, this.level)
 
 	init {
 		this.init()
@@ -27,7 +28,8 @@ class EntityTab(screen: CreatorScreen, private val level: Level) : ContainerWidg
 		this.addChild(
 			"test_button",
 			GenericButton(this.x, this.y + 150, 40, 12, "TEST") {
-				this.screen.data.setValueDirect { it.putEntity("entity", this.currentEntity) }
+				val stack = getStackInPlayerHand(this.screen.menu.inventory.player)
+				this.screen.getData().setValueDirect { it.putEntity("entity", this.currentEntity) }
 			}
 		)
 	}

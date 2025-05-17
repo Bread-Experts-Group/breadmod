@@ -1,61 +1,53 @@
 package org.bread_experts_group.breadmod.client.gui.screens
 
-import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Inventory
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.client.ModTextureLocations
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderFluid
-import org.bread_experts_group.breadmod.client.render.texture.BreadModTextureHelper
+import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
-import org.bread_experts_group.breadmod.registry.menu.actual.AbstractModContainerMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.BMContainerMenu
 import java.math.BigDecimal
 
-abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE : BreadModBlockEntity<BE>>(
+abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE : BreadModBlockEntity<BE>>(
 	menu: T,
 	inventory: Inventory,
 	title: Component
-) : AbstractContainerScreen<T>(menu, inventory, title) {
+) : AbstractElementHolderScreen<T>(menu, inventory, title) {
 	companion object {
-		val baseTexture: BreadModTextureHelper = ModTextureLocations.ENERGY_METER_16X47
-
 		@DataGenerateLanguage("en_us", "Energy")
-		val energyLabel: MutableComponent = modTranslatable(path = arrayOf("energy"))
+		val ENERGY_LABEL: MutableComponent = modTranslatable(path = arrayOf("energy"))
 	}
 
-	protected fun setupRender(texture: ResourceLocation) {
-		RenderSystem.setShader(GameRenderer::getRendertypeGuiShader)
-		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-		RenderSystem.setShaderTexture(0, texture)
-	}
-
-	protected fun GuiGraphics.renderEnergyMeter(x: Int, y: Int, h: Int, cell: Int? = null) {
-		val energyHandler = (this@AbstractModContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
+	private fun GuiGraphics.renderEnergyMeter(x: Int, y: Int, h: Int, cell: Int? = null) {
+		val energyHandler = (this@AbstractRecipeContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
 		val sap = if (cell == null) energyHandler else energyHandler.getUnit(cell)
 		val scaled = sap.capacity?.let { ((sap.amount.divide(it)).toFloat() * h).toInt() } ?: 0
-		Companion.baseTexture.blitTexture(
+		ModTextureLocations.ENERGY_METER_FRAME.blit(
 			this,
-			this@AbstractModContainerScreen.leftPos + x,
-			this@AbstractModContainerScreen.topPos + y + h - scaled,
+			this@AbstractRecipeContainerScreen.leftPos + x,
+			this@AbstractRecipeContainerScreen.topPos + y
+		)
+		ModTextureLocations.ENERGY_METER.blit(
+			this,
+			this@AbstractRecipeContainerScreen.leftPos + x + 1,
+			this@AbstractRecipeContainerScreen.topPos + y + 1 + h - scaled,
 			vOffset = 47f - scaled,
 			vHeight = scaled
 		)
 	}
 
-	protected fun GuiGraphics.renderEnergyTooltip(
+	private fun GuiGraphics.renderEnergyTooltip(
 		x: Int,
 		y: Int,
 		w: Int,
@@ -64,13 +56,14 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		mouseY: Double,
 		cell: Int? = null
 	) {
-		if (this@AbstractModContainerScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
-			val energyHandler = (this@AbstractModContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
+		if (this@AbstractRecipeContainerScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
+			val energyHandler =
+				(this@AbstractRecipeContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
 			val sap = if (cell == null) energyHandler else energyHandler.getUnit(cell)
 			this.renderComponentTooltip(
-				this@AbstractModContainerScreen.font,
+				this@AbstractRecipeContainerScreen.font,
 				listOf(
-					Companion.energyLabel
+					Companion.ENERGY_LABEL
 						.withStyle(ChatFormatting.RED)
 						.withStyle(ChatFormatting.ITALIC),
 					JadeDrawingCommon.fixedLengthScrollingComponent(
@@ -93,10 +86,10 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 	) {
 		if (localClient.options.advancedItemTooltips) {
 			this.fill(
-				this@AbstractModContainerScreen.leftPos + x,
-				this@AbstractModContainerScreen.topPos + y,
-				this@AbstractModContainerScreen.leftPos + x + w,
-				this@AbstractModContainerScreen.topPos + y + h,
+				this@AbstractRecipeContainerScreen.leftPos + x,
+				this@AbstractRecipeContainerScreen.topPos + y,
+				this@AbstractRecipeContainerScreen.leftPos + x + w,
+				this@AbstractRecipeContainerScreen.topPos + y + h,
 				0x7F000080
 			)
 		}
@@ -116,7 +109,7 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		this.renderEnergyTooltip(x, y, w, h, mouseX, mouseY, cell)
 	}
 
-	protected fun GuiGraphics.renderFluidMeter(
+	private fun GuiGraphics.renderFluidMeter(
 		x: Int,
 		y: Int,
 		w: Int,
@@ -124,12 +117,12 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		tank: Int,
 		flowing: Boolean = false
 	) {
-		val fluidHandler = (this@AbstractModContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
+		val fluidHandler = (this@AbstractRecipeContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
 		val tank = fluidHandler.getUnit(tank)
 		if (tank.amount > BigDecimal.ZERO) {
 			this.renderFluid(
-				this@AbstractModContainerScreen.leftPos + x.toFloat(),
-				(this@AbstractModContainerScreen.topPos + y.toFloat()),
+				this@AbstractRecipeContainerScreen.leftPos + x.toFloat(),
+				(this@AbstractRecipeContainerScreen.topPos + y.toFloat()),
 				w,
 				h,
 				tank,
@@ -138,7 +131,7 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		}
 	}
 
-	protected fun GuiGraphics.renderFluidTooltip(
+	private fun GuiGraphics.renderFluidTooltip(
 		x: Int,
 		y: Int,
 		w: Int,
@@ -147,12 +140,12 @@ abstract class AbstractModContainerScreen<T : AbstractModContainerMenu<BE>, BE :
 		mouseY: Double,
 		tank: Int
 	) {
-		if (this@AbstractModContainerScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
-			val fluidHandler = (this@AbstractModContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
+		if (this@AbstractRecipeContainerScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
+			val fluidHandler = (this@AbstractRecipeContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
 			val tank = fluidHandler.getUnit(tank)
 			val tint = IClientFluidTypeExtensions.of(tank.fluid).tintColor
 			this.renderComponentTooltip(
-				this@AbstractModContainerScreen.font,
+				this@AbstractRecipeContainerScreen.font,
 				listOf(
 					Component.translatable(tank.fluidType.descriptionId)
 						.withStyle(Style.EMPTY.withColor(tint))

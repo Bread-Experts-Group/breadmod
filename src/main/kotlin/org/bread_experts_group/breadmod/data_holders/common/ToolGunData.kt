@@ -5,15 +5,21 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.neoforged.fml.ModList
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
+import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.putValue
+import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
+import kotlin.reflect.full.createInstance
 
 typealias KeyData = Pair<Component, (event: InputEvent.Key, stack: ItemStack, player: Player, data: ToolGunData) -> Unit>
 
@@ -30,10 +36,23 @@ data class ToolGunData(
 	}
 
 	companion object {
-		val EMPTY: ToolGunData = ToolGunData(EmptyMode, CompoundTag(), 0)
+		val EMPTY: ToolGunData = ToolGunData(EmptyMode(), CompoundTag(), 0)
 		fun get(stack: ItemStack): ToolGunData {
 			check(stack.`is`(ModItems.TOOL_GUN.asItem())) { "Provided ItemStack is not ToolGunItem!" }
 			return stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, this.EMPTY)
+		}
+
+		/**
+		 * Loads tool gun modes.
+		 */
+		fun loadToolGunModes() {
+			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
+				.forEach {
+					val mode = it.createInstance() as IToolGunMode
+					if (Registry.toolGunModes[mode.getUid()] == null) {
+						Registry.toolGunModes[mode.getUid()] = mode
+					} else BreadMod.logger.warn("Mode [${mode.getModeName()}] with id ${mode.getUid()} already exists, skipping.")
+				}
 		}
 	}
 
