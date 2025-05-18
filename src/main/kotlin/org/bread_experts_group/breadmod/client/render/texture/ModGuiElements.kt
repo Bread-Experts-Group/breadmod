@@ -3,11 +3,10 @@ package org.bread_experts_group.breadmod.client.render.texture
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 
-// todo GuiBuilder will be a reality soon...
 /**
- * Holds [ResourceLocation]s for Breadmod's textures
+ * Holds [ResourceLocation]s for Breadmod's gui elements.
  */
-object ModTextureLocations {
+object ModGuiElements {
 	val WAR_TIMER: GuiElement = GuiElement(
 		modLocation("textures", "gui", "hud", "war_overlay_timer.png"),
 		329, 111
@@ -48,13 +47,11 @@ object ModTextureLocations {
 		GuiElement(this.guiElementLocation("cube_sprites_out"), 256, 256)
 
 	// Sprites //
-	val ENERGY_METER: GuiElement = GuiElement(
-		modLocation("container", "elements", "energy_meter"),
-		textureHeight = 47
-	)
-	val ENERGY_METER_FRAME: GuiElement = GuiElement(modLocation("container", "elements", "energy_meter_frame"), 18, 49)
+	val ENERGY_METER: GuiElement = GuiElement(modLocation("container", "elements", "energy_meter"), textureHeight = 47)
 	val SLOT: GuiElement = GuiElement(modLocation("container", "slot"), 18, 18)
-	val RESULT_SLOT: GuiElement = GuiElement(modLocation("container", "slot"), 26, 26)
+	val RESULT_SLOT: GuiElement = GuiElement.ofScaledCopy(this.SLOT, 26, 26)
+	val BUCKET_SLOT: GuiElement = GuiElement(modLocation("container", "elements", "bucket_slot"), 18, 18)
+	val PLUS: GuiElement = GuiElement(modLocation("container", "elements", "plus"), 13, 13)
 	val INVENTORY_SLOTS: GuiElement = GuiElement(modLocation("container", "inventory_slots"), 162, 54)
 	val HOTBAR_SLOTS: GuiElement = GuiElement(modLocation("container", "hotbar_slots"), 162, 18)
 	val BACKGROUND: GuiElement = GuiElement(modLocation("background"), 32, 32)

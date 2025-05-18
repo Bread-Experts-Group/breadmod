@@ -21,6 +21,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.security.SecureRandom
 
+// todo render BEWLRs in items/blockitems if they're rendered onto the tool gun
 object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels

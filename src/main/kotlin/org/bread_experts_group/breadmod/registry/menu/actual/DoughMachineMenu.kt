@@ -44,10 +44,9 @@ class DoughMachineMenu(
 
 	init {
 		this.addInventorySlots(inventory, 8, 142, 84)
-		val handler = this.parent.itemHandler
-		this.addHandlerSlot(handler, 0, 10, 34)
-		this.addHandlerSlot(handler, 1, 45, 34)
-		this.addResultHandlerSlot(handler, 2, 98, 35)
+		this.addHandlerSlot(0, 10, 34)
+		this.addHandlerSlot(1, 45, 34)
+		this.addResultHandlerSlot(2, 98, 35)
 		this.addSlot(this.DoughMachineBucketSlot())
 	}
 }

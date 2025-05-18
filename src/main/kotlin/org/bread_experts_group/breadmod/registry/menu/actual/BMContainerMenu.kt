@@ -9,15 +9,12 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
-import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.SlotItemHandler
-import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
-import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
-import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.util.function.Supplier
 
 abstract class BMContainerMenu(
@@ -64,22 +61,13 @@ abstract class BMContainerMenu(
 		}
 	}
 
-	fun addHandlerSlot(handler: IItemHandler, slot: Int, x: Int, y: Int) {
-		this.addSlot(SlotItemHandler(handler, slot, x, y))
-	}
-
-	fun addResultHandlerSlot(handler: IItemHandler, slot: Int, x: Int, y: Int) {
-		this.addSlot(ResultSlotItemHandler(handler, slot, x, y))
-	}
-
 	override fun stillValid(player: Player): Boolean = true
 
 	/**
 	 * ### Used in [quickMoveStack] to enable shift clicking items into the target inventory
 	 * value must match the number of slots your block entity has
 	 */
-	open
-	val containerSlotCount: Int = 0
+	open val containerSlotCount: Int = 0
 	private fun moveStackFunction(playerIn: Player, pIndex: Int): ItemStack {
 		val sourceSlot = this.slots[pIndex]
 		if (!sourceSlot.hasItem()) return ItemStack.EMPTY //EMPTY_ITEM
@@ -120,11 +108,21 @@ abstract class BMContainerMenu(
 	abstract class Entity<T : BreadModBlockEntity<T>>(
 		type: MenuType<*>?,
 		id: Int,
-		inventory: Inventory,
+		val inventory: Inventory,
 		val parent: T
 	) : BMContainerMenu(type, id) {
 		abstract override val containerSlotCount: Int
 		override fun stillValid(player: Player): Boolean = player.containerMenu == this
+
+		fun addHandlerSlot(slot: Int, x: Int, y: Int) {
+			val handler = this.parent as? ItemBearingBlockEntity ?: return
+			this.addSlot(SlotItemHandler(handler.itemHandler, slot, x, y))
+		}
+
+		fun addResultHandlerSlot(slot: Int, x: Int, y: Int) {
+			val handler = this.parent as? ItemBearingBlockEntity ?: return
+			this.addSlot(ResultSlotItemHandler(handler.itemHandler, slot, x, y))
+		}
 	}
 
 	abstract class RecipeEntity<R : FluidEnergyRecipe, T : BreadModRecipeBlockEntity<FluidEnergyInput, R, T>>(
@@ -138,16 +136,5 @@ abstract class BMContainerMenu(
 			get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * this.progressWidth).toInt()
 
 		fun isCrafting(): Boolean = this.parent.progress > 1
-	}
-
-	abstract class ToolGun(
-		type: MenuType<*>?,
-		id: Int,
-		val inventory: Inventory
-	) : BMContainerMenu(type, id) {
-		val data: ToolGunData = ToolGunData.get(getStackInPlayerHand(this.inventory.player))
-
-		override fun quickMoveStack(player: Player, index: Int): ItemStack = ItemStack.EMPTY
-		override fun stillValid(player: Player): Boolean = player.isHolding(ModItems.TOOL_GUN.get())
 	}
 }

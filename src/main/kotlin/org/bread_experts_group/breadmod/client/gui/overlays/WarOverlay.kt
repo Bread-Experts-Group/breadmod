@@ -6,7 +6,7 @@ import net.minecraft.client.gui.LayeredDraw
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations.WAR_TIMER
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements.WAR_TIMER
 import org.bread_experts_group.breadmod.registry.ModFonts
 import java.awt.Color
 

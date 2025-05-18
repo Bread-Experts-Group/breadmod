@@ -26,8 +26,6 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import java.util.function.Supplier
 
 @JeiPlugin
@@ -49,7 +47,7 @@ class BreadModJeiPlugin : IModPlugin {
 
 	override fun registerCategories(registration: IRecipeCategoryRegistration) {
 		val guiHelper = registration.jeiHelpers.guiHelper
-
+		// todo convert category rendering to use GuiElements
 		registration.addRecipeCategories(WheatCrusherRecipeCategory(guiHelper))
 		registration.addRecipeCategories(ToasterRecipeCategory(guiHelper))
 //		registration.addRecipeCategories(DoughMachineRecipeCategory(guiHelper))
@@ -88,9 +86,6 @@ class BreadModJeiPlugin : IModPlugin {
 			WheatCrusherScreen::class.java, 84, 34, 7, 48,
 			ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE
 		)
-
-		registration.addGuiScreenHandler(CreatorScreen::class.java) { null }
-		registration.addGuiScreenHandler(ToolGunScreen::class.java) { null }
 	}
 
 	override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {

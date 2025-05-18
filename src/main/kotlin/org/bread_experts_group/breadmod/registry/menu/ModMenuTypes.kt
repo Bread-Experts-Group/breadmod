@@ -10,8 +10,6 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyMenu
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorMenu
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunMenu
 import java.util.function.Supplier
 
 object ModMenuTypes {
@@ -20,10 +18,6 @@ object ModMenuTypes {
 		this.registerMenuType("wheat_crusher_menu", ::WheatCrusherMenu)
 	val DOUGH_MACHINE: Supplier<MenuType<DoughMachineMenu>> =
 		this.registerMenuType("dough_machine_menu", ::DoughMachineMenu)
-	val CREATOR: Supplier<MenuType<CreatorMenu>> =
-		this.registerMenuType("creator_menu") { id, inventory, _ -> CreatorMenu(id, inventory) }
-	val TOOL_GUN: Supplier<MenuType<ToolGunMenu>> =
-		this.registerMenuType("tool_gun_menu") { id, inventory, _ -> ToolGunMenu(id, inventory) }
 
 	// Exp.
 	val FLUID_ENERGY_TEST: Supplier<MenuType<FluidEnergyMenu>> =

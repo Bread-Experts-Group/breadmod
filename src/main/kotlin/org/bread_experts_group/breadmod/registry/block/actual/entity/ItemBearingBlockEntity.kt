@@ -9,7 +9,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 
-// todo remove WorldlyContainer (it isn't needed since we have the item handler in here)
 @Suppress("unused")
 interface ItemBearingBlockEntity {
 	val itemHandler: ExpansibleItemHandler

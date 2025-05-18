@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.client.gui.screens
 
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
@@ -10,7 +11,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderFluid
-import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
@@ -19,11 +20,12 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearin
 import org.bread_experts_group.breadmod.registry.menu.actual.BMContainerMenu
 import java.math.BigDecimal
 
+// todo work out an automatic slot texture rendering using the menu slots as a source
 abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE : BreadModBlockEntity<BE>>(
 	menu: T,
 	inventory: Inventory,
 	title: Component
-) : AbstractElementHolderScreen<T>(menu, inventory, title) {
+) : AbstractContainerScreen<T>(menu, inventory, title) {
 	companion object {
 		@DataGenerateLanguage("en_us", "Energy")
 		val ENERGY_LABEL: MutableComponent = modTranslatable(path = arrayOf("energy"))
@@ -33,12 +35,13 @@ abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE 
 		val energyHandler = (this@AbstractRecipeContainerScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
 		val sap = if (cell == null) energyHandler else energyHandler.getUnit(cell)
 		val scaled = sap.capacity?.let { ((sap.amount.divide(it)).toFloat() * h).toInt() } ?: 0
-		ModTextureLocations.ENERGY_METER_FRAME.blit(
+		ModGuiElements.SLOT.blitScaled(
 			this,
 			this@AbstractRecipeContainerScreen.leftPos + x,
-			this@AbstractRecipeContainerScreen.topPos + y
+			this@AbstractRecipeContainerScreen.topPos + y,
+			18, 49
 		)
-		ModTextureLocations.ENERGY_METER.blit(
+		ModGuiElements.ENERGY_METER.blit(
 			this,
 			this@AbstractRecipeContainerScreen.leftPos + x + 1,
 			this@AbstractRecipeContainerScreen.topPos + y + 1 + h - scaled,
@@ -117,15 +120,22 @@ abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE 
 		tank: Int,
 		flowing: Boolean = false
 	) {
+		ModGuiElements.SLOT.blitScaled(
+			this,
+			this@AbstractRecipeContainerScreen.leftPos + x,
+			this@AbstractRecipeContainerScreen.topPos + y,
+			w + 2,
+			h + 2
+		)
 		val fluidHandler = (this@AbstractRecipeContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
-		val tank = fluidHandler.getUnit(tank)
-		if (tank.amount > BigDecimal.ZERO) {
+		val expansibleTank = fluidHandler.getUnit(tank)
+		if (expansibleTank.amount > BigDecimal.ZERO) {
 			this.renderFluid(
-				this@AbstractRecipeContainerScreen.leftPos + x.toFloat(),
-				(this@AbstractRecipeContainerScreen.topPos + y.toFloat()),
+				(this@AbstractRecipeContainerScreen.leftPos + x.toFloat()) + 1,
+				(this@AbstractRecipeContainerScreen.topPos + y.toFloat()) + 1,
 				w,
 				h,
-				tank,
+				expansibleTank,
 				flowing
 			)
 		}
@@ -142,16 +152,16 @@ abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE 
 	) {
 		if (this@AbstractRecipeContainerScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
 			val fluidHandler = (this@AbstractRecipeContainerScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
-			val tank = fluidHandler.getUnit(tank)
-			val tint = IClientFluidTypeExtensions.of(tank.fluid).tintColor
+			val expansibleTank = fluidHandler.getUnit(tank)
+			val tint = IClientFluidTypeExtensions.of(expansibleTank.fluid).tintColor
 			this.renderComponentTooltip(
 				this@AbstractRecipeContainerScreen.font,
 				listOf(
-					Component.translatable(tank.fluidType.descriptionId)
+					Component.translatable(expansibleTank.fluidType.descriptionId)
 						.withStyle(Style.EMPTY.withColor(tint))
 						.withStyle(ChatFormatting.ITALIC),
 					JadeDrawingCommon.fixedLengthScrollingComponent(
-						tank.amount, tank.capacity,
+						expansibleTank.amount, expansibleTank.capacity,
 						"B", -1,
 						tint
 					)

@@ -9,6 +9,7 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -20,7 +21,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 
-class DoughMachineBlock : BreadModBlockWithEntity(Properties.of()) {
+class DoughMachineBlock : BreadModBlockWithEntity(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	companion object {
 		val CODEC: MapCodec<DoughMachineBlock> = simpleCodec { DoughMachineBlock() }
 	}

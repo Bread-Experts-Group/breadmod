@@ -7,12 +7,9 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
-import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -39,7 +36,7 @@ import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunMenu
+import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.util.function.Supplier
 
@@ -48,7 +45,7 @@ class ToolGunItem : Item(
 		.stacksTo(1)
 		.component(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 		.rarity(Rarity.RARE)
-), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem, MenuProvider {
+), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
 	object ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer
 		override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose =
@@ -124,16 +121,11 @@ class ToolGunItem : Item(
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
 		val data = ToolGunData.get(heldStack)
 		if (data.mode.keyMatchesInput(openModeGui, keyEvent) && localClient.screen == null) {
-			PacketDistributor.sendToServer(ToolGunScreenPacket())
+			localClient.setScreen(ToolGunScreen(Component.literal("Tool Gun: Mode Select"), heldStack))
 		} else {
 			(data.keyData[keyEvent.key] ?: return).second.invoke(keyEvent, heldStack, player, data)
 		}
 	}
-
-	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): AbstractContainerMenu =
-		ToolGunMenu(containerId, playerInventory)
-
-	override fun getDisplayName(): Component = Component.literal("Tool Gun: Mode Select")
 
 	override fun appendHoverText(
 		stack: ItemStack,

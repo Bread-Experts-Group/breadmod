@@ -163,10 +163,7 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.ModStructures
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.tool_gun.ToolGunScreenPacket
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
-import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
@@ -429,8 +426,6 @@ object Registry {
 				modBus.addListener { event: RegisterMenuScreensEvent ->
 					event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
 					event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
-					event.register(ModMenuTypes.CREATOR.get(), ::CreatorScreen)
-					event.register(ModMenuTypes.TOOL_GUN.get(), ::ToolGunScreen)
 					// Experimental stuff
 					event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
 				}
@@ -528,7 +523,6 @@ object Registry {
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
-			ToolGunScreenPacket.register(registrar)
 		}
 		modBus.addListener { event: EntityAttributeCreationEvent ->
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())

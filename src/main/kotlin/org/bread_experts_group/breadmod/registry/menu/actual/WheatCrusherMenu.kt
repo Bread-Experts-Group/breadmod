@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.registry.menu.actual
 
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
-import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
@@ -28,7 +27,7 @@ class WheatCrusherMenu(
 
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)
-		this.addSlot(SlotItemHandler(this.parent.itemHandler, 0, 80, 15))
-		this.addSlot(ResultSlotItemHandler(this.parent.itemHandler, 1, 80, 87))
+		this.addHandlerSlot(0, 80, 15)
+		this.addResultHandlerSlot(1, 80, 87)
 	}
 }

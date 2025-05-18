@@ -27,8 +27,8 @@ import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.putBlockState
 
 class BlockTab(screen: CreatorScreen, private val level: Level) : ContainerWidget<CreatorScreen>(
-	screen.getLeftPos(),
-	screen.getTopPos() + 12,
+	screen.leftPos,
+	screen.topPos + 12,
 	256,
 	244,
 	"block_tab",
@@ -103,7 +103,7 @@ class BlockTab(screen: CreatorScreen, private val level: Level) : ContainerWidge
 		this.addChild(
 			"test_button",
 			GenericButton(this.x, this.y + 150, 40, 12, "TEST") {
-				this.screen.getData().setValueDirect { it.putBlockState("block", this.currentBlock) }
+				this.screen.data.setValueDirect { it.putBlockState("block", this.currentBlock) }
 			}
 		)
 	}

@@ -70,7 +70,7 @@ open class ScrollingContainerWidget<T : Screen>(
 			this.scrollAmount -= scrollDirection
 			this.getWidgets().forEach { widget ->
 				if (this.scrollAmount != 0.0 && this.scrollAmount < this.getMaxScrollAmount())
-					widget.y += scrollDirection.toInt()
+					widget.setPosition(widget.x, widget.y + scrollDirection.toInt())
 				LogManager.getLogger()
 					.info("${widget.x}, ${widget.y}, ${this.getMaxScrollAmount()}, ${this.scrollAmount}")
 			}
@@ -91,7 +91,7 @@ open class ScrollingContainerWidget<T : Screen>(
 
 	protected open fun scrollbarVisible(): Boolean = this.getInnerHeight() > this.getHeight()
 
-	fun getScrollBarHeight(): Int {
+	private fun getScrollBarHeight(): Int {
 		return Mth.clamp(
 			((this.height * this.height).toFloat() / this.getContentHeight().toFloat()).toInt(),
 			32,

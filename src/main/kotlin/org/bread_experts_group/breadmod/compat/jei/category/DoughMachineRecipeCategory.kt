@@ -9,6 +9,7 @@ import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 
+// todo finish this
 class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<DoughMachineRecipe> {
 	override fun getRecipeType(): RecipeType<DoughMachineRecipe> {
 		TODO("Not yet implemented")

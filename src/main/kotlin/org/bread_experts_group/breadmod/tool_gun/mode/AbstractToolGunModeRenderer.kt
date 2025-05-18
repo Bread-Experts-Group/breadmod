@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
-import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 
 abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunModeRenderer {
@@ -54,7 +54,7 @@ abstract class AbstractToolGunModeRenderer(val id: ResourceLocation) : IToolGunM
 
 	abstract fun buildModeWidget(): ModeWidget.Builder
 
-	override fun getScreenTexture(): ResourceLocation = ModTextureLocations.SCREEN.location
+	override fun getScreenTexture(): ResourceLocation = ModGuiElements.SCREEN.location
 
 	override fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean = true
 }

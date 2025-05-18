@@ -14,8 +14,8 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.render.drawScaledText
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations.INFO
-import org.bread_experts_group.breadmod.client.render.texture.ModTextureLocations.MODE_OVERLAY_BG
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements.INFO
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements.MODE_OVERLAY_BG
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
