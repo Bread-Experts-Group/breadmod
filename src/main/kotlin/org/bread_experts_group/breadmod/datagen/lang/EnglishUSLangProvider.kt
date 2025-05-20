@@ -30,6 +30,9 @@ internal class EnglishUSLangProvider(
 		this.bmAdd(modTranslatable("tool_gun", "settings", "title"), "Tool Gun Setup Utility V1.0")
 		this.add("modmenu.nameTranslation.breadmod", "Bread Mod")
 		this.add("jei.breadmod.generic.recipe_time", "%ss")
+		this.add("jei.breadmod.generic.recipe_energy", "Energy Needed: %sFE")
+
+		this.add("command.breadmod.war_timer.toggle.success", "Toggled war timer to %s for %s")
 	}
 
 	override fun getNameAdditional(): String = "(with automatic naming)"

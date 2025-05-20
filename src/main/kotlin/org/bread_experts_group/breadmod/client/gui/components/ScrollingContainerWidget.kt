@@ -1,36 +1,54 @@
 package org.bread_experts_group.breadmod.client.gui.components
 
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.util.Mth
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.Color
+import kotlin.math.floor
 import kotlin.math.max
 
 // todo actually make widget positioning function with scrolling
-open class ScrollingContainerWidget<T : Screen>(
+class ScrollingContainerWidget<T : Screen>(
 	x: Int,
 	y: Int,
 	width: Int,
 	height: Int,
 	id: String,
-	screen: T
+	screen: T,
+	private val innerHeight: Int,
+	private val innerColor: Int,
+	private val outerColor: Int,
+	private val scrollRate: Double = 10.0,
+	private val initializer: (ScrollingContainerWidget<T>) -> Unit
 ) : ContainerWidget<T>(x, y, width, height, id, screen) {
+	private val innerPadding: Int = 0
 	private var scrollAmount: Double = 0.0
 		set(value) {
 			field = Mth.clamp(value, 0.0, this.getMaxScrollAmount().toDouble())
 		}
-	var scrolling: Boolean = false
 
 	override fun init() {
-		this.addChild("test", GenericButton(this.x + 5, this.y + 80, 15, 15, "x") {})
+		this.initializer.invoke(this)
+	}
+
+	override fun addChild(
+		id: String,
+		widget: AbstractWidget,
+		x: Int,
+		y: Int,
+		shouldRender: Boolean,
+		isActive: Boolean
+	) {
+		val newX = x + this.innerPadding
+		val newY = y + this.innerPadding
+		super.addChild(id, widget, newX, newY, shouldRender, isActive)
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		val poseStack = guiGraphics.pose()
 		if (this.visible) {
 			if (this.debug) guiGraphics.borderedFill(
 				this.x,
@@ -40,66 +58,53 @@ open class ScrollingContainerWidget<T : Screen>(
 				Color.GREEN,
 				Color.WHITE
 			)
-			guiGraphics.borderedFillPositioned(this.x, this.y, this.width, this.height, Color.GRAY, Color.DARK_GRAY)
+			guiGraphics.borderedFillPositioned(
+				this.x, this.y,
+				this.width, this.height,
+				this.outerColor, this.innerColor
+			)
 			guiGraphics.enableScissor(this.x + 1, this.y + 1, this.x + this.width - 1, this.y + this.height - 1)
-			poseStack.pushPose()
-			poseStack.translate(0.0, -this.scrollAmount, 0.0)
 			this.renderContainer(guiGraphics, mouseX, mouseY, partialTick)
 			this.getWidgets().forEach { if (it.visible) it.render(guiGraphics, mouseX, mouseY, partialTick) }
-			poseStack.popPose()
 			guiGraphics.disableScissor()
 			if (this.scrollbarVisible()) this.renderScrollBar(guiGraphics)
 			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN)
 		}
 	}
 
-	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-		LogManager.getLogger().info("clicked")
-		return super.mouseClicked(mouseX, mouseY, button)
-	}
-
-	override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
-		if (button == 0) this.scrolling = false
-		return super.mouseReleased(mouseX, mouseY, button)
-	}
-
 	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
 		if (!this.active) return false
 		if (this.isHoveredOrFocused) {
-			val scrollDirection = scrollY * this.scrollRate()
+			val scrollDirection = floor(scrollY * this.scrollRate).toInt()
+			// account for the last scroll on the top and bottom of the widget
+			val topAccount = if (this.scrollAmount - scrollDirection == 0.0 && scrollDirection > 0) 10 else 0
+			val bottomAccount = if (this.scrollAmount.toInt() - scrollDirection == this.getMaxScrollAmount()) 10 else 0
 			this.scrollAmount -= scrollDirection
 			this.getWidgets().forEach { widget ->
-				if (this.scrollAmount != 0.0 && this.scrollAmount < this.getMaxScrollAmount())
-					widget.setPosition(widget.x, widget.y + scrollDirection.toInt())
-				LogManager.getLogger()
-					.info("${widget.x}, ${widget.y}, ${this.getMaxScrollAmount()}, ${this.scrollAmount}")
+				widget.y += topAccount - bottomAccount
+				if (this.scrollAmount != 0.0 && this.scrollAmount < this.getMaxScrollAmount()) {
+					widget.y += scrollDirection
+				}
 			}
 			return true
 		}
 		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY)
 	}
 
-	private fun getMaxScrollAmount(): Int = max(0.0, (this.getContentHeight() - (this.height - 4)).toDouble()).toInt()
-
-	private fun getContentHeight(): Int = this.getInnerHeight() + 4
-
-	protected open fun scrollRate(): Double = 10.0
-
-	protected open fun getInnerHeight(): Int = this.height + 100
-
-	protected open fun scrollbarWidth(): Int = 4
-
-	protected open fun scrollbarVisible(): Boolean = this.getInnerHeight() > this.getHeight()
+	private fun getMaxScrollAmount(): Int = max(0.0, this.getInnerHeight().toDouble()).toInt()
+	private fun getInnerHeight(): Int = this.height + this.innerHeight
+	private fun scrollbarWidth(): Int = 4
+	private fun scrollbarVisible(): Boolean = this.getInnerHeight() > this.getHeight()
 
 	private fun getScrollBarHeight(): Int {
 		return Mth.clamp(
-			((this.height * this.height).toFloat() / this.getContentHeight().toFloat()).toInt(),
+			((this.height * this.height).toFloat() / this.getInnerHeight().toFloat()).toInt(),
 			32,
 			this.height
 		)
 	}
 
-	open fun renderScrollBar(guiGraphics: GuiGraphics) {
+	private fun renderScrollBar(guiGraphics: GuiGraphics) {
 		val height = this.getScrollBarHeight()
 		val width = this.scrollbarWidth()
 		val x = this.x + this.width - width

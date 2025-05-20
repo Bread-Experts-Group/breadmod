@@ -150,7 +150,7 @@ open class ContainerWidget<T : Screen>(
 		else super.isMouseOver(mouseX, mouseY)
 	}
 
-	fun addChild(
+	open fun addChild(
 		id: String,
 		widget: AbstractWidget,
 		x: Int = 0,
@@ -158,6 +158,7 @@ open class ContainerWidget<T : Screen>(
 		shouldRender: Boolean = true,
 		isActive: Boolean = true
 	) {
+		check(this.subWidgets[id] == null) { "Widget with $id already exists!" }
 		widget.visible = shouldRender
 		widget.active = isActive
 		if (x != 0 || y != 0) widget.setPosition(x, y)

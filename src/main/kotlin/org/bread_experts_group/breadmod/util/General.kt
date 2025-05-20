@@ -191,6 +191,9 @@ operator fun Vec3i.unaryMinus(): Vec3i = Vec3i(-this.x, -this.y, -this.z)
 operator fun Vec3.component1(): Double = this.x
 operator fun Vec3.component2(): Double = this.y
 operator fun Vec3.component3(): Double = this.z
+operator fun BlockPos.component1(): Int = this.x
+operator fun BlockPos.component2(): Int = this.y
+operator fun BlockPos.component3(): Int = this.z
 
 fun blocks(vararg filterBlocks: Block = arrayOf(Blocks.AIR)): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())

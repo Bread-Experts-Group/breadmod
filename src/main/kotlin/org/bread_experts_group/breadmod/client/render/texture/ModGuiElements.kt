@@ -1,7 +1,11 @@
 package org.bread_experts_group.breadmod.client.render.texture
 
+import com.mojang.blaze3d.platform.NativeImage
+import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.util.Color
 
 /**
  * Holds [ResourceLocation]s for Breadmod's gui elements.
@@ -55,6 +59,9 @@ object ModGuiElements {
 	val INVENTORY_SLOTS: GuiElement = GuiElement(modLocation("container", "inventory_slots"), 162, 54)
 	val HOTBAR_SLOTS: GuiElement = GuiElement(modLocation("container", "hotbar_slots"), 162, 18)
 	val BACKGROUND: GuiElement = GuiElement(modLocation("background"), 32, 32)
+	val BACKGROUND_ALT: GuiElement = GuiElement(modLocation("background_alt"), 20, 20)
+	val FLAME: GuiElement = GuiElement(modLocation("flame"), 14, 14)
+	val FLAT_BACKGROUND: GuiElement = GuiElement(this.staticColorImage(198, 198, 198))
 
 	// Wheat Crusher
 	val WHEAT_CRUSHER_LEFT_WHEEL: GuiElement =
@@ -71,6 +78,16 @@ object ModGuiElements {
 		GuiElement(modLocation("container", "dough_machine", "dough_machine_arrow"), 24, 17)
 	val DOUGH_MACHINE_ARROW_FILLED: GuiElement =
 		GuiElement(modLocation("container", "dough_machine", "dough_machine_arrow_filled"), 24, 17)
+	val DOUGH_MACHINE_ARROW_JEI: GuiElement =
+		GuiElement(modLocation("container", "dough_machine", "jei", "arrow"), 76, 21)
+	val DOUGH_MACHINE_ARROW_FILLED_JEI: GuiElement =
+		GuiElement(modLocation("container", "dough_machine", "jei", "arrow_filled"), 76, 21)
+
+	// Toaster
+	val TOASTER_ARROW_JEI: GuiElement =
+		GuiElement(modLocation("container", "toaster", "jei", "arrow"), 29, 22)
+	val TOASTER_ARROW_FILLED_JEI: GuiElement =
+		GuiElement(modLocation("container", "toaster", "jei", "arrow_filled"), 29, 22)
 
 	private fun toolGunHudLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "hud", "$name.png")
@@ -78,9 +95,15 @@ object ModGuiElements {
 	private fun toolGunGuiLocation(name: String, extension: String = "png"): ResourceLocation =
 		modLocation("textures", "tool_gun", "gui", "$name.$extension")
 
-	private fun containerElementLocation(name: String): ResourceLocation =
-		modLocation("textures", "gui", "container", "elements", "$name.png")
-
 	private fun guiElementLocation(name: String): ResourceLocation =
 		modLocation("textures", "gui", "$name.png")
+
+	private fun staticColorImage(color: Int): ResourceLocation {
+		val native = NativeImage(16, 16, false)
+		native.fillRect(0, 0, 16, 16, color)
+		return localClient.textureManager.register("bm_color_tex_$color", DynamicTexture(native))
+	}
+
+	private fun staticColorImage(r: Int, g: Int, b: Int): ResourceLocation =
+		this.staticColorImage(Color.color(r, g, b))
 }

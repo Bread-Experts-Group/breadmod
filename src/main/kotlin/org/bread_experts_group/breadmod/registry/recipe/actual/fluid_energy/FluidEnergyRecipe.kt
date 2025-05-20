@@ -12,8 +12,10 @@ import net.minecraft.world.level.Level
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
+import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import kotlin.math.max
 
+/** Convenience type for [FluidEnergyBuilder]. */
 typealias RecipeFunctionMulti =
 			(
 			NonNullList<SizedIngredient>, MutableList<ItemStack>,
@@ -21,11 +23,17 @@ typealias RecipeFunctionMulti =
 			Int?, Int?
 		) -> FluidEnergyRecipe
 
+/** Convenience type for [FluidEnergySerializer] and [ModRecipeSerializers]. */
 typealias RecipeFunctionDataFixer<R> =
 		Function6<NonNullList<SizedIngredient>, MutableList<ItemStack>,
 				NonNullList<SizedFluidIngredient>, MutableList<FluidStack>,
 				Int?, Int?, R>
 
+/**
+ * An "All in one" recipe class for all of BreadMod's recipes.
+ *
+ * - Handles fluids, items, time, and energy.
+ */
 abstract class FluidEnergyRecipe(
 	/** Input list of items for this recipe. Populated via [FluidEnergyInput]. */
 	val rItemInputs: NonNullList<SizedIngredient>,
@@ -35,7 +43,9 @@ abstract class FluidEnergyRecipe(
 	val rFluidInputs: NonNullList<SizedFluidIngredient>,
 	/** Output list of fluids for this recipe. Populated via [RecipeManager]. */
 	val rFluidOutputs: MutableList<FluidStack>,
+	/** The amount of time needed for this recipe to complete.*/
 	val rTime: Int?,
+	/** The amount of energy needed for this recipe to complete.*/
 	val rEnergy: Int?
 ) : Recipe<FluidEnergyInput> {
 	/**
@@ -47,7 +57,40 @@ abstract class FluidEnergyRecipe(
 				&& this.rItemInputs.all { rItem -> input.iItems.any(rItem::test) }
 				&& this.rFluidInputs.all { rFluid -> input.iFluids.any(rFluid::test) }
 
+	/**
+	 * Used to determine if this recipe can fit in a grid of the given width/height
+	 *
+	 * ##### Javadoc copied from superclass.
+	 */
 	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
+
+	/**
+	 * @return A list of input [ItemStack]s from [rItemInputs].
+	 */
+	fun getInputItems(): List<ItemStack> =
+		buildList { this@FluidEnergyRecipe.rItemInputs.forEach { it.items.forEach(this::add) } }
+
+	/**
+	 * @return A list of input [ItemStack]s from a specified index in [rItemInputs].
+	 */
+	fun getInputItemsForIndex(index: Int): List<ItemStack> =
+		if (index in this.rItemInputs.indices) {
+			buildList { this@FluidEnergyRecipe.rItemInputs[0].items.forEach(this::add) }
+		} else listOf()
+
+	/**
+	 * @return A list of input [FluidStack]s from [rFluidInputs].
+	 */
+	fun getInputFluids(): List<FluidStack> =
+		buildList { this@FluidEnergyRecipe.rFluidInputs.forEach { it.fluids.forEach(this::add) } }
+
+	/**
+	 * @return A list of input [FluidStack]s from a specified index in [rFluidInputs].
+	 */
+	fun getInputFluidsForIndex(index: Int): List<FluidStack> =
+		if (index in this.rFluidInputs.indices) {
+			buildList { this@FluidEnergyRecipe.rFluidInputs[0].fluids.forEach(this::add) }
+		} else listOf()
 
 	/**
 	 * Assembles the first item in [rItemOutputs].
@@ -120,7 +163,7 @@ abstract class FluidEnergyRecipe(
 		itemList.forEach { item -> this.rItemInputs.forEach { if (it.test(item)) item.shrink(it.count()) } }
 		return itemList
 	}
-
+	// todo nonfunctional, look into
 	/**
 	 * [consumeItems] with a [set] lambda provided for passing to the item handlers' set methods.
 	 */
@@ -137,7 +180,7 @@ abstract class FluidEnergyRecipe(
 		fluidList.forEach { fluid -> this.rFluidInputs.forEach { if (it.test(fluid)) fluid.shrink(it.amount()) } }
 		return fluidList
 	}
-
+	// todo nonfunctional, look into
 	/**
 	 * [consumeFluids] with a [set] lambda provided for passing to the fluid handlers' set methods.
 	 */

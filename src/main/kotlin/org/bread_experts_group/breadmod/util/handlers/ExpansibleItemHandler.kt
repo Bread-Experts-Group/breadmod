@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.util.handlers
 
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.component.DataComponentMap
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -45,11 +46,13 @@ class ExpansibleItemHandler(
 		this.allowedSides = direction.toList()
 	}
 
+	// todo rewrite to use ItemStack instead of separating it into different fields
 	class ExpansibleSlot(
 		override var maxIn: BigDecimal? = BigDecimal(64),
 		override var maxOut: BigDecimal? = BigDecimal(64),
 		var filter: Predicate<ItemStack> = Predicate { _ -> true },
 		var item: Item = Items.AIR,
+		var components: DataComponentMap = Items.AIR.components(),
 		override var amount: BigDecimal = BigDecimal.ZERO
 	) : HandlerSerializable {
 		override var capacity: BigDecimal? = BigDecimal(this.asStack.maxStackSize)
@@ -59,11 +62,13 @@ class ExpansibleItemHandler(
 		val isEmpty: Boolean
 			get() = this.item == Items.AIR || this.amount == BigDecimal.ZERO
 		var asStack: ItemStack
-			get() = ItemStack(this.item, min(this.amount.capInt(), 99))/*.also {
-				it.update(ModDataComponents.EXPANSIBLE_ITEM_STACK, BigDecimal.ZERO) { this.amount }
-			}*/
+			get() = ItemStack(this.item, min(this.amount.capInt(), 99)).also {
+//				it.update(ModDataComponents.EXPANSIBLE_ITEM_STACK, BigDecimal.ZERO) { this.amount }
+				it.applyComponents(this.components)
+			}
 			set(value) {
 				this.item = value.item
+				this.components = value.components
 				this.amount = value.get(ModDataComponents.EXPANSIBLE_ITEM_STACK) ?: value.count.toBigDecimal()
 			}
 
@@ -98,18 +103,23 @@ class ExpansibleItemHandler(
 				false,
 				mutableListOf(stack.item)
 			).first.capInt()
-			stack.copy().also {
-				if (target.isEmpty) target.asStack = it else target.asStack.grow(moved)
+			stack.also {
+				if (target.isEmpty) target.asStack = it.copy() else target.asStack.grow(moved)
 			}
 		} else ItemStack.EMPTY
 	}
 
+	// todo fix logic
 	override fun extractItem(slot: Int, count: Int, simulate: Boolean): ItemStack {
 		val target = this.units[slot]
+		return target.asStack.copy()
+		/*
+		if (this.amount == BigDecimal.ZERO) return ItemStack.EMPTY
 		return if (target.maxOut != null) {
-			val (bCount, _) = target.drainDecimal(count.toBigDecimal(), false)
-			ItemStack(target.item, bCount.capInt())
+			val bCount = target.drainDecimal(count.toBigDecimal(), false).first.toInt()
+			target.asStack.copyWithCount(bCount)
 		} else ItemStack.EMPTY
+		*/
 	}
 
 	override fun getSlots(): Int = this.units.size

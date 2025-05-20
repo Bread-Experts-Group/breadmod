@@ -112,6 +112,7 @@ import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacke
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
+import org.bread_experts_group.breadmod.network.clientbound.SoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.ClientPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.GridPosUpdatePacket
@@ -518,6 +519,7 @@ object Registry {
 			GridPosUpdatePacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
 			DoubleOrNothingPacket.register(registrar)
+			SoundPacket.register(registrar)
 			// Serverbound packets
 			ToolGunModeChangePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)

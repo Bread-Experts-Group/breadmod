@@ -53,7 +53,6 @@ class ItemInWorldBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().n
 
 	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE
 
-	// todo maybe this is what's causing the dropped items to not retain their cap data
 	override fun onRemove(
 		state: BlockState,
 		level: Level,

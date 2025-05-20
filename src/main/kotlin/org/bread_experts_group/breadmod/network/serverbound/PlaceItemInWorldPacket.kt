@@ -48,8 +48,6 @@ class PlaceItemInWorldPacket(
 				WEST  -> data.pos.west()
 			} else data.pos
 			val checkState = level.getBlockState(pos)
-			// todo copy capability data from stack to new stack when placing in world
-			//  (or if it's already present in the block figure out why it's getting removed when breaking the block..)
 			if (!stack.isEmpty) {
 				if (!blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.get()) && checkState.`is`(Blocks.AIR)) {
 					level.setBlockAndUpdate(

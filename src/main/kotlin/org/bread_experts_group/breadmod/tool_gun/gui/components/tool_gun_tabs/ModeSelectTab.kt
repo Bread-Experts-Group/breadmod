@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
+import org.bread_experts_group.breadmod.client.gui.components.ScrollingContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -38,19 +39,39 @@ class ModeSelectTab(
 	override fun init() {
 		val (_, _, index) = ToolGunData.get(this.stack)
 		this.currentModeWidget = ModeWidget.noWidget
-		val gridList = buildList {
-			repeat(5) { y ->
-				repeat(3) { x ->
-					this.add(this@ModeSelectTab.x + 4 + x * 36 to this@ModeSelectTab.y + 3 + y * 45)
-				}
-			}
-		}
 		Registry.toolGunModes.forEach { (_, mode) ->
 			this.modeWidgets.add(mode.getCustomRenderer().getModeWidget())
 		}
-		this.modeWidgets.forEachIndexed { mIndex, modeWidget ->
-			this.addChild("mode_widget_$mIndex", modeWidget, gridList[mIndex].first, gridList[mIndex].second)
-		}
+		this.addChild(
+			"mode_scroller",
+			ScrollingContainerWidget(
+				this.x + 2,
+				this.y + 2,
+				117,
+				180,
+				"mode_holder",
+				this.screen,
+				100,
+				Color.color(10, 10, 10),
+				Color.DARK_GRAY
+			) { container ->
+				val gridList = buildList {
+					repeat(5) { y ->
+						repeat(3) { x ->
+							this.add(container.x + 4 + x * 36 to container.y + 3 + y * 41)
+						}
+					}
+				}
+				this.modeWidgets.forEachIndexed { mIndex, modeWidget ->
+					container.addChild(
+						"mode_widget_$mIndex",
+						modeWidget,
+						gridList[mIndex].first,
+						gridList[mIndex].second
+					)
+				}
+			}
+		)
 		this.addChild("mode_change_button", this.modeButton, this.x + 160, this.y + 162, isActive = false)
 		this.updateModeWidgetSelection(index)
 	}

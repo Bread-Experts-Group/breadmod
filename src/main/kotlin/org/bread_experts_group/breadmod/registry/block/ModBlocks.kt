@@ -49,6 +49,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
+import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.SoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
@@ -115,6 +116,11 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	val MONITOR: DeferredItem<BlockItem> =
 		this.BLOCK_REGISTRY.registerBlockItem("monitor", ::MonitorBlock, Properties())
+
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage("en_us")
+	val RADIO: DeferredItem<BlockItem> =
+		this.BLOCK_REGISTRY.registerBlockItem("radio", ::RadioBlock, Properties())
 
 	@DataGenerateTagBlock(
 		"minecraft:mineable/hoe",

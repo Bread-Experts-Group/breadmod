@@ -9,6 +9,7 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.server.level.ServerPlayer
 import net.neoforged.neoforge.network.PacketDistributor
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.data_holders.server.WarTimerData
 import org.bread_experts_group.breadmod.data_holders.server.WarTimerData.Companion.warTimerMap
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
@@ -31,15 +32,22 @@ internal object WarTimerCommand {
 		PacketDistributor.sendToPlayer(player, WarTimerToggle(true))
 	}
 
+	private fun translation(endKey: String, state: Boolean, args: List<Any> = listOf()) =
+		modTranslatable("command", "war_timer", endKey, if (state) "success" else "failure", args = args)
+
 	private fun toggle(): ArgumentBuilder<CommandSourceStack, *> =
 		Commands.literal("toggle")
 			.executes { ctx ->
 				val targets = EntityArgument.getPlayers(ctx, "targets")
+				if (targets.isEmpty()) this.translation("toggle", false)
 				targets.forEach { player ->
 					val check = warTimerMap[player]
 					if (check != null) {
 						check.active = !check.active
 						PacketDistributor.sendToPlayer(player, WarTimerToggle(check.active))
+						ctx.source.sendSuccess({
+							this.translation("toggle", true, listOf(check.active, player.name))
+						}, true)
 					} else this.reset(player)
 				}
 				Command.SINGLE_SUCCESS

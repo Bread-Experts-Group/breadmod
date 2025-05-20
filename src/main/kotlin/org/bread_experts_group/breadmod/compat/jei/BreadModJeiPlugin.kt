@@ -13,15 +13,15 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.item.crafting.RecipeType
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
 import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.compat.jei.category.DoughMachineRecipeCategory
 import org.bread_experts_group.breadmod.compat.jei.category.ToasterRecipeCategory
 import org.bread_experts_group.breadmod.compat.jei.category.WheatCrusherRecipeCategory
 import org.bread_experts_group.breadmod.compat.jei.vanilla_extension.JEISliceCraftingExtension
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
-import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
@@ -47,10 +47,10 @@ class BreadModJeiPlugin : IModPlugin {
 
 	override fun registerCategories(registration: IRecipeCategoryRegistration) {
 		val guiHelper = registration.jeiHelpers.guiHelper
-		// todo convert category rendering to use GuiElements
+
 		registration.addRecipeCategories(WheatCrusherRecipeCategory(guiHelper))
 		registration.addRecipeCategories(ToasterRecipeCategory(guiHelper))
-//		registration.addRecipeCategories(DoughMachineRecipeCategory(guiHelper))
+		registration.addRecipeCategories(DoughMachineRecipeCategory(guiHelper))
 	}
 
 	override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
@@ -86,13 +86,17 @@ class BreadModJeiPlugin : IModPlugin {
 			WheatCrusherScreen::class.java, 84, 34, 7, 48,
 			ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE
 		)
+		registration.addRecipeClickArea(
+			DoughMachineScreen::class.java, 29, 35, 13, 13,
+			ModJEIRecipeTypes.DOUGH_MACHINE_RECIPE_TYPE
+		)
 	}
 
 	override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
 		// todo figure out why this is erroring
-		registration.addRecipeTransferHandler(
-			WheatCrusherMenu::class.java, ModMenuTypes.WHEAT_CRUSHER.get(), ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE,
-			0, 2, 2, 36
-		)
+//		registration.addRecipeTransferHandler(
+//			WheatCrusherMenu::class.java, ModMenuTypes.WHEAT_CRUSHER.get(), ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE,
+//			0, 2, 2, 36
+//		)
 	}
 }
