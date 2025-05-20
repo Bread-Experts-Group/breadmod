@@ -19,6 +19,7 @@ import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
 import org.bread_experts_group.breadmod.logging.ConsoleUnnamedRedirection
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
+import org.bread_experts_group.coder.format.riff.RIFFInputStream
 
 /**
  * Main mod class.
@@ -54,6 +55,14 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 	}
 
 	init {
+		RIFFInputStream(
+			this::class.java.getResourceAsStream("/Hoshi ni Natte.wav")
+		).readAllParsed().also {
+			it.forEach {
+				logger.info(it)
+			}
+		}
+
 		if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {
 			val context = LogManager.getContext(false) as LoggerContext
 			val fileLocator = this::class.java.getResource("/log4j2.xml")?.toURI()

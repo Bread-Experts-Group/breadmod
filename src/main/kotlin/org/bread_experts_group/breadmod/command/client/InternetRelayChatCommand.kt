@@ -11,9 +11,7 @@ import net.minecraft.commands.Commands
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.irc.IRCMessage
-import org.bread_experts_group.socket.failquick.FailQuickInputStream
-import org.bread_experts_group.socket.failquick.FailQuickOutputStream
-import org.bread_experts_group.socket.writeString
+import org.bread_experts_group.stream.writeString
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -28,7 +26,7 @@ internal object InternetRelayChatCommand {
 
 	private fun socketListener(ctx: CommandContext<CommandSourceStack>) {
 		Thread.ofVirtual().start {
-			val fqOut = FailQuickOutputStream(this.currentSocket.outputStream)
+			val fqOut = this.currentSocket.outputStream
 			try {
 				while (true) {
 					if (this.messagingStack.isEmpty()) continue
@@ -44,7 +42,7 @@ internal object InternetRelayChatCommand {
 		}
 
 		try {
-			val fqIn = FailQuickInputStream(this.currentSocket.inputStream)
+			val fqIn = this.currentSocket.inputStream
 			while (true) {
 				val message = IRCMessage.read(fqIn)
 				ctx.source.sendSystemMessage(
