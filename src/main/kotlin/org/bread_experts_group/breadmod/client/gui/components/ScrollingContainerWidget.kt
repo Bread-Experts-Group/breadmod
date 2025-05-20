@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.util.Mth
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -19,7 +20,7 @@ class ScrollingContainerWidget<T : Screen>(
 	height: Int,
 	id: String,
 	screen: T,
-	private val innerHeight: Int,
+	private var innerHeight: Int,
 	private val innerColor: Int,
 	private val outerColor: Int,
 	private val scrollRate: Double = 10.0,
@@ -73,6 +74,7 @@ class ScrollingContainerWidget<T : Screen>(
 	}
 
 	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
+		LogManager.getLogger(this.getMaxScrollAmount())
 		if (!this.active) return false
 		if (this.isHoveredOrFocused) {
 			val scrollDirection = floor(scrollY * this.scrollRate).toInt()

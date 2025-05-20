@@ -55,12 +55,8 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 	}
 
 	init {
-		RIFFInputStream(
-			this::class.java.getResourceAsStream("/Hoshi ni Natte.wav")
-		).readAllParsed().also {
-			it.forEach {
-				logger.info(it)
-			}
+		this::class.java.getResourceAsStream("/Hoshi ni Natte.wav")?.let {
+			RIFFInputStream(it).readAllParsed().onEach(logger::info)
 		}
 
 		if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {

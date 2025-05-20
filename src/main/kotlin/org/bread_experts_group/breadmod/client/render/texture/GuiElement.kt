@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.client.render.texture
 
+import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
@@ -99,6 +100,23 @@ class GuiElement(
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
 	}
 
+	/**
+	 * Converts this [GuiElement] to a [NativeImage].
+	 */
+	fun toNativeImage(): NativeImage {
+		val stream =
+			this::class.java.getResourceAsStream("/assets/${this.location.namespace}/${this.actualLocation(true).path}")!!
+		return NativeImage.read(stream)
+	}
+
+	/**
+	 * Standard blit method for this [GuiElement].
+	 *
+	 * * scale, width, and height is automatically set based on [textureWidth] and [textureHeight].
+	 *
+	 * @see blitScaled
+	 * @see blitStaticSprite
+	 */
 	fun blit(
 		guiGraphics: GuiGraphics,
 		x: Int,
@@ -135,6 +153,11 @@ class GuiElement(
 		pose.popPose()
 	}
 
+	/**
+	 * Blits this [GuiElement] with scaling.
+	 *
+	 * if this [GuiElement] is a nine-sliced sprite, it will scale accordingly.
+	 */
 	fun blitScaled(guiGraphics: GuiGraphics, x: Int, y: Int, width: Int, height: Int): Unit =
 		this.blit(
 			guiGraphics,
@@ -146,6 +169,11 @@ class GuiElement(
 			textureHeight = height
 		)
 
+	/**
+	 * Blits this [GuiElement] as a static sprite.
+	 *
+	 * Falls back to standard blitting if [isAnimatedSprite] is false.
+	 */
 	fun blitStaticSprite(guiGraphics: GuiGraphics, x: Int, y: Int, frame: Int = 0) {
 		val pose = guiGraphics.pose()
 		pose.pushPose()

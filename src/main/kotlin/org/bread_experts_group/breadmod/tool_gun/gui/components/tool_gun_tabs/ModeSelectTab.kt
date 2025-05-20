@@ -79,9 +79,10 @@ class ModeSelectTab(
 	/**
 	 * Update the border color on the widget's mode that is currently active.
 	 */
-	private fun updateModeWidgetSelection(index: Int): Unit = this.getWidgets().filterIsInstance<ModeWidget>().forEach {
-		it.isSelected = it.id == Registry.toolGunModes.keys.elementAt(index)
-	}
+	private fun updateModeWidgetSelection(index: Int): Unit =
+		this.getAllWidgets().filterIsInstance<ModeWidget>().forEach {
+			it.isSelected = it.id == Registry.toolGunModes.keys.elementAt(index)
+		}
 
 	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		this.currentModeWidget = this.screen.focused as? ModeWidget ?: ModeWidget.noWidget

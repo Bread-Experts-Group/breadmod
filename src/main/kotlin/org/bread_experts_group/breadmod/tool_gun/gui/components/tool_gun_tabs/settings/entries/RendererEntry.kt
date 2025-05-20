@@ -4,12 +4,10 @@ import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
 import net.minecraft.world.item.ItemStack
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.client.gui.components.ModelViewerWidget
 import org.bread_experts_group.breadmod.client.gui.components.ScrollingContainerWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.RENDERER
@@ -31,32 +29,27 @@ class RendererEntry(
 		RENDERER
 	)
 ) {
-	private val toolGunRenderer: ToolGunItemRenderer = ToolGunItemRenderer
+	private var index = 0
 
 	override fun init() {
-		val (_, _, index) = ToolGunData.get(this.stack)
 		this.addChild(
 			"model_viewer",
-			ModelViewerWidget(screen = this.screen) { poseStack, bufferSource ->
-				ModelViewerWidget.setupRender(235.0, 30.0, 180.0, poseStack)
-				this.toolGunRenderer.renderToolGun(
+			ModelViewerWidget(screen = this.screen) { modelViewer, poseStack, bufferSource ->
+				ModelViewerWidget.setupRender(modelViewer, 0.0, -10.0, 180.0, poseStack)
+				ToolGunItemRenderer.renderToolGun(
 					this.stack,
 					FIRST_PERSON_RIGHT_HAND,
 					poseStack,
 					bufferSource,
 					0XFFFFFF,
 					OverlayTexture.NO_OVERLAY,
-					Registry.toolGunModes.values.elementAt(index)
+					Registry.toolGunModes.values.elementAt(this.index)
 				)
 			},
 			this.x + 125,
 			this.y + 5
 		)
-		Registry.toolGunModes.forEach { (_, mode) ->
-			val renderer = mode.getCustomRenderer()
-			if (renderer is EmptyMode.EmptyModeRenderer) return@forEach
-		}
-		// todo setup widgets for each renderer
+
 		this.addChild(
 			"test_scroll_container",
 			ScrollingContainerWidget(
@@ -67,18 +60,23 @@ class RendererEntry(
 				"test_container",
 				this.screen,
 				100,
-				Color.WHITE,
+				Color.color(198, 198, 198),
 				Color.DARK_GRAY
 			) { container ->
-				repeat(20) { repeat ->
+				var offset = 0
+				Registry.toolGunModes.forEach { (_, mode) ->
+					val renderer = mode.getCustomRenderer()
+					if (renderer is EmptyMode.EmptyModeRenderer) return@forEach
 					container.addChild(
-						"test_$repeat",
-						GenericButton(0, 0, 80, 15, "$repeat") {
-							LogManager.getLogger().info(repeat)
+						"renderer_${mode.getModeName()}",
+						GenericButton(0, 0, 80, 15, mode.getDisplayName()) {
+							this.index = Registry.toolGunModes.values.indexOf(mode)
+//							ToolGunItemRenderer.rendererOverride = renderer
 						},
-						container.x,
-						container.y + (repeat * 18)
+						container.x + 10,
+						container.y + 5 + offset
 					)
+					offset += 18
 				}
 			}
 		)

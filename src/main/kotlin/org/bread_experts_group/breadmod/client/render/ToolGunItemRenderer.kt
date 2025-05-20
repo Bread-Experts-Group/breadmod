@@ -11,10 +11,12 @@ import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import java.awt.Color
 import java.lang.Math.clamp
 import java.math.BigDecimal
@@ -30,14 +32,21 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	private val partialTick: Float = this.deltaTracker.gameTimeDeltaTicks
 	private val caseOhInstrument: SecureRandom = SecureRandom()
 	private var caseOhSize: BigDecimal = BigDecimal.TWO
-	private val rotationMap: MutableMap<Int, Triple<Float, Float, Float>> = mutableMapOf()
+	var delta: Float = 0f
+	var rotation: Float = 0f
+	var recoil: Float = 0f
+
+	/**
+	 * Overrides tool gun rendering if this value isn't null.
+	 */
+	var rendererOverride: IToolGunModeRenderer? = null
 
 	/**
 	 * Sets the delta and recoil to their triggered values.
 	 */
 	fun triggerDelta(hashcode: Int) {
-		val data = this.rotationMap[hashcode] ?: return
-		this.rotationMap[hashcode] = Triple(1f, data.second, 0.1f)
+		this.delta = 1f
+		this.recoil = 0.1f
 	}
 
 	// Models
@@ -60,30 +69,21 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val playerItemHash = (localClient.player ?: return).mainHandItem.hashCode()
+		val playerItemHash = getStackInPlayerHand(localClient.player).hashCode()
 		val stackHash = stack.hashCode()
-		if (this.rotationMap[stackHash] == null) this.rotationMap[stackHash] = Triple(0f, 0f, 0f)
-		if (playerItemHash == stackHash && this.rotationMap[stackHash] != null) {
-			this.rotationMap[stackHash]?.let { (delta, rotation, recoil) ->
-				var newDelta = delta
-				var newRot = rotation
-				var newRecoil = recoil
-				if (newDelta > 0f) {
-					newDelta -= 0.025f * this.partialTick
-					newRot += (40f * newDelta) * this.partialTick
-					newRecoil -= 0.025f * this.partialTick * newDelta / 3.5f
-				}
-				this.rotationMap[stackHash] = Triple(newDelta, newRot, newRecoil)
-			}
+		if (playerItemHash == stackHash && !localClient.gamePaused()) {
+			if (this.delta > 0f) this.delta -= 0.025f * this.partialTick
+			if (this.delta > 0f) this.rotation += (40 * this.delta) * this.partialTick
+			if (this.recoil > 0f) this.recoil -= 0.025f * this.partialTick * this.delta / 3.5f
 		}
 
 		if (displayContext.firstPerson()) {
-			val modeRenderer = currentMode.getCustomRenderer()
+			val modeRenderer: IToolGunModeRenderer = this.rendererOverride ?: currentMode.getCustomRenderer()
 			poseStack.pushPose()
 			// Main recoil translations
 			// todo improve recoil
 			if (modeRenderer.shouldRecoil(stack, displayContext, currentMode)) poseStack.translate(
-				-clamp((this.rotationMap[stackHash] ?: return).third, 0f, 1f),
+				-clamp(this.recoil, 0f, 1f),
 				0f,
 				0f
 			)
@@ -143,7 +143,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			// Render Coil Stage
 			poseStack.pushPose()
 			if (modeRenderer.shouldCoilSpin(stack, displayContext)) {
-				poseStack.mulPose(Axis.XN.rotationDegrees((this.rotationMap[stackHash] ?: return).second))
+				poseStack.mulPose(Axis.XN.rotationDegrees(this.rotation))
 			}
 			if (modeRenderer.shouldRenderCoil(
 					stack,
@@ -183,7 +183,6 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val stackHash = stack.hashCode()
 		localClient.itemRenderer.renderItemModel(
 			this.mainModel,
 			stack,
@@ -195,7 +194,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			overrideRenderType = overrideRenderType,
 			renderTypeOverride = renderTypeOverride
 		)
-		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees((this.rotationMap[stackHash] ?: return).second))
+		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(this.rotation))
 		localClient.itemRenderer.renderItemModel(
 			this.coilModel,
 			stack,

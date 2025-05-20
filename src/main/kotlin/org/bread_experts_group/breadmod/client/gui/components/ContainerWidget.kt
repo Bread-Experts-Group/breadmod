@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.client.gui.components
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
+import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.sounds.SoundManager
@@ -29,9 +30,27 @@ open class ContainerWidget<T : Screen>(
 	var debug: Boolean = false
 	private val subWidgets: MutableMap<String, AbstractWidget> = mutableMapOf()
 
+	/**
+	 * Gets every widget in this [ContainerWidget], including nested [ContainerWidget]s.
+	 *
+	 * @see getContainerWidgets
+	 */
 	fun getWidgets(): MutableCollection<AbstractWidget> = this.subWidgets.values
-	private fun getContainerWidgets(): List<ContainerWidget<*>> =
+
+	/**
+	 * Gets every nested [ContainerWidget] in this [ContainerWidget].
+	 */
+	fun getContainerWidgets(): List<ContainerWidget<*>> =
 		this.getWidgets().filterIsInstance<ContainerWidget<*>>()
+
+	/**
+	 * Gets every widget from this [ContainerWidget], including widgets from nested [ContainerWidget]s.
+	 */
+	fun getAllWidgets(): List<AbstractWidget> = buildList {
+		val thisContainerWidgets = this@ContainerWidget.getWidgets().filterNot { it is ContainerWidget<*> }
+		this.addAll(thisContainerWidgets)
+		this@ContainerWidget.getContainerWidgets().forEach { this.addAll(it.getWidgets()) }
+	}
 
 	private fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
 
@@ -84,6 +103,10 @@ open class ContainerWidget<T : Screen>(
 		if (this.active && this.visible) this.tickAdditional()
 	}
 
+	private fun setFocused(listener: GuiEventListener?) {
+		this.screen.focused = listener
+	}
+
 	open fun tickAdditional() {}
 
 	override fun playDownSound(handler: SoundManager) {
@@ -94,59 +117,59 @@ open class ContainerWidget<T : Screen>(
 
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
-		return this.getWidgets().any { widget ->
-			widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button).also {
-				if (it) this.screen.focused = widget
+		return this.getAllWidgets().any { widget ->
+			(widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button)).also {
+				if (it) this.setFocused(widget)
 			}
 		}
 	}
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
 		if (!this.active) return false
-		return this.getWidgets().any { it.keyPressed(keyCode, scanCode, modifiers) }
+		return this.getAllWidgets().any { it.keyPressed(keyCode, scanCode, modifiers) }
 	}
 
 	override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
 		if (!this.active) return false
-		return this.getWidgets().any { it.keyReleased(keyCode, scanCode, modifiers) }
+		return this.getAllWidgets().any { it.keyReleased(keyCode, scanCode, modifiers) }
 	}
 
-	override fun visitWidgets(consumer: Consumer<AbstractWidget>): Unit = this.getWidgets().forEach(consumer)
+	override fun visitWidgets(consumer: Consumer<AbstractWidget>): Unit = this.getAllWidgets().forEach(consumer)
 
 	override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
 		if (!this.active) return false
-		return this.getWidgets().any { it.mouseReleased(mouseX, mouseY, button) }
+		return this.getAllWidgets().any { it.mouseReleased(mouseX, mouseY, button) }
 	}
 
 	override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
 		if (!this.active) return false
-		return this.getWidgets().any { it.mouseDragged(mouseX, mouseY, button, dragX, dragY) }
+		return this.getAllWidgets().any { it.mouseDragged(mouseX, mouseY, button, dragX, dragY) }
 	}
 
 	override fun mouseMoved(mouseX: Double, mouseY: Double) {
 		if (!this.active) return
-		this.getWidgets().any { widget ->
+		this.getAllWidgets().any { widget ->
 			widget.isHoveredOrFocused.also { if (it) widget.mouseMoved(mouseX, mouseY) }
 		}
 	}
 
 	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
 		if (!this.active) return false
-		return this.getWidgets().any { it.isHoveredOrFocused && it.mouseScrolled(mouseX, mouseY, scrollX, scrollY) }
+		return this.getAllWidgets().any { it.isHoveredOrFocused && it.mouseScrolled(mouseX, mouseY, scrollX, scrollY) }
 	}
 
 	override fun setPosition(x: Int, y: Int) {
 		super.setPosition(x, y)
-		this.getWidgets().forEach { it.setPosition(x + this.x, y + this.y) }
+		this.getAllWidgets().forEach { it.setPosition(x + this.x, y + this.y) }
 	}
 
 	override fun charTyped(codePoint: Char, modifiers: Int): Boolean {
 		if (!this.active) return false
-		return this.getWidgets().any { it.isHoveredOrFocused && it.charTyped(codePoint, modifiers) }
+		return this.getAllWidgets().any { it.isHoveredOrFocused && it.charTyped(codePoint, modifiers) }
 	}
 
 	override fun isMouseOver(mouseX: Double, mouseY: Double): Boolean {
-		return if (this.getWidgets().any { it.isMouseOver(mouseX, mouseY) }) true
+		return if (this.getAllWidgets().any { it.isMouseOver(mouseX, mouseY) }) true
 		else super.isMouseOver(mouseX, mouseY)
 	}
 
@@ -172,7 +195,15 @@ open class ContainerWidget<T : Screen>(
 
 	fun removeChild(id: String): AbstractWidget? = this.subWidgets.remove(id)
 
+	/**
+	 * Gets a child widget with a provided [id].
+	 */
 	fun getChild(id: String): AbstractWidget? = this.subWidgets[id]
 
+	/**
+	 * Initializes this [ContainerWidget].
+	 *
+	 * * override this method to add child widgets.
+	 */
 	open fun init() {}
 }

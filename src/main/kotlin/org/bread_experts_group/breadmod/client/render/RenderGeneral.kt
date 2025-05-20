@@ -67,6 +67,8 @@ val localClient: Minecraft = Minecraft.getInstance()
 internal var skyColorMixinActive: Boolean = false
 internal var redness: Float = 1f
 
+fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
+
 /**
  * Color getter for ItemStacks.
  */

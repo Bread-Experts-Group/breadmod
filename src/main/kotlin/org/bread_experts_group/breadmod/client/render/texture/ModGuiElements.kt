@@ -89,6 +89,8 @@ object ModGuiElements {
 	val TOASTER_ARROW_FILLED_JEI: GuiElement =
 		GuiElement(modLocation("container", "toaster", "jei", "arrow_filled"), 29, 22)
 
+	val test = this.SLOT.toNativeImage()
+
 	private fun toolGunHudLocation(name: String): ResourceLocation =
 		modLocation("textures", "tool_gun", "hud", "$name.png")
 
