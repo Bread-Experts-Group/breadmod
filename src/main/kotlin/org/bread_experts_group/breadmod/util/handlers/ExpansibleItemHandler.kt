@@ -2,20 +2,15 @@ package org.bread_experts_group.breadmod.util.handlers
 
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
-import net.minecraft.core.component.DataComponentMap
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.IItemHandlerModifiable
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler.ExpansibleSlot
 import java.math.BigDecimal
 import java.util.function.Predicate
 import kotlin.jvm.optionals.getOrElse
-import kotlin.math.min
 
 @Suppress("ConvertLambdaToReference")
 class ExpansibleItemHandler(
@@ -46,45 +41,32 @@ class ExpansibleItemHandler(
 		this.allowedSides = direction.toList()
 	}
 
-	// todo rewrite to use ItemStack instead of separating it into different fields
 	class ExpansibleSlot(
 		override var maxIn: BigDecimal? = BigDecimal(64),
 		override var maxOut: BigDecimal? = BigDecimal(64),
 		var filter: Predicate<ItemStack> = Predicate { _ -> true },
-		var item: Item = Items.AIR,
-		var components: DataComponentMap = Items.AIR.components(),
+		var stack: ItemStack = ItemStack.EMPTY,
 		override var amount: BigDecimal = BigDecimal.ZERO
 	) : HandlerSerializable {
-		override var capacity: BigDecimal? = BigDecimal(this.asStack.maxStackSize)
+		override var capacity: BigDecimal? = BigDecimal(this.stack.maxStackSize)
 			set(value) {
 				field = if (value != null && value <= BigDecimal.ZERO) null else value
 			}
 		val isEmpty: Boolean
-			get() = this.item == Items.AIR || this.amount == BigDecimal.ZERO
-		var asStack: ItemStack
-			get() = ItemStack(this.item, min(this.amount.capInt(), 99)).also {
-//				it.update(ModDataComponents.EXPANSIBLE_ITEM_STACK, BigDecimal.ZERO) { this.amount }
-				it.applyComponents(this.components)
-			}
-			set(value) {
-				this.item = value.item
-				this.components = value.components
-				this.amount = value.get(ModDataComponents.EXPANSIBLE_ITEM_STACK) ?: value.count.toBigDecimal()
-			}
+			get() = this.stack.isEmpty && this.amount == BigDecimal.ZERO
 
 		override fun serializeNBT(registries: HolderLookup.Provider): CompoundTag =
 			super.serializeNBT(registries).also {
-				if (this.asStack.isEmpty) return@also
-				it.put("item", this.asStack.save(registries))
+				if (this.stack.isEmpty) return@also
+				it.put("item", this.stack.save(registries))
 			}
 
 		override fun deserializeNBT(registries: HolderLookup.Provider, tag: CompoundTag) {
-			this.item = ItemStack.parse(registries, tag.get("item") ?: return).getOrElse(ItemStack::EMPTY).item
+			this.stack = ItemStack.parse(registries, tag.get("item") ?: return).getOrElse(ItemStack::EMPTY)
 		}
 	}
 
-	val isEmpty: Boolean
-		get() = this.units.all { it.isEmpty }
+	override fun isEmpty(): Boolean = this.units.all { it.isEmpty }
 	val filledSlots: Int
 		get() = this.units.count { !it.isEmpty }
 
@@ -97,14 +79,14 @@ class ExpansibleItemHandler(
 	): ItemStack {
 		val target = this.units[slot]
 		return if (target.maxIn != null && !simulate && this.isItemValid(slot, stack)) {
-			if (stack.count + target.asStack.count > target.asStack.maxStackSize) return ItemStack.EMPTY
+			if (stack.count + target.stack.count > target.stack.maxStackSize) return ItemStack.EMPTY
 			val moved = target.fillDecimal(
 				stack.count.toBigDecimal(),
 				false,
 				mutableListOf(stack.item)
 			).first.capInt()
 			stack.also {
-				if (target.isEmpty) target.asStack = it.copy() else target.asStack.grow(moved)
+				if (target.isEmpty) target.stack = it.copy() else target.stack.grow(moved)
 			}
 		} else ItemStack.EMPTY
 	}
@@ -112,7 +94,7 @@ class ExpansibleItemHandler(
 	// todo fix logic
 	override fun extractItem(slot: Int, count: Int, simulate: Boolean): ItemStack {
 		val target = this.units[slot]
-		return target.asStack.copy()
+		return target.stack.copy()
 		/*
 		if (this.amount == BigDecimal.ZERO) return ItemStack.EMPTY
 		return if (target.maxOut != null) {
@@ -123,12 +105,12 @@ class ExpansibleItemHandler(
 	}
 
 	override fun getSlots(): Int = this.units.size
-	override fun getStackInSlot(slot: Int): ItemStack = this.units[slot].asStack
+	override fun getStackInSlot(slot: Int): ItemStack = this.units[slot].stack
 	override fun getSlotLimit(slot: Int): Int =
-		this.units[slot].capacity?.capInt() ?: this.units[slot].asStack.maxStackSize
+		this.units[slot].capacity?.capInt() ?: this.units[slot].stack.maxStackSize
 
 	override fun isItemValid(slot: Int, stack: ItemStack): Boolean = this.units[slot].filter.test(stack)
 	override fun setStackInSlot(slot: Int, stack: ItemStack) {
-		this.units[slot].asStack = stack
+		this.units[slot].stack = stack
 	}
 }

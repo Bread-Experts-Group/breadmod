@@ -133,8 +133,7 @@ class ExpansibleFluidHandler(
 		}
 	}
 
-	val isEmpty: Boolean
-		get() = this.units.all { it.isEmpty }
+	override fun isEmpty(): Boolean = this.units.all { it.isEmpty }
 
 	override fun fill(
 		stack: FluidStack,

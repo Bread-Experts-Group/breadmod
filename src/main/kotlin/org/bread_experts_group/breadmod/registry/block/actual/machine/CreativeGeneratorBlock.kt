@@ -14,13 +14,11 @@ import net.minecraft.util.RandomSource
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
@@ -232,13 +230,5 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 		)
 	}
 
-	override fun <T : BlockEntity> getTicker(
-		level: Level,
-		state: BlockState,
-		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
-		blockEntityType,
-		ModBlockEntityTypes.CREATIVE_GENERATOR.get(),
-		this::tickBreadModBlockEntity
-	)
+	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.CREATIVE_GENERATOR.get()
 }

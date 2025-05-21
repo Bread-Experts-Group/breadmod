@@ -11,7 +11,7 @@ import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
 import net.minecraft.world.item.BlockItem
-import net.minecraft.world.item.ItemDisplayContext.NONE
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.Vec3
@@ -128,7 +128,7 @@ class ItemInWorldRenderer(context: Context) : BreadModBER<ItemInWorldBlockEntity
 		}
 		this.context.itemRenderer.renderStatic(
 			stack,
-			NONE,
+			ItemDisplayContext.NONE,
 			packedLight,
 			packedOverlay,
 			poseStack,
@@ -139,5 +139,5 @@ class ItemInWorldRenderer(context: Context) : BreadModBER<ItemInWorldBlockEntity
 		poseStack.popPose()
 	}
 
-	override fun shouldRender(entity: ItemInWorldBlockEntity, cameraPos: Vec3): Boolean = !entity.itemHandler.isEmpty
+	override fun shouldRender(entity: ItemInWorldBlockEntity, cameraPos: Vec3): Boolean = !entity.itemHandler.isEmpty()
 }

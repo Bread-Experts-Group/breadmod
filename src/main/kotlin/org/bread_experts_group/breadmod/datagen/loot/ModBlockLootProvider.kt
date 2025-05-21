@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.datagen.loot
 
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.data.PackOutput
 import net.minecraft.data.loot.BlockLootSubProvider
 import net.minecraft.data.loot.LootTableProvider
@@ -109,17 +110,11 @@ class ModBlockLootProvider(
 		)
 	}
 
-	companion object {
-		fun constructLootProvider(
-			blockLootProvider: BlockLootSubProvider,
-			output: PackOutput,
-			registries: CompletableFuture<HolderLookup.Provider>
-		): LootTableProvider =
-			LootTableProvider(
-				output,
-				setOf(),
-				listOf(LootTableProvider.SubProviderEntry({ blockLootProvider }, LootContextParamSets.BLOCK)),
-				registries
-			)
-	}
+	fun construct(output: PackOutput, registries: CompletableFuture<Provider>): LootTableProvider =
+		LootTableProvider(
+			output,
+			setOf(),
+			listOf(LootTableProvider.SubProviderEntry({ this }, LootContextParamSets.BLOCK)),
+			registries
+		)
 }

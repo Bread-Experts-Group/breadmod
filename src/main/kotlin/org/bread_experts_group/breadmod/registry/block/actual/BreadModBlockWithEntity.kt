@@ -118,20 +118,29 @@ abstract class BreadModBlockWithEntity(
 		return this.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
 	}
 
-	protected fun <T : BreadModBlockEntity<T>> tickBreadModBlockEntity(
-		level: Level,
-		pos: BlockPos,
-		state: BlockState,
-		blockEntity: T
-	) {
-		if (level.isClientSide) blockEntity.clientTick(level, pos, state, blockEntity)
-		else blockEntity.serverTick(level, pos, state, blockEntity)
-		blockEntity.commonTick(level, pos, state, blockEntity)
-	}
+	/**
+	 * Override this to enable [BlockEntity] ticking for this block.
+	 */
+	open fun getBlockEntityType(): BlockEntityType<*>? = null
 
-	override fun <T : BlockEntity> getTicker(
+	final override fun <T : BlockEntity> getTicker(
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = null
+	): BlockEntityTicker<T>? = this.tickBlockEntity(blockEntityType, this.getBlockEntityType())
+
+	@Suppress("UNCHECKED_CAST")
+	private fun <E : BlockEntity, A : BlockEntity> tickBlockEntity(
+		serverType: BlockEntityType<A>?, clientType: BlockEntityType<E>?
+	): BlockEntityTicker<A>? {
+		return if (clientType === serverType) {
+			BlockEntityTicker<A> { level, pos, state, blockEntity ->
+				if (level.isClientSide)
+					(blockEntity as BreadModBlockEntity<A>).clientTick(level, pos, state, blockEntity)
+				if (!level.isClientSide)
+					(blockEntity as BreadModBlockEntity<A>).serverTick(level, pos, state, blockEntity)
+				(blockEntity as BreadModBlockEntity<A>).commonTick(level, pos, state, blockEntity)
+			}
+		} else null
+	}
 }

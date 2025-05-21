@@ -62,6 +62,7 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	fun finalizeAndReset(recipe: R, level: Level) {
 		this.finalizeRecipe(recipe, level)
 		this.resetRecipe(level)
+		this.setChanged()
 	}
 
 	fun getOptionalRecipe(input: I, level: Level): Optional<RecipeHolder<R>> =

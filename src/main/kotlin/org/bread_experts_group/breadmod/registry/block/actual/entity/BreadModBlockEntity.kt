@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.util.handlers.ListenerHandler
  * An "All In One" [BlockEntity].
  * todo actual javadocs.
  */
-abstract class BreadModBlockEntity<T : BreadModBlockEntity<T>>(
+abstract class BreadModBlockEntity<T : BlockEntity>(
 	type: BlockEntityType<T>,
 	pos: BlockPos,
 	state: BlockState

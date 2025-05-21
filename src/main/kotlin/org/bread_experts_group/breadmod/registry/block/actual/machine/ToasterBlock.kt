@@ -19,13 +19,11 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
@@ -211,13 +209,5 @@ class ToasterBlock : BreadModBlockWithEntity(
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 
-	override fun <T : BlockEntity> getTicker(
-		level: Level,
-		state: BlockState,
-		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
-		blockEntityType,
-		ModBlockEntityTypes.TOASTER.get(),
-		this::tickBreadModBlockEntity
-	)
+	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.TOASTER.get()
 }

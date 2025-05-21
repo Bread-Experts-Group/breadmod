@@ -59,10 +59,12 @@ class PlaceItemInWorldPacket(
 					)
 					val entity = level.getBlockEntity(pos) as? ItemInWorldBlockEntity ?: return
 					entity.setItem(0, if (player.isCreative) stack.copy() else stack.copyAndClear())
+					entity.setChanged()
 				} else {
 					val entity = level.getBlockEntity(pos) as? ItemInWorldBlockEntity ?: return
 					val slotIndex = entity.itemHandler.filledSlots
 					entity.setItem(slotIndex, if (player.isCreative) stack.copy() else stack.copyAndClear())
+					entity.setChanged()
 				}
 				level.sendBlockUpdated(pos, blockState, blockState, 3)
 			}

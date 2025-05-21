@@ -100,7 +100,6 @@ import org.bread_experts_group.breadmod.datagen.damage_type.ModDamageTypeProvide
 import org.bread_experts_group.breadmod.datagen.lang.BaseLanguageProvider
 import org.bread_experts_group.breadmod.datagen.lang.LanguageDataGenerator
 import org.bread_experts_group.breadmod.datagen.loot.ModBlockLootProvider
-import org.bread_experts_group.breadmod.datagen.loot.ModBlockLootProvider.Companion.constructLootProvider
 import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider
 import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
 import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
@@ -486,7 +485,7 @@ object Registry {
 				generator.addProvider(true, ModSoundDefinitionsProvider(packOutput, existingFileHelper))
 				generator.addProvider(
 					true,
-					constructLootProvider(ModBlockLootProvider(lookupProvider), packOutput, lookupProvider)
+					ModBlockLootProvider(lookupProvider).construct(packOutput, lookupProvider)
 				)
 				generator.addProvider(true, ModRecipeProvider(packOutput, lookupProvider))
 				generator.addProvider(true, ModDamageTypeProvider(packOutput))

@@ -17,12 +17,10 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
@@ -141,7 +139,7 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		val direction = hitResult.direction ?: return FAIL
 		val normalizedPos = normalizedHitPos(hitResult.location, pos)
 		val entity = level.getBlockEntity(pos) as MicrowaveBlockEntity
-		when (direction) {
+		val number = when (direction) {
 			NORTH -> this.buttonPress(normalizedPos.x, normalizedPos.y, 0.23, 0.27, level, pos, NORTH)
 			EAST  -> this.buttonPress(normalizedPos.z, normalizedPos.y, 0.23, 0.27, level, pos, EAST)
 			SOUTH -> this.buttonPress(normalizedPos.x, normalizedPos.y, 0.73, 0.77, level, pos, SOUTH)
@@ -221,13 +219,5 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		}
 	}
 
-	override fun <T : BlockEntity> getTicker(
-		level: Level,
-		state: BlockState,
-		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
-		blockEntityType,
-		ModBlockEntityTypes.MICROWAVE.get(),
-		this::tickBreadModBlockEntity
-	)
+	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.MICROWAVE.get()
 }

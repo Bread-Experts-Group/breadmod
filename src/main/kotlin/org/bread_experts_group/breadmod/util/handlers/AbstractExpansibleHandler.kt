@@ -24,6 +24,9 @@ abstract class AbstractExpansibleHandler<T : HandlerSerializable> : HandlerSeria
 	fun getUnit(unit: Int): T = this.units[unit]
 	fun getUnits(): Int = this.units.size
 
+	open fun isEmpty(): Boolean = this.amount == BigDecimal.ZERO
+	fun isNotEmpty(): Boolean = !this.isEmpty()
+
 	override fun fillDecimal(
 		count: BigDecimal,
 		simulate: Boolean,

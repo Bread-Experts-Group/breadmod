@@ -361,7 +361,6 @@ object ModBlocks {
 					.mapColor(MapColor.WOOD)
 					.strength(1.0F)
 					.pushReaction(PushReaction.DESTROY)
-					.noOcclusion()
 			) {
 				override fun isFlammable(
 					state: BlockState,
@@ -392,9 +391,7 @@ object ModBlocks {
 		id: String,
 		block: () -> Block,
 		properties: Properties
-	): DeferredItem<BlockItem> = this.register(id, block).let { supplier ->
-		ITEM_REGISTRY.register(id) { -> BlockItem(supplier.get(), properties) }
-	}
+	): DeferredItem<BlockItem> = this.registerBlockItem(id, block) { blockItem -> BlockItem(blockItem, properties) }
 
 	private fun DeferredRegister.Blocks.registerBlockItem(
 		id: String,

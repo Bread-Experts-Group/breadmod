@@ -7,11 +7,9 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
@@ -71,13 +69,5 @@ class WheatCrusherBlock : BreadModBlockWithEntity(Properties.ofFullCopy(Blocks.I
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 
-	override fun <T : BlockEntity> getTicker(
-		level: Level,
-		state: BlockState,
-		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
-		blockEntityType,
-		ModBlockEntityTypes.WHEAT_CRUSHER.get(),
-		this::tickBreadModBlockEntity
-	)
+	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.WHEAT_CRUSHER.get()
 }

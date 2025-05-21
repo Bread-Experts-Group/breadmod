@@ -50,4 +50,10 @@ object ModDataComponents {
 			.networkSynchronized(MachSpeedData.STREAM_CODEC)
 			.cacheEncoding()::build
 	)
+	val ENERGY: Supplier<DataComponentType<Int>> = this.DATA_COMPONENT_REGISTRY.register(
+		"energy", DataComponentType.builder<Int>()
+			.networkSynchronized(ByteBufCodecs.INT)
+			.persistent(Codec.INT)
+			.cacheEncoding()::build
+	)
 }
