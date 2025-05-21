@@ -220,7 +220,6 @@ object ModBlocks {
 	val ITEM_IN_WORLD_BLOCK: DeferredBlock<ItemInWorldBlock> =
 		this.BLOCK_REGISTRY.registerBlock("item_in_world") { ItemInWorldBlock() }
 
-	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
 	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"energy_storage",

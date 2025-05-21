@@ -14,8 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.storage.loot.LootParams
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams
 import net.minecraft.world.phys.HitResult
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
@@ -45,21 +43,6 @@ class EnergyStorageBlock : BreadModBlockWithEntity(Properties.of()) {
 	) {
 		val energy = stack.getOrDefault(ModDataComponents.ENERGY, 0)
 		tooltipComponents.add(Component.literal("energy: $energy"))
-	}
-
-	// todo this is busted, find out how to properly save block entity components to items on block break...
-	//  ShulkerBoxBlock
-	override fun getDrops(state: BlockState, params: LootParams.Builder): MutableList<ItemStack> {
-		val position = BlockPos.containing(
-			params.getOptionalParameter(LootContextParams.ORIGIN) ?: return super.getDrops(
-				state,
-				params
-			)
-		)
-		val entity = params.level.getBlockEntity(position) as EnergyStorageBlockEntity
-		val list = super.getDrops(state, params)
-		list.forEach { entity.saveToItem(it, params.level.registryAccess()) }
-		return list
 	}
 
 	override fun getCloneItemStack(

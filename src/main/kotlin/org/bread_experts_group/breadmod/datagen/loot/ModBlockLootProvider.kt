@@ -17,6 +17,7 @@ import net.minecraft.world.level.storage.loot.LootTable
 import net.minecraft.world.level.storage.loot.entries.AlternativesEntry
 import net.minecraft.world.level.storage.loot.entries.LootItem
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition
@@ -28,6 +29,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
@@ -72,6 +74,25 @@ class ModBlockLootProvider(
 				ModBlocks.FLOUR_BLOCK.asBlock(),
 				ModItems.FLOUR.get(), ConstantValue.exactly(4f)
 			)
+		)
+
+		this.add(
+			ModBlocks.ENERGY_STORAGE.asBlock(),
+			LootTable.lootTable()
+				.withPool(
+					this.applyExplosionCondition(
+						ModBlocks.ENERGY_STORAGE.asBlock(),
+						LootPool.lootPool()
+							.setRolls(ConstantValue.exactly(1f))
+							.add(
+								LootItem.lootTableItem(ModBlocks.ENERGY_STORAGE.asItem())
+									.apply(
+										CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+											.include(ModDataComponents.ENERGY.get())
+									)
+							)
+					)
+				)
 		)
 
 		this.add(
