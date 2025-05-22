@@ -4,18 +4,19 @@ import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.ItemStack
-import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.IItemHandlerModifiable
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler.ExpansibleSlot
 import java.math.BigDecimal
 import java.util.function.Predicate
 import kotlin.jvm.optionals.getOrElse
+import kotlin.math.min
 
 @Suppress("ConvertLambdaToReference")
 class ExpansibleItemHandler(
 	override val units: MutableList<ExpansibleSlot>
-) : AbstractExpansibleHandler<ExpansibleSlot>(), IItemHandler, IItemHandlerModifiable {
+) : AbstractExpansibleHandler<ExpansibleSlot>(), IItemHandlerModifiable {
 	constructor(slots: Int) : this(MutableList(slots) { ExpansibleSlot() })
 
 	private var allowedSides: List<Direction?> = listOf(null)
@@ -94,14 +95,28 @@ class ExpansibleItemHandler(
 	// todo fix logic
 	override fun extractItem(slot: Int, count: Int, simulate: Boolean): ItemStack {
 		val target = this.units[slot]
-		return target.stack.copy()
-		/*
+//		return target.stack.copy()
 		if (this.amount == BigDecimal.ZERO) return ItemStack.EMPTY
 		return if (target.maxOut != null) {
 			val bCount = target.drainDecimal(count.toBigDecimal(), false).first.toInt()
-			target.asStack.copyWithCount(bCount)
+			target.stack.copyWithCount(bCount)
 		} else ItemStack.EMPTY
-		*/
+	}
+
+	fun extractItemInternal(slot: Int, count: Int): ItemStack {
+		LogManager.getLogger("item handler").info("$slot, $count")
+		if (count == 0) return ItemStack.EMPTY
+		val existing = this.units[slot].stack
+
+		if (existing.isEmpty) return ItemStack.EMPTY
+		val toExtract = min(existing.count, count)
+
+		if (existing.count <= toExtract) {
+			this.setStackInSlot(slot, ItemStack.EMPTY)
+			return existing
+		}
+		this.setStackInSlot(slot, existing.copyWithCount(existing.count - toExtract))
+		return existing.copyWithCount(toExtract)
 	}
 
 	override fun getSlots(): Int = this.units.size

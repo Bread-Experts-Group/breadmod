@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.Blocks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
+import org.bread_experts_group.breadmod.client.render.enablePositionedScissor
 import org.bread_experts_group.breadmod.client.render.flushAndFinishScissor
 import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -91,10 +92,6 @@ class ModelViewerWidget(
 	}
 
 	override fun init() {
-//		this.xRot = 0f
-//		this.yRot = 0f
-//		this.scale = 1f
-//		this.debug = true
 		this.addChild("dragger", this.Dragger())
 		this.addChild(
 			"move_left",
@@ -139,20 +136,16 @@ class ModelViewerWidget(
 			)
 			val poseStack = guiGraphics.pose()
 			poseStack.pushPose()
-			if (!this@ModelViewerWidget.debug) guiGraphics.enableScissor(
+			if (!this@ModelViewerWidget.debug) guiGraphics.enablePositionedScissor(
 				this.x + 1,
 				this.y + 1,
-				this.x + this.width - 1,
-				this.y + this.height - 1
+				this.width - 1,
+				this.height - 1
 			)
 			val offsetX = this.rectangle.width / 2
 			val offsetY = this.rectangle.height / 2
 			poseStack.translate(this.x.toDouble(), this.y.toDouble(), 0.0)
-			poseStack.translate(
-				this.offsetX + offsetX,
-				this.offsetY + offsetY,
-				0.0
-			)
+			poseStack.translate(this.offsetX + offsetX, this.offsetY + offsetY, 0.0)
 			poseStack.scaleFlat(this.scale)
 			this@ModelViewerWidget.model.invoke(this@ModelViewerWidget, poseStack, guiGraphics.bufferSource())
 			if (!this@ModelViewerWidget.debug) guiGraphics.flushAndFinishScissor()

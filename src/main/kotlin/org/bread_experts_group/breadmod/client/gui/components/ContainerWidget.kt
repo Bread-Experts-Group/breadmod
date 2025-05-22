@@ -9,7 +9,7 @@ import net.minecraft.client.sounds.SoundManager
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
-import java.awt.Color
+import org.bread_experts_group.breadmod.util.Color
 import java.util.function.Consumer
 
 /**
@@ -65,20 +65,32 @@ open class ContainerWidget<T : Screen>(
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		if (this.visible) {
-			if (this.debug) guiGraphics.borderedFill(
-				this.x,
-				this.y,
-				this.x + this.width,
-				this.y + this.height,
-				Color.GREEN.rgb,
-				Color.WHITE.rgb
-			)
+			if (this.debug) guiGraphics.renderDebugFill()
 			this.renderContainer(guiGraphics, mouseX, mouseY, partialTick)
 			this.getWidgets().forEach { if (it.visible) it.render(guiGraphics, mouseX, mouseY, partialTick) }
 			this.renderContainerAfterWidgets(guiGraphics, mouseX, mouseY, partialTick)
-			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN.rgb)
+			if (this.debug) guiGraphics.renderDebugText()
 		}
 	}
+
+	protected fun GuiGraphics.renderDebugText(): Int =
+		this.drawString(
+			localClient.font,
+			"DEBUG MODE ENABLED",
+			this@ContainerWidget.x,
+			this@ContainerWidget.y,
+			Color.GREEN
+		)
+
+	protected fun GuiGraphics.renderDebugFill(): Unit =
+		this.borderedFill(
+			this@ContainerWidget.x,
+			this@ContainerWidget.y,
+			this@ContainerWidget.x + this@ContainerWidget.width,
+			this@ContainerWidget.y + this@ContainerWidget.height,
+			Color.GREEN,
+			Color.WHITE
+		)
 
 	private fun setChildrenVisibility() {
 		if (this.getWidgets().isNotEmpty()) this.getWidgets().forEach {

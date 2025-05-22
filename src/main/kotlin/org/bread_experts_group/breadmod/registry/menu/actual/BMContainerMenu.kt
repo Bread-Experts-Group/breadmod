@@ -9,7 +9,6 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
-import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
@@ -116,7 +115,7 @@ abstract class BMContainerMenu(
 
 		fun addHandlerSlot(slot: Int, x: Int, y: Int) {
 			val handler = this.parent as? ItemBearingBlockEntity ?: return
-			this.addSlot(SlotItemHandler(handler.itemHandler, slot, x, y))
+			this.addSlot(ModifiedSlotItemHandler(handler.itemHandler, slot, x, y))
 		}
 
 		fun addResultHandlerSlot(slot: Int, x: Int, y: Int) {

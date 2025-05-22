@@ -5,9 +5,7 @@ import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.util.Mth
 import org.apache.logging.log4j.LogManager
-import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.Color
 import kotlin.math.floor
 import kotlin.math.max
@@ -51,14 +49,7 @@ class ScrollingContainerWidget<T : Screen>(
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		if (this.visible) {
-			if (this.debug) guiGraphics.borderedFill(
-				this.x,
-				this.y,
-				this.x + this.width,
-				this.y + this.height,
-				Color.GREEN,
-				Color.WHITE
-			)
+			if (this.debug) guiGraphics.renderDebugFill()
 			guiGraphics.borderedFillPositioned(
 				this.x, this.y,
 				this.width, this.height,
@@ -69,7 +60,7 @@ class ScrollingContainerWidget<T : Screen>(
 			this.getWidgets().forEach { if (it.visible) it.render(guiGraphics, mouseX, mouseY, partialTick) }
 			guiGraphics.disableScissor()
 			if (this.scrollbarVisible()) this.renderScrollBar(guiGraphics)
-			if (this.debug) guiGraphics.drawString(localClient.font, "DEBUG MODE ENABLED", 0, 0, Color.GREEN)
+			if (this.debug) guiGraphics.renderDebugText()
 		}
 	}
 
