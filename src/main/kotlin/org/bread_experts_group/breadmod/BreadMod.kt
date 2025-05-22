@@ -15,8 +15,6 @@ import org.apache.logging.log4j.core.LoggerContext
 import org.apache.logging.log4j.core.config.ConfigurationFactory
 import org.apache.logging.log4j.core.config.Configurator
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
-import org.bread_experts_group.breadmod.logging.ConsoleColorAppender
-import org.bread_experts_group.breadmod.logging.ConsoleUnnamedRedirection
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.coder.format.riff.RIFFInputStream
@@ -28,7 +26,7 @@ import org.bread_experts_group.coder.format.riff.RIFFInputStream
 class BreadMod(eventBus: IEventBus, container: ModContainer) {
 	companion object {
 		const val ID: String = "breadmod"
-		val logger: Logger = LogManager.getLogger()
+		private val logger: Logger = LogManager.getLogger("Bread Mod Main")
 
 		fun modModelLoc(id: String): ModelResourceLocation = ModelResourceLocation.standalone(
 			this.modLocation(id)
@@ -55,10 +53,6 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 	}
 
 	init {
-		this::class.java.getResourceAsStream("/Hoshi ni Natte.wav")?.let {
-			RIFFInputStream(it).readAllParsed().onEach(logger::info)
-		}
-
 		if (!FMLLoader.isProduction() || System.getProperty("breadmod.logging") == "true") {
 			val context = LogManager.getContext(false) as LoggerContext
 			val fileLocator = this::class.java.getResource("/log4j2.xml")?.toURI()
@@ -74,8 +68,9 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 			val colorAppender = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
 			configuration.addAppender(colorAppender)
 			Configurator.reconfigure(configuration)
-
-			ConsoleUnnamedRedirection.setup()
+		}
+		this::class.java.getResourceAsStream("/Hoshi ni Natte.wav")?.let {
+			RIFFInputStream(it).readAllParsed().forEach(logger::info)
 		}
 		Companion.logger.info("Hello world!")
 

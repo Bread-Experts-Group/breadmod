@@ -44,6 +44,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.joml.Vector3f
@@ -54,6 +55,7 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.math.round
 import kotlin.reflect.full.createInstance
 
+private val generalLogger: Logger = LogManager.getLogger("General Utilities")
 val Vector3fZero: Vector3f = Vector3f(0f, 0f, 0f)
 val Vector3fAxisX: Vector3f = Vector3f(1f, 0f, 0f)
 val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
@@ -439,7 +441,7 @@ fun CompoundTag.getBlockState(key: String): BlockState =
 
 fun CompoundTag.putEntity(key: String, value: Entity?): CompoundTag {
 	if (value == null) {
-		LogManager.getLogger().warn("provided entity is null...")
+		generalLogger.warn("provided entity is null...")
 		return CompoundTag()
 	}
 	this.put(key, CompoundTag().also { rootTag ->

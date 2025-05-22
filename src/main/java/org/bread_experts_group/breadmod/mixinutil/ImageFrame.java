@@ -13,11 +13,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /* https://stackoverflow.com/a/17269591/7693129 */
 public class ImageFrame {
@@ -271,7 +273,7 @@ public class ImageFrame {
 			final ImageFrame frame = frames.get(i);
 			final Pair<Integer, Integer> offsets = frameOffsets.get(i);
 
-			final byte[] data = General.mergeByteArrays(frameData.get(i));
+			final byte[] data = ImageFrame.mergeByteArrays(frameData.get(i));
 			General.compressedWriteToImage(frame.image, data);
 
 			final BufferedImage core = new BufferedImage(
@@ -285,12 +287,18 @@ public class ImageFrame {
 		return frames.toArray(new ImageFrame[0]);
 	}
 
+	static byte[] mergeByteArrays(final List<byte[]> byteArrayList) throws IOException {
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		for (final byte[] byteArray : byteArrayList) outputStream.write(byteArray);
+		return outputStream.toByteArray();
+	}
+
 	public int getWidth() {
-		return image.getWidth();
+		return this.image.getWidth();
 	}
 
 	public int getHeight() {
-		return image.getHeight();
+		return this.image.getHeight();
 	}
 
 	/* https://www.w3.org/TR/png-3/#fcTL-chunk */
@@ -306,9 +314,9 @@ public class ImageFrame {
 		}
 
 		static DisposeOperation fromValue(final int value) {
-			for (final DisposeOperation operation : values())
+			for (final DisposeOperation operation : DisposeOperation.values())
 				if (operation.value == value) return operation;
-			return DISPOSE_OP_NONE;
+			return DisposeOperation.DISPOSE_OP_NONE;
 		}
 	}
 }

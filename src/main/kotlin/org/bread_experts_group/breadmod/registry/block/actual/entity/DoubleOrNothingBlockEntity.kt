@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
@@ -23,6 +24,7 @@ class DoubleOrNothingBlockEntity(
 	pos: BlockPos,
 	state: BlockState
 ) : BlockEntity(ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(), pos, state) {
+	private val logger: Logger = LogManager.getLogger("Double Or Nothing Block Entity")
 	val random: RandomSource = RandomSource.create()
 	var counter: Int = 0
 	private val sounds: List<DeferredHolder<SoundEvent, SoundEvent>> = listOf(
@@ -120,7 +122,7 @@ class DoubleOrNothingBlockEntity(
 	fun cashout(level: Level, player: Player, pos: BlockPos) {
 		if (this.hasJackpot) return
 		if (this.counter == 0) return
-		LogManager.getLogger().info("cashout")
+		this.logger.info("cashout")
 		this.timeStarted = level.gameTime
 		if (level is ServerLevel) {
 			this.playSound(level, pos.above(), ModSounds.DOUBLE_CASHOUT)

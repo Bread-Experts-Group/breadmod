@@ -9,7 +9,7 @@ import net.neoforged.fml.ModList
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
-import org.bread_experts_group.breadmod.BreadMod
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
@@ -36,6 +36,7 @@ data class ToolGunData(
 	}
 
 	companion object {
+		val logger: Logger = LogManager.getLogger("Tool Gun Data")
 		val EMPTY: ToolGunData = ToolGunData(EmptyMode(), CompoundTag(), 0)
 		fun get(stack: ItemStack): ToolGunData {
 			check(stack.`is`(ModItems.TOOL_GUN.asItem())) { "Provided ItemStack is not ToolGunItem!" }
@@ -51,7 +52,7 @@ data class ToolGunData(
 					val mode = it.createInstance() as IToolGunMode
 					if (Registry.toolGunModes[mode.getUid()] == null) {
 						Registry.toolGunModes[mode.getUid()] = mode
-					} else BreadMod.logger.warn("Mode [${mode.getModeName()}] with id ${mode.getUid()} already exists, skipping.")
+					} else this.logger.warn("Mode [${mode.getModeName()}] with id ${mode.getUid()} already exists, skipping.")
 				}
 		}
 	}
@@ -84,7 +85,7 @@ data class ToolGunData(
 		if (data.contains(key)) {
 			data.putValue<T>(key, newValue)
 			this.syncToServer()
-		} else LogManager.getLogger().warn("$key does not exist, value will not be updated.")
+		} else Companion.logger.warn("$key does not exist, value will not be updated.")
 	}
 
 	/**

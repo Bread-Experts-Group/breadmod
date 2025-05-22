@@ -12,13 +12,13 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
 import org.bread_experts_group.breadmod.util.blocks
@@ -32,6 +32,8 @@ import org.bread_experts_group.breadmod.util.rayCast
 @ToolGunMode
 @Suppress("unused")
 class CreatorMode : AbstractToolGunMode() {
+	private val logger: Logger = LogManager.getLogger("Creator Mode")
+
 	companion object {
 		@DataGenerateLanguage("en_us", "Create/Edit blocks and entities.")
 		val description: MutableComponent = modTranslatable("tool_gun", "creator", "mode", "description")
@@ -50,16 +52,16 @@ class CreatorMode : AbstractToolGunMode() {
 	private var preparedEntityTag: CompoundTag = CompoundTag()
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
-		LogManager.getLogger().info("block: ${this.preparedBlock}")
-		LogManager.getLogger().info("entity: ${this.preparedEntityTag}")
+		this.logger.info("block: ${this.preparedBlock}")
+		this.logger.info("entity: ${this.preparedEntityTag}")
 		val block = player.rayCast(500.0, blocks()) ?: return
 		val entity = this.preparedEntityTag.createEntity(level) ?: return
 		entity.setPos(block.position.plus(0.0, 1.0, 0.0))
 		level.addFreshEntity(entity)
 	}
 
-	override fun getDisplayName(): Component = Companion.displayName
-	override fun getTooltip(): Component = Companion.tooltip
+	override fun getDisplayName(): Component = displayName
+	override fun getTooltip(): Component = tooltip
 	override fun getCustomRenderer(): IToolGunModeRenderer = CreatorRenderer(this.getUid())
 	override fun getUid(): ResourceLocation = this.toolGunLocation("creator_mode")
 
@@ -81,9 +83,9 @@ class CreatorMode : AbstractToolGunMode() {
 
 	class CreatorRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
 		override fun buildModeWidget(): Builder =
-			ModeWidget.Builder()
-				.name(Companion.name)
+			Builder()
+				.name(name)
 				.icon(Items.CRAFTING_TABLE)
-				.description(Companion.description)
+				.description(description)
 	}
 }

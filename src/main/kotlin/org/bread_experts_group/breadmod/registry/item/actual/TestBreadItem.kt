@@ -16,7 +16,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).rarity(Rarity.EPIC)) {
-	val logger: Logger = LogManager.getLogger()
+	val logger: Logger = LogManager.getLogger("Test Bread Item")
 	override fun appendHoverText(
 		stack: ItemStack,
 		context: TooltipContext,

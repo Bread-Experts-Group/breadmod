@@ -170,7 +170,7 @@ import kotlin.reflect.full.primaryConstructor
 
 object Registry {
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
-	val logger: Logger = LogManager.getLogger()
+	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
 	private val registerList: List<DeferredRegister<out Any>> = listOf(
 		ModItems.ITEM_REGISTRY,
 		ModBlocks.BLOCK_REGISTRY,

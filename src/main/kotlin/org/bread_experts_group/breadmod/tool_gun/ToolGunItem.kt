@@ -23,6 +23,7 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -46,6 +47,8 @@ class ToolGunItem : Item(
 		.component(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 		.rarity(Rarity.RARE)
 ), IRegisterSpecialCreativeTab, IMouseItem, IKeyboardItem {
+	private val logger: Logger = LogManager.getLogger("Tool Gun")
+
 	object ToolGunItemExtensions : IClientItemExtensions {
 		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer
 		override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose =
@@ -99,7 +102,7 @@ class ToolGunItem : Item(
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		val newData = ToolGunData.get(stack)
 		if (newData.extraData.isEmpty) {
-			LogManager.getLogger().info("Tool gun data is empty! Populating mode saved data...")
+			this.logger.info("Tool gun data is empty! Populating mode saved data...")
 			Registry.toolGunModes.forEach { (_, mode) ->
 				newData.extraData.put(mode.getModeName(), CompoundTag().also { mode.saveExtraData(it, level) })
 			}

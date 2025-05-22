@@ -35,7 +35,7 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 	companion object {
 		private val classes: MutableMap<Package, List<KClass<out Any>>> = mutableMapOf()
 		private val coreLoader: ClassLoader = ReentrantBlockableEventLoop::class.java.classLoader
-		val logger: Logger = LogManager.getLogger()
+		val logger: Logger = LogManager.getLogger("Library Scanner")
 
 		private fun safeGetFileSystem(uri: URI): FileSystem = try {
 			this.logger.info("Safe-getting file system from: $uri")

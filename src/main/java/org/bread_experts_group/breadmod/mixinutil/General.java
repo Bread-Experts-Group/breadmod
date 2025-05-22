@@ -10,21 +10,15 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.zip.InflaterInputStream;
 
-public class General {
-	public static final Logger logger = LogManager.getLogger();
+public enum General {
+	;
+	public static final Logger logger = LogManager.getLogger("Bread Mod Mixin Utilities");
 
-	public static byte[] mergeByteArrays(final List<byte[]> byteArrayList) throws IOException {
-		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		for (final byte[] byteArray : byteArrayList) outputStream.write(byteArray);
-		return outputStream.toByteArray();
-	}
-
-	public static void compressedWriteToImage(final BufferedImage img, final byte[] data) throws IOException {
-		final ByteArrayInputStream decompressedInputStream = getDecompressedInputStream(data);
-		final byte[] decompressed = decompressedInputStream.readAllBytes();
+	static void compressedWriteToImage(final BufferedImage img, final byte[] data) throws IOException {
+		final ByteArrayInputStream decomInputStream = General.getDecompressedInputStream(data);
+		final byte[] decompressed = decomInputStream.readAllBytes();
 
 		final WritableRaster raster = img.getRaster();
 		final byte[][] imgData = ((DataBufferByte) raster.getDataBuffer()).getBankData();
@@ -40,11 +34,11 @@ public class General {
 	private static @NotNull ByteArrayInputStream getDecompressedInputStream(final byte[] data) throws IOException {
 		final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
 		final InflaterInputStream inflaterInputStream = new InflaterInputStream(byteArrayInputStream);
-		final ByteArrayOutputStream decompressedOutputStream = new ByteArrayOutputStream();
+		final ByteArrayOutputStream decomInputStream = new ByteArrayOutputStream();
 		final byte[] buffer = new byte[1024];
 		int length;
 
-		while ((length = inflaterInputStream.read(buffer)) != -1) decompressedOutputStream.write(buffer, 0, length);
-		return new ByteArrayInputStream(decompressedOutputStream.toByteArray());
+		while ((length = inflaterInputStream.read(buffer)) != -1) decomInputStream.write(buffer, 0, length);
+		return new ByteArrayInputStream(decomInputStream.toByteArray());
 	}
 }

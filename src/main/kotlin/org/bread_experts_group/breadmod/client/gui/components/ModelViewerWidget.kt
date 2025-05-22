@@ -15,6 +15,7 @@ import net.minecraft.client.sounds.SoundManager
 import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.Blocks
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.flushAndFinishScissor
 import org.bread_experts_group.breadmod.client.render.getModel
@@ -120,6 +121,7 @@ class ModelViewerWidget(
 	}
 
 	inner class Dragger : AbstractWidget(this.x + 1, this.y + 1, 113, 80, Component.empty()) {
+		private val logger: Logger = LogManager.getLogger("Model Viewer Widget Dragger")
 		var xRot: Float = 0f
 		var yRot: Float = 0f
 		var scale: Float = 1f
@@ -189,7 +191,7 @@ class ModelViewerWidget(
 		}
 
 		override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-			LogManager.getLogger().info(button)
+			this.logger.info(button)
 			return super.mouseClicked(mouseX, mouseY, button)
 		}
 
