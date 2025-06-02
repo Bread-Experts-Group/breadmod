@@ -19,25 +19,25 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
-import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
+import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.entities
 import org.bread_experts_group.breadmod.util.getValue
 import org.bread_experts_group.breadmod.util.putValue
 import org.bread_experts_group.breadmod.util.rayCast
-import java.awt.Color
 
 @ToolGunMode
 @Suppress("unused")
-class RemoverMode : AbstractToolGunMode() {
+class RemoverMode : IToolGunMode {
 	companion object {
 		@DataGenerateLanguage("en_us", "Remover Mode")
 		val name: MutableComponent = modTranslatable("tool_gun", "remover", "mode", "name")
@@ -130,7 +130,7 @@ class RemoverMode : AbstractToolGunMode() {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("remover_mode")
-	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this.getUid())
+	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this)
 
 	override fun saveExtraData(tag: CompoundTag, level: Level) {
 		tag.putValue("targetAlt", this.targetEntities)
@@ -140,11 +140,13 @@ class RemoverMode : AbstractToolGunMode() {
 		this.targetEntities = tag.getValue("targetAlt")
 	}
 
-	class RemoverRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
+	class RemoverRenderer(private val mode: IToolGunMode) : IToolGunModeRenderer {
 		override fun buildModeWidget(): Builder = Builder()
 			.icon(Items.STRUCTURE_VOID)
 			.description(Companion.description)
 			.name(Companion.name)
+
+		override fun getMode(): IToolGunMode = this.mode
 
 		override fun renderScreenStage(
 			stack: ItemStack,
@@ -154,12 +156,11 @@ class RemoverMode : AbstractToolGunMode() {
 			packedLight: Int,
 			packedOverlay: Int,
 		) {
-			val (mode, _, _) = ToolGunData.get(stack)
-			if (mode !is RemoverMode) return
+			val mode = this.mode as RemoverMode
 			this.drawTextOnScreen(
 				"Targeting: ${if (mode.targetEntities) "Entity" else "Block"}",
-				Color.WHITE.rgb,
-				Color.BLACK.rgb,
+				Color.WHITE,
+				Color.BLACK,
 				false,
 				localClient.font,
 				poseStack,

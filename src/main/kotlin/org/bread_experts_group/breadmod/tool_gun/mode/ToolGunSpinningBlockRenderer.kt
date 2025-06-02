@@ -4,22 +4,25 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.Util
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
+import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderBlockModel
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 
 class ToolGunSpinningBlockRenderer(
-	id: ResourceLocation,
+	private val mode: IToolGunMode,
 	val block: Block,
 	builder: Builder
-) : AbstractToolGunModeRenderer(id) {
+) : IToolGunModeRenderer {
 	private val builder: Builder = builder.icon(this.block.asItem())
 	override fun buildModeWidget(): Builder = this.builder
+
+	override fun getMode(): IToolGunMode = this.mode
 
 	override fun render(
 		stack: ItemStack,

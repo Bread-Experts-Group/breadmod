@@ -12,6 +12,7 @@ import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.BlockHitResult
+import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.util.normalizeHitLoc
@@ -25,10 +26,11 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 			val vec31 = player.getViewVector(partialTick)
 			val vec32 = vec3.add(vec31.x * 10.0, vec31.y * 10.0, vec31.z * 10.0)
 			val clip = level.clip(ClipContext(vec3, vec32, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player))
-			logger.info(clip.location)
-			logger.info(clip.direction)
-			logger.info(clip.blockPos)
-			logger.info(level.getBlockState(clip.blockPos))
+//			logger.info(clip.location)
+//			logger.info(clip.direction)
+//			logger.info(clip.blockPos)
+//			logger.info(level.getBlockState(clip.blockPos))
+			logger.info("item handler id for ${clip.direction}: ${level.getCapability(Capabilities.ItemHandler.BLOCK, clip.blockPos, clip.direction).toString()}")
 		}
 		return super.use(level, player, usedHand)
 	}

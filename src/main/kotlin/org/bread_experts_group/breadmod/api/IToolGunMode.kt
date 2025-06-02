@@ -50,32 +50,32 @@ interface IToolGunMode {
 	/**
 	 * Fired when the tool gun's use function is called, fired before [action].
 	 */
-	fun actionPre(level: Level, player: Player, usedHand: InteractionHand)
+	fun actionPre(level: Level, player: Player, usedHand: InteractionHand) {}
 
 	/**
 	 * Fired when the tool gun's use function is called, fired after [action].
 	 */
-	fun actionPost(level: Level, player: Player, usedHand: InteractionHand)
+	fun actionPost(level: Level, player: Player, usedHand: InteractionHand) {}
 
 	/**
 	 * Event bridge for [MouseScrollingEvent], used for handling mouse scrolling while holding the tool gun.
 	 * Return true to cancel this event.
 	 */
-	fun mouseScrollAction(event: MouseScrollingEvent, stack: ItemStack, player: Player): Boolean
+	fun mouseScrollAction(event: MouseScrollingEvent, stack: ItemStack, player: Player): Boolean = false
 
 	/**
 	 * Event bridge for [MouseButton.Post], used for handling mouse button presses.
 	 * Fired after vanilla mouse button processing.
 	 * @see mouseButtonPreAction
 	 */
-	fun mouseButtonPostAction(event: MouseButton.Post, stack: ItemStack, player: Player)
+	fun mouseButtonPostAction(event: MouseButton.Post, stack: ItemStack, player: Player) {}
 
 	/**
 	 * Event bridge for [MouseButton.Pre], used for handling mouse button presses.
 	 * Fired before vanilla mouse button processing.
 	 * @see mouseButtonPostAction
 	 */
-	fun mouseButtonPreAction(event: MouseButton.Pre, stack: ItemStack, player: Player)
+	fun mouseButtonPreAction(event: MouseButton.Pre, stack: ItemStack, player: Player) {}
 
 	/**
 	 * Used for registering custom key inputs to this [IToolGunMode].
@@ -93,14 +93,21 @@ interface IToolGunMode {
 	fun keyMatchesInput(key: Int, event: Key): Boolean = event.key == key
 
 	/**
+	 * @return the id of this mode after the last slash as a string.
+	 *
+	 * * Used as a default impl for [getDisplayName] and the default mode widget name.
+	 */
+	fun unformattedName(): String = this.getUid().path.substringAfter("/")
+
+	/**
 	 * Used in the [ToolGunOverlay] and [ToolGunItemRenderer] for displaying this [IToolGunMode]'s name.
 	 */
-	fun getDisplayName(): Component
+	fun getDisplayName(): Component = Component.literal(this.unformattedName())
 
 	/**
 	 * Used in the [ToolGunOverlay] for displaying this [IToolGunMode]'s tooltip.
 	 */
-	fun getTooltip(): Component
+	fun getTooltip(): Component = Component.literal("Override getTooltip to change this text!")
 
 	/**
 	 * The unique ID of this [IToolGunMode].
@@ -130,7 +137,7 @@ interface IToolGunMode {
 	 *
 	 * Defaults to [EmptyMode]'s Renderer.
 	 */
-	fun getCustomRenderer(): IToolGunModeRenderer = EmptyMode.EmptyModeRenderer(this.getUid())
+	fun getCustomRenderer(): IToolGunModeRenderer = EmptyMode.EmptyModeRenderer(this)
 
 	/**
 	 * Convenience function for setting up tool gun ids.

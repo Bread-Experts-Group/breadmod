@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.entities
@@ -13,7 +14,7 @@ import org.bread_experts_group.breadmod.util.rayCast
 
 @ToolGunMode
 @Suppress("unused")
-class FlingMode : AbstractToolGunMode() {
+class FlingMode : IToolGunMode {
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		val target = player.rayCast(100.0, entities())
 		target?.let {

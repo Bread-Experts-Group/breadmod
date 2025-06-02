@@ -36,7 +36,7 @@ class ModeSelectTab(
 		this.updateModeWidgetSelection(index)
 	}
 
-	override fun init() {
+	override fun initContainer() {
 		val (_, _, index) = ToolGunData.get(this.stack)
 		this.currentModeWidget = ModeWidget.noWidget
 		Registry.toolGunModes.forEach { (_, mode) ->

@@ -10,6 +10,6 @@ abstract class ToolGunScreenTab(
 	val tabBarColor: Int,
 	screen: ToolGunScreen,
 	val stack: ItemStack
-) : ContainerWidget<ToolGunScreen>(0, 0, 243, 185, id, screen) {
+) : ContainerWidget<ToolGunScreen, ToolGunScreenTab>(0, 0, 243, 185, id, screen) {
 	abstract fun getTabButton(): TabButton
 }

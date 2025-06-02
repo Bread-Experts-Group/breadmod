@@ -116,7 +116,7 @@ object JadeDrawingCommon {
 		color: Int
 	) {
 		val i = font.width(text)
-		val j = (minY + maxY - 9) / 2 + 1
+		val j = (minY + maxY - font.lineHeight) / 2 + 1
 		val k = maxX - minX
 		if (i > k) {
 			val l = i - k

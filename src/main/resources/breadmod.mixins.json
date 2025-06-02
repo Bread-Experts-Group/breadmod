@@ -16,6 +16,7 @@
   "client": [
     "client.IAccessorDirectoryLister",
     "client.InvokerIVertexConsumerExtension",
+    "client.MixinAbstractWidget",
     "client.MixinClientLanguage",
     "client.MixinClientPacket",
     "client.MixinDirectoryListener",

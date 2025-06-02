@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
@@ -17,7 +18,7 @@ import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Build
 
 @ToolGunMode
 @Suppress("unused")
-class PowerMode : AbstractToolGunMode() {
+class PowerMode : IToolGunMode {
 	companion object {
 		@DataGenerateLanguage("en_us", "Power Mode")
 		val name: MutableComponent = modTranslatable("tool_gun", "power", "mode", "name")
@@ -75,7 +76,7 @@ class PowerMode : AbstractToolGunMode() {
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("power_mode")
 	override fun getCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
-		this.getUid(),
+		this,
 		ModBlocks.ENERGY_STORAGE.asBlock(),
 		Builder()
 			.previewImage(ModGuiElements.POWER_PREVIEW)

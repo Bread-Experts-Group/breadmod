@@ -13,8 +13,10 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.render.drawQuad
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
@@ -33,6 +35,9 @@ interface IToolGunModeRenderer {
 		const val SCREEN_TEXT_Y: Double = 0.4215
 		const val SCREEN_TEXT_Z: Double = 0.8317
 	}
+
+	val font: Font
+		get() = localClient.font
 
 	fun shouldRecoil(
 		stack: ItemStack,
@@ -160,7 +165,8 @@ interface IToolGunModeRenderer {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
-	)
+	) {
+	}
 
 	/**
 	 * Used to render text and/or icons positioned to the tool gun screen.
@@ -174,7 +180,8 @@ interface IToolGunModeRenderer {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
-	)
+	) {
+	}
 
 	/**
 	 * Used to render effects and/or models to the tool gun's coil.
@@ -190,7 +197,8 @@ interface IToolGunModeRenderer {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
-	)
+	) {
+	}
 
 	/**
 	 * Used to render effects and/or models to the tool gun's main body.
@@ -204,19 +212,39 @@ interface IToolGunModeRenderer {
 		buffer: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
-	)
+	) {
+	}
 
-	fun getModeWidget(): ModeWidget
+	/**
+	 * @return the [IToolGunMode] for this [IToolGunModeRenderer].
+	 */
+	fun getMode(): IToolGunMode
 
-	fun getScreenTexture(): ResourceLocation
+	/**
+	 * Override this to build a mode widget with its id already prefixed.
+	 */
+	fun buildModeWidget(): ModeWidget.Builder = ModeWidget.builder()
+		.name(this.getMode().getDisplayName())
+		.description("[Description here]")
 
-	fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean
+	/**
+	 * Gets the mode widget for this [IToolGunModeRenderer].
+	 *
+	 * * Override [buildModeWidget] to build a widget with the id already prefixed.
+	 */
+	fun getModeWidget(): ModeWidget = this.buildModeWidget().id(this.getMode().getUid()).build()
+
+	fun getScreenTexture(): ResourceLocation = ModGuiElements.SCREEN.location
+
+	fun shouldCoilSpin(stack: ItemStack, displayContext: ItemDisplayContext): Boolean = true
 
 	/**
 	 * Used for rendering additional elements onto the [ToolGunOverlay].
 	 */
 	fun renderOverlayAdditions(
 		guiGraphics: GuiGraphics,
+		originX: Int,
+		originY: Int,
 		deltaTracker: DeltaTracker,
 		stack: ItemStack,
 		data: ToolGunData

@@ -112,5 +112,7 @@ class ModeWidget(
 			Component.literal("???"),
 			ResourceLocation.fromNamespaceAndPath(BreadMod.ID, "missing")
 		)
+
+		fun builder(): Builder = ModeWidget.Builder()
 	}
 }

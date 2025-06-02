@@ -280,7 +280,7 @@ object Registry {
 				}
 				modBus.addListener { event: RegisterItemDecorationsEvent ->
 					event.register(ModItems.TOOL_GUN.asItem()) { guiGraphics, _, stack, xOffset, yOffset ->
-						val (mode, _, _) = ToolGunData.get(stack)
+						val mode = ToolGunData.get(stack).getMode()
 						val poseStack = guiGraphics.pose()
 						poseStack.pushPose()
 						poseStack.scaleFlat(0.4f)

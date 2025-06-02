@@ -59,7 +59,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 		x: Int,
 		y: Int
 	) {
-		val mode = data.mode
+		val mode = data.getMode()
 		poseStack.pushPose()
 		// Icon renders
 		INFO.blit(guiGraphics, x + 1, y + 33)
@@ -104,7 +104,7 @@ class ToolGunOverlay : LayeredDraw.Layer {
 			)
 			offset += 12
 		}
-		mode.getCustomRenderer().renderOverlayAdditions(guiGraphics, deltaTracker, stack, data)
+		mode.getCustomRenderer().renderOverlayAdditions(guiGraphics, x, y, deltaTracker, stack, data)
 		// KeyBinds
 //        mode?.keyBinds?.forEachIndexed { index, control ->
 //            val moved = ((index + 1) * 12) + 2

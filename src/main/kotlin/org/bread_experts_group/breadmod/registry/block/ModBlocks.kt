@@ -63,6 +63,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.storage.EnergyStor
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
+import org.bread_experts_group.breadmod.registry.item.actual.EnergyStorageItem
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlock
 import java.awt.Color
@@ -224,7 +225,7 @@ object ModBlocks {
 	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"energy_storage",
 		::EnergyStorageBlock,
-		Properties()
+		::EnergyStorageItem
 	)
 
 	@DataGenerateLootDropSelf

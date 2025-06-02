@@ -13,6 +13,7 @@ import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.Font.DisplayMode
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.LightTexture
@@ -47,6 +48,7 @@ import net.neoforged.neoforge.client.model.ExtraFaceData
 import net.neoforged.neoforge.client.model.data.ModelData
 import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.translateDirection
@@ -247,6 +249,21 @@ fun GuiGraphics.enablePositionedScissor(
 fun GuiGraphics.flushAndFinishScissor() {
 	this.flush()
 	this.disableScissor()
+}
+
+/**
+ * If your screen implements [ContainerWidget], use this method to redirect focus from the container to its children.
+ */
+fun Screen.redirectFocusFromContainerWidgets(mouseX: Double, mouseY: Double, button: Int): Boolean {
+	this.children().any { child ->
+		if (child.mouseClicked(mouseX, mouseY, button)) {
+			if (child !is ContainerWidget<*, *>) this.focused = child
+			if (button == 0) this.isDragging = true
+			return true
+		} else false
+	}
+
+	return false
 }
 
 /**

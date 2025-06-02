@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
@@ -19,7 +20,7 @@ import org.bread_experts_group.breadmod.util.rayCast
 
 @ToolGunMode
 @Suppress("unused")
-class ExplodeMode : AbstractToolGunMode() {
+class ExplodeMode : IToolGunMode {
 	companion object {
 		@DataGenerateLanguage("en_us", "Explode Mode")
 		val name: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "name")
@@ -47,7 +48,7 @@ class ExplodeMode : AbstractToolGunMode() {
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("explode_mode")
 	override fun getCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
-		this.getUid(),
+		this,
 		Blocks.TNT,
 		Builder()
 			.previewImage(ModGuiElements.EXPLODE_PREVIEW)

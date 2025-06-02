@@ -28,6 +28,7 @@ import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.Registry
@@ -58,7 +59,7 @@ class ToolGunItem : Item(
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		val stack = getStackInPlayerHand(player, usedHand)
 		if (stack.`is`(ModItems.TOOL_GUN)) {
-			val (mode, _, _) = ToolGunData.get(stack)
+			val mode = ToolGunData.get(stack).getMode()
 			mode.actionPre(level, player, usedHand)
 			mode.action(level, player, stack)
 			mode.actionPost(level, player, usedHand)
@@ -82,13 +83,17 @@ class ToolGunItem : Item(
 
 	companion object {
 		const val TOOL_GUN_DEF: String = "tool_gun"
+
+		@DataGenerateLanguage("en_us", "Tool Gun")
+		val TOOL_GUN_SCREEN_NAME: Component = Component.translatable(this.TOOL_GUN_DEF, "screen_name")
 	}
 
 	override fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {
-		val (mode, _, index) = ToolGunData.get(heldStack)
+		val data = ToolGunData.get(heldStack)
 		if (player.isCrouching) {
 			scrollingEvent.isCanceled = true
-			val currentIndex = Math.floorMod(index + scrollingEvent.scrollDeltaY.toInt(), Registry.toolGunModes.size)
+			val currentIndex =
+				Math.floorMod(data.modeIndex + scrollingEvent.scrollDeltaY.toInt(), Registry.toolGunModes.size)
 			PacketDistributor.sendToServer(
 				ToolGunModeChangePacket(
 					Registry.toolGunModes.keys.elementAt(currentIndex),
@@ -96,7 +101,7 @@ class ToolGunItem : Item(
 				)
 			)
 		}
-		if (mode.mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
+		if (data.getMode().mouseScrollAction(scrollingEvent, heldStack, player)) scrollingEvent.isCanceled = true
 	}
 
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
@@ -112,19 +117,19 @@ class ToolGunItem : Item(
 	}
 
 	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {
-		val (mode, _, _) = ToolGunData.get(heldStack)
+		val mode = ToolGunData.get(heldStack).getMode()
 		mode.mouseButtonPreAction(mouseEvent, heldStack, player)
 	}
 
 	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
-		val (mode, _, _) = ToolGunData.get(heldStack)
+		val mode = ToolGunData.get(heldStack).getMode()
 		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
 
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
 		val data = ToolGunData.get(heldStack)
-		if (data.mode.keyMatchesInput(openModeGui, keyEvent) && localClient.screen == null) {
-			localClient.setScreen(ToolGunScreen(Component.literal("Tool Gun: Mode Select"), heldStack))
+		if (data.getMode().keyMatchesInput(openModeGui, keyEvent) && localClient.screen == null) {
+			localClient.setScreen(ToolGunScreen(Companion.TOOL_GUN_SCREEN_NAME, heldStack))
 		} else {
 			(data.keyData[keyEvent.key] ?: return).second.invoke(keyEvent, heldStack, player, data)
 		}
@@ -136,7 +141,7 @@ class ToolGunItem : Item(
 		tooltipComponents: MutableList<Component>,
 		tooltipFlag: TooltipFlag
 	) {
-		val (mode, _, _) = ToolGunData.get(stack)
+		val mode = ToolGunData.get(stack).getMode()
 		tooltipComponents.addAll(
 			listOf(
 				Component.literal("Current Mode: ")

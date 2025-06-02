@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.client.gui.components.ScrollingContainer
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.RENDERER
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum.RENDERER
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import org.bread_experts_group.breadmod.tool_gun.mode.EmptyMode
 import org.bread_experts_group.breadmod.util.Color
@@ -31,7 +31,7 @@ class RendererEntry(
 ) {
 	private var index = 0
 
-	override fun init() {
+	override fun initContainer() {
 		this.addChild(
 			"model_viewer",
 			ModelViewerWidget(screen = this.screen) { modelViewer, poseStack, bufferSource ->

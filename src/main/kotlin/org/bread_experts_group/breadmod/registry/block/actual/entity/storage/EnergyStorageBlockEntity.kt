@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.storage.EnergyStorageBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
@@ -20,14 +21,6 @@ class EnergyStorageBlockEntity(
 	pos,
 	state
 ), EnergyBearingBlockEntity {
-	companion object {
-		fun energyToLevel(stored: Int): Int =
-			if (stored >= 1000000) 4
-			else if (stored > 750000) 3
-			else if (stored > 500000) 2
-			else if (stored > 250000) 1
-			else 0
-	}
 
 	override val energyHandler: ExpansibleEnergyHandler = ExpansibleEnergyHandler(
 		mutableListOf(
@@ -36,7 +29,7 @@ class EnergyStorageBlockEntity(
 	)
 
 	override fun commonTick(level: Level, pos: BlockPos, state: BlockState, entity: EnergyStorageBlockEntity) {
-		level.updateStorageLevel(state, pos, Companion.energyToLevel(this.energyHandler.energyStored))
+		level.updateStorageLevel(state, pos, EnergyStorageBlock.energyToLevel(this.energyHandler.energyStored))
 	}
 
 	override fun applyImplicitComponents(componentInput: DataComponentInput) {

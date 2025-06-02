@@ -1,11 +1,14 @@
 package org.bread_experts_group.breadmod.tool_gun.mode
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
@@ -14,24 +17,29 @@ import net.minecraft.world.level.block.state.BlockState
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
+import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.createEntity
 import org.bread_experts_group.breadmod.util.getBlockState
+import org.bread_experts_group.breadmod.util.getValue
 import org.bread_experts_group.breadmod.util.plus
 import org.bread_experts_group.breadmod.util.putBlockState
 import org.bread_experts_group.breadmod.util.putEntity
+import org.bread_experts_group.breadmod.util.putValue
 import org.bread_experts_group.breadmod.util.rayCast
 
 @ToolGunMode
 @Suppress("unused")
-class CreatorMode : AbstractToolGunMode() {
+class CreatorMode : IToolGunMode {
 	private val logger: Logger = LogManager.getLogger("Creator Mode")
 
 	companion object {
@@ -50,42 +58,79 @@ class CreatorMode : AbstractToolGunMode() {
 
 	private var preparedBlock: BlockState = Blocks.AIR.defaultBlockState()
 	private var preparedEntityTag: CompoundTag = CompoundTag()
+	private var placingEntity: Boolean = true
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		this.logger.info("block: ${this.preparedBlock}")
 		this.logger.info("entity: ${this.preparedEntityTag}")
 		val block = player.rayCast(500.0, blocks()) ?: return
-		val entity = this.preparedEntityTag.createEntity(level) ?: return
-		entity.setPos(block.position.plus(0.0, 1.0, 0.0))
-		level.addFreshEntity(entity)
+		if (this.placingEntity) {
+			val entity = this.preparedEntityTag.createEntity(level)
+			entity.setPos(block.position.plus(0.0, 1.0, 0.0))
+			level.addFreshEntity(entity)
+		} else {
+			level.setBlockAndUpdate(block.blockPosition.above(), this.preparedBlock)
+		}
 	}
 
-	override fun getDisplayName(): Component = displayName
-	override fun getTooltip(): Component = tooltip
-	override fun getCustomRenderer(): IToolGunModeRenderer = CreatorRenderer(this.getUid())
+	override fun getDisplayName(): Component = Companion.displayName
+	override fun getTooltip(): Component = Companion.tooltip
+	override fun getCustomRenderer(): IToolGunModeRenderer = CreatorRenderer(this)
 	override fun getUid(): ResourceLocation = this.toolGunLocation("creator_mode")
 
 	override fun registerKeys(into: MutableMap<Int, KeyData>) {
 		into[InputConstants.KEY_F] = KeyData(Component.literal("open screen")) { _, _, player, data ->
 			if (localClient.screen == null) localClient.setScreen(CreatorScreen(player.level(), data))
 		}
+		into[KeyMappings.toolGunAltOne.key.value] =
+			KeyData(Component.literal("change place mode")) { event, _, _, data ->
+				if (this.keyMatchesInput(KeyMappings.toolGunAltOne, event) && this.isKeyboardPress(event)) {
+					data.setValue("placing_entity", !this.placingEntity)
+				}
+			}
 	}
 
 	override fun saveExtraData(tag: CompoundTag, level: Level) {
 		tag.putBlockState("block", this.preparedBlock)
 		tag.putEntity("entity", this.preparedEntityTag.createEntity(level))
+		tag.putValue("placing_entity", this.placingEntity)
 	}
 
 	override fun loadExtraData(tag: CompoundTag, level: Level) {
 		this.preparedBlock = tag.getBlockState("block")
 		this.preparedEntityTag = tag.getCompound("entity")
+		this.placingEntity = tag.getValue("placing_entity")
 	}
 
-	class CreatorRenderer(id: ResourceLocation) : AbstractToolGunModeRenderer(id) {
+	class CreatorRenderer(private val mode: IToolGunMode) : IToolGunModeRenderer {
 		override fun buildModeWidget(): Builder =
 			Builder()
-				.name(name)
+				.name(Companion.name)
 				.icon(Items.CRAFTING_TABLE)
-				.description(description)
+				.description(Companion.description)
+
+		override fun renderScreenStage(
+			stack: ItemStack,
+			displayContext: ItemDisplayContext,
+			poseStack: PoseStack,
+			buffer: MultiBufferSource,
+			packedLight: Int,
+			packedOverlay: Int
+		) {
+			val mode = this.mode as CreatorMode
+			this.drawTextOnScreen(
+				"placing: ${if (mode.placingEntity) "Entity" else "Block"}",
+				Color.WHITE,
+				Color.BLACK,
+				false,
+				localClient.font,
+				poseStack,
+				buffer,
+				IToolGunModeRenderer.SCREEN_TEXT_X + 0.008,
+				IToolGunModeRenderer.SCREEN_TEXT_Y - 0.015
+			)
+		}
+
+		override fun getMode(): IToolGunMode = this.mode
 	}
 }

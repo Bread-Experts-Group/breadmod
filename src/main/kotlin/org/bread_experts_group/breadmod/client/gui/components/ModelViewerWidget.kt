@@ -43,7 +43,7 @@ class ModelViewerWidget(
 	y: Int = 0,
 	screen: Screen,
 	val model: (ModelViewerWidget, PoseStack, MultiBufferSource) -> Unit
-) : ContainerWidget<Screen>(x, y, 115, 140, "model_viewer", screen) {
+) : ContainerWidget<Screen, ModelViewerWidget>(x, y, 115, 140, "model_viewer", screen) {
 	companion object {
 		fun setupRender(
 			modelViewer: ModelViewerWidget,
@@ -91,7 +91,7 @@ class ModelViewerWidget(
 		}
 	}
 
-	override fun init() {
+	override fun initContainer() {
 		this.addChild("dragger", this.Dragger())
 		this.addChild(
 			"move_left",

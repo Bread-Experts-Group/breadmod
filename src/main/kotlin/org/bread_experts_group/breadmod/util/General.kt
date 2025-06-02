@@ -9,6 +9,7 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.core.Holder
 import net.minecraft.core.NonNullList
 import net.minecraft.core.Vec3i
 import net.minecraft.core.registries.BuiltInRegistries
@@ -26,7 +27,9 @@ import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.attributes.Attribute
 import net.minecraft.world.entity.ai.attributes.Attributes
+import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
@@ -35,6 +38,7 @@ import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
@@ -43,6 +47,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.neoforge.capabilities.BlockCapability
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
@@ -118,6 +123,22 @@ fun isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).ge
 inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 
+private val getCapMethod = Level::class.java.getMethod(
+	"getCapability",
+	BlockCapability::class.java,
+	BlockPos::class.java,
+	BlockState::class.java,
+	BlockEntity::class.java
+)
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Level.getCapability(
+	capability: BlockCapability<T, *>,
+	pos: BlockPos,
+	state: BlockState,
+	entity: BlockEntity
+): T? = getCapMethod.invoke(this, capability, pos, state, entity) as T?
+
 fun join(v1: VoxelShape, v2: VoxelShape): VoxelShape = Shapes.join(v1, v2, BooleanOp.OR)
 
 /// Start raycast functions ///
@@ -141,9 +162,10 @@ fun <T> rayCast(
 		val localPosition = position.add(direction.scale(distance))
 		val hit = selector(localPosition)
 		if (hit != null) {
+			val blockPos = BlockPos.containing(localPosition)
 			result = HitResult(
-				localPosition, BlockPos.containing(Vec3.atLowerCornerOf(localPosition.toVec3i())), length,
-				Direction.getNearest(position), direction, hit
+				localPosition, blockPos, length,
+				Direction.getNearest(normalizedHitPos(localPosition, blockPos)), direction, hit
 			)
 			break
 		}
@@ -440,33 +462,38 @@ fun CompoundTag.getBlockState(key: String): BlockState =
 		?: Blocks.AIR.defaultBlockState()
 
 fun CompoundTag.putEntity(key: String, value: Entity?): CompoundTag {
-	if (value == null) {
-		generalLogger.warn("provided entity is null...")
-		return CompoundTag()
-	}
+	if (value == null) return CompoundTag()
 	this.put(key, CompoundTag().also { rootTag ->
 		rootTag.putBoolean("isLivingEntity", value is LivingEntity)
 		rootTag.putString("type", value.type.toString())
 		if (value is LivingEntity) {
-			rootTag.putFloat("health", value.health)
 			rootTag.putDouble("maxHealth", value.maxHealth.toDouble())
+			rootTag.putFloat("health", value.health)
 		}
 	})
 	return this
 }
 
 @Suppress("ConvertLambdaToReference")
-fun CompoundTag.createEntity(level: Level): Entity? {
-	if (!this.contains("type")) return null
-	val typeString = this.getString("type")
-	val type =
-		BuiltInRegistries.ENTITY_TYPE.get(EntityType.byString(typeString).getOrNull()?.let { EntityType.getKey(it) })
-	val entity = type.create(level) ?: return null
+fun CompoundTag.createEntity(level: Level): Entity {
+	val default = Pig(EntityType.PIG, level)
+	if (!this.contains("type")) return default
+	val typeString = this.getString("type").substringAfterLast('.')
+	val type = BuiltInRegistries.ENTITY_TYPE.get(EntityType.byString(typeString).getOrNull()?.let {
+		EntityType.getKey(it)
+	})
+	val entity = if (this.getBoolean("isLivingEntity")) type.create(level) as LivingEntity
+	else type.create(level) ?: default
+
 	if (entity is LivingEntity) {
+		entity.setAttribute(Attributes.MAX_HEALTH, this.getDouble("maxHealth"))
 		entity.health = this.getFloat("health")
-		entity.getAttribute(Attributes.MAX_HEALTH)?.let { it.baseValue = this.getDouble("maxHealth") }
 	}
 	return entity
+}
+
+fun LivingEntity.setAttribute(attribute: Holder<Attribute>, value: Double) {
+	this.attributes.getInstance(attribute)?.let { it.baseValue = value }
 }
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!

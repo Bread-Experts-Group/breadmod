@@ -216,7 +216,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val (currentMode, _, _) = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
+		val currentMode = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY).getMode()
 		this.renderToolGun(
 			stack,
 			displayContext,

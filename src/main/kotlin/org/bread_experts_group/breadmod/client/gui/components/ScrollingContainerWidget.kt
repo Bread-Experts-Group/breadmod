@@ -22,17 +22,13 @@ class ScrollingContainerWidget<T : Screen>(
 	private val innerColor: Int,
 	private val outerColor: Int,
 	private val scrollRate: Double = 10.0,
-	private val initializer: (ScrollingContainerWidget<T>) -> Unit
-) : ContainerWidget<T>(x, y, width, height, id, screen) {
+	initializer: (ScrollingContainerWidget<T>) -> Unit
+) : ContainerWidget<T, ScrollingContainerWidget<T>>(x, y, width, height, id, screen, initializer) {
 	private val innerPadding: Int = 0
 	private var scrollAmount: Double = 0.0
 		set(value) {
 			field = Mth.clamp(value, 0.0, this.getMaxScrollAmount().toDouble())
 		}
-
-	override fun init() {
-		this.initializer.invoke(this)
-	}
 
 	override fun addChild(
 		id: String,

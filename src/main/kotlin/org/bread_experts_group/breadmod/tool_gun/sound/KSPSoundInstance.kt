@@ -16,10 +16,14 @@ class KSPSoundInstance : AbstractTickableSoundInstance(
 ) {
 	var shouldPlay: Boolean = false
 
+	init {
+		this.volume = 0.5f
+	}
+
 	override fun tick() {
 		if (this.shouldPlay) {
 			this.pitch = 1f
-			if (this.volume < 1f) this.volume += 0.1f
+			if (this.volume < 0.5f) this.volume += 0.1f
 		} else {
 			if (this.volume > 0f) {
 				this.volume -= 0.1f

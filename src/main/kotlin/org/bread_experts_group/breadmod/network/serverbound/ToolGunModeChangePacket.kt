@@ -11,10 +11,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
-import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
-import org.bread_experts_group.breadmod.tool_gun.mode.EmptyMode
 
 // todo look into using ItemStack#update for changing data instead of just replacing the whole thing
 class ToolGunModeChangePacket(private val id: ResourceLocation, private val index: Int) : CustomPacketPayload {
@@ -36,8 +34,7 @@ class ToolGunModeChangePacket(private val id: ResourceLocation, private val inde
 			if (stack.`is`(ModItems.TOOL_GUN)) {
 				val toolGunData = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY)
 				toolGunData.saveData(player.level())
-				val newMode = Registry.toolGunModes[data.id] ?: EmptyMode()
-				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(newMode, toolGunData.extraData, data.index))
+				stack.set(ModDataComponents.TOOL_GUN_DATA, ToolGunData(data.id, toolGunData.extraData, data.index))
 			}
 		}
 

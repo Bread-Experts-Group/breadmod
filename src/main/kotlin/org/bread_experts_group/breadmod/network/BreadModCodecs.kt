@@ -11,6 +11,7 @@ import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
@@ -21,7 +22,6 @@ import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
-import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import java.math.BigDecimal
@@ -39,13 +39,13 @@ object BreadModCodecs {
 	val TOOL_GUN_CODEC: Codec<ToolGunData> =
 		RecordCodecBuilder.create { instance ->
 			instance.group(
-				IToolGunMode.CODEC.fieldOf("mode").forGetter(ToolGunData::mode),
+				ResourceLocation.CODEC.fieldOf("id").forGetter(ToolGunData::id),
 				CompoundTag.CODEC.fieldOf("extra_data").forGetter(ToolGunData::extraData),
 				Codec.INT.fieldOf("index").forGetter(ToolGunData::modeIndex)
 			).apply(instance, ::ToolGunData)
 		}
 	val TOOL_GUN_STREAM_CODEC: StreamCodec<FriendlyByteBuf, ToolGunData> = StreamCodec.composite(
-		IToolGunMode.STREAM_CODEC, ToolGunData::mode,
+		ResourceLocation.STREAM_CODEC, ToolGunData::id,
 		ByteBufCodecs.TRUSTED_COMPOUND_TAG, ToolGunData::extraData,
 		ByteBufCodecs.VAR_INT, ToolGunData::modeIndex,
 		::ToolGunData

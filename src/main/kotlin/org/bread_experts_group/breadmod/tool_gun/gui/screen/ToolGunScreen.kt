@@ -6,11 +6,13 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
+import org.bread_experts_group.breadmod.client.render.redirectFocusFromContainerWidgets
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ModeSelectTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab
+import org.bread_experts_group.breadmod.util.Color
 
 class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(title) {
 	companion object {
@@ -31,6 +33,7 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		this.getTabs().forEach { if (Companion.activeTab == it) it.enable() else it.disable() }
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
+		guiGraphics.drawString(this.font, this.title, this.leftPos + 2, this.topPos + 8, Color.WHITE)
 		ModGuiElements.FRAME.blit(guiGraphics, this.leftPos, this.topPos)
 
 		Companion.activeTab?.let {
@@ -68,19 +71,11 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 		}
 	}
 
-	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-		this.children().any { child ->
-			if (child.mouseClicked(mouseX, mouseY, button)) {
-				if (child !is ContainerWidget<*>) this.focused = child
-				if (button == 0) this.isDragging = true
-				return true
-			} else false
-		}
+	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean =
+		this.redirectFocusFromContainerWidgets(mouseX, mouseY, button)
 
-		return false
-	}
-
-	override fun tick(): Unit = this.children().filterIsInstance<ContainerWidget<*>>().forEach(ContainerWidget<*>::tick)
+	override fun tick(): Unit =
+		this.children().filterIsInstance<ContainerWidget<*, *>>().forEach(ContainerWidget<*, *>::tick)
 
 	override fun rebuildWidgets() {
 		val tab = this.getTabs().first { it.id == "mode_select" } as? ModeSelectTab ?: return super.rebuildWidgets()

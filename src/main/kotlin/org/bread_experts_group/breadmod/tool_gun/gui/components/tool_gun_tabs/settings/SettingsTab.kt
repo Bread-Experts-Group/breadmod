@@ -8,7 +8,7 @@ import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnums.MAIN
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum.MAIN
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.MainEntry
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.RendererEntry
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.SettingsEntry
@@ -20,7 +20,7 @@ class SettingsTab(
 	stack: ItemStack
 ) : ToolGunScreenTab("settings", Color.color(b = 180), screen, stack) {
 	companion object {
-		var currentSettingsEntry: SettingsEntryEnums = MAIN
+		var currentSettingsEntry: org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum = MAIN
 	}
 
 	override fun getTabButton(): TabButton =
@@ -31,7 +31,7 @@ class SettingsTab(
 			this
 		)
 
-	override fun init() {
+	override fun initContainer() {
 		Companion.currentSettingsEntry = MAIN
 		this.addSettingsEntry(RendererEntry(this.screen, this.stack))
 		this.addSettingsEntry(MainEntry(this.screen, this.stack))

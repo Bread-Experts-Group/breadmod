@@ -13,19 +13,21 @@ import org.bread_experts_group.breadmod.util.Color
 import java.util.function.Consumer
 
 /**
- * Container for holding "sub" or "child" widgets.
+ * Container for holding "child" widgets.
  *
  * All actions of this [ContainerWidget] are delegated to its children.
- *
- * Interactions with this [ContainerWidget] itself are not possible.
  */
-open class ContainerWidget<T : Screen>(
+open class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
 	x: Int,
 	y: Int,
 	width: Int,
 	height: Int,
 	val id: String,
-	val screen: T
+	val screen: T,
+	/**
+	 * Convenience parameter for setting up a basic [ContainerWidget] with children without having to extend this class.
+	 */
+	private val initializer: (C) -> Unit = {}
 ) : AbstractWidget(x, y, width, height, Component.literal(id)) {
 	var debug: Boolean = false
 	private val subWidgets: MutableMap<String, AbstractWidget> = mutableMapOf()
@@ -40,19 +42,19 @@ open class ContainerWidget<T : Screen>(
 	/**
 	 * Gets every nested [ContainerWidget] in this [ContainerWidget].
 	 */
-	fun getContainerWidgets(): List<ContainerWidget<*>> =
-		this.getWidgets().filterIsInstance<ContainerWidget<*>>()
+	fun getContainerWidgets(): List<ContainerWidget<T, C>> =
+		this.getWidgets().filterIsInstance<ContainerWidget<T, C>>()
 
 	/**
 	 * Gets every widget from this [ContainerWidget], including widgets from nested [ContainerWidget]s.
 	 */
 	fun getAllWidgets(): List<AbstractWidget> = buildList {
-		val thisContainerWidgets = this@ContainerWidget.getWidgets().filterNot { it is ContainerWidget<*> }
+		val thisContainerWidgets = this@ContainerWidget.getWidgets().filterNot { it is ContainerWidget<*, *> }
 		this.addAll(thisContainerWidgets)
 		this@ContainerWidget.getContainerWidgets().forEach { this.addAll(it.getWidgets()) }
 	}
 
-	private fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<*>::tick)
+	private fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<T, C>::tick)
 
 	protected open fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {}
 	protected open fun renderContainerAfterWidgets(
@@ -109,6 +111,11 @@ open class ContainerWidget<T : Screen>(
 		this.visible = true
 	}
 
+	fun setState(state: Boolean) {
+		this.active = state
+		this.visible = state
+	}
+
 	fun tick() {
 		this.setChildrenVisibility()
 		if (this.getContainerWidgets().isNotEmpty() && this.active && this.visible) this.tickContainerWidgets()
@@ -128,38 +135,38 @@ open class ContainerWidget<T : Screen>(
 	}
 
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-		if (!this.active) return false
+		if (!this.visible || !this.active) return false
 		return this.getAllWidgets().any { widget ->
 			(widget.isHoveredOrFocused && widget.mouseClicked(mouseX, mouseY, button)).also {
-				if (it) this.setFocused(widget)
+				this.setFocused(if (it) widget else this)
 			}
 		}
 	}
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-		if (!this.active) return false
+		if (!this.visible || !this.active) return false
 		return this.getAllWidgets().any { it.keyPressed(keyCode, scanCode, modifiers) }
 	}
 
 	override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-		if (!this.active) return false
+		if (!this.visible || !this.active) return false
 		return this.getAllWidgets().any { it.keyReleased(keyCode, scanCode, modifiers) }
 	}
 
 	override fun visitWidgets(consumer: Consumer<AbstractWidget>): Unit = this.getAllWidgets().forEach(consumer)
 
 	override fun mouseReleased(mouseX: Double, mouseY: Double, button: Int): Boolean {
-		if (!this.active) return false
+		if (!this.visible || !this.active) return false
 		return this.getAllWidgets().any { it.mouseReleased(mouseX, mouseY, button) }
 	}
 
 	override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, dragX: Double, dragY: Double): Boolean {
-		if (!this.active) return false
+		if (!this.visible || !this.active) return false
 		return this.getAllWidgets().any { it.mouseDragged(mouseX, mouseY, button, dragX, dragY) }
 	}
 
 	override fun mouseMoved(mouseX: Double, mouseY: Double) {
-		if (!this.active) return
+		if (!this.visible || !this.active) return
 		this.getAllWidgets().any { widget ->
 			widget.isHoveredOrFocused.also { if (it) widget.mouseMoved(mouseX, mouseY) }
 		}
@@ -197,7 +204,7 @@ open class ContainerWidget<T : Screen>(
 		widget.visible = shouldRender
 		widget.active = isActive
 		if (x != 0 || y != 0) widget.setPosition(x, y)
-		if (widget is ContainerWidget<*>) widget.init()
+		if (widget is ContainerWidget<*, *>) widget.init()
 		this.subWidgets[id] = widget
 	}
 
@@ -213,9 +220,20 @@ open class ContainerWidget<T : Screen>(
 	fun getChild(id: String): AbstractWidget? = this.subWidgets[id]
 
 	/**
+	 * Removes all child widgets from this [ContainerWidget].
+	 */
+	fun clearChildren(): Unit = this.subWidgets.clear()
+
+	/**
 	 * Initializes this [ContainerWidget].
 	 *
 	 * * override this method to add child widgets.
 	 */
-	open fun init() {}
+	protected open fun initContainer() {}
+
+	fun init() {
+		@Suppress("UNCHECKED_CAST")
+		this.initializer.invoke(this as C)
+		this.initContainer()
+	}
 }

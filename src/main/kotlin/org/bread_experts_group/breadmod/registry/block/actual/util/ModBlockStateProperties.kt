@@ -15,8 +15,8 @@ object ModBlockStateProperties {
 		private val flippedMiddleDirection: Direction?
 	) : StringRepresentable {
 		LOWER(Direction.UP, null),
-		UPPER(Direction.DOWN, null),
-		MIDDLE(Direction.UP, Direction.DOWN);
+		MIDDLE(Direction.UP, Direction.DOWN),
+		UPPER(Direction.DOWN, null);
 
 		fun getDirectionToOther(flipMiddle: Boolean = false): Direction =
 			if (flipMiddle && this == MIDDLE) this.flippedMiddleDirection ?: Direction.DOWN else this.directionToOther
