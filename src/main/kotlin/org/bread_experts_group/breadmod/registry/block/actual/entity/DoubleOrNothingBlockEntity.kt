@@ -18,8 +18,6 @@ import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacke
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
-// todo an idea.. what if i used an AbstractTickableSoundInstance to preserve the stereo quality of the sounds,
-//  while also attenuating the audio when you get further from the machine?
 class DoubleOrNothingBlockEntity(
 	pos: BlockPos,
 	state: BlockState

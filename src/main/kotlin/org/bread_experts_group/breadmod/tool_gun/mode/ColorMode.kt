@@ -43,7 +43,7 @@ class ColorMode : IToolGunMode {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip.withStyle(ChatFormatting.UNDERLINE)
 	override fun getUid(): ResourceLocation = this.toolGunLocation("color_mode")
-	override fun getCustomRenderer(): IToolGunModeRenderer = ColorRenderer(this)
+	override fun defineCustomRenderer(): IToolGunModeRenderer = ColorRenderer(this)
 
 	class ColorRenderer(private val mode: IToolGunMode) : IToolGunModeRenderer {
 		override fun buildModeWidget(): Builder =

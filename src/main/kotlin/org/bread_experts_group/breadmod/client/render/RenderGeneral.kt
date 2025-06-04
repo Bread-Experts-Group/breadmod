@@ -524,7 +524,7 @@ private const val TRANSLATE_OFFSET: Double = 0.0001
  *
  * @see translateDirection
  */
-// todo check to make sure the rotated PoseStack aligns and rotates properly.
+// todo check to make sure the rotated PoseStack aligns and rotates properly. horizontal directions are fine but UP and DOWN is iffy...
 fun PoseStack.translateOnBlockSide(
 	blockState: BlockState,
 	direction: Direction? = null,

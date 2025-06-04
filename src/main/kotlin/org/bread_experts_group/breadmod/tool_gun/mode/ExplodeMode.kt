@@ -47,7 +47,7 @@ class ExplodeMode : IToolGunMode {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("explode_mode")
-	override fun getCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
+	override fun defineCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
 		this,
 		Blocks.TNT,
 		Builder()

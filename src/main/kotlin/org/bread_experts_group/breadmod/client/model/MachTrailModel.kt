@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 
-// todo completely rewrite with better model getting
+// todo look into rewriting with gathering all the models on the player entity and actually setting their anim pose properly.
 class MachTrailModel(
 	val player: Player,
 	private val playerInfo: PlayerInfo,

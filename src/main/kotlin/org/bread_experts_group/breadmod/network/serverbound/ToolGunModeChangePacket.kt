@@ -14,7 +14,6 @@ import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
 
-// todo look into using ItemStack#update for changing data instead of just replacing the whole thing
 class ToolGunModeChangePacket(private val id: ResourceLocation, private val index: Int) : CustomPacketPayload {
 	companion object {
 		val TYPE: CustomPacketPayload.Type<ToolGunModeChangePacket> =

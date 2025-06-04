@@ -47,7 +47,7 @@ object MachTrailBufferTask {
 				).rgb
 				val poseStack = event.poseStack
 				val camera = event.camera
-				val partialTick = event.partialTick.realtimeDeltaTicks
+				val partialTick = event.partialTick.gameTimeDeltaTicks
 
 				if (currentOpacity > 0) {
 					poseStack.pushPose()

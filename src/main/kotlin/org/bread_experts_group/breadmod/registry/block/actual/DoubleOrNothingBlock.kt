@@ -58,7 +58,6 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		val TRIPLE_HALF: EnumProperty<TripleBlockHalf> = ModBlockStateProperties.TRIPLE_BLOCK_HALF
 		val FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
 
-		// todo the rest of the VoxelShapes
 		// shapes lower
 		val SHAPE_LOWER_NORTH: VoxelShape = Stream.of(
 			box(1.0, 7.0, 9.0, 15.0, 16.0, 16.0),

@@ -18,7 +18,7 @@ object EmptyMode : IToolGunMode {
 
 	override fun getDisplayName(): Component = Component.literal("???")
 	override fun getUid(): ResourceLocation = this.toolGunLocation("empty_mode")
-	override fun getCustomRenderer(): IToolGunModeRenderer = EmptyModeRenderer(this)
+	override fun defineCustomRenderer(): IToolGunModeRenderer = EmptyModeRenderer(this)
 
 	@DataGenerateLanguage("en_us", "If you see this mode then something probably went wrong!")
 	override fun getTooltip(): Component = modTranslatable("tool_gun", "empty", "mode", "tooltip")

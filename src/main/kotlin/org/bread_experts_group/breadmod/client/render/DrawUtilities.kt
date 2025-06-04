@@ -13,7 +13,6 @@ import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.joml.Vector3f
 import java.awt.Color
 
-// todo vertex coords need to be redone and renamed on drawTexturedQuad and drawQuad
 /**
  * Draws a quad with a provided [textureLocation].
  *

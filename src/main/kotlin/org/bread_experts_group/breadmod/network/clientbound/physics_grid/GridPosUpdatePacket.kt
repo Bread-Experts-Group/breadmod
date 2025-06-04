@@ -12,7 +12,6 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 
-// todo codecs for vec3?
 class GridPosUpdatePacket(
 	private val newPos: Vec3,
 	private val id: Int

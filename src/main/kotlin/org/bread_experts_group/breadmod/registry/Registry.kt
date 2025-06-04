@@ -56,6 +56,7 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modModelLoc
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.client.gui.overlays.CameraOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.InternetChatRelayOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
@@ -170,6 +171,7 @@ import kotlin.reflect.full.primaryConstructor
 
 object Registry {
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
+	val toolGunRenderers: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
 	private val registerList: List<DeferredRegister<out Any>> = listOf(
 		ModItems.ITEM_REGISTRY,

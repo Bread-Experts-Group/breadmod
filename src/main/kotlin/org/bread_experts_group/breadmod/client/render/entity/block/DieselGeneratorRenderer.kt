@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DieselGeneratorBlockEntity
 import org.bread_experts_group.breadmod.util.toYRotFixed
 
-// todo the rest of the models
+// todo the rest of the models (upgrades, door)
 class DieselGeneratorRenderer(context: Context) : BreadModBER<DieselGeneratorBlockEntity>(context) {
 	private val doorModel: BakedModel = this.modelManager.getModel("block/diesel_generator/diesel_generator_door")
 

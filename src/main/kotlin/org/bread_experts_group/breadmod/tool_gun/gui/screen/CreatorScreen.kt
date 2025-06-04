@@ -1,36 +1,96 @@
 package org.bread_experts_group.breadmod.tool_gun.gui.screen
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.renderer.LightTexture
+import net.minecraft.client.renderer.texture.OverlayTexture
+import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
+import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.animal.Cow
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.client.gui.screens.HoldScreen
+import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
+import org.bread_experts_group.breadmod.client.render.enablePositionedScissor
+import org.bread_experts_group.breadmod.client.render.flushAndFinishScissor
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.redirectFocusFromContainerWidgets
+import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.BlockTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.EntityTab
 import org.bread_experts_group.breadmod.tool_gun.sound.KSPSoundInstance
 import org.bread_experts_group.breadmod.util.Color
 
-// todo IDK REVAMP OR SOMETHING
 class CreatorScreen(
 	private val level: Level,
 	val data: ToolGunData
 ) : HoldScreen(Component.empty(), InputConstants.KEY_F) {
 	companion object {
 		val bgSound: KSPSoundInstance = KSPSoundInstance()
+
+		fun renderBlockPreview(
+			state: BlockState,
+			blockEntity: BlockEntity?,
+			guiGraphics: GuiGraphics,
+			random: RandomSource,
+			x: Int,
+			y: Int,
+			rotation: Float = 0f,
+			partialTick: Float = 0f
+		) {
+			val model = localClient.blockRenderer.getBlockModel(state)
+			val level = localClient.level ?: return
+			val poseStack = guiGraphics.pose()
+			val modelData = model.getModelData(level, BlockPos.ZERO, state, ModelData.EMPTY)
+			guiGraphics.borderedFillPositioned(x, y, 100, 100, Color.GRAY, Color.BLACK)
+			guiGraphics.enablePositionedScissor(x + 1, y + 1, 98, 98)
+			Lighting.setupForFlatItems()
+			poseStack.pushPose()
+			poseStack.translate(x + 50, y + 50, 200)
+			poseStack.mulPose(Axis.XN.rotationDegrees(10f))
+			poseStack.mulPose(Axis.YN.rotationDegrees(rotation))
+			poseStack.scaleFlat(-64f)
+			poseStack.translate(-0.5, -0.5, -0.5)
+			model.getRenderTypes(state, random, modelData).forEach { renderType ->
+				localClient.blockRenderer.renderSingleBlock(
+					state,
+					poseStack,
+					guiGraphics.bufferSource(),
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY,
+					modelData,
+					renderType
+				)
+			}
+			blockEntity?.let {
+				val renderer = localClient.blockEntityRenderDispatcher.getRenderer(it) ?: return@let
+				renderer.render(
+					it,
+					partialTick,
+					poseStack,
+					guiGraphics.bufferSource(),
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY
+				)
+			}
+			poseStack.popPose()
+			guiGraphics.flushAndFinishScissor()
+		}
 	}
 
-	var lastTick: Int = 0
 	var leftPos: Int = 0
 	var topPos: Int = 0
 	var currentBlock: BlockState = Blocks.GRASS_BLOCK.defaultBlockState()

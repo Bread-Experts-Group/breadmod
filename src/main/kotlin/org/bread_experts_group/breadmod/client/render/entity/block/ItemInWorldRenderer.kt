@@ -19,7 +19,6 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import kotlin.jvm.optionals.getOrNull
 
-// todo render BEWLRs in items/blockitems if they exist
 class ItemInWorldRenderer(context: Context) : BreadModBER<ItemInWorldBlockEntity>(context) {
 	override fun render(
 		blockEntity: ItemInWorldBlockEntity,

@@ -52,6 +52,10 @@ class GuiElement(
 		return this
 	}
 
+	/**
+	 * Retrieves the actual location of this [GuiElement] if this element is a sprite,
+	 * otherwise returns the normal location if this element isn't a sprite.
+	 */
 	fun actualLocation(withExtension: Boolean = false): ResourceLocation =
 		if (this.isSprite) this.location.withPrefix("textures/gui/sprites/")
 			.withSuffix(if (withExtension) ".png" else "")

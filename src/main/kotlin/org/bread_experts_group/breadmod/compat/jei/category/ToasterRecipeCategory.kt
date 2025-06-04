@@ -24,7 +24,6 @@ import org.bread_experts_group.breadmod.compat.jei.getCachedArrow
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 
-// todo replace drawing with GuiElements
 class ToasterRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<ToasterRecipe> {
 	private val cachedArrows: LoadingCache<Int, IDrawableAnimated> = createCachedArrow(
 		this.guiHelper,

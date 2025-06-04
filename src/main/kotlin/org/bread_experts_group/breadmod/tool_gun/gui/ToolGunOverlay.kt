@@ -104,7 +104,10 @@ class ToolGunOverlay : LayeredDraw.Layer {
 			)
 			offset += 12
 		}
+		poseStack.popPose()
+		poseStack.pushPose()
 		mode.getCustomRenderer().renderOverlayAdditions(guiGraphics, x, y, deltaTracker, stack, data)
+		poseStack.popPose()
 		// KeyBinds
 //        mode?.keyBinds?.forEachIndexed { index, control ->
 //            val moved = ((index + 1) * 12) + 2
@@ -132,6 +135,5 @@ class ToolGunOverlay : LayeredDraw.Layer {
 //                }
 //            }
 //        }
-		poseStack.popPose()
 	}
 }

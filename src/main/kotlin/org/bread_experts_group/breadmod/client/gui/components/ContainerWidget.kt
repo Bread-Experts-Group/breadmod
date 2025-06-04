@@ -17,16 +17,14 @@ import java.util.function.Consumer
  *
  * All actions of this [ContainerWidget] are delegated to its children.
  */
-open class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
+abstract class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
 	x: Int,
 	y: Int,
 	width: Int,
 	height: Int,
 	val id: String,
 	val screen: T,
-	/**
-	 * Convenience parameter for setting up a basic [ContainerWidget] with children without having to extend this class.
-	 */
+	// todo probably remove this
 	private val initializer: (C) -> Unit = {}
 ) : AbstractWidget(x, y, width, height, Component.literal(id)) {
 	var debug: Boolean = false
@@ -81,7 +79,7 @@ open class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
 			"DEBUG MODE ENABLED",
 			this@ContainerWidget.x,
 			this@ContainerWidget.y,
-			Color.GREEN
+			Color.RED
 		)
 
 	protected fun GuiGraphics.renderDebugFill(): Unit =
@@ -217,7 +215,13 @@ open class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
 	/**
 	 * Gets a child widget with a provided [id].
 	 */
-	fun getChild(id: String): AbstractWidget? = this.subWidgets[id]
+	fun getChild(id: String): AbstractWidget =
+		this.subWidgets[id] ?: throw NullPointerException("child widget entry is missing.")
+
+	/**
+	 * @return null if the child doesn't exist.
+	 */
+	fun getNullableChild(id: String): AbstractWidget? = this.subWidgets[id]
 
 	/**
 	 * Removes all child widgets from this [ContainerWidget].

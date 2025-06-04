@@ -35,7 +35,7 @@ class RayCastTestMode : IToolGunMode {
 
 	override fun getUid(): ResourceLocation = this.toolGunLocation("raycast_test")
 
-	override fun getCustomRenderer(): IToolGunModeRenderer = Renderer(this)
+	override fun defineCustomRenderer(): IToolGunModeRenderer = Renderer(this)
 
 	class Renderer(private val mode: RayCastTestMode) : IToolGunModeRenderer {
 		override fun getMode(): IToolGunMode = this.mode
@@ -77,6 +77,14 @@ class RayCastTestMode : IToolGunMode {
 				"hit direction: ${this.mode.direction}",
 				originX + 2,
 				originY + 110,
+				Color.WHITE,
+				true
+			)
+			guiGraphics.drawString(
+				this.font,
+				"local direction: ${(localClient.player ?: return).nearestViewDirection}",
+				originX + 2,
+				originY + 120,
 				Color.WHITE,
 				true
 			)

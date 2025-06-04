@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.util.Color
 import kotlin.math.floor
 import kotlin.math.max
 
-// todo actually make widget positioning function with scrolling
+// todo some edge cases occur that doesn't allow the widget to scroll (tool gun screen, mode tab for example)
 class ScrollingContainerWidget<T : Screen>(
 	x: Int,
 	y: Int,

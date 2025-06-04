@@ -2,11 +2,14 @@ package org.bread_experts_group.breadmod.tool_gun.mode
 
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.DeltaTracker
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -22,6 +25,7 @@ import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
@@ -75,7 +79,7 @@ class CreatorMode : IToolGunMode {
 
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
-	override fun getCustomRenderer(): IToolGunModeRenderer = CreatorRenderer(this)
+	override fun defineCustomRenderer(): IToolGunModeRenderer = CreatorRenderer(this)
 	override fun getUid(): ResourceLocation = this.toolGunLocation("creator_mode")
 
 	override fun registerKeys(into: MutableMap<Int, KeyData>) {
@@ -102,7 +106,7 @@ class CreatorMode : IToolGunMode {
 		this.placingEntity = tag.getValue("placing_entity")
 	}
 
-	class CreatorRenderer(private val mode: IToolGunMode) : IToolGunModeRenderer {
+	class CreatorRenderer(private val mode: CreatorMode) : IToolGunModeRenderer {
 		override fun buildModeWidget(): Builder =
 			Builder()
 				.name(Companion.name)
@@ -117,9 +121,8 @@ class CreatorMode : IToolGunMode {
 			packedLight: Int,
 			packedOverlay: Int
 		) {
-			val mode = this.mode as CreatorMode
 			this.drawTextOnScreen(
-				"placing: ${if (mode.placingEntity) "Entity" else "Block"}",
+				"placing: ${if (this.mode.placingEntity) "Entity" else "Block"}",
 				Color.WHITE,
 				Color.BLACK,
 				false,
@@ -128,6 +131,29 @@ class CreatorMode : IToolGunMode {
 				buffer,
 				IToolGunModeRenderer.SCREEN_TEXT_X + 0.008,
 				IToolGunModeRenderer.SCREEN_TEXT_Y - 0.015
+			)
+		}
+
+		private val random: RandomSource = RandomSource.create()
+		private var rotation: Float = 0f
+		override fun renderOverlayAdditions(
+			guiGraphics: GuiGraphics,
+			originX: Int,
+			originY: Int,
+			deltaTracker: DeltaTracker,
+			stack: ItemStack,
+			data: ToolGunData
+		) {
+			this.rotation += 1f * deltaTracker.gameTimeDeltaTicks
+			CreatorScreen.renderBlockPreview(
+				this.mode.preparedBlock,
+				null,
+				guiGraphics,
+				this.random,
+				guiGraphics.guiWidth() - 104,
+				originY,
+				this.rotation,
+				deltaTracker.gameTimeDeltaTicks
 			)
 		}
 

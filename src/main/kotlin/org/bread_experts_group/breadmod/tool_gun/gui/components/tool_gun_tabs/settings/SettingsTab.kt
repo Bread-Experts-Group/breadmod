@@ -45,11 +45,11 @@ class SettingsTab(
 			)
 			entryPos += 12
 		}
-		(this.getChild("setting_entry_main_button") ?: return).setPosition(this.x + 5, this.y + 5)
+		this.getChild("setting_entry_main_button").setPosition(this.x + 5, this.y + 5)
 	}
 
 	override fun tickAdditional() {
-		(this.getChild("setting_entry_main_button") ?: return).let {
+		this.getChild("setting_entry_main_button").let {
 			it.active = Companion.currentSettingsEntry != MAIN
 			it.visible = Companion.currentSettingsEntry != MAIN
 		}

@@ -28,7 +28,6 @@ import org.bread_experts_group.breadmod.compat.jei.getCachedArrow
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 
-// todo finish this
 class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<DoughMachineRecipe> {
 	private val cachedArrows: LoadingCache<Int, IDrawableAnimated> = createCachedArrow(
 		this.guiHelper,

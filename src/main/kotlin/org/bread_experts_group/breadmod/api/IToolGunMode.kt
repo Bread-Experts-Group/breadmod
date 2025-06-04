@@ -18,6 +18,7 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
+import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.tool_gun.mode.EmptyMode
@@ -136,8 +137,16 @@ interface IToolGunMode {
 	 * Returns the custom renderer for this [IToolGunMode].
 	 *
 	 * Defaults to [EmptyMode]'s Renderer.
+	 *
+	 * * This shouldn't be overridden.
 	 */
-	fun getCustomRenderer(): IToolGunModeRenderer = EmptyMode.EmptyModeRenderer(this)
+	fun getCustomRenderer(): IToolGunModeRenderer =
+		Registry.toolGunRenderers.getOrPut(this.getUid(), this::defineCustomRenderer)
+
+	/**
+	 * Defines the custom renderer for this [IToolGunMode].
+	 */
+	fun defineCustomRenderer(): IToolGunModeRenderer = EmptyMode.EmptyModeRenderer(this)
 
 	/**
 	 * Convenience function for setting up tool gun ids.

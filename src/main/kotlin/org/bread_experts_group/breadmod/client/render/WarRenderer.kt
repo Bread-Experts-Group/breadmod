@@ -57,14 +57,14 @@ object WarRenderer {
 				FogRenderer.FogMode.FOG_SKY,
 				256f,
 				true,
-				event.partialTick.realtimeDeltaTicks
+				event.partialTick.gameTimeDeltaTicks
 			)
 			FogRenderer.setupFog(
 				event.camera,
 				FogRenderer.FogMode.FOG_TERRAIN,
 				max(256f, 32f),
 				true,
-				event.partialTick.realtimeDeltaTicks
+				event.partialTick.gameTimeDeltaTicks
 			)
 
 			redness = clamp((sin(millis.toFloat() / 1800) + 1) / 2, 0f, 1f)

@@ -130,7 +130,7 @@ class RemoverMode : IToolGunMode {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("remover_mode")
-	override fun getCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this)
+	override fun defineCustomRenderer(): IToolGunModeRenderer = RemoverRenderer(this)
 
 	override fun saveExtraData(tag: CompoundTag, level: Level) {
 		tag.putValue("targetAlt", this.targetEntities)
@@ -140,7 +140,7 @@ class RemoverMode : IToolGunMode {
 		this.targetEntities = tag.getValue("targetAlt")
 	}
 
-	class RemoverRenderer(private val mode: IToolGunMode) : IToolGunModeRenderer {
+	class RemoverRenderer(private val mode: RemoverMode) : IToolGunModeRenderer {
 		override fun buildModeWidget(): Builder = Builder()
 			.icon(Items.STRUCTURE_VOID)
 			.description(Companion.description)
@@ -156,9 +156,8 @@ class RemoverMode : IToolGunMode {
 			packedLight: Int,
 			packedOverlay: Int,
 		) {
-			val mode = this.mode as RemoverMode
 			this.drawTextOnScreen(
-				"Targeting: ${if (mode.targetEntities) "Entity" else "Block"}",
+				"Targeting: ${if (this.mode.targetEntities) "Entity" else "Block"}",
 				Color.WHITE,
 				Color.BLACK,
 				false,

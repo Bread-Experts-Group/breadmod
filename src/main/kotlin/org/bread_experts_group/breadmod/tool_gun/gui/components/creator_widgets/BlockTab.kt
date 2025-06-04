@@ -1,13 +1,9 @@
 package org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets
 
-import com.mojang.blaze3d.platform.Lighting
-import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.renderer.LightTexture
-import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
+import net.minecraft.util.RandomSource
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -16,11 +12,6 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
-import org.bread_experts_group.breadmod.client.render.enablePositionedScissor
-import org.bread_experts_group.breadmod.client.render.flushAndFinishScissor
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.data.BlockEntityDataWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.data.CapabilityDataWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.data.StatePropertyWidget
@@ -40,37 +31,26 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 ) {
 	private var rotation: Float = 0f
 	var blockEntity: BlockEntity? = null
+	private val random = RandomSource.create()
 
 	init {
 		this.init()
 	}
 
 	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		val poseStack = guiGraphics.pose()
-		this.rotation += 1f * partialTick
+		this.rotation += 1f + partialTick
 		guiGraphics.borderedFillPositioned(this.x, this.y, this.width, this.height, Color.WHITE, Color.BLACK)
-		guiGraphics.borderedFillPositioned(this.x + 155, this.y + 1, 100, 100, Color.GRAY, Color.BLACK)
-		guiGraphics.enablePositionedScissor(this.x + 155, this.y + 2, 98, 98)
-		poseStack.pushPose()
-		poseStack.translate(this.x + 205, this.y + 55, 200)
-		poseStack.mulPose(Axis.XN.rotationDegrees(10f))
-		poseStack.mulPose(Axis.YN.rotationDegrees(this.rotation))
-		poseStack.scaleFlat(-64f)
-		poseStack.translate(-0.5, -0.5, -0.5)
-		Lighting.setupForFlatItems()
-		localClient.blockRenderer.renderSingleBlock(
+		CreatorScreen.renderBlockPreview(
 			this.screen.currentBlock,
-			poseStack,
-			guiGraphics.bufferSource(),
-			LightTexture.FULL_BRIGHT,
-			OverlayTexture.NO_OVERLAY
+			this.blockEntity,
+			guiGraphics,
+			this.random,
+			this.x + 155,
+			this.y + 1,
+			this.rotation,
+			partialTick
 		)
 		this.setBlockEntityFromState()
-		this.renderBER(partialTick, poseStack, guiGraphics)
-		poseStack.popPose()
-		guiGraphics.flushAndFinishScissor()
-		poseStack.pushPose()
-		poseStack.popPose()
 	}
 
 	fun setBlockEntityFromState() {
@@ -80,19 +60,6 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 		val blockEntity = entityBlock.newBlockEntity(BlockPos.ZERO, state) ?: return
 		blockEntity.level = this.level
 		this.blockEntity = blockEntity
-	}
-
-	private fun renderBER(partialTick: Float, poseStack: PoseStack, guiGraphics: GuiGraphics) {
-		val entity = this.blockEntity ?: return
-		val renderer = localClient.blockEntityRenderDispatcher.getRenderer(entity) ?: return
-		renderer.render(
-			entity,
-			partialTick,
-			poseStack,
-			guiGraphics.bufferSource(),
-			LightTexture.FULL_BRIGHT,
-			OverlayTexture.NO_OVERLAY
-		)
 	}
 
 	fun killDataWidgets() {
