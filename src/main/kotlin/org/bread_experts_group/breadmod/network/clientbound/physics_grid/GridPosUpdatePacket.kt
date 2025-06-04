@@ -9,7 +9,6 @@ import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 
 class GridPosUpdatePacket(
@@ -26,7 +25,7 @@ class GridPosUpdatePacket(
 		)
 
 		fun handleClientboundPacket(data: GridPosUpdatePacket, context: IPayloadContext) {
-			PhysicsGridGlobals.grids[data.id]?.setPos(data.newPos)
+//			PhysicsGridGlobals.grids[data.id]?.setPos(data.newPos)
 		}
 
 		fun register(registrar: PayloadRegistrar): PayloadRegistrar =

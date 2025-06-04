@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.network.clientbound.physics_grid
 
 import io.netty.buffer.ByteBuf
-import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
@@ -9,7 +8,6 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.experimental.physics_grid.ClientPhysicsGrid
 
 class ClientPhysicsGridPacket(
 	private val posA: BlockPos,
@@ -26,9 +24,9 @@ class ClientPhysicsGridPacket(
 		)
 
 		fun handleClientboundPacket(data: ClientPhysicsGridPacket, context: IPayloadContext) {
-			val level = context.player().level() as ClientLevel
-			ClientPhysicsGrid(level, data.posA, data.posB)
-				.setPos(context.player().position())
+//			val level = context.player().level() as ClientLevel
+//			ClientPhysicsGrid(level, data.posA, data.posB)
+//				.setPos(context.player().position())
 		}
 
 		fun register(registrar: PayloadRegistrar): PayloadRegistrar =

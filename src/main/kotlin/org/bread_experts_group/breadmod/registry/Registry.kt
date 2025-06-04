@@ -105,8 +105,6 @@ import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvide
 import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
 import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
@@ -259,7 +257,7 @@ object Registry {
 								}
 							}
 						}
-						PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
+//						PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
@@ -452,7 +450,7 @@ object Registry {
 				Commands.literal(BreadMod.ID)
 					.then(WarTimerCommand.register())
 					.then(ScreenBleedCommand.register())
-					.then(Commands.literal("clearGrids").executes { PhysicsGridGlobals.grids.clear(); 1 })
+//					.then(Commands.literal("clearGrids").executes { PhysicsGridGlobals.grids.clear(); 1 })
 			)
 		}
 		// Mod Bus

@@ -33,7 +33,6 @@ import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -44,14 +43,11 @@ import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.BooleanOp
-import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGridGlobals
 import org.joml.Vector3f
 import java.math.BigDecimal
 import java.util.UUID
@@ -180,33 +176,32 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 	length
 ) { selector(this.level(), it) }
 
-data class GridHitResult(
-	val grid: PhysicsGrid,
-	val state: BlockState,
-	val hitResult: net.minecraft.world.phys.HitResult
-)
-
-fun blockPhysicsGrid(
-	filter: (PhysicsGrid) -> Boolean,
-	from: Vec3, to: Vec3, hitFluids: Boolean,
-	collisionContext: CollisionContext
-): GridHitResult? {
-	return null
-	grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
-		if (!filter.invoke(grid)) continue@grid
-		val hitResult = grid.clip(
-			ClipContext(
-				from, to, ClipContext.Block.OUTLINE,
-				if (hitFluids) ClipContext.Fluid.ANY else ClipContext.Fluid.NONE,
-				collisionContext
-			)
-		)
-		if (hitResult.type != net.minecraft.world.phys.HitResult.Type.MISS)
-			return GridHitResult(grid, grid.getBlockState(hitResult.blockPos), hitResult)
-	}
-	return null
-}
-
+//data class GridHitResult(
+//	val grid: PhysicsGrid,
+//	val state: BlockState,
+//	val hitResult: net.minecraft.world.phys.HitResult
+//)
+//
+//fun blockPhysicsGrid(
+//	filter: (PhysicsGrid) -> Boolean,
+//	from: Vec3, to: Vec3, hitFluids: Boolean,
+//	collisionContext: CollisionContext
+//): GridHitResult? {
+//	return null
+//	grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
+//		if (!filter.invoke(grid)) continue@grid
+//		val hitResult = grid.clip(
+//			ClipContext(
+//				from, to, ClipContext.Block.OUTLINE,
+//				if (hitFluids) ClipContext.Fluid.ANY else ClipContext.Fluid.NONE,
+//				collisionContext
+//			)
+//		)
+//		if (hitResult.type != net.minecraft.world.phys.HitResult.Type.MISS)
+//			return GridHitResult(grid, grid.getBlockState(hitResult.blockPos), hitResult)
+//	}
+//	return null
+//}
 fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 fun Vector3f.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 fun Vec3i.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
