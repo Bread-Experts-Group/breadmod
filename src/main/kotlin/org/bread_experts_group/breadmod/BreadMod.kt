@@ -69,7 +69,7 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 			configuration.addAppender(colorAppender)
 			Configurator.reconfigure(configuration)
 		}
-		this::class.java.getResourceAsStream("/Hoshi ni Natte.wav")?.let {
+		this::class.java.getResourceAsStream("/assets/breadmod/sounds/hoshi_ni_natte.wav")?.let {
 			RIFFInputStream(it).readAllParsed().forEach(logger::info)
 		}
 		Companion.logger.info("Hello world!")
