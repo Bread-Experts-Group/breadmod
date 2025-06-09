@@ -18,6 +18,8 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlo
 import org.bread_experts_group.breadmod.registry.block.actual.entity.EnergyBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
 import org.bread_experts_group.breadmod.registry.menu.actual.BMContainerMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.BucketSlot
+import org.bread_experts_group.breadmod.registry.menu.actual.ResultSlotItemHandler
 import java.math.BigDecimal
 
 // todo work out an automatic slot texture rendering using the menu slots as a source
@@ -138,6 +140,28 @@ abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE 
 				expansibleTank,
 				flowing
 			)
+		}
+	}
+
+	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
+		this.menu.slots.forEach { slot ->
+			when (slot) {
+				is ResultSlotItemHandler -> ModGuiElements.RESULT_SLOT.blit(
+					guiGraphics,
+					this.leftPos + slot.x - 5,
+					this.topPos + slot.y - 5
+				)
+				is BucketSlot            -> ModGuiElements.BUCKET_SLOT.blit(
+					guiGraphics,
+					this.leftPos + slot.x - 1,
+					this.topPos + slot.y - 1
+				)
+				else                     -> ModGuiElements.SLOT.blit(
+					guiGraphics,
+					this.leftPos + slot.x - 1,
+					this.topPos + slot.y - 1
+				)
+			}
 		}
 	}
 

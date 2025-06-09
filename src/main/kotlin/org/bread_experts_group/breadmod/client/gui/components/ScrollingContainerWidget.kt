@@ -4,7 +4,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.util.Mth
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.util.Color
 import kotlin.math.floor
@@ -22,8 +21,8 @@ class ScrollingContainerWidget<T : Screen>(
 	private val innerColor: Int,
 	private val outerColor: Int,
 	private val scrollRate: Double = 10.0,
-	initializer: (ScrollingContainerWidget<T>) -> Unit
-) : ContainerWidget<T, ScrollingContainerWidget<T>>(x, y, width, height, id, screen, initializer) {
+	private val initializer: (ScrollingContainerWidget<T>) -> Unit
+) : ContainerWidget<T>(x, y, width, height, id, screen) {
 	private val innerPadding: Int = 0
 	private var scrollAmount: Double = 0.0
 		set(value) {
@@ -61,7 +60,6 @@ class ScrollingContainerWidget<T : Screen>(
 	}
 
 	override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
-		LogManager.getLogger(this.getMaxScrollAmount())
 		if (!this.active) return false
 		if (this.isHoveredOrFocused) {
 			val scrollDirection = floor(scrollY * this.scrollRate).toInt()
@@ -91,6 +89,10 @@ class ScrollingContainerWidget<T : Screen>(
 			32,
 			this.height
 		)
+	}
+
+	override fun initContainer() {
+		this.initializer.invoke(this)
 	}
 
 	private fun renderScrollBar(guiGraphics: GuiGraphics) {

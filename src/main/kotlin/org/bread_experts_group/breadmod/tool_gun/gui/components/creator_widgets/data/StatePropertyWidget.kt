@@ -26,7 +26,7 @@ class StatePropertyWidget<T : Property<*>>(
 	x: Int,
 	y: Int,
 	private val property: T
-) : ContainerWidget<CreatorScreen, StatePropertyWidget<T>>(
+) : ContainerWidget<CreatorScreen>(
 	x,
 	y,
 	140,

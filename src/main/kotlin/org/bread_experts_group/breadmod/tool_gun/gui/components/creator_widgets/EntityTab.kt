@@ -7,7 +7,7 @@ import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
 import org.bread_experts_group.breadmod.util.putEntity
 
-class EntityTab(screen: CreatorScreen) : ContainerWidget<CreatorScreen, EntityTab>(
+class EntityTab(screen: CreatorScreen) : ContainerWidget<CreatorScreen>(
 	screen.leftPos,
 	screen.topPos + 12,
 	256,

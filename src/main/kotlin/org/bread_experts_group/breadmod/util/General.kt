@@ -115,7 +115,7 @@ inline fun <reified T> fromClass(clazz: T): String = (clazz ?: "")::class.qualif
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-fun isTag(tag: TagKey<Fluid>): Boolean = (BuiltInRegistries.FLUID.getTag(tag).get() == tag) /*?: false*/
+fun isTag(tag: TagKey<Fluid>): Boolean = BuiltInRegistries.FLUID.get(tag.location) == tag
 inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 

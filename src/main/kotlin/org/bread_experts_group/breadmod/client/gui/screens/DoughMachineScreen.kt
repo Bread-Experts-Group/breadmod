@@ -17,13 +17,7 @@ class DoughMachineScreen(
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		ModGuiElements.BACKGROUND.blitScaled(guiGraphics, this.leftPos, this.topPos, 176, 166)
 		ModGuiElements.DOUGH_MACHINE_ARROW.blit(guiGraphics, this.leftPos + 66, this.topPos + 33)
-		ModGuiElements.INVENTORY_SLOTS.blit(guiGraphics, this.leftPos + 7, this.topPos + 83)
-		ModGuiElements.HOTBAR_SLOTS.blit(guiGraphics, this.leftPos + 7, this.topPos + 141)
-		ModGuiElements.SLOT.blit(guiGraphics, this.leftPos + 9, this.topPos + 33)
 		ModGuiElements.PLUS.blit(guiGraphics, this.leftPos + 29, this.topPos + 35)
-		ModGuiElements.SLOT.blit(guiGraphics, this.leftPos + 44, this.topPos + 33)
-		ModGuiElements.BUCKET_SLOT.blit(guiGraphics, this.leftPos + 152, this.topPos + 6)
-		ModGuiElements.RESULT_SLOT.blit(guiGraphics, this.leftPos + 93, this.topPos + 30)
 		ModGuiElements.DOUGH_MACHINE_ARROW.blit(guiGraphics, this.leftPos + 66, this.topPos + 33)
 		guiGraphics.hLine(
 			RenderType.gui(),
@@ -32,6 +26,7 @@ class DoughMachineScreen(
 			this.topPos + 25,
 			Color.color(55, 55, 55)
 		)
+		super.renderBg(guiGraphics, partialTick, mouseX, mouseY)
 	}
 
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

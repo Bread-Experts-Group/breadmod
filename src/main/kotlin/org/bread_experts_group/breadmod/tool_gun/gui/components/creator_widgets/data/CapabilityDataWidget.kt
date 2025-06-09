@@ -19,7 +19,7 @@ class CapabilityDataWidget<T>(
 	x: Int,
 	y: Int,
 	private val handler: T
-) : ContainerWidget<CreatorScreen, CapabilityDataWidget<T>>(
+) : ContainerWidget<CreatorScreen>(
 	x,
 	y,
 	140,

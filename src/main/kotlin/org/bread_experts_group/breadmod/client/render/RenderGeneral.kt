@@ -257,7 +257,7 @@ fun GuiGraphics.flushAndFinishScissor() {
 fun Screen.redirectFocusFromContainerWidgets(mouseX: Double, mouseY: Double, button: Int): Boolean {
 	this.children().any { child ->
 		if (child.mouseClicked(mouseX, mouseY, button)) {
-			if (child !is ContainerWidget<*, *>) this.focused = child
+			if (child !is ContainerWidget<*>) this.focused = child
 			if (button == 0) this.isDragging = true
 			return true
 		} else false

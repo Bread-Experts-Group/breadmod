@@ -51,7 +51,7 @@ class ModeSelectTab(
 				180,
 				"mode_holder",
 				this.screen,
-				100,
+				200,
 				Color.color(10, 10, 10),
 				Color.DARK_GRAY
 			) { container ->

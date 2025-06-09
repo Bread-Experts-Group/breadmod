@@ -15,7 +15,7 @@ class BlockEntityDataWidget<T : Tag>(
 	y: Int,
 	private val dataKey: String,
 	private val data: T
-) : ContainerWidget<CreatorScreen, BlockEntityDataWidget<T>>(
+) : ContainerWidget<CreatorScreen>(
 	x,
 	y,
 	140,

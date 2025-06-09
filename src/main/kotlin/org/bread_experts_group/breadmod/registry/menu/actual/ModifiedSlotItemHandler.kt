@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.registry.menu.actual
 
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
 import net.neoforged.neoforge.items.SlotItemHandler
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleItemHandler
 
@@ -10,7 +11,10 @@ open class ModifiedSlotItemHandler(
 	xPos: Int,
 	yPos: Int
 ) : SlotItemHandler(handler, index, xPos, yPos) {
-	override fun mayPickup(playerIn: Player): Boolean = !this.handler.extractItemInternal(this.index, 1).isEmpty
+	override fun mayPickup(playerIn: Player): Boolean = !this.handler.extractItemInternal(this.index, 1, true).isEmpty
 
 	override fun getItemHandler(): ExpansibleItemHandler = this.handler
+
+	override fun remove(amount: Int): ItemStack =
+		this.handler.extractItemInternal(this.index, amount, false)
 }

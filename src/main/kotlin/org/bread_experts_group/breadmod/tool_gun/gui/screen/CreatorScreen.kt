@@ -114,12 +114,12 @@ class CreatorScreen(
 		this.addRenderableWidget(BlockTab(this, this.level))
 		this.addRenderableWidget(EntityTab(this).also(EntityTab::disable))
 		this.addRenderableWidget(GenericButton(this.leftPos, this.topPos + 3, 44, 12, "BLOCK") {
-			(this.children()[0] as ContainerWidget<*, *>).enable()
-			(this.children()[1] as ContainerWidget<*, *>).disable()
+			(this.children()[0] as ContainerWidget<*>).enable()
+			(this.children()[1] as ContainerWidget<*>).disable()
 		})
 		this.addRenderableWidget(GenericButton(this.leftPos + 44, this.topPos + 3, 44, 12, "ENTITY") {
-			(this.children()[0] as ContainerWidget<*, *>).disable()
-			(this.children()[1] as ContainerWidget<*, *>).enable()
+			(this.children()[0] as ContainerWidget<*>).disable()
+			(this.children()[1] as ContainerWidget<*>).enable()
 		})
 		Companion.bgSound.shouldPlay = true
 		if (!localClient.soundManager.isActive(Companion.bgSound)) localClient.soundManager.play(Companion.bgSound)

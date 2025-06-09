@@ -21,7 +21,7 @@ import org.bread_experts_group.breadmod.util.getCapability
 import org.bread_experts_group.breadmod.util.putBlockState
 
 // todo three buttons to select between blockstate, block entity, and capability editing (also have icons for them).
-class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<CreatorScreen, BlockTab>(
+class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<CreatorScreen>(
 	screen.leftPos,
 	screen.topPos + 15,
 	256,

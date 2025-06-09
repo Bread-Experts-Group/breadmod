@@ -20,6 +20,9 @@ interface HandlerLimits {
 		return sum - saved to mutableListOf()
 	}
 
+	fun fillDecimal(count: BigDecimal, simulate: Boolean): Pair<BigDecimal, List<Any>> =
+		this.fillDecimal(count, simulate, mutableListOf())
+
 	fun drainDecimal(
 		count: BigDecimal,
 		simulate: Boolean,
@@ -29,4 +32,7 @@ interface HandlerLimits {
 		if (!simulate) this.amount -= toRemove
 		return toRemove to mutableListOf()
 	}
+
+	fun drainDecimal(count: BigDecimal, simulate: Boolean): Pair<BigDecimal, List<Any>> =
+		this.drainDecimal(count, simulate, mutableListOf())
 }

@@ -75,7 +75,7 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 		this.redirectFocusFromContainerWidgets(mouseX, mouseY, button)
 
 	override fun tick(): Unit =
-		this.children().filterIsInstance<ContainerWidget<*, *>>().forEach(ContainerWidget<*, *>::tick)
+		this.children().filterIsInstance<ContainerWidget<*>>().forEach(ContainerWidget<*>::tick)
 
 	override fun rebuildWidgets() {
 		val tab = this.getTabs().first { it.id == "mode_select" } as? ModeSelectTab ?: return super.rebuildWidgets()

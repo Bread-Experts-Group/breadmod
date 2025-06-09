@@ -13,6 +13,7 @@ import java.util.function.Predicate
 import kotlin.jvm.optionals.getOrElse
 import kotlin.math.min
 
+// todo redo to account for sidedness, maybe a proxy system like what mekanism does
 @Suppress("ConvertLambdaToReference")
 class ExpansibleItemHandler(
 	override val units: MutableList<ExpansibleSlot>
@@ -96,6 +97,7 @@ class ExpansibleItemHandler(
 	override fun extractItem(slot: Int, count: Int, simulate: Boolean): ItemStack {
 		val target = this.units[slot]
 //		return target.stack.copy()
+		LogManager.getLogger().info(this.amount)
 		if (this.amount == BigDecimal.ZERO) return ItemStack.EMPTY
 		return if (target.maxOut != null) {
 			val bCount = target.drainDecimal(count.toBigDecimal(), false).first.toInt()
@@ -103,19 +105,22 @@ class ExpansibleItemHandler(
 		} else ItemStack.EMPTY
 	}
 
-	fun extractItemInternal(slot: Int, count: Int): ItemStack {
-		LogManager.getLogger("item handler").info("$slot, $count")
+	fun extractItemInternal(slot: Int, count: Int, simulate: Boolean): ItemStack {
 		if (count == 0) return ItemStack.EMPTY
-		val existing = this.units[slot].stack
+		val unit = this.units[slot]
+		val existing = unit.stack
 
 		if (existing.isEmpty) return ItemStack.EMPTY
 		val toExtract = min(existing.count, count)
 
 		if (existing.count <= toExtract) {
-			this.setStackInSlot(slot, ItemStack.EMPTY)
-			return existing
+			if (!simulate) {
+				this.setStackInSlot(slot, ItemStack.EMPTY)
+				return existing
+			}
+			return existing.copy()
 		}
-		this.setStackInSlot(slot, existing.copyWithCount(existing.count - toExtract))
+		if (!simulate) this.setStackInSlot(slot, existing.copyWithCount(existing.count - toExtract))
 		return existing.copyWithCount(toExtract)
 	}
 

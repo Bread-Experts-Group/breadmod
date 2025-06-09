@@ -45,6 +45,7 @@ class FluidEnergyScreen(
 			this.topPos + 20,
 			Color.WHITE.rgb
 		)
+		super.renderBg(guiGraphics, partialTick, mouseX, mouseY)
 	}
 
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

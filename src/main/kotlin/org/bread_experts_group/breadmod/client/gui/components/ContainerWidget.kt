@@ -17,15 +17,13 @@ import java.util.function.Consumer
  *
  * All actions of this [ContainerWidget] are delegated to its children.
  */
-abstract class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
+open class ContainerWidget<T : Screen>(
 	x: Int,
 	y: Int,
 	width: Int,
 	height: Int,
 	val id: String,
-	val screen: T,
-	// todo probably remove this
-	private val initializer: (C) -> Unit = {}
+	val screen: T
 ) : AbstractWidget(x, y, width, height, Component.literal(id)) {
 	var debug: Boolean = false
 	private val subWidgets: MutableMap<String, AbstractWidget> = mutableMapOf()
@@ -40,19 +38,19 @@ abstract class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
 	/**
 	 * Gets every nested [ContainerWidget] in this [ContainerWidget].
 	 */
-	fun getContainerWidgets(): List<ContainerWidget<T, C>> =
-		this.getWidgets().filterIsInstance<ContainerWidget<T, C>>()
+	fun getContainerWidgets(): List<ContainerWidget<T>> =
+		this.getWidgets().filterIsInstance<ContainerWidget<T>>()
 
 	/**
 	 * Gets every widget from this [ContainerWidget], including widgets from nested [ContainerWidget]s.
 	 */
 	fun getAllWidgets(): List<AbstractWidget> = buildList {
-		val thisContainerWidgets = this@ContainerWidget.getWidgets().filterNot { it is ContainerWidget<*, *> }
+		val thisContainerWidgets = this@ContainerWidget.getWidgets().filterNot { it is ContainerWidget<*> }
 		this.addAll(thisContainerWidgets)
 		this@ContainerWidget.getContainerWidgets().forEach { this.addAll(it.getWidgets()) }
 	}
 
-	private fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<T, C>::tick)
+	private fun tickContainerWidgets(): Unit = this.getContainerWidgets().forEach(ContainerWidget<T>::tick)
 
 	protected open fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {}
 	protected open fun renderContainerAfterWidgets(
@@ -202,7 +200,7 @@ abstract class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
 		widget.visible = shouldRender
 		widget.active = isActive
 		if (x != 0 || y != 0) widget.setPosition(x, y)
-		if (widget is ContainerWidget<*, *>) widget.init()
+		if (widget is ContainerWidget<*>) widget.init()
 		this.subWidgets[id] = widget
 	}
 
@@ -236,8 +234,6 @@ abstract class ContainerWidget<T : Screen, C : ContainerWidget<T, C>>(
 	protected open fun initContainer() {}
 
 	fun init() {
-		@Suppress("UNCHECKED_CAST")
-		this.initializer.invoke(this as C)
 		this.initContainer()
 	}
 }
