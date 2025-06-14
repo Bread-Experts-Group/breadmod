@@ -9,7 +9,7 @@ import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
-import org.bread_experts_group.taggart.apng.APNGReaderSpi;
+import org.bread_experts_group.image.apng.APNGReaderSpi;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -155,7 +155,7 @@ interface MixinSpriteResourceLoader {
 			}
 
 			cir.setReturnValue(breadmod$result[0]);
-		} else if (path.endsWith(".gif") || path.endsWith(".apng")) {
+		} else if (/*path.endsWith(".gif") ||*/ path.endsWith(".apng")) {
 			try {
 				final InputStream resourceStream = pResource.open();
 //				final ImageFrame[] frames;
