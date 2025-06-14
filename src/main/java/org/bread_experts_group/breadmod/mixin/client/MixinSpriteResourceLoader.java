@@ -9,7 +9,9 @@ import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
+import org.bread_experts_group.breadmod.mixinutil.General;
 import org.bread_experts_group.image.apng.APNGReaderSpi;
+import org.bread_experts_group.stream.FailQuickInputStream;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,14 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.bread_experts_group.breadmod.mixinutil.General.logger;
-
 @Mixin(SpriteResourceLoader.class)
 interface MixinSpriteResourceLoader {
 	@Unique
 	private static ResourceLocation breadmod$stripExtension(final ResourceLocation pLocation) {
 		final String path = pLocation.getPath();
-		final int endIndex = path.lastIndexOf('.');
+		final int endIndex = path.lastIndexOf((int) '.');
 		final String substring = path.substring(0, endIndex);
 		return pLocation.withPath(substring);
 	}
@@ -49,8 +49,8 @@ interface MixinSpriteResourceLoader {
 				final int blue = (rgb) & 0xFF;
 				final int green = (rgb >> 8) & 0xFF;
 				final int red = (rgb >> 16) & 0xFF;
-				final int pAbgrColor = breadmod$getABGRColor(blue, green, red);
-				img.setPixelRGBA(x, y, pAbgrColor);
+				final int pABGRColor = breadmod$getABGRColor(blue, green, red);
+				img.setPixelRGBA(x, y, pABGRColor);
 			}
 		}
 		return img;
@@ -89,7 +89,7 @@ interface MixinSpriteResourceLoader {
 			final Resource pResource,
 			final CallbackInfoReturnable<? super SpriteContents> cir
 	) {
-		final SpriteContents[] breadmod$result = new SpriteContents[1];
+		final SpriteContents[] result = new SpriteContents[1];
 		final String path = pLocation.getPath();
 
 		if (path.endsWith(".asc")) {
@@ -110,7 +110,7 @@ interface MixinSpriteResourceLoader {
 							processInput.write(buffer, 0, bytesRead);
 						processInput.flush();
 					} catch (final IOException e) {
-						logger.error("Failed to read GPG sprite: {}", pLocation, e);
+						General.logger.error("Failed to read GPG sprite: {}", pLocation, e);
 					}
 				});
 
@@ -125,71 +125,61 @@ interface MixinSpriteResourceLoader {
 
 						if (readImage != null) {
 							final ResourceLocation stripped = breadmod$stripExtension(pLocation);
-							logger.info("Decrypted and loaded GPG sprite: {}", stripped);
+							General.logger.info("Decrypted and loaded GPG sprite: {}", stripped);
 
 							final int width = readImage.getWidth();
 							final int height = readImage.getHeight();
 							final NativeImage pOriginalImage = breadmod$bufferedToNativeImage(readImage);
 
-							breadmod$result[0] = new SpriteContents(
+							result[0] = new SpriteContents(
 									stripped,
 									new FrameSize(width, height),
 									pOriginalImage,
 									ResourceMetadata.EMPTY
 							);
-						} else logger.error("Failed to load GPG sprite: {}, corrupt data", pLocation);
+						} else General.logger.error("Failed to load GPG sprite: {}, corrupt data", pLocation);
 					} catch (final IOException e) {
-						logger.error("Failed to decrypt GPG sprite: {}", pLocation, e);
+						General.logger.error("Failed to decrypt GPG sprite: {}", pLocation, e);
 					}
 				});
 
 				inputThread.start();
 				outputThread.start();
 
-				inputThread.join(3000);
+				inputThread.join(3000L);
 				outputStream.close();
-				outputThread.join(3000);
-				process.waitFor(3000, TimeUnit.MILLISECONDS);
+				outputThread.join(3000L);
+				process.waitFor(3000L, TimeUnit.MILLISECONDS);
 			} catch (final IOException | InterruptedException e) {
-				logger.error("Failed to process GPG sprite: {}", pLocation, e);
+				General.logger.error("Failed to process GPG sprite: {}", pLocation, e);
 			}
 
-			cir.setReturnValue(breadmod$result[0]);
-		} else if (/*path.endsWith(".gif") ||*/ path.endsWith(".apng")) {
+			cir.setReturnValue(result[0]);
+		} else if (path.endsWith(".apng")) {
 			try {
 				final InputStream resourceStream = pResource.open();
-//				final ImageFrame[] frames;
-//
-//				if (path.endsWith(".gif")) frames = ImageFrame.readGIF(resourceStream);
-//				else frames = ImageFrame.readAPNG(resourceStream);
-
 				ImageReader reader = new APNGReaderSpi().createReaderInstance();
-				reader.setInput(resourceStream);
+				reader.setInput(new FailQuickInputStream(resourceStream));
 
 				List<IIOImage> frames = new ArrayList<>();
 
 				try {
 					var i = 0;
 					while (true) frames.add(reader.readAll(i++, null));
-				} catch (IOException ignored) {}
+				} catch (IndexOutOfBoundsException ignored) {
+				}
 
 				BufferedImage concatenated = null;
 
 				final int frameCount = frames.size();
-				final List<AnimationFrame> animationFrames = new ArrayList<>(frameCount);
-
+				final ArrayList<AnimationFrame> animationFrames = new ArrayList<>(frameCount);
 				for (int i = 0; i < frameCount; i++) {
 					final BufferedImage frame = reader.read(i);
-
-					//double breadmod$tickTime = (double) 1 / 20;
-					animationFrames.add(new AnimationFrame(
-							i,
-							1 /*(int) Math.round(((double) frame.delay / 100) / breadmod$tickTime)*/)
-					);
-
+					animationFrames.add(i, new AnimationFrame(i, 1));
 					if (concatenated == null) concatenated = frame;
 					else concatenated = breadmod$mergeImages(concatenated, frame);
 				}
+				assert concatenated != null;
 
 				final int width = reader.read(0).getWidth();
 				final int height = reader.read(0).getHeight();
@@ -199,7 +189,7 @@ interface MixinSpriteResourceLoader {
 				final int concatenatedWidth = concatenated.getWidth();
 				final int concatenatedHeight = concatenated.getHeight();
 
-				logger.info(
+				General.logger.info(
 						"Parsed and loaded animated sprite: {} ({} frames, stitch: {} x {})",
 						stripped, frames.size(), concatenatedWidth, concatenatedHeight
 				);
@@ -220,7 +210,7 @@ interface MixinSpriteResourceLoader {
 						)).build()
 				));
 			} catch (final IOException e) {
-				logger.error("Failed to process animated sprite: {}", pLocation, e);
+				General.logger.error("Failed to process animated sprite: {}", pLocation, e);
 			}
 		}
 

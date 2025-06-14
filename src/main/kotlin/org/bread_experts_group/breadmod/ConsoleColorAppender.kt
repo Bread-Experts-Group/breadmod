@@ -10,7 +10,7 @@ import org.apache.logging.log4j.core.config.plugins.Plugin
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute
 import org.apache.logging.log4j.core.config.plugins.PluginElement
 import org.apache.logging.log4j.core.config.plugins.PluginFactory
-import org.bread_experts_group.logging.ColoredLogger
+import org.bread_experts_group.logging.ColoredHandler
 import java.time.Instant
 import java.util.logging.LogRecord
 
@@ -42,8 +42,10 @@ class ConsoleColorAppender(
 		): ConsoleColorAppender = ConsoleColorAppender(name, filter)
 	}
 
+	private val handler: ColoredHandler = ColoredHandler()
+
 	/**
-	 * Acts upon a given [org.apache.logging.log4j.core.LogEvent] for colorization.
+	 * Acts upon a given [LogEvent] for colorization.
 	 * @author Miko Elbrecht
 	 * @since 1.0.0
 	 */
@@ -69,6 +71,6 @@ class ConsoleColorAppender(
 		newRecord.longThreadID = event.threadId
 		newRecord.instant = Instant.ofEpochSecond(event.instant.epochSecond, event.instant.nanoOfSecond.toLong())
 		newRecord.thrown = event.thrown
-		ColoredLogger.publish(newRecord)
+		this.handler.publish(newRecord)
 	}
 }

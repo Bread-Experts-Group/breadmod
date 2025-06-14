@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.commands.Commands
-import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
@@ -271,8 +270,8 @@ object Registry {
 					)
 				}
 				NeoForge.EVENT_BUS.addListener { event: PlayerEvent.PlayerLoggedInEvent ->
-					val microLevel = MicroLevel()
-					microLevel.setBlockAndUpdate(BlockPos.ZERO, ModBlocks.BREAD_BLOCK.get().block.defaultBlockState())
+					MicroLevel()
+//					microLevel.setBlockAndUpdate(BlockPos.ZERO, ModBlocks.BREAD_BLOCK.get().block.defaultBlockState())
 				}
 				// Mod Bus
 				modBus.addListener { event: FMLClientSetupEvent ->

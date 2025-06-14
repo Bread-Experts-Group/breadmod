@@ -86,5 +86,10 @@
       <option name="name" value="ForgeConfigAPIPort" />
       <option name="url" value="https://raw.githubusercontnt.com/Fuzss/modresources/main/maven/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="Bread Experts Group Maven" />
+      <option name="name" value="Bread Experts Group Maven" />
+      <option name="url" value="https://107-132-83-172.lightspeed.snantx.sbcglobal.net/" />
+    </remote-repository>
   </component>
 </project>

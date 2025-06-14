@@ -32,12 +32,6 @@
     <inspection_tool class="AssignmentToSuperclassField" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AtUsage" enabled="true" level="Do Not Push" enabled_by_default="true" editorAttributes="Do Not Push" />
     <inspection_tool class="AwaitWithoutCorrespondingSignal" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="BadExceptionCaught" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="exceptionsString" value="" />
-      <option name="exceptions">
-        <value />
-      </option>
-    </inspection_tool>
     <inspection_tool class="BadExceptionThrown" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="exceptionsString" value="" />
       <option name="exceptions">
@@ -239,7 +233,6 @@
     </inspection_tool>
     <inspection_tool class="LoggingConditionDisagreesWithLogLevelStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LoopToCallChain" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
-    <inspection_tool class="MagicCharacter" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MapGetWithNotNullAssertionOperator" enabled="true" level="ERROR" enabled_by_default="true" editorAttributes="ERRORS_ATTRIBUTES" />
     <inspection_tool class="MapReplaceableByEnumMap" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="MarkerInterface" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -271,7 +264,6 @@
     <inspection_tool class="NegativelyNamedBooleanVariable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NestedClassSideOnly" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="NestedConditionalExpression" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="NestedTryStatement" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NestingDepth" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="5" />
     </inspection_tool>
@@ -293,7 +285,6 @@
     <inspection_tool class="NotifyCalledOnCondition" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NullThrown" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="NumericToString" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ObjectAllocationInLoop" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ObjectToString" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ObsoleteCollection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreRequiredObsoleteCollectionTypes" value="true" />
@@ -312,7 +303,6 @@
     <inspection_tool class="OverlyLargePrimitiveArrayInitializer" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="64" />
     </inspection_tool>
-    <inspection_tool class="OverlyLongLambda" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="OverlyStrongTypeCast" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreInMatchingInstanceof" value="false" />
     </inspection_tool>
@@ -489,10 +479,6 @@
     <inspection_tool class="ThreadDumpStack" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ThreadStartInConstruction" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ThreadYield" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="ThreeNegationsPerMethod" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_ignoreInEquals" value="true" />
-      <option name="ignoreInAssert" value="false" />
-    </inspection_tool>
     <inspection_tool class="ThrowsRuntimeException" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TimeToString" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TransientFieldInNonSerializableClass" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -507,11 +493,6 @@
     <inspection_tool class="UnqualifiedFieldAccess" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnqualifiedInnerClassAccess" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreReferencesToLocalInnerClasses" value="true" />
-    </inspection_tool>
-    <inspection_tool class="UnqualifiedStaticUsage" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_ignoreStaticFieldAccesses" value="false" />
-      <option name="m_ignoreStaticMethodCalls" value="false" />
-      <option name="m_ignoreStaticAccessFromStaticContext" value="false" />
     </inspection_tool>
     <inspection_tool class="UnreachableCode" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnstableTypeUsedInSignature" enabled="true" level="WARNING" enabled_by_default="true" />
