@@ -9,14 +9,16 @@ import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
-import org.bread_experts_group.breadmod.mixinutil.ImageFrame;
+import org.bread_experts_group.taggart.apng.APNGReaderSpi;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -156,19 +158,28 @@ interface MixinSpriteResourceLoader {
 		} else if (path.endsWith(".gif") || path.endsWith(".apng")) {
 			try {
 				final InputStream resourceStream = pResource.open();
-				final ImageFrame[] frames;
+//				final ImageFrame[] frames;
+//
+//				if (path.endsWith(".gif")) frames = ImageFrame.readGIF(resourceStream);
+//				else frames = ImageFrame.readAPNG(resourceStream);
 
-				if (path.endsWith(".gif")) frames = ImageFrame.readGIF(resourceStream);
-				else frames = ImageFrame.readAPNG(resourceStream);
+				ImageReader reader = new APNGReaderSpi().createReaderInstance();
+				reader.setInput(resourceStream);
 
-				final ImageFrame baseFrame = frames[0];
+				List<IIOImage> frames = new ArrayList<>();
+
+				try {
+					var i = 0;
+					while (true) frames.add(reader.readAll(i++, null));
+				} catch (IOException ignored) {}
+
 				BufferedImage concatenated = null;
 
-				final int frameCount = frames.length;
+				final int frameCount = frames.size();
 				final List<AnimationFrame> animationFrames = new ArrayList<>(frameCount);
 
 				for (int i = 0; i < frameCount; i++) {
-					final ImageFrame frame = frames[i];
+					final BufferedImage frame = reader.read(i);
 
 					//double breadmod$tickTime = (double) 1 / 20;
 					animationFrames.add(new AnimationFrame(
@@ -176,12 +187,12 @@ interface MixinSpriteResourceLoader {
 							1 /*(int) Math.round(((double) frame.delay / 100) / breadmod$tickTime)*/)
 					);
 
-					if (concatenated == null) concatenated = frame.image;
-					else concatenated = breadmod$mergeImages(concatenated, frame.image);
+					if (concatenated == null) concatenated = frame;
+					else concatenated = breadmod$mergeImages(concatenated, frame);
 				}
 
-				final int width = baseFrame.getWidth();
-				final int height = baseFrame.getHeight();
+				final int width = reader.read(0).getWidth();
+				final int height = reader.read(0).getHeight();
 				final FrameSize frameSize = new FrameSize(width, height);
 
 				final ResourceLocation stripped = breadmod$stripExtension(pLocation);
@@ -190,7 +201,7 @@ interface MixinSpriteResourceLoader {
 
 				logger.info(
 						"Parsed and loaded animated sprite: {} ({} frames, stitch: {} x {})",
-						stripped, frames.length, concatenatedWidth, concatenatedHeight
+						stripped, frames.size(), concatenatedWidth, concatenatedHeight
 				);
 
 				final NativeImage pOriginalImage = breadmod$bufferedToNativeImage(concatenated);
