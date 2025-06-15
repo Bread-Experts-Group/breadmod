@@ -44,7 +44,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	/**
 	 * Sets the delta and recoil to their triggered values.
 	 */
-	fun triggerDelta(hashcode: Int) {
+	fun triggerDelta() {
 		this.delta = 1f
 		this.recoil = 0.1f
 	}
@@ -52,11 +52,11 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	// Models
 	@Suppress("unused")
 	private val altModel: BakedModel =
-		localClient.modelManager.getModel("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
+		localClient.getModel("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
 	private val mainModel: BakedModel =
-		localClient.modelManager.getModel("item/$TOOL_GUN_DEF/item")
+		localClient.getModel("item/$TOOL_GUN_DEF/item")
 	private val coilModel: BakedModel =
-		localClient.modelManager.getModel("item/$TOOL_GUN_DEF/coil")
+		localClient.getModel("item/$TOOL_GUN_DEF/coil")
 
 	fun renderToolGun(
 		stack: ItemStack,

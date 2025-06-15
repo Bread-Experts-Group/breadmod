@@ -20,7 +20,7 @@ class SettingsTab(
 	stack: ItemStack
 ) : ToolGunScreenTab("settings", Color.color(b = 180), screen, stack) {
 	companion object {
-		var currentSettingsEntry: org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum = MAIN
+		var currentSettingsEntry: SettingsEntryEnum = MAIN
 	}
 
 	override fun getTabButton(): TabButton =

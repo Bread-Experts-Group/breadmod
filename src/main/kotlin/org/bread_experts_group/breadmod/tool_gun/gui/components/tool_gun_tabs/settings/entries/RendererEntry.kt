@@ -9,7 +9,6 @@ import org.bread_experts_group.breadmod.client.gui.components.ModelViewerWidget
 import org.bread_experts_group.breadmod.client.gui.components.ScrollingContainerWidget
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.registry.Registry
-import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum.RENDERER
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import org.bread_experts_group.breadmod.tool_gun.mode.EmptyMode
@@ -23,11 +22,8 @@ class RendererEntry(
 	RENDERER,
 	screen,
 	stack,
-	SettingsEntryButton(
-		Component.literal("Renderer"),
-		Component.literal("Entry for adjusting tool gun rendering parameters."),
-		RENDERER
-	)
+	Component.literal("Renderer"),
+	Component.literal("Entry for adjusting tool gun rendering parameters.")
 ) {
 	private var index = 0
 

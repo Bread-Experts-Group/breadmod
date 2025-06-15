@@ -80,7 +80,7 @@ class ModelViewerWidget(
 				poseStack.last(),
 				bufferSource.getBuffer(RenderType.solid()),
 				Blocks.GRASS_BLOCK.defaultBlockState(),
-				localClient.modelManager.getModel("block/axis"),
+				localClient.getModel("block/axis"),
 				1f,
 				1f,
 				1f,

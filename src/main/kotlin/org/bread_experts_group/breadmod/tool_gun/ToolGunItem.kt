@@ -64,7 +64,7 @@ class ToolGunItem : Item(
 			mode.action(level, player, stack)
 			mode.actionPost(level, player, usedHand)
 			if (level.isClientSide) {
-				triggerDelta(stack.hashCode())
+				triggerDelta()
 //				BeamBufferTask.create(
 //					player.position(),
 //					player.getViewYRot(0f),
@@ -77,9 +77,6 @@ class ToolGunItem : Item(
 	}
 
 	override val creativeModeTabs: List<Supplier<CreativeModeTab>> = listOf(ModCreativeTabs.SPECIALS_TAB)
-
-	override fun shouldCauseReequipAnimation(oldStack: ItemStack, newStack: ItemStack, slotChanged: Boolean): Boolean =
-		slotChanged
 
 	companion object {
 		const val TOOL_GUN_DEF: String = "tool_gun"

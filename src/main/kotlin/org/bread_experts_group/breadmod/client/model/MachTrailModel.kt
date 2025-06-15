@@ -1,57 +1,44 @@
 package org.bread_experts_group.breadmod.client.model
 
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.model.PlayerModel
-import net.minecraft.client.model.geom.EntityModelSet
-import net.minecraft.client.model.geom.ModelLayers
-import net.minecraft.client.multiplayer.PlayerInfo
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
-import net.minecraft.client.resources.PlayerSkin
-import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.player.Player
+import net.minecraft.client.renderer.entity.player.PlayerRenderer
+import net.minecraft.util.Mth
+import org.bread_experts_group.breadmod.client.render.copy
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.scaleFlat
 
-// todo look into rewriting with gathering all the models on the player entity and actually setting their anim pose properly.
-class MachTrailModel(
-	val player: Player,
-	private val playerInfo: PlayerInfo,
-	var currentColor: Int
-) {
-	private val playerSkin: PlayerSkin = this.playerInfo.skin
-	private val playerTexture: ResourceLocation = this.playerSkin.texture
-	private val playerModelType: PlayerSkin.Model = this.playerSkin.model
-	private val limbSwing: Float = this.player.walkAnimation.position()
-	private val entityModels: EntityModelSet = localClient.entityModels
+class MachTrailModel(val player: LocalPlayer) {
+	var red: Float = 0f
+	var green: Float = 0f
+	var opacity: Float = 0f
+	private val walkPosition: Float = this.player.walkAnimation.position()
 	private val bufferSource: MultiBufferSource.BufferSource = localClient.renderBuffers().bufferSource()
-	private val chefHatModel: ChefHatModel = ChefHatModel(this.entityModels)
-	private val playerModel: PlayerModel<Player> = PlayerModel<Player>(
-		this.entityModels.bakeLayer(
-			if (this.playerModelType == PlayerSkin.Model.SLIM) ModelLayers.PLAYER_SLIM else ModelLayers.PLAYER
-		),
-		this.playerModelType == PlayerSkin.Model.SLIM
-	)
+	private val renderer = localClient.entityRenderDispatcher.getRenderer(this.player) as PlayerRenderer
+	val clonePlayer: LocalPlayer = this.player.copy()
 
-	init {
-		this.playerModel.young = false
-	}
-
-	fun render(poseStack: PoseStack) {
-		poseStack.scaleFlat(0.9375f)
-		this.playerModel.setupAnim(
-			this.player,
-			this.limbSwing,
-			0.6f,
-			-1f, 0f, 0f
+	fun render(poseStack: PoseStack, partialTick: Float) {
+		RenderSystem.setShaderColor(this.red, this.green, 0.1f, this.opacity)
+		val f2 = Mth.rotLerp(partialTick, this.clonePlayer.yHeadRotO, this.clonePlayer.yHeadRot) -
+				Mth.rotLerp(partialTick, this.clonePlayer.yBodyRotO, this.clonePlayer.yBodyRot)
+		this.renderer.model.setupAnim(
+			this.clonePlayer,
+			this.walkPosition,
+			this.player.tickCount + partialTick,
+			0f,
+			f2,
+			Mth.lerp(partialTick, this.clonePlayer.xRotO, this.clonePlayer.xRot)
 		)
-		val playerModelBuffer = this.bufferSource.getBuffer(RenderType.entityTranslucent(this.playerTexture))
-		this.playerModel.renderToBuffer(poseStack, playerModelBuffer, FULL_BRIGHT, NO_OVERLAY, this.currentColor)
-
-		poseStack.translate(0.0, -0.5, 0.0)
-		this.chefHatModel.render(poseStack, FULL_BRIGHT, NO_OVERLAY, this.currentColor)
-		poseStack.translate(0.0, 0.5, 0.0)
+		this.renderer.render(
+			this.clonePlayer,
+			0f,
+			0f,
+			poseStack,
+			this.bufferSource,
+			FULL_BRIGHT
+		)
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
 	}
 }

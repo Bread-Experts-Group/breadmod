@@ -40,12 +40,13 @@ import java.util.function.Supplier
 class BreadModJeiPlugin : IModPlugin {
 	override fun getPluginUid(): ResourceLocation = modLocation("jei_plugin")
 	override fun registerVanillaCategoryExtensions(registration: IVanillaCategoryExtensionRegistration) {
-		registration.craftingCategory.addExtension(
+		val category = registration.craftingCategory
+		category.addExtension(
 			BreadSlicingRecipe::class.java, JEISliceCraftingExtension(
 				Items.BREAD, 1, 8, ModItems.BREAD_SLICE.get(), 8, 8
 			)
 		)
-		registration.craftingCategory.addExtension(
+		category.addExtension(
 			ToastSlicingRecipe::class.java, JEISliceCraftingExtension(
 				ModItems.TOASTED_BREAD.get(), 1, 8, ModItems.TOAST_SLICE.get(), 8, 8
 			)

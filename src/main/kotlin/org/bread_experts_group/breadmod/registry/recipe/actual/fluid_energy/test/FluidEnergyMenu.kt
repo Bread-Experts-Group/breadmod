@@ -25,14 +25,14 @@ class FluidEnergyMenu(
 		this.addInventorySlots(inventory, 8, 174, 116)
 
 		this.addHandlerSlot(0, 15, 30)
-		this.addHandlerSlot(1, 30, 30)
-		this.addHandlerSlot(2, 15, 45)
-		this.addHandlerSlot(3, 30, 45)
+		this.addHandlerSlot(1, 32, 30)
+		this.addHandlerSlot(2, 15, 48)
+		this.addHandlerSlot(3, 32, 48)
 
-		this.addResultHandlerSlot(4, 60, 30)
-		this.addResultHandlerSlot(5, 75, 30)
-		this.addResultHandlerSlot(6, 60, 45)
-		this.addResultHandlerSlot(7, 75, 45)
+		this.addResultHandlerSlot(4, 103, 33)
+		this.addResultHandlerSlot(5, 129, 33)
+		this.addResultHandlerSlot(6, 103, 59)
+		this.addResultHandlerSlot(7, 129, 59)
 	}
 
 	override val containerSlotCount: Int = 8

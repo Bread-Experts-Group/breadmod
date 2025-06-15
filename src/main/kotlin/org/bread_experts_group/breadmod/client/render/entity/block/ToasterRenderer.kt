@@ -24,7 +24,7 @@ class ToasterRenderer(
 	context
 ) {
 	private companion object {
-		val HANDLE_MODEL: BakedModel = localClient.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
+		val HANDLE_MODEL: BakedModel = localClient.getModel("${ModelProvider.BLOCK_FOLDER}/toaster/handle")
 	}
 
 	private val itemRenderer: ItemRenderer = this.context.itemRenderer

@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum.MAIN
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import java.awt.Color
@@ -18,7 +17,7 @@ class MainEntry(
 	MAIN,
 	screen,
 	stack,
-	SettingsEntryButton(Component.literal("<"), Component.empty(), MAIN)
+	Component.literal("<")
 ) {
 	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		guiGraphics.fill(

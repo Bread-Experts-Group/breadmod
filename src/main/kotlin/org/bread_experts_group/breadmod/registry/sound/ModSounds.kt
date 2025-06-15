@@ -142,6 +142,14 @@ object ModSounds {
 	@DataGenerateLanguage("en_us", "Nothing...")
 	val DOUBLE_NOTHING: SoundHolder = this.registerSoundEvents("double_or_nothing_nothing")
 
+	@DataGenerateSound
+	@DataGenerateLanguage("en_us", "nyoooom")
+	val SPEED_COIL: SoundHolder = this.registerSoundEvents("speed_coil")
+
+	@DataGenerateSound
+	@DataGenerateLanguage("en_us", "[low gravity noise]")
+	val GRAVITY_COIL: SoundHolder = this.registerSoundEvents("gravity_coil")
+
 	private fun registerSoundEvents(name: String): SoundHolder {
 		return this.SOUND_REGISTRY.register(name) { ->
 			SoundEvent.createVariableRangeEvent(modLocation(name))

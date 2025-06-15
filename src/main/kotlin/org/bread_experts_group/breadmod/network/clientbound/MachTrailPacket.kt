@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.network.clientbound
 
 import com.mojang.authlib.GameProfile
 import io.netty.buffer.ByteBuf
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
@@ -20,7 +21,7 @@ data class MachTrailPacket(private val playerProfile: GameProfile) : CustomPacke
 		)
 
 		fun handleClientboundPacket(data: MachTrailPacket, context: IPayloadContext) {
-			val targetPlayer = context.player().level().getPlayerByUUID(data.playerProfile.id) ?: return
+			val targetPlayer = context.player().level().getPlayerByUUID(data.playerProfile.id) as? LocalPlayer ?: return
 			machTrailMap[targetPlayer] = MachTrailData(targetPlayer)
 		}
 

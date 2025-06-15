@@ -16,7 +16,9 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadArmorPotionRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.DopedBreadRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyBuilder
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
@@ -36,6 +38,10 @@ class ModRecipeProvider(
 			.save(recipeOutput, modLocation("special", "crafting", "bread_slicing"))
 		SpecialRecipeBuilder.special { ToastSlicingRecipe() }
 			.save(recipeOutput, modLocation("special", "crafting", "toast_slicing"))
+		SpecialRecipeBuilder.special { BreadArmorPotionRecipe() }
+			.save(recipeOutput, modLocation("special", "crafting", "bread_armor_potion_application"))
+		SpecialRecipeBuilder.special { DopedBreadRecipe() }
+			.save(recipeOutput, modLocation("special", "crafting", "doped_bread_crafting"))
 		// Toaster
 		this.toasting(Items.BREAD, ModItems.TOASTED_BREAD.get(), recipeOutput, "bread_to_toasted_bread")
 		this.toasting(ModItems.BREAD_SLICE.get(), ModItems.TOAST_SLICE.get(), recipeOutput, "slice_to_toast")

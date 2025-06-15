@@ -19,6 +19,8 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.phys.AABB
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
+import org.bread_experts_group.breadmod.util.component1
+import org.bread_experts_group.breadmod.util.component2
 import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.random.Random
@@ -36,6 +38,7 @@ class BreadArmorItem(type: Type) : ArmorItem(
 		val decimalFormat: DecimalFormat = DecimalFormat("0.#")
 	}
 
+	// todo finish the tooltip for this
 	override fun appendHoverText(
 		stack: ItemStack,
 		context: TooltipContext,
@@ -43,14 +46,16 @@ class BreadArmorItem(type: Type) : ArmorItem(
 		tooltipFlag: TooltipFlag
 	) {
 		val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-		if (potion.customEffects.isEmpty() || potion.customEffects.first() == null) return
-		val range = COMMON.dopedArmorEffectDistanceMultiplier.get() * potion.customEffects.first().amplifier
-		tooltipComponents.add(
-			modTranslatable(
-				"item", "bread_armor", "range",
-				args = listOf(Companion.decimalFormat.format(range), if (range == 1.0) "block" else "blocks")
-			).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)
-		)
+		val rangeMulti = COMMON.dopedArmorEffectDistanceMultiplier.get()
+		potion.allEffects.forEach { (effect, amplifier) ->
+			val range = rangeMulti * amplifier
+			tooltipComponents.add(
+				modTranslatable(
+					"item", "bread_armor", "range",
+					args = listOf(Companion.decimalFormat.format(range), if (range == 1.0) "block" else "blocks")
+				).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)
+			)
+		}
 		potion.addPotionTooltip(tooltipComponents::add, 1.0f, context.tickRate())
 	}
 

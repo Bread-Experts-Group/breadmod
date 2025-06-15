@@ -1,13 +1,11 @@
 package org.bread_experts_group.breadmod.registry.item
 
 import net.minecraft.ChatFormatting
-import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EquipmentSlotGroup
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.food.FoodProperties
@@ -27,10 +25,8 @@ import net.minecraft.world.item.Tier
 import net.minecraft.world.item.Tiers
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.UseAnim
-import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.item.component.ItemAttributeModifiers
 import net.minecraft.world.item.context.UseOnContext
-import net.minecraft.world.level.Level
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod
@@ -45,8 +41,11 @@ import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
 import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
+import org.bread_experts_group.breadmod.registry.item.actual.DopedBreadItem
+import org.bread_experts_group.breadmod.registry.item.actual.GravityCoilItem
 import org.bread_experts_group.breadmod.registry.item.actual.OilDrumItem
 import org.bread_experts_group.breadmod.registry.item.actual.PushGridItem
+import org.bread_experts_group.breadmod.registry.item.actual.SpeedCoilItem
 import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.WrenchItem
@@ -130,34 +129,9 @@ object ModItems {
 
 	@DataGenerateModelLayeredItem("doped_bread", "doped_bread_overlay")
 	@DataGenerateLanguage("en_us")
-	@DataGenerateLanguage("en_us", "contains trace amounts of neurotoxin", suffix = ".tooltip")
-	val DOPED_BREAD: DeferredItem<Item> = this.ITEM_REGISTRY.register("doped_bread") { ->
-		object : Item(
-			Properties()
-				.food(FoodProperties.Builder().nutrition(6).alwaysEdible().build())
-				.component(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-				.rarity(Rarity.RARE)
-		) {
-			override fun finishUsingItem(stack: ItemStack, level: Level, livingEntity: LivingEntity): ItemStack {
-				stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-					.forEachEffect(livingEntity::addEffect)
-				return super.finishUsingItem(stack, level, livingEntity)
-			}
-
-			override fun appendHoverText(
-				stack: ItemStack,
-				context: TooltipContext,
-				tooltipComponents: MutableList<Component>,
-				tooltipFlag: TooltipFlag
-			) {
-				val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-
-				tooltipComponents.add(modTranslatable("item", "doped_bread", "tooltip").withStyle(ChatFormatting.GRAY))
-				PotionContents.addPotionTooltip(potion.allEffects, tooltipComponents::add, 1f, context.tickRate())
-				super.appendHoverText(stack, context, tooltipComponents, tooltipFlag)
-			}
-		}
-	}
+	@DataGenerateLanguage("en_us", "Contains trace amounts of neurotoxin", suffix = ".tooltip")
+	@DataGenerateLanguage("en_us", "Doped with:", suffix = ".tooltip_two")
+	val DOPED_BREAD: DeferredItem<Item> = this.ITEM_REGISTRY.register("doped_bread", ::DopedBreadItem)
 
 	@DataGenerateTagItem("breadmod:toastable")
 	@DataGenerateModelSingleItem
@@ -393,15 +367,13 @@ object ModItems {
 	val PUSH_GRID_ITEM: DeferredItem<Item> =
 		this.ITEM_REGISTRY.register("push_grid_tool", ::PushGridItem)
 
-	// todo models/textures
 	@DataGenerateLanguage("en_us")
 	val SPEED_COIL: DeferredItem<Item> =
-		this.ITEM_REGISTRY.registerSimpleItem("speed_coil")
+		this.ITEM_REGISTRY.register("speed_coil", ::SpeedCoilItem)
 
-	// todo models/textures
 	@DataGenerateLanguage("en_us")
 	val GRAVITY_COIL: DeferredItem<Item> =
-		this.ITEM_REGISTRY.registerSimpleItem("gravity_coil")
+		this.ITEM_REGISTRY.register("gravity_coil", ::GravityCoilItem)
 
 	// End Tools
 	@DataGenerateModelSingleItem
@@ -435,9 +407,8 @@ object ModItems {
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Free Energy: %s eV", suffix = ".energy")
 	@DataGenerateLanguage("en_us", "Total Energy: %s J", suffix = ".total_energy")
-	val RADIOACTIVE_MATERIAL: DeferredItem<Item> = this.ITEM_REGISTRY.register("radioactive_material") { _ ->
-		RadioactiveMaterial
-	}
+	val RADIOACTIVE_MATERIAL: DeferredItem<Item> =
+		this.ITEM_REGISTRY.register("radioactive_material", ::RadioactiveMaterial)
 
 	@DataGenerateLanguage("en_us")
 	val FORKLIFT: DeferredItem<Item> = this.ITEM_REGISTRY.register("forklift") { ->

@@ -24,10 +24,13 @@ import net.minecraft.tags.TagKey
 import net.minecraft.util.Mth
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionHand.MAIN_HAND
+import net.minecraft.world.effect.MobEffect
+import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.Attribute
+import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Player
@@ -213,6 +216,8 @@ operator fun Vec3.component3(): Double = this.z
 operator fun BlockPos.component1(): Int = this.x
 operator fun BlockPos.component2(): Int = this.y
 operator fun BlockPos.component3(): Int = this.z
+operator fun MobEffectInstance.component1(): Holder<MobEffect> = this.effect
+operator fun MobEffectInstance.component2(): Int = this.amplifier
 
 fun blocks(vararg filterBlocks: Block = arrayOf(Blocks.AIR)): (BlockGetter, Vec3) -> BlockState? = { level, position ->
 	val blockPos = BlockPos(position.toVec3i())
@@ -490,6 +495,9 @@ fun CompoundTag.createEntity(level: Level): Entity {
 fun LivingEntity.setAttribute(attribute: Holder<Attribute>, value: Double) {
 	this.attributes.getInstance(attribute)?.let { it.baseValue = value }
 }
+
+fun LivingEntity.getAttributeInstance(attribute: Holder<Attribute>): AttributeInstance =
+	this.attributes.getInstance(attribute) ?: throw NullPointerException()
 /// !!! NOTICE !!! ///
 // Definitions above this line are for public use by other mods, possibly even external ones!
 // Make sure to write good Javadoc for them!

@@ -12,9 +12,7 @@ object DieselGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
-	private val originalModel: BakedModel = localClient.modelManager.getModel(
-		"block/diesel_generator/diesel_generator"
-	)
+	private val originalModel: BakedModel = localClient.getModel("block/diesel_generator/diesel_generator")
 
 	//	private val doorModel: BakedModel = localClient.modelManager.getModel(
 //		"block/diesel_generator/diesel_generator_door"

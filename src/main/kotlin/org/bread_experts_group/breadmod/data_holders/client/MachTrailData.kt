@@ -1,7 +1,7 @@
 package org.bread_experts_group.breadmod.data_holders.client
 
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.world.entity.EquipmentSlot.HEAD
-import net.minecraft.world.entity.player.Player
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
-data class MachTrailData(val targetPlayer: Player) {
+data class MachTrailData(val targetPlayer: LocalPlayer) {
 	private val sounds: List<MachSoundInstance> = listOf(
 		MachSoundInstance(ModSounds.MACH_ONE.get(), this.targetPlayer),
 		MachSoundInstance(ModSounds.MACH_TWO.get(), this.targetPlayer),

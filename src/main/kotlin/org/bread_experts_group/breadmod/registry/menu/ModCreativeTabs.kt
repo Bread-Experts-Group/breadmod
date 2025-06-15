@@ -42,14 +42,10 @@ object ModCreativeTabs {
 								.listElements()
 								.forEach { potion ->
 									val dopedBread = ModItems.DOPED_BREAD.toStack()
-									val color = potion.value().effects.firstOrNull()?.effect?.value()?.color ?: 0
+									val color = PotionContents.getColor(potion.value().effects)
 									dopedBread.set(
 										DataComponents.POTION_CONTENTS,
-										PotionContents(
-											Optional.of(potion),
-											Optional.of(color),
-											listOf()
-										)
+										PotionContents(Optional.of(potion), Optional.of(color), listOf())
 									)
 									dopedBread.set(DataComponents.DYED_COLOR, DyedItemColor(color, false))
 									output.accept(dopedBread)

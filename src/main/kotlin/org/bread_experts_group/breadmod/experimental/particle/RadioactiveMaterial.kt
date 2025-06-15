@@ -15,7 +15,7 @@ import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.pow
 
-object RadioactiveMaterial : Item(Properties().rarity(RARE)) {
+class RadioactiveMaterial : Item(Properties().rarity(RARE)) {
 	private fun getClosedSystem(stack: ItemStack): ClosedSystem = stack.getOrDefault(
 		ModDataComponents.CLOSED_SYSTEM,
 		ClosedSystem(

@@ -12,8 +12,8 @@ object CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {
-	private val originalModel: BakedModel = localClient.modelManager.getModel("block/creative_generator")
-	private val starModel: BakedModel = localClient.modelManager.getModel("block/creative_generator_star")
+	private val originalModel: BakedModel = localClient.getModel("block/creative_generator")
+	private val starModel: BakedModel = localClient.getModel("block/creative_generator_star")
 
 	override fun renderByItem(
 		stack: ItemStack,

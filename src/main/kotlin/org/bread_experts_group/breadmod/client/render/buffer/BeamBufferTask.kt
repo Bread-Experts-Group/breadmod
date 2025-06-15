@@ -21,7 +21,7 @@ object BeamBufferTask {
 		val player = localClient.player ?: return
 		val bufferSource = localClient.renderBuffers().bufferSource()
 		val blockRenderer = localClient.blockRenderer
-		val axisModel = localClient.modelManager.getModel("block/axis")
+		val axisModel = localClient.getModel("block/axis")
 
 		RenderBuffer.add(
 			Stage.AFTER_SOLID_BLOCKS,

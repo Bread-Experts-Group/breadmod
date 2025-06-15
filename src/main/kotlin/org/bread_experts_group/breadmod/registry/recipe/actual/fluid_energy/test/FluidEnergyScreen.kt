@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import org.bread_experts_group.breadmod.client.gui.screens.AbstractRecipeContainerScreen
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import java.awt.Color
 
 class FluidEnergyScreen(
@@ -45,6 +46,7 @@ class FluidEnergyScreen(
 			this.topPos + 20,
 			Color.WHITE.rgb
 		)
+		ModGuiElements.DOUGH_MACHINE_ARROW_FILLED.setRotation(-15f).blitScaled(guiGraphics, this.leftPos + 52, this.topPos + 32, 48, 20)
 		super.renderBg(guiGraphics, partialTick, mouseX, mouseY)
 	}
 

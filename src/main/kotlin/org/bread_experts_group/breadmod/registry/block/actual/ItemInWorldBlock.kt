@@ -7,7 +7,16 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource.BLOCKS
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.ItemInteractionResult
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
+import net.minecraft.world.item.crafting.CraftingInput
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -17,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.PushReaction.PUSH_ONLY
+import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -49,6 +59,30 @@ class ItemInWorldBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().n
 			WEST  -> Block.box(15.0, 0.0, 0.0, 16.0, 16.0, 16.0)
 			EAST  -> Block.box(0.0, 0.0, 0.0, 1.0, 16.0, 16.0)
 		}
+	}
+
+	override fun useItemOnBM(
+		stack: ItemStack,
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hand: InteractionHand,
+		hitResult: BlockHitResult
+	): ItemInteractionResult {
+		if (!stack.`is`(Items.POTION)) return super.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
+		val entity = level.getBlockEntity(pos) as ItemInWorldBlockEntity
+		var flag = false
+		repeat(4) { index ->
+			val item = entity.getItem(index)
+			if (!item.`is`(Items.BREAD)) return@repeat
+			val input = CraftingInput.of(1, 2, listOf(item, stack))
+			val recipe = level.recipeManager.getRecipeFor(RecipeType.CRAFTING, input, level)
+			entity.setItem(index, recipe.get().value.assemble(input, level.registryAccess()))
+			flag = true
+		}
+		if (flag) level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, BLOCKS, 1f, 1f)
+		return super.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
 	}
 
 	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.INVISIBLE

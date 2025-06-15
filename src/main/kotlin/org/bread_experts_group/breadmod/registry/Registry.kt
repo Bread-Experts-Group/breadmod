@@ -44,6 +44,7 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.items.wrapper.InvWrapper
@@ -106,6 +107,7 @@ import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvide
 import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
 import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
+import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.experimental.physics_grid.MicroLevel
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
@@ -142,6 +144,7 @@ import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.entity.ModPainting
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
+import org.bread_experts_group.breadmod.registry.item.EquipmentSlotListener
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.ModItems
@@ -273,6 +276,25 @@ object Registry {
 					MicroLevel()
 //					microLevel.setBlockAndUpdate(BlockPos.ZERO, ModBlocks.BREAD_BLOCK.get().block.defaultBlockState())
 				}
+				NeoForge.EVENT_BUS.addListener { event: LivingEquipmentChangeEvent ->
+					val entity = event.entity
+					val toStack = event.to
+					val toItem = toStack.item as? EquipmentSlotListener
+					val fromStack = event.from
+					val fromItem = fromStack.item as? EquipmentSlotListener
+					if (toStack.item is EquipmentSlotListener)
+						toItem?.let {
+							it.onItemEquipped(toStack, entity, entity.level(), event.slot)
+							it.onEquipmentChange(fromStack, toStack, entity, entity.level(), event.slot)
+						}
+					fromItem?.let {
+						it.onItemUnequipped(fromStack, entity, entity.level(), event.slot)
+						it.onEquipmentChange(fromStack, toStack, entity, entity.level(), event.slot)
+					}
+				}
+				NeoForge.EVENT_BUS.addListener { event: InventoryChangeEvent ->
+//					LogManager.getLogger().info(event.stack.item)
+				}
 				// Mod Bus
 				modBus.addListener { event: FMLClientSetupEvent ->
 					event.enqueueWork {
@@ -378,7 +400,12 @@ object Registry {
 				modBus.addListener { event: RegisterColorHandlersEvent.Item ->
 					event.register(
 						itemColor,
-						ModItems.CHEF_HAT.get(), ModItems.DOPED_BREAD.get()
+						ModItems.CHEF_HAT.get(),
+						ModItems.DOPED_BREAD.get(),
+						ModItems.BREAD_CHESTPLATE.get(),
+						ModItems.BREAD_HELMET.get(),
+						ModItems.BREAD_LEGGINGS.get(),
+						ModItems.BREAD_BOOTS.get()
 					)
 				}
 				modBus.addListener { event: ModelEvent.RegisterAdditional ->

@@ -10,7 +10,9 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.AbstractCuttingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadArmorPotionRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.DopedBreadRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergySerializer
@@ -44,6 +46,14 @@ object ModRecipeSerializers {
 	val TOAST_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
 		this.RECIPE_SERIALIZER_REGISTRY.register("toast_slice_crafting") { ->
 			SimpleCraftingRecipeSerializer { ToastSlicingRecipe() }
+		}
+	val ARMOR_POTION: Supplier<SimpleCraftingRecipeSerializer<BreadArmorPotionRecipe>> =
+		this.RECIPE_SERIALIZER_REGISTRY.register("bread_armor_potion_crafting") { ->
+			SimpleCraftingRecipeSerializer { BreadArmorPotionRecipe() }
+		}
+	val BREAD_DOPING: Supplier<SimpleCraftingRecipeSerializer<DopedBreadRecipe>> =
+		this.RECIPE_SERIALIZER_REGISTRY.register("doped_bread_crafting") { ->
+			SimpleCraftingRecipeSerializer { DopedBreadRecipe() }
 		}
 
 	// Exp.
