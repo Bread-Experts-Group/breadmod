@@ -91,5 +91,10 @@
       <option name="name" value="Bread Experts Group Maven" />
       <option name="url" value="https://107-132-83-172.lightspeed.snantx.sbcglobal.net/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="Bread Experts Group Maven" />
+      <option name="name" value="Bread Experts Group Maven" />
+      <option name="url" value="https://maven.breadexperts.group/" />
+    </remote-repository>
   </component>
 </project>

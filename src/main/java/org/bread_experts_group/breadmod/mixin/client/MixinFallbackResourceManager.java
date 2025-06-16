@@ -4,14 +4,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.FallbackResourceManager;
 import net.minecraft.server.packs.resources.IoSupplier;
+import org.bread_experts_group.breadmod.BreadMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.InputStream;
-
-import static org.bread_experts_group.breadmod.BreadMod.ID;
 
 @Mixin(FallbackResourceManager.class)
 public class MixinFallbackResourceManager {
@@ -22,6 +21,6 @@ public class MixinFallbackResourceManager {
 			IoSupplier<InputStream> stream,
 			CallbackInfoReturnable<IoSupplier<InputStream>> cir
 	) {
-		if (location.getNamespace().equals(ID)) cir.setReturnValue(stream);
+		if (location.getNamespace().equals(BreadMod.ID)) cir.setReturnValue(stream);
 	}
 }

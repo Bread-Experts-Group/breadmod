@@ -11,6 +11,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
 import org.bread_experts_group.breadmod.mixinutil.General;
 import org.bread_experts_group.image.apng.APNGReaderSpi;
+import org.bread_experts_group.image.gif.GIFReaderSpi;
 import org.bread_experts_group.stream.FailQuickInputStream;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -155,10 +156,12 @@ interface MixinSpriteResourceLoader {
 			}
 
 			cir.setReturnValue(result[0]);
-		} else if (path.endsWith(".apng")) {
+		} else if (path.endsWith(".gif") || path.endsWith(".apng")) {
 			try {
 				final InputStream resourceStream = pResource.open();
-				ImageReader reader = new APNGReaderSpi().createReaderInstance();
+				ImageReader reader;
+				if (path.endsWith(".gif")) reader = new GIFReaderSpi().createReaderInstance();
+				else reader = new APNGReaderSpi().createReaderInstance();
 				reader.setInput(new FailQuickInputStream(resourceStream));
 
 				List<IIOImage> frames = new ArrayList<>();
@@ -179,7 +182,7 @@ interface MixinSpriteResourceLoader {
 					if (concatenated == null) concatenated = frame;
 					else concatenated = breadmod$mergeImages(concatenated, frame);
 				}
-				assert concatenated != null;
+				if (concatenated == null) return;
 
 				final int width = reader.read(0).getWidth();
 				final int height = reader.read(0).getHeight();
@@ -215,6 +218,6 @@ interface MixinSpriteResourceLoader {
 		}
 
 		// Allow assets that can't be decoded by default to use the missing texture.
-		// JPG/APNG support?
+		// JPG support?
 	}
 }

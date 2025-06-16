@@ -6,7 +6,7 @@ import org.slf4j.event.Level
 import java.util.Properties
 
 plugins {
-	kotlin("jvm") version "2.1.10"
+	kotlin("jvm") version "2.2.0-RC3"
 	id("org.jetbrains.dokka-javadoc") version "2.0.0"
 	id("idea")
 	id("net.neoforged.moddev") version "2.0.80"
@@ -21,7 +21,7 @@ version = project.properties["mod_version"] as String
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:2.35.1"
+private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:2.39.0"
 
 idea {
 	module {
@@ -63,7 +63,7 @@ repositories {
 	}
 	maven {
 		name = "Bread Experts Group Maven"
-		url = uri("https://107-132-83-172.lightspeed.snantx.sbcglobal.net/")
+		url = uri("https://maven.breadexperts.group/")
 	}
 }
 
@@ -114,16 +114,16 @@ neoForge {
 				dependencies.create(breadServerLib) { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.1.10") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.2.0-RC3") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.1.10") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.2.0-RC2") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0-RC3") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0-RC3") { isTransitive = false }
 			)
 		}
 	}
@@ -138,10 +138,10 @@ neoForge {
 dependencies {
 	// Mod Dependencies //
 	jarJar(implementation(breadServerLib) {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:2.1.10") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.10") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.10") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.10") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.0-RC3") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:2.2.0-RC2") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0-RC3") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0-RC3") {})
 	// Mod Compatibility //
 	// Jade (WAILA)
 	implementation("curse.maven:jade-324717:5976517")
@@ -192,7 +192,7 @@ publishing {
 			pom {
 				name = "Bread Mod"
 				description = "The Bread Mod."
-				url = "https://javart.zip"
+				url = "https://breadexperts.group"
 				signing {
 					sign(publishing.publications["mavenKotlin"])
 					sign(configurations.archives.get())
@@ -207,25 +207,25 @@ publishing {
 					developer {
 						id = "mikoe"
 						name = "Miko Elbrecht"
-						email = "miko@javart.zip"
+						email = "miko@breadexperts.group"
 					}
 					developer {
 						id = "loganm"
 						name = "Logan McLean"
-						email = "thetoaster@javart.zip"
+						email = "thetoaster@breadexperts.group"
 					}
 				}
 				scm {
 					connection = "scm:git:git://github.com/Bread-Experts-Group/breadmod.git"
 					developerConnection = "scm:git:ssh://git@github.com:Bread-Experts-Group/breadmod.git"
-					url = "https://javart.zip"
+					url = "https://breadexperts.group"
 				}
 			}
 		}
 	}
 	repositories {
 		maven {
-			url = uri("https://107-132-83-172.lightspeed.snantx.sbcglobal.net/")
+			url = uri("https://maven.breadexperts.group/")
 			credentials {
 				username = localProperties["mavenUser"] as String
 				password = localProperties["mavenPassword"] as String
