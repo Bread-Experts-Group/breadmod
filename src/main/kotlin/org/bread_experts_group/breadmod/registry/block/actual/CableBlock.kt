@@ -16,8 +16,10 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
+import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CableBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
+import org.bread_experts_group.breadmod.util.Color
 
 // todo cable network
 class CableBlock(
@@ -46,6 +48,14 @@ class CableBlock(
 		Direction.SOUTH -> Companion.SOUTH
 		Direction.WEST  -> Companion.WEST
 		Direction.EAST  -> Companion.EAST
+	}
+
+	fun resolveColor(): Int {
+		val acceptable = this.acceptable.first()
+		return if (acceptable == Capabilities.EnergyStorage.BLOCK) Color.RED
+		else if (acceptable == Capabilities.ItemHandler.BLOCK) Color.GREEN
+		else if (acceptable == Capabilities.FluidHandler.BLOCK) Color.BLUE
+		else Color.WHITE
 	}
 
 	fun connectsTo(

@@ -75,8 +75,8 @@ fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
 /**
  * Color getter for ItemStacks.
  */
-val itemColor: ItemColor = ItemColor { stack: ItemStack, i: Int ->
-	if (i > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE.rgb)
+val itemColor: ItemColor = ItemColor { stack: ItemStack, tintIndex: Int ->
+	if (tintIndex > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE.rgb)
 }
 
 fun getFluidSpriteAndTint(fluid: Fluid, flowing: Boolean): Pair<TextureAtlasSprite?, Int> {

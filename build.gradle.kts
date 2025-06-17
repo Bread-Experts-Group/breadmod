@@ -161,12 +161,13 @@ dependencies {
 	implementation("curse.maven:jade-324717:5976517")
 //    runtimeOnly "curse.maven:the-one-probe-245211:5836106"
 	runtimeOnly("curse.maven:packet-fixer-689467:6195911")
+	implementation("curse.maven:projecte-226410:6611984")
 	// Just Enough Items (JEI)
-	val jeiVersion = "19.10.0.126"
+	val jeiVersion = "19.21.2.313"
 	compileOnly("mezz.jei:jei-${mcVersion()}-neoforge-api:${jeiVersion}")
 	runtimeOnly("mezz.jei:jei-${mcVersion()}-neoforge:${jeiVersion}")
 	// Mekanism
-	val mekanismVersion = "${mcVersion()}-10.7.8.70"
+	val mekanismVersion = "${mcVersion()}-10.7.9.72"
 	compileOnly("mekanism:Mekanism:${mekanismVersion}:api")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}")
 	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:additions")

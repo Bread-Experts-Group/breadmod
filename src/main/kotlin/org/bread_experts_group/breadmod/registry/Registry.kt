@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
@@ -139,6 +140,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
+import org.bread_experts_group.breadmod.registry.block.actual.CableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
@@ -169,6 +171,7 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
+import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
@@ -408,6 +411,16 @@ object Registry {
 						ModItems.BREAD_LEGGINGS.get(),
 						ModItems.BREAD_BOOTS.get()
 					)
+					event.register({ stack, _ ->
+						val blockItem = stack.item as? BlockItem ?: return@register Color.WHITE
+						val cable = blockItem.block as? CableBlock ?: return@register Color.WHITE
+						cable.resolveColor()
+					}, ModBlocks.CABLE.asItem())
+				}
+				modBus.addListener { event: RegisterColorHandlersEvent.Block ->
+					event.register({ state, _, _, _ ->
+						(state.block as? CableBlock ?: return@register Color.WHITE).resolveColor()
+					}, ModBlocks.CABLE.asBlock())
 				}
 				modBus.addListener { event: ModelEvent.RegisterAdditional ->
 					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
