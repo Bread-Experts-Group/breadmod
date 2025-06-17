@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.Level
+import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -14,14 +14,8 @@ import net.minecraft.world.level.material.PushReaction.BLOCK
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CableBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
-import org.bread_experts_group.breadmod.util.component1
-import org.bread_experts_group.breadmod.util.component2
-import org.bread_experts_group.breadmod.util.component3
-import org.bread_experts_group.breadmod.util.toVec3
 
 // todo cable network
 class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)) {
@@ -41,26 +35,6 @@ class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushRea
 		val EAST_SHAPE: VoxelShape = Block.box(11.0, 5.0, 5.0, 16.0, 11.0, 11.0)
 	}
 
-	override fun neighborChanged(
-		state: BlockState,
-		level: Level,
-		pos: BlockPos,
-		neighborBlock: Block,
-		neighborPos: BlockPos,
-		movedByPiston: Boolean
-	) {
-		val neighborState = level.getBlockState(neighborPos)
-		val (nX, nY, nZ) = neighborPos.toVec3()
-		val (x, y, z) = pos.toVec3()
-		val side = Direction.getNearest(nX - x, nY - y, nZ - z)
-		val isNeighborCable = level.getBlockState(neighborPos).`is`(ModBlocks.CABLE.asBlock())
-		level.setBlockAndUpdate(pos, state.setValue(this.sideToProperty(side), isNeighborCable))
-		if (isNeighborCable) level.setBlockAndUpdate(
-			neighborPos,
-			neighborState.setValue(this.sideToProperty(side.opposite), true)
-		)
-	}
-
 	private fun sideToProperty(side: Direction): BooleanProperty = when (side) {
 		Direction.DOWN  -> Companion.DOWN
 		Direction.UP    -> Companion.UP
@@ -68,6 +42,23 @@ class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushRea
 		Direction.SOUTH -> Companion.SOUTH
 		Direction.WEST  -> Companion.WEST
 		Direction.EAST  -> Companion.EAST
+	}
+
+	fun connectsTo(state: BlockState, level: LevelAccessor, direction: Direction): Boolean {
+		val flag = state.`is`(this)
+		// todo cap stuff here
+		return flag
+	}
+
+	override fun updateShape(
+		state: BlockState,
+		direction: Direction,
+		neighborState: BlockState,
+		level: LevelAccessor,
+		pos: BlockPos,
+		neighborPos: BlockPos
+	): BlockState {
+		return state.setValue(this.sideToProperty(direction), this.connectsTo(neighborState, level, direction.opposite))
 	}
 
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
