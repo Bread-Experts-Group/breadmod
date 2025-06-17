@@ -6,12 +6,12 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
-import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.hex
-import org.bread_experts_group.breadmod.experimental.computer.BinaryUtil.shr
-import org.bread_experts_group.breadmod.experimental.computer.bios.h10.TeletypeOutput
-import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.registry.ModFonts
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
+import org.bread_experts_group.computer.BinaryUtil.hex
+import org.bread_experts_group.computer.BinaryUtil.shr
+import org.bread_experts_group.computer.bios.h10.TeletypeOutput
+import org.bread_experts_group.computer.ia32.IA32Processor
 import java.awt.Color
 
 class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(context) {

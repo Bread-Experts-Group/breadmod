@@ -21,7 +21,7 @@ version = project.properties["mod_version"] as String
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:2.39.0"
+private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:2.41.0"
 
 idea {
 	module {
@@ -64,6 +64,18 @@ repositories {
 	maven {
 		name = "Bread Experts Group Maven"
 		url = uri("https://maven.breadexperts.group/")
+	}
+
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Bread Experts Group Maven"
+				url = uri("https://maven.breadexperts.group/")
+			}
+		}
+		filter {
+			includeGroup("org.bread_experts_group")
+		}
 	}
 }
 
@@ -111,7 +123,9 @@ neoForge {
 			// systemProperty 'forge.logging.markers', 'REGISTRIES'
 			logLevel = Level.INFO
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create(breadServerLib) { isTransitive = false }
+				dependencies.create(breadServerLib) {
+					isTransitive = false
+				}
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
 				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.2.0-RC3") { isTransitive = false }

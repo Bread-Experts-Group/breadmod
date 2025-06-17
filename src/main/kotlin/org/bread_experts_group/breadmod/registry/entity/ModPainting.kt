@@ -33,14 +33,14 @@ object ModPainting {
 
 	@DataGenerateTagPainting("minecraft:placeable")
 	@DataGenerateLanguage("en_us", "CLASSIFIED", "painting.", ".title")
-	@DataGenerateLanguage("en_us", "N/A", "painting.", ".author")
+	@DataGenerateLanguage("en_us", "あゆただ 通販開始", "painting.", ".author")
 	val CLASSIFIED: ResourceKey<PaintingVariant> = this.create("meow")
 	fun bootstrap(context: BootstrapContext<PaintingVariant>) {
 		this.register(context, this.PAINTING_TEST, 4, 4)
 		this.register(context, this.DEVIL_PUPP, 4, 4)
 		this.register(context, this.FISH, 2, 2)
 		this.register(context, this.ELEPHANT, 2, 2)
-		this.register(context, this.CLASSIFIED, 1, 2)
+		this.register(context, this.CLASSIFIED, 2, 2)
 	}
 
 	private fun register(

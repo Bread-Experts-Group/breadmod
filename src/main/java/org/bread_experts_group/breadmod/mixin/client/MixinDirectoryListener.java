@@ -22,7 +22,6 @@ abstract class MixinDirectoryListener implements IAccessorDirectoryLister {
 				resourceManager.listResources(prefix, (location) -> true);
 		resourceLocationMap.forEach((location, resource) -> {
 			final String path = location.getPath();
-			if (path.endsWith(".asc")) return;
 			ResourceLocation translated = location.withPath(
 					path.substring(
 							prefix.length() + 1,

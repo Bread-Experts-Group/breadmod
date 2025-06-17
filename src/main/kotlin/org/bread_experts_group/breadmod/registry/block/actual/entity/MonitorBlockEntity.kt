@@ -6,14 +6,14 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.level.block.state.BlockState
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.experimental.computer.Computer
-import org.bread_experts_group.breadmod.experimental.computer.MemoryModule
-import org.bread_experts_group.breadmod.experimental.computer.bios.StandardBIOS
-import org.bread_experts_group.breadmod.experimental.computer.disc.iso9960.ISO9660Disc
-import org.bread_experts_group.breadmod.experimental.computer.ia32.IA32Processor
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes.MONITOR
 import org.bread_experts_group.breadmod.util.toBlockPos
 import org.bread_experts_group.breadmod.util.toIntArray
+import org.bread_experts_group.computer.Computer
+import org.bread_experts_group.computer.MemoryModule
+import org.bread_experts_group.computer.bios.StandardBIOS
+import org.bread_experts_group.computer.disc.iso9960.ISO9660Disc
+import org.bread_experts_group.computer.ia32.IA32Processor
 
 class MonitorBlockEntity(
 	pos: BlockPos,
@@ -63,13 +63,13 @@ class MonitorBlockEntity(
 	fun start(): Unit? = if (!this.isRunning()) this.computerStepper.start() else null
 
 	override fun loadAdditionalBM(tag: CompoundTag, registries: Provider) {
-		this.computer.deserializeNBT(registries, tag.getCompound("computer"))
+//		this.computer.deserializeNBT(registries, tag.getCompound("computer"))
 		this.keyboardPos = tag.getIntArray("keyboard").toBlockPos()
 	}
 
 	override fun saveAdditionalBM(tag: CompoundTag, registries: Provider) {
 		this.computerStepper.interrupt()
-		tag.put("computer", this.computer.serializeNBT(registries))
+//		tag.put("computer", this.computer.serializeNBT(registries))
 		tag.putIntArray("keyboard", this.keyboardPos.toIntArray())
 	}
 }

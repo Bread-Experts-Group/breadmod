@@ -407,8 +407,10 @@ object ModItems {
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Free Energy: %s eV", suffix = ".energy")
 	@DataGenerateLanguage("en_us", "Total Energy: %s J", suffix = ".total_energy")
-	val RADIOACTIVE_MATERIAL: DeferredItem<Item> =
-		this.ITEM_REGISTRY.register("radioactive_material", ::RadioactiveMaterial)
+	val RADIOACTIVE_MATERIAL: DeferredItem<Item> = this.ITEM_REGISTRY.register(
+		"radioactive_material",
+		::RadioactiveMaterial
+	)
 
 	@DataGenerateLanguage("en_us")
 	val FORKLIFT: DeferredItem<Item> = this.ITEM_REGISTRY.register("forklift") { ->
