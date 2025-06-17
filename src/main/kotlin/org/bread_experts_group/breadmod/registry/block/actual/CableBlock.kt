@@ -7,7 +7,6 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BooleanProperty
@@ -56,9 +55,9 @@ class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushRea
 		val side = Direction.getNearest(nX - x, nY - y, nZ - z)
 		val isNeighborCable = level.getBlockState(neighborPos).`is`(ModBlocks.CABLE.asBlock())
 		level.setBlockAndUpdate(pos, state.setValue(this.sideToProperty(side), isNeighborCable))
-		level.setBlockAndUpdate(
+		if (isNeighborCable) level.setBlockAndUpdate(
 			neighborPos,
-			neighborState.setValue(this.sideToProperty(side.opposite), isNeighborCable)
+			neighborState.setValue(this.sideToProperty(side.opposite), true)
 		)
 	}
 
@@ -98,8 +97,4 @@ class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushRea
 	override fun hasDynamicShape(): Boolean = true
 
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = CableBlockEntity(pos, state)
-
-	override fun getBlockEntityType(): BlockEntityType<*>? {
-		return super.getBlockEntityType()
-	}
 }
