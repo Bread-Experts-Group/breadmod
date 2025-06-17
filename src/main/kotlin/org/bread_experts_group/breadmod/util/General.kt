@@ -45,8 +45,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.minecraft.world.phys.shapes.BooleanOp
-import net.minecraft.world.phys.shapes.Shapes
+import net.minecraft.world.phys.shapes.Shapes.or
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
 import org.apache.logging.log4j.LogManager
@@ -55,6 +54,7 @@ import org.joml.Vector3f
 import java.math.BigDecimal
 import java.util.UUID
 import java.util.function.Supplier
+import java.util.stream.Stream
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.round
 import kotlin.reflect.full.createInstance
@@ -138,7 +138,8 @@ fun <T> Level.getCapability(
 	entity: BlockEntity
 ): T? = getCapMethod.invoke(this, capability, pos, state, entity) as T?
 
-fun join(v1: VoxelShape, v2: VoxelShape): VoxelShape = Shapes.join(v1, v2, BooleanOp.OR)
+fun Stream<VoxelShape>.combine(): VoxelShape = this.reduce(::or).get()
+fun combineShapes(list: List<VoxelShape>): VoxelShape = list.stream().reduce(::or).get()
 
 /// Start raycast functions ///
 class HitResult<T>(

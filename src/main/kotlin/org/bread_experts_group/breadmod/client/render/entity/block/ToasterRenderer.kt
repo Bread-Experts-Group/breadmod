@@ -16,6 +16,7 @@ import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.translateDiv16
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 
 class ToasterRenderer(
@@ -67,7 +68,7 @@ class ToasterRenderer(
 		poseStack.scaleFlat(0.6f)
 		if (blockRotation == SOUTH || blockRotation == NORTH) {
 			poseStack.mulPose(Axis.YN.rotationDegrees(90f))
-			poseStack.translate(-0.185, 0.0, 0.185)
+			poseStack.translateDiv16(-2.8, 0.0, 3.0)
 		}
 		if (!triggered) {
 			if (stack.count == 2) {

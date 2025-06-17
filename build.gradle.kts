@@ -160,7 +160,7 @@ dependencies {
 	// Jade (WAILA)
 	implementation("curse.maven:jade-324717:5976517")
 //    runtimeOnly "curse.maven:the-one-probe-245211:5836106"
-	compileOnly("curse.maven:packet-fixer-689467:6195911")
+	runtimeOnly("curse.maven:packet-fixer-689467:6195911")
 	// Just Enough Items (JEI)
 	val jeiVersion = "19.10.0.126"
 	compileOnly("mezz.jei:jei-${mcVersion()}-neoforge-api:${jeiVersion}")

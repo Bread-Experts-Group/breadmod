@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.client.resources.model.BakedModel
-import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.core.Direction.DOWN
 import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
@@ -36,7 +35,6 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	private val snapGraphicsToBlockSide: Boolean = true
 ) : BlockEntityRenderer<T> {
 	protected val random: RandomSource = RandomSource.create()
-	protected val modelManager: ModelManager = localClient.modelManager
 	private val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
 //	private val debugAxisModel: BakedModel = localClient.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/axis")
 	/**
@@ -48,6 +46,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 		bufferSource: MultiBufferSource,
 		packedOverlay: Int
 	) {
+		poseStack.pushPose()
 		val originalModel = this.context.blockRenderDispatcher.getBlockModel(blockEntity.blockState)
 		localClient.blockRenderer.modelRenderer.tessellateModel(
 			blockEntity,
@@ -58,6 +57,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 			packedOverlay,
 			this.modelData
 		)
+		poseStack.popPose()
 	}
 
 	protected fun renderModel(
@@ -67,6 +67,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 		bufferSource: MultiBufferSource,
 		packedOverlay: Int
 	) {
+		poseStack.pushPose()
 		localClient.blockRenderer.modelRenderer.tessellateModel(
 			blockEntity,
 			model,
@@ -76,6 +77,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 			packedOverlay,
 			this.modelData
 		)
+		poseStack.popPose()
 	}
 
 	//	protected fun renderDebugAxis(blockEntity: T, poseStack: PoseStack, bufferSource: MultiBufferSource) {

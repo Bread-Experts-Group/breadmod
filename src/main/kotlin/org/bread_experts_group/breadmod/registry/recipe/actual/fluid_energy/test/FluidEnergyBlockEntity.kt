@@ -6,8 +6,10 @@ import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
@@ -37,11 +39,11 @@ class FluidEnergyBlockEntity(
 	)
 
 	override fun finalizeRecipe(recipe: FluidEnergyRecipeTest, level: Level): Boolean {
-		recipe.consumeItems(this.getItemsInRange(0 .. 3)).forEachIndexed(this::setItem)
-		recipe.setItemsOverflow(4 .. 7, this::getItemsInRange, this::setOrGrowItem, 4)
+		recipe.consumeItemsAndSet(this.getItemsInRange(0 .. 3), this::setItem)
+		recipe.setItemsOverflow(4 .. 7, this::getItemsInRange, this::setOrGrowItem)
 
-		recipe.consumeFluids(this.getFluidsInRange(0 .. 1)).forEachIndexed(this::setFluid)
-		recipe.setFluidsOverflow(2 .. 3, this::getFluidsInRange, this::setOrGrowFluid, 10000, 2)
+		recipe.consumeFluidsAndSet(this.getFluidsInRange(0 .. 1), this::setFluid)
+		recipe.setFluidsOverflow(2 .. 3, this::getFluidsInRange, this::setOrGrowFluid, 10000)
 		return true
 	}
 
@@ -83,6 +85,6 @@ class FluidEnergyBlockEntity(
 	}
 
 	override fun checkIsEmpty(level: Level): Boolean =
-		this.getItemsInRange(0 .. 3).all { it.isEmpty } &&
-				this.getFluidsInRange(0 .. 1).all { it.isEmpty }
+		this.getItemsInRange(0 .. 3).all(ItemStack::isEmpty) &&
+				this.getFluidsInRange(0 .. 1).all(FluidStack::isEmpty)
 }

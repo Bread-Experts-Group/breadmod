@@ -56,7 +56,6 @@ import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
-import snownee.jade.overlay.DisplayHelper
 import java.awt.Color
 import java.math.BigDecimal
 import java.util.function.Supplier
@@ -210,14 +209,7 @@ fun GuiGraphics.renderFluid(
 		val maxY: Float = y + height
 		if (color == -1) color = -0x55555556
 
-		DisplayHelper.fill(
-			this,
-			x,
-			maxY - scaledAmount,
-			x + width,
-			maxY,
-			color
-		)
+		this.fill(x, maxY - scaledAmount, x + width, maxY, color)
 	} else {
 		this.drawTiledSprite(
 			x,
@@ -229,6 +221,40 @@ fun GuiGraphics.renderFluid(
 			sprite
 		)
 	}
+}
+
+/**
+ * Float variant of GuiGraphics#fill.
+ */
+fun GuiGraphics.fill(
+	minX: Float,
+	minY: Float,
+	maxX: Float,
+	maxY: Float,
+	color: Int,
+	renderType: RenderType = RenderType.gui()
+) {
+	var newMinX = minX
+	var newMaxX = maxX
+	var newMinY = minY
+	var newMaxY = maxY
+	val pose = this.pose().last().pose()
+	if (minX < maxX) {
+		val i = newMinX
+		newMinX = maxX
+		newMaxX = i
+	}
+	if (minY < maxY) {
+		val j = newMinY
+		newMinY = newMaxY
+		newMaxY = j
+	}
+	val consumer = this.bufferSource().getBuffer(renderType)
+	consumer.addVertex(pose, newMinX, newMinY, 0f).setColor(color)
+	consumer.addVertex(pose, newMinX, newMaxY, 0f).setColor(color)
+	consumer.addVertex(pose, newMaxX, newMaxY, 0f).setColor(color)
+	consumer.addVertex(pose, newMaxX, newMinY, 0f).setColor(color)
+	this.flush()
 }
 
 /**
@@ -312,6 +338,17 @@ fun PoseStack.translate(vec3: Vec3): Unit = this.translate(vec3.x, vec3.y, vec3.
  */
 fun PoseStack.initialTranslate(camera: Camera): Unit =
 	this.translate(-camera.position.x, -camera.position.y, -camera.position.z)
+
+fun PoseStack.rotate(axis: Axis, degrees: Float) = this.mulPose(axis.rotationDegrees(degrees))
+
+/**
+ * Translates this [PoseStack] and divides it by 16. Used for positioning models onto blocks.
+ */
+fun PoseStack.translateDiv16(x: Double, y: Double, z: Double): Unit =
+	this.translate(x / 16, y / 16, z / 16)
+
+fun PoseStack.translateDiv16(x: Float, y: Float, z: Float): Unit =
+	this.translateDiv16(x.toDouble(), y.toDouble(), z.toDouble())
 
 /**
  * Alternative method for positioning the [PoseStack] of the added [RenderBuffer] to the camera pos.

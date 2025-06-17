@@ -5,19 +5,17 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
+import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.network.serverbound.ComputerKeystrokePacket
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import java.awt.Color
 
 class KeyboardScreen(private val monitorPos: BlockPos) : Screen(Component.empty()) {
-	// todo remove after fixing packet not notifying the BER
-	private val monitorEntity: MonitorBlockEntity = localClient.level?.getBlockEntity(this.monitorPos)
-			as MonitorBlockEntity
-
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-		this.monitorEntity.computer.keyboard.write(keyCode.toUByte())
-		// todo figure out why this isn't sending the change to clients later
-//		PacketDistributor.sendToServer(ComputerKeystrokePacket(this.monitorPos, keyCode))
+		val entity = localClient.level!!.getBlockEntity(this.monitorPos) as MonitorBlockEntity
+		entity.computer.keyboard.write(keyCode.toUByte())
+		PacketDistributor.sendToServer(ComputerKeystrokePacket(this.monitorPos, keyCode))
 		return super.keyPressed(keyCode, scanCode, modifiers)
 	}
 

@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -15,7 +16,6 @@ import org.bread_experts_group.breadmod.util.handlers.ListenerHandler
 
 /**
  * An "All In One" [BlockEntity].
- * todo actual javadocs.
  */
 abstract class BreadModBlockEntity<T : BlockEntity>(
 	type: BlockEntityType<T>,
@@ -46,6 +46,8 @@ abstract class BreadModBlockEntity<T : BlockEntity>(
 			this.energyHandler.extractAction = update
 		}
 	}
+
+	fun getChunkPos(): ChunkPos = ChunkPos(this.blockPos)
 
 	open fun commonTick(
 		level: Level,

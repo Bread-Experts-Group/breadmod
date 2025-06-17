@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGen
 import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
 
 class CreativeGeneratorRenderer(context: Context) : BreadModBER<CreativeGeneratorBlockEntity>(context) {
-	private val starModel: BakedModel = this.modelManager.getModel("block/creative_generator_star")
+	private val starModel: BakedModel = localClient.getModel("block/creative_generator_star")
 
 	override fun render(
 		blockEntity: CreativeGeneratorBlockEntity,

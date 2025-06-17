@@ -10,6 +10,7 @@ import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
 
 /**
@@ -30,4 +31,6 @@ object BlockScanner {
 
 	fun List<BlockPos>.filterPositions(level: Level, filter: Block): List<BlockPos> =
 		this.filter { level.getBlockState(it).`is`(filter) }
+
+	fun List<BlockPos>.getBlockStates(level: Level): List<BlockState> = this.map(level::getBlockState)
 }

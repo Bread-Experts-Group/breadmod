@@ -183,6 +183,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 		return this
 	}
 
+	// todo fix the messed up PoseStack translations with translateDiv16
 	private val direction: Vec2 = Vec2(1.0f, -1.0f)
 	private fun drawRainbowQuad(
 		poseStack: PoseStack,

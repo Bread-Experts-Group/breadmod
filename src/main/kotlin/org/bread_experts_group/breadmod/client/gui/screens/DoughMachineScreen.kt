@@ -26,7 +26,7 @@ class DoughMachineScreen(
 			this.topPos + 25,
 			Color.color(55, 55, 55)
 		)
-		super.renderBg(guiGraphics, partialTick, mouseX, mouseY)
+		this.renderSlots(guiGraphics)
 	}
 
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

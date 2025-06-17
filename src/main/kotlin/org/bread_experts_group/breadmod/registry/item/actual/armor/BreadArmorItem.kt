@@ -25,7 +25,6 @@ import java.awt.Color
 import java.text.DecimalFormat
 import kotlin.random.Random
 
-// todo reimplement potion crafting recipe
 class BreadArmorItem(type: Type) : ArmorItem(
 	ModArmorMaterials.BREAD,
 	type,
@@ -59,6 +58,7 @@ class BreadArmorItem(type: Type) : ArmorItem(
 		potion.addPotionTooltip(tooltipComponents::add, 1.0f, context.tickRate())
 	}
 
+	// todo look into why this isn't applying effects to the player
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		if (this.type.slot.index == slotId && level is ServerLevel && entity is ServerPlayer) {
 			val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)

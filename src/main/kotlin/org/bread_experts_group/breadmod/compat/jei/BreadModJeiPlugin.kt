@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.compat.jei
 
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
-import mezz.jei.api.recipe.transfer.IRecipeTransferInfo
 import mezz.jei.api.registration.IGuiHandlerRegistration
 import mezz.jei.api.registration.IRecipeCatalystRegistration
 import mezz.jei.api.registration.IRecipeCategoryRegistration
@@ -10,8 +9,6 @@ import mezz.jei.api.registration.IRecipeRegistration
 import mezz.jei.api.registration.IRecipeTransferRegistration
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.inventory.MenuType
-import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.item.crafting.RecipeType
@@ -28,11 +25,9 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
-import java.util.Optional
 import java.util.function.Supplier
 
 @JeiPlugin
@@ -51,6 +46,7 @@ class BreadModJeiPlugin : IModPlugin {
 				ModItems.TOASTED_BREAD.get(), 1, 8, ModItems.TOAST_SLICE.get(), 8, 8
 			)
 		)
+		// todo bread and doped bread potion crafting extensions
 	}
 
 	override fun registerCategories(registration: IRecipeCategoryRegistration) {
@@ -100,32 +96,11 @@ class BreadModJeiPlugin : IModPlugin {
 		)
 	}
 
-	// todo ugh...
+	// todo fix transfer handlers throwing
 	override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
-		registration.addRecipeTransferHandler(object : IRecipeTransferInfo<WheatCrusherMenu, WheatCrusherRecipe> {
-			override fun getContainerClass(): Class<out WheatCrusherMenu> = WheatCrusherMenu::class.java
-			override fun getMenuType(): Optional<MenuType<WheatCrusherMenu>> =
-				Optional.of(ModMenuTypes.WHEAT_CRUSHER.get())
-
-			override fun getRecipeType(): mezz.jei.api.recipe.RecipeType<WheatCrusherRecipe> =
-				ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE
-
-			override fun getInventorySlots(container: WheatCrusherMenu, recipe: WheatCrusherRecipe): MutableList<Slot> {
-				val list: MutableList<Slot> = mutableListOf()
-				repeat(35) {
-					list.add(container.slots[it])
-				}
-				return list
-			}
-
-			override fun getRecipeSlots(container: WheatCrusherMenu, recipe: WheatCrusherRecipe): MutableList<Slot> =
-				mutableListOf(container.slots[35])
-
-			override fun canHandle(container: WheatCrusherMenu, recipe: WheatCrusherRecipe): Boolean = true
-		})
-//		registration.addRecipeTransferHandler(
-//			WheatCrusherMenu::class.java, ModMenuTypes.WHEAT_CRUSHER.get(), ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE,
-//			0, 2, 2, 35
-//		)
+		registration.addRecipeTransferHandler(
+			WheatCrusherMenu::class.java, ModMenuTypes.WHEAT_CRUSHER.get(), ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE,
+			0, 2, 2, 35
+		)
 	}
 }

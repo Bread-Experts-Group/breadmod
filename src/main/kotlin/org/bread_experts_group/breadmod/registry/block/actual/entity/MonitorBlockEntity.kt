@@ -40,13 +40,11 @@ class MonitorBlockEntity(
 //		this.logger.warn(stream.assemble())
 		this.computer.processor.computer = this.computer
 		this.computer.disc = ISO9660Disc.readDisc(
-			this::class.java.getResource(
-				"/bootloader/bootable.iso"
-			)!!.toURI()
+			(this::class.java.getResource("/bootloader/bootable.iso") ?: return@unstarted).toURI()
 		)
 		this.computer.reset()
 		try {
-			while (!this.computerStepper.isInterrupted) this.computer.step()
+			while (!Thread.currentThread().isInterrupted) this.computer.step()
 		} catch (_: InterruptedException) {
 		}
 	}

@@ -22,7 +22,6 @@ import org.bread_experts_group.breadmod.registry.menu.actual.BucketSlot
 import org.bread_experts_group.breadmod.registry.menu.actual.ResultSlotItemHandler
 import java.math.BigDecimal
 
-// todo work out an automatic slot texture rendering using the menu slots as a source
 abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE : BreadModBlockEntity<BE>>(
 	menu: T,
 	inventory: Inventory,
@@ -143,7 +142,7 @@ abstract class AbstractRecipeContainerScreen<T : BMContainerMenu.Entity<BE>, BE 
 		}
 	}
 
-	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
+	fun renderSlots(guiGraphics: GuiGraphics) {
 		this.menu.slots.forEach { slot ->
 			when (slot) {
 				is ResultSlotItemHandler -> ModGuiElements.RESULT_SLOT.blit(

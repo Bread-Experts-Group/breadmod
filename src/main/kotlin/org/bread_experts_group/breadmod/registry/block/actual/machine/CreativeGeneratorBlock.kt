@@ -31,7 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGeneratorBlockEntity
-import org.bread_experts_group.breadmod.util.join
+import org.bread_experts_group.breadmod.util.combine
 import java.util.stream.Stream
 
 class CreativeGeneratorBlock : BreadModBlockWithEntity(
@@ -72,7 +72,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0),
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_SOUTH: VoxelShape = Stream.of(
 			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
 			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
@@ -104,7 +104,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0),
 			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0),
 			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_EAST: VoxelShape = Stream.of(
 			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
 			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
@@ -136,7 +136,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0),
 			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0),
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_WEST: VoxelShape = Stream.of(
 			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
 			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
@@ -168,7 +168,7 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0),
 			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0)
-		).reduce(::join).get()
+		).combine()
 	}
 
 	private val random: RandomSource = RandomSource.create()

@@ -106,10 +106,26 @@ class ModBlockStateProvider(
 				)
 				.build()
 		}
+		val connector = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_part"))
+		val core = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_core"))
+		this.getMultipartBuilder(ModBlocks.CABLE.asBlock())
+			.part().modelFile(core).addModel().end()
+			.part().modelFile(connector).uvLock(false).addModel()
+			.condition(ModBlockStateProperties.NORTH, true).end()
+			.part().modelFile(connector).uvLock(false).rotationY(90).addModel()
+			.condition(ModBlockStateProperties.EAST, true).end()
+			.part().modelFile(connector).uvLock(false).rotationY(180).addModel()
+			.condition(ModBlockStateProperties.SOUTH, true).end()
+			.part().modelFile(connector).uvLock(false).rotationY(270).addModel()
+			.condition(ModBlockStateProperties.WEST, true).end()
+			.part().modelFile(connector).uvLock(false).rotationX(270).addModel()
+			.condition(ModBlockStateProperties.UP, true).end()
+			.part().modelFile(connector).uvLock(false).rotationX(90).addModel()
+			.condition(ModBlockStateProperties.DOWN, true).end()
+		this.simpleBlockItem(ModBlocks.CABLE.asBlock(), core)
 		val machineTop = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
 		val machineSide = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
 		val machineBack = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
-
 		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.asBlock()) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
 			val model = this.models().cube(

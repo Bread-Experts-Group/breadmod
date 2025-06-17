@@ -7,6 +7,7 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type
 import net.neoforged.neoforge.network.handling.IPayloadContext
+import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 
@@ -24,12 +25,16 @@ class ComputerKeystrokePacket(private val monitorPos: BlockPos, private val keyC
 		fun handleServerboundPacket(data: ComputerKeystrokePacket, context: IPayloadContext) {
 			context.enqueueWork {
 				val level = context.player().level()
-				val monitorEntity = level.getBlockEntity(data.monitorPos) as? MonitorBlockEntity
-				monitorEntity?.computer?.keyboard?.write(data.keyCode.toUByte())
+				val monitorEntity = level.getBlockEntity(data.monitorPos) as? MonitorBlockEntity ?: return@enqueueWork
+				monitorEntity.computer.keyboard.write(data.keyCode.toUByte())
 				val monitorState = level.getBlockState(data.monitorPos)
-				level.sendBlockUpdated(data.monitorPos, monitorState, monitorState, 3)
+				monitorEntity.setChanged()
+				level.setBlockAndUpdate(data.monitorPos, monitorState)
 			}
 		}
+
+		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
+			registrar.playToServer(this.TYPE, this.STREAM_CODEC, this::handleServerboundPacket)
 	}
 
 	override fun type(): Type<out CustomPacketPayload> = Companion.TYPE

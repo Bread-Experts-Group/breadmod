@@ -145,29 +145,43 @@ abstract class FluidEnergyRecipe(
 	 * @return A copy of the first item in [rItemOutputs]
 	 */
 	override fun getResultItem(registries: HolderLookup.Provider): ItemStack = this.rItemOutputs[0].copy()
-
-	/**
-	 * Combined [consumeItems] and [consumeFluids].
-	 */
-	fun consumeInputs(items: List<ItemStack>, fluids: List<FluidStack>): Pair<List<ItemStack>, List<FluidStack>> =
-		this.consumeItems(items) to this.consumeFluids(fluids)
-
+//	/**
+//	 * Combined [consumeItems] and [consumeFluids].
+//	 */
+//	fun consumeInputs(items: List<ItemStack>, fluids: List<FluidStack>): Pair<List<ItemStack>, List<FluidStack>> =
+//		this.consumeItems(items) to this.consumeFluids(fluids)
+//	/**
+//	 * Combined [consumeItems] and [consumeFluids] with [setItem] and [setFluid] lambdas,
+//	 * for passing into their respective handlers.
+//	 */
+//	fun consumeInputsAndSet(
+//		items: List<ItemStack>,
+//		fluids: List<FluidStack>,
+//		setItem: (Int, ItemStack) -> Unit,
+//		setFluid: (Int, FluidStack) -> Unit
+//	) {
+//		this.consumeInputs(items, fluids).let {
+//			it.first.forEachIndexed(setItem)
+//			it.second.forEachIndexed(setFluid)
+//		}
+//	}
 	/**
 	 * @param items The list of item slots to extract from.
 	 * @return A list of items with the recipe input counts subtracted.
 	 * @see consumeItemsAndSet
 	 */
 	fun consumeItems(items: List<ItemStack>): List<ItemStack> {
-		val itemList: MutableList<ItemStack> = mutableListOf()
-		this.rItemInputs.forEach { itemList.add(items.find(it::test) ?: return@forEach) }
-		itemList.forEach { item -> this.rItemInputs.forEach { if (it.test(item)) item.shrink(it.count()) } }
-		return itemList
+		this.rItemInputs.forEach { sizedIngredient ->
+			items.firstOrNull(sizedIngredient::test)?.shrink(sizedIngredient.count())
+		}
+		return items
 	}
-	// todo nonfunctional, look into
+
 	/**
 	 * [consumeItems] with a [set] lambda provided for passing to the item handlers' set methods.
 	 */
-	fun consumeItemsAndSet(items: List<ItemStack>, set: (Int, ItemStack) -> Unit): Unit = items.forEachIndexed(set)
+	fun consumeItemsAndSet(items: List<ItemStack>, set: (Int, ItemStack) -> Unit): Unit =
+		this.consumeItems(items).forEachIndexed(set)
 
 	/**
 	 * @param fluids The list of tanks to extract from.
@@ -175,17 +189,17 @@ abstract class FluidEnergyRecipe(
 	 * @see consumeFluidsAndSet
 	 */
 	fun consumeFluids(fluids: List<FluidStack>): List<FluidStack> {
-		val fluidList: MutableList<FluidStack> = mutableListOf()
-		this.rFluidInputs.forEach { fluidList.add(fluids.find(it::test) ?: return@forEach) }
-		fluidList.forEach { fluid -> this.rFluidInputs.forEach { if (it.test(fluid)) fluid.shrink(it.amount()) } }
-		return fluidList
+		this.rFluidInputs.forEach { sizedFluidIngredient ->
+			fluids.firstOrNull(sizedFluidIngredient::test)?.shrink(sizedFluidIngredient.amount())
+		}
+		return fluids
 	}
-	// todo nonfunctional, look into
+
 	/**
 	 * [consumeFluids] with a [set] lambda provided for passing to the fluid handlers' set methods.
 	 */
 	fun consumeFluidsAndSet(fluids: List<FluidStack>, set: (Int, FluidStack) -> Unit): Unit =
-		fluids.forEachIndexed(set)
+		this.consumeFluids(fluids).forEachIndexed(set)
 
 	/**
 	 * @return True if both items and fluids are still valid.
@@ -259,19 +273,17 @@ abstract class FluidEnergyRecipe(
 	 * - [get] lambda is provided for getting the output slots for handling item setting.
 	 * - [set] lambda is provided for setting the target slot with the item handlers' set methods
 	 * @param range The slot range to gather output items from for determining where items will be set.
-	 * @param slotOffset The starting offset for setting items in output slots.
 	 */
 	fun setItemsOverflow(
 		range: IntRange,
 		get: (IntRange) -> List<ItemStack>,
-		set: (Int, ItemStack, Int) -> Unit,
-		slotOffset: Int = 0
+		set: (Int, ItemStack, Int) -> Unit
 	) {
 		for (outputItem in this.assembleItems()) {
 			val outputItems = get(range)
 			for (i in outputItems.indices)
 				if (this.checkItemsCanFit(outputItems[i], outputItem)) {
-					set(i + slotOffset, outputItem, outputItem.count)
+					set(i + range.first, outputItem, outputItem.count)
 					break
 				}
 		}
@@ -301,20 +313,18 @@ abstract class FluidEnergyRecipe(
 	 * - [get] lambda is provided for getting the output tanks for handling fluid setting.
 	 * - [set] lambda is provided for setting the target tank with the fluid handlers' set methods
 	 * @param range The tank range to gather output fluids from for determining where fluids will be set.
-	 * @param tankOffset The starting offset for setting fluid in output tanks.
 	 */
 	fun setFluidsOverflow(
 		range: IntRange,
 		get: (IntRange) -> List<FluidStack>,
 		set: (Int, FluidStack, Int) -> Unit,
-		tankCapacity: Int,
-		tankOffset: Int = 0
+		tankCapacity: Int
 	) {
 		for (outputFluid in this.assembleFluids()) {
 			val outputFluids = get(range)
 			for (i in outputFluids.indices)
 				if (this.checkFluidsCanFit(outputFluids[i], outputFluid, tankCapacity)) {
-					set(i + tankOffset, outputFluid, outputFluid.amount)
+					set(i + range.first, outputFluid, outputFluid.amount)
 					break
 				}
 		}
@@ -341,7 +351,7 @@ abstract class FluidEnergyRecipe(
 	fun canFitFluidResults(fluids: List<FluidStack>, tankCapacity: Int): Boolean =
 		fluids.all { iFluid ->
 			this.rFluidOutputs.any { rFluid ->
-				iFluid.amount <= tankCapacity || iFluid.amount + rFluid.amount <= tankCapacity
+				iFluid.amount < tankCapacity || iFluid.amount + rFluid.amount < tankCapacity
 			}
 		} || this.rFluidOutputs.isEmpty()
 

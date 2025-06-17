@@ -102,7 +102,8 @@ class WheatCrusherBlockEntity(
 	override fun finalizeRecipe(recipe: WheatCrusherRecipe, level: Level): Boolean {
 		val stack = this.getItem(0)
 		val assemble = recipe.assembleItem(FluidEnergyInput(stack), level)
-		recipe.consumeItems(listOf(this.getItem(0))).forEachIndexed(this::setItem)
+//		recipe.consumeItems(listOf(this.getItem(0))).forEachIndexed(this::setItem)
+		recipe.consumeItemsAndSet(listOf(this.getItem(0)), this::setItem)
 		this.setOrGrowItem(1, assemble, assemble.count)
 		return true
 	}

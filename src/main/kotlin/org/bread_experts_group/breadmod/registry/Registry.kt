@@ -122,6 +122,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
+import org.bread_experts_group.breadmod.network.serverbound.ComputerKeystrokePacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
@@ -174,7 +175,7 @@ import kotlin.reflect.full.primaryConstructor
 
 object Registry {
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
-	val toolGunRenderers: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
+	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
 	private val registerList: List<DeferredRegister<out Any>> = listOf(
 		ModItems.ITEM_REGISTRY,
@@ -554,6 +555,7 @@ object Registry {
 			SoundPacket.register(registrar)
 			// Serverbound packets
 			ToolGunModeChangePacket.register(registrar)
+			ComputerKeystrokePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
@@ -620,6 +622,10 @@ object Registry {
 				Capabilities.ItemHandler.BLOCK,
 				ModBlockEntityTypes.FLUID_ENERGY.get()
 			) { entity, _: Direction? -> entity.itemHandler }
+			event.registerBlockEntity(
+				Capabilities.FluidHandler.BLOCK,
+				ModBlockEntityTypes.DIESEL_GENERATOR.get()
+			) { entity, _ -> entity.fluidHandler }
 		}
 	}
 }

@@ -10,11 +10,15 @@ interface FluidBearingBlockEntity {
 	val fluidHandler: ExpansibleFluidHandler
 
 	fun growFluid(tank: Int, amount: Int) {
-		this.getFluid(tank).grow(amount)
+		val fluid = this.getFluid(tank)
+		fluid.grow(amount)
+		this.setFluid(tank, fluid)
 	}
 
 	fun shrinkFluid(tank: Int, amount: Int) {
-		this.getFluid(tank).shrink(amount)
+		val fluid = this.getFluid(tank)
+		fluid.shrink(amount)
+		this.setFluid(tank, fluid)
 	}
 
 	fun getFluid(tank: Int): FluidStack = this.fluidHandler.getFluidInTank(tank)

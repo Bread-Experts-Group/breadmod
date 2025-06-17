@@ -141,7 +141,7 @@ interface IToolGunMode {
 	 * * This shouldn't be overridden.
 	 */
 	fun getCustomRenderer(): IToolGunModeRenderer =
-		Registry.toolGunRenderers.getOrPut(this.getUid(), this::defineCustomRenderer)
+		Registry.toolGunRendererCache.getOrPut(this.getUid(), this::defineCustomRenderer)
 
 	/**
 	 * Defines the custom renderer for this [IToolGunMode].

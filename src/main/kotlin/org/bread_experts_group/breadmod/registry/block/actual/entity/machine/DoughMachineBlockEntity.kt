@@ -96,10 +96,9 @@ class DoughMachineBlockEntity(
 
 	override fun finalizeRecipe(recipe: DoughMachineRecipe, level: Level): Boolean {
 		val assemble = recipe.assembleOutputs()
-		recipe.consumeItems(this.getItemsInRange(0 .. 1)).forEachIndexed(this::setItem)
-		recipe.consumeFluids(listOf(this.getFluid(0))).forEachIndexed(this::setFluid)
+		recipe.consumeItemsAndSet(this.getItemsInRange(0 .. 1), this::setItem)
+		recipe.consumeFluidsAndSet(listOf(this.getFluid(0)), this::setFluid)
 		this.setOrGrowItem(2, assemble.first[0], assemble.first[0].count)
-		// todo fluid setting works, but not growing (works in FluidEnergyBlockEntity)
 		this.setOrGrowFluid(1, assemble.second[0], assemble.second[0].amount)
 		return true
 	}

@@ -48,8 +48,8 @@ import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockState
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.MIDDLE
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.UPPER
+import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.directionalTargetFaceSection
-import org.bread_experts_group.breadmod.util.join
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 import java.util.stream.Stream
 
@@ -77,7 +77,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(0.0, 7.0, 5.0, 1.0, 10.0, 6.0),
 			box(0.0, 7.0, 3.0, 1.0, 8.0, 4.0),
 			box(0.0, 7.0, 4.0, 1.0, 9.0, 5.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_LOWER_SOUTH: VoxelShape = Stream.of(
 			box(1.0, 7.0, 0.0, 15.0, 16.0, 7.0),
 			box(0.0, 7.0, 0.0, 1.0, 16.0, 8.0),
@@ -96,7 +96,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(15.0, 7.0, 10.0, 16.0, 10.0, 11.0),
 			box(15.0, 7.0, 12.0, 16.0, 8.0, 13.0),
 			box(15.0, 7.0, 11.0, 16.0, 9.0, 12.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_LOWER_EAST: VoxelShape = Stream.of(
 			box(0.0, 7.0, 1.0, 7.0, 16.0, 15.0),
 			box(0.0, 7.0, 15.0, 8.0, 16.0, 16.0),
@@ -115,7 +115,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(10.0, 7.0, 0.0, 11.0, 10.0, 1.0),
 			box(12.0, 7.0, 0.0, 13.0, 8.0, 1.0),
 			box(11.0, 7.0, 0.0, 12.0, 9.0, 1.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_LOWER_WEST: VoxelShape = Stream.of(
 			box(9.0, 7.0, 1.0, 16.0, 16.0, 15.0),
 			box(8.0, 7.0, 0.0, 16.0, 16.0, 1.0),
@@ -134,27 +134,27 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(5.0, 7.0, 15.0, 6.0, 10.0, 16.0),
 			box(3.0, 7.0, 15.0, 4.0, 8.0, 16.0),
 			box(4.0, 7.0, 15.0, 5.0, 9.0, 16.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_MIDDLE_NORTH: VoxelShape = Stream.of(
 			box(15.0, 0.0, 8.0, 16.0, 16.0, 16.0),
 			box(1.0, 0.0, 9.0, 15.0, 16.0, 16.0),
 			box(0.0, 0.0, 8.0, 1.0, 16.0, 16.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_MIDDLE_SOUTH: VoxelShape = Stream.of(
 			box(15.0, 0.0, 0.0, 16.0, 16.0, 8.0),
 			box(1.0, 0.0, 0.0, 15.0, 16.0, 7.0),
 			box(0.0, 0.0, 0.0, 1.0, 16.0, 8.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_MIDDLE_EAST: VoxelShape = Stream.of(
 			box(0.0, 0.0, 15.0, 8.0, 16.0, 16.0),
 			box(0.0, 0.0, 1.0, 7.0, 16.0, 15.0),
 			box(0.0, 0.0, 0.0, 8.0, 16.0, 1.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_MIDDLE_WEST: VoxelShape = Stream.of(
 			box(8.0, 0.0, 15.0, 16.0, 16.0, 16.0),
 			box(9.0, 0.0, 1.0, 16.0, 16.0, 15.0),
 			box(8.0, 0.0, 0.0, 16.0, 16.0, 1.0)
-		).reduce(::join).get()
+		).combine()
 
 		// shapes upper
 		val SHAPE_UPPER_NORTH: VoxelShape = Stream.of(
@@ -166,7 +166,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(13.0, 7.0, 11.5, 14.0, 9.0, 12.5),
 			box(15.0, 0.0, 8.0, 16.0, 7.0, 16.0),
 			box(1.0, 10.0, 10.8, 15.0, 15.0, 11.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_UPPER_SOUTH: VoxelShape = Stream.of(
 			box(1.0, 0.0, 0.0, 15.0, 6.0, 7.0),
 			box(0.0, 0.0, 0.0, 1.0, 7.0, 8.0),
@@ -176,7 +176,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(13.0, 7.0, 3.5, 14.0, 9.0, 4.5),
 			box(15.0, 0.0, 0.0, 16.0, 7.0, 8.0),
 			box(1.0, 10.0, 5.0, 15.0, 15.0, 5.2)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_UPPER_EAST: VoxelShape = Stream.of(
 			box(0.0, 0.0, 1.0, 7.0, 6.0, 15.0),
 			box(0.0, 0.0, 15.0, 8.0, 7.0, 16.0),
@@ -186,7 +186,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(3.5, 7.0, 13.0, 4.5, 9.0, 14.0),
 			box(0.0, 0.0, 0.0, 8.0, 7.0, 1.0),
 			box(5.0, 10.0, 1.0, 5.2, 15.0, 15.0)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_UPPER_WEST: VoxelShape = Stream.of(
 			box(9.0, 0.0, 1.0, 16.0, 6.0, 15.0),
 			box(8.0, 0.0, 15.0, 16.0, 7.0, 16.0),
@@ -196,7 +196,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(11.5, 7.0, 13.0, 12.5, 9.0, 14.0),
 			box(8.0, 0.0, 0.0, 16.0, 7.0, 1.0),
 			box(10.8, 10.0, 1.0, 11.0, 15.0, 15.0)
-		).reduce(::join).get()
+		).combine()
 	}
 
 	override fun codec(): MapCodec<out BaseEntityBlock> = BlockBehaviour.simpleCodec { this }

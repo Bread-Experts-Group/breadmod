@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.registry.block.actual.util
 
 import net.minecraft.core.Direction
 import net.minecraft.util.StringRepresentable
+import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.level.block.state.properties.EnumProperty
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 
@@ -9,6 +10,12 @@ object ModBlockStateProperties {
 	val STORAGE_LEVEL: IntegerProperty = IntegerProperty.create("storage_level", 0, 4)
 	val TRIPLE_BLOCK_HALF: EnumProperty<TripleBlockHalf> =
 		EnumProperty.create("triple_half", TripleBlockHalf::class.java)
+	val DOWN: BooleanProperty = BooleanProperty.create("down")
+	val UP: BooleanProperty = BooleanProperty.create("up")
+	val NORTH: BooleanProperty = BooleanProperty.create("north")
+	val SOUTH: BooleanProperty = BooleanProperty.create("south")
+	val WEST: BooleanProperty = BooleanProperty.create("west")
+	val EAST: BooleanProperty = BooleanProperty.create("east")
 
 	enum class TripleBlockHalf(
 		private val directionToOther: Direction,

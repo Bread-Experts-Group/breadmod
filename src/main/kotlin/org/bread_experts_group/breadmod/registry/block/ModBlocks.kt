@@ -37,6 +37,7 @@ import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSing
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagBlock
 import org.bread_experts_group.breadmod.experimental.fluid_tank.FluidTankJadeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
+import org.bread_experts_group.breadmod.registry.block.actual.CableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlammableBlock
@@ -241,6 +242,14 @@ object ModBlocks {
 	val DIESEL_GENERATOR: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"diesel_generator",
 		::DieselGeneratorBlock,
+		Properties()
+	)
+
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage("en_us")
+	val CABLE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"cable",
+		::CableBlock,
 		Properties()
 	)
 

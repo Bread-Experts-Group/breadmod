@@ -47,7 +47,7 @@ class FluidEnergyScreen(
 			Color.WHITE.rgb
 		)
 		ModGuiElements.DOUGH_MACHINE_ARROW_FILLED.setRotation(-15f).blitScaled(guiGraphics, this.leftPos + 52, this.topPos + 32, 48, 20)
-		super.renderBg(guiGraphics, partialTick, mouseX, mouseY)
+		this.renderSlots(guiGraphics)
 	}
 
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

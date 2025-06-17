@@ -29,7 +29,7 @@ class WheatCrusherScreen(
 			if (this.menu.isCrafting()) it.blit(guiGraphics, this.leftPos + 92, this.topPos + 38)
 			else it.blitStaticSprite(guiGraphics, this.leftPos + 92, this.topPos + 38)
 		}
-		super.renderBg(guiGraphics, partialTick, mouseX, mouseY)
+		this.renderSlots(guiGraphics)
 	}
 
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

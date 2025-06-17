@@ -30,7 +30,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlo
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import org.bread_experts_group.breadmod.util.BlockScanner
 import org.bread_experts_group.breadmod.util.BlockScanner.filterPositions
-import org.bread_experts_group.breadmod.util.join
+import org.bread_experts_group.breadmod.util.combine
 import java.util.stream.Stream
 
 class KeyboardBlock : BreadModBlockWithEntity(
@@ -42,25 +42,25 @@ class KeyboardBlock : BreadModBlockWithEntity(
 			box(3.0, 0.0, 6.0, 16.0, 0.5, 11.0),
 			box(0.0, 0.0, 5.0, 2.0, 0.5, 8.0),
 			box(0.5, 0.5, 9.5, 1.5, 3.0, 10.5)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_SOUTH: VoxelShape = Stream.of(
 			box(14.0, 0.0, 5.0, 16.0, 0.5, 7.0),
 			box(0.0, 0.0, 5.0, 13.0, 0.5, 10.0),
 			box(14.0, 0.0, 8.0, 16.0, 0.5, 11.0),
 			box(14.5, 0.5, 5.5, 15.5, 3.0, 6.5)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_EAST: VoxelShape = Stream.of(
 			box(5.0, 0.0, 0.0, 7.0, 0.5, 2.0),
 			box(5.0, 0.0, 3.0, 10.0, 0.5, 16.0),
 			box(8.0, 0.0, 0.0, 11.0, 0.5, 2.0),
 			box(5.5, 0.5, 0.5, 6.5, 3.0, 1.5)
-		).reduce(::join).get()
+		).combine()
 		val SHAPE_WEST: VoxelShape = Stream.of(
 			box(9.0, 0.0, 14.0, 11.0, 0.5, 16.0),
 			box(6.0, 0.0, 0.0, 11.0, 0.5, 13.0),
 			box(5.0, 0.0, 14.0, 8.0, 0.5, 16.0),
 			box(9.5, 0.5, 14.5, 10.5, 3.0, 15.5)
-		).reduce(::join).get()
+		).combine()
 	}
 
 	override fun useWithoutItem(
