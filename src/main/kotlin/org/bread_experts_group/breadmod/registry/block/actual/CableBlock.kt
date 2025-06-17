@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -14,11 +15,14 @@ import net.minecraft.world.level.material.PushReaction.BLOCK
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.neoforge.capabilities.BlockCapability
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CableBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 
 // todo cable network
-class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)) {
+class CableBlock(
+	private val acceptable: List<BlockCapability<*, Direction?>>
+) : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)) {
 	companion object {
 		val UP: BooleanProperty = ModBlockStateProperties.UP
 		val DOWN: BooleanProperty = ModBlockStateProperties.DOWN
@@ -35,7 +39,7 @@ class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushRea
 		val EAST_SHAPE: VoxelShape = Block.box(11.0, 5.0, 5.0, 16.0, 11.0, 11.0)
 	}
 
-	private fun sideToProperty(side: Direction): BooleanProperty = when (side) {
+	private fun Direction.property(): BooleanProperty = when (this) {
 		Direction.DOWN  -> Companion.DOWN
 		Direction.UP    -> Companion.UP
 		Direction.NORTH -> Companion.NORTH
@@ -44,10 +48,19 @@ class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushRea
 		Direction.EAST  -> Companion.EAST
 	}
 
-	fun connectsTo(state: BlockState, level: LevelAccessor, direction: Direction): Boolean {
-		val flag = state.`is`(this)
-		// todo cap stuff here
-		return flag
+	fun connectsTo(
+		neighborState: BlockState,
+		neighborPos: BlockPos,
+		neighborDirection: Direction,
+		level: LevelAccessor
+	): Boolean {
+		if (neighborState.`is`(this)) return true
+		return this.acceptable.any {
+			@Suppress("UNCHECKED_CAST")
+			it as BlockCapability<Any, Direction?>
+			@Suppress("UnstableApiUsage")
+			it.getCapability(level as Level, neighborPos, neighborState, null, neighborDirection) != null
+		}
 	}
 
 	override fun updateShape(
@@ -58,7 +71,15 @@ class CableBlock : BreadModBlockWithEntity(Properties.of().noOcclusion().pushRea
 		pos: BlockPos,
 		neighborPos: BlockPos
 	): BlockState {
-		return state.setValue(this.sideToProperty(direction), this.connectsTo(neighborState, level, direction.opposite))
+		return state.setValue(
+			direction.property(),
+			this.connectsTo(
+				neighborState,
+				neighborPos,
+				direction.opposite,
+				level
+			)
+		)
 	}
 
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =

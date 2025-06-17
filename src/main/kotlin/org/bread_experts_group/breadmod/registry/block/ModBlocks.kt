@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.material.PushReaction
+import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
@@ -249,7 +250,7 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	val CABLE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"cable",
-		::CableBlock,
+		{ CableBlock(listOf(Capabilities.EnergyStorage.BLOCK)) },
 		Properties()
 	)
 
