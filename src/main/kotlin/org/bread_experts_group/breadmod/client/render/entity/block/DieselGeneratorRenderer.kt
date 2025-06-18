@@ -16,7 +16,7 @@ import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.rotate
 import org.bread_experts_group.breadmod.client.render.translateDiv16
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DieselGeneratorBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DieselGeneratorBlockEntity
 import org.bread_experts_group.breadmod.util.toYRotFixed
 
 // todo the rest of the models (upgrades, door)
@@ -66,7 +66,7 @@ class DieselGeneratorRenderer(context: Context) : BreadModBER<DieselGeneratorBlo
 		bufferSource: MultiBufferSource
 	) {
 		val tank = blockEntity.fluidHandler.getUnit(0)
-		val scaledAmount = tank.amount.divide(tank.capacity).toFloat()
-		val (sprite, tint) = getFluidSpriteAndTint(tank.fluid, false)
+		tank.amount.divide(tank.capacity).toFloat()
+		val (_, _) = getFluidSpriteAndTint(tank.fluid, false)
 	}
 }

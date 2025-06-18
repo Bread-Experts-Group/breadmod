@@ -43,11 +43,14 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
+import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
+import net.neoforged.neoforge.fluids.capability.IFluidHandler
+import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.items.wrapper.InvWrapper
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
@@ -109,7 +112,6 @@ import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
 import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
-import org.bread_experts_group.breadmod.experimental.physics_grid.MicroLevel
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
@@ -277,7 +279,7 @@ object Registry {
 					)
 				}
 				NeoForge.EVENT_BUS.addListener { event: PlayerEvent.PlayerLoggedInEvent ->
-					MicroLevel()
+//					MicroLevel()
 //					microLevel.setBlockAndUpdate(BlockPos.ZERO, ModBlocks.BREAD_BLOCK.get().block.defaultBlockState())
 				}
 				NeoForge.EVENT_BUS.addListener { event: LivingEquipmentChangeEvent ->
@@ -639,6 +641,18 @@ object Registry {
 				Capabilities.FluidHandler.BLOCK,
 				ModBlockEntityTypes.DIESEL_GENERATOR.get()
 			) { entity, _ -> entity.fluidHandler }
+			event.registerBlockEntity(
+				Capabilities.ItemHandler.BLOCK,
+				ModBlockEntityTypes.CABLE.get()
+			) { entity, _ -> entity.capabilities.firstNotNullOfOrNull { it.value as? IItemHandler } }
+			event.registerBlockEntity(
+				Capabilities.EnergyStorage.BLOCK,
+				ModBlockEntityTypes.CABLE.get()
+			) { entity, _ -> entity.capabilities.firstNotNullOfOrNull { it.value as? IEnergyStorage } }
+			event.registerBlockEntity(
+				Capabilities.FluidHandler.BLOCK,
+				ModBlockEntityTypes.CABLE.get()
+			) { entity, _ -> entity.capabilities.firstNotNullOfOrNull { it.value as? IFluidHandler } }
 		}
 	}
 }

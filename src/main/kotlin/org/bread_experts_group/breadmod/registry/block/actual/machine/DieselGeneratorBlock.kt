@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DieselGeneratorBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DieselGeneratorBlockEntity
 
 class DieselGeneratorBlock : BreadModBlockWithEntity(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {

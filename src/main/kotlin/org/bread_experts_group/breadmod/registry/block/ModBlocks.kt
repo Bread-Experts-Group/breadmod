@@ -68,7 +68,9 @@ import org.bread_experts_group.breadmod.registry.item.ModItems.ITEM_REGISTRY
 import org.bread_experts_group.breadmod.registry.item.actual.EnergyStorageItem
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlock
+import org.bread_experts_group.breadmod.util.handlers.ExpansibleEnergyHandler
 import java.awt.Color
+import java.math.BigDecimal
 import java.util.function.Supplier
 
 object ModBlocks {
@@ -250,7 +252,18 @@ object ModBlocks {
 	@DataGenerateLanguage("en_us")
 	val CABLE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"cable",
-		{ CableBlock(listOf(Capabilities.EnergyStorage.BLOCK)) },
+		{
+			CableBlock(
+				setOf(Capabilities.EnergyStorage.BLOCK),
+				{
+					listOf(
+						ExpansibleEnergyHandler(
+							mutableListOf(ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(10)))
+						)
+					)
+				}
+			)
+		},
 		Properties()
 	)
 

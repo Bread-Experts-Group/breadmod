@@ -1,7 +1,9 @@
 package org.bread_experts_group.breadmod.registry.block.actual
 
 import com.mojang.serialization.MapCodec
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.ItemInteractionResult.SUCCESS
@@ -67,11 +69,10 @@ abstract class BreadModBlockWithEntity(
 	): BlockEntityTicker<A>? {
 		return if (clientType === serverType) {
 			BlockEntityTicker<A> { level, pos, state, blockEntity ->
-				if (level.isClientSide)
-					(blockEntity as BreadModBlockEntity<A>).clientTick(level, pos, state, blockEntity)
-				if (!level.isClientSide)
-					(blockEntity as BreadModBlockEntity<A>).serverTick(level, pos, state, blockEntity)
-				(blockEntity as BreadModBlockEntity<A>).commonTick(level, pos, state, blockEntity)
+				blockEntity as BreadModBlockEntity<A>
+				if (level.isClientSide) blockEntity.clientTick(level as ClientLevel, pos, state, blockEntity)
+				else blockEntity.serverTick(level as ServerLevel, pos, state, blockEntity)
+				blockEntity.commonTick(level, pos, state, blockEntity)
 			}
 		} else null
 	}

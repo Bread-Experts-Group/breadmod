@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGeneratorBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.CreativeGeneratorBlockEntity
 import org.bread_experts_group.breadmod.util.combine
 import java.util.stream.Stream
 

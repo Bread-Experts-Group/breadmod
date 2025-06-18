@@ -20,6 +20,15 @@ abstract class AbstractExpansibleHandler<T : HandlerSerializable> : HandlerSeria
 	override var maxOut: BigDecimal?
 		get() = if (this.units.any { it.maxOut == null }) null else this.units.sumOf { it.maxOut!! }
 		set(_) = throw UnsupportedOperationException("Max output is provisional for ExpansibleHandlers, see units")
+	var suppressChanged: Boolean = false
+	private var internalChanged: () -> Unit = {}
+	var changed: () -> Unit
+		get() = if (this.suppressChanged) {
+			{}
+		} else this.internalChanged
+		set(value) {
+			this.internalChanged = value
+		}
 
 	fun getUnit(unit: Int): T = this.units[unit]
 	fun getUnits(): Int = this.units.size

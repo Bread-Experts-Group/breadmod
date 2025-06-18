@@ -1,11 +1,13 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -57,14 +59,14 @@ abstract class BreadModBlockEntity<T : BlockEntity>(
 	): Unit = Unit
 
 	open fun clientTick(
-		clientLevel: Level,
+		clientLevel: ClientLevel,
 		pos: BlockPos,
 		state: BlockState,
 		entity: T
 	): Unit = Unit
 
 	open fun serverTick(
-		serverLevel: Level,
+		serverLevel: ServerLevel,
 		pos: BlockPos,
 		state: BlockState,
 		entity: T

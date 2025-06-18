@@ -10,27 +10,17 @@ import net.neoforged.neoforge.fluids.FluidType
 import net.neoforged.neoforge.fluids.IFluidTank
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem
-import org.bread_experts_group.breadmod.registry.block.actual.entity.FluidBearingBlockEntity
 import org.bread_experts_group.breadmod.util.capInt
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler.ExpansibleTank
 import java.math.BigDecimal
 import java.util.function.Predicate
 import kotlin.jvm.optionals.getOrElse
-import kotlin.reflect.full.isSubclassOf
 
 @Suppress("ConvertLambdaToReference")
 class ExpansibleFluidHandler(
 	override val units: MutableList<ExpansibleTank>,
 	val itemContainer: ItemStack = ItemStack.EMPTY
 ) : AbstractExpansibleHandler<ExpansibleTank>(), IFluidHandler, IFluidHandlerItem {
-	init {
-		val stackTrace = Thread.currentThread().stackTrace
-		val callingLocation = this::class.java.classLoader.loadClass(stackTrace.first {
-			it.className != this::class.qualifiedName && !it.className.startsWith("java.")
-		}.className)
-		check(callingLocation.kotlin.isSubclassOf(FluidBearingBlockEntity::class)) { "ExpansibleFluidHandler must be used in an FluidBearingBlockEntity" }
-	}
-
 	class ExpansibleTank(
 		capacity: BigDecimal,
 		override var maxIn: BigDecimal? = null,

@@ -11,7 +11,7 @@ import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGeneratorBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.CreativeGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
 
 class CreativeGeneratorRenderer(context: Context) : BreadModBER<CreativeGeneratorBlockEntity>(context) {

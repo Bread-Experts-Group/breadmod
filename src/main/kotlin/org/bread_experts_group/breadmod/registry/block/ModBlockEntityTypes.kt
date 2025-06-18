@@ -10,14 +10,14 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CableBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.CreativeGeneratorBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DieselGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.CreativeGeneratorBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DieselGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.ToasterBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.WheatCrusherBlockEntity
@@ -78,7 +78,7 @@ object ModBlockEntityTypes {
 			this.buildBlockEntity(::DieselGeneratorBlockEntity, ModBlocks.DIESEL_GENERATOR.asBlock())
 		}
 	val CABLE: Supplier<BlockEntityType<CableBlockEntity>> =
-		this.BLOCK_ENTITY_REGISTRY.register("cable_entity") { ->
+		this.BLOCK_ENTITY_REGISTRY.register("cable") { ->
 			this.buildBlockEntity(::CableBlockEntity, ModBlocks.CABLE.asBlock())
 		}
 

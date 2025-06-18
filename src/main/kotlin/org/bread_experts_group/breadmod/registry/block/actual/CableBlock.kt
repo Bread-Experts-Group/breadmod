@@ -23,39 +23,29 @@ import org.bread_experts_group.breadmod.util.Color
 
 // todo cable network
 class CableBlock(
-	private val acceptable: List<BlockCapability<*, Direction?>>
+	private val capabilities: Set<BlockCapability<*, Direction?>>,
+	private val capabilitiesConstructor: () -> List<Any>
 ) : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)) {
 	companion object {
-		val UP: BooleanProperty = ModBlockStateProperties.UP
-		val DOWN: BooleanProperty = ModBlockStateProperties.DOWN
-		val NORTH: BooleanProperty = ModBlockStateProperties.NORTH
-		val SOUTH: BooleanProperty = ModBlockStateProperties.SOUTH
-		val EAST: BooleanProperty = ModBlockStateProperties.EAST
-		val WEST: BooleanProperty = ModBlockStateProperties.WEST
+		val directions: Map<Direction, Pair<BooleanProperty, VoxelShape>> = mapOf(
+			Direction.UP to (ModBlockStateProperties.UP to box(5.0, 11.0, 5.0, 11.0, 16.0, 11.0)),
+			Direction.DOWN to (ModBlockStateProperties.DOWN to box(5.0, 0.0, 5.0, 11.0, 5.0, 11.0)),
+			Direction.NORTH to (ModBlockStateProperties.NORTH to box(5.0, 5.0, 0.0, 11.0, 11.0, 5.0)),
+			Direction.SOUTH to (ModBlockStateProperties.SOUTH to box(5.0, 5.0, 11.0, 11.0, 11.0, 16.0)),
+			Direction.EAST to (ModBlockStateProperties.EAST to box(11.0, 5.0, 5.0, 16.0, 11.0, 11.0)),
+			Direction.WEST to (ModBlockStateProperties.WEST to box(0.0, 5.0, 5.0, 5.0, 11.0, 11.0)),
+		)
 		val CORE_SHAPE: VoxelShape = Block.box(5.0, 5.0, 5.0, 11.0, 11.0, 11.0)
-		val UP_SHAPE: VoxelShape = Block.box(5.0, 11.0, 5.0, 11.0, 16.0, 11.0)
-		val DOWN_SHAPE: VoxelShape = Block.box(5.0, 0.0, 5.0, 11.0, 5.0, 11.0)
-		val NORTH_SHAPE: VoxelShape = Block.box(5.0, 5.0, 0.0, 11.0, 11.0, 5.0)
-		val SOUTH_SHAPE: VoxelShape = Block.box(5.0, 5.0, 11.0, 11.0, 11.0, 16.0)
-		val WEST_SHAPE: VoxelShape = Block.box(0.0, 5.0, 5.0, 5.0, 11.0, 11.0)
-		val EAST_SHAPE: VoxelShape = Block.box(11.0, 5.0, 5.0, 16.0, 11.0, 11.0)
-	}
-
-	private fun Direction.property(): BooleanProperty = when (this) {
-		Direction.DOWN  -> Companion.DOWN
-		Direction.UP    -> Companion.UP
-		Direction.NORTH -> Companion.NORTH
-		Direction.SOUTH -> Companion.SOUTH
-		Direction.WEST  -> Companion.WEST
-		Direction.EAST  -> Companion.EAST
 	}
 
 	fun resolveColor(): Int {
-		val acceptable = this.acceptable.first()
-		return if (acceptable == Capabilities.EnergyStorage.BLOCK) Color.RED
-		else if (acceptable == Capabilities.ItemHandler.BLOCK) Color.GREEN
-		else if (acceptable == Capabilities.FluidHandler.BLOCK) Color.BLUE
-		else Color.WHITE
+		val acceptable = this.capabilities.first()
+		return when (acceptable) {
+			Capabilities.EnergyStorage.BLOCK -> Color.RED
+			Capabilities.ItemHandler.BLOCK   -> Color.GREEN
+			Capabilities.FluidHandler.BLOCK  -> Color.BLUE
+			else                             -> Color.WHITE
+		}
 	}
 
 	fun connectsTo(
@@ -65,11 +55,8 @@ class CableBlock(
 		level: LevelAccessor
 	): Boolean {
 		if (neighborState.`is`(this)) return true
-		return this.acceptable.any {
-			@Suppress("UNCHECKED_CAST")
-			it as BlockCapability<Any, Direction?>
-			@Suppress("UnstableApiUsage")
-			it.getCapability(level as Level, neighborPos, neighborState, null, neighborDirection) != null
+		return this.capabilities.any {
+			(level as Level).getCapability(it, neighborPos, neighborDirection) != null
 		}
 	}
 
@@ -82,7 +69,7 @@ class CableBlock(
 		neighborPos: BlockPos
 	): BlockState {
 		return state.setValue(
-			direction.property(),
+			Companion.directions.getValue(direction).first,
 			this.connectsTo(
 				neighborState,
 				neighborPos,
@@ -92,31 +79,39 @@ class CableBlock(
 		)
 	}
 
-	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
-		this.defaultBlockState()
-			.setValue(Companion.UP, false)
-			.setValue(Companion.DOWN, false)
-			.setValue(Companion.NORTH, false)
-			.setValue(Companion.SOUTH, false)
-			.setValue(Companion.EAST, false)
-			.setValue(Companion.WEST, false)
+	override fun getStateForPlacement(context: BlockPlaceContext): BlockState = this.defaultBlockState().let {
+		Companion.directions.forEach { (_, pair) -> it.setValue(pair.first, false) }
+		var shape = it
+		for (direction in Direction.entries) {
+			val neighborPos = context.clickedPos.relative(direction)
+			shape = this.updateShape(
+				shape,
+				direction,
+				context.level.getBlockState(neighborPos),
+				context.level,
+				context.clickedPos,
+				neighborPos
+			)
+		}
+		shape
+	}
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
-		builder.add(Companion.UP, Companion.DOWN, Companion.NORTH, Companion.SOUTH, Companion.EAST, Companion.WEST)
+		builder.add(*Companion.directions.values.map { it.first }.toTypedArray())
 	}
 
 	override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
 		var shape = Companion.CORE_SHAPE
-		if (state.getValue(Companion.UP)) shape = Shapes.or(shape, Companion.UP_SHAPE)
-		if (state.getValue(Companion.DOWN)) shape = Shapes.or(shape, Companion.DOWN_SHAPE)
-		if (state.getValue(Companion.NORTH)) shape = Shapes.or(shape, Companion.NORTH_SHAPE)
-		if (state.getValue(Companion.SOUTH)) shape = Shapes.or(shape, Companion.SOUTH_SHAPE)
-		if (state.getValue(Companion.EAST)) shape = Shapes.or(shape, Companion.EAST_SHAPE)
-		if (state.getValue(Companion.WEST)) shape = Shapes.or(shape, Companion.WEST_SHAPE)
+		Companion.directions.forEach { (_, pair) ->
+			if (state.getValue(pair.first)) shape = Shapes.or(shape, pair.second)
+		}
 		return shape
 	}
 
 	override fun hasDynamicShape(): Boolean = true
 
-	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = CableBlockEntity(pos, state)
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = CableBlockEntity(
+		pos, state,
+		this.capabilities.zip(this.capabilitiesConstructor.invoke()).toMap()
+	)
 }

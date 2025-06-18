@@ -16,8 +16,11 @@ interface HandlerLimits {
 		val actualCount = if (this.maxIn != null) count.min(this.maxIn) else count
 		val sum = (this.amount + actualCount).let { this.capacity?.let(it::min) ?: it }
 		val saved = this.amount
-		if (!simulate) this.amount = sum
-		return sum - saved to mutableListOf()
+		val delta = sum - saved
+		if (!simulate && delta > BigDecimal.ZERO) {
+			this.amount = sum
+		}
+		return delta to mutableListOf()
 	}
 
 	fun fillDecimal(count: BigDecimal, simulate: Boolean): Pair<BigDecimal, List<Any>> =
