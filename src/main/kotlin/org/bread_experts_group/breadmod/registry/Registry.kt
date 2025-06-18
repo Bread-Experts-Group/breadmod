@@ -82,6 +82,7 @@ import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.CableRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.DieselGeneratorRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
@@ -378,6 +379,7 @@ object Registry {
 					event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
 					event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
 					event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get(), ::MonitorRenderer)
+					event.registerBlockEntityRenderer(ModBlockEntityTypes.CABLE.get(), ::CableRenderer)
 					event.registerBlockEntityRenderer(
 						ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(),
 						::DoubleOrNothingRenderer
