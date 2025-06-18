@@ -17,6 +17,7 @@ import org.apache.logging.log4j.core.config.Configurator
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
+import org.bread_experts_group.breadmod.registry.item.integration.ModIntegrationItems
 import org.bread_experts_group.coder.format.riff.RIFFInputStream
 
 /**
@@ -78,6 +79,7 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 		container.registerConfig(ModConfig.Type.CLIENT, ModConfiguration.CLIENT_SPEC.right, "breadmod-client.toml")
 
 		Registry.registerAll(eventBus)
+		ModIntegrationItems.registerAll()
 		ToolGunData.loadToolGunModes()
 	}
 }

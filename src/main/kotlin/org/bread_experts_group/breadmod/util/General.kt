@@ -18,6 +18,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.Tag
 import net.minecraft.nbt.TagType
+import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.tags.TagKey
@@ -26,6 +27,7 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionHand.MAIN_HAND
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffectUtil
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -40,11 +42,17 @@ import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.Rotation
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
+import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
+import net.minecraft.world.level.block.Rotation.NONE
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.Shapes.or
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
@@ -138,8 +146,21 @@ fun <T> Level.getCapability(
 	entity: BlockEntity
 ): T? = getCapMethod.invoke(this, capability, pos, state, entity) as T?
 
+private val shapeOrigin = Vec3(-0.5, -0.5, -0.5)
+
+fun AABB.rotate(rotation: Rotation): AABB = when (rotation) {
+	NONE                -> this
+	CLOCKWISE_90        -> AABB(-this.minZ, this.minY, this.minX, -this.maxZ, this.maxY, this.maxX)
+	CLOCKWISE_180       -> AABB(-this.minX, this.minY, -this.minZ, -this.maxX, this.maxY, -this.maxZ)
+	COUNTERCLOCKWISE_90 -> AABB(this.minZ, this.minY, -this.minX, this.maxZ, this.maxY, -this.maxX)
+}
+
 fun Stream<VoxelShape>.combine(): VoxelShape = this.reduce(::or).get()
 fun combineShapes(list: List<VoxelShape>): VoxelShape = list.stream().reduce(::or).get()
+
+fun VoxelShape.rotate(rotation: Rotation): VoxelShape = combineShapes(
+	this.toAabbs().map { Shapes.create(it.move(shapeOrigin).rotate(rotation).move(-shapeOrigin)) }
+)
 
 /// Start raycast functions ///
 class HitResult<T>(
@@ -209,6 +230,7 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 fun Vector3f.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 fun Vec3i.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
+operator fun Vec3.unaryMinus(): Vec3 = Vec3(-this.x, -this.y, -this.z)
 operator fun Vec3i.unaryMinus(): Vec3i = Vec3i(-this.x, -this.y, -this.z)
 
 operator fun Vec3.component1(): Double = this.x
@@ -302,6 +324,23 @@ fun BlockPos.toIntArray(): IntArray = intArrayOf(this.x, this.y, this.z)
 fun IntArray.toBlockPos(): BlockPos {
 	if (this.size != 3) return BlockPos.ZERO
 	return BlockPos(this[0], this[1], this[2])
+}
+
+fun effectTooltip(effect: MobEffectInstance, durationFactor: Float, ticksPerSecond: Float): Component {
+	var mutableComponent = Component.translatable(effect.descriptionId)
+	if (effect.amplifier > 0) mutableComponent = Component.translatable(
+		"potion.withAmplifier",
+		mutableComponent,
+		Component.translatable("potion.potency." + effect.amplifier)
+	)
+
+	if (!effect.endsWithin(20)) mutableComponent = Component.translatable(
+		"potion.withDuration",
+		mutableComponent,
+		MobEffectUtil.formatDuration(effect, durationFactor, ticksPerSecond)
+	)
+
+	return mutableComponent.withStyle(effect.effect.value().category.tooltipFormatting)
 }
 
 // Codec shenanigans

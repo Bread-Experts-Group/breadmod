@@ -16,8 +16,9 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.RenderShape
-import net.minecraft.world.level.block.RenderShape.INVISIBLE
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
+import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
@@ -32,6 +33,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.CreativeGeneratorBlockEntity
 import org.bread_experts_group.breadmod.util.combine
+import org.bread_experts_group.breadmod.util.rotate
 import java.util.stream.Stream
 
 class CreativeGeneratorBlock : BreadModBlockWithEntity(
@@ -73,109 +75,14 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0)
 		).combine()
-		val SHAPE_SOUTH: VoxelShape = Stream.of(
-			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
-			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
-			box(13.0, 2.0, 2.0, 14.0, 3.0, 14.0),
-			box(2.0, 2.0, 2.0, 3.0, 3.0, 14.0),
-			box(3.0, 2.0, 13.0, 13.0, 3.0, 14.0),
-			box(3.0, 2.0, 2.0, 13.0, 3.0, 3.0),
-			box(1.0, 3.0, 0.0, 15.0, 4.0, 1.0),
-			box(1.0, 12.0, 0.0, 15.0, 13.0, 1.0),
-			box(4.0, 4.0, 0.0, 12.0, 12.0, 1.0),
-			box(5.0, 3.0, 5.0, 11.0, 4.0, 11.0),
-			box(4.0, 4.0, 4.0, 12.0, 12.0, 12.0),
-			box(5.0, 12.0, 5.0, 11.0, 15.0, 11.0),
-			box(5.0, 15.0, 5.0, 11.0, 16.0, 11.0),
-			box(1.0, 15.0, 11.0, 15.0, 16.0, 12.0),
-			box(1.0, 15.0, 4.0, 15.0, 16.0, 5.0),
-			box(1.0, 15.0, 0.0, 15.0, 16.0, 1.0),
-			box(1.0, 15.0, 15.0, 15.0, 16.0, 16.0),
-			box(15.0, 15.0, 0.0, 16.0, 16.0, 16.0),
-			box(0.0, 15.0, 0.0, 1.0, 16.0, 16.0),
-			box(0.0, 12.0, 1.0, 1.0, 13.0, 15.0),
-			box(15.0, 12.0, 1.0, 16.0, 13.0, 15.0),
-			box(15.0, 3.0, 1.0, 16.0, 4.0, 15.0),
-			box(0.0, 3.0, 1.0, 1.0, 4.0, 15.0),
-			box(0.0, 4.0, 4.0, 1.0, 12.0, 12.0),
-			box(15.0, 4.0, 4.0, 16.0, 12.0, 12.0),
-			box(1.0, 1.0, 15.0, 7.0, 4.0, 16.0),
-			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
-			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0),
-			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0),
-			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0)
-		).combine()
-		val SHAPE_EAST: VoxelShape = Stream.of(
-			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
-			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
-			box(2.0, 2.0, 2.0, 14.0, 3.0, 3.0),
-			box(2.0, 2.0, 13.0, 14.0, 3.0, 14.0),
-			box(13.0, 2.0, 3.0, 14.0, 3.0, 13.0),
-			box(2.0, 2.0, 3.0, 3.0, 3.0, 13.0),
-			box(0.0, 3.0, 1.0, 1.0, 4.0, 15.0),
-			box(0.0, 12.0, 1.0, 1.0, 13.0, 15.0),
-			box(0.0, 4.0, 4.0, 1.0, 12.0, 12.0),
-			box(5.0, 3.0, 5.0, 11.0, 4.0, 11.0),
-			box(4.0, 4.0, 4.0, 12.0, 12.0, 12.0),
-			box(5.0, 12.0, 5.0, 11.0, 15.0, 11.0),
-			box(5.0, 15.0, 5.0, 11.0, 16.0, 11.0),
-			box(11.0, 15.0, 1.0, 12.0, 16.0, 15.0),
-			box(4.0, 15.0, 1.0, 5.0, 16.0, 15.0),
-			box(0.0, 15.0, 1.0, 1.0, 16.0, 15.0),
-			box(15.0, 15.0, 1.0, 16.0, 16.0, 15.0),
-			box(0.0, 15.0, 0.0, 16.0, 16.0, 1.0),
-			box(0.0, 15.0, 15.0, 16.0, 16.0, 16.0),
-			box(1.0, 12.0, 15.0, 15.0, 13.0, 16.0),
-			box(1.0, 12.0, 0.0, 15.0, 13.0, 1.0),
-			box(1.0, 3.0, 0.0, 15.0, 4.0, 1.0),
-			box(1.0, 3.0, 15.0, 15.0, 4.0, 16.0),
-			box(4.0, 4.0, 15.0, 12.0, 12.0, 16.0),
-			box(4.0, 4.0, 0.0, 12.0, 12.0, 1.0),
-			box(15.0, 1.0, 9.0, 16.0, 4.0, 15.0),
-			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0),
-			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0),
-			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0),
-			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0)
-		).combine()
-		val SHAPE_WEST: VoxelShape = Stream.of(
-			box(0.0, 0.0, 0.0, 16.0, 1.0, 16.0),
-			box(1.0, 1.0, 1.0, 15.0, 2.0, 15.0),
-			box(2.0, 2.0, 13.0, 14.0, 3.0, 14.0),
-			box(2.0, 2.0, 2.0, 14.0, 3.0, 3.0),
-			box(2.0, 2.0, 3.0, 3.0, 3.0, 13.0),
-			box(13.0, 2.0, 3.0, 14.0, 3.0, 13.0),
-			box(15.0, 3.0, 1.0, 16.0, 4.0, 15.0),
-			box(15.0, 12.0, 1.0, 16.0, 13.0, 15.0),
-			box(15.0, 4.0, 4.0, 16.0, 12.0, 12.0),
-			box(5.0, 3.0, 5.0, 11.0, 4.0, 11.0),
-			box(4.0, 4.0, 4.0, 12.0, 12.0, 12.0),
-			box(5.0, 12.0, 5.0, 11.0, 15.0, 11.0),
-			box(5.0, 15.0, 5.0, 11.0, 16.0, 11.0),
-			box(4.0, 15.0, 1.0, 5.0, 16.0, 15.0),
-			box(11.0, 15.0, 1.0, 12.0, 16.0, 15.0),
-			box(15.0, 15.0, 1.0, 16.0, 16.0, 15.0),
-			box(0.0, 15.0, 1.0, 1.0, 16.0, 15.0),
-			box(0.0, 15.0, 15.0, 16.0, 16.0, 16.0),
-			box(0.0, 15.0, 0.0, 16.0, 16.0, 1.0),
-			box(1.0, 12.0, 0.0, 15.0, 13.0, 1.0),
-			box(1.0, 12.0, 15.0, 15.0, 13.0, 16.0),
-			box(1.0, 3.0, 15.0, 15.0, 4.0, 16.0),
-			box(1.0, 3.0, 0.0, 15.0, 4.0, 1.0),
-			box(4.0, 4.0, 0.0, 12.0, 12.0, 1.0),
-			box(4.0, 4.0, 15.0, 12.0, 12.0, 16.0),
-			box(0.0, 1.0, 1.0, 1.0, 4.0, 7.0),
-			box(0.0, 1.0, 15.0, 1.0, 15.0, 16.0),
-			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
-			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0),
-			box(0.0, 1.0, 0.0, 1.0, 15.0, 1.0)
-		).combine()
+		val SHAPE_SOUTH: VoxelShape = this.SHAPE_NORTH.rotate(CLOCKWISE_180)
+		val SHAPE_EAST: VoxelShape = this.SHAPE_NORTH.rotate(CLOCKWISE_90)
+		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.rotate(COUNTERCLOCKWISE_90)
 	}
 
 	private val random: RandomSource = RandomSource.create()
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		CreativeGeneratorBlockEntity(pos, state)
-
-	override fun getRenderShape(state: BlockState): RenderShape = INVISIBLE
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
 		builder.add(Companion.FACING, Companion.ENABLED)
@@ -230,5 +137,6 @@ class CreativeGeneratorBlock : BreadModBlockWithEntity(
 		)
 	}
 
-	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.CREATIVE_GENERATOR.get()
+	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
+		ModBlockEntityTypes.CREATIVE_GENERATOR.get()
 }

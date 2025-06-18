@@ -13,10 +13,8 @@ object DieselGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.entityModels
 ) {
 	private val originalModel: BakedModel = localClient.getModel("block/diesel_generator/diesel_generator")
+	private val doorModel: BakedModel = localClient.getModel("block/diesel_generator/diesel_generator_door")
 
-	//	private val doorModel: BakedModel = localClient.modelManager.getModel(
-//		"block/diesel_generator/diesel_generator_door"
-//	)
 	override fun renderByItem(
 		stack: ItemStack,
 		displayContext: ItemDisplayContext,
@@ -35,6 +33,16 @@ object DieselGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 			packedOverlay,
 			packedLight
 		)
+//		poseStack.translateDiv16(16.0, 16.0, 0.0)
+//		localClient.itemRenderer.renderItemModel(
+//			this.doorModel,
+//			stack,
+//			displayContext,
+//			poseStack,
+//			buffer,
+//			packedOverlay,
+//			packedLight
+//		)
 		poseStack.popPose()
 	}
 }

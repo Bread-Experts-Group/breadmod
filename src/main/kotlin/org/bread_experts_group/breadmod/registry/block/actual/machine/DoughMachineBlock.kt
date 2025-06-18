@@ -69,5 +69,6 @@ class DoughMachineBlock : BreadModBlockWithEntity(Properties.ofFullCopy(Blocks.I
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
 		DoughMachineBlockEntity(pos, state)
 
-	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.DOUGH_MACHINE.get()
+	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
+		ModBlockEntityTypes.DOUGH_MACHINE.get()
 }

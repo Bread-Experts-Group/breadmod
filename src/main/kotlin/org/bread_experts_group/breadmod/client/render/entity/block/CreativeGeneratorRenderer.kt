@@ -29,7 +29,6 @@ class CreativeGeneratorRenderer(context: Context) : BreadModBER<CreativeGenerato
 		val enabled = blockEntity.blockState.getValue(CreativeGeneratorBlock.ENABLED)
 
 		poseStack.pushPose()
-		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
 		if (enabled) {
 			poseStack.translate(0.5, 0.5, 0.5)
 			poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360) + partialTick))

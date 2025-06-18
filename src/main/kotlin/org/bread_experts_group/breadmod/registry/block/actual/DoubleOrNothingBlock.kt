@@ -10,15 +10,18 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource.BLOCKS
+import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -28,6 +31,9 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.INVISIBLE
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
+import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -51,6 +57,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockState
 import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.directionalTargetFaceSection
 import org.bread_experts_group.breadmod.util.normalizedHitPos
+import org.bread_experts_group.breadmod.util.rotate
 import java.util.stream.Stream
 
 class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
@@ -78,83 +85,17 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(0.0, 7.0, 3.0, 1.0, 8.0, 4.0),
 			box(0.0, 7.0, 4.0, 1.0, 9.0, 5.0)
 		).combine()
-		val SHAPE_LOWER_SOUTH: VoxelShape = Stream.of(
-			box(1.0, 7.0, 0.0, 15.0, 16.0, 7.0),
-			box(0.0, 7.0, 0.0, 1.0, 16.0, 8.0),
-			box(15.0, 7.0, 0.0, 16.0, 16.0, 8.0),
-			box(10.0, 7.0, 8.6, 13.0, 9.4, 11.6),
-			box(3.0, 7.0, 8.6, 6.0, 9.4, 11.6),
-			box(0.0, 0.0, 0.0, 16.0, 7.0, 13.0),
-			box(1.0, 1.0, 13.0, 15.0, 6.0, 13.2),
-			box(0.0, 7.0, 12.0, 1.0, 8.0, 13.0),
-			box(0.0, 7.0, 11.0, 1.0, 9.0, 12.0),
-			box(0.0, 7.0, 10.0, 1.0, 10.0, 11.0),
-			box(0.0, 7.0, 9.0, 1.0, 11.0, 10.0),
-			box(0.0, 7.0, 8.0, 1.0, 12.0, 9.0),
-			box(15.0, 7.0, 8.0, 16.0, 12.0, 9.0),
-			box(15.0, 7.0, 9.0, 16.0, 11.0, 10.0),
-			box(15.0, 7.0, 10.0, 16.0, 10.0, 11.0),
-			box(15.0, 7.0, 12.0, 16.0, 8.0, 13.0),
-			box(15.0, 7.0, 11.0, 16.0, 9.0, 12.0)
-		).combine()
-		val SHAPE_LOWER_EAST: VoxelShape = Stream.of(
-			box(0.0, 7.0, 1.0, 7.0, 16.0, 15.0),
-			box(0.0, 7.0, 15.0, 8.0, 16.0, 16.0),
-			box(0.0, 7.0, 0.0, 8.0, 16.0, 1.0),
-			box(8.4, 7.0, 10.0, 11.4, 9.4, 13.0),
-			box(8.4, 7.0, 3.0, 11.4, 9.4, 6.0),
-			box(0.0, 0.0, 0.0, 13.0, 7.0, 16.0),
-			box(13.0, 1.0, 1.0, 13.2, 6.0, 15.0),
-			box(12.0, 7.0, 15.0, 13.0, 8.0, 16.0),
-			box(11.0, 7.0, 15.0, 12.0, 9.0, 16.0),
-			box(10.0, 7.0, 15.0, 11.0, 10.0, 16.0),
-			box(9.0, 7.0, 15.0, 10.0, 11.0, 16.0),
-			box(8.0, 7.0, 15.0, 9.0, 12.0, 16.0),
-			box(8.0, 7.0, 0.0, 9.0, 12.0, 1.0),
-			box(9.0, 7.0, 0.0, 10.0, 11.0, 1.0),
-			box(10.0, 7.0, 0.0, 11.0, 10.0, 1.0),
-			box(12.0, 7.0, 0.0, 13.0, 8.0, 1.0),
-			box(11.0, 7.0, 0.0, 12.0, 9.0, 1.0)
-		).combine()
-		val SHAPE_LOWER_WEST: VoxelShape = Stream.of(
-			box(9.0, 7.0, 1.0, 16.0, 16.0, 15.0),
-			box(8.0, 7.0, 0.0, 16.0, 16.0, 1.0),
-			box(8.0, 7.0, 15.0, 16.0, 16.0, 16.0),
-			box(4.6, 7.0, 3.0, 7.6, 9.4, 6.0),
-			box(4.6, 7.0, 10.0, 7.6, 9.4, 13.0),
-			box(3.0, 0.0, 0.0, 16.0, 7.0, 16.0),
-			box(2.8, 1.0, 1.0, 3.0, 6.0, 15.0),
-			box(3.0, 7.0, 0.0, 4.0, 8.0, 1.0),
-			box(4.0, 7.0, 0.0, 5.0, 9.0, 1.0),
-			box(5.0, 7.0, 0.0, 6.0, 10.0, 1.0),
-			box(6.0, 7.0, 0.0, 7.0, 11.0, 1.0),
-			box(7.0, 7.0, 0.0, 8.0, 12.0, 1.0),
-			box(7.0, 7.0, 15.0, 8.0, 12.0, 16.0),
-			box(6.0, 7.0, 15.0, 7.0, 11.0, 16.0),
-			box(5.0, 7.0, 15.0, 6.0, 10.0, 16.0),
-			box(3.0, 7.0, 15.0, 4.0, 8.0, 16.0),
-			box(4.0, 7.0, 15.0, 5.0, 9.0, 16.0)
-		).combine()
+		val SHAPE_LOWER_SOUTH: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(CLOCKWISE_180)
+		val SHAPE_LOWER_EAST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(CLOCKWISE_90)
+		val SHAPE_LOWER_WEST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(COUNTERCLOCKWISE_90)
 		val SHAPE_MIDDLE_NORTH: VoxelShape = Stream.of(
 			box(15.0, 0.0, 8.0, 16.0, 16.0, 16.0),
 			box(1.0, 0.0, 9.0, 15.0, 16.0, 16.0),
 			box(0.0, 0.0, 8.0, 1.0, 16.0, 16.0)
 		).combine()
-		val SHAPE_MIDDLE_SOUTH: VoxelShape = Stream.of(
-			box(15.0, 0.0, 0.0, 16.0, 16.0, 8.0),
-			box(1.0, 0.0, 0.0, 15.0, 16.0, 7.0),
-			box(0.0, 0.0, 0.0, 1.0, 16.0, 8.0)
-		).combine()
-		val SHAPE_MIDDLE_EAST: VoxelShape = Stream.of(
-			box(0.0, 0.0, 15.0, 8.0, 16.0, 16.0),
-			box(0.0, 0.0, 1.0, 7.0, 16.0, 15.0),
-			box(0.0, 0.0, 0.0, 8.0, 16.0, 1.0)
-		).combine()
-		val SHAPE_MIDDLE_WEST: VoxelShape = Stream.of(
-			box(8.0, 0.0, 15.0, 16.0, 16.0, 16.0),
-			box(9.0, 0.0, 1.0, 16.0, 16.0, 15.0),
-			box(8.0, 0.0, 0.0, 16.0, 16.0, 1.0)
-		).combine()
+		val SHAPE_MIDDLE_SOUTH: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(CLOCKWISE_180)
+		val SHAPE_MIDDLE_EAST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(CLOCKWISE_90)
+		val SHAPE_MIDDLE_WEST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(COUNTERCLOCKWISE_90)
 
 		// shapes upper
 		val SHAPE_UPPER_NORTH: VoxelShape = Stream.of(
@@ -167,36 +108,11 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			box(15.0, 0.0, 8.0, 16.0, 7.0, 16.0),
 			box(1.0, 10.0, 10.8, 15.0, 15.0, 11.0)
 		).combine()
-		val SHAPE_UPPER_SOUTH: VoxelShape = Stream.of(
-			box(1.0, 0.0, 0.0, 15.0, 6.0, 7.0),
-			box(0.0, 0.0, 0.0, 1.0, 7.0, 8.0),
-			box(1.0, 6.0, 0.0, 15.0, 7.0, 8.0),
-			box(0.0, 9.0, 3.0, 16.0, 16.0, 5.0),
-			box(2.0, 7.0, 3.5, 3.0, 9.0, 4.5),
-			box(13.0, 7.0, 3.5, 14.0, 9.0, 4.5),
-			box(15.0, 0.0, 0.0, 16.0, 7.0, 8.0),
-			box(1.0, 10.0, 5.0, 15.0, 15.0, 5.2)
-		).combine()
-		val SHAPE_UPPER_EAST: VoxelShape = Stream.of(
-			box(0.0, 0.0, 1.0, 7.0, 6.0, 15.0),
-			box(0.0, 0.0, 15.0, 8.0, 7.0, 16.0),
-			box(0.0, 6.0, 1.0, 8.0, 7.0, 15.0),
-			box(3.0, 9.0, 0.0, 5.0, 16.0, 16.0),
-			box(3.5, 7.0, 2.0, 4.5, 9.0, 3.0),
-			box(3.5, 7.0, 13.0, 4.5, 9.0, 14.0),
-			box(0.0, 0.0, 0.0, 8.0, 7.0, 1.0),
-			box(5.0, 10.0, 1.0, 5.2, 15.0, 15.0)
-		).combine()
-		val SHAPE_UPPER_WEST: VoxelShape = Stream.of(
-			box(9.0, 0.0, 1.0, 16.0, 6.0, 15.0),
-			box(8.0, 0.0, 15.0, 16.0, 7.0, 16.0),
-			box(8.0, 6.0, 1.0, 16.0, 7.0, 15.0),
-			box(11.0, 9.0, 0.0, 13.0, 16.0, 16.0),
-			box(11.5, 7.0, 2.0, 12.5, 9.0, 3.0),
-			box(11.5, 7.0, 13.0, 12.5, 9.0, 14.0),
-			box(8.0, 0.0, 0.0, 16.0, 7.0, 1.0),
-			box(10.8, 10.0, 1.0, 11.0, 15.0, 15.0)
-		).combine()
+		val SHAPE_UPPER_SOUTH: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(CLOCKWISE_180)
+		val SHAPE_UPPER_EAST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(CLOCKWISE_90)
+		val SHAPE_UPPER_WEST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(COUNTERCLOCKWISE_90)
+		val SHEARS_TAG: TagKey<Item> = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:tools/shear"))
+		val BOWS_TAG: TagKey<Item> = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:tools/bow"))
 	}
 
 	override fun codec(): MapCodec<out BaseEntityBlock> = BlockBehaviour.simpleCodec { this }
@@ -333,10 +249,10 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 	): ItemInteractionResult {
 		if (state.getValue(Companion.TRIPLE_HALF) == LOWER) {
 			val entity = level.getBlockEntity(pos) as DoubleOrNothingBlockEntity
-			if (stack.`is`(Items.SHEARS)) {
+			if (stack.`is`(Companion.SHEARS_TAG)) {
 				level.playSound(null, pos, SoundEvents.BEE_STING, BLOCKS, 1f, 1f)
 				entity.rewired = !entity.rewired
-			} else if (stack.`is`(Items.BOW)) {
+			} else if (stack.`is`(Companion.BOWS_TAG)) {
 				level.playSound(null, pos, SoundEvents.VILLAGER_NO, BLOCKS, 1f, 1f)
 				entity.blockhead = !entity.blockhead
 			}

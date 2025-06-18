@@ -15,6 +15,7 @@ import net.minecraft.world.item.alchemy.Potion
 import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.util.effectTooltip
 
 class DopedBreadItem : Item(
 	Properties()
@@ -51,6 +52,6 @@ class DopedBreadItem : Item(
 			)
 		)
 
-		PotionContents.addPotionTooltip(potionContents.allEffects, tooltipComponents::add, 1f, context.tickRate())
+		potionContents.allEffects.forEach { tooltipComponents.add(effectTooltip(it, 1f, context.tickRate())) }
 	}
 }

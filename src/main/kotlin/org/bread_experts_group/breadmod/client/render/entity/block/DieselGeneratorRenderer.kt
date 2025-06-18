@@ -33,7 +33,6 @@ class DieselGeneratorRenderer(context: Context) : BreadModBER<DieselGeneratorBlo
 	) {
 		val blockRotation = blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
 		poseStack.pushPose()
-		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
 		poseStack.mulPose(Axis.YP.rotationDegrees(blockRotation.toYRotFixed()))
 		this.renderDoor(blockEntity, blockRotation, poseStack, bufferSource, packedOverlay)
 		poseStack.popPose()

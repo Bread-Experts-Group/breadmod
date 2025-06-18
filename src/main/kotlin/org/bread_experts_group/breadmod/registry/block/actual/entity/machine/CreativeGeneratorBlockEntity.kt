@@ -39,13 +39,10 @@ class CreativeGeneratorBlockEntity(
 				Int.MAX_VALUE,
 				false
 			)
-			for (direction in Direction.entries) {
-				val cap = serverLevel.getCapability(
-					Capabilities.EnergyStorage.BLOCK,
-					pos.relative(direction), direction
-				) ?: continue
-				cap.receiveEnergy(Int.MAX_VALUE, false)
-			}
+			Direction.entries
+				.asSequence()
+				.mapNotNull { serverLevel.getCapability(Capabilities.EnergyStorage.BLOCK, pos.relative(it), it) }
+				.forEach { it.receiveEnergy(Int.MAX_VALUE, false) }
 		}
 	}
 
@@ -56,7 +53,8 @@ class CreativeGeneratorBlockEntity(
 		entity: CreativeGeneratorBlockEntity
 	) {
 		val enabled = state.getValue(CreativeGeneratorBlock.ENABLED)
-		if (clientLevel.gameTime % 80.0 == 0.0 && enabled)
-			clientLevel.playSound(null, pos, SoundEvents.BEACON_AMBIENT, BLOCKS, 1f, 1f)
+		if (clientLevel.gameTime % 80.0 == 0.0 && enabled) {
+			clientLevel.playLocalSound(pos, SoundEvents.BEACON_AMBIENT, BLOCKS, 1f, 1f, false)
+		}
 	}
 }

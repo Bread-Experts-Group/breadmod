@@ -55,13 +55,13 @@ abstract class BreadModBlockWithEntity(
 	/**
 	 * Override this to enable [BlockEntity] ticking for this block.
 	 */
-	open fun getBlockEntityType(): BlockEntityType<*>? = null
+	open fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*>? = null
 
 	final override fun <T : BlockEntity> getTicker(
 		level: Level,
 		state: BlockState,
 		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = this.tickBlockEntity(blockEntityType, this.getBlockEntityType())
+	): BlockEntityTicker<T>? = this.tickBlockEntity(blockEntityType, this.getBlockEntityType(level, state))
 
 	@Suppress("UNCHECKED_CAST")
 	private fun <E : BlockEntity, A : BlockEntity> tickBlockEntity(

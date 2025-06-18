@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod.registry.item.actual.armor
 
 import net.minecraft.ChatFormatting
+import net.minecraft.ChatFormatting.GRAY
+import net.minecraft.ChatFormatting.ITALIC
 import net.minecraft.core.Holder
 import net.minecraft.core.component.DataComponents
 import net.minecraft.network.chat.Component
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ArmorItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.alchemy.Potion
 import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.Level
@@ -21,7 +24,9 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
+import org.bread_experts_group.breadmod.util.effectTooltip
 import java.awt.Color
+import java.lang.Math.clamp
 import java.text.DecimalFormat
 import kotlin.random.Random
 
@@ -44,10 +49,17 @@ class BreadArmorItem(type: Type) : ArmorItem(
 		tooltipComponents: MutableList<Component>,
 		tooltipFlag: TooltipFlag
 	) {
-		val potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+		val potionContents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+		val translation = Potion.getName(potionContents.potion, "item.minecraft.potion.effect.")
+		val color = PotionContents.getColor(potionContents.allEffects)
+		val potionName =
+			Component.literal(" [")
+				.append(Component.translatable(translation))
+				.append(Component.literal("]"))
+				.withStyle { style -> style.withColor(color) }
 		val rangeMulti = COMMON.dopedArmorEffectDistanceMultiplier.get()
-		potion.allEffects.forEach { (effect, amplifier) ->
-			val range = rangeMulti * amplifier
+		potionContents.allEffects.forEach { (effect, amplifier) ->
+			val range = rangeMulti * clamp(amplifier.toLong(), 1, 99)
 			tooltipComponents.add(
 				modTranslatable(
 					"item", "bread_armor", "range",
@@ -55,7 +67,15 @@ class BreadArmorItem(type: Type) : ArmorItem(
 				).withStyle(ChatFormatting.BLUE, ChatFormatting.ITALIC)
 			)
 		}
-		potion.addPotionTooltip(tooltipComponents::add, 1.0f, context.tickRate())
+
+		if (potionContents != PotionContents.EMPTY) tooltipComponents.addAll(
+			arrayOf(
+				Component.empty(),
+				modTranslatable("item", "bread_armor", "tooltip").withStyle(ITALIC, GRAY).append(potionName)
+			)
+		)
+
+		potionContents.allEffects.forEach { tooltipComponents.add(effectTooltip(it, 1f, context.tickRate())) }
 	}
 
 	// todo look into why this isn't applying effects to the player

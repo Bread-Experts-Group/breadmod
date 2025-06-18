@@ -53,5 +53,6 @@ class FluidEnergyBlock : BreadModBlockWithEntity(Properties.of()) {
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 
-	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.FLUID_ENERGY.get()
+	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
+		ModBlockEntityTypes.FLUID_ENERGY.get()
 }

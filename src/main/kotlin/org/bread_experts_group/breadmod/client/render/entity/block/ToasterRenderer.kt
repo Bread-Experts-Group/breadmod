@@ -42,7 +42,6 @@ class ToasterRenderer(
 		val triggered = blockEntity.blockState.getValue(BlockStateProperties.TRIGGERED)
 
 		poseStack.pushPose()
-		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
 		when (blockRotation) {
 			SOUTH -> {
 				poseStack.mulPose(Axis.YP.rotationDegrees(180f))

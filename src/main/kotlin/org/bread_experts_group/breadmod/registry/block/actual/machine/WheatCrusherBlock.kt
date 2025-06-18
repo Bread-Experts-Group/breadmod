@@ -69,5 +69,6 @@ class WheatCrusherBlock : BreadModBlockWithEntity(Properties.ofFullCopy(Blocks.I
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 
-	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.WHEAT_CRUSHER.get()
+	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
+		ModBlockEntityTypes.WHEAT_CRUSHER.get()
 }

@@ -171,11 +171,6 @@ class ModBlockStateProvider(
 			this.models().getBuilder("breadmod:block/generator")
 		)
 
-		this.horizontalBlockBenchModelWithItem(
-			ModBlocks.DIESEL_GENERATOR.asBlock(),
-			"diesel_generator/diesel_generator"
-		)
-
 		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
 			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
 			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
@@ -261,6 +256,8 @@ class ModBlockStateProvider(
 		}
 		// Creative Generator
 		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.asBlock(), "creative_generator")
+		// Diesel Generator
+		this.horizontalBlockBenchModel(ModBlocks.DIESEL_GENERATOR.asBlock(), "diesel_generator/diesel_generator")
 	}
 
 	private fun blockBenchBlockModel(model: String): ModelFile.ExistingModelFile =

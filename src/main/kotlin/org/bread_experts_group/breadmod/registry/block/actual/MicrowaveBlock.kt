@@ -20,6 +20,9 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
+import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
+import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
@@ -35,6 +38,7 @@ import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.normalizedHitPos
+import org.bread_experts_group.breadmod.util.rotate
 import org.bread_experts_group.breadmod.util.targetFaceSection
 import java.util.stream.Stream
 
@@ -50,30 +54,9 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
 			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
 		).combine()
-		val SHAPE_SOUTH: VoxelShape = Stream.of(
-			box(1.0, 1.0, 3.0, 15.0, 9.0, 13.0),
-			box(2.0, 2.0, 2.0, 14.0, 8.0, 3.0),
-			box(1.5, 0.0, 10.5, 3.5, 1.0, 12.5),
-			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5),
-			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
-			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
-		).combine()
-		val SHAPE_WEST: VoxelShape = Stream.of(
-			box(3.0, 1.0, 1.0, 13.0, 9.0, 15.0),
-			box(13.0, 2.0, 2.0, 14.0, 8.0, 14.0),
-			box(3.5, 0.0, 1.5, 5.5, 1.0, 3.5),
-			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5),
-			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
-			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5)
-		).combine()
-		val SHAPE_EAST: VoxelShape = Stream.of(
-			box(3.0, 1.0, 1.0, 13.0, 9.0, 15.0),
-			box(2.0, 2.0, 2.0, 3.0, 8.0, 14.0),
-			box(3.5, 0.0, 1.5, 5.5, 1.0, 3.5),
-			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5),
-			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
-			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5)
-		).combine()
+		val SHAPE_SOUTH: VoxelShape = this.SHAPE_NORTH.rotate(CLOCKWISE_180)
+		val SHAPE_EAST: VoxelShape = this.SHAPE_NORTH.rotate(CLOCKWISE_90)
+		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.rotate(COUNTERCLOCKWISE_90)
 		val SHAPE_NORTH_OPEN: VoxelShape = Stream.of(
 			box(1.0, 1.0, 3.0, 5.0, 9.0, 13.0),
 			box(5.0, 1.0, 3.0, 15.0, 2.0, 13.0),
@@ -87,45 +70,9 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(1.5, 0.0, 10.5, 3.5, 1.0, 12.5),
 			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5)
 		).combine()
-		val SHAPE_SOUTH_OPEN: VoxelShape = Stream.of(
-			box(11.0, 1.0, 3.0, 15.0, 9.0, 13.0),
-			box(1.0, 1.0, 3.0, 11.0, 2.0, 13.0),
-			box(3.5, 2.0, 5.0, 9.5, 2.5, 11.0),
-			box(1.0, 2.0, 3.0, 2.0, 8.0, 13.0),
-			box(2.0, 2.0, 2.0, 11.0, 8.0, 4.0),
-			box(11.0, 2.0, 2.0, 14.0, 8.0, 3.0),
-			box(1.0, 8.0, 3.0, 11.0, 9.0, 13.0),
-			box(1.5, 0.0, 10.5, 3.5, 1.0, 12.5),
-			box(12.5, 0.0, 10.5, 14.5, 1.0, 12.5),
-			box(12.5, 0.0, 3.5, 14.5, 1.0, 5.5),
-			box(1.5, 0.0, 3.5, 3.5, 1.0, 5.5)
-		).combine()
-		val SHAPE_WEST_OPEN: VoxelShape = Stream.of(
-			box(3.0, 1.0, 11.0, 13.0, 9.0, 15.0),
-			box(3.0, 1.0, 1.0, 13.0, 2.0, 11.0),
-			box(5.0, 2.1, 3.5, 11.0, 2.5, 9.5),
-			box(3.0, 2.0, 1.0, 13.0, 8.0, 2.0),
-			box(12.0, 2.0, 2.0, 14.0, 8.0, 11.0),
-			box(13.0, 2.0, 11.0, 14.0, 8.0, 14.0),
-			box(3.0, 8.0, 1.0, 13.0, 9.0, 11.0),
-			box(3.5, 0.0, 1.5, 5.5, 1.0, 3.5),
-			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5),
-			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
-			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5)
-		).combine()
-		val SHAPE_EAST_OPEN: VoxelShape = Stream.of(
-			box(3.0, 1.0, 1.0, 13.0, 9.0, 5.0),
-			box(3.0, 1.0, 5.0, 13.0, 2.0, 15.0),
-			box(5.0, 2.1, 6.5, 11.0, 2.5, 12.5),
-			box(3.0, 2.0, 14.0, 13.0, 8.0, 15.0),
-			box(2.0, 2.0, 5.0, 4.0, 8.0, 14.0),
-			box(2.0, 2.0, 2.0, 3.0, 8.0, 5.0),
-			box(3.0, 8.0, 5.0, 13.0, 9.0, 15.0),
-			box(3.5, 0.0, 1.5, 5.5, 1.0, 3.5),
-			box(3.5, 0.0, 12.5, 5.5, 1.0, 14.5),
-			box(10.5, 0.0, 12.5, 12.5, 1.0, 14.5),
-			box(10.5, 0.0, 1.5, 12.5, 1.0, 3.5)
-		).combine()
+		val SHAPE_SOUTH_OPEN: VoxelShape = this.SHAPE_NORTH_OPEN.rotate(CLOCKWISE_180)
+		val SHAPE_EAST_OPEN: VoxelShape = this.SHAPE_NORTH_OPEN.rotate(CLOCKWISE_90)
+		val SHAPE_WEST_OPEN: VoxelShape = this.SHAPE_NORTH_OPEN.rotate(COUNTERCLOCKWISE_90)
 	}
 
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MicrowaveBlockEntity(pos, state)
@@ -219,5 +166,6 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		}
 	}
 
-	override fun getBlockEntityType(): BlockEntityType<*> = ModBlockEntityTypes.MICROWAVE.get()
+	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
+		ModBlockEntityTypes.MICROWAVE.get()
 }
