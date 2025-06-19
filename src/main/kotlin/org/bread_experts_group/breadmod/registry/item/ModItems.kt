@@ -205,7 +205,7 @@ object ModItems {
 	@DataGenerateModelSingleItem
 	@DataGenerateLanguage("en_us")
 	@DataGenerateLanguage("en_us", "Feeds %s every %s", suffix = ".tooltip")
-	@DataGenerateLanguage("en_us", "(stacking!)", "stacks.")
+	@DataGenerateLanguage("en_us", "(stacking!)", suffix = ".stacks")
 	val BREAD_AMULET: DeferredItem<BreadAmuletItem> =
 		this.ITEM_REGISTRY.register("bread_amulet") { -> BreadAmuletItem(500) }
 

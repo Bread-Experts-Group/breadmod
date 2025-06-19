@@ -31,7 +31,7 @@ internal class EnglishUSLangProvider(
 		this.add("modmenu.nameTranslation.breadmod", "Bread Mod")
 		this.add("jei.breadmod.generic.recipe_time", "%ss")
 		this.add("jei.breadmod.generic.recipe_energy", "Energy Needed: %sFE")
-		this.add("item.breadmod.bread_armor.range", "Effect range: %s %s")
+		this.add("item.breadmod.bread_armor.range", "range: %s %s")
 		this.add("item.breadmod.bread_armor.tooltip", "Applied Effect:")
 
 		this.add("command.breadmod.war_timer.toggle.success", "Toggled war timer to %s for %s")

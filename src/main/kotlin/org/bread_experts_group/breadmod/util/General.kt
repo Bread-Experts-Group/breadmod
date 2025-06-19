@@ -19,6 +19,7 @@ import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.Tag
 import net.minecraft.nbt.TagType
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.tags.TagKey
@@ -326,21 +327,21 @@ fun IntArray.toBlockPos(): BlockPos {
 	return BlockPos(this[0], this[1], this[2])
 }
 
-fun effectTooltip(effect: MobEffectInstance, durationFactor: Float, ticksPerSecond: Float): Component {
-	var mutableComponent = Component.translatable(effect.descriptionId)
-	if (effect.amplifier > 0) mutableComponent = Component.translatable(
+fun effectTooltip(instance: MobEffectInstance, durationFactor: Float, ticksPerSecond: Float): MutableComponent {
+	var mutableComponent = Component.translatable(instance.descriptionId)
+	if (instance.amplifier > 0) mutableComponent = Component.translatable(
 		"potion.withAmplifier",
 		mutableComponent,
-		Component.translatable("potion.potency." + effect.amplifier)
+		Component.translatable("potion.potency." + instance.amplifier)
 	)
 
-	if (!effect.endsWithin(20)) mutableComponent = Component.translatable(
+	if (!instance.endsWithin(20)) mutableComponent = Component.translatable(
 		"potion.withDuration",
 		mutableComponent,
-		MobEffectUtil.formatDuration(effect, durationFactor, ticksPerSecond)
+		MobEffectUtil.formatDuration(instance, durationFactor, ticksPerSecond)
 	)
 
-	return mutableComponent.withStyle(effect.effect.value().category.tooltipFormatting)
+	return mutableComponent.withStyle(instance.effect.value().category.tooltipFormatting)
 }
 
 // Codec shenanigans
