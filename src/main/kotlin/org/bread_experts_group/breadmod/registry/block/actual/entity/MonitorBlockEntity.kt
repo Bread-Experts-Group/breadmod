@@ -11,9 +11,9 @@ import org.bread_experts_group.breadmod.util.toBlockPos
 import org.bread_experts_group.breadmod.util.toIntArray
 import org.bread_experts_group.computer.Computer
 import org.bread_experts_group.computer.MemoryModule
-import org.bread_experts_group.computer.bios.StandardBIOS
 import org.bread_experts_group.computer.disc.iso9960.ISO9660Disc
 import org.bread_experts_group.computer.ia32.IA32Processor
+import org.bread_experts_group.computer.ia32.bios.StandardBIOS
 
 class MonitorBlockEntity(
 	pos: BlockPos,

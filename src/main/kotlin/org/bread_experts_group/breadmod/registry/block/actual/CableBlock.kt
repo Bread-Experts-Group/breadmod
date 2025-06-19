@@ -7,10 +7,15 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.CrossCollisionBlock
+import net.minecraft.world.level.block.SimpleWaterloggedBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.BooleanProperty
+import net.minecraft.world.level.material.FluidState
+import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.material.PushReaction.BLOCK
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
@@ -25,7 +30,7 @@ import org.bread_experts_group.breadmod.util.Color
 class CableBlock(
 	private val capabilities: Set<BlockCapability<*, Direction?>>,
 	private val capabilitiesConstructor: () -> List<Any>
-) : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)) {
+) : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)), SimpleWaterloggedBlock {
 	companion object {
 		val directions: Map<Direction, Pair<BooleanProperty, VoxelShape>> = mapOf(
 			Direction.UP to (ModBlockStateProperties.UP to box(5.0, 11.0, 5.0, 11.0, 16.0, 11.0)),
@@ -36,6 +41,14 @@ class CableBlock(
 			Direction.WEST to (ModBlockStateProperties.WEST to box(0.0, 5.0, 5.0, 5.0, 11.0, 11.0)),
 		)
 		val CORE_SHAPE: VoxelShape = Block.box(5.0, 5.0, 5.0, 11.0, 11.0, 11.0)
+	}
+
+	init {
+		this.registerDefaultState(
+			this.defaultBlockState()
+				.also { Companion.directions.forEach { (_, side) -> it.setValue(side.first, false) } }
+				.setValue(BlockStateProperties.WATERLOGGED, false)
+		)
 	}
 
 	fun resolveColor(): Int {
@@ -68,6 +81,11 @@ class CableBlock(
 		pos: BlockPos,
 		neighborPos: BlockPos
 	): BlockState {
+		if (state.getValue(CrossCollisionBlock.WATERLOGGED)) level.scheduleTick(
+			pos,
+			Fluids.WATER, Fluids.WATER.getTickDelay(level)
+		)
+
 		return state.setValue(
 			Companion.directions.getValue(direction).first,
 			this.connectsTo(
@@ -93,11 +111,12 @@ class CableBlock(
 				neighborPos
 			)
 		}
-		shape
+		val fluidState = context.level.getFluidState(context.clickedPos)
+		shape.setValue(BlockStateProperties.WATERLOGGED, fluidState.type == Fluids.WATER)
 	}
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
-		builder.add(*Companion.directions.values.map { it.first }.toTypedArray())
+		builder.add(*Companion.directions.values.map { it.first }.toTypedArray(), BlockStateProperties.WATERLOGGED)
 	}
 
 	override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
@@ -114,4 +133,11 @@ class CableBlock(
 		pos, state,
 		this.capabilities.zip(this.capabilitiesConstructor.invoke()).toMap()
 	)
+
+	override fun propagatesSkylightDown(state: BlockState, reader: BlockGetter, pos: BlockPos): Boolean =
+		!state.getValue(BlockStateProperties.WATERLOGGED)
+
+	override fun getFluidState(state: BlockState): FluidState =
+		if (state.getValue(BlockStateProperties.WATERLOGGED)) Fluids.WATER.getSource(false)
+		else super.getFluidState(state)
 }

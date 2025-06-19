@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,6 +8,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import org.bread_experts_group.FormattingKt;
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -22,8 +22,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-
-import static org.bread_experts_group.breadmod.util.GeneralKt.formatNumberBigDecimal;
 
 @Mixin(GuiGraphics.class)
 public abstract class MixinGuiGraphics {
@@ -53,8 +51,8 @@ public abstract class MixinGuiGraphics {
 			this.pose.pushPose();
 			BigDecimal read = stack.get(ModDataComponents.INSTANCE.getEXPANSIBLE_ITEM_STACK());
 			if (stack.getCount() != 1 && text == null && read != null) {
-				Pair<BigDecimal, String> a = formatNumberBigDecimal(read, 0, BigDecimal.valueOf(1000));
-				String s = this.breadmod$decimalFormatter.format(a.component1()) + a.component2();
+				String[] split = FormattingKt.formatMetric(read.doubleValue(), 2).split(" ");
+				String s = this.breadmod$decimalFormatter.format(split[0]) + split[1];
 
 				this.pose.translate(0.0F, 0.0F, 200.0F);
 				this.drawString(

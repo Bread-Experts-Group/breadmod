@@ -21,7 +21,7 @@ version = project.properties["mod_version"] as String
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:2.41.0"
+private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:2.42.0"
 
 idea {
 	module {

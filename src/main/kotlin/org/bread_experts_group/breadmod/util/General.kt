@@ -70,41 +70,8 @@ import kotlin.reflect.full.createInstance
 val Vector3fZero: Vector3f = Vector3f(0f, 0f, 0f)
 val Vector3fAxisX: Vector3f = Vector3f(1f, 0f, 0f)
 val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
-internal val formatArray: List<String> =
-	listOf("q", "r", "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q")
 
 fun BigDecimal.capInt(): Int = if (this > Int.MAX_VALUE.toBigDecimal()) Int.MAX_VALUE else this.toInt()
-
-/**
- * Limits a number to 1000, and provides a keyword describing it in a shortened format.
- * For example, 1000 → "1", "k".
- *
- * @return A pair containing the limited number and the unit sign.
- * @param n The number to format.
- * @param unitOffset The offset to start at.
- * @param unitMax The maximum number to reach before moving to the next unit.
- * @return A pair containing the limited number and the unit.
- * @author Miko Elbrecht
- * @since 1.0
- * @see formatArray
- */
-fun formatNumberBigDecimal(
-	n: BigDecimal,
-	unitOffset: Int = 0,
-	unitMax: BigDecimal = BigDecimal.valueOf(1000)
-): Pair<BigDecimal, String> {
-	var num = n
-	var index = 10 + unitOffset
-	while (num >= unitMax && index < formatArray.size - 1) {
-		num = num.divide(unitMax)
-		index++
-	}
-	while (num < BigDecimal.ONE && index > 0) {
-		num = num.multiply(unitMax)
-		index--
-	}
-	return num to formatArray[index]
-}
 
 /**
  * Retrieves an instance of the provided [path]

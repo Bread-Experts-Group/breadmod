@@ -15,8 +15,8 @@ import net.minecraft.world.inventory.InventoryMenu
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
-import org.bread_experts_group.breadmod.util.formatNumberBigDecimal
 import org.bread_experts_group.breadmod.util.handlers.HandlerLimits
+import org.bread_experts_group.formatMetric
 import org.joml.Math.clamp
 import snownee.jade.api.config.IWailaConfig.IConfigOverlay
 import snownee.jade.overlay.OverlayRenderer
@@ -162,8 +162,8 @@ object JadeDrawingCommon {
 		offWhite: Style
 	): Pair<MutableComponent, String> {
 		if (n != null) {
-			val (truncatedAmount, unit) = formatNumberBigDecimal(n, offset)
-			val asString = this.decimalFormatter.format(truncatedAmount)
+			val (truncated, unit) = n.toDouble().formatMetric().split(' ')
+			val asString = this.decimalFormatter.format(truncated.toDouble())
 			var zeros = ""
 			for (char in asString) {
 				if (char != '0' && char != '.') break

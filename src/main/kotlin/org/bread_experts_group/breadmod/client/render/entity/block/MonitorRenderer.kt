@@ -10,8 +10,8 @@ import org.bread_experts_group.breadmod.registry.ModFonts
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import org.bread_experts_group.computer.BinaryUtil.hex
 import org.bread_experts_group.computer.BinaryUtil.shr
-import org.bread_experts_group.computer.bios.h10.TeletypeOutput
 import org.bread_experts_group.computer.ia32.IA32Processor
+import org.bread_experts_group.computer.ia32.bios.h10.TeletypeOutput
 import java.awt.Color
 
 class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(context) {
