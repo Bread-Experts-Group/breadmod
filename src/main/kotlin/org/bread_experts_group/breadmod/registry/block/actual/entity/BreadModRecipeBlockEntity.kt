@@ -42,8 +42,8 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	protected var currentRecipe: Optional<R> = Optional.empty()
 	protected val recipeDial: RecipeManager.CachedCheck<I, R> = RecipeManager.createCheck(recipeType)
 
-	override fun commonTick(level: Level, pos: BlockPos, state: BlockState) {
-		this.runRecipe(level, pos, state)
+	override fun commonTick(level: Level) {
+		this.runRecipe(level)
 	}
 
 	/**
@@ -75,12 +75,12 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	/**
 	 * Ticks the [currentRecipe].
 	 */
-	abstract fun runCurrentRecipe(recipe: R, level: Level, pos: BlockPos, state: BlockState)
+	abstract fun runCurrentRecipe(recipe: R, level: Level)
 
 	/**
 	 * Used for recipe checking and setting.
 	 */
-	abstract fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState)
+	abstract fun runMissingRecipe(level: Level)
 
 	/**
 	 * Used for checking if specified slots or tanks are empty.
@@ -90,12 +90,12 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	/**
 	 * Runs the current recipe for this [net.minecraft.world.level.block.entity.BlockEntity].
 	 */
-	fun runRecipe(level: Level, pos: BlockPos, state: BlockState) {
+	fun runRecipe(level: Level) {
 		if (this.checkIsEmpty(level)) this.resetRecipe(level)
 		this.currentRecipe.ifPresentOrElse({ activeRecipe ->
-			this.runCurrentRecipe(activeRecipe, level, pos, state)
+			this.runCurrentRecipe(activeRecipe, level)
 		}, {
-			this.runMissingRecipe(level, pos, state)
+			this.runMissingRecipe(level)
 		})
 	}
 }

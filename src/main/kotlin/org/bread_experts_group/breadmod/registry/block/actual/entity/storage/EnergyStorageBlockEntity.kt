@@ -28,8 +28,11 @@ class EnergyStorageBlockEntity(
 		)
 	)
 
-	override fun commonTick(level: Level, pos: BlockPos, state: BlockState) {
-		level.updateStorageLevel(state, pos, EnergyStorageBlock.energyToLevel(this.energyHandler.energyStored))
+	override fun commonTick(level: Level) {
+		level.updateStorageLevel(
+			this.blockState, this.blockPos,
+			EnergyStorageBlock.energyToLevel(this.energyHandler.energyStored)
+		)
 	}
 
 	override fun applyImplicitComponents(componentInput: DataComponentInput) {

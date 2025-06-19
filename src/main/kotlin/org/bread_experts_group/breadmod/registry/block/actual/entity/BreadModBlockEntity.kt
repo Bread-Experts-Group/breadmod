@@ -51,23 +51,9 @@ abstract class BreadModBlockEntity<T : BlockEntity>(
 
 	fun getChunkPos(): ChunkPos = ChunkPos(this.blockPos)
 
-	open fun commonTick(
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
-	): Unit = Unit
-
-	open fun clientTick(
-		clientLevel: ClientLevel,
-		pos: BlockPos,
-		state: BlockState
-	): Unit = Unit
-
-	open fun serverTick(
-		serverLevel: ServerLevel,
-		pos: BlockPos,
-		state: BlockState
-	): Unit = Unit
+	open fun commonTick(level: Level): Unit = Unit
+	open fun clientTick(clientLevel: ClientLevel): Unit = Unit
+	open fun serverTick(serverLevel: ServerLevel): Unit = Unit
 
 	open fun saveAdditionalBM(tag: CompoundTag, registries: Provider) {}
 	open fun loadAdditionalBM(tag: CompoundTag, registries: Provider) {}

@@ -27,12 +27,8 @@ class CreativeGeneratorBlockEntity(
 	override val energyHandler: ExpansibleEnergyHandler =
 		ExpansibleEnergyHandler(mutableListOf(ExpansibleCell(BigDecimal.valueOf(Long.MAX_VALUE))))
 
-	override fun serverTick(
-		serverLevel: ServerLevel,
-		pos: BlockPos,
-		state: BlockState
-	) {
-		val enabled = state.getValue(CreativeGeneratorBlock.ENABLED)
+	override fun serverTick(serverLevel: ServerLevel) {
+		val enabled = this.blockState.getValue(CreativeGeneratorBlock.ENABLED)
 		if (enabled) {
 			if (this.energyHandler.energyStored != this.energyHandler.maxEnergyStored) this.energyHandler.receiveEnergy(
 				Int.MAX_VALUE,
@@ -40,19 +36,27 @@ class CreativeGeneratorBlockEntity(
 			)
 			Direction.entries
 				.asSequence()
-				.mapNotNull { serverLevel.getCapability(Capabilities.EnergyStorage.BLOCK, pos.relative(it), it) }
+				.mapNotNull {
+					serverLevel.getCapability(
+						Capabilities.EnergyStorage.BLOCK,
+						this.blockPos.relative(it),
+						it
+					)
+				}
 				.forEach { it.receiveEnergy(Int.MAX_VALUE, false) }
 		}
 	}
 
 	override fun clientTick(
-		clientLevel: ClientLevel,
-		pos: BlockPos,
-		state: BlockState
+		clientLevel: ClientLevel
 	) {
-		val enabled = state.getValue(CreativeGeneratorBlock.ENABLED)
-		if (clientLevel.gameTime % 80.0 == 0.0 && enabled) {
-			clientLevel.playLocalSound(pos, SoundEvents.BEACON_AMBIENT, BLOCKS, 1f, 1f, false)
-		}
+		val enabled = this.blockState.getValue(CreativeGeneratorBlock.ENABLED)
+		if (clientLevel.gameTime % 80.0 == 0.0 && enabled)
+			clientLevel.playLocalSound(
+				this.blockPos,
+				SoundEvents.BEACON_AMBIENT,
+				BLOCKS,
+				1f, 1f, false
+			)
 	}
 }

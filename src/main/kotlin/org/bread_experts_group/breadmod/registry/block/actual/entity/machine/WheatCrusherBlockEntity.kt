@@ -53,11 +53,9 @@ class WheatCrusherBlockEntity(
 
 	override fun runCurrentRecipe(
 		recipe: WheatCrusherRecipe,
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
+		level: Level
 	) {
-		val powered = state.getValue(Companion.POWERED)
+		val powered = this.blockState.getValue(Companion.POWERED)
 		if (!recipe.itemStillValid(this.getItem(0))) {
 			this.resetRecipe(level)
 		}
@@ -67,16 +65,14 @@ class WheatCrusherBlockEntity(
 		if (this.handleEnergy(this.energyHandler)) return
 		if (this.energyHandler.extractEnergy(this.energyDivision, false) < this.energyDivision) return
 
-		if (!powered) level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, true))
+		if (!powered) level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.POWERED, true))
 		if (this.progress >= recipeTime) this.finalizeAndReset(recipe, level) else this.progress++
 	}
 
 	override fun runMissingRecipe(
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
+		level: Level
 	) {
-		level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, false))
+		level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.POWERED, false))
 		val stack = this.getItem(0)
 		val check = this.getOptionalRecipe(FluidEnergyInput(stack), level)
 
@@ -85,7 +81,7 @@ class WheatCrusherBlockEntity(
 			if (recipe.canFitItemResult(this.getItem(1))) {
 				this.setRecipe(recipe)
 				this.maxProgress = present.value.getTime()
-				level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, true))
+				level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.POWERED, true))
 			}
 		}
 	}
