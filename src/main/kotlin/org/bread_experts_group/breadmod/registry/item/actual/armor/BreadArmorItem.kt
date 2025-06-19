@@ -71,7 +71,6 @@ class BreadArmorItem(type: Type) : ArmorItem(
 		}
 	}
 
-	// todo look into why this isn't applying effects to the player
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		if (entity !is LivingEntity || !entity.armorSlots.contains(stack)) return
 

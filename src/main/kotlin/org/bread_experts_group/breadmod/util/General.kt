@@ -327,12 +327,33 @@ fun IntArray.toBlockPos(): BlockPos {
 	return BlockPos(this[0], this[1], this[2])
 }
 
+val romanNumerals: List<Pair<String, Int>> = listOf(
+	"M" to 1000,
+	"D" to 500,
+	"C" to 100,
+	"L" to 50,
+	"X" to 10,
+	"V" to 5,
+	"IV" to 4,
+	"I" to 1
+)
+
+fun formatRomanNumerals(n: Int): String = buildString {
+	var remainder = n
+	for ((numeral, divisor) in romanNumerals) {
+		while (remainder >= divisor) {
+			this.append(numeral)
+			remainder -= divisor
+		}
+	}
+}
+
 fun effectTooltip(instance: MobEffectInstance, durationFactor: Float, ticksPerSecond: Float): MutableComponent {
 	var mutableComponent = Component.translatable(instance.descriptionId)
 	if (instance.amplifier > 0) mutableComponent = Component.translatable(
 		"potion.withAmplifier",
 		mutableComponent,
-		Component.translatable("potion.potency." + instance.amplifier)
+		Component.literal(formatRomanNumerals(instance.amplifier))
 	)
 
 	if (!instance.endsWithin(20)) mutableComponent = Component.translatable(
