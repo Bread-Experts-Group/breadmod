@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
-import org.bread_experts_group.breadmod.compat.jei.buildBackground
 import org.bread_experts_group.breadmod.compat.jei.createCachedArrow
 import org.bread_experts_group.breadmod.compat.jei.drawRecipeTime
 import org.bread_experts_group.breadmod.compat.jei.drawableItemStack
@@ -38,8 +37,9 @@ class ToasterRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory
 
 	override fun getRecipeType(): RecipeType<ToasterRecipe> = ModJEIRecipeTypes.TOASTER_RECIPE_TYPE
 	override fun getTitle(): Component = Component.translatable(ModBlocks.TOASTER.get().descriptionId)
-	override fun getBackground(): IDrawable = this.guiHelper.buildBackground(66, 66)
 	override fun getIcon(): IDrawable = this.guiHelper.drawableItemStack(ModBlocks.TOASTER)
+	override fun getWidth(): Int = 66
+	override fun getHeight(): Int = 66
 
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: ToasterRecipe, focuses: IFocusGroup) {
 		builder.addSlot(RENDER_ONLY, 9, 46).addItemStack(ModBlocks.TOASTER.toStack())
@@ -55,6 +55,7 @@ class ToasterRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory
 		mouseX: Double,
 		mouseY: Double
 	) {
+		ModGuiElements.FLAT_BACKGROUND.blit(guiGraphics, 0, 0)
 		val arrow = getCachedArrow(recipe, this.cachedArrows)
 		ModGuiElements.TOASTER_ARROW_JEI.blit(guiGraphics, 27, 10)
 		arrow.draw(guiGraphics, 27, 10)

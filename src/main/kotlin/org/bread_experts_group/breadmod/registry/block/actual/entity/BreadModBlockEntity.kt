@@ -54,22 +54,19 @@ abstract class BreadModBlockEntity<T : BlockEntity>(
 	open fun commonTick(
 		level: Level,
 		pos: BlockPos,
-		state: BlockState,
-		entity: T
+		state: BlockState
 	): Unit = Unit
 
 	open fun clientTick(
 		clientLevel: ClientLevel,
 		pos: BlockPos,
-		state: BlockState,
-		entity: T
+		state: BlockState
 	): Unit = Unit
 
 	open fun serverTick(
 		serverLevel: ServerLevel,
 		pos: BlockPos,
-		state: BlockState,
-		entity: T
+		state: BlockState
 	): Unit = Unit
 
 	open fun saveAdditionalBM(tag: CompoundTag, registries: Provider) {}

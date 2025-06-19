@@ -19,7 +19,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
-import org.bread_experts_group.breadmod.compat.jei.buildBackground
 import org.bread_experts_group.breadmod.compat.jei.createCachedArrow
 import org.bread_experts_group.breadmod.compat.jei.drawEnergyTooltip
 import org.bread_experts_group.breadmod.compat.jei.drawRecipeTime
@@ -42,8 +41,9 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 
 	override fun getRecipeType(): RecipeType<DoughMachineRecipe> = ModJEIRecipeTypes.DOUGH_MACHINE_RECIPE_TYPE
 	override fun getTitle(): Component = Component.translatable(ModBlocks.DOUGH_MACHINE.get().descriptionId)
-	override fun getBackground(): IDrawable = this.guiHelper.buildBackground(147, 55)
 	override fun getIcon(): IDrawable = this.guiHelper.drawableItemStack(ModBlocks.DOUGH_MACHINE)
+	override fun getWidth(): Int = 147
+	override fun getHeight(): Int = 55
 
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: DoughMachineRecipe, focuses: IFocusGroup) {
 		builder.addSlot(INPUT, 12, 28).addItemStacks(recipe.getInputItemsForIndex(0))
@@ -86,6 +86,7 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 		mouseX: Double,
 		mouseY: Double
 	) {
+		ModGuiElements.FLAT_BACKGROUND.blit(guiGraphics, 0, 0)
 		val arrow = getCachedArrow(recipe, this.cachedArrows)
 		ModGuiElements.DOUGH_MACHINE_ARROW_JEI.blit(guiGraphics, 17, 5)
 		arrow.draw(guiGraphics, 17, 5)

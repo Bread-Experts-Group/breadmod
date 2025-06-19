@@ -28,7 +28,7 @@ class EnergyStorageBlockEntity(
 		)
 	)
 
-	override fun commonTick(level: Level, pos: BlockPos, state: BlockState, entity: EnergyStorageBlockEntity) {
+	override fun commonTick(level: Level, pos: BlockPos, state: BlockState) {
 		level.updateStorageLevel(state, pos, EnergyStorageBlock.energyToLevel(this.energyHandler.energyStored))
 	}
 

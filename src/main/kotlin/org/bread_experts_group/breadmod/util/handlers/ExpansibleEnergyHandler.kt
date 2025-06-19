@@ -34,12 +34,12 @@ class ExpansibleEnergyHandler(
 	override fun receiveEnergy(count: Int, simulate: Boolean): Int = this.fillDecimal(
 		count.toBigDecimal(),
 		simulate
-	).first.capInt().also { if (it != 0) this.changed() }
+	).first.capInt()
 
 	override fun extractEnergy(count: Int, simulate: Boolean): Int = this.drainDecimal(
 		count.toBigDecimal(),
 		simulate
-	).first.capInt().also { if (it != 0) this.changed() }
+	).first.capInt()
 
 	override fun getEnergyStored(): Int = this.amount.capInt()
 	override fun getMaxEnergyStored(): Int = this.capacity?.capInt() ?: Int.MAX_VALUE

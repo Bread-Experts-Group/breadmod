@@ -55,8 +55,7 @@ class WheatCrusherBlockEntity(
 		recipe: WheatCrusherRecipe,
 		level: Level,
 		pos: BlockPos,
-		state: BlockState,
-		entity: WheatCrusherBlockEntity
+		state: BlockState
 	) {
 		val powered = state.getValue(Companion.POWERED)
 		if (!recipe.itemStillValid(this.getItem(0))) {
@@ -75,8 +74,7 @@ class WheatCrusherBlockEntity(
 	override fun runMissingRecipe(
 		level: Level,
 		pos: BlockPos,
-		state: BlockState,
-		entity: WheatCrusherBlockEntity
+		state: BlockState
 	) {
 		level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, false))
 		val stack = this.getItem(0)

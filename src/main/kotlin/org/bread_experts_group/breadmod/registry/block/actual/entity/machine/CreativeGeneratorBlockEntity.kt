@@ -30,8 +30,7 @@ class CreativeGeneratorBlockEntity(
 	override fun serverTick(
 		serverLevel: ServerLevel,
 		pos: BlockPos,
-		state: BlockState,
-		entity: CreativeGeneratorBlockEntity
+		state: BlockState
 	) {
 		val enabled = state.getValue(CreativeGeneratorBlock.ENABLED)
 		if (enabled) {
@@ -49,8 +48,7 @@ class CreativeGeneratorBlockEntity(
 	override fun clientTick(
 		clientLevel: ClientLevel,
 		pos: BlockPos,
-		state: BlockState,
-		entity: CreativeGeneratorBlockEntity
+		state: BlockState
 	) {
 		val enabled = state.getValue(CreativeGeneratorBlock.ENABLED)
 		if (clientLevel.gameTime % 80.0 == 0.0 && enabled) {

@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.CrossCollisionBlock
 import net.minecraft.world.level.block.SimpleWaterloggedBlock
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -22,14 +23,15 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.common.util.INBTSerializable
+import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CableBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.util.Color
 
-// todo cable network
 class CableBlock(
 	private val capabilities: Set<BlockCapability<*, Direction?>>,
-	private val capabilitiesConstructor: () -> List<Any>
+	private val capabilitiesConstructor: () -> List<INBTSerializable<*>>
 ) : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)), SimpleWaterloggedBlock {
 	companion object {
 		val directions: Map<Direction, Pair<BooleanProperty, VoxelShape>> = mapOf(
@@ -129,6 +131,8 @@ class CableBlock(
 
 	override fun hasDynamicShape(): Boolean = true
 
+	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
+		ModBlockEntityTypes.CABLE.get()
 	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = CableBlockEntity(
 		pos, state,
 		this.capabilities.zip(this.capabilitiesConstructor.invoke()).toMap()

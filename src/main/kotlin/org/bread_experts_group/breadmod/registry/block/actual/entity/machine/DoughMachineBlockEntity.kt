@@ -54,8 +54,7 @@ class DoughMachineBlockEntity(
 		recipe: DoughMachineRecipe,
 		level: Level,
 		pos: BlockPos,
-		state: BlockState,
-		entity: DoughMachineBlockEntity
+		state: BlockState
 	) {
 		val powered = state.getValue(Companion.POWERED)
 		val fluidInput = listOf(this.getFluid(0))
@@ -72,7 +71,7 @@ class DoughMachineBlockEntity(
 		if (this.progress >= recipeTime) this.finalizeAndReset(recipe, level) else this.progress++
 	}
 
-	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState, entity: DoughMachineBlockEntity) {
+	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState) {
 		level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, false))
 		val fluidInput = listOf(this.getFluid(0))
 		val itemInputs = this.getItemsInRange(0 .. 1)

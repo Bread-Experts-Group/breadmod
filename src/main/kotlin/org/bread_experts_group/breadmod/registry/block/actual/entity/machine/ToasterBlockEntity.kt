@@ -34,8 +34,7 @@ class ToasterBlockEntity(
 	override fun commonTick(
 		level: Level,
 		pos: BlockPos,
-		state: BlockState,
-		entity: ToasterBlockEntity
+		state: BlockState
 	) {
 		if (this.getItem(0).`is`(EXPLODES_IN_TOASTER) && state.getValue(Companion.TRIGGERED)) {
 			this.maxProgress = 60
@@ -51,15 +50,14 @@ class ToasterBlockEntity(
 					Level.ExplosionInteraction.BLOCK
 				)
 			}
-		} else super.commonTick(level, pos, state, entity)
+		} else super.commonTick(level, pos, state)
 	}
 
 	override fun runCurrentRecipe(
 		recipe: ToasterRecipe,
 		level: Level,
 		pos: BlockPos,
-		state: BlockState,
-		entity: ToasterBlockEntity
+		state: BlockState
 	) {
 		if (!recipe.itemStillValid(this.getItem(0))) this.resetRecipe(level)
 		val recipeTime = recipe.getTime()
@@ -71,7 +69,7 @@ class ToasterBlockEntity(
 		} else this.progress++
 	}
 
-	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState, entity: ToasterBlockEntity) {
+	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState) {
 		val stack = this.getItem(0)
 		val check = this.getOptionalRecipe(FluidEnergyInput(stack), level)
 

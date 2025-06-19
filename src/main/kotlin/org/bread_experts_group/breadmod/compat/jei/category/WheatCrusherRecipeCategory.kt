@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
-import org.bread_experts_group.breadmod.compat.jei.buildBackground
 import org.bread_experts_group.breadmod.compat.jei.createCachedArrow
 import org.bread_experts_group.breadmod.compat.jei.drawEnergyTooltip
 import org.bread_experts_group.breadmod.compat.jei.drawRecipeTime
@@ -39,8 +38,9 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 
 	override fun getRecipeType(): RecipeType<WheatCrusherRecipe> = ModJEIRecipeTypes.WHEAT_CRUSHER_RECIPE_TYPE
 	override fun getTitle(): Component = Component.translatable(ModBlocks.WHEAT_CRUSHER.get().descriptionId)
-	override fun getBackground(): IDrawable = this.guiHelper.buildBackground(161, 65)
 	override fun getIcon(): IDrawable = this.guiHelper.drawableItemStack(ModBlocks.WHEAT_CRUSHER)
+	override fun getWidth(): Int = 161
+	override fun getHeight(): Int = 65
 
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: WheatCrusherRecipe, focuses: IFocusGroup) {
 		builder.addSlot(INPUT, 43, 24).addItemStacks(recipe.getInputItems())
@@ -66,6 +66,7 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 		mouseX: Double,
 		mouseY: Double
 	) {
+		ModGuiElements.FLAT_BACKGROUND.blit(guiGraphics, 0, 0)
 		ModGuiElements.WHEAT_CRUSHER_ARROW.setRotation(90f).blit(guiGraphics, 61, 36)
 		drawRotatedArrow(guiGraphics, recipe, this.cachedArrow, 61, 36, 90f)
 		drawRecipeTime(recipe, guiGraphics, 110, 46)
