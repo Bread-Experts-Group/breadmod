@@ -57,9 +57,8 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.Shapes.or
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import org.joml.Vector3f
+import java.lang.reflect.Method
 import java.math.BigDecimal
 import java.util.UUID
 import java.util.function.Supplier
@@ -68,7 +67,6 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.math.round
 import kotlin.reflect.full.createInstance
 
-private val generalLogger: Logger = LogManager.getLogger("General Utilities")
 val Vector3fZero: Vector3f = Vector3f(0f, 0f, 0f)
 val Vector3fAxisX: Vector3f = Vector3f(1f, 0f, 0f)
 val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
@@ -131,7 +129,7 @@ fun isTag(tag: TagKey<Fluid>): Boolean = BuiltInRegistries.FLUID.get(tag.locatio
 inline fun <T, reified A : T> IntrinsicTagAppender<T>.add(vararg toAdd: Supplier<A>): IntrinsicTagAppender<T> =
 	this.also { this.add(*toAdd.map(Supplier<A>::get).toTypedArray()) }
 
-private val getCapMethod = Level::class.java.getMethod(
+private val getCapMethod: Method = Level::class.java.getMethod(
 	"getCapability",
 	BlockCapability::class.java,
 	BlockPos::class.java,
@@ -147,7 +145,7 @@ fun <T> Level.getCapability(
 	entity: BlockEntity
 ): T? = getCapMethod.invoke(this, capability, pos, state, entity) as T?
 
-private val shapeOrigin = Vec3(-0.5, -0.5, -0.5)
+private val shapeOrigin: Vec3 = Vec3(-0.5, -0.5, -0.5)
 
 fun AABB.rotate(rotation: Rotation): AABB = when (rotation) {
 	NONE                -> this
