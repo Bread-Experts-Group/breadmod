@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.energy.IEnergyStorage
@@ -26,6 +27,8 @@ class CableBlockEntity(
 	val attenuationRandom: Random = Random(-392492)
 	val receivedFrom: MutableSet<Direction> = mutableSetOf()
 	override fun serverTick(serverLevel: ServerLevel, pos: BlockPos, state: BlockState) {
+		// TODO: JUST FOR TESTING [CABLES SET THEIR STATE TO WATERLOGGED ON UPDATE]
+		// TODO: REMOVE THIS WHEN A BETTER SOLUTION IS FOUND FOR VISUALIZATION
 		val directions = CableBlock.directions.entries.toMutableSet()
 		while (directions.isNotEmpty()) {
 			val (direction, side) = directions.random().also { directions.remove(it) }
@@ -40,7 +43,13 @@ class CableBlockEntity(
 				if (neighborCapability == null) continue
 				fun setReceived() {
 					val neighborEntity = serverLevel.getBlockEntity(neighborPos)
-					if (neighborEntity is CableBlockEntity) neighborEntity.receivedFrom.add(direction.opposite)
+					if (neighborEntity is CableBlockEntity) {
+						neighborEntity.receivedFrom.add(direction.opposite)
+						serverLevel.setBlockAndUpdate(
+							neighborPos,
+							serverLevel.getBlockState(neighborPos).setValue(BlockStateProperties.WATERLOGGED, true)
+						)
+					}
 				}
 				when (neighborCapability) {
 					is IEnergyStorage -> {
@@ -65,6 +74,7 @@ class CableBlockEntity(
 			}
 		}
 		this.receivedFrom.clear()
+		serverLevel.setBlockAndUpdate(pos, state.setValue(BlockStateProperties.WATERLOGGED, false))
 	}
 
 	override fun saveAdditionalBM(tag: CompoundTag, registries: HolderLookup.Provider) {
