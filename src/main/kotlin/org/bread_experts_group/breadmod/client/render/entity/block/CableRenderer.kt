@@ -27,7 +27,7 @@ class CableRenderer(private val context: Context) : BlockEntityRenderer<CableBlo
 		poseStack.translate(0.35f, 1f, 0.5f)
 		poseStack.mulPose(Axis.XN.rotationDegrees(180f))
 		poseStack.mulPose(Axis.YN.rotationDegrees(180f))
-		poseStack.mulPose(Axis.YN.rotationDegrees(-player.yHeadRot))
+		poseStack.mulPose(Axis.YN.rotationDegrees(-player.getViewYRot(partialTick)))
 		poseStack.mulPose(Axis.XN.rotationDegrees(player.xRot))
 		poseStack.scaleFlat(0.025f)
 		this.context.font.renderText(

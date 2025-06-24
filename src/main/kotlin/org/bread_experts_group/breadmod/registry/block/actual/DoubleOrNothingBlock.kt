@@ -30,7 +30,6 @@ import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
-import net.minecraft.world.level.block.RenderShape.INVISIBLE
 import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
 import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
 import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
@@ -150,7 +149,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		} else null
 	}
 
-	override fun getRenderShape(state: BlockState): RenderShape = INVISIBLE
+	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
 	override fun setPlacedBy(level: Level, pos: BlockPos, state: BlockState, placer: LivingEntity?, stack: ItemStack) {
 		level.setBlockAndUpdate(pos.above(), state.setValue(Companion.TRIPLE_HALF, MIDDLE))

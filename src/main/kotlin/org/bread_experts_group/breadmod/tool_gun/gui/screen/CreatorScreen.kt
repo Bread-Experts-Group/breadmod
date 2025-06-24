@@ -91,6 +91,11 @@ class CreatorScreen(
 		}
 	}
 
+	override fun tick() {
+		(this.children()[0] as ContainerWidget<*>).tick()
+		(this.children()[1] as ContainerWidget<*>).tick()
+	}
+
 	var leftPos: Int = 0
 	var topPos: Int = 0
 	var currentBlock: BlockState = Blocks.GRASS_BLOCK.defaultBlockState()

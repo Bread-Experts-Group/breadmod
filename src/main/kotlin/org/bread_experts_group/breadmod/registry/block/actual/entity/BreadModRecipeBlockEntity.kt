@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.HolderLookup.Provider
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeHolder
 import net.minecraft.world.item.crafting.RecipeInput
@@ -10,7 +12,11 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.energy.IEnergyStorage
+import org.bread_experts_group.breadmod.util.getRecipe
+import org.bread_experts_group.breadmod.util.putRecipe
 import java.util.Optional
+import java.util.function.Supplier
+import kotlin.jvm.optionals.getOrNull
 
 abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : BreadModRecipeBlockEntity<I, R, T>>(
 	type: BlockEntityType<T>,
@@ -36,11 +42,35 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	fun handleEnergy(handler: IEnergyStorage): Boolean =
 		(this.energyDivision < 0) && (handler.energyStored + this.energyDivision > handler.maxEnergyStored)
 
+	override fun saveAdditionalBM(tag: CompoundTag, registries: Provider) {
+		tag.putInt("progress", this.progress)
+		tag.putInt("maxProgress", this.maxProgress)
+		tag.putRecipe("currentRecipe", this.currentRecipe.getOrNull() ?: return)
+	}
+
+	override fun loadAdditionalBM(tag: CompoundTag, registries: Provider) {
+		this.progress = tag.getInt("progress")
+		this.maxProgress = tag.getInt("maxProgress")
+		this.currentRecipe = Optional.of(tag.getRecipe<I, R>("currentRecipe") ?: return)
+	}
+
+	/**
+	 * Returns a list of optional recipes matching the [recipeType].
+	 */
+	fun getRecipeList(recipeType: RecipeType<R>, level: Level): List<Optional<RecipeHolder<R>>> =
+		level.recipeManager.getAllRecipesFor(recipeType).map { Optional.of(it) }
+
+	/**
+	 * @see getRecipeList
+	 */
+	fun getRecipeList(recipeType: Supplier<RecipeType<R>>, level: Level): List<Optional<RecipeHolder<R>>> =
+		this.getRecipeList(recipeType.get(), level)
+
 	/**
 	 * Holds the current running recipe.
 	 */
 	protected var currentRecipe: Optional<R> = Optional.empty()
-	protected val recipeDial: RecipeManager.CachedCheck<I, R> = RecipeManager.createCheck(recipeType)
+	private val recipeDial: RecipeManager.CachedCheck<I, R> = RecipeManager.createCheck(recipeType)
 
 	override fun commonTick(level: Level, pos: BlockPos, state: BlockState) {
 		this.runRecipe(level, pos, state)
@@ -57,15 +87,15 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	open fun resetRecipe(level: Level) {
 		this.currentRecipe = Optional.empty()
 		this.maxProgress = 0; this.progress = 0
+		this.setChanged()
 	}
 
 	fun finalizeAndReset(recipe: R, level: Level) {
 		this.finalizeRecipe(recipe, level)
 		this.resetRecipe(level)
-		this.setChanged()
 	}
 
-	fun getOptionalRecipe(input: I, level: Level): Optional<RecipeHolder<R>> =
+	open fun getOptionalRecipe(input: I, level: Level): Optional<RecipeHolder<R>> =
 		this.recipeDial.getRecipeFor(input, level)
 
 	fun setRecipe(recipe: R) {

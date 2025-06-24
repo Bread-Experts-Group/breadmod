@@ -47,6 +47,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HellNawButtonBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
+import org.bread_experts_group.breadmod.registry.block.actual.ItemPedestalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
@@ -253,16 +254,13 @@ object ModBlocks {
 	val CABLE: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
 		"cable",
 		{
-			CableBlock(
-				setOf(Capabilities.EnergyStorage.BLOCK),
-				{
-					listOf(
-						ExpansibleEnergyHandler(
-							mutableListOf(ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(10)))
-						)
+			CableBlock(setOf(Capabilities.EnergyStorage.BLOCK)) {
+				listOf(
+					ExpansibleEnergyHandler(
+						mutableListOf(ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(10)))
 					)
-				}
-			)
+				)
+			}
 		},
 		Properties()
 	)
@@ -433,6 +431,15 @@ object ModBlocks {
 			override val creativeModeTabs: List<Supplier<CreativeModeTab>> = creativeTabs
 		}
 	}
+
+	// todo textures, renderer, BE logic
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage("en_us")
+	val ITEM_PEDESTAL: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
+		"item_pedestal",
+		::ItemPedestalBlock,
+		Properties()
+	)
 
 	@DataGenerateLootDropSelf
 	@DataGenerateModelBlockAndItem

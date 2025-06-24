@@ -8,7 +8,7 @@ import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 
-object CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
+class CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ) {

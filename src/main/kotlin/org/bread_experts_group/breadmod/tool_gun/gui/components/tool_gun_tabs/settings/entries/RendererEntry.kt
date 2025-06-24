@@ -26,13 +26,14 @@ class RendererEntry(
 	Component.literal("Entry for adjusting tool gun rendering parameters.")
 ) {
 	private var index = 0
+	private val renderer = ToolGunItemRenderer()
 
 	override fun initContainer() {
 		this.addChild(
 			"model_viewer",
 			ModelViewerWidget(screen = this.screen) { modelViewer, poseStack, bufferSource ->
 				ModelViewerWidget.setupRender(modelViewer, 0.0, -10.0, 180.0, poseStack)
-				ToolGunItemRenderer.renderToolGun(
+				this.renderer.renderToolGun(
 					this.stack,
 					FIRST_PERSON_RIGHT_HAND,
 					poseStack,

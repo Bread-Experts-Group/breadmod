@@ -48,7 +48,7 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: DoughMachineRecipe, focuses: IFocusGroup) {
 		builder.addSlot(INPUT, 12, 28).addItemStacks(recipe.getInputItemsForIndex(0))
 		builder.addSlot(INPUT, 47, 28).addItemStacks(recipe.getInputItemsForIndex(1))
-		builder.addSlot(INPUT, 123, 23)
+		if (recipe.getInputFluids().isNotEmpty()) builder.addSlot(INPUT, 123, 23)
 			.addFluidStack(
 				recipe.getInputFluids().first().fluid,
 				recipe.getInputFluids().first().amount.toLong()
@@ -56,7 +56,7 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 			.addRichTooltipCallback { _, tooltip ->
 				tooltip.add(Component.literal("Input").withStyle(ITALIC, BLUE))
 			}
-		builder.addSlot(OUTPUT, 123, 4)
+		if (recipe.rFluidOutputs.isNotEmpty()) builder.addSlot(OUTPUT, 123, 4)
 			.addFluidStack(
 				recipe.rFluidOutputs.first().fluid,
 				recipe.rFluidOutputs.first().amount.toLong()

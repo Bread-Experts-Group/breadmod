@@ -74,7 +74,7 @@ import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
 import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
-import org.bread_experts_group.breadmod.client.render.DieselGeneratorItemRenderer
+import org.bread_experts_group.breadmod.client.render.LerpTicker
 import org.bread_experts_group.breadmod.client.render.WarRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
@@ -182,6 +182,7 @@ import kotlin.reflect.full.primaryConstructor
 object Registry {
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
+	val itemRenderers: MutableMap<String, BlockEntityWithoutLevelRenderer> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
 	private val registerList: List<DeferredRegister<out Any>> = listOf(
 		ModItems.ITEM_REGISTRY,
@@ -270,6 +271,13 @@ object Registry {
 							}
 						}
 //						PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
+					}
+				}
+				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
+					val inventory = (localClient.player ?: return@addListener).allSlots
+					inventory.forEach {
+						val renderer = IClientItemExtensions.of(it).customRenderer
+						if (renderer is LerpTicker.BEWLR) renderer.tick()
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
@@ -361,13 +369,10 @@ object Registry {
 					event.registerItem(ToolGunItem.ToolGunItemExtensions, ModItems.TOOL_GUN)
 					event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
 					event.registerItem(object : IClientItemExtensions {
+						val renderer: String = "creative_generator"
 						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
-							CreativeGeneratorItemRenderer
+							this@Registry.itemRenderers.getOrPut(this.renderer, ::CreativeGeneratorItemRenderer)
 					}, ModBlocks.CREATIVE_GENERATOR.asItem())
-					event.registerItem(object : IClientItemExtensions {
-						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
-							DieselGeneratorItemRenderer
-					}, ModBlocks.DIESEL_GENERATOR.asItem())
 				}
 				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
 					event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
@@ -438,11 +443,10 @@ object Registry {
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/microwave/microwave_plate"))
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/axis"))
 					val dieselGeneratorPath = "${ModelProvider.BLOCK_FOLDER}/diesel_generator"
-					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator"))
 					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_door"))
-					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_charging_upgrade"))
-					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_turbo_upgrade"))
-					event.register(modModelLoc("$dieselGeneratorPath/diesel_generator_battery_upgrade"))
+					event.register(modModelLoc("$dieselGeneratorPath/charging_upgrade"))
+					event.register(modModelLoc("$dieselGeneratorPath/turbo_upgrade"))
+					event.register(modModelLoc("$dieselGeneratorPath/battery_upgrade"))
 				}
 				modBus.addListener { event: EntityRenderersEvent.AddLayers ->
 					@Suppress("UNCHECKED_CAST")

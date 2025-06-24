@@ -38,6 +38,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeInput
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
@@ -70,6 +72,9 @@ import kotlin.reflect.full.createInstance
 val Vector3fZero: Vector3f = Vector3f(0f, 0f, 0f)
 val Vector3fAxisX: Vector3f = Vector3f(1f, 0f, 0f)
 val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
+
+val HORIZONTAL_DIRECTIONS: Array<Direction> = Direction.entries.filter { it.axis.isHorizontal }.toTypedArray()
+val ALL_DIRECTIONS: Array<Direction> = Direction.entries.toTypedArray()
 
 fun BigDecimal.capInt(): Int = if (this > Int.MAX_VALUE.toBigDecimal()) Int.MAX_VALUE else this.toInt()
 
@@ -487,6 +492,13 @@ fun CompoundTag.putBlockState(key: String, value: BlockState) {
 fun CompoundTag.getBlockState(key: String): BlockState =
 	BlockState.CODEC.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull()?.first
 		?: Blocks.AIR.defaultBlockState()
+
+fun <T : RecipeInput> CompoundTag.putRecipe(key: String, value: Recipe<T>) =
+	this.put(key, Recipe.CODEC.encodeStart(NbtOps.INSTANCE, value).result().get())
+
+@Suppress("UNCHECKED_CAST")
+fun <I : RecipeInput, R : Recipe<I>> CompoundTag.getRecipe(key: String): R? =
+	Recipe.CODEC.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull() as? R
 
 fun CompoundTag.putEntity(key: String, value: Entity?): CompoundTag {
 	if (value == null) return CompoundTag()

@@ -1,21 +1,30 @@
 package org.bread_experts_group.breadmod.datagen.model.block
 
 import net.minecraft.core.Direction
+import net.minecraft.core.Direction.UP
 import net.minecraft.data.PackOutput
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.ButtonBlock
 import net.minecraft.world.level.block.DoorBlock
 import net.minecraft.world.level.block.FenceBlock
+import net.minecraft.world.level.block.PipeBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.AttachFace
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
+import net.minecraft.world.level.block.state.properties.Property
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel.Builder
 import net.neoforged.neoforge.client.model.generators.ModelFile
 import net.neoforged.neoforge.client.model.generators.ModelProvider
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder
+import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder.PartBuilder
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.getBlock
+import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider.PropertyType.FACING
+import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider.PropertyType.HORIZONTAL_FACING
+import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider.PropertyType.PIPE_BLOCK
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
@@ -109,20 +118,53 @@ class ModBlockStateProvider(
 		val connector = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_part"))
 		val core = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_core"))
 		this.getMultipartBuilder(ModBlocks.CABLE.asBlock())
-			.part().modelFile(core).addModel().end()
-			.part().modelFile(connector).uvLock(false).addModel()
-			.condition(ModBlockStateProperties.NORTH, true).end()
-			.part().modelFile(connector).uvLock(false).rotationY(90).addModel()
-			.condition(ModBlockStateProperties.EAST, true).end()
-			.part().modelFile(connector).uvLock(false).rotationY(180).addModel()
-			.condition(ModBlockStateProperties.SOUTH, true).end()
-			.part().modelFile(connector).uvLock(false).rotationY(270).addModel()
-			.condition(ModBlockStateProperties.WEST, true).end()
-			.part().modelFile(connector).uvLock(false).rotationX(270).addModel()
-			.condition(ModBlockStateProperties.UP, true).end()
-			.part().modelFile(connector).uvLock(false).rotationX(90).addModel()
-			.condition(ModBlockStateProperties.DOWN, true).end()
+			.createPart(core).end()
+			.createSidedPart(connector, propertyType = PIPE_BLOCK)
 		this.simpleBlockItem(ModBlocks.CABLE.asBlock(), core)
+		// Diesel Generator
+		// todo adding the upgrades to the multipart
+		this.getMultipartBuilder(ModBlocks.DIESEL_GENERATOR.asBlock())
+			.createSidedPart(this.blockBenchBlockModel("diesel_generator/diesel_generator"))
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/diesel_generator_door"),
+				BlockStateProperties.OPEN,
+				false
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/diesel_generator_door_open"),
+				BlockStateProperties.OPEN,
+				true
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/battery_upgrade"),
+				BlockStateProperties.OPEN,
+				true,
+				{ it.condition(ModBlockStateProperties.UPGRADE_ONE, true) }
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/charging_upgrade"),
+				BlockStateProperties.OPEN,
+				true,
+				{ it.condition(ModBlockStateProperties.UPGRADE_TWO, true) }
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/turbo_upgrade"),
+				BlockStateProperties.OPEN,
+				true,
+				{ it.condition(ModBlockStateProperties.UPGRADE_THREE, true) }
+			)
+		this.simpleBlockItem(
+			ModBlocks.DIESEL_GENERATOR.asBlock(),
+			this.blockBenchItemModel("diesel_generator_item")
+		)
+		// Item Pedestal
+		this.simpleBlock(ModBlocks.ITEM_PEDESTAL.asBlock(), this.blockBenchBlockModel("item_pedestal"))
+		this.simpleBlockItem(ModBlocks.ITEM_PEDESTAL.asBlock(), this.blockBenchBlockModel("item_pedestal"))
+		// Toaster
+		// todo toaster multipart
+		this.horizontalBlockBenchModel(ModBlocks.TOASTER.asBlock(), "toaster")
+		this.simpleBlockItem(ModBlocks.TOASTER.asBlock(), this.blockBenchItemModel("toaster_item"))
+		// Wheat Crusher
 		val machineTop = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
 		val machineSide = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
 		val machineBack = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
@@ -143,7 +185,7 @@ class ModBlockStateProvider(
 			ModBlocks.WHEAT_CRUSHER.asBlock(),
 			this.models().getBuilder("breadmod:block/wheat_crusher")
 		)
-
+		// Dough Machine
 		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.asBlock()) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
 			val model = this.models().cube(
@@ -206,8 +248,6 @@ class ModBlockStateProvider(
 		this.horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
 
-		this.horizontalBlockBenchModel(ModBlocks.TOASTER.asBlock(), "toaster")
-		this.simpleBlockItem(ModBlocks.TOASTER.asBlock(), this.blockBenchItemModel("toaster_item"))
 		this.horizontalBlockBenchModelWithItem(ModBlocks.MICROWAVE.asBlock(), "microwave")
 		this.simpleBlockItem(ModBlocks.MICROWAVE.asBlock(), this.blockBenchItemModel("microwave_item"))
 
@@ -256,8 +296,6 @@ class ModBlockStateProvider(
 		}
 		// Creative Generator
 		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.asBlock(), "creative_generator")
-		// Diesel Generator
-		this.horizontalBlockBenchModel(ModBlocks.DIESEL_GENERATOR.asBlock(), "diesel_generator/diesel_generator")
 	}
 
 	private fun blockBenchBlockModel(model: String): ModelFile.ExistingModelFile =
@@ -272,5 +310,90 @@ class ModBlockStateProvider(
 	private fun horizontalBlockBenchModelWithItem(block: Block, model: String) {
 		this.horizontalBlockBenchModel(block, model)
 		this.simpleBlockItem(block, this.blockBenchBlockModel(model))
+	}
+
+	private fun Builder<PartBuilder>.rotated(
+		direction: Direction
+	): Builder<PartBuilder> = this.let {
+		if (direction.axis.isHorizontal) {
+			this.rotationY((direction.toYRot().toInt() + 180) % 360)
+		} else this.rotationX(if (direction == UP) 270 else 90)
+	}
+
+	private fun <T : Comparable<T>> MultiPartBlockStateBuilder.createSidedConditionalPart(
+		model: ModelFile,
+		condition: Property<T>,
+		value: T,
+		additionalConditions: (PartBuilder) -> Unit = {},
+		propertyType: PropertyType = HORIZONTAL_FACING,
+		uvLock: Boolean = false,
+		vararg sides: Direction = Direction.entries.toTypedArray()
+	): MultiPartBlockStateBuilder {
+		val directions =
+			if (propertyType == HORIZONTAL_FACING) sides.filter { it.axis.isHorizontal }.toTypedArray()
+			else sides
+
+		fun <T : Comparable<T>> part(prop: Property<T>, propVal: T, direction: Direction) =
+			this.part()
+				.modelFile(model)
+				.uvLock(uvLock)
+				.rotated(direction)
+				.addModel()
+				.condition(prop, propVal)
+				.condition(condition, value)
+		when (propertyType) {
+			PIPE_BLOCK        -> directions.forEach { direction ->
+				val property = PipeBlock.PROPERTY_BY_DIRECTION[direction] ?: return@forEach
+				part(property, true, direction).also(additionalConditions)
+			}
+			FACING            -> directions.forEach { direction ->
+				part(BlockStateProperties.FACING, direction, direction).also(additionalConditions)
+			}
+			HORIZONTAL_FACING -> directions.forEach { direction ->
+				part(BlockStateProperties.HORIZONTAL_FACING, direction, direction).also(additionalConditions)
+			}
+		}
+		return this
+	}
+
+	private enum class PropertyType { PIPE_BLOCK, FACING, HORIZONTAL_FACING }
+
+	private fun <T : Comparable<T>> MultiPartBlockStateBuilder.conditionalPart(
+		model: ModelFile,
+		condition: Property<T>,
+		value: T,
+		additionalConditions: (PartBuilder) -> Unit = {}
+	): MultiPartBlockStateBuilder =
+		this.part().modelFile(model).addModel().condition(condition, value).also(additionalConditions).end()
+
+	private fun MultiPartBlockStateBuilder.createPart(model: ModelFile): PartBuilder =
+		this.part().modelFile(model).addModel()
+
+	private fun MultiPartBlockStateBuilder.createSidedPart(
+		model: ModelFile,
+		uvLock: Boolean = false,
+		propertyType: PropertyType = HORIZONTAL_FACING,
+		vararg sides: Direction = Direction.entries.toTypedArray()
+	): MultiPartBlockStateBuilder {
+		val directions =
+			if (propertyType == HORIZONTAL_FACING) sides.filter { it.axis.isHorizontal }.toTypedArray()
+			else sides
+
+		fun <T : Comparable<T>> part(prop: Property<T>, value: T, direction: Direction) =
+			this.part().modelFile(model).uvLock(uvLock).rotated(direction).addModel().condition(prop, value)
+		when (propertyType) {
+			PIPE_BLOCK        -> directions.forEach { direction ->
+				val property = PipeBlock.PROPERTY_BY_DIRECTION[direction] ?: return@forEach
+				part(property, true, direction)
+			}
+			FACING            -> directions.forEach { direction ->
+				part(BlockStateProperties.FACING, direction, direction)
+			}
+			HORIZONTAL_FACING -> directions.forEach { direction ->
+				part(BlockStateProperties.HORIZONTAL_FACING, direction, direction)
+			}
+		}
+		// this is just here to satisfy compiler requirements.
+		return this
 	}
 }

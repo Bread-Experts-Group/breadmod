@@ -11,6 +11,8 @@ import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
+import org.bread_experts_group.breadmod.client.render.LerpTicker
+import org.bread_experts_group.breadmod.client.render.LerpTicker.LerpParams
 import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.data.BlockEntityDataWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.data.CapabilityDataWidget
@@ -28,8 +30,8 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 	225,
 	"block_tab",
 	screen
-) {
-	private var rotation: Float = 0f
+), LerpTicker {
+	override val lerpParams: Array<LerpParams> = arrayOf(LerpParams())
 	var blockEntity: BlockEntity? = null
 	private val random = RandomSource.create()
 
@@ -38,7 +40,6 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 	}
 
 	override fun renderContainer(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-		this.rotation += 1f + partialTick
 		guiGraphics.borderedFillPositioned(this.x, this.y, this.width, this.height, Color.WHITE, Color.BLACK)
 		CreatorScreen.renderBlockPreview(
 			this.screen.currentBlock,
@@ -47,10 +48,14 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 			this.random,
 			this.x + 155,
 			this.y + 1,
-			this.rotation,
+			this.getLerpedValue(0, partialTick),
 			partialTick
 		)
 		this.setBlockEntityFromState()
+	}
+
+	override fun tickAdditional() {
+		this.tickAllPositions()
 	}
 
 	fun setBlockEntityFromState() {
@@ -152,9 +157,9 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 	}
 
 	private fun capabilityWidgetVisibility(visible: Boolean) {
-		(this.getChild("cap_widget_item_handler") as? CapabilityDataWidget<*>)?.setState(visible)
-		(this.getChild("cap_widget_energy_handler") as? CapabilityDataWidget<*>)?.setState(visible)
-		(this.getChild("cap_widget_fluid_handler") as? CapabilityDataWidget<*>)?.setState(visible)
+		(this.getNullableChild("cap_widget_item_handler") as? CapabilityDataWidget<*>)?.setState(visible)
+		(this.getNullableChild("cap_widget_energy_handler") as? CapabilityDataWidget<*>)?.setState(visible)
+		(this.getNullableChild("cap_widget_fluid_handler") as? CapabilityDataWidget<*>)?.setState(visible)
 	}
 
 	override fun initContainer() {

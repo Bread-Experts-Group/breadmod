@@ -15,10 +15,12 @@ import kotlin.math.min
 
 // todo redo to account for sidedness, maybe a proxy system like what mekanism does
 @Suppress("ConvertLambdaToReference")
-class ExpansibleItemHandler(
+open class ExpansibleItemHandler(
 	override val units: MutableList<ExpansibleSlot>
 ) : AbstractExpansibleHandler<ExpansibleSlot>(), IItemHandlerModifiable {
 	constructor(slots: Int) : this(MutableList(slots) { ExpansibleSlot() })
+
+	open fun onContentsChanged(slot: Int) {}
 
 	private var allowedSides: List<Direction?> = listOf(null)
 	fun getThisForSide(direction: Direction?): ExpansibleItemHandler? =
@@ -87,6 +89,7 @@ class ExpansibleItemHandler(
 				false,
 				mutableListOf(stack.item)
 			).first.capInt()
+			this.onContentsChanged(slot)
 			stack.also {
 				if (target.isEmpty) target.stack = it.copy() else target.stack.grow(moved)
 			}
@@ -101,6 +104,7 @@ class ExpansibleItemHandler(
 		if (this.amount == BigDecimal.ZERO) return ItemStack.EMPTY
 		return if (target.maxOut != null) {
 			val bCount = target.drainDecimal(count.toBigDecimal(), false).first.toInt()
+			this.onContentsChanged(slot)
 			target.stack.copyWithCount(bCount)
 		} else ItemStack.EMPTY
 	}
@@ -116,11 +120,15 @@ class ExpansibleItemHandler(
 		if (existing.count <= toExtract) {
 			if (!simulate) {
 				this.setStackInSlot(slot, ItemStack.EMPTY)
+				this.onContentsChanged(slot)
 				return existing
 			}
 			return existing.copy()
 		}
-		if (!simulate) this.setStackInSlot(slot, existing.copyWithCount(existing.count - toExtract))
+		if (!simulate) {
+			this.setStackInSlot(slot, existing.copyWithCount(existing.count - toExtract))
+			this.onContentsChanged(slot)
+		}
 		return existing.copyWithCount(toExtract)
 	}
 

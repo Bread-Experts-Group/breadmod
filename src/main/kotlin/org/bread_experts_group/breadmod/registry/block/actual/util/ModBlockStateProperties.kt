@@ -10,12 +10,9 @@ object ModBlockStateProperties {
 	val STORAGE_LEVEL: IntegerProperty = IntegerProperty.create("storage_level", 0, 4)
 	val TRIPLE_BLOCK_HALF: EnumProperty<TripleBlockHalf> =
 		EnumProperty.create("triple_half", TripleBlockHalf::class.java)
-	val DOWN: BooleanProperty = BooleanProperty.create("down")
-	val UP: BooleanProperty = BooleanProperty.create("up")
-	val NORTH: BooleanProperty = BooleanProperty.create("north")
-	val SOUTH: BooleanProperty = BooleanProperty.create("south")
-	val WEST: BooleanProperty = BooleanProperty.create("west")
-	val EAST: BooleanProperty = BooleanProperty.create("east")
+	val UPGRADE_ONE: BooleanProperty = BooleanProperty.create("upgrade_one")
+	val UPGRADE_TWO: BooleanProperty = BooleanProperty.create("upgrade_two")
+	val UPGRADE_THREE: BooleanProperty = BooleanProperty.create("upgrade_three")
 
 	enum class TripleBlockHalf(
 		private val directionToOther: Direction,

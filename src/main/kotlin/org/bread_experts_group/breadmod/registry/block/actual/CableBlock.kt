@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.CrossCollisionBlock
+import net.minecraft.world.level.block.PipeBlock
 import net.minecraft.world.level.block.SimpleWaterloggedBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -26,7 +27,6 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.common.util.INBTSerializable
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CableBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.util.Color
 
 class CableBlock(
@@ -35,12 +35,12 @@ class CableBlock(
 ) : BreadModBlockWithEntity(Properties.of().noOcclusion().pushReaction(BLOCK)), SimpleWaterloggedBlock {
 	companion object {
 		val directions: Map<Direction, Pair<BooleanProperty, VoxelShape>> = mapOf(
-			Direction.UP to (ModBlockStateProperties.UP to box(5.0, 11.0, 5.0, 11.0, 16.0, 11.0)),
-			Direction.DOWN to (ModBlockStateProperties.DOWN to box(5.0, 0.0, 5.0, 11.0, 5.0, 11.0)),
-			Direction.NORTH to (ModBlockStateProperties.NORTH to box(5.0, 5.0, 0.0, 11.0, 11.0, 5.0)),
-			Direction.SOUTH to (ModBlockStateProperties.SOUTH to box(5.0, 5.0, 11.0, 11.0, 11.0, 16.0)),
-			Direction.EAST to (ModBlockStateProperties.EAST to box(11.0, 5.0, 5.0, 16.0, 11.0, 11.0)),
-			Direction.WEST to (ModBlockStateProperties.WEST to box(0.0, 5.0, 5.0, 5.0, 11.0, 11.0)),
+			Direction.UP to (PipeBlock.UP to box(5.0, 11.0, 5.0, 11.0, 16.0, 11.0)),
+			Direction.DOWN to (PipeBlock.DOWN to box(5.0, 0.0, 5.0, 11.0, 5.0, 11.0)),
+			Direction.NORTH to (PipeBlock.NORTH to box(5.0, 5.0, 0.0, 11.0, 11.0, 5.0)),
+			Direction.SOUTH to (PipeBlock.SOUTH to box(5.0, 5.0, 11.0, 11.0, 11.0, 16.0)),
+			Direction.EAST to (PipeBlock.EAST to box(11.0, 5.0, 5.0, 16.0, 11.0, 11.0)),
+			Direction.WEST to (PipeBlock.WEST to box(0.0, 5.0, 5.0, 5.0, 11.0, 11.0)),
 		)
 		val CORE_SHAPE: VoxelShape = Block.box(5.0, 5.0, 5.0, 11.0, 11.0, 11.0)
 	}
@@ -118,7 +118,10 @@ class CableBlock(
 	}
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
-		builder.add(*Companion.directions.values.map { it.first }.toTypedArray(), BlockStateProperties.WATERLOGGED)
+		builder.add(
+			*Companion.directions.values.map(Pair<BooleanProperty, VoxelShape>::first).toTypedArray(),
+			BlockStateProperties.WATERLOGGED
+		)
 	}
 
 	override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {

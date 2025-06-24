@@ -1,9 +1,12 @@
 package org.bread_experts_group.breadmod.registry.recipe.actual.crafting
 
 import net.minecraft.core.HolderLookup.Provider
+import net.minecraft.core.NonNullList
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.item.PotionItem
+import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.item.crafting.CraftingBookCategory.MISC
@@ -41,7 +44,23 @@ class BreadArmorPotionRecipe : CustomRecipe(MISC) {
 		val dyeColor = DyedItemColor(PotionContents.getColor(potionContents.allEffects), false)
 		armor.set(DataComponents.POTION_CONTENTS, potionContents)
 		armor.set(DataComponents.DYED_COLOR, dyeColor)
+		armor.set(DataComponents.RARITY, Rarity.UNCOMMON)
 		return armor
+	}
+
+	override fun getGroup(): String = "bread_armor"
+
+	override fun getRemainingItems(input: CraftingInput): NonNullList<ItemStack> {
+		val nonNullList = NonNullList.withSize(input.size(), ItemStack.EMPTY)
+
+		for (i: Int in nonNullList.indices) {
+			val stack = input.getItem(i)
+			if (stack.`is`(Items.POTION)) {
+				nonNullList[i] = Items.GLASS_BOTTLE.defaultInstance
+			} else nonNullList[i] = stack.craftingRemainingItem
+		}
+
+		return nonNullList
 	}
 
 	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true

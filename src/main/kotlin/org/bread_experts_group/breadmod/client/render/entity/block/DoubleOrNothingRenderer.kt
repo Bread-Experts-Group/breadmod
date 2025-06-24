@@ -25,7 +25,6 @@ import org.bread_experts_group.breadmod.client.render.drawQuad
 import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
-import org.bread_experts_group.breadmod.client.render.tessellateModel
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
@@ -38,6 +37,7 @@ import org.joml.Vector3f
 import org.lwjgl.system.MemoryUtil
 import java.awt.Color
 
+// todo rewrite to work with LerpTicker, move ticking values to the block entity for ticking.
 class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRenderer<DoubleOrNothingBlockEntity> {
 	private val random: RandomSource = RandomSource.create()
 	private val modelData: ModelData = ModelData.EMPTY
@@ -80,17 +80,7 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 	) {
 		val partial = localClient.timer.gameTimeDeltaTicks
 		val blockRotation = blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
-		val originalModel = this.context.blockRenderDispatcher.getBlockModel(blockEntity.blockState)
 		val blockHeadMode = if (blockEntity.blockhead) this.blockhead else this.backgroundTexture
-		localClient.blockRenderer.modelRenderer.tessellateModel(
-			blockEntity,
-			originalModel,
-			poseStack,
-			bufferSource,
-			this.random,
-			packedOverlay,
-			this.modelData
-		)
 		if (blockEntity.blockState.getValue(DoubleOrNothingBlock.TRIPLE_HALF) != LOWER) return
 		poseStack.pushPose()
 		if (blockEntity.rewired) this.drawText(

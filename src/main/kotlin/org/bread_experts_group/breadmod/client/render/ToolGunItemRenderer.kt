@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.client.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
-import net.minecraft.client.DeltaTracker
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -12,10 +11,10 @@ import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
+import org.bread_experts_group.breadmod.client.render.LerpTicker.LerpParams
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.formatMetric
 import java.awt.Color
 import java.lang.Math.clamp
@@ -23,17 +22,17 @@ import java.math.BigDecimal
 import java.security.SecureRandom
 
 // todo render BEWLRs in items/blockitems if they're rendered onto the tool gun
-object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
+class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
-) {
-	private val deltaTracker: DeltaTracker = localClient.timer
-	private val partialTick: Float = this.deltaTracker.gameTimeDeltaTicks
+), LerpTicker.BEWLR {
 	private val caseOhInstrument: SecureRandom = SecureRandom()
 	private var caseOhSize: BigDecimal = BigDecimal.TWO
-	var delta: Float = 0f
-	var rotation: Float = 0f
-	var recoil: Float = 0f
+	override val lerpParams: Array<LerpParams> = arrayOf(
+		LerpParams(amount = -0.075f), // Delta
+		LerpParams(), // Rotation
+		LerpParams() // Recoil
+	)
 
 	/**
 	 * Overrides tool gun rendering if this value isn't null.
@@ -44,8 +43,19 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	 * Sets the delta and recoil to their triggered values.
 	 */
 	fun triggerDelta() {
-		this.delta = 1f
-		this.recoil = 0.1f
+		this.setParamPosition(0, 1.5f + localClient.timer.realtimeDeltaTicks)
+		this.setParamPosition(2, 0.15f)
+	}
+
+	// todo maybe look into doing this more cleanly, this just seems a bit hacky imo
+	override fun tick() {
+		val delta = this.getRawValue(0)
+		val recoil = this.getRawValue(2)
+		if (!localClient.gamePaused()) {
+			if (delta > 0f) this.tickPositionIndex(0)
+			if (delta > 0f) this.tickPositionIndex(1, 40 * delta)
+			if (recoil > 0f) this.tickPositionIndex(2, -0.0125f * delta)
+		}
 	}
 
 	// Models
@@ -68,13 +78,10 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val playerItemHash = getStackInPlayerHand(localClient.player).hashCode()
-		val stackHash = stack.hashCode()
-		if (playerItemHash == stackHash && !localClient.gamePaused()) {
-			if (this.delta > 0f) this.delta -= 0.025f * this.partialTick
-			if (this.delta > 0f) this.rotation += (40 * this.delta) * this.partialTick
-			if (this.recoil > 0f) this.recoil -= 0.025f * this.partialTick * this.delta / 3.5f
-		}
+		val delta = this.getRawValue(0)
+		val rotation = if (delta > 0f) this.getLerpedValue(1) else this.getRawValue(1)
+		val rawRecoil = this.getRawValue(2)
+		val recoil = if (rawRecoil <= 0f) this.getRawValue(2) else this.getLerpedValue(2)
 
 		if (displayContext.firstPerson()) {
 			val modeRenderer: IToolGunModeRenderer = this.rendererOverride ?: currentMode.getCustomRenderer()
@@ -82,7 +89,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			// Main recoil translations
 			// todo improve recoil
 			if (modeRenderer.shouldRecoil(stack, displayContext, currentMode)) poseStack.translate(
-				-clamp(this.recoil, 0f, 1f),
+				-clamp(recoil, 0f, 1f),
 				0f,
 				0f
 			)
@@ -141,7 +148,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			// Render Coil Stage
 			poseStack.pushPose()
 			if (modeRenderer.shouldCoilSpin(stack, displayContext)) {
-				poseStack.mulPose(Axis.XN.rotationDegrees(this.rotation))
+				poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
 			}
 			if (modeRenderer.shouldRenderCoil(
 					stack,
@@ -181,6 +188,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
+		val rotation = this.getLerpedValue(1)
 		localClient.itemRenderer.renderItemModel(
 			this.mainModel,
 			stack,
@@ -192,7 +200,7 @@ object ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			overrideRenderType = overrideRenderType,
 			renderTypeOverride = renderTypeOverride
 		)
-		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(this.rotation))
+		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
 		localClient.itemRenderer.renderItemModel(
 			this.coilModel,
 			stack,

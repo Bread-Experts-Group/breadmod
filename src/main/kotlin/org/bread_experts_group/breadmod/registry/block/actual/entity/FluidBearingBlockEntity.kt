@@ -27,6 +27,8 @@ interface FluidBearingBlockEntity {
 		it.amount = stack.amount.toBigDecimal()
 	}
 
+	fun getTankCapacity(tank: Int): Int = this.fluidHandler.getTankCapacity(tank)
+
 	fun getFluidsInRange(range: IntRange): List<FluidStack> = buildList {
 		range.forEach { this.add(this@FluidBearingBlockEntity.getFluid(it)) }
 	}

@@ -25,7 +25,6 @@ import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
-import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer.triggerDelta
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
@@ -51,7 +50,10 @@ class ToolGunItem : Item(
 	private val logger: Logger = LogManager.getLogger("Tool Gun")
 
 	object ToolGunItemExtensions : IClientItemExtensions {
-		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer = ToolGunItemRenderer
+		private var renderer: String = "tool_gun_renderer"
+		override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+			Registry.itemRenderers.getOrPut(this.renderer, ::ToolGunItemRenderer)
+
 		override fun getArmPose(entityLiving: LivingEntity, hand: InteractionHand, itemStack: ItemStack): ArmPose =
 			ArmPose.BOW_AND_ARROW
 	}
@@ -64,7 +66,7 @@ class ToolGunItem : Item(
 			mode.action(level, player, stack)
 			mode.actionPost(level, player, usedHand)
 			if (level.isClientSide) {
-				triggerDelta()
+				(IClientItemExtensions.of(stack).customRenderer as ToolGunItemRenderer).triggerDelta()
 //				BeamBufferTask.create(
 //					player.position(),
 //					player.getViewYRot(0f),

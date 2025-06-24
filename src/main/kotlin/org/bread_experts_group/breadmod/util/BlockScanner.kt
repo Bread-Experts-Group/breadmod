@@ -33,4 +33,8 @@ object BlockScanner {
 		this.filter { level.getBlockState(it).`is`(filter) }
 
 	fun List<BlockPos>.getBlockStates(level: Level): List<BlockState> = this.map(level::getBlockState)
+
+	fun List<BlockPos>.createStateMap(level: Level): Map<BlockPos, BlockState> = buildMap {
+		this@createStateMap.forEach { this[it] = level.getBlockState(it) }
+	}
 }
