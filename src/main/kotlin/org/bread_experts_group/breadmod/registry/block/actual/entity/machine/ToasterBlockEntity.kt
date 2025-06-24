@@ -31,62 +31,55 @@ class ToasterBlockEntity(
 
 	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1)
 
-	override fun commonTick(
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
-	) {
-		if (this.getItem(0).`is`(EXPLODES_IN_TOASTER) && state.getValue(Companion.TRIGGERED)) {
+	override fun commonTick(level: Level) {
+		if (this.getItem(0).`is`(EXPLODES_IN_TOASTER) && this.blockState.getValue(Companion.TRIGGERED)) {
 			this.maxProgress = 60
 			this.progress++
-			if (this.progress == 35) level.playSound(null, pos, SoundEvents.TNT_PRIMED, BLOCKS)
+			if (this.progress == 35) level.playSound(null, this.blockPos, SoundEvents.TNT_PRIMED, BLOCKS)
 			if (this.progress == 60) {
 				if (!level.isClientSide) level.explode(
 					null,
-					pos.x.toDouble(),
-					pos.y.toDouble(),
-					pos.z.toDouble(),
+					this.blockPos.x.toDouble(),
+					this.blockPos.y.toDouble(),
+					this.blockPos.z.toDouble(),
 					1f,
 					Level.ExplosionInteraction.BLOCK
 				)
 			}
-		} else super.commonTick(level, pos, state)
+		}
 	}
 
 	override fun runCurrentRecipe(
 		recipe: ToasterRecipe,
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
+		level: Level
 	) {
 		if (!recipe.itemStillValid(this.getItem(0))) this.resetRecipe(level)
 		val recipeTime = recipe.getTime()
 
 		if (this.progress >= recipeTime) {
 			this.finalizeAndReset(recipe, level)
-			level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BELL.value(), BLOCKS, 0.2f, 0.8f)
-			level.setBlockAndUpdate(pos, state.setValue(Companion.TRIGGERED, false))
+			level.playSound(null, this.blockPos, SoundEvents.NOTE_BLOCK_BELL.value(), BLOCKS, 0.2f, 0.8f)
+			level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.TRIGGERED, false))
 		} else this.progress++
 	}
 
-	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState) {
+	override fun runMissingRecipe(level: Level) {
 		val stack = this.getItem(0)
 		val check = this.getOptionalRecipe(FluidEnergyInput(stack), level)
 
-		if (state.getValue(Companion.TRIGGERED)) check.ifPresentOrElse({ present ->
+		if (this.blockState.getValue(Companion.TRIGGERED)) check.ifPresentOrElse({ present ->
 			val recipe = present.value
 			this.maxProgress = recipe.getTime()
 			this.setRecipe(recipe)
 		}, {
 			level.playSound(
 				null,
-				pos,
+				this.blockPos,
 				SoundEvents.NOTE_BLOCK_BASS.value(),
 				BLOCKS,
-				0.2f,
-				0.5f
+				0.2f, 0.5f
 			)
-			level.setBlockAndUpdate(pos, state.setValue(Companion.TRIGGERED, false))
+			level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.TRIGGERED, false))
 		})
 	}
 

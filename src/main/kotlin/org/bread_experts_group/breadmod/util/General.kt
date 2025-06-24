@@ -302,6 +302,7 @@ val romanNumerals: List<Pair<String, Int>> = listOf(
 	"D" to 500,
 	"C" to 100,
 	"L" to 50,
+	"XL" to 40,
 	"X" to 10,
 	"V" to 5,
 	"IV" to 4,

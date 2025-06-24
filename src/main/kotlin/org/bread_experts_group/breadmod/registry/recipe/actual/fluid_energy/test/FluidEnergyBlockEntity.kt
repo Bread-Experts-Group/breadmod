@@ -54,9 +54,7 @@ class FluidEnergyBlockEntity(
 
 	override fun runCurrentRecipe(
 		recipe: FluidEnergyRecipeTest,
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
+		level: Level
 	) {
 		val fluidInputs = this.getFluidsInRange(0 .. 1)
 		val itemInputs = this.getItemsInRange(0 .. 3)
@@ -66,7 +64,7 @@ class FluidEnergyBlockEntity(
 		if (this.progress >= recipeTime) this.finalizeAndReset(recipe, level) else this.progress++
 	}
 
-	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState) {
+	override fun runMissingRecipe(level: Level) {
 		val fluidInputs = this.getFluidsInRange(0 .. 1)
 		val itemInputs = this.getItemsInRange(0 .. 3)
 		val check = this.getOptionalRecipe(FluidEnergyInput(itemInputs, fluidInputs), level)

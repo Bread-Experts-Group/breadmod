@@ -30,9 +30,7 @@ class MicrowaveBlockEntity(
 	private var currentCampfireRecipe: Optional<CampfireCookingRecipe> = Optional.empty()
 
 	override fun commonTick(
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
+		level: Level
 	) {
 		val stack = this.getItem(0)
 		this.currentCampfireRecipe.ifPresentOrElse({ recipe ->
@@ -43,15 +41,13 @@ class MicrowaveBlockEntity(
 		})
 	}
 
-	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState) {
+	override fun runMissingRecipe(level: Level) {
 		TODO("Not yet implemented")
 	}
 
 	override fun runCurrentRecipe(
 		recipe: MicrowaveRecipe,
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
+		level: Level
 	) {
 		TODO("Not yet implemented")
 	}

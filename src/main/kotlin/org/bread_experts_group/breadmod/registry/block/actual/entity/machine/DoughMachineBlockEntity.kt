@@ -80,11 +80,9 @@ class DoughMachineBlockEntity(
 
 	override fun runCurrentRecipe(
 		recipe: DoughMachineRecipe,
-		level: Level,
-		pos: BlockPos,
-		state: BlockState
+		level: Level
 	) {
-		val powered = state.getValue(Companion.POWERED)
+		val powered = this.blockState.getValue(Companion.POWERED)
 		val fluidInput = listOf(this.getFluid(0))
 		val itemInputs = this.getItemsInRange(0 .. 1)
 
@@ -95,12 +93,12 @@ class DoughMachineBlockEntity(
 		if (this.handleEnergy(this.energyHandler)) return
 		if (this.energyHandler.extractEnergy(this.energyDivision, false) < this.energyDivision) return
 
-		if (!powered) level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, true))
+		if (!powered) level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.POWERED, true))
 		if (this.progress >= recipeTime) this.finalizeAndReset(recipe, level) else this.progress++
 	}
 
-	override fun runMissingRecipe(level: Level, pos: BlockPos, state: BlockState) {
-		level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, false))
+	override fun runMissingRecipe(level: Level) {
+		level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.POWERED, false))
 		val fluidInput = listOf(this.getFluid(0))
 		val itemInputs = this.getItemsInRange(0 .. 1)
 		val check = this.getOptionalRecipe(FluidEnergyInput(itemInputs, fluidInput), level)
@@ -113,7 +111,7 @@ class DoughMachineBlockEntity(
 			) {
 				this.setRecipe(recipe)
 				this.maxProgress = recipe.getTime()
-				level.setBlockAndUpdate(pos, state.setValue(Companion.POWERED, true))
+				level.setBlockAndUpdate(this.blockPos, this.blockState.setValue(Companion.POWERED, true))
 			}
 		}
 	}
