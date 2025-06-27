@@ -19,8 +19,7 @@ class RadioBlock : Block(Properties.of()) {
 		hitResult: BlockHitResult
 	): InteractionResult {
 		if (level.isClientSide) {
-			val instance = StereoSoundInstance()
-			localClient.soundManager.stop(instance)
+			val instance = StereoSoundInstance(this::class.java.getResourceAsStream("/chicken.wav")!!, pos, 50.0)
 			localClient.soundManager.play(instance)
 		}
 //		if (!level.isClientSide) PacketDistributor.sendToPlayersTrackingChunk(
