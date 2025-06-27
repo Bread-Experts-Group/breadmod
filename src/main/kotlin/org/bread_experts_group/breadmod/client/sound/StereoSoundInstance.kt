@@ -33,18 +33,18 @@ class StereoSoundInstance(
 		this.x = player.x
 		this.y = player.y
 		this.z = player.z
-
-		this.sound = Sound(
-			SoundManager.INTENTIONALLY_EMPTY_SOUND_LOCATION,
-			ConstantFloat.of(1f),
-			ConstantFloat.of(1f),
-			1,
-			Sound.Type.FILE,
-			true,
-			false,
-			this.falloffDistance.toInt()
-		)
 	}
+
+	override fun getSound(): Sound = Sound(
+		SoundManager.INTENTIONALLY_EMPTY_SOUND_LOCATION,
+		ConstantFloat.of(1f),
+		ConstantFloat.of(1f),
+		1,
+		Sound.Type.FILE,
+		true,
+		false,
+		this.falloffDistance.toInt()
+	)
 
 	override fun tick() {
 		val playerPos = (localClient.player ?: return).position()
