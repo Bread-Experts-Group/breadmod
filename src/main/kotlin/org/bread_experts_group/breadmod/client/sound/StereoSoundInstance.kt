@@ -14,7 +14,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
-import org.bread_experts_group.coder.format.riff.RIFFInputStream
+import org.bread_experts_group.coder.format.riff.RIFFParser
 import java.io.InputStream
 import java.lang.Math.clamp
 import java.util.concurrent.CompletableFuture
@@ -65,6 +65,6 @@ class StereoSoundInstance(
 		sound: Sound,
 		looping: Boolean
 	): CompletableFuture<AudioStream> {
-		return CompletableFuture.completedFuture(RIFFAudioStream(RIFFInputStream(this.inputStream)))
+		return CompletableFuture.completedFuture(RIFFAudioStream(RIFFParser(this.inputStream)))
 	}
 }

@@ -18,7 +18,6 @@ import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.item.integration.ModIntegrationItems
-import org.bread_experts_group.coder.format.riff.RIFFInputStream
 
 /**
  * Main mod class.
@@ -69,9 +68,6 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 			val colorAppender = ConsoleColorAppender.createAppender("ConsoleColorAppender", null)
 			configuration.addAppender(colorAppender)
 			Configurator.reconfigure(configuration)
-		}
-		this::class.java.getResourceAsStream("/assets/breadmod/sounds/hoshi_ni_natte.wav")?.let {
-			RIFFInputStream(it).readAllParsed().forEach(logger::info)
 		}
 		Companion.logger.info("Hello world!")
 
