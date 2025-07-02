@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "breadmod_neoforge.refmap.json",
   "mixins": [
+    "client.IMultiPartBlockStateBuilderAccessor",
     "common.IAccessorEntity",
     "common.MixinActiveProfiler",
     "common.MixinEntity",
@@ -18,6 +19,7 @@
     "client.IAccessorDirectoryLister",
     "client.InvokerIVertexConsumerExtension",
     "client.MixinAbstractWidget",
+    "client.MixinChannel",
     "client.MixinClientLanguage",
     "client.MixinClientPacket",
     "client.MixinDirectoryListener",

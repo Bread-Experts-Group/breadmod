@@ -20,11 +20,10 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder.PartBuilder
 import net.neoforged.neoforge.common.data.ExistingFileHelper
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.getBlock
-import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider.PropertyType.FACING
-import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider.PropertyType.HORIZONTAL_FACING
-import org.bread_experts_group.breadmod.datagen.model.block.ModBlockStateProvider.PropertyType.PIPE_BLOCK
+import org.bread_experts_group.breadmod.mixin.client.IMultiPartBlockStateBuilderAccessor
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
@@ -119,10 +118,9 @@ class ModBlockStateProvider(
 		val core = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_core"))
 		this.getMultipartBuilder(ModBlocks.CABLE.asBlock())
 			.createPart(core).end()
-			.createSidedPart(connector, propertyType = PIPE_BLOCK)
+			.createSidedPart(connector)
 		this.simpleBlockItem(ModBlocks.CABLE.asBlock(), core)
 		// Diesel Generator
-		// todo adding the upgrades to the multipart
 		this.getMultipartBuilder(ModBlocks.DIESEL_GENERATOR.asBlock())
 			.createSidedPart(this.blockBenchBlockModel("diesel_generator/diesel_generator"))
 			.createSidedConditionalPart(
@@ -320,18 +318,23 @@ class ModBlockStateProvider(
 		} else this.rotationX(if (direction == UP) 270 else 90)
 	}
 
+	@Suppress("CAST_NEVER_SUCCEEDS")
+	private fun MultiPartBlockStateBuilder.getOwner() =
+		(this as IMultiPartBlockStateBuilderAccessor).`breadmod$getOwner`()
+
 	private fun <T : Comparable<T>> MultiPartBlockStateBuilder.createSidedConditionalPart(
 		model: ModelFile,
 		condition: Property<T>,
 		value: T,
 		additionalConditions: (PartBuilder) -> Unit = {},
-		propertyType: PropertyType = HORIZONTAL_FACING,
 		uvLock: Boolean = false,
 		vararg sides: Direction = Direction.entries.toTypedArray()
 	): MultiPartBlockStateBuilder {
+		val properties = this.getOwner().stateDefinition.properties
 		val directions =
-			if (propertyType == HORIZONTAL_FACING) sides.filter { it.axis.isHorizontal }.toTypedArray()
-			else sides
+			if (properties.contains(BlockStateProperties.HORIZONTAL_FACING))
+				sides.filter { it.axis.isHorizontal }.toTypedArray() else sides
+		LogManager.getLogger().info("BLOCK STATE: $properties")
 
 		fun <T : Comparable<T>> part(prop: Property<T>, propVal: T, direction: Direction) =
 			this.part()
@@ -341,22 +344,22 @@ class ModBlockStateProvider(
 				.addModel()
 				.condition(prop, propVal)
 				.condition(condition, value)
-		when (propertyType) {
-			PIPE_BLOCK        -> directions.forEach { direction ->
+		if (properties.containsAll(PipeBlock.PROPERTY_BY_DIRECTION.values)) {
+			directions.forEach { direction ->
 				val property = PipeBlock.PROPERTY_BY_DIRECTION[direction] ?: return@forEach
 				part(property, true, direction).also(additionalConditions)
 			}
-			FACING            -> directions.forEach { direction ->
+		} else if (properties.contains(BlockStateProperties.FACING)) {
+			directions.forEach { direction ->
 				part(BlockStateProperties.FACING, direction, direction).also(additionalConditions)
 			}
-			HORIZONTAL_FACING -> directions.forEach { direction ->
+		} else if (properties.contains(BlockStateProperties.HORIZONTAL_FACING)) {
+			directions.forEach { direction ->
 				part(BlockStateProperties.HORIZONTAL_FACING, direction, direction).also(additionalConditions)
 			}
 		}
 		return this
 	}
-
-	private enum class PropertyType { PIPE_BLOCK, FACING, HORIZONTAL_FACING }
 
 	private fun <T : Comparable<T>> MultiPartBlockStateBuilder.conditionalPart(
 		model: ModelFile,
@@ -372,24 +375,26 @@ class ModBlockStateProvider(
 	private fun MultiPartBlockStateBuilder.createSidedPart(
 		model: ModelFile,
 		uvLock: Boolean = false,
-		propertyType: PropertyType = HORIZONTAL_FACING,
 		vararg sides: Direction = Direction.entries.toTypedArray()
 	): MultiPartBlockStateBuilder {
+		val properties = this.getOwner().stateDefinition.properties
 		val directions =
-			if (propertyType == HORIZONTAL_FACING) sides.filter { it.axis.isHorizontal }.toTypedArray()
-			else sides
+			if (properties.contains(BlockStateProperties.HORIZONTAL_FACING))
+				sides.filter { it.axis.isHorizontal }.toTypedArray() else sides
 
 		fun <T : Comparable<T>> part(prop: Property<T>, value: T, direction: Direction) =
 			this.part().modelFile(model).uvLock(uvLock).rotated(direction).addModel().condition(prop, value)
-		when (propertyType) {
-			PIPE_BLOCK        -> directions.forEach { direction ->
+		if (properties.containsAll(PipeBlock.PROPERTY_BY_DIRECTION.values)) {
+			directions.forEach { direction ->
 				val property = PipeBlock.PROPERTY_BY_DIRECTION[direction] ?: return@forEach
 				part(property, true, direction)
 			}
-			FACING            -> directions.forEach { direction ->
+		} else if (properties.contains(BlockStateProperties.FACING)) {
+			directions.forEach { direction ->
 				part(BlockStateProperties.FACING, direction, direction)
 			}
-			HORIZONTAL_FACING -> directions.forEach { direction ->
+		} else if (properties.contains(BlockStateProperties.HORIZONTAL_FACING)) {
+			directions.forEach { direction ->
 				part(BlockStateProperties.HORIZONTAL_FACING, direction, direction)
 			}
 		}

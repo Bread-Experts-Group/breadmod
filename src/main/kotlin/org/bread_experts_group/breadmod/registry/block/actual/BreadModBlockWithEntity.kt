@@ -68,7 +68,7 @@ abstract class BreadModBlockWithEntity(
 		serverType: BlockEntityType<A>?, clientType: BlockEntityType<E>?
 	): BlockEntityTicker<A>? {
 		return if (clientType === serverType) {
-			BlockEntityTicker<A> { level, pos, state, blockEntity ->
+			BlockEntityTicker<A> { level, _, _, blockEntity ->
 				blockEntity as BreadModBlockEntity<A>
 				if (level.isClientSide) blockEntity.clientTick(level as ClientLevel)
 				else blockEntity.serverTick(level as ServerLevel)

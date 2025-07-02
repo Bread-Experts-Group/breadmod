@@ -90,6 +90,7 @@ import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorage
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.MonitorRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.RadioRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
@@ -384,6 +385,7 @@ object Registry {
 					event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
 					event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get(), ::MonitorRenderer)
 					event.registerBlockEntityRenderer(ModBlockEntityTypes.CABLE.get(), ::CableRenderer)
+					event.registerBlockEntityRenderer(ModBlockEntityTypes.RADIO.get(), ::RadioRenderer)
 					event.registerBlockEntityRenderer(
 						ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(),
 						::DoubleOrNothingRenderer

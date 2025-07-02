@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorld
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.RadioBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.CreativeGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DieselGeneratorBlockEntity
@@ -80,6 +81,10 @@ object ModBlockEntityTypes {
 	val CABLE: Supplier<BlockEntityType<CableBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("cable") { ->
 			this.buildBlockEntity(::CableBlockEntity, ModBlocks.CABLE.asBlock())
+		}
+	val RADIO: Supplier<BlockEntityType<RadioBlockEntity>> =
+		this.BLOCK_ENTITY_REGISTRY.register("radio") { ->
+			this.buildBlockEntity(::RadioBlockEntity, ModBlocks.RADIO.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(

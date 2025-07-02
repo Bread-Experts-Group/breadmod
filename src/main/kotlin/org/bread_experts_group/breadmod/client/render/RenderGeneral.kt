@@ -31,6 +31,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.client.resources.model.ModelResourceLocation
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
@@ -52,6 +53,7 @@ import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
+import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
@@ -69,6 +71,7 @@ import kotlin.math.min
 val localClient: Minecraft = Minecraft.getInstance()
 internal var skyColorMixinActive: Boolean = false
 internal var redness: Float = 1f
+val playingSounds: MutableMap<BlockPos, StereoSoundInstance> = mutableMapOf()
 
 fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
 
