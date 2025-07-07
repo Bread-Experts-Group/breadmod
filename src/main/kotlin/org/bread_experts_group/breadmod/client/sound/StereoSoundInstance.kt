@@ -22,11 +22,11 @@ import org.bread_experts_group.breadmod.client.sound.stream.RIFFAudioStream
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
-import java.net.URL
+import java.net.URI
 import java.util.concurrent.CompletableFuture
 
 class StereoSoundInstance(
-	val url: URL,
+	val uri: URI,
 	private val pos: BlockPos,
 	private val falloffDistance: Double = 50.0
 ) : AbstractSoundInstance(
@@ -48,7 +48,7 @@ class StereoSoundInstance(
 	}
 
 	val stream: BaseAudioStream
-	val fileName: Component = Component.literal(this.url.path.substringAfterLast('/'))
+	val fileName: Component = Component.literal(this.uri.path.substringAfterLast('/'))
 	val logger: Logger = LogManager.getLogger("StereoSoundInstance")
 
 	fun togglePause() {
@@ -66,12 +66,12 @@ class StereoSoundInstance(
 	}
 
 	init {
-		val extension = this.url.file.substringAfter('.').lowercase()
+		val extension = this.uri.path.substringAfter('.').lowercase()
 		val (x, y, z) = this.pos.center
 
 		this.stream = when (extension) {
-			"mp3" -> MP3AudioStream(this.url)
-			"wav" -> RIFFAudioStream(this.url)
+			"mp3" -> MP3AudioStream(this.uri)
+			"wav" -> RIFFAudioStream(this.uri)
 			else  -> throw IllegalStateException("Unsupported file format: $extension")
 		}
 

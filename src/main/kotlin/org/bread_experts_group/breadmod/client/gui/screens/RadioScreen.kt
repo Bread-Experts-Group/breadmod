@@ -14,7 +14,6 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
 import java.net.URI
-import java.net.URL
 
 class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 	private var leftPos: Int = 0
@@ -33,32 +32,28 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 		}
 	}
 
-	private var url: URL? = null
+	private var uri: URI? = null
 
 	init {
 		val playingSound = playingSounds[this.pos]
-		if (playingSound != null) {
-			this.url = playingSound.url
-		}
+		if (playingSound != null) this.uri = playingSound.uri
 	}
 
 	private fun trySetURL(value: String) {
 		val extension = value.substringAfter('.').lowercase()
-		val flag = when (extension) {
-			"mp3" -> true
-			"wav" -> true
-			else  -> false
-		}
-
-		if (flag) try {
-			val uri = URI(value)
-			this.url = uri.toURL()
+		val uri = try {
+			if (extension == "mp3" || extension == "wav") URI(value)
+			else null
 		} catch (e: Exception) {
 			this.logger.error(e)
+			null
 		}
 
-		if (this.url == null) this.logger.error("Invalid url? [$value]")
-		else this.logger.info("Successfully set url to: ${this.url?.path}")
+		if (uri == null) this.logger.error("Invalid url? [$value]")
+		else {
+			this.uri = uri
+			this.logger.info("Successfully set url to: ${uri.path}")
+		}
 	}
 
 	override fun init() {
@@ -67,18 +62,18 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 
 		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 5, 40, 20, "button") {
 			Thread.ofVirtual().start {
-				playingSounds[this.pos] = StereoSoundInstance(this.url ?: return@start, this.pos)
+				playingSounds[this.pos] = StereoSoundInstance(this.uri ?: return@start, this.pos)
 				val instance = playingSounds[this.pos] ?: return@start
-				if (instance.stream.initialized) localClient.soundManager.play(instance)
+				localClient.soundManager.play(instance)
 			}
 		})
 
 		this.addRenderableWidget(GenericButton(this.leftPos + 45, this.topPos + 5, 40, 20, "test") {
 			Thread.ofVirtual().start {
 				this@RadioScreen.trySetURL("file:///home/logan/beginning.mp3")
-				playingSounds[this.pos] = StereoSoundInstance(this.url ?: return@start, this.pos)
+				playingSounds[this.pos] = StereoSoundInstance(this.uri ?: return@start, this.pos)
 				val instance = playingSounds[this.pos] ?: return@start
-				if (instance.stream.initialized) localClient.soundManager.play(instance)
+				localClient.soundManager.play(instance)
 			}
 		})
 
@@ -93,7 +88,7 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 		this.addRenderableWidget(
 			object : EditBox(this.font, this.leftPos + 5, this.topPos + 90, 165, 20, Component.empty()) {
 				init {
-					this.value = this@RadioScreen.url?.path ?: ""
+					this.value = this@RadioScreen.uri?.path ?: ""
 					this.setMaxLength(100)
 				}
 

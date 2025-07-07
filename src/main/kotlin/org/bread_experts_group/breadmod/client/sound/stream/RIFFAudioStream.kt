@@ -1,41 +1,40 @@
 package org.bread_experts_group.breadmod.client.sound.stream
 
-import org.apache.logging.log4j.LogManager
+import net.minecraft.network.chat.Component
 import org.bread_experts_group.coder.format.riff.RIFFParser
 import org.bread_experts_group.coder.format.riff.chunk.RIFFAudioFormatChunk
 import org.bread_experts_group.coder.format.riff.chunk.RIFFContainerChunk
-import java.net.URL
+import org.bread_experts_group.coder.format.riff.chunk.RIFFID3Chunk
+import org.bread_experts_group.coder.format.riff.chunk.RIFFTextChunk
+import java.net.URI
 import javax.sound.sampled.AudioFormat
 
-
-class RIFFAudioStream(url: URL) : BaseAudioStream(url) {
-//	private val parser: RIFFParser = RIFFParser(this.url.openStream())
-//	private val waveChunk: RIFFContainerChunk? =
-//		this.parser.filterIsInstance<RIFFContainerChunk>().find { it.localIdentifier == "WAVE" }
-//	private var audioFormatChunk: RIFFAudioFormatChunk = this.waveChunk!!.firstNotNullOf { it as? RIFFAudioFormatChunk }
-//	override var audioData: ByteArray = this.waveChunk!!.first { it.tag == "data" }.data
-
-	private lateinit var audioFormatChunk: RIFFAudioFormatChunk
-	override lateinit var audioData: ByteArray
+class RIFFAudioStream(uri: URI) : BaseAudioStream(uri) {
+	private val audioFormatChunk: RIFFAudioFormatChunk
+	override val audioData: ByteArray
 
 	init {
-		RIFFParser(this.url.openStream()).forEach {
-			LogManager.getLogger().info((it as? RIFFContainerChunk)?.localIdentifier)
-			(it as? RIFFContainerChunk)?.forEach { LogManager.getLogger().info(it.tag) }
-		}
-		for (i in RIFFParser(this.url.openStream())) {
-			if (i !is RIFFContainerChunk) continue
-			when (i.localIdentifier) {
-				"fmt"  -> this.audioFormatChunk = i.firstNotNullOf { it as? RIFFAudioFormatChunk }
-				"data" -> {
-					LogManager.getLogger().info(i.data.size)
-					this.audioData = i.data
-				}
-				"id3"  -> LogManager.getLogger().info(i.localIdentifier)
+		lateinit var preppedFormat: RIFFAudioFormatChunk
+		lateinit var preppedData: ByteArray
+		val container = RIFFParser(this.uri.toURL().openStream()).first() as RIFFContainerChunk
+		if (container.localIdentifier != "WAVE") throw IllegalArgumentException("Not a .wav file!")
+		for (c in container) when (c) {
+			is RIFFAudioFormatChunk if c.tag == "fmt " -> preppedFormat = c
+			is RIFFContainerChunk if c.tag == "LIST" && c.localIdentifier == "INFO" -> for (i in c) when (i) {
+				is RIFFTextChunk if i.tag == "ICMT" -> this.comments = Component.literal(i.text)
+				is RIFFTextChunk if i.tag == "ITRK" -> this.trackNumber = Component.literal(i.text)
+				is RIFFTextChunk if i.tag == "ISFT" -> this.encodedBy = Component.literal(i.text)
+				is RIFFTextChunk if i.tag == "ICRD" -> this.recordingDate = Component.literal(i.text)
+				is RIFFTextChunk if i.tag == "IGNR" -> this.genre = Component.literal(i.text)
+				else -> this.logger.info("Notice: unrecognized INFO text chunk [$i]!")
 			}
+			is RIFFID3Chunk -> this.decodeMetadata(c.id3)
+			else ->
+				if (c.tag == "data") preppedData = c.data
+				else this.logger.info("Notice: unrecognized chunk [$c]!")
 		}
-
-		this.initialized = true
+		this.audioFormatChunk = preppedFormat
+		this.audioData = preppedData
 	}
 
 	override fun getFormat(): AudioFormat = AudioFormat(
