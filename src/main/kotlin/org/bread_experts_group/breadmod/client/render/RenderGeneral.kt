@@ -54,11 +54,11 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
+import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.handlers.ExpansibleFluidHandler
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
-import java.awt.Color
 import java.math.BigDecimal
 import java.util.function.Supplier
 import kotlin.jvm.optionals.getOrNull
@@ -79,7 +79,7 @@ fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
  * Color getter for ItemStacks.
  */
 val itemColor: ItemColor = ItemColor { stack: ItemStack, tintIndex: Int ->
-	if (tintIndex > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE.rgb)
+	if (tintIndex > 0) -1 else DyedItemColor.getOrDefault(stack, Color.WHITE)
 }
 
 fun getFluidSpriteAndTint(fluid: Fluid, flowing: Boolean): Pair<TextureAtlasSprite?, Int> {
@@ -289,6 +289,27 @@ fun GuiGraphics.borderedFillPositioned(
 	this.fill(renderType, x + 1, y + 1, x + width - 1, y + height - 1, innerColor)
 }
 
+fun GuiGraphics.borderedFillPositioned(
+	x: Float,
+	y: Float,
+	width: Float,
+	height: Int,
+	borderColor: Int,
+	innerColor: Int,
+	borderThickness: Float = 1f,
+	renderType: RenderType = RenderType.gui()
+) {
+	this.fill(x, y, x + width, y + height, borderColor, renderType)
+	this.fill(
+		x + borderThickness,
+		y + borderThickness,
+		x + width - borderThickness,
+		y + height - borderThickness,
+		innerColor,
+		renderType
+	)
+}
+
 fun GuiGraphics.fillPositioned(
 	x: Int,
 	y: Int,
@@ -297,6 +318,15 @@ fun GuiGraphics.fillPositioned(
 	color: Int,
 	renderType: RenderType = RenderType.gui()
 ): Unit = this.fill(renderType, x, y, x + width, y + height, color)
+
+fun GuiGraphics.fillPositioned(
+	x: Float,
+	y: Float,
+	width: Float,
+	height: Float,
+	color: Int,
+	renderType: RenderType = RenderType.gui()
+): Unit = this.fill(x, y, width, height, color, renderType)
 
 fun GuiGraphics.enablePositionedScissor(
 	x: Int,
@@ -417,7 +447,7 @@ fun ModelBlockRenderer.renderBlockModel(
 		packedLight,
 		packedOverlay,
 		ModelData.builder()
-			.with(ModelProperty(), ExtraFaceData(Color.WHITE.rgb, LightTexture.block(packedLight), 0, true)).build(),
+			.with(ModelProperty(), ExtraFaceData(Color.WHITE, LightTexture.block(packedLight), 0, true)).build(),
 		renderType
 	)
 }
@@ -588,6 +618,17 @@ fun Font.renderText(
 	dropShadowOffset
 )
 
+fun Font.renderTextNoBg(
+	component: FormattedCharSequence,
+	color: Int,
+	poseStack: PoseStack,
+	buffer: MultiBufferSource,
+	dropShadow: Boolean,
+	packedLight: Int,
+	dropShadowOffset: Float
+): Unit =
+	this.renderText(component, color, Color.color(a = 0), poseStack, buffer, dropShadow, packedLight, dropShadowOffset)
+
 private const val TRANSLATE_OFFSET: Double = 0.0001
 
 /**
@@ -638,7 +679,7 @@ fun PoseStack.drawTextOnBlockSide(
 	posZ: Double = 0.0,
 	bufferSource: MultiBufferSource,
 	blockState: BlockState,
-	color: Int = Color.WHITE.rgb,
+	color: Int = Color.WHITE,
 	backgroundColor: Int = 0,
 	dropShadow: Boolean = false,
 	direction: Direction? = null,
