@@ -30,7 +30,7 @@ class ToasterRenderer(
 
 	private val itemRenderer: ItemRenderer = this.context.itemRenderer
 
-	override fun render(
+	override fun renderBM(
 		blockEntity: ToasterBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,

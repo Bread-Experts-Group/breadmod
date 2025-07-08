@@ -20,7 +20,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorld
 import kotlin.jvm.optionals.getOrNull
 
 class ItemInWorldRenderer(context: Context) : BreadModBER<ItemInWorldBlockEntity>(context) {
-	override fun render(
+	override fun renderBM(
 		blockEntity: ItemInWorldBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,

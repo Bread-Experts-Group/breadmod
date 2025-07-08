@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.network.chat.Component
 import net.minecraft.world.phys.AABB
+import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.client.render.fillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.playingSounds
@@ -19,33 +20,51 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.RadioBlockE
 import org.bread_experts_group.breadmod.util.Color
 
 class RadioRenderer(context: Context) : BreadModBER<RadioBlockEntity>(context, false) {
-	override fun renderWithGraphics(
+	override fun renderBM(
 		blockEntity: RadioBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
-		lgPoseStack: PoseStack,
 		bufferSource: MultiBufferSource,
-		levelGraphics: GuiGraphics,
+		packedLight: Int,
+		packedOverlay: Int
+	) {
+		poseStack.drawTextOnBlockSide(
+			localClient.font,
+			Component.literal("a string of text"),
+			0.0,
+			0.0,
+			bufferSource = bufferSource,
+			blockState = blockEntity.blockState,
+			scale = 0.01f
+		)
+	}
+
+	override fun renderGuiGraphics(
+		blockEntity: RadioBlockEntity,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		guiGraphics: GuiGraphics,
 		packedLight: Int,
 		packedOverlay: Int
 	) {
 		val soundInstance = playingSounds[blockEntity.blockPos] ?: return
 
-		this.positionDisplay(lgPoseStack, blockEntity, partialTick)
-		this.drawBg(lgPoseStack, levelGraphics)
-		this.drawImage(lgPoseStack, levelGraphics, soundInstance)
-		this.drawTitle(lgPoseStack, bufferSource, soundInstance)
-		this.drawArtist(lgPoseStack, bufferSource, soundInstance)
+		this.positionDisplay(poseStack, blockEntity, partialTick)
+		this.drawBg(poseStack, guiGraphics)
+		this.drawImage(poseStack, guiGraphics, soundInstance)
+		this.drawTitle(poseStack, bufferSource, soundInstance)
+		this.drawArtist(poseStack, bufferSource, soundInstance)
 
 		poseStack.pushPose()
-		lgPoseStack.pushForward(3)
-		levelGraphics.fillPositioned(2, 4, this.scaledProgress(soundInstance), 1, Color.GREEN)
+		poseStack.pushForward(3)
+		guiGraphics.fillPositioned(2, 4, this.scaledProgress(soundInstance), 1, Color.GREEN)
 		poseStack.popPose()
 
-		lgPoseStack.mulPose(Axis.YP.rotationDegrees(180f))
+		poseStack.mulPose(Axis.YP.rotationDegrees(180f))
 
-		this.drawBg(lgPoseStack, levelGraphics)
-		this.drawImage(lgPoseStack, levelGraphics, soundInstance)
+		this.drawBg(poseStack, guiGraphics)
+		this.drawImage(poseStack, guiGraphics, soundInstance)
 	}
 
 	private fun scaledProgress(instance: StereoSoundInstance): Int {

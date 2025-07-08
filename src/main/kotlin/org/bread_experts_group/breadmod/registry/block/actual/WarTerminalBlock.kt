@@ -17,9 +17,14 @@ import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
 import org.bread_experts_group.breadmod.command.server.WarTimerCommand.increaseTime
+import org.bread_experts_group.breadmod.data_holders.server.WarTimerData
 import org.bread_experts_group.breadmod.data_holders.server.WarTimerData.Companion.warTimerMap
+import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
+import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.util.combine
 import java.util.stream.Stream
 
@@ -69,7 +74,16 @@ class WarTerminalBlock : Block(Properties.of()) {
 		val server = level.server ?: return super.playerWillDestroy(level, pos, state, thisPlayer)
 		server.playerList.players.forEach { player ->
 			val check = warTimerMap[player]
-			if (check != null) increaseTime(player, check, 30)
+			if (check != null) {
+				if (check.active) increaseTime(player, check, 30)
+			} else {
+				warTimerMap[player] = WarTimerData(timeLeft = 0)
+				val data = warTimerMap[player]!!
+				WarOverlay.timeLeft = data.timeLeft
+				data.increaseTime += 30
+				PacketDistributor.sendToPlayer(player, WarTimerIncrement(true, data.increaseTime))
+				PacketDistributor.sendToPlayer(player, WarTimerToggle(true))
+			}
 		}
 		return super.playerWillDestroy(level, pos, state, thisPlayer)
 	}

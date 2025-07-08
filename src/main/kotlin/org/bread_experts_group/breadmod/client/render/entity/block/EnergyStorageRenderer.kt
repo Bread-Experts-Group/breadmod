@@ -9,7 +9,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.storage.Ene
 import java.awt.Color
 
 class EnergyStorageRenderer(context: Context) : BreadModBER<EnergyStorageBlockEntity>(context) {
-	override fun render(
+	override fun renderBM(
 		blockEntity: EnergyStorageBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,

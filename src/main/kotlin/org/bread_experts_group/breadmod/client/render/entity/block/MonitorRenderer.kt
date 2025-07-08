@@ -15,18 +15,17 @@ import org.bread_experts_group.computer.ia32.bios.h10.TeletypeOutput
 import java.awt.Color
 
 class MonitorRenderer(context: Context) : BreadModBER<MonitorBlockEntity>(context) {
-	override fun renderWithGraphics(
+	override fun renderGuiGraphics(
 		blockEntity: MonitorBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
-		lgPoseStack: PoseStack,
 		bufferSource: MultiBufferSource,
-		levelGraphics: GuiGraphics,
+		guiGraphics: GuiGraphics,
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		levelGraphics.fill(2, 2, 14, 14, 1, Color.BLACK.rgb)
-		levelGraphics.fill(
+		guiGraphics.fill(2, 2, 14, 14, 1, Color.BLACK.rgb)
+		guiGraphics.fill(
 			13, 15, 14, 16, 1,
 			when (blockEntity.computerStepper.state) {
 				Thread.State.NEW           -> Color.YELLOW

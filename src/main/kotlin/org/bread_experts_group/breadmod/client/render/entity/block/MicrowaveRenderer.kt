@@ -32,7 +32,7 @@ class MicrowaveRenderer(
 	private var plateRots: MutableMap<Int, Float> = mutableMapOf()
 	private val itemRenderer: ItemRenderer = this.context.itemRenderer
 
-	override fun render(
+	override fun renderBM(
 		blockEntity: MicrowaveBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,

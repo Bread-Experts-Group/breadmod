@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGe
 class CreativeGeneratorRenderer(context: Context) : BreadModBER<CreativeGeneratorBlockEntity>(context) {
 	private val starModel: BakedModel = localClient.getModel("block/creative_generator_star")
 
-	override fun render(
+	override fun renderBM(
 		blockEntity: CreativeGeneratorBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,

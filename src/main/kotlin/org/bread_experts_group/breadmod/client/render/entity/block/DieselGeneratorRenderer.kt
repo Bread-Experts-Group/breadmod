@@ -9,7 +9,7 @@ import org.bread_experts_group.breadmod.client.render.getFluidSpriteAndTint
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DieselGeneratorBlockEntity
 
 class DieselGeneratorRenderer(context: Context) : BreadModBER<DieselGeneratorBlockEntity>(context) {
-	override fun render(
+	override fun renderBM(
 		blockEntity: DieselGeneratorBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,

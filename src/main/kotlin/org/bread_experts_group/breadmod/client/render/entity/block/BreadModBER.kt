@@ -24,7 +24,7 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.tessellateModel
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import java.awt.Color
+import org.bread_experts_group.breadmod.util.Color
 import kotlin.jvm.optionals.getOrNull
 
 /**
@@ -131,7 +131,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 		}
 	}
 
-	override fun render(
+	final override fun render(
 		blockEntity: T,
 		partialTick: Float,
 		poseStack: PoseStack,
@@ -141,29 +141,38 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	) {
 		Companion.LEVEL_GRAPHICS.pose().last().pose().set(poseStack.last().pose())
 		// todo band-aid fix. replace with own innerBlit and override blit methods to use it.
-		Companion.LEVEL_GRAPHICS.fill(0, 0, 0, 0, Color(0, 0, 0, 0).rgb)
+		Companion.LEVEL_GRAPHICS.fill(0, 0, 0, 0, Color.color(a = 0))
 		if (this.snapGraphicsToBlockSide) this.translateGraphicsToBlockSide(blockEntity)
 		this.setupGraphicsPose()
-		this.renderWithGraphics(
+		this.renderGuiGraphics(
 			blockEntity,
 			partialTick,
-			poseStack,
 			Companion.LEVEL_GRAPHICS.pose(),
-			bufferSource,
+			Companion.LEVEL_GRAPHICS.bufferSource(),
 			Companion.LEVEL_GRAPHICS,
 			packedLight,
 			packedOverlay
 		)
 		this.teardownGraphicsPose()
+		this.renderBM(blockEntity, partialTick, poseStack, bufferSource, packedLight, packedOverlay)
 	}
 
-	open fun renderWithGraphics(
+	open fun renderGuiGraphics(
 		blockEntity: T,
 		partialTick: Float,
 		poseStack: PoseStack,
-		lgPoseStack: PoseStack,
 		bufferSource: MultiBufferSource,
-		levelGraphics: GuiGraphics,
+		guiGraphics: GuiGraphics,
+		packedLight: Int,
+		packedOverlay: Int
+	) {
+	}
+
+	open fun renderBM(
+		blockEntity: T,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
 	) {
