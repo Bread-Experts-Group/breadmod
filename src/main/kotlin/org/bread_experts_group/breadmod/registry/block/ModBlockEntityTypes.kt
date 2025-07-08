@@ -16,7 +16,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlo
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MonitorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.RadioBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.CreativeGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DieselGeneratorBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
@@ -37,10 +36,6 @@ object ModBlockEntityTypes {
 	val KEYBOARD: Supplier<BlockEntityType<KeyboardBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("keyboard_entity") { ->
 			this.buildBlockEntity(::KeyboardBlockEntity, ModBlocks.KEYBOARD.asBlock())
-		}
-	val SOUND_BLOCK: Supplier<BlockEntityType<SoundBlockEntity>> =
-		this.BLOCK_ENTITY_REGISTRY.register("sound_block_entity") { ->
-			this.buildBlockEntity(::SoundBlockEntity, ModBlocks.SOUND_BLOCK.asBlock())
 		}
 	val WHEAT_CRUSHER: Supplier<BlockEntityType<WheatCrusherBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("wheat_crusher_entity") { ->
@@ -84,7 +79,7 @@ object ModBlockEntityTypes {
 		}
 	val RADIO: Supplier<BlockEntityType<RadioBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("radio") { ->
-			this.buildBlockEntity(::RadioBlockEntity, ModBlocks.RADIO.asBlock())
+			this.buildBlockEntity(::RadioBlockEntity, ModBlocks.RADIO_BLOCK.asBlock())
 		}
 
 	private fun <T : BlockEntity> buildBlockEntity(

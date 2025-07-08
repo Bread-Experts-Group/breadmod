@@ -29,9 +29,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	private val caseOhInstrument: SecureRandom = SecureRandom()
 	private var caseOhSize: BigDecimal = BigDecimal.TWO
 	override val lerpParams: Array<LerpParams> = arrayOf(
-		LerpParams(amount = -0.075f), // Delta
-		LerpParams(), // Rotation
-		LerpParams() // Recoil
+		LerpParams(incrementAmount = -0.075f, isHandledManually = true), // Delta
+		LerpParams(isHandledManually = true), // Rotation
+		LerpParams(isHandledManually = true) // Recoil
 	)
 
 	/**
@@ -47,14 +47,19 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		this.setParamPosition(2, 0.15f)
 	}
 
-	// todo maybe look into doing this more cleanly, this just seems a bit hacky imo
 	override fun tick() {
-		val delta = this.getRawValue(0)
-		val recoil = this.getRawValue(2)
 		if (!localClient.gamePaused()) {
-			if (delta > 0f) this.tickPositionIndex(0)
-			if (delta > 0f) this.tickPositionIndex(1, 40 * delta)
-			if (recoil > 0f) this.tickPositionIndex(2, -0.0125f * delta)
+			val delta = this.getRawValue(0)
+			this.tickCustom(0) { params ->
+				if (delta > 0f) params.tick()
+			}
+			this.tickCustom(1) { params ->
+				if (delta > 0f) params.position += 40 * delta
+			}
+			this.tickCustom(2) { params ->
+				val recoil = this.getRawValue(2)
+				if (recoil > 0f) params.position += -0.0125f * delta
+			}
 		}
 	}
 
@@ -78,10 +83,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val delta = this.getRawValue(0)
-		val rotation = if (delta > 0f) this.getLerpedValue(1) else this.getRawValue(1)
-		val rawRecoil = this.getRawValue(2)
-		val recoil = if (rawRecoil <= 0f) this.getRawValue(2) else this.getLerpedValue(2)
+		val rotation = if (this.getRawValue(0) > 0f) this.getLerpedValue(1) else this.getRawValue(1)
+		val recoil = if (this.getRawValue(2) <= 0f) this.getRawValue(2) else this.getLerpedValue(2)
 
 		if (displayContext.firstPerson()) {
 			val modeRenderer: IToolGunModeRenderer = this.rendererOverride ?: currentMode.getCustomRenderer()

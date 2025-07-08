@@ -56,7 +56,7 @@ abstract class BaseAudioStream(val uri: URI) : AudioStream {
 	var extra: MutableList<Component> = mutableListOf<Component>()
 
 	fun decodeMetadata(id3: ID3Parser) {
-		val id3Header = id3.first() as ID3Header
+		val id3Header = id3.firstOrNull() as? ID3Header ?: return
 		val version = "(v${id3Header.major}.${id3Header.minor})"
 		for (f in id3) when (f) {
 			is ID3TextFrame -> when (f.tag) {

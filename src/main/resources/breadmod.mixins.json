@@ -27,6 +27,7 @@
     "client.MixinGuiGraphics",
     "client.MixinLevelRenderer",
     "client.MixinMinecraft",
+    "client.MixinProjectE",
     "client.MixinSoundManager",
     "client.MixinSpriteResourceLoader",
     "client.MixinTranslatableContents",

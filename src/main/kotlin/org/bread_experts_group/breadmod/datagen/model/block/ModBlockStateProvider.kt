@@ -74,19 +74,19 @@ class ModBlockStateProvider(
 			this.models().getBuilder("breadmod:block/monitor")
 		)
 
-		this.horizontalBlock(ModBlocks.SOUND_BLOCK.asBlock()) {
+		this.horizontalBlock(ModBlocks.RADIO_BLOCK.asBlock()) {
 			val model = this.models().orientable(
-				"breadmod:block/sound_block",
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/sound_block_side")
+				"breadmod:block/radio_block",
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side")
 			)
 
 			return@horizontalBlock model
 		}
 		this.simpleBlockItem(
-			ModBlocks.SOUND_BLOCK.asBlock(),
-			this.models().getBuilder("breadmod:block/sound_block")
+			ModBlocks.RADIO_BLOCK.asBlock(),
+			this.models().getBuilder("breadmod:block/radio_block")
 		)
 
 		this.getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.asBlock()).forAllStates { state ->

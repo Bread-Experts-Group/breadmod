@@ -51,7 +51,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
 import net.neoforged.neoforge.items.IItemHandler
-import net.neoforged.neoforge.items.wrapper.InvWrapper
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
@@ -144,7 +143,6 @@ import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CableBlock
-import org.bread_experts_group.breadmod.registry.block.actual.entity.SoundBlockEntity
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -585,11 +583,6 @@ object Registry {
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())
 		}
 		modBus.addListener { event: RegisterCapabilitiesEvent ->
-			event.registerBlock(
-				Capabilities.ItemHandler.BLOCK,
-				{ _, _, _, entity, _: Direction? -> InvWrapper(entity as SoundBlockEntity) },
-				ModBlocks.SOUND_BLOCK.asBlock()
-			)
 			event.registerBlockEntity(
 				Capabilities.EnergyStorage.BLOCK,
 				ModBlockEntityTypes.WHEAT_CRUSHER.get()

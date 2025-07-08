@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.client.sound.stream
 import org.bread_experts_group.coder.format.mp3.MP3Parser
 import org.bread_experts_group.coder.format.mp3.frame.MP3Frame
 import org.bread_experts_group.coder.format.mp3.frame.MP3ID3Frame
+import org.bread_experts_group.coder.format.mp3.frame.header.ChannelMode
 import org.bread_experts_group.coder.format.mp3.frame.header.MP3Header
 import org.lwjgl.BufferUtils
 import java.io.ByteArrayOutputStream
@@ -17,9 +18,14 @@ class MP3AudioStream(uri: URI) : BaseAudioStream(uri) {
 	override fun getFormat(): AudioFormat = AudioFormat(
 		this.headers[0].sampleRate.toFloat(),
 		16,
-		2,
+		this.numberOfChannels(),
 		true, false
 	)
+
+	private fun numberOfChannels(): Int = when (this.headers[0].channelMode) {
+		ChannelMode.DUAL_CHANNEL, ChannelMode.STEREO, ChannelMode.JOINT_STEREO -> 2
+		ChannelMode.SINGLE_CHANNEL                                             -> 1
+	}
 
 	override fun read(size: Int): ByteBuffer = BufferUtils.createByteBuffer(size)
 

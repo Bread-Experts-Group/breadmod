@@ -6,9 +6,6 @@ import net.minecraft.util.Mth
 interface LerpTicker {
 	val lerpParams: Array<LerpParams>
 
-	/**
-	 * populate the [partialTick] parameter if your calling this inside of a Screen or BER.
-	 */
 	fun getLerpedValue(index: Int, partialTick: Float): Float =
 		if (partialTick == 1f) this.lerpParams[index].position
 		else Mth.lerp(partialTick, this.lerpParams[index].previous, this.lerpParams[index].position)
@@ -17,35 +14,56 @@ interface LerpTicker {
 
 	fun tickAllPositions() {
 		this.lerpParams.forEach {
+			if (it.isHandledManually) return@forEach
 			it.previous = it.position
-			it.position += it.amount
+			it.position += it.incrementAmount
 		}
 	}
 
-	fun tickPositionIndex(index: Int, customAmount: Float? = null) {
+	fun tickIndex(index: Int, customAmount: Float? = null) {
 		val params = this.lerpParams[index]
 		params.previous = params.position
-		params.position += customAmount ?: params.amount
-	}
-
-	fun setParamsAmount(index: Int, amount: Float) {
-		this.lerpParams[index].amount = amount
+		params.position += customAmount ?: params.incrementAmount
 	}
 
 	fun setParamPosition(index: Int, position: Float) {
 		val params = this.lerpParams[index]
-		params.previous = position - params.amount
+		params.previous = position - params.incrementAmount
 		params.position = position
 	}
 
-	fun getLerpParam(index: Int): LerpParams = this.lerpParams[index]
+	/**
+	 * LerpParams#previous is set automatically before [run] is invoked.
+	 */
+	fun tickCustom(index: Int, run: (LerpParams) -> Unit) {
+		val params = this.lerpParams[index]
+		params.previous = params.position
+		run.invoke(params)
+	}
 
 	data class LerpParams(
+		/**
+		 * this is set to [position] every tick, updates before [position].
+		 */
 		var previous: Float = 0f,
+		/**
+		 * updates after [previous] every tick.
+		 */
 		var position: Float = 0f,
-		var amount: Float = 1f,
-		var isClamped: Boolean = false
-	)
+		/**
+		 * the amount that [position] is incremented by every tick.
+		 */
+		var incrementAmount: Float = 1f,
+		/**
+		 * if this is true, this param must be ticked manually through tickCustom or tickIndex.
+		 */
+		var isHandledManually: Boolean = false
+	) {
+		fun tick() {
+			this.previous = this.position
+			this.position += this.incrementAmount
+		}
+	}
 
 	/**
 	 * [BlockEntityWithoutLevelRenderer] specific interface for ticking [lerpParams].

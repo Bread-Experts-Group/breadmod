@@ -54,7 +54,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
-import org.bread_experts_group.breadmod.registry.block.actual.SoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.DieselGeneratorBlock
@@ -123,11 +122,6 @@ object ModBlocks {
 	val MONITOR: DeferredItem<BlockItem> =
 		this.BLOCK_REGISTRY.registerBlockItem("monitor", ::MonitorBlock, Properties())
 
-	@DataGenerateLootDropSelf
-	@DataGenerateLanguage("en_us")
-	val RADIO: DeferredItem<BlockItem> =
-		this.BLOCK_REGISTRY.registerBlockItem("radio", ::RadioBlock, Properties())
-
 	@DataGenerateTagBlock(
 		"minecraft:mineable/hoe",
 		"c:storage_blocks/low_density_charcoal"
@@ -162,9 +156,8 @@ object ModBlocks {
 
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage("en_us")
-	val SOUND_BLOCK: DeferredItem<BlockItem> = this.BLOCK_REGISTRY.registerBlockItem(
-		"sound_block", ::SoundBlock, Properties()
-	)
+	val RADIO_BLOCK: DeferredItem<BlockItem> =
+		this.BLOCK_REGISTRY.registerBlockItem("radio_block", ::RadioBlock, Properties())
 
 	@DataGenerateLootDropSelf
 	@DataGenerateTagBlock("c:storage_blocks/charcoal")

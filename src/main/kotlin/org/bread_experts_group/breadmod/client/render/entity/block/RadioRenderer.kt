@@ -7,17 +7,14 @@ import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
 import net.minecraft.network.chat.Component
-import net.minecraft.util.FormattedCharSequence
 import net.minecraft.world.phys.AABB
 import org.bread_experts_group.breadmod.client.render.fillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.playingSounds
-import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.renderTextNoBg
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
-import org.bread_experts_group.breadmod.client.sound.stream.BaseAudioStream
 import org.bread_experts_group.breadmod.registry.block.actual.entity.RadioBlockEntity
 import org.bread_experts_group.breadmod.util.Color
 
@@ -33,13 +30,22 @@ class RadioRenderer(context: Context) : BreadModBER<RadioBlockEntity>(context, f
 		packedOverlay: Int
 	) {
 		val soundInstance = playingSounds[blockEntity.blockPos] ?: return
-		this.positionDisplay(lgPoseStack, partialTick)
+
+		this.positionDisplay(lgPoseStack, blockEntity, partialTick)
 		this.drawBg(lgPoseStack, levelGraphics)
 		this.drawImage(lgPoseStack, levelGraphics, soundInstance)
 		this.drawTitle(lgPoseStack, bufferSource, soundInstance)
 		this.drawArtist(lgPoseStack, bufferSource, soundInstance)
+
+		poseStack.pushPose()
 		lgPoseStack.pushForward(3)
 		levelGraphics.fillPositioned(2, 4, this.scaledProgress(soundInstance), 1, Color.GREEN)
+		poseStack.popPose()
+
+		lgPoseStack.mulPose(Axis.YP.rotationDegrees(180f))
+
+		this.drawBg(lgPoseStack, levelGraphics)
+		this.drawImage(lgPoseStack, levelGraphics, soundInstance)
 	}
 
 	private fun scaledProgress(instance: StereoSoundInstance): Int {
@@ -47,12 +53,12 @@ class RadioRenderer(context: Context) : BreadModBER<RadioBlockEntity>(context, f
 		return ((stream.currentSlice.toFloat() / stream.dataSize.toFloat()) * 28f).toInt()
 	}
 
-	private fun positionDisplay(poseStack: PoseStack, partialTick: Float) {
-		val player = localClient.player ?: return
+	private fun positionDisplay(poseStack: PoseStack, entity: RadioBlockEntity, partialTick: Float) {
 		poseStack.translate(-8, -20, 8)
 		poseStack.translate(16, 8, 0)
-		poseStack.mulPose(Axis.YP.rotationDegrees(player.getViewYRot(partialTick)))
-		poseStack.mulPose(Axis.XN.rotationDegrees(player.xRot))
+		poseStack.mulPose(Axis.YP.rotationDegrees(90f))
+		poseStack.mulPose(Axis.YP.rotation(entity.getLerpedValue(1, partialTick)))
+		poseStack.mulPose(Axis.YP.rotation(entity.getLerpedValue(0, partialTick)))
 	}
 
 	private fun PoseStack.pushForward(factor: Int) {
@@ -84,11 +90,7 @@ class RadioRenderer(context: Context) : BreadModBER<RadioBlockEntity>(context, f
 		poseStack.pushForward(10)
 		poseStack.translate(-5.5, -9.0, 0.0)
 		poseStack.scaleFlat(0.3f)
-		this.renderText(
-			if (title == Component.empty()) fileName else title,
-			poseStack,
-			bufferSource
-		)
+		this.renderText(if (title == Component.empty()) fileName else title, poseStack, bufferSource)
 		poseStack.popPose()
 	}
 
