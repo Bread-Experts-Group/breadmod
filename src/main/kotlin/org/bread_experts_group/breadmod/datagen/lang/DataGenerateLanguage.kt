@@ -16,7 +16,7 @@ package org.bread_experts_group.breadmod.datagen.lang
 @Repeatable
 @Target(AnnotationTarget.FIELD, AnnotationTarget.FUNCTION)
 internal annotation class DataGenerateLanguage(
-	val language: String,
+	val language: String = "en_us",
 	val name: String = "<null>",
 	val prefix: String = "<null>",
 	val suffix: String = "<null>"

@@ -5,7 +5,6 @@ import com.mojang.serialization.DataResult
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.core.BlockPos
-import net.minecraft.core.NonNullList
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -17,7 +16,6 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
-import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.common.crafting.SizedIngredient
 import net.neoforged.neoforge.fluids.FluidStack
@@ -121,57 +119,41 @@ object BreadModCodecs {
 
 	fun <O> sizedIngredientCodecModule(
 		field: String,
-		getter: Function<O, NonNullList<SizedIngredient>>
-	): RecordCodecBuilder<O, NonNullList<SizedIngredient>> =
+		getter: Function<O, List<SizedIngredient>>
+	): RecordCodecBuilder<O, List<SizedIngredient>> =
 		SizedIngredient.FLAT_CODEC
 			.listOf()
-			.fieldOf(field)
-			.flatXmap(
-				{ itemList ->
-					val itemArray = itemList.toTypedArray()
-					DataResult.success(NonNullList.of(SizedIngredient.of(ItemStack.EMPTY.item, 1), *itemArray))
-				}, { result -> DataResult.success(result) }
-			).forGetter(getter)
+			.optionalFieldOf(field, listOf())
+			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+			.forGetter(getter)
 
 	fun <O> optionalSizedIngredientCodecModule(
 		field: String,
-		getter: Function<O, NonNullList<SizedIngredient>>
-	): RecordCodecBuilder<O, NonNullList<SizedIngredient>> =
+		getter: Function<O, List<SizedIngredient>>
+	): RecordCodecBuilder<O, List<SizedIngredient>> =
 		SizedIngredient.FLAT_CODEC
 			.listOf()
-			.optionalFieldOf(field, NonNullList.create())
-			.flatXmap(
-				{ itemList ->
-					val itemArray = itemList.toTypedArray()
-					DataResult.success(NonNullList.of(SizedIngredient.of(ItemStack.EMPTY.item, 1), *itemArray))
-				}, { result -> DataResult.success(result) }
-			).forGetter(getter)
+			.optionalFieldOf(field, listOf())
+			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+			.forGetter(getter)
 
 	fun <O> sizedFluidIngredientCodecModule(
 		field: String,
-		getter: Function<O, NonNullList<SizedFluidIngredient>>
-	): RecordCodecBuilder<O, NonNullList<SizedFluidIngredient>> =
+		getter: Function<O, List<SizedFluidIngredient>>
+	): RecordCodecBuilder<O, List<SizedFluidIngredient>> =
 		SizedFluidIngredient.FLAT_CODEC
 			.listOf()
-			.fieldOf(field)
-			.flatXmap(
-				{ fluidList ->
-					val fluidArray = fluidList.toTypedArray()
-					DataResult.success(NonNullList.of(SizedFluidIngredient.of(Fluids.WATER, 1), *fluidArray))
-				}, { result -> DataResult.success(result) }
-			).forGetter(getter)
+			.optionalFieldOf(field, listOf())
+			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+			.forGetter(getter)
 
 	fun <O> optionalSizedFluidIngredientCodecModule(
 		field: String,
-		getter: Function<O, NonNullList<SizedFluidIngredient>>
-	): RecordCodecBuilder<O, NonNullList<SizedFluidIngredient>> =
+		getter: Function<O, List<SizedFluidIngredient>>
+	): RecordCodecBuilder<O, List<SizedFluidIngredient>> =
 		SizedFluidIngredient.FLAT_CODEC
 			.listOf()
-			.optionalFieldOf(field, NonNullList.create())
-			.flatXmap(
-				{ fluidList ->
-					val fluidArray = fluidList.toTypedArray()
-					DataResult.success(NonNullList.of(SizedFluidIngredient.of(Fluids.WATER, 1), *fluidArray))
-				}, { result -> DataResult.success(result) }
-			).forGetter(getter)
+			.optionalFieldOf(field, listOf())
+			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+			.forGetter(getter)
 }

@@ -2,7 +2,9 @@ package org.bread_experts_group.breadmod.datagen.model.block
 
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.UP
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.PackOutput
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.ButtonBlock
 import net.minecraft.world.level.block.DoorBlock
@@ -38,10 +40,20 @@ class ModBlockStateProvider(
 ) : BlockStateProvider(packOutput, BreadMod.Companion.ID, existingFileHelper) {
 	private val registryScanner: LibraryScanner = Registry::class.java.`package`.getScanner()
 	override fun registerStatesAndModels() {
-		this.registryScanner.resolveAnnotationValuePairs<DataGenerateModelBlockAndItem>().forEach { (_, data) ->
-			val block = data.getBlock("Block model generation (block / item, cubeAll)")
-			this.simpleBlockWithItem(block, this.cubeAll(block))
-		}
+		this.registryScanner.resolveAnnotationValuePairs<DataGenerateModelBlockAndItem>()
+			.forEach { (annotation, data) ->
+				val block = data.getBlock("Block model generation (block / item, cubeAll)")
+				val location = BuiltInRegistries.BLOCK.getKey(block)
+				val aPath = annotation.extendedPath
+				val path = if (aPath.isNotEmpty()) "block/${aPath}/${location.path}"
+				else "block/${location.path}"
+				val texture = ResourceLocation.fromNamespaceAndPath(location.namespace, path)
+
+				this.simpleBlockWithItem(
+					block,
+					this.models().cubeAll(location.path, texture).renderType(annotation.renderType)
+				)
+			}
 		this.simpleBlock(
 			ModBlocks.NUKE.asBlock(),
 			this.models().cubeBottomTop(
@@ -294,6 +306,8 @@ class ModBlockStateProvider(
 		}
 		// Creative Generator
 		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.asBlock(), "creative_generator")
+		// Coffee Machine
+		this.horizontalBlockBenchModelWithItem(ModBlocks.COFFEE_MACHINE.asBlock(), "coffee_machine")
 	}
 
 	private fun blockBenchBlockModel(model: String): ModelFile.ExistingModelFile =

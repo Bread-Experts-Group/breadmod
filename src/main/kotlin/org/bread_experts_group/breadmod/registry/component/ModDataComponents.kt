@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.EXPANSIBLE_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_STREAM_CODEC
+import org.bread_experts_group.breadmod.registry.item.coffee.CoffeeContents
 import java.math.BigDecimal
 import java.util.function.Supplier
 
@@ -54,6 +55,12 @@ object ModDataComponents {
 		"energy", DataComponentType.builder<Int>()
 			.networkSynchronized(ByteBufCodecs.INT)
 			.persistent(Codec.INT)
+			.cacheEncoding()::build
+	)
+	val COFFEE_CONTENTS: Supplier<DataComponentType<CoffeeContents>> = this.DATA_COMPONENT_REGISTRY.register(
+		"coffee_contents", DataComponentType.builder<CoffeeContents>()
+			.networkSynchronized(CoffeeContents.STREAM_CODEC)
+			.persistent(CoffeeContents.CODEC)
 			.cacheEncoding()::build
 	)
 }

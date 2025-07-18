@@ -345,6 +345,7 @@ fun <T : ByteBuf, V> StreamCodec<T, V>.toMutableList(): StreamCodec<T, MutableLi
 	this.apply(ByteBufCodecs.collection { NonNullList.createWithCapacity<V>(it).toMutableList() })
 
 fun <T> List<T>.toNonNullList(): NonNullList<T> = NonNullList.copyOf(this)
+fun <T : ByteBuf, V> StreamCodec<T, V>.toList(): StreamCodec<T, List<V>> = this.apply(ByteBufCodecs.list())
 
 fun getStackInPlayerHand(player: Player?, hand: InteractionHand = player?.usedItemHand ?: MAIN_HAND): ItemStack {
 	if (player == null) return ItemStack.EMPTY

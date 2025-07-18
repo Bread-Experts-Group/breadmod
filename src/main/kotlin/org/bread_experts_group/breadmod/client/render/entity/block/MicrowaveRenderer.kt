@@ -46,7 +46,6 @@ class MicrowaveRenderer(
 		val rotation = this.plateRots[blockEntity.hashCode()] ?: return
 
 		poseStack.pushPose()
-		this.renderOriginalModel(blockEntity, poseStack, bufferSource, packedOverlay)
 		poseStack.translate(0.5, 0.5, 0.5)
 		poseStack.mulPose(Axis.YP.rotationDegrees(blockRotation.toYRotFixed()))
 		poseStack.translate(-0.5, -0.5, -0.5)

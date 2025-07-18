@@ -8,4 +8,7 @@ package org.bread_experts_group.breadmod.datagen.model.block
  * @see ModBlockStateProvider
  */
 @Target(AnnotationTarget.FIELD)
-internal annotation class DataGenerateModelBlockAndItem
+internal annotation class DataGenerateModelBlockAndItem(
+	val extendedPath: String = "",
+	val renderType: String = "solid"
+)

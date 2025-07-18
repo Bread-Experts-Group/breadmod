@@ -29,9 +29,7 @@ class MicrowaveBlockEntity(
 		RecipeManager.createCheck(RecipeType.CAMPFIRE_COOKING)
 	private var currentCampfireRecipe: Optional<CampfireCookingRecipe> = Optional.empty()
 
-	override fun commonTick(
-		level: Level
-	) {
+	override fun commonRecipeTickPre(level: Level): Boolean {
 		val stack = this.getItem(0)
 		this.currentCampfireRecipe.ifPresentOrElse({ recipe ->
 			this.setItem(0, recipe.assemble(SingleRecipeInput(stack), level.registryAccess()))
@@ -39,6 +37,7 @@ class MicrowaveBlockEntity(
 			val check = this.campfireRecipeCache.getRecipeFor(SingleRecipeInput(stack), level)
 			check.ifPresent { this.currentCampfireRecipe = Optional.of(it.value) }
 		})
+		return true
 	}
 
 	override fun runMissingRecipe(level: Level) {

@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
-import org.bread_experts_group.breadmod.util.toNonNullList
+import org.bread_experts_group.breadmod.util.toList
 
 class DoubleOrNothingPacket(
 	private val zoomAndTilt: List<Float>,
@@ -22,8 +22,8 @@ class DoubleOrNothingPacket(
 		private val TYPE: CustomPacketPayload.Type<DoubleOrNothingPacket> =
 			CustomPacketPayload.Type(modLocation("double_or_nothing_packet"))
 		private val STREAM_CODEC: StreamCodec<ByteBuf, DoubleOrNothingPacket> = StreamCodec.composite(
-			ByteBufCodecs.FLOAT.toNonNullList(), { it.zoomAndTilt.toNonNullList() },
-			ByteBufCodecs.BOOL.toNonNullList(), { it.nothingJackpotCashout.toNonNullList() },
+			ByteBufCodecs.FLOAT.toList(), DoubleOrNothingPacket::zoomAndTilt,
+			ByteBufCodecs.BOOL.toList(), DoubleOrNothingPacket::nothingJackpotCashout,
 			ByteBufCodecs.INT, DoubleOrNothingPacket::counter,
 			BlockPos.STREAM_CODEC, DoubleOrNothingPacket::pos,
 			::DoubleOrNothingPacket

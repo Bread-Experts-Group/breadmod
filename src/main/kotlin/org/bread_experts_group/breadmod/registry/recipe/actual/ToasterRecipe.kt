@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.recipe.actual
 
-import net.minecraft.core.NonNullList
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
@@ -12,9 +11,9 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 
 class ToasterRecipe(
-	rItemInputs: NonNullList<SizedIngredient>,
+	rItemInputs: List<SizedIngredient>,
 	rItemOutputs: MutableList<ItemStack>,
-	rFluidInputs: NonNullList<SizedFluidIngredient>,
+	rFluidInputs: List<SizedFluidIngredient>,
 	rFluidOutputs: MutableList<FluidStack>,
 	rTime: Int?,
 	rEnergy: Int?

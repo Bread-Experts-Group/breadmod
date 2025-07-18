@@ -84,7 +84,7 @@ import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRend
 import org.bread_experts_group.breadmod.client.render.entity.block.CableRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.DieselGeneratorRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRendererNew
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
@@ -114,7 +114,7 @@ import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvide
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
-import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
+import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacketNew
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
@@ -386,7 +386,7 @@ object Registry {
 					event.registerBlockEntityRenderer(ModBlockEntityTypes.RADIO.get(), ::RadioRenderer)
 					event.registerBlockEntityRenderer(
 						ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(),
-						::DoubleOrNothingRenderer
+						::DoubleOrNothingRendererNew
 					)
 					event.registerBlockEntityRenderer(
 						ModBlockEntityTypes.CREATIVE_GENERATOR.get(),
@@ -414,6 +414,7 @@ object Registry {
 						itemColor,
 						ModItems.CHEF_HAT.get(),
 						ModItems.DOPED_BREAD.get(),
+						ModItems.COFFEE_CUP.get(),
 						ModItems.BREAD_CHESTPLATE.get(),
 						ModItems.BREAD_HELMET.get(),
 						ModItems.BREAD_LEGGINGS.get(),
@@ -571,7 +572,7 @@ object Registry {
 			ClientPhysicsGridPacket.register(registrar)
 			GridPosUpdatePacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
-			DoubleOrNothingPacket.register(registrar)
+			DoubleOrNothingPacketNew.register(registrar)
 			// Serverbound packets
 			ToolGunModeChangePacket.register(registrar)
 			ComputerKeystrokePacket.register(registrar)

@@ -31,7 +31,7 @@ class ToasterBlockEntity(
 
 	override val itemHandler: ExpansibleItemHandler = ExpansibleItemHandler(1)
 
-	override fun commonTick(level: Level) {
+	override fun commonRecipeTickPre(level: Level): Boolean =
 		if (this.getItem(0).`is`(EXPLODES_IN_TOASTER) && this.blockState.getValue(Companion.TRIGGERED)) {
 			this.maxProgress = 60
 			this.progress++
@@ -46,8 +46,8 @@ class ToasterBlockEntity(
 					Level.ExplosionInteraction.BLOCK
 				)
 			}
-		}
-	}
+			false
+		} else true
 
 	override fun runCurrentRecipe(
 		recipe: ToasterRecipe,

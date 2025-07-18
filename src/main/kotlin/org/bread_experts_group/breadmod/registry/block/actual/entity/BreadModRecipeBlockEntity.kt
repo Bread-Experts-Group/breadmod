@@ -72,9 +72,16 @@ abstract class BreadModRecipeBlockEntity<I : RecipeInput, R : Recipe<I>, T : Bre
 	protected var currentRecipe: Optional<R> = Optional.empty()
 	private val recipeDial: RecipeManager.CachedCheck<I, R> = RecipeManager.createCheck(recipeType)
 
-	override fun commonTick(level: Level) {
-		this.runRecipe(level)
+	final override fun commonTick(level: Level) {
+		if (this.commonRecipeTickPre(level)) this.runRecipe(level)
+		this.commonRecipeTickPost(level)
 	}
+
+	/**
+	 * Return false to cancel running the current recipe.
+	 */
+	open fun commonRecipeTickPre(level: Level): Boolean = true
+	open fun commonRecipeTickPost(level: Level) {}
 
 	/**
 	 * Finalizes this recipe.

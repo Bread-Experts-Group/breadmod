@@ -25,8 +25,8 @@ typealias RecipeFunctionMulti =
 
 /** Convenience type for [FluidEnergySerializer] and [ModRecipeSerializers]. */
 typealias RecipeFunctionDataFixer<R> =
-		Function6<NonNullList<SizedIngredient>, MutableList<ItemStack>,
-				NonNullList<SizedFluidIngredient>, MutableList<FluidStack>,
+		Function6<List<SizedIngredient>, MutableList<ItemStack>,
+				List<SizedFluidIngredient>, MutableList<FluidStack>,
 				Int?, Int?, R>
 
 /**
@@ -36,11 +36,11 @@ typealias RecipeFunctionDataFixer<R> =
  */
 abstract class FluidEnergyRecipe(
 	/** Input list of items for this recipe. Populated via [FluidEnergyInput]. */
-	val rItemInputs: NonNullList<SizedIngredient>,
+	val rItemInputs: List<SizedIngredient>,
 	/** Output list of items for this recipe. Populated via [RecipeManager]. */
 	val rItemOutputs: MutableList<ItemStack>,
 	/** Input list of fluids for this recipe. Populated via [FluidEnergyInput]. */
-	val rFluidInputs: NonNullList<SizedFluidIngredient>,
+	val rFluidInputs: List<SizedFluidIngredient>,
 	/** Output list of fluids for this recipe. Populated via [RecipeManager]. */
 	val rFluidOutputs: MutableList<FluidStack>,
 	/** The amount of time needed for this recipe to complete.*/

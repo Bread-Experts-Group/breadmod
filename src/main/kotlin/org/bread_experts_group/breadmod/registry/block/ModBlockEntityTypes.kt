@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.experimental.fluid_tank.SidedFluidTankJadeBlockEntity
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CableBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntityNew
 import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemInWorldBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.KeyboardBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.MicrowaveBlockEntity
@@ -61,9 +61,9 @@ object ModBlockEntityTypes {
 		this.BLOCK_ENTITY_REGISTRY.register("energy_storage_entity") { ->
 			this.buildBlockEntity(::EnergyStorageBlockEntity, ModBlocks.ENERGY_STORAGE.asBlock())
 		}
-	val DOUBLE_OR_NOTHING: Supplier<BlockEntityType<DoubleOrNothingBlockEntity>> =
+	val DOUBLE_OR_NOTHING: Supplier<BlockEntityType<DoubleOrNothingBlockEntityNew>> =
 		this.BLOCK_ENTITY_REGISTRY.register("double_or_nothing_entity") { ->
-			this.buildBlockEntity(::DoubleOrNothingBlockEntity, ModBlocks.DOUBLE_OR_NOTHING.asBlock())
+			this.buildBlockEntity(::DoubleOrNothingBlockEntityNew, ModBlocks.DOUBLE_OR_NOTHING.asBlock())
 		}
 	val CREATIVE_GENERATOR: Supplier<BlockEntityType<CreativeGeneratorBlockEntity>> =
 		this.BLOCK_ENTITY_REGISTRY.register("creative_generator_entity") { ->

@@ -34,7 +34,6 @@ import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
 import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
 import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
@@ -47,7 +46,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntityNew
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
@@ -59,7 +58,7 @@ import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.rotate
 import java.util.stream.Stream
 
-class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
+class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
 	companion object {
 		val TRIPLE_HALF: EnumProperty<TripleBlockHalf> = ModBlockStateProperties.TRIPLE_BLOCK_HALF
 		val FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
@@ -229,15 +228,15 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 			directionalTargetFaceSection(direction, normalizedPos, 0.29, 0.46, 0.62, 0.81, 0.49, 0.59)
 		val cashOutButtonState =
 			directionalTargetFaceSection(direction, normalizedPos, 0.29, 0.46, 0.19, 0.38, 0.49, 0.59)
-		val entity = level.getBlockEntity(newPos) as DoubleOrNothingBlockEntity
+		val entity = level.getBlockEntity(newPos) as DoubleOrNothingBlockEntityNew
 
-		if (doubleButtonState || half == MIDDLE || half == UPPER) entity.double(level, player, pos)
-		else if (cashOutButtonState) entity.cashout(level, player, pos)
+		if (doubleButtonState || half == MIDDLE || half == UPPER) entity.triggerDouble(level, player)
+		else if (cashOutButtonState) entity.triggerCashout(level, player)
 
 		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 
-	override fun useItemOn(
+	override fun useItemOnBM(
 		stack: ItemStack,
 		state: BlockState,
 		level: Level,
@@ -247,7 +246,7 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 		hitResult: BlockHitResult
 	): ItemInteractionResult {
 		if (state.getValue(Companion.TRIPLE_HALF) == LOWER) {
-			val entity = level.getBlockEntity(pos) as DoubleOrNothingBlockEntity
+			val entity = level.getBlockEntity(pos) as DoubleOrNothingBlockEntityNew
 			if (stack.`is`(Companion.SHEARS_TAG)) {
 				level.playSound(null, pos, SoundEvents.BEE_STING, BLOCKS, 1f, 1f)
 				entity.rewired = !entity.rewired
@@ -256,19 +255,12 @@ class DoubleOrNothingBlock : BaseEntityBlock(Properties.of()) {
 				entity.blockhead = !entity.blockhead
 			}
 		}
-		return super.useItemOn(stack, state, level, pos, player, hand, hitResult)
+		return super.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
 	}
 
-	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = DoubleOrNothingBlockEntity(pos, state)
+	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
+		DoubleOrNothingBlockEntityNew(pos, state)
 
-	override fun <T : BlockEntity?> getTicker(
-		level: Level,
-		state: BlockState,
-		blockEntityType: BlockEntityType<T>
-	): BlockEntityTicker<T>? = BaseEntityBlock.createTickerHelper(
-		blockEntityType,
+	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
 		ModBlockEntityTypes.DOUBLE_OR_NOTHING.get()
-	) { tLevel, tPos, tState, tEntity ->
-		if (tState.getValue(Companion.TRIPLE_HALF) == LOWER) tEntity.tick(tLevel, tPos, tState)
-	}
 }

@@ -31,7 +31,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	override val lerpParams: Array<LerpParams> = arrayOf(
 		LerpParams(incrementAmount = -0.075f, isHandledManually = true), // Delta
 		LerpParams(isHandledManually = true), // Rotation
-		LerpParams(isHandledManually = true) // Recoil
+		LerpParams(isHandledManually = true, clampMin = 0f) // Recoil
 	)
 
 	/**
@@ -54,12 +54,9 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				if (delta > 0f) params.tick()
 			}
 			this.tickCustom(1) { params ->
-				if (delta > 0f) params.position += 40 * delta
+				if (delta > 0f) params.setClampedPos(40 * delta)
 			}
-			this.tickCustom(2) { params ->
-				val recoil = this.getRawValue(2)
-				if (recoil > 0f) params.position += -0.0125f * delta
-			}
+			this.tickIndex(2, -0.0125f * delta)
 		}
 	}
 

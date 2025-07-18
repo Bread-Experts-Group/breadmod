@@ -15,8 +15,8 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalIntCodecM
 import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalItemStackListCodecModule
 import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalSizedFluidIngredientCodecModule
 import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalSizedIngredientCodecModule
+import org.bread_experts_group.breadmod.util.toList
 import org.bread_experts_group.breadmod.util.toMutableList
-import org.bread_experts_group.breadmod.util.toNonNullList
 
 class FluidEnergySerializer<R : FluidEnergyRecipe>(
 	private val recipe: RecipeFunctionDataFixer<R>
@@ -34,9 +34,9 @@ class FluidEnergySerializer<R : FluidEnergyRecipe>(
 
 	override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, R> =
 		StreamCodec.composite(
-			SizedIngredient.STREAM_CODEC.toNonNullList(), FluidEnergyRecipe::rItemInputs,
+			SizedIngredient.STREAM_CODEC.toList(), FluidEnergyRecipe::rItemInputs,
 			ItemStack.LIST_STREAM_CODEC, FluidEnergyRecipe::rItemOutputs,
-			SizedFluidIngredient.STREAM_CODEC.toNonNullList(), FluidEnergyRecipe::rFluidInputs,
+			SizedFluidIngredient.STREAM_CODEC.toList(), FluidEnergyRecipe::rFluidInputs,
 			FluidStack.STREAM_CODEC.toMutableList(), FluidEnergyRecipe::rFluidOutputs,
 			ByteBufCodecs.INT, FluidEnergyRecipe::rTime,
 			ByteBufCodecs.INT, FluidEnergyRecipe::rEnergy,

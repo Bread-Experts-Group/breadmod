@@ -1,14 +1,16 @@
 package org.bread_experts_group.breadmod.client.render
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
-import net.minecraft.util.Mth
+import java.lang.Math.clamp
 
 interface LerpTicker {
 	val lerpParams: Array<LerpParams>
 
-	fun getLerpedValue(index: Int, partialTick: Float): Float =
-		if (partialTick == 1f) this.lerpParams[index].position
-		else Mth.lerp(partialTick, this.lerpParams[index].previous, this.lerpParams[index].position)
+	fun getLerpedValue(index: Int, partialTick: Float): Float {
+		val start = this.lerpParams[index].previous
+		val end = this.lerpParams[index].position
+		return if (partialTick == 1f) end else start + partialTick * (end - start)
+	}
 
 	fun getRawValue(index: Int): Float = this.lerpParams[index].position
 
@@ -16,20 +18,20 @@ interface LerpTicker {
 		this.lerpParams.forEach {
 			if (it.isHandledManually) return@forEach
 			it.previous = it.position
-			it.position += it.incrementAmount
+			it.setClampedPos(it.incrementAmount)
 		}
 	}
 
 	fun tickIndex(index: Int, customAmount: Float? = null) {
 		val params = this.lerpParams[index]
 		params.previous = params.position
-		params.position += customAmount ?: params.incrementAmount
+		params.setClampedPos(customAmount ?: params.incrementAmount)
 	}
 
 	fun setParamPosition(index: Int, position: Float) {
 		val params = this.lerpParams[index]
 		params.previous = position - params.incrementAmount
-		params.position = position
+		params.setClampedPos(position)
 	}
 
 	/**
@@ -57,11 +59,17 @@ interface LerpTicker {
 		/**
 		 * if this is true, this param must be ticked manually through tickCustom or tickIndex.
 		 */
-		var isHandledManually: Boolean = false
+		var isHandledManually: Boolean = false,
+		var clampMin: Float = Float.MIN_VALUE,
+		var clampMax: Float = Float.MAX_VALUE
 	) {
 		fun tick() {
 			this.previous = this.position
-			this.position += this.incrementAmount
+			this.setClampedPos(this.incrementAmount)
+		}
+
+		fun setClampedPos(value: Float) {
+			this.position = clamp(this.position + value, this.clampMin, this.clampMax)
 		}
 	}
 

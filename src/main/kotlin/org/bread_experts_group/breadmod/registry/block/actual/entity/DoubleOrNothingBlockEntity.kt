@@ -15,13 +15,13 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
-import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
+// todo rewrite
 class DoubleOrNothingBlockEntity(
 	pos: BlockPos,
 	state: BlockState
-) : BlockEntity(ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(), pos, state) {
+) : BlockEntity(null, pos, state) {
 	private val logger: Logger = LogManager.getLogger("Double Or Nothing Block Entity")
 	val random: RandomSource = RandomSource.create()
 	var counter: Int = 0
@@ -133,7 +133,7 @@ class DoubleOrNothingBlockEntity(
 		level.playSound(null, pos, sound.get(), BLOCKS, 1f, 1f)
 	}
 
-	fun tick(level: Level, pos: BlockPos, state: BlockState) {
+	fun tick(level: Level) {
 		if (this.timeStarted + 600 < level.gameTime
 			&& !this.hasJackpot && !this.nothing && !this.cashout && this.timeStarted != 0L
 		) this.reset()

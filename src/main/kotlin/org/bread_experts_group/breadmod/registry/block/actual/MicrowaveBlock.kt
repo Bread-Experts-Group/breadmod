@@ -18,8 +18,6 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.RenderShape
-import net.minecraft.world.level.block.RenderShape.ENTITYBLOCK_ANIMATED
 import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
 import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
 import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
@@ -139,8 +137,6 @@ class MicrowaveBlock : BreadModBlockWithEntity(Properties.of()) {
 		this.defaultBlockState()
 			.setValue(Companion.HORIZONTAL_FACING, context.horizontalDirection.opposite)
 			.setValue(Companion.OPEN, false)
-
-	override fun getRenderShape(state: BlockState): RenderShape = ENTITYBLOCK_ANIMATED
 
 	override fun getShape(
 		state: BlockState,
