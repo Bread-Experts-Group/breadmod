@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth.clamp
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.solidColorTexture
 import org.bread_experts_group.breadmod.client.render.translate
 
 // todo maybe look into making this an AbstractWidget in the future
@@ -38,6 +39,9 @@ class GuiElement(
 
 		fun ofScaledCopy(element: GuiElement, width: Int, height: Int): GuiElement =
 			GuiElement(element.location, width, height)
+
+		fun ofSolidColor(r: Int, g: Int, b: Int): GuiElement = GuiElement(solidColorTexture(r, g, b, "gui_element"))
+		fun ofSolidColor(color: Int): GuiElement = GuiElement(solidColorTexture(color, "gui_element"))
 	}
 
 	val isSprite: Boolean

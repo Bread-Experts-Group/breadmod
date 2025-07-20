@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.client.render
 
+import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
@@ -26,6 +27,7 @@ import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.block.ModelBlockRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.entity.ItemRenderer
+import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.BakedModel
@@ -35,6 +37,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.util.RandomSource
 import net.minecraft.world.inventory.InventoryMenu
@@ -702,3 +705,12 @@ fun PoseStack.drawTextOnBlockSide(
 	)
 	this.popPose()
 }
+
+fun solidColorTexture(color: Int, id: String, width: Int = 16, height: Int = 16): ResourceLocation {
+	val native = NativeImage(width, height, false)
+	native.fillRect(0, 0, width, height, color)
+	return localClient.textureManager.register("bm_color_tex_${color}_$id", DynamicTexture(native))
+}
+
+fun solidColorTexture(r: Int, g: Int, b: Int, id: String, width: Int = 16, height: Int = 16): ResourceLocation =
+	solidColorTexture(Color.color(r, g, b), id, width, height)

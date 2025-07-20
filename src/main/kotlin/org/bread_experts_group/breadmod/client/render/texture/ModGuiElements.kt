@@ -1,11 +1,7 @@
 package org.bread_experts_group.breadmod.client.render.texture
 
-import com.mojang.blaze3d.platform.NativeImage
-import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.util.Color
 
 /**
  * Holds [ResourceLocation]s for Breadmod's gui elements.
@@ -61,7 +57,7 @@ object ModGuiElements {
 	val BACKGROUND: GuiElement = GuiElement(modLocation("background"), 32, 32)
 	val BACKGROUND_ALT: GuiElement = GuiElement(modLocation("background_alt"), 20, 20)
 	val FLAME: GuiElement = GuiElement(modLocation("flame"), 14, 14)
-	val FLAT_BACKGROUND: GuiElement = GuiElement(this.staticColorImage(198, 198, 198))
+	val FLAT_BACKGROUND: GuiElement = GuiElement.ofSolidColor(198, 198, 198)
 
 	// Wheat Crusher
 	val WHEAT_CRUSHER_LEFT_WHEEL: GuiElement =
@@ -97,13 +93,4 @@ object ModGuiElements {
 
 	private fun guiElementLocation(name: String): ResourceLocation =
 		modLocation("textures", "gui", "$name.png")
-
-	private fun staticColorImage(color: Int): ResourceLocation {
-		val native = NativeImage(16, 16, false)
-		native.fillRect(0, 0, 16, 16, color)
-		return localClient.textureManager.register("bm_color_tex_$color", DynamicTexture(native))
-	}
-
-	private fun staticColorImage(r: Int, g: Int, b: Int): ResourceLocation =
-		this.staticColorImage(Color.color(r, g, b))
 }
