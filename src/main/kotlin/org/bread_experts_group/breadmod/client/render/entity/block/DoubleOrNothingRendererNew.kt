@@ -95,9 +95,15 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 			when {
 				blockEntity.doubleCounter > 0 -> this.drawText(
 					Component.literal("${blockEntity.doubleCounter}x"),
-					5.5f,
+					5f,
 					0.04f,
 					this.colors[blockEntity.doubleCounter - 1]
+				)
+				blockEntity.nothing           -> this.drawText(
+					Component.literal("NOTHING"),
+					4.5f,
+					0.018f,
+					Color.RED
 				)
 				else                          -> this.drawText(
 					Component.literal("PRESS DOUBLE TO START"),
@@ -208,31 +214,27 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	) {
 		val rawZoom = blockEntity.getRawValue(0)
 		val zoom = if (rawZoom == 0f) 0f else blockEntity.getLerpedValue(0, partialTick)
-		val zoomOffset = offset.toFloat() / 11f
-		poseStack.translate(-centeringOffset, -(zoomOffset - scale - 0.1f), 0f)
+		val zoomOffset = (offset.toFloat() / 11f) + if (offset != 0) scale + 0.05f else 0f
+		poseStack.translate(-centeringOffset, -(zoomOffset - 0.15f), 0f)
 		poseStack.scaleFlat(1f + zoom)
-		poseStack.translate(centeringOffset, zoomOffset - scale - 0.1f, 0f)
+		poseStack.translate(centeringOffset, zoomOffset - 0.15f, 0f)
 	}
-
-//	fun setTextZoom(blockEntity: DoubleOrNothingBlockEntityNew, poseStack: PoseStack, partialTick: Float) {
-//		val rawZoom = blockEntity.getRawValue(0)
-//		val zoom = if (rawZoom == 0f) 0f else blockEntity.getLerpedValue(0, partialTick)
-//		poseStack.translate(0f, 0.25f, 0f)
-//		poseStack.scaleFlat(1f + zoom)
-//		poseStack.translate(0f, -0.25f, 0f)
-//	}
 
 	fun setTextRotation(
 		blockEntity: DoubleOrNothingBlockEntityNew,
 		poseStack: PoseStack,
-		partialTick: Float
+		partialTick: Float,
+		offset: Float
 	) {
 		val rawPositive = blockEntity.getRawValue(1)
 		val tiltPositive = if (rawPositive == 0f) 0f else blockEntity.getLerpedValue(1, partialTick)
 		val rawNegative = blockEntity.getRawValue(2)
 		val tiltNegative = if (rawNegative == 0f) 0f else blockEntity.getLerpedValue(2, partialTick)
 		val tilt = if (blockEntity.useNegativeTilt) tiltNegative else tiltPositive
+
+		poseStack.translate(0f, (offset / 16f) - 0.25f, 0f)
 		poseStack.mulPose(Axis.ZN.rotationDegrees(tilt))
+		poseStack.translate(0f, -((offset / 16f) - 0.25f), 0f)
 	}
 
 	fun setGlobalTextRotation(
@@ -271,10 +273,7 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 		var zoomOffset = 0
 		poseStack.pushPose()
 		poseStack.translateDiv16(8f, y, -8.98f)
-		poseStack.translate(0.0, 0.2 + scale, 0.0)
-		if (useTilt) this.setTextRotation(blockEntity, poseStack, partialTick)
-		poseStack.translate(0.0, -0.2 + scale, 0.0)
-//		if (useZoom) this.setTextZoom(blockEntity, poseStack, partialTick)
+		if (useTilt) this.setTextRotation(blockEntity, poseStack, partialTick, y)
 		for (sequence in font.split(text, maxWidth)) {
 			val center = (-font.width(sequence).toFloat() / 2f) * scale
 			poseStack.pushPose()
@@ -293,7 +292,7 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 				LightTexture.FULL_BRIGHT,
 				-0.03f
 			)
-			yOffset -= 1.4f
+			yOffset -= scale * 135
 			zoomOffset++
 			poseStack.popPose()
 		}

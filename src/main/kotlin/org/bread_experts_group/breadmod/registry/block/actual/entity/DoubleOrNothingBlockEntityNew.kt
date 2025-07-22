@@ -79,6 +79,7 @@ class DoubleOrNothingBlockEntityNew(
 		LogManager.getLogger().info(this.doubleCounter)
 		if (nothing) {
 			this.doubleCounter = 0
+			this.applyZoom()
 			this.nothing = true
 		} else {
 			this.applyTilt()
@@ -172,7 +173,6 @@ class DoubleOrNothingBlockEntityNew(
 
 			if (this.cashout && data.timeStarted + 60 == level.gameTime) {
 				this.reset()
-				this.setParamPosition(0, 0.3f)
 			}
 
 			if (this.jackpot) {
@@ -181,15 +181,13 @@ class DoubleOrNothingBlockEntityNew(
 					this.jackpot = false
 					this.jackpotTimer = 0
 					this.reset()
-					this.setParamPosition(0, 0.3f)
 				}
 			}
 
 			if (this.nothing) {
-				if (data.timeStarted + 20 == level.gameTime) {
+				if (data.timeStarted + 30 == level.gameTime) {
 					this.reset()
 					this.nothing = false
-					this.setParamPosition(0, 0.3f)
 				}
 			}
 		}
@@ -199,7 +197,7 @@ class DoubleOrNothingBlockEntityNew(
 		this.data = null
 		this.doubleCounter = 0
 		this.cashout = false
-		this.setParamPosition(0, 0f)
+		this.setParamPosition(0, 0.3f)
 		this.setParamPosition(1, 0f)
 	}
 
