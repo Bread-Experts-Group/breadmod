@@ -189,6 +189,9 @@ dependencies {
 }
 kotlin {
 	jvmToolchain(21)
+	compilerOptions {
+		freeCompilerArgs.add("-Xcontext-parameters")
+	}
 }
 tasks.register<Jar>("dokkaJavadocJar") {
 	dependsOn(tasks.dokkaGeneratePublicationJavadoc)

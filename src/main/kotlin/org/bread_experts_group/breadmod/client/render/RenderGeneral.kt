@@ -386,6 +386,9 @@ fun PoseStack.translateDiv16(x: Double, y: Double, z: Double): Unit =
 fun PoseStack.translateDiv16(x: Float, y: Float, z: Float): Unit =
 	this.translateDiv16(x.toDouble(), y.toDouble(), z.toDouble())
 
+fun PoseStack.translateDiv16(vec: Vec3): Unit =
+	this.translateDiv16(vec.x, vec.y, vec.z)
+
 /**
  * Alternative method for positioning the [PoseStack] of the added [RenderBuffer] to the camera pos.
  *
@@ -611,6 +614,31 @@ fun Font.renderText(
 	component,
 	0f,
 	0f,
+	color,
+	dropShadow,
+	poseStack.last().pose(),
+	buffer,
+	DisplayMode.NORMAL,
+	backgroundColor,
+	packedLight,
+	dropShadowOffset
+)
+
+fun Font.renderText(
+	component: FormattedCharSequence,
+	color: Int,
+	backgroundColor: Int,
+	poseStack: PoseStack,
+	buffer: MultiBufferSource,
+	dropShadow: Boolean,
+	packedLight: Int,
+	x: Float,
+	y: Float,
+	dropShadowOffset: Float = 0.03f
+): Unit = this.drawAdjustableShadowText(
+	component,
+	x,
+	y,
 	color,
 	dropShadow,
 	poseStack.last().pose(),

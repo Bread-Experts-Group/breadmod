@@ -243,10 +243,6 @@ class DoubleOrNothingRenderer(private val context: Context) : BlockEntityRendere
 			Vector3fZero,
 			Vector3f(2f, 0f, 1f),
 			Vector3f(2f, 0f, 0f),
-			0f,
-			0f,
-			1f,
-			1f
 		)
 		poseStack.popPose()
 	}

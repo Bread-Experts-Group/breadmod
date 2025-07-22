@@ -37,8 +37,9 @@ class DoubleOrNothingBlockEntityNew(
 		ModSounds.DOUBLE_JACKPOT
 	)
 	override val lerpParams: Array<LerpTicker.LerpParams> = arrayOf(
-		LerpTicker.LerpParams(clampMin = 0f, clampMax = 2f), // zoom
-		LerpTicker.LerpParams(clampMin = -20f, clampMax = 20f) // tilt
+		LerpTicker.LerpParams(clampMin = 0f, clampMax = 0.55f), // zoom
+		LerpTicker.LerpParams(clampMin = 0f, clampMax = 20f), // tiltPositive
+		LerpTicker.LerpParams(clampMin = -20f, clampMax = 0f) // tiltNegative
 	)
 	val random: RandomSource = RandomSource.create()
 
@@ -51,6 +52,7 @@ class DoubleOrNothingBlockEntityNew(
 	var jackpot: Boolean = false
 	var cashout: Boolean = false
 	var data: DoubleOrNothingData? = null
+	var useNegativeTilt: Boolean = false
 
 	// funny stuff
 	var rewired: Boolean = false
@@ -116,10 +118,9 @@ class DoubleOrNothingBlockEntityNew(
 			9    -> 22f
 			else -> 0f
 		}
-		this.setParamPosition(
-			1,
-			if (this.random.nextInt(0, 2) == 1) tiltIntensity else -tiltIntensity
-		)
+		this.setParamPosition(1, tiltIntensity)
+		this.setParamPosition(2, -tiltIntensity)
+		this.useNegativeTilt = this.random.nextInt(0, 2) == 1
 	}
 
 	fun isDouble(): Boolean {
@@ -141,7 +142,26 @@ class DoubleOrNothingBlockEntityNew(
 		)
 	}
 
+	private fun tickZoom(params: (LerpTicker.LerpParams) -> Unit): Unit = this.tickCustom(0, params)
+	private fun tickTilts(params: (LerpTicker.LerpParams) -> Unit) {
+		this.tickCustom(1, params)
+		this.tickCustom(2, params)
+	}
+
 	override fun commonTick(level: Level) {
+		this.rewired = true
+		val multiplier = when (this.doubleCounter) {
+			7    -> 0.7f
+			8    -> 0.5f
+			9    -> 0.2f
+			else -> 1f
+		}
+
+		this.tickZoom { it.setClampedPos(-0.1f * multiplier) }
+		this.tickTilts {
+			if (it.clampMax == 0f) it.setClampedPos(2f * multiplier + 0.05f) else it.setClampedPos(-2f * multiplier + 0.05f)
+		}
+
 		this.data?.let { data ->
 			if (data.timeStarted + 600 < level.gameTime
 				&& !this.jackpot
