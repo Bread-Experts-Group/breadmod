@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.registry.block
 
+import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.registries.BuiltInRegistries
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.CreativeModeTab
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
@@ -53,7 +55,9 @@ import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.GeneratorBlock
+import org.bread_experts_group.breadmod.registry.block.actual.storage.EnergyStorageBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
@@ -216,12 +220,23 @@ object ModBlocks : RegistryProvider(
 	@DataGenerateLanguage
 	val ITEM_IN_WORLD_BLOCK: DeferredBlock<ItemInWorldBlock> = this.registerBlock("item_in_world", ::ItemInWorldBlock)
 
-	//	@DataGenerateLanguage
-//	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"energy_storage",
-//		::EnergyStorageBlock,
-//		::EnergyStorageItem
-//	)
+	@DataGenerateLanguage
+	val ENERGY_STORAGE: DeferredItem<BlockItem> = this.registerBlockItem(
+		"energy_storage",
+		::EnergyStorageBlock
+	) { block ->
+		object : BlockItem(block, Item.Properties()) {
+			override fun isBarVisible(stack: ItemStack): Boolean = true
+
+			override fun getBarColor(stack: ItemStack): Int = ChatFormatting.RED.color!!
+
+			override fun getBarWidth(stack: ItemStack): Int = this.storedEnergyScaled(stack).toInt()
+
+			private fun storedEnergyScaled(stack: ItemStack): Float =
+				(stack.getOrDefault(ModDataComponents.ENERGY, 0).toFloat() / 1000000f * 13f)
+		}
+	}
+
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
 	val GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem(

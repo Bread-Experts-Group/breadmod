@@ -217,28 +217,28 @@ class ModBlockStateProvider(
 			ModBlocks.GENERATOR.asBlock(),
 			this.models().getBuilder("breadmod:block/generator")
 		)
-//		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
-//			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
-//			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
-//				1    -> "_one"
-//				2    -> "_two"
-//				3    -> "_three"
-//				4    -> "_four"
-//				else -> ""
-//			}
-//			val model = this.models().orientableWithBottom(
-//				"breadmod:block/energy_storage$storedLevel",
-//				this.modLoc("$blockFolder/side"),
-//				this.modLoc("$blockFolder/front$storedLevel"),
-//				this.modLoc("$blockFolder/bottom"),
-//				this.modLoc("$blockFolder/top")
-//			)
-//			return@horizontalBlock model
-//		}
-//		this.simpleBlockItem(
-//			ModBlocks.ENERGY_STORAGE.asBlock(),
-//			this.models().getBuilder("breadmod:block/energy_storage")
-//		)
+		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
+			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
+			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
+				1 -> "_one"
+				2 -> "_two"
+				3 -> "_three"
+				4 -> "_four"
+				else -> ""
+			}
+			val model = this.models().orientableWithBottom(
+				"breadmod:block/energy_storage$storedLevel",
+				this.modLoc("$blockFolder/side"),
+				this.modLoc("$blockFolder/front$storedLevel"),
+				this.modLoc("$blockFolder/bottom"),
+				this.modLoc("$blockFolder/top")
+			)
+			return@horizontalBlock model
+		}
+		this.simpleBlockItem(
+			ModBlocks.ENERGY_STORAGE.asBlock(),
+			this.models().getBuilder("breadmod:block/energy_storage")
+		)
 		this.simpleBlockItem(
 			ModBlocks.FLOUR_LAYER_BLOCK.asBlock(),
 			this.models().getBuilder("breadmod:block/flour_layer_1")
@@ -322,8 +322,9 @@ class ModBlockStateProvider(
 		} else this.rotationX(if (direction == UP) 270 else 90)
 	}
 
+	// cursed :3
 	@Suppress("CAST_NEVER_SUCCEEDS")
-	private fun MultiPartBlockStateBuilder.getOwner() =
+	private fun MultiPartBlockStateBuilder.getOwner(): Block =
 		(this as IMultiPartBlockStateBuilderAccessor).`breadmod$getOwner`()
 
 	private fun <T : Comparable<T>> MultiPartBlockStateBuilder.createSidedConditionalPart(
