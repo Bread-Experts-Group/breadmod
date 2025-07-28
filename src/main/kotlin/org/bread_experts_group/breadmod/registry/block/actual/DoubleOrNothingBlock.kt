@@ -38,8 +38,8 @@ import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.bread_experts_group.breadmod.client.render.LerpTicker
-import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRendererNew
-import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRendererNew.LerpLabels
+import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
+import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer.LerpLabels
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacketNew
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler
@@ -226,7 +226,7 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 	)
 
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
-		::DoubleOrNothingRendererNew
+		::DoubleOrNothingRenderer
 
 	override val commonTickBM: BreadModTicker<Level> = { entity, level, _, pos ->
 		val ticker = entity.getLerpTicker<LerpLabels>()

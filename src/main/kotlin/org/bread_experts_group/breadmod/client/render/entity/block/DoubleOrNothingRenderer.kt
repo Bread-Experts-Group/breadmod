@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.client.render.entity.block
 
-import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
@@ -16,6 +15,7 @@ import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.drawQuad
+import org.bread_experts_group.breadmod.client.render.getBufferBuilder
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
@@ -37,7 +37,7 @@ import org.bread_experts_group.breadmod.util.toVec3
 import org.joml.Vector3f
 import org.lwjgl.system.MemoryUtil
 
-class DoubleOrNothingRendererNew(
+class DoubleOrNothingRenderer(
 	context: BlockEntityRendererProvider.Context
 ) : BlockEntityRenderer<BreadModBlockEntity> {
 	// Background vertex positions
@@ -107,30 +107,23 @@ class DoubleOrNothingRendererNew(
 		val state = blockEntity.getStateHandler()
 		context(blockEntity, partialTick, poseStack, bufferSource) {
 //			this.setGlobalTextRotation(blockEntity, poseStack, partialTick)
-			this.drawTextNew(
-				Component.literal("TEST TEST test test"),
-				0f,
-				0.02f,
-				Color.WHITE
-			)
 			when {
-				state.get(DOUBLE_COUNTER) > 0 -> this.drawText(
+				state.get(DOUBLE_COUNTER) > 0 -> this.drawTextNew(
 					Component.literal("${state.get(DOUBLE_COUNTER)}x"),
-					5f,
-					0.04f,
-					this.colors[state.get(DOUBLE_COUNTER) - 1]
+					y = 15f,
+					scale = 0.05f,
+					color = this.colors[state.get(DOUBLE_COUNTER) - 1]
 				)
-				state.get(NOTHING) -> this.drawText(
+				state.get(NOTHING)            -> this.drawTextNew(
 					Component.literal("NOTHING"),
-					4.5f,
-					0.018f,
-					Color.RED
+					y = 13f,
+					scale = 0.018f,
+					color = Color.RED
 				)
-				else -> this.drawText(
+				else                          -> this.drawTextNew(
 					Component.literal("PRESS DOUBLE TO START"),
-					4.5f,
-					0.01f,
-					Color.WHITE,
+					y = 13f,
+					color = Color.WHITE,
 					maxWidth = 80
 				)
 			}
@@ -139,7 +132,7 @@ class DoubleOrNothingRendererNew(
 	}
 
 	private fun VertexConsumer.setDirection(direction: Vec2): VertexConsumer {
-		val builder = this as? BufferBuilder ?: throw AssertionError("current consumer is not BufferBuilder!")
+		val builder = this.getBufferBuilder()
 		val i = builder.beginElement(ModRenderType.DIRECTION_VERTEX_ELEMENT)
 		if (i != -1L) {
 			MemoryUtil.memPutFloat(i, direction.x)
@@ -149,7 +142,7 @@ class DoubleOrNothingRendererNew(
 	}
 
 	private fun VertexConsumer.setSpeed(speed: Float): VertexConsumer {
-		val builder = this as? BufferBuilder ?: throw AssertionError("current consumer is not BufferBuilder!")
+		val builder = this.getBufferBuilder()
 		val i = builder.beginElement(ModRenderType.SPEED_VERTEX_ELEMENT)
 		if (i != -1L) MemoryUtil.memPutFloat(i, speed)
 		return this
@@ -172,12 +165,12 @@ class DoubleOrNothingRendererNew(
 			else if (state.get(NOTHING)) this.nothingBGColor
 			else Color.WHITE
 		val speed = when (state.get(DOUBLE_COUNTER)) {
-			5 -> 1300f
-			6 -> 1400f
-			7 -> 1600f
-			8 -> 1900f
-			9 -> 2300f
-			10 -> 2400f
+			5    -> 1300f
+			6    -> 1400f
+			7    -> 1600f
+			8    -> 1900f
+			9    -> 2300f
+			10   -> 2400f
 			else -> 1000f
 		}
 
@@ -227,42 +220,6 @@ class DoubleOrNothingRendererNew(
 		return AABB(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 2.0, pos.z + 1)
 	}
 
-	fun setLocalZoom(
-		blockEntity: BreadModBlockEntity,
-		poseStack: PoseStack,
-		partialTick: Float,
-		centeringOffset: Float,
-		offset: Int,
-		scale: Float
-	) {
-		val lerp = blockEntity.getLerpTicker<LerpLabels>()
-		val rawZoom = lerp.getRawValue(LerpLabels.ZOOM)
-		val zoom = if (rawZoom == 0f) 0f else lerp.getLerpedValue(LerpLabels.ZOOM, partialTick)
-		val zoomOffset = (offset.toFloat() / 11f) + if (offset != 0) scale + 0.05f else 0f
-		poseStack.translate(-centeringOffset, -(zoomOffset - 0.15f), 0f)
-		poseStack.scaleFlat(1f + zoom)
-		poseStack.translate(centeringOffset, zoomOffset - 0.15f, 0f)
-	}
-
-	fun setTextRotation(
-		blockEntity: BreadModBlockEntity,
-		poseStack: PoseStack,
-		partialTick: Float,
-		offset: Float
-	) {
-		val lerp = blockEntity.getLerpTicker<LerpLabels>()
-		val state = blockEntity.getStateHandler()
-		val rawPositive = lerp.getRawValue(LerpLabels.TILT_P)
-		val tiltPositive = if (rawPositive == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_P, partialTick)
-		val rawNegative = lerp.getRawValue(LerpLabels.TILT_N)
-		val tiltNegative = if (rawNegative == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_N, partialTick)
-		val tilt = if (state.get(USE_NEGATIVE_TILT)) tiltNegative else tiltPositive
-
-		poseStack.translate(0f, (offset / 16f) - 0.25f, 0f)
-		poseStack.mulPose(Axis.ZN.rotationDegrees(tilt))
-		poseStack.translate(0f, -((offset / 16f) - 0.25f), 0f)
-	}
-
 	fun setGlobalTextRotation(
 		blockEntity: BreadModBlockEntity,
 		poseStack: PoseStack,
@@ -289,35 +246,50 @@ class DoubleOrNothingRendererNew(
 	)
 	fun drawTextNew(
 		text: Component,
-		y: Float,
-		scale: Float,
-		color: Int,
+		x: Float = 0f,
+		y: Float = 0f,
+		scale: Float = 0.01f,
+		color: Int = Color.WHITE,
+		maxWidth: Int = 75
 	) {
 		val font = localClient.font
-		val split = font.split(text, 75)
+		val split = font.split(text, maxWidth)
 		val splitSize = split.size.toFloat()
-		var splitRotOffset = 0f
-		poseStack.pushPose()
-//		poseStack.translate(0f, -(1f + scale), 0f)
-//		poseStack.mulPose(Axis.ZP.rotationDegrees(blockEntity.level!!.gameTime.toFloat()))
-//		poseStack.translate(0f, (1f + scale), 0f)
-		poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+		val state = blockEntity.getStateHandler()
+		val lerp = blockEntity.getLerpTicker<LerpLabels>()
+		val rawPositive = lerp.getRawValue(LerpLabels.TILT_P)
+		val tiltPositive = if (rawPositive == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_P, partialTick)
+		val rawNegative = lerp.getRawValue(LerpLabels.TILT_N)
+		val tiltNegative = if (rawNegative == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_N, partialTick)
+		val tilt = if (state.get(USE_NEGATIVE_TILT)) tiltNegative else tiltPositive
+		val zoom = lerp.getLerpedValue(LerpLabels.ZOOM, partialTick)
 
-		repeat(splitSize.toInt()) { splitRotOffset += 0.5f }
-//		poseStack.translateDiv16(0f, 0.5f + splitRotOffset, 0f)
-//		poseStack.scaleFlat(1f + (blockEntity.getLerpedValue(0, partialTick)))
-//		poseStack.translateDiv16(-0f, -(0.5f + splitRotOffset), 0f)
+		poseStack.pushPose()
+		// set the initial position of the text, use x and y to adjust
+		poseStack.translateDiv16(8f + x, 20.5f - y, -8.95f)
+		// set the text tilt with the block entity's lerped tilt
+		if (splitSize == 1f) poseStack.translate(0f, scale * 2, 0f)
+		poseStack.mulPose(Axis.ZP.rotationDegrees(tilt))
+		if (splitSize == 1f) poseStack.translate(0f, -scale * 2, 0f)
+		// flip the text around so it isn't facing backwards
+		poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+		// set the text scale with the block entity's lerped zoom
+		if (splitSize == 1f) poseStack.translate(0f, -scale * 2, 0f)
+		poseStack.scaleFlat(1f + zoom)
+		if (splitSize == 1f) poseStack.translate(0f, scale * 2, 0f)
 		var splitYOffset = 0f
 		repeat(splitSize.toInt()) {
 			val component = split[it]
 			val center = (-font.width(component).toFloat() / 2f) * scale
 			poseStack.pushPose()
+			// position the split text below the previous text
 			poseStack.translateDiv16(0f, splitYOffset, 0f)
+			// center the text on the screen
 			poseStack.translate(center, 0f, 0f)
-//			poseStack.translate(0f, -0.5f, 0f)
-			// todo the scaling causes the text to move downwards, figure out a way to fix that.. maybe the zoom code above
+			// correct position before scaling
+			poseStack.translate(0f, -(scale * 8), 0f)
 			poseStack.scaleFlat(scale)
-//			poseStack.translate(0f, -(0.5f * (1f + scale)), 0f)
+
 			font.renderText(
 				component,
 				color,
@@ -330,52 +302,6 @@ class DoubleOrNothingRendererNew(
 			)
 			poseStack.popPose()
 			splitYOffset += scale * 135
-		}
-		poseStack.popPose()
-	}
-
-	context(
-		blockEntity: BreadModBlockEntity,
-		partialTick: Float,
-		poseStack: PoseStack,
-		bufferSource: MultiBufferSource
-	)
-	fun drawText(
-		text: Component,
-		y: Float,
-		scale: Float,
-		color: Int,
-		useZoom: Boolean = true,
-		useTilt: Boolean = true,
-		maxWidth: Int = 86
-	) {
-		val font = localClient.font
-		var yOffset = y
-		var zoomOffset = 0
-		poseStack.pushPose()
-		poseStack.translateDiv16(8f, y, -8.98f)
-		if (useTilt) this.setTextRotation(blockEntity, poseStack, partialTick, y)
-		for (sequence in font.split(text, maxWidth)) {
-			val center = (-font.width(sequence).toFloat() / 2f) * scale
-			poseStack.pushPose()
-			poseStack.translateDiv16(0f, yOffset, 0f)
-			poseStack.translate(center, 0f, 0f)
-			poseStack.mulPose(Axis.XN.rotationDegrees(180f))
-			if (useZoom) this.setLocalZoom(blockEntity, poseStack, partialTick, center, zoomOffset, scale)
-			poseStack.scaleFlat(scale)
-			font.renderText(
-				sequence,
-				color,
-				Color.color(a = 0),
-				poseStack,
-				bufferSource,
-				true,
-				LightTexture.FULL_BRIGHT,
-				-0.03f
-			)
-			yOffset -= scale * 135
-			zoomOffset++
-			poseStack.popPose()
 		}
 		poseStack.popPose()
 	}

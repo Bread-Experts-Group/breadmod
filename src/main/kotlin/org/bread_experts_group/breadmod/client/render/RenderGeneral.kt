@@ -2,10 +2,12 @@ package org.bread_experts_group.breadmod.client.render
 
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.BufferUploader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.Tesselator
+import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.math.Axis
 import net.minecraft.client.Camera
@@ -354,12 +356,15 @@ fun Screen.redirectFocusFromContainerWidgets(mouseX: Double, mouseY: Double, but
 	return false
 }
 
+fun VertexConsumer.getBufferBuilder(): BufferBuilder =
+	this as? BufferBuilder ?: throw AssertionError("this vertex consumer is not buffer builder!")
+
 /**
  * Scales the [PoseStack] uniformly on the X, Y, and Z axis.
  */
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
-
 fun PoseStack.translate(x: Int, y: Int, z: Int): Unit = this.translate(x.toFloat(), y.toFloat(), z.toFloat())
+
 fun PoseStack.translate(vec3: Vec3): Unit = this.translate(vec3.x, vec3.y, vec3.z)
 
 /**
@@ -370,20 +375,6 @@ fun PoseStack.translate(vec3: Vec3): Unit = this.translate(vec3.x, vec3.y, vec3.
  */
 fun PoseStack.initialTranslate(camera: Camera): Unit =
 	this.translate(-camera.position.x, -camera.position.y, -camera.position.z)
-
-fun PoseStack.rotate(axis: Axis, degrees: Float) = this.mulPose(axis.rotationDegrees(degrees))
-
-/**
- * Translates this [PoseStack] and divides it by 16. Used for positioning models onto blocks.
- */
-fun PoseStack.translateDiv16(x: Double, y: Double, z: Double): Unit =
-	this.translate(x / 16, y / 16, z / 16)
-
-fun PoseStack.translateDiv16(x: Float, y: Float, z: Float): Unit =
-	this.translateDiv16(x.toDouble(), y.toDouble(), z.toDouble())
-
-fun PoseStack.translateDiv16(vec: Vec3): Unit =
-	this.translateDiv16(vec.x, vec.y, vec.z)
 
 /**
  * Alternative method for positioning the [PoseStack] of the added [RenderBuffer] to the camera pos.
@@ -397,6 +388,20 @@ fun PoseStack.offsetRenderToCameraPos(pos: Vec3, camera: Camera, workaround: Boo
 	// the -0.5 is a temp workaround for the render being positioned in the corner instead of centered
 	this.translate(offset.x - fix, offset.y, offset.z - fix)
 }
+
+fun PoseStack.rotate(axis: Axis, degrees: Float): Unit = this.mulPose(axis.rotationDegrees(degrees))
+
+/**
+ * Translates this [PoseStack] and divides it by 16. Used for positioning models onto blocks.
+ */
+fun PoseStack.translateDiv16(x: Double, y: Double, z: Double): Unit =
+	this.translate(x / 16, y / 16, z / 16)
+
+fun PoseStack.translateDiv16(x: Float, y: Float, z: Float): Unit =
+	this.translateDiv16(x.toDouble(), y.toDouble(), z.toDouble())
+
+fun PoseStack.translateDiv16(vec: Vec3): Unit =
+	this.translateDiv16(vec.x, vec.y, vec.z)
 
 /**
  * Draws scaled [text] in a Screen or Overlay
