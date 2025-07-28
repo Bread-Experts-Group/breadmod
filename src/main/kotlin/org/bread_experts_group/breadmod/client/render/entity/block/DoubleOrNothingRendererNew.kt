@@ -92,6 +92,12 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 		this.renderInnerBG(poseStack, bufferSource, blockEntity, this.backgroundTexture)
 		context(blockEntity, partialTick, poseStack, bufferSource) {
 //			this.setGlobalTextRotation(blockEntity, poseStack, partialTick)
+			this.drawTextNew(
+				Component.literal("TEST TEST test test"),
+				0f,
+				0.02f,
+				Color.WHITE
+			)
 			when {
 				blockEntity.doubleCounter > 0 -> this.drawText(
 					Component.literal("${blockEntity.doubleCounter}x"),
@@ -251,6 +257,64 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 		poseStack.translateDiv16(8f, 8f, 0f)
 		poseStack.mulPose(Axis.ZN.rotationDegrees(tilt))
 		poseStack.translateDiv16(-8f, -8f, 0f)
+	}
+
+	context(
+		blockEntity: DoubleOrNothingBlockEntityNew,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource
+	)
+	fun drawTextNew(
+		text: Component,
+		y: Float,
+		scale: Float,
+		color: Int,
+	) {
+		val font = localClient.font
+		val split = font.split(text, 75)
+		val splitSize = split.size.toFloat()
+		var splitRotOffset = 0f
+		poseStack.pushPose()
+
+//		poseStack.translate(0f, -(1f + scale), 0f)
+//		poseStack.mulPose(Axis.ZP.rotationDegrees(blockEntity.level!!.gameTime.toFloat()))
+//		poseStack.translate(0f, (1f + scale), 0f)
+
+		poseStack.mulPose(Axis.XN.rotationDegrees(180f))
+
+		repeat(splitSize.toInt()) { splitRotOffset += 0.5f }
+
+//		poseStack.translateDiv16(0f, 0.5f + splitRotOffset, 0f)
+//		poseStack.scaleFlat(1f + (blockEntity.getLerpedValue(0, partialTick)))
+//		poseStack.translateDiv16(-0f, -(0.5f + splitRotOffset), 0f)
+		var splitYOffset = 0f
+		repeat(splitSize.toInt()) {
+			val component = split[it]
+			val center = (-font.width(component).toFloat() / 2f) * scale
+			poseStack.pushPose()
+			poseStack.translateDiv16(0f, splitYOffset, 0f)
+			poseStack.translate(center, 0f, 0f)
+
+//			poseStack.translate(0f, -0.5f, 0f)
+			// todo the scaling causes the text to move downwards, figure out a way to fix that.. maybe the zoom code above
+			poseStack.scaleFlat(scale)
+//			poseStack.translate(0f, -(0.5f * (1f + scale)), 0f)
+
+			font.renderText(
+				component,
+				color,
+				Color.color(a = 0),
+				poseStack,
+				bufferSource,
+				true,
+				LightTexture.FULL_BRIGHT,
+				-0.03f
+			)
+			poseStack.popPose()
+			splitYOffset += scale * 135
+		}
+		poseStack.popPose()
 	}
 
 	context(
