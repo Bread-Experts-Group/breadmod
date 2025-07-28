@@ -9,10 +9,6 @@ import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
-import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModRecipeBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.ItemBearingBlockEntity
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import java.util.function.Supplier
 
@@ -104,36 +100,36 @@ abstract class BMContainerMenu(
 
 	override fun quickMoveStack(player: Player, index: Int): ItemStack = this.moveStackFunction(player, index)
 
-	abstract class Entity<T : BreadModBlockEntity<T>>(
+	abstract class Entity<BE : BlockEntity>(
 		type: MenuType<*>?,
 		id: Int,
 		val inventory: Inventory,
-		val parent: T
+		val parent: BE
 	) : BMContainerMenu(type, id) {
 		abstract override val containerSlotCount: Int
 		override fun stillValid(player: Player): Boolean = player.containerMenu == this
-
-		fun addHandlerSlot(slot: Int, x: Int, y: Int) {
-			val handler = this.parent as? ItemBearingBlockEntity ?: return
-			this.addSlot(ModifiedSlotItemHandler(handler.itemHandler, slot, x, y))
-		}
-
-		fun addResultHandlerSlot(slot: Int, x: Int, y: Int) {
-			val handler = this.parent as? ItemBearingBlockEntity ?: return
-			this.addSlot(ResultSlotItemHandler(handler.itemHandler, slot, x, y))
-		}
+//		fun addHandlerSlot(slot: Int, x: Int, y: Int) {
+//			val handler = this.parent as? ItemBearingBlockEntity ?: return
+//			this.addSlot(SlotItemHandler(handler.itemHandler, slot, x, y))
+//		}
+//
+//		fun addResultHandlerSlot(slot: Int, x: Int, y: Int) {
+//			val handler = this.parent as? ItemBearingBlockEntity ?: return
+//			this.addSlot(SlotItemHandler(handler.itemHandler, slot, x, y))
+//		}
 	}
 
-	abstract class RecipeEntity<R : FluidEnergyRecipe, T : BreadModRecipeBlockEntity<FluidEnergyInput, R, T>>(
+	abstract class RecipeEntity<R : FluidEnergyRecipe, BE : BlockEntity>(
 		type: MenuType<*>?,
 		id: Int,
 		inventory: Inventory,
-		parent: T
-	) : Entity<T>(type, id, inventory, parent) {
+		parent: BE
+	) : Entity<BE>(type, id, inventory, parent) {
 		open val progressWidth: Int = 0
-		val scaledProgress: Int
-			get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * this.progressWidth).toInt()
 
-		fun isCrafting(): Boolean = this.parent.progress > 1
+		//		val scaledProgress: Int
+//			get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * this.progressWidth).toInt()
+//
+		fun isCrafting(): Boolean = TODO("Extensible") //this.parent.progress > 1
 	}
 }

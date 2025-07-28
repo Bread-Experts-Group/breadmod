@@ -3,33 +3,35 @@ package org.bread_experts_group.breadmod.client.render
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import java.lang.Math.clamp
 
-interface LerpTicker {
-	val lerpParams: Array<LerpParams>
+open class LerpTicker<E>(
+	vararg parameters: Pair<E, LerpParams>
+) {
+	private val lerpParams: MutableMap<E, LerpParams> = mutableMapOf(*parameters)
 
-	fun getLerpedValue(index: Int, partialTick: Float): Float {
-		val start = this.lerpParams[index].previous
-		val end = this.lerpParams[index].position
-		return if (partialTick == 1f) end else start + partialTick * (end - start)
+	fun getLerpedValue(label: E, partialTick: Float): Float {
+		val parameters = this.lerpParams.getValue(label)
+		return if (partialTick == 1f) parameters.position
+		else parameters.previous + partialTick * (parameters.position - parameters.previous)
 	}
 
-	fun getRawValue(index: Int): Float = this.lerpParams[index].position
+	fun getRawValue(label: E): Float = this.lerpParams.getValue(label).position
 
 	fun tickAllPositions() {
-		this.lerpParams.forEach {
-			if (it.isHandledManually) return@forEach
-			it.previous = it.position
-			it.setClampedPos(it.incrementAmount)
+		this.lerpParams.forEach { (_, parameters) ->
+			if (parameters.isHandledManually) return@forEach
+			parameters.previous = parameters.position
+			parameters.setClampedPos(parameters.incrementAmount)
 		}
 	}
 
-	fun tickIndex(index: Int, customAmount: Float? = null) {
-		val params = this.lerpParams[index]
+	fun tickIndex(label: E, customAmount: Float? = null) {
+		val params = this.lerpParams.getValue(label)
 		params.previous = params.position
 		params.setClampedPos(customAmount ?: params.incrementAmount)
 	}
 
-	fun setParamPosition(index: Int, position: Float) {
-		val params = this.lerpParams[index]
+	fun setParamPosition(label: E, position: Float) {
+		val params = this.lerpParams.getValue(label)
 		params.previous = position - params.incrementAmount
 		params.setClampedPos(position)
 	}
@@ -37,8 +39,8 @@ interface LerpTicker {
 	/**
 	 * LerpParams#previous is set automatically before [run] is invoked.
 	 */
-	fun tickCustom(index: Int, run: (LerpParams) -> Unit) {
-		val params = this.lerpParams[index]
+	fun tickCustom(label: E, run: (LerpParams) -> Unit) {
+		val params = this.lerpParams.getValue(label)
 		params.previous = params.position
 		run.invoke(params)
 	}
@@ -76,10 +78,14 @@ interface LerpTicker {
 	/**
 	 * [BlockEntityWithoutLevelRenderer] specific interface for ticking [lerpParams].
 	 */
-	interface BEWLR : LerpTicker {
-		fun getLerpedValue(index: Int): Float =
-			this.getLerpedValue(index, localClient.timer.getGameTimeDeltaPartialTick(false))
+	abstract class BEWLR<E>(
+		vararg parameters: Pair<E, LerpParams>
+	) : LerpTicker<E>(*parameters) {
+		fun getLerpedValue(label: E): Float = this.getLerpedValue(
+			label,
+			localClient.timer.getGameTimeDeltaPartialTick(false)
+		)
 
-		fun tick()
+		abstract fun tick()
 	}
 }

@@ -4,23 +4,24 @@ import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ShaderInstance
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.commands.Commands
-import net.minecraft.core.Direction
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.item.BlockItem
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.fml.loading.FMLEnvironment
-import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.EntityRenderersEvent
@@ -43,18 +44,14 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider
 import net.neoforged.neoforge.data.event.GatherDataEvent
-import net.neoforged.neoforge.energy.IEnergyStorage
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent
 import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
-import net.neoforged.neoforge.fluids.capability.IFluidHandler
-import net.neoforged.neoforge.items.IItemHandler
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
-import net.neoforged.neoforge.registries.DeferredRegister
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod
@@ -67,13 +64,10 @@ import org.bread_experts_group.breadmod.client.gui.overlays.InternetChatRelayOve
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
-import org.bread_experts_group.breadmod.client.gui.screens.DoughMachineScreen
-import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
-import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
-import org.bread_experts_group.breadmod.client.render.LerpTicker
+import org.bread_experts_group.breadmod.client.render.RendererWithBEWLRLerpTicker
 import org.bread_experts_group.breadmod.client.render.WarRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
@@ -81,16 +75,6 @@ import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.CableRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.DieselGeneratorRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRendererNew
-import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.MonitorRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.RadioRenderer
-import org.bread_experts_group.breadmod.client.render.entity.block.ToasterRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.render.itemColor
@@ -125,7 +109,6 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
-import org.bread_experts_group.breadmod.network.serverbound.ComputerKeystrokePacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
@@ -137,12 +120,11 @@ import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltOne
 import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltThree
 import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltTwo
 import org.bread_experts_group.breadmod.registry.attachment.ModAttachments
-import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
-import org.bread_experts_group.breadmod.registry.block.actual.CableBlock
+import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -156,10 +138,9 @@ import org.bread_experts_group.breadmod.registry.item.ModRecords
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.registry.menu.ModMenuTypes
+import org.bread_experts_group.breadmod.registry.menu.ModMenus
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
-import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyScreen
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModBiomes
@@ -172,7 +153,6 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
-import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
@@ -182,32 +162,32 @@ object Registry {
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val itemRenderers: MutableMap<String, BlockEntityWithoutLevelRenderer> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
-	private val registerList: List<DeferredRegister<out Any>> = listOf(
-		ModItems.ITEM_REGISTRY,
-		ModBlocks.BLOCK_REGISTRY,
-		ModSounds.SOUND_REGISTRY,
-		ModBlockEntityTypes.BLOCK_ENTITY_REGISTRY,
-		ModCreativeTabs.CREATIVE_TAB_REGISTRY,
-		ModFluids.FLUID_REGISTRY,
-		ModFluids.FLUID_TYPE_REGISTRY,
-		ModEntityTypes.ENTITY_REGISTRY,
-		ModEntityDataSerializers.ENTITY_DATA_SERIALIZER_REGISTRY,
-		ModArmorMaterials.ARMOR_REGISTRY,
-		ModDataComponents.DATA_COMPONENT_REGISTRY,
-		ModAttachments.ATTACHMENT_REGISTRY,
-		ModRecipeSerializers.RECIPE_SERIALIZER_REGISTRY,
-		ModRecipeTypes.RECIPE_TYPE_REGISTRY,
-		ModMenuTypes.MENU_TYPE_REGISTRY
+	private val registerList: Array<RegistryProvider> = arrayOf(
+		ModItems,
+		ModBlocks,
+		ModSounds,
+		ModCreativeTabs,
+		ModFluids,
+		ModEntityTypes,
+		ModEntityDataSerializers,
+		ModArmorMaterials,
+		ModDataComponents,
+		ModAttachments,
+		ModRecipeSerializers,
+		ModRecipeTypes,
+		ModMenus
 	)
 
 	fun registerAll(modBus: IEventBus) {
 		this.registerList.forEach {
-			this.logger.info("Pushing register for ${it.registryName}")
-			it.register(modBus)
+			for (registry in it) {
+				this.logger.info("Pushing registry [${registry.registryName}]")
+				registry.register(modBus)
+			}
 		}
 		// Sided Event Registration
 		when (FMLEnvironment.dist) {
-			Dist.CLIENT           -> {
+			Dist.CLIENT -> {
 				// Game Bus
 				NeoForge.EVENT_BUS.addListener { event: ScreenEvent.Render.Post ->
 					ScreenBleedOverlay.renderBleed(event.guiGraphics)
@@ -275,7 +255,7 @@ object Registry {
 					val inventory = (localClient.player ?: return@addListener).allSlots
 					inventory.forEach {
 						val renderer = IClientItemExtensions.of(it).customRenderer
-						if (renderer is LerpTicker.BEWLR) renderer.tick()
+						if (renderer is RendererWithBEWLRLerpTicker<*>) renderer.lerpTicker.tick()
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
@@ -366,36 +346,27 @@ object Registry {
 					event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
 					event.registerItem(ToolGunItem.ToolGunItemExtensions, ModItems.TOOL_GUN)
 					event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
-					event.registerItem(object : IClientItemExtensions {
-						val renderer: String = "creative_generator"
-						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
-							this@Registry.itemRenderers.getOrPut(this.renderer, ::CreativeGeneratorItemRenderer)
-					}, ModBlocks.CREATIVE_GENERATOR.asItem())
+//					event.registerItem(object : IClientItemExtensions {
+//						val renderer: String = "creative_generator"
+//						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+//							this@Registry.itemRenderers.getOrPut(this.renderer, ::CreativeGeneratorItemRenderer)
+//					}, ModBlocks.CREATIVE_GENERATOR.asItem())
 				}
 				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
 					event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
 					event.registerEntityRenderer(ModEntityTypes.NUKE_BLOCK_ENTITY.get(), ::PrimedNukeBlockRenderer)
 					event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
 					event.registerEntityRenderer(ModEntityTypes.FORKLIFT.get(), ::ForkliftRenderer)
-					event.registerBlockEntityRenderer(ModBlockEntityTypes.TOASTER.get(), ::ToasterRenderer)
-					event.registerBlockEntityRenderer(ModBlockEntityTypes.MICROWAVE.get(), ::MicrowaveRenderer)
-					event.registerBlockEntityRenderer(ModBlockEntityTypes.ITEM_IN_WORLD.get(), ::ItemInWorldRenderer)
-					event.registerBlockEntityRenderer(ModBlockEntityTypes.ENERGY_STORAGE.get(), ::EnergyStorageRenderer)
-					event.registerBlockEntityRenderer(ModBlockEntityTypes.MONITOR.get(), ::MonitorRenderer)
-					event.registerBlockEntityRenderer(ModBlockEntityTypes.CABLE.get(), ::CableRenderer)
-					event.registerBlockEntityRenderer(ModBlockEntityTypes.RADIO.get(), ::RadioRenderer)
-					event.registerBlockEntityRenderer(
-						ModBlockEntityTypes.DOUBLE_OR_NOTHING.get(),
-						::DoubleOrNothingRendererNew
-					)
-					event.registerBlockEntityRenderer(
-						ModBlockEntityTypes.CREATIVE_GENERATOR.get(),
-						::CreativeGeneratorRenderer
-					)
-					event.registerBlockEntityRenderer(
-						ModBlockEntityTypes.DIESEL_GENERATOR.get(),
-						::DieselGeneratorRenderer
-					)
+					for (deferredBlock in ModBlocks.blockIterator()) {
+						val block = deferredBlock.get()
+						if (block !is BreadModBlock) continue
+						val renderer = block.ofRenderer() ?: continue
+						@Suppress("UNCHECKED_CAST")
+						event.registerBlockEntityRenderer(
+							block.blockEntityType!!.get(),
+							renderer as ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<BlockEntity>)
+						)
+					}
 				}
 				modBus.addListener { event: RegisterGuiLayersEvent ->
 					event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
@@ -420,16 +391,16 @@ object Registry {
 						ModItems.BREAD_LEGGINGS.get(),
 						ModItems.BREAD_BOOTS.get()
 					)
-					event.register({ stack, _ ->
-						val blockItem = stack.item as? BlockItem ?: return@register Color.WHITE
-						val cable = blockItem.block as? CableBlock ?: return@register Color.WHITE
-						cable.resolveColor()
-					}, ModBlocks.CABLE.asItem())
+//					event.register({ stack, _ ->
+//						val blockItem = stack.item as? BlockItem ?: return@register Color.WHITE
+//						val cable = blockItem.block as? CableBlock ?: return@register Color.WHITE
+//						cable.resolveColor()
+//					}, ModBlocks.CABLE.asItem())
 				}
 				modBus.addListener { event: RegisterColorHandlersEvent.Block ->
-					event.register({ state, _, _, _ ->
-						(state.block as? CableBlock ?: return@register Color.WHITE).resolveColor()
-					}, ModBlocks.CABLE.asBlock())
+//					event.register({ state, _, _, _ ->
+//						(state.block as? CableBlock ?: return@register Color.WHITE).resolveColor()
+//					}, ModBlocks.CABLE.asBlock())
 				}
 				modBus.addListener { event: ModelEvent.RegisterAdditional ->
 					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
@@ -479,16 +450,16 @@ object Registry {
 					event.registerLayerDefinition(ForkliftModel.FORKLIFT_LAYER, ForkliftModel::createLayerDefinition)
 				}
 				modBus.addListener { event: RegisterMenuScreensEvent ->
-					event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
-					event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
+//					event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
+//					event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
 					// Experimental stuff
-					event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
+//					event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
 				}
 			}
 			Dist.DEDICATED_SERVER -> {
 				// Nothing for dedicated servers yet ...
 			}
-			else                  -> throw UnsupportedOperationException()
+			else -> throw UnsupportedOperationException()
 		}
 		// Common Event Registration
 		// Game Bus
@@ -575,7 +546,7 @@ object Registry {
 			DoubleOrNothingPacketNew.register(registrar)
 			// Serverbound packets
 			ToolGunModeChangePacket.register(registrar)
-			ComputerKeystrokePacket.register(registrar)
+//			ComputerKeystrokePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
@@ -584,75 +555,18 @@ object Registry {
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())
 		}
 		modBus.addListener { event: RegisterCapabilitiesEvent ->
-			event.registerBlockEntity(
-				Capabilities.EnergyStorage.BLOCK,
-				ModBlockEntityTypes.WHEAT_CRUSHER.get()
-			) { entity, _: Direction? -> entity.energyHandler }
-			event.registerBlockEntity(
-				Capabilities.ItemHandler.BLOCK,
-				ModBlockEntityTypes.WHEAT_CRUSHER.get()
-			) { entity, direction: Direction? -> entity.itemHandler.getThisForSide(direction) }
-			event.registerBlockEntity(
-				Capabilities.EnergyStorage.BLOCK,
-				ModBlockEntityTypes.CREATIVE_GENERATOR.get()
-			) { entity, _ -> entity.energyHandler }
-			event.registerBlockEntity(
-				Capabilities.EnergyStorage.BLOCK,
-				ModBlockEntityTypes.DOUGH_MACHINE.get(),
-			) { entity, _: Direction? -> entity.energyHandler }
-			event.registerBlockEntity(
-				Capabilities.ItemHandler.BLOCK,
-				ModBlockEntityTypes.DOUGH_MACHINE.get()
-			) { entity, _: Direction? -> entity.itemHandler }
-			event.registerBlockEntity(
-				Capabilities.FluidHandler.BLOCK,
-				ModBlockEntityTypes.DOUGH_MACHINE.get()
-			) { entity, direction: Direction? ->
-				when (direction) {
-					Direction.UP, Direction.DOWN -> entity.fluidHandler
-					else                         -> null
+			for (deferredBlock in ModBlocks.blockIterator()) {
+				val block = deferredBlock.get()
+				if (block !is BreadModBlock) continue
+				val capabilities = block.ofCapabilities()
+				for ((capability, _) in capabilities) {
+					@Suppress("UNCHECKED_CAST")
+					event.registerBlockEntity(
+						capability as BlockCapability<Any, Any>,
+						block.blockEntityType!!.get()
+					) { entity, context -> (entity as BreadModBlockEntity).getCapability(capability, context) }
 				}
 			}
-			event.registerBlockEntity(
-				Capabilities.EnergyStorage.BLOCK,
-				ModBlockEntityTypes.ENERGY_STORAGE.get()
-			) { entity, _ -> entity.energyHandler }
-
-			event.registerBlockEntity(
-				Capabilities.FluidHandler.BLOCK,
-				ModBlockEntityTypes.FLUID_TANK_JADE_ENTITY.get()
-			) { entity, _: Direction? ->
-				entity.fluidHandler
-			}
-			event.registerBlockEntity(
-				Capabilities.FluidHandler.BLOCK,
-				ModBlockEntityTypes.FLUID_ENERGY.get()
-			) { entity, direction: Direction? ->
-				when (direction) {
-					Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN -> entity.fluidHandler
-					else                                                         -> null
-				}
-			}
-			event.registerBlockEntity(
-				Capabilities.ItemHandler.BLOCK,
-				ModBlockEntityTypes.FLUID_ENERGY.get()
-			) { entity, _: Direction? -> entity.itemHandler }
-			event.registerBlockEntity(
-				Capabilities.FluidHandler.BLOCK,
-				ModBlockEntityTypes.DIESEL_GENERATOR.get()
-			) { entity, _ -> entity.fluidHandler }
-			event.registerBlockEntity(
-				Capabilities.ItemHandler.BLOCK,
-				ModBlockEntityTypes.CABLE.get()
-			) { entity, _ -> entity.capabilities.firstNotNullOfOrNull { it.value as? IItemHandler } }
-			event.registerBlockEntity(
-				Capabilities.EnergyStorage.BLOCK,
-				ModBlockEntityTypes.CABLE.get()
-			) { entity, _ -> entity.capabilities.firstNotNullOfOrNull { it.value as? IEnergyStorage } }
-			event.registerBlockEntity(
-				Capabilities.FluidHandler.BLOCK,
-				ModBlockEntityTypes.CABLE.get()
-			) { entity, _ -> entity.capabilities.firstNotNullOfOrNull { it.value as? IFluidHandler } }
 		}
 	}
 }

@@ -1,74 +1,54 @@
 package org.bread_experts_group.breadmod.registry.block.actual.machine
-
-import com.mojang.serialization.MapCodec
-import net.minecraft.core.BlockPos
-import net.minecraft.world.InteractionResult
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.context.BlockPlaceContext
-import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityType
-import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.StateDefinition
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.phys.BlockHitResult
-import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
-import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlockWithEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.machine.DoughMachineBlockEntity
-
-class DoughMachineBlock : BreadModBlockWithEntity(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
-	companion object {
-		val CODEC: MapCodec<DoughMachineBlock> = simpleCodec { DoughMachineBlock() }
-	}
-
-	override fun codec(): MapCodec<DoughMachineBlock> = Companion.CODEC
-	override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =
-		!player.isCreative
-
-	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
-		this.defaultBlockState()
-			.setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite)
-			.setValue(BlockStateProperties.POWERED, false)
-
-	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
-		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.POWERED)
-	}
-
-	override fun useWithoutItem(
-		state: BlockState,
-		level: Level,
-		pos: BlockPos,
-		player: Player,
-		hitResult: BlockHitResult
-	): InteractionResult {
-		if (!level.isClientSide) {
-			val entity = level.getBlockEntity(pos) as? DoughMachineBlockEntity ?: return InteractionResult.FAIL
-			player.openMenu(entity, pos)
-		}
-		return InteractionResult.sidedSuccess(level.isClientSide)
-	}
-
-	override fun onRemove(
-		state: BlockState,
-		level: Level,
-		pos: BlockPos,
-		newState: BlockState,
-		movedByPiston: Boolean
-	) {
-		if (!state.`is`(newState.block)) {
-			val entity = (level.getBlockEntity(pos) as DoughMachineBlockEntity)
-			entity.dropContents(level, pos)
-		}
-		level.invalidateCapabilities(pos)
-		super.onRemove(state, level, pos, newState, movedByPiston)
-	}
-
-	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
-		DoughMachineBlockEntity(pos, state)
-
-	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
-		ModBlockEntityTypes.DOUGH_MACHINE.get()
-}
+//class DoughMachineBlock : BreadModBlockWithEntity(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
+//	companion object {
+//		val CODEC: MapCodec<DoughMachineBlock> = simpleCodec { DoughMachineBlock() }
+//	}
+//
+//	override fun codec(): MapCodec<DoughMachineBlock> = Companion.CODEC
+//	override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =
+//		!player.isCreative
+//
+//	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
+//		this.defaultBlockState()
+//			.setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite)
+//			.setValue(BlockStateProperties.POWERED, false)
+//
+//	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
+//		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.POWERED)
+//	}
+//
+//	override fun useWithoutItem(
+//		state: BlockState,
+//		level: Level,
+//		pos: BlockPos,
+//		player: Player,
+//		hitResult: BlockHitResult
+//	): InteractionResult {
+//		if (!level.isClientSide) {
+//			val entity = level.getBlockEntity(pos) as? DoughMachineBlockEntity ?: return InteractionResult.FAIL
+//			player.openMenu(entity, pos)
+//		}
+//		return InteractionResult.sidedSuccess(level.isClientSide)
+//	}
+//
+//	override fun onRemove(
+//		state: BlockState,
+//		level: Level,
+//		pos: BlockPos,
+//		newState: BlockState,
+//		movedByPiston: Boolean
+//	) {
+//		if (!state.`is`(newState.block)) {
+//			val entity = (level.getBlockEntity(pos) as DoughMachineBlockEntity)
+//			entity.dropContents(level, pos)
+//		}
+//		level.invalidateCapabilities(pos)
+//		super.onRemove(state, level, pos, newState, movedByPiston)
+//	}
+//
+//	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
+//		DoughMachineBlockEntity(pos, state)
+//
+//	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
+//		ModBlockEntityTypes.DOUGH_MACHINE.get()
+//}

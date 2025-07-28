@@ -30,8 +30,8 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 	225,
 	"block_tab",
 	screen
-), LerpTicker {
-	override val lerpParams: Array<LerpParams> = arrayOf(LerpParams())
+) {
+	val lerpTicker: LerpTicker<Int> = LerpTicker(0 to LerpParams())
 	var blockEntity: BlockEntity? = null
 	private val random = RandomSource.create()
 
@@ -48,14 +48,14 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 			this.random,
 			this.x + 155,
 			this.y + 1,
-			this.getLerpedValue(0, partialTick),
+			this.lerpTicker.getLerpedValue(0, partialTick),
 			partialTick
 		)
 		this.setBlockEntityFromState()
 	}
 
 	override fun tickAdditional() {
-		this.tickAllPositions()
+		this.lerpTicker.tickAllPositions()
 	}
 
 	fun setBlockEntityFromState() {

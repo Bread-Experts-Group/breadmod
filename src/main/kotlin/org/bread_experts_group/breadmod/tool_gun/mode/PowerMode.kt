@@ -8,28 +8,23 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode
-import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
-import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 
 @ToolGunMode
 @Suppress("unused")
 class PowerMode : IToolGunMode {
 	companion object {
-		@DataGenerateLanguage("en_us", "Power Mode")
+		@DataGenerateLanguage(name = "Power Mode")
 		val name: MutableComponent = modTranslatable("tool_gun", "power", "mode", "name")
 
-		@DataGenerateLanguage("en_us", "WARNING! This will actually turn off your computer!")
+		@DataGenerateLanguage(name = "WARNING! This will actually turn off your computer!")
 		val description: MutableComponent = modTranslatable("tool_gun", "power", "mode", "description")
 
-		@DataGenerateLanguage("en_us", "Power")
+		@DataGenerateLanguage(name = "Power")
 		val displayName: MutableComponent = modTranslatable("tool_gun", "power", "mode", "display_name")
 
-		@DataGenerateLanguage("en_us", "This will turn off your computer!!!!")
+		@DataGenerateLanguage(name = "This will turn off your computer!!!!")
 		val tooltip: MutableComponent = modTranslatable("tool_gun", "power", "mode", "tooltip")
 	}
 
@@ -75,12 +70,12 @@ class PowerMode : IToolGunMode {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("power_mode")
-	override fun defineCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
-		this,
-		ModBlocks.ENERGY_STORAGE.asBlock(),
-		Builder()
-			.previewImage(ModGuiElements.POWER_PREVIEW)
-			.name(Companion.name)
-			.description(Companion.description)
-	)
+//	override fun defineCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
+//		this,
+//		ModBlocks.ENERGY_STORAGE.asBlock(),
+//		Builder()
+//			.previewImage(ModGuiElements.POWER_PREVIEW)
+//			.name(Companion.name)
+//			.description(Companion.description)
+//	)
 }

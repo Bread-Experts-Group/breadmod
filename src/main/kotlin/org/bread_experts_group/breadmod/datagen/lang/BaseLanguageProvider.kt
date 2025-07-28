@@ -47,27 +47,27 @@ internal abstract class BaseLanguageProvider(
 	fun getLanguageID(item: Any, annotation: DataGenerateLanguage = DataGenerateLanguage("")): String {
 		val actualItem = when (item) {
 			is DeferredHolder<*, *> -> item.get()
-			else                    -> item
+			else -> item
 		}
 		return (if (annotation.prefix == "<null>") "" else annotation.prefix) + when (actualItem) {
-			is Block            -> actualItem.descriptionId
-			is Item             -> actualItem.descriptionId
-			is ItemStack        -> actualItem.item.descriptionId
-			is EntityType<*>    -> actualItem.descriptionId
-			is CreativeModeTab  -> (actualItem.displayName.contents as TranslatableContents).key
-			is ModDamageType    -> actualItem.translationKey()
-			is SoundEvent       -> actualItem.location.toLanguageKey("sound")
-			is KeyMapping       -> actualItem.name
-			is String           -> actualItem
+			is Block -> actualItem.descriptionId
+			is Item -> actualItem.descriptionId
+			is ItemStack -> actualItem.item.descriptionId
+			is EntityType<*> -> actualItem.descriptionId
+			is CreativeModeTab -> (actualItem.displayName.contents as TranslatableContents).key
+			is ModDamageType -> actualItem.translationKey()
+			is SoundEvent -> actualItem.location.toLanguageKey("sound")
+			is KeyMapping -> actualItem.name
+			is String -> actualItem
 			is ResourceLocation -> actualItem.toLanguageKey()
-			is FluidType        -> actualItem.descriptionId
-			is Fluid            -> actualItem.fluidType.descriptionId +
+			is FluidType -> actualItem.descriptionId
+			is Fluid -> actualItem.fluidType.descriptionId +
 					if (actualItem.isSource(actualItem.defaultFluidState())) "_source"
 					else "_flowing"
-			is Component        -> actualItem.string
-			is TagKey<*>        -> actualItem.location.toLanguageKey()
-			is ResourceKey<*>   -> actualItem.location().toLanguageKey()
-			else                -> throw UnsupportedItemClassException(actualItem::class.java)
+			is Component -> actualItem.string
+			is TagKey<*> -> actualItem.location.toLanguageKey()
+			is ResourceKey<*> -> actualItem.location().toLanguageKey()
+			else -> throw UnsupportedItemClassException(actualItem::class.java)
 		} + (if (annotation.suffix == "<null>") "" else annotation.suffix)
 	}
 
@@ -116,7 +116,7 @@ internal abstract class BaseLanguageProvider(
 						addForDatum(data.source)
 						addForDatum(data.flowing)
 					}
-					else                 -> addForDatum(data)
+					else -> addForDatum(data)
 				}
 			}
 		this.addManualTranslations()

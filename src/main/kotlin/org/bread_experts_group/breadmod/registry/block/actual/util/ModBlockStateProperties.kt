@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty
 
 object ModBlockStateProperties {
 	val STORAGE_LEVEL: IntegerProperty = IntegerProperty.create("storage_level", 0, 4)
-	val TRIPLE_BLOCK_HALF: EnumProperty<TripleBlockHalf> =
+	val TRIPLE_BLOCK: EnumProperty<TripleBlockHalf> =
 		EnumProperty.create("triple_half", TripleBlockHalf::class.java)
 	val UPGRADE_ONE: BooleanProperty = BooleanProperty.create("upgrade_one")
 	val UPGRADE_TWO: BooleanProperty = BooleanProperty.create("upgrade_two")

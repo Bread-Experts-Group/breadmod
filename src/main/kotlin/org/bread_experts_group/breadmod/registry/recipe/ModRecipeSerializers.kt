@@ -4,7 +4,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
@@ -20,16 +20,12 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.Reci
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
 import java.util.function.Supplier
 
-object ModRecipeSerializers {
-	val RECIPE_SERIALIZER_REGISTRY: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(
-		Registries.RECIPE_SERIALIZER, BreadMod.ID
-	)
-
+object ModRecipeSerializers : RegistryProvider(Registries.RECIPE_SERIALIZER) {
+	private val registry: DeferredRegister<RecipeSerializer<*>> = this.getRegistry(Registries.RECIPE_SERIALIZER)
 	private fun <R : FluidEnergyRecipe> registerFERSupplier(
 		name: String,
 		recipe: RecipeFunctionDataFixer<R>
-	): Supplier<RecipeSerializer<R>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register(name) { -> FluidEnergySerializer(recipe) }
+	): Supplier<RecipeSerializer<R>> = this.registry.register(name) { -> FluidEnergySerializer(recipe) }
 
 	val WHEAT_CRUSHING: Supplier<RecipeSerializer<WheatCrusherRecipe>> =
 		this.registerFERSupplier("wheat_crushing", ::WheatCrusherRecipe)
@@ -40,19 +36,19 @@ object ModRecipeSerializers {
 	val MICROWAVE: Supplier<RecipeSerializer<MicrowaveRecipe>> =
 		this.registerFERSupplier("microwaving", ::MicrowaveRecipe)
 	val BREAD_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("bread_slice_crafting") { ->
+		this.registry.register("bread_slice_crafting") { ->
 			SimpleCraftingRecipeSerializer { BreadSlicingRecipe() }
 		}
 	val TOAST_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("toast_slice_crafting") { ->
+		this.registry.register("toast_slice_crafting") { ->
 			SimpleCraftingRecipeSerializer { ToastSlicingRecipe() }
 		}
 	val ARMOR_POTION: Supplier<SimpleCraftingRecipeSerializer<BreadArmorPotionRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("bread_armor_potion_crafting") { ->
+		this.registry.register("bread_armor_potion_crafting") { ->
 			SimpleCraftingRecipeSerializer { BreadArmorPotionRecipe() }
 		}
 	val BREAD_DOPING: Supplier<SimpleCraftingRecipeSerializer<DopedBreadRecipe>> =
-		this.RECIPE_SERIALIZER_REGISTRY.register("doped_bread_crafting") { ->
+		this.registry.register("doped_bread_crafting") { ->
 			SimpleCraftingRecipeSerializer { DopedBreadRecipe() }
 		}
 

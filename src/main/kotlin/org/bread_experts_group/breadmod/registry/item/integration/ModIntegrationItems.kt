@@ -14,7 +14,7 @@ object ModIntegrationItems {
 		@DataGenerateLanguage(name = "An EMC battery made of... bread?", prefix = ".tooltip")
 		@DataGenerateLanguage("en_jp", "パン玉")
 		@DataGenerateModelSingleItem
-		val BREAD_ORB: DeferredItem<ItemPE> = ModItems.ITEM_REGISTRY.register("bread_orb", ::BreadOrbItem)
+		val BREAD_ORB: DeferredItem<ItemPE> = ModItems.registerItem("bread_orb", ::BreadOrbItem)
 	}
 
 	fun registerAll() {

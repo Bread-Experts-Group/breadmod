@@ -8,7 +8,10 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntityNew
+import org.bread_experts_group.breadmod.registry.block.ModBlocks
+import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler
 
 class DoubleOrNothingPacketNew(
 	private val pos: BlockPos,
@@ -26,9 +29,11 @@ class DoubleOrNothingPacketNew(
 		private fun handleClientboundPacket(data: DoubleOrNothingPacketNew, context: IPayloadContext) {
 			context.enqueueWork {
 				val level = context.player().level() ?: return@enqueueWork
-				val entity = level.getBlockEntity(data.pos) as DoubleOrNothingBlockEntityNew
-				val playerData = entity.data ?: return@enqueueWork
-				entity.handleDouble(playerData, level, context.player(), data.nothing)
+				val entity = level.getBlockEntity(data.pos) as BreadModBlockEntity
+				val state = entity.getCapability(DoubleOrNothingStateHandler.BLOCK_VOID)
+				(ModBlocks.DOUBLE_OR_NOTHING.get().block as DoubleOrNothingBlock).handleDouble(
+					entity, state, data.nothing
+				)
 			}
 		}
 

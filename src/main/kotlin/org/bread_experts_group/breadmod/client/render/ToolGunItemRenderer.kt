@@ -11,7 +11,6 @@ import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
-import org.bread_experts_group.breadmod.client.render.LerpTicker.LerpParams
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
@@ -25,14 +24,27 @@ import java.security.SecureRandom
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
-), LerpTicker.BEWLR {
+), RendererWithBEWLRLerpTicker<ToolGunItemRenderer.LerpLabels> {
 	private val caseOhInstrument: SecureRandom = SecureRandom()
 	private var caseOhSize: BigDecimal = BigDecimal.TWO
-	override val lerpParams: Array<LerpParams> = arrayOf(
-		LerpParams(incrementAmount = -0.075f, isHandledManually = true), // Delta
-		LerpParams(isHandledManually = true), // Rotation
-		LerpParams(isHandledManually = true, clampMin = 0f) // Recoil
-	)
+	override val lerpTicker: LerpTicker.BEWLR<LerpLabels> = object : LerpTicker.BEWLR<LerpLabels>(
+		LerpLabels.DELTA to LerpParams(incrementAmount = -0.075f, isHandledManually = true),
+		LerpLabels.ROTATION to LerpParams(isHandledManually = true),
+		LerpLabels.RECOIL to LerpParams(isHandledManually = true, clampMin = 0f)
+	) {
+		override fun tick() {
+			if (!localClient.gamePaused()) {
+				val delta = this.getRawValue(LerpLabels.DELTA)
+				this.tickCustom(LerpLabels.DELTA) { params ->
+					if (delta > 0f) params.tick()
+				}
+				this.tickCustom(LerpLabels.ROTATION) { params ->
+					if (delta > 0f) params.setClampedPos(40 * delta)
+				}
+				this.tickIndex(LerpLabels.RECOIL, -0.0125f * delta)
+			}
+		}
+	}
 
 	/**
 	 * Overrides tool gun rendering if this value isn't null.
@@ -43,31 +55,15 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	 * Sets the delta and recoil to their triggered values.
 	 */
 	fun triggerDelta() {
-		this.setParamPosition(0, 1.5f + localClient.timer.realtimeDeltaTicks)
-		this.setParamPosition(2, 0.15f)
-	}
-
-	override fun tick() {
-		if (!localClient.gamePaused()) {
-			val delta = this.getRawValue(0)
-			this.tickCustom(0) { params ->
-				if (delta > 0f) params.tick()
-			}
-			this.tickCustom(1) { params ->
-				if (delta > 0f) params.setClampedPos(40 * delta)
-			}
-			this.tickIndex(2, -0.0125f * delta)
-		}
+		this.lerpTicker.setParamPosition(LerpLabels.DELTA, 1.5f + localClient.timer.realtimeDeltaTicks)
+		this.lerpTicker.setParamPosition(LerpLabels.RECOIL, 0.15f)
 	}
 
 	// Models
 	@Suppress("unused")
-	private val altModel: BakedModel =
-		localClient.getModel("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
-	private val mainModel: BakedModel =
-		localClient.getModel("item/$TOOL_GUN_DEF/item")
-	private val coilModel: BakedModel =
-		localClient.getModel("item/$TOOL_GUN_DEF/coil")
+	private val altModel: BakedModel = localClient.getModel("item/$TOOL_GUN_DEF/alt/tool_gun_alt")
+	private val mainModel: BakedModel = localClient.getModel("item/$TOOL_GUN_DEF/item")
+	private val coilModel: BakedModel = localClient.getModel("item/$TOOL_GUN_DEF/coil")
 
 	fun renderToolGun(
 		stack: ItemStack,
@@ -80,8 +76,12 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val rotation = if (this.getRawValue(0) > 0f) this.getLerpedValue(1) else this.getRawValue(1)
-		val recoil = if (this.getRawValue(2) <= 0f) this.getRawValue(2) else this.getLerpedValue(2)
+		val rotation =
+			if (this.lerpTicker.getRawValue(LerpLabels.DELTA) > 0f) this.lerpTicker.getLerpedValue(LerpLabels.ROTATION)
+			else this.lerpTicker.getRawValue(LerpLabels.ROTATION)
+		val recoil =
+			if (this.lerpTicker.getRawValue(LerpLabels.RECOIL) <= 0f) this.lerpTicker.getRawValue(LerpLabels.RECOIL)
+			else this.lerpTicker.getLerpedValue(LerpLabels.RECOIL)
 
 		if (displayContext.firstPerson()) {
 			val modeRenderer: IToolGunModeRenderer = this.rendererOverride ?: currentMode.getCustomRenderer()
@@ -188,7 +188,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val rotation = this.getLerpedValue(1)
+		val rotation = this.lerpTicker.getLerpedValue(LerpLabels.ROTATION)
 		localClient.itemRenderer.renderItemModel(
 			this.mainModel,
 			stack,
@@ -232,5 +232,11 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			packedOverlay,
 			currentMode
 		)
+	}
+
+	enum class LerpLabels {
+		DELTA,
+		ROTATION,
+		RECOIL
 	}
 }

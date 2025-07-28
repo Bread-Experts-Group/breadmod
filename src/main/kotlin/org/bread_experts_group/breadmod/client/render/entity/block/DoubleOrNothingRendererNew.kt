@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.phys.AABB
@@ -22,7 +22,14 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.solidColorTexture
 import org.bread_experts_group.breadmod.client.render.translateDiv16
 import org.bread_experts_group.breadmod.client.render.translateOnBlockSide
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntityNew
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler.Companion.getLerpTicker
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.CASHOUT
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.DOUBLE_COUNTER
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.JACKPOT
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.NOTHING
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.USE_NEGATIVE_TILT
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.Color
@@ -30,7 +37,9 @@ import org.bread_experts_group.breadmod.util.toVec3
 import org.joml.Vector3f
 import org.lwjgl.system.MemoryUtil
 
-class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRenderer<DoubleOrNothingBlockEntityNew> {
+class DoubleOrNothingRendererNew(
+	context: BlockEntityRendererProvider.Context
+) : BlockEntityRenderer<BreadModBlockEntity> {
 	// Background vertex positions
 	private val outerBGVertexes: Array<Vector3f> = arrayOf(
 		Vector3f(0.05f, 0f, 0f), // top left
@@ -47,7 +56,7 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 
 	// Colors
 	private val colors: IntArray = intArrayOf(
-		Color.color(255, 57, 0),
+		Color.color(255, 57),
 		Color.color(255, 79, 59),
 		Color.color(255, 59, 106),
 		Color.color(255, 59, 135),
@@ -75,21 +84,27 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	private val outerBGOffset: Vec3 = Vec3(0.0, 22.0, -9.0)
 	private val innerBGOffset: Vec3 = Vec3(0.0, 21.8, -8.99)
 
+	@Suppress("UNCHECKED_CAST")
+	private fun BreadModBlockEntity.getStateHandler(): DoubleOrNothingStateHandler = this.getCapability(
+		DoubleOrNothingStateHandler.BLOCK_VOID
+	) as DoubleOrNothingStateHandler
+
 	override fun render(
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val half = blockEntity.blockState.getValue(ModBlockStateProperties.TRIPLE_BLOCK_HALF)
+		val half = blockEntity.blockState.getValue(ModBlockStateProperties.TRIPLE_BLOCK)
 		if (half != ModBlockStateProperties.TripleBlockHalf.LOWER) return
 
 		poseStack.pushPose()
 		poseStack.translateOnBlockSide(blockEntity.blockState)
 		this.renderOuterBG(poseStack, bufferSource, blockEntity)
 		this.renderInnerBG(poseStack, bufferSource, blockEntity, this.backgroundTexture)
+		val state = blockEntity.getStateHandler()
 		context(blockEntity, partialTick, poseStack, bufferSource) {
 //			this.setGlobalTextRotation(blockEntity, poseStack, partialTick)
 			this.drawTextNew(
@@ -99,19 +114,19 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 				Color.WHITE
 			)
 			when {
-				blockEntity.doubleCounter > 0 -> this.drawText(
-					Component.literal("${blockEntity.doubleCounter}x"),
+				state.get(DOUBLE_COUNTER) > 0 -> this.drawText(
+					Component.literal("${state.get(DOUBLE_COUNTER)}x"),
 					5f,
 					0.04f,
-					this.colors[blockEntity.doubleCounter - 1]
+					this.colors[state.get(DOUBLE_COUNTER) - 1]
 				)
-				blockEntity.nothing           -> this.drawText(
+				state.get(NOTHING) -> this.drawText(
 					Component.literal("NOTHING"),
 					4.5f,
 					0.018f,
 					Color.RED
 				)
-				else                          -> this.drawText(
+				else -> this.drawText(
 					Component.literal("PRESS DOUBLE TO START"),
 					4.5f,
 					0.01f,
@@ -144,24 +159,25 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	fun renderOuterBG(
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 	) {
 		poseStack.pushPose()
 		poseStack.translateDiv16(this.outerBGOffset)
+		val state = blockEntity.getStateHandler()
 		val outerBGRenderType =
-			if (!blockEntity.nothing && !blockEntity.jackpot && !blockEntity.cashout) ModRenderType.rainbow()
+			if (!state.get(NOTHING) && !state.get(JACKPOT) && !state.get(CASHOUT)) ModRenderType.rainbow()
 			else RenderType.text(this.colorableTexture)
 		val outerBGColor =
-			if (blockEntity.cashout) this.cashoutBGColor
-			else if (blockEntity.nothing) this.nothingBGColor
+			if (state.get(CASHOUT)) this.cashoutBGColor
+			else if (state.get(NOTHING)) this.nothingBGColor
 			else Color.WHITE
-		val speed = when (blockEntity.doubleCounter) {
-			5    -> 1300f
-			6    -> 1400f
-			7    -> 1600f
-			8    -> 1900f
-			9    -> 2300f
-			10   -> 2400f
+		val speed = when (state.get(DOUBLE_COUNTER)) {
+			5 -> 1300f
+			6 -> 1400f
+			7 -> 1600f
+			8 -> 1900f
+			9 -> 2300f
+			10 -> 2400f
 			else -> 1000f
 		}
 
@@ -183,11 +199,12 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	fun renderInnerBG(
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 		texture: ResourceLocation,
 	) {
-		val bgColor = if (blockEntity.doubleCounter == 0 && !blockEntity.nothing) this.defaultBGColor
-		else if (!blockEntity.nothing) this.colors[8 - (blockEntity.doubleCounter - 1)]
+		val state = blockEntity.getStateHandler()
+		val bgColor = if (state.get(DOUBLE_COUNTER) == 0 && !state.get(NOTHING)) this.defaultBGColor
+		else if (!state.get(NOTHING)) this.colors[8 - (state.get(DOUBLE_COUNTER) - 1)]
 		else this.nothingBGColor
 
 		poseStack.pushPose()
@@ -205,21 +222,22 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 		poseStack.popPose()
 	}
 
-	override fun getRenderBoundingBox(blockEntity: DoubleOrNothingBlockEntityNew): AABB {
+	override fun getRenderBoundingBox(blockEntity: BreadModBlockEntity): AABB {
 		val pos = blockEntity.blockPos.toVec3()
 		return AABB(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 2.0, pos.z + 1)
 	}
 
 	fun setLocalZoom(
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 		poseStack: PoseStack,
 		partialTick: Float,
 		centeringOffset: Float,
 		offset: Int,
 		scale: Float
 	) {
-		val rawZoom = blockEntity.getRawValue(0)
-		val zoom = if (rawZoom == 0f) 0f else blockEntity.getLerpedValue(0, partialTick)
+		val lerp = blockEntity.getLerpTicker<LerpLabels>()
+		val rawZoom = lerp.getRawValue(LerpLabels.ZOOM)
+		val zoom = if (rawZoom == 0f) 0f else lerp.getLerpedValue(LerpLabels.ZOOM, partialTick)
 		val zoomOffset = (offset.toFloat() / 11f) + if (offset != 0) scale + 0.05f else 0f
 		poseStack.translate(-centeringOffset, -(zoomOffset - 0.15f), 0f)
 		poseStack.scaleFlat(1f + zoom)
@@ -227,16 +245,18 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	}
 
 	fun setTextRotation(
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 		poseStack: PoseStack,
 		partialTick: Float,
 		offset: Float
 	) {
-		val rawPositive = blockEntity.getRawValue(1)
-		val tiltPositive = if (rawPositive == 0f) 0f else blockEntity.getLerpedValue(1, partialTick)
-		val rawNegative = blockEntity.getRawValue(2)
-		val tiltNegative = if (rawNegative == 0f) 0f else blockEntity.getLerpedValue(2, partialTick)
-		val tilt = if (blockEntity.useNegativeTilt) tiltNegative else tiltPositive
+		val lerp = blockEntity.getLerpTicker<LerpLabels>()
+		val state = blockEntity.getStateHandler()
+		val rawPositive = lerp.getRawValue(LerpLabels.TILT_P)
+		val tiltPositive = if (rawPositive == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_P, partialTick)
+		val rawNegative = lerp.getRawValue(LerpLabels.TILT_N)
+		val tiltNegative = if (rawNegative == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_N, partialTick)
+		val tilt = if (state.get(USE_NEGATIVE_TILT)) tiltNegative else tiltPositive
 
 		poseStack.translate(0f, (offset / 16f) - 0.25f, 0f)
 		poseStack.mulPose(Axis.ZN.rotationDegrees(tilt))
@@ -244,15 +264,17 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	}
 
 	fun setGlobalTextRotation(
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 		poseStack: PoseStack,
 		partialTick: Float
 	) {
-		val rawPositive = blockEntity.getRawValue(1)
-		val tiltPositive = if (rawPositive == 0f) 0f else blockEntity.getLerpedValue(1, partialTick)
-		val rawNegative = blockEntity.getRawValue(2)
-		val tiltNegative = if (rawNegative == 0f) 0f else blockEntity.getLerpedValue(2, partialTick)
-		val tilt = if (blockEntity.useNegativeTilt) tiltNegative else tiltPositive
+		val lerp = blockEntity.getLerpTicker<LerpLabels>()
+		val state = blockEntity.getStateHandler()
+		val rawPositive = lerp.getRawValue(LerpLabels.TILT_P)
+		val tiltPositive = if (rawPositive == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_P, partialTick)
+		val rawNegative = lerp.getRawValue(LerpLabels.TILT_N)
+		val tiltNegative = if (rawNegative == 0f) 0f else lerp.getLerpedValue(LerpLabels.TILT_N, partialTick)
+		val tilt = if (state.get(USE_NEGATIVE_TILT)) tiltNegative else tiltPositive
 
 		poseStack.translateDiv16(8f, 8f, 0f)
 		poseStack.mulPose(Axis.ZN.rotationDegrees(tilt))
@@ -260,7 +282,7 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	}
 
 	context(
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource
@@ -276,15 +298,12 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 		val splitSize = split.size.toFloat()
 		var splitRotOffset = 0f
 		poseStack.pushPose()
-
 //		poseStack.translate(0f, -(1f + scale), 0f)
 //		poseStack.mulPose(Axis.ZP.rotationDegrees(blockEntity.level!!.gameTime.toFloat()))
 //		poseStack.translate(0f, (1f + scale), 0f)
-
 		poseStack.mulPose(Axis.XN.rotationDegrees(180f))
 
 		repeat(splitSize.toInt()) { splitRotOffset += 0.5f }
-
 //		poseStack.translateDiv16(0f, 0.5f + splitRotOffset, 0f)
 //		poseStack.scaleFlat(1f + (blockEntity.getLerpedValue(0, partialTick)))
 //		poseStack.translateDiv16(-0f, -(0.5f + splitRotOffset), 0f)
@@ -295,12 +314,10 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 			poseStack.pushPose()
 			poseStack.translateDiv16(0f, splitYOffset, 0f)
 			poseStack.translate(center, 0f, 0f)
-
 //			poseStack.translate(0f, -0.5f, 0f)
 			// todo the scaling causes the text to move downwards, figure out a way to fix that.. maybe the zoom code above
 			poseStack.scaleFlat(scale)
 //			poseStack.translate(0f, -(0.5f * (1f + scale)), 0f)
-
 			font.renderText(
 				component,
 				color,
@@ -318,7 +335,7 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 	}
 
 	context(
-		blockEntity: DoubleOrNothingBlockEntityNew,
+		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource
@@ -361,5 +378,11 @@ class DoubleOrNothingRendererNew(private val context: Context) : BlockEntityRend
 			poseStack.popPose()
 		}
 		poseStack.popPose()
+	}
+
+	enum class LerpLabels {
+		ZOOM,
+		TILT_P,
+		TILT_N
 	}
 }

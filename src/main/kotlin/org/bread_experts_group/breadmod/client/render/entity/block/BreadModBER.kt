@@ -6,14 +6,9 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.resources.model.BakedModel
-import net.minecraft.core.Direction.DOWN
-import net.minecraft.core.Direction.EAST
-import net.minecraft.core.Direction.NORTH
-import net.minecraft.core.Direction.SOUTH
-import net.minecraft.core.Direction.UP
-import net.minecraft.core.Direction.WEST
+import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -30,10 +25,10 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Bread Mod Specific [BlockEntityRenderer] with an extremely cursed "in-world" [GuiGraphics] implementation.
  */
-abstract class BreadModBER<T : BreadModBlockEntity<T>>(
-	val context: Context,
+abstract class BreadModBER(
+	val context: BlockEntityRendererProvider.Context,
 	private val snapGraphicsToBlockSide: Boolean = true
-) : BlockEntityRenderer<T> {
+) : BlockEntityRenderer<BreadModBlockEntity> {
 	protected val random: RandomSource = RandomSource.create()
 	private val modelData: ModelData = ModelData.builder().with(ModelProperty(), ExtraFaceData.DEFAULT).build()
 //	private val debugAxisModel: BakedModel = localClient.modelManager.getModel("${ModelProvider.BLOCK_FOLDER}/axis")
@@ -41,7 +36,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	 * Make sure to place this before the yRot mulPose, since this model's orientation is pulled from the BlockState.
 	 */
 	fun renderOriginalModel(
-		blockEntity: T,
+		blockEntity: BreadModBlockEntity,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
 		packedOverlay: Int
@@ -61,7 +56,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	}
 
 	protected fun renderModel(
-		blockEntity: T,
+		blockEntity: BreadModBlockEntity,
 		model: BakedModel,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
@@ -132,7 +127,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	}
 
 	final override fun render(
-		blockEntity: T,
+		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
@@ -158,7 +153,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	}
 
 	open fun renderGuiGraphics(
-		blockEntity: T,
+		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
@@ -169,7 +164,7 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 	}
 
 	open fun renderBM(
-		blockEntity: T,
+		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,
 		bufferSource: MultiBufferSource,
@@ -206,17 +201,17 @@ abstract class BreadModBER<T : BreadModBlockEntity<T>>(
 			blockEntity.blockState.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING).getOrNull()
 				?: blockEntity.blockState.getOptionalValue(BlockStateProperties.FACING).getOrNull() ?: return
 		when (facing) {
-			DOWN, UP -> {} // todo work on down/up for the FACING property
-			NORTH    -> lgPoseStack.translate(0.0, 0.0, -Companion.TRANSLATE_OFFSET)
-			SOUTH    -> {
+			Direction.DOWN, Direction.UP -> {} // todo work on down/up for the FACING property
+			Direction.NORTH -> lgPoseStack.translate(0.0, 0.0, -Companion.TRANSLATE_OFFSET)
+			Direction.SOUTH -> {
 				lgPoseStack.mulPose(Axis.YN.rotationDegrees(180f))
 				lgPoseStack.translate(-1.0, 0.0, -1.0 - Companion.TRANSLATE_OFFSET)
 			}
-			WEST     -> {
+			Direction.WEST -> {
 				lgPoseStack.mulPose(Axis.YP.rotationDegrees(90f))
 				lgPoseStack.translate(-1.0, 0.0, -Companion.TRANSLATE_OFFSET)
 			}
-			EAST     -> {
+			Direction.EAST -> {
 				lgPoseStack.mulPose(Axis.YN.rotationDegrees(90f))
 				lgPoseStack.translate(0.0, 0.0, -1.0 - Companion.TRANSLATE_OFFSET)
 			}

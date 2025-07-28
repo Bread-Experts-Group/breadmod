@@ -9,15 +9,13 @@ import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.neoforged.neoforge.registries.DeferredRegister
-import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.registry.RegistryProvider
 import java.util.EnumMap
 
-object ModArmorMaterials {
-	internal val ARMOR_REGISTRY: DeferredRegister<ArmorMaterial> = DeferredRegister.create(
-		Registries.ARMOR_MATERIAL, BreadMod.ID
-	)
-	val BREAD: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("bread") { ->
+object ModArmorMaterials : RegistryProvider(Registries.ARMOR_MATERIAL) {
+	private val registry: DeferredRegister<ArmorMaterial> = this.getRegistry(Registries.ARMOR_MATERIAL)
+	val BREAD: Holder<ArmorMaterial> = this.registry.register("bread") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.BOOTS] = 2
@@ -37,7 +35,7 @@ object ModArmorMaterials {
 			0f
 		)
 	}
-	val RF_BREAD: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("rf_bread") { ->
+	val RF_BREAD: Holder<ArmorMaterial> = this.registry.register("rf_bread") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.BOOTS] = 4
@@ -56,7 +54,7 @@ object ModArmorMaterials {
 			0.5f
 		)
 	}
-	val CHEF: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("chef") { ->
+	val CHEF: Holder<ArmorMaterial> = this.registry.register("chef") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.HELMET] = 2
@@ -69,7 +67,7 @@ object ModArmorMaterials {
 			1f
 		)
 	}
-	val GLUON_GUN_BACKPACK: Holder<ArmorMaterial> = this.ARMOR_REGISTRY.register("gluon_backpack") { ->
+	val GLUON_GUN_BACKPACK: Holder<ArmorMaterial> = this.registry.register("gluon_backpack") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
 				map[ArmorItem.Type.BODY] = 3

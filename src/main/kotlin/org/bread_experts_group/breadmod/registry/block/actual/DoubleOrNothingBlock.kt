@@ -1,19 +1,16 @@
 package org.bread_experts_group.breadmod.registry.block.actual
 
-import com.mojang.serialization.MapCodec
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.Direction.Axis
-import net.minecraft.core.Direction.DOWN
-import net.minecraft.core.Direction.EAST
-import net.minecraft.core.Direction.NORTH
-import net.minecraft.core.Direction.SOUTH
-import net.minecraft.core.Direction.UP
-import net.minecraft.core.Direction.WEST
+import net.minecraft.core.SectionPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
-import net.minecraft.sounds.SoundSource.BLOCKS
+import net.minecraft.sounds.SoundSource
 import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -26,43 +23,52 @@ import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
-import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.RenderShape
-import net.minecraft.world.level.block.Rotation.CLOCKWISE_180
-import net.minecraft.world.level.block.Rotation.CLOCKWISE_90
-import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityType
-import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.block.Rotation
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.StateDefinition.Builder
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.block.state.properties.DirectionProperty
-import net.minecraft.world.level.block.state.properties.EnumProperty
+import net.minecraft.world.level.block.state.StateDefinition
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import org.bread_experts_group.breadmod.registry.block.ModBlockEntityTypes
-import org.bread_experts_group.breadmod.registry.block.actual.entity.DoubleOrNothingBlockEntityNew
-import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
-import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf
+import net.neoforged.neoforge.capabilities.BaseCapability
+import net.neoforged.neoforge.network.PacketDistributor
+import net.neoforged.neoforge.registries.DeferredHolder
+import org.bread_experts_group.breadmod.client.render.LerpTicker
+import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRendererNew
+import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRendererNew.LerpLabels
+import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacketNew
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler.Companion.getLerpTicker
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.BLOCKHEAD
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.CASHOUT
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.DATA
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.DOUBLE_COUNTER
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.JACKPOT
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.JACKPOT_TIMER
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.NOTHING
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.REWIRED
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler.Companion.USE_NEGATIVE_TILT
+import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TRIPLE_BLOCK
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.MIDDLE
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.UPPER
+import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.directionalTargetFaceSection
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.rotate
+import java.util.Optional
+import java.util.Random
 import java.util.stream.Stream
 
-class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
+class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 	companion object {
-		val TRIPLE_HALF: EnumProperty<TripleBlockHalf> = ModBlockStateProperties.TRIPLE_BLOCK_HALF
-		val FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
-
 		// shapes lower
 		val SHAPE_LOWER_NORTH: VoxelShape = Stream.of(
 			box(1.0, 7.0, 9.0, 15.0, 16.0, 16.0),
@@ -83,17 +89,17 @@ class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(0.0, 7.0, 3.0, 1.0, 8.0, 4.0),
 			box(0.0, 7.0, 4.0, 1.0, 9.0, 5.0)
 		).combine()
-		val SHAPE_LOWER_SOUTH: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(CLOCKWISE_180)
-		val SHAPE_LOWER_EAST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(CLOCKWISE_90)
-		val SHAPE_LOWER_WEST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(COUNTERCLOCKWISE_90)
+		val SHAPE_LOWER_SOUTH: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(Rotation.CLOCKWISE_180)
+		val SHAPE_LOWER_EAST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(Rotation.CLOCKWISE_90)
+		val SHAPE_LOWER_WEST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
 		val SHAPE_MIDDLE_NORTH: VoxelShape = Stream.of(
 			box(15.0, 0.0, 8.0, 16.0, 16.0, 16.0),
 			box(1.0, 0.0, 9.0, 15.0, 16.0, 16.0),
 			box(0.0, 0.0, 8.0, 1.0, 16.0, 16.0)
 		).combine()
-		val SHAPE_MIDDLE_SOUTH: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(CLOCKWISE_180)
-		val SHAPE_MIDDLE_EAST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(CLOCKWISE_90)
-		val SHAPE_MIDDLE_WEST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(COUNTERCLOCKWISE_90)
+		val SHAPE_MIDDLE_SOUTH: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(Rotation.CLOCKWISE_180)
+		val SHAPE_MIDDLE_EAST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(Rotation.CLOCKWISE_90)
+		val SHAPE_MIDDLE_WEST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
 
 		// shapes upper
 		val SHAPE_UPPER_NORTH: VoxelShape = Stream.of(
@@ -106,32 +112,182 @@ class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
 			box(15.0, 0.0, 8.0, 16.0, 7.0, 16.0),
 			box(1.0, 10.0, 10.8, 15.0, 15.0, 11.0)
 		).combine()
-		val SHAPE_UPPER_SOUTH: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(CLOCKWISE_180)
-		val SHAPE_UPPER_EAST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(CLOCKWISE_90)
-		val SHAPE_UPPER_WEST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(COUNTERCLOCKWISE_90)
+		val SHAPE_UPPER_SOUTH: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(Rotation.CLOCKWISE_180)
+		val SHAPE_UPPER_EAST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(Rotation.CLOCKWISE_90)
+		val SHAPE_UPPER_WEST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
 		val SHEARS_TAG: TagKey<Item> = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:tools/shear"))
 		val BOWS_TAG: TagKey<Item> = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:tools/bow"))
+		val SOUNDS: List<DeferredHolder<SoundEvent, SoundEvent>> = listOf(
+			ModSounds.DOUBLE_1X,
+			ModSounds.DOUBLE_2X,
+			ModSounds.DOUBLE_3X,
+			ModSounds.DOUBLE_4X,
+			ModSounds.DOUBLE_5X,
+			ModSounds.DOUBLE_6X,
+			ModSounds.DOUBLE_7X,
+			ModSounds.DOUBLE_8X,
+			ModSounds.DOUBLE_9X,
+			ModSounds.DOUBLE_JACKPOT
+		)
 	}
 
-	override fun codec(): MapCodec<out BaseEntityBlock> = BlockBehaviour.simpleCodec { this }
-
-	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
-		builder.add(Companion.TRIPLE_HALF, Companion.FACING)
+	fun applyZoom(entity: BreadModBlockEntity, state: DoubleOrNothingStateHandler) {
+		val lerpTicker = entity.getLerpTicker<LerpLabels>()
+		lerpTicker.setParamPosition(
+			LerpLabels.ZOOM, when (state.get(DOUBLE_COUNTER)) {
+				0, 1, 2, 3 -> 0.3f
+				4 -> 0.4f
+				5 -> 0.42f
+				6 -> 0.47f
+				7 -> 0.50f
+				8 -> 0.52f
+				9 -> 0.55f
+				else -> 0f
+			}
+		)
 	}
 
-	override fun playerDestroy(
-		level: Level,
-		player: Player,
-		pos: BlockPos,
-		state: BlockState,
-		blockEntity: BlockEntity?,
-		tool: ItemStack
+	fun applyTilt(entity: BreadModBlockEntity, state: DoubleOrNothingStateHandler) {
+		val lerpTicker = entity.getLerpTicker<LerpLabels>()
+		val doubles = state.get(DOUBLE_COUNTER)
+		if (doubles < 4) return
+		val tiltIntensity = when (doubles) {
+			4 -> 10f
+			5 -> 13f
+			6 -> 15f
+			7 -> 17f
+			8 -> 19f
+			9 -> 22f
+			else -> 0f
+		}
+		lerpTicker.setParamPosition(LerpLabels.TILT_P, tiltIntensity)
+		lerpTicker.setParamPosition(LerpLabels.TILT_N, -tiltIntensity)
+		state.set(USE_NEGATIVE_TILT, kotlin.random.Random.nextBoolean())
+	}
+
+	fun handleDouble(
+		entity: BreadModBlockEntity, state: DoubleOrNothingStateHandler,
+		nothing: Boolean
 	) {
-		super.playerDestroy(level, player, pos, state, blockEntity, tool)
+		val doubles = state.get(DOUBLE_COUNTER)
+		this.applyZoom(entity, state)
+		if (nothing) {
+			state.set(DOUBLE_COUNTER, 0)
+			state.set(NOTHING, true)
+		} else {
+			this.applyTilt(entity, state)
+			if (doubles < 10) state.set(DOUBLE_COUNTER, doubles + 1)
+			if (doubles == 10) state.set(JACKPOT, true)
+		}
 	}
 
-	override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
-		return super.playerWillDestroy(level, pos, state, player)
+	fun triggerDouble(level: Level, pos: BlockPos, player: Player) {
+		if (level !is ServerLevel) return
+		val entity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return
+		val state = entity.getCapability(DoubleOrNothingStateHandler.BLOCK_VOID)
+		if (state.get(JACKPOT)) return
+		if (state.get(NOTHING)) state.set(NOTHING, false)
+		if (state.getOrNull(DATA) == null) state.set(
+			DATA,
+			DoubleOrNothingStateHandler.DoubleOrNothingData(player, level.gameTime)
+		)
+		fun playSound(level: Level, pos: BlockPos, sound: DeferredHolder<SoundEvent, SoundEvent>) = level.playSound(
+			null, pos.above(), sound.get(), SoundSource.BLOCKS,
+			1f, 1f
+		)
+
+		val doubles = Random().nextInt(0, 10) >= (if (state.get(REWIRED)) 0 else 4) || state.get(DOUBLE_COUNTER) == 0
+		playSound(level, pos, if (doubles) Companion.SOUNDS[state.get(DOUBLE_COUNTER)] else ModSounds.DOUBLE_NOTHING)
+		PacketDistributor.sendToPlayersTrackingChunk(
+			level, SectionPos.of(pos).chunk(),
+			DoubleOrNothingPacketNew(pos, !doubles)
+		)
+		this.handleDouble(entity, state, !doubles)
+	}
+
+	fun triggerCashout(level: Level, pos: BlockPos, player: Player) {
+		this.logger.info("CASHOUT")
+	}
+
+	override fun shouldCreateEntity(pos: BlockPos, state: BlockState): Boolean = when (state.getValue(TRIPLE_BLOCK)) {
+		LOWER -> true
+		else -> false
+	}
+
+	override fun ofCapabilities(): Map<BaseCapability<*, *>, Map<Optional<Any>, Any>> = mapOf(
+		DoubleOrNothingStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to DoubleOrNothingStateHandler()),
+		LerpTickerHandler.BLOCK_VOID to mapOf(
+			Optional.empty<Any>() to LerpTickerHandler(
+				LerpLabels.ZOOM to LerpTicker.LerpParams(clampMin = 0f, clampMax = 0.55f),
+				LerpLabels.TILT_P to LerpTicker.LerpParams(clampMin = 0f, clampMax = 20f),
+				LerpLabels.TILT_N to LerpTicker.LerpParams(clampMin = -20f, clampMax = 0f)
+			)
+		)
+	)
+
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+		::DoubleOrNothingRendererNew
+
+	override val commonTickBM: BreadModTicker<Level> = { entity, level, _, pos ->
+		val ticker = entity.getLerpTicker<LerpLabels>()
+		fun tickZoom(params: (LerpTicker.LerpParams) -> Unit): Unit = ticker.tickCustom(LerpLabels.ZOOM, params)
+		fun tickTilts(params: (LerpTicker.LerpParams) -> Unit) {
+			ticker.tickCustom(LerpLabels.TILT_P, params)
+			ticker.tickCustom(LerpLabels.TILT_N, params)
+		}
+
+		val state = entity.getCapability(DoubleOrNothingStateHandler.BLOCK_VOID)
+		fun reset() {
+			state.set(DATA, null)
+			state.set(DOUBLE_COUNTER, 0)
+			state.set(CASHOUT, false)
+			ticker.setParamPosition(LerpLabels.ZOOM, 0.3f)
+			ticker.setParamPosition(LerpLabels.TILT_P, 0f)
+		}
+
+		state.set(REWIRED, true)
+		val multiplier = when (state.get(DOUBLE_COUNTER)) {
+			7 -> 0.7f
+			8 -> 0.5f
+			9 -> 0.2f
+			else -> 1f
+		}
+
+		tickZoom { it.setClampedPos(-0.1f * multiplier) }
+		tickTilts {
+			if (it.clampMax == 0f) it.setClampedPos(2f * multiplier + 0.05f) else it.setClampedPos(-2f * multiplier + 0.05f)
+		}
+
+		state.getOrNull(DATA)?.let { data ->
+			if (data.startedAt + 600 < level.gameTime
+				&& !state.get(JACKPOT)
+				&& !state.get(NOTHING)
+				&& !state.get(CASHOUT)
+				&& data.startedAt != 0L
+			) reset()
+
+			if (state.get(CASHOUT) && data.startedAt + 60 == level.gameTime) reset()
+
+			if (state.get(JACKPOT)) {
+				state.set(JACKPOT_TIMER, state.get(JACKPOT_TIMER) + 1)
+				if (state.get(JACKPOT_TIMER) > 1200) {
+					state.set(JACKPOT, false)
+					state.set(JACKPOT_TIMER, 0)
+					reset()
+				}
+			}
+
+			if (state.get(NOTHING)) {
+				if (data.startedAt + 30 == level.gameTime) {
+					reset()
+					state.set(NOTHING, false)
+				}
+			}
+		}
+	}
+
+	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
+		builder.add(TRIPLE_BLOCK, HORIZONTAL_FACING)
 	}
 
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState? {
@@ -143,16 +299,16 @@ class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
 			level.getBlockState(pos.above().above()).canBeReplaced(context)
 		) {
 			return this.defaultBlockState()
-				.setValue(Companion.FACING, context.horizontalDirection.opposite)
-				.setValue(Companion.TRIPLE_HALF, LOWER)
+				.setValue(HORIZONTAL_FACING, context.horizontalDirection.opposite)
+				.setValue(TRIPLE_BLOCK, LOWER)
 		} else null
 	}
 
 	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
 	override fun setPlacedBy(level: Level, pos: BlockPos, state: BlockState, placer: LivingEntity?, stack: ItemStack) {
-		level.setBlockAndUpdate(pos.above(), state.setValue(Companion.TRIPLE_HALF, MIDDLE))
-		level.setBlockAndUpdate(pos.above().above(), state.setValue(Companion.TRIPLE_HALF, UPPER))
+		level.setBlockAndUpdate(pos.above(), state.setValue(TRIPLE_BLOCK, MIDDLE))
+		level.setBlockAndUpdate(pos.above().above(), state.setValue(TRIPLE_BLOCK, UPPER))
 	}
 
 	override fun updateShape(
@@ -163,54 +319,54 @@ class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
 		pos: BlockPos,
 		neighborPos: BlockPos
 	): BlockState {
-		val half = state.getValue(Companion.TRIPLE_HALF)
+		val half = state.getValue(TRIPLE_BLOCK)
 		// todo only breaks all three blocks when the middle or lower block is broken, upper block doesn't break the other two.
 		//  look into DoorBlock and try to make a three block tall variant that works properly..
-		return if (facing.axis != Axis.Y || (half == LOWER != (facing == UP))) {
-			if (half == LOWER && facing == DOWN) {
+		return if (facing.axis != Direction.Axis.Y || (half == LOWER != (facing == Direction.UP))) {
+			if (half == LOWER && facing == Direction.DOWN) {
 				Blocks.AIR.defaultBlockState()
 			} else super.updateShape(state, facing, neighborState, level, pos, neighborPos)
 		} else {
-			if (neighborState.block is DoubleOrNothingBlock && neighborState.getValue(Companion.TRIPLE_HALF) != half)
-				neighborState.setValue(Companion.TRIPLE_HALF, half) else Blocks.AIR.defaultBlockState()
+			if (neighborState.block is DoubleOrNothingBlock && neighborState.getValue(TRIPLE_BLOCK) != half)
+				neighborState.setValue(TRIPLE_BLOCK, half) else Blocks.AIR.defaultBlockState()
 		}
 	}
 
 	override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape =
-		when (state.getValue(Companion.FACING)) {
-			NORTH -> {
-				when (state.getValue(Companion.TRIPLE_HALF)) {
-					UPPER  -> Companion.SHAPE_UPPER_NORTH
+		when (state.getValue(HORIZONTAL_FACING)) {
+			Direction.NORTH -> {
+				when (state.getValue(TRIPLE_BLOCK)) {
+					UPPER -> Companion.SHAPE_UPPER_NORTH
 					MIDDLE -> Companion.SHAPE_MIDDLE_NORTH
-					LOWER  -> Companion.SHAPE_LOWER_NORTH
-					else   -> Shapes.block()
+					LOWER -> Companion.SHAPE_LOWER_NORTH
+					else -> Shapes.block()
 				}
 			}
-			SOUTH -> {
-				when (state.getValue(Companion.TRIPLE_HALF)) {
-					UPPER  -> Companion.SHAPE_UPPER_SOUTH
+			Direction.SOUTH -> {
+				when (state.getValue(TRIPLE_BLOCK)) {
+					UPPER -> Companion.SHAPE_UPPER_SOUTH
 					MIDDLE -> Companion.SHAPE_MIDDLE_SOUTH
-					LOWER  -> Companion.SHAPE_LOWER_SOUTH
-					else   -> Shapes.block()
+					LOWER -> Companion.SHAPE_LOWER_SOUTH
+					else -> Shapes.block()
 				}
 			}
-			WEST  -> {
-				when (state.getValue(Companion.TRIPLE_HALF)) {
-					UPPER  -> Companion.SHAPE_UPPER_WEST
+			Direction.WEST -> {
+				when (state.getValue(TRIPLE_BLOCK)) {
+					UPPER -> Companion.SHAPE_UPPER_WEST
 					MIDDLE -> Companion.SHAPE_MIDDLE_WEST
-					LOWER  -> Companion.SHAPE_LOWER_WEST
-					else   -> Shapes.block()
+					LOWER -> Companion.SHAPE_LOWER_WEST
+					else -> Shapes.block()
 				}
 			}
-			EAST  -> {
-				when (state.getValue(Companion.TRIPLE_HALF)) {
-					UPPER  -> Companion.SHAPE_UPPER_EAST
+			Direction.EAST -> {
+				when (state.getValue(TRIPLE_BLOCK)) {
+					UPPER -> Companion.SHAPE_UPPER_EAST
 					MIDDLE -> Companion.SHAPE_MIDDLE_EAST
-					LOWER  -> Companion.SHAPE_LOWER_EAST
-					else   -> Shapes.block()
+					LOWER -> Companion.SHAPE_LOWER_EAST
+					else -> Shapes.block()
 				}
 			}
-			else  -> Shapes.block()
+			else -> Shapes.block()
 		}
 
 	override fun useWithoutItem(
@@ -220,19 +376,25 @@ class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
 		player: Player,
 		hitResult: BlockHitResult
 	): InteractionResult {
-		val half = state.getValue(Companion.TRIPLE_HALF)
-		val newPos = if (half == MIDDLE) pos.below() else if (half == UPPER) pos.below().below() else pos
+		val half = state.getValue(TRIPLE_BLOCK)
 		val normalizedPos = normalizedHitPos(hitResult.location, pos)
-		val direction = state.getValue(Companion.FACING)
-		val doubleButtonState =
-			directionalTargetFaceSection(direction, normalizedPos, 0.29, 0.46, 0.62, 0.81, 0.49, 0.59)
-		val cashOutButtonState =
-			directionalTargetFaceSection(direction, normalizedPos, 0.29, 0.46, 0.19, 0.38, 0.49, 0.59)
-		val entity = level.getBlockEntity(newPos) as DoubleOrNothingBlockEntityNew
-
-		if (doubleButtonState || half == MIDDLE || half == UPPER) entity.triggerDouble(level, player)
-		else if (cashOutButtonState) entity.triggerCashout(level, player)
-
+		val direction = state.getValue(HORIZONTAL_FACING)
+		val doubleButtonState = directionalTargetFaceSection(
+			direction, normalizedPos,
+			0.29, 0.46, 0.62, 0.81,
+			0.49, 0.59
+		)
+		val cashOutButtonState = directionalTargetFaceSection(
+			direction, normalizedPos,
+			0.29, 0.46, 0.19, 0.38,
+			0.49, 0.59
+		)
+		when {
+			doubleButtonState -> this.triggerDouble(level, pos, player)
+			cashOutButtonState -> this.triggerCashout(level, pos, player)
+			half == MIDDLE -> this.triggerDouble(level, pos.below(1), player)
+			half == UPPER -> this.triggerDouble(level, pos.below(2), player)
+		}
 		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 
@@ -245,22 +407,18 @@ class DoubleOrNothingBlock : BreadModBlockWithEntity(Properties.of()) {
 		hand: InteractionHand,
 		hitResult: BlockHitResult
 	): ItemInteractionResult {
-		if (state.getValue(Companion.TRIPLE_HALF) == LOWER) {
-			val entity = level.getBlockEntity(pos) as DoubleOrNothingBlockEntityNew
+		val entity = level.getBlockEntity(pos) as? BreadModBlockEntity
+			?: return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+		val entityState = entity.getCapability(DoubleOrNothingStateHandler.BLOCK_VOID)
+		if (state.getValue(TRIPLE_BLOCK) == LOWER) {
 			if (stack.`is`(Companion.SHEARS_TAG)) {
-				level.playSound(null, pos, SoundEvents.BEE_STING, BLOCKS, 1f, 1f)
-				entity.rewired = !entity.rewired
+				level.playSound(null, pos, SoundEvents.BEE_STING, SoundSource.BLOCKS, 1f, 1f)
+				entityState.invert(REWIRED)
 			} else if (stack.`is`(Companion.BOWS_TAG)) {
-				level.playSound(null, pos, SoundEvents.VILLAGER_NO, BLOCKS, 1f, 1f)
-				entity.blockhead = !entity.blockhead
+				level.playSound(null, pos, SoundEvents.VILLAGER_NO, SoundSource.BLOCKS, 1f, 1f)
+				entityState.invert(BLOCKHEAD)
 			}
 		}
-		return super.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
 	}
-
-	override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity =
-		DoubleOrNothingBlockEntityNew(pos, state)
-
-	override fun getBlockEntityType(level: Level, state: BlockState): BlockEntityType<*> =
-		ModBlockEntityTypes.DOUBLE_OR_NOTHING.get()
 }

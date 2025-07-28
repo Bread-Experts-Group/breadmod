@@ -29,7 +29,6 @@ import org.bread_experts_group.breadmod.mixin.client.IMultiPartBlockStateBuilder
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
-import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
@@ -67,40 +66,37 @@ class ModBlockStateProvider(
 			ModBlocks.NUKE.asBlock(),
 			this.models().getBuilder("breadmod:block/nuke")
 		)
-
-		this.horizontalBlock(ModBlocks.MONITOR.asBlock()) {
-			val model = this.models().cube(
-				"breadmod:block/monitor",
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
-			).renderType("minecraft:cutout")
-
-			return@horizontalBlock model
-		}
-		this.simpleBlockItem(
-			ModBlocks.MONITOR.asBlock(),
-			this.models().getBuilder("breadmod:block/monitor")
-		)
-
-		this.horizontalBlock(ModBlocks.RADIO_BLOCK.asBlock()) {
-			val model = this.models().orientable(
-				"breadmod:block/radio_block",
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side")
-			)
-
-			return@horizontalBlock model
-		}
-		this.simpleBlockItem(
-			ModBlocks.RADIO_BLOCK.asBlock(),
-			this.models().getBuilder("breadmod:block/radio_block")
-		)
-
+//		this.horizontalBlock(ModBlocks.MONITOR.asBlock()) {
+//			val model = this.models().cube(
+//				"breadmod:block/monitor",
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
+//			).renderType("minecraft:cutout")
+//
+//			return@horizontalBlock model
+//		}
+//		this.simpleBlockItem(
+//			ModBlocks.MONITOR.asBlock(),
+//			this.models().getBuilder("breadmod:block/monitor")
+//		)
+//		this.horizontalBlock(ModBlocks.RADIO_BLOCK.asBlock()) {
+//			val model = this.models().orientable(
+//				"breadmod:block/radio_block",
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side"),
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block"),
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side")
+//			)
+//
+//			return@horizontalBlock model
+//		}
+//		this.simpleBlockItem(
+//			ModBlocks.RADIO_BLOCK.asBlock(),
+//			this.models().getBuilder("breadmod:block/radio_block")
+//		)
 		this.getVariantBuilder(ModBlocks.FLOUR_LAYER_BLOCK.asBlock()).forAllStates { state ->
 			val layer = state.getValue(BlockStateProperties.LAYERS)
 			ConfiguredModel.builder()
@@ -126,94 +122,93 @@ class ModBlockStateProvider(
 				)
 				.build()
 		}
-		val connector = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_part"))
-		val core = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_core"))
-		this.getMultipartBuilder(ModBlocks.CABLE.asBlock())
-			.createPart(core).end()
-			.createSidedPart(connector)
-		this.simpleBlockItem(ModBlocks.CABLE.asBlock(), core)
+		this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_part"))
+		this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_core"))
+//		this.getMultipartBuilder(ModBlocks.CABLE.asBlock())
+//			.createPart(core).end()
+//			.createSidedPart(connector)
+//		this.simpleBlockItem(ModBlocks.CABLE.asBlock(), core)
 		// Diesel Generator
-		this.getMultipartBuilder(ModBlocks.DIESEL_GENERATOR.asBlock())
-			.createSidedPart(this.blockBenchBlockModel("diesel_generator/diesel_generator"))
-			.createSidedConditionalPart(
-				this.blockBenchBlockModel("diesel_generator/diesel_generator_door"),
-				BlockStateProperties.OPEN,
-				false
-			)
-			.createSidedConditionalPart(
-				this.blockBenchBlockModel("diesel_generator/diesel_generator_door_open"),
-				BlockStateProperties.OPEN,
-				true
-			)
-			.createSidedConditionalPart(
-				this.blockBenchBlockModel("diesel_generator/battery_upgrade"),
-				BlockStateProperties.OPEN,
-				true,
-				{ it.condition(ModBlockStateProperties.UPGRADE_ONE, true) }
-			)
-			.createSidedConditionalPart(
-				this.blockBenchBlockModel("diesel_generator/charging_upgrade"),
-				BlockStateProperties.OPEN,
-				true,
-				{ it.condition(ModBlockStateProperties.UPGRADE_TWO, true) }
-			)
-			.createSidedConditionalPart(
-				this.blockBenchBlockModel("diesel_generator/turbo_upgrade"),
-				BlockStateProperties.OPEN,
-				true,
-				{ it.condition(ModBlockStateProperties.UPGRADE_THREE, true) }
-			)
-		this.simpleBlockItem(
-			ModBlocks.DIESEL_GENERATOR.asBlock(),
-			this.blockBenchItemModel("diesel_generator_item")
-		)
+//		this.getMultipartBuilder(ModBlocks.DIESEL_GENERATOR.asBlock())
+//			.createSidedPart(this.blockBenchBlockModel("diesel_generator/diesel_generator"))
+//			.createSidedConditionalPart(
+//				this.blockBenchBlockModel("diesel_generator/diesel_generator_door"),
+//				BlockStateProperties.OPEN,
+//				false
+//			)
+//			.createSidedConditionalPart(
+//				this.blockBenchBlockModel("diesel_generator/diesel_generator_door_open"),
+//				BlockStateProperties.OPEN,
+//				true
+//			)
+//			.createSidedConditionalPart(
+//				this.blockBenchBlockModel("diesel_generator/battery_upgrade"),
+//				BlockStateProperties.OPEN,
+//				true,
+//				{ it.condition(ModBlockStateProperties.UPGRADE_ONE, true) }
+//			)
+//			.createSidedConditionalPart(
+//				this.blockBenchBlockModel("diesel_generator/charging_upgrade"),
+//				BlockStateProperties.OPEN,
+//				true,
+//				{ it.condition(ModBlockStateProperties.UPGRADE_TWO, true) }
+//			)
+//			.createSidedConditionalPart(
+//				this.blockBenchBlockModel("diesel_generator/turbo_upgrade"),
+//				BlockStateProperties.OPEN,
+//				true,
+//				{ it.condition(ModBlockStateProperties.UPGRADE_THREE, true) }
+//			)
+//		this.simpleBlockItem(
+//			ModBlocks.DIESEL_GENERATOR.asBlock(),
+//			this.blockBenchItemModel("diesel_generator_item")
+//		)
 		// Item Pedestal
 		this.simpleBlock(ModBlocks.ITEM_PEDESTAL.asBlock(), this.blockBenchBlockModel("item_pedestal"))
 		this.simpleBlockItem(ModBlocks.ITEM_PEDESTAL.asBlock(), this.blockBenchBlockModel("item_pedestal"))
 		// Toaster
 		// todo toaster multipart
-		this.horizontalBlockBenchModel(ModBlocks.TOASTER.asBlock(), "toaster")
-		this.simpleBlockItem(ModBlocks.TOASTER.asBlock(), this.blockBenchItemModel("toaster_item"))
+//		this.horizontalBlockBenchModel(ModBlocks.TOASTER.asBlock(), "toaster")
+//		this.simpleBlockItem(ModBlocks.TOASTER.asBlock(), this.blockBenchItemModel("toaster_item"))
 		// Wheat Crusher
-		val machineTop = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
-		val machineSide = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
-		val machineBack = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
-		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.asBlock()) { state ->
-			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-			val model = this.models().cube(
-				"breadmod:block/wheat_crusher$machineOn",
-				machineTop,
-				machineTop,
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
-				machineBack,
-				machineSide,
-				machineSide
-			)
-			return@horizontalBlock model
-		}
-		this.simpleBlockItem(
-			ModBlocks.WHEAT_CRUSHER.asBlock(),
-			this.models().getBuilder("breadmod:block/wheat_crusher")
-		)
+		this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
+		this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
+		this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
+//		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.asBlock()) { state ->
+//			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+//			val model = this.models().cube(
+//				"breadmod:block/wheat_crusher$machineOn",
+//				machineTop,
+//				machineTop,
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
+//				machineBack,
+//				machineSide,
+//				machineSide
+//			)
+//			return@horizontalBlock model
+//		}
+//		this.simpleBlockItem(
+//			ModBlocks.WHEAT_CRUSHER.asBlock(),
+//			this.models().getBuilder("breadmod:block/wheat_crusher")
+//		)
 		// Dough Machine
-		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.asBlock()) { state ->
-			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-			val model = this.models().cube(
-				"breadmod:block/dough_machine$machineOn",
-				machineTop,
-				machineTop,
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
-				machineBack,
-				machineSide,
-				machineSide
-			)
-			return@horizontalBlock model
-		}
-		this.simpleBlockItem(
-			ModBlocks.DOUGH_MACHINE.asBlock(),
-			this.models().getBuilder("breadmod:block/dough_machine")
-		)
-
+//		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.asBlock()) { state ->
+//			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+//			val model = this.models().cube(
+//				"breadmod:block/dough_machine$machineOn",
+//				machineTop,
+//				machineTop,
+//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
+//				machineBack,
+//				machineSide,
+//				machineSide
+//			)
+//			return@horizontalBlock model
+//		}
+//		this.simpleBlockItem(
+//			ModBlocks.DOUGH_MACHINE.asBlock(),
+//			this.models().getBuilder("breadmod:block/dough_machine")
+//		)
 		this.horizontalBlock(ModBlocks.GENERATOR.asBlock()) { state ->
 			val active = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
 			this.blockBenchBlockModel("generator$active")
@@ -222,45 +217,40 @@ class ModBlockStateProvider(
 			ModBlocks.GENERATOR.asBlock(),
 			this.models().getBuilder("breadmod:block/generator")
 		)
-
-		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
-			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
-			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
-				1    -> "_one"
-				2    -> "_two"
-				3    -> "_three"
-				4    -> "_four"
-				else -> ""
-			}
-			val model = this.models().orientableWithBottom(
-				"breadmod:block/energy_storage$storedLevel",
-				this.modLoc("$blockFolder/side"),
-				this.modLoc("$blockFolder/front$storedLevel"),
-				this.modLoc("$blockFolder/bottom"),
-				this.modLoc("$blockFolder/top")
-			)
-			return@horizontalBlock model
-		}
-		this.simpleBlockItem(
-			ModBlocks.ENERGY_STORAGE.asBlock(),
-			this.models().getBuilder("breadmod:block/energy_storage")
-		)
-
+//		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.asBlock()) { state ->
+//			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
+//			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
+//				1    -> "_one"
+//				2    -> "_two"
+//				3    -> "_three"
+//				4    -> "_four"
+//				else -> ""
+//			}
+//			val model = this.models().orientableWithBottom(
+//				"breadmod:block/energy_storage$storedLevel",
+//				this.modLoc("$blockFolder/side"),
+//				this.modLoc("$blockFolder/front$storedLevel"),
+//				this.modLoc("$blockFolder/bottom"),
+//				this.modLoc("$blockFolder/top")
+//			)
+//			return@horizontalBlock model
+//		}
+//		this.simpleBlockItem(
+//			ModBlocks.ENERGY_STORAGE.asBlock(),
+//			this.models().getBuilder("breadmod:block/energy_storage")
+//		)
 		this.simpleBlockItem(
 			ModBlocks.FLOUR_LAYER_BLOCK.asBlock(),
 			this.models().getBuilder("breadmod:block/flour_layer_1")
 		)
-
-		this.horizontalBlockBenchModelWithItem(ModBlocks.KEYBOARD.asBlock(), "keyboard")
+//		this.horizontalBlockBenchModelWithItem(ModBlocks.KEYBOARD.asBlock(), "keyboard")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.WAR_TERMINAL.asBlock(), "war_terminal")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.NIKO_BLOCK.asBlock(), "niko_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.asBlock(), "omaneko_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.asBlock(), "ricard_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.asBlock(), "unfunnylad_block")
-
-		this.horizontalBlockBenchModelWithItem(ModBlocks.MICROWAVE.asBlock(), "microwave")
-		this.simpleBlockItem(ModBlocks.MICROWAVE.asBlock(), this.blockBenchItemModel("microwave_item"))
-
+//		this.horizontalBlockBenchModelWithItem(ModBlocks.MICROWAVE.asBlock(), "microwave")
+//		this.simpleBlockItem(ModBlocks.MICROWAVE.asBlock(), this.blockBenchItemModel("microwave_item"))
 		this.doorBlockWithRenderType(
 			ModBlocks.BREAD_DOOR.asBlock() as DoorBlock,
 			this.modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),
@@ -294,18 +284,18 @@ class ModBlockStateProvider(
 		)
 		// Double or Nothing
 		this.horizontalBlock(ModBlocks.DOUBLE_OR_NOTHING.asBlock()) { state ->
-			val half = state.getValue(DoubleOrNothingBlock.Companion.TRIPLE_HALF)
+			val half = state.getValue(ModBlockStateProperties.TRIPLE_BLOCK)
 			val segment = when (half) {
-				ModBlockStateProperties.TripleBlockHalf.UPPER  -> "upper"
+				ModBlockStateProperties.TripleBlockHalf.UPPER -> "upper"
 				ModBlockStateProperties.TripleBlockHalf.MIDDLE -> "middle"
-				ModBlockStateProperties.TripleBlockHalf.LOWER  -> "lower"
-				else                                           -> ""
+				ModBlockStateProperties.TripleBlockHalf.LOWER -> "lower"
+				else -> ""
 			}
 			val model = this.blockBenchBlockModel("double_or_nothing_$segment")
 			return@horizontalBlock model
 		}
 		// Creative Generator
-		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.asBlock(), "creative_generator")
+//		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.asBlock(), "creative_generator")
 		// Coffee Machine
 		this.horizontalBlockBenchModelWithItem(ModBlocks.COFFEE_MACHINE.asBlock(), "coffee_machine")
 	}
