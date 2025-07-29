@@ -8,15 +8,15 @@ import net.minecraft.world.Containers
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 
-class SlotQueueHandler : ParentedHandler<BlockEntity>(), INBTSerializable<ListTag>, Iterable<ItemStack> {
+class SlotQueueHandler : ParentedHandler<BreadModBlockEntity>(), INBTSerializable<ListTag>, Iterable<ItemStack> {
 	companion object {
 		val BLOCK_VOID: BlockCapability<SlotQueueHandler, Void?> = BlockCapability.createVoid<SlotQueueHandler>(
 			modLocation("slot_queue_handler"),
@@ -81,7 +81,7 @@ class SlotQueueHandler : ParentedHandler<BlockEntity>(), INBTSerializable<ListTa
 				}
 				else -> throw IllegalStateException(this.contained.size.toString())
 			}
-			newShape = Shapes.joinUnoptimized(newShape, localShape, BooleanOp.OR)
+			newShape = Shapes.join(newShape, localShape, BooleanOp.OR)
 		}
 		this.shape = newShape
 	}
@@ -92,6 +92,7 @@ class SlotQueueHandler : ParentedHandler<BlockEntity>(), INBTSerializable<ListTa
 	fun append(stack: ItemStack) {
 		this.contained.add(stack)
 		this.updateShape()
+		this.stateUpdated()
 	}
 
 	fun dropContents(pos: BlockPos, level: Level) {
@@ -112,6 +113,7 @@ class SlotQueueHandler : ParentedHandler<BlockEntity>(), INBTSerializable<ListTa
 			ItemStack.parse(provider, it).ifPresent { stack -> this.contained.add(stack) }
 		}
 		this.updateShape()
+		this.stateUpdated()
 	}
 
 	override fun toString(): String = "SlotQueueHandler[${this.contained}]"

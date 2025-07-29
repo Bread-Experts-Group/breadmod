@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 
 object ModBlockStateProperties {
-	val STORAGE_LEVEL: IntegerProperty = IntegerProperty.create("storage_level", 0, 4)
+	val STORAGE_LEVEL: IntegerProperty = IntegerProperty.create("storage_level", 0, 13)
 	val TRIPLE_BLOCK: EnumProperty<TripleBlockHalf> =
 		EnumProperty.create("triple_half", TripleBlockHalf::class.java)
 	val UPGRADE_ONE: BooleanProperty = BooleanProperty.create("upgrade_one")
@@ -27,16 +27,16 @@ object ModBlockStateProperties {
 
 		fun getOtherHalf(flipMiddle: Boolean = false): TripleBlockHalf =
 			when (this) {
-				LOWER  -> MIDDLE
+				LOWER -> MIDDLE
 				MIDDLE -> if (flipMiddle) LOWER else UPPER
-				UPPER  -> MIDDLE
+				UPPER -> MIDDLE
 			}
 
 		override fun toString(): String = this.serializedName
 
 		override fun getSerializedName(): String = when (this) {
-			LOWER  -> "lower"
-			UPPER  -> "upper"
+			LOWER -> "lower"
+			UPPER -> "upper"
 			MIDDLE -> "middle"
 		}
 	}

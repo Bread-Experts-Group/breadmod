@@ -6,6 +6,7 @@ import net.minecraft.core.Direction
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -29,7 +30,7 @@ class PlaceItemInWorldPacket(
 
 		fun handleServerboundPacket(data: PlaceItemInWorldPacket, context: IPayloadContext) {
 			val player = context.player()
-			val level = player.level()
+			val level = player.level() as ServerLevel
 			val stack = player.getItemInHand(InteractionHand.MAIN_HAND)
 			val blockState = level.getBlockState(data.pos)
 			val pos = if (!blockState.`is`(ModBlocks.ITEM_IN_WORLD_BLOCK.get())) when (data.direction) {

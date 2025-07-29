@@ -62,6 +62,8 @@ import net.neoforged.neoforge.capabilities.BlockCapability
 import org.joml.Vector3f
 import java.lang.reflect.Method
 import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 import java.util.UUID
 import java.util.function.Supplier
 import java.util.stream.Stream
@@ -75,8 +77,12 @@ val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
 
 val HORIZONTAL_DIRECTIONS: Array<Direction> = Direction.entries.filter { it.axis.isHorizontal }.toTypedArray()
 val ALL_DIRECTIONS: Array<Direction> = Direction.entries.toTypedArray()
-
-fun BigDecimal.capInt(): Int = if (this > Int.MAX_VALUE.toBigDecimal()) Int.MAX_VALUE else this.toInt()
+val floatRoundEven: MathContext = MathContext(7, RoundingMode.HALF_EVEN)
+val BigDecimal.int: Int
+	get() = this.coerceIn(
+		BigDecimal(Int.MIN_VALUE),
+		BigDecimal(Int.MAX_VALUE)
+	).intValueExact()
 
 /**
  * Retrieves an instance of the provided [path]

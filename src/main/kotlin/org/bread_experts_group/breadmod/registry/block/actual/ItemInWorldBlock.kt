@@ -15,9 +15,9 @@ import net.minecraft.world.level.material.PushReaction
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import net.neoforged.neoforge.capabilities.BaseCapability
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.SlotQueueHandler
 import java.util.Optional
 
@@ -25,9 +25,12 @@ class ItemInWorldBlock : BreadModBlock(
 	Properties.of()
 		.pushReaction(PushReaction.DESTROY)
 ) {
-	override fun ofCapabilities(): Map<BaseCapability<*, *>, Map<Optional<Any>, Any>> = mapOf(
-		SlotQueueHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to SlotQueueHandler())
-	)
+	override fun ofCapabilities(): CapabilityMap {
+		val inventory = SlotQueueHandler()
+		return mapOf(
+			SlotQueueHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> inventory })
+		)
+	}
 
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		::ItemInWorldRenderer

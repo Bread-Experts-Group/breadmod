@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.util.Color
 
 class EnergyStorageRenderer(
@@ -21,9 +22,9 @@ class EnergyStorageRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val energy = blockEntity.getCapability(Capabilities.EnergyStorage.BLOCK)
-		val energyStored = energy.energyStored
-		val maxEnergyStored = energy.maxEnergyStored
+		val energy = blockEntity.getCapability(Capabilities.EnergyStorage.BLOCK) as ExtendedEnergyHandler
+		val energyStored = energy.bigAmount
+		val maxEnergyStored = energy.bigCapacity
 		poseStack.drawTextOnBlockSide(
 			this.context.font,
 			Component.literal("$energyStored FE"),

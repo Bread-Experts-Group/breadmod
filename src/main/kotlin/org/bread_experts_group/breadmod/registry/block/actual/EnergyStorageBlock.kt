@@ -1,53 +1,62 @@
-package org.bread_experts_group.breadmod.registry.block.actual.storage
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
-import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
-import net.minecraft.world.entity.player.Player
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.BlockPlaceContext
-import net.minecraft.world.level.Level
-import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.phys.HitResult
-import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.capabilities.Capabilities
-import net.neoforged.neoforge.energy.EnergyStorage
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
-import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
-import org.bread_experts_group.breadmod.registry.block.actual.BreadModTicker
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.util.floatRoundEven
+import java.math.BigDecimal
 import java.util.Optional
+import kotlin.math.roundToInt
 
 class EnergyStorageBlock : BreadModBlock(Properties.of()) {
-	private fun energyToLevel(stored: Int): Int =
-		if (stored >= 1000000) 4
-		else if (stored > 750000) 3
-		else if (stored > 500000) 2
-		else if (stored > 250000) 1
-		else 0
-
-	override fun ofCapabilities(): Map<BaseCapability<*, *>, Map<Optional<Any>, Any>> = mapOf(
-		Capabilities.EnergyStorage.BLOCK to mapOf(Optional.empty<Any>() to EnergyStorage(1_000_000))
-	)
+	override fun ofCapabilities(): CapabilityMap {
+		val container = ExtendedEnergyHandler(
+			BigDecimal.TWO.pow(256)
+		)
+		val storage = { _: BreadModBlockEntity, _: Any? -> container }
+		return mapOf(
+			Capabilities.EnergyStorage.BLOCK to mapOf(
+				Optional.empty<Direction>() to storage,
+				Optional.of(Direction.UP) to storage,
+				Optional.of(Direction.DOWN) to storage,
+				Optional.of(Direction.NORTH) to storage,
+				Optional.of(Direction.SOUTH) to storage,
+				Optional.of(Direction.EAST) to storage,
+				Optional.of(Direction.WEST) to storage,
+			)
+		)
+	}
 
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		::EnergyStorageRenderer
 
-	override val commonTickBM: BreadModTicker<Level> = { entity, level, state, pos ->
-		val energy = entity.getCapability(Capabilities.EnergyStorage.BLOCK)
+	override val serverTickBM: BreadModTicker<ServerLevel> = { entity, level, state, pos ->
+		val energy = entity.getCapability(Capabilities.EnergyStorage.BLOCK) as ExtendedEnergyHandler
 		level.setBlockAndUpdate(
 			pos,
-			state.setValue(ModBlockStateProperties.STORAGE_LEVEL, this.energyToLevel(energy.energyStored))
+			state.setValue(
+				ModBlockStateProperties.STORAGE_LEVEL,
+				((energy.bigAmount.divide(energy.bigCapacity, floatRoundEven)).toFloat() / (1 / 13f))
+					.roundToInt()
+			)
 		)
 	}
 
@@ -56,10 +65,8 @@ class EnergyStorageBlock : BreadModBlock(Properties.of()) {
 	}
 
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState {
-		val energyStored = context.itemInHand.getOrDefault(ModDataComponents.ENERGY, 0)
 		return this.defaultBlockState()
 			.setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite)
-			.setValue(ModBlockStateProperties.STORAGE_LEVEL, this.energyToLevel(energyStored))
 	}
 
 	override fun appendHoverText(
@@ -68,20 +75,8 @@ class EnergyStorageBlock : BreadModBlock(Properties.of()) {
 		tooltipComponents: MutableList<Component>,
 		tooltipFlag: TooltipFlag
 	) {
-		val energy = stack.getOrDefault(ModDataComponents.ENERGY, 0)
-		tooltipComponents.add(Component.literal("energy: $energy").withStyle(ChatFormatting.RED))
-	}
-
-	override fun getCloneItemStack(
-		state: BlockState,
-		target: HitResult,
-		level: LevelReader,
-		pos: BlockPos,
-		player: Player
-	): ItemStack {
-		val stack = super.getCloneItemStack(state, target, level, pos, player)
-		val entity = level.getBlockEntity(pos) as BreadModBlockEntity
-		stack.applyComponents(entity.collectComponents())
-		return stack
+		val amount = stack.getOrDefault(ModDataComponents.ENERGY, BigDecimal.ZERO)
+		val capacity = stack.getOrDefault(ModDataComponents.ENERGY_CAPACITY, BigDecimal.ONE)
+		tooltipComponents.add(Component.literal("$amount / $capacity").withStyle(ChatFormatting.RED))
 	}
 }

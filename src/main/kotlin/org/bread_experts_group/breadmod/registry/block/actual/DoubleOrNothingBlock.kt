@@ -34,14 +34,14 @@ import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.bread_experts_group.breadmod.client.render.LerpTicker
 import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer
 import org.bread_experts_group.breadmod.client.render.entity.block.DoubleOrNothingRenderer.LerpLabels
-import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacketNew
+import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler.Companion.getLerpTicker
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler
@@ -200,7 +200,7 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 		playSound(level, pos, if (doubles) Companion.SOUNDS[state.get(DOUBLE_COUNTER)] else ModSounds.DOUBLE_NOTHING)
 		PacketDistributor.sendToPlayersTrackingChunk(
 			level, SectionPos.of(pos).chunk(),
-			DoubleOrNothingPacketNew(pos, !doubles)
+			DoubleOrNothingPacket(pos, !doubles)
 		)
 		this.handleDouble(entity, state, !doubles)
 	}
@@ -214,16 +214,20 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 		else -> false
 	}
 
-	override fun ofCapabilities(): Map<BaseCapability<*, *>, Map<Optional<Any>, Any>> = mapOf(
-		DoubleOrNothingStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to DoubleOrNothingStateHandler()),
-		LerpTickerHandler.BLOCK_VOID to mapOf(
-			Optional.empty<Any>() to LerpTickerHandler(
-				LerpLabels.ZOOM to LerpTicker.LerpParams(clampMin = 0f, clampMax = 0.55f),
-				LerpLabels.TILT_P to LerpTicker.LerpParams(clampMin = 0f, clampMax = 20f),
-				LerpLabels.TILT_N to LerpTicker.LerpParams(clampMin = -20f, clampMax = 0f)
+	override fun ofCapabilities(): CapabilityMap {
+		val state = DoubleOrNothingStateHandler()
+		val lerp = LerpTickerHandler(
+			LerpLabels.ZOOM to LerpTicker.LerpParams(clampMin = 0f, clampMax = 0.55f),
+			LerpLabels.TILT_P to LerpTicker.LerpParams(clampMin = 0f, clampMax = 20f),
+			LerpLabels.TILT_N to LerpTicker.LerpParams(clampMin = -20f, clampMax = 0f)
+		)
+		return mapOf(
+			DoubleOrNothingStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> state }),
+			LerpTickerHandler.BLOCK_VOID to mapOf(
+				Optional.empty<Any>() to { _, _ -> lerp }
 			)
 		)
-	)
+	}
 
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		::DoubleOrNothingRenderer
@@ -284,6 +288,7 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 				}
 			}
 		}
+		this.synchronizeEntity(entity)
 	}
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {

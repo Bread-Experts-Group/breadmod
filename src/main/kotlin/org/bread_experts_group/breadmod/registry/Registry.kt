@@ -98,7 +98,8 @@ import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvide
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
-import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacketNew
+import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
+import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
@@ -109,6 +110,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
+import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
@@ -543,13 +545,15 @@ object Registry {
 			ClientPhysicsGridPacket.register(registrar)
 			GridPosUpdatePacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
-			DoubleOrNothingPacketNew.register(registrar)
+			DoubleOrNothingPacket.register(registrar)
+			BreadModBlockEntityUpdatePacket.register(registrar)
 			// Serverbound packets
 			ToolGunModeChangePacket.register(registrar)
 //			ComputerKeystrokePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
+			BreadModBlockEntityUpdateRequestPacket.register(registrar)
 		}
 		modBus.addListener { event: EntityAttributeCreationEvent ->
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())
@@ -558,8 +562,7 @@ object Registry {
 			for (deferredBlock in ModBlocks.blockIterator()) {
 				val block = deferredBlock.get()
 				if (block !is BreadModBlock) continue
-				val capabilities = block.ofCapabilities()
-				for ((capability, _) in capabilities) {
+				for ((capability, _) in block.ofCapabilities()) {
 					@Suppress("UNCHECKED_CAST")
 					event.registerBlockEntity(
 						capability as BlockCapability<Any, Any>,

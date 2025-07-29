@@ -5,6 +5,7 @@ import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
+import net.minecraft.core.SectionPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
@@ -12,6 +13,7 @@ import net.minecraft.world.ItemInteractionResult.SUCCESS
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.BaseEntityBlock
 import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.RenderShape.MODEL
@@ -21,13 +23,15 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
-import net.neoforged.neoforge.capabilities.BaseCapability
+import net.minecraft.world.phys.HitResult
 import net.neoforged.neoforge.fluids.FluidUtil
+import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import java.util.Optional
+import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 
 typealias BreadModTicker<T> = ((entity: BreadModBlockEntity, level: T, state: BlockState, pos: BlockPos) -> Unit)?
 
@@ -39,7 +43,7 @@ abstract class BreadModBlock(
 	override fun getRenderShape(state: BlockState): RenderShape = MODEL
 
 	var blockEntityType: DeferredHolder<BlockEntityType<*>, BlockEntityType<*>>? = null
-	open fun ofCapabilities(): Map<BaseCapability<*, *>, Map<Optional<Any>, Any>> = mapOf()
+	open fun ofCapabilities(): CapabilityMap = mapOf()
 	open fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		null
 
@@ -50,6 +54,17 @@ abstract class BreadModBlock(
 			this.blockEntityType!!.get(), pos, state,
 			this.ofCapabilities()
 		)
+	}
+
+	fun synchronizeEntity(entity: BlockEntity) {
+		val level = entity.level as? ServerLevel ?: return
+		PacketDistributor.sendToPlayersTrackingChunk(
+			level, SectionPos.of(entity.blockPos).chunk(),
+			BreadModBlockEntityUpdatePacket(
+				entity.blockPos, entity.saveCustomOnly(level.registryAccess())
+			)
+		)
+		entity.setChanged()
 	}
 
 	open val commonTickBM: BreadModTicker<Level> = null
@@ -95,5 +110,18 @@ abstract class BreadModBlock(
 	): ItemInteractionResult {
 		if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hitResult.direction)) return SUCCESS
 		return this.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
+	}
+
+	final override fun getCloneItemStack(
+		state: BlockState,
+		target: HitResult,
+		level: LevelReader,
+		pos: BlockPos,
+		player: Player
+	): ItemStack {
+		val stack = super.getCloneItemStack(state, target, level, pos, player)
+		val entity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return stack
+		stack.applyComponents(entity.collectComponents())
+		return stack
 	}
 }

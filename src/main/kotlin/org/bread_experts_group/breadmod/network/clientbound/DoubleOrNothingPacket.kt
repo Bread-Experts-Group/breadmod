@@ -13,20 +13,20 @@ import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlo
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DoubleOrNothingStateHandler
 
-class DoubleOrNothingPacketNew(
+class DoubleOrNothingPacket(
 	private val pos: BlockPos,
 	private val nothing: Boolean = false
 ) : CustomPacketPayload {
 	companion object {
-		private val TYPE: CustomPacketPayload.Type<DoubleOrNothingPacketNew> =
+		private val TYPE: CustomPacketPayload.Type<DoubleOrNothingPacket> =
 			CustomPacketPayload.Type(modLocation("double_or_nothing_packet"))
-		private val STREAM_CODEC: StreamCodec<ByteBuf, DoubleOrNothingPacketNew> = StreamCodec.composite(
-			BlockPos.STREAM_CODEC, DoubleOrNothingPacketNew::pos,
-			ByteBufCodecs.BOOL, DoubleOrNothingPacketNew::nothing,
-			::DoubleOrNothingPacketNew
+		private val STREAM_CODEC: StreamCodec<ByteBuf, DoubleOrNothingPacket> = StreamCodec.composite(
+			BlockPos.STREAM_CODEC, DoubleOrNothingPacket::pos,
+			ByteBufCodecs.BOOL, DoubleOrNothingPacket::nothing,
+			::DoubleOrNothingPacket
 		)
 
-		private fun handleClientboundPacket(data: DoubleOrNothingPacketNew, context: IPayloadContext) {
+		private fun handleClientboundPacket(data: DoubleOrNothingPacket, context: IPayloadContext) {
 			context.enqueueWork {
 				val level = context.player().level() ?: return@enqueueWork
 				val entity = level.getBlockEntity(data.pos) as BreadModBlockEntity

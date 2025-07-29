@@ -44,6 +44,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CoffeeMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
+import org.bread_experts_group.breadmod.registry.block.actual.EnergyStorageBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlammableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
@@ -55,14 +56,16 @@ import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.GeneratorBlock
-import org.bread_experts_group.breadmod.registry.block.actual.storage.EnergyStorageBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
+import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.awt.Color
+import java.math.BigDecimal
 import java.util.function.Supplier
+import kotlin.math.roundToInt
 
 object ModBlocks : RegistryProvider(
 	Registries.BLOCK,
@@ -227,13 +230,12 @@ object ModBlocks : RegistryProvider(
 	) { block ->
 		object : BlockItem(block, Item.Properties()) {
 			override fun isBarVisible(stack: ItemStack): Boolean = true
-
-			override fun getBarColor(stack: ItemStack): Int = ChatFormatting.RED.color!!
-
-			override fun getBarWidth(stack: ItemStack): Int = this.storedEnergyScaled(stack).toInt()
-
-			private fun storedEnergyScaled(stack: ItemStack): Float =
-				(stack.getOrDefault(ModDataComponents.ENERGY, 0).toFloat() / 1000000f * 13f)
+			override fun getBarColor(stack: ItemStack): Int = ChatFormatting.RED.color ?: 0
+			override fun getBarWidth(stack: ItemStack): Int {
+				val amount = stack.getOrDefault(ModDataComponents.ENERGY, BigDecimal.ZERO)
+				val capacity = stack.getOrDefault(ModDataComponents.ENERGY_CAPACITY, BigDecimal.ONE)
+				return (amount.divide(capacity, floatRoundEven).toFloat() * 13).roundToInt()
+			}
 		}
 	}
 

@@ -224,6 +224,15 @@ class ModBlockStateProvider(
 				2 -> "_two"
 				3 -> "_three"
 				4 -> "_four"
+				5 -> "_five"
+				6 -> "_six"
+				7 -> "_seven"
+				8 -> "_eight"
+				9 -> "_nine"
+				10 -> "_ten"
+				11 -> "_eleven"
+				12 -> "_twelve"
+				13 -> "_thirteen"
 				else -> ""
 			}
 			val model = this.models().orientableWithBottom(
