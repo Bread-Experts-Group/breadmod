@@ -2,11 +2,11 @@ package org.bread_experts_group.breadmod.network.serverbound
 
 import io.netty.buffer.ByteBuf
 import net.minecraft.core.BlockPos
-import net.minecraft.core.SectionPos
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.level.ChunkPos
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
@@ -28,7 +28,7 @@ class BreadModBlockEntityUpdateRequestPacket(
 			val level = context.player().level() as ServerLevel
 			if (
 				level.chunkSource.chunkMap
-					.getPlayers(SectionPos.of(data.pos).chunk(), false)
+					.getPlayers(ChunkPos(data.pos), false)
 					.contains(context.player())
 			) {
 				val entity = level.getBlockEntity(data.pos) as? BreadModBlockEntity ?: return

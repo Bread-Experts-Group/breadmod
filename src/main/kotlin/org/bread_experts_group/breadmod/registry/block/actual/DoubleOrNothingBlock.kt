@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.SectionPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
@@ -21,6 +20,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
@@ -199,7 +199,7 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 		val doubles = Random().nextInt(0, 10) >= (if (state.get(REWIRED)) 0 else 4) || state.get(DOUBLE_COUNTER) == 0
 		playSound(level, pos, if (doubles) Companion.SOUNDS[state.get(DOUBLE_COUNTER)] else ModSounds.DOUBLE_NOTHING)
 		PacketDistributor.sendToPlayersTrackingChunk(
-			level, SectionPos.of(pos).chunk(),
+			level, ChunkPos(pos),
 			DoubleOrNothingPacket(pos, !doubles)
 		)
 		this.handleDouble(entity, state, !doubles)

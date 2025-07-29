@@ -5,13 +5,13 @@ import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
-import net.minecraft.core.SectionPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.ItemInteractionResult.SUCCESS
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.BaseEntityBlock
@@ -59,7 +59,7 @@ abstract class BreadModBlock(
 	fun synchronizeEntity(entity: BlockEntity) {
 		val level = entity.level as? ServerLevel ?: return
 		PacketDistributor.sendToPlayersTrackingChunk(
-			level, SectionPos.of(entity.blockPos).chunk(),
+			level, ChunkPos(entity.blockPos),
 			BreadModBlockEntityUpdatePacket(
 				entity.blockPos, entity.saveCustomOnly(level.registryAccess())
 			)
