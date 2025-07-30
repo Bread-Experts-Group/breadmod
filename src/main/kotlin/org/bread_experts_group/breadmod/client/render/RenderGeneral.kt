@@ -226,7 +226,6 @@ fun GuiGraphics.drawCenteredWordWrap(font: Font, text: FormattedText, x: Int, y:
 //		)
 //	}
 //}
-
 /**
  * Float variant of GuiGraphics#fill.
  */
@@ -688,14 +687,14 @@ fun PoseStack.translateOnBlockSide(
 	this.translate(posX, posY, posZ)
 	when (facing) {
 		Direction.NORTH -> this.translate(-1.0, 1.0, TRANSLATE_OFFSET)
-		Direction.EAST  -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
-		Direction.WEST  -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
+		Direction.EAST -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
+		Direction.WEST -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
 		Direction.SOUTH -> this.translate(0.0, 1.0, 1 + TRANSLATE_OFFSET)
-		Direction.UP    -> {
+		Direction.UP -> {
 			this.translate(-1.0, 1 + TRANSLATE_OFFSET, 0.0)
 			this.mulPose(Axis.XN.rotationDegrees(90F))
 		}
-		Direction.DOWN  -> {
+		Direction.DOWN -> {
 			this.translate(-1.0, 0 - TRANSLATE_OFFSET, 0.0)
 			this.mulPose(Axis.XP.rotationDegrees(90f))
 		}

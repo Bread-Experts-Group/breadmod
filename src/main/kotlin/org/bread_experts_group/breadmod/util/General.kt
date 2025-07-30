@@ -79,7 +79,9 @@ val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
 
 val HORIZONTAL_DIRECTIONS: Array<Direction> = Direction.entries.filter { it.axis.isHorizontal }.toTypedArray()
 val ALL_DIRECTIONS: Array<Direction> = Direction.entries.toTypedArray()
+val intRoundEven: MathContext = MathContext(1, RoundingMode.HALF_EVEN)
 val floatRoundEven: MathContext = MathContext(7, RoundingMode.HALF_EVEN)
+val percentRoundEven: MathContext = MathContext(4, RoundingMode.HALF_EVEN)
 val BigDecimal.int: Int
 	get() = this.coerceIn(
 		BigDecimal(Int.MIN_VALUE),

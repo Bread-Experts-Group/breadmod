@@ -218,7 +218,6 @@ class ModBlockStateProvider(
 			this.models().getBuilder("breadmod:block/generator")
 		)
 		this.horizontalBlock(ModBlocks.ENERGY_STORAGE.block) { state ->
-			val blockFolder = "${ModelProvider.BLOCK_FOLDER}/energy_storage"
 			val storedLevel = when (state.getValue(ModBlockStateProperties.STORAGE_LEVEL)) {
 				1 -> "_one"
 				2 -> "_two"

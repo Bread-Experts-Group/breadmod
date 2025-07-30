@@ -1,17 +1,20 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity.handler
 
+import net.minecraft.ChatFormatting
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentMap
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
+import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.energy.IEnergyStorage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.util.floatRoundEven
-import org.bread_experts_group.breadmod.util.int
+import org.bread_experts_group.breadmod.util.percentRoundEven
 import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.math.roundToInt
 
 class ExtendedEnergyHandler(
@@ -57,8 +60,40 @@ class ExtendedEnergyHandler(
 		map.set(ModDataComponents.ENERGY_CAPACITY, this.bigCapacity)
 	}
 
+	val big100: BigDecimal = BigDecimal.valueOf(100)
+	val dividerDarkGray: Component = Component.literal("|").withStyle(ChatFormatting.DARK_GRAY)
+	val paraLeftDarkGray: Component = Component.literal(" (").withStyle(ChatFormatting.DARK_GRAY)
+	val paraRightDarkGray: Component = Component.literal(")").withStyle(ChatFormatting.DARK_GRAY)
+	val percentGray: Component = Component.literal("%").withStyle(ChatFormatting.GRAY)
+	val rfGray: Component = Component.literal(" FE").withStyle(ChatFormatting.GRAY)
+	val upGray: Component = Component.literal("↑ ").withStyle(ChatFormatting.GRAY)
+	val downGray: Component = Component.literal("↓ ").withStyle(ChatFormatting.GRAY)
+	override fun collectHoverText(tooltipComponents: MutableList<Component>) {
+		val energy = Component.literal("${this.bigAmount} ").withStyle(ChatFormatting.RED)
+		energy.append(this.dividerDarkGray)
+		energy.append(Component.literal(" ${this.bigCapacity}").withStyle(ChatFormatting.RED))
+		energy.append(this.rfGray)
+		energy.append(this.paraLeftDarkGray)
+		val percentage = this.bigAmount
+			.divide(this.bigCapacity, percentRoundEven)
+			.multiply(this.big100)
+			.setScale(2, RoundingMode.HALF_EVEN)
+		energy.append(Component.literal(percentage.toString()))
+		energy.append(this.percentGray)
+		energy.append(this.paraRightDarkGray)
+		tooltipComponents.add(energy)
+		val maxOut = this.upGray.copy()
+		maxOut.append(Component.literal(this.maxOut.toString()).withStyle(ChatFormatting.RED))
+		maxOut.append(this.rfGray)
+		tooltipComponents.add(maxOut)
+		val maxIn = this.downGray.copy()
+		maxIn.append(Component.literal(this.maxIn.toString()).withStyle(ChatFormatting.RED))
+		maxIn.append(this.rfGray)
+		tooltipComponents.add(maxIn)
+	}
+
 	fun receiveBigEnergy(toReceive: BigDecimal, simulate: Boolean): BigDecimal {
-		val transfer = toReceive.coerceAtMost(this.bigCapacity - this.bigAmount)
+		val transfer = minOf(toReceive, this.bigCapacity - this.bigAmount, this.maxIn)
 		if (transfer < BigDecimal.ONE) return BigDecimal.ZERO
 		if (!simulate) this.bigAmount += transfer
 		this.stateUpdated()
@@ -70,7 +105,7 @@ class ExtendedEnergyHandler(
 	}
 
 	override fun extractEnergy(toExtract: Int, simulate: Boolean): Int {
-		val transfer = BigDecimal(toExtract).coerceAtMost(this.bigAmount)
+		val transfer = minOf(BigDecimal(toExtract), this.bigAmount, this.maxOut)
 		if (transfer < BigDecimal.ONE) return 0
 		if (!simulate) this.bigAmount -= transfer
 		this.stateUpdated()
@@ -79,7 +114,7 @@ class ExtendedEnergyHandler(
 
 	override fun canReceive(): Boolean = this.maxIn > BigDecimal.ZERO
 	override fun canExtract(): Boolean = this.maxOut > BigDecimal.ZERO
-	override fun getMaxEnergyStored(): Int = this.maxIn.int
+	override fun getMaxEnergyStored(): Int = Int.MAX_VALUE
 	override fun getEnergyStored(): Int = (this.bigAmount.divide(this.bigCapacity, floatRoundEven)
 		.toFloat() * Int.MAX_VALUE).roundToInt()
 }

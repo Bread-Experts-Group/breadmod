@@ -1,11 +1,13 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
+import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.core.component.DataComponentMap
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
+import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
@@ -15,6 +17,7 @@ import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.DataComponentSerializable
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ParentedHandler
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
 import java.util.Optional
 
 typealias CapabilityMap = Map<BaseCapability<*, *>, Map<Optional<out Any>, (BreadModBlockEntity, Any?) -> Any>>
@@ -65,7 +68,7 @@ class BreadModBlockEntity(
 		this.prepLoad.forEach { (capability, contextual) ->
 			val list = ListTag()
 			contextual.forEach { (_, actual) -> list.add(actual.second) }
-			if (list.isNotEmpty()) tag.put(capability.name().toLanguageKey(), list)
+			if (list.isNotEmpty()) tag.put(capability.name().toString(), list)
 		}
 		this.capabilities.forEach { (capability, contextual) ->
 			val list = ListTag()
@@ -73,7 +76,7 @@ class BreadModBlockEntity(
 				// TODO: CONTEXT SAVE
 				if (actual is INBTSerializable<*>) list.add(actual.serializeNBT(registries))
 			}
-			if (list.isNotEmpty()) tag.put(capability.name().toLanguageKey(), list)
+			if (list.isNotEmpty()) tag.put(capability.name().toString(), list)
 		}
 	}
 
@@ -81,7 +84,7 @@ class BreadModBlockEntity(
 		super.loadAdditional(tag, registries)
 		this.prepLoad.clear()
 		for ((capability, contextual) in this.capabilityConstructors) {
-			val list = tag.get(capability.name().toLanguageKey()) as? ListTag ?: continue
+			val list = tag.get(capability.name().toString()) as? ListTag ?: continue
 			val loadMap = this.capabilities[capability]
 			val prepMap = this.prepLoad.getOrPut(capability) { mutableMapOf() }
 			for ((i, data) in contextual.entries.iterator().withIndex()) {
@@ -98,19 +101,47 @@ class BreadModBlockEntity(
 	}
 
 	override fun applyImplicitComponents(componentInput: DataComponentInput) {
-		this.capabilities.forEach { (_, contextual) ->
-			contextual.forEach { (_, actual) ->
-				if (actual is DataComponentSerializable) actual.deserializeDataComponent(componentInput)
-			}
+		this.loadedCapabilities.forEach { actual ->
+			if (actual is DataComponentSerializable) actual.deserializeDataComponent(componentInput)
 		}
 		this.prepInput = componentInput
 	}
 
+	val grayStart: Component = Component.literal("[").withStyle(ChatFormatting.DARK_GRAY)
+	val grayEnd: Component = Component.literal("]").withStyle(ChatFormatting.DARK_GRAY)
+	val grayMiddle: Component = Component.literal(",").withStyle(ChatFormatting.DARK_GRAY)
 	override fun collectImplicitComponents(components: DataComponentMap.Builder) {
-		this.capabilities.forEach { (_, contextual) ->
-			contextual.forEach { (_, actual) ->
-				if (actual is DataComponentSerializable) actual.serializeDataComponent(components)
+		val counted = mutableMapOf<Any, Triple<BaseCapability<*, *>, MutableList<Any?>, MutableList<Component>>>()
+		this.capabilities.forEach { (capability, contextual) ->
+			contextual.forEach { (context, actual) ->
+				if (actual is DataComponentSerializable) {
+					val (_, contextSet, _) = counted.getOrPut(actual) {
+						val localText = mutableListOf<Component>()
+						actual.serializeDataComponent(components)
+						actual.collectHoverText(localText)
+						Triple(capability, mutableListOf<Any?>(), localText)
+					}
+					contextSet.add(context)
+				}
 			}
 		}
+		val hoverText = mutableListOf<Component>()
+		counted.forEach { (_, data) ->
+			val (capability, contextSet, components) = data
+			if (components.isEmpty()) return@forEach
+			val capabilityHeader = this.grayStart.copy()
+			capabilityHeader.append(
+				Component.literal(capability.name().toString()).withStyle(ChatFormatting.GRAY)
+			)
+			hoverText.add(capabilityHeader.append(this.grayEnd))
+			val contextHeader = this.grayStart.copy()
+			contextSet.forEachIndexed { index, item ->
+				contextHeader.append(Component.literal(item.toString()).withStyle(ChatFormatting.GRAY))
+				if (index < contextSet.lastIndex) contextHeader.append(this.grayMiddle)
+			}
+			hoverText.add(contextHeader.append(this.grayEnd))
+			hoverText.addAll(components)
+		}
+		components.set(BLOCK_ENTITY_HANDLER_INFORMATION, hoverText)
 	}
 }

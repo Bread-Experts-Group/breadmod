@@ -30,6 +30,7 @@ class BreadModBlockEntityUpdatePacket(
 				val level = context.player().level() ?: return@enqueueWork
 				val entity = level.getBlockEntity(data.pos) as? BreadModBlockEntity ?: return@enqueueWork
 				entity.loadCustomOnly(data.tag, level.registryAccess())
+				level.sendBlockUpdated(entity.blockPos, entity.blockState, entity.blockState, 3)
 			}
 		}
 

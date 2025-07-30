@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.registry
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ShaderInstance
@@ -337,17 +338,31 @@ object Registry {
 					event.registerShader(
 						ShaderInstance(
 							event.resourceProvider,
-							modLocation("rendertype_rainbow"),
+							modLocation("rainbow"),
 							ModRenderType.rainbowVertexFormat
 						)
 					) { ModRenderType.rainbowInstance = it }
 					event.registerShader(
 						ShaderInstance(
 							event.resourceProvider,
-							modLocation("rendertype_astral"),
+							modLocation("astral"),
 							ModRenderType.astralVertexFormat
 						)
 					) { ModRenderType.astralInstance = it }
+					event.registerShader(
+						ShaderInstance(
+							event.resourceProvider,
+							modLocation("glow"),
+							DefaultVertexFormat.BLOCK
+						)
+					) { ModRenderType.glowInstance = it }
+					event.registerShader(
+						ShaderInstance(
+							event.resourceProvider,
+							modLocation("translucent_tex"),
+							DefaultVertexFormat.BLOCK
+						)
+					) { ModRenderType.translucentTexInstance = it }
 				}
 				modBus.addListener { event: RegisterClientExtensionsEvent ->
 					event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())

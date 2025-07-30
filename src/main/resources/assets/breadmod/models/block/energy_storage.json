@@ -4,14 +4,21 @@
   "textures": {
     "front": "breadmod:block/energy_storage/front",
     "side": "breadmod:block/energy_storage/side",
+    "top": "breadmod:block/energy_storage/top",
     "overlay": "breadmod:block/energy_storage/front_overlay"
   },
   "elements": [
     {   "from": [ 0, 0, 0 ],
       "to": [ 16, 16, 16 ],
       "faces": {
-        "down":  { "texture": "#side", "cullface": "down" },
-        "up":    { "texture": "#side", "cullface": "up" },
+        "down": {
+          "texture": "#top",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top",
+          "cullface": "up"
+        },
         "north": { "texture": "#front", "cullface": "north" },
         "south": { "texture": "#side", "cullface": "south" },
         "west":  { "texture": "#side", "cullface": "west" },

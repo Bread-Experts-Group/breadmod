@@ -1,16 +1,20 @@
 package org.bread_experts_group.breadmod.registry.block.actual
 
 import com.mojang.serialization.MapCodec
+import net.minecraft.ChatFormatting
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.ItemInteractionResult.SUCCESS
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelReader
@@ -32,6 +36,7 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
+import org.bread_experts_group.breadmod.registry.component.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
 
 typealias BreadModTicker<T> = ((entity: BreadModBlockEntity, level: T, state: BlockState, pos: BlockPos) -> Unit)?
 
@@ -88,6 +93,19 @@ abstract class BreadModBlock(
 			this.commonTickBM?.invoke(entity as BreadModBlockEntity, level, state, pos)
 		}
 	} else null
+
+	final override fun appendHoverText(
+		stack: ItemStack,
+		context: Item.TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
+	) {
+		val info = stack.get(BLOCK_ENTITY_HANDLER_INFORMATION)
+		if (info != null) tooltipComponents.addAll(info)
+		else if (tooltipFlag.isAdvanced) tooltipComponents.add(
+			Component.literal("<no data>").withStyle(ChatFormatting.DARK_GRAY)
+		)
+	}
 
 	open fun useItemOnBM(
 		stack: ItemStack,

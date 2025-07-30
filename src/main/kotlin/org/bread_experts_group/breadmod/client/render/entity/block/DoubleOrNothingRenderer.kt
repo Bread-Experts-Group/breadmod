@@ -158,7 +158,7 @@ class DoubleOrNothingRenderer(
 		poseStack.translateDiv16(this.outerBGOffset)
 		val state = blockEntity.getStateHandler()
 		val outerBGRenderType =
-			if (!state.get(NOTHING) && !state.get(JACKPOT) && !state.get(CASHOUT)) ModRenderType.rainbow()
+			if (!state.get(NOTHING) && !state.get(JACKPOT) && !state.get(CASHOUT)) ModRenderType.rainbow
 			else RenderType.text(this.colorableTexture)
 		val outerBGColor =
 			if (state.get(CASHOUT)) this.cashoutBGColor
@@ -184,7 +184,7 @@ class DoubleOrNothingRenderer(
 			this.outerBGVertexes[2],
 			this.outerBGVertexes[3]
 		) { consumer ->
-			if (outerBGRenderType == ModRenderType.rainbow()) consumer.setSpeed(speed).setDirection(this.direction)
+			if (outerBGRenderType == ModRenderType.rainbow) consumer.setSpeed(speed).setDirection(this.direction)
 		}
 		poseStack.popPose()
 	}

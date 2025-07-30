@@ -1,11 +1,9 @@
 package org.bread_experts_group.breadmod.registry.block.actual
 
-import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -13,9 +11,7 @@ import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.DyeItem
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -30,7 +26,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityM
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.EnergyStorageStateHandler
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.math.BigDecimal
 import java.util.Optional
@@ -38,9 +33,7 @@ import kotlin.math.roundToInt
 
 class EnergyStorageBlock : BreadModBlock(Properties.of()) {
 	override fun ofCapabilities(): CapabilityMap {
-		val container = ExtendedEnergyHandler(
-			BigDecimal.TWO.pow(256)
-		)
+		val container = ExtendedEnergyHandler(BigDecimal(10000000))
 		val storage = { _: BreadModBlockEntity, _: Any? -> container }
 		return mapOf(
 			Capabilities.EnergyStorage.BLOCK to mapOf(
@@ -96,16 +89,5 @@ class EnergyStorageBlock : BreadModBlock(Properties.of()) {
 		level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1f, 1f)
 		level.sendBlockUpdated(pos, state, state, 3)
 		return ItemInteractionResult.sidedSuccess(level.isClientSide)
-	}
-
-	override fun appendHoverText(
-		stack: ItemStack,
-		context: Item.TooltipContext,
-		tooltipComponents: MutableList<Component>,
-		tooltipFlag: TooltipFlag
-	) {
-		val amount = stack.getOrDefault(ModDataComponents.ENERGY, BigDecimal.ZERO)
-		val capacity = stack.getOrDefault(ModDataComponents.ENERGY_CAPACITY, BigDecimal.ONE)
-		tooltipComponents.add(Component.literal("$amount / $capacity").withStyle(ChatFormatting.RED))
 	}
 }
