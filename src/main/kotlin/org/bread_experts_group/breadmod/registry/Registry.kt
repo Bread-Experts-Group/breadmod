@@ -129,6 +129,7 @@ import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.EnergyStorageStateHandler
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -157,6 +158,8 @@ import org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures.
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
+import org.bread_experts_group.breadmod.util.Color
+import org.bread_experts_group.breadmod.util.block
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
@@ -402,6 +405,13 @@ object Registry {
 //					}, ModBlocks.CABLE.asItem())
 				}
 				modBus.addListener { event: RegisterColorHandlersEvent.Block ->
+					event.register({ _, getter, pos, _ ->
+						if (getter != null && pos != null) {
+							val entity = getter.getBlockEntity(pos) as BreadModBlockEntity
+							val state = entity.getCapability(EnergyStorageStateHandler.BLOCK_VOID)
+							state.get(EnergyStorageStateHandler.COLOR)
+						} else Color.RED
+					}, ModBlocks.ENERGY_STORAGE.block)
 //					event.register({ state, _, _, _ ->
 //						(state.block as? CableBlock ?: return@register Color.WHITE).resolveColor()
 //					}, ModBlocks.CABLE.asBlock())

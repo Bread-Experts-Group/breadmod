@@ -15,7 +15,7 @@ abstract class GeneralStateHandler(vararg provisioners: StateProvisioner<out Any
 		return this.state.getValue(provisioner) as E
 	}
 
-	fun <E : Any?> set(provisioner: StateProvisioner<E>, value: E) {
+	open fun <E : Any?> set(provisioner: StateProvisioner<E>, value: E) {
 		this.state[provisioner] = value
 	}
 

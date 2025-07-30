@@ -235,13 +235,10 @@ class ModBlockStateProvider(
 				13 -> "_thirteen"
 				else -> ""
 			}
-			val model = this.models().orientableWithBottom(
+			val model = this.models().withExistingParent(
 				"breadmod:block/energy_storage$storedLevel",
-				this.modLoc("$blockFolder/side"),
-				this.modLoc("$blockFolder/front$storedLevel"),
-				this.modLoc("$blockFolder/bottom"),
-				this.modLoc("$blockFolder/top")
-			)
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/energy_storage")
+			).texture("overlay", "breadmod:block/energy_storage/front_overlay$storedLevel")
 			return@horizontalBlock model
 		}
 		this.simpleBlockItem(
