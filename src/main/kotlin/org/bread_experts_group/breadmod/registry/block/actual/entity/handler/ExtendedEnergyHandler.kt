@@ -2,7 +2,8 @@ package org.bread_experts_group.breadmod.registry.block.actual.entity.handler
 
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentMap
-import net.minecraft.nbt.StringTag
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.Tag
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.energy.IEnergyStorage
@@ -17,18 +18,31 @@ class ExtendedEnergyHandler(
 	bigCapacity: BigDecimal,
 	private val maxIn: BigDecimal = bigCapacity,
 	private val maxOut: BigDecimal = bigCapacity
-) : ParentedHandler<BreadModBlockEntity>(), IEnergyStorage, DataComponentSerializable, INBTSerializable<StringTag> {
+) : ParentedHandler<BreadModBlockEntity>(), IEnergyStorage, DataComponentSerializable, INBTSerializable<Tag> {
 	var bigAmount: BigDecimal = BigDecimal.ZERO
 		private set
 	var bigCapacity: BigDecimal = bigCapacity
-		private set
+		private set(value) {
+			this.bigAmount = minOf(this.bigAmount, value)
+			field = value
+		}
 
-	override fun serializeNBT(provider: HolderLookup.Provider): StringTag = StringTag.valueOf(this.bigAmount.toString())
-	override fun deserializeNBT(provider: HolderLookup.Provider, nbt: StringTag) {
+	override fun serializeNBT(provider: HolderLookup.Provider): CompoundTag = CompoundTag().also {
+		it.putString("amount", this.bigAmount.toString())
+		it.putString("capacity", this.bigCapacity.toString())
+	}
+
+	override fun deserializeNBT(provider: HolderLookup.Provider, nbt: Tag) {
+		if (nbt !is CompoundTag) return
 		this.bigAmount = try {
-			BigDecimal(nbt.asString)
+			BigDecimal(nbt.getString("amount"))
 		} catch (_: NumberFormatException) {
 			BigDecimal.ZERO
+		}
+		this.bigCapacity = try {
+			BigDecimal(nbt.getString("capacity"))
+		} catch (_: NumberFormatException) {
+			BigDecimal.ONE
 		}
 	}
 
@@ -42,12 +56,16 @@ class ExtendedEnergyHandler(
 		map.set(ModDataComponents.ENERGY_CAPACITY, this.bigCapacity)
 	}
 
-	override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
-		val transfer = BigDecimal(toReceive).coerceAtMost(this.bigCapacity - this.bigAmount)
-		if (transfer < BigDecimal.ONE) return 0
+	fun receiveBigEnergy(toReceive: BigDecimal, simulate: Boolean): BigDecimal {
+		val transfer = toReceive.coerceAtMost(this.bigCapacity - this.bigAmount)
+		if (transfer < BigDecimal.ONE) return BigDecimal.ZERO
 		if (!simulate) this.bigAmount += transfer
 		this.stateUpdated()
-		return transfer.toInt()
+		return transfer
+	}
+
+	override fun receiveEnergy(toReceive: Int, simulate: Boolean): Int {
+		return this.receiveBigEnergy(BigDecimal(toReceive), simulate).intValueExact()
 	}
 
 	override fun extractEnergy(toExtract: Int, simulate: Boolean): Int {

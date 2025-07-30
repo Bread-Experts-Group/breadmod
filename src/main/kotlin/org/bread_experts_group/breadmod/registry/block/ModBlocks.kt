@@ -53,8 +53,10 @@ import org.bread_experts_group.breadmod.registry.block.actual.HellNawButtonBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemPedestalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
+import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
+import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.machine.GeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
@@ -151,23 +153,18 @@ object ModBlocks : RegistryProvider(
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
 	@DataGenerateLanguage(name = "Prolongs the inevitable.", suffix = ".tooltip")
-	val WAR_TERMINAL: DeferredItem<BlockItem> = this.registerBlockItem(
-		"war_terminal", ::WarTerminalBlock, Properties()
-	)
+	val WAR_TERMINAL: DeferredItem<BlockItem> = this.registerBlockItem("war_terminal", ::WarTerminalBlock)
 
 	@DataGenerateLootDropSelf
 	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage
 	@DataGenerateLanguage(name = "Uses the power of a die to make random noises.", suffix = ".tooltip")
-	val RANDOM_SOUND_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem(
-		"random_sound_block", ::RandomSoundBlock, Properties()
-	)
+	val RANDOM_SOUND_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem("random_sound_block", ::RandomSoundBlock)
 
-	//
-//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	val RADIO_BLOCK: DeferredItem<BlockItem> =
-//		this.registerBlockItem("radio_block", ::RadioBlock, Properties())
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	val RADIO_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem("radio_block", ::RadioBlock)
+
 	@DataGenerateLootDropSelf
 	@DataGenerateTagBlock("c:storage_blocks/charcoal")
 	@DataGenerateModelBlockAndItem
@@ -197,14 +194,14 @@ object ModBlocks : RegistryProvider(
 //		Properties()
 //	)
 //
-//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	val CREATIVE_GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"creative_generator",
-//		::CreativeGeneratorBlock,
-//		Properties()
-//	)
-//	@DataGenerateLootDropSelf
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	val CREATIVE_GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem(
+		"creative_generator",
+		::CreativeGeneratorBlock
+	)
+
+	//	@DataGenerateLootDropSelf
 //	@DataGenerateLanguage
 //	@DataGenerateLanguage(name = "I wouldn't cook charcoal in it..", suffix = ".tooltip")
 //	val TOASTER: DeferredItem<BlockItem> = this.registerBlockItem(

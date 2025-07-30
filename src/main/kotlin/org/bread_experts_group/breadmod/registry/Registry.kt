@@ -67,6 +67,7 @@ import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
+import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
 import org.bread_experts_group.breadmod.client.render.RendererWithBEWLRLerpTicker
 import org.bread_experts_group.breadmod.client.render.WarRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
@@ -348,11 +349,11 @@ object Registry {
 					event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
 					event.registerItem(ToolGunItem.ToolGunItemExtensions, ModItems.TOOL_GUN)
 					event.registerItem(GluonGunBackpackItem.GluonGunExtensions(), ModItems.GLUON_GUN)
-//					event.registerItem(object : IClientItemExtensions {
-//						val renderer: String = "creative_generator"
-//						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
-//							this@Registry.itemRenderers.getOrPut(this.renderer, ::CreativeGeneratorItemRenderer)
-//					}, ModBlocks.CREATIVE_GENERATOR.asItem())
+					event.registerItem(object : IClientItemExtensions {
+						val renderer: String = "creative_generator"
+						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+							this@Registry.itemRenderers.getOrPut(this.renderer, ::CreativeGeneratorItemRenderer)
+					}, ModBlocks.CREATIVE_GENERATOR.asItem())
 				}
 				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
 					event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)

@@ -10,9 +10,8 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition.Builder
-import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.level.block.state.properties.BooleanProperty
-import net.minecraft.world.level.block.state.properties.DirectionProperty
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.POWERED
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -21,8 +20,6 @@ import java.util.stream.Stream
 
 class GeneratorBlock : Block(Properties.of()) {
 	companion object {
-		val FACING: DirectionProperty = BlockStateProperties.HORIZONTAL_FACING
-		val POWERED: BooleanProperty = BlockStateProperties.POWERED
 		val SHAPE_NORTH: VoxelShape = Stream.of(
 			box(12.0, 0.0, 1.0, 14.0, 1.0, 15.0),
 			box(0.0, 0.0, 0.0, 16.0, 1.0, 1.0),
@@ -118,16 +115,16 @@ class GeneratorBlock : Block(Properties.of()) {
 	}
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
-		builder.add(Companion.FACING, Companion.POWERED)
+		builder.add(HORIZONTAL_FACING, POWERED)
 	}
 
 	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
 		this.defaultBlockState()
-			.setValue(Companion.FACING, context.horizontalDirection.opposite)
-			.setValue(Companion.POWERED, false)
+			.setValue(HORIZONTAL_FACING, context.horizontalDirection.opposite)
+			.setValue(POWERED, false)
 
 	override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape =
-		when (state.getValue(Companion.FACING)) {
+		when (state.getValue(HORIZONTAL_FACING)) {
 			NORTH -> Companion.SHAPE_NORTH
 			SOUTH -> Companion.SHAPE_SOUTH
 			EAST  -> Companion.SHAPE_EAST
