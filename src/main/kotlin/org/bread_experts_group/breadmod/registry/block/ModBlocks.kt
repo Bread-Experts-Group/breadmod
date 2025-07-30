@@ -43,11 +43,13 @@ import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CoffeeMachineBlock
+import org.bread_experts_group.breadmod.registry.block.actual.CreativeGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
 import org.bread_experts_group.breadmod.registry.block.actual.EnergyStorageBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlammableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourLayeredBlock
+import org.bread_experts_group.breadmod.registry.block.actual.GeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HellNawButtonBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
@@ -58,8 +60,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
-import org.bread_experts_group.breadmod.registry.block.actual.machine.CreativeGeneratorBlock
-import org.bread_experts_group.breadmod.registry.block.actual.machine.GeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab

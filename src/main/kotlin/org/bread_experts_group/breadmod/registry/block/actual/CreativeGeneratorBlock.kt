@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.machine
+package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
@@ -25,8 +25,6 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
-import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
-import org.bread_experts_group.breadmod.registry.block.actual.BreadModTicker
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.util.combine

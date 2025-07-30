@@ -9,13 +9,15 @@ import org.bread_experts_group.computer.disc.iso9960.ISO9660Disc
 import org.bread_experts_group.computer.ia32.IA32Processor
 import org.bread_experts_group.computer.ia32.bios.StandardBIOS
 
-class ComputerHandler : ParentedHandler<BreadModBlockEntity>() {
+class ComputerHandler : ParentedHandler<BreadModBlockEntity> {
 	companion object {
 		val BLOCK_VOID: BlockCapability<ComputerHandler, Void?> = BlockCapability.createVoid<ComputerHandler>(
 			modLocation("computer"),
 			ComputerHandler::class.java
 		)
 	}
+
+	override lateinit var parent: BreadModBlockEntity
 
 	val computer: Computer = Computer(
 		listOf(MemoryModule(2097152u)),

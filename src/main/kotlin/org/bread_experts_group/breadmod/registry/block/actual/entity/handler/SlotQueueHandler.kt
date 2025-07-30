@@ -16,7 +16,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 
-class SlotQueueHandler : ParentedHandler<BreadModBlockEntity>(), INBTSerializable<ListTag>, Iterable<ItemStack> {
+class SlotQueueHandler : ParentedHandler<BreadModBlockEntity>, INBTSerializable<ListTag>, Iterable<ItemStack> {
 	companion object {
 		val BLOCK_VOID: BlockCapability<SlotQueueHandler, Void?> = BlockCapability.createVoid<SlotQueueHandler>(
 			modLocation("slot_queue_handler"),
@@ -42,6 +42,7 @@ class SlotQueueHandler : ParentedHandler<BreadModBlockEntity>(), INBTSerializabl
 		return shape
 	}
 
+	override lateinit var parent: BreadModBlockEntity
 	private val contained: ArrayDeque<ItemStack> = ArrayDeque()
 	val size: Int
 		get() = this.contained.size
