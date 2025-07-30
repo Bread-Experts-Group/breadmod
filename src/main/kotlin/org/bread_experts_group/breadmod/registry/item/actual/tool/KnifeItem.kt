@@ -25,8 +25,6 @@ import net.minecraft.world.level.block.CarvedPumpkinBlock
 import net.minecraft.world.level.block.state.BlockState
 import org.bread_experts_group.breadmod.datagen.tag.KNIVES
 import org.bread_experts_group.breadmod.datagen.tag.MINEABLE_WITH_KNIFE
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 
 class KnifeItem(
 	tier: Tier
@@ -64,45 +62,49 @@ class KnifeItem(
 		val blockState = level.getBlockState(clickedPos)
 		val facing = context.clickedFace
 
-		return if (blockState.block == Blocks.PUMPKIN && handStack.`is`(KNIVES)) {
-			val player = context.player
-			if (player != null && !level.isClientSide) {
-				val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
-				level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
-				level.setBlockAndUpdate(
-					clickedPos,
-					Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction)
-				)
-				val itemEntity = this.createItemEntity(Items.PUMPKIN_SEEDS, 4, level, clickedPos, direction)
-				itemEntity.setDeltaMovement(
-					0.05 * direction.stepX + level.random.nextDouble() * 0.02,
-					0.05,
-					0.05 * direction.stepZ + level.random.nextDouble() * 0.02
-				)
+		return when (blockState.block) {
+			blockState.block if handStack.`is`(KNIVES) -> {
+				val player = context.player
+				if (player != null && !level.isClientSide) {
+					val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
+					level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
+					level.setBlockAndUpdate(
+						clickedPos,
+						Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, direction)
+					)
+					val itemEntity = this.createItemEntity(Items.PUMPKIN_SEEDS, 4, level, clickedPos, direction)
+					itemEntity.setDeltaMovement(
+						0.05 * direction.stepX + level.random.nextDouble() * 0.02,
+						0.05,
+						0.05 * direction.stepZ + level.random.nextDouble() * 0.02
+					)
 
-				level.addFreshEntity(itemEntity)
-				handStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.hand))
+					level.addFreshEntity(itemEntity)
+					handStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.hand))
+				}
+
+				InteractionResult.sidedSuccess(level.isClientSide)
 			}
+			blockState.block if handStack.`is`(KNIVES) -> {
+				val player = context.player
+				if (player != null && !level.isClientSide) {
+					val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
+					level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
+					level.setBlockAndUpdate(clickedPos, Blocks.AIR.defaultBlockState())
+					val itemEntity = this.createItemEntity(Items.BREAD, 9, level, clickedPos, direction)
+					itemEntity.setDeltaMovement(
+						0.05 * direction.stepX + level.random.nextDouble() * 0.02,
+						0.05,
+						0.05 * direction.stepZ + level.random.nextDouble() * 0.02
+					)
 
-			InteractionResult.sidedSuccess(level.isClientSide)
-		} else if (blockState.block == ModBlocks.BREAD_BLOCK.asBlock() && handStack.`is`(KNIVES)) {
-			val player = context.player
-			if (player != null && !level.isClientSide) {
-				val direction = if (facing.axis == Direction.Axis.Y) player.direction.opposite else facing
-				level.playSound(null, clickedPos, SoundEvents.PUMPKIN_CARVE, SoundSource.BLOCKS, 1.0f, 1.0f)
-				level.setBlockAndUpdate(clickedPos, Blocks.AIR.defaultBlockState())
-				val itemEntity = this.createItemEntity(Items.BREAD, 9, level, clickedPos, direction)
-				itemEntity.setDeltaMovement(
-					0.05 * direction.stepX + level.random.nextDouble() * 0.02,
-					0.05,
-					0.05 * direction.stepZ + level.random.nextDouble() * 0.02
-				)
-
-				level.addFreshEntity(itemEntity)
-				handStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.hand))
+					level.addFreshEntity(itemEntity)
+					handStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.hand))
+				}
+				InteractionResult.sidedSuccess(level.isClientSide)
 			}
-			InteractionResult.sidedSuccess(level.isClientSide)
-		} else InteractionResult.PASS
+			else -> InteractionResult.PASS
+		}
 	}
 
 	private fun createItemEntity(

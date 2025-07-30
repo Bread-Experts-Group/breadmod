@@ -52,6 +52,8 @@ import org.bread_experts_group.breadmod.registry.block.actual.HappyBlock
 import org.bread_experts_group.breadmod.registry.block.actual.HellNawButtonBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemPedestalBlock
+import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
+import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
@@ -89,11 +91,6 @@ object ModBlocks : RegistryProvider(
 
 	fun getLocation(block: Block): ResourceLocation = BuiltInRegistries.BLOCK.getKey(block)
 
-	/**
-	 * Convenience function for directly getting a block from a [BlockItem] in a [DeferredItem]
-	 */
-	fun DeferredItem<BlockItem>.asBlock(): Block = this.get().block
-
 	@DataGenerateTagBlock(
 		"minecraft:mineable/hoe",
 		"minecraft:stone_ore_replaceables",
@@ -128,11 +125,12 @@ object ModBlocks : RegistryProvider(
 		Properties().fireResistant()
 	)
 
-	//	@DataGenerateLootDropSelf
-//	@DataGenerateTagBlock("minecraft:mineable/pickaxe")
-//	@DataGenerateLanguage
-//	val MONITOR: DeferredItem<BlockItem> =
-//		this.registerBlockItem("monitor", ::MonitorBlock, Properties())
+	@DataGenerateLootDropSelf
+	@DataGenerateTagBlock("minecraft:mineable/pickaxe")
+	@DataGenerateLanguage
+	val MONITOR: DeferredItem<BlockItem> =
+		this.registerBlockItem("monitor", ::MonitorBlock)
+
 	@DataGenerateTagBlock(
 		"minecraft:mineable/hoe",
 		"c:storage_blocks/low_density_charcoal"
@@ -288,13 +286,13 @@ object ModBlocks : RegistryProvider(
 	@DataGenerateLanguage
 	val NUKE: DeferredItem<BlockItem> = this.registerBlockItem("nuke", ::NukeBlock)
 
-	//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	val KEYBOARD: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"keyboard",
-//		::KeyboardBlock,
-//		Properties().stacksTo(1)
-//	)
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	val KEYBOARD: DeferredItem<BlockItem> = this.registerBlockItem(
+		"keyboard",
+		::KeyboardBlock,
+		Properties().stacksTo(1)
+	)
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
 	val HELL_NAW_BUTTON: DeferredItem<BlockItem> = this.registerBlockItem(

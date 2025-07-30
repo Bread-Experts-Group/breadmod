@@ -37,6 +37,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeInput
@@ -59,6 +60,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.Shapes.or
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
+import net.neoforged.neoforge.registries.DeferredItem
 import org.joml.Vector3f
 import java.lang.reflect.Method
 import java.math.BigDecimal
@@ -83,6 +85,8 @@ val BigDecimal.int: Int
 		BigDecimal(Int.MIN_VALUE),
 		BigDecimal(Int.MAX_VALUE)
 	).intValueExact()
+val DeferredItem<BlockItem>.block: Block
+	get() = this.get().block
 
 /**
  * Retrieves an instance of the provided [path]

@@ -112,6 +112,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSe
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
+import org.bread_experts_group.breadmod.network.serverbound.ComputerKeystrokePacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
@@ -550,7 +551,7 @@ object Registry {
 			BreadModBlockEntityUpdatePacket.register(registrar)
 			// Serverbound packets
 			ToolGunModeChangePacket.register(registrar)
-//			ComputerKeystrokePacket.register(registrar)
+			ComputerKeystrokePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)

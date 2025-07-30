@@ -1,6 +1,6 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state
 
-abstract class GeneralStateHandler(vararg provisioners: StateProvisioner<*>) {
+abstract class GeneralStateHandler(vararg provisioners: StateProvisioner<out Any>) {
 	private val state: MutableMap<StateProvisioner<*>, Any?> = provisioners.associateWith<StateProvisioner<*>, Any> {
 		it.default as Any
 	}.toMutableMap()

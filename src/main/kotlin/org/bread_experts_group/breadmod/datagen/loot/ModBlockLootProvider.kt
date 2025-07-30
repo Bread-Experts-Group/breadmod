@@ -26,9 +26,9 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue
 import org.bread_experts_group.breadmod.datagen.getBlock
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.ModBlocks.asBlock
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.util.block
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import java.util.concurrent.CompletableFuture
@@ -50,9 +50,9 @@ class ModBlockLootProvider(
 		this.registryScanner.resolveAnnotationValuePairs<DataGenerateLootDropNothing>().forEach { (_, data) ->
 			this.dropOther(data.getBlock("Block loot generation (drop nothing)"), Blocks.AIR)
 		}
-		val breadDoor = ModBlocks.BREAD_DOOR.asBlock()
+		val breadDoor = ModBlocks.BREAD_DOOR.block
 		this.add(breadDoor, this.createDoorTable(breadDoor))
-//		val doubleOrNothing = ModBlocks.DOUBLE_OR_NOTHING.asBlock()
+//		val doubleOrNothing = ModBlocks.DOUBLE_OR_NOTHING.block
 //		this.add(
 //			doubleOrNothing,
 //			this.createSinglePropConditionTable(
@@ -62,18 +62,18 @@ class ModBlockLootProvider(
 //			)
 //		)
 		this.add(
-			ModBlocks.FLOUR_BLOCK.asBlock(),
+			ModBlocks.FLOUR_BLOCK.block,
 			this.createSingleItemTableWithSilkTouch(
-				ModBlocks.FLOUR_BLOCK.asBlock(),
+				ModBlocks.FLOUR_BLOCK.block,
 				ModItems.FLOUR.get(), ConstantValue.exactly(4f)
 			)
 		)
 		this.add(
-			ModBlocks.ENERGY_STORAGE.asBlock(),
+			ModBlocks.ENERGY_STORAGE.block,
 			LootTable.lootTable()
 				.withPool(
 					this.applyExplosionCondition(
-						ModBlocks.ENERGY_STORAGE.asBlock(),
+						ModBlocks.ENERGY_STORAGE.block,
 						LootPool.lootPool()
 							.setRolls(ConstantValue.exactly(1f))
 							.add(
