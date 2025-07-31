@@ -129,40 +129,40 @@ class ModBlockStateProvider(
 //			.createSidedPart(connector)
 //		this.simpleBlockItem(ModBlocks.CABLE.block, core)
 		// Diesel Generator
-//		this.getMultipartBuilder(ModBlocks.DIESEL_GENERATOR.block)
-//			.createSidedPart(this.blockBenchBlockModel("diesel_generator/diesel_generator"))
-//			.createSidedConditionalPart(
-//				this.blockBenchBlockModel("diesel_generator/diesel_generator_door"),
-//				BlockStateProperties.OPEN,
-//				false
-//			)
-//			.createSidedConditionalPart(
-//				this.blockBenchBlockModel("diesel_generator/diesel_generator_door_open"),
-//				BlockStateProperties.OPEN,
-//				true
-//			)
-//			.createSidedConditionalPart(
-//				this.blockBenchBlockModel("diesel_generator/battery_upgrade"),
-//				BlockStateProperties.OPEN,
-//				true,
-//				{ it.condition(ModBlockStateProperties.UPGRADE_ONE, true) }
-//			)
-//			.createSidedConditionalPart(
-//				this.blockBenchBlockModel("diesel_generator/charging_upgrade"),
-//				BlockStateProperties.OPEN,
-//				true,
-//				{ it.condition(ModBlockStateProperties.UPGRADE_TWO, true) }
-//			)
-//			.createSidedConditionalPart(
-//				this.blockBenchBlockModel("diesel_generator/turbo_upgrade"),
-//				BlockStateProperties.OPEN,
-//				true,
-//				{ it.condition(ModBlockStateProperties.UPGRADE_THREE, true) }
-//			)
-//		this.simpleBlockItem(
-//			ModBlocks.DIESEL_GENERATOR.block,
-//			this.blockBenchItemModel("diesel_generator_item")
-//		)
+		this.getMultipartBuilder(ModBlocks.DIESEL_GENERATOR.block)
+			.createSidedPart(this.blockBenchBlockModel("diesel_generator/diesel_generator"))
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/diesel_generator_door"),
+				BlockStateProperties.OPEN,
+				false
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/diesel_generator_door_open"),
+				BlockStateProperties.OPEN,
+				true
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/battery_upgrade"),
+				BlockStateProperties.OPEN,
+				true,
+				{ it.condition(ModBlockStateProperties.UPGRADE_ONE, true) }
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/charging_upgrade"),
+				BlockStateProperties.OPEN,
+				true,
+				{ it.condition(ModBlockStateProperties.UPGRADE_TWO, true) }
+			)
+			.createSidedConditionalPart(
+				this.blockBenchBlockModel("diesel_generator/turbo_upgrade"),
+				BlockStateProperties.OPEN,
+				true,
+				{ it.condition(ModBlockStateProperties.UPGRADE_THREE, true) }
+			)
+		this.simpleBlockItem(
+			ModBlocks.DIESEL_GENERATOR.block,
+			this.blockBenchItemModel("diesel_generator_item")
+		)
 		// Item Pedestal
 		this.simpleBlock(ModBlocks.ITEM_PEDESTAL.block, this.blockBenchBlockModel("item_pedestal"))
 		this.simpleBlockItem(ModBlocks.ITEM_PEDESTAL.block, this.blockBenchBlockModel("item_pedestal"))

@@ -2,10 +2,14 @@ package org.bread_experts_group.breadmod.network
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
+import com.mojang.serialization.DynamicOps
+import com.mojang.serialization.codecs.PrimitiveCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.core.BlockPos
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.StringTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
@@ -23,17 +27,15 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.function.Function
 
 object BreadModCodecs {
-	val EXPANSIBLE_CODEC: Codec<BigDecimal> =
-		RecordCodecBuilder.create { instance ->
-			instance.group(
-				Codec.STRING.fieldOf("value").forGetter(BigDecimal::toEngineeringString)
-			).apply(instance, ::BigDecimal)
-		}
-	val EXPANSIBLE_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDecimal> =
-		StreamCodec.composite(ByteBufCodecs.STRING_UTF8, BigDecimal::toEngineeringString, ::BigDecimal)
+	fun <T, S, R> ((T) -> R).compose(from: (S) -> T): (S) -> R = { this(from(it)) }
+	val FLUID_ID_SERIALIZER: (Fluid) -> String = { fluid: Fluid -> BuiltInRegistries.FLUID.getKey(fluid).toString() }
+	val FLUID_ID_DESERIALIZER: (String) -> Fluid = { id: String ->
+		BuiltInRegistries.FLUID.get(ResourceLocation.parse(id))
+	}
 	val TOOL_GUN_CODEC: Codec<ToolGunData> =
 		RecordCodecBuilder.create { instance ->
 			instance.group(
@@ -78,6 +80,30 @@ object BreadModCodecs {
 				buffer.writeMap(value, BlockPos.STREAM_CODEC, this@BreadModCodecs.FLUIDSTATE_STREAM_CODEC)
 			}
 		}
+	val BIG_DECIMAL_CODEC: PrimitiveCodec<BigDecimal> = object : PrimitiveCodec<BigDecimal> {
+		override fun toString(): String = "BigDecimal"
+		override fun <T> write(ops: DynamicOps<T>, value: BigDecimal): T = ops.createString(value.toString())
+		override fun <T> read(ops: DynamicOps<T>, input: T): DataResult<BigDecimal> {
+			if (input is StringTag) return DataResult.success(BigDecimal(input.asString))
+			return DataResult.error { "Not a string tag: $input [${if (input != null) input::class.qualifiedName else "?"}]" }
+		}
+	}
+	val BIG_DECIMAL_STREAM_CODEC: StreamCodec<ByteBuf, BigDecimal> = object : StreamCodec<ByteBuf, BigDecimal> {
+		override fun decode(buffer: ByteBuf): BigDecimal {
+			val scale = buffer.readInt()
+			val data = ByteArray(buffer.readInt())
+			buffer.readBytes(data)
+			val unscaled = BigInteger(data)
+			return BigDecimal(unscaled, scale)
+		}
+
+		override fun encode(buffer: ByteBuf, value: BigDecimal) {
+			buffer.writeInt(value.scale())
+			val data = value.unscaledValue().toByteArray()
+			buffer.writeInt(data.size)
+			buffer.writeBytes(data)
+		}
+	}
 
 	@Suppress("ConvertLambdaToReference") // necessary because of overload ambiguity.
 	val VEC3: StreamCodec<ByteBuf, Vec3> = StreamCodec.composite(

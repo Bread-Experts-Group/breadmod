@@ -1,25 +1,21 @@
 package org.bread_experts_group.breadmod.client.render.entity.block
-//
-//class DieselGeneratorRenderer(context: Context) : BreadModBER<DieselGeneratorBlockEntity>(context) {
-//	override fun renderBM(
-//		blockEntity: DieselGeneratorBlockEntity,
-//		partialTick: Float,
-//		poseStack: PoseStack,
-//		bufferSource: MultiBufferSource,
-//		packedLight: Int,
-//		packedOverlay: Int
-//	) {
-//		val blockRotation = blockEntity.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
-//	}
-//
-//	private fun renderFluid(
-//		blockEntity: DieselGeneratorBlockEntity,
-//		poseStack: PoseStack,
-//		rotation: Direction,
-//		bufferSource: MultiBufferSource
-//	) {
-//		val tank = blockEntity.fluidHandler.getUnit(0)
-//		tank.amount.divide(tank.capacity).toFloat()
-//		val (_, _) = getFluidSpriteAndTint(tank.fluid, false)
-//	}
-//}
+
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+
+class DieselGeneratorRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(context) {
+	override fun renderBM(
+		blockEntity: BreadModBlockEntity,
+		partialTick: Float,
+		poseStack: PoseStack,
+		bufferSource: MultiBufferSource,
+		packedLight: Int,
+		packedOverlay: Int
+	) {
+		blockEntity.blockState.getValue(HORIZONTAL_FACING)
+		// TODO render fluid
+	}
+}

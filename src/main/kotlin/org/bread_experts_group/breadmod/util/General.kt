@@ -86,7 +86,7 @@ val BigDecimal.int: Int
 	get() = this.coerceIn(
 		BigDecimal(Int.MIN_VALUE),
 		BigDecimal(Int.MAX_VALUE)
-	).intValueExact()
+	).toBigInteger().toInt()
 val DeferredItem<BlockItem>.block: Block
 	get() = this.get().block
 
