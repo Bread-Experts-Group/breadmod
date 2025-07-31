@@ -56,6 +56,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.HellNawButtonBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemPedestalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
+import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
@@ -208,13 +209,14 @@ object ModBlocks : RegistryProvider(
 //		::ToasterBlock,
 //		Properties()
 //	)
-//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	val MICROWAVE: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"microwave",
-//		::MicrowaveBlock,
-//		Properties()
-//	)
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	val MICROWAVE: DeferredItem<BlockItem> = this.registerBlockItem(
+		"microwave",
+		::MicrowaveBlock,
+		Properties()
+	)
+
 	@DataGenerateLootDropNothing
 	@DataGenerateLanguage
 	val ITEM_IN_WORLD_BLOCK: DeferredBlock<ItemInWorldBlock> = this.registerBlock("item_in_world", ::ItemInWorldBlock)
@@ -251,7 +253,7 @@ object ModBlocks : RegistryProvider(
 		Properties()
 	)
 
-//	@DataGenerateLootDropSelf
+	//	@DataGenerateLootDropSelf
 //	@DataGenerateLanguage
 //	val CABLE: DeferredItem<BlockItem> = this.registerBlockItem(
 //		"cable",
@@ -295,6 +297,7 @@ object ModBlocks : RegistryProvider(
 		::KeyboardBlock,
 		Properties().stacksTo(1)
 	)
+
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
 	val HELL_NAW_BUTTON: DeferredItem<BlockItem> = this.registerBlockItem(

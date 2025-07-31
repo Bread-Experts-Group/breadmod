@@ -67,10 +67,12 @@ class ItemInWorldBlock : BreadModBlock(
 		newState: BlockState,
 		movedByPiston: Boolean
 	) {
-		if (!state.`is`(newState.block)) level.getCapability(
-			SlotQueueHandler.BLOCK_VOID,
-			pos, state, level.getBlockEntity(pos)
-		)?.dropContents(pos, level)
+		if (!state.`is`(newState.block)) {
+			val entity = level.getBlockEntity(pos) as? BreadModBlockEntity
+				?: return super.onRemove(state, level, pos, newState, movedByPiston)
+			val itemHandler = entity.getCapability(SlotQueueHandler.BLOCK_VOID)
+			itemHandler.dropContents(pos, level)
+		}
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
 }

@@ -1,5 +1,8 @@
 package org.bread_experts_group.breadmod.util
 
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
+
 object Color {
 	val WHITE: Int = this.color(255, 255, 255)
 	val BLACK: Int = this.color()
@@ -14,6 +17,12 @@ object Color {
 	val MAGENTA: Int = this.color(r = 255, b = 255)
 	val CYAN: Int = this.color(g = 255, b = 255)
 	val BLUE: Int = this.color(b = 255)
+	val CORNFLOWER_BLUE: Int = this.color(97, 149, 237)
+	val SAFFRON: Int = this.color(243, 179, 48)
+
+	fun Int.component(literal: String): MutableComponent = Component.literal(literal).withColor(this)
+	fun Char.component(color: Int): MutableComponent = Component.literal(this.toString()).withColor(color)
+	fun String.component(color: Int): MutableComponent = Component.literal(this).withColor(color)
 
 	/**
 	 * ARGB32

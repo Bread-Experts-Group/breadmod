@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity
 
-import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup.Provider
 import net.minecraft.core.component.DataComponentMap
@@ -18,6 +17,10 @@ import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityU
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.DataComponentSerializable
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ParentedHandler
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
+import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
+import org.bread_experts_group.breadmod.util.Color.GRAY
+import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
+import org.bread_experts_group.breadmod.util.Color.component
 import java.util.Optional
 
 typealias CapabilityMap = Map<BaseCapability<*, *>, Map<Optional<out Any>, (BreadModBlockEntity, Any?) -> Any>>
@@ -107,9 +110,6 @@ class BreadModBlockEntity(
 		this.prepInput = componentInput
 	}
 
-	val grayStart: Component = Component.literal("[").withStyle(ChatFormatting.DARK_GRAY)
-	val grayEnd: Component = Component.literal("]").withStyle(ChatFormatting.DARK_GRAY)
-	val grayMiddle: Component = Component.literal(",").withStyle(ChatFormatting.DARK_GRAY)
 	override fun collectImplicitComponents(components: DataComponentMap.Builder) {
 		val counted = mutableMapOf<Any, Triple<BaseCapability<*, *>, MutableList<Any?>, MutableList<Component>>>()
 		this.capabilities.forEach { (capability, contextual) ->
@@ -129,17 +129,15 @@ class BreadModBlockEntity(
 		counted.forEach { (_, data) ->
 			val (capability, contextSet, components) = data
 			if (components.isEmpty()) return@forEach
-			val capabilityHeader = this.grayStart.copy()
-			capabilityHeader.append(
-				Component.literal(capability.name().toString()).withStyle(ChatFormatting.GRAY)
-			)
-			hoverText.add(capabilityHeader.append(this.grayEnd))
-			val contextHeader = this.grayStart.copy()
+			val capabilityHeader = '['.component(DARK_GRAY)
+			capabilityHeader.append(LIGHT_GRAY.component(capability.name().toString()))
+			hoverText.add(capabilityHeader.append(']'.component(DARK_GRAY)))
+			val contextHeader = '['.component(DARK_GRAY)
 			contextSet.forEachIndexed { index, item ->
-				contextHeader.append(Component.literal(item.toString()).withStyle(ChatFormatting.GRAY))
-				if (index < contextSet.lastIndex) contextHeader.append(this.grayMiddle)
+				contextHeader.append(LIGHT_GRAY.component(item.toString()))
+				if (index < contextSet.lastIndex) contextHeader.append(','.component(GRAY))
 			}
-			hoverText.add(contextHeader.append(this.grayEnd))
+			hoverText.add(contextHeader.append(']'.component(DARK_GRAY)))
 			hoverText.addAll(components)
 		}
 		components.set(BLOCK_ENTITY_HANDLER_INFORMATION, hoverText)

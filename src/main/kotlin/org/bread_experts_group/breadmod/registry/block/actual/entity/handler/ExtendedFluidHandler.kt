@@ -2,12 +2,12 @@ package org.bread_experts_group.breadmod.registry.block.actual.entity.handler
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.ChatFormatting
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
+import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.Tag
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
@@ -29,6 +29,10 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.compose
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler.Tank.Companion.TANK_FLUID_ID_SERIALIZER
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents.TANKS
+import org.bread_experts_group.breadmod.util.Color.CORNFLOWER_BLUE
+import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
+import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
+import org.bread_experts_group.breadmod.util.Color.component
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import org.bread_experts_group.breadmod.util.int
 import org.bread_experts_group.breadmod.util.percentRoundEven
@@ -110,34 +114,26 @@ class ExtendedFluidHandler(
 	}
 
 	val big100: BigDecimal = BigDecimal.valueOf(100)
-	val percentGray: Component = Component.literal("%").withStyle(ChatFormatting.GRAY)
-	val paraLeftDarkGray: Component = Component.literal("(").withStyle(ChatFormatting.DARK_GRAY)
-	val paraRightDarkGray: Component = Component.literal(") ").withStyle(ChatFormatting.DARK_GRAY)
-	val leftDarkGray: Component = Component.literal("[").withStyle(ChatFormatting.DARK_GRAY)
-	val rightDarkGray: Component = Component.literal("]").withStyle(ChatFormatting.DARK_GRAY)
-	val hashDarkGray: Component = Component.literal("#").withStyle(ChatFormatting.DARK_GRAY)
-	val colonDarkGray: Component = Component.literal(": ").withStyle(ChatFormatting.DARK_GRAY)
-	val pipeDarkGray: Component = Component.literal("|").withStyle(ChatFormatting.DARK_GRAY)
 	override fun collectHoverText(tooltipComponents: MutableList<Component>) {
 		this.tanks.forEach { (index, tank) ->
-			val component = this.hashDarkGray.copy()
-			component.append(Component.literal(index.toString()).withStyle(ChatFormatting.GRAY))
-			component.append(this.colonDarkGray)
-			component.append(Component.literal(" ${tank.amount} ").withStyle(ChatFormatting.BLUE))
-			component.append(this.pipeDarkGray)
-			component.append(Component.literal(" ${tank.capacity} ").withStyle(ChatFormatting.BLUE))
-			component.append(this.paraLeftDarkGray)
+			val component = '#'.component(DARK_GRAY)
+			component.append(index.toString().component(LIGHT_GRAY))
+			component.append(':'.component(DARK_GRAY))
+			component.append(" ${tank.amount} ".component(CORNFLOWER_BLUE))
+			component.append('|'.component(DARK_GRAY))
+			component.append(" ${tank.capacity} ".component(CORNFLOWER_BLUE))
+			component.append('('.component(DARK_GRAY))
 			val percentage = tank.amount
 				.divide(tank.capacity, percentRoundEven)
 				.multiply(this.big100)
 				.setScale(2, RoundingMode.HALF_EVEN)
-			component.append(Component.literal(percentage.toString()).withStyle(ChatFormatting.BLUE))
-			component.append(this.percentGray)
-			component.append(this.paraRightDarkGray)
-			component.append(this.leftDarkGray)
+			component.append(percentage.toString().component(CORNFLOWER_BLUE))
+			component.append('%'.component(LIGHT_GRAY))
+			component.append(") ".component(DARK_GRAY))
+			component.append('['.component(DARK_GRAY))
 			val color = IClientFluidTypeExtensions.of(tank.fluid).tintColor
 			component.append(tank.fluid.fluidType.description.copy().withColor(color))
-			component.append(this.rightDarkGray)
+			component.append(']'.component(DARK_GRAY))
 			tooltipComponents.add(component)
 		}
 	}
@@ -150,7 +146,10 @@ class ExtendedFluidHandler(
 			if (tank.amount > BigDecimal.ZERO) {
 				compound.putString("amount", tank.amount.toString())
 				compound.putString("fluid", TANK_FLUID_ID_SERIALIZER(tank))
-				// TODO components
+				val result = DataComponentMap.CODEC.encodeStart(NbtOps.INSTANCE, tank.components)
+				result.resultOrPartial().ifPresent {
+					compound.put("components", it)
+				}
 			}
 			list.add(compound)
 		}
@@ -166,9 +165,14 @@ class ExtendedFluidHandler(
 				val tank = this.tanks.getOrPut(index) { Tank(capacity) }
 				tank.fluid = BuiltInRegistries.FLUID.get(ResourceLocation.parse(tag.getString("fluid")))
 				tank.amount = BigDecimal(tag.getString("amount"))
+				val result = DataComponentMap.CODEC.decode(NbtOps.INSTANCE, tag.get("components"))
+				result.resultOrPartial().ifPresent {
+					tank.components = it.first
+				}
 			} catch (_: Exception) {
 			}
 		}
+		if (nbt.isNotEmpty()) this.stateUpdated()
 	}
 
 	data class Tank(

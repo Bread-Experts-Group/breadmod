@@ -13,7 +13,7 @@ internal class JapaneseJPLangProvider(
 
 	override fun addManualTranslations() {
 //		this.bmAdd(modTranslatable("irc", "connected"), "Connected to host [%1\$s]")
-		this.bmAdd(modTranslatable("irc", "disconnected"), "リモートホスト切断しました [%1\$s]")
+		this.bmAdd(modTranslatable("irc", "disconnected"), $$"リモートホスト切断しました [%1$s]")
 //		this.bmAdd(modTranslatable("irc", "unknown_host"), "Cannot connect, unknown host \"%1\$s:%2\$s\"")
 //		this.bmAdd(modTranslatable("irc", "timed_out"), "Cannot connect, timed out \"[%1\$s]:%2\$s\"")
 //		this.bmAdd(

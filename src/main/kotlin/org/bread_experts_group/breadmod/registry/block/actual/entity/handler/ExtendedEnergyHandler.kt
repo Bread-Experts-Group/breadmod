@@ -11,6 +11,10 @@ import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.energy.IEnergyStorage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
+import org.bread_experts_group.breadmod.util.Color.GRAY
+import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
+import org.bread_experts_group.breadmod.util.Color.component
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import org.bread_experts_group.breadmod.util.percentRoundEven
 import java.math.BigDecimal
@@ -61,34 +65,27 @@ class ExtendedEnergyHandler(
 	}
 
 	val big100: BigDecimal = BigDecimal.valueOf(100)
-	val dividerDarkGray: Component = Component.literal("|").withStyle(ChatFormatting.DARK_GRAY)
-	val paraLeftDarkGray: Component = Component.literal(" (").withStyle(ChatFormatting.DARK_GRAY)
-	val paraRightDarkGray: Component = Component.literal(")").withStyle(ChatFormatting.DARK_GRAY)
-	val percentGray: Component = Component.literal("%").withStyle(ChatFormatting.GRAY)
-	val rfGray: Component = Component.literal(" FE").withStyle(ChatFormatting.GRAY)
-	val upGray: Component = Component.literal("↑ ").withStyle(ChatFormatting.GRAY)
-	val downGray: Component = Component.literal("↓ ").withStyle(ChatFormatting.GRAY)
 	override fun collectHoverText(tooltipComponents: MutableList<Component>) {
 		val energy = Component.literal("${this.bigAmount} ").withStyle(ChatFormatting.RED)
-		energy.append(this.dividerDarkGray)
+		energy.append('|'.component(DARK_GRAY))
 		energy.append(Component.literal(" ${this.bigCapacity}").withStyle(ChatFormatting.RED))
-		energy.append(this.rfGray)
-		energy.append(this.paraLeftDarkGray)
+		energy.append(" FE".component(GRAY))
+		energy.append(" (".component(DARK_GRAY))
 		val percentage = this.bigAmount
 			.divide(this.bigCapacity, percentRoundEven)
 			.multiply(this.big100)
 			.setScale(2, RoundingMode.HALF_EVEN)
 		energy.append(Component.literal(percentage.toString()))
-		energy.append(this.percentGray)
-		energy.append(this.paraRightDarkGray)
+		energy.append('%'.component(LIGHT_GRAY))
+		energy.append(')'.component(DARK_GRAY))
 		tooltipComponents.add(energy)
-		val maxOut = this.upGray.copy()
+		val maxOut = "↑ ".component(LIGHT_GRAY)
 		maxOut.append(Component.literal(this.maxOut.toString()).withStyle(ChatFormatting.RED))
-		maxOut.append(this.rfGray)
+		maxOut.append(" FE".component(GRAY))
 		tooltipComponents.add(maxOut)
-		val maxIn = this.downGray.copy()
+		val maxIn = "↓ ".component(LIGHT_GRAY)
 		maxIn.append(Component.literal(this.maxIn.toString()).withStyle(ChatFormatting.RED))
-		maxIn.append(this.rfGray)
+		maxIn.append(" FE".component(GRAY))
 		tooltipComponents.add(maxIn)
 	}
 

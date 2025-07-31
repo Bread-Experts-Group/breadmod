@@ -18,6 +18,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_STREAM_CODEC
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
 import org.bread_experts_group.breadmod.registry.item.coffee.CoffeeContents
 import org.bread_experts_group.breadmod.util.toList
 import java.math.BigDecimal
@@ -51,6 +52,7 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 	val COLOR: Supplier<DataComponentType<Int>> = this.registry.register(
 		"color", DataComponentType.builder<Int>()
 			.networkSynchronized(ByteBufCodecs.INT)
+			.persistent(Codec.INT)
 		::build
 	)
 	val ENERGY: Supplier<DataComponentType<BigDecimal>> = this.registry.register(
@@ -69,6 +71,12 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 		"tanks", DataComponentType.builder<List<ExtendedFluidHandler.Tank>>()
 			.networkSynchronized(ExtendedFluidHandler.Tank.STREAM_CODEC.toList())
 			.persistent(ExtendedFluidHandler.Tank.CODEC.listOf())
+		::build
+	)
+	val SLOTS: Supplier<DataComponentType<List<ExtendedItemHandler.Slot>>> = this.registry.register(
+		"slots", DataComponentType.builder<List<ExtendedItemHandler.Slot>>()
+			.networkSynchronized(ExtendedItemHandler.Slot.STREAM_CODEC.toList())
+			.persistent(ExtendedItemHandler.Slot.CODEC.listOf())
 		::build
 	)
 	val COFFEE_CONTENTS: Supplier<DataComponentType<CoffeeContents>> = this.registry.register(

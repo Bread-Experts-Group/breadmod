@@ -15,6 +15,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
@@ -35,6 +36,10 @@ object BreadModCodecs {
 	val FLUID_ID_SERIALIZER: (Fluid) -> String = { fluid: Fluid -> BuiltInRegistries.FLUID.getKey(fluid).toString() }
 	val FLUID_ID_DESERIALIZER: (String) -> Fluid = { id: String ->
 		BuiltInRegistries.FLUID.get(ResourceLocation.parse(id))
+	}
+	val ITEM_ID_SERIALIZER: (Item) -> String = { item: Item -> BuiltInRegistries.ITEM.getKey(item).toString() }
+	val ITEM_ID_DESERIALIZER: (String) -> Item = { id: String ->
+		BuiltInRegistries.ITEM.get(ResourceLocation.parse(id))
 	}
 	val TOOL_GUN_CODEC: Codec<ToolGunData> =
 		RecordCodecBuilder.create { instance ->

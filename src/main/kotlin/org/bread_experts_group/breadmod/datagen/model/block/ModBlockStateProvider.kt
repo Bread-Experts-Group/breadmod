@@ -254,8 +254,8 @@ class ModBlockStateProvider(
 		this.horizontalBlockBenchModelWithItem(ModBlocks.OMANEKO_BLOCK.block, "omaneko_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.RICARD_BLOCK.block, "ricard_block")
 		this.horizontalBlockBenchModelWithItem(ModBlocks.UNFUNNYLAD_BLOCK.block, "unfunnylad_block")
-//		this.horizontalBlockBenchModelWithItem(ModBlocks.MICROWAVE.block, "microwave")
-//		this.simpleBlockItem(ModBlocks.MICROWAVE.block, this.blockBenchItemModel("microwave_item"))
+		this.horizontalBlockBenchModelWithItem(ModBlocks.MICROWAVE.block, "microwave")
+		this.simpleBlockItem(ModBlocks.MICROWAVE.block, this.blockBenchItemModel("microwave_item"))
 		this.doorBlockWithRenderType(
 			ModBlocks.BREAD_DOOR.block as DoorBlock,
 			this.modLoc("${ModelProvider.BLOCK_FOLDER}/bread_door_bottom"),

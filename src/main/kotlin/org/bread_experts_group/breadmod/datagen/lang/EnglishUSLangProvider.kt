@@ -37,5 +37,5 @@ internal class EnglishUSLangProvider(
 		this.add("command.breadmod.war_timer.toggle.success", "Toggled war timer to %s for %s")
 	}
 
-	override fun getNameAdditional(): String = "(with automatic naming)"
+	override fun getNameAdditional(): String = "English (with automatic naming)"
 }

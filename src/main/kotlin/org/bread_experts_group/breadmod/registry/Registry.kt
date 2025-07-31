@@ -422,7 +422,7 @@ object Registry {
 				modBus.addListener { event: RegisterColorHandlersEvent.Block ->
 					event.register({ _, getter, pos, _ ->
 						if (getter != null && pos != null) {
-							val entity = getter.getBlockEntity(pos) as BreadModBlockEntity
+							val entity = getter.getBlockEntity(pos) as? BreadModBlockEntity ?: return@register Color.RED
 							val state = entity.getCapability(EnergyStorageStateHandler.BLOCK_VOID)
 							state.get(EnergyStorageStateHandler.COLOR)
 						} else Color.RED

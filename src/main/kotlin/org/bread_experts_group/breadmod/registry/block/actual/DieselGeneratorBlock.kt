@@ -25,7 +25,7 @@ import java.util.Optional
 class DieselGeneratorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	override fun ofCapabilities(): CapabilityMap {
 		val state = DieselGeneratorStateHandler()
-		val fluids = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(100_000)))
+		val fluids = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))
 		val storage = { _: BreadModBlockEntity, _: Any? -> fluids }
 		return mapOf(
 			DieselGeneratorStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> state }),
