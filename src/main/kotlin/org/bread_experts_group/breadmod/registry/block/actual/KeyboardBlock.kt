@@ -65,6 +65,7 @@ class KeyboardBlock : BreadModBlock(
 		).combine()
 	}
 
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofCapabilities(): CapabilityMap {
 		val state = KeyboardStateHandler()
 		return mapOf(

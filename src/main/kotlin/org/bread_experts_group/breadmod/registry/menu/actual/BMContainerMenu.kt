@@ -1,21 +1,20 @@
 package org.bread_experts_group.breadmod.registry.menu.actual
 
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityType
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
-import java.util.function.Supplier
 
 abstract class BMContainerMenu(
-	type: MenuType<*>?,
+	type: MenuType<*>,
 	id: Int,
-) : AbstractContainerMenu(type, id) {
+	inventory: Inventory,
+	entity: BreadModBlockEntity
+) : BreadModMenu(type, id, inventory, entity) {
 	protected companion object {
 		// CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
 		// must assign a slot number to each of the slots used by the GUI.
@@ -32,12 +31,6 @@ abstract class BMContainerMenu(
 		private const val VANILLA_SLOT_COUNT = this.HOTBAR_SLOT_COUNT + this.PLAYER_INVENTORY_SLOT_COUNT
 		private const val VANILLA_FIRST_SLOT_INDEX = 0
 		private const val TE_INVENTORY_FIRST_SLOT_INDEX = this.VANILLA_FIRST_SLOT_INDEX + this.VANILLA_SLOT_COUNT
-
-		fun <T : BlockEntity> blockEntityFromByteBuf(
-			inventory: Inventory,
-			byteBuf: RegistryFriendlyByteBuf,
-			supplier: Supplier<BlockEntityType<T>>
-		): T = inventory.player.level().getBlockEntity(byteBuf.readBlockPos(), supplier.get()).get()
 	}
 
 	protected fun addInventorySlots(inventory: Inventory, pX: Int, hotBarY: Int, inventoryY: Int) {
@@ -100,31 +93,22 @@ abstract class BMContainerMenu(
 
 	override fun quickMoveStack(player: Player, index: Int): ItemStack = this.moveStackFunction(player, index)
 
-	abstract class Entity<BE : BlockEntity>(
-		type: MenuType<*>?,
-		id: Int,
-		val inventory: Inventory,
-		val parent: BE
-	) : BMContainerMenu(type, id) {
-		abstract override val containerSlotCount: Int
-		override fun stillValid(player: Player): Boolean = player.containerMenu == this
-//		fun addHandlerSlot(slot: Int, x: Int, y: Int) {
-//			val handler = this.parent as? ItemBearingBlockEntity ?: return
-//			this.addSlot(SlotItemHandler(handler.itemHandler, slot, x, y))
-//		}
-//
-//		fun addResultHandlerSlot(slot: Int, x: Int, y: Int) {
-//			val handler = this.parent as? ItemBearingBlockEntity ?: return
-//			this.addSlot(SlotItemHandler(handler.itemHandler, slot, x, y))
-//		}
-	}
-
-	abstract class RecipeEntity<R : FluidEnergyRecipe, BE : BlockEntity>(
-		type: MenuType<*>?,
+	abstract class Entity(
+		type: MenuType<*>,
 		id: Int,
 		inventory: Inventory,
-		parent: BE
-	) : Entity<BE>(type, id, inventory, parent) {
+		entity: BreadModBlockEntity
+	) : BMContainerMenu(type, id, inventory, entity) {
+		abstract override val containerSlotCount: Int
+		override fun stillValid(player: Player): Boolean = player.containerMenu == this
+	}
+
+	abstract class RecipeEntity<R : FluidEnergyRecipe>(
+		type: MenuType<*>,
+		id: Int,
+		inventory: Inventory,
+		entity: BreadModBlockEntity
+	) : Entity(type, id, inventory, entity) {
 		open val progressWidth: Int = 0
 
 		//		val scaledProgress: Int

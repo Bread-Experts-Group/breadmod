@@ -2,6 +2,8 @@ package org.bread_experts_group.breadmod.registry
 
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import net.minecraft.client.gui.screens.MenuScreens
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ShaderInstance
@@ -13,9 +15,12 @@ import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.commands.Commands
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.api.distmarker.Dist
@@ -65,6 +70,7 @@ import org.bread_experts_group.breadmod.client.gui.overlays.InternetChatRelayOve
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
+import org.bread_experts_group.breadmod.client.gui.screens.BreadModScreen
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
@@ -143,6 +149,7 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.ModRecords
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
+import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.menu.ModMenus
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
@@ -479,10 +486,18 @@ object Registry {
 					event.registerLayerDefinition(ForkliftModel.FORKLIFT_LAYER, ForkliftModel::createLayerDefinition)
 				}
 				modBus.addListener { event: RegisterMenuScreensEvent ->
-//					event.register(ModMenuTypes.WHEAT_CRUSHER.get(), ::WheatCrusherScreen)
-//					event.register(ModMenuTypes.DOUGH_MACHINE.get(), ::DoughMachineScreen)
-					// Experimental stuff
-//					event.register(ModMenuTypes.FLUID_ENERGY_TEST.get(), ::FluidEnergyScreen)
+					for (deferredBlock in ModBlocks.blockIterator()) {
+						val block = deferredBlock.get()
+						if (block !is BreadModBlock) continue
+						if (block.ofMenu() == null) continue
+						@Suppress("UNCHECKED_CAST")
+						event.register(
+							block.menuType!!.get(),
+							BreadModScreenConstructor() as MenuScreens.ScreenConstructor<
+									AbstractContainerMenu, AbstractContainerScreen<AbstractContainerMenu>
+									>
+						)
+					}
 				}
 			}
 			Dist.DEDICATED_SERVER -> {
@@ -598,5 +613,13 @@ object Registry {
 				}
 			}
 		}
+	}
+
+	class BreadModScreenConstructor : MenuScreens.ScreenConstructor<BreadModMenu, BreadModScreen> {
+		override fun create(
+			menu: BreadModMenu,
+			inventory: Inventory,
+			title: Component
+		): BreadModScreen = menu.ofScreen(title)
 	}
 }

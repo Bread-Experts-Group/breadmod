@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.entity.machine
+package org.bread_experts_group.breadmod.registry.block.actual.entity
 //class WheatCrusherBlockEntity(
 //	pos: BlockPos, state: BlockState
 //) : BreadModRecipeBlockEntity<FluidEnergyInput, WheatCrusherRecipe, WheatCrusherBlockEntity>(

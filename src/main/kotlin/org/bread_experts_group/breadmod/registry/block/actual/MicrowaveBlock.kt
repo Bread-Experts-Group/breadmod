@@ -66,6 +66,7 @@ class MicrowaveBlock : BreadModBlock(Properties.of()) {
 		val SHAPE_WEST_OPEN: VoxelShape = this.SHAPE_NORTH_OPEN.rotate(Rotation.COUNTERCLOCKWISE_90)
 	}
 
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofCapabilities(): CapabilityMap {
 		val storage = ExtendedItemHandler(ExtendedItemHandler.Slot(BigDecimal.ONE))
 		return mapOf(

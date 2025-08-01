@@ -11,7 +11,9 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.ItemInteractionResult.SUCCESS
+import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
@@ -37,6 +39,7 @@ import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityU
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
+import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 
 typealias BreadModTicker<T> = ((entity: BreadModBlockEntity, level: T, state: BlockState, pos: BlockPos) -> Unit)?
 
@@ -48,13 +51,19 @@ abstract class BreadModBlock(
 	override fun getRenderShape(state: BlockState): RenderShape = MODEL
 
 	var blockEntityType: DeferredHolder<BlockEntityType<*>, BlockEntityType<*>>? = null
+	var menuType: DeferredHolder<MenuType<*>, MenuType<*>>? = null
+	open fun getDisplayName(blockEntity: BreadModBlockEntity): Component = Component.literal(
+		"${this::class.simpleName ?: "BreadModBlock"} / $blockEntity"
+	)
+
+	open fun ofMenu(): ((MenuType<*>, Int, Inventory, BreadModBlockEntity) -> BreadModMenu)? = null
 	open fun ofCapabilities(): CapabilityMap = mapOf()
 	open fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		null
 
-	open fun shouldCreateEntity(pos: BlockPos, state: BlockState): Boolean = true
+	abstract fun shouldCreateEntity(with: Pair<BlockPos, BlockState>? = null): Boolean
 	final override fun newBlockEntity(pos: BlockPos, state: BlockState): BreadModBlockEntity? {
-		if (this.blockEntityType == null || !this.shouldCreateEntity(pos, state)) return null
+		if (this.blockEntityType == null || !this.shouldCreateEntity(pos to state)) return null
 		return BreadModBlockEntity(
 			this.blockEntityType!!.get(), pos, state,
 			this.ofCapabilities()

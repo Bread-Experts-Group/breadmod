@@ -32,6 +32,7 @@ import java.util.Optional
 import kotlin.math.roundToInt
 
 class EnergyStorageBlock : BreadModBlock(Properties.of()) {
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofCapabilities(): CapabilityMap {
 		val container = ExtendedEnergyHandler(BigDecimal(10000000))
 		val storage = { _: BreadModBlockEntity, _: Any? -> container }

@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.block.Block
@@ -23,6 +24,7 @@ import java.math.BigDecimal
 import java.util.Optional
 
 class DieselGeneratorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofCapabilities(): CapabilityMap {
 		val state = DieselGeneratorStateHandler()
 		val fluids = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))

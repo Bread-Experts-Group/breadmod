@@ -171,9 +171,9 @@ class ModBlockStateProvider(
 //		this.horizontalBlockBenchModel(ModBlocks.TOASTER.block, "toaster")
 //		this.simpleBlockItem(ModBlocks.TOASTER.block, this.blockBenchItemModel("toaster_item"))
 		// Wheat Crusher
-		this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
-		this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
-		this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
+		val machineTop = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
+		val machineSide = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
+		val machineBack = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
 //		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.block) { state ->
 //			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
 //			val model = this.models().cube(
@@ -192,23 +192,23 @@ class ModBlockStateProvider(
 //			this.models().getBuilder("breadmod:block/wheat_crusher")
 //		)
 		// Dough Machine
-//		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.block) { state ->
-//			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-//			val model = this.models().cube(
-//				"breadmod:block/dough_machine$machineOn",
-//				machineTop,
-//				machineTop,
-//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
-//				machineBack,
-//				machineSide,
-//				machineSide
-//			)
-//			return@horizontalBlock model
-//		}
-//		this.simpleBlockItem(
-//			ModBlocks.DOUGH_MACHINE.block,
-//			this.models().getBuilder("breadmod:block/dough_machine")
-//		)
+		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.block) { state ->
+			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+			val model = this.models().cube(
+				"breadmod:block/dough_machine$machineOn",
+				machineTop,
+				machineTop,
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/dough_machine_front$machineOn"),
+				machineBack,
+				machineSide,
+				machineSide
+			)
+			return@horizontalBlock model
+		}
+		this.simpleBlockItem(
+			ModBlocks.DOUGH_MACHINE.block,
+			this.models().getBuilder("breadmod:block/dough_machine")
+		)
 		this.horizontalBlock(ModBlocks.GENERATOR.block) { state ->
 			val active = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
 			this.blockBenchBlockModel("generator$active")

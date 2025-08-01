@@ -7,6 +7,9 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
 import net.minecraft.network.chat.Component
+import net.minecraft.world.MenuProvider
+import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
@@ -14,9 +17,11 @@ import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
+import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.DataComponentSerializable
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ParentedHandler
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
+import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
 import org.bread_experts_group.breadmod.util.Color.GRAY
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
@@ -31,11 +36,17 @@ class BreadModBlockEntity(
 	pos: BlockPos,
 	state: BlockState,
 	private val capabilityConstructors: CapabilityMap = mapOf(),
-) : BlockEntity(type, pos, state) {
+) : BlockEntity(type, pos, state), MenuProvider {
 	private val loadedCapabilities: MutableSet<Any> = mutableSetOf()
 	private val capabilities: MutableCapabilityMap<Any> = mutableMapOf()
 	private val prepLoad: MutableCapabilityMap<Pair<Provider, Tag>> = mutableMapOf()
 	private var prepInput: DataComponentInput? = null
+
+	override fun getDisplayName(): Component = (this.blockState.block as BreadModBlock).getDisplayName(this)
+	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): BreadModMenu {
+		val parent = this.blockState.block as BreadModBlock
+		return parent.ofMenu()!!.invoke(parent.menuType!!.get(), containerId, playerInventory, this)
+	}
 
 	@Suppress("UNCHECKED_CAST")
 	fun <T, C> getCapability(capability: BaseCapability<T, C>, context: C? = null): T {

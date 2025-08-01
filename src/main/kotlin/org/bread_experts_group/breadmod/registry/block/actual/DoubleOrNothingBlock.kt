@@ -209,9 +209,12 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 		this.logger.info("CASHOUT")
 	}
 
-	override fun shouldCreateEntity(pos: BlockPos, state: BlockState): Boolean = when (state.getValue(TRIPLE_BLOCK)) {
-		LOWER -> true
-		else -> false
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean {
+		if (with == null) return true
+		return when (with.second.getValue(TRIPLE_BLOCK)) {
+			LOWER -> true
+			else -> false
+		}
 	}
 
 	override fun ofCapabilities(): CapabilityMap {

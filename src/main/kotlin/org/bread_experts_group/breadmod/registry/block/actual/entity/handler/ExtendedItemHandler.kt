@@ -21,7 +21,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.common.util.INBTSerializable
-import net.neoforged.neoforge.items.IItemHandler
+import net.neoforged.neoforge.items.IItemHandlerModifiable
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.ITEM_ID_DESERIALIZER
@@ -43,7 +43,7 @@ import kotlin.math.roundToInt
 
 class ExtendedItemHandler(
 	vararg slots: Slot
-) : ParentedHandler<BreadModBlockEntity>, IItemHandler, DataComponentSerializable, INBTSerializable<Tag> {
+) : ParentedHandler<BreadModBlockEntity>, IItemHandlerModifiable, DataComponentSerializable, INBTSerializable<Tag> {
 	override lateinit var parent: BreadModBlockEntity
 	val slots: MutableMap<Int, Slot> = mutableMapOf(*slots.mapIndexed { index, slot -> index to slot }.toTypedArray())
 
@@ -53,6 +53,13 @@ class ExtendedItemHandler(
 
 	override fun getSlots(): Int = this.slots.size
 	override fun getStackInSlot(slot: Int): ItemStack = this.slots[slot]?.itemStack() ?: ItemStack.EMPTY
+	override fun setStackInSlot(slot: Int, stack: ItemStack) {
+		val slot = this.slots[slot] ?: return
+		slot.item = stack.item
+		slot.amount = minOf(BigDecimal(stack.count), slot.capacity)
+		slot.components = stack.components
+		this.stateUpdated()
+	}
 
 	data class BigItemTransaction(
 		val item: Item,
@@ -101,13 +108,35 @@ class ExtendedItemHandler(
 		return stack
 	}
 
+	val emptyTransaction: BigItemTransaction = BigItemTransaction(
+		Items.AIR, BigDecimal.ZERO,
+		DataComponentMap.EMPTY
+	)
+
+	fun bigExtractItem(
+		slot: Int,
+		amount: BigDecimal,
+		simulate: Boolean
+	): BigItemTransaction {
+		if (amount == BigDecimal.ZERO) return this.emptyTransaction
+		val slot = this.slots[slot] ?: return this.emptyTransaction
+		val transfer = minOf(slot.amount, amount)
+		if (!simulate) {
+			slot.amount -= transfer
+			this.stateUpdated()
+		}
+		return BigItemTransaction(slot.item, transfer, slot.components)
+	}
+
 	override fun extractItem(
 		slot: Int,
 		amount: Int,
 		simulate: Boolean
 	): ItemStack {
-		println("delta")
-		return ItemStack.EMPTY
+		val transaction = this.bigExtractItem(slot, BigDecimal(amount), simulate)
+		val stack = ItemStack(transaction.item, transaction.amount.int)
+		stack.applyComponents(transaction.components)
+		return stack
 	}
 
 	override fun getSlotLimit(slot: Int): Int = this.slots[slot]?.capacity?.int ?: 0

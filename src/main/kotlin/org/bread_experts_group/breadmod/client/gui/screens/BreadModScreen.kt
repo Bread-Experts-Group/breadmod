@@ -1,0 +1,249 @@
+package org.bread_experts_group.breadmod.client.gui.screens
+
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+import net.minecraft.client.gui.screens.inventory.MenuAccess
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
+import net.minecraft.world.inventory.Slot
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
+import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
+import org.bread_experts_group.breadmod.registry.menu.actual.LambdaSlotItemHandler
+
+abstract class BreadModScreen(
+	val menu: BreadModMenu,
+	title: Component
+) : AbstractContainerScreen<BreadModMenu>(menu, menu.inventory, title), MenuAccess<BreadModMenu> {
+	companion object {
+		@DataGenerateLanguage(name = "Energy")
+		val ENERGY_LABEL: MutableComponent = modTranslatable(path = arrayOf("energy"))
+	}
+
+	private fun GuiGraphics.drawFillBox(
+		x: Int,
+		y: Int,
+		w: Int,
+		h: Int
+	) {
+		if (localClient.options.advancedItemTooltips) {
+			this.fill(
+				this@BreadModScreen.leftPos + x,
+				this@BreadModScreen.topPos + y,
+				this@BreadModScreen.leftPos + x + w,
+				this@BreadModScreen.topPos + y + h,
+				0x7F000080
+			)
+		}
+	}
+
+	private fun GuiGraphics.renderEnergyMeter(x: Int, y: Int, h: Int, cell: Int? = null) {
+//		val energyHandler = (this@BreadModScreen.menu.parent as EnergyBearingBlockEntity).energyHandler
+//		val sap = if (cell == null) energyHandler else energyHandler.getUnit(cell)
+//		val scaled = sap.capacity?.let { ((sap.amount.divide(it)).toFloat() * h).toInt() } ?: 0
+		ModGuiElements.SLOT.blitScaled(
+			this,
+			this@BreadModScreen.leftPos + x,
+			this@BreadModScreen.topPos + y,
+			18, 49
+		)
+		// TODO("Extensible Tank")
+//		ModGuiElements.ENERGY_METER.blit(
+//			this,
+//			this@BreadModScreen.leftPos + x + 1,
+//			this@BreadModScreen.topPos + y + 1 + h - scaled,
+//			vOffset = 47f - scaled,
+//			vHeight = scaled
+//		)
+	}
+
+	private fun GuiGraphics.renderEnergyTooltip(
+		x: Int,
+		y: Int,
+		w: Int,
+		h: Int,
+		mouseX: Double,
+		mouseY: Double,
+		cell: Int? = null
+	) {
+		if (this@BreadModScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
+			// TODO("Extensible Tank")
+//			val sap = if (cell == null) energyHandler else energyHandler.getUnit(cell)
+//			this.renderComponentTooltip(
+//				this@BreadModScreen.font,
+//				listOf(
+//					Companion.ENERGY_LABEL
+//						.withStyle(ChatFormatting.RED)
+//						.withStyle(ChatFormatting.ITALIC),
+//					JadeDrawingCommon.fixedLengthScrollingComponent(
+//						sap.amount,
+//						sap.capacity,
+//						"FE",
+//						tint = ChatFormatting.RED.color ?: return
+//					)
+//				),
+//				mouseX.toInt(), mouseY.toInt()
+//			)
+		}
+	}
+
+	protected fun GuiGraphics.renderEnergyWithTooltip(
+		x: Int,
+		y: Int,
+		w: Int,
+		h: Int,
+		mouseX: Double,
+		mouseY: Double,
+		cell: Int? = null
+	) {
+		this.drawFillBox(x, y, w, h)
+		this.renderEnergyMeter(x, y, h, cell)
+		this.renderEnergyTooltip(x, y, w, h, mouseX, mouseY, cell)
+	}
+
+	private fun GuiGraphics.renderFluidMeter(
+		x: Int,
+		y: Int,
+		w: Int,
+		h: Int,
+		tank: Int,
+		flowing: Boolean = false
+	) {
+		ModGuiElements.SLOT.blitScaled(
+			this,
+			this@BreadModScreen.leftPos + x,
+			this@BreadModScreen.topPos + y,
+			w + 2,
+			h + 2
+		)
+		// TODO("Extensible Tank")
+//		val fluidHandler = (this@BreadModScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
+//		val expansibleTank = fluidHandler.getUnit(tank)
+//		if (expansibleTank.amount > BigDecimal.ZERO) {
+//			this.renderFluid(
+//				(this@BreadModScreen.leftPos + x.toFloat()) + 1,
+//				(this@BreadModScreen.topPos + y.toFloat()) + 1,
+//				w,
+//				h,
+//				expansibleTank,
+//				flowing
+//			)
+//		}
+	}
+
+	private fun GuiGraphics.renderFluidTooltip(
+		x: Int,
+		y: Int,
+		w: Int,
+		h: Int,
+		mouseX: Double,
+		mouseY: Double,
+		tank: Int
+	) {
+		if (this@BreadModScreen.isHovering(x, y, w, h, mouseX, mouseY)) {
+			// TODO("Extensible Tank")
+//			val fluidHandler = (this@BreadModScreen.menu.parent as FluidBearingBlockEntity).fluidHandler
+//			val expansibleTank = fluidHandler.getUnit(tank)
+//			val tint = IClientFluidTypeExtensions.of(expansibleTank.fluid).tintColor
+//			this.renderComponentTooltip(
+//				this@BreadModScreen.font,
+//				listOf(
+//					Component.translatable(expansibleTank.fluidType.descriptionId)
+//						.withStyle(Style.EMPTY.withColor(tint))
+//						.withStyle(ChatFormatting.ITALIC),
+//					JadeDrawingCommon.fixedLengthScrollingComponent(
+//						expansibleTank.amount, expansibleTank.capacity,
+//						"B", -1,
+//						tint
+//					)
+//				),
+//				mouseX.toInt(), mouseY.toInt()
+//			)
+		}
+	}
+
+	protected fun GuiGraphics.renderFluidWithTooltip(
+		x: Int,
+		y: Int,
+		w: Int,
+		h: Int,
+		mouseX: Double,
+		mouseY: Double,
+		tank: Int
+	) {
+		this.drawFillBox(x, y, w, h)
+		this.renderFluidMeter(x, y, w, h, tank)
+		this.renderFluidTooltip(x, y, w, h, mouseX, mouseY, tank)
+	}
+
+	override fun renderSlot(guiGraphics: GuiGraphics, slot: Slot) {
+		var stack = slot.item
+		this.menu.carried
+		var flag = false
+		var flag1 = false
+//		var flag1 = slot === this.clickedSlot && !this.draggingItem.isEmpty && !this.isSplittingStack
+//		if (slot === this.clickedSlot && !this.draggingItem.isEmpty && this.isSplittingStack && !stack.isEmpty) {
+//			stack = stack.copyWithCount(stack.count / 2)
+//		} else if (this.isQuickCrafting && this.quickCraftSlots.contains(slot) && !carried.isEmpty) {
+//			if (this.quickCraftSlots.size == 1) {
+//				return
+//			}
+//
+//			if (AbstractContainerMenu.canItemQuickReplace(slot, carried, true) && this.menu.canDragTo(slot)) {
+//				flag = true
+//				val k = min(carried.maxStackSize, slot.getMaxStackSize(carried))
+//				val l = if (slot.item.isEmpty) 0 else slot.item.count
+//				var i1 = AbstractContainerMenu.getQuickCraftPlaceCount(
+//					this.quickCraftSlots,
+//					this.quickCraftingType,
+//					carried
+//				) + l
+//				if (i1 > k) {
+//					i1 = k
+//					s = ChatFormatting.YELLOW.toString() + k
+//				}
+//
+//				stack = carried.copyWithCount(i1)
+//			} else {
+//				this.quickCraftSlots.remove(slot)
+//				this.recalculateQuickCraftRemaining()
+//			}
+//		}
+		guiGraphics.pose().pushPose()
+		guiGraphics.pose().translate(0.0f, 0.0f, 100.0f)
+		if (stack.isEmpty && slot.isActive) {
+			val pair = slot.noItemIcon
+			if (pair != null) {
+				val sprite = localClient.getTextureAtlas(pair.first).apply(pair.second)
+				guiGraphics.blit(slot.x, slot.y, 0, 16, 16, sprite)
+				flag1 = true
+			}
+		}
+
+		if (!flag1) {
+			if (flag) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, -2130706433)
+			this.renderSlotContents(guiGraphics, stack, slot, "Alpha")
+		}
+
+		guiGraphics.pose().popPose()
+	}
+
+	fun renderSlots(guiGraphics: GuiGraphics) {
+		this.menu.slots.forEach { slot ->
+			when (slot) {
+				is LambdaSlotItemHandler -> slot.jadeGraphic.blit(
+					guiGraphics,
+					this.leftPos + slot.x - 1,
+					this.topPos + slot.y - 1
+				)
+				else -> ModGuiElements.SLOT.blit(
+					guiGraphics,
+					this.leftPos + slot.x - 1,
+					this.topPos + slot.y - 1
+				)
+			}
+		}
+	}
+}

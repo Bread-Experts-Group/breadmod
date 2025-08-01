@@ -39,9 +39,7 @@ class MonitorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 		)
 	}
 
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
-		::MonitorRenderer
-
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofCapabilities(): CapabilityMap {
 		val state = MonitorStateHandler()
 		val computer = ComputerHandler()
@@ -50,6 +48,9 @@ class MonitorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 			ComputerHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> computer })
 		)
 	}
+
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+		::MonitorRenderer
 
 	override fun useWithoutItem(
 		state: BlockState,

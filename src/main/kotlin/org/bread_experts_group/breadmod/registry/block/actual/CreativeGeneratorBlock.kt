@@ -74,6 +74,7 @@ class CreativeGeneratorBlock : BreadModBlock(
 		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
 	}
 
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override val serverTickBM: BreadModTicker<ServerLevel> = serverTickBM@{ _, level, state, pos ->
 		if (!state.getValue(ENABLED)) return@serverTickBM
 		Direction.entries.forEach {

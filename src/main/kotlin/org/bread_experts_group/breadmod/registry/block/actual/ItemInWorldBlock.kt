@@ -25,6 +25,7 @@ class ItemInWorldBlock : BreadModBlock(
 	Properties.of()
 		.pushReaction(PushReaction.DESTROY)
 ) {
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofCapabilities(): CapabilityMap {
 		val inventory = SlotQueueHandler()
 		return mapOf(

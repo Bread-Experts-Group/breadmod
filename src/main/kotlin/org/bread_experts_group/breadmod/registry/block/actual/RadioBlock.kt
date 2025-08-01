@@ -48,6 +48,7 @@ class RadioBlock : BreadModBlock(
 		.requiresCorrectToolForDrops()
 		.sound(SoundType.METAL)
 ) {
+	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofCapabilities(): CapabilityMap {
 		val state = RadioStateHandler()
 		val lerp = LerpTickerHandler(

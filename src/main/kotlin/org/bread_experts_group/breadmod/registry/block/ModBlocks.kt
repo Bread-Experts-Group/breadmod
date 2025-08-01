@@ -8,6 +8,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.food.FoodProperties
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
@@ -28,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.material.PushReaction
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
@@ -62,6 +64,8 @@ import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -75,9 +79,11 @@ import kotlin.math.roundToInt
 
 object ModBlocks : RegistryProvider(
 	Registries.BLOCK,
+	Registries.MENU,
 	Registries.BLOCK_ENTITY_TYPE
 ) {
 	private val registry: DeferredRegister<Block> = this.getRegistry(Registries.BLOCK)
+	private val menuRegistry: DeferredRegister<MenuType<*>> = this.getRegistry(Registries.MENU)
 	private val blockEntityRegistry: DeferredRegister<BlockEntityType<*>> = this.getRegistry(
 		Registries.BLOCK_ENTITY_TYPE
 	)
@@ -178,7 +184,6 @@ object ModBlocks : RegistryProvider(
 			}
 		}
 	)
-
 	//	@DataGenerateLootDropSelf
 //	@DataGenerateLanguage
 //	val WHEAT_CRUSHER: DeferredItem<BlockItem> = this.registerBlockItem(
@@ -186,14 +191,14 @@ object ModBlocks : RegistryProvider(
 //		::WheatCrusherBlock,
 //		Properties()
 //	)
-//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	val DOUGH_MACHINE: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"dough_machine",
-//		::DoughMachineBlock,
-//		Properties()
-//	)
-//
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	val DOUGH_MACHINE: DeferredItem<BlockItem> = this.registerBlockItem(
+		"dough_machine",
+		::DoughMachineBlock,
+		Properties()
+	)
+
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
 	val CREATIVE_GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem(
@@ -418,13 +423,33 @@ object ModBlocks : RegistryProvider(
 		val holder = this.registry.register(id, Supplier {
 			val actual = block()
 			if (actual is BreadModBlock) {
-				@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-				actual.blockEntityType = this.blockEntityRegistry.register(id, Supplier {
-					BlockEntityType.Builder.of(
-						{ p, s -> actual.newBlockEntity(p, s) },
-						actual
-					).build(null)
-				})
+				if (actual.shouldCreateEntity()) {
+					@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+					actual.blockEntityType = this.blockEntityRegistry.register(id, Supplier {
+						BlockEntityType.Builder.of(
+							{ p, s -> actual.newBlockEntity(p, s) },
+							actual
+						).build(null)
+					})
+				}
+				val menu = actual.ofMenu()
+				if (menu != null) {
+					actual.menuType = this.menuRegistry.register(id) { id: ResourceLocation ->
+						IMenuTypeExtension.create { id, inventory, byteBuf ->
+							@Suppress("UNCHECKED_CAST")
+							menu(
+								actual.menuType!!.get(), id, inventory,
+								inventory.player
+									.level()
+									.getBlockEntity(
+										byteBuf.readBlockPos(),
+										actual.blockEntityType!!.get() as BlockEntityType<BreadModBlockEntity>
+									)
+									.get()
+							)
+						}
+					}
+				}
 			}
 			actual
 		})
