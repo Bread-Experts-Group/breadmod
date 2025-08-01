@@ -10,15 +10,20 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.ENABLED
 import net.neoforged.neoforge.client.model.data.ModelData
+import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.getModel
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 
 class CreativeGeneratorRenderer(
 	context: BlockEntityRendererProvider.Context
 ) : BlockEntityRenderer<BreadModBlockEntity> {
 	private val starModel: BakedModel = localClient.getModel("block/creative_generator_star")
+	val starShader: RenderType = ModRenderType.sun(
+		modLocation("textures/shader_noise.png")
+	)
 
 	override fun render(
 		blockEntity: BreadModBlockEntity,
@@ -39,7 +44,7 @@ class CreativeGeneratorRenderer(
 			poseStack.scaleFlat(0.95f)
 			localClient.blockRenderer.modelRenderer.renderModel(
 				poseStack.last(),
-				bufferSource.getBuffer(RenderType.solid()),
+				bufferSource.getBuffer(this.starShader),
 				blockEntity.blockState,
 				this.starModel,
 				1f,
@@ -48,7 +53,7 @@ class CreativeGeneratorRenderer(
 				LightTexture.FULL_BRIGHT,
 				packedOverlay,
 				ModelData.EMPTY,
-				RenderType.solid()
+				this.starShader
 			)
 		}
 		poseStack.popPose()

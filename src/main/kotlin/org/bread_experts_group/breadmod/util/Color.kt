@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.util
 
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
+import kotlin.math.roundToInt
 
 object Color {
 	val WHITE: Int = this.color(255, 255, 255)
@@ -23,17 +24,40 @@ object Color {
 	fun Int.component(literal: String): MutableComponent = Component.literal(literal).withColor(this)
 	fun Char.component(color: Int): MutableComponent = Component.literal(this.toString()).withColor(color)
 	fun String.component(color: Int): MutableComponent = Component.literal(this).withColor(color)
+	fun mix(vararg colors: Int): Int {
+		val mixed = FloatArray(4)
+		colors.forEach {
+			val array = it.argbArray()
+			mixed[0] += array[0]
+			mixed[1] += array[1]
+			mixed[2] += array[2]
+			mixed[3] += array[3]
+		}
+		mixed.forEachIndexed { index, f -> mixed[index] = f / colors.size }
+		return this.color(mixed)
+	}
+
+	fun Int.argbArray(): FloatArray = floatArrayOf(
+		((this and 0xFF000000.toInt()) ushr 24) / 255f,
+		((this and 0x00FF0000) ushr 16) / 255f,
+		((this and 0x0000FF00) ushr 8) / 255f,
+		(this and 0x000000FF) / 255f,
+	)
+
+	/**
+	 * ARGB
+	 */
+	fun color(array: FloatArray): Int = this.color(
+		(array[1] * 255).roundToInt(),
+		(array[2] * 255).roundToInt(),
+		(array[3] * 255).roundToInt(),
+		(array[0] * 255).roundToInt(),
+	)
 
 	/**
 	 * ARGB32
 	 */
 	@JvmStatic
 	fun color(r: Int = 0, g: Int = 0, b: Int = 0, a: Int = 255): Int =
-		(((a and 0xFF) shl 24) or ((r and 0xFF) shl 16) or ((g and 0xFF) shl 8) or ((b and 0xFF) shl 0))
-
-	fun IntArray.toArrayOfFloats(): ArrayList<Float> {
-		val array: ArrayList<Float> = arrayListOf()
-		this.forEachIndexed { index, i -> array.add(index, i.toFloat()) }
-		return array
-	}
+		(((a and 0xFF) shl 24) or ((r and 0xFF) shl 16) or ((g and 0xFF) shl 8) or (b and 0xFF))
 }

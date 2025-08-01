@@ -21,6 +21,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
+import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.FLUID_ID_DESERIALIZER
@@ -29,15 +30,13 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.compose
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler.Tank.Companion.TANK_FLUID_ID_SERIALIZER
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents.TANKS
-import org.bread_experts_group.breadmod.util.Color.CORNFLOWER_BLUE
+import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
 import org.bread_experts_group.breadmod.util.Color.component
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import org.bread_experts_group.breadmod.util.int
-import org.bread_experts_group.breadmod.util.percentRoundEven
 import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.roundToInt
 
 class ExtendedFluidHandler(
@@ -113,24 +112,20 @@ class ExtendedFluidHandler(
 		}
 	}
 
-	val big100: BigDecimal = BigDecimal.valueOf(100)
+	val big1000: BigDecimal = BigDecimal.valueOf(1000)
 	override fun collectHoverText(tooltipComponents: MutableList<Component>) {
 		this.tanks.forEach { (index, tank) ->
 			val component = '#'.component(DARK_GRAY)
 			component.append(index.toString().component(LIGHT_GRAY))
-			component.append(':'.component(DARK_GRAY))
-			component.append(" ${tank.amount} ".component(CORNFLOWER_BLUE))
-			component.append('|'.component(DARK_GRAY))
-			component.append(" ${tank.capacity} ".component(CORNFLOWER_BLUE))
-			component.append('('.component(DARK_GRAY))
-			val percentage = tank.amount
-				.divide(tank.capacity, percentRoundEven)
-				.multiply(this.big100)
-				.setScale(2, RoundingMode.HALF_EVEN)
-			component.append(percentage.toString().component(CORNFLOWER_BLUE))
-			component.append('%'.component(LIGHT_GRAY))
-			component.append(") ".component(DARK_GRAY))
-			component.append('['.component(DARK_GRAY))
+			component.append(": ".component(DARK_GRAY))
+			val fluid = JadeDrawingCommon.fixedLengthScrollingComponent(
+				tank.amount.divide(this.big1000),
+				tank.capacity.divide(this.big1000),
+				"B",
+				Color.CORNFLOWER_BLUE
+			)
+			component.append(fluid)
+			component.append(" [".component(DARK_GRAY))
 			val color = IClientFluidTypeExtensions.of(tank.fluid).tintColor
 			component.append(tank.fluid.fluidType.description.copy().withColor(color))
 			component.append(']'.component(DARK_GRAY))

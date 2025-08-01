@@ -1,12 +1,15 @@
 {
-  "vertex": "breadmod:glow",
-  "fragment": "breadmod:glow",
-  "samplers": [
-    {
-      "name": "Sampler0"
-    }
-  ],
+  "vertex": "breadmod:sun",
+  "fragment": "breadmod:sun",
   "uniforms": [
+    {
+      "name": "GameTime",
+      "type": "float",
+      "count": 1,
+      "values": [
+        0.0
+      ]
+    },
     {
       "name": "ModelViewMat",
       "type": "matrix4x4",
@@ -51,6 +54,16 @@
         0.0,
         0.0,
         1.0
+      ]
+    },
+    {
+      "name": "ChunkOffset",
+      "type": "float",
+      "count": 3,
+      "values": [
+        0.0,
+        0.0,
+        0.0
       ]
     },
     {

@@ -59,12 +59,15 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
+import java.math.BigDecimal
 import java.util.function.Supplier
 import kotlin.jvm.optionals.getOrNull
+import kotlin.math.min
 
 /**
  * Main minecraft instance
@@ -195,36 +198,36 @@ fun GuiGraphics.drawCenteredWordWrap(font: Font, text: FormattedText, x: Int, y:
 		yOffset += 9
 	}
 }
-//fun GuiGraphics.renderFluid(
-//	x: Float, y: Float, width: Int, height: Int,
-//	tank: ExpansibleFluidHandler.ExpansibleTank,
-//	flowing: Boolean
-//) {
-//	if (tank.fluid.fluidType.isAir
-//		|| width <= 0
-//		|| height <= 0
-//		|| tank.capacity == null
-//		|| tank.amount == BigDecimal.ZERO
-//	) return
-//	val scaledAmount = min(tank.amount.divide(tank.capacity).toFloat() * height, height.toFloat())
-//	val (sprite, tint) = getFluidSpriteAndTint(tank.fluid, flowing)
-//	var color = tint
-//	if (sprite == null) {
-//		val maxY: Float = y + height
-//		if (color == -1) color = -0x55555556
-//
-//		this.fill(x, maxY - scaledAmount, x + width, maxY, color)
-//	} else {
-//		this.drawTiledSprite(
-//			x,
-//			y,
-//			width.toFloat(),
-//			height.toFloat(),
-//			color,
-//			scaledAmount,
-//			sprite
-//		)
-//	}
+fun GuiGraphics.renderFluid(
+	x: Float, y: Float, width: Int, height: Int,
+	tank: ExtendedFluidHandler.Tank,
+	flowing: Boolean
+) {
+	if (tank.fluid.fluidType.isAir
+		|| width <= 0
+		|| height <= 0
+		|| tank.amount == BigDecimal.ZERO
+	) return
+	val scaledAmount = min(tank.amount.divide(tank.capacity).toFloat() * height, height.toFloat())
+	val (sprite, tint) = getFluidSpriteAndTint(tank.fluid, flowing)
+	var color = tint
+	if (sprite == null) {
+		val maxY: Float = y + height
+		if (color == -1) color = -0x55555556
+
+		this.fill(x, maxY - scaledAmount, x + width, maxY, color)
+	} else {
+		this.drawTiledSprite(
+			x,
+			y,
+			width.toFloat(),
+			height.toFloat(),
+			color,
+			scaledAmount,
+			sprite
+		)
+	}
+}
 //}
 /**
  * Float variant of GuiGraphics#fill.
@@ -715,7 +718,8 @@ fun PoseStack.drawTextOnBlockSide(
 	dropShadow: Boolean = false,
 	direction: Direction? = null,
 	scale: Float = 1f,
-	dropShadowOffset: Float = 0.03f
+	dropShadowOffset: Float = 0.03f,
+	packedLight: Int = FULL_BRIGHT
 ) {
 	this.pushPose()
 	this.translateOnBlockSide(blockState, direction, posX, posY, posZ)
@@ -728,7 +732,7 @@ fun PoseStack.drawTextOnBlockSide(
 		this,
 		bufferSource,
 		dropShadow,
-		FULL_BRIGHT,
+		packedLight,
 		dropShadowOffset
 	)
 	this.popPose()

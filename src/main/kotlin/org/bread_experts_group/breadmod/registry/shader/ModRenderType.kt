@@ -122,6 +122,29 @@ object ModRenderType {
 		)
 	}
 
+	var sunInstance: ShaderInstance? = null
+	private val sunShader: ShaderStateShard = ShaderStateShard(this::sunInstance)
+
+	/**
+	 * Sun Shader.
+	 */
+	fun sun(texture: ResourceLocation): RenderType {
+		val textureState = TextureStateShard(texture, false, false)
+		return RenderType.create(
+			"sun",
+			DefaultVertexFormat.BLOCK,
+			VertexFormat.Mode.QUADS,
+			SMALL_BUFFER_SIZE,
+			true,
+			true,
+			RenderType.CompositeState.builder()
+				.setShaderState(this.sunShader)
+				.setTextureState(textureState)
+				.setTransparencyState(NO_TRANSPARENCY)
+				.createCompositeState(false)
+		)
+	}
+
 	var translucentTexInstance: ShaderInstance? = null
 	private val translucentTexTexShader: ShaderStateShard = ShaderStateShard(this::translucentTexInstance)
 

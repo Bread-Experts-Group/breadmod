@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.block.actual.entity.handler
 
-import net.minecraft.ChatFormatting
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentMap
 import net.minecraft.nbt.CompoundTag
@@ -9,16 +8,14 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.energy.IEnergyStorage
+import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
-import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
-import org.bread_experts_group.breadmod.util.Color.GRAY
+import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
 import org.bread_experts_group.breadmod.util.Color.component
 import org.bread_experts_group.breadmod.util.floatRoundEven
-import org.bread_experts_group.breadmod.util.percentRoundEven
 import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.roundToInt
 
 class ExtendedEnergyHandler(
@@ -64,28 +61,19 @@ class ExtendedEnergyHandler(
 		map.set(ModDataComponents.ENERGY_CAPACITY, this.bigCapacity)
 	}
 
-	val big100: BigDecimal = BigDecimal.valueOf(100)
 	override fun collectHoverText(tooltipComponents: MutableList<Component>) {
-		val energy = Component.literal("${this.bigAmount} ").withStyle(ChatFormatting.RED)
-		energy.append('|'.component(DARK_GRAY))
-		energy.append(Component.literal(" ${this.bigCapacity}").withStyle(ChatFormatting.RED))
-		energy.append(" FE".component(GRAY))
-		energy.append(" (".component(DARK_GRAY))
-		val percentage = this.bigAmount
-			.divide(this.bigCapacity, percentRoundEven)
-			.multiply(this.big100)
-			.setScale(2, RoundingMode.HALF_EVEN)
-		energy.append(Component.literal(percentage.toString()))
-		energy.append('%'.component(LIGHT_GRAY))
-		energy.append(')'.component(DARK_GRAY))
+		val energy = JadeDrawingCommon.fixedLengthScrollingComponent(
+			this.bigAmount,
+			this.bigCapacity,
+			"FE",
+			Color.RED
+		)
 		tooltipComponents.add(energy)
 		val maxOut = "↑ ".component(LIGHT_GRAY)
-		maxOut.append(Component.literal(this.maxOut.toString()).withStyle(ChatFormatting.RED))
-		maxOut.append(" FE".component(GRAY))
+		maxOut.append(JadeDrawingCommon.fixedLengthScrollingComponentSinglet(this.maxOut, "FE", Color.RED))
 		tooltipComponents.add(maxOut)
 		val maxIn = "↓ ".component(LIGHT_GRAY)
-		maxIn.append(Component.literal(this.maxIn.toString()).withStyle(ChatFormatting.RED))
-		maxIn.append(" FE".component(GRAY))
+		maxIn.append(JadeDrawingCommon.fixedLengthScrollingComponentSinglet(this.maxIn, "FE", Color.RED))
 		tooltipComponents.add(maxIn)
 	}
 

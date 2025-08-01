@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.registry.block.actual.machine
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -20,23 +21,48 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
+import java.math.BigDecimal
 import java.util.Optional
 
 class DoughMachineBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofMenu(): (MenuType<*>, Int, Inventory, BreadModBlockEntity) -> BreadModMenu = ::DoughMachineMenu
 	override fun ofCapabilities(): CapabilityMap {
-		val storage = ExtendedItemHandler(
+		val itemStorage = ExtendedItemHandler(
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal())
 		)
+		val energy = ExtendedEnergyHandler(BigDecimal(10000))
+		val energyStorage = { _: BreadModBlockEntity, _: Any? -> energy }
+		val fluid = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))
+		val fluidStorage = { _: BreadModBlockEntity, _: Any? -> fluid }
 		return mapOf(
-			Capabilities.ItemHandler.BLOCK to mapOf(Optional.empty<Any>() to { _, _ -> storage })
+			Capabilities.ItemHandler.BLOCK to mapOf(Optional.empty<Any>() to { _, _ -> itemStorage }),
+			Capabilities.EnergyStorage.BLOCK to mapOf(
+				Optional.empty<Direction>() to energyStorage,
+				Optional.of(Direction.UP) to energyStorage,
+				Optional.of(Direction.DOWN) to energyStorage,
+				Optional.of(Direction.NORTH) to energyStorage,
+				Optional.of(Direction.SOUTH) to energyStorage,
+				Optional.of(Direction.EAST) to energyStorage,
+				Optional.of(Direction.WEST) to energyStorage,
+			),
+			Capabilities.FluidHandler.BLOCK to mapOf(
+				Optional.empty<Direction>() to fluidStorage,
+				Optional.of(Direction.UP) to fluidStorage,
+				Optional.of(Direction.DOWN) to fluidStorage,
+				Optional.of(Direction.NORTH) to fluidStorage,
+				Optional.of(Direction.SOUTH) to fluidStorage,
+				Optional.of(Direction.EAST) to fluidStorage,
+				Optional.of(Direction.WEST) to fluidStorage,
+			)
 		)
 	}
 

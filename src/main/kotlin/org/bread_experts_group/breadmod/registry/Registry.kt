@@ -151,7 +151,6 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackp
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
-import org.bread_experts_group.breadmod.registry.menu.ModMenus
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
@@ -189,8 +188,7 @@ object Registry {
 		ModDataComponents,
 		ModAttachments,
 		ModRecipeSerializers,
-		ModRecipeTypes,
-		ModMenus
+		ModRecipeTypes
 	)
 
 	fun registerAll(modBus: IEventBus) {
@@ -370,6 +368,13 @@ object Registry {
 							DefaultVertexFormat.BLOCK
 						)
 					) { ModRenderType.translucentTexInstance = it }
+					event.registerShader(
+						ShaderInstance(
+							event.resourceProvider,
+							modLocation("sun"),
+							DefaultVertexFormat.BLOCK
+						)
+					) { ModRenderType.sunInstance = it }
 				}
 				modBus.addListener { event: RegisterClientExtensionsEvent ->
 					event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())

@@ -19,6 +19,5 @@ void main() {
     float texPosition = (texCoord0.x * rainbowDirection.x) + (texCoord0.y * rainbowDirection.y);
     float time = (GameTime * rainbowSpeed);
     float huePosition = mod(texPosition - time, 1);
-//    if (texCoord0.x < 0.9 && texCoord0.x > 0.1 && texCoord0.y > 0.05 && texCoord0.y < 0.94) discard;
     fragColor = linear_fog(hsv2rgb(vec3(huePosition, 1, 1), 1), vertexDistance, FogStart, FogEnd, FogColor);
 }

@@ -1,16 +1,19 @@
 package org.bread_experts_group.breadmod.client.render.entity.block
 
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
-import net.minecraft.network.chat.Component
+import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.drawQuad
 import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.client.render.translateOnBlockSide
+import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.EnergyStorageStateHandler
@@ -18,6 +21,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.sta
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import org.joml.Vector3f
+import java.math.BigDecimal
 import kotlin.math.roundToInt
 
 class EnergyStorageRenderer(
@@ -59,42 +63,48 @@ class EnergyStorageRenderer(
 			v0 = ((this.glowOverlayHeight - energyScaled) / this.glowOverlayHeight)
 		)
 		poseStack.popPose()
+		val amount = JadeDrawingCommon.fixedLengthScrollingComponentSinglet(
+			energyStored, "FE",
+			color
+		)
+		val light = if (energyStored == BigDecimal.ZERO) packedLight else FULL_BRIGHT
 		poseStack.drawTextOnBlockSide(
 			this.context.font,
-			Component.literal("$energyStored FE"),
+			amount,
 			0.2,
 			-0.125,
 			bufferSource = bufferSource,
 			blockState = blockEntity.blockState,
 			scale = 0.0105f,
-			color = color
+			packedLight = light
+		)
+		val capacity = JadeDrawingCommon.fixedLengthScrollingComponentSinglet(
+			maxEnergyStored, "FE",
+			color
 		)
 		poseStack.drawTextOnBlockSide(
 			this.context.font,
-			Component.literal("-------------"),
-			0.195,
-			-0.185,
-			bufferSource = bufferSource,
-			blockState = blockEntity.blockState,
-			scale = 0.0105f,
-			color = color
-		)
-		poseStack.drawTextOnBlockSide(
-			this.context.font,
-			Component.literal("$maxEnergyStored FE"),
+			capacity,
 			0.2,
 			-0.245,
 			bufferSource = bufferSource,
 			blockState = blockEntity.blockState,
 			scale = 0.0105f,
-			color = color
+			packedLight = light
 		)
 		poseStack.pushPose()
 		poseStack.translateOnBlockSide(blockEntity.blockState, posZ = 0.001)
+		val forwardLight = blockEntity.level?.let {
+			LevelRenderer.getLightColor(
+				it,
+				blockEntity.blockPos.relative(blockEntity.blockState.getValue(HORIZONTAL_FACING))
+			)
+		} ?: FULL_BRIGHT
 		drawQuad(
 			poseStack,
 			bufferSource,
-			this.frostOverlay
+			this.frostOverlay,
+			packedLight = forwardLight
 		)
 		poseStack.popPose()
 	}
