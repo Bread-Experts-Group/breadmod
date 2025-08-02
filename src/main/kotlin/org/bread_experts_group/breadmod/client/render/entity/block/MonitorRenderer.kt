@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.registry.ModFonts
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ComputerHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ComputerHandler
 import org.bread_experts_group.computer.BinaryUtil.hex
 import org.bread_experts_group.computer.BinaryUtil.shr
 import org.bread_experts_group.computer.ia32.IA32Processor

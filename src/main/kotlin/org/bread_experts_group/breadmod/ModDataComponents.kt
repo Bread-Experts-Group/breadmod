@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.component
+package org.bread_experts_group.breadmod
 
 import com.mojang.serialization.Codec
 import net.minecraft.core.component.DataComponentType
@@ -11,16 +11,10 @@ import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
-import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_CODEC
-import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_STREAM_CODEC
-import org.bread_experts_group.breadmod.network.BreadModCodecs.CLOSED_SYSTEM_CODEC
-import org.bread_experts_group.breadmod.network.BreadModCodecs.CLOSED_SYSTEM_STREAM_CODEC
-import org.bread_experts_group.breadmod.network.BreadModCodecs.RECIPE_HOLDER_CODEC
-import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_CODEC
-import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_STREAM_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.registry.RegistryProvider
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
 import org.bread_experts_group.breadmod.registry.item.coffee.CoffeeContents
 import org.bread_experts_group.breadmod.util.toList
 import java.math.BigDecimal
@@ -36,19 +30,19 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 	)
 	val TOOL_GUN_DATA: Supplier<DataComponentType<ToolGunData>> = this.registry.register(
 		"current_mode", DataComponentType.builder<ToolGunData>()
-			.persistent(TOOL_GUN_CODEC)
-			.networkSynchronized(TOOL_GUN_STREAM_CODEC)
+			.persistent(BreadModCodecs.TOOL_GUN_CODEC)
+			.networkSynchronized(BreadModCodecs.TOOL_GUN_STREAM_CODEC)
 			.cacheEncoding()::build
 	)
 	val CLOSED_SYSTEM: Supplier<DataComponentType<ClosedSystem>> = this.registry.register(
 		"closed_system", DataComponentType.builder<ClosedSystem>()
-			.persistent(CLOSED_SYSTEM_CODEC)
-			.networkSynchronized(CLOSED_SYSTEM_STREAM_CODEC)
+			.persistent(BreadModCodecs.CLOSED_SYSTEM_CODEC)
+			.networkSynchronized(BreadModCodecs.CLOSED_SYSTEM_STREAM_CODEC)
 			.cacheEncoding()::build
 	)
 	val MACH_SPEED: Supplier<DataComponentType<MachSpeedData>> = this.registry.register(
 		"mach_speed", DataComponentType.builder<MachSpeedData>()
-			.networkSynchronized(MachSpeedData.STREAM_CODEC)
+			.networkSynchronized(MachSpeedData.Companion.STREAM_CODEC)
 			.cacheEncoding()::build
 	)
 	val COLOR: Supplier<DataComponentType<Int>> = this.registry.register(
@@ -59,14 +53,14 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 	)
 	val ENERGY: Supplier<DataComponentType<BigDecimal>> = this.registry.register(
 		"energy", DataComponentType.builder<BigDecimal>()
-			.networkSynchronized(BIG_DECIMAL_STREAM_CODEC)
-			.persistent(BIG_DECIMAL_CODEC)
+			.networkSynchronized(BreadModCodecs.BIG_DECIMAL_STREAM_CODEC)
+			.persistent(BreadModCodecs.BIG_DECIMAL_CODEC)
 		::build
 	)
 	val ENERGY_CAPACITY: Supplier<DataComponentType<BigDecimal>> = this.registry.register(
 		"energy_capacity", DataComponentType.builder<BigDecimal>()
-			.networkSynchronized(BIG_DECIMAL_STREAM_CODEC)
-			.persistent(BIG_DECIMAL_CODEC)
+			.networkSynchronized(BreadModCodecs.BIG_DECIMAL_STREAM_CODEC)
+			.persistent(BreadModCodecs.BIG_DECIMAL_CODEC)
 		::build
 	)
 	val TANKS: Supplier<DataComponentType<List<ExtendedFluidHandler.Tank>>> = this.registry.register(
@@ -84,7 +78,7 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 	val RECIPE: Supplier<DataComponentType<RecipeHolder<*>>> = this.registry.register(
 		"recipe", DataComponentType.builder<RecipeHolder<*>>()
 			.networkSynchronized(RecipeHolder.STREAM_CODEC)
-			.persistent(RECIPE_HOLDER_CODEC)
+			.persistent(BreadModCodecs.RECIPE_HOLDER_CODEC)
 		::build
 	)
 	val RECIPE_PROGRESS: Supplier<DataComponentType<Long>> = this.registry.register(
@@ -95,8 +89,8 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 	)
 	val COFFEE_CONTENTS: Supplier<DataComponentType<CoffeeContents>> = this.registry.register(
 		"coffee_contents", DataComponentType.builder<CoffeeContents>()
-			.networkSynchronized(CoffeeContents.STREAM_CODEC)
-			.persistent(CoffeeContents.CODEC)
+			.networkSynchronized(CoffeeContents.Companion.STREAM_CODEC)
+			.persistent(CoffeeContents.Companion.CODEC)
 			.cacheEncoding()::build
 	)
 	val BLOCK_ENTITY_HANDLER_INFORMATION: Supplier<DataComponentType<List<Component>>> = this.registry.register(

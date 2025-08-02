@@ -26,7 +26,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGeneratorRenderer
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.rotate
 import java.util.stream.Stream

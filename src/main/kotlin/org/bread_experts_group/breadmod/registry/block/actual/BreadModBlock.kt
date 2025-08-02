@@ -35,10 +35,10 @@ import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
 import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 
 typealias BreadModTicker<T> = ((entity: BreadModBlockEntity, level: T, state: BlockState, pos: BlockPos) -> Unit)?

@@ -3,10 +3,12 @@ package org.bread_experts_group.breadmod.registry.entity
 import net.minecraft.core.registries.Registries
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
+import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.RegistryProvider
+import org.bread_experts_group.breadmod.registry.entity.actual.BigItemContainer
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
@@ -15,6 +17,17 @@ import java.util.function.Supplier
 
 object ModEntityTypes : RegistryProvider(Registries.ENTITY_TYPE) {
 	private val registry: DeferredRegister<EntityType<*>> = this.getRegistry(Registries.ENTITY_TYPE)
+
+	@DataGenerateLanguage(name = "Big Item Container")
+	val BIG_ITEM_CONTAINER: DeferredHolder<EntityType<*>, EntityType<BigItemContainer>> =
+		this.registry.register("big_item_container") { ->
+			EntityType.Builder.of({ _, level -> BigItemContainer(level) }, MobCategory.MISC)
+				.sized(0.25F, 0.25F)
+				.eyeHeight(0.2125F)
+				.clientTrackingRange(6)
+				.updateInterval(20)
+				.build(modLocation("big_item_container").toString())
+		}
 
 	@DataGenerateLanguage(name = "Happy Block")
 	val HAPPY_BLOCK_ENTITY: Supplier<EntityType<PrimedHappyBlock>> = this.registry.register("happy_block") { ->

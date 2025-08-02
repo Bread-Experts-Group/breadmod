@@ -22,11 +22,11 @@ import org.bread_experts_group.breadmod.client.render.entity.block.MonitorRender
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ComputerHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.KeyboardStateHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.KeyboardStateHandler.Companion.MONITOR_POSITION
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.MonitorStateHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.MonitorStateHandler.Companion.KEYBOARD_POSITION
+import org.bread_experts_group.breadmod.registry.block.handler.ComputerHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.KeyboardStateHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.KeyboardStateHandler.Companion.MONITOR_POSITION
+import org.bread_experts_group.breadmod.registry.block.handler.state.MonitorStateHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.MonitorStateHandler.Companion.KEYBOARD_POSITION
 import org.bread_experts_group.breadmod.util.directionalTargetFaceSection
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 

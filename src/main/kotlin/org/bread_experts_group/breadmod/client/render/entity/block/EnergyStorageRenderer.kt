@@ -15,9 +15,9 @@ import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.client.render.translateOnBlockSide
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.EnergyStorageStateHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.EnergyStorageStateHandler.Companion.COLOR
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.EnergyStorageStateHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.EnergyStorageStateHandler.Companion.COLOR
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import org.joml.Vector3f

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state
+package org.bread_experts_group.breadmod.registry.block.handler.state
 
 import net.neoforged.neoforge.capabilities.BlockCapability
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation

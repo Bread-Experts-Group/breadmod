@@ -23,9 +23,9 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.entity.block.EnergyStorageRenderer
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.EnergyStorageStateHandler
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.EnergyStorageStateHandler
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.math.BigDecimal
 import kotlin.math.roundToInt

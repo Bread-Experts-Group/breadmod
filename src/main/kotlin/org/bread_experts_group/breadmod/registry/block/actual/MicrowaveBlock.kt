@@ -26,7 +26,7 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.entity.block.MicrowaveRenderer
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
 import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.rotate

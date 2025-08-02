@@ -24,6 +24,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
@@ -31,7 +32,6 @@ import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.Registry
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -83,7 +83,7 @@ class ToolGunItem : Item(
 	companion object {
 		const val TOOL_GUN_DEF: String = "tool_gun"
 
-		@DataGenerateLanguage("en_us", "Tool Gun")
+		@DataGenerateLanguage(name = "Tool Gun")
 		val TOOL_GUN_SCREEN_NAME: Component = Component.translatable(this.TOOL_GUN_DEF, "screen_name")
 	}
 

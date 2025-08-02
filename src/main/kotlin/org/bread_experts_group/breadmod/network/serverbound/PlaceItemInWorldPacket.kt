@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.SlotQueueHandler
+import org.bread_experts_group.breadmod.registry.block.handler.SlotQueueHandler
 
 class PlaceItemInWorldPacket(
 	private val pos: BlockPos,

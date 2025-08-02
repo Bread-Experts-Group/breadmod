@@ -63,6 +63,7 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modModelLoc
+import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.client.gui.overlays.CameraOverlay
@@ -79,6 +80,7 @@ import org.bread_experts_group.breadmod.client.render.RendererWithBEWLRLerpTicke
 import org.bread_experts_group.breadmod.client.render.WarRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
+import org.bread_experts_group.breadmod.client.render.entity.BigItemContainerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.FakePlayerRenderer
 import org.bread_experts_group.breadmod.client.render.entity.ForkliftRenderer
 import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRenderer
@@ -136,8 +138,7 @@ import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.EnergyStorageStateHandler
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.block.handler.state.EnergyStorageStateHandler
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.entity.ModPainting
@@ -387,6 +388,7 @@ object Registry {
 					}, ModBlocks.CREATIVE_GENERATOR.asItem())
 				}
 				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
+					event.registerEntityRenderer(ModEntityTypes.BIG_ITEM_CONTAINER.get(), ::BigItemContainerRenderer)
 					event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
 					event.registerEntityRenderer(ModEntityTypes.NUKE_BLOCK_ENTITY.get(), ::PrimedNukeBlockRenderer)
 					event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)

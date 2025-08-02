@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler.Companion.getLerpTicker
+import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler.Companion.getLerpTicker
 import org.bread_experts_group.breadmod.util.Color
 
 class RadioRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(context, false) {

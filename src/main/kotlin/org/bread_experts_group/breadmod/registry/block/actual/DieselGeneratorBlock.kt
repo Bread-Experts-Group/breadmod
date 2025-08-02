@@ -15,11 +15,11 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.entity.block.DieselGeneratorRenderer
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.DieselGeneratorStateHandler
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.UPGRADE_ONE
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.UPGRADE_THREE
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.UPGRADE_TWO
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.DieselGeneratorStateHandler
 import java.math.BigDecimal
 import java.util.Optional
 

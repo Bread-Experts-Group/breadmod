@@ -18,7 +18,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRenderer
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.SlotQueueHandler
+import org.bread_experts_group.breadmod.registry.block.handler.SlotQueueHandler
 
 class ItemInWorldBlock : BreadModBlock(
 	Properties.of()

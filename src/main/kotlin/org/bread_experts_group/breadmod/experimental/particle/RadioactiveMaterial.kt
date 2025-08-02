@@ -9,7 +9,7 @@ import net.minecraft.world.item.Rarity.RARE
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.ModDataComponents
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.concurrent.ConcurrentHashMap

@@ -29,10 +29,10 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.LerpTickerHandler.Companion.getLerpTicker
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.RadioStateHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.RadioStateHandler.Companion.DISPLAY_FLIP
+import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler
+import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler.Companion.getLerpTicker
+import org.bread_experts_group.breadmod.registry.block.handler.state.RadioStateHandler
+import org.bread_experts_group.breadmod.registry.block.handler.state.RadioStateHandler.Companion.DISPLAY_FLIP
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3

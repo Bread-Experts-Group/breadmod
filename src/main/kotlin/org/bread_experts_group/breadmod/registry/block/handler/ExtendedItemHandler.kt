@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.entity.handler
+package org.bread_experts_group.breadmod.registry.block.handler
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -22,14 +22,16 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.items.IItemHandlerModifiable
+import org.bread_experts_group.breadmod.ModDataComponents.SLOTS
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.ITEM_ID_DESERIALIZER
 import org.bread_experts_group.breadmod.network.BreadModCodecs.ITEM_ID_SERIALIZER
 import org.bread_experts_group.breadmod.network.BreadModCodecs.compose
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler.Slot.Companion.SLOT_ITEM_ID_SERIALIZER
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents.SLOTS
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler.Slot.Companion.SLOT_ITEM_ID_SERIALIZER
+import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
+import org.bread_experts_group.breadmod.registry.entity.actual.BigItemContainer
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.itemStack
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
@@ -43,6 +45,7 @@ import org.bread_experts_group.breadmod.util.percentRoundEven
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 class ExtendedItemHandler(
 	vararg slots: Slot
@@ -52,7 +55,35 @@ class ExtendedItemHandler(
 	val slots: MutableMap<Int, Slot> = mutableMapOf(*slots.mapIndexed { index, slot -> index to slot }.toTypedArray())
 
 	fun dropContents(pos: BlockPos, level: Level) {
-		// TODO: BigDecimal drop container
+		val accumulated = mutableMapOf<Item, MutableMap<DataComponentMap, BigDecimal>>()
+		this.slots.values.forEach {
+			accumulated.getOrPut(it.item) { mutableMapOf() }.compute(it.components) { _, acc ->
+				it.amount + (acc ?: BigDecimal.ZERO)
+			}
+		}
+		if (accumulated.isEmpty()) return
+		this.slots.values.forEach { it.amount = BigDecimal.ZERO }
+		val container = BigItemContainer(
+			level,
+			accumulated.flatMap { (item, values) ->
+				values.map { (component, amount) -> BigDescriptor(amount, item, component) }
+			}
+		)
+		val d0 = ModEntityTypes.BIG_ITEM_CONTAINER.get().width
+		val d1 = 1.0 - d0
+		val d2 = d0 / 2.0
+		container.moveTo(
+			pos.x + Random.nextDouble() * d1 + d2,
+			pos.y + Random.nextDouble() * d1,
+			pos.z + Random.nextDouble() * d1 + d2,
+		)
+		container.setDeltaMovement(
+			Random.nextDouble(0.0, 0.1),
+			Random.nextDouble(0.0, 0.2),
+			Random.nextDouble(0.0, 0.1)
+		)
+		level.addFreshEntity(container)
+		this.stateUpdated()
 	}
 
 	override fun getSlots(): Int = this.slots.size

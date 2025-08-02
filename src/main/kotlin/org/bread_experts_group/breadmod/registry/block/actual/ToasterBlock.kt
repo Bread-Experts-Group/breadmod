@@ -40,9 +40,9 @@ import org.bread_experts_group.breadmod.datagen.tag.EXPLODES_IN_TOASTER
 import org.bread_experts_group.breadmod.datagen.tag.TOASTABLE
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.FERecipeHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.FERecipeHandler.Companion.getRecipeHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
+import org.bread_experts_group.breadmod.registry.block.handler.FERecipeHandler
+import org.bread_experts_group.breadmod.registry.block.handler.FERecipeHandler.Companion.getRecipeHandler
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.util.Color.RED

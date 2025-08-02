@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.SlotQueueHandler
+import org.bread_experts_group.breadmod.registry.block.handler.SlotQueueHandler
 import kotlin.jvm.optionals.getOrNull
 
 class ItemInWorldRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(context) {

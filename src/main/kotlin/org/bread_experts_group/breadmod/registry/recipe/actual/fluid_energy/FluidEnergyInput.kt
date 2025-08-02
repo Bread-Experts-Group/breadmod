@@ -2,9 +2,9 @@ package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeInput
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
 import java.math.BigDecimal
 
 class FluidEnergyInput(

@@ -16,11 +16,11 @@ import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.network.PacketDistributor
+import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.DataComponentSerializable
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ParentedHandler
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
+import org.bread_experts_group.breadmod.registry.block.handler.DataComponentSerializable
+import org.bread_experts_group.breadmod.registry.block.handler.ParentedHandler
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
 import org.bread_experts_group.breadmod.util.Color.GRAY

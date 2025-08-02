@@ -16,9 +16,9 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.registry.ModDamageType
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 
 data class MachSpeedData(

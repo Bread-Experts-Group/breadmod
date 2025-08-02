@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state
+package org.bread_experts_group.breadmod.registry.block.handler.state
 
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack

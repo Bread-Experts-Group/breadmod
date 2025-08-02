@@ -9,10 +9,10 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
+import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 
 /**
  * Chef Hat, inspired from the game Pizza Tower by Tour De Pizza.

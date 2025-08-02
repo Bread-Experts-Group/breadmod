@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.entity.handler
+package org.bread_experts_group.breadmod.registry.block.handler
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -21,6 +21,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.capability.IFluidHandler
+import org.bread_experts_group.breadmod.ModDataComponents.TANKS
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_STREAM_CODEC
@@ -28,8 +29,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.FLUID_ID_DESERIAL
 import org.bread_experts_group.breadmod.network.BreadModCodecs.FLUID_ID_SERIALIZER
 import org.bread_experts_group.breadmod.network.BreadModCodecs.compose
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler.Tank.Companion.TANK_FLUID_ID_SERIALIZER
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents.TANKS
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler.Tank.Companion.TANK_FLUID_ID_SERIALIZER
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY

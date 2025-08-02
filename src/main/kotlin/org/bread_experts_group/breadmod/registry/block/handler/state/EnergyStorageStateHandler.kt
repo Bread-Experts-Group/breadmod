@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state
+package org.bread_experts_group.breadmod.registry.block.handler.state
 
 import net.minecraft.ChatFormatting
 import net.minecraft.core.HolderLookup
@@ -10,10 +10,10 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.DataComponentSerializable
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ParentedHandler
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
+import org.bread_experts_group.breadmod.registry.block.handler.DataComponentSerializable
+import org.bread_experts_group.breadmod.registry.block.handler.ParentedHandler
 import org.bread_experts_group.breadmod.util.Color
 
 class EnergyStorageStateHandler : GeneralStateHandler(
@@ -35,7 +35,7 @@ class EnergyStorageStateHandler : GeneralStateHandler(
 		this.stateUpdated()
 	}
 
-	override fun serializeNBT(provider: HolderLookup.Provider): IntTag = IntTag.valueOf(this.get(Companion.COLOR))
+	override fun serializeNBT(provider: HolderLookup.Provider): IntTag = IntTag.valueOf(this.get(COLOR))
 	override fun deserializeNBT(
 		provider: HolderLookup.Provider,
 		nbt: Tag

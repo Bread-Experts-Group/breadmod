@@ -9,7 +9,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ComputerHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ComputerHandler
 
 class ComputerKeystrokePacket(private val monitorPos: BlockPos, private val keyCode: Int) : CustomPacketPayload {
 	companion object {

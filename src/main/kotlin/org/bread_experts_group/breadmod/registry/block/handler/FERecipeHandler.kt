@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.registry.block.actual.entity.handler
+package org.bread_experts_group.breadmod.registry.block.handler
 
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.component.DataComponentMap
@@ -16,9 +16,9 @@ import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.common.util.INBTSerializable
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.ModDataComponents.RECIPE
+import org.bread_experts_group.breadmod.ModDataComponents.RECIPE_PROGRESS
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents.RECIPE
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents.RECIPE_PROGRESS
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyInput
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY

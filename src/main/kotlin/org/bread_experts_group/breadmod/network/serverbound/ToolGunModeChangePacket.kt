@@ -10,8 +10,8 @@ import net.minecraft.world.InteractionHand.OFF_HAND
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
-import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
 
 class ToolGunModeChangePacket(private val id: ResourceLocation, private val index: Int) : CustomPacketPayload {

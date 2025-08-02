@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.client.render.renderStaticItem
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translateDiv16
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
 import java.math.BigDecimal
 
 class ToasterRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(context) {

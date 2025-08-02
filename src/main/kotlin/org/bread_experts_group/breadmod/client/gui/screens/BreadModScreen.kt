@@ -14,8 +14,8 @@ import org.bread_experts_group.breadmod.client.render.renderFluid
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.LambdaSlotItemHandler
 import org.bread_experts_group.breadmod.util.Color

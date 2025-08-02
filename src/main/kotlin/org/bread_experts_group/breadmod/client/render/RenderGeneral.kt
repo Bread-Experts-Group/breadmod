@@ -59,7 +59,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
-import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
