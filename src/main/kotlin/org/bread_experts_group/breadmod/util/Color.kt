@@ -20,6 +20,7 @@ object Color {
 	val BLUE: Int = this.color(b = 255)
 	val CORNFLOWER_BLUE: Int = this.color(97, 149, 237)
 	val SAFFRON: Int = this.color(243, 179, 48)
+	val LAVENDER_MAGENTA: Int = this.color(236, 91, 211)
 
 	fun Int.component(literal: String): MutableComponent = Component.literal(literal).withColor(this)
 	fun Char.component(color: Int): MutableComponent = Component.literal(this.toString()).withColor(color)

@@ -42,6 +42,7 @@ class SlotQueueHandler : ParentedHandler<BreadModBlockEntity>, INBTSerializable<
 		return shape
 	}
 
+	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
 	private val contained: ArrayDeque<ItemStack> = ArrayDeque()
 	val size: Int

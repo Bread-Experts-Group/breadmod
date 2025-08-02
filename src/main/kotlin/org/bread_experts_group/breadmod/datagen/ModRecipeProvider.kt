@@ -28,6 +28,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadArm
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.BreadSlicingRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.DopedBreadRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSlicingRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyBuilder
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
 import java.util.concurrent.CompletableFuture
@@ -54,7 +55,7 @@ class ModRecipeProvider(
 		this.wheatCrushing(
 			Items.WHEAT to 1,
 			ModItems.FLOUR.get() to 2,
-			5 * 20,
+			5u * 20u,
 			2000,
 			recipeOutput,
 			"wheat_to_flour"
@@ -62,7 +63,7 @@ class ModRecipeProvider(
 		this.wheatCrushing(
 			Items.HAY_BLOCK to 1,
 			ModItems.FLOUR.get() to 18,
-			15 * 20,
+			15u * 20u,
 			6000,
 			recipeOutput,
 			"hay_block_to_flour"
@@ -74,7 +75,7 @@ class ModRecipeProvider(
 			Fluids.WATER to 100,
 			Items.TNT to 1,
 			Fluids.LAVA to 500,
-			10 * 20,
+			10u * 20u,
 			5000,
 			recipeOutput,
 			"dough_machine_test"
@@ -85,7 +86,7 @@ class ModRecipeProvider(
 			Fluids.WATER to 250,
 			ModItems.DOUGH.get() to 1,
 			null,
-			5 * 20,
+			5u * 20u,
 			1000,
 			recipeOutput,
 			"flour_to_dough"
@@ -96,7 +97,7 @@ class ModRecipeProvider(
 			null,
 			ModItems.ULTIMATE_BREAD.get() to 1,
 			Fluids.WATER to 1000,
-			5 * 20,
+			5u * 20u,
 			5000,
 			recipeOutput,
 			"ultimate_bread_crafting"
@@ -104,30 +105,33 @@ class ModRecipeProvider(
 		// FluidEnergyRecipe
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
-			listOf(Items.BREAD to 16),
-			listOf(Fluids.WATER to 500)
+			mutableListOf(BigDescriptor(16, Items.BREAD)),
+			mutableListOf(BigDescriptor(500, Fluids.WATER))
 		)
 			.itemRequired(ModItems.FLOUR.get(), 8)
 			.itemRequired(Items.APPLE, 8)
 			.fluidRequired(Fluids.LAVA, 500)
-			.timeRequired(100)
+			.timeRequired(100u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_one"))
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
-			listOf(Items.COOKED_BEEF to 16)
+			mutableListOf(BigDescriptor(16, Items.COOKED_BEEF))
 		)
 			.itemRequired(ModItems.FLOUR.get(), 8)
 			.itemRequired(Items.SPONGE, 8)
-			.timeRequired(100)
+			.timeRequired(100u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_two"))
 
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
-			listOf(Items.BREAD to 16, Items.STRING to 16)
+			mutableListOf(
+				BigDescriptor(16, Items.BREAD),
+				BigDescriptor(16, Items.STRING)
+			)
 		)
 			.itemRequired(ModItems.FLOUR.get(), 8)
 			.itemRequired(Items.REDSTONE, 8)
-			.timeRequired(50)
+			.timeRequired(50u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
 		// Crafting Table recipes
 		nineBlockStorageRecipes(
@@ -550,20 +554,26 @@ class ModRecipeProvider(
 	}
 
 	private fun toasting(input: Item, result: Item, output: RecipeOutput, name: String): Unit =
-		FluidEnergyBuilder(::ToasterRecipe, result to 2)
+		FluidEnergyBuilder(
+			{ ii, io, _, _, time, _ -> ToasterRecipe(ii, io, time) },
+			mutableListOf(BigDescriptor(2, result))
+		)
 			.itemRequired(input, 2)
-			.timeRequiredInSeconds(5)
+			.timeRequiredInSeconds(5u)
 			.save(output, modLocation("machine", "toasting", name))
 
 	private fun wheatCrushing(
 		input: Pair<Item, Int>,
 		result: Pair<Item, Int>,
-		ticks: Int,
+		ticks: ULong,
 		energy: Int,
 		output: RecipeOutput,
 		name: String
-	): Unit = FluidEnergyBuilder(::WheatCrusherRecipe, listOf(result))
-		.itemRequired(input)
+	): Unit = FluidEnergyBuilder(
+		{ ii, io, _, _, time, energy -> WheatCrusherRecipe(ii, io, time, energy) },
+		mutableListOf(BigDescriptor(result.second, result.first))
+	)
+		.itemRequired(input.first, input.second)
 		.timeRequired(ticks)
 		.energyRequired(energy)
 		.save(output, modLocation("machine", "wheat_crushing", name))
@@ -574,11 +584,15 @@ class ModRecipeProvider(
 		fluidInput: Pair<Fluid, Int>?,
 		itemOutput: Pair<Item, Int>?,
 		fluidOutput: Pair<Fluid, Int>?,
-		ticks: Int,
+		ticks: ULong,
 		energy: Int,
 		output: RecipeOutput,
 		name: String
-	): Unit = FluidEnergyBuilder(::DoughMachineRecipe, itemOutput, fluidOutput)
+	): Unit = FluidEnergyBuilder(
+		::DoughMachineRecipe,
+		itemOutput?.let { mutableListOf(BigDescriptor(it.second, it.first)) } ?: mutableListOf(),
+		fluidOutput?.let { mutableListOf(BigDescriptor(it.second, it.first)) } ?: mutableListOf()
+	)
 		.itemRequired(inputOne)
 		.itemRequired(inputTwo)
 		.fluidRequired(fluidInput)

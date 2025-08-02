@@ -53,11 +53,11 @@ abstract class BreadModBlock(
 	var blockEntityType: DeferredHolder<BlockEntityType<*>, BlockEntityType<*>>? = null
 	var menuType: DeferredHolder<MenuType<*>, MenuType<*>>? = null
 	open fun getDisplayName(blockEntity: BreadModBlockEntity): Component = Component.literal(
-		"${this::class.simpleName ?: "BreadModBlock"} / $blockEntity"
+		this::class.simpleName ?: "BreadModBlock"
 	)
 
 	open fun ofMenu(): ((MenuType<*>, Int, Inventory, BreadModBlockEntity) -> BreadModMenu)? = null
-	open fun ofCapabilities(): CapabilityMap = mapOf()
+	open fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf()
 	open fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		null
 
@@ -114,6 +114,15 @@ abstract class BreadModBlock(
 		else if (tooltipFlag.isAdvanced) tooltipComponents.add(
 			Component.literal("<no data>").withStyle(ChatFormatting.DARK_GRAY)
 		)
+		this.appendHoverTextAdditional(stack, context, tooltipComponents, tooltipFlag)
+	}
+
+	open fun appendHoverTextAdditional(
+		stack: ItemStack,
+		context: Item.TooltipContext,
+		tooltipComponents: MutableList<Component>,
+		tooltipFlag: TooltipFlag
+	) {
 	}
 
 	open fun useItemOnBM(

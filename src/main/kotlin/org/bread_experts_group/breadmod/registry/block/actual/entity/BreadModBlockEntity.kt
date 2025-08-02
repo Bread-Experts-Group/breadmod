@@ -26,21 +26,31 @@ import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
 import org.bread_experts_group.breadmod.util.Color.GRAY
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
 import org.bread_experts_group.breadmod.util.Color.component
-import java.util.Optional
 
-typealias CapabilityMap = Map<BaseCapability<*, *>, Map<Optional<out Any>, (BreadModBlockEntity, Any?) -> Any>>
-typealias MutableCapabilityMap<T> = MutableMap<BaseCapability<*, *>, MutableMap<Optional<out Any>, T>>
+typealias CapabilityMap<T> = Map<BaseCapability<*, *>, Map<Any?, T>>
 
 class BreadModBlockEntity(
 	type: BlockEntityType<*>,
 	pos: BlockPos,
 	state: BlockState,
-	private val capabilityConstructors: CapabilityMap = mapOf(),
+	capabilityConstructors: CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(),
 ) : BlockEntity(type, pos, state), MenuProvider {
-	private val loadedCapabilities: MutableSet<Any> = mutableSetOf()
-	private val capabilities: MutableCapabilityMap<Any> = mutableMapOf()
-	private val prepLoad: MutableCapabilityMap<Pair<Provider, Tag>> = mutableMapOf()
-	private var prepInput: DataComponentInput? = null
+	private val capabilities: CapabilityMap<Any> = capabilityConstructors.mapValues { (c, m) ->
+		m.mapValues {
+			val actual = it.value.invoke(this)
+			@Suppress("UNCHECKED_CAST")
+			if (actual is ParentedHandler<*>) (actual as ParentedHandler<BlockEntity>).parent = this
+			actual
+		}
+	}
+
+	init {
+		for ((_, contextual) in this.capabilities) {
+			for ((_, actual) in contextual) {
+				if (actual is ParentedHandler<*>) actual.parentReady()
+			}
+		}
+	}
 
 	override fun getDisplayName(): Component = (this.blockState.block as BreadModBlock).getDisplayName(this)
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): BreadModMenu {
@@ -49,41 +59,19 @@ class BreadModBlockEntity(
 	}
 
 	@Suppress("UNCHECKED_CAST")
+	fun <T, C> getCapabilityOrNull(capability: BaseCapability<T, C>, context: C? = null): T? {
+		if (this.level?.isClientSide == true)
+			PacketDistributor.sendToServer(BreadModBlockEntityUpdateRequestPacket(this.blockPos))
+		return this.capabilities[capability]?.get(context) as? T
+	}
+
 	fun <T, C> getCapability(capability: BaseCapability<T, C>, context: C? = null): T {
-		val actual = this.capabilities
-			.getOrPut(capability) { mutableMapOf() }
-			.getOrPut(Optional.ofNullable(context)) {
-				if (this.level?.isClientSide == true)
-					PacketDistributor.sendToServer(BreadModBlockEntityUpdateRequestPacket(this.blockPos))
-				val contextual = this.capabilityConstructors[capability]
-					?: throw NullPointerException("No capability for [${capability.name()}]")
-				val nullableContext = Optional.ofNullable(context)
-				val actual = contextual[nullableContext]?.invoke(this, context) as? T
-					?: throw NullPointerException("No contextual actual for [${capability.name()} / $context]")
-				if (this.loadedCapabilities.add(actual)) {
-					if (actual is ParentedHandler<*>) (actual as ParentedHandler<BlockEntity>).parent = this
-					if (actual is INBTSerializable<*>) this.prepLoad[capability]?.let {
-						val contextPrep = it[nullableContext] ?: return@let
-						(actual as INBTSerializable<Any>).deserializeNBT(contextPrep.first, contextPrep.second)
-						it.remove(nullableContext)
-						if (it.isEmpty()) this.prepLoad.remove(capability)
-					}
-					this.prepInput?.let {
-						if (actual is DataComponentSerializable) actual.deserializeDataComponent(it)
-					}
-				}
-				actual
-			} as T
-		return actual
+		return this.getCapabilityOrNull(capability, context)
+			?: throw NullPointerException("No capability for [${capability.name()} / $context]")
 	}
 
 	override fun saveAdditional(tag: CompoundTag, registries: Provider) {
 		super.saveAdditional(tag, registries)
-		this.prepLoad.forEach { (capability, contextual) ->
-			val list = ListTag()
-			contextual.forEach { (_, actual) -> list.add(actual.second) }
-			if (list.isNotEmpty()) tag.put(capability.name().toString(), list)
-		}
 		this.capabilities.forEach { (capability, contextual) ->
 			val list = ListTag()
 			contextual.forEach { (_, actual) ->
@@ -96,29 +84,24 @@ class BreadModBlockEntity(
 
 	override fun loadAdditional(tag: CompoundTag, registries: Provider) {
 		super.loadAdditional(tag, registries)
-		this.prepLoad.clear()
-		for ((capability, contextual) in this.capabilityConstructors) {
+		for ((capability, contextual) in this.capabilities) {
 			val list = tag.get(capability.name().toString()) as? ListTag ?: continue
-			val loadMap = this.capabilities[capability]
-			val prepMap = this.prepLoad.getOrPut(capability) { mutableMapOf() }
 			for ((i, data) in contextual.entries.iterator().withIndex()) {
 				if (i >= list.size) break // Possible corruption
-				val (context, _) = data
-				// TODO: CONTEXT SAVE
-				val loadCheck = loadMap?.get(context)
+				val (_, actual) = data
 				@Suppress("UNCHECKED_CAST")
-				if (loadCheck != null && loadCheck is INBTSerializable<*>) (loadCheck as INBTSerializable<Tag>).deserializeNBT(
-					registries, list[i]
-				) else prepMap[context] = registries to list[i]
+				if (actual is INBTSerializable<*>)
+					(actual as INBTSerializable<Tag>).deserializeNBT(registries, list[i])
 			}
 		}
 	}
 
 	override fun applyImplicitComponents(componentInput: DataComponentInput) {
-		this.loadedCapabilities.forEach { actual ->
-			if (actual is DataComponentSerializable) actual.deserializeDataComponent(componentInput)
+		for ((_, contextual) in this.capabilities) {
+			for ((_, actual) in contextual) {
+				if (actual is DataComponentSerializable) actual.deserializeDataComponent(componentInput)
+			}
 		}
-		this.prepInput = componentInput
 	}
 
 	override fun collectImplicitComponents(components: DataComponentMap.Builder) {

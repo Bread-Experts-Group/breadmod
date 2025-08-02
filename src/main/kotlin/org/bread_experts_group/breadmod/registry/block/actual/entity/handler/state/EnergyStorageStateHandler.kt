@@ -28,6 +28,7 @@ class EnergyStorageStateHandler : GeneralStateHandler(
 			)
 	}
 
+	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
 	override fun <E> set(provisioner: StateProvisioner<E>, value: E) {
 		super.set(provisioner, value)

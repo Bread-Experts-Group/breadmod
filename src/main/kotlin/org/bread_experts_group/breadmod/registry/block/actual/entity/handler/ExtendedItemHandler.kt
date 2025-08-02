@@ -30,7 +30,10 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.compose
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler.Slot.Companion.SLOT_ITEM_ID_SERIALIZER
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents.SLOTS
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.itemStack
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
+import org.bread_experts_group.breadmod.util.Color.GRAY
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
 import org.bread_experts_group.breadmod.util.Color.SAFFRON
 import org.bread_experts_group.breadmod.util.Color.component
@@ -44,6 +47,7 @@ import kotlin.math.roundToInt
 class ExtendedItemHandler(
 	vararg slots: Slot
 ) : ParentedHandler<BreadModBlockEntity>, IItemHandlerModifiable, DataComponentSerializable, INBTSerializable<Tag> {
+	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
 	val slots: MutableMap<Int, Slot> = mutableMapOf(*slots.mapIndexed { index, slot -> index to slot }.toTypedArray())
 
@@ -61,30 +65,24 @@ class ExtendedItemHandler(
 		this.stateUpdated()
 	}
 
-	data class BigItemTransaction(
-		val item: Item,
-		val amount: BigDecimal,
-		val components: DataComponentMap
-	)
-
 	fun bigInsertItem(
 		slot: Int,
-		transaction: BigItemTransaction,
+		transaction: BigDescriptor<Item>,
 		simulate: Boolean
-	): BigItemTransaction {
+	): BigDescriptor<Item> {
 		if (transaction.amount == BigDecimal.ZERO) return transaction
 		val slot = this.slots[slot] ?: return transaction
-		if (!slot.validity(transaction.item, transaction.amount, transaction.components)) return transaction
+		if (!slot.validity(transaction.value, transaction.amount, transaction.components)) return transaction
 		val transfer = minOf(transaction.amount, slot.capacity - slot.amount)
-		if (slot.amount == BigDecimal.ZERO) {
+		if (slot.amount <= BigDecimal.ZERO) {
 			if (!simulate) {
-				slot.item = transaction.item
+				slot.item = transaction.value
 				slot.amount = transfer
 				slot.components = transaction.components
 				this.stateUpdated()
 			}
 			return transaction.copy(amount = transaction.amount - transfer)
-		} else if (slot.item != transaction.item) return transaction
+		} else if (slot.item != transaction.value) return transaction
 		val remainder = transaction.copy(amount = transaction.amount - transfer)
 		if (!simulate) {
 			slot.amount += transfer
@@ -100,16 +98,16 @@ class ExtendedItemHandler(
 	): ItemStack {
 		val transaction = this.bigInsertItem(
 			slot,
-			BigItemTransaction(stack.item, BigDecimal(stack.count), stack.components),
+			BigDescriptor<Item>(BigDecimal(stack.count), stack.item, stack.components),
 			simulate
 		)
-		val stack = ItemStack(transaction.item, transaction.amount.int)
+		val stack = ItemStack(transaction.value, transaction.amount.int)
 		stack.applyComponents(transaction.components)
 		return stack
 	}
 
-	val emptyTransaction: BigItemTransaction = BigItemTransaction(
-		Items.AIR, BigDecimal.ZERO,
+	val emptyTransaction: BigDescriptor<Item> = BigDescriptor(
+		BigDecimal.ZERO, Items.AIR,
 		DataComponentMap.EMPTY
 	)
 
@@ -117,7 +115,7 @@ class ExtendedItemHandler(
 		slot: Int,
 		amount: BigDecimal,
 		simulate: Boolean
-	): BigItemTransaction {
+	): BigDescriptor<Item> {
 		if (amount == BigDecimal.ZERO) return this.emptyTransaction
 		val slot = this.slots[slot] ?: return this.emptyTransaction
 		val transfer = minOf(slot.amount, amount)
@@ -125,19 +123,14 @@ class ExtendedItemHandler(
 			slot.amount -= transfer
 			this.stateUpdated()
 		}
-		return BigItemTransaction(slot.item, transfer, slot.components)
+		return BigDescriptor(transfer, slot.item, slot.components)
 	}
 
 	override fun extractItem(
 		slot: Int,
 		amount: Int,
 		simulate: Boolean
-	): ItemStack {
-		val transaction = this.bigExtractItem(slot, BigDecimal(amount), simulate)
-		val stack = ItemStack(transaction.item, transaction.amount.int)
-		stack.applyComponents(transaction.components)
-		return stack
-	}
+	): ItemStack = this.bigExtractItem(slot, BigDecimal(amount), simulate).itemStack()
 
 	override fun getSlotLimit(slot: Int): Int = this.slots[slot]?.capacity?.int ?: 0
 	override fun isItemValid(slot: Int, stack: ItemStack): Boolean =
@@ -160,9 +153,7 @@ class ExtendedItemHandler(
 			component.append(percentage.toString().component(SAFFRON))
 			component.append('%'.component(LIGHT_GRAY))
 			component.append(") ".component(DARK_GRAY))
-			component.append('['.component(DARK_GRAY))
-			component.append(slot.item.description.copy().withColor(SAFFRON))
-			component.append(']'.component(DARK_GRAY))
+			component.append(slot.itemStack().displayName.copy().withColor(GRAY))
 			tooltipComponents.add(component)
 		}
 	}
@@ -223,8 +214,16 @@ class ExtendedItemHandler(
 		var capacity: BigDecimal
 	) {
 		var validity: (Item, BigDecimal, DataComponentMap) -> Boolean = { _, _, _ -> true }
-		var amount: BigDecimal = BigDecimal.ZERO
 		var item: Item = Items.AIR
+			set(value) {
+				if (value == Items.AIR) this.amount = BigDecimal.ZERO
+				field = value
+			}
+		var amount: BigDecimal = BigDecimal.ZERO
+			set(value) {
+				if (this.item == Items.AIR) field = BigDecimal.ZERO
+				else field = value
+			}
 		var components: DataComponentMap = DataComponentMap.EMPTY
 		fun itemStack(): ItemStack {
 			val percent = this.amount.divide(this.capacity, floatRoundEven).toFloat()

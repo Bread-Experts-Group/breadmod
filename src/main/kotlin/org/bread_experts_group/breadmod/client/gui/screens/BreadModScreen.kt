@@ -6,7 +6,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.gui.screens.inventory.MenuAccess
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
-import net.minecraft.world.inventory.Slot
 import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
@@ -183,58 +182,6 @@ abstract class BreadModScreen(
 		this.drawFillBox(x, y, w, h)
 		this.renderFluidMeter(x, y, w, h, fluidHandler, tank)
 		this.renderFluidTooltip(x, y, w, h, mouseX, mouseY, fluidHandler, tank)
-	}
-
-	override fun renderSlot(guiGraphics: GuiGraphics, slot: Slot) {
-		var stack = slot.item
-		this.menu.carried
-		var flag = false
-		var flag1 = false
-//		var flag1 = slot === this.clickedSlot && !this.draggingItem.isEmpty && !this.isSplittingStack
-//		if (slot === this.clickedSlot && !this.draggingItem.isEmpty && this.isSplittingStack && !stack.isEmpty) {
-//			stack = stack.copyWithCount(stack.count / 2)
-//		} else if (this.isQuickCrafting && this.quickCraftSlots.contains(slot) && !carried.isEmpty) {
-//			if (this.quickCraftSlots.size == 1) {
-//				return
-//			}
-//
-//			if (AbstractContainerMenu.canItemQuickReplace(slot, carried, true) && this.menu.canDragTo(slot)) {
-//				flag = true
-//				val k = min(carried.maxStackSize, slot.getMaxStackSize(carried))
-//				val l = if (slot.item.isEmpty) 0 else slot.item.count
-//				var i1 = AbstractContainerMenu.getQuickCraftPlaceCount(
-//					this.quickCraftSlots,
-//					this.quickCraftingType,
-//					carried
-//				) + l
-//				if (i1 > k) {
-//					i1 = k
-//					s = ChatFormatting.YELLOW.toString() + k
-//				}
-//
-//				stack = carried.copyWithCount(i1)
-//			} else {
-//				this.quickCraftSlots.remove(slot)
-//				this.recalculateQuickCraftRemaining()
-//			}
-//		}
-		guiGraphics.pose().pushPose()
-		guiGraphics.pose().translate(0.0f, 0.0f, 100.0f)
-		if (stack.isEmpty && slot.isActive) {
-			val pair = slot.noItemIcon
-			if (pair != null) {
-				val sprite = localClient.getTextureAtlas(pair.first).apply(pair.second)
-				guiGraphics.blit(slot.x, slot.y, 0, 16, 16, sprite)
-				flag1 = true
-			}
-		}
-
-		if (!flag1) {
-			if (flag) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, -2130706433)
-			this.renderSlotContents(guiGraphics, stack, slot, "Alpha")
-		}
-
-		guiGraphics.pose().popPose()
 	}
 
 	fun renderSlots(guiGraphics: GuiGraphics) {

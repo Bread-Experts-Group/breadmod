@@ -29,7 +29,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.sta
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.state.MonitorStateHandler.Companion.KEYBOARD_POSITION
 import org.bread_experts_group.breadmod.util.directionalTargetFaceSection
 import org.bread_experts_group.breadmod.util.normalizedHitPos
-import java.util.Optional
 
 class MonitorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	init {
@@ -40,12 +39,12 @@ class MonitorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	}
 
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap {
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
 		val state = MonitorStateHandler()
 		val computer = ComputerHandler()
 		return mapOf(
-			MonitorStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> state }),
-			ComputerHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> computer })
+			MonitorStateHandler.BLOCK_VOID to mapOf(null to { _ -> state }),
+			ComputerHandler.BLOCK_VOID to mapOf(null to { _ -> computer })
 		)
 	}
 

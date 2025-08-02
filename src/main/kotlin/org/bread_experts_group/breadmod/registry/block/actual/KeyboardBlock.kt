@@ -32,7 +32,6 @@ import org.bread_experts_group.breadmod.util.BlockScanner
 import org.bread_experts_group.breadmod.util.BlockScanner.filterPositions
 import org.bread_experts_group.breadmod.util.block
 import org.bread_experts_group.breadmod.util.combine
-import java.util.Optional
 import java.util.stream.Stream
 
 class KeyboardBlock : BreadModBlock(
@@ -66,10 +65,10 @@ class KeyboardBlock : BreadModBlock(
 	}
 
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap {
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
 		val state = KeyboardStateHandler()
 		return mapOf(
-			KeyboardStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> state })
+			KeyboardStateHandler.BLOCK_VOID to mapOf(null to { _ -> state })
 		)
 	}
 

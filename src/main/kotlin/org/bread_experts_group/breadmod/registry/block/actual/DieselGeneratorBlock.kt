@@ -25,20 +25,20 @@ import java.util.Optional
 
 class DieselGeneratorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap {
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
 		val state = DieselGeneratorStateHandler()
 		val fluids = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))
-		val storage = { _: BreadModBlockEntity, _: Any? -> fluids }
+		val storage = { _: BreadModBlockEntity -> fluids }
 		return mapOf(
-			DieselGeneratorStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> state }),
+			DieselGeneratorStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _ -> state }),
 			Capabilities.FluidHandler.BLOCK to mapOf(
-				Optional.empty<Direction>() to storage,
-				Optional.of(Direction.UP) to storage,
-				Optional.of(Direction.DOWN) to storage,
-				Optional.of(Direction.NORTH) to storage,
-				Optional.of(Direction.SOUTH) to storage,
-				Optional.of(Direction.EAST) to storage,
-				Optional.of(Direction.WEST) to storage,
+				null to storage,
+				Direction.UP to storage,
+				Direction.DOWN to storage,
+				Direction.NORTH to storage,
+				Direction.SOUTH to storage,
+				Direction.EAST to storage,
+				Direction.WEST to storage,
 			)
 		)
 	}

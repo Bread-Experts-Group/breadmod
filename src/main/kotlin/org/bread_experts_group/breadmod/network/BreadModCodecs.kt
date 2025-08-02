@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.network
 
+import com.google.gson.JsonPrimitive
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
@@ -7,8 +8,10 @@ import com.mojang.serialization.codecs.PrimitiveCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.core.BlockPos
+import net.minecraft.core.component.DataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.LongTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -17,6 +20,8 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeHolder
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
@@ -27,6 +32,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.function.Function
@@ -89,7 +95,10 @@ object BreadModCodecs {
 		override fun toString(): String = "BigDecimal"
 		override fun <T> write(ops: DynamicOps<T>, value: BigDecimal): T = ops.createString(value.toString())
 		override fun <T> read(ops: DynamicOps<T>, input: T): DataResult<BigDecimal> {
-			if (input is StringTag) return DataResult.success(BigDecimal(input.asString))
+			when (input) {
+				is StringTag -> return DataResult.success(BigDecimal(input.asString))
+				is JsonPrimitive -> return DataResult.success(BigDecimal(input.asString))
+			}
 			return DataResult.error { "Not a string tag: $input [${if (input != null) input::class.qualifiedName else "?"}]" }
 		}
 	}
@@ -108,6 +117,57 @@ object BreadModCodecs {
 			buffer.writeInt(data.size)
 			buffer.writeBytes(data)
 		}
+	}
+	val U_LONG_CODEC: PrimitiveCodec<ULong> = object : PrimitiveCodec<ULong> {
+		override fun toString(): String = "ULong"
+		override fun <T> write(ops: DynamicOps<T>, value: ULong): T = ops.createLong(value.toLong())
+		override fun <T> read(ops: DynamicOps<T>, input: T): DataResult<ULong> {
+			when (input) {
+				is LongTag -> return DataResult.success(input.asLong.toULong())
+				is JsonPrimitive -> return DataResult.success(input.asLong.toULong())
+			}
+			return DataResult.error { "Not a string tag: $input [${if (input != null) input::class.qualifiedName else "?"}]" }
+		}
+	}
+	val U_LONG_STREAM_CODEC: StreamCodec<ByteBuf, ULong> = object : StreamCodec<ByteBuf, ULong> {
+		override fun decode(buffer: ByteBuf): ULong = buffer.readLong().toULong()
+		override fun encode(buffer: ByteBuf, value: ULong) {
+			buffer.writeLong(value.toLong())
+		}
+	}
+	val BIG_DESCRIPTOR_ITEM_CODEC: Codec<BigDescriptor<Item>> = RecordCodecBuilder.mapCodec { inst ->
+		inst.group(
+			Codec.STRING.fieldOf("id").forGetter { this.ITEM_ID_SERIALIZER(it.value) },
+			this.BIG_DECIMAL_CODEC.fieldOf("amount").forGetter(BigDescriptor<Item>::amount),
+			DataComponentMap.CODEC.fieldOf("components").forGetter(BigDescriptor<Item>::components)
+		).apply(inst) { id: String, amount: BigDecimal, components: DataComponentMap ->
+			BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components)
+		}
+	}.codec()
+	val BIG_DESCRIPTOR_ITEM_STREAM_CODEC: StreamCodec<ByteBuf, BigDescriptor<Item>> = StreamCodec.composite(
+		ByteBufCodecs.STRING_UTF8, { this.ITEM_ID_SERIALIZER(it.value) },
+		this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Item>::amount,
+		{ id, amount -> BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id)) } // TODO COMPONENTS
+	)
+	val BIG_DESCRIPTOR_FLUID_CODEC: Codec<BigDescriptor<Fluid>> = RecordCodecBuilder.mapCodec { inst ->
+		inst.group(
+			Codec.STRING.fieldOf("id").forGetter { this.FLUID_ID_SERIALIZER(it.value) },
+			this.BIG_DECIMAL_CODEC.fieldOf("amount").forGetter(BigDescriptor<Fluid>::amount),
+			DataComponentMap.CODEC.fieldOf("components").forGetter(BigDescriptor<Fluid>::components)
+		).apply(inst) { id: String, amount: BigDecimal, components: DataComponentMap ->
+			BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id), components)
+		}
+	}.codec()
+	val BIG_DESCRIPTOR_FLUID_STREAM_CODEC: StreamCodec<ByteBuf, BigDescriptor<Fluid>> = StreamCodec.composite(
+		ByteBufCodecs.STRING_UTF8, { this.FLUID_ID_SERIALIZER(it.value) },
+		this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Fluid>::amount,
+		{ id, amount -> BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id)) } // TODO COMPONENTS
+	)
+	val RECIPE_HOLDER_CODEC: Codec<RecipeHolder<*>> = RecordCodecBuilder.create { instance ->
+		instance.group(
+			ResourceLocation.CODEC.fieldOf("id").forGetter(RecipeHolder<*>::id),
+			Recipe.CODEC.fieldOf("recipe").forGetter(RecipeHolder<*>::value)
+		).apply(instance) { id, value -> RecipeHolder(id, value) }
 	}
 
 	@Suppress("ConvertLambdaToReference") // necessary because of overload ambiguity.

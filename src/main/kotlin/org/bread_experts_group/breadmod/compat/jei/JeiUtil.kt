@@ -25,8 +25,8 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.Flui
  * Draws a recipe time string
  */
 fun drawRecipeTime(recipe: FluidEnergyRecipe, guiGraphics: GuiGraphics, x: Int, y: Int) {
-	if (recipe.getTime() > 0) {
-		val recipeTimeSeconds = recipe.getTime() / 20
+	if (recipe.rTime > 0u) {
+		val recipeTimeSeconds = recipe.rTime / 20u
 		val timeString = modTranslatable("jei", "generic", "recipe_time", args = listOf("$recipeTimeSeconds"))
 		guiGraphics.drawString(localClient.font, timeString, x, y, -8355712, false)
 	}
@@ -52,26 +52,26 @@ fun createCachedArrow(
 	width: Int, height: Int,
 	startDirection: IDrawableAnimated.StartDirection,
 	inverted: Boolean = false
-): LoadingCache<Int, IDrawableAnimated> =
-	CacheBuilder.newBuilder().maximumSize(maxSize).build(object : CacheLoader<Int, IDrawableAnimated>() {
-		override fun load(key: Int): IDrawableAnimated =
+): LoadingCache<ULong, IDrawableAnimated> =
+	CacheBuilder.newBuilder().maximumSize(maxSize).build(object : CacheLoader<ULong, IDrawableAnimated>() {
+		override fun load(key: ULong): IDrawableAnimated =
 			guiHelper.drawableBuilder(texture, u, v, width, height)
 				.setTextureSize(width, height)
-				.buildAnimated(key, startDirection, inverted)
-	})
+				.buildAnimated(1, startDirection, inverted)
+	}) // TODO Long tick
 
 /**
  * @see createCachedArrow
  */
 fun <T : IDrawableAnimated> getCachedArrow(
 	recipe: FluidEnergyRecipe,
-	cachedArrows: LoadingCache<Int, T>
-): T = cachedArrows.getUnchecked(recipe.getTime())
+	cachedArrows: LoadingCache<ULong, T>
+): T = cachedArrows.getUnchecked(recipe.rTime)
 
 fun <T : FluidEnergyRecipe> drawRotatedArrow(
 	guiGraphics: GuiGraphics,
 	recipe: T,
-	arrow: LoadingCache<Int, IDrawableAnimated>,
+	arrow: LoadingCache<ULong, IDrawableAnimated>,
 	x: Int,
 	y: Int,
 	rotation: Float

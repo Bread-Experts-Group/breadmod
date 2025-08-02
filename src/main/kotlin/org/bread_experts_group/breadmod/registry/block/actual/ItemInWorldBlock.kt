@@ -19,17 +19,16 @@ import org.bread_experts_group.breadmod.client.render.entity.block.ItemInWorldRe
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.SlotQueueHandler
-import java.util.Optional
 
 class ItemInWorldBlock : BreadModBlock(
 	Properties.of()
 		.pushReaction(PushReaction.DESTROY)
 ) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap {
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
 		val inventory = SlotQueueHandler()
 		return mapOf(
-			SlotQueueHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> inventory })
+			SlotQueueHandler.BLOCK_VOID to mapOf(null to { _ -> inventory })
 		)
 	}
 

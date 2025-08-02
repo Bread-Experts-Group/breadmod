@@ -122,12 +122,12 @@ class ModBlockStateProvider(
 				)
 				.build()
 		}
-		this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_part"))
-		this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_core"))
-//		this.getMultipartBuilder(ModBlocks.CABLE.block)
-//			.createPart(core).end()
-//			.createSidedPart(connector)
-//		this.simpleBlockItem(ModBlocks.CABLE.block, core)
+		val connector = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_part"))
+		val core = this.models().getExistingFile(this.modLoc("${ModelProvider.BLOCK_FOLDER}/cable/cable_core"))
+		this.getMultipartBuilder(ModBlocks.CABLE.block)
+			.createPart(core).end()
+			.createSidedPart(connector)
+		this.simpleBlockItem(ModBlocks.CABLE.block, core)
 		// Diesel Generator
 		this.getMultipartBuilder(ModBlocks.DIESEL_GENERATOR.block)
 			.createSidedPart(this.blockBenchBlockModel("diesel_generator/diesel_generator"))
@@ -168,29 +168,29 @@ class ModBlockStateProvider(
 		this.simpleBlockItem(ModBlocks.ITEM_PEDESTAL.block, this.blockBenchBlockModel("item_pedestal"))
 		// Toaster
 		// todo toaster multipart
-//		this.horizontalBlockBenchModel(ModBlocks.TOASTER.block, "toaster")
-//		this.simpleBlockItem(ModBlocks.TOASTER.block, this.blockBenchItemModel("toaster_item"))
+		this.horizontalBlockBenchModel(ModBlocks.TOASTER.block, "toaster")
+		this.simpleBlockItem(ModBlocks.TOASTER.block, this.blockBenchItemModel("toaster_item"))
 		// Wheat Crusher
 		val machineTop = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top")
 		val machineSide = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
 		val machineBack = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
-//		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.block) { state ->
-//			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-//			val model = this.models().cube(
-//				"breadmod:block/wheat_crusher$machineOn",
-//				machineTop,
-//				machineTop,
-//				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
-//				machineBack,
-//				machineSide,
-//				machineSide
-//			)
-//			return@horizontalBlock model
-//		}
-//		this.simpleBlockItem(
-//			ModBlocks.WHEAT_CRUSHER.block,
-//			this.models().getBuilder("breadmod:block/wheat_crusher")
-//		)
+		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.block) { state ->
+			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
+			val model = this.models().cube(
+				"breadmod:block/wheat_crusher$machineOn",
+				machineTop,
+				machineTop,
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/wheat_crusher_front$machineOn"),
+				machineBack,
+				machineSide,
+				machineSide
+			)
+			return@horizontalBlock model
+		}
+		this.simpleBlockItem(
+			ModBlocks.WHEAT_CRUSHER.block,
+			this.models().getBuilder("breadmod:block/wheat_crusher")
+		)
 		// Dough Machine
 		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.block) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""

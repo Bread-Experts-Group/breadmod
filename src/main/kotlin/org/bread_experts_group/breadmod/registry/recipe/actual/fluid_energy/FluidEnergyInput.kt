@@ -2,17 +2,18 @@ package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy
 
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeInput
-import net.neoforged.neoforge.fluids.FluidStack
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.ExtendedItemHandler
+import java.math.BigDecimal
 
 class FluidEnergyInput(
-	val iItems: List<ItemStack>,
-	val iFluids: List<FluidStack>
+	val item: ExtendedItemHandler? = null,
+	val fluid: ExtendedFluidHandler? = null,
+	val energy: ExtendedEnergyHandler? = null,
+	var lastConsumed: BigDecimal = BigDecimal.ZERO
 ) : RecipeInput {
-	constructor(item: ItemStack) : this(listOf(item), listOf())
-	constructor(fluid: FluidStack) : this(listOf(), listOf(fluid))
-	constructor(item: ItemStack, fluid: FluidStack) : this(listOf(item), listOf(fluid))
-
-	override fun size(): Int = this.iItems.size
-	override fun getItem(index: Int): ItemStack = this.iItems[index]
-	override fun isEmpty(): Boolean = (super.isEmpty() || this.iItems.isEmpty()) && this.iFluids.isEmpty()
+	override fun size(): Int = throw UnsupportedOperationException()
+	override fun getItem(index: Int): ItemStack = throw UnsupportedOperationException()
+	override fun isEmpty(): Boolean = this.item == null && this.fluid != null && this.energy != null
 }

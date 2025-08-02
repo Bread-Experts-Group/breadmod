@@ -18,7 +18,9 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.Flui
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergySerializer
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.RecipeFunctionDataFixer
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
+import java.util.Optional
 import java.util.function.Supplier
+import kotlin.jvm.optionals.getOrNull
 
 object ModRecipeSerializers : RegistryProvider(Registries.RECIPE_SERIALIZER) {
 	private val registry: DeferredRegister<RecipeSerializer<*>> = this.getRegistry(Registries.RECIPE_SERIALIZER)
@@ -27,14 +29,26 @@ object ModRecipeSerializers : RegistryProvider(Registries.RECIPE_SERIALIZER) {
 		recipe: RecipeFunctionDataFixer<R>
 	): Supplier<RecipeSerializer<R>> = this.registry.register(name) { -> FluidEnergySerializer(recipe) }
 
+	private fun <T> Optional<List<T>>.unwrap(): List<T> = this.orElse(emptyList())
 	val WHEAT_CRUSHING: Supplier<RecipeSerializer<WheatCrusherRecipe>> =
-		this.registerFERSupplier("wheat_crushing", ::WheatCrusherRecipe)
+		this.registerFERSupplier("wheat_crushing") { ii, io, _, _, time, energy ->
+			WheatCrusherRecipe(ii.unwrap(), io.unwrap(), time, energy.getOrNull())
+		}
 	val DOUGH_MACHINE: Supplier<RecipeSerializer<DoughMachineRecipe>> =
-		this.registerFERSupplier("dough_machine", ::DoughMachineRecipe)
+		this.registerFERSupplier("dough_machine") { ii, io, fi, fo, time, energy ->
+			DoughMachineRecipe(
+				ii.unwrap(), io.unwrap(), fi.unwrap(), fo.unwrap(),
+				time, energy.getOrNull()
+			)
+		}
 	val TOASTER: Supplier<RecipeSerializer<ToasterRecipe>> =
-		this.registerFERSupplier("toasting", ::ToasterRecipe)
+		this.registerFERSupplier("toasting") { ii, io, _, _, time, _ ->
+			ToasterRecipe(ii.unwrap(), io.unwrap(), time)
+		}
 	val MICROWAVE: Supplier<RecipeSerializer<MicrowaveRecipe>> =
-		this.registerFERSupplier("microwaving", ::MicrowaveRecipe)
+		this.registerFERSupplier("microwaving") { ii, io, _, _, time, _ ->
+			MicrowaveRecipe(ii.unwrap(), io.unwrap(), time)
+		}
 	val BREAD_SLICE: Supplier<SimpleCraftingRecipeSerializer<AbstractCuttingRecipe>> =
 		this.registry.register("bread_slice_crafting") { ->
 			SimpleCraftingRecipeSerializer { BreadSlicingRecipe() }
@@ -54,5 +68,10 @@ object ModRecipeSerializers : RegistryProvider(Registries.RECIPE_SERIALIZER) {
 
 	// Exp.
 	val FLUID_ENERGY_TEST: Supplier<RecipeSerializer<FluidEnergyRecipe>> =
-		this.registerFERSupplier("fluid_energy", ::FluidEnergyRecipeTest)
+		this.registerFERSupplier("fluid_energy") { ii, io, fi, fo, time, energy ->
+			FluidEnergyRecipeTest(
+				ii.unwrap(), io.unwrap(), fi.unwrap(), fo.unwrap(),
+				time, energy.getOrNull()
+			)
+		}
 }

@@ -42,6 +42,7 @@ import kotlin.math.roundToInt
 class ExtendedFluidHandler(
 	vararg tanks: Tank
 ) : ParentedHandler<BreadModBlockEntity>, IFluidHandler, DataComponentSerializable, INBTSerializable<Tag> {
+	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
 	val tanks: MutableMap<Int, Tank> = mutableMapOf(*tanks.mapIndexed { index, tank -> index to tank }.toTypedArray())
 	override fun getTanks(): Int = this.tanks.size

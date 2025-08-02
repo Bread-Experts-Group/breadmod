@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.world.item.crafting.RecipeHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
@@ -14,6 +15,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DECIMAL_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.CLOSED_SYSTEM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.CLOSED_SYSTEM_STREAM_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs.RECIPE_HOLDER_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.TOOL_GUN_STREAM_CODEC
 import org.bread_experts_group.breadmod.registry.RegistryProvider
@@ -77,6 +79,18 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 		"slots", DataComponentType.builder<List<ExtendedItemHandler.Slot>>()
 			.networkSynchronized(ExtendedItemHandler.Slot.STREAM_CODEC.toList())
 			.persistent(ExtendedItemHandler.Slot.CODEC.listOf())
+		::build
+	)
+	val RECIPE: Supplier<DataComponentType<RecipeHolder<*>>> = this.registry.register(
+		"recipe", DataComponentType.builder<RecipeHolder<*>>()
+			.networkSynchronized(RecipeHolder.STREAM_CODEC)
+			.persistent(RECIPE_HOLDER_CODEC)
+		::build
+	)
+	val RECIPE_PROGRESS: Supplier<DataComponentType<Long>> = this.registry.register(
+		"recipe_progress", DataComponentType.builder<Long>()
+			.persistent(Codec.LONG)
+			.networkSynchronized(ByteBufCodecs.VAR_LONG)
 		::build
 	)
 	val COFFEE_CONTENTS: Supplier<DataComponentType<CoffeeContents>> = this.registry.register(

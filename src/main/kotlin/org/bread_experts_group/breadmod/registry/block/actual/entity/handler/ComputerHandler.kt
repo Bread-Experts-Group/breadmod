@@ -17,8 +17,8 @@ class ComputerHandler : ParentedHandler<BreadModBlockEntity> {
 		)
 	}
 
+	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
-
 	val computer: Computer = Computer(
 		listOf(MemoryModule(2097152u)),
 		IA32Processor(),

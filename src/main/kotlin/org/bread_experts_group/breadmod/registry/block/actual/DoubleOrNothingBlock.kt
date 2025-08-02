@@ -63,7 +63,6 @@ import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.directionalTargetFaceSection
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.rotate
-import java.util.Optional
 import java.util.Random
 import java.util.stream.Stream
 
@@ -217,7 +216,7 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 		}
 	}
 
-	override fun ofCapabilities(): CapabilityMap {
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
 		val state = DoubleOrNothingStateHandler()
 		val lerp = LerpTickerHandler(
 			LerpLabels.ZOOM to LerpTicker.LerpParams(clampMin = 0f, clampMax = 0.55f),
@@ -225,10 +224,8 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 			LerpLabels.TILT_N to LerpTicker.LerpParams(clampMin = -20f, clampMax = 0f)
 		)
 		return mapOf(
-			DoubleOrNothingStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> state }),
-			LerpTickerHandler.BLOCK_VOID to mapOf(
-				Optional.empty<Any>() to { _, _ -> lerp }
-			)
+			DoubleOrNothingStateHandler.BLOCK_VOID to mapOf(null to { _ -> state }),
+			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp })
 		)
 	}
 

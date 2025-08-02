@@ -28,25 +28,24 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.sta
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.math.BigDecimal
-import java.util.Optional
 import kotlin.math.roundToInt
 
 class EnergyStorageBlock : BreadModBlock(Properties.of()) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap {
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
 		val container = ExtendedEnergyHandler(BigDecimal(10000000))
-		val storage = { _: BreadModBlockEntity, _: Any? -> container }
+		val storage = { _: BreadModBlockEntity -> container }
 		return mapOf(
 			Capabilities.EnergyStorage.BLOCK to mapOf(
-				Optional.empty<Direction>() to storage,
-				Optional.of(Direction.UP) to storage,
-				Optional.of(Direction.DOWN) to storage,
-				Optional.of(Direction.NORTH) to storage,
-				Optional.of(Direction.SOUTH) to storage,
-				Optional.of(Direction.EAST) to storage,
-				Optional.of(Direction.WEST) to storage,
+				null to storage,
+				Direction.UP to storage,
+				Direction.DOWN to storage,
+				Direction.NORTH to storage,
+				Direction.SOUTH to storage,
+				Direction.EAST to storage,
+				Direction.WEST to storage,
 			),
-			EnergyStorageStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> EnergyStorageStateHandler() })
+			EnergyStorageStateHandler.BLOCK_VOID to mapOf(null to { _ -> EnergyStorageStateHandler() })
 		)
 	}
 

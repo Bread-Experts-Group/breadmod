@@ -36,7 +36,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.handler.sta
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
-import java.util.Optional
 import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.atan2
@@ -49,17 +48,15 @@ class RadioBlock : BreadModBlock(
 		.sound(SoundType.METAL)
 ) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap {
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
 		val state = RadioStateHandler()
 		val lerp = LerpTickerHandler(
 			LerpLabels.TILT_ALPHA to LerpTicker.LerpParams(),
 			LerpLabels.TILT_BETA to LerpTicker.LerpParams(clampMin = 0f, clampMax = 3.15f)
 		)
 		return mapOf(
-			RadioStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _, _ -> state }),
-			LerpTickerHandler.BLOCK_VOID to mapOf(
-				Optional.empty<Any>() to { _, _ -> lerp }
-			)
+			RadioStateHandler.BLOCK_VOID to mapOf(null to { _ -> state }),
+			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp })
 		)
 	}
 

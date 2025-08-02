@@ -1,45 +1,52 @@
 package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy
 
+import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeSerializer
-import net.neoforged.neoforge.common.crafting.SizedIngredient
-import net.neoforged.neoforge.fluids.FluidStack
-import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
-import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalFluidStackListCodecModule
-import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalIntCodecModule
-import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalItemStackListCodecModule
-import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalSizedFluidIngredientCodecModule
-import org.bread_experts_group.breadmod.network.BreadModCodecs.optionalSizedIngredientCodecModule
+import org.bread_experts_group.breadmod.network.BreadModCodecs
+import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DESCRIPTOR_FLUID_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DESCRIPTOR_FLUID_STREAM_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DESCRIPTOR_ITEM_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DESCRIPTOR_ITEM_STREAM_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs.U_LONG_CODEC
+import org.bread_experts_group.breadmod.network.BreadModCodecs.U_LONG_STREAM_CODEC
 import org.bread_experts_group.breadmod.util.toList
-import org.bread_experts_group.breadmod.util.toMutableList
+import java.util.Optional
 
 class FluidEnergySerializer<R : FluidEnergyRecipe>(
 	private val recipe: RecipeFunctionDataFixer<R>
 ) : RecipeSerializer<R> {
 	override fun codec(): MapCodec<R> = RecordCodecBuilder.mapCodec { inst ->
 		inst.group(
-			optionalSizedIngredientCodecModule("item_ingredients", FluidEnergyRecipe::rItemInputs),
-			optionalItemStackListCodecModule("item_results", FluidEnergyRecipe::rItemOutputs),
-			optionalSizedFluidIngredientCodecModule("fluid_ingredients", FluidEnergyRecipe::rFluidInputs),
-			optionalFluidStackListCodecModule("fluid_results", FluidEnergyRecipe::rFluidOutputs),
-			optionalIntCodecModule("time", FluidEnergyRecipe::rTime),
-			optionalIntCodecModule("energy", FluidEnergyRecipe::rEnergy),
+			Codec.optionalField("item_in", BIG_DESCRIPTOR_ITEM_CODEC.listOf(), true)
+				.forGetter { if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemInputs) },
+			Codec.optionalField("item_out", BIG_DESCRIPTOR_ITEM_CODEC.listOf(), true)
+				.forGetter { if (it.rItemOutputs.isEmpty()) Optional.empty() else Optional.of(it.rItemOutputs) },
+			Codec.optionalField("fluid_in", BIG_DESCRIPTOR_FLUID_CODEC.listOf(), true)
+				.forGetter { if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidInputs) },
+			Codec.optionalField("fluid_out", BIG_DESCRIPTOR_FLUID_CODEC.listOf(), true)
+				.forGetter { if (it.rFluidOutputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidOutputs) },
+			U_LONG_CODEC.fieldOf("time").forGetter(FluidEnergyRecipe::rTime),
+			Codec.optionalField("energy", BreadModCodecs.BIG_DECIMAL_CODEC, true)
+				.forGetter { Optional.ofNullable(it.rEnergy) }
 		).apply(inst, this.recipe)
 	}
 
-	override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, R> =
-		StreamCodec.composite(
-			SizedIngredient.STREAM_CODEC.toList(), FluidEnergyRecipe::rItemInputs,
-			ItemStack.LIST_STREAM_CODEC, FluidEnergyRecipe::rItemOutputs,
-			SizedFluidIngredient.STREAM_CODEC.toList(), FluidEnergyRecipe::rFluidInputs,
-			FluidStack.STREAM_CODEC.toMutableList(), FluidEnergyRecipe::rFluidOutputs,
-			ByteBufCodecs.INT, FluidEnergyRecipe::rTime,
-			ByteBufCodecs.INT, FluidEnergyRecipe::rEnergy,
-			this.recipe
-		)
+	override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, R> = StreamCodec.composite(
+		ByteBufCodecs.optional(BIG_DESCRIPTOR_ITEM_STREAM_CODEC.toList()),
+		{ if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemInputs) },
+		ByteBufCodecs.optional(BIG_DESCRIPTOR_ITEM_STREAM_CODEC.toList()),
+		{ if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemOutputs) },
+		ByteBufCodecs.optional(BIG_DESCRIPTOR_FLUID_STREAM_CODEC.toList()),
+		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidInputs) },
+		ByteBufCodecs.optional(BIG_DESCRIPTOR_FLUID_STREAM_CODEC.toList()),
+		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidOutputs) },
+		U_LONG_STREAM_CODEC, FluidEnergyRecipe::rTime,
+		ByteBufCodecs.optional(BreadModCodecs.BIG_DECIMAL_STREAM_CODEC), { Optional.ofNullable(it.rEnergy) },
+		this.recipe
+	)
 }

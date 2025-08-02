@@ -1,25 +1,33 @@
 package org.bread_experts_group.breadmod.registry.menu.actual
-//class WheatCrusherMenu(
-//	id: Int,
-//	inventory: Inventory,
-//	parent: WheatCrusherBlockEntity
-//) : BMContainerMenu.RecipeEntity<WheatCrusherRecipe, WheatCrusherBlockEntity>(
-//	ModMenuTypes.WHEAT_CRUSHER.get(),
-//	id,
-//	inventory,
-//	parent
-//) {
-//	constructor(id: Int, inventory: Inventory, byteBuf: RegistryFriendlyByteBuf) : this(
-//		id, inventory,
-//		BMContainerMenu.blockEntityFromByteBuf(inventory, byteBuf, ModBlockEntityTypes.WHEAT_CRUSHER)
-//	)
-//
-//	override val progressWidth: Int = 48
-//	override val containerSlotCount: Int = 2
-//
-//	init {
-//		this.addInventorySlots(inventory, 8, 174, 116)
-//		this.addHandlerSlot(0, 80, 15)
-//		this.addResultHandlerSlot(1, 80, 87)
-//	}
-//}
+
+import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.inventory.MenuType
+import net.neoforged.neoforge.capabilities.Capabilities
+import org.bread_experts_group.breadmod.client.gui.screens.BreadModScreen
+import org.bread_experts_group.breadmod.client.gui.screens.WheatCrusherScreen
+import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecipe
+
+class WheatCrusherMenu(
+	type: MenuType<*>,
+	id: Int,
+	inventory: Inventory,
+	parent: BreadModBlockEntity
+) : BMContainerMenu.RecipeEntity<WheatCrusherRecipe>(
+	type,
+	id,
+	inventory,
+	parent
+) {
+	override val progressWidth: Int = 48
+	override val containerSlotCount: Int = 2
+	override fun ofScreen(title: Component): BreadModScreen = WheatCrusherScreen(this, title)
+
+	init {
+		this.addInventorySlots(inventory, 8, 174, 116)
+		val capability = this.entity.getCapability(Capabilities.ItemHandler.BLOCK)
+		this.addSlot(LambdaSlotItemHandler(capability, 0, 80, 15))
+		this.addSlot(LambdaSlotItemHandler.playerReadOnly(capability, 1, 80, 87))
+	}
+}

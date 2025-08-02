@@ -43,11 +43,13 @@ import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagBlock
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
+import org.bread_experts_group.breadmod.registry.block.actual.CableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CoffeeMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CreativeGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DieselGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
+import org.bread_experts_group.breadmod.registry.block.actual.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.EnergyStorageBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlammableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.FlourBlock
@@ -63,9 +65,10 @@ import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
+import org.bread_experts_group.breadmod.registry.block.actual.ToasterBlock
 import org.bread_experts_group.breadmod.registry.block.actual.WarTerminalBlock
+import org.bread_experts_group.breadmod.registry.block.actual.WheatCrusherBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
-import org.bread_experts_group.breadmod.registry.block.actual.machine.DoughMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTypes
 import org.bread_experts_group.breadmod.registry.component.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
@@ -184,13 +187,15 @@ object ModBlocks : RegistryProvider(
 			}
 		}
 	)
-	//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	val WHEAT_CRUSHER: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"wheat_crusher",
-//		::WheatCrusherBlock,
-//		Properties()
-//	)
+
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	val WHEAT_CRUSHER: DeferredItem<BlockItem> = this.registerBlockItem(
+		"wheat_crusher",
+		::WheatCrusherBlock,
+		Properties()
+	)
+
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
 	val DOUGH_MACHINE: DeferredItem<BlockItem> = this.registerBlockItem(
@@ -206,14 +211,15 @@ object ModBlocks : RegistryProvider(
 		::CreativeGeneratorBlock
 	)
 
-	//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	@DataGenerateLanguage(name = "I wouldn't cook charcoal in it..", suffix = ".tooltip")
-//	val TOASTER: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"toaster",
-//		::ToasterBlock,
-//		Properties()
-//	)
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	@DataGenerateLanguage(name = "I wouldn't cook charcoal in it..", suffix = ".tooltip")
+	val TOASTER: DeferredItem<BlockItem> = this.registerBlockItem(
+		"toaster",
+		::ToasterBlock,
+		Properties()
+	)
+
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
 	val MICROWAVE: DeferredItem<BlockItem> = this.registerBlockItem(
@@ -244,43 +250,25 @@ object ModBlocks : RegistryProvider(
 
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
-	val GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem(
-		"generator",
-		::GeneratorBlock,
-		Properties()
-	)
+	val GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem("generator", ::GeneratorBlock)
 
 	@DataGenerateLootDropSelf
 	@DataGenerateLanguage
-	val DIESEL_GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem(
-		"diesel_generator",
-		::DieselGeneratorBlock,
-		Properties()
+	val DIESEL_GENERATOR: DeferredItem<BlockItem> = this.registerBlockItem("diesel_generator", ::DieselGeneratorBlock)
+
+	@DataGenerateLootDropSelf
+	@DataGenerateLanguage
+	val CABLE: DeferredItem<BlockItem> = this.registerBlockItem(
+		"cable",
+		{
+			CableBlock()
+		}
 	)
 
-	//	@DataGenerateLootDropSelf
-//	@DataGenerateLanguage
-//	val CABLE: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"cable",
-//		{
-//			CableBlock(setOf(Capabilities.EnergyStorage.BLOCK)) {
-//				listOf(
-//					ExpansibleEnergyHandler(
-//						mutableListOf(ExpansibleEnergyHandler.ExpansibleCell(BigDecimal.valueOf(10)))
-//					)
-//				)
-//			}
-//		},
-//		Properties()
-//	)
 	@DataGenerateTagBlock("minecraft:mineable/shovel")
 	@DataGenerateModelBlockAndItem
 	@DataGenerateLanguage
-	val FLOUR_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem(
-		"flour_block",
-		::FlourBlock,
-		Properties()
-	)
+	val FLOUR_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem("flour_block", ::FlourBlock)
 
 	@DataGenerateTagBlock("minecraft:mineable/shovel")
 	@DataGenerateLanguage(name = "Flour")

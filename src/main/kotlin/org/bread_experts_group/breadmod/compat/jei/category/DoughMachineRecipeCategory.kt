@@ -14,6 +14,7 @@ import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
 import org.bread_experts_group.breadmod.compat.jei.createCachedArrow
@@ -23,9 +24,10 @@ import org.bread_experts_group.breadmod.compat.jei.drawableItemStack
 import org.bread_experts_group.breadmod.compat.jei.getCachedArrow
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.itemStack
 
 class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<DoughMachineRecipe> {
-	private val cachedArrows: LoadingCache<Int, IDrawableAnimated> = createCachedArrow(
+	private val cachedArrows: LoadingCache<ULong, IDrawableAnimated> = createCachedArrow(
 		this.guiHelper,
 		21,
 		ModGuiElements.DOUGH_MACHINE_ARROW_FILLED_JEI.actualLocation(true),
@@ -43,26 +45,32 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 	override fun getHeight(): Int = 55
 
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: DoughMachineRecipe, focuses: IFocusGroup) {
-		builder.addSlot(RecipeIngredientRole.INPUT, 12, 28).addItemStacks(recipe.getInputItemsForIndex(0))
-		builder.addSlot(RecipeIngredientRole.INPUT, 47, 28).addItemStacks(recipe.getInputItemsForIndex(1))
-		if (recipe.getInputFluids().isNotEmpty()) builder.addSlot(RecipeIngredientRole.INPUT, 123, 23)
+		builder.addSlot(RecipeIngredientRole.INPUT, 12, 28).addItemStack(
+			recipe.rItemInputs.getOrNull(0)?.itemStack() ?: ItemStack.EMPTY
+		)
+		builder.addSlot(RecipeIngredientRole.INPUT, 47, 28).addItemStack(
+			recipe.rItemInputs.getOrNull(1)?.itemStack() ?: ItemStack.EMPTY
+		)
+		if (recipe.rFluidInputs.isNotEmpty()) builder.addSlot(RecipeIngredientRole.INPUT, 123, 23)
 			.addFluidStack(
-				recipe.getInputFluids().first().fluid,
-				recipe.getInputFluids().first().amount.toLong()
+				recipe.rFluidInputs.first().value,
+				recipe.rFluidInputs.first().amount.toLong()
 			).setFluidRenderer(10000, true, 16, 28)
 			.addRichTooltipCallback { _, tooltip ->
 				tooltip.add(Component.literal("Input").withStyle(ChatFormatting.ITALIC, ChatFormatting.BLUE))
 			}
 		if (recipe.rFluidOutputs.isNotEmpty()) builder.addSlot(RecipeIngredientRole.OUTPUT, 123, 4)
 			.addFluidStack(
-				recipe.rFluidOutputs.first().fluid,
+				recipe.rFluidOutputs.first().value,
 				recipe.rFluidOutputs.first().amount.toLong()
 			).setFluidRenderer(10000, true, 16, 16)
 			.addRichTooltipCallback { _, tooltip ->
 				tooltip.add(Component.literal("Output").withStyle(ChatFormatting.ITALIC, ChatFormatting.RED))
 			}
 
-		recipe.rItemOutputs.let(builder.addSlot(RecipeIngredientRole.OUTPUT, 78, 31)::addItemStacks)
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 78, 31).addItemStacks(
+			recipe.rItemOutputs.map { it.itemStack() }
+		)
 	}
 
 	override fun getTooltip(
