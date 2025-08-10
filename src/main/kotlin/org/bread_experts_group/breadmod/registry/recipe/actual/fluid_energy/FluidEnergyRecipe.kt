@@ -84,19 +84,28 @@ abstract class FluidEnergyRecipe(
 		if (reliesOnEnergy && input.energy == null) return false
 		// TODO: This all ignores components, we need to differentiate them
 		if (reliesOnItems) {
-			val count = mutableMapOf<Item, BigDecimal>()
+			val count: MutableMap<Item, Map<DataComponentMap, BigDecimal>> = mutableMapOf()
 			input.item!!.slots.forEach { (_, slot) ->
-				count.compute(slot.item) { _, acc -> slot.amount + (acc ?: BigDecimal.ZERO) }
+				count.compute(slot.item) { _, acc ->
+					mapOf(slot.components to slot.amount)
+				}
 			}
 			this.rItemInputs.forEach {
 				val accumulated = count[it.value] ?: return false
-				if (accumulated < it.amount) return false
+				accumulated.any { acc ->
+					acc.value < it.amount && acc.key.all { component ->
+						it.components.any { iComp ->
+							iComp == component
+						}
+					}
+				}
 			}
 		}
 		if (reliesOnFluids) throw UnsupportedOperationException()
 		if (reliesOnEnergy) throw UnsupportedOperationException()
 		return true
 	}
+
 
 	/**
 	 * Used to determine if this recipe can fit in a grid of the given width/height

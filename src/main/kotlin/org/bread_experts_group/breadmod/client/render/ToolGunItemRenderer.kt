@@ -28,16 +28,14 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	private val caseOhInstrument: SecureRandom = SecureRandom()
 	private var caseOhSize: BigDecimal = BigDecimal.TWO
 	override val lerpTicker: LerpTicker.BEWLR<LerpLabels> = object : LerpTicker.BEWLR<LerpLabels>(
-		LerpLabels.DELTA to LerpParams(incrementAmount = -0.075f, isHandledManually = true),
+		LerpLabels.DELTA to LerpParams(incrementAmount = -0.075f, clampMin = 0f, clampMax = 2f),
 		LerpLabels.ROTATION to LerpParams(isHandledManually = true),
-		LerpLabels.RECOIL to LerpParams(isHandledManually = true, clampMin = 0f)
+		LerpLabels.RECOIL to LerpParams(isHandledManually = true, clampMin = 0f, clampMax = 0.15f)
 	) {
 		override fun tick() {
 			if (!localClient.gamePaused()) {
 				val delta = this.getRawValue(LerpLabels.DELTA)
-				this.tickCustom(LerpLabels.DELTA) { params ->
-					if (delta > 0f) params.tick()
-				}
+				this.tickIndex(LerpLabels.DELTA)
 				this.tickCustom(LerpLabels.ROTATION) { params ->
 					if (delta > 0f) params.setClampedPos(40 * delta)
 				}
