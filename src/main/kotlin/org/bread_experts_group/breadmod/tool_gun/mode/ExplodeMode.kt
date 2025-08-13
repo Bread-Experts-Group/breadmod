@@ -39,7 +39,7 @@ class ExplodeMode : IToolGunMode {
 		if (!level.isClientSide) {
 			val targetBlock = player.rayCast(500.0, blocks()) ?: return
 			BreadModExplosion
-				.calculate(level, targetBlock.position.subtract(targetBlock.direction), 20f, 1000)
+				.calculate(level, targetBlock.position.subtract(targetBlock.castDirection), 20f, 1000)
 				.explode(player)
 		}
 	}

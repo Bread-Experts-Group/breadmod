@@ -91,7 +91,6 @@ interface IToolGunMode {
 	/** @return true if [event] action is equal to 1. */
 	fun isKeyboardPress(event: Key): Boolean = event.action == 1
 	fun keyMatchesInput(key: KeyMapping, event: Key): Boolean = event.key == key.key.value
-	fun keyMatchesInput(key: Int, event: Key): Boolean = event.key == key
 
 	/**
 	 * @return the id of this mode after the last slash as a string.

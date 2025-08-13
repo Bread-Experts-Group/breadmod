@@ -41,7 +41,7 @@ data class ToolGunData(
 		/**
 		 * Loads tool gun modes.
 		 */
-		fun loadToolGunModes() {
+		fun initializeToolGunModes() {
 			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
 				.forEach {
 					val mode = it.createInstance() as IToolGunMode
@@ -60,6 +60,9 @@ data class ToolGunData(
 	}
 
 	fun getMode(): IToolGunMode = Registry.toolGunModes.getOrDefault(this.id, EmptyMode)
+
+	@Suppress("UNCHECKED_CAST")
+	fun <T : IToolGunMode> getTypedMode(): T = this.getMode() as T
 
 	fun syncToServer(): Unit = PacketDistributor.sendToServer(ToolGunDataSyncPacket(this))
 

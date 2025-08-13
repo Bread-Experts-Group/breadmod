@@ -76,6 +76,6 @@ class BreadMod(eventBus: IEventBus, container: ModContainer) {
 
 		Registry.registerAll(eventBus)
 		ModIntegrationItems.registerAll()
-		ToolGunData.loadToolGunModes()
+		ToolGunData.initializeToolGunModes()
 	}
 }

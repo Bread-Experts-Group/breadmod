@@ -158,7 +158,7 @@ class ToasterBlock : BreadModBlock(
 				)
 			}
 		}
-		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
+		return ItemInteractionResult.sidedSuccess(level.isClientSide)
 	}
 
 	// Pretty much a clone of the furnace animateTick code.

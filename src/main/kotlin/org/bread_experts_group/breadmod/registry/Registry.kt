@@ -209,6 +209,17 @@ object Registry {
 				NeoForge.EVENT_BUS.addListener { event: RenderLevelStageEvent ->
 					WarRenderer.render(event)
 					RenderBuffer.handle(event)
+					val player = localClient.player ?: return@addListener
+					val stack = getStackInPlayerHand(player)
+					if (stack.item is ToolGunItem) {
+						val data = ToolGunData.get(stack)
+						data.getMode().getCustomRenderer().renderLevelStageEvent(
+							event,
+							localClient.renderBuffers().bufferSource(),
+							player,
+							data
+						)
+					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
 					val player = localClient.player ?: return@addListener

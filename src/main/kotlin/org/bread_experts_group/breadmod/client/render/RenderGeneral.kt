@@ -18,6 +18,7 @@ import net.minecraft.client.gui.Font.DisplayMode
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.particle.Particle
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
@@ -37,6 +38,7 @@ import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import net.minecraft.resources.ResourceLocation
@@ -548,6 +550,9 @@ fun ItemRenderer.renderItemModel(
 		}
 	}
 }
+
+fun ParticleOptions.toParticle(): Particle? =
+	localClient.particleEngine.createParticle(this, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
 /**
  * Convenience function for getting a model with just a string.

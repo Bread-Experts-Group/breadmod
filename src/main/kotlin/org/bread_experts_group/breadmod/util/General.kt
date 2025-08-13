@@ -150,39 +150,58 @@ class HitResult<T>(
 	val position: Vec3,
 	val blockPosition: BlockPos,
 	val length: Double,
-	val side: Direction,
-	val direction: Vec3,
+	val hitSide: Direction,
+	val castDirection: Vec3,
 	val hit: T
 )
 
-fun <T> rayCast(
-	position: Vec3, direction: Vec3,
+private fun <T> rayCast(
+	positionFrom: Vec3, directionTo: Vec3,
 	length: Double,
-	selector: (Vec3) -> T?
+	selector: (Vec3, Vec3) -> T?
 ): HitResult<T>? {
 	var result: HitResult<T>? = null
 	var distance = 0.0
 	do {
-		val localPosition = position.add(direction.scale(distance))
-		val hit = selector(localPosition)
+		val localPositionTo = positionFrom.add(directionTo.scale(distance))
+		val hit: T? = selector(positionFrom, localPositionTo)
 		if (hit != null) {
-			val blockPos = BlockPos.containing(localPosition)
+			val blockPos = BlockPos.containing(localPositionTo)
+			val vec3 = positionFrom.subtract(localPositionTo)
 			result = HitResult(
-				localPosition, blockPos, length,
-				Direction.getNearest(normalizedHitPos(localPosition, blockPos)), direction, hit
+				localPositionTo, blockPos, length,
+				Direction.getNearest(vec3.x, vec3.y, vec3.z), directionTo, hit
 			)
 			break
 		}
-		distance++
+		distance += 0.01
 	} while (distance < length)
 	return result
 }
 
-fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult<T>? = rayCast(
+fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3, Vec3) -> T?): HitResult<T>? = rayCast(
 	this.eyePosition,
 	this.calculateViewVector(this.xRot, this.yRot),
 	length
-) { selector(this.level(), it) }
+) { from, to -> selector(this.level(), from, to) }
+
+fun blocks(
+	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)
+): (BlockGetter, Vec3, Vec3) -> BlockState? = { level, from, to ->
+	val blockPos = BlockPos(to.toVec3i())
+	val state = level.getBlockState(blockPos)
+	val shape = state.getShape(level, blockPos)
+	if (filterBlocks.contains(state.block)) null
+	if (shape.clip(from, to, blockPos) != null) state else null
+}
+
+fun entities(vararg filterTypes: EntityType<*> = arrayOf(EntityType.PLAYER)): (EntityGetter, Vec3, Vec3) -> Entity? =
+	{ level, from, to ->
+		val entities = level.getEntities(null, AABB.ofSize(to, 1.0, 1.0, 1.0))
+			.firstOrNull()
+		if (entities == null || filterTypes.contains(entities.type) || entities.boundingBox.clip(from, to).getOrNull() == null) null
+		else entities
+	}
 
 //data class GridHitResult(
 //	val grid: PhysicsGrid,
@@ -210,36 +229,24 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3) -> T?): HitResult
 //	}
 //	return null
 //}
+
+/// End raycast functions ///
+operator fun MobEffectInstance.component2(): Int = this.amplifier
 fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 fun Vector3f.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
 fun Vec3i.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
+
 operator fun Vec3.unaryMinus(): Vec3 = Vec3(-this.x, -this.y, -this.z)
 operator fun Vec3i.unaryMinus(): Vec3i = Vec3i(-this.x, -this.y, -this.z)
-
 operator fun Vec3.component1(): Double = this.x
 operator fun Vec3.component2(): Double = this.y
 operator fun Vec3.component3(): Double = this.z
 operator fun BlockPos.component1(): Int = this.x
 operator fun BlockPos.component2(): Int = this.y
 operator fun BlockPos.component3(): Int = this.z
+
 operator fun MobEffectInstance.component1(): Holder<MobEffect> = this.effect
-operator fun MobEffectInstance.component2(): Int = this.amplifier
 
-fun blocks(vararg filterBlocks: Block = arrayOf(Blocks.AIR)): (BlockGetter, Vec3) -> BlockState? = { level, position ->
-	val blockPos = BlockPos(position.toVec3i())
-	val state = level.getBlockState(blockPos)
-	if (filterBlocks.contains(state.block)) null
-	else state
-}
-
-fun entities(vararg filterTypes: EntityType<*> = arrayOf(EntityType.PLAYER)): (EntityGetter, Vec3) -> Entity? =
-	{ level, position ->
-		val entities = level.getEntities(null, AABB.ofSize(position, 1.0, 1.0, 1.0))
-			.firstOrNull()
-		if (entities == null || filterTypes.contains(entities.type)) null
-		else entities
-	}
-/// End raycast functions ///
 /**
  * Translates a [Direction] to a side relative to another [Direction].
  * @return The relativized [Direction].

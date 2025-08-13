@@ -5,6 +5,7 @@ import com.mojang.math.Axis
 import net.minecraft.client.DeltaTracker
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.bread_experts_group.breadmod.client.render.drawQuad
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderText
@@ -247,6 +249,17 @@ interface IToolGunModeRenderer {
 		originY: Int,
 		deltaTracker: DeltaTracker,
 		stack: ItemStack,
+		data: ToolGunData
+	) {
+	}
+
+	/**
+	 * Hook for rendering into the level.
+	 */
+	fun renderLevelStageEvent(
+		event: RenderLevelStageEvent,
+		bufferSource: MultiBufferSource,
+		player: LocalPlayer,
 		data: ToolGunData
 	) {
 	}

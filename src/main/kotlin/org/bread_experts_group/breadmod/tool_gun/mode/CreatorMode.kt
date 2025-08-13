@@ -35,7 +35,6 @@ import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.createEntity
 import org.bread_experts_group.breadmod.util.getBlockState
 import org.bread_experts_group.breadmod.util.getValue
-import org.bread_experts_group.breadmod.util.plus
 import org.bread_experts_group.breadmod.util.putBlockState
 import org.bread_experts_group.breadmod.util.putEntity
 import org.bread_experts_group.breadmod.util.putValue
@@ -65,15 +64,19 @@ class CreatorMode : IToolGunMode {
 	private var placingEntity: Boolean = true
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
-		this.logger.info("block: ${this.preparedBlock}")
-		this.logger.info("entity: ${this.preparedEntityTag}")
-		val block = player.rayCast(500.0, blocks()) ?: return
+//		this.logger.info("block: ${this.preparedBlock}")
+//		this.logger.info("entity: ${this.preparedEntityTag}")
+		val block = player.rayCast(50.0, blocks()) ?: return
 		if (this.placingEntity) {
 			val entity = this.preparedEntityTag.createEntity(level)
-			entity.setPos(block.position.plus(0.0, 1.0, 0.0))
+			entity.setPos(block.position.relative(block.hitSide, 1.5))
 			level.addFreshEntity(entity)
 		} else {
-			level.setBlockAndUpdate(block.blockPosition.above(), this.preparedBlock)
+			if (level.isClientSide) {
+				player.sendSystemMessage(Component.literal("hit side: ${block.hitSide}"))
+			}
+//			block.blockPosition.relative(block.hitSide.axis, 1)
+			level.setBlockAndUpdate(block.blockPosition.relative(block.hitSide), this.preparedBlock)
 		}
 	}
 
@@ -106,6 +109,8 @@ class CreatorMode : IToolGunMode {
 		this.placingEntity = tag.getValue("placing_entity")
 	}
 
+	// todo render an outline of the targeted block when looking at blocks in the world
+	//  DebugRenderer.renderFilledBox using the AABB of the targeted block
 	class CreatorRenderer(private val mode: CreatorMode) : IToolGunModeRenderer {
 		override fun buildModeWidget(): Builder =
 			Builder()
