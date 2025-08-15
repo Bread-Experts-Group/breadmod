@@ -8,8 +8,13 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode
+import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
+import org.bread_experts_group.breadmod.registry.block.ModBlocks
+import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
+import org.bread_experts_group.breadmod.util.block
 
 @ToolGunMode
 @Suppress("unused")
@@ -70,12 +75,12 @@ class PowerMode : IToolGunMode {
 	override fun getDisplayName(): Component = Companion.displayName
 	override fun getTooltip(): Component = Companion.tooltip
 	override fun getUid(): ResourceLocation = this.toolGunLocation("power_mode")
-//	override fun defineCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
-//		this,
-//		ModBlocks.ENERGY_STORAGE.asBlock(),
-//		Builder()
-//			.previewImage(ModGuiElements.POWER_PREVIEW)
-//			.name(Companion.name)
-//			.description(Companion.description)
-//	)
+	override fun defineCustomRenderer(): IToolGunModeRenderer = ToolGunSpinningBlockRenderer(
+		this,
+		ModBlocks.ENERGY_STORAGE.block,
+		ModeWidget.Builder()
+			.previewImage(ModGuiElements.POWER_PREVIEW)
+			.name(Companion.name)
+			.description(Companion.description)
+	)
 }

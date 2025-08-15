@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
+import com.mojang.datafixers.DataFixerBuilder
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
@@ -44,8 +45,8 @@ class MicroLevel : ServerLevel(
 	LevelStorageSource(
 		Path("./testalpha"),
 		Path("./testbeta"),
-		DirectoryValidator({ _ -> true }),
-		null
+		DirectoryValidator { _ -> true },
+		DataFixerBuilder(1).build().fixer()
 	).createAccess("123ExpExpHelpMe"),
 	object : ServerLevelData {
 		override fun setThundering(p0: Boolean) {

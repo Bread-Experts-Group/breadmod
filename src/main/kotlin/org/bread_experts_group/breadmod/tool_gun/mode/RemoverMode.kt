@@ -65,9 +65,9 @@ class RemoverMode : IToolGunMode {
 					if (level is ServerLevel) {
 						level.sendParticles(
 							ParticleTypes.END_ROD,
-							it.position.x,
-							it.position.y,
-							it.position.z,
+							it.hitPosition.x,
+							it.hitPosition.y,
+							it.hitPosition.z,
 							40,
 							this.rand(player),
 							player.random.nextDouble(),
@@ -97,13 +97,13 @@ class RemoverMode : IToolGunMode {
 			} else {
 				val block = player.rayCast(500.0, blocks())
 				block?.let {
-					level.setBlockAndUpdate(BlockPos.containing(it.position), Blocks.AIR.defaultBlockState())
+					level.setBlockAndUpdate(BlockPos.containing(it.hitPosition), Blocks.AIR.defaultBlockState())
 					if (level is ServerLevel) {
 						level.sendParticles(
 							ParticleTypes.CRIT,
-							it.position.x,
-							it.position.y,
-							it.position.z,
+							it.hitPosition.x,
+							it.hitPosition.y,
+							it.hitPosition.z,
 							20,
 							this.rand(player),
 							player.random.nextDouble(),

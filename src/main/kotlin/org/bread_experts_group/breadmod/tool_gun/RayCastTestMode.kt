@@ -42,7 +42,7 @@ class RayCastTestMode : IToolGunMode {
 
 	override fun action(level: Level, player: Player, stack: ItemStack) {
 		player.rayCast(100.0, blocks())?.let {
-			this.hitPos = it.position
+			this.hitPos = it.hitPosition
 			this.blockHitPos.set(it.blockPosition)
 			this.direction = it.hitSide
 		}

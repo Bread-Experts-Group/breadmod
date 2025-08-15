@@ -16,6 +16,21 @@ open class LerpTicker<E>(
 
 	fun getRawValue(label: E): Float = this.lerpParams.getValue(label).position
 
+	/**
+	 * Returns the lerped value for this [label] while it's above 0f, else it will return the raw value
+	 * to prevent jittering due to [partialTick].
+	 *
+	 * @param checker used for returning the lerped or raw value.
+	 * Example would be checking delta on another label then returning the lerped value if it's above 0,
+	 * defaults to using [label].
+	 */
+	fun getLerpedOrRawValue(label: E, partialTick: Float, checker: E = label): Float =
+		if (this.getRawValue(checker) > 0f) this.getLerpedValue(label, partialTick) else
+			this.getRawValue(label)
+
+	fun getLerpedIfElseRaw(label: E, partialTick: Float, checker: E = label, condition: () -> Boolean): Float =
+		if (condition()) this.getLerpedOrRawValue(label, partialTick, checker) else this.getRawValue(label)
+
 	fun tickAllPositions() {
 		this.lerpParams.forEach { (_, parameters) ->
 			if (parameters.isHandledManually) return@forEach
@@ -81,10 +96,21 @@ open class LerpTicker<E>(
 	abstract class BEWLR<E>(
 		vararg parameters: Pair<E, LerpParams>
 	) : LerpTicker<E>(*parameters) {
-		fun getLerpedValue(label: E): Float = this.getLerpedValue(
-			label,
-			localClient.timer.getGameTimeDeltaPartialTick(false)
-		)
+		private fun getPartialTick(): Float = localClient.timer.getGameTimeDeltaPartialTick(false)
+
+		fun getLerpedValue(label: E): Float = this.getLerpedValue(label, this.getPartialTick())
+
+		/**
+		 * @see org.bread_experts_group.breadmod.client.render.LerpTicker.getLerpedOrRawValue
+		 */
+		fun getLerpedOrRawValue(label: E, checker: E = label): Float =
+			this.getLerpedOrRawValue(label, this.getPartialTick(), checker)
+
+		/**
+		 * @see org.bread_experts_group.breadmod.client.render.LerpTicker.getLerpedIfElseRaw
+		 */
+		fun getLerpedIfElseRaw(label: E, checker: E = label, condition: () -> Boolean): Float =
+			this.getLerpedIfElseRaw(label, this.getPartialTick(), checker, condition)
 
 		abstract fun tick()
 	}

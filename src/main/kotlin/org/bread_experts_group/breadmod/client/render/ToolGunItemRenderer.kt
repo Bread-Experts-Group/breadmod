@@ -74,12 +74,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		overrideRenderType: Boolean = false,
 		renderTypeOverride: RenderType = RenderType.solid()
 	) {
-		val rotation =
-			if (this.lerpTicker.getRawValue(LerpLabels.DELTA) > 0f) this.lerpTicker.getLerpedValue(LerpLabels.ROTATION)
-			else this.lerpTicker.getRawValue(LerpLabels.ROTATION)
-		val recoil =
-			if (this.lerpTicker.getRawValue(LerpLabels.RECOIL) <= 0f) this.lerpTicker.getRawValue(LerpLabels.RECOIL)
-			else this.lerpTicker.getLerpedValue(LerpLabels.RECOIL)
+		val rotation = this.lerpTicker.getLerpedOrRawValue(LerpLabels.ROTATION, LerpLabels.DELTA)
+		val recoil = this.lerpTicker.getLerpedOrRawValue(LerpLabels.RECOIL, LerpLabels.DELTA)
 
 		if (displayContext.firstPerson()) {
 			val modeRenderer: IToolGunModeRenderer = this.rendererOverride ?: currentMode.getCustomRenderer()

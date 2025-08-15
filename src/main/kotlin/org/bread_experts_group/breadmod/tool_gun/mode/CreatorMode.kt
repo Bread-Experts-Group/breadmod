@@ -69,13 +69,9 @@ class CreatorMode : IToolGunMode {
 		val block = player.rayCast(50.0, blocks()) ?: return
 		if (this.placingEntity) {
 			val entity = this.preparedEntityTag.createEntity(level)
-			entity.setPos(block.position.relative(block.hitSide, 1.5))
+			entity.setPos(block.hitPosition.relative(block.hitSide, 1.0))
 			level.addFreshEntity(entity)
 		} else {
-			if (level.isClientSide) {
-				player.sendSystemMessage(Component.literal("hit side: ${block.hitSide}"))
-			}
-//			block.blockPosition.relative(block.hitSide.axis, 1)
 			level.setBlockAndUpdate(block.blockPosition.relative(block.hitSide), this.preparedBlock)
 		}
 	}

@@ -147,15 +147,22 @@ fun VoxelShape.rotate(rotation: Rotation): VoxelShape = combineShapes(
 
 /// Start raycast functions ///
 class HitResult<T>(
-	val position: Vec3,
+	val positionFrom: Vec3,
+	val directionTo: Vec3,
+	val hitPosition: Vec3,
+	val hitShape: VoxelShape,
 	val blockPosition: BlockPos,
 	val length: Double,
-	val hitSide: Direction,
-	val castDirection: Vec3,
 	val hit: T
-)
+) {
+	val hitSide: Direction
+		get() = this.hitShape.clip(
+			this.positionFrom, this.hitPosition, this.blockPosition
+		)?.direction ?: Direction.getNearest(this.positionFrom.subtract(this.hitPosition))
+}
 
 private fun <T> rayCast(
+	level: Level,
 	positionFrom: Vec3, directionTo: Vec3,
 	length: Double,
 	selector: (Vec3, Vec3) -> T?
@@ -163,15 +170,13 @@ private fun <T> rayCast(
 	var result: HitResult<T>? = null
 	var distance = 0.0
 	do {
-		val localPositionTo = positionFrom.add(directionTo.scale(distance))
-		val hit: T? = selector(positionFrom, localPositionTo)
+		val hitPosition = positionFrom.add(directionTo.scale(distance))
+		val hit: T? = selector(positionFrom, hitPosition)
 		if (hit != null) {
-			val blockPos = BlockPos.containing(localPositionTo)
-			val vec3 = positionFrom.subtract(localPositionTo)
-			result = HitResult(
-				localPositionTo, blockPos, length,
-				Direction.getNearest(vec3.x, vec3.y, vec3.z), directionTo, hit
-			)
+			val blockPos = BlockPos.containing(hitPosition)
+			val shape = level.getBlockState(blockPos).getShape(level, blockPos)
+
+			result = HitResult(positionFrom, directionTo, hitPosition, shape, blockPos, length, hit)
 			break
 		}
 		distance += 0.01
@@ -180,6 +185,7 @@ private fun <T> rayCast(
 }
 
 fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3, Vec3) -> T?): HitResult<T>? = rayCast(
+	this.level(),
 	this.eyePosition,
 	this.calculateViewVector(this.xRot, this.yRot),
 	length
@@ -199,7 +205,7 @@ fun entities(vararg filterTypes: EntityType<*> = arrayOf(EntityType.PLAYER)): (E
 	{ level, from, to ->
 		val entities = level.getEntities(null, AABB.ofSize(to, 1.0, 1.0, 1.0))
 			.firstOrNull()
-		if (entities == null || filterTypes.contains(entities.type) || entities.boundingBox.clip(from, to).getOrNull() == null) null
+		if (entities == null || filterTypes.contains(entities.type) || entities.boundingBox.clip(from, to).isEmpty) null
 		else entities
 	}
 
