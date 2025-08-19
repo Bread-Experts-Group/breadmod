@@ -139,7 +139,7 @@ class ModRecipeProvider(
 			::FluidEnergyRecipeTest,
 			mutableListOf(BigDescriptor(16, Items.POTATO))
 		)
-			.itemRequired(ItemTags.LEAVES, 8)
+			.itemRequired(ItemTags.AXES, 8)
 			.itemRequired(ItemTags.PLANKS, 8)
 			.timeRequired(100u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_four"))

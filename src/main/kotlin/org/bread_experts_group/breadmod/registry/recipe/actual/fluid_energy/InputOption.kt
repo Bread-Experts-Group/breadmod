@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.Fluids
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.util.ofOptional
 import org.bread_experts_group.breadmod.util.toKotlinPair
@@ -37,8 +38,10 @@ class InputOption<T : Any>(
 		val ITEM_CODEC: Codec<InputOption<Item>> =
 			RecordCodecBuilder<RegistryFriendlyByteBuf, InputOption<Item>>.create { inst ->
 				inst.group(
-					Codec.pair(TagKey.codec(Registries.ITEM), BreadModCodecs.BIG_DECIMAL_CODEC).optionalFieldOf("left")
-						.forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
+					Codec.pair(
+						TagKey.codec(Registries.ITEM).fieldOf("tag").codec(),
+						BreadModCodecs.BIG_DECIMAL_CODEC.fieldOf("amount").codec()
+					).optionalFieldOf("left").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
 					BreadModCodecs.BIG_DESCRIPTOR_ITEM_CODEC.optionalFieldOf("right")
 						.forGetter { Optional.ofNullable(it.right) }
 				).apply(inst) { first, second ->
@@ -52,8 +55,10 @@ class InputOption<T : Any>(
 		val FLUID_CODEC: Codec<InputOption<Fluid>> =
 			RecordCodecBuilder<RegistryFriendlyByteBuf, InputOption<Item>>.create { inst ->
 				inst.group(
-					Codec.pair(TagKey.codec(Registries.FLUID), BreadModCodecs.BIG_DECIMAL_CODEC).optionalFieldOf("left")
-						.forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
+					Codec.pair(
+						TagKey.codec(Registries.FLUID).fieldOf("tag").codec(),
+						BreadModCodecs.BIG_DECIMAL_CODEC.fieldOf("amount").codec()
+					).optionalFieldOf("left").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
 					BreadModCodecs.BIG_DESCRIPTOR_FLUID_CODEC.optionalFieldOf("right")
 						.forGetter { Optional.ofNullable(it.right) }
 				).apply(inst) { first, second ->
@@ -108,14 +113,17 @@ class InputOption<T : Any>(
 		when (this.selectClass) {
 			Item::class -> {
 				if (this.left != null) {
+					LogManager.getLogger().info("getting tag for ${this.left.first}")
 					val itemTag = this.left.first as TagKey<Item>
-					this.tagItems = BuiltInRegistries.ITEM.getTag(itemTag).get().map { it.value() }
+					val tag = BuiltInRegistries.ITEM.getTag(itemTag)
+					if (tag.isPresent) this.tagItems = tag.get().map { it.value() }
 				}
 			}
 			Fluid::class -> {
 				if (this.left != null) {
 					val fluidTag = this.left.first as TagKey<Fluid>
-					this.tagFluids = BuiltInRegistries.FLUID.getTag(fluidTag).get().map { it.value() }
+					val tag = BuiltInRegistries.FLUID.getTag(fluidTag)
+					if (tag.isPresent) this.tagFluids = tag.get().map { it.value() }
 				}
 			}
 			else -> throw IllegalArgumentException("${this.selectClass} is not supported in InputOption!")
