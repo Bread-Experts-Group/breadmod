@@ -17,15 +17,15 @@ import java.util.Optional
 /** Convenience type for [FluidEnergyBuilder]. */
 typealias RecipeFunctionMulti =
 			(
-			List<BigDescriptor<Item>>, List<BigDescriptor<Item>>,
-			List<BigDescriptor<Fluid>>, List<BigDescriptor<Fluid>>,
+			List<InputOption<Item>>, List<BigDescriptor<Item>>,
+			List<InputOption<Fluid>>, List<BigDescriptor<Fluid>>,
 			ULong, BigDecimal?
 		) -> FluidEnergyRecipe
 
 /** Convenience type for [FluidEnergySerializer] and [ModRecipeSerializers]. */
 typealias RecipeFunctionDataFixer<R> =
-		Function6<Optional<List<BigDescriptor<Item>>>, Optional<List<BigDescriptor<Item>>>,
-				Optional<List<BigDescriptor<Fluid>>>, Optional<List<BigDescriptor<Fluid>>>,
+		Function6<Optional<List<InputOption<Item>>>, Optional<List<BigDescriptor<Item>>>,
+				Optional<List<InputOption<Fluid>>>, Optional<List<BigDescriptor<Fluid>>>,
 				ULong, Optional<BigDecimal>, R>
 
 data class BigDescriptor<T>(
@@ -60,11 +60,11 @@ fun BigDescriptor<Item>.itemStack(): ItemStack {
  */
 abstract class FluidEnergyRecipe(
 	/** Input list of items for this recipe. Populated via [FluidEnergyInput]. */
-	val rItemInputs: List<BigDescriptor<Item>>,
+	val rItemInputs: List<InputOption<Item>>,
 	/** Output list of items for this recipe. Populated via [RecipeManager]. */
 	val rItemOutputs: List<BigDescriptor<Item>>,
 	/** Input list of fluids for this recipe. Populated via [FluidEnergyInput]. */
-	val rFluidInputs: List<BigDescriptor<Fluid>>,
+	val rFluidInputs: List<InputOption<Fluid>>,
 	/** Output list of fluids for this recipe. Populated via [RecipeManager]. */
 	val rFluidOutputs: List<BigDescriptor<Fluid>>,
 	/** The amount of time needed for this recipe to complete.*/
@@ -76,34 +76,30 @@ abstract class FluidEnergyRecipe(
 	 * Compares [rItemInputs] and [rFluidInputs] with the [input]s items and fluids.
 	 */
 	override fun matches(input: FluidEnergyInput, level: Level): Boolean {
-		val reliesOnItems = this.rItemInputs.isNotEmpty()
-		if (reliesOnItems && input.item == null) return false
-		val reliesOnFluids = this.rFluidInputs.isNotEmpty()
-		if (reliesOnFluids && input.fluid == null) return false
-		val reliesOnEnergy = this.rEnergy != null && this.rEnergy != BigDecimal.ZERO
-		if (reliesOnEnergy && input.energy == null) return false
-		// TODO: This all ignores components, we need to differentiate them
-		if (reliesOnItems) {
-			val count: MutableMap<Item, Map<DataComponentMap, BigDecimal>> = mutableMapOf()
-			input.item!!.slots.forEach { (_, slot) ->
-				count.compute(slot.item) { _, acc ->
-					mapOf(slot.components to slot.amount)
-				}
-			}
-			this.rItemInputs.forEach {
-				val accumulated = count[it.value] ?: return false
-				accumulated.any { acc ->
-					acc.value < it.amount && acc.key.all { component ->
-						it.components.any { iComp ->
-							iComp == component
-						}
-					}
-				}
+		var itemsSatisfied = false
+//		var fluidsSatisfied = false
+//		val reliesOnEnergy = this.rEnergy != null && this.rEnergy != BigDecimal.ZERO
+//		if (reliesOnEnergy && input.energy == null) return false
+
+		if (this.rItemInputs.isNotEmpty() && input.item != null) {
+			// todo work on component test in InputOption
+//			val count: MutableMap<Item, Map<DataComponentMap, BigDecimal>> = mutableMapOf()
+//			input.item.slots.forEach { (_, slot) ->
+//				count.compute(slot.item) { _, acc ->
+//					mapOf(slot.components to slot.amount)
+//				}
+//			}
+			itemsSatisfied = this.rItemInputs.all { rInput ->
+				input.item.slots.any { (_, slot) -> rInput.test(slot.item) }
 			}
 		}
-		if (reliesOnFluids) throw UnsupportedOperationException()
-		if (reliesOnEnergy) throw UnsupportedOperationException()
-		return true
+
+//		if (this.rFluidInputs.isNotEmpty() && input.fluid != null) {
+//			fluidsSatisfied = true
+//		}
+//		if (reliesOnFluids) throw UnsupportedOperationException()
+//		if (reliesOnEnergy) throw UnsupportedOperationException()
+		return itemsSatisfied/* || fluidsSatisfied*/
 	}
 
 
@@ -116,10 +112,10 @@ abstract class FluidEnergyRecipe(
 
 	fun consumeItemsAndFluids(input: FluidEnergyInput) {
 		this.rItemInputs.forEach {
-			var remainder = it.amount
+			var remainder = it.left?.second ?: it.right?.amount ?: return@forEach
 			for (slotID in input.item!!.slots.keys) {
 				val extracted = input.item.bigExtractItem(slotID, remainder, true)
-				if (extracted.value == it.value) {
+				if (extracted.value == it.resolveInputItem()) {
 					input.item.bigExtractItem(slotID, remainder, false)
 					remainder -= extracted.amount
 					if (remainder <= BigDecimal.ZERO) break

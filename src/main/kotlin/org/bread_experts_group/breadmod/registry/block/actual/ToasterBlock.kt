@@ -46,7 +46,6 @@ import org.bread_experts_group.breadmod.registry.block.handler.FERecipeHandler.C
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.util.Color.RED
-import java.math.BigDecimal
 import kotlin.random.Random
 
 class ToasterBlock : BreadModBlock(
@@ -65,7 +64,7 @@ class ToasterBlock : BreadModBlock(
 		::ToasterRenderer
 
 	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val storage = ExtendedItemHandler(ExtendedItemHandler.Slot(BigDecimal.TWO))
+		val storage = ExtendedItemHandler.ofSlotsWithCapacity(1, 2)
 		val recipe = FERecipeHandler(ModRecipeTypes.TOASTING.get())
 		return mapOf(
 			Capabilities.ItemHandler.BLOCK to mapOf(null to { _ -> storage }),

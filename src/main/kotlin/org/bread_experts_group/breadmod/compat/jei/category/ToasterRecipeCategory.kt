@@ -12,6 +12,7 @@ import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
 import org.bread_experts_group.breadmod.compat.jei.createCachedArrow
@@ -40,10 +41,11 @@ class ToasterRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory
 	override fun getWidth(): Int = 66
 	override fun getHeight(): Int = 66
 
+	// todo update to use InputOption code
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: ToasterRecipe, focuses: IFocusGroup) {
 		builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 9, 46).addItemStack(ModBlocks.TOASTER.toStack())
 		builder.addSlot(RecipeIngredientRole.INPUT, 9, 4).addItemStacks(
-			recipe.rItemInputs.map { it.itemStack() }
+			recipe.rItemInputs.map { it.right?.itemStack() ?: ItemStack.EMPTY }
 		)
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 41, 34).addItemStacks(
 			recipe.rItemOutputs.map { it.itemStack() }

@@ -8,12 +8,13 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.InputOption
 import java.math.BigDecimal
 
 class FluidEnergyRecipeTest(
-	rItemInputs: List<BigDescriptor<Item>>,
+	rItemInputs: List<InputOption<Item>>,
 	rItemOutputs: List<BigDescriptor<Item>>,
-	rFluidInputs: List<BigDescriptor<Fluid>>,
+	rFluidInputs: List<InputOption<Fluid>>,
 	rFluidOutputs: List<BigDescriptor<Fluid>>,
 	rTime: ULong,
 	rEnergy: BigDecimal?

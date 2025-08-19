@@ -2,20 +2,17 @@ package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
@@ -25,7 +22,6 @@ import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandl
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.DoughMachineMenu
 import java.math.BigDecimal
-import java.util.Optional
 
 class DoughMachineBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
@@ -42,7 +38,7 @@ class DoughMachineBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)
 		val fluid = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))
 		val fluidStorage = { _: BreadModBlockEntity -> fluid }
 		return mapOf(
-			Capabilities.ItemHandler.BLOCK to mapOf(Optional.empty<Any>() to { _ -> itemStorage }),
+			Capabilities.ItemHandler.BLOCK to mapOf(null to { _ -> itemStorage }),
 			Capabilities.EnergyStorage.BLOCK to mapOf(
 				null to energyStorage,
 				Direction.UP to energyStorage,
@@ -74,19 +70,5 @@ class DoughMachineBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
 		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.POWERED)
-	}
-
-	override fun useWithoutItem(
-		state: BlockState,
-		level: Level,
-		pos: BlockPos,
-		player: Player,
-		hitResult: BlockHitResult
-	): InteractionResult {
-		if (!level.isClientSide) {
-			val entity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return InteractionResult.FAIL
-			player.openMenu(entity, pos)
-		}
-		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 }

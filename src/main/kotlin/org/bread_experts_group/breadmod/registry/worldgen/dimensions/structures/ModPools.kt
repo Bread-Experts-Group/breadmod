@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.worldgen.dimensions.structures
 
-import com.mojang.datafixers.util.Pair
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.data.worldgen.Pools
@@ -8,6 +7,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.util.toMojangPair
 
 object ModPools {
 	fun createKey(id: String): ResourceKey<StructureTemplatePool> = ResourceKey.create(
@@ -21,7 +21,7 @@ object ModPools {
 		pContext.register(
 			this.FARMHOUSE_POOL, StructureTemplatePool(
 				templateHolder,
-				listOf(Pair.of(StructurePoolElement.single("breadmod:farmhouse"), 50)),
+				listOf((StructurePoolElement.single("breadmod:farmhouse") to 50).toMojangPair()),
 				StructureTemplatePool.Projection.RIGID
 			)
 		)

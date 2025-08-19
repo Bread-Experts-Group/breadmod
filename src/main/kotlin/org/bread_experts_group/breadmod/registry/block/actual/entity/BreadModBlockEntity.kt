@@ -65,10 +65,9 @@ class BreadModBlockEntity(
 		return this.capabilities[capability]?.get(context) as? T
 	}
 
-	fun <T, C> getCapability(capability: BaseCapability<T, C>, context: C? = null): T {
-		return this.getCapabilityOrNull(capability, context)
+	fun <T, C> getCapability(capability: BaseCapability<T, C>, context: C? = null): T =
+		this.getCapabilityOrNull(capability, context)
 			?: throw NullPointerException("No capability for [${capability.name()} / $context]")
-	}
 
 	override fun saveAdditional(tag: CompoundTag, registries: Provider) {
 		super.saveAdditional(tag, registries)

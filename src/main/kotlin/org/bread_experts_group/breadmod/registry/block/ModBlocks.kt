@@ -74,6 +74,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockSetTy
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
+import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyBlock
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.awt.Color
 import java.math.BigDecimal
@@ -479,13 +480,14 @@ object ModBlocks : RegistryProvider(
 		Properties()
 	)
 
-	//	@DataGenerateLootDropSelf
-//	@DataGenerateModelBlockAndItem
-//	@DataGenerateLanguage(name = "Fluid Energy Recipe")
-//	val FLUID_ENERGY: DeferredItem<BlockItem> = this.registerBlockItem(
-//		"fluid_energy_block",
-//		::FluidEnergyBlock
-//	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
+	@DataGenerateLootDropSelf
+	@DataGenerateModelBlockAndItem
+	@DataGenerateLanguage(name = "Fluid Energy Recipe")
+	val FLUID_ENERGY: DeferredItem<BlockItem> = this.registerBlockItem(
+		"fluid_energy_block",
+		::FluidEnergyBlock
+	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
+
 	// EXPERIMENTAL PAST THIS POINT
 	@DataGenerateLootDropNothing
 	@DataGenerateModelBlockAndItem

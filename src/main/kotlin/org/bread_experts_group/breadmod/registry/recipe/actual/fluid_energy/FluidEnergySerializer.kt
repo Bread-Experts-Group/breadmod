@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.network.RegistryFriendlyByteBuf
-import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.item.crafting.RecipeSerializer
 import org.bread_experts_group.breadmod.network.BreadModCodecs
@@ -14,6 +13,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DESCRIPTOR_IT
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BIG_DESCRIPTOR_ITEM_STREAM_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.U_LONG_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.U_LONG_STREAM_CODEC
+import org.bread_experts_group.breadmod.util.ofOptional
 import org.bread_experts_group.breadmod.util.toList
 import java.util.Optional
 
@@ -22,11 +22,11 @@ class FluidEnergySerializer<R : FluidEnergyRecipe>(
 ) : RecipeSerializer<R> {
 	override fun codec(): MapCodec<R> = RecordCodecBuilder.mapCodec { inst ->
 		inst.group(
-			Codec.optionalField("item_in", BIG_DESCRIPTOR_ITEM_CODEC.listOf(), true)
+			Codec.optionalField("item_in", InputOption.ITEM_CODEC.listOf(), true)
 				.forGetter { if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemInputs) },
 			Codec.optionalField("item_out", BIG_DESCRIPTOR_ITEM_CODEC.listOf(), true)
 				.forGetter { if (it.rItemOutputs.isEmpty()) Optional.empty() else Optional.of(it.rItemOutputs) },
-			Codec.optionalField("fluid_in", BIG_DESCRIPTOR_FLUID_CODEC.listOf(), true)
+			Codec.optionalField("fluid_in", InputOption.FLUID_CODEC.listOf(), true)
 				.forGetter { if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidInputs) },
 			Codec.optionalField("fluid_out", BIG_DESCRIPTOR_FLUID_CODEC.listOf(), true)
 				.forGetter { if (it.rFluidOutputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidOutputs) },
@@ -37,16 +37,16 @@ class FluidEnergySerializer<R : FluidEnergyRecipe>(
 	}
 
 	override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, R> = StreamCodec.composite(
-		ByteBufCodecs.optional(BIG_DESCRIPTOR_ITEM_STREAM_CODEC.toList()),
+		InputOption.ITEM_STREAM_CODEC.toList().ofOptional(),
 		{ if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemInputs) },
-		ByteBufCodecs.optional(BIG_DESCRIPTOR_ITEM_STREAM_CODEC.toList()),
+		BIG_DESCRIPTOR_ITEM_STREAM_CODEC.toList().ofOptional(),
 		{ if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemOutputs) },
-		ByteBufCodecs.optional(BIG_DESCRIPTOR_FLUID_STREAM_CODEC.toList()),
+		InputOption.FLUID_STREAM_CODEC.toList().ofOptional(),
 		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidInputs) },
-		ByteBufCodecs.optional(BIG_DESCRIPTOR_FLUID_STREAM_CODEC.toList()),
+		BIG_DESCRIPTOR_FLUID_STREAM_CODEC.toList().ofOptional(),
 		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidOutputs) },
 		U_LONG_STREAM_CODEC, FluidEnergyRecipe::rTime,
-		ByteBufCodecs.optional(BreadModCodecs.BIG_DECIMAL_STREAM_CODEC), { Optional.ofNullable(it.rEnergy) },
+		BreadModCodecs.BIG_DECIMAL_STREAM_CODEC.ofOptional(), { Optional.ofNullable(it.rEnergy) },
 		this.recipe
 	)
 }

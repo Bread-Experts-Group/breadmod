@@ -15,6 +15,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
 import org.bread_experts_group.breadmod.compat.jei.createCachedArrow
@@ -25,6 +26,7 @@ import org.bread_experts_group.breadmod.compat.jei.getCachedArrow
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.itemStack
+import org.bread_experts_group.breadmod.util.toItemStacks
 
 class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCategory<DoughMachineRecipe> {
 	private val cachedArrows: LoadingCache<ULong, IDrawableAnimated> = createCachedArrow(
@@ -44,17 +46,21 @@ class DoughMachineRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 	override fun getWidth(): Int = 147
 	override fun getHeight(): Int = 55
 
+	// todo update to use InputOption code
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: DoughMachineRecipe, focuses: IFocusGroup) {
-		builder.addSlot(RecipeIngredientRole.INPUT, 12, 28).addItemStack(
-			recipe.rItemInputs.getOrNull(0)?.itemStack() ?: ItemStack.EMPTY
+		val firstSlot = recipe.rItemInputs.getOrNull(0) ?: return
+		val secondSlot = recipe.rItemInputs.getOrNull(1) ?: return
+		builder.addSlot(RecipeIngredientRole.INPUT, 12, 28).addItemStacks(
+			if (firstSlot.getTagItems().isEmpty()) listOf(firstSlot.right?.itemStack())
+			else firstSlot.getTagItems().toItemStacks()
 		)
 		builder.addSlot(RecipeIngredientRole.INPUT, 47, 28).addItemStack(
-			recipe.rItemInputs.getOrNull(1)?.itemStack() ?: ItemStack.EMPTY
+			secondSlot.right?.itemStack() ?: ItemStack.EMPTY
 		)
 		if (recipe.rFluidInputs.isNotEmpty()) builder.addSlot(RecipeIngredientRole.INPUT, 123, 23)
 			.addFluidStack(
-				recipe.rFluidInputs.first().value,
-				recipe.rFluidInputs.first().amount.toLong()
+				recipe.rFluidInputs.first().right?.value ?: Fluids.EMPTY,
+				recipe.rFluidInputs.first().right?.amount?.toLong() ?: 1000
 			).setFluidRenderer(10000, true, 16, 28)
 			.addRichTooltipCallback { _, tooltip ->
 				tooltip.add(Component.literal("Input").withStyle(ChatFormatting.ITALIC, ChatFormatting.BLUE))

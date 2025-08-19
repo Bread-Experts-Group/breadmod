@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.ItemInteractionResult.SUCCESS
 import net.minecraft.world.entity.player.Inventory
@@ -84,6 +85,23 @@ abstract class BreadModBlock(
 	open val commonTickBM: BreadModTicker<Level> = null
 	open val clientTickBM: BreadModTicker<ClientLevel> = null
 	open val serverTickBM: BreadModTicker<ServerLevel> = null
+
+	override fun useWithoutItem(
+		state: BlockState,
+		level: Level,
+		pos: BlockPos,
+		player: Player,
+		hitResult: BlockHitResult
+	): InteractionResult = this.openContainerMenu(level, pos, player)
+
+	fun openContainerMenu(level: Level, pos: BlockPos, player: Player): InteractionResult {
+		val entity = level.getBlockEntity(pos) as? BreadModBlockEntity
+		if (entity != null && this.menuType != null) {
+			player.openMenu(entity, pos)
+			return InteractionResult.sidedSuccess(level.isClientSide)
+		}
+		return InteractionResult.PASS
+	}
 
 	final override fun <T : BlockEntity> getTicker(
 		level: Level,

@@ -48,6 +48,9 @@ class FERecipeHandler<T : FluidEnergyRecipe>(
 	private val recipeDial: RecipeManager.CachedCheck<FluidEnergyInput, T> = RecipeManager.createCheck(recipeType)
 	var recipeComputationSuspended: Boolean = false
 
+	/**
+	 * Advances this [recipe], and assembles the results upon completion.
+	 */
 	fun advanceRecipe(): Boolean {
 		val recipe = this.recipe ?: return false
 		val level = this.parent.level ?: return false

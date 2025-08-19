@@ -8,6 +8,7 @@ import net.minecraft.advancements.critereon.RecipeUnlockedTrigger
 import net.minecraft.data.recipes.RecipeBuilder
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.material.Fluid
 import java.math.BigDecimal
@@ -48,22 +49,30 @@ class FluidEnergyBuilder(
 		return advancement.build(id.withPrefix("recipes/"))
 	}
 
-	var items: MutableList<BigDescriptor<Item>> = mutableListOf()
-	var fluids: MutableList<BigDescriptor<Fluid>> = mutableListOf()
+	var items: MutableList<InputOption<Item>> = mutableListOf()
+	var fluids: MutableList<InputOption<Fluid>> = mutableListOf()
 	fun fluidRequired(fluid: Fluid, amount: BigDecimal): FluidEnergyBuilder =
-		this.also { this.fluids.add(BigDescriptor(amount, fluid)) }
+		this.also { this.fluids.add(InputOption.bigDescriptor(Fluid::class, BigDescriptor(amount, fluid))) }
 
 	fun fluidRequired(fluid: Fluid, amount: Int): FluidEnergyBuilder = this.fluidRequired(fluid, BigDecimal(amount))
 	fun fluidRequired(bundle: Pair<Fluid, Int>?): FluidEnergyBuilder = this.also {
 		if (bundle != null) this.fluidRequired(bundle.first, bundle.second)
 	}
 
+	fun fluidRequired(tag: TagKey<Fluid>, amount: Int): FluidEnergyBuilder = this.also {
+		this.fluids.add(InputOption.tag(Fluid::class, tag to BigDecimal(amount)))
+	}
+
 	fun itemRequired(item: Item, amount: BigDecimal): FluidEnergyBuilder =
-		this.also { this.items.add(BigDescriptor(amount, item)) }
+		this.also { this.items.add(InputOption.bigDescriptor(Item::class, BigDescriptor(amount, item))) }
 
 	fun itemRequired(item: Item, amount: Int): FluidEnergyBuilder = this.itemRequired(item, BigDecimal(amount))
 	fun itemRequired(bundle: Pair<Item, Int>?): FluidEnergyBuilder = this.also {
 		if (bundle != null) this.itemRequired(bundle.first, bundle.second)
+	}
+
+	fun itemRequired(tag: TagKey<Item>, amount: Int): FluidEnergyBuilder = this.also {
+		this.items.add(InputOption.tag(Item::class, tag to BigDecimal(amount)))
 	}
 
 	override fun getResult(): Item = this.itemResults[0].value

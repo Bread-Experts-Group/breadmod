@@ -12,6 +12,7 @@ import net.minecraft.data.recipes.SimpleCookingRecipeBuilder
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder
 import net.minecraft.data.recipes.SpecialRecipeBuilder
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
@@ -133,6 +134,15 @@ class ModRecipeProvider(
 			.itemRequired(Items.REDSTONE, 8)
 			.timeRequired(50u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
+
+		FluidEnergyBuilder(
+			::FluidEnergyRecipeTest,
+			mutableListOf(BigDescriptor(16, Items.POTATO))
+		)
+			.itemRequired(ItemTags.LEAVES, 8)
+			.itemRequired(ItemTags.PLANKS, 8)
+			.timeRequired(100u)
+			.save(recipeOutput, modLocation("fluid_energy", "test_four"))
 		// Crafting Table recipes
 		nineBlockStorageRecipes(
 			recipeOutput,
@@ -452,17 +462,18 @@ class ModRecipeProvider(
 		fenceBuilder(ModBlocks.BREAD_FENCE.get(), Ingredient.of(ModBlocks.BREAD_BLOCK.get()))
 			.unlockedBy("has_item", has(ModBlocks.BREAD_BLOCK.get()))
 			.save(recipeOutput, modLocation("decorations", "bread_fence"))
-//		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.TOASTER.get().asItem())
-//			.unlockedBy("has_item", has(ModItems.BREAD_SLICE.get()))
-//			.define('H', ModItems.TOASTER_HEATING_ELEMENT.get())
-//			.define('I', Items.IRON_INGOT)
-//			.define('C', Items.COPPER_INGOT)
-//			.define('R', Items.REDSTONE)
-//			.define('B', Items.STONE_BUTTON)
-//			.pattern("IBI")
-//			.pattern("CHC")
-//			.pattern("IRI")
-//			.save(recipeOutput, modLocation("misc", "toaster"))
+
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.TOASTER.get().asItem())
+			.unlockedBy("has_item", has(ModItems.BREAD_SLICE.get()))
+			.define('H', ModItems.TOASTER_HEATING_ELEMENT.get())
+			.define('I', Items.IRON_INGOT)
+			.define('C', Items.COPPER_INGOT)
+			.define('R', Items.REDSTONE)
+			.define('B', Items.STONE_BUTTON)
+			.pattern("IBI")
+			.pattern("CHC")
+			.pattern("IRI")
+			.save(recipeOutput, modLocation("misc", "toaster"))
 
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TOASTER_HEATING_ELEMENT.get())
 			.unlockedBy("has_item", has(Items.COPPER_INGOT))

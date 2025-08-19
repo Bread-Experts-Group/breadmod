@@ -13,6 +13,7 @@ import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.compat.jei.ModJEIRecipeTypes
 import org.bread_experts_group.breadmod.compat.jei.createCachedArrow
@@ -42,9 +43,10 @@ class WheatCrusherRecipeCategory(private val guiHelper: IGuiHelper) : IRecipeCat
 	override fun getWidth(): Int = 161
 	override fun getHeight(): Int = 65
 
+	// todo update to use InputOption code
 	override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: WheatCrusherRecipe, focuses: IFocusGroup) {
 		builder.addSlot(RecipeIngredientRole.INPUT, 43, 24).addItemStacks(
-			recipe.rItemInputs.map { it.itemStack() }
+			recipe.rItemInputs.map { it.right?.itemStack() ?: ItemStack.EMPTY }
 		)
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 115, 24).addItemStacks(
 			recipe.rItemOutputs.map { it.itemStack() }

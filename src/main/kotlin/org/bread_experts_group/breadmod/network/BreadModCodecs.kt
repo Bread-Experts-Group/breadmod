@@ -19,7 +19,6 @@ import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeHolder
 import net.minecraft.world.level.block.Block
@@ -27,18 +26,28 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.common.crafting.SizedIngredient
-import net.neoforged.neoforge.fluids.FluidStack
-import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.util.function.Function
 
 object BreadModCodecs {
 	fun <T, S, R> ((T) -> R).compose(from: (S) -> T): (S) -> R = { this(from(it)) }
+
+	// todo make sure this doesn't crash from using kotlin pairs instead of mojang pairs
+	fun <B : ByteBuf, L, R> pairStreamCodec(
+		left: StreamCodec<B, L>,
+		right: StreamCodec<B, R>
+	): StreamCodec<B, Pair<L, R>> = object : StreamCodec<B, Pair<L, R>> {
+		override fun decode(buffer: B): Pair<L, R> = left.decode(buffer) to right.decode(buffer)
+
+		override fun encode(buffer: B, value: Pair<L, R>) {
+			left.encode(buffer, value.first!!)
+			right.encode(buffer, value.second!!)
+		}
+	}
+
 	val FLUID_ID_SERIALIZER: (Fluid) -> String = { fluid: Fluid -> BuiltInRegistries.FLUID.getKey(fluid).toString() }
 	val FLUID_ID_DESERIALIZER: (String) -> Fluid = { id: String ->
 		BuiltInRegistries.FLUID.get(ResourceLocation.parse(id))
@@ -178,73 +187,73 @@ object BreadModCodecs {
 		::Vec3
 	)
 
-	// Convenience codec methods.
-	fun <O> itemStackListCodecModule(
-		field: String,
-		getter: Function<O, List<ItemStack>>
-	): RecordCodecBuilder<O, MutableList<ItemStack>> =
-		ItemStack.CODEC.listOf().fieldOf(field).forGetter(getter)
-
-	fun <O> optionalItemStackListCodecModule(
-		field: String,
-		getter: Function<O, List<ItemStack>>
-	): RecordCodecBuilder<O, MutableList<ItemStack>> =
-		ItemStack.CODEC.listOf().optionalFieldOf(field, listOf()).forGetter(getter)
-
-	fun <O> fluidStackListCodecModule(
-		field: String,
-		getter: Function<O, List<FluidStack>>
-	): RecordCodecBuilder<O, MutableList<FluidStack>> =
-		FluidStack.CODEC.listOf().fieldOf(field).forGetter(getter)
-
-	fun <O> optionalFluidStackListCodecModule(
-		field: String,
-		getter: Function<O, List<FluidStack>>
-	): RecordCodecBuilder<O, MutableList<FluidStack>> =
-		FluidStack.CODEC.listOf().optionalFieldOf(field, mutableListOf()).forGetter(getter)
-
-	fun <O> optionalIntCodecModule(
-		field: String,
-		getter: Function<O, Int?>
-	): RecordCodecBuilder<O, Int?> = Codec.INT.optionalFieldOf(field, 0).forGetter(getter)
-
-	fun <O> sizedIngredientCodecModule(
-		field: String,
-		getter: Function<O, List<SizedIngredient>>
-	): RecordCodecBuilder<O, List<SizedIngredient>> =
-		SizedIngredient.FLAT_CODEC
-			.listOf()
-			.optionalFieldOf(field, listOf())
-			.flatXmap(DataResult<O>::success, DataResult<O>::success)
-			.forGetter(getter)
-
-	fun <O> optionalSizedIngredientCodecModule(
-		field: String,
-		getter: Function<O, List<SizedIngredient>>
-	): RecordCodecBuilder<O, List<SizedIngredient>> =
-		SizedIngredient.FLAT_CODEC
-			.listOf()
-			.optionalFieldOf(field, listOf())
-			.flatXmap(DataResult<O>::success, DataResult<O>::success)
-			.forGetter(getter)
-
-	fun <O> sizedFluidIngredientCodecModule(
-		field: String,
-		getter: Function<O, List<SizedFluidIngredient>>
-	): RecordCodecBuilder<O, List<SizedFluidIngredient>> =
-		SizedFluidIngredient.FLAT_CODEC
-			.listOf()
-			.optionalFieldOf(field, listOf())
-			.flatXmap(DataResult<O>::success, DataResult<O>::success)
-			.forGetter(getter)
-
-	fun <O> optionalSizedFluidIngredientCodecModule(
-		field: String,
-		getter: Function<O, List<SizedFluidIngredient>>
-	): RecordCodecBuilder<O, List<SizedFluidIngredient>> =
-		SizedFluidIngredient.FLAT_CODEC
-			.listOf()
-			.optionalFieldOf(field, listOf())
-			.flatXmap(DataResult<O>::success, DataResult<O>::success)
-			.forGetter(getter)
+//	// Convenience codec methods.
+//	fun <O> itemStackListCodecModule(
+//		field: String,
+//		getter: Function<O, List<ItemStack>>
+//	): RecordCodecBuilder<O, MutableList<ItemStack>> =
+//		ItemStack.CODEC.listOf().fieldOf(field).forGetter(getter)
+//
+//	fun <O> optionalItemStackListCodecModule(
+//		field: String,
+//		getter: Function<O, List<ItemStack>>
+//	): RecordCodecBuilder<O, MutableList<ItemStack>> =
+//		ItemStack.CODEC.listOf().optionalFieldOf(field, listOf()).forGetter(getter)
+//
+//	fun <O> fluidStackListCodecModule(
+//		field: String,
+//		getter: Function<O, List<FluidStack>>
+//	): RecordCodecBuilder<O, MutableList<FluidStack>> =
+//		FluidStack.CODEC.listOf().fieldOf(field).forGetter(getter)
+//
+//	fun <O> optionalFluidStackListCodecModule(
+//		field: String,
+//		getter: Function<O, List<FluidStack>>
+//	): RecordCodecBuilder<O, MutableList<FluidStack>> =
+//		FluidStack.CODEC.listOf().optionalFieldOf(field, mutableListOf()).forGetter(getter)
+//
+//	fun <O> optionalIntCodecModule(
+//		field: String,
+//		getter: Function<O, Int?>
+//	): RecordCodecBuilder<O, Int?> = Codec.INT.optionalFieldOf(field, 0).forGetter(getter)
+//
+//	fun <O> sizedIngredientCodecModule(
+//		field: String,
+//		getter: Function<O, List<SizedIngredient>>
+//	): RecordCodecBuilder<O, List<SizedIngredient>> =
+//		SizedIngredient.FLAT_CODEC
+//			.listOf()
+//			.optionalFieldOf(field, listOf())
+//			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+//			.forGetter(getter)
+//
+//	fun <O> optionalSizedIngredientCodecModule(
+//		field: String,
+//		getter: Function<O, List<SizedIngredient>>
+//	): RecordCodecBuilder<O, List<SizedIngredient>> =
+//		SizedIngredient.FLAT_CODEC
+//			.listOf()
+//			.optionalFieldOf(field, listOf())
+//			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+//			.forGetter(getter)
+//
+//	fun <O> sizedFluidIngredientCodecModule(
+//		field: String,
+//		getter: Function<O, List<SizedFluidIngredient>>
+//	): RecordCodecBuilder<O, List<SizedFluidIngredient>> =
+//		SizedFluidIngredient.FLAT_CODEC
+//			.listOf()
+//			.optionalFieldOf(field, listOf())
+//			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+//			.forGetter(getter)
+//
+//	fun <O> optionalSizedFluidIngredientCodecModule(
+//		field: String,
+//		getter: Function<O, List<SizedFluidIngredient>>
+//	): RecordCodecBuilder<O, List<SizedFluidIngredient>> =
+//		SizedFluidIngredient.FLAT_CODEC
+//			.listOf()
+//			.optionalFieldOf(field, listOf())
+//			.flatXmap(DataResult<O>::success, DataResult<O>::success)
+//			.forGetter(getter)
 }

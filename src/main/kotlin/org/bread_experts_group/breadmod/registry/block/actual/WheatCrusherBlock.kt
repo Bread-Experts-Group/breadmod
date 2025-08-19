@@ -2,20 +2,17 @@ package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
-import net.minecraft.world.phys.BlockHitResult
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
@@ -59,19 +56,5 @@ class WheatCrusherBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
 		builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.POWERED)
-	}
-
-	override fun useWithoutItem(
-		state: BlockState,
-		level: Level,
-		pos: BlockPos,
-		player: Player,
-		hitResult: BlockHitResult
-	): InteractionResult {
-		if (!level.isClientSide) {
-			val entity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return InteractionResult.FAIL
-			player.openMenu(entity, pos)
-		}
-		return InteractionResult.sidedSuccess(level.isClientSide)
 	}
 }

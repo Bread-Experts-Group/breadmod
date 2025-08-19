@@ -1,6 +1,5 @@
 package org.bread_experts_group.breadmod.registry.worldgen.dimensions
 
-import com.mojang.datafixers.util.Pair
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstrapContext
 import net.minecraft.resources.ResourceKey
@@ -17,6 +16,7 @@ import net.minecraft.world.level.dimension.LevelStem
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings
 import org.bread_experts_group.breadmod.BreadMod
+import org.bread_experts_group.breadmod.util.toMojangPair
 import java.util.OptionalLong
 
 object ModDimensions {
@@ -64,20 +64,17 @@ object ModDimensions {
 		{ holderGetter ->
 			Climate.ParameterList(
 				listOf(
-					Pair.of(
-						Climate.parameters(
-							0.9F,
-							0.5f,
-							0.0F,
-							0.25f,
-							1.0f,
-							1.0F,
-							0.175F
-						),
-						holderGetter.getOrThrow(
-							ModBiomes.BREAD
-						)
-					)
+					(Climate.parameters(
+						0.9F,
+						0.5f,
+						0.0F,
+						0.25f,
+						1.0f,
+						1.0F,
+						0.175F
+					) to holderGetter.getOrThrow(
+						ModBiomes.BREAD
+					)).toMojangPair()
 				)
 			)
 		},

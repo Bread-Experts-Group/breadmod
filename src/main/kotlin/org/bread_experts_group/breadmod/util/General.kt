@@ -38,6 +38,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeInput
@@ -60,12 +61,14 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.Shapes.or
 import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
+import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.registries.DeferredItem
 import org.joml.Vector3f
 import java.lang.reflect.Method
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
+import java.util.Optional
 import java.util.UUID
 import java.util.function.Supplier
 import java.util.stream.Stream
@@ -371,11 +374,21 @@ fun <T : ByteBuf, V> StreamCodec<T, V>.toMutableList(): StreamCodec<T, MutableLi
 
 fun <T> List<T>.toNonNullList(): NonNullList<T> = NonNullList.copyOf(this)
 fun <T : ByteBuf, V> StreamCodec<T, V>.toList(): StreamCodec<T, List<V>> = this.apply(ByteBufCodecs.list())
+fun <T : ByteBuf, V> StreamCodec<T, V>.ofOptional(): StreamCodec<T, Optional<V>> = ByteBufCodecs.optional(this)
+
+fun <T, R> Pair<T, R>.toMojangPair(): com.mojang.datafixers.util.Pair<T, R> =
+	com.mojang.datafixers.util.Pair.of(this.first, this.second)
+
+fun <T, R> com.mojang.datafixers.util.Pair<T, R>.toKotlinPair(): Pair<T, R> =
+	this.first to this.second
 
 fun getStackInPlayerHand(player: Player?, hand: InteractionHand = player?.usedItemHand ?: MAIN_HAND): ItemStack {
 	if (player == null) return ItemStack.EMPTY
 	return player.getItemInHand(hand)
 }
+
+fun List<Item>.toItemStacks(): List<ItemStack> = this.map { ItemStack(it) }
+fun List<Fluid>.toFluidStacks(): List<FluidStack> = this.map { FluidStack(it, 1000) }
 
 /// Face Targeting Functions ///
 fun dunsxCheck(opposite: Direction, x: Double, z: Double): Direction? {

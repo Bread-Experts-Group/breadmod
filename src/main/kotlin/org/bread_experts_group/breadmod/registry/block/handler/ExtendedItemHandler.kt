@@ -50,6 +50,14 @@ import kotlin.random.Random
 class ExtendedItemHandler(
 	vararg slots: Slot
 ) : ParentedHandler<BreadModBlockEntity>, IItemHandlerModifiable, DataComponentSerializable, INBTSerializable<Tag> {
+	companion object {
+		fun ofSlotsWithCapacity(slotAmount: Int, capacity: BigDecimal): ExtendedItemHandler =
+			ExtendedItemHandler(*Array(slotAmount) { Slot(capacity) })
+
+		fun ofSlotsWithCapacity(slotAmount: Int, capacity: Int): ExtendedItemHandler =
+			this.ofSlotsWithCapacity(slotAmount, BigDecimal(capacity))
+	}
+
 	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
 	val slots: MutableMap<Int, Slot> = mutableMapOf(*slots.mapIndexed { index, slot -> index to slot }.toTypedArray())
