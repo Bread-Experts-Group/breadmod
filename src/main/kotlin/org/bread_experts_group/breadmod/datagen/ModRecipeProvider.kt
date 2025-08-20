@@ -141,6 +141,7 @@ class ModRecipeProvider(
 		)
 			.itemRequired(ItemTags.AXES, 8)
 			.itemRequired(ItemTags.PLANKS, 8)
+			.itemRequired(Items.BREAD, 8)
 			.timeRequired(100u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_four"))
 		// Crafting Table recipes

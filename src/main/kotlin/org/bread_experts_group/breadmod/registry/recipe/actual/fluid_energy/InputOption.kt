@@ -40,9 +40,9 @@ class InputOption<T : Any>(
 				inst.group(
 					Codec.pair(
 						TagKey.codec(Registries.ITEM).fieldOf("tag").codec(),
-						BreadModCodecs.BIG_DECIMAL_CODEC.fieldOf("amount").codec()
-					).optionalFieldOf("left").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
-					BreadModCodecs.BIG_DESCRIPTOR_ITEM_CODEC.optionalFieldOf("right")
+						BreadModCodecs.BIG_DECIMAL_CODEC.fieldOf("count").codec()
+					).optionalFieldOf("input_tag").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
+					BreadModCodecs.BIG_DESCRIPTOR_ITEM_CODEC.optionalFieldOf("input_big_descriptor")
 						.forGetter { Optional.ofNullable(it.right) }
 				).apply(inst) { first, second ->
 					InputOption(
@@ -58,8 +58,8 @@ class InputOption<T : Any>(
 					Codec.pair(
 						TagKey.codec(Registries.FLUID).fieldOf("tag").codec(),
 						BreadModCodecs.BIG_DECIMAL_CODEC.fieldOf("amount").codec()
-					).optionalFieldOf("left").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
-					BreadModCodecs.BIG_DESCRIPTOR_FLUID_CODEC.optionalFieldOf("right")
+					).optionalFieldOf("input_tag").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
+					BreadModCodecs.BIG_DESCRIPTOR_FLUID_CODEC.optionalFieldOf("input_big_descriptor")
 						.forGetter { Optional.ofNullable(it.right) }
 				).apply(inst) { first, second ->
 					InputOption(

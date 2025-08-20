@@ -1,14 +1,19 @@
 package org.bread_experts_group.breadmod.network
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
 import com.mojang.serialization.DynamicOps
+import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.PrimitiveCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
+import io.netty.buffer.Unpooled
 import net.minecraft.core.BlockPos
 import net.minecraft.core.component.DataComponentMap
+import net.minecraft.core.component.DataComponentType
+import net.minecraft.core.component.TypedDataComponent
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.LongTag
@@ -17,25 +22,30 @@ import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.codec.StreamDecoder
+import net.minecraft.network.codec.StreamEncoder
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeHolder
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.network.connection.ConnectionType
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.function.IntFunction
 
 object BreadModCodecs {
 	fun <T, S, R> ((T) -> R).compose(from: (S) -> T): (S) -> R = { this(from(it)) }
 
-	// todo make sure this doesn't crash from using kotlin pairs instead of mojang pairs
 	fun <B : ByteBuf, L, R> pairStreamCodec(
 		left: StreamCodec<B, L>,
 		right: StreamCodec<B, R>
@@ -48,6 +58,149 @@ object BreadModCodecs {
 		}
 	}
 
+	fun <K, V, M : MutableMap<K, V>> RegistryFriendlyByteBuf.readMapRegFriendly(
+		mapFactory: IntFunction<M>,
+		keyReader: StreamDecoder<in RegistryFriendlyByteBuf, K>,
+		valueReader: StreamDecoder<in RegistryFriendlyByteBuf, V>
+	): M {
+		val i: Int = this.readVarInt()
+		val map = mapFactory.apply(i)
+
+		repeat(i) {
+			val k = keyReader.decode(this)
+			val v = valueReader.decode(this)
+			map[k] = v
+		}
+
+		return map
+	}
+
+	fun <K, V> RegistryFriendlyByteBuf.writeMapRegFriendly(
+		map: MutableMap<K, V>,
+		keyWriter: StreamEncoder<in RegistryFriendlyByteBuf, K>,
+		valueWriter: StreamEncoder<in RegistryFriendlyByteBuf, V>
+	) {
+		this.writeVarInt(map.size)
+		map.forEach { (key: K, value: V) ->
+			keyWriter.encode(this, key!!)
+			valueWriter.encode(this, value!!)
+		}
+	}
+
+	inline fun <reified B : ByteBuf, V> testCodec(
+		codec: Codec<V>?,
+		streamCodec: StreamCodec<B, V>?,
+		value: V,
+		level: Level? = null
+	) {
+		val logger = LogManager.getLogger("BreadModCodecs - Tester")
+
+		if (codec != null) {
+			var encoded: DataResult<JsonElement>? = null
+
+			try {
+				logger.info("[Codec / Encode] Attempting to encode value[$value]")
+				encoded = codec.encodeStart(JsonOps.INSTANCE, value)
+
+				encoded.ifSuccess { result ->
+					logger.info("[Codec / Encode] Encoded value successfully")
+					logger.info("[Codec / Encode] Result: $result")
+				}
+				encoded.ifError { error ->
+					logger.error("[Codec / Encode] Failed encoding value")
+					logger.error(error)
+				}
+			} catch (e: Exception) {
+				logger.error("[Codec / Encode] Exception in encoding value")
+				e.printStackTrace()
+			}
+
+			try {
+				logger.info("[Codec / Decode] Attempting to decode value[$value]")
+				if (encoded != null && encoded.isSuccess) {
+					val decoded = codec.parse(JsonOps.INSTANCE, encoded.orThrow)
+
+					decoded.ifSuccess { result ->
+						logger.info("[Codec / Decode] Decoded value successfully")
+						logger.info("[Codec / Decode] Decode result: $result")
+					}
+					decoded.ifError { error ->
+						logger.error("[Codec / Decode] Failed decoding value")
+						logger.info("[Codec / Decode] Error: $error")
+					}
+				}
+			} catch (e: Exception) {
+				logger.error("[Codec / Decode] Exception in decoding value[$value]")
+				e.printStackTrace()
+			}
+		}
+
+		if (streamCodec != null && (level != null || B::class !is RegistryFriendlyByteBuf)) {
+			val byteBuf = Unpooled.buffer()
+			val buffer: B = when (B::class) {
+				ByteBuf::class -> byteBuf
+				FriendlyByteBuf::class -> FriendlyByteBuf(byteBuf)
+				RegistryFriendlyByteBuf::class -> RegistryFriendlyByteBuf(
+					byteBuf,
+					level!!.registryAccess(),
+					ConnectionType.NEOFORGE
+				)
+				else -> throw IllegalArgumentException("[StreamCodec / Buffer] invalid buffer: ${B::class.simpleName}")
+			} as B
+
+			try {
+				logger.info("[StreamCodec / Encode] Attempting to encode value[$value]")
+				streamCodec.encode(buffer, value!!)
+				logger.info("[StreamCodec / Encode] Encoded value successfully")
+			} catch (e: Exception) {
+				logger.error("[StreamCodec / Encode] Exception in encoding value")
+				e.printStackTrace()
+			}
+
+			try {
+				logger.info("[StreamCodec / Decode] Attempting to decode value")
+				val decoded = streamCodec.decode(buffer)
+				logger.info("[StreamCodec / Decode] Decoded value successfully")
+				logger.info("[StreamCodec / Decode] Decode result: $decoded")
+			} catch (e: Exception) {
+				logger.error("[StreamCodec / Decode] Exception in decoding value")
+				e.printStackTrace()
+			}
+
+			logger.info("Releasing ByteBuf")
+			buffer.release()
+		} else logger.error("level is null, skipped StreamCodec tests uses RegistryFriendlyByteBuf")
+	}
+
+	val DATA_COMPONENT_MAP_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, DataComponentMap> =
+		object : StreamCodec<RegistryFriendlyByteBuf, DataComponentMap> {
+			override fun decode(buffer: RegistryFriendlyByteBuf): DataComponentMap {
+				val dataComponentMapBuilder = DataComponentMap.builder()
+				val componentMap: MutableMap<Int, TypedDataComponent<*>> =
+					buffer.readMapRegFriendly(
+						{ size -> mutableMapOf() },
+						ByteBufCodecs.INT,
+						TypedDataComponent.STREAM_CODEC
+					)
+
+				for (component in componentMap.values) dataComponentMapBuilder.set(
+					{ component.type as DataComponentType<in Any> },
+					component.value()
+				)
+
+				return dataComponentMapBuilder.build()
+			}
+
+			override fun encode(
+				buffer: RegistryFriendlyByteBuf,
+				value: DataComponentMap
+			) {
+				val componentMap: MutableMap<Int, TypedDataComponent<*>> = mutableMapOf()
+				var index = 0
+				for (type in value) componentMap[index++] = type
+				buffer.writeMapRegFriendly(componentMap, ByteBufCodecs.INT, TypedDataComponent.STREAM_CODEC::encode)
+			}
+		}
 	val FLUID_ID_SERIALIZER: (Fluid) -> String = { fluid: Fluid -> BuiltInRegistries.FLUID.getKey(fluid).toString() }
 	val FLUID_ID_DESERIALIZER: (String) -> Fluid = { id: String ->
 		BuiltInRegistries.FLUID.get(ResourceLocation.parse(id))
@@ -153,11 +306,15 @@ object BreadModCodecs {
 			BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components)
 		}
 	}.codec()
-	val BIG_DESCRIPTOR_ITEM_STREAM_CODEC: StreamCodec<ByteBuf, BigDescriptor<Item>> = StreamCodec.composite(
-		ByteBufCodecs.STRING_UTF8, { this.ITEM_ID_SERIALIZER(it.value) },
-		this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Item>::amount,
-		{ id, amount -> BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id)) } // TODO COMPONENTS
-	)
+	val BIG_DESCRIPTOR_ITEM_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDescriptor<Item>> =
+		StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8, { this.ITEM_ID_SERIALIZER(it.value) },
+			this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Item>::amount,
+			this.DATA_COMPONENT_MAP_STREAM_CODEC, BigDescriptor<Item>::components,
+			{ id, amount, components ->
+				BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components)
+			}
+		)
 	val BIG_DESCRIPTOR_FLUID_CODEC: Codec<BigDescriptor<Fluid>> = RecordCodecBuilder.mapCodec { inst ->
 		inst.group(
 			Codec.STRING.fieldOf("id").forGetter { this.FLUID_ID_SERIALIZER(it.value) },
@@ -167,11 +324,15 @@ object BreadModCodecs {
 			BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id), components)
 		}
 	}.codec()
-	val BIG_DESCRIPTOR_FLUID_STREAM_CODEC: StreamCodec<ByteBuf, BigDescriptor<Fluid>> = StreamCodec.composite(
-		ByteBufCodecs.STRING_UTF8, { this.FLUID_ID_SERIALIZER(it.value) },
-		this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Fluid>::amount,
-		{ id, amount -> BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id)) } // TODO COMPONENTS
-	)
+	val BIG_DESCRIPTOR_FLUID_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDescriptor<Fluid>> =
+		StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8, { this.FLUID_ID_SERIALIZER(it.value) },
+			this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Fluid>::amount,
+			this.DATA_COMPONENT_MAP_STREAM_CODEC, BigDescriptor<Fluid>::components,
+			{ id, amount, components ->
+				BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id), components)
+			}
+		)
 	val RECIPE_HOLDER_CODEC: Codec<RecipeHolder<*>> = RecordCodecBuilder.create { instance ->
 		instance.group(
 			ResourceLocation.CODEC.fieldOf("id").forGetter(RecipeHolder<*>::id),
