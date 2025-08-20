@@ -39,9 +39,12 @@ import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
+import org.bread_experts_group.breadmod.util.ofOptional
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.Optional
 import java.util.function.IntFunction
+import kotlin.jvm.optionals.getOrNull
 
 object BreadModCodecs {
 	fun <T, S, R> ((T) -> R).compose(from: (S) -> T): (S) -> R = { this(from(it)) }
@@ -301,36 +304,44 @@ object BreadModCodecs {
 		inst.group(
 			Codec.STRING.fieldOf("id").forGetter { this.ITEM_ID_SERIALIZER(it.value) },
 			this.BIG_DECIMAL_CODEC.fieldOf("count").forGetter(BigDescriptor<Item>::amount),
-			DataComponentMap.CODEC.fieldOf("components").forGetter(BigDescriptor<Item>::components)
-		).apply(inst) { id: String, amount: BigDecimal, components: DataComponentMap ->
-			BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components)
+			DataComponentMap.CODEC.optionalFieldOf("components")
+				.forGetter { Optional.ofNullable(if (it.components.isEmpty) null else it.components) }
+		).apply(inst) { id: String, amount: BigDecimal, components ->
+			BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components.getOrNull() ?: DataComponentMap.EMPTY)
 		}
 	}.codec()
 	val BIG_DESCRIPTOR_ITEM_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDescriptor<Item>> =
 		StreamCodec.composite(
-			ByteBufCodecs.STRING_UTF8, { this.ITEM_ID_SERIALIZER(it.value) },
-			this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Item>::amount,
-			this.DATA_COMPONENT_MAP_STREAM_CODEC, BigDescriptor<Item>::components,
-			{ id, amount, components ->
-				BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components)
+			ByteBufCodecs.STRING_UTF8,
+			{ this.ITEM_ID_SERIALIZER(it.value) },
+			this.BIG_DECIMAL_STREAM_CODEC,
+			BigDescriptor<Item>::amount,
+			this.DATA_COMPONENT_MAP_STREAM_CODEC.ofOptional(),
+			{ Optional.ofNullable(if (it.components.isEmpty) null else it.components) },
+			{ id, amount, components: Optional<DataComponentMap> ->
+				BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components.getOrNull() ?: DataComponentMap.EMPTY)
 			}
 		)
 	val BIG_DESCRIPTOR_FLUID_CODEC: Codec<BigDescriptor<Fluid>> = RecordCodecBuilder.mapCodec { inst ->
 		inst.group(
 			Codec.STRING.fieldOf("id").forGetter { this.FLUID_ID_SERIALIZER(it.value) },
 			this.BIG_DECIMAL_CODEC.fieldOf("amount").forGetter(BigDescriptor<Fluid>::amount),
-			DataComponentMap.CODEC.fieldOf("components").forGetter(BigDescriptor<Fluid>::components)
-		).apply(inst) { id: String, amount: BigDecimal, components: DataComponentMap ->
-			BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id), components)
+			DataComponentMap.CODEC.optionalFieldOf("components")
+				.forGetter { Optional.ofNullable(if (it.components.isEmpty) null else it.components) }
+		).apply(inst) { id: String, amount: BigDecimal, components: Optional<DataComponentMap> ->
+			BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id), components.getOrNull() ?: DataComponentMap.EMPTY)
 		}
 	}.codec()
 	val BIG_DESCRIPTOR_FLUID_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, BigDescriptor<Fluid>> =
 		StreamCodec.composite(
-			ByteBufCodecs.STRING_UTF8, { this.FLUID_ID_SERIALIZER(it.value) },
-			this.BIG_DECIMAL_STREAM_CODEC, BigDescriptor<Fluid>::amount,
-			this.DATA_COMPONENT_MAP_STREAM_CODEC, BigDescriptor<Fluid>::components,
+			ByteBufCodecs.STRING_UTF8,
+			{ this.FLUID_ID_SERIALIZER(it.value) },
+			this.BIG_DECIMAL_STREAM_CODEC,
+			BigDescriptor<Fluid>::amount,
+			this.DATA_COMPONENT_MAP_STREAM_CODEC.ofOptional(),
+			{ Optional.ofNullable(if (it.components.isEmpty) null else it.components) },
 			{ id, amount, components ->
-				BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id), components)
+				BigDescriptor(amount, this.FLUID_ID_DESERIALIZER(id), components.getOrNull() ?: DataComponentMap.EMPTY)
 			}
 		)
 	val RECIPE_HOLDER_CODEC: Codec<RecipeHolder<*>> = RecordCodecBuilder.create { instance ->
