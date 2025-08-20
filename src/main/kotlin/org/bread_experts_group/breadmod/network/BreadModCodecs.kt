@@ -300,7 +300,7 @@ object BreadModCodecs {
 	val BIG_DESCRIPTOR_ITEM_CODEC: Codec<BigDescriptor<Item>> = RecordCodecBuilder.mapCodec { inst ->
 		inst.group(
 			Codec.STRING.fieldOf("id").forGetter { this.ITEM_ID_SERIALIZER(it.value) },
-			this.BIG_DECIMAL_CODEC.fieldOf("amount").forGetter(BigDescriptor<Item>::amount),
+			this.BIG_DECIMAL_CODEC.fieldOf("count").forGetter(BigDescriptor<Item>::amount),
 			DataComponentMap.CODEC.fieldOf("components").forGetter(BigDescriptor<Item>::components)
 		).apply(inst) { id: String, amount: BigDecimal, components: DataComponentMap ->
 			BigDescriptor(amount, this.ITEM_ID_DESERIALIZER(id), components)

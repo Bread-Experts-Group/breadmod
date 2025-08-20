@@ -5,6 +5,8 @@ import net.minecraft.advancements.AdvancementRequirements.Strategy
 import net.minecraft.advancements.AdvancementRewards.Builder
 import net.minecraft.advancements.Criterion
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger
+import net.minecraft.core.component.DataComponentMap
+import net.minecraft.core.component.DataComponentType
 import net.minecraft.data.recipes.RecipeBuilder
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.resources.ResourceLocation
@@ -51,25 +53,17 @@ class FluidEnergyBuilder(
 
 	var items: MutableList<InputOption<Item>> = mutableListOf()
 	var fluids: MutableList<InputOption<Fluid>> = mutableListOf()
-	fun fluidRequired(fluid: Fluid, amount: BigDecimal): FluidEnergyBuilder =
-		this.also { this.fluids.add(InputOption.bigDescriptor(Fluid::class, BigDescriptor(amount, fluid))) }
-
-	fun fluidRequired(fluid: Fluid, amount: Int): FluidEnergyBuilder = this.fluidRequired(fluid, BigDecimal(amount))
-	fun fluidRequired(bundle: Pair<Fluid, Int>?): FluidEnergyBuilder = this.also {
-		if (bundle != null) this.fluidRequired(bundle.first, bundle.second)
-	}
+	fun fluidRequired(fluid: Fluid, amount: BigDecimal): BuilderEntry<Fluid> = BuilderEntry(fluid, amount)
+	fun fluidRequired(fluid: Fluid, amount: Int): BuilderEntry<Fluid> = this.fluidRequired(fluid, BigDecimal(amount))
+	fun fluidRequired(bundle: Pair<Fluid, Int>): BuilderEntry<Fluid> = this.fluidRequired(bundle.first, bundle.second)
 
 	fun fluidRequired(tag: TagKey<Fluid>, amount: Int): FluidEnergyBuilder = this.also {
 		this.fluids.add(InputOption.tag(Fluid::class, tag to BigDecimal(amount)))
 	}
 
-	fun itemRequired(item: Item, amount: BigDecimal): FluidEnergyBuilder =
-		this.also { this.items.add(InputOption.bigDescriptor(Item::class, BigDescriptor(amount, item))) }
-
-	fun itemRequired(item: Item, amount: Int): FluidEnergyBuilder = this.itemRequired(item, BigDecimal(amount))
-	fun itemRequired(bundle: Pair<Item, Int>?): FluidEnergyBuilder = this.also {
-		if (bundle != null) this.itemRequired(bundle.first, bundle.second)
-	}
+	fun itemRequired(item: Item, amount: BigDecimal): BuilderEntry<Item> = BuilderEntry(item, amount)
+	fun itemRequired(item: Item, amount: Int): BuilderEntry<Item> = this.itemRequired(item, BigDecimal(amount))
+	fun itemRequired(bundle: Pair<Item, Int>): BuilderEntry<Item> = this.itemRequired(bundle.first, bundle.second)
 
 	fun itemRequired(tag: TagKey<Item>, amount: Int): FluidEnergyBuilder = this.also {
 		this.items.add(InputOption.tag(Item::class, tag to BigDecimal(amount)))
@@ -79,5 +73,34 @@ class FluidEnergyBuilder(
 	override fun save(recipeOutput: RecipeOutput, id: ResourceLocation) {
 		require(this.items.isNotEmpty() || this.fluids.isNotEmpty()) { "Items or Fluids should have at least one ingredient!" }
 		recipeOutput.accept(id, this.invokeRecipe(), recipeOutput.buildAdvancement(id))
+	}
+
+	inner class BuilderEntry<E>(
+		val value: E,
+		val amount: BigDecimal,
+		var components: DataComponentMap = DataComponentMap.EMPTY
+	) {
+		fun <V> withComponents(vararg components: Pair<DataComponentType<V>, V>): BuilderEntry<E> = this.also {
+			val mapBuilder = DataComponentMap.builder()
+			for ((component, value) in components) {
+				mapBuilder.set(component, value)
+			}
+			this.components = mapBuilder.build()
+		}
+
+		fun finish(): FluidEnergyBuilder = this@FluidEnergyBuilder.also {
+			val isItem = this.value as? Item
+			if (isItem != null) it.items.add(
+				InputOption.bigDescriptor(
+					Item::class,
+					BigDescriptor(this.amount, this.value as Item, this.components)
+				)
+			) else it.fluids.add(
+				InputOption.bigDescriptor(
+					Fluid::class,
+					BigDescriptor(this.amount, this.value as Fluid, this.components)
+				)
+			)
+		}
 	}
 }

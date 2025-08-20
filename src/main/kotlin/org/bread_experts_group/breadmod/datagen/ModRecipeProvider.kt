@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.datagen
 
 import moze_intel.projecte.gameObjs.registries.PEItems
 import net.minecraft.core.HolderLookup
+import net.minecraft.core.component.DataComponents
 import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeOutput
@@ -11,7 +12,9 @@ import net.minecraft.data.recipes.ShapelessRecipeBuilder
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder
 import net.minecraft.data.recipes.SpecialRecipeBuilder
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.FluidTags
 import net.minecraft.tags.ItemTags
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
@@ -109,17 +112,17 @@ class ModRecipeProvider(
 			mutableListOf(BigDescriptor(16, Items.BREAD)),
 			mutableListOf(BigDescriptor(500, Fluids.WATER))
 		)
-			.itemRequired(ModItems.FLOUR.get(), 8)
-			.itemRequired(Items.APPLE, 8)
-			.fluidRequired(Fluids.LAVA, 500)
+			.itemRequired(ModItems.FLOUR.get(), 8).finish()
+			.itemRequired(Items.APPLE, 8).finish()
+			.fluidRequired(Fluids.LAVA, 500).finish()
 			.timeRequired(100u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_one"))
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
 			mutableListOf(BigDescriptor(16, Items.COOKED_BEEF))
 		)
-			.itemRequired(ModItems.FLOUR.get(), 8)
-			.itemRequired(Items.SPONGE, 8)
+			.itemRequired(ModItems.FLOUR.get(), 8).finish()
+			.itemRequired(Items.SPONGE, 8).finish()
 			.timeRequired(100u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_two"))
 
@@ -130,8 +133,8 @@ class ModRecipeProvider(
 				BigDescriptor(16, Items.STRING)
 			)
 		)
-			.itemRequired(ModItems.FLOUR.get(), 8)
-			.itemRequired(Items.REDSTONE, 8)
+			.itemRequired(ModItems.FLOUR.get(), 8).finish()
+			.itemRequired(Items.REDSTONE, 8).finish()
 			.timeRequired(50u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
 
@@ -142,6 +145,12 @@ class ModRecipeProvider(
 			.itemRequired(ItemTags.AXES, 8)
 			.itemRequired(ItemTags.PLANKS, 8)
 			.itemRequired(Items.BREAD, 8)
+			.withComponents(DataComponents.ITEM_NAME to Component.literal("Epic Bread"))
+			.finish()
+			.fluidRequired(Fluids.WATER, 1000)
+			.withComponents(DataComponents.ITEM_NAME to Component.literal("Silly Water"))
+			.finish()
+			.fluidRequired(FluidTags.LAVA, 1000)
 			.timeRequired(100u)
 			.save(recipeOutput, modLocation("fluid_energy", "test_four"))
 		// Crafting Table recipes
@@ -570,7 +579,7 @@ class ModRecipeProvider(
 			{ ii, io, _, _, time, _ -> ToasterRecipe(ii, io, time) },
 			mutableListOf(BigDescriptor(2, result))
 		)
-			.itemRequired(input, 2)
+			.itemRequired(input, 2).finish()
 			.timeRequiredInSeconds(5u)
 			.save(output, modLocation("machine", "toasting", name))
 
@@ -585,7 +594,7 @@ class ModRecipeProvider(
 		{ ii, io, _, _, time, energy -> WheatCrusherRecipe(ii, io, time, energy) },
 		mutableListOf(BigDescriptor(result.second, result.first))
 	)
-		.itemRequired(input.first, input.second)
+		.itemRequired(input.first, input.second).finish()
 		.timeRequired(ticks)
 		.energyRequired(energy)
 		.save(output, modLocation("machine", "wheat_crushing", name))
@@ -605,11 +614,13 @@ class ModRecipeProvider(
 		itemOutput?.let { mutableListOf(BigDescriptor(it.second, it.first)) } ?: mutableListOf(),
 		fluidOutput?.let { mutableListOf(BigDescriptor(it.second, it.first)) } ?: mutableListOf()
 	)
-		.itemRequired(inputOne)
-		.itemRequired(inputTwo)
-		.fluidRequired(fluidInput)
+		.itemRequired(inputOne).finish()
 		.timeRequired(ticks)
 		.energyRequired(energy)
+		.also {
+			if (inputTwo != null) it.itemRequired(inputTwo).finish()
+			if (fluidInput != null) it.fluidRequired(fluidInput)
+		}
 		.save(output, modLocation("machine", "dough_crafting", name))
 
 	private fun modNetheriteSmithing(
