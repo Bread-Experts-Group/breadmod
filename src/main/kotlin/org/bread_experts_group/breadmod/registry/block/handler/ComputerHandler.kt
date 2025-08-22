@@ -5,9 +5,9 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.computer.Computer
 import org.bread_experts_group.computer.MemoryModule
-import org.bread_experts_group.computer.disc.iso9960.ISO9660Disc
 import org.bread_experts_group.computer.ia32.IA32Processor
 import org.bread_experts_group.computer.ia32.bios.StandardBIOS
+import org.bread_experts_group.computer.ia32.bios.h13.Read.floppy5_14_320K
 
 class ComputerHandler : ParentedHandler<BreadModBlockEntity> {
 	companion object {
@@ -32,9 +32,8 @@ class ComputerHandler : ParentedHandler<BreadModBlockEntity> {
 //		)
 //		this.logger.warn(stream.assemble())
 		this.computer.processor.computer = this.computer
-		this.computer.disc = ISO9660Disc.readDisc(
-			(this::class.java.getResource("/bootloader/bootable.iso") ?: return@unstarted).toURI()
-		)
+		this.computer.floppyURLs[0] =
+			(this::class.java.getResource("/CDPDOS125.IMG") ?: return@unstarted) to floppy5_14_320K
 		this.computer.reset()
 		try {
 			while (!Thread.currentThread().isInterrupted) {

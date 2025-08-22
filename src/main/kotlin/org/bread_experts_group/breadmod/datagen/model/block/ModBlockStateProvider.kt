@@ -69,13 +69,13 @@ class ModBlockStateProvider(
 		this.horizontalBlock(ModBlocks.MONITOR.block) {
 			val model = this.models().cube(
 				"breadmod:block/monitor",
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_face"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor_side")
-			).renderType("minecraft:cutout")
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/front"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/side"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top")
+			)
 
 			return@horizontalBlock model
 		}

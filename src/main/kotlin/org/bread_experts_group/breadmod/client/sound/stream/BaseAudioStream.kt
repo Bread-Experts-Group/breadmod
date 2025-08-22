@@ -7,14 +7,14 @@ import net.minecraft.network.chat.Component
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.coder.format.id3.ID3Parser
-import org.bread_experts_group.coder.format.id3.frame.ID3CommentFrame
-import org.bread_experts_group.coder.format.id3.frame.ID3Header
-import org.bread_experts_group.coder.format.id3.frame.ID3PictureFrame2
-import org.bread_experts_group.coder.format.id3.frame.ID3PictureFrame3
-import org.bread_experts_group.coder.format.id3.frame.ID3PopularimeterFrame
-import org.bread_experts_group.coder.format.id3.frame.ID3TextFrame
-import org.bread_experts_group.coder.format.id3.frame.ID3URLLinkFrame
+import org.bread_experts_group.coder.format.parse.id3.ID3Parser
+import org.bread_experts_group.coder.format.parse.id3.frame.ID3CommentFrame
+import org.bread_experts_group.coder.format.parse.id3.frame.ID3Header
+import org.bread_experts_group.coder.format.parse.id3.frame.ID3PictureFrame2
+import org.bread_experts_group.coder.format.parse.id3.frame.ID3PictureFrame3
+import org.bread_experts_group.coder.format.parse.id3.frame.ID3PopularimeterFrame
+import org.bread_experts_group.coder.format.parse.id3.frame.ID3TextFrame
+import org.bread_experts_group.coder.format.parse.id3.frame.ID3URLLinkFrame
 import org.lwjgl.BufferUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -56,9 +56,9 @@ abstract class BaseAudioStream(val uri: URI) : AudioStream {
 	var extra: MutableList<Component> = mutableListOf<Component>()
 
 	fun decodeMetadata(id3: ID3Parser) {
-		val id3Header = id3.firstOrNull() as? ID3Header ?: return
+		val id3Header = (id3.firstOrNull() ?: return).resultSafe as ID3Header
 		val version = "(v${id3Header.major}.${id3Header.minor})"
-		for (f in id3) when (f) {
+		for (f in id3) when (val f = f.resultSafe) {
 			is ID3TextFrame -> when (f.tag) {
 				"TIT2", "TT2" -> this.title = this.setComp(f.text)
 				"TPE1", "TP1" -> this.artist = this.setComp(f.text)

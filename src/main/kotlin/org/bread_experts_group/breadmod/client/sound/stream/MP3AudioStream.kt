@@ -1,10 +1,11 @@
 package org.bread_experts_group.breadmod.client.sound.stream
 
-import org.bread_experts_group.coder.format.mp3.MP3Parser
-import org.bread_experts_group.coder.format.mp3.frame.MP3Frame
-import org.bread_experts_group.coder.format.mp3.frame.MP3ID3Frame
-import org.bread_experts_group.coder.format.mp3.frame.header.ChannelMode
-import org.bread_experts_group.coder.format.mp3.frame.header.MP3Header
+import org.bread_experts_group.coder.format.parse.id3.ID3Parser
+import org.bread_experts_group.coder.format.parse.mp3.MP3Parser
+import org.bread_experts_group.coder.format.parse.mp3.frame.MP3Frame
+import org.bread_experts_group.coder.format.parse.mp3.frame.MP3ID3Frame
+import org.bread_experts_group.coder.format.parse.mp3.frame.header.ChannelMode
+import org.bread_experts_group.coder.format.parse.mp3.frame.header.MP3Header
 import org.lwjgl.BufferUtils
 import java.io.ByteArrayOutputStream
 import java.net.URI
@@ -32,8 +33,8 @@ class MP3AudioStream(uri: URI) : BaseAudioStream(uri) {
 	init {
 		val headers = mutableListOf<MP3Header>()
 		val stream = ByteArrayOutputStream()
-		for (f in MP3Parser(this.uri.toURL().openStream())) when (f) {
-			is MP3ID3Frame -> this.decodeMetadata(f.id3)
+		for (f in MP3Parser().setInput(this.uri.toURL().openStream())) when (val f = f.resultSafe) {
+			is MP3ID3Frame -> this.decodeMetadata(f.id3 as ID3Parser)
 			is MP3Frame -> {
 				headers.add(f.header)
 				stream.write(f.data)

@@ -13,7 +13,7 @@ import java.awt.Color
 class KeyboardScreen(private val monitorPos: BlockPos) : Screen(Component.empty()) {
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
 		if (super.keyPressed(keyCode, scanCode, modifiers)) return true
-		PacketDistributor.sendToServer(ComputerKeystrokePacket(this.monitorPos, keyCode))
+		PacketDistributor.sendToServer(ComputerKeystrokePacket(this.monitorPos, keyCode, modifiers))
 		return true
 	}
 

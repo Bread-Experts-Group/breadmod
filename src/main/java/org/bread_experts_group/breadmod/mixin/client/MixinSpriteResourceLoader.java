@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
 import org.bread_experts_group.breadmod.mixinutil.General;
-import org.bread_experts_group.image.apng.APNGReaderSpi;
 import org.bread_experts_group.image.gif.GIFReaderSpi;
 import org.bread_experts_group.stream.FailQuickInputStream;
 import org.spongepowered.asm.mixin.Mixin;
@@ -156,13 +155,13 @@ interface MixinSpriteResourceLoader {
 			}
 
 			cir.setReturnValue(result[0]);
-		} else if (path.endsWith(".gif") || path.endsWith(".apng")) {
+		} else if (false) { // path.endsWith(".gif") || path.endsWith(".apng") TODO reintroduce APNG/GIF when available again ...
 			try {
 				final InputStream resourceStream = pResource.open();
 				ImageReader reader;
 				if (path.endsWith(".gif")) reader = new GIFReaderSpi().createReaderInstance();
-				else reader = new APNGReaderSpi().createReaderInstance();
-				reader.setInput(new FailQuickInputStream(resourceStream));
+				else return;
+				reader.setInput(new FailQuickInputStream<>(resourceStream));
 
 				List<IIOImage> frames = new ArrayList<>();
 
