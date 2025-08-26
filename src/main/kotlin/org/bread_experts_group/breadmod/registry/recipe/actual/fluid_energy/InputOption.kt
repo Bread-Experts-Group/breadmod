@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.component.DataComponentMap
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -161,14 +162,16 @@ class InputOption<T : Any>(
 		else if (this.right != null && this.selectClass == Fluid::class) (this.right as BigDescriptor<Fluid>).value
 		else Fluids.EMPTY
 
-//	fun testComponents(input: ExtendedItemHandler?): Boolean {
-//		if (input == null) return false
-//		if (this.right == null) return false
-//		val itemDescriptor = this.right as BigDescriptor<Item>
-//
-//		if (itemDescriptor.components.isEmpty) return true
-//		input.slots.forEach { (_, slot) ->
-//
-//		}
-//	}
+	fun testComponents(input: DataComponentMap): Boolean {
+		if (this.right == null) return false
+		val itemDescriptor = this.right as BigDescriptor<Item>
+
+		if (itemDescriptor.components.isEmpty) return true
+		itemDescriptor.components.all { iComp ->
+			input.any { rComp ->
+				return iComp.type == rComp.type && iComp.value == rComp.value
+			}
+		}
+		return false
+	}
 }

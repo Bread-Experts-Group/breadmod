@@ -77,29 +77,29 @@ abstract class FluidEnergyRecipe(
 	 */
 	override fun matches(input: FluidEnergyInput, level: Level): Boolean {
 		var itemsSatisfied = false
-//		var fluidsSatisfied = false
+		var fluidsSatisfied = false
 //		val reliesOnEnergy = this.rEnergy != null && this.rEnergy != BigDecimal.ZERO
 //		if (reliesOnEnergy && input.energy == null) return false
 
 		if (this.rItemInputs.isNotEmpty() && input.item != null) {
-			// todo work on component test in InputOption
-//			val count: MutableMap<Item, Map<DataComponentMap, BigDecimal>> = mutableMapOf()
-//			input.item.slots.forEach { (_, slot) ->
-//				count.compute(slot.item) { _, acc ->
-//					mapOf(slot.components to slot.amount)
-//				}
-//			}
 			itemsSatisfied = this.rItemInputs.all { rInput ->
-				input.item.slots.any { (_, slot) -> rInput.test(slot.item) }
+				input.item.slots.any { (_, slot) ->
+					rInput.test(slot.item) && rInput.testComponents(slot.components)
+				}
 			}
 		}
 
-//		if (this.rFluidInputs.isNotEmpty() && input.fluid != null) {
-//			fluidsSatisfied = true
-//		}
+		if (this.rFluidInputs.isNotEmpty() && input.fluid != null) {
+			fluidsSatisfied = this.rFluidInputs.all { rInput ->
+				input.fluid.tanks.any { (_, tank) ->
+					rInput.test(tank.fluid) && rInput.testComponents(tank.components)
+				}
+			}
+		}
+
 //		if (reliesOnFluids) throw UnsupportedOperationException()
 //		if (reliesOnEnergy) throw UnsupportedOperationException()
-		return itemsSatisfied/* || fluidsSatisfied*/
+		return itemsSatisfied || fluidsSatisfied
 	}
 
 

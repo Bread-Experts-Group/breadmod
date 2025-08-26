@@ -63,6 +63,7 @@ import net.minecraft.world.phys.shapes.VoxelShape
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.registries.DeferredItem
+import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
 import org.joml.Vector3f
 import java.lang.reflect.Method
 import java.math.BigDecimal
@@ -80,8 +81,6 @@ val Vector3fZero: Vector3f = Vector3f(0f, 0f, 0f)
 val Vector3fAxisX: Vector3f = Vector3f(1f, 0f, 0f)
 val Vector3fAxisZ: Vector3f = Vector3f(0f, 0f, 1f)
 
-val HORIZONTAL_DIRECTIONS: Array<Direction> = Direction.entries.filter { it.axis.isHorizontal }.toTypedArray()
-val ALL_DIRECTIONS: Array<Direction> = Direction.entries.toTypedArray()
 val intRoundEven: MathContext = MathContext(1, RoundingMode.HALF_EVEN)
 val floatRoundEven: MathContext = MathContext(7, RoundingMode.HALF_EVEN)
 val percentRoundEven: MathContext = MathContext(4, RoundingMode.HALF_EVEN)
@@ -210,6 +209,14 @@ fun entities(vararg filterTypes: EntityType<*> = arrayOf(EntityType.PLAYER)): (E
 			.firstOrNull()
 		if (entities == null || filterTypes.contains(entities.type) || entities.boundingBox.clip(from, to).isEmpty) null
 		else entities
+	}
+
+fun hitbox(): (Level, Vec3, Vec3) -> Hitbox? =
+	{ _, from, to ->
+		HitboxHandler.hitboxes.filter { it.value.pos.distanceTo(from) < it.value.bounds.size + 10.0 }
+			.firstNotNullOfOrNull { (pos, hitbox) ->
+				if (hitbox.bounds.move(pos).clip(from, to).isPresent) hitbox else null
+			}
 	}
 
 //data class GridHitResult(

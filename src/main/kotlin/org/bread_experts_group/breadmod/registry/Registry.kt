@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.model.EntityModel
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.client.resources.PlayerSkin
+import net.minecraft.client.sounds.SoundEngine
 import net.minecraft.commands.Commands
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
@@ -123,6 +125,7 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerTo
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
 import org.bread_experts_group.breadmod.network.serverbound.ComputerKeystrokePacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
+import org.bread_experts_group.breadmod.network.serverbound.HitboxPacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
@@ -138,6 +141,7 @@ import org.bread_experts_group.breadmod.registry.block.ModFluids
 import org.bread_experts_group.breadmod.registry.block.actual.BreadLiquidBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
 import org.bread_experts_group.breadmod.registry.block.handler.state.EnergyStorageStateHandler
 import org.bread_experts_group.breadmod.registry.entity.ModEntityDataSerializers
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
@@ -169,6 +173,8 @@ import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.block
 import org.bread_experts_group.breadmod.util.getStackInPlayerHand
+import org.bread_experts_group.breadmod.util.hitbox
+import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
 
@@ -177,6 +183,7 @@ object Registry {
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val itemRenderers: MutableMap<String, BlockEntityWithoutLevelRenderer> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
+	lateinit var soundEngine: SoundEngine
 	private val registerList: Array<RegistryProvider> = arrayOf(
 		ModItems,
 		ModBlocks,
@@ -220,6 +227,10 @@ object Registry {
 							data
 						)
 					}
+
+					HitboxHandler.hitboxes.forEach { (_, hitbox) ->
+						hitbox.render(event, localClient.renderBuffers().bufferSource())
+					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
 					val player = localClient.player ?: return@addListener
@@ -257,10 +268,19 @@ object Registry {
 					val stack = getStackInPlayerHand(player)
 					val item = stack.item
 					if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
+
+					if (event.action == InputConstants.PRESS && event.button == InputConstants.MOUSE_BUTTON_RIGHT) {
+						player.rayCast(10.0, hitbox())?.let { result ->
+							val level = player.level()
+							val state = level.getBlockState(result.blockPosition)
+							val entity = level.getBlockEntity(result.hit.originBlockPos) as BreadModBlockEntity
+							val blockPos = result.hit.originBlockPos
+							result.hit.onHitClient(level as ClientLevel, blockPos, state, player, entity)
+							result.hit.onHitCommon(level, result.hit.originBlockPos, state, player, entity)
+						}
+						PacketDistributor.sendToServer(HitboxPacket())
+					}
 				}
-//				NeoForge.EVENT_BUS.addListener { _: ClientPlayerNetworkEvent.LoggingIn ->
-//					loadToolGunModes()
-//				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Pre ->
 					if (!localClient.isPaused || !localClient.isLocalServer) {
 						if (machTrailMap.isNotEmpty()) {
@@ -614,6 +634,7 @@ object Registry {
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
 			BreadModBlockEntityUpdateRequestPacket.register(registrar)
+			HitboxPacket.register(registrar)
 		}
 		modBus.addListener { event: EntityAttributeCreationEvent ->
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())

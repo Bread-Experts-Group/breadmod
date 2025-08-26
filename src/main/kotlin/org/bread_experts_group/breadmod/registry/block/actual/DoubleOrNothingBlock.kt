@@ -12,7 +12,6 @@ import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResult
 import net.minecraft.world.ItemInteractionResult
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
@@ -46,6 +45,8 @@ import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockState
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.LOWER
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.MIDDLE
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.UPPER
+import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
+import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler.Companion.getHitboxHandler
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler.Companion.getLerpTicker
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler
@@ -59,9 +60,8 @@ import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNot
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler.Companion.REWIRED
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler.Companion.USE_NEGATIVE_TILT
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
+import org.bread_experts_group.breadmod.util.Hitbox
 import org.bread_experts_group.breadmod.util.combine
-import org.bread_experts_group.breadmod.util.directionalTargetFaceSection
-import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.rotate
 import java.util.Random
 import java.util.stream.Stream
@@ -225,7 +225,16 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 		)
 		return mapOf(
 			DoubleOrNothingStateHandler.BLOCK_VOID to mapOf(null to { _ -> state }),
-			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp })
+			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp }),
+			HitboxHandler.BLOCK_VOID to mapOf(null to { entity ->
+				val pos = entity.blockPos
+				val vec = pos.center.add(1.0, 0.0, 0.0)
+				HitboxHandler(
+					Hitbox(0.25, pos, vec) { level, pos, state, player, entity ->
+						this.triggerDouble(level, pos, player)
+					}
+				)
+			})
 		)
 	}
 
@@ -374,34 +383,46 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 			else -> Shapes.block()
 		}
 
-	override fun useWithoutItem(
+	override fun onRemove(
 		state: BlockState,
 		level: Level,
 		pos: BlockPos,
-		player: Player,
-		hitResult: BlockHitResult
-	): InteractionResult {
-		val half = state.getValue(TRIPLE_BLOCK)
-		val normalizedPos = normalizedHitPos(hitResult.location, pos)
-		val direction = state.getValue(HORIZONTAL_FACING)
-		val doubleButtonState = directionalTargetFaceSection(
-			direction, normalizedPos,
-			0.29, 0.46, 0.62, 0.81,
-			0.49, 0.59
-		)
-		val cashOutButtonState = directionalTargetFaceSection(
-			direction, normalizedPos,
-			0.29, 0.46, 0.19, 0.38,
-			0.49, 0.59
-		)
-		when {
-			doubleButtonState -> this.triggerDouble(level, pos, player)
-			cashOutButtonState -> this.triggerCashout(level, pos, player)
-			half == MIDDLE -> this.triggerDouble(level, pos.below(1), player)
-			half == UPPER -> this.triggerDouble(level, pos.below(2), player)
-		}
-		return InteractionResult.sidedSuccess(level.isClientSide)
+		newState: BlockState,
+		movedByPiston: Boolean
+	) {
+		val entity = level.getBlockEntity(pos) as? BreadModBlockEntity
+		entity?.getHitboxHandler()?.discard()
+		super.onRemove(state, level, pos, newState, movedByPiston)
 	}
+
+//	override fun useWithoutItem(
+//		state: BlockState,
+//		level: Level,
+//		pos: BlockPos,
+//		player: Player,
+//		hitResult: BlockHitResult
+//	): InteractionResult {
+//		val half = state.getValue(TRIPLE_BLOCK)
+//		val normalizedPos = normalizedHitPos(hitResult.location, pos)
+//		val direction = state.getValue(HORIZONTAL_FACING)
+//		val doubleButtonState = directionalTargetFaceSection(
+//			direction, normalizedPos,
+//			0.29, 0.46, 0.62, 0.81,
+//			0.49, 0.59
+//		)
+//		val cashOutButtonState = directionalTargetFaceSection(
+//			direction, normalizedPos,
+//			0.29, 0.46, 0.19, 0.38,
+//			0.49, 0.59
+//		)
+//		when {
+//			doubleButtonState -> this.triggerDouble(level, pos, player)
+//			cashOutButtonState -> this.triggerCashout(level, pos, player)
+//			half == MIDDLE -> this.triggerDouble(level, pos.below(1), player)
+//			half == UPPER -> this.triggerDouble(level, pos.below(2), player)
+//		}
+//		return InteractionResult.sidedSuccess(level.isClientSide)
+//	}
 
 	override fun useItemOnBM(
 		stack: ItemStack,

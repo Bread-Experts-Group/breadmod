@@ -113,7 +113,7 @@ class RayCastTestMode : IToolGunMode {
 			val poseStack = event.poseStack
 			val level = player.level()
 
-			player.rayCast(50.0, blocks())?.let { blockRaycast ->
+			player.rayCast(100.0, blocks())?.let { blockRaycast ->
 				blockRaycast.hit.getShape(level, blockRaycast.blockPosition).toAabbs().forEach {
 					poseStack.pushPose()
 					poseStack.offsetRenderToCameraPos(blockRaycast.blockPosition.toVec3(), event.camera, false)
