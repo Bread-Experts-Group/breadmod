@@ -158,6 +158,7 @@ import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
+import org.bread_experts_group.breadmod.registry.shader.ModPostChains
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModBiomes
@@ -319,7 +320,7 @@ object Registry {
 					)
 				}
 				NeoForge.EVENT_BUS.addListener { event: PlayerEvent.PlayerLoggedInEvent ->
-//					MicroLevel()
+//					val microLevel = ServerMicroLevel()
 //					microLevel.setBlockAndUpdate(BlockPos.ZERO, ModBlocks.BREAD_BLOCK.get().block.defaultBlockState())
 				}
 				NeoForge.EVENT_BUS.addListener { event: LivingEquipmentChangeEvent ->
@@ -415,6 +416,7 @@ object Registry {
 							DefaultVertexFormat.BLOCK
 						)
 					) { ModRenderType.sunInstance = it }
+					ModPostChains.init(event.resourceProvider)
 				}
 				modBus.addListener { event: RegisterClientExtensionsEvent ->
 					event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())

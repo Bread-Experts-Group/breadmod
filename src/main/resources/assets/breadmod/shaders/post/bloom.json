@@ -1,0 +1,119 @@
+{
+  "targets": [
+    "emissive",
+    "emissive_swap",
+    "mixed"
+  ],
+  "passes": [
+    {
+      "name": "blit",
+      "intarget": "minecraft:main",
+      "outtarget": "mixed"
+    },
+    {
+      "name": "box_blur",
+      "intarget": "emissive",
+      "outtarget": "emissive_swap",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [
+            1.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "box_blur",
+      "intarget": "emissive_swap",
+      "outtarget": "emissive",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    {
+      "name": "box_blur",
+      "intarget": "emissive",
+      "outtarget": "emissive_swap",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [
+            1.0,
+            0.0
+          ],
+          "RadiusMultiplier": 0.5
+        }
+      ]
+    },
+    {
+      "name": "box_blur",
+      "intarget": "emissive_swap",
+      "outtarget": "emissive",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [
+            0.0,
+            1.0
+          ],
+          "RadiusMultiplier": 0.5
+        }
+      ]
+    },
+    {
+      "name": "box_blur",
+      "intarget": "emissive",
+      "outtarget": "emissive_swap",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [
+            1.0,
+            0.0
+          ],
+          "RadiusMultiplier": 0.25
+        }
+      ]
+    },
+    {
+      "name": "box_blur",
+      "intarget": "emissive_swap",
+      "outtarget": "emissive",
+      "use_linear_filter": true,
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "values": [
+            0.0,
+            1.0
+          ],
+          "RadiusMultiplier": 0.25
+        }
+      ]
+    },
+    {
+      "name": "breadmod:blend",
+      "intarget": "emissive",
+      "outtarget": "minecraft:main",
+      "auxtargets": [
+        {
+          "name": "AlphaOverSampler",
+          "id": "mixed"
+        }
+      ]
+    }
+  ]
+}

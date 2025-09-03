@@ -24,6 +24,7 @@
     "client.MixinClientPacket",
     "client.MixinDirectoryListener",
     "client.MixinFallbackResourceManager",
+    "client.MixinGameRenderer",
     "client.MixinGuiGraphics",
     "client.MixinLevelRenderer",
     "client.MixinMinecraft",

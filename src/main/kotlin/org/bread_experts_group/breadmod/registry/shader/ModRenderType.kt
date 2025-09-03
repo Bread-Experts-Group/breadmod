@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderStateShard.CULL
 import net.minecraft.client.renderer.RenderStateShard.LIGHTMAP
 import net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY
+import net.minecraft.client.renderer.RenderStateShard.OutputStateShard
 import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
 import net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TARGET
 import net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TRANSPARENCY
@@ -15,6 +16,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderType.SMALL_BUFFER_SIZE
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.resources.ResourceLocation
+import org.bread_experts_group.breadmod.client.render.localClient
 
 /**
  * ## SHADER UNIFORM AND IN/OUT INFO
@@ -46,6 +48,11 @@ import net.minecraft.resources.ResourceLocation
  */
 @Suppress("INACCESSIBLE_TYPE")
 object ModRenderType {
+	val EMISSIVE_TARGET: OutputStateShard = OutputStateShard("emissive_target", {
+		if (ModPostChains.ready) ModPostChains.bloomEmissiveTarget.bindWrite(false)
+	}, {
+		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(false)
+	})
 	val SPEED_VERTEX_ELEMENT: VertexFormatElement = VertexFormatElement.register(
 		6, 0,
 		VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 1
@@ -116,6 +123,7 @@ object ModRenderType {
 			RenderType.CompositeState.builder()
 				.setShaderState(this.glowShader)
 				.setTextureState(textureState)
+				.setOutputState(this.EMISSIVE_TARGET)
 				.setTransparencyState(NO_TRANSPARENCY)
 				.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 				.createCompositeState(false)
