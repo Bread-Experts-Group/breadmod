@@ -22,7 +22,7 @@ class EntityTab(screen: CreatorScreen) : ContainerWidget<CreatorScreen>(
 	override fun initContainer() {
 		this.addChild(
 			"test_button",
-			GenericButton(this.x, this.y + 150, 40, 12, "TEST") {
+			GenericButton(this.x, this.y + 150, 40, 12, "TEST") { _, _ ->
 				val entity = this.screen.currentEntity as LivingEntity
 				entity.health = 100f
 				entity.attributes.getInstance(Attributes.MAX_HEALTH)?.let { it.baseValue = 100.0 }

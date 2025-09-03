@@ -273,8 +273,16 @@ object Registry {
 						player.rayCast(10.0, hitbox())?.let { result ->
 							val level = player.level()
 							val state = level.getBlockState(result.blockPosition)
-							val entity = level.getBlockEntity(result.hit.originBlockPos) as BreadModBlockEntity
+							val entity = level.getBlockEntity(result.hit.originBlockPos) as? BreadModBlockEntity
 							val blockPos = result.hit.originBlockPos
+							if (entity == null) {
+								HitboxHandler.hitboxes.remove(result.hit.pos)
+								player.displayClientMessage(
+									Component.literal("entity does not exist, removing hitbox"),
+									true
+								)
+								return@addListener
+							}
 							result.hit.onHitClient(level as ClientLevel, blockPos, state, player, entity)
 							result.hit.onHitCommon(level, result.hit.originBlockPos, state, player, entity)
 						}

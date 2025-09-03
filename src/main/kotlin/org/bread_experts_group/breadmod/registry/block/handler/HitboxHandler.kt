@@ -8,7 +8,7 @@ import org.bread_experts_group.breadmod.util.Hitbox
 
 class HitboxHandler(
 	vararg val hitboxes: Hitbox
-) : ParentedHandler<BreadModBlockEntity> {
+) : ParentedHandler<BreadModBlockEntity>, DiscardableHandler {
 	companion object {
 		val hitboxes: MutableMap<Vec3, Hitbox> = mutableMapOf()
 
@@ -27,7 +27,8 @@ class HitboxHandler(
 		}
 	}
 
-	fun discard() {
+	// todo find out why this isn't being called in setRemoved
+	override fun discard() {
 		this.hitboxes.forEach { Companion.hitboxes.remove(it.pos) }
 	}
 

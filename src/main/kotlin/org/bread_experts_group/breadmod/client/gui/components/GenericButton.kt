@@ -14,19 +14,26 @@ class GenericButton(
 	height: Int,
 	message: Component,
 	private val tooltipMessage: Component = Component.empty(),
-	onPress: OnPress
-) :
-	Button(x, y, width, height, message, onPress, { Component.empty() }) {
+	private val onClick: (Button, Int) -> Unit
+) : Button(x, y, width, height, message, {}, { Component.empty() }) {
 	constructor(
 		x: Int, y:
 		Int, width:
 		Int, height: Int,
 		message: String,
 		tooltipMessage: Component = Component.empty(),
-		onPress: OnPress
+		onPress: (Button, Int) -> Unit
 	) : this(x, y, width, height, Component.literal(message), tooltipMessage, onPress)
 
 	override fun getTooltip(): Tooltip = Tooltip.create(this.tooltipMessage)
+
+	override fun isValidClickButton(button: Int): Boolean = button == 0 || button == 1 || button == 2
+
+	override fun onPress() {}
+
+	override fun onClick(mouseX: Double, mouseY: Double, button: Int) {
+		this.onClick(this, button)
+	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		if (this.isMouseOver(

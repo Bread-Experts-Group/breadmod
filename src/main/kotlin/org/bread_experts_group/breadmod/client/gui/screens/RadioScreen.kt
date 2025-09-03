@@ -1,13 +1,13 @@
 package org.bread_experts_group.breadmod.client.gui.screens
 
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.components.EditBox
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.gui.components.GenericButton
+import org.bread_experts_group.breadmod.client.gui.components.GenericEditBox
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.playingSounds
 import org.bread_experts_group.breadmod.client.render.scaleFlat
@@ -60,7 +60,7 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 		this.leftPos = (this.width - 176) / 2
 		this.topPos = (this.height - 150) / 2
 
-		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 5, 40, 20, "button") {
+		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 5, 40, 20, "button") { _, _ ->
 			Thread.ofVirtual().start {
 				playingSounds[this.pos] = StereoSoundInstance(this.uri ?: return@start, this.pos)
 				val instance = playingSounds[this.pos] ?: return@start
@@ -68,7 +68,7 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 			}
 		})
 
-		this.addRenderableWidget(GenericButton(this.leftPos + 45, this.topPos + 5, 40, 20, "test") {
+		this.addRenderableWidget(GenericButton(this.leftPos + 45, this.topPos + 5, 40, 20, "test") { _, _ ->
 			Thread.ofVirtual().start {
 				this@RadioScreen.trySetURL("file:///home/logan/beginning.mp3")
 				playingSounds[this.pos] = StereoSoundInstance(this.uri ?: return@start, this.pos)
@@ -77,25 +77,20 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 			}
 		})
 
-		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 30, 70, 20, "pause/play") {
+		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 30, 70, 20, "pause/play") { _, _ ->
 			val instance = playingSounds[this.pos] ?: return@GenericButton
 			instance.togglePause()
 		})
 
-		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 60, 70, 20, "rewind") {
+		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 60, 70, 20, "rewind") { _, _ ->
 		})
 
 		this.addRenderableWidget(
-			object : EditBox(this.font, this.leftPos + 5, this.topPos + 90, 165, 20, Component.empty()) {
-				init {
-					this.value = this@RadioScreen.uri?.path ?: ""
-					this.setMaxLength(100)
-				}
-
-				override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
-					if (keyCode == 257) this@RadioScreen.trySetURL(this.value)
-					return super.keyPressed(keyCode, scanCode, modifiers)
-				}
+			GenericEditBox(this.leftPos + 5, this.topPos + 90, 165, 20, Component.empty(), { editBox ->
+				editBox.value = this@RadioScreen.uri?.path ?: ""
+				editBox.setMaxLength(100)
+			}) { editBox, keyCode ->
+				if (keyCode == 257) this@RadioScreen.trySetURL(editBox.value)
 			})
 	}
 

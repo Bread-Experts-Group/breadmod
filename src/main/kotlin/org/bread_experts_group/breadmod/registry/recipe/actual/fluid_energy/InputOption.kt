@@ -24,17 +24,17 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
-class InputOption<T : Any>(
+class InputOption<T : Any> private constructor(
 	private val selectClass: KClass<T>,
-	val left: Pair<TagKey<T>, BigDecimal>?,
-	val right: BigDescriptor<T>?
+	val left: Pair<TagKey<T>, BigDecimal>? = null,
+	val right: BigDescriptor<T>? = null
 ) {
 	companion object {
 		fun <T : Any> tag(selectClass: KClass<T>, tagKey: Pair<TagKey<T>, BigDecimal>): InputOption<T> =
-			InputOption(selectClass, tagKey, null)
+			InputOption(selectClass, tagKey)
 
 		fun <T : Any> bigDescriptor(selectClass: KClass<T>, descriptor: BigDescriptor<T>): InputOption<T> =
-			InputOption(selectClass, null, descriptor)
+			InputOption(selectClass, right = descriptor)
 
 		val ITEM_CODEC: Codec<InputOption<Item>> =
 			RecordCodecBuilder<RegistryFriendlyByteBuf, InputOption<Item>>.create { inst ->
@@ -108,9 +108,6 @@ class InputOption<T : Any>(
 	private var tagFluids: List<Fluid> = emptyList()
 
 	init {
-		if (this.left != null && this.right != null) throw IllegalArgumentException("Only Left or Right should be not null!")
-		if (this.left == null && this.right == null) throw IllegalArgumentException("Left or Right should not be null!")
-
 		when (this.selectClass) {
 			Item::class -> {
 				if (this.left != null) {

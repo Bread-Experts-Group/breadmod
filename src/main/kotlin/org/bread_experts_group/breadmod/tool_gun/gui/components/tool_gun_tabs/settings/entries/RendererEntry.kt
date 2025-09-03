@@ -66,7 +66,7 @@ class RendererEntry(
 					if (renderer is EmptyMode.EmptyModeRenderer) return@forEach
 					container.addChild(
 						"renderer_${mode.getModeName()}",
-						GenericButton(0, 0, 80, 15, mode.getDisplayName()) {
+						GenericButton(0, 0, 80, 15, mode.getDisplayName()) { _, _ ->
 							this.index = Registry.toolGunModes.values.indexOf(mode)
 //							ToolGunItemRenderer.rendererOverride = renderer
 						},

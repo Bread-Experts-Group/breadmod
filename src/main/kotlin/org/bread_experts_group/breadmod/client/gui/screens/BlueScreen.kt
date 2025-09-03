@@ -13,7 +13,7 @@ class BlueScreen : Screen(Component.empty()) {
 	}
 
 	override fun init() {
-		this.addRenderableWidget(GenericButton(10, 10, 200, 16, "RESPAWN") {
+		this.addRenderableWidget(GenericButton(10, 10, 200, 16, "RESPAWN") { _, _ ->
 			(localClient.player ?: return@GenericButton).respawn()
 		})
 	}

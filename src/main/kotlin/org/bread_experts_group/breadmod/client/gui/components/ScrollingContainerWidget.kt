@@ -29,9 +29,9 @@ class ScrollingContainerWidget<T : Screen>(
 			field = Mth.clamp(value, 0.0, this.getMaxScrollAmount().toDouble())
 		}
 
-	override fun addChild(
+	override fun <T : AbstractWidget> addChild(
 		id: String,
-		widget: AbstractWidget,
+		widget: T,
 		x: Int,
 		y: Int,
 		shouldRender: Boolean,
@@ -68,6 +68,14 @@ class ScrollingContainerWidget<T : Screen>(
 			val bottomAccount = if (this.scrollAmount.toInt() - scrollDirection == this.getMaxScrollAmount()) 10 else 0
 			this.scrollAmount -= scrollDirection
 			this.getWidgets().forEach { widget ->
+				if (widget is ContainerWidget<*>) {
+					widget.getAllWidgets().forEach { child ->
+						child.y += topAccount - bottomAccount
+						if (this.scrollAmount != 0.0 && this.scrollAmount < this.getMaxScrollAmount()) {
+							child.y += scrollDirection
+						}
+					}
+				}
 				widget.y += topAccount - bottomAccount
 				if (this.scrollAmount != 0.0 && this.scrollAmount < this.getMaxScrollAmount()) {
 					widget.y += scrollDirection
@@ -92,7 +100,7 @@ class ScrollingContainerWidget<T : Screen>(
 	}
 
 	override fun initContainer() {
-		this.initializer.invoke(this)
+		this.initializer(this)
 	}
 
 	private fun renderScrollBar(guiGraphics: GuiGraphics) {

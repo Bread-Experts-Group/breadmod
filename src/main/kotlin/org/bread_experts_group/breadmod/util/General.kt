@@ -152,7 +152,7 @@ class HitResult<T>(
 	val positionFrom: Vec3,
 	val directionTo: Vec3,
 	val hitPosition: Vec3,
-	val hitShape: VoxelShape,
+	private val hitShape: VoxelShape,
 	val blockPosition: BlockPos,
 	val length: Double,
 	val hit: T

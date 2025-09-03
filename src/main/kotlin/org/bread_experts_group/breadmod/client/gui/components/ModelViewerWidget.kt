@@ -95,7 +95,7 @@ class ModelViewerWidget(
 		this.addChild("dragger", this.Dragger())
 		this.addChild(
 			"move_left",
-			GenericButton(0, 0, 20, 20, "<") {
+			GenericButton(0, 0, 20, 20, "<") { _, _ ->
 				this.getDragger().offsetX -= 1.0
 			},
 			this.x + 2,
@@ -103,7 +103,7 @@ class ModelViewerWidget(
 		)
 		this.addChild(
 			"move_right",
-			GenericButton(0, 0, 20, 20, ">") {
+			GenericButton(0, 0, 20, 20, ">") { _, _ ->
 				this.getDragger().offsetX += 1.0
 			},
 			this.x + 24,

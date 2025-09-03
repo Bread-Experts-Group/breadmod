@@ -46,7 +46,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockState
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.MIDDLE
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties.TripleBlockHalf.UPPER
 import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
-import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler.Companion.getHitboxHandler
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler.Companion.getLerpTicker
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler
@@ -228,9 +227,9 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp }),
 			HitboxHandler.BLOCK_VOID to mapOf(null to { entity ->
 				val pos = entity.blockPos
-				val vec = pos.center.add(1.0, 0.0, 0.0)
+				val offset = pos.relative(entity.blockState.getValue(HORIZONTAL_FACING)).center
 				HitboxHandler(
-					Hitbox(0.25, pos, vec) { level, pos, state, player, entity ->
+					Hitbox(0.25, pos, offset) { level, pos, state, player, entity ->
 						this.triggerDouble(level, pos, player)
 					}
 				)
@@ -382,18 +381,6 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 			}
 			else -> Shapes.block()
 		}
-
-	override fun onRemove(
-		state: BlockState,
-		level: Level,
-		pos: BlockPos,
-		newState: BlockState,
-		movedByPiston: Boolean
-	) {
-		val entity = level.getBlockEntity(pos) as? BreadModBlockEntity
-		entity?.getHitboxHandler()?.discard()
-		super.onRemove(state, level, pos, newState, movedByPiston)
-	}
 
 //	override fun useWithoutItem(
 //		state: BlockState,

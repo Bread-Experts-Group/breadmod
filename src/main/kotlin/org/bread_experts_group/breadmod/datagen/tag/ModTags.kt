@@ -7,23 +7,23 @@ import net.minecraft.world.level.block.Block
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 
-@DataGenerateLanguage("en_us", prefix = "tag.block.")
+@DataGenerateLanguage(prefix = "tag.block.")
 val MINEABLE_WITH_KNIFE: TagKey<Block> =
 	TagKey.create(Registries.BLOCK, modLocation("mineable/knife"))
 
-@DataGenerateLanguage("en_us", prefix = "tag.block.")
+@DataGenerateLanguage(prefix = "tag.block.")
 val INCORRECT_FOR_BREAD_TOOL: TagKey<Block> =
 	TagKey.create(Registries.BLOCK, modLocation("incorrect_for_bread_tool"))
 
-@DataGenerateLanguage("en_us", prefix = "tag.block.")
+@DataGenerateLanguage(prefix = "tag.block.")
 val INCORRECT_FOR_REINFORCED_BREAD_TOOL: TagKey<Block> =
 	TagKey.create(Registries.BLOCK, modLocation("incorrect_for_reinforced_bread_tool"))
 
-@DataGenerateLanguage("en_us", prefix = "tag.item.")
+@DataGenerateLanguage(prefix = "tag.item.")
 val KNIVES: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("knives"))
 
-@DataGenerateLanguage("en_us", prefix = "tag.item.")
+@DataGenerateLanguage(prefix = "tag.item.")
 val TOASTABLE: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("toastable"))
 
-@DataGenerateLanguage("en_us", prefix = "tag.item.")
+@DataGenerateLanguage(prefix = "tag.item.")
 val EXPLODES_IN_TOASTER: TagKey<Item> = TagKey.create(Registries.ITEM, modLocation("explodes_in_toaster"))

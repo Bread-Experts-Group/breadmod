@@ -11,5 +11,5 @@ interface ParentedHandler<T : Any> {
 		this.stateListeners.forEach { it() }
 	}
 
-	fun parentReady() {}
+	fun onParentReady() {}
 }

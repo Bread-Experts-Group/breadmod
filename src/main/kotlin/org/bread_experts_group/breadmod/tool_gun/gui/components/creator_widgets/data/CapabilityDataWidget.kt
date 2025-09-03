@@ -71,7 +71,7 @@ class CapabilityDataWidget<T>(
 				val handler = this.container.getCapability(Capabilities.EnergyStorage.BLOCK) ?: return
 				this.addChild(
 					"energy_button",
-					GenericButton(this.x + 2, this.y + 20, 10, 10, "+") {
+					GenericButton(this.x + 2, this.y + 20, 10, 10, "+") { _, _ ->
 						handler.receiveEnergy(10000, false)
 					}
 				)

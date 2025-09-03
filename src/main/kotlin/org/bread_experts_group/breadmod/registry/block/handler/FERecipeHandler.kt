@@ -51,7 +51,7 @@ class FERecipeHandler<T : FluidEnergyRecipe>(
 	/**
 	 * Advances this [recipe], and assembles the results upon completion.
 	 */
-	fun advanceRecipe(): Boolean {
+	fun advanceAndFinishRecipe(): Boolean {
 		val recipe = this.recipe ?: return false
 		val level = this.parent.level ?: return false
 		this.progress++
@@ -73,7 +73,7 @@ class FERecipeHandler<T : FluidEnergyRecipe>(
 		}
 	}
 
-	override fun parentReady() {
+	override fun onParentReady() {
 		val item = this.parent.getCapabilityOrNull(Capabilities.ItemHandler.BLOCK) as? ExtendedItemHandler
 		val fluid = this.parent.getCapabilityOrNull(Capabilities.FluidHandler.BLOCK) as? ExtendedFluidHandler
 		val energy = this.parent.getCapabilityOrNull(Capabilities.EnergyStorage.BLOCK) as? ExtendedEnergyHandler
@@ -87,6 +87,11 @@ class FERecipeHandler<T : FluidEnergyRecipe>(
 	var progress: ULong = 0u
 	var recipe: RecipeHolder<T>? = null
 		private set
+
+	fun flushRecipe() {
+		this.recipe = null
+		this.progress = 0u
+	}
 
 	override fun serializeNBT(provider: HolderLookup.Provider): Tag = CompoundTag().also {
 		it.putLong("progress", this.progress.toLong())

@@ -16,10 +16,12 @@ import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.network.PacketDistributor
+import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.handler.DataComponentSerializable
+import org.bread_experts_group.breadmod.registry.block.handler.DiscardableHandler
 import org.bread_experts_group.breadmod.registry.block.handler.ParentedHandler
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
@@ -47,7 +49,7 @@ class BreadModBlockEntity(
 	init {
 		for ((_, contextual) in this.capabilities) {
 			for ((_, actual) in contextual) {
-				if (actual is ParentedHandler<*>) actual.parentReady()
+				if (actual is ParentedHandler<*>) actual.onParentReady()
 			}
 		}
 	}
@@ -134,5 +136,15 @@ class BreadModBlockEntity(
 			hoverText.addAll(components)
 		}
 		components.set(BLOCK_ENTITY_HANDLER_INFORMATION, hoverText)
+	}
+
+	override fun setRemoved() {
+		this.capabilities.forEach { (capability, _) ->
+			if (capability is DiscardableHandler) {
+				LogManager.getLogger().info("removing $capability")
+				capability.discard()
+			}
+		}
+		super.setRemoved()
 	}
 }

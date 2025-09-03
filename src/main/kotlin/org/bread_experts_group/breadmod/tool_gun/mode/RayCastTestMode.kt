@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.tool_gun
+package org.bread_experts_group.breadmod.tool_gun.mode
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.DeltaTracker
@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.debug.DebugRenderer
-import net.minecraft.core.BlockPos.MutableBlockPos
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -36,7 +36,7 @@ import org.bread_experts_group.breadmod.util.toVec3
 @Suppress("unused")
 class RayCastTestMode : IToolGunMode {
 	var hitPos: Vec3 = Vec3.ZERO
-	var blockHitPos: MutableBlockPos = MutableBlockPos()
+	var blockHitPos: BlockPos.MutableBlockPos = BlockPos.MutableBlockPos()
 	var direction: Direction = Direction.NORTH
 	var showDebugData: Boolean = true
 

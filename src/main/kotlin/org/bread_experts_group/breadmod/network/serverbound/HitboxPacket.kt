@@ -8,6 +8,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
 import org.bread_experts_group.breadmod.util.hitbox
 import org.bread_experts_group.breadmod.util.rayCast
 import java.util.Objects
@@ -23,8 +24,12 @@ class HitboxPacket : CustomPacketPayload {
 				val level = player.level()
 				player.rayCast(10.0, hitbox())?.let { result ->
 					val state = level.getBlockState(result.blockPosition)
-					val entity = level.getBlockEntity(result.hit.originBlockPos) as BreadModBlockEntity
+					val entity = level.getBlockEntity(result.hit.originBlockPos) as? BreadModBlockEntity
 					val blockPos = result.hit.originBlockPos
+					if (entity == null) {
+						HitboxHandler.hitboxes.remove(result.hit.pos)
+						return@enqueueWork
+					}
 					result.hit.onHitServer(level as ServerLevel, blockPos, state, player, entity)
 					result.hit.onHitCommon(level, blockPos, state, player, entity)
 					player.swing(player.usedItemHand, true)

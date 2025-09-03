@@ -751,3 +751,18 @@ fun solidColorTexture(color: Int, id: String, width: Int = 16, height: Int = 16)
 
 fun solidColorTexture(r: Int, g: Int, b: Int, id: String, width: Int = 16, height: Int = 16): ResourceLocation =
 	solidColorTexture(Color.color(r, g, b), id, width, height)
+
+fun checkerboardTexture(
+	firstColor: Int,
+	secondColor: Int,
+	id: String,
+	width: Int = 16,
+	height: Int = 16
+): ResourceLocation {
+	val native = NativeImage(width, height, false)
+	native.fillRect(0, 0, width / 2, height / 2, firstColor)
+	native.fillRect(width / 2, 0, width / 2, height / 2, secondColor)
+	native.fillRect(0, height / 2, width / 2, height / 2, secondColor)
+	native.fillRect(width / 2, height / 2, width / 2, height / 2, firstColor)
+	return localClient.textureManager.register("bm_color_tex_${firstColor}_${secondColor}_$id", DynamicTexture(native))
+}

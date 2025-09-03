@@ -118,11 +118,11 @@ class CreatorScreen(
 		this.topPos = (this.height - 256) / 2
 		this.addRenderableWidget(BlockTab(this, this.level))
 		this.addRenderableWidget(EntityTab(this).also(EntityTab::disable))
-		this.addRenderableWidget(GenericButton(this.leftPos, this.topPos + 3, 44, 12, "BLOCK") {
+		this.addRenderableWidget(GenericButton(this.leftPos, this.topPos + 3, 44, 12, "BLOCK") { _, _ ->
 			(this.children()[0] as ContainerWidget<*>).enable()
 			(this.children()[1] as ContainerWidget<*>).disable()
 		})
-		this.addRenderableWidget(GenericButton(this.leftPos + 44, this.topPos + 3, 44, 12, "ENTITY") {
+		this.addRenderableWidget(GenericButton(this.leftPos + 44, this.topPos + 3, 44, 12, "ENTITY") { _, _ ->
 			(this.children()[0] as ContainerWidget<*>).disable()
 			(this.children()[1] as ContainerWidget<*>).enable()
 		})

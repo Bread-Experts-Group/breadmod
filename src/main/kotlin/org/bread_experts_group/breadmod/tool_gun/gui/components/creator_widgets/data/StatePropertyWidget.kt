@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.data
 
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.components.Button
 import net.minecraft.client.gui.components.Button.OnPress
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
@@ -57,7 +58,7 @@ class StatePropertyWidget<T : Property<*>>(
 				this.property.allValues.toList().forEach { intValue: Value<Int> ->
 					this.addChild(
 						"${this.property.name}_${intValue.value}",
-						this.makeButton(xOffset, yOffset, intValue.value.toString()) {
+						this.makeButton(xOffset, yOffset, intValue.value.toString()) { _, _ ->
 							this.setInt(this.property, intValue.value)
 						}
 					)
@@ -73,7 +74,7 @@ class StatePropertyWidget<T : Property<*>>(
 				this.property.allValues.toList().forEach { boolValue ->
 					this.addChild(
 						"${this.property.name}_${boolValue.value}",
-						this.makeButton(xOffset, 0, boolValue.value.toString()) {
+						this.makeButton(xOffset, 0, boolValue.value.toString()) { _, _ ->
 							this.setBool(this.property, boolValue.value)
 						}
 					)
@@ -86,7 +87,7 @@ class StatePropertyWidget<T : Property<*>>(
 				Direction.entries.forEach { direction ->
 					this.addChild(
 						"${this.property.name}_${direction.name}",
-						this.makeButton(xOffset, yOffset, direction.name) {
+						this.makeButton(xOffset, yOffset, direction.name) { _, _ ->
 							this.setDirection(this.property, direction)
 						},
 						isActive = direction in this.property.possibleValues
@@ -105,7 +106,7 @@ class StatePropertyWidget<T : Property<*>>(
 					val enum = this.property.possibleValues.toList()[ordinal]
 					this.addChild(
 						"${this.property.name}_$ordinal",
-						this.makeButton(xOffset, yOffset, enum.name) { this.setEnum(this.property, ordinal) }
+						this.makeButton(xOffset, yOffset, enum.name) { _, _ -> this.setEnum(this.property, ordinal) }
 					)
 					if (ordinal == 2) {
 						yOffset = 14
@@ -118,7 +119,7 @@ class StatePropertyWidget<T : Property<*>>(
 		}
 	}
 
-	private fun makeButton(xOffset: Int, yOffset: Int, text: String, onPress: OnPress): GenericButton =
+	private fun makeButton(xOffset: Int, yOffset: Int, text: String, onClick: (Button, Int) -> Unit): GenericButton =
 		GenericButton(
 			this.x + 6 + xOffset,
 			this.y + 12 + yOffset,
@@ -126,7 +127,7 @@ class StatePropertyWidget<T : Property<*>>(
 			12,
 			text,
 			Component.empty(),
-			onPress
+			onClick
 		)
 
 	private fun setEnum(property: EnumProperty<*>, ordinal: Int) {

@@ -188,15 +188,15 @@ open class ContainerWidget<T : Screen>(
 		else super.isMouseOver(mouseX, mouseY)
 	}
 
-	open fun addChild(
+	open fun <T : AbstractWidget> addChild(
 		id: String,
-		widget: AbstractWidget,
+		widget: T,
 		x: Int = 0,
 		y: Int = 0,
 		shouldRender: Boolean = true,
 		isActive: Boolean = true
 	) {
-		check(this.subWidgets[id] == null) { "Widget with $id already exists!" }
+		check(this.subWidgets[id] == null) { "Widget with $id already exists! source: ${this::class.simpleName}" }
 		widget.visible = shouldRender
 		widget.active = isActive
 		if (x != 0 || y != 0) widget.setPosition(x, y)

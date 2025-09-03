@@ -30,7 +30,7 @@ class ModeSelectTab(
 
 	private var currentModeWidget: ModeWidget = ModeWidget.noWidget
 	private val modeWidgets: MutableList<ModeWidget> = mutableListOf()
-	private val modeButton: GenericButton = GenericButton(0, 0, 80, 20, "Change Mode") {
+	private val modeButton: GenericButton = GenericButton(0, 0, 80, 20, "Change Mode") { _, _ ->
 		val index = Registry.toolGunModes.keys.indexOf(this.currentModeWidget.id)
 		PacketDistributor.sendToServer(ToolGunModeChangePacket(this.currentModeWidget.id, index))
 		this.updateModeWidgetSelection(index)
@@ -51,7 +51,7 @@ class ModeSelectTab(
 				180,
 				"mode_holder",
 				this.screen,
-				200,
+				400,
 				Color.color(10, 10, 10),
 				Color.DARK_GRAY
 			) { container ->

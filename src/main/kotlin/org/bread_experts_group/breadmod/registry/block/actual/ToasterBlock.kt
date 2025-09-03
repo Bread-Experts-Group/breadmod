@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
@@ -46,6 +47,7 @@ import org.bread_experts_group.breadmod.registry.block.handler.FERecipeHandler.C
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.recipe.actual.ToasterRecipe
 import org.bread_experts_group.breadmod.util.Color.RED
+import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import kotlin.random.Random
 
 class ToasterBlock : BreadModBlock(
@@ -60,7 +62,7 @@ class ToasterBlock : BreadModBlock(
 	}
 
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::ToasterRenderer
 
 	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
@@ -73,11 +75,17 @@ class ToasterBlock : BreadModBlock(
 	}
 
 	override val serverTickBM: BreadModTicker<ServerLevel> = tick@{ entity, level, state, pos ->
+		if (!state.getValue(TRIGGERED)) return@tick
 		val recipeHandler = entity.getRecipeHandler<ToasterRecipe>()
-		val recipe = recipeHandler.recipe ?: return@tick
-		level.setBlockAndUpdate(pos, state.setValue(TRIGGERED, true))
+		val recipe = recipeHandler.recipe
+		if (recipe == null) {
+			level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BASS.value(), SoundSource.BLOCKS, 0.2f, 0.5f)
+			level.setBlockAndUpdate(pos, state.setValue(TRIGGERED, false))
+			return@tick
+		}
 		if (recipeHandler.progress == 0uL) recipe.value.consumeItemsAndFluids(recipeHandler.input)
-		if (recipeHandler.advanceRecipe()) {
+		if (recipeHandler.advanceAndFinishRecipe()) {
+			level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS, 0.4f, 0.8f)
 			level.setBlockAndUpdate(pos, state.setValue(TRIGGERED, false))
 		}
 	}
@@ -112,13 +120,13 @@ class ToasterBlock : BreadModBlock(
 		val blockEntity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return InteractionResult.FAIL
 		val storageState = blockEntity.getCapability(Capabilities.ItemHandler.BLOCK) as ExtendedItemHandler
 		val recipeState = blockEntity.getCapability(FERecipeHandler.BLOCK_VOID)
-		val triggeredState = state.getValue(TRIGGERED)
 		if (player.isCrouching && recipeState.progress == 0uL) {
-			level.setBlockAndUpdate(pos, state.setValue(TRIGGERED, triggeredState))
-		} else if (
-			!player.isCrouching && !triggeredState && recipeState.progress == 0uL &&
-			player.getItemInHand(player.usedItemHand).isEmpty
-		) storageState.dropContents(pos, level)
+			level.setBlockAndUpdate(pos, state.setValue(TRIGGERED, true))
+		} else if (!player.isCrouching && recipeState.progress > 0uL) {
+			recipeState.flushRecipe()
+			storageState.dropContents(pos, level)
+			state.setValue(TRIGGERED, false)
+		}
 		return sidedSuccess(level.isClientSide)
 	}
 
@@ -139,10 +147,10 @@ class ToasterBlock : BreadModBlock(
 			!triggeredState && recipeState.progress <= 0uL && !stack.isEmpty &&
 			(stack.`is`(TOASTABLE) || stack.`is`(EXPLODES_IN_TOASTER))
 		) {
-			val stack = player.getItemInHand(player.usedItemHand)
+			val stack = getStackInPlayerHand(player)
 			val inserted = storageState.insertItem(
 				0,
-				player.getItemInHand(player.usedItemHand),
+				getStackInPlayerHand(player),
 				false
 			)
 			if (inserted.count != stack.count) {
@@ -157,7 +165,7 @@ class ToasterBlock : BreadModBlock(
 				)
 			}
 		}
-		return ItemInteractionResult.sidedSuccess(level.isClientSide)
+		return super.useItemOnBM(stack, state, level, pos, player, hand, hitResult)
 	}
 
 	// Pretty much a clone of the furnace animateTick code.
@@ -172,39 +180,23 @@ class ToasterBlock : BreadModBlock(
 		val d3 = random.nextDouble() * 0.6 / 16.0 // Y
 		val d2 = if (axis == Direction.Axis.Z) direction.stepX * 0.52 else d1 // Z
 
+		fun particle(particle: ParticleOptions, xOffset: Double = 0.0, secondSlot: Boolean) = level.addParticle(
+			particle,
+			posX + d2 + xOffset,
+			posY + d3,
+			posZ + d4 + if (axis == Direction.Axis.X) if (secondSlot) -0.1 else 0.1 else 0.0,
+			0.0, 0.0, 0.0
+		)
+
 		if (state.getValue(TRIGGERED)) {
 			val blockEntity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return
 			val storageState = blockEntity.getCapability(Capabilities.ItemHandler.BLOCK)
 			if (storageState.getStackInSlot(0).`is`(EXPLODES_IN_TOASTER)) {
-				level.addParticle(
-					ParticleTypes.LAVA,
-					posX + d2,
-					posY + d3,
-					posZ + d4 + if (axis == Direction.Axis.X) -0.1 else 0.0,
-					0.0, 0.0, 0.0
-				)
-				level.addParticle(
-					ParticleTypes.LAVA,
-					posX + d2 + 0.2,
-					posY + d3,
-					posZ + d4 + if (axis == Direction.Axis.X) 0.1 else 0.0,
-					0.0, 0.0, 0.0
-				)
+				particle(ParticleTypes.LAVA, secondSlot = true)
+				particle(ParticleTypes.LAVA, 0.2, false)
 			} else {
-				level.addParticle(
-					ParticleTypes.SMOKE,
-					posX + d2,
-					posY + d3,
-					posZ + d4 + if (axis == Direction.Axis.X) -0.1 else 0.0,
-					0.0, 0.0, 0.0
-				)
-				level.addParticle(
-					ParticleTypes.SMOKE,
-					posX + d2 + 0.2,
-					posY + d3,
-					posZ + d4 + if (axis == Direction.Axis.X) 0.1 else 0.0,
-					0.0, 0.0, 0.0
-				)
+				particle(ParticleTypes.SMOKE, secondSlot = true)
+				particle(ParticleTypes.SMOKE, 0.2, false)
 			}
 		}
 	}
