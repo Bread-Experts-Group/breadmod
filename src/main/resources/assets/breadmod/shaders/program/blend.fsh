@@ -8,7 +8,7 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 vec4 blend(vec4 src, vec4 dst) {
-    return src + dst;
+    return dst + src * (1 - dst.a);
 }
 
 void main(){
