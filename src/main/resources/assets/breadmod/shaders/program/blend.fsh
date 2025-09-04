@@ -12,5 +12,6 @@ vec4 blend(vec4 src, vec4 dst) {
 }
 
 void main(){
-    fragColor = blend(texture(AlphaOverSampler, texCoord), texture(DiffuseSampler, texCoord));
+    vec4 final = blend(texture(AlphaOverSampler, texCoord), texture(DiffuseSampler, texCoord));
+    fragColor = final;
 }

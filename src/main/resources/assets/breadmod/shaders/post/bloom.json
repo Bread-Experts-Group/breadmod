@@ -2,13 +2,13 @@
   "targets": [
     "emissive",
     "emissive_swap",
-    "mixed"
+    "final"
   ],
   "passes": [
     {
       "name": "blit",
       "intarget": "minecraft:main",
-      "outtarget": "mixed"
+      "outtarget": "final"
     },
     {
       "name": "box_blur",
@@ -18,10 +18,7 @@
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [
-            1.0,
-            0.0
-          ]
+          "values": [1.0, 0.0]
         }
       ]
     },
@@ -33,10 +30,7 @@
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [
-            0.0,
-            1.0
-          ]
+          "values": [0.0, 1.0]
         }
       ]
     },
@@ -48,10 +42,7 @@
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [
-            1.0,
-            0.0
-          ],
+          "values": [1.0, 0.0],
           "RadiusMultiplier": 0.5
         }
       ]
@@ -64,10 +55,7 @@
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [
-            0.0,
-            1.0
-          ],
+          "values": [0.0, 1.0],
           "RadiusMultiplier": 0.5
         }
       ]
@@ -80,10 +68,7 @@
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [
-            1.0,
-            0.0
-          ],
+          "values": [1.0, 0.0],
           "RadiusMultiplier": 0.25
         }
       ]
@@ -96,10 +81,7 @@
       "uniforms": [
         {
           "name": "BlurDir",
-          "values": [
-            0.0,
-            1.0
-          ],
+          "values": [0.0, 1.0],
           "RadiusMultiplier": 0.25
         }
       ]
@@ -111,7 +93,7 @@
       "auxtargets": [
         {
           "name": "AlphaOverSampler",
-          "id": "mixed"
+          "id": "final"
         }
       ]
     }
