@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.registry.shader
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
-import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderStateShard.CULL
 import net.minecraft.client.renderer.RenderStateShard.LIGHTMAP
 import net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY
@@ -49,7 +48,10 @@ import org.bread_experts_group.breadmod.client.render.localClient
 @Suppress("INACCESSIBLE_TYPE")
 object ModRenderType {
 	val EMISSIVE_TARGET: OutputStateShard = OutputStateShard("emissive_target", {
-		if (ModPostChains.ready) ModPostChains.bloomEmissiveTarget.bindWrite(false)
+		if (ModPostChains.ready) {
+			ModPostChains.bloomEmissiveTarget.copyDepthFrom(localClient.mainRenderTarget)
+			ModPostChains.bloomEmissiveTarget.bindWrite(false)
+		}
 	}, {
 		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(false)
 	})
@@ -119,13 +121,12 @@ object ModRenderType {
 			VertexFormat.Mode.QUADS,
 			SMALL_BUFFER_SIZE,
 			true,
-			true,
+			false,
 			RenderType.CompositeState.builder()
 				.setShaderState(this.glowShader)
 				.setTextureState(textureState)
 				.setOutputState(this.EMISSIVE_TARGET)
 				.setTransparencyState(NO_TRANSPARENCY)
-				.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 				.createCompositeState(false)
 		)
 	}

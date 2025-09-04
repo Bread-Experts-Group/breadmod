@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.math.Axis
 import net.minecraft.client.Camera
+import net.minecraft.client.DeltaTracker
 import net.minecraft.client.Minecraft
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.gui.Font
@@ -62,6 +63,7 @@ import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.shader.ModPostChains
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
@@ -765,4 +767,11 @@ fun checkerboardTexture(
 	native.fillRect(0, height / 2, width / 2, height / 2, secondColor)
 	native.fillRect(width / 2, height / 2, width / 2, height / 2, firstColor)
 	return localClient.textureManager.register("bm_color_tex_${firstColor}_${secondColor}_$id", DynamicTexture(native))
+}
+
+fun renderBlend(deltaTracker: DeltaTracker) {
+	if (ModPostChains.ready) {
+		ModPostChains.bloom.process(deltaTracker.gameTimeDeltaTicks)
+		ModPostChains.bloom.getTempTarget("emissive").clear(Minecraft.ON_OSX)
+	}
 }

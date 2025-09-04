@@ -12,10 +12,8 @@ import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.drawQuad
 import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.translateOnBlockSide
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
-import org.bread_experts_group.breadmod.mixinutil.RenderGeneral
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.registry.block.handler.state.EnergyStorageStateHandler
@@ -108,7 +106,6 @@ class EnergyStorageRenderer(
 			this.frostOverlay,
 			packedLight = forwardLight
 		)
-		RenderGeneral.renderBlend(localClient.timer)
 		poseStack.popPose()
 	}
 }
