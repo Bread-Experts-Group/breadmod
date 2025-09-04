@@ -769,9 +769,9 @@ fun checkerboardTexture(
 	return localClient.textureManager.register("bm_color_tex_${firstColor}_${secondColor}_$id", DynamicTexture(native))
 }
 
-fun renderBlend(deltaTracker: DeltaTracker) {
+fun renderBloom(deltaTracker: DeltaTracker) {
 	if (ModPostChains.ready) {
 		ModPostChains.bloom.process(deltaTracker.gameTimeDeltaTicks)
-		ModPostChains.bloom.getTempTarget("emissive").clear(Minecraft.ON_OSX)
+		ModPostChains.bloomEmissiveTarget.clear(Minecraft.ON_OSX)
 	}
 }
