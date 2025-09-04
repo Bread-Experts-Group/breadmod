@@ -66,7 +66,7 @@ class ModelScreen : Screen(Component.literal("editor")) {
 		this.translateAndScale(poseStack)
 		this.rotateView(poseStack)
 		this.renderBlocks(poseStack, bufferSource)
-		this.renderFloor(poseStack, bufferSource, guiGraphics)
+		this.renderFloor(poseStack, bufferSource)
 
 		poseStack.popPose()
 	}
@@ -85,7 +85,7 @@ class ModelScreen : Screen(Component.literal("editor")) {
 		poseStack.translate(-2.5, 2.5, 0.0)
 	}
 
-	fun renderFloor(poseStack: PoseStack, bufferSource: MultiBufferSource, guiGraphics: GuiGraphics) {
+	fun renderFloor(poseStack: PoseStack, bufferSource: MultiBufferSource) {
 		repeat(5) { x ->
 			repeat(5) { y ->
 				poseStack.pushPose()
