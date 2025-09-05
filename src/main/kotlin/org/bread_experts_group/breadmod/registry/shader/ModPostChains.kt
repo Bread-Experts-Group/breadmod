@@ -15,21 +15,22 @@ object ModPostChains {
 		private set
 
 	fun init(provider: ResourceProvider) {
-		if (this.ready) {
-			this.bloom.close()
-		}
-		this.bloom = PostChain(
-			localClient.textureManager,
-			provider,
-			localClient.mainRenderTarget,
-			modLocation("shaders/post/bloom.json")
-		)
+		if (this.ready) this.bloom.close()
+		this.bloom = this.newPostChain("bloom", provider)
 		this.resize(localClient.window.width, localClient.window.height)
-		this.bloomEmissiveTarget = ModPostChains.bloom.getTempTarget("emissive")
+		this.bloomEmissiveTarget = this.bloom.getTempTarget("emissive")
 		this.ready = true
 	}
 
 	fun resize(w: Int, h: Int) {
 		this.bloom.resize(w, h)
 	}
+
+	private fun newPostChain(shader: String, provider: ResourceProvider): PostChain =
+		PostChain(
+			localClient.textureManager,
+			provider,
+			localClient.mainRenderTarget,
+			modLocation("shaders/post/$shader.json")
+		)
 }

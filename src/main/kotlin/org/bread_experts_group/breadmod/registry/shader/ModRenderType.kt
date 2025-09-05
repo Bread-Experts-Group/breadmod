@@ -53,7 +53,7 @@ object ModRenderType {
 			ModPostChains.bloomEmissiveTarget.bindWrite(false)
 		}
 	}, {
-		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(false)
+		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(true)
 	})
 	val SPEED_VERTEX_ELEMENT: VertexFormatElement = VertexFormatElement.register(
 		6, 0,

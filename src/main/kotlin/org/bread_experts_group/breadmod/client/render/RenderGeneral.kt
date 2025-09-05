@@ -773,5 +773,7 @@ fun renderBloom(deltaTracker: DeltaTracker) {
 	if (ModPostChains.ready) {
 		ModPostChains.bloom.process(deltaTracker.gameTimeDeltaTicks)
 		ModPostChains.bloomEmissiveTarget.clear(Minecraft.ON_OSX)
+		localClient.mainRenderTarget.bindWrite(false)
+		RenderSystem.clear(256, Minecraft.ON_OSX)
 	}
 }

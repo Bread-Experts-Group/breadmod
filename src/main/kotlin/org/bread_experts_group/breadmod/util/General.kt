@@ -60,9 +60,11 @@ import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.Shapes.or
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.registries.DeferredItem
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
 import org.joml.Vector3f
 import java.lang.reflect.Method
@@ -389,7 +391,10 @@ fun <T, R> Pair<T, R>.toMojangPair(): com.mojang.datafixers.util.Pair<T, R> =
 fun <T, R> com.mojang.datafixers.util.Pair<T, R>.toKotlinPair(): Pair<T, R> =
 	this.first to this.second
 
-fun getStackInPlayerHand(player: Player?, hand: InteractionHand = player?.usedItemHand ?: MAIN_HAND): ItemStack {
+fun getStackInPlayerHand(
+	player: Player? = if (FMLEnvironment.dist.isClient) localClient.player else null,
+	hand: InteractionHand = player?.usedItemHand ?: MAIN_HAND
+): ItemStack {
 	if (player == null) return ItemStack.EMPTY
 	return player.getItemInHand(hand)
 }

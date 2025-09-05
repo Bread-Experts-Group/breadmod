@@ -1,7 +1,17 @@
 package org.bread_experts_group.breadmod.mixin.client;
 
+import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import org.bread_experts_group.breadmod.client.render.RenderGeneralKt;
+import org.bread_experts_group.breadmod.registry.shader.ModPostChains;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LevelRenderer.class)
 public abstract class MixinLevelRenderer {
@@ -69,4 +79,16 @@ public abstract class MixinLevelRenderer {
 //			}
 //		}
 //	}
+
+	@Inject(method = "renderLevel", at = @At(value = "TAIL"))
+	private void renderLevel(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
+		RenderGeneralKt.renderBloom(deltaTracker);
+	}
+
+	@Inject(method = "resize", at = @At("TAIL"))
+	private void resize(int width, int height, CallbackInfo ci) {
+		if (ModPostChains.INSTANCE.getReady()) {
+			ModPostChains.INSTANCE.resize(width, height);
+		}
+	}
 }

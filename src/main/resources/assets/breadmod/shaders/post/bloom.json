@@ -6,7 +6,7 @@
   ],
   "passes": [
     {
-      "name": "blit",
+      "name": "spider",
       "intarget": "minecraft:main",
       "outtarget": "final"
     },
