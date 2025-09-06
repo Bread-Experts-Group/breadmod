@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
@@ -25,10 +24,6 @@ import org.bread_experts_group.computer.ia32.bios.h10.TeletypeOutput
 import java.awt.Color
 
 class MonitorRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(context) {
-	val frostOverlay: RenderType = ModRenderType.translucentTex(
-		modLocation("textures/block/monitor/front_frost.png")
-	)
-
 	override fun renderGuiGraphics(
 		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
@@ -112,7 +107,7 @@ class MonitorRenderer(context: BlockEntityRendererProvider.Context) : BreadModBE
 		drawQuad(
 			poseStack,
 			bufferSource,
-			this.frostOverlay,
+			ModRenderType.translucentTex(modLocation("textures/block/monitor/front_frost.png")),
 			packedLight = forwardLight
 		)
 		poseStack.popPose()

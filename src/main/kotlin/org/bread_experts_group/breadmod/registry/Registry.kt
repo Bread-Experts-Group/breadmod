@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.client.resources.PlayerSkin
-import net.minecraft.client.sounds.SoundEngine
 import net.minecraft.commands.Commands
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
@@ -160,6 +159,7 @@ import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeTypes
 import org.bread_experts_group.breadmod.registry.shader.ModPostChains
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
+import org.bread_experts_group.breadmod.registry.shader.ModVertexFormats
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModBiomes
 import org.bread_experts_group.breadmod.registry.worldgen.dimensions.ModDimensions
@@ -184,7 +184,6 @@ object Registry {
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val itemRenderers: MutableMap<String, BlockEntityWithoutLevelRenderer> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
-	lateinit var soundEngine: SoundEngine
 	private val registerList: Array<RegistryProvider> = arrayOf(
 		ModItems,
 		ModBlocks,
@@ -385,37 +384,37 @@ object Registry {
 						ShaderInstance(
 							event.resourceProvider,
 							modLocation("rainbow"),
-							ModRenderType.rainbowVertexFormat
+							ModVertexFormats.RAINBOW_VERTEX_FORMAT
 						)
-					) { ModRenderType.rainbowInstance = it }
+					) { ModRenderType.RAINBOW_INSTANCE = it }
 					event.registerShader(
 						ShaderInstance(
 							event.resourceProvider,
 							modLocation("astral"),
-							ModRenderType.astralVertexFormat
+							ModVertexFormats.ASTRAL_VERTEX_FORMAT
 						)
-					) { ModRenderType.astralInstance = it }
+					) { ModRenderType.ASTRAL_INSTANCE = it }
 					event.registerShader(
 						ShaderInstance(
 							event.resourceProvider,
 							modLocation("glow"),
 							DefaultVertexFormat.BLOCK
 						)
-					) { ModRenderType.glowInstance = it }
+					) { ModRenderType.GLOW_INSTANCE = it }
 					event.registerShader(
 						ShaderInstance(
 							event.resourceProvider,
 							modLocation("translucent_tex"),
 							DefaultVertexFormat.BLOCK
 						)
-					) { ModRenderType.translucentTexInstance = it }
+					) { ModRenderType.TRANSLUCENT_TEX_INSTANCE = it }
 					event.registerShader(
 						ShaderInstance(
 							event.resourceProvider,
 							modLocation("sun"),
 							DefaultVertexFormat.BLOCK
 						)
-					) { ModRenderType.sunInstance = it }
+					) { ModRenderType.SUN_INSTANCE = it }
 					ModPostChains.init(event.resourceProvider)
 				}
 				modBus.addListener { event: RegisterClientExtensionsEvent ->
@@ -441,7 +440,7 @@ object Registry {
 						@Suppress("UNCHECKED_CAST")
 						event.registerBlockEntityRenderer(
 							block.blockEntityType!!.get(),
-							renderer as ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<BlockEntity>)
+							renderer as (BlockEntityRendererProvider.Context) -> BlockEntityRenderer<BlockEntity>
 						)
 					}
 				}

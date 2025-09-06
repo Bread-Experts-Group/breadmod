@@ -2,12 +2,10 @@ package org.bread_experts_group.breadmod.registry.shader
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
-import com.mojang.blaze3d.vertex.VertexFormatElement
+import net.minecraft.Util
 import net.minecraft.client.renderer.RenderStateShard.CULL
 import net.minecraft.client.renderer.RenderStateShard.LIGHTMAP
 import net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY
-import net.minecraft.client.renderer.RenderStateShard.OutputStateShard
-import net.minecraft.client.renderer.RenderStateShard.ShaderStateShard
 import net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TARGET
 import net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TRANSPARENCY
 import net.minecraft.client.renderer.RenderStateShard.TextureStateShard
@@ -15,7 +13,7 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderType.SMALL_BUFFER_SIZE
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.resources.ResourceLocation
-import org.bread_experts_group.breadmod.client.render.localClient
+import java.util.function.Function
 
 /**
  * ## SHADER UNIFORM AND IN/OUT INFO
@@ -47,75 +45,40 @@ import org.bread_experts_group.breadmod.client.render.localClient
  */
 @Suppress("INACCESSIBLE_TYPE")
 object ModRenderType {
-	val EMISSIVE_TARGET: OutputStateShard = OutputStateShard("emissive_target", {
-		if (ModPostChains.ready) {
-			ModPostChains.bloomEmissiveTarget.copyDepthFrom(localClient.mainRenderTarget)
-			ModPostChains.bloomEmissiveTarget.bindWrite(false)
-		}
-	}, {
-		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(true)
-	})
-	val SPEED_VERTEX_ELEMENT: VertexFormatElement = VertexFormatElement.register(
-		6, 0,
-		VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 1
+	lateinit var RAINBOW_INSTANCE: ShaderInstance
+	lateinit var ASTRAL_INSTANCE: ShaderInstance
+	lateinit var GLOW_INSTANCE: ShaderInstance
+	lateinit var SUN_INSTANCE: ShaderInstance
+	lateinit var TRANSLUCENT_TEX_INSTANCE: ShaderInstance
+	val RAINBOW: RenderType = RenderType.create(
+		"rainbow",
+		ModVertexFormats.RAINBOW_VERTEX_FORMAT,
+		VertexFormat.Mode.QUADS,
+		SMALL_BUFFER_SIZE,
+		true,
+		false,
+		RenderType.CompositeState.builder()
+			.setCullState(CULL)
+			.setTransparencyState(NO_TRANSPARENCY)
+			.setShaderState(ModStateShards.RAINBOW_SHARD)
+			.createCompositeState(false)
 	)
-	val DIRECTION_VERTEX_ELEMENT: VertexFormatElement = VertexFormatElement.register(
-		7, 0,
-		VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 2
+	val ASTRAL: RenderType = RenderType.create(
+		"astral",
+		ModVertexFormats.ASTRAL_VERTEX_FORMAT,
+		VertexFormat.Mode.QUADS,
+		SMALL_BUFFER_SIZE,
+		false,
+		false,
+		RenderType.CompositeState.builder()
+			.setCullState(CULL)
+			.setTransparencyState(NO_TRANSPARENCY)
+			.setShaderState(ModStateShards.ASTRAL_SHARD)
+			.createCompositeState(false)
 	)
-	val rainbowVertexFormat: VertexFormat = VertexFormat.builder()
-		.add("Position", VertexFormatElement.POSITION)
-		.add("UV0", VertexFormatElement.UV0)
-		.add("Speed", this.SPEED_VERTEX_ELEMENT)
-		.add("Direction", this.DIRECTION_VERTEX_ELEMENT)
-		.build()
-	var rainbowInstance: ShaderInstance? = null
-	private val rainbowShader: ShaderStateShard = ShaderStateShard(this::rainbowInstance)
-	val rainbow: RenderType by lazy {
-		RenderType.create(
-			"rainbow",
-			this.rainbowVertexFormat,
-			VertexFormat.Mode.QUADS,
-			SMALL_BUFFER_SIZE,
-			true,
-			false,
-			RenderType.CompositeState.builder()
-				.setCullState(CULL)
-				.setTransparencyState(NO_TRANSPARENCY)
-				.setShaderState(this.rainbowShader)
-				.createCompositeState(false)
-		)
-	}
-	val astralVertexFormat: VertexFormat = VertexFormat.builder()
-		.add("Position", VertexFormatElement.POSITION)
-		.add("UV0", VertexFormatElement.UV0)
-		.build()
-	var astralInstance: ShaderInstance? = null
-	private val astralShader: ShaderStateShard = ShaderStateShard(this::astralInstance)
-	val astral: RenderType by lazy {
-		RenderType.create(
-			"astral",
-			this.astralVertexFormat,
-			VertexFormat.Mode.QUADS,
-			SMALL_BUFFER_SIZE,
-			false,
-			false,
-			RenderType.CompositeState.builder()
-				.setCullState(CULL)
-				.setTransparencyState(NO_TRANSPARENCY)
-				.setShaderState(this.astralShader)
-				.createCompositeState(false)
-		)
-	}
-	var glowInstance: ShaderInstance? = null
-	private val glowShader: ShaderStateShard = ShaderStateShard(this::glowInstance)
-
-	/**
-	 * Glow Shader.
-	 */
-	fun glow(texture: ResourceLocation): RenderType {
+	private val GLOW: Function<ResourceLocation, RenderType> = Util.memoize { texture ->
 		val textureState = TextureStateShard(texture, false, false)
-		return RenderType.create(
+		RenderType.create(
 			"glow",
 			DefaultVertexFormat.BLOCK,
 			VertexFormat.Mode.QUADS,
@@ -123,23 +86,16 @@ object ModRenderType {
 			true,
 			false,
 			RenderType.CompositeState.builder()
-				.setShaderState(this.glowShader)
+				.setShaderState(ModStateShards.GLOW_SHARD)
 				.setTextureState(textureState)
-				.setOutputState(this.EMISSIVE_TARGET)
+				.setOutputState(ModStateShards.EMISSIVE_TARGET)
 				.setTransparencyState(NO_TRANSPARENCY)
 				.createCompositeState(false)
 		)
 	}
-
-	var sunInstance: ShaderInstance? = null
-	private val sunShader: ShaderStateShard = ShaderStateShard(this::sunInstance)
-
-	/**
-	 * Sun Shader.
-	 */
-	fun sun(texture: ResourceLocation): RenderType {
+	private val SUN: Function<ResourceLocation, RenderType> = Util.memoize { texture ->
 		val textureState = TextureStateShard(texture, false, false)
-		return RenderType.create(
+		RenderType.create(
 			"sun",
 			DefaultVertexFormat.BLOCK,
 			VertexFormat.Mode.QUADS,
@@ -147,22 +103,15 @@ object ModRenderType {
 			true,
 			true,
 			RenderType.CompositeState.builder()
-				.setShaderState(this.sunShader)
+				.setShaderState(ModStateShards.SUN_SHARD)
 				.setTextureState(textureState)
 				.setTransparencyState(NO_TRANSPARENCY)
 				.createCompositeState(false)
 		)
 	}
-
-	var translucentTexInstance: ShaderInstance? = null
-	private val translucentTexTexShader: ShaderStateShard = ShaderStateShard(this::translucentTexInstance)
-
-	/**
-	 * Translucent tex Shader.
-	 */
-	fun translucentTex(texture: ResourceLocation): RenderType {
+	private val TRANSLUCENT_TEX: Function<ResourceLocation, RenderType> = Util.memoize { texture ->
 		val textureState = TextureStateShard(texture, false, false)
-		return RenderType.create(
+		RenderType.create(
 			"translucent_tex",
 			DefaultVertexFormat.BLOCK,
 			VertexFormat.Mode.QUADS,
@@ -171,11 +120,26 @@ object ModRenderType {
 			true,
 			RenderType.CompositeState.builder()
 				.setLightmapState(LIGHTMAP)
-				.setShaderState(this.translucentTexTexShader)
+				.setShaderState(ModStateShards.TRANSLUCENT_TEX_SHARD)
 				.setTextureState(textureState)
 				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 				.setOutputState(TRANSLUCENT_TARGET)
 				.createCompositeState(false)
 		)
 	}
+
+	/**
+	 * Glow Shader.
+	 */
+	fun glow(texture: ResourceLocation): RenderType = this.GLOW.apply(texture)
+
+	/**
+	 * Sun Shader.
+	 */
+	fun sun(texture: ResourceLocation): RenderType = this.SUN.apply(texture)
+
+	/**
+	 * Translucent tex Shader.
+	 */
+	fun translucentTex(texture: ResourceLocation): RenderType = this.TRANSLUCENT_TEX.apply(texture)
 }

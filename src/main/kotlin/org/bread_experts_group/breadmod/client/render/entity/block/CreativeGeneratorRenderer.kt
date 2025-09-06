@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.resources.model.BakedModel
@@ -21,9 +20,6 @@ class CreativeGeneratorRenderer(
 	context: BlockEntityRendererProvider.Context
 ) : BlockEntityRenderer<BreadModBlockEntity> {
 	private val starModel: BakedModel = localClient.getModel("block/creative_generator_star")
-	val starShader: RenderType = ModRenderType.sun(
-		modLocation("textures/shader_noise.png")
-	)
 
 	override fun render(
 		blockEntity: BreadModBlockEntity,
@@ -42,9 +38,10 @@ class CreativeGeneratorRenderer(
 			poseStack.mulPose(Axis.YN.rotationDegrees(Math.floorMod(level.gameTime, 360) + partialTick))
 			poseStack.mulPose(Axis.XN.rotationDegrees(Math.floorMod(level.gameTime, 360) + partialTick))
 			poseStack.scaleFlat(0.95f)
+			val renderType = ModRenderType.sun(modLocation("textures/shader_noise.png"))
 			localClient.blockRenderer.modelRenderer.renderModel(
 				poseStack.last(),
-				bufferSource.getBuffer(this.starShader),
+				bufferSource.getBuffer(renderType),
 				blockEntity.blockState,
 				this.starModel,
 				1f,
@@ -53,7 +50,7 @@ class CreativeGeneratorRenderer(
 				LightTexture.FULL_BRIGHT,
 				packedOverlay,
 				ModelData.EMPTY,
-				this.starShader
+				renderType
 			)
 		}
 		poseStack.popPose()

@@ -32,6 +32,7 @@ import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNot
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler.Companion.NOTHING
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler.Companion.USE_NEGATIVE_TILT
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
+import org.bread_experts_group.breadmod.registry.shader.ModVertexFormats
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.toVec3
 import org.joml.Vector3f
@@ -133,7 +134,7 @@ class DoubleOrNothingRenderer(
 
 	private fun VertexConsumer.setDirection(direction: Vec2): VertexConsumer {
 		val builder = this.getBufferBuilder()
-		val i = builder.beginElement(ModRenderType.DIRECTION_VERTEX_ELEMENT)
+		val i = builder.beginElement(ModVertexFormats.DIRECTION_VERTEX_ELEMENT)
 		if (i != -1L) {
 			MemoryUtil.memPutFloat(i, direction.x)
 			MemoryUtil.memPutFloat(i + 4L, direction.y)
@@ -143,7 +144,7 @@ class DoubleOrNothingRenderer(
 
 	private fun VertexConsumer.setSpeed(speed: Float): VertexConsumer {
 		val builder = this.getBufferBuilder()
-		val i = builder.beginElement(ModRenderType.SPEED_VERTEX_ELEMENT)
+		val i = builder.beginElement(ModVertexFormats.SPEED_VERTEX_ELEMENT)
 		if (i != -1L) MemoryUtil.memPutFloat(i, speed)
 		return this
 	}
@@ -158,7 +159,7 @@ class DoubleOrNothingRenderer(
 		poseStack.translateDiv16(this.outerBGOffset)
 		val state = blockEntity.getStateHandler()
 		val outerBGRenderType =
-			if (!state.get(NOTHING) && !state.get(JACKPOT) && !state.get(CASHOUT)) ModRenderType.rainbow
+			if (!state.get(NOTHING) && !state.get(JACKPOT) && !state.get(CASHOUT)) ModRenderType.RAINBOW
 			else RenderType.text(this.colorableTexture)
 		val outerBGColor =
 			if (state.get(CASHOUT)) this.cashoutBGColor
@@ -184,7 +185,7 @@ class DoubleOrNothingRenderer(
 			this.outerBGVertexes[2],
 			this.outerBGVertexes[3]
 		) { consumer ->
-			if (outerBGRenderType == ModRenderType.rainbow) consumer.setSpeed(speed).setDirection(this.direction)
+			if (outerBGRenderType == ModRenderType.RAINBOW) consumer.setSpeed(speed).setDirection(this.direction)
 		}
 		poseStack.popPose()
 	}

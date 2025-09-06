@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
@@ -28,12 +27,6 @@ class EnergyStorageRenderer(
 	private val context: BlockEntityRendererProvider.Context
 ) : BlockEntityRenderer<BreadModBlockEntity> {
 	val glowOverlayHeight: Float = 16f
-	val frostOverlay: RenderType = ModRenderType.translucentTex(
-		modLocation("textures/block/energy_storage/front_frost.png")
-	)
-	val glowOverlay: RenderType = ModRenderType.glow(
-		modLocation("textures/block/energy_storage/front_overlay_thirteen.png")
-	)
 
 	override fun render(
 		blockEntity: BreadModBlockEntity,
@@ -56,7 +49,9 @@ class EnergyStorageRenderer(
 		drawQuad(
 			poseStack,
 			bufferSource,
-			this.glowOverlay,
+			ModRenderType.glow(
+				modLocation("textures/block/energy_storage/front_overlay_thirteen.png")
+			),
 			color,
 			topLeft = Vector3f(0f, yNormalized, 0f),
 			topRight = Vector3f(1f, yNormalized, 0f),
@@ -103,7 +98,9 @@ class EnergyStorageRenderer(
 		drawQuad(
 			poseStack,
 			bufferSource,
-			this.frostOverlay,
+			ModRenderType.translucentTex(
+				modLocation("textures/block/energy_storage/front_frost.png")
+			),
 			packedLight = forwardLight
 		)
 		poseStack.popPose()
