@@ -263,4 +263,6 @@ interface IToolGunModeRenderer {
 		data: ToolGunData
 	) {
 	}
+
+	fun shouldFireBeam(): Boolean = true
 }

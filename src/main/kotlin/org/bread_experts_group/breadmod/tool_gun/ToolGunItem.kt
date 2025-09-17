@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.client.render.ToolGunItemRenderer
+import org.bread_experts_group.breadmod.client.render.buffer.BeamBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
@@ -62,17 +63,15 @@ class ToolGunItem : Item(
 		val stack = getStackInPlayerHand(player, usedHand)
 		if (stack.`is`(ModItems.TOOL_GUN)) {
 			val mode = ToolGunData.get(stack).getMode()
-			mode.actionPre(level, player, usedHand)
-			mode.action(level, player, stack)
-			mode.actionPost(level, player, usedHand)
-			if (level.isClientSide) {
-				(IClientItemExtensions.of(stack).customRenderer as ToolGunItemRenderer).triggerDelta()
-//				BeamBufferTask.create(
-//					player.position(),
-//					player.getViewYRot(0f),
-//					player.getViewXRot(0f)
-//				)
-				if (mode.shouldPlayToolGunSound(stack, player)) mode.playToolGunSound(player)
+			if (mode.actionPre(level, player, usedHand)) {
+				mode.action(level, player, stack)
+				mode.actionPost(level, player, usedHand)
+
+				if (level.isClientSide) {
+					(IClientItemExtensions.of(stack).customRenderer as ToolGunItemRenderer).triggerDelta()
+					if (mode.getCustomRenderer().shouldFireBeam()) BeamBufferTask.needsNewTask = true
+					if (mode.shouldPlayToolGunSound(stack, player)) mode.playToolGunSound(player)
+				}
 			}
 		}
 		return super.use(level, player, usedHand)

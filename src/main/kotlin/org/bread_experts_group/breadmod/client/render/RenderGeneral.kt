@@ -37,18 +37,21 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.client.resources.model.ModelResourceLocation
-import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.Vec3i
 import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.util.RandomSource
 import net.minecraft.world.inventory.InventoryMenu
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.component.DyedItemColor
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -61,7 +64,6 @@ import net.neoforged.neoforge.client.model.data.ModelProperty
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
-import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.registry.shader.ModPostChains
 import org.bread_experts_group.breadmod.util.Color
@@ -80,7 +82,6 @@ import kotlin.math.min
 val localClient: Minecraft = Minecraft.getInstance()
 internal var skyColorMixinActive: Boolean = false
 internal var redness: Float = 1f
-val playingSounds: MutableMap<BlockPos, StereoSoundInstance> = mutableMapOf()
 
 fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
 
@@ -370,8 +371,8 @@ fun VertexConsumer.getBufferBuilder(): BufferBuilder =
  */
 fun PoseStack.scaleFlat(scale: Float): Unit = this.scale(scale, scale, scale)
 fun PoseStack.translate(x: Int, y: Int, z: Int): Unit = this.translate(x.toFloat(), y.toFloat(), z.toFloat())
-
 fun PoseStack.translate(vec3: Vec3): Unit = this.translate(vec3.x, vec3.y, vec3.z)
+fun PoseStack.translate(vec3i: Vec3i): Unit = this.translate(vec3i.x, vec3i.y, vec3i.z)
 
 /**
  * Translates the [PoseStack] of the added [RenderBuffer] to the player's camera.
@@ -408,6 +409,9 @@ fun PoseStack.translateDiv16(x: Float, y: Float, z: Float): Unit =
 
 fun PoseStack.translateDiv16(vec: Vec3): Unit =
 	this.translateDiv16(vec.x, vec.y, vec.z)
+
+fun Block.textureLocation(): ResourceLocation = BuiltInRegistries.BLOCK.getKey(this).withPrefix("block/")
+fun Item.textureLocation(): ResourceLocation = BuiltInRegistries.ITEM.getKey(this).withPrefix("item/")
 
 /**
  * Draws scaled [text] in a Screen or Overlay

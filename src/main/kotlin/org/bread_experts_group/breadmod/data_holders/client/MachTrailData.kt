@@ -2,13 +2,13 @@ package org.bread_experts_group.breadmod.data_holders.client
 
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.world.entity.EquipmentSlot.HEAD
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.sound.MachSoundInstance
 import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
+import org.bread_experts_group.breadmod.util.logDebugInfo
 
 data class MachTrailData(val targetPlayer: LocalPlayer) {
 	private val sounds: List<MachSoundInstance> = listOf(
@@ -22,7 +22,7 @@ data class MachTrailData(val targetPlayer: LocalPlayer) {
 		val stack = this.targetPlayer.getItemBySlot(HEAD)
 		if (!stack.`is`(ModItems.CHEF_HAT.get())) return
 		val data = MachSpeedData.get(stack)
-		LogManager.getLogger(data.machStage)
+		logDebugInfo("MachTrailData", data.machStage)
 
 		if (this.targetPlayer.isSprinting) {
 			this.setSounds(data.sprintTimer)
@@ -31,25 +31,22 @@ data class MachTrailData(val targetPlayer: LocalPlayer) {
 	}
 
 	private fun killSound(id: Int) {
-		val soundManager = localClient.soundManager
 		val sound = this.sounds[id]
 		sound.kill()
-		soundManager.stop(sound)
 	}
 
 	private fun playSound(id: Int) {
-		val soundManager = localClient.soundManager
 		val sound = this.sounds[id]
 		sound.stopped = false
-		soundManager.play(sound)
+		sound.play()
 	}
 
 	fun killAllSounds(): Unit = repeat(4) { this.sounds[it].kill() }
 
 	private fun setSounds(timer: Int) {
 		when (timer) {
-			1  -> this.playSound(0)
-			2  -> if (!localClient.soundManager.isActive(this.sounds[0])) this.playSound(0)
+			1 -> this.playSound(0)
+			2 -> if (!localClient.soundManager.isActive(this.sounds[0])) this.playSound(0)
 			20 -> {
 				this.killSound(0)
 				this.playSound(1)

@@ -9,9 +9,9 @@ import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
-import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
+import org.bread_experts_group.breadmod.client.render.buffer.BeamBufferTask
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.formatMetric
@@ -82,11 +82,8 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			poseStack.pushPose()
 			// Main recoil translations
 			// todo improve recoil
-			if (modeRenderer.shouldRecoil(stack, displayContext, currentMode)) poseStack.translate(
-				-clamp(recoil, 0f, 1f),
-				0f,
-				0f
-			)
+			if (modeRenderer.shouldRecoil(stack, displayContext, currentMode))
+				poseStack.translate(-clamp(recoil, 0f, 1f), 0f, 0f)
 
 			poseStack.pushPose()
 			modeRenderer.render(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
@@ -96,17 +93,32 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					displayContext,
 					currentMode
 				)
-			) localClient.itemRenderer.renderItemModel(
-				this.mainModel,
-				stack,
-				displayContext,
-				poseStack,
-				buffer,
-				packedOverlay,
-				packedLight,
-				overrideRenderType = overrideRenderType,
-				renderTypeOverride = renderTypeOverride
-			)
+			) {
+				localClient.itemRenderer.renderItemModel(
+					this.mainModel,
+					stack,
+					displayContext,
+					poseStack,
+					buffer,
+					packedOverlay,
+					packedLight,
+					overrideRenderType = overrideRenderType,
+					renderTypeOverride = renderTypeOverride
+				)
+				poseStack.pushPose()
+				poseStack.translate(1.35f, 0f, 0f)
+				// todo look into replicating the PoseStack and transforms for rendering the beam in BEWLR.
+				//  It should allow for better control on where and when the beam renders when faced with different display contexts,
+				//  instead of doing... this to render the beam.
+				//  render process: renderByItem (BEWLR) <- render (ItemRenderer) <- renderStatic (ItemRenderer)
+				//  <- renderItem (ItemInHandRenderer) <- renderArmWithItem (ItemInHandRenderer)
+				//  <- renderHandsWithItems (ItemInHandRenderer) <- renderItemInHand (GameRenderer)
+				if (BeamBufferTask.needsNewTask) {
+					BeamBufferTask.create(poseStack.last().copy())
+					BeamBufferTask.needsNewTask = false
+				}
+				poseStack.popPose()
+			}
 			modeRenderer.renderBodyStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
 			poseStack.popPose()
 			// Render Screen Stage
@@ -216,7 +228,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val currentMode = stack.getOrDefault(ModDataComponents.TOOL_GUN_DATA, ToolGunData.EMPTY).getMode()
+		val currentMode = ToolGunData.get(stack).getMode()
 		this.renderToolGun(
 			stack,
 			displayContext,

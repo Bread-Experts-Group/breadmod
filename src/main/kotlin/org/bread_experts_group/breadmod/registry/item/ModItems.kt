@@ -44,6 +44,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.item.actual.CoffeeBlendItem
 import org.bread_experts_group.breadmod.registry.item.actual.CoffeeCupItem
 import org.bread_experts_group.breadmod.registry.item.actual.DopedBreadItem
+import org.bread_experts_group.breadmod.registry.item.actual.FineShineItem
 import org.bread_experts_group.breadmod.registry.item.actual.GravityCoilItem
 import org.bread_experts_group.breadmod.registry.item.actual.OilDrumItem
 import org.bread_experts_group.breadmod.registry.item.actual.PushGridItem
@@ -57,6 +58,7 @@ import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackp
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.item.actual.tool.KnifeItem
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem
+import org.bread_experts_group.breadmod.util.itemTooltip
 import kotlin.reflect.KClass
 
 /**
@@ -149,10 +151,7 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 				tooltipComponents: MutableList<Component>,
 				tooltipFlag: TooltipFlag
 			) {
-				tooltipComponents.add(
-					modTranslatable("item", "bread_shield", "tooltip")
-						.withStyle(ChatFormatting.AQUA)
-				)
+				tooltipComponents.add(this.itemTooltip().withStyle(ChatFormatting.AQUA))
 			}
 		}
 	}
@@ -253,6 +252,11 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 					.rarity(Rarity.UNCOMMON)
 			)
 		}
+
+	@DataGenerateModelSingleItem
+	@DataGenerateLanguage(name = "The Fine Shine")
+	@DataGenerateLanguage(name = "Wait... shouldn't this be illegal?", suffix = ".tooltip")
+	val FINE_SHINE: DeferredItem<Item> = this.registerItem("fine_shine", ::FineShineItem)
 
 	// Bread Armor
 	@DataGenerateTagItem("minecraft:dyeable")

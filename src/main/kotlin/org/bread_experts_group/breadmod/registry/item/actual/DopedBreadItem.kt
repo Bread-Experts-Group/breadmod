@@ -14,8 +14,8 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.alchemy.Potion
 import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.level.Level
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.util.effectTooltip
+import org.bread_experts_group.breadmod.util.itemTooltip
 
 class DopedBreadItem : Item(
 	Properties()
@@ -46,9 +46,9 @@ class DopedBreadItem : Item(
 
 		tooltipComponents.addAll(
 			arrayOf(
-				modTranslatable("item", "doped_bread", "tooltip").withStyle(ChatFormatting.GOLD),
+				this.itemTooltip().withStyle(ChatFormatting.GOLD),
 				Component.empty(),
-				modTranslatable("item", "doped_bread", "tooltip_two").withStyle(ITALIC, GRAY).append(potionName)
+				this.itemTooltip(1).withStyle(ITALIC, GRAY).append(potionName)
 			)
 		)
 

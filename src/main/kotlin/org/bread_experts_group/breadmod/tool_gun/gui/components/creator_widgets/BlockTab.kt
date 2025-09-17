@@ -29,6 +29,7 @@ import org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets.
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.CreatorScreen
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.getCapability
+import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.putBlockState
 import kotlin.jvm.optionals.getOrNull
 
@@ -207,12 +208,12 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 							data.tags.forEach { (key, tag) ->
 								if (tag is CompoundTag) {
 									tag.tags.forEach { (cKey, cTag) ->
-										LogManager.getLogger().info("parent: $key, $cKey, ${cTag.type}")
+										logDebugInfo("parent: $key, $cKey, ${cTag.type}")
 									}
 								}
-								LogManager.getLogger().info("$key, ${tag.type}")
+								logDebugInfo("$key, ${tag.type}")
 							}
-							LogManager.getLogger().info(
+							logDebugInfo(
 								this.level.getCapability(
 									Capabilities.EnergyStorage.BLOCK,
 									BlockPos.ZERO,
@@ -220,7 +221,7 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 									entity
 								)?.maxEnergyStored
 							)
-							entity.components().forEach<TypedDataComponent<*>>(LogManager.getLogger()::info)
+							entity.components().forEach<TypedDataComponent<*>>(LogManager.getLogger("BlockTab")::info)
 						}
 					}
 				})

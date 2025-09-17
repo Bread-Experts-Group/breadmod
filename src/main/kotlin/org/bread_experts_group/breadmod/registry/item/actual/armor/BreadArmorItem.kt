@@ -19,6 +19,7 @@ import net.minecraft.world.phys.AABB
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
 import org.bread_experts_group.breadmod.util.effectTooltip
+import org.bread_experts_group.breadmod.util.itemTooltip
 import java.awt.Color
 import java.lang.Math.clamp
 import java.text.DecimalFormat
@@ -53,7 +54,7 @@ class BreadArmorItem(type: Type) : ArmorItem(
 					.append(Component.literal("]"))
 					.withStyle { style -> style.withColor(color) }
 			tooltipComponents.add(
-				modTranslatable("item", "bread_armor", "tooltip").withStyle(ITALIC, GRAY).append(potionName)
+				this.itemTooltip().withStyle(ITALIC, GRAY).append(potionName)
 			)
 		}
 		val rangeMulti = COMMON.dopedArmorEffectDistanceMultiplier.get()

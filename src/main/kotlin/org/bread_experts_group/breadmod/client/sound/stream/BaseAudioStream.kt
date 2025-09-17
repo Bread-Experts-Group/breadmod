@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.coder.format.parse.id3.ID3Parser
 import org.bread_experts_group.coder.format.parse.id3.frame.ID3CommentFrame
 import org.bread_experts_group.coder.format.parse.id3.frame.ID3Header
@@ -99,7 +100,7 @@ abstract class BaseAudioStream(val uri: URI) : AudioStream {
 	fun setImageData(data: ByteArray, imageType: String) {
 		val stream = ByteArrayInputStream(data)
 		val nativeImage: NativeImage = if (imageType == "image/jpeg" || imageType == "JPG") {
-			LogManager.getLogger().info("converting JPG to PNG...")
+			logDebugInfo("converting JPG to PNG...")
 			val output = ByteArrayOutputStream()
 			ImageIO.write(ImageIO.read(stream), "png", output)
 			NativeImage.read(ByteArrayInputStream(output.toByteArray()))

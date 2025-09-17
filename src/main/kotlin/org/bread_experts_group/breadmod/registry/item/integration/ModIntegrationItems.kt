@@ -11,7 +11,7 @@ import org.bread_experts_group.breadmod.registry.item.integration.project_e.Brea
 object ModIntegrationItems {
 	object ProjectEItems {
 		@DataGenerateLanguage
-		@DataGenerateLanguage(name = "An EMC battery made of... bread?", prefix = ".tooltip")
+		@DataGenerateLanguage(name = "An EMC battery made of... bread?", suffix = ".tooltip")
 		@DataGenerateLanguage("en_jp", "パン玉")
 		@DataGenerateModelSingleItem
 		val BREAD_ORB: DeferredItem<ItemPE> = ModItems.registerItem("bread_orb", ::BreadOrbItem)

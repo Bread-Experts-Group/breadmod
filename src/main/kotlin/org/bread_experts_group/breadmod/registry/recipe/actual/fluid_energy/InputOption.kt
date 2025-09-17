@@ -13,8 +13,8 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.Fluids
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.network.BreadModCodecs
+import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.ofOptional
 import org.bread_experts_group.breadmod.util.toKotlinPair
 import org.bread_experts_group.breadmod.util.toMojangPair
@@ -111,7 +111,7 @@ class InputOption<T : Any> private constructor(
 		when (this.selectClass) {
 			Item::class -> {
 				if (this.left != null) {
-					LogManager.getLogger().info("getting tag for ${this.left.first}")
+					logDebugInfo("getting tag for ${this.left.first}")
 					val itemTag = this.left.first as TagKey<Item>
 					val tag = BuiltInRegistries.ITEM.getTag(itemTag)
 					if (tag.isPresent) this.tagItems = tag.get().map { it.value() }

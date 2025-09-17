@@ -11,11 +11,11 @@ import net.minecraft.world.phys.AABB
 import org.bread_experts_group.breadmod.client.render.drawTextOnBlockSide
 import org.bread_experts_group.breadmod.client.render.fillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.playingSounds
 import org.bread_experts_group.breadmod.client.render.renderTextNoBg
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
+import org.bread_experts_group.breadmod.registry.Registry.playingSounds
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler.Companion.getLerpTicker
 import org.bread_experts_group.breadmod.util.Color
@@ -49,7 +49,7 @@ class RadioRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val soundInstance = playingSounds[blockEntity.blockPos] ?: return
+		val soundInstance = playingSounds[blockEntity.blockPos.center] as? StereoSoundInstance ?: return
 
 		this.positionDisplay(poseStack, blockEntity, partialTick)
 		this.drawBg(poseStack, guiGraphics)

@@ -63,28 +63,30 @@ class RadioBlock : BreadModBlock(
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		::RadioRenderer
 
-	override val clientTickBM: BreadModTicker<ClientLevel> = { entity, _, _, pos ->
-		fun doMath(input: Float): Float {
-			var newInput = input
-			while (newInput >= PI.toFloat()) newInput -= (PI * 2).toFloat()
-			while (newInput < -PI.toFloat()) newInput += (PI * 2).toFloat()
-			return newInput
-		}
+	override val clientTickBM: BreadModTicker<ClientLevel> by lazy {
+		{ entity, _, _, pos ->
+			fun doMath(input: Float): Float {
+				var newInput = input
+				while (newInput >= PI.toFloat()) newInput -= (PI * 2).toFloat()
+				while (newInput < -PI.toFloat()) newInput += (PI * 2).toFloat()
+				return newInput
+			}
 
-		val state = entity.getCapability(RadioStateHandler.BLOCK_VOID)
-		val lerpTicker = entity.getLerpTicker<LerpLabels>()
-		lerpTicker.tickCustom(LerpLabels.TILT_ALPHA) { params ->
-			val player = localClient.player ?: return@tickCustom
-			val (x, _, z) = pos.center
-			val playerX = player.x - x
-			val playerZ = player.z - z
-			val f2 = doMath(atan2(playerZ, playerX).toFloat() - params.position)
-			params.position += f2 * 0.4f
-		}
+			val state = entity.getCapability(RadioStateHandler.BLOCK_VOID)
+			val lerpTicker = entity.getLerpTicker<LerpLabels>()
+			lerpTicker.tickCustom(LerpLabels.TILT_ALPHA) { params ->
+				val player = localClient.player ?: return@tickCustom
+				val (x, _, z) = pos.center
+				val playerX = player.x - x
+				val playerZ = player.z - z
+				val f2 = doMath(atan2(playerZ, playerX).toFloat() - params.position)
+				params.position += f2 * 0.4f
+			}
 
-		lerpTicker.tickCustom(LerpLabels.TILT_BETA) { params ->
-			val f2 = doMath(atan(state.get(DISPLAY_FLIP)))
-			params.setClampedPos(f2 * 0.4f)
+			lerpTicker.tickCustom(LerpLabels.TILT_BETA) { params ->
+				val f2 = doMath(atan(state.get(DISPLAY_FLIP)))
+				params.setClampedPos(f2 * 0.4f)
+			}
 		}
 	}
 

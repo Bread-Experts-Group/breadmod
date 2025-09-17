@@ -12,8 +12,8 @@ import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
+import org.bread_experts_group.breadmod.util.itemTooltip
 
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).rarity(Rarity.EPIC)) {
 	val logger: Logger = LogManager.getLogger("Test Bread Item")
@@ -23,7 +23,7 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
 		tooltipComponents: MutableList<Component>,
 		tooltipFlag: TooltipFlag
 	) {
-		tooltipComponents.add(modTranslatable("item", "test_bread", "tooltip").withStyle(ChatFormatting.GOLD))
+		tooltipComponents.add(this.itemTooltip().withStyle(ChatFormatting.GOLD))
 		tooltipComponents.add(Component.literal("Hold this item to show the camera overlay (temp)"))
 	}
 

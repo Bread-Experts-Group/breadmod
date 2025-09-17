@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.util
 
 import io.netty.buffer.ByteBuf
+import net.minecraft.SharedConstants
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.DOWN
@@ -64,6 +65,8 @@ import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.neoforge.capabilities.BlockCapability
 import net.neoforged.neoforge.fluids.FluidStack
 import net.neoforged.neoforge.registries.DeferredItem
+import org.apache.logging.log4j.LogManager
+import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
 import org.joml.Vector3f
@@ -93,6 +96,12 @@ val BigDecimal.int: Int
 	).toBigInteger().toInt()
 val DeferredItem<BlockItem>.block: Block
 	get() = this.get().block
+
+fun logDebugInfo(loggerName: String, message: Any?) {
+	if (SharedConstants.IS_RUNNING_IN_IDE) LogManager.getLogger(loggerName).info(message)
+}
+
+fun logDebugInfo(message: Any?): Unit = logDebugInfo("", message)
 
 /**
  * Retrieves an instance of the provided [path]
@@ -157,6 +166,7 @@ class HitResult<T>(
 	private val hitShape: VoxelShape,
 	val blockPosition: BlockPos,
 	val length: Double,
+	val hitDistance: Double,
 	val hit: T
 ) {
 	val hitSide: Direction
@@ -180,7 +190,7 @@ private fun <T> rayCast(
 			val blockPos = BlockPos.containing(hitPosition)
 			val shape = level.getBlockState(blockPos).getShape(level, blockPos)
 
-			result = HitResult(positionFrom, directionTo, hitPosition, shape, blockPos, length, hit)
+			result = HitResult(positionFrom, directionTo, hitPosition, shape, blockPos, length, distance, hit)
 			break
 		}
 		distance += 0.01
@@ -259,6 +269,10 @@ operator fun Vec3i.unaryMinus(): Vec3i = Vec3i(-this.x, -this.y, -this.z)
 operator fun Vec3.component1(): Double = this.x
 operator fun Vec3.component2(): Double = this.y
 operator fun Vec3.component3(): Double = this.z
+operator fun Vec3.div(amount: Double): Vec3 = Vec3(this.x / amount, this.y / amount, this.z / amount)
+operator fun Vector3f.component1(): Float = this.x
+operator fun Vector3f.component2(): Float = this.y
+operator fun Vector3f.component3(): Float = this.z
 operator fun BlockPos.component1(): Int = this.x
 operator fun BlockPos.component2(): Int = this.y
 operator fun BlockPos.component3(): Int = this.z
@@ -307,6 +321,8 @@ fun Vec3.plus(x: Double, y: Double, z: Double): Vec3 = Vec3(this.x + x, this.y +
  * @since 1.0.0
  */
 operator fun Vec3.minus(other: Vec3): Vec3 = Vec3(this.x - other.x, this.y - other.y, this.z - other.z)
+
+fun Vec3.minus(x: Double, y: Double, z: Double): Vec3 = Vec3(this.x - x, this.y - y, this.z - z)
 
 /**
  * Scales this [Vec3] by the specified factor.
@@ -371,6 +387,17 @@ fun effectTooltip(instance: MobEffectInstance, durationFactor: Float, ticksPerSe
 	)
 
 	return mutableComponent.withStyle(instance.effect.value().category.tooltipFormatting)
+}
+
+fun <T : Item> T.itemTooltip(index: Int = 0, args: List<Any> = listOf()): MutableComponent {
+	val i = when (index) {
+		1 -> "_two"
+		2 -> "_three"
+		3 -> "_four"
+		5 -> "_five"
+		else -> ""
+	}
+	return modTranslatable("item", this.descriptionId.substringAfterLast('.'), "tooltip$i", args = args)
 }
 
 // Codec shenanigans

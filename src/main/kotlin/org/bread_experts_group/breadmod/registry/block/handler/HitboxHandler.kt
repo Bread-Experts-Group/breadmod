@@ -27,7 +27,6 @@ class HitboxHandler(
 		}
 	}
 
-	// todo find out why this isn't being called in setRemoved
 	override fun discard() {
 		this.hitboxes.forEach { Companion.hitboxes.remove(it.pos) }
 	}

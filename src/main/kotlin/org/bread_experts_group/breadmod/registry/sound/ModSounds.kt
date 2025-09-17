@@ -146,6 +146,11 @@ object ModSounds : RegistryProvider(Registries.SOUND_EVENT) {
 	@DataGenerateSound
 	@DataGenerateLanguage(name = "[low gravity noise]")
 	val GRAVITY_COIL: SoundHolder = this.registerSoundEvents("gravity_coil")
+
+	@DataGenerateSound
+	@DataGenerateLanguage(name = "The Moon")
+	val THE_MOON: SoundHolder = this.registerSoundEvents("the_moon")
+
 	private fun registerSoundEvents(name: String): SoundHolder {
 		val registry = this.getRegistry(Registries.SOUND_EVENT)
 		return registry.register(name) { -> SoundEvent.createVariableRangeEvent(modLocation(name)) }

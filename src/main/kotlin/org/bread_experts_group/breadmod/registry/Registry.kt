@@ -24,6 +24,7 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.Vec3
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
@@ -91,6 +92,7 @@ import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBack
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.sound.BreadModTickingSoundInstance
 import org.bread_experts_group.breadmod.command.client.InternetRelayChatCommand
 import org.bread_experts_group.breadmod.command.client.PingCommand
 import org.bread_experts_group.breadmod.command.server.ScreenBleedCommand
@@ -115,8 +117,6 @@ import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.ClientPhysicsGridPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.GridPosUpdatePacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
@@ -151,6 +151,7 @@ import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.ModRecords
+import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
@@ -183,6 +184,8 @@ object Registry {
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val itemRenderers: MutableMap<String, BlockEntityWithoutLevelRenderer> = mutableMapOf()
+	val playingSounds: MutableMap<Vec3, BreadModTickingSoundInstance> = mutableMapOf()
+	val grids: MutableList<BulkBlockItem.PhysicsGrid> = mutableListOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
 	private val registerList: Array<RegistryProvider> = arrayOf(
 		ModItems,
@@ -310,6 +313,7 @@ object Registry {
 						val renderer = IClientItemExtensions.of(it).customRenderer
 						if (renderer is RendererWithBEWLRLerpTicker<*>) renderer.lerpTicker.tick()
 					}
+					this.playingSounds.values.forEach { it.tick(localClient.player ?: return@forEach) }
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
 					event.dispatcher.register(
@@ -631,12 +635,11 @@ object Registry {
 			BeamPacket.register(registrar)
 			SpreadParticlesPacket.register(registrar)
 			ScreenBleedSetPacket.register(registrar)
-			ClientPhysicsGridPacket.register(registrar)
-			GridPosUpdatePacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
 			DoubleOrNothingPacket.register(registrar)
 			BreadModBlockEntityUpdatePacket.register(registrar)
 			// Serverbound packets
+			BulkBlockItem.ClearGridPacket.register(registrar)
 			ToolGunModeChangePacket.register(registrar)
 			ComputerKeystrokePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)

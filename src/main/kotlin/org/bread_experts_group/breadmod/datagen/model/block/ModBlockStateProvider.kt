@@ -22,7 +22,6 @@ import net.neoforged.neoforge.client.model.generators.ModelProvider
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder.PartBuilder
 import net.neoforged.neoforge.common.data.ExistingFileHelper
-import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.getBlock
 import org.bread_experts_group.breadmod.mixin.client.IMultiPartBlockStateBuilderAccessor
@@ -30,6 +29,7 @@ import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockStateProperties
 import org.bread_experts_group.breadmod.util.block
+import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 
@@ -69,12 +69,12 @@ class ModBlockStateProvider(
 		this.horizontalBlock(ModBlocks.MONITOR.block) {
 			val model = this.models().cube(
 				"breadmod:block/monitor",
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/front"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/side"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/top")
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top")
 			)
 
 			return@horizontalBlock model
@@ -344,7 +344,7 @@ class ModBlockStateProvider(
 		val directions =
 			if (properties.contains(BlockStateProperties.HORIZONTAL_FACING))
 				sides.filter { it.axis.isHorizontal }.toTypedArray() else sides
-		LogManager.getLogger().info("BLOCK STATE: $properties")
+		logDebugInfo("BLOCK STATE: $properties")
 
 		fun <T : Comparable<T>> part(prop: Property<T>, propVal: T, direction: Direction) =
 			this.part()

@@ -10,6 +10,7 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.ModConfiguration.COMMON
+import org.bread_experts_group.breadmod.util.itemTooltip
 import java.text.DecimalFormat
 
 class BreadAmuletItem(durability: Int) : Item(Properties().durability(durability)) {
@@ -56,9 +57,7 @@ class BreadAmuletItem(durability: Int) : Item(Properties().durability(durability
 		val bars = COMMON.breadAmuletFeedAmount.get().toDouble() / 2
 		val feedStacks = COMMON.breadAmuletEffectCanStack.get()
 		tooltipComponents.add(
-			modTranslatable(
-				"item",
-				"bread_amulet", "tooltip",
+			this.itemTooltip(
 				args = listOf(
 					if (bars == 1.0) "a bar" else "${Companion.decimalFormat.format(bars)} bars",
 					if (secDelay == 1.0) "second" else "${Companion.decimalFormat.format(secDelay)} seconds"

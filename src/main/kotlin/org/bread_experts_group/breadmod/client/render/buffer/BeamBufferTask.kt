@@ -1,76 +1,62 @@
 package org.bread_experts_group.breadmod.client.render.buffer
 
-import com.mojang.math.Axis
+import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Transformation
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.phys.Vec3
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage
-import net.neoforged.neoforge.client.model.data.ModelData
-import org.bread_experts_group.breadmod.client.render.getModel
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import org.bread_experts_group.breadmod.client.render.drawBlockAtlasCube
+import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
+import org.bread_experts_group.breadmod.client.render.textureLocation
+import org.bread_experts_group.breadmod.client.render.translate
+import org.bread_experts_group.breadmod.client.render.translateDiv16
+import org.bread_experts_group.breadmod.util.Color
+import org.bread_experts_group.breadmod.util.blocks
+import org.bread_experts_group.breadmod.util.entities
+import org.bread_experts_group.breadmod.util.rayCast
+import org.bread_experts_group.breadmod.util.toVec3
+import kotlin.math.roundToInt
 
 object BeamBufferTask {
-	var xOffset: Double = 0.0
-	var yOffset: Double = 0.0
-	var zOffset: Double = 0.0
-	var rotationEnabled: Boolean = false
-	var usePlayerRot: Boolean = false
-	fun create(initialPos: Vec3, yRot: Float, xRot: Float) {
+	var needsNewTask: Boolean = false
+	val beamTexture: ResourceLocation = Blocks.LIGHT_BLUE_STAINED_GLASS.textureLocation()
+
+	fun create(lastPose: PoseStack.Pose) {
 		val player = localClient.player ?: return
-		val bufferSource = localClient.renderBuffers().bufferSource()
-		val blockRenderer = localClient.blockRenderer
-		val axisModel = localClient.getModel("block/axis")
+		val pose4f = lastPose.pose()
+		val transform = Transformation(pose4f)
+		val playerPos = player.position().add(0.0, player.eyeHeight.toDouble(), 0.0)
+		val localPos = transform.translation.toVec3()
+		val blockCast = player.rayCast(100.0, blocks())
+		val entityCast = player.rayCast(100.0, entities())
+		val raycast = entityCast ?: blockCast ?: return
 
 		RenderBuffer.add(
-			Stage.AFTER_SOLID_BLOCKS,
+			RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS,
 			{ event, passthrough ->
-				val camera = event.camera
 				val poseStack = event.poseStack
-				val partialTick = event.partialTick.gameTimeDeltaTicks
 				val opacity = passthrough[0] as Float
-				val pyRot = player.getViewYRot(partialTick)
-				val pxRot = player.getViewXRot(partialTick)
+				val partialTick = event.partialTick.gameTimeDeltaTicks
+				val color = Color.color(255, 255, 255, (255 * opacity).roundToInt())
 
 				if (opacity > 0f) {
 					poseStack.pushPose()
-					poseStack.offsetRenderToCameraPos(initialPos, camera, false)
-					poseStack.translate(this.xOffset, this.yOffset, this.zOffset)
-					if (this.rotationEnabled) {
-						if (!this.usePlayerRot) {
-							poseStack.mulPose(Axis.YN.rotationDegrees(yRot + 90f))
-							poseStack.mulPose(Axis.ZN.rotationDegrees(xRot))
-						} else {
-							poseStack.mulPose(Axis.YN.rotationDegrees(pyRot + 90f))
-							poseStack.mulPose(Axis.ZN.rotationDegrees(pxRot))
-						}
-					}
-					poseStack.translate(-this.xOffset, -this.yOffset, -this.zOffset)
-					poseStack.translate(this.xOffset, this.yOffset, this.zOffset)
-					blockRenderer.modelRenderer.renderModel(
-						poseStack.last(),
-						bufferSource.getBuffer(RenderType.translucent()),
-						Blocks.AIR.defaultBlockState(),
-						axisModel,
-						1f,
-						1f,
-						1f,
-						15728880,
-						NO_OVERLAY,
-						ModelData.EMPTY,
-						RenderType.translucent()
-					)
-					poseStack.scale(20f, 0.1f, 0.1f)
-					poseStack.translate(0.0, -0.5, -0.5)
-					blockRenderer.renderSingleBlock(
-						Blocks.LIGHT_BLUE_STAINED_GLASS.defaultBlockState(),
+
+					poseStack.initialTranslate(event.camera)
+					poseStack.translate(playerPos)
+					poseStack.translate(localPos)
+					poseStack.mulPose(transform.leftRotation)
+					poseStack.mulPose(transform.rightRotation)
+
+					poseStack.translateDiv16(0.0, 0.2, 0.65)
+					poseStack.scale(raycast.hitDistance.toFloat(), 0.05f, 0.05f)
+					drawBlockAtlasCube(
+						this.beamTexture,
 						poseStack,
-						bufferSource,
-						0xFFFFFFF,
-						NO_OVERLAY,
-						ModelData.EMPTY,
-						RenderType.translucent()
+						renderType = RenderType.translucent(),
+						color = color
 					)
 					poseStack.popPose()
 

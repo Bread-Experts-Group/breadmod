@@ -50,8 +50,9 @@ interface IToolGunMode {
 
 	/**
 	 * Fired when the tool gun's use function is called, fired before [action].
+	 * if the returned value is false, cancel the main tool gun action.
 	 */
-	fun actionPre(level: Level, player: Player, usedHand: InteractionHand) {}
+	fun actionPre(level: Level, player: Player, usedHand: InteractionHand): Boolean = true
 
 	/**
 	 * Fired when the tool gun's use function is called, fired after [action].

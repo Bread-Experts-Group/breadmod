@@ -15,9 +15,9 @@ import net.minecraft.world.item.CreativeModeTab.Output
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent
-import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.registry.item.IRegisterSpecialCreativeTab
 import org.bread_experts_group.breadmod.registry.menu.ModCreativeTabs
+import org.bread_experts_group.breadmod.util.itemTooltip
 import java.util.function.Supplier
 import kotlin.math.min
 
@@ -64,7 +64,7 @@ class BreadOrbItem : ItemPE(
 		tooltipComponents: MutableList<Component>,
 		tooltipFlag: TooltipFlag
 	) {
-		tooltipComponents.add(modTranslatable("item", "bread_orb", "tooltip").withStyle(ChatFormatting.GOLD))
+		tooltipComponents.add(this.itemTooltip().withStyle(ChatFormatting.GOLD))
 	}
 
 	override fun attachCapabilities(event: RegisterCapabilitiesEvent?) {
