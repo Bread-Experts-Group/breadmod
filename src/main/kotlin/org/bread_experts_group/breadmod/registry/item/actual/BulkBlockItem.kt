@@ -33,56 +33,67 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
-import org.bread_experts_group.breadmod.util.div
 import org.bread_experts_group.breadmod.util.logDebugInfo
-import org.bread_experts_group.breadmod.util.minus
-import org.bread_experts_group.breadmod.util.plus
-import org.bread_experts_group.breadmod.util.times
-import org.bread_experts_group.breadmod.util.toVec3
 
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
-	private var posA: BlockPos? = null
-	private var posB: BlockPos? = null
+	private var posA: BlockPos = BlockPos.ZERO
+	private var posB: BlockPos = BlockPos.ZERO
 
 	override fun useOn(context: UseOnContext): InteractionResult {
 		if (context.clickedPos is BlockPos.MutableBlockPos) return super.useOn(context)
-		if (this.posA == null) {
+		if (this.posA == BlockPos.ZERO) {
 			this.posA = context.clickedPos
 			context.player?.sendSystemMessage(Component.literal("A = ${this.posA}"))
 			return InteractionResult.sidedSuccess(context.level.isClientSide)
 		}
-		if (this.posB == null) {
+		if (this.posB == BlockPos.ZERO) {
 			this.posB = context.clickedPos
 			context.player?.sendSystemMessage(Component.literal("B = ${this.posB}"))
 			return InteractionResult.sidedSuccess(context.level.isClientSide)
 		}
-		val level = context.level
-		if (this.posA != null && this.posB != null) {
-			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
-			val a = this.posA!!
-			val b = this.posB!!
-			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
-			val center = ((a.center / 2.0) - (b.center / 2.0)).minus(0.5, 0.5, 0.5)
-			val bounding = AABB(
-				0.0,
-				0.0,
-				0.0,
-				a.x - b.x - 1.0,
-				a.y - b.y - 1.0,
-				a.z - b.z - 1.0
-			).move(targetPos.minus(center.times(2.0)))
-			val centerOffset = a.toVec3() + center
-			logDebugInfo(bounding)
-			BlockPos.betweenClosedStream(a, b).forEach { pos ->
-				val immutable = pos.immutable()
-				val state = level.getBlockState(immutable)
-				if (state.isAir) return@forEach
-				blocks[BlockPos(immutable.x - a.x, immutable.y - a.y, immutable.z - a.z)] = state
+		if (this.posA != BlockPos.ZERO && this.posB != BlockPos.ZERO) {
+			val list = mutableListOf<BlockPos>()
+			BlockPos.betweenClosedStream(this.posA, this.posB).forEach { pos ->
+				list.add(pos.immutable())
 			}
-			Registry.grids.add(PhysicsGrid(level, blocks, targetPos, center, bounding))
+			logDebugInfo(list.size)
+			RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, pass ->
+				val flag = pass[0] as Boolean
+				if (!flag) {
+					ThingFinder.oreBlocksList = list
+					logDebugInfo(ThingFinder.oreBlocksList.size)
+					logDebugInfo("generating VBO")
+					ThingFinder.generateVBO(context.player ?: return@add true)
+					pass[0] = true
+				}
+				ThingFinder.render(event, localClient.player!!)
+				false
+			}, mutableListOf(false))
+//			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
+//			val a = this.posA!!
+//			val b = this.posB!!
+//			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
+//			val center = ((a.center / 2.0) - (b.center / 2.0)).minus(0.5, 0.5, 0.5)
+//			val bounding = AABB(
+//				0.0,
+//				0.0,
+//				0.0,
+//				a.x - b.x - 1.0,
+//				a.y - b.y - 1.0,
+//				a.z - b.z - 1.0
+//			).move(targetPos.minus(center.times(2.0)))
+//			val centerOffset = a.toVec3() + center
+//			logDebugInfo(bounding)
+//			BlockPos.betweenClosedStream(a, b).forEach { pos ->
+//				val immutable = pos.immutable()
+//				val state = level.getBlockState(immutable)
+//				if (state.isAir) return@forEach
+//				blocks[BlockPos(immutable.x - a.x, immutable.y - a.y, immutable.z - a.z)] = state
+//			}
+//			Registry.grids.add(PhysicsGrid(level, blocks, targetPos, center, bounding))
 		}
-		this.posA = null
-		this.posB = null
+		this.posA = BlockPos.ZERO
+		this.posB = BlockPos.ZERO
 		return super.useOn(context)
 	}
 
