@@ -21,7 +21,7 @@ version = project.properties["mod_version"] as String
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:4.0.0-exp3"
+private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:4.1.0-exp1"
 
 idea {
 	module {
@@ -62,22 +62,21 @@ repositories {
 		name = "ForgeConfigAPIPort"
 		url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/")
 	}
-	maven {
-		name = "Bread Experts Group Maven"
-		url = uri("https://maven.breadexperts.group/")
-	}
-
-	exclusiveContent {
-		forRepository {
-			maven {
-				name = "Bread Experts Group Maven"
-				url = uri("https://maven.breadexperts.group/")
-			}
-		}
-		filter {
-			includeGroup("org.bread_experts_group")
-		}
-	}
+//	maven {
+//		name = "Bread Experts Group Maven"
+//		url = uri("https://maven.breadexperts.group/")
+//	}
+//	exclusiveContent {
+//		forRepository {
+//			maven {
+//				name = "Bread Experts Group Maven"
+//				url = uri("https://maven.breadexperts.group/")
+//			}
+//		}
+//		filter {
+//			includeGroup("org.bread_experts_group")
+//		}
+//	}
 }
 
 neoForge {

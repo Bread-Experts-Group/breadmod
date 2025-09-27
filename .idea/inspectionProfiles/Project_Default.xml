@@ -295,10 +295,6 @@
     <inspection_tool class="OverlyComplexArithmeticExpression" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="6" />
     </inspection_tool>
-    <inspection_tool class="OverlyComplexBooleanExpression" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_limit" value="3" />
-      <option name="m_ignorePureConjunctionsDisjunctions" value="true" />
-    </inspection_tool>
     <inspection_tool class="OverlyLargePrimitiveArrayInitializer" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="64" />
     </inspection_tool>
@@ -466,6 +462,8 @@
           <option value="ConvertLambdaToReference" />
           <option value="ReplaceNotNullAssertionWithElvisReturn" />
           <option value="UnstableApiUsage" />
+          <option value="CAST_NEVER_SUCCEEDS" />
+          <option value="UnreachableCode" />
         </list>
       </option>
     </inspection_tool>
