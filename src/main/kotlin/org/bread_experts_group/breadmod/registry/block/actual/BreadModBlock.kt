@@ -83,6 +83,10 @@ abstract class BreadModBlock(
 	}
 
 	open val commonTickBM: BreadModTicker<Level> = null
+
+	/**
+	 * Must be initialized as [Lazy] in implementing classes to prevent [ClassNotFoundException] on serverside.
+	 */
 	open val clientTickBM: BreadModTicker<ClientLevel> = null
 	open val serverTickBM: BreadModTicker<ServerLevel> = null
 

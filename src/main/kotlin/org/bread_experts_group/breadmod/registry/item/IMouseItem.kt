@@ -16,11 +16,15 @@ interface IMouseItem {
 
 	/**
 	 * Fires during mouse input while holding item, after vanilla processing.
+	 *
+	 * #### You should override Item#use or Item#onEntitySwing if your only listening for left/right clicks.
 	 */
 	fun onMouseInputPost(mouseEvent: InputEvent.MouseButton.Post, heldStack: ItemStack, player: Player) {}
 
 	/**
 	 * Fires during mouse input while holding item, before vanilla processing.
+	 *
+	 * #### You should override Item#use or Item#onEntitySwing if your only listening for left/right clicks.
 	 */
 	fun onMouseInputPre(mouseEvent: InputEvent.MouseButton.Pre, heldStack: ItemStack, player: Player) {}
 }

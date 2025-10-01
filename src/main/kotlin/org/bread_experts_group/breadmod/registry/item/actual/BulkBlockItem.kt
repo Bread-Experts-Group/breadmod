@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod.registry.item.actual
 
 import com.google.common.base.Objects
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.VertexBuffer
 import io.netty.buffer.ByteBuf
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.LightTexture
@@ -33,7 +35,15 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
+import org.bread_experts_group.breadmod.util.component1
+import org.bread_experts_group.breadmod.util.component2
+import org.bread_experts_group.breadmod.util.component3
+import org.bread_experts_group.breadmod.util.div
 import org.bread_experts_group.breadmod.util.logDebugInfo
+import org.bread_experts_group.breadmod.util.minus
+import org.bread_experts_group.breadmod.util.plus
+import org.bread_experts_group.breadmod.util.times
+import org.bread_experts_group.breadmod.util.toVec3
 
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var posA: BlockPos = BlockPos.ZERO
@@ -52,45 +62,8 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			return InteractionResult.sidedSuccess(context.level.isClientSide)
 		}
 		if (this.posA != BlockPos.ZERO && this.posB != BlockPos.ZERO) {
-			val list = mutableListOf<BlockPos>()
-			BlockPos.betweenClosedStream(this.posA, this.posB).forEach { pos ->
-				list.add(pos.immutable())
-			}
-			logDebugInfo(list.size)
-			RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, pass ->
-				val flag = pass[0] as Boolean
-				if (!flag) {
-					ThingFinder.oreBlocksList = list
-					logDebugInfo(ThingFinder.oreBlocksList.size)
-					logDebugInfo("generating VBO")
-					ThingFinder.generateVBO(context.player ?: return@add true)
-					pass[0] = true
-				}
-				ThingFinder.render(event, localClient.player!!)
-				false
-			}, mutableListOf(false))
-//			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
-//			val a = this.posA!!
-//			val b = this.posB!!
-//			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
-//			val center = ((a.center / 2.0) - (b.center / 2.0)).minus(0.5, 0.5, 0.5)
-//			val bounding = AABB(
-//				0.0,
-//				0.0,
-//				0.0,
-//				a.x - b.x - 1.0,
-//				a.y - b.y - 1.0,
-//				a.z - b.z - 1.0
-//			).move(targetPos.minus(center.times(2.0)))
-//			val centerOffset = a.toVec3() + center
-//			logDebugInfo(bounding)
-//			BlockPos.betweenClosedStream(a, b).forEach { pos ->
-//				val immutable = pos.immutable()
-//				val state = level.getBlockState(immutable)
-//				if (state.isAir) return@forEach
-//				blocks[BlockPos(immutable.x - a.x, immutable.y - a.y, immutable.z - a.z)] = state
-//			}
-//			Registry.grids.add(PhysicsGrid(level, blocks, targetPos, center, bounding))
+//			this.addThingFinderRender(context)
+			PhysicsGrid.add(this.posA, this.posB, context, context.level)
 		}
 		this.posA = BlockPos.ZERO
 		this.posB = BlockPos.ZERO
@@ -103,6 +76,26 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			PacketDistributor.sendToServer(ClearGridPacket())
 			scrollingEvent.isCanceled = true
 		}
+	}
+
+	fun addThingFinderRender(context: UseOnContext) {
+		val list = mutableListOf<BlockPos>()
+		BlockPos.betweenClosedStream(this.posA, this.posB).forEach { pos ->
+			list.add(pos.immutable())
+		}
+		logDebugInfo(list.size)
+		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, pass ->
+			val flag = pass[0] as Boolean
+			if (!flag) {
+				ThingFinder.oreBlocksList = list
+				logDebugInfo(ThingFinder.oreBlocksList.size)
+				logDebugInfo("generating VBO")
+				ThingFinder.generateVBO(context.player ?: return@add true)
+				pass[0] = true
+			}
+			ThingFinder.render(event, localClient.player!!)
+			false
+		}, mutableListOf(false))
 	}
 
 	class ClearGridPacket : CustomPacketPayload {
@@ -135,10 +128,64 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		val center: Vec3,
 		val bounding: AABB
 	) {
+		companion object {
+			fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext, level: Level) {
+				val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
+				val a = posA
+				val b = posB
+				val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
+				val center = ((a.center / 2.0) - (b.center / 2.0)).minus(0.5, 0.5, 0.5)
+				val bounding = AABB(
+					0.0,
+					0.0,
+					0.0,
+					a.x - b.x - 1.0,
+					a.y - b.y - 1.0,
+					a.z - b.z - 1.0
+				).move(targetPos.minus(center.times(2.0)))
+				val centerOffset = a.toVec3() + center
+				logDebugInfo(bounding)
+				BlockPos.betweenClosedStream(a, b).forEach { pos ->
+					val immutable = pos.immutable()
+					val state = level.getBlockState(immutable)
+					if (state.isAir) return@forEach
+					blocks[BlockPos(immutable.x - a.x, immutable.y - a.y, immutable.z - a.z)] = state
+				}
+				Registry.grids.add(PhysicsGrid(level, blocks, targetPos, center, bounding))
+			}
+		}
+
 		val random: RandomSource = RandomSource.create(42)
 
-		init {
-			logDebugInfo(this.bounding)
+		fun addNew() {
+			RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
+				VertexThing.generate(event, this.blocks)
+				if (VertexThing.vertexBuffer.format == null) return@add true
+				val poseStack = event.poseStack
+				val shaderInstance = RenderSystem.getShader() ?: return@add true
+				val (x, y, z) = event.camera.position
+				poseStack.pushPose()
+				poseStack.mulPose(event.modelViewMatrix)
+				poseStack.translate(-x, -y, -z)
+				poseStack.translate(this.pos)
+				VertexThing.vertexBuffer.bind()
+				VertexThing.vertexBuffer.drawWithShader(
+					poseStack.last().pose(),
+					event.projectionMatrix,
+					shaderInstance
+				)
+				shaderInstance.clear()
+				VertexBuffer.unbind()
+				poseStack.popPose()
+				if (!Registry.grids.contains(this)) {
+					VertexThing.generated = false
+					VertexThing.meshData!!.close()
+					true
+				} else false
+			})
+		}
+
+		fun addLegacy() {
 			RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
 				val poseStack = event.poseStack
 				val blockRenderer = localClient.blockRenderer
@@ -171,6 +218,11 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 				poseStack.popPose()
 				!Registry.grids.contains(this)
 			})
+		}
+
+		init {
+			logDebugInfo("blocks: ${this.blocks.size}")
+			this.addNew()
 		}
 	}
 }
