@@ -6,8 +6,10 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlo
 import org.bread_experts_group.computer.Computer
 import org.bread_experts_group.computer.MemoryModule
 import org.bread_experts_group.computer.ia32.IA32Processor
+import org.bread_experts_group.computer.ia32.bios.Read.FloppyGeometry.Companion.floppy5_14_320K
 import org.bread_experts_group.computer.ia32.bios.StandardBIOS
-import org.bread_experts_group.computer.ia32.bios.h13.Read.floppy5_14_320K
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption
 
 class ComputerHandler : ParentedHandler<BreadModBlockEntity> {
 	companion object {
@@ -32,8 +34,14 @@ class ComputerHandler : ParentedHandler<BreadModBlockEntity> {
 //		)
 //		this.logger.warn(stream.assemble())
 		this.computer.processor.computer = this.computer
-		this.computer.floppyURLs[0] =
-			(this::class.java.getResource("/CDPDOS125.IMG") ?: return@unstarted) to floppy5_14_320K
+		val floppyDataPath = Files.createTempFile("flp", "img" + System.currentTimeMillis())
+		Files.newOutputStream(floppyDataPath).use {
+			(this::class.java.getResourceAsStream("/CDPDOS125.IMG") ?: return@unstarted).use { imgData ->
+				imgData.transferTo(it)
+			}
+		}
+		val floppyData = Files.newByteChannel(floppyDataPath, StandardOpenOption.READ, StandardOpenOption.WRITE)
+		this.computer.floppies[0] = floppyData to floppy5_14_320K
 		this.computer.reset()
 		try {
 			while (!Thread.currentThread().isInterrupted) {
