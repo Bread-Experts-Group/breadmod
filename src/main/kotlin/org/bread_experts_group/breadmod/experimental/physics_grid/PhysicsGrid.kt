@@ -2,7 +2,9 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexBuffer
+import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.LightTexture
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
@@ -20,6 +22,7 @@ import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.translate
+import org.bread_experts_group.breadmod.experimental.physics_grid.micro.ServerMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
@@ -32,9 +35,7 @@ import org.bread_experts_group.breadmod.util.times
 import org.bread_experts_group.breadmod.util.toVec3
 
 class PhysicsGrid private constructor(
-	val level: Level,
-	val blocks: Map<BlockPos, Pair<VoxelShape, BlockState>>,
-	val blockEntities: Map<BlockPos, BlockEntity>,
+	val microLevel: ServerMicroLevel,
 	val pos: Vec3,
 	val center: Vec3,
 	val bounding: AABB
@@ -44,11 +45,15 @@ class PhysicsGrid private constructor(
 	companion object {
 		val gridMeshes: MutableMap<PhysicsGrid, GridMesh> = mutableMapOf()
 		val grids: MutableList<PhysicsGrid> = mutableListOf()
+
+		fun getClosestGrid(entity: Entity): PhysicsGrid? =
+			this.grids.firstOrNull { entity.boundingBox.intersects(it.bounding) }
+
 		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext, level: Level) {
 			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
 			val a = posA
 			val b = posB
-			val blocks: MutableMap<BlockPos, Pair<VoxelShape, BlockState>> = mutableMapOf()
+			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
 			val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
 			val center = ((a.center / 2.0) - (b.center / 2.0)).minus(0.5, 0.5, 0.5)
 			val bounding = AABB(
@@ -68,15 +73,22 @@ class PhysicsGrid private constructor(
 				val posOffset = BlockPos(immutable.x - a.x, immutable.y - a.y, immutable.z - a.z)
 				val blockEntity = level.getBlockEntity(immutable)
 				if (blockEntity != null) blockEntities[posOffset] = blockEntity
-				blocks[posOffset] = state.getShape(level, immutable) to state
+				blocks[posOffset] = state
 			}
-			Companion.grids.add(PhysicsGrid(level, blocks, blockEntities, targetPos, center, bounding))
+			Companion.grids.add(
+				PhysicsGrid(
+					ServerMicroLevel.create(blocks, blockEntities),
+					targetPos,
+					center,
+					bounding
+				)
+			)
 		}
 	}
 
 	init {
 		val player = localClient.player!!
-		player.sendSystemMessage(Component.literal("blocks: ${this.blocks.size}"))
+		player.sendSystemMessage(Component.literal("blocks: ${this.microLevel.blocks.size}"))
 		this.attachRenderer()
 	}
 
@@ -105,8 +117,17 @@ class PhysicsGrid private constructor(
 
 			poseStack.pushPose()
 			poseStack.initialTranslate(event.camera)
+			LevelRenderer.renderLineBox(
+				poseStack,
+				localClient.renderBuffers().bufferSource().getBuffer(RenderType.lines()),
+				this.bounding,
+				1f,
+				1f,
+				1f,
+				1f
+			)
 			poseStack.translate(this.pos)
-			this.blockEntities.forEach { (pos, blockEntity) ->
+			this.microLevel.blockEntities.forEach { (pos, blockEntity) ->
 				poseStack.pushPose()
 				poseStack.translate(pos)
 				val renderer = localClient.blockEntityRenderDispatcher.getRenderer(blockEntity)
@@ -130,11 +151,11 @@ class PhysicsGrid private constructor(
 
 	fun getNearbyShapes(entity: Entity): List<VoxelShape> {
 		val nearbyBlocks =
-			this.blocks.filter { this.pos.add(it.component1().toVec3()).distanceTo(entity.position()) < 5.0 }
+			this.microLevel.blocks.filter { this.pos.add(it.component1().toVec3()).distanceTo(entity.position()) < 5.0 }
 		return buildList {
-			nearbyBlocks.forEach { (pos, pair) ->
+			nearbyBlocks.forEach { (pos, state) ->
 				val (x, y, z) = this@PhysicsGrid.pos.add(pos.toVec3())
-				this.add(pair.first.move(x, y, z))
+				this.add(state.getShape(this@PhysicsGrid.microLevel, pos).move(x, y, z))
 			}
 		}
 	}

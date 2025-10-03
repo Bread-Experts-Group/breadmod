@@ -68,6 +68,7 @@ import net.neoforged.neoforge.registries.DeferredItem
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
 import org.joml.Vector3f
 import java.lang.reflect.Method
@@ -101,7 +102,12 @@ fun logDebugInfo(loggerName: String, message: Any?) {
 	if (SharedConstants.IS_RUNNING_IN_IDE) LogManager.getLogger(loggerName).info(message)
 }
 
-fun logDebugInfo(message: Any?): Unit = logDebugInfo("", message)
+fun logDebugInfo(message: Any?) {
+	if (SharedConstants.IS_RUNNING_IN_IDE) LogManager.getLogger().info(message)
+}
+
+fun displayClientMessage(message: Any?): Unit =
+	localClient.player!!.displayClientMessage(Component.literal("$message"), true)
 
 /**
  * Retrieves an instance of the provided [path]
@@ -186,6 +192,7 @@ private fun <T> rayCast(
 	do {
 		val hitPosition = positionFrom.add(directionTo.scale(distance))
 		val hit: T? = selector(positionFrom, hitPosition)
+//		displayClientMessage("$hit, $distance, $hitPosition, ${BlockPos.containing(hitPosition)}")
 		if (hit != null) {
 			val blockPos = BlockPos.containing(hitPosition)
 			val shape = level.getBlockState(blockPos).getShape(level, blockPos)
@@ -204,6 +211,28 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3, Vec3) -> T?): Hit
 	this.calculateViewVector(this.xRot, this.yRot),
 	length
 ) { from, to -> selector(this.level(), from, to) }
+
+fun <T> Entity.gridRayCast(length: Double, selector: (PhysicsGrid, Vec3, Vec3) -> T?): HitResult<T>? {
+	val grid = PhysicsGrid.getClosestGrid(this) ?: return null
+	return rayCast(
+		grid.microLevel,
+		this.eyePosition,
+		this.calculateViewVector(this.xRot, this.yRot),
+		length
+	) { from, to -> selector(grid, from, to) }
+}
+
+fun gridBlocks(
+	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)
+): (PhysicsGrid, Vec3, Vec3) -> BlockState? = { grid, from, to ->
+	val offsetTo = grid.pos.subtract(to).add(0.0, 1.62, 0.0)
+	val pos = BlockPos(offsetTo.toVec3i())
+	val state = grid.microLevel.getBlockState(pos)
+	displayClientMessage("$pos, $state")
+//	val shape = state.getShape(grid.microLevel, pos)
+	if (state.block in filterBlocks) null
+	state
+}
 
 fun blocks(
 	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)

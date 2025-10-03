@@ -2,10 +2,16 @@ package org.bread_experts_group.breadmod.mixin.common;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
+import org.bread_experts_group.breadmod.util.GeneralKt;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,6 +23,10 @@ import java.util.List;
 
 @Mixin(Entity.class)
 abstract class MixinEntity {
+	@Shadow public abstract Vec3 getEyePosition(float partialTicks);
+
+	@Shadow public abstract Vec3 getViewVector(float partialTicks);
+
 	@Unique
 	private Entity breadmod$getThis() {
 		return (Entity) (Object) this;
@@ -35,6 +45,27 @@ abstract class MixinEntity {
 			}
 		});
 		cir.setReturnValue(allShapes);
+	}
+
+	@Inject(method = "pick", at = @At("HEAD"), cancellable = true)
+	private void pickGridBlock(
+			double hitDistance, float partialTicks, boolean hitFluids,
+			CallbackInfoReturnable<HitResult> cir
+	) {
+//		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
+//		if (grid != null) {
+//			Vec3 vec3 = this.getEyePosition(partialTicks);
+//			Vec3 vec31 = this.getViewVector(partialTicks);
+//			Vec3 vec32 = vec3.add(vec31.x * hitDistance, vec31.y * hitDistance, vec31.z * hitDistance);
+//			org.bread_experts_group.breadmod.util.HitResult<BlockState> gridCast =
+//					GeneralKt.gridRayCast(breadmod$getThis(), hitDistance, GeneralKt.blocks());
+//			cir.setReturnValue(grid.getMicroLevel().clip(new ClipContext(vec3, vec32, ClipContext.Block.OUTLINE, hitFluids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, breadmod$getThis())));
+//		}
+		org.bread_experts_group.breadmod.util.HitResult<BlockState> gridCast =
+				GeneralKt.gridRayCast(breadmod$getThis(), hitDistance, GeneralKt.gridBlocks());
+		if (gridCast != null) {
+			cir.setReturnValue(new BlockHitResult(gridCast.getHitPosition(), gridCast.getHitSide(), gridCast.getBlockPosition(), false));
+		}
 	}
 
 	// todo do when we have a working server level impl

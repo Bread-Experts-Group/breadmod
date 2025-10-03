@@ -41,8 +41,7 @@ class GridMesh(private val grid: PhysicsGrid) {
 		val random = RandomSource.create()
 		val level = localClient.level ?: return
 
-		this.grid.blocks.forEach { (pos, pair) ->
-			val state = pair.second
+		this.grid.microLevel.blocks.forEach { (pos, state) ->
 			val bakedModel = dispatcher.getBlockModel(state)
 			poseStack.pushPose()
 			poseStack.translate(pos)
