@@ -1,10 +1,77 @@
 package org.bread_experts_group.breadmod.mixin.common;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Mixin(Entity.class)
 abstract class MixinEntity {
+	@Unique
+	private Entity breadmod$getThis() {
+		return (Entity) (Object) this;
+	}
+
+	@Inject(method = "collectColliders", at = @At("TAIL"), cancellable = true)
+	private static void collideWithGrids(
+			Entity entity, Level level, List<VoxelShape> collisions, AABB boundingBox,
+			CallbackInfoReturnable<List<VoxelShape>> cir
+	) {
+		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
+		Collection<PhysicsGrid> grids = PhysicsGrid.Companion.getGrids();
+		grids.forEach((grid) -> {
+			if (entity != null && entity.getBoundingBox().intersects(grid.getBounding())) {
+				allShapes.addAll(grid.getNearbyShapes(entity));
+			}
+		});
+		cir.setReturnValue(allShapes);
+	}
+
+	// todo do when we have a working server level impl
+	//	@Inject(method = "pick", at = @At("HEAD"), cancellable = true)
+//	private void pick(
+//			double hitDistance, float partialTicks,
+//			boolean hitFluids,
+//			CallbackInfoReturnable<net.minecraft.world.phys.HitResult> cir
+//	) {
+//		Vec3 eyePosition = this.getEyePosition(partialTicks);
+//		Vec3 viewVector = this.getViewVector(partialTicks);
+//		Vec3 destination = eyePosition.add(
+//				viewVector.x * hitDistance,
+//				viewVector.y * hitDistance,
+//				viewVector.z * hitDistance
+//		);
+//		GridHitResult selected = GeneralKt.blockPhysicsGrid(
+//				(grid) -> grid instanceof ClientPhysicsGrid,
+//				eyePosition,
+//				destination,
+//				false,
+//				CollisionContext.of(breadmod$getThis())
+//		);
+//		if (selected != null) {
+//			cir.setReturnValue(
+//					new GridBlockHitResult(
+//							selected.getHitResult().getLocation(),
+//							Direction.getNearest(selected.getHitResult().getLocation()),
+//							BlockPos.containing(selected.getHitResult().getLocation().add(selected.getGrid().getPosition())),
+//							selected.getGrid(),
+//							BlockPos.containing(selected.getHitResult().getLocation()),
+//							selected.getState()
+//					)
+//			);
+//		}
+//	}
+
 //	@Shadow
 //	public boolean noPhysics;
 //	@Shadow
@@ -13,18 +80,6 @@ abstract class MixinEntity {
 //	private Level level;
 //	@Unique
 //	private @Nullable Vec3 breadmod$lastPlatformPos;
-//
-//	@Inject(method = "collectColliders", at = @At("TAIL"), cancellable = true)
-//	private static void collectColliders(
-//			Entity entity, Level level, List<VoxelShape> collisions, AABB boundingBox,
-//			CallbackInfoReturnable<List<VoxelShape>> cir
-//	) {
-//		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
-//		for (PhysicsGrid grid : PhysicsGridGlobals.INSTANCE.getGrids().values()) {
-//			if (grid instanceof ClientPhysicsGrid) allShapes.addAll(grid.getWorldVoxelShapes());
-//		}
-//		cir.setReturnValue(allShapes);
-//	}
 //
 //	@Inject(method = "baseTick", at = @At("TAIL"))
 //	private void baseTick(CallbackInfo ci) {
@@ -79,11 +134,6 @@ abstract class MixinEntity {
 //	@Shadow
 //	public abstract Vec3 getViewVector(float partialTicks);
 //
-//	@Unique
-//	private Entity breadmod$getThis() {
-//		return (Entity) (Object) this;
-//	}
-//
 //	@Inject(method = "isInWall", at = @At("HEAD"), cancellable = true)
 //	private void isInWall(CallbackInfoReturnable<Boolean> cir) {
 //		if (this.noPhysics) cir.setReturnValue(false);
@@ -130,40 +180,6 @@ abstract class MixinEntity {
 //					);
 //				} else cir.setReturnValue(false);
 //			}
-//		}
-//	}
-//
-//	@Inject(method = "pick", at = @At("HEAD"), cancellable = true)
-//	private void pick(
-//			double hitDistance, float partialTicks,
-//			boolean hitFluids,
-//			CallbackInfoReturnable<net.minecraft.world.phys.HitResult> cir
-//	) {
-//		Vec3 eyePosition = this.getEyePosition(partialTicks);
-//		Vec3 viewVector = this.getViewVector(partialTicks);
-//		Vec3 destination = eyePosition.add(
-//				viewVector.x * hitDistance,
-//				viewVector.y * hitDistance,
-//				viewVector.z * hitDistance
-//		);
-//		GridHitResult selected = GeneralKt.blockPhysicsGrid(
-//				(grid) -> grid instanceof ClientPhysicsGrid,
-//				eyePosition,
-//				destination,
-//				false,
-//				CollisionContext.of(breadmod$getThis())
-//		);
-//		if (selected != null) {
-//			cir.setReturnValue(
-//					new GridBlockHitResult(
-//							selected.getHitResult().getLocation(),
-//							Direction.getNearest(selected.getHitResult().getLocation()),
-//							BlockPos.containing(selected.getHitResult().getLocation().add(selected.getGrid().getPosition())),
-//							selected.getGrid(),
-//							BlockPos.containing(selected.getHitResult().getLocation()),
-//							selected.getState()
-//					)
-//			);
 //		}
 //	}
 }

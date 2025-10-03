@@ -80,7 +80,6 @@ abstract class FluidEnergyRecipe(
 		var fluidsSatisfied = false
 //		val reliesOnEnergy = this.rEnergy != null && this.rEnergy != BigDecimal.ZERO
 //		if (reliesOnEnergy && input.energy == null) return false
-
 		if (this.rItemInputs.isNotEmpty() && input.item != null) {
 			itemsSatisfied = this.rItemInputs.all { rInput ->
 				input.item.slots.any { (_, slot) ->
@@ -101,7 +100,6 @@ abstract class FluidEnergyRecipe(
 //		if (reliesOnEnergy) throw UnsupportedOperationException()
 		return itemsSatisfied || fluidsSatisfied
 	}
-
 
 	/**
 	 * Used to determine if this recipe can fit in a grid of the given width/height

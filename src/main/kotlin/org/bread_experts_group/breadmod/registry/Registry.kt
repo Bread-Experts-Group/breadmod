@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.client.resources.PlayerSkin
 import net.minecraft.commands.Commands
-import net.minecraft.core.BlockPos
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
@@ -111,7 +110,8 @@ import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
 import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
-import org.bread_experts_group.breadmod.experimental.physics_grid.ServerMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.ClearGridPacket
+import org.bread_experts_group.breadmod.experimental.physics_grid.micro.ServerMicroLevel
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
@@ -153,7 +153,6 @@ import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.item.ModRecords
-import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.GluonGunBackpackItem
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ModArmorMaterials
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
@@ -180,7 +179,6 @@ import org.bread_experts_group.breadmod.util.getStackInPlayerHand
 import org.bread_experts_group.breadmod.util.hitbox
 import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
-import sun.misc.Unsafe
 import kotlin.reflect.full.primaryConstructor
 
 object Registry {
@@ -188,7 +186,6 @@ object Registry {
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val itemRenderers: MutableMap<String, BlockEntityWithoutLevelRenderer> = mutableMapOf()
 	val playingSounds: MutableMap<Vec3, BreadModTickingSoundInstance> = mutableMapOf()
-	val grids: MutableList<BulkBlockItem.PhysicsGrid> = mutableListOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
 	private val registerList: Array<RegistryProvider> = arrayOf(
 		ModItems,
@@ -326,13 +323,7 @@ object Registry {
 					)
 				}
 				NeoForge.EVENT_BUS.addListener { event: PlayerEvent.PlayerLoggedInEvent ->
-					// TODO: The worst Bread Mod code ever written
-					// Incredibly powerful and dangerous, needs an alternative ASAP
-					val theUnsafe = Unsafe::class.java.getDeclaredField("theUnsafe")
-					theUnsafe.isAccessible = true
-					val unsafe = theUnsafe.get(null) as Unsafe
-					val microLevel = unsafe.allocateInstance(ServerMicroLevel::class.java) as ServerMicroLevel
-					microLevel.setBlockAndUpdate(BlockPos.ZERO, ModBlocks.BREAD_BLOCK.get().block.defaultBlockState())
+					ServerMicroLevel.testLevel()
 				}
 				NeoForge.EVENT_BUS.addListener { event: LivingEquipmentChangeEvent ->
 					val entity = event.entity
@@ -647,7 +638,7 @@ object Registry {
 			DoubleOrNothingPacket.register(registrar)
 			BreadModBlockEntityUpdatePacket.register(registrar)
 			// Serverbound packets
-			BulkBlockItem.ClearGridPacket.register(registrar)
+			ClearGridPacket.register(registrar)
 			ToolGunModeChangePacket.register(registrar)
 			ComputerKeystrokePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)

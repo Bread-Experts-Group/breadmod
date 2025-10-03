@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.physics_grid
+package org.bread_experts_group.breadmod.experimental.physics_grid.micro
 
 import com.mojang.authlib.GameProfile
 import net.minecraft.SystemReport

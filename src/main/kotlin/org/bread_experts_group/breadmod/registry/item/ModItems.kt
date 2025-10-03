@@ -37,10 +37,10 @@ import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelLaye
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagItem
 import org.bread_experts_group.breadmod.experimental.particle.RadioactiveMaterial
+import org.bread_experts_group.breadmod.experimental.physics_grid.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
-import org.bread_experts_group.breadmod.registry.item.actual.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.item.actual.CoffeeBlendItem
 import org.bread_experts_group.breadmod.registry.item.actual.CoffeeCupItem
 import org.bread_experts_group.breadmod.registry.item.actual.DopedBreadItem

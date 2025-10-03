@@ -19,9 +19,7 @@ object RenderBuffer {
 		passthrough: BufferPassthrough = mutableListOf()
 	): Boolean = this.renderBuffer.add(Triple(forStage, entry, passthrough))
 
-	fun handle(
-		event: RenderLevelStageEvent
-	) {
+	fun handle(event: RenderLevelStageEvent) {
 		this.renderBuffer.removeIf { (stage, entry, passthrough) ->
 			if (stage == null || event.stage == stage) entry(event, passthrough)
 			else false

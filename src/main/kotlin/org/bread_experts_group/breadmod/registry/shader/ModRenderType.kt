@@ -42,6 +42,8 @@ import java.util.function.Function
  * - POSITION -> in vec3 Position
  * - COLOR -> in vec4 Color
  * - NORMAL -> in vec3 Normal
+ *
+ * #### Custom uniforms can be created by extending ShaderInstance, creating the uniform inside the shader's json and populating a field with your uniform by calling getUniform
  */
 @Suppress("INACCESSIBLE_TYPE")
 object ModRenderType {
