@@ -212,26 +212,28 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3, Vec3) -> T?): Hit
 	length
 ) { from, to -> selector(this.level(), from, to) }
 
-fun <T> Entity.gridRayCast(length: Double, selector: (PhysicsGrid, Vec3, Vec3) -> T?): HitResult<T>? {
+fun <T> Entity.gridRayCast(length: Double, selector: (PhysicsGrid, Entity, Vec3, Vec3) -> T?): HitResult<T>? {
 	val grid = PhysicsGrid.getClosestGrid(this) ?: return null
 	return rayCast(
 		grid.microLevel,
 		this.eyePosition,
 		this.calculateViewVector(this.xRot, this.yRot),
 		length
-	) { from, to -> selector(grid, from, to) }
+	) { from, to -> selector(grid, this, from, to) }
 }
 
 fun gridBlocks(
 	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)
-): (PhysicsGrid, Vec3, Vec3) -> BlockState? = { grid, from, to ->
-	val offsetTo = grid.pos.subtract(to).add(0.0, 1.62, 0.0)
-	val pos = BlockPos(offsetTo.toVec3i())
-	val state = grid.microLevel.getBlockState(pos)
-	displayClientMessage("$pos, $state")
-//	val shape = state.getShape(grid.microLevel, pos)
-	if (state.block in filterBlocks) null
-	state
+): (PhysicsGrid, Entity, Vec3, Vec3) -> BlockState? = { grid, entity, from, to ->
+	val shapes = grid.getNearbyShapesAndPos(entity)
+	val found = shapes.find { pair -> pair.second.toAabbs().find { it.clip(from, to).isPresent } != null }
+	if (found != null) {
+		val pos = found.first
+		val state = grid.microLevel.getBlockState(pos)
+		displayClientMessage("$pos, $state")
+		if (state.block in filterBlocks) null
+		state
+	} else null
 }
 
 fun blocks(

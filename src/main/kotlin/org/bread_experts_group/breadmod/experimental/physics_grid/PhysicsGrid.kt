@@ -89,6 +89,7 @@ class PhysicsGrid private constructor(
 	init {
 		val player = localClient.player!!
 		player.sendSystemMessage(Component.literal("blocks: ${this.microLevel.blocks.size}"))
+		this.microLevel.initGrid(this)
 		this.attachRenderer()
 	}
 
@@ -156,6 +157,17 @@ class PhysicsGrid private constructor(
 			nearbyBlocks.forEach { (pos, state) ->
 				val (x, y, z) = this@PhysicsGrid.pos.add(pos.toVec3())
 				this.add(state.getShape(this@PhysicsGrid.microLevel, pos).move(x, y, z))
+			}
+		}
+	}
+
+	fun getNearbyShapesAndPos(entity: Entity): List<Pair<BlockPos, VoxelShape>> {
+		val nearbyBlocks =
+			this.microLevel.blocks.filter { this.pos.add(it.component1().toVec3()).distanceTo(entity.position()) < 5.0 }
+		return buildList {
+			nearbyBlocks.forEach { (pos, state) ->
+				val (x, y, z) = this@PhysicsGrid.pos.add(pos.toVec3())
+				this.add(pos to state.getShape(this@PhysicsGrid.microLevel, pos).move(x, y, z))
 			}
 		}
 	}

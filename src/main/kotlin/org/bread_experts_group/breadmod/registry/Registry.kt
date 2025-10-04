@@ -55,7 +55,6 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent
-import net.neoforged.neoforge.event.entity.player.PlayerEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
@@ -111,7 +110,6 @@ import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvide
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.experimental.physics_grid.ClearGridPacket
-import org.bread_experts_group.breadmod.experimental.physics_grid.micro.ServerMicroLevel
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
@@ -321,9 +319,6 @@ object Registry {
 							.then(InternetRelayChatCommand.register())
 							.then(PingCommand.register())
 					)
-				}
-				NeoForge.EVENT_BUS.addListener { event: PlayerEvent.PlayerLoggedInEvent ->
-					ServerMicroLevel.testLevel()
 				}
 				NeoForge.EVENT_BUS.addListener { event: LivingEquipmentChangeEvent ->
 					val entity = event.entity
