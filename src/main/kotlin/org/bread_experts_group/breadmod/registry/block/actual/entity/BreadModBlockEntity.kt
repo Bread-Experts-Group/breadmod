@@ -17,7 +17,7 @@ import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
 import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
-import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
+import org.bread_experts_group.breadmod.network.serverbound.BreadModBEUpdateRequestPacket
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.handler.DataComponentSerializable
 import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
@@ -63,7 +63,7 @@ class BreadModBlockEntity(
 	@Suppress("UNCHECKED_CAST")
 	fun <T, C> getCapabilityOrNull(capability: BaseCapability<T, C>, context: C? = null): T? {
 		if (this.level?.isClientSide == true)
-			PacketDistributor.sendToServer(BreadModBlockEntityUpdateRequestPacket(this.blockPos))
+			PacketDistributor.sendToServer(BreadModBEUpdateRequestPacket(this.blockPos))
 		return this.capabilities[capability]?.get(context) as? T
 	}
 

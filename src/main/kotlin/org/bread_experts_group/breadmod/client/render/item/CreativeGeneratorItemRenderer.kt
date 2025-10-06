@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.render
+package org.bread_experts_group.breadmod.client.render.item
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -7,6 +7,10 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.resources.model.BakedModel
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import org.bread_experts_group.breadmod.client.render.getModel
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.renderItemModel
+import org.bread_experts_group.breadmod.client.render.scaleFlat
 
 class CreativeGeneratorItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,

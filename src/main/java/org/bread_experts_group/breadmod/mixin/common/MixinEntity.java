@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.mixin.common;
 
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -46,7 +47,7 @@ abstract class MixinEntity {
 	}
 
 	@Inject(method = "pick", at = @At("HEAD"), cancellable = true)
-	private void pickGridBlock(
+	private void pickGrid(
 			double hitDistance, float partialTicks, boolean hitFluids,
 			CallbackInfoReturnable<HitResult> cir
 	) {
@@ -55,6 +56,7 @@ abstract class MixinEntity {
 			Vec3 vec3 = this.getEyePosition(partialTicks);
 			Vec3 vec31 = this.getViewVector(partialTicks);
 			Vec3 vec32 = vec3.add(vec31.x * hitDistance, vec31.y * hitDistance, vec31.z * hitDistance);
+			breadmod$getThis().level().addParticle(ParticleTypes.END_ROD, vec32.x, vec32.y, vec32.z, 0.0, 0.0, 0.0);
 			cir.setReturnValue(grid.getMicroLevel().clip(new ClipContext(vec3, vec32, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, breadmod$getThis())));
 		}
 //		org.bread_experts_group.breadmod.util.HitResult<BlockState> gridCast =

@@ -65,10 +65,8 @@ abstract class BreadModBlock(
 	abstract fun shouldCreateEntity(with: Pair<BlockPos, BlockState>? = null): Boolean
 	final override fun newBlockEntity(pos: BlockPos, state: BlockState): BreadModBlockEntity? {
 		if (this.blockEntityType == null || !this.shouldCreateEntity(pos to state)) return null
-		return BreadModBlockEntity(
-			this.blockEntityType!!.get(), pos, state,
-			this.ofCapabilities()
-		)
+		val blockEntity = BreadModBlockEntity(this.blockEntityType!!.get(), pos, state, this.ofCapabilities())
+		return blockEntity
 	}
 
 	fun synchronizeEntity(entity: BlockEntity) {

@@ -14,6 +14,8 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.util.minus
+import org.bread_experts_group.breadmod.util.toVec3
 import sun.misc.Unsafe
 
 class ServerMicroLevel : ServerLevel(
@@ -77,9 +79,14 @@ class ServerMicroLevel : ServerLevel(
 	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
 
 	override fun clip(context: ClipContext): BlockHitResult {
-		val result = super.clip(context)
-		val localized = result.location.subtract(this.grid.pos)
-		localClient.player!!.displayClientMessage(Component.literal("$localized"), true)
+		val initial = super.clip(context)
+		val result = BlockHitResult(
+			initial.location - this.grid.pos,
+			initial.direction,
+			BlockPos.containing(initial.blockPos.toVec3() - this.grid.pos),
+			initial.isInside
+		)
+		localClient.player!!.displayClientMessage(Component.literal("${result.blockPos}, ${result.location}"), true)
 		return result
 	}
 }

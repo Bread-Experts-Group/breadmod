@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
 import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.tool_gun.gui.components.SettingsEntryButton
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum.MAIN
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.MainEntry

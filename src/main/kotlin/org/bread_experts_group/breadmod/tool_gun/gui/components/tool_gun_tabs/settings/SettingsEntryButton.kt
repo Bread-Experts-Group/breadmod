@@ -1,11 +1,9 @@
-package org.bread_experts_group.breadmod.tool_gun.gui.components
+package org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab.Companion.currentSettingsEntry
 import java.awt.Color
 
 class SettingsEntryButton(
@@ -18,7 +16,7 @@ class SettingsEntryButton(
 	localClient.font.width(message) + 4,
 	12,
 	message,
-	{ currentSettingsEntry = entry },
+	{ SettingsTab.Companion.currentSettingsEntry = entry },
 	{ Component.empty() }
 ) {
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

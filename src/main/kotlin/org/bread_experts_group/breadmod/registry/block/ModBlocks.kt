@@ -62,6 +62,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.ItemInWorldBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ItemPedestalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
+import org.bread_experts_group.breadmod.registry.block.actual.ModelBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
@@ -487,6 +488,9 @@ object ModBlocks : RegistryProvider(
 		"fluid_energy_block",
 		::FluidEnergyBlock
 	) { block -> this.itemWithCreativeTab(block, Properties(), listOf(ModCreativeTabs.EXPERIMENTAL_TAB)) }
+
+	@DataGenerateLanguage
+	val MODEL_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem("model_block", ::ModelBlock)
 
 	// EXPERIMENTAL PAST THIS POINT
 	@DataGenerateLootDropNothing

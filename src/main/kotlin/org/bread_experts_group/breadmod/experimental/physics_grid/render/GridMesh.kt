@@ -17,22 +17,24 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 class GridMesh(private val grid: PhysicsGrid) {
 	private var isCompiled: Boolean = false
 	private val meshes: MutableMap<RenderType, MeshData> = mutableMapOf()
-	val bufferBuilders: MutableMap<RenderType, BufferBuilder> = mutableMapOf()
-	val vertexBuffers: MutableMap<RenderType, VertexBuffer> = mutableMapOf()
+	private val bufferBuilders: MutableMap<RenderType, BufferBuilder> = mutableMapOf()
+	private val vertexBuffers: MutableMap<RenderType, VertexBuffer> = mutableMapOf()
 
-	fun getOrBeginBufferBuilder(renderType: RenderType): BufferBuilder =
+	private fun getOrBeginBufferBuilder(renderType: RenderType): BufferBuilder =
 		this.bufferBuilders.getOrPut(renderType) {
 			val byteBufferBuilder = ByteBufferBuilder(renderType.bufferSize)
 			BufferBuilder(byteBufferBuilder, renderType.mode, renderType.format)
 		}
 
-	fun getOrBeginVertexBuffer(renderType: RenderType): VertexBuffer =
+	private fun getOrBeginVertexBuffer(renderType: RenderType): VertexBuffer =
 		this.vertexBuffers.getOrPut(renderType) { VertexBuffer(VertexBuffer.Usage.STATIC) }
 
 	fun close() {
 		this.meshes.values.forEach(MeshData::close)
 		this.vertexBuffers.values.forEach(VertexBuffer::close)
 	}
+
+	fun getBuffers(): Collection<VertexBuffer> = this.vertexBuffers.values
 
 	fun compile(poseStack: PoseStack) {
 		if (this.isCompiled) return

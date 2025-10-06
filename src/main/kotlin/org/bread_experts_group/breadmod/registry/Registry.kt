@@ -76,7 +76,6 @@ import org.bread_experts_group.breadmod.client.gui.screens.BreadModScreen
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
-import org.bread_experts_group.breadmod.client.render.CreativeGeneratorItemRenderer
 import org.bread_experts_group.breadmod.client.render.RendererWithBEWLRLerpTicker
 import org.bread_experts_group.breadmod.client.render.WarRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
@@ -88,6 +87,8 @@ import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRen
 import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
+import org.bread_experts_group.breadmod.client.render.item.CreativeGeneratorItemRenderer
+import org.bread_experts_group.breadmod.client.render.item.ModelBlockItemRenderer
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
@@ -121,8 +122,9 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
-import org.bread_experts_group.breadmod.network.serverbound.BreadModBlockEntityUpdateRequestPacket
+import org.bread_experts_group.breadmod.network.serverbound.BreadModBEUpdateRequestPacket
 import org.bread_experts_group.breadmod.network.serverbound.ComputerKeystrokePacket
+import org.bread_experts_group.breadmod.network.serverbound.CreateModelBlockItemPacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.HitboxPacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
@@ -424,6 +426,11 @@ object Registry {
 						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
 							this@Registry.itemRenderers.getOrPut(this.renderer, ::CreativeGeneratorItemRenderer)
 					}, ModBlocks.CREATIVE_GENERATOR.asItem())
+					event.registerItem(object : IClientItemExtensions {
+						val renderer: String = "model_item"
+						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+							this@Registry.itemRenderers.getOrPut(this.renderer, ::ModelBlockItemRenderer)
+					}, ModBlocks.MODEL_BLOCK.asItem())
 				}
 				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
 					event.registerEntityRenderer(ModEntityTypes.BIG_ITEM_CONTAINER.get(), ::BigItemContainerRenderer)
@@ -639,8 +646,9 @@ object Registry {
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
-			BreadModBlockEntityUpdateRequestPacket.register(registrar)
+			BreadModBEUpdateRequestPacket.register(registrar)
 			HitboxPacket.register(registrar)
+			CreateModelBlockItemPacket.register(registrar)
 		}
 		modBus.addListener { event: EntityAttributeCreationEvent ->
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())

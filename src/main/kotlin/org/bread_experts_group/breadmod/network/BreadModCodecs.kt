@@ -40,6 +40,7 @@ import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import org.bread_experts_group.breadmod.util.ofOptional
+import org.joml.Quaternionf
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Optional
@@ -357,6 +358,13 @@ object BreadModCodecs {
 		ByteBufCodecs.DOUBLE, { it.y },
 		ByteBufCodecs.DOUBLE, { it.z },
 		::Vec3
+	)
+	val QUATERNIONF: StreamCodec<ByteBuf, Quaternionf> = StreamCodec.composite(
+		ByteBufCodecs.FLOAT, { it.x },
+		ByteBufCodecs.FLOAT, { it.y },
+		ByteBufCodecs.FLOAT, { it.z },
+		ByteBufCodecs.FLOAT, { it.w },
+		::Quaternionf
 	)
 
 //	// Convenience codec methods.

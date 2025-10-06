@@ -88,6 +88,24 @@ class ModBlockLootProvider(
 				)
 		)
 		this.add(
+			ModBlocks.MODEL_BLOCK.block,
+			LootTable.lootTable()
+				.withPool(
+					this.applyExplosionCondition(
+						ModBlocks.MODEL_BLOCK.block,
+						LootPool.lootPool()
+							.setRolls(ConstantValue.exactly(1f))
+							.add(
+								LootItem.lootTableItem(ModBlocks.MODEL_BLOCK.asItem())
+									.apply(
+										CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+											.include(ModDataComponents.MODEL_DATA.get())
+									)
+							)
+					)
+				)
+		)
+		this.add(
 			ModBlocks.FLOUR_LAYER_BLOCK.get().block, LootTable.lootTable().withPool(
 				LootPool.lootPool()
 					.`when`(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))

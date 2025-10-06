@@ -98,6 +98,8 @@ val BigDecimal.int: Int
 val DeferredItem<BlockItem>.block: Block
 	get() = this.get().block
 
+fun <T : Any> T.optional(): Optional<T> = Optional.of(this)
+
 fun logDebugInfo(loggerName: String, message: Any?) {
 	if (SharedConstants.IS_RUNNING_IN_IDE) LogManager.getLogger(loggerName).info(message)
 }
@@ -440,14 +442,13 @@ fun <T : ByteBuf, V> StreamCodec<T, V>.toMutableList(): StreamCodec<T, MutableLi
 	this.apply(ByteBufCodecs.collection { NonNullList.createWithCapacity<V>(it).toMutableList() })
 
 fun <T> List<T>.toNonNullList(): NonNullList<T> = NonNullList.copyOf(this)
-fun <T : ByteBuf, V> StreamCodec<T, V>.toList(): StreamCodec<T, List<V>> = this.apply(ByteBufCodecs.list())
+fun <T : ByteBuf, V> StreamCodec<T, V>.listOf(): StreamCodec<T, List<V>> = this.apply(ByteBufCodecs.list())
 fun <T : ByteBuf, V> StreamCodec<T, V>.ofOptional(): StreamCodec<T, Optional<V>> = ByteBufCodecs.optional(this)
 
 fun <T, R> Pair<T, R>.toMojangPair(): com.mojang.datafixers.util.Pair<T, R> =
 	com.mojang.datafixers.util.Pair.of(this.first, this.second)
 
-fun <T, R> com.mojang.datafixers.util.Pair<T, R>.toKotlinPair(): Pair<T, R> =
-	this.first to this.second
+fun <T, R> com.mojang.datafixers.util.Pair<T, R>.toKotlinPair(): Pair<T, R> = this.first to this.second
 
 fun getStackInPlayerHand(
 	player: Player? = if (FMLEnvironment.dist.isClient) localClient.player else null,

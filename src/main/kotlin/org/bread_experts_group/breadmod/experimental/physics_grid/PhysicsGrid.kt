@@ -104,7 +104,7 @@ class PhysicsGrid private constructor(
 			poseStack.mulPose(event.modelViewMatrix)
 			poseStack.translate(-x, -y, -z)
 			poseStack.translate(this.pos)
-			gridMesh.vertexBuffers.values.forEach { buffer ->
+			gridMesh.getBuffers().forEach { buffer ->
 				buffer.bind()
 				buffer.drawWithShader(
 					poseStack.last().pose(),

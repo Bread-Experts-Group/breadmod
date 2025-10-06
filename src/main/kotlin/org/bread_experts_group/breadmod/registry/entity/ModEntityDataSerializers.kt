@@ -11,7 +11,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BLOCK_MAP_STREAM_CODEC
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
-import org.bread_experts_group.breadmod.util.toList
+import org.bread_experts_group.breadmod.util.listOf
 
 @Suppress("unused")
 object ModEntityDataSerializers : RegistryProvider(
@@ -29,6 +29,6 @@ object ModEntityDataSerializers : RegistryProvider(
 			EntityDataSerializer<List<BigDescriptor<Item>>>
 			> =
 		this.registry.register("big_descriptor_item") { ->
-			EntityDataSerializer.forValueType(BreadModCodecs.BIG_DESCRIPTOR_ITEM_STREAM_CODEC.toList())
+			EntityDataSerializer.forValueType(BreadModCodecs.BIG_DESCRIPTOR_ITEM_STREAM_CODEC.listOf())
 		}
 }

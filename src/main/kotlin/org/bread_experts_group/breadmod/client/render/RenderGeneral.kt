@@ -82,6 +82,8 @@ import kotlin.math.min
 val localClient: Minecraft = Minecraft.getInstance()
 internal var skyColorMixinActive: Boolean = false
 internal var redness: Float = 1f
+val floorTexture: ResourceLocation = checkerboardTexture(Color.WHITE, Color.BLACK, "white_black")
+val arrowTexture: ResourceLocation = modLocation("textures/arrow.png")
 
 fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
 
@@ -364,7 +366,7 @@ fun Screen.redirectFocusFromContainerWidgets(mouseX: Double, mouseY: Double, but
 }
 
 fun VertexConsumer.getBufferBuilder(): BufferBuilder =
-	this as? BufferBuilder ?: throw AssertionError("this vertex consumer is not buffer builder!")
+	this as? BufferBuilder ?: throw ClassCastException("this vertex consumer is not BufferBuilder!")
 
 /**
  * Scales the [PoseStack] uniformly on the X, Y, and Z axis.

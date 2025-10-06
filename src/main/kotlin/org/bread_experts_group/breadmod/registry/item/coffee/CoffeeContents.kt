@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.util.Color
-import org.bread_experts_group.breadmod.util.toList
+import org.bread_experts_group.breadmod.util.listOf
 
 data class CoffeeContents(val effects: List<MobEffectInstance>) {
 	companion object {
@@ -21,7 +21,7 @@ data class CoffeeContents(val effects: List<MobEffectInstance>) {
 			).apply(inst, ::CoffeeContents)
 		}
 		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, CoffeeContents> = StreamCodec.composite(
-			MobEffectInstance.STREAM_CODEC.toList(), CoffeeContents::effects,
+			MobEffectInstance.STREAM_CODEC.listOf(), CoffeeContents::effects,
 			::CoffeeContents
 		)
 		val EMPTY: CoffeeContents = CoffeeContents(listOf())

@@ -62,21 +62,22 @@ repositories {
 		name = "ForgeConfigAPIPort"
 		url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/")
 	}
-//	maven {
-//		name = "Bread Experts Group Maven"
-//		url = uri("https://maven.breadexperts.group/")
-//	}
-//	exclusiveContent {
-//		forRepository {
-//			maven {
-//				name = "Bread Experts Group Maven"
-//				url = uri("https://maven.breadexperts.group/")
-//			}
-//		}
-//		filter {
-//			includeGroup("org.bread_experts_group")
-//		}
-//	}
+	maven {
+		name = "Bread Experts Group Maven"
+		url = uri("https://maven.breadexperts.group/")
+	}
+
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Bread Experts Group Maven"
+				url = uri("file:///home/logan/.m2/repository")
+			}
+		}
+		filter {
+			includeGroup("org.bread_experts_group")
+		}
+	}
 }
 
 neoForge {

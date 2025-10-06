@@ -16,7 +16,8 @@ import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
 import org.bread_experts_group.breadmod.registry.item.coffee.CoffeeContents
-import org.bread_experts_group.breadmod.util.toList
+import org.bread_experts_group.breadmod.tool_gun.Model
+import org.bread_experts_group.breadmod.util.listOf
 import java.math.BigDecimal
 import java.util.function.Supplier
 
@@ -45,6 +46,12 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 			.networkSynchronized(MachSpeedData.Companion.STREAM_CODEC)
 			.cacheEncoding()::build
 	)
+	val MODEL_DATA: Supplier<DataComponentType<List<Model>>> = this.registry.register(
+		"model_data", DataComponentType.builder<List<Model>>()
+			.persistent(Model.CODEC.listOf())
+			.networkSynchronized(Model.STREAM_CODEC.listOf())
+		::build
+	)
 	val COLOR: Supplier<DataComponentType<Int>> = this.registry.register(
 		"color", DataComponentType.builder<Int>()
 			.networkSynchronized(ByteBufCodecs.INT)
@@ -65,13 +72,13 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 	)
 	val TANKS: Supplier<DataComponentType<List<ExtendedFluidHandler.Tank>>> = this.registry.register(
 		"tanks", DataComponentType.builder<List<ExtendedFluidHandler.Tank>>()
-			.networkSynchronized(ExtendedFluidHandler.Tank.STREAM_CODEC.toList())
+			.networkSynchronized(ExtendedFluidHandler.Tank.STREAM_CODEC.listOf())
 			.persistent(ExtendedFluidHandler.Tank.CODEC.listOf())
 		::build
 	)
 	val SLOTS: Supplier<DataComponentType<List<ExtendedItemHandler.Slot>>> = this.registry.register(
 		"slots", DataComponentType.builder<List<ExtendedItemHandler.Slot>>()
-			.networkSynchronized(ExtendedItemHandler.Slot.STREAM_CODEC.toList())
+			.networkSynchronized(ExtendedItemHandler.Slot.STREAM_CODEC.listOf())
 			.persistent(ExtendedItemHandler.Slot.CODEC.listOf())
 		::build
 	)
@@ -95,7 +102,7 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 	)
 	val BLOCK_ENTITY_HANDLER_INFORMATION: Supplier<DataComponentType<List<Component>>> = this.registry.register(
 		"beg_be_handler_info", DataComponentType.builder<List<Component>>()
-			.networkSynchronized(ComponentSerialization.STREAM_CODEC.toList())
+			.networkSynchronized(ComponentSerialization.STREAM_CODEC.listOf())
 			.persistent(ComponentSerialization.CODEC.listOf())
 			.cacheEncoding()::build
 	)

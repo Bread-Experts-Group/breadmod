@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.client.render
+package org.bread_experts_group.breadmod.client.render.item
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
@@ -11,7 +11,13 @@ import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
+import org.bread_experts_group.breadmod.client.render.LerpTicker
+import org.bread_experts_group.breadmod.client.render.RendererWithBEWLRLerpTicker
 import org.bread_experts_group.breadmod.client.render.buffer.BeamBufferTask
+import org.bread_experts_group.breadmod.client.render.gamePaused
+import org.bread_experts_group.breadmod.client.render.getModel
+import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.renderItemModel
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
 import org.bread_experts_group.formatMetric

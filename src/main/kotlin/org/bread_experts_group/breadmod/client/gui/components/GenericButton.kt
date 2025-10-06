@@ -22,8 +22,8 @@ class GenericButton(
 		Int, height: Int,
 		message: String,
 		tooltipMessage: Component = Component.empty(),
-		onPress: (Button, Int) -> Unit
-	) : this(x, y, width, height, Component.literal(message), tooltipMessage, onPress)
+		onClick: (Button, Int) -> Unit
+	) : this(x, y, width, height, Component.literal(message), tooltipMessage, onClick)
 
 	override fun getTooltip(): Tooltip = Tooltip.create(this.tooltipMessage)
 

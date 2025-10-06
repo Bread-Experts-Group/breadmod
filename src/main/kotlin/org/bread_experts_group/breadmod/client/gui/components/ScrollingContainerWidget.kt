@@ -21,7 +21,7 @@ class ScrollingContainerWidget<T : Screen>(
 	private val innerColor: Int,
 	private val outerColor: Int,
 	private val scrollRate: Double = 10.0,
-	private val initializer: (ScrollingContainerWidget<T>) -> Unit
+	private val initializer: (ScrollingContainerWidget<T>) -> Unit = {}
 ) : ContainerWidget<T>(x, y, width, height, id, screen) {
 	private val innerPadding: Int = 0
 	private var scrollAmount: Double = 0.0
