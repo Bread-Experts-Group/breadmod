@@ -51,15 +51,15 @@ class Hitbox(
 		)
 		poseStack.popPose()
 
-		DebugRenderer.renderFloatingText(
-			poseStack,
-			bufferSource,
-			this.pos.toString(),
-			this.pos.x,
-			this.pos.y + 1.0,
-			this.pos.z,
-			Color.WHITE
-		)
+//		DebugRenderer.renderFloatingText(
+//			poseStack,
+//			bufferSource,
+//			this.pos.toString(),
+//			this.pos.x,
+//			this.pos.y + 1.0,
+//			this.pos.z,
+//			Color.WHITE
+//		)
 	}
 
 	fun resize(newSize: Double) {

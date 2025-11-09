@@ -22,8 +22,11 @@ import org.bread_experts_group.breadmod.client.gui.components.GenericButton
 import org.bread_experts_group.breadmod.client.gui.components.GenericEditBox
 import org.bread_experts_group.breadmod.client.gui.components.ScrollingContainerWidget
 import org.bread_experts_group.breadmod.client.render.arrowTexture
+import org.bread_experts_group.breadmod.client.render.borderedFillPositioned
 import org.bread_experts_group.breadmod.client.render.drawQuad
+import org.bread_experts_group.breadmod.client.render.enablePositionedScissor
 import org.bread_experts_group.breadmod.client.render.floorTexture
+import org.bread_experts_group.breadmod.client.render.flushAndFinishScissor
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.redirectFocusFromContainerWidgets
 import org.bread_experts_group.breadmod.client.render.scaleFlat
@@ -35,6 +38,8 @@ import org.bread_experts_group.breadmod.util.Color
 import kotlin.jvm.optionals.getOrNull
 
 class ModelScreen(val player: Player) : Screen(Component.literal("editor")) {
+	val screenSize: Int = localClient.options.guiScale().get()
+
 	companion object {
 		fun renderFloor(poseStack: PoseStack, bufferSource: MultiBufferSource, withArrow: Boolean = true) {
 			repeat(5) { x ->
@@ -100,6 +105,10 @@ class ModelScreen(val player: Player) : Screen(Component.literal("editor")) {
 	var floorPitch: Float = 64f
 	var floorRoll: Float = 0f
 
+	init {
+		localClient.options.guiScale().set(3)
+	}
+
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean =
 		this.redirectFocusFromContainerWidgets(mouseX, mouseY, button)
 
@@ -111,10 +120,15 @@ class ModelScreen(val player: Player) : Screen(Component.literal("editor")) {
 
 		poseStack.pushPose()
 
+		poseStack.translate(0f, 0f, -200f)
+		guiGraphics.borderedFillPositioned(this.leftPos - 190, 0, 380, this.height, Color.GRAY, Color.BLACK)
+		poseStack.translate(0f, 0f, 200f)
 		this.translateAndScale(poseStack)
 		this.rotateView(poseStack)
+		guiGraphics.enablePositionedScissor(this.leftPos - 189, 0, 378, this.height)
 		Companion.renderBlocks(poseStack, bufferSource, Companion.blocks)
 		Companion.renderFloor(poseStack, bufferSource)
+		guiGraphics.flushAndFinishScissor()
 
 		poseStack.popPose()
 	}
@@ -131,6 +145,11 @@ class ModelScreen(val player: Player) : Screen(Component.literal("editor")) {
 		poseStack.mulPose(Axis.ZN.rotationDegrees(this.floorYaw))
 		poseStack.mulPose(Axis.YN.rotationDegrees(this.floorRoll))
 		poseStack.translate(-2.5, 2.5, 0.0)
+	}
+
+	override fun onClose() {
+		localClient.options.guiScale().set(this.screenSize)
+		super.onClose()
 	}
 
 	// cursed

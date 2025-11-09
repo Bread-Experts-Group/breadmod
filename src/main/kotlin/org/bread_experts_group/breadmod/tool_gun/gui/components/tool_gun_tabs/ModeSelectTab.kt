@@ -90,8 +90,6 @@ class ModeSelectTab(
 		val poseStack = guiGraphics.pose()
 		guiGraphics.borderedFill(this.x, this.y, this.x + 243, this.y + 185, Color.RED, Color.GRAY)
 		guiGraphics.vLine(this.x + 120, this.y, this.y + 184, Color.RED)
-		// todo move this to the main screen class for the title
-//		guiGraphics.drawString(localClient.font, this.title, this.x + 2, this.y + 2, Color.BLACK.rgb, false)
 		guiGraphics.fill(
 			RenderType.gui(),
 			this.x + 123,

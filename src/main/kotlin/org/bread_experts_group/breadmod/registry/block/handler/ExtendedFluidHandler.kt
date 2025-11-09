@@ -179,6 +179,8 @@ class ExtendedFluidHandler(
 		var fluid: Fluid = Fluids.EMPTY
 		var components: DataComponentMap = DataComponentMap.EMPTY
 
+		fun isEmpty() = this.amount == BigDecimal.ZERO
+
 		fun fluidStack(): FluidStack {
 			if (this.amount < BigDecimal.ONE) return FluidStack.EMPTY
 			val percent = this.amount.divide(this.capacity, floatRoundEven).toFloat()

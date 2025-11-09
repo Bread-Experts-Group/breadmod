@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.compat.lookingat.jade
 
 import com.mojang.blaze3d.platform.ScreenManager.clamp
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.ChatFormatting
 import net.minecraft.Util
 import net.minecraft.client.gui.Font
@@ -12,7 +13,9 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.util.Mth
 import net.minecraft.world.inventory.InventoryMenu
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.render.fillPositioned
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.Color.mix
 import org.bread_experts_group.formatMetric
@@ -37,20 +40,21 @@ object JadeDrawingCommon {
 		).mapIndexed { index, direction -> direction to index * 16 }.toTypedArray()
 	)
 
-//	fun GuiGraphics.drawDirectionCube(x: Float, y: Float, direction: Direction?, item: HandlerLimits) {
-//		RenderSystem.enableBlend()
+	fun GuiGraphics.drawDirectionCube(x: Float, y: Float, direction: Direction?,/* item: HandlerLimits*/) {
+		RenderSystem.enableBlend()
 //		(if (item.maxIn == BigDecimal.ZERO) ModGuiElements.CUBE_OUT_ONLY
 //		else if (item.maxOut == BigDecimal.ZERO) ModGuiElements.CUBE_IN_ONLY
-//		else ModGuiElements.CUBE_BI_DIRECTIONAL).blit(
-//			this,
-//			x.toInt() + 82,
-//			y.toInt() - 1,
-//			this@JadeDrawingCommon.uvs[direction]?.toFloat() ?: 0f,
-//			uWidth = 16,
-//			vHeight = 16
-//		)
-//		RenderSystem.disableBlend()
-//	}
+		/*else*/ ModGuiElements.CUBE_BI_DIRECTIONAL/*)*/.blit(
+			this,
+			x.toInt() + 82,
+			y.toInt() - 1,
+			this@JadeDrawingCommon.uvs[direction]?.toFloat() ?: 0f,
+			uWidth = 16,
+			vHeight = 16
+		)
+		RenderSystem.disableBlend()
+	}
+
 	fun GuiGraphics.fill(minX: Float, minY: Float, maxX: Float, maxY: Float) {
 		var minX1 = minX
 		var minY1 = minY
@@ -123,6 +127,7 @@ object JadeDrawingCommon {
 			val matrix = this.pose().last().pose()
 			val left = matrix.m30().toInt()
 			val top = matrix.m31().toInt()
+			this.fillPositioned(minX, j, maxX - minX, maxY - minY, Color.BLUE)
 			this.enableScissor(left + minX, top + minY, left + maxX, top + maxY)
 			this.drawString(font, text, minX - d3.toInt(), j, color)
 			this.disableScissor()

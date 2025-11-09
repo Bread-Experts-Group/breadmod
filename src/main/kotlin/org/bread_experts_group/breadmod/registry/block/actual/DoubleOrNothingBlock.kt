@@ -227,10 +227,24 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp }),
 			HitboxHandler.BLOCK_VOID to mapOf(null to { entity ->
 				val pos = entity.blockPos
-				val offset = pos.relative(entity.blockState.getValue(HORIZONTAL_FACING)).center
+				val facing = entity.blockState.getValue(HORIZONTAL_FACING)
+				val offset = pos.relative(facing).center
+				val nsOffset = if (facing == Direction.SOUTH) 0.219 else if (facing == Direction.NORTH) -0.219 else 0.0
+				val ewOffset = if (facing == Direction.WEST) 0.219 else if (facing == Direction.EAST) -0.219 else 0.0
 				HitboxHandler(
-					Hitbox(0.25, pos, offset) { level, pos, state, player, entity ->
+					Hitbox(
+						0.185,
+						pos,
+						offset.relative(facing, -0.88).add(nsOffset, 0.0, ewOffset)
+					) { level, pos, state, player, entity ->
 						this.triggerDouble(level, pos, player)
+					},
+					Hitbox(
+						0.185,
+						pos,
+						offset.relative(facing, -0.88).add(-nsOffset, 0.0, -ewOffset)
+					) { level, pos, state, player, entity ->
+						this.triggerCashout(level, pos, player)
 					}
 				)
 			})

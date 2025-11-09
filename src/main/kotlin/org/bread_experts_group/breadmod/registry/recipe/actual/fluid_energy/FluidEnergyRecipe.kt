@@ -9,6 +9,7 @@ import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.Fluid
+import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.util.int
 import java.math.BigDecimal
@@ -49,6 +50,12 @@ data class BigDescriptor<T>(
 
 fun BigDescriptor<Item>.itemStack(): ItemStack {
 	val stack = ItemStack(this.value, this.amount.int)
+	stack.applyComponents(this.components)
+	return stack
+}
+
+fun BigDescriptor<Fluid>.fluidStack(): FluidStack {
+	val stack = FluidStack(this.value, this.amount.int)
 	stack.applyComponents(this.components)
 	return stack
 }
