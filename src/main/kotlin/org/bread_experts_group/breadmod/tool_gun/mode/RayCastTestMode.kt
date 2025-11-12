@@ -11,6 +11,7 @@ import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -40,7 +41,7 @@ class RayCastTestMode : IToolGunMode {
 	var direction: Direction = Direction.NORTH
 	var showDebugData: Boolean = true
 
-	override fun action(level: Level, player: Player, stack: ItemStack) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
 		player.rayCast(100.0, blocks())?.let {
 			this.hitPos = it.hitPosition
 			this.blockHitPos.set(it.blockPosition)

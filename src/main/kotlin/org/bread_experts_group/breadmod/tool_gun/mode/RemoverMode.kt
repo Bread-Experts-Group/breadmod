@@ -11,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -57,7 +58,7 @@ class RemoverMode : IToolGunMode {
 	}
 
 	private var targetEntities: Boolean = false
-	override fun action(level: Level, player: Player, stack: ItemStack) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
 		if (!player.isShiftKeyDown) {
 			if (this.targetEntities) {
 				val entity = player.rayCast(500.0, entities())

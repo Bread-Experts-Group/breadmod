@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.tool_gun.mode
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -35,7 +36,7 @@ class ExplodeMode : IToolGunMode {
 		val tooltip: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "tooltip")
 	}
 
-	override fun action(level: Level, player: Player, stack: ItemStack) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
 		if (!level.isClientSide) {
 			val targetBlock = player.rayCast(500.0, blocks()) ?: return
 			BreadModExplosion

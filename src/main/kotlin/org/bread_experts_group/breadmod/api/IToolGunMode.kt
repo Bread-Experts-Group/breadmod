@@ -18,6 +18,7 @@ import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.item.ToolGunItemRenderer
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.Registry
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
@@ -46,18 +47,25 @@ interface IToolGunMode {
 	 * Main action method for this [IToolGunMode].
 	 * Triggered using right click.
 	 */
-	fun action(level: Level, player: Player, stack: ItemStack)
+	fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand)
 
 	/**
 	 * Fired when the tool gun's use function is called, fired before [action].
 	 * if the returned value is false, cancel the main tool gun action.
 	 */
-	fun actionPre(level: Level, player: Player, usedHand: InteractionHand): Boolean = true
+	fun actionPre(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand): Boolean = true
 
 	/**
 	 * Fired when the tool gun's use function is called, fired after [action].
 	 */
-	fun actionPost(level: Level, player: Player, usedHand: InteractionHand) {}
+	fun actionPost(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {}
+
+	/**
+	 * Fires every tick.
+	 *
+	 * ### Note this is tied to Item#inventoryTick, this method will not be called if the stack is not present inside the player's inventory.
+	 */
+	fun tick(level: Level, player: Player, stack: ItemStack, data: ToolGunData) {}
 
 	/**
 	 * Event bridge for [MouseScrollingEvent], used for handling mouse scrolling while holding the tool gun.
@@ -138,7 +146,7 @@ interface IToolGunMode {
 	 *
 	 * Defaults to [EmptyMode]'s Renderer.
 	 *
-	 * * This shouldn't be overridden.
+	 * ## *This shouldn't be overridden.*
 	 */
 	fun getCustomRenderer(): IToolGunModeRenderer =
 		Registry.toolGunRendererCache.getOrPut(this.getUid(), this::defineCustomRenderer)

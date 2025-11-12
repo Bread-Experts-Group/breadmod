@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.RandomSource
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
@@ -46,16 +47,16 @@ class CreatorMode : IToolGunMode {
 	private val logger: Logger = LogManager.getLogger("Creator Mode")
 
 	companion object {
-		@DataGenerateLanguage("en_us", "Create/Edit blocks and entities.")
+		@DataGenerateLanguage(name = "Create/Edit blocks and entities.")
 		val description: MutableComponent = modTranslatable("tool_gun", "creator", "mode", "description")
 
-		@DataGenerateLanguage("en_us", "Creator")
+		@DataGenerateLanguage(name = "Creator")
 		val displayName: MutableComponent = modTranslatable("tool_gun", "creator", "mode", "display_name")
 
-		@DataGenerateLanguage("en_us", "Creator Mode")
+		@DataGenerateLanguage(name = "Creator Mode")
 		val name: MutableComponent = modTranslatable("tool_gun", "creator", "mode", "name")
 
-		@DataGenerateLanguage("en_us", "create blocks and entities")
+		@DataGenerateLanguage(name = "create blocks and entities")
 		val tooltip: MutableComponent = modTranslatable("tool_gun", "creator", "mode", "tooltip")
 	}
 
@@ -63,7 +64,7 @@ class CreatorMode : IToolGunMode {
 	private var preparedEntityTag: CompoundTag = CompoundTag()
 	private var placingEntity: Boolean = true
 
-	override fun action(level: Level, player: Player, stack: ItemStack) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
 //		this.logger.info("block: ${this.preparedBlock}")
 //		this.logger.info("entity: ${this.preparedEntityTag}")
 		val block = player.rayCast(50.0, blocks()) ?: return

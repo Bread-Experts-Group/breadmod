@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.client.render.entity.block
 
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
@@ -15,10 +14,11 @@ import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.drawQuad
-import org.bread_experts_group.breadmod.client.render.getBufferBuilder
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
+import org.bread_experts_group.breadmod.client.render.setDirection
+import org.bread_experts_group.breadmod.client.render.setSpeed
 import org.bread_experts_group.breadmod.client.render.solidColorTexture
 import org.bread_experts_group.breadmod.client.render.translateDiv16
 import org.bread_experts_group.breadmod.client.render.translateOnBlockSide
@@ -32,11 +32,9 @@ import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNot
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler.Companion.NOTHING
 import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNothingStateHandler.Companion.USE_NEGATIVE_TILT
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
-import org.bread_experts_group.breadmod.registry.shader.ModVertexFormats
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.toVec3
 import org.joml.Vector3f
-import org.lwjgl.system.MemoryUtil
 
 class DoubleOrNothingRenderer(
 	context: BlockEntityRendererProvider.Context
@@ -130,23 +128,6 @@ class DoubleOrNothingRenderer(
 			}
 		}
 		poseStack.popPose()
-	}
-
-	private fun VertexConsumer.setDirection(direction: Vec2): VertexConsumer {
-		val builder = this.getBufferBuilder()
-		val i = builder.beginElement(ModVertexFormats.DIRECTION_VERTEX_ELEMENT)
-		if (i != -1L) {
-			MemoryUtil.memPutFloat(i, direction.x)
-			MemoryUtil.memPutFloat(i + 4L, direction.y)
-		}
-		return this
-	}
-
-	private fun VertexConsumer.setSpeed(speed: Float): VertexConsumer {
-		val builder = this.getBufferBuilder()
-		val i = builder.beginElement(ModVertexFormats.SPEED_VERTEX_ELEMENT)
-		if (i != -1L) MemoryUtil.memPutFloat(i, speed)
-		return this
 	}
 
 	private val direction: Vec2 = Vec2(1.0f, -1.0f)

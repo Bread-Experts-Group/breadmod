@@ -5,7 +5,7 @@ import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 
-abstract class ToolGunScreenTab(
+abstract class AbstractToolGunScreenTab(
 	id: String,
 	val tabBarColor: Int,
 	screen: ToolGunScreen,

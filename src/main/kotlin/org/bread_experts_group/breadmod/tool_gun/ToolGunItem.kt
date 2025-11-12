@@ -63,9 +63,9 @@ class ToolGunItem : Item(
 		val stack = getStackInPlayerHand(player, usedHand)
 		if (stack.`is`(ModItems.TOOL_GUN)) {
 			val mode = ToolGunData.get(stack).getMode()
-			if (mode.actionPre(level, player, usedHand)) {
-				mode.action(level, player, stack)
-				mode.actionPost(level, player, usedHand)
+			if (mode.actionPre(level, player, stack, usedHand)) {
+				mode.action(level, player, stack, usedHand)
+				mode.actionPost(level, player, stack, usedHand)
 
 				if (level.isClientSide) {
 					(IClientItemExtensions.of(stack).customRenderer as ToolGunItemRenderer).triggerDelta()
@@ -104,6 +104,7 @@ class ToolGunItem : Item(
 
 	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
 		val newData = ToolGunData.get(stack)
+		val player = entity as? Player
 		if (newData.extraData.isEmpty) {
 			this.logger.info("Tool gun data is empty! Populating mode saved data...")
 			Registry.toolGunModes.forEach { (_, mode) ->
@@ -112,6 +113,7 @@ class ToolGunItem : Item(
 			stack.set(ModDataComponents.TOOL_GUN_DATA, newData)
 		}
 		if (!newData.dataLoaded) newData.loadData(level)
+		player?.let { newData.getMode().tick(level, it, stack, newData) }
 	}
 
 	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {

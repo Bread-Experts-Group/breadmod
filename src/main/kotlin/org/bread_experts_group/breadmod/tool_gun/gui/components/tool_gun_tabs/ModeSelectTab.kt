@@ -21,7 +21,7 @@ import org.bread_experts_group.breadmod.util.Color
 class ModeSelectTab(
 	screen: ToolGunScreen,
 	stack: ItemStack
-) : ToolGunScreenTab("mode_select", Color.GRAY, screen, stack) {
+) : AbstractToolGunScreenTab("mode_select", Color.GRAY, screen, stack) {
 	override fun getTabButton(): TabButton = TabButton(
 		Component.literal("Modes"),
 		Color.RED, Color.GRAY,

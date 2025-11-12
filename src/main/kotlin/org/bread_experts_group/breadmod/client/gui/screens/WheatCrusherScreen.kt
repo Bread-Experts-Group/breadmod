@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.client.gui.screens
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
+import org.bread_experts_group.breadmod.registry.menu.actual.BMContainerMenu
 import org.bread_experts_group.breadmod.registry.menu.actual.WheatCrusherMenu
 
 class WheatCrusherScreen(
@@ -32,13 +33,13 @@ class WheatCrusherScreen(
 	override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick)
 		guiGraphics.renderEnergyWithTooltip(150, 13, 16, 47, mouseX.toDouble(), mouseY.toDouble())
-//		ModGuiElements.WHEAT_CRUSHER_ARROW_FILLED.drawProgressiveVertical(
-//			guiGraphics,
-//			this.menu.scaledProgress,
-//			this.leftPos + 83,
-//			this.topPos + 33,
-//			true
-//		)
+		ModGuiElements.WHEAT_CRUSHER_ARROW_FILLED.drawProgressiveVertical(
+			guiGraphics,
+			(this.menu as BMContainerMenu.RecipeEntity<*>).scaledProgress,
+			this.leftPos + 83,
+			this.topPos + 33,
+			true
+		)
 		this.renderTooltip(guiGraphics, mouseX, mouseY)
 	}
 }

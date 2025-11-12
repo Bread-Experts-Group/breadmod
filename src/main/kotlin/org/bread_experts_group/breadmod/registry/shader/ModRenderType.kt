@@ -86,7 +86,7 @@ object ModRenderType {
 			VertexFormat.Mode.QUADS,
 			SMALL_BUFFER_SIZE,
 			true,
-			false,
+			true,
 			RenderType.CompositeState.builder()
 				.setShaderState(ModStateShards.GLOW_SHARD)
 				.setTextureState(textureState)

@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_neoforge.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_neoforge.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_neoforge.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_neoforge.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_neoforge.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_neoforge.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.main.iml" />
     </modules>
   </component>

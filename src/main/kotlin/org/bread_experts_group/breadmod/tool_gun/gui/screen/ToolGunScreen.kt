@@ -9,14 +9,14 @@ import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.redirectFocusFromContainerWidgets
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.registry.item.ModItems
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.AbstractToolGunScreenTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ModeSelectTab
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab
 import org.bread_experts_group.breadmod.util.Color
 
 class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(title) {
 	companion object {
-		var activeTab: ToolGunScreenTab? = null
+		var activeTab: AbstractToolGunScreenTab? = null
 	}
 
 	/**
@@ -47,7 +47,7 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 		}
 	}
 
-	private fun getTabs(): List<ToolGunScreenTab> = this.children().filterIsInstance<ToolGunScreenTab>()
+	private fun getTabs(): List<AbstractToolGunScreenTab> = this.children().filterIsInstance<AbstractToolGunScreenTab>()
 
 	override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean =
 		if (keyCode == InputConstants.KEY_E) {
@@ -83,7 +83,7 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 		super.rebuildWidgets()
 	}
 
-	private fun addTab(tab: ToolGunScreenTab, initialTab: Boolean) {
+	private fun addTab(tab: AbstractToolGunScreenTab, initialTab: Boolean) {
 		if (initialTab) Companion.activeTab = tab
 		tab.setPosition(this.leftPos + 7, this.topPos + 38)
 		tab.init()

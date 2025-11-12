@@ -12,7 +12,7 @@ import java.awt.Color
 class MainEntry(
 	screen: ToolGunScreen,
 	stack: ItemStack
-) : SettingsEntry(
+) : AbstractSettingsEntry(
 	"main",
 	MAIN,
 	screen,

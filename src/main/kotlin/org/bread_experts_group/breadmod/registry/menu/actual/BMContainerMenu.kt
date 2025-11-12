@@ -6,6 +6,7 @@ import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
+import org.bread_experts_group.breadmod.registry.block.handler.FERecipeHandler
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 
@@ -23,14 +24,14 @@ abstract class BMContainerMenu(
 		//  0 – 8 = hotbar slots (which will map to the InventoryPlayer slot numbers 0 – 8)
 		//  9 – 35 = player inventory slots (which map to the InventoryPlayer slot numbers 9 – 35)
 		//  36 – 44 = TileInventory slots, which map to our BlockEntity slot numbers 0 – 8)
-		private const val HOTBAR_SLOT_COUNT = 9
-		private const val PLAYER_INVENTORY_ROW_COUNT = 3
-		private const val PLAYER_INVENTORY_COLUMN_COUNT = 9
-		private const val PLAYER_INVENTORY_SLOT_COUNT =
+		private const val HOTBAR_SLOT_COUNT: Int = 9
+		private const val PLAYER_INVENTORY_ROW_COUNT: Int = 3
+		private const val PLAYER_INVENTORY_COLUMN_COUNT: Int = 9
+		private const val PLAYER_INVENTORY_SLOT_COUNT: Int =
 			this.PLAYER_INVENTORY_COLUMN_COUNT * this.PLAYER_INVENTORY_ROW_COUNT
-		private const val VANILLA_SLOT_COUNT = this.HOTBAR_SLOT_COUNT + this.PLAYER_INVENTORY_SLOT_COUNT
-		private const val VANILLA_FIRST_SLOT_INDEX = 0
-		private const val TE_INVENTORY_FIRST_SLOT_INDEX = this.VANILLA_FIRST_SLOT_INDEX + this.VANILLA_SLOT_COUNT
+		private const val VANILLA_SLOT_COUNT: Int = this.HOTBAR_SLOT_COUNT + this.PLAYER_INVENTORY_SLOT_COUNT
+		private const val VANILLA_FIRST_SLOT_INDEX: Int = 0
+		private const val TE_INVENTORY_FIRST_SLOT_INDEX: Int = this.VANILLA_FIRST_SLOT_INDEX + this.VANILLA_SLOT_COUNT
 	}
 
 	protected fun addInventorySlots(inventory: Inventory, pX: Int, hotBarY: Int, inventoryY: Int) {
@@ -110,10 +111,16 @@ abstract class BMContainerMenu(
 		entity: BreadModBlockEntity
 	) : Entity(type, id, inventory, entity) {
 		open val progressWidth: Int = 0
+		val scaledProgress: Int
+			get() {
+				val recipeHandler = this.entity.getCapabilityOrNull(FERecipeHandler.BLOCK_VOID) ?: return 0
+				val time = recipeHandler.recipe?.value?.rTime ?: recipeHandler.progress
+				return ((recipeHandler.progress.toFloat() / time.toFloat()) * this.progressWidth).toInt()
+			}
 
-		//		val scaledProgress: Int
-//			get() = ((this.parent.progress.toFloat() / this.parent.maxProgress.toFloat()) * this.progressWidth).toInt()
-//
-		fun isCrafting(): Boolean = TODO("Extensible") //this.parent.progress > 1
+		fun isCrafting(): Boolean {
+			val recipeHandler = this.entity.getCapabilityOrNull(FERecipeHandler.BLOCK_VOID) ?: return false
+			return recipeHandler.progress > 0u
+		}
 	}
 }

@@ -56,6 +56,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.material.Fluid
+import net.minecraft.world.phys.Vec2
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import net.neoforged.neoforge.client.model.ExtraFaceData
@@ -66,10 +67,12 @@ import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.registry.shader.ModPostChains
+import org.bread_experts_group.breadmod.registry.shader.ModVertexFormats
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.translateDirection
 import org.jetbrains.annotations.ApiStatus.Internal
 import org.joml.Matrix4f
+import org.lwjgl.system.MemoryUtil
 import java.math.BigDecimal
 import java.util.function.Supplier
 import kotlin.jvm.optionals.getOrNull
@@ -367,6 +370,23 @@ fun Screen.redirectFocusFromContainerWidgets(mouseX: Double, mouseY: Double, but
 
 fun VertexConsumer.getBufferBuilder(): BufferBuilder =
 	this as? BufferBuilder ?: throw ClassCastException("this vertex consumer is not BufferBuilder!")
+
+fun VertexConsumer.setDirection(direction: Vec2): VertexConsumer {
+	val builder = this.getBufferBuilder()
+	val i = builder.beginElement(ModVertexFormats.DIRECTION_VERTEX_ELEMENT)
+	if (i != -1L) {
+		MemoryUtil.memPutFloat(i, direction.x)
+		MemoryUtil.memPutFloat(i + 4L, direction.y)
+	}
+	return this
+}
+
+fun VertexConsumer.setSpeed(speed: Float): VertexConsumer {
+	val builder = this.getBufferBuilder()
+	val i = builder.beginElement(ModVertexFormats.SPEED_VERTEX_ELEMENT)
+	if (i != -1L) MemoryUtil.memPutFloat(i, speed)
+	return this
+}
 
 /**
  * Scales the [PoseStack] uniformly on the X, Y, and Z axis.

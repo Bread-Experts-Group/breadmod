@@ -6,18 +6,18 @@ import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.TabButton
 import org.bread_experts_group.breadmod.client.render.drawCenteredWordWrap
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.AbstractToolGunScreenTab
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsEntryEnum.MAIN
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.AbstractSettingsEntry
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.MainEntry
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.RendererEntry
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.entries.SettingsEntry
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 import org.bread_experts_group.breadmod.util.Color
 
 class SettingsTab(
 	screen: ToolGunScreen,
 	stack: ItemStack
-) : ToolGunScreenTab("settings", Color.color(b = 180), screen, stack) {
+) : AbstractToolGunScreenTab("settings", Color.color(b = 180), screen, stack) {
 	companion object {
 		var currentSettingsEntry: SettingsEntryEnum = MAIN
 	}
@@ -35,7 +35,7 @@ class SettingsTab(
 		this.addSettingsEntry(RendererEntry(this.screen, this.stack))
 		this.addSettingsEntry(MainEntry(this.screen, this.stack))
 		var entryPos = 30
-		this.getWidgets().filterIsInstance<SettingsEntry>().forEach { entry ->
+		this.getWidgets().filterIsInstance<AbstractSettingsEntry>().forEach { entry ->
 			this.addChild(
 				"${entry.id}_button",
 				entry.entryButton,
@@ -54,7 +54,7 @@ class SettingsTab(
 		}
 	}
 
-	private fun addSettingsEntry(entry: SettingsEntry) {
+	private fun addSettingsEntry(entry: AbstractSettingsEntry) {
 		entry.setPosition(this.x, this.y)
 		this.addChild(entry.id, entry)
 	}

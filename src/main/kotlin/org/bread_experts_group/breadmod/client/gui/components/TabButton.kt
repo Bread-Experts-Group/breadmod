@@ -6,14 +6,14 @@ import net.minecraft.network.chat.Component
 import net.minecraft.util.Mth
 import org.bread_experts_group.breadmod.client.render.borderedFill
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.ToolGunScreenTab
+import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.AbstractToolGunScreenTab
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 
 class TabButton(
 	message: Component,
 	private val outerColor: Int,
 	private val innerColor: Int,
-	tab: ToolGunScreenTab
+	tab: AbstractToolGunScreenTab
 ) : Button(
 	0,
 	0,

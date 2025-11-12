@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.tool_gun.mode
 
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -13,7 +14,7 @@ import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 
 object EmptyMode : IToolGunMode {
-	override fun action(level: Level, player: Player, stack: ItemStack) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
 	}
 
 	override fun getDisplayName(): Component = Component.literal("???")

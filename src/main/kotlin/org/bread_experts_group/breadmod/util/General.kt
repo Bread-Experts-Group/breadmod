@@ -264,6 +264,8 @@ fun hitbox(): (Level, Vec3, Vec3) -> Hitbox? =
 			}
 	}
 
+fun BlockPos.MutableBlockPos.isZero(): Boolean = this.x == 0 && this.y == 0 && this.z == 0
+
 //data class GridHitResult(
 //	val grid: PhysicsGrid,
 //	val state: BlockState,

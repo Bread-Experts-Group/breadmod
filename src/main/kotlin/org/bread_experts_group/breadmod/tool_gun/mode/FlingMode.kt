@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.tool_gun.mode
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundSource
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -15,7 +16,7 @@ import org.bread_experts_group.breadmod.util.rayCast
 @ToolGunMode
 @Suppress("unused")
 class FlingMode : IToolGunMode {
-	override fun action(level: Level, player: Player, stack: ItemStack) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
 		val target = player.rayCast(100.0, entities())
 		target?.let {
 			val entity = it.hit

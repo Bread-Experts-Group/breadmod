@@ -17,7 +17,7 @@ import org.bread_experts_group.breadmod.util.Color
 class RendererEntry(
 	screen: ToolGunScreen,
 	stack: ItemStack
-) : SettingsEntry(
+) : AbstractSettingsEntry(
 	"renderer",
 	RENDERER,
 	screen,
@@ -25,8 +25,8 @@ class RendererEntry(
 	Component.literal("Renderer"),
 	Component.literal("Entry for adjusting tool gun rendering parameters.")
 ) {
-	private var index = 0
-	private val renderer = ToolGunItemRenderer()
+	private var index: Int = 0
+	private val renderer: ToolGunItemRenderer = ToolGunItemRenderer()
 
 	override fun initContainer() {
 		this.addChild(

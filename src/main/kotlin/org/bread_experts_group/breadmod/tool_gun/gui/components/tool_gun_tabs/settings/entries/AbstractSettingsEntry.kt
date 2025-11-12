@@ -9,7 +9,7 @@ import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.se
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ToolGunScreen
 
-abstract class SettingsEntry(
+abstract class AbstractSettingsEntry(
 	id: String,
 	val entry: SettingsEntryEnum,
 	screen: ToolGunScreen,
