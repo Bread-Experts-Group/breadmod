@@ -90,6 +90,12 @@ val arrowTexture: ResourceLocation = modLocation("textures/arrow.png")
 
 fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
 
+fun executeOnRenderThread(runnable: () -> Unit) {
+	if (!RenderSystem.isOnRenderThread()) {
+		RenderSystem.recordRenderCall { runnable() }
+	} else runnable()
+}
+
 /**
  * Color getter for ItemStacks.
  */

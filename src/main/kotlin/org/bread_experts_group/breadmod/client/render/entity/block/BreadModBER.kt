@@ -126,7 +126,7 @@ abstract class BreadModBER(
 		}
 	}
 
-	final override fun render(
+	override fun render(
 		blockEntity: BreadModBlockEntity,
 		partialTick: Float,
 		poseStack: PoseStack,

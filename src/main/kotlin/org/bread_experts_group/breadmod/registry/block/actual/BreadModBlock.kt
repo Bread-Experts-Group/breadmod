@@ -62,7 +62,7 @@ abstract class BreadModBlock(
 	open fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		null
 
-	abstract fun shouldCreateEntity(with: Pair<BlockPos, BlockState>? = null): Boolean
+	open fun shouldCreateEntity(with: Pair<BlockPos, BlockState>? = null): Boolean = false
 	final override fun newBlockEntity(pos: BlockPos, state: BlockState): BreadModBlockEntity? {
 		if (this.blockEntityType == null || !this.shouldCreateEntity(pos to state)) return null
 		val blockEntity = BreadModBlockEntity(this.blockEntityType!!.get(), pos, state, this.ofCapabilities())

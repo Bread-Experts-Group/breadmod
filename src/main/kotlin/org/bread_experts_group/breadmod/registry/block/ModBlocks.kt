@@ -41,6 +41,7 @@ import org.bread_experts_group.breadmod.datagen.loot.DataGenerateLootDropSelf
 import org.bread_experts_group.breadmod.datagen.model.block.DataGenerateModelBlockAndItem
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagBlock
+import org.bread_experts_group.breadmod.experimental.camera.CameraBlock
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
@@ -396,6 +397,12 @@ object ModBlocks : RegistryProvider(
 	val DOUBLE_OR_NOTHING: DeferredItem<BlockItem> = this.registerBlockItem(
 		"double_or_nothing",
 		::DoubleOrNothingBlock
+	)
+
+	@DataGenerateLootDropNothing
+	val CAMERA_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem(
+		"camera_block",
+		::CameraBlock
 	)
 
 	@DataGenerateLanguage

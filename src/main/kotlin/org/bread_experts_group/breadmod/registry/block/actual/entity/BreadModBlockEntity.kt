@@ -20,8 +20,7 @@ import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_I
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBEUpdateRequestPacket
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.handler.DataComponentSerializable
-import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
-import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler.Companion.getHitboxHandler
+import org.bread_experts_group.breadmod.registry.block.handler.DiscardableHandler
 import org.bread_experts_group.breadmod.registry.block.handler.ParentedHandler
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
@@ -140,9 +139,7 @@ class BreadModBlockEntity(
 
 	override fun setRemoved() {
 		this.capabilities.forEach { (capability, _) ->
-			if (capability == HitboxHandler.BLOCK_VOID) {
-				this.getHitboxHandler().discard()
-			}
+			(this.getCapability(capability) as? DiscardableHandler)?.discard()
 		}
 		super.setRemoved()
 	}

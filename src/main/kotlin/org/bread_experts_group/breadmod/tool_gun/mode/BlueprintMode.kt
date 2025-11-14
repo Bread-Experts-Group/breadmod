@@ -21,7 +21,6 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.render.LerpTicker
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
@@ -31,12 +30,11 @@ import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
 import org.bread_experts_group.breadmod.util.isZero
-import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.minus
 import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.toVec3
 
-// todo work on and add screen, structure previewing
+// todo work on and add screen, structure previewing, proper positioning
 @ToolGunMode
 class BlueprintMode : IToolGunMode {
 	val pos1: BlockPos.MutableBlockPos = BlockPos.MutableBlockPos()
@@ -48,11 +46,11 @@ class BlueprintMode : IToolGunMode {
 		val (x, y, z) = player.position()
 		val blockCast = player.rayCast(50.0, blocks()) ?: return false
 		if (this.pos1.isZero()) {
-			level.playSound(null, x, y, z, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.AMBIENT, 1f, 0.8f)
+			level.playSound(null, x, y, z, SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.AMBIENT, 1f, 0.8f)
 			this.pos1.set(blockCast.blockPosition)
 			return false
 		} else if (this.pos2.isZero()) {
-			level.playSound(null, x, y, z, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.AMBIENT, 1f, 1f)
+			level.playSound(null, x, y, z, SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.AMBIENT, 1f, 0.8f)
 			this.pos2.set(blockCast.blockPosition)
 			return false
 		}
@@ -78,14 +76,14 @@ class BlueprintMode : IToolGunMode {
 						val offset = BlockPos(pos.x - x, pos.y - y, pos.z - z)
 						this.add(offset to BLOCK_STATE_REGISTRY.getId(state))
 					}
-				},
+				}.iterator(),
 				blockCast.blockPosition.relative(blockCast.hitSide)
 			)
 		)
 
 		this.pos1.set(0, 0, 0)
 		this.pos2.set(0, 0, 0)
-		level.playSound(null, x, y, z, SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.AMBIENT, 1f, 0.5f)
+		level.playSound(null, x, y, z, SoundEvents.NOTE_BLOCK_BIT.value(), SoundSource.AMBIENT, 1f, 1.2f)
 	}
 
 	override fun tick(level: Level, player: Player, stack: ItemStack, data: ToolGunData) {
@@ -101,26 +99,22 @@ class BlueprintMode : IToolGunMode {
 	override fun defineCustomRenderer(): IToolGunModeRenderer = Renderer(this)
 
 	class StructureBuilder(
-		val blocks: List<Pair<BlockPos, Int>>,
+		val blocks: Iterator<Pair<BlockPos, Int>>,
 		val targetPos: BlockPos
 	) {
-		private val ticker: LerpTicker<Int> = LerpTicker(0 to LerpTicker.LerpParams(clampMin = 0f, clampMax = 1f))
 		var finished: Boolean = false
-		private var index: Int = 0
+		var ticker: Int = 0
 
 		fun tick(level: Level) {
-			val pair = this.blocks[this.index++]
-
-			if (this.ticker.getRawValue(0) == 1f && this.index < this.blocks.size) {
+			if (this.ticker++ == 1 && this.blocks.hasNext()) {
+				val pair = this.blocks.next()
 				val state = BLOCK_STATE_REGISTRY.byId(pair.second) ?: return
 				val (x, y, z) = this.targetPos.offset(pair.first)
 				val sound = state.getSoundType(level, pair.first, null).placeSound
 				level.setBlockAndUpdate(this.targetPos.offset(pair.first), state)
-				logDebugInfo("${pair.first}, ${pair.second}")
 				level.playSound(null, x.toDouble(), y.toDouble(), z.toDouble(), sound, SoundSource.BLOCKS, 1f, 1f)
-				this.ticker.setParamPosition(0, 0f)
-			} else if (this.index >= this.blocks.size) this.finished = true
-			this.ticker.tickAllPositions()
+				this.ticker = 0
+			} else if (!this.blocks.hasNext()) this.finished = true
 		}
 	}
 
