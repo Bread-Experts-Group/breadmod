@@ -25,7 +25,7 @@ class MP3AudioStream(uri: URI) : BaseAudioStream(uri) {
 
 	private fun numberOfChannels(): Int = when (this.headers[0].channelMode) {
 		ChannelMode.DUAL_CHANNEL, ChannelMode.STEREO, ChannelMode.JOINT_STEREO -> 2
-		ChannelMode.SINGLE_CHANNEL                                             -> 1
+		ChannelMode.SINGLE_CHANNEL -> 1
 	}
 
 	override fun read(size: Int): ByteBuffer = BufferUtils.createByteBuffer(size)

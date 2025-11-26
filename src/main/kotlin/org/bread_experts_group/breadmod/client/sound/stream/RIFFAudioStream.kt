@@ -18,7 +18,7 @@ class RIFFAudioStream(uri: URI) : BaseAudioStream(uri) {
 		lateinit var preppedFormat: RIFFAudioFormatChunk
 		lateinit var preppedData: ByteArray
 		val container = RIFFParser().setInput(this.uri.toURL().openStream()).first().resultSafe as RIFFContainerChunk
-		if (container.localIdentifier != "WAVE") throw IllegalArgumentException("Not a .wav file!")
+		require(container.localIdentifier == "WAVE") { "Not a .wav file!" }
 		for (c in container) when (val c = c.resultSafe) {
 			is RIFFAudioFormatChunk if c.tag == "fmt " -> preppedFormat = c
 			is RIFFContainerChunk if c.tag == "LIST" && c.localIdentifier == "INFO" -> for (i in c) when (val i =

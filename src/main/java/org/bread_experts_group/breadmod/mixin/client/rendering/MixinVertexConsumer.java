@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.mixin.client;
+package org.bread_experts_group.breadmod.mixin.client.rendering;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;

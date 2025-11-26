@@ -41,7 +41,10 @@ import org.bread_experts_group.breadmod.datagen.loot.DataGenerateLootDropSelf
 import org.bread_experts_group.breadmod.datagen.model.block.DataGenerateModelBlockAndItem
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagBlock
-import org.bread_experts_group.breadmod.experimental.camera.CameraBlock
+import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraViewerBlock
+import org.bread_experts_group.breadmod.experimental.camera_viewer.camera.CameraBlock
+import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraItem
+import org.bread_experts_group.breadmod.experimental.mirror.MirrorBlock
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
@@ -399,10 +402,27 @@ object ModBlocks : RegistryProvider(
 		::DoubleOrNothingBlock
 	)
 
-	@DataGenerateLootDropNothing
+	@DataGenerateLanguage
+	@DataGenerateLootDropSelf
+	val CAMERA_VIEWER: DeferredItem<BlockItem> = this.registerBlockItem(
+		"camera_viewer",
+		::CameraViewerBlock
+	)
+
+	@DataGenerateLanguage(name = "Camera")
+	@DataGenerateModelSingleItem
+	@DataGenerateLootDropSelf
 	val CAMERA_BLOCK: DeferredItem<BlockItem> = this.registerBlockItem(
 		"camera_block",
-		::CameraBlock
+		::CameraBlock,
+		::CameraItem
+	)
+
+	@DataGenerateLanguage
+	@DataGenerateLootDropSelf
+	val MIRROR: DeferredItem<BlockItem> = this.registerBlockItem(
+		"mirror",
+		::MirrorBlock
 	)
 
 	@DataGenerateLanguage
@@ -431,7 +451,7 @@ object ModBlocks : RegistryProvider(
 				}
 				val menu = actual.ofMenu()
 				if (menu != null) {
-					actual.menuType = this.menuRegistry.register(id) { id: ResourceLocation ->
+					actual.menuType = this.menuRegistry.register(id) { _: ResourceLocation ->
 						IMenuTypeExtension.create { id, inventory, byteBuf ->
 							@Suppress("UNCHECKED_CAST")
 							menu(

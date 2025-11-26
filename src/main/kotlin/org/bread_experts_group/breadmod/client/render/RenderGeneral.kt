@@ -19,7 +19,6 @@ import net.minecraft.client.gui.Font.DisplayMode
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.client.particle.Particle
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
@@ -39,7 +38,6 @@ import net.minecraft.client.resources.model.ModelManager
 import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.Direction
 import net.minecraft.core.Vec3i
-import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
@@ -88,7 +86,7 @@ internal var redness: Float = 1f
 val floorTexture: ResourceLocation = checkerboardTexture(Color.WHITE, Color.BLACK, "white_black")
 val arrowTexture: ResourceLocation = modLocation("textures/arrow.png")
 
-fun Minecraft.gamePaused(): Boolean = (this.isPaused && this.isLocalServer)
+fun Minecraft.gamePaused(): Boolean = this.isPaused && this.isLocalServer
 
 fun executeOnRenderThread(runnable: () -> Unit) {
 	if (!RenderSystem.isOnRenderThread()) {
@@ -244,7 +242,7 @@ fun GuiGraphics.renderFluid(
 		)
 	}
 }
-//}
+
 /**
  * Float variant of GuiGraphics#fill.
  */
@@ -584,9 +582,6 @@ fun ItemRenderer.renderItemModel(
 		}
 	}
 }
-
-fun ParticleOptions.toParticle(): Particle? =
-	localClient.particleEngine.createParticle(this, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
 /**
  * Convenience function for getting a model with just a string.

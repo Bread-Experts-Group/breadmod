@@ -14,8 +14,8 @@ private typealias SoundHolder = DeferredHolder<SoundEvent, SoundEvent>
 
 object ModSounds : RegistryProvider(Registries.SOUND_EVENT) {
 	@DataGenerateSound
-	@DataGenerateLanguage(name = "Test Sound plays")
-	val TEST_SOUND: SoundHolder = this.registerSoundEvents("test_sound")
+	@DataGenerateLanguage(name = "Secret Hoppin' Plays")
+	val SECRET_HOPPIN: SoundHolder = this.registerSoundEvents("secret_hoppin")
 
 	@DataGenerateSound
 	@DataGenerateLanguage(name = "LOUD INCORRECT BUZZER")

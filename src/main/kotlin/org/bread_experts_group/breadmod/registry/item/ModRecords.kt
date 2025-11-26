@@ -15,13 +15,13 @@ import org.bread_experts_group.breadmod.registry.sound.ModSounds
  * [JukeboxSong] entry holder and registry.
  */
 object ModRecords {
-	val SECRET_HOPPIN: ResourceKey<JukeboxSong> = this.create("test_sound")
+	val SECRET_HOPPIN: ResourceKey<JukeboxSong> = this.create("secret_hoppin")
 
 	/**
 	 * Registers and generates the "jukebox_song" entries in the mod's data folder
 	 */
 	fun bootstrap(context: BootstrapContext<JukeboxSong>) {
-		this.register(context, this.SECRET_HOPPIN, ModSounds.TEST_SOUND, 381f, 15, "secret_hoppin")
+		this.register(context, this.SECRET_HOPPIN, ModSounds.SECRET_HOPPIN, 381f, 15, "secret_hoppin")
 	}
 
 	fun register(

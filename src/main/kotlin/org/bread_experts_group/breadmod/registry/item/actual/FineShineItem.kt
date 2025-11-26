@@ -1,30 +1,32 @@
 package org.bread_experts_group.breadmod.registry.item.actual
 
 import net.minecraft.ChatFormatting
+import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ItemParticleOption
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.InteractionHand
-import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
 import org.bread_experts_group.breadmod.client.sound.SpaceSoundInstance
-import org.bread_experts_group.breadmod.util.entities
-import org.bread_experts_group.breadmod.util.getStackInPlayerHand
+import org.bread_experts_group.breadmod.registry.item.IEntityInteractingItem
+import org.bread_experts_group.breadmod.util.component1
+import org.bread_experts_group.breadmod.util.component2
+import org.bread_experts_group.breadmod.util.component3
 import org.bread_experts_group.breadmod.util.itemTooltip
-import org.bread_experts_group.breadmod.util.rayCast
 
-class FineShineItem : Item(Properties()) {
+class FineShineItem : Item(Properties()), IEntityInteractingItem {
 	private fun LivingEntity.spawnItemParticles(stack: ItemStack, amount: Int) {
 		repeat(amount) {
 			var vec3 = Vec3((this.random.nextFloat().toDouble() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0)
@@ -56,39 +58,36 @@ class FineShineItem : Item(Properties()) {
 		tooltipComponents.add(this.itemTooltip().withStyle(ChatFormatting.ITALIC, ChatFormatting.AQUA))
 	}
 
-	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
-		val interactionRange =
-			player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE) ?: return super.use(level, player, usedHand)
-		val entity = player.rayCast(interactionRange.value, entities())
-		val stack = getStackInPlayerHand(player)
-
-		entity?.let { result ->
-			val pos = result.hitPosition
-			val hit = result.hit
-
-			if (hit is LivingEntity) {
-				level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.GENERIC_EAT, SoundSource.AMBIENT)
-				hit.spawnItemParticles(stack, 8)
-				if (!player.isCreative) stack.shrink(1)
-				Thread.ofVirtual().start {
-					Thread.sleep(4000)
-					if (level.isClientSide) SpaceSoundInstance(hit).play()
-					hit.addEffect(MobEffectInstance(MobEffects.LEVITATION, 8 * 20, 3))
-					Thread.sleep(7500)
-					if (!level.isClientSide) level.explode(
-						hit,
-						hit.x,
-						hit.y,
-						hit.z,
-						5f,
-						false,
-						Level.ExplosionInteraction.MOB
-					)
-					hit.kill()
-				}
+	override fun onInteractWithEntity(
+		event: PlayerInteractEvent.EntityInteract,
+		player: Player,
+		target: Entity,
+		level: Level,
+		usedHand: InteractionHand,
+		pos: BlockPos,
+		stack: ItemStack
+	) {
+		val (x, y, z) = target.position()
+		if (target is LivingEntity) {
+			level.playSound(null, x, y, z, SoundEvents.GENERIC_EAT, SoundSource.AMBIENT)
+			target.spawnItemParticles(stack, 8)
+			if (!player.isCreative) stack.shrink(1)
+			Thread.ofVirtual().start {
+				Thread.sleep(4000)
+				if (level.isClientSide) SpaceSoundInstance(target).play()
+				target.addEffect(MobEffectInstance(MobEffects.LEVITATION, 8 * 20, 3))
+				Thread.sleep(7500)
+				if (!level.isClientSide) level.explode(
+					target,
+					target.x,
+					target.y,
+					target.z,
+					5f,
+					false,
+					Level.ExplosionInteraction.MOB
+				)
+				target.kill()
 			}
 		}
-
-		return super.use(level, player, usedHand)
 	}
 }

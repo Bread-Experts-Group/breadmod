@@ -17,21 +17,24 @@
   ],
   "client": [
     "client.IAccessorDirectoryLister",
-    "client.InvokerIVertexConsumerExtension",
-    "client.MixinAbstractWidget",
     "client.MixinChannel",
     "client.MixinClientLanguage",
     "client.MixinClientPacket",
     "client.MixinDirectoryListener",
     "client.MixinFallbackResourceManager",
-    "client.MixinGuiGraphics",
-    "client.MixinLevelRenderer",
     "client.MixinMinecraft",
     "client.MixinProjectE",
     "client.MixinSoundManager",
     "client.MixinSpriteResourceLoader",
     "client.MixinTranslatableContents",
-    "client.MixinVertexConsumer"
+    "client.rendering.InvokerIVertexConsumerExtension",
+    "client.rendering.MixinAbstractWidget",
+    "client.rendering.MixinFrustum",
+    "client.rendering.MixinGameRenderer",
+    "client.rendering.MixinGuiGraphics",
+    "client.rendering.MixinLevelRenderer",
+    "client.rendering.MixinTextureManager",
+    "client.rendering.MixinVertexConsumer"
   ],
   "injectors": {
     "defaultRequire": 1

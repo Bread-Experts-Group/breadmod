@@ -43,7 +43,7 @@ class DieselGeneratorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLO
 		)
 	}
 
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::DieselGeneratorRenderer
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {

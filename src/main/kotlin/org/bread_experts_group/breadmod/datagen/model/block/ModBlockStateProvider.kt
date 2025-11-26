@@ -67,7 +67,7 @@ class ModBlockStateProvider(
 			this.models().getBuilder("breadmod:block/nuke")
 		)
 		this.horizontalBlock(ModBlocks.MONITOR.block) {
-			val model = this.models().cube(
+			this.models().cube(
 				"breadmod:block/monitor",
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
@@ -76,23 +76,36 @@ class ModBlockStateProvider(
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top")
 			)
-
-			return@horizontalBlock model
 		}
 		this.simpleBlockItem(
 			ModBlocks.MONITOR.block,
 			this.models().getBuilder("breadmod:block/monitor")
 		)
 		this.horizontalBlock(ModBlocks.RADIO_BLOCK.block) {
-			val model = this.models().orientable(
+			this.models().orientable(
 				"breadmod:block/radio_block",
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block"),
 				this.modLoc("${ModelProvider.BLOCK_FOLDER}/radio_block_side")
 			)
-
-			return@horizontalBlock model
 		}
+		this.horizontalBlock(
+			ModBlocks.CAMERA_VIEWER.block
+		) {
+			this.models().cube(
+				"breadmod:block/camera_viewer",
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top_cutout"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_top"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side"),
+				this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_side")
+			).renderType("minecraft:cutout")
+		}
+		this.simpleBlockItem(
+			ModBlocks.CAMERA_VIEWER.block,
+			this.models().getBuilder("breadmod:block/camera_viewer")
+		)
 		this.simpleBlockItem(
 			ModBlocks.RADIO_BLOCK.block,
 			this.models().getBuilder("breadmod:block/radio_block")
@@ -176,7 +189,7 @@ class ModBlockStateProvider(
 		val machineBack = this.modLoc("${ModelProvider.BLOCK_FOLDER}/machine_back")
 		this.horizontalBlock(ModBlocks.WHEAT_CRUSHER.block) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-			val model = this.models().cube(
+			this.models().cube(
 				"breadmod:block/wheat_crusher$machineOn",
 				machineTop,
 				machineTop,
@@ -185,7 +198,6 @@ class ModBlockStateProvider(
 				machineSide,
 				machineSide
 			)
-			return@horizontalBlock model
 		}
 		this.simpleBlockItem(
 			ModBlocks.WHEAT_CRUSHER.block,
@@ -194,7 +206,7 @@ class ModBlockStateProvider(
 		// Dough Machine
 		this.horizontalBlock(ModBlocks.DOUGH_MACHINE.block) { state ->
 			val machineOn = if (state.getValue(BlockStateProperties.POWERED)) "_on" else ""
-			val model = this.models().cube(
+			this.models().cube(
 				"breadmod:block/dough_machine$machineOn",
 				machineTop,
 				machineTop,
@@ -203,7 +215,6 @@ class ModBlockStateProvider(
 				machineSide,
 				machineSide
 			)
-			return@horizontalBlock model
 		}
 		this.simpleBlockItem(
 			ModBlocks.DOUGH_MACHINE.block,
@@ -296,8 +307,7 @@ class ModBlockStateProvider(
 				ModBlockStateProperties.TripleBlockHalf.LOWER -> "lower"
 				else -> ""
 			}
-			val model = this.blockBenchBlockModel("double_or_nothing_$segment")
-			return@horizontalBlock model
+			this.blockBenchBlockModel("double_or_nothing_$segment")
 		}
 		// Creative Generator
 		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.block, "creative_generator")

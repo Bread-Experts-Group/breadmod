@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.mixin.client;
+package org.bread_experts_group.breadmod.mixin.client.rendering;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;

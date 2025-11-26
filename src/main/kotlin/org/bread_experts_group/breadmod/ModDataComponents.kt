@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod
 
 import com.mojang.serialization.Codec
+import net.minecraft.core.BlockPos
+import net.minecraft.core.UUIDUtil
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
@@ -19,6 +21,7 @@ import org.bread_experts_group.breadmod.registry.item.coffee.CoffeeContents
 import org.bread_experts_group.breadmod.tool_gun.Model
 import org.bread_experts_group.breadmod.util.listOf
 import java.math.BigDecimal
+import java.util.UUID
 import java.util.function.Supplier
 
 object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
@@ -105,5 +108,13 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 			.networkSynchronized(ComponentSerialization.STREAM_CODEC.listOf())
 			.persistent(ComponentSerialization.CODEC.listOf())
 			.cacheEncoding()::build
+	)
+	val BLOCK_POS: Supplier<DataComponentType<BlockPos>> = this.registry.register(
+		"block_pos", DataComponentType.builder<BlockPos>()
+			.networkSynchronized(BlockPos.STREAM_CODEC)::build
+	)
+	val UUID: Supplier<DataComponentType<UUID>> = this.registry.register(
+		"uuid", DataComponentType.builder<UUID>()
+			.networkSynchronized(UUIDUtil.STREAM_CODEC)::build
 	)
 }

@@ -1,12 +1,15 @@
 package org.bread_experts_group.breadmod.registry
 
 import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
+import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
@@ -44,6 +47,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL
 import net.neoforged.neoforge.client.event.ScreenEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
@@ -55,6 +59,8 @@ import net.neoforged.neoforge.data.event.GatherDataEvent
 import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.EntityInteract
+import net.neoforged.neoforge.event.server.ServerStoppingEvent
 import net.neoforged.neoforge.event.tick.ServerTickEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
@@ -109,6 +115,9 @@ import org.bread_experts_group.breadmod.datagen.model.item.ModItemModelProvider
 import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvider
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
+import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
+import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
+import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
 import org.bread_experts_group.breadmod.experimental.physics_grid.ClearGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
@@ -148,6 +157,7 @@ import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.entity.ModPainting
 import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.registry.item.EquipmentSlotListener
+import org.bread_experts_group.breadmod.registry.item.IEntityInteractingItem
 import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.item.ModItems
@@ -232,6 +242,31 @@ object Registry {
 
 					HitboxHandler.hitboxes.forEach { (_, hitbox) ->
 						hitbox.render(event, localClient.renderBuffers().bufferSource())
+					}
+
+					if (MirrorRenderer.blockEntities.isNotEmpty() && event.stage == AFTER_LEVEL) {
+						MirrorRenderer.blockEntities.forEach { entity ->
+							val texture = MirrorRenderer.textures.getOrPut(entity.blockPos) {
+								MirrorTexture(modLocation("mirror_${MirrorTexture.counter++}"))
+							}
+
+							texture.bind()
+							MirrorTexture.camera.setEntity(entity.level ?: return@forEach)
+							texture.setupCamera(entity)
+
+							MirrorTexture.textureTarget.clear(true)
+							MirrorTexture.textureTarget.bindWrite(true)
+							CameraTexture.targetBeingRendered = MirrorTexture.textureTarget
+
+							RenderSystem.clear(16640, Minecraft.ON_OSX)
+							FogRenderer.setupNoFog()
+							RenderSystem.enableCull()
+
+							texture.renderLevel(MirrorTexture.textureTarget)
+							texture.writeToFrameBuffer(MirrorTexture.textureTarget)
+							CameraTexture.targetBeingRendered = null
+							localClient.mainRenderTarget.bindWrite(true)
+						}
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
@@ -414,6 +449,13 @@ object Registry {
 							DefaultVertexFormat.BLOCK
 						)
 					) { ModRenderType.SUN_INSTANCE = it }
+					event.registerShader(
+						ShaderInstance(
+							event.resourceProvider,
+							modLocation("position_tex_color_no_cutout"),
+							DefaultVertexFormat.POSITION_TEX_COLOR
+						)
+					) { ModRenderType.POSITION_TEX_COLOR_NO_CUTOUT_INSTANCE = it }
 					ModPostChains.init(event.resourceProvider)
 				}
 				modBus.addListener { event: RegisterClientExtensionsEvent ->
@@ -437,13 +479,14 @@ object Registry {
 					event.registerEntityRenderer(ModEntityTypes.NUKE_BLOCK_ENTITY.get(), ::PrimedNukeBlockRenderer)
 					event.registerEntityRenderer(ModEntityTypes.FAKE_PLAYER.get(), ::FakePlayerRenderer)
 					event.registerEntityRenderer(ModEntityTypes.FORKLIFT.get(), ::ForkliftRenderer)
+
 					for (deferredBlock in ModBlocks.blockIterator()) {
 						val block = deferredBlock.get()
 						if (block !is BreadModBlock) continue
 						val renderer = block.ofRenderer() ?: continue
 						@Suppress("UNCHECKED_CAST")
 						event.registerBlockEntityRenderer(
-							block.blockEntityType!!.get(),
+							(block.blockEntityType ?: return@addListener).get(),
 							renderer as (BlockEntityRendererProvider.Context) -> BlockEntityRenderer<BlockEntity>
 						)
 					}
@@ -542,7 +585,7 @@ object Registry {
 						if (block.ofMenu() == null) continue
 						@Suppress("UNCHECKED_CAST")
 						event.register(
-							block.menuType!!.get(),
+							(block.menuType ?: return@addListener).get(),
 							BreadModScreenConstructor() as MenuScreens.ScreenConstructor<
 									AbstractContainerMenu, AbstractContainerScreen<AbstractContainerMenu>
 									>
@@ -557,7 +600,7 @@ object Registry {
 		}
 		// Common Event Registration
 		// Game Bus
-		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
+		NeoForge.EVENT_BUS.addListener { _: ServerTickEvent.Post ->
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
 //			PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
@@ -572,6 +615,24 @@ object Registry {
 					.then(ScreenBleedCommand.register())
 //					.then(Commands.literal("clearGrids").executes { PhysicsGridGlobals.grids.clear(); 1 })
 			)
+		}
+		NeoForge.EVENT_BUS.addListener { event: EntityInteract ->
+			val item = event.itemStack.item
+			if (item is IEntityInteractingItem) item.onInteractWithEntity(
+				event,
+				event.entity,
+				event.target,
+				event.level,
+				event.hand,
+				event.pos,
+				event.itemStack
+			)
+		}
+		NeoForge.EVENT_BUS.addListener { _: ServerStoppingEvent ->
+			if (FMLEnvironment.dist.isClient) {
+				CameraTexture.textures.forEach { it.value.close() }
+				CameraTexture.textures.clear()
+			}
 		}
 		// Mod Bus
 		modBus.addListener { event: GatherDataEvent ->
@@ -659,7 +720,7 @@ object Registry {
 					@Suppress("UNCHECKED_CAST")
 					event.registerBlockEntity(
 						capability as BlockCapability<Any, Any>,
-						block.blockEntityType!!.get()
+						(block.blockEntityType ?: return@addListener).get()
 					) { entity, context -> (entity as BreadModBlockEntity).getCapability(capability, context) }
 				}
 			}

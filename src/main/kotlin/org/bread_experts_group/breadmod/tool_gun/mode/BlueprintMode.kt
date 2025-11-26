@@ -63,11 +63,13 @@ class BlueprintMode : IToolGunMode {
 		stack: ItemStack,
 		usedHand: InteractionHand
 	) {
+		if (level.isClientSide) return
 		val (x, y, z) = player.position()
 		val blockCast = player.rayCast(50.0, blocks()) ?: return
-
+		// todo block entity data
 		this.builders.add(
 			StructureBuilder(
+				level,
 				buildList {
 					BlockPos.betweenClosed(this@BlueprintMode.pos1, this@BlueprintMode.pos2).forEach { pos ->
 						val state = level.getBlockState(pos)
@@ -76,7 +78,7 @@ class BlueprintMode : IToolGunMode {
 						val offset = BlockPos(pos.x - x, pos.y - y, pos.z - z)
 						this.add(offset to BLOCK_STATE_REGISTRY.getId(state))
 					}
-				}.iterator(),
+				}.sortedBy { it.first.y }.iterator(),
 				blockCast.blockPosition.relative(blockCast.hitSide)
 			)
 		)
@@ -88,10 +90,7 @@ class BlueprintMode : IToolGunMode {
 
 	override fun tick(level: Level, player: Player, stack: ItemStack, data: ToolGunData) {
 		if (level.isClientSide) return
-		this.builders.removeIf {
-			it.tick(level)
-			it.finished
-		}
+		this.builders.removeIf { !it.blocks.hasNext() }
 	}
 
 	override fun getUid(): ResourceLocation = this.toolGunLocation("blueprint_mode")
@@ -99,22 +98,35 @@ class BlueprintMode : IToolGunMode {
 	override fun defineCustomRenderer(): IToolGunModeRenderer = Renderer(this)
 
 	class StructureBuilder(
+		val level: Level,
 		val blocks: Iterator<Pair<BlockPos, Int>>,
 		val targetPos: BlockPos
 	) {
-		var finished: Boolean = false
-		var ticker: Int = 0
-
-		fun tick(level: Level) {
-			if (this.ticker++ == 1 && this.blocks.hasNext()) {
-				val pair = this.blocks.next()
-				val state = BLOCK_STATE_REGISTRY.byId(pair.second) ?: return
-				val (x, y, z) = this.targetPos.offset(pair.first)
-				val sound = state.getSoundType(level, pair.first, null).placeSound
-				level.setBlockAndUpdate(this.targetPos.offset(pair.first), state)
-				level.playSound(null, x.toDouble(), y.toDouble(), z.toDouble(), sound, SoundSource.BLOCKS, 1f, 1f)
-				this.ticker = 0
-			} else if (!this.blocks.hasNext()) this.finished = true
+		init {
+			Thread.ofVirtual().start {
+				var target = System.currentTimeMillis() + 10
+				do {
+					if (System.currentTimeMillis() >= target) {
+						val pair = this.blocks.next()
+						val state = BLOCK_STATE_REGISTRY.byId(pair.second) ?: return@start
+						val (x, y, z) = this.targetPos.offset(pair.first)
+						val sound = state.getSoundType(this.level, pair.first, null).placeSound
+						val offsetPos = this.targetPos.offset(pair.first)
+						this.level.setBlock(offsetPos, state, 2)
+						this.level.playSound(
+							null,
+							x.toDouble(),
+							y.toDouble(),
+							z.toDouble(),
+							sound,
+							SoundSource.BLOCKS,
+							1f,
+							1f
+						)
+						target += 10
+					}
+				} while (this.blocks.hasNext())
+			}
 		}
 	}
 

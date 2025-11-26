@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.client.render
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import com.mojang.blaze3d.vertex.VertexFormatElement
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -14,6 +15,7 @@ import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
 import org.joml.Vector3f
 
+val DEFAULT_NORMAL: Vector3f = Vector3f(0f, 1f, 0f)
 val TOP_LEFT: Vector3f = Vector3f(0f, 0f, 0f)
 val TOP_RIGHT: Vector3f = Vector3f(1f, 0f, 0f)
 val BOTTOM_LEFT: Vector3f = Vector3f(0f, -1f, 0f)
@@ -62,13 +64,14 @@ fun drawBlockAtlasCube(
 	west: Array<Vector3f> = CUBE_WEST,
 	up: Array<Vector3f> = CUBE_UP,
 	down: Array<Vector3f> = CUBE_DOWN,
+	normal: Vector3f = DEFAULT_NORMAL,
 	packedLight: Int = LightTexture.FULL_BRIGHT,
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY
 ) {
 	drawBlockAtlasQuad( // North / Back
 		spriteLoc,
 		renderType, poseStack,
-		buffer, color,
+		buffer, color, normal,
 		packedLight, packedOverlay,
 		north[0], north[1],
 		north[2], north[3]
@@ -76,7 +79,7 @@ fun drawBlockAtlasCube(
 	drawBlockAtlasQuad( // South / Front
 		spriteLoc,
 		renderType, poseStack,
-		buffer, color,
+		buffer, color, normal,
 		packedLight, packedOverlay,
 		south[0], south[1],
 		south[2], south[3],
@@ -84,7 +87,7 @@ fun drawBlockAtlasCube(
 	drawBlockAtlasQuad( // East / Right
 		spriteLoc,
 		renderType, poseStack,
-		buffer, color,
+		buffer, color, normal,
 		packedLight, packedOverlay,
 		east[0], east[1],
 		east[2], east[3]
@@ -92,7 +95,7 @@ fun drawBlockAtlasCube(
 	drawBlockAtlasQuad( // West / Left
 		spriteLoc,
 		renderType, poseStack,
-		buffer, color,
+		buffer, color, normal,
 		packedLight, packedOverlay,
 		west[0], west[1],
 		west[2], west[3]
@@ -100,7 +103,7 @@ fun drawBlockAtlasCube(
 	drawBlockAtlasQuad( // Up
 		spriteLoc,
 		renderType, poseStack,
-		buffer, color,
+		buffer, color, normal,
 		packedLight, packedOverlay,
 		up[0], up[1],
 		up[2], up[3]
@@ -108,7 +111,7 @@ fun drawBlockAtlasCube(
 	drawBlockAtlasQuad( // Down
 		spriteLoc,
 		renderType, poseStack,
-		buffer, color,
+		buffer, color, normal,
 		packedLight, packedOverlay,
 		down[0], down[1],
 		down[2], down[3]
@@ -126,6 +129,7 @@ fun drawCube(
 	west: Array<Vector3f> = CUBE_WEST,
 	up: Array<Vector3f> = CUBE_UP,
 	down: Array<Vector3f> = CUBE_DOWN,
+	normal: Vector3f = DEFAULT_NORMAL,
 	u0: Float = 0f, v0: Float = 0f,
 	u1: Float = 1f, v1: Float = 1f,
 	packedLight: Int = LightTexture.FULL_BRIGHT,
@@ -139,6 +143,7 @@ fun drawCube(
 		north[2], north[3],
 		u0, v0,
 		u1, v1,
+		normal,
 		packedLight,
 		packedOverlay,
 		extraElements
@@ -150,6 +155,7 @@ fun drawCube(
 		south[2], south[3],
 		u0, v0,
 		u1, v1,
+		normal,
 		packedLight,
 		packedOverlay,
 		extraElements
@@ -161,6 +167,7 @@ fun drawCube(
 		east[2], east[3],
 		u0, v0,
 		u1, v1,
+		normal,
 		packedLight,
 		packedOverlay,
 		extraElements
@@ -172,6 +179,7 @@ fun drawCube(
 		west[2], west[3],
 		u0, v0,
 		u1, v1,
+		normal,
 		packedLight,
 		packedOverlay,
 		extraElements
@@ -183,6 +191,7 @@ fun drawCube(
 		up[2], up[3],
 		u0, v0,
 		u1, v1,
+		normal,
 		packedLight,
 		packedOverlay,
 		extraElements
@@ -194,6 +203,7 @@ fun drawCube(
 		down[2], down[3],
 		u0, v0,
 		u1, v1,
+		normal,
 		packedLight, packedOverlay,
 		extraElements
 	)
@@ -205,6 +215,7 @@ fun drawBlockAtlasQuad(
 	poseStack: PoseStack,
 	buffer: MultiBufferSource,
 	color: Int,
+	normal: Vector3f = DEFAULT_NORMAL,
 	packedLight: Int = LightTexture.FULL_BRIGHT,
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY,
 	topLeft: Vector3f = TOP_LEFT,
@@ -222,6 +233,7 @@ fun drawBlockAtlasQuad(
 		bottomLeft, bottomRight,
 		sprite.u0, sprite.v0,
 		sprite.u1, sprite.v1,
+		normal,
 		packedLight,
 		packedOverlay
 	)
@@ -245,6 +257,7 @@ fun drawQuad(
 	bottomRight: Vector3f = BOTTOM_RIGHT,
 	u0: Float = 0f, v0: Float = 0f,
 	u1: Float = 1f, v1: Float = 1f,
+	normal: Vector3f = DEFAULT_NORMAL,
 	packedLight: Int = LightTexture.FULL_BRIGHT,
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY,
 	extraElements: (VertexConsumer) -> Unit = {}
@@ -252,22 +265,22 @@ fun drawQuad(
 	drawVertex(
 		poseStack, buffer, renderType, color,
 		topLeft.x, topLeft.y, topLeft.z, u0, v0,
-		packedLight, packedOverlay, extraElements
+		normal, packedLight, packedOverlay, extraElements
 	)
 	drawVertex(
 		poseStack, buffer, renderType, color,
 		bottomLeft.x, bottomLeft.y, bottomLeft.z, u0, v1,
-		packedLight, packedOverlay, extraElements
+		normal, packedLight, packedOverlay, extraElements
 	)
 	drawVertex(
 		poseStack, buffer, renderType, color,
 		bottomRight.x, bottomRight.y, bottomRight.z, u1, v1,
-		packedLight, packedOverlay, extraElements
+		normal, packedLight, packedOverlay, extraElements
 	)
 	drawVertex(
 		poseStack, buffer, renderType, color,
 		topRight.x, topRight.y, topRight.z, u1, v0,
-		packedLight, packedOverlay, extraElements
+		normal, packedLight, packedOverlay, extraElements
 	)
 }
 
@@ -288,12 +301,13 @@ fun drawVertex(
 	z: Float,
 	u: Float,
 	v: Float,
+	normal: Vector3f,
 	packedLight: Int = LightTexture.FULL_BRIGHT,
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY,
 	extraElements: (VertexConsumer) -> Unit = {}
 ) {
 	val (x, y, z) = poseStack.last().pose().transformPosition(x, y, z, Vector3f())
-	drawVertex(x, y, z, buffer, renderType, color, u, v, packedLight, packedOverlay, extraElements)
+	drawVertex(x, y, z, buffer, renderType, color, u, v, normal, packedLight, packedOverlay, extraElements)
 }
 
 fun drawVertex(
@@ -305,16 +319,19 @@ fun drawVertex(
 	color: Int,
 	u: Float,
 	v: Float,
+	normal: Vector3f,
 	packedLight: Int = LightTexture.FULL_BRIGHT,
 	packedOverlay: Int = OverlayTexture.NO_OVERLAY,
 	extraElements: (VertexConsumer) -> Unit = {}
 ) {
 	val consumer = buffer.getBuffer(renderType)
-	consumer.addVertex(x, y, z)
-		.setColor(color)
-		.setUv(u, v)
-		.setOverlay(packedOverlay)
-		.setLight(packedLight)
-		.setNormal(0f, 1f, 0f)
-		.also(extraElements)
+	val format = renderType.format
+	val vertex = consumer.addVertex(x, y, z)
+
+	if (format.contains(VertexFormatElement.COLOR)) vertex.setColor(color)
+	if (format.contains(VertexFormatElement.UV)) vertex.setUv(u, v)
+	if (format.contains(VertexFormatElement.UV1)) vertex.setOverlay(packedOverlay)
+	if (format.contains(VertexFormatElement.UV2)) vertex.setLight(packedLight)
+	if (format.contains(VertexFormatElement.NORMAL)) vertex.setNormal(normal.x, normal.y, normal.z)
+	extraElements(vertex)
 }

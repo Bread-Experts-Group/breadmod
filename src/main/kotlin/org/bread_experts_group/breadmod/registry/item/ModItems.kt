@@ -36,6 +36,7 @@ import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelHand
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelLayeredItem
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagItem
+import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraBinderItem
 import org.bread_experts_group.breadmod.experimental.particle.RadioactiveMaterial
 import org.bread_experts_group.breadmod.experimental.physics_grid.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.RegistryProvider
@@ -414,6 +415,10 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 		"reinforced_bread_sword", ToolTier.RF_BREAD,
 		2.0, -2.5
 	)
+
+	@DataGenerateModelSingleItem
+	@DataGenerateLanguage
+	val CAMERA_BINDER: DeferredItem<Item> = this.registerItem("camera_binder", ::CameraBinderItem)
 
 	@DataGenerateModelHandheldItem
 	@DataGenerateLanguage

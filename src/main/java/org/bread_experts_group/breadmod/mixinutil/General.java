@@ -15,6 +15,10 @@ import java.util.zip.InflaterInputStream;
 public enum General {
 	;
 	public static final Logger logger = LogManager.getLogger("Bread Mod Mixin Utilities");
+	/**
+	 * Safeguard to prevent camera textures from adding themselves to the tickable textures set while it's still iterating.
+	 */
+	public static boolean textureLock = false;
 
 	static void compressedWriteToImage(final BufferedImage img, final byte[] data) throws IOException {
 		final ByteArrayInputStream decomInputStream = General.getDecompressedInputStream(data);

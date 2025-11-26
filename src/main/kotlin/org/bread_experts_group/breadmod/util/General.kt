@@ -460,6 +460,8 @@ fun getStackInPlayerHand(
 	return player.getItemInHand(hand)
 }
 
+fun <T : BlockItem> BlockState.`is`(deferredItem: DeferredItem<T>): Boolean = this.`is`(deferredItem.get().block)
+
 fun List<Item>.toItemStacks(): List<ItemStack> = this.map { ItemStack(it) }
 fun List<Fluid>.toFluidStacks(): List<FluidStack> = this.map { FluidStack(it, 1000) }
 
@@ -596,6 +598,19 @@ inline fun <reified T> CompoundTag.putValue(key: String, value: T) {
 		UUID::class        -> this.putUUID(key, value as UUID)
 		else               -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
 	}
+}
+
+fun CompoundTag.putBlockPos(key: String, value: BlockPos) {
+	this.put(key, CompoundTag().also { posTag ->
+		posTag.putInt("x", value.x)
+		posTag.putInt("y", value.y)
+		posTag.putInt("z", value.z)
+	})
+}
+
+fun CompoundTag.getBlockPos(key: String): BlockPos {
+	val posTag = this.getCompound(key)
+	return BlockPos(posTag.getInt("x"), posTag.getInt("y"), posTag.getInt("z"))
 }
 
 fun CompoundTag.putBlockState(key: String, value: BlockState) {

@@ -57,7 +57,7 @@ open class LerpTicker<E>(
 	fun tickCustom(label: E, run: (LerpParams) -> Unit) {
 		val params = this.lerpParams.getValue(label)
 		params.previous = params.position
-		run.invoke(params)
+		run(params)
 	}
 
 	data class LerpParams(

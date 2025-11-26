@@ -1,10 +1,14 @@
 package org.bread_experts_group.breadmod.registry.shader
 
+import com.mojang.blaze3d.pipeline.RenderTarget
+import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.Util
+import net.minecraft.client.renderer.RenderStateShard
 import net.minecraft.client.renderer.RenderStateShard.CULL
 import net.minecraft.client.renderer.RenderStateShard.LIGHTMAP
+import net.minecraft.client.renderer.RenderStateShard.NO_CULL
 import net.minecraft.client.renderer.RenderStateShard.NO_TRANSPARENCY
 import net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TARGET
 import net.minecraft.client.renderer.RenderStateShard.TRANSLUCENT_TRANSPARENCY
@@ -52,6 +56,7 @@ object ModRenderType {
 	lateinit var GLOW_INSTANCE: ShaderInstance
 	lateinit var SUN_INSTANCE: ShaderInstance
 	lateinit var TRANSLUCENT_TEX_INSTANCE: ShaderInstance
+	lateinit var POSITION_TEX_COLOR_NO_CUTOUT_INSTANCE: ShaderInstance
 	val RAINBOW: RenderType = RenderType.create(
 		"rainbow",
 		ModVertexFormats.RAINBOW_VERTEX_FORMAT,
@@ -129,6 +134,26 @@ object ModRenderType {
 				.createCompositeState(false)
 		)
 	}
+	private val RENDER_TARGET: Function<RenderTarget, RenderType> = Util.memoize { renderTarget ->
+		RenderType.create(
+			"render_target",
+			DefaultVertexFormat.POSITION_TEX_COLOR,
+			VertexFormat.Mode.QUADS,
+			SMALL_BUFFER_SIZE,
+			true,
+			false,
+			RenderType.CompositeState.builder()
+				.setShaderState(ModStateShards.POSITION_TEX_COLOR_NO_CUTOUT)
+				.setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
+				.setCullState(NO_CULL)
+				.setTexturingState(RenderStateShard.TexturingStateShard("set_texture", {
+					RenderSystem.setShaderTexture(0, renderTarget.colorTextureId)
+				}, {}))
+				.createCompositeState(false)
+		)
+	}
+
+	fun renderTarget(target: RenderTarget): RenderType = this.RENDER_TARGET.apply(target)
 
 	/**
 	 * Glow Shader.
