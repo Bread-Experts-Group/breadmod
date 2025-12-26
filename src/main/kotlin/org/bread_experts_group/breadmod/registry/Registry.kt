@@ -506,7 +506,6 @@ object Registry {
 						itemColor,
 						ModItems.CHEF_HAT.get(),
 						ModItems.DOPED_BREAD.get(),
-						ModItems.COFFEE_CUP.get(),
 						ModItems.BREAD_CHESTPLATE.get(),
 						ModItems.BREAD_HELMET.get(),
 						ModItems.BREAD_LEGGINGS.get(),
@@ -725,11 +724,11 @@ object Registry {
 		}
 	}
 
-	class BreadModScreenConstructor : MenuScreens.ScreenConstructor<BreadModMenu, BreadModScreen> {
+	class BreadModScreenConstructor : MenuScreens.ScreenConstructor<BreadModMenu, BreadModScreen<*>> {
 		override fun create(
 			menu: BreadModMenu,
 			inventory: Inventory,
 			title: Component
-		): BreadModScreen = menu.ofScreen(title)
+		): BreadModScreen<*> = menu.ofScreen(title)
 	}
 }

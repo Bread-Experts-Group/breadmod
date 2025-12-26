@@ -17,7 +17,6 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
-import org.bread_experts_group.breadmod.registry.item.coffee.CoffeeContents
 import org.bread_experts_group.breadmod.tool_gun.Model
 import org.bread_experts_group.breadmod.util.listOf
 import java.math.BigDecimal
@@ -96,12 +95,6 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 			.persistent(Codec.LONG)
 			.networkSynchronized(ByteBufCodecs.VAR_LONG)
 		::build
-	)
-	val COFFEE_CONTENTS: Supplier<DataComponentType<CoffeeContents>> = this.registry.register(
-		"coffee_contents", DataComponentType.builder<CoffeeContents>()
-			.networkSynchronized(CoffeeContents.Companion.STREAM_CODEC)
-			.persistent(CoffeeContents.Companion.CODEC)
-			.cacheEncoding()::build
 	)
 	val BLOCK_ENTITY_HANDLER_INFORMATION: Supplier<DataComponentType<List<Component>>> = this.registry.register(
 		"beg_be_handler_info", DataComponentType.builder<List<Component>>()

@@ -42,8 +42,6 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
-import org.bread_experts_group.breadmod.registry.item.actual.CoffeeBlendItem
-import org.bread_experts_group.breadmod.registry.item.actual.CoffeeCupItem
 import org.bread_experts_group.breadmod.registry.item.actual.DopedBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.FineShineItem
 import org.bread_experts_group.breadmod.registry.item.actual.GravityCoilItem
@@ -120,12 +118,6 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 
 	@DataGenerateLanguage
 	val TOOL_GUN: DeferredItem<ToolGunItem> = this.registerItem("tool_gun", ::ToolGunItem)
-
-	@DataGenerateLanguage
-	val COFFEE_CUP: DeferredItem<CoffeeCupItem> = this.registerItem("coffee_cup", ::CoffeeCupItem)
-
-	@DataGenerateLanguage
-	val COFFEE_BLEND: DeferredItem<CoffeeBlendItem> = this.registerItem("coffee_blend", ::CoffeeBlendItem)
 
 	@DataGenerateModelSingleItem
 	@DataGenerateLanguage

@@ -50,7 +50,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CableBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CharacterModelBlock
-import org.bread_experts_group.breadmod.registry.block.actual.CoffeeMachineBlock
 import org.bread_experts_group.breadmod.registry.block.actual.CreativeGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DieselGeneratorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.DoubleOrNothingBlock
@@ -417,14 +416,6 @@ object ModBlocks : RegistryProvider(
 	val MIRROR: DeferredItem<BlockItem> = this.registerBlockItem(
 		"mirror",
 		::MirrorBlock
-	)
-
-	@DataGenerateLanguage
-	@DataGenerateLootDropSelf
-	// todo model, BE, BER, textures
-	val COFFEE_MACHINE: DeferredItem<BlockItem> = this.registerBlockItem(
-		"coffee_machine",
-		::CoffeeMachineBlock
 	)
 
 	fun <T : Block> registerBlock(
