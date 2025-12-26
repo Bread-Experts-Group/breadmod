@@ -31,7 +31,7 @@ import kotlin.reflect.jvm.javaMethod
  * @author Miko Elbrecht
  * @since 1.0.0
  */
-class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModFileScanData>?) {
+class LibraryScanner private constructor(forPackage: Package?, data: List<ModFileScanData>?) {
 	companion object {
 		private val classes: MutableMap<Package, List<KClass<out Any>>> = mutableMapOf()
 		private val coreLoader: ClassLoader = ReentrantBlockableEventLoop::class.java.classLoader
@@ -109,10 +109,10 @@ class LibraryScanner private constructor(pForPackage: Package?, pData: List<ModF
 	val localClasses: List<KClass<out Any>>
 
 	init {
-		if (pForPackage != null) {
-			this.localClasses = pForPackage.getOrScanCache()
-		} else if (pData != null) {
-			this.localClasses = pData.piggybackCache()
+		if (forPackage != null) {
+			this.localClasses = forPackage.getOrScanCache()
+		} else if (data != null) {
+			this.localClasses = data.piggybackCache()
 		} else {
 			throw IllegalArgumentException("Either a package or list of mod file data must be provided.")
 		}

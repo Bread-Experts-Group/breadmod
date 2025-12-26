@@ -7,13 +7,13 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.contents.PlainTextContents
 import org.bread_experts_group.breadmod.client.render.localClient
 
-class GenericButton(
+open class GenericButton(
 	x: Int,
 	y: Int,
 	width: Int,
 	height: Int,
 	message: Component,
-	private val tooltipMessage: Component = Component.empty(),
+	val tooltipMessage: Component = Component.empty(),
 	private val onClick: (Button, Int) -> Unit
 ) : Button(x, y, width, height, message, {}, { Component.empty() }) {
 	constructor(
@@ -36,11 +36,15 @@ class GenericButton(
 	}
 
 	override fun renderWidget(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+		this.renderTooltipMessage(guiGraphics, mouseX, mouseY)
+		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
+	}
+
+	fun renderTooltipMessage(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int) {
 		if (this.isMouseOver(
 				mouseX.toDouble(),
 				mouseY.toDouble()
 			) && this.tooltipMessage.contents != PlainTextContents.EMPTY
 		) guiGraphics.renderTooltip(localClient.font, this.tooltipMessage, mouseX, mouseY)
-		super.renderWidget(guiGraphics, mouseX, mouseY, partialTick)
 	}
 }

@@ -22,10 +22,10 @@ import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.gui.ToolGunOverlay
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
+import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.Vector3fAxisX
 import org.bread_experts_group.breadmod.util.Vector3fZero
 import org.joml.Vector3f
-import java.awt.Color
 
 interface IToolGunModeRenderer {
 	companion object {
@@ -97,7 +97,7 @@ interface IToolGunModeRenderer {
 			poseStack,
 			buffer,
 			RenderType.text(texture),
-			Color.WHITE.rgb,
+			Color.WHITE,
 			Vector3fAxisX,
 			Vector3fZero,
 			Vector3f(1f, -1f, 0f),
@@ -115,16 +115,20 @@ interface IToolGunModeRenderer {
 		color: Int,
 		backgroundColor: Int,
 		dropShadow: Boolean,
-		fontRenderer: Font,
 		poseStack: PoseStack,
 		buffer: MultiBufferSource,
-		posX: Double = Companion.SCREEN_TEXT_X,
-		posY: Double = Companion.SCREEN_TEXT_Y,
-		posZ: Double = Companion.SCREEN_TEXT_Z,
+		offsetX: Double,
+		offsetY: Double,
 		scale: Float = 0.0007f
 	) {
-		this.initialScreenTranslations(poseStack, posX, posY, posZ, scale)
-		fontRenderer.renderText(
+		this.initialScreenTranslations(
+			poseStack,
+			Companion.SCREEN_TEXT_X + offsetX,
+			Companion.SCREEN_TEXT_Y + offsetY,
+			Companion.SCREEN_TEXT_Z,
+			scale
+		)
+		localClient.font.renderText(
 			component.visualOrderText, color, backgroundColor, poseStack,
 			buffer, dropShadow,
 			Companion.SCREEN_TINT
@@ -132,24 +136,22 @@ interface IToolGunModeRenderer {
 		poseStack.popPose()
 	}
 
-	/**
-	 * @see drawTextOnScreen
-	 */
 	fun drawTextOnScreen(
-		text: String,
+		component: Component,
 		color: Int,
-		backgroundColor: Int,
-		dropShadow: Boolean,
-		fontRenderer: Font,
 		poseStack: PoseStack,
-		buffer: MultiBufferSource,
-		posX: Double = Companion.SCREEN_TEXT_X,
-		posY: Double = Companion.SCREEN_TEXT_Y,
-		posZ: Double = Companion.SCREEN_TEXT_Z,
+		bufferSource: MultiBufferSource,
+		offsetX: Double,
+		offsetY: Double,
 		scale: Float = 0.0007f
 	): Unit = this.drawTextOnScreen(
-		Component.literal(text),
-		color, backgroundColor, dropShadow, fontRenderer, poseStack, buffer, posX, posY, posZ, scale
+		component,
+		color,
+		Color.NONE,
+		false,
+		poseStack, bufferSource,
+		offsetX, offsetY,
+		scale
 	)
 
 	/**

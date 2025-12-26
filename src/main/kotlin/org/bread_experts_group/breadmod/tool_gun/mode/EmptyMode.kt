@@ -9,12 +9,13 @@ import net.minecraft.world.level.Level
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 
 object EmptyMode : IToolGunMode {
-	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand, data: ToolGunData) {
 	}
 
 	override fun getDisplayName(): Component = Component.literal("???")

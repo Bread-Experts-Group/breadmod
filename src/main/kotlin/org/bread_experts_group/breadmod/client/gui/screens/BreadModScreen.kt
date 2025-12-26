@@ -187,11 +187,15 @@ abstract class BreadModScreen(
 	fun renderSlots(guiGraphics: GuiGraphics) {
 		this.menu.slots.forEach { slot ->
 			when (slot) {
-				is LambdaSlotItemHandler -> slot.jadeGraphic.blit(
-					guiGraphics,
-					this.leftPos + slot.x - 1,
-					this.topPos + slot.y - 1
-				)
+				is LambdaSlotItemHandler -> {
+					val graphic = slot.jadeGraphic
+					val adjust = if (graphic == ModGuiElements.RESULT_SLOT) 5 else 1
+					graphic.blit(
+						guiGraphics,
+						this.leftPos + slot.x - adjust,
+						this.topPos + slot.y - adjust
+					)
+				}
 				else -> ModGuiElements.SLOT.blit(
 					guiGraphics,
 					this.leftPos + slot.x - 1,

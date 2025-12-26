@@ -10,6 +10,7 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.Rotation
 import net.minecraft.world.level.block.SimpleWaterloggedBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
@@ -21,19 +22,15 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.client.gui.screens.KeyboardScreen
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.registry.block.ModBlocks
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 import org.bread_experts_group.breadmod.registry.block.handler.state.KeyboardStateHandler
 import org.bread_experts_group.breadmod.registry.block.handler.state.KeyboardStateHandler.Companion.MONITOR_POSITION
-import org.bread_experts_group.breadmod.registry.block.handler.state.MonitorStateHandler
-import org.bread_experts_group.breadmod.registry.block.handler.state.MonitorStateHandler.Companion.KEYBOARD_POSITION
-import org.bread_experts_group.breadmod.util.BlockScanner
-import org.bread_experts_group.breadmod.util.BlockScanner.filterPositions
-import org.bread_experts_group.breadmod.util.block
 import org.bread_experts_group.breadmod.util.combine
+import org.bread_experts_group.breadmod.util.rotate
 import java.util.stream.Stream
 
+// todo transfer functionality into the camera viewer block (allowing the viewer to switch between multiple bound cameras when that functionality exists)
 class KeyboardBlock : BreadModBlock(
 	Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()
 ), SimpleWaterloggedBlock {
@@ -44,24 +41,9 @@ class KeyboardBlock : BreadModBlock(
 			box(0.0, 0.0, 5.0, 2.0, 0.5, 8.0),
 			box(0.5, 0.5, 9.5, 1.5, 3.0, 10.5)
 		).combine()
-		val SHAPE_SOUTH: VoxelShape = Stream.of(
-			box(14.0, 0.0, 5.0, 16.0, 0.5, 7.0),
-			box(0.0, 0.0, 5.0, 13.0, 0.5, 10.0),
-			box(14.0, 0.0, 8.0, 16.0, 0.5, 11.0),
-			box(14.5, 0.5, 5.5, 15.5, 3.0, 6.5)
-		).combine()
-		val SHAPE_EAST: VoxelShape = Stream.of(
-			box(5.0, 0.0, 0.0, 7.0, 0.5, 2.0),
-			box(5.0, 0.0, 3.0, 10.0, 0.5, 16.0),
-			box(8.0, 0.0, 0.0, 11.0, 0.5, 2.0),
-			box(5.5, 0.5, 0.5, 6.5, 3.0, 1.5)
-		).combine()
-		val SHAPE_WEST: VoxelShape = Stream.of(
-			box(9.0, 0.0, 14.0, 11.0, 0.5, 16.0),
-			box(6.0, 0.0, 0.0, 11.0, 0.5, 13.0),
-			box(5.0, 0.0, 14.0, 8.0, 0.5, 16.0),
-			box(9.5, 0.5, 14.5, 10.5, 3.0, 15.5)
-		).combine()
+		val SHAPE_SOUTH: VoxelShape = this.SHAPE_NORTH.rotate(Rotation.CLOCKWISE_180)
+		val SHAPE_EAST: VoxelShape = this.SHAPE_NORTH.rotate(Rotation.CLOCKWISE_90)
+		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
 	}
 
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
@@ -82,7 +64,7 @@ class KeyboardBlock : BreadModBlock(
 		val keyboardEntity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return InteractionResult.FAIL
 		val keyboardState = keyboardEntity.getCapability(KeyboardStateHandler.BLOCK_VOID)
 		if (player.isShiftKeyDown) {
-			val opposite = state.getValue(HORIZONTAL_FACING).opposite
+/*			val opposite = state.getValue(HORIZONTAL_FACING).opposite
 			val posList = BlockScanner.scanAdjacent(pos, opposite)
 				.filterPositions(level, ModBlocks.MONITOR.block)
 			if (posList.isEmpty()) {
@@ -100,7 +82,7 @@ class KeyboardBlock : BreadModBlock(
 					break
 				}
 				break
-			}
+			}*/
 		} else {
 			if (level.isClientSide) {
 				val position = keyboardState.getOrNull(MONITOR_POSITION)
@@ -109,7 +91,6 @@ class KeyboardBlock : BreadModBlock(
 				} else localClient.setScreen(KeyboardScreen(position))
 			}
 		}
-
 
 		return super.useWithoutItem(state, level, pos, player, hitResult)
 	}
@@ -122,13 +103,13 @@ class KeyboardBlock : BreadModBlock(
 		movedByPiston: Boolean
 	) {
 		if (!state.`is`(newState.block)) {
-			val keyboardEntity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return
+/*			val keyboardEntity = level.getBlockEntity(pos) as? BreadModBlockEntity ?: return
 			val keyboardState = keyboardEntity.getCapability(KeyboardStateHandler.BLOCK_VOID)
 			val monitorPosition = keyboardState.getOrNull(MONITOR_POSITION) ?: return
 			val monitorEntity = level.getBlockEntity(monitorPosition) as? BreadModBlockEntity ?: return
 			val monitorState = monitorEntity.getCapability(MonitorStateHandler.BLOCK_VOID)
 			monitorState.set(KEYBOARD_POSITION, null)
-			if (level.isClientSide) localClient.player?.sendSystemMessage(Component.literal("unbinding monitor from removed keyboard."))
+			if (level.isClientSide) localClient.player?.sendSystemMessage(Component.literal("unbinding monitor from removed keyboard."))*/
 		}
 		super.onRemove(state, level, pos, newState, movedByPiston)
 	}

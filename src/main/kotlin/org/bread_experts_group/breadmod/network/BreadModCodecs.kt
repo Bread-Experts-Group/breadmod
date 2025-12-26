@@ -31,6 +31,7 @@ import net.minecraft.world.item.crafting.RecipeHolder
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.phys.Vec3
@@ -57,10 +58,12 @@ object BreadModCodecs {
 		override fun decode(buffer: B): Pair<L, R> = left.decode(buffer) to right.decode(buffer)
 
 		override fun encode(buffer: B, value: Pair<L, R>) {
-			left.encode(buffer, value.first!!)
-			right.encode(buffer, value.second!!)
+			left.encode(buffer, value.first ?: throw NullPointerException("first cannot be null."))
+			right.encode(buffer, value.second ?: throw NullPointerException("second cannot be null."))
 		}
 	}
+
+	fun <F, S> kotlinPair(first: Codec<F>, second: Codec<S>): KotlinPairCodec<F, S> = KotlinPairCodec(first, second)
 
 	fun <K, V, M : MutableMap<K, V>> RegistryFriendlyByteBuf.readMapRegFriendly(
 		mapFactory: IntFunction<M>,
@@ -86,8 +89,8 @@ object BreadModCodecs {
 	) {
 		this.writeVarInt(map.size)
 		map.forEach { (key: K, value: V) ->
-			keyWriter.encode(this, key!!)
-			valueWriter.encode(this, value!!)
+			keyWriter.encode(this, key ?: throw NullPointerException())
+			valueWriter.encode(this, value ?: throw NullPointerException())
 		}
 	}
 
@@ -146,7 +149,7 @@ object BreadModCodecs {
 				FriendlyByteBuf::class -> FriendlyByteBuf(byteBuf)
 				RegistryFriendlyByteBuf::class -> RegistryFriendlyByteBuf(
 					byteBuf,
-					level!!.registryAccess(),
+					(level ?: return).registryAccess(),
 					ConnectionType.NEOFORGE
 				)
 				else -> throw IllegalArgumentException("[StreamCodec / Buffer] invalid buffer: ${B::class.simpleName}")
@@ -154,7 +157,7 @@ object BreadModCodecs {
 
 			try {
 				logger.info("[StreamCodec / Encode] Attempting to encode value[$value]")
-				streamCodec.encode(buffer, value!!)
+				streamCodec.encode(buffer, value ?: return)
 				logger.info("[StreamCodec / Encode] Encoded value successfully")
 			} catch (e: Exception) {
 				logger.error("[StreamCodec / Encode] Exception in encoding value")
@@ -353,18 +356,27 @@ object BreadModCodecs {
 	}
 
 	@Suppress("ConvertLambdaToReference") // necessary because of overload ambiguity.
-	val VEC3: StreamCodec<ByteBuf, Vec3> = StreamCodec.composite(
+	val VEC3_STREAM_CODEC: StreamCodec<ByteBuf, Vec3> = StreamCodec.composite(
 		ByteBufCodecs.DOUBLE, { it.x },
 		ByteBufCodecs.DOUBLE, { it.y },
 		ByteBufCodecs.DOUBLE, { it.z },
 		::Vec3
 	)
-	val QUATERNIONF: StreamCodec<ByteBuf, Quaternionf> = StreamCodec.composite(
+	val QUATERNIONF_STREAM_CODEC: StreamCodec<ByteBuf, Quaternionf> = StreamCodec.composite(
 		ByteBufCodecs.FLOAT, { it.x },
 		ByteBufCodecs.FLOAT, { it.y },
 		ByteBufCodecs.FLOAT, { it.z },
 		ByteBufCodecs.FLOAT, { it.w },
 		::Quaternionf
+	)
+	val BOUNDING_BOX_STREAM_CODEC: StreamCodec<ByteBuf, BoundingBox> = StreamCodec.composite(
+		ByteBufCodecs.INT, BoundingBox::minX,
+		ByteBufCodecs.INT, BoundingBox::minY,
+		ByteBufCodecs.INT, BoundingBox::minZ,
+		ByteBufCodecs.INT, BoundingBox::maxX,
+		ByteBufCodecs.INT, BoundingBox::maxY,
+		ByteBufCodecs.INT, BoundingBox::maxZ,
+		::BoundingBox
 	)
 
 //	// Convenience codec methods.

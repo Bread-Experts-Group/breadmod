@@ -2,10 +2,10 @@ package org.bread_experts_group.breadmod.tool_gun.gui.screen
 
 import com.mojang.blaze3d.platform.InputConstants
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
+import org.bread_experts_group.breadmod.client.gui.screens.PositionedScreen
 import org.bread_experts_group.breadmod.client.render.redirectFocusFromContainerWidgets
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.registry.item.ModItems
@@ -14,20 +14,10 @@ import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.Mo
 import org.bread_experts_group.breadmod.tool_gun.gui.components.tool_gun_tabs.settings.SettingsTab
 import org.bread_experts_group.breadmod.util.Color
 
-class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(title) {
+class ToolGunScreen(title: Component, private val stack: ItemStack) : PositionedScreen(title) {
 	companion object {
 		var activeTab: AbstractToolGunScreenTab? = null
 	}
-
-	/**
-	 * Starts at the top left of the gui and moves left to right
-	 */
-	var leftPos: Int = (this.width - 256) / 2
-
-	/**
-	 * Starts at the top left of the gui and moves up to down
-	 */
-	var topPos: Int = (this.height - 256) / 2
 
 	override fun isPauseScreen(): Boolean = false
 	override fun renderBackground(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -57,8 +47,7 @@ class ToolGunScreen(title: Component, private val stack: ItemStack) : Screen(tit
 
 	override fun init() {
 		check(this.stack.`is`(ModItems.TOOL_GUN.asItem())) { "Provided ItemStack must be ToolGunItem!" }
-		this.leftPos = (this.width - 256) / 2
-		this.topPos = (this.height - 256) / 2
+		super.init()
 
 		this.addTab(ModeSelectTab(this, this.stack), true)
 		this.addTab(SettingsTab(this, this.stack), false)

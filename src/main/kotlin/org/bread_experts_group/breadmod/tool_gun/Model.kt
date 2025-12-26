@@ -26,8 +26,8 @@ class Model(var state: BlockState, val stateDefinition: StateDefinition<Block, B
 		val STREAM_CODEC: StreamCodec<ByteBuf, Model> = StreamCodec.composite(
 			BreadModCodecs.BLOCKSTATE_STREAM_CODEC, Model::state,
 			ByteBufCodecs.FLOAT, Model::scale,
-			BreadModCodecs.VEC3, Model::position,
-			BreadModCodecs.QUATERNIONF, Model::rotation,
+			BreadModCodecs.VEC3_STREAM_CODEC, Model::position,
+			BreadModCodecs.QUATERNIONF_STREAM_CODEC, Model::rotation,
 			this::create
 		)
 

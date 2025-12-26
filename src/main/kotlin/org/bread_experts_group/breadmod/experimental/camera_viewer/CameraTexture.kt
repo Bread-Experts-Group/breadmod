@@ -47,13 +47,13 @@ class CameraTexture(
 		private var textureCounter: Int = 0
 		private val frameTargets: MutableMap<BlockPos, TextureTarget> = mutableMapOf()
 		val textures: MutableMap<BlockPos, CameraTexture> = mutableMapOf()
-		fun get(blockEntity: BreadModBlockEntity, width: Int, height: Int): CameraTexture? {
+		fun get(blockEntity: BreadModBlockEntity, width: Int, height: Int, shouldTick: Boolean): CameraTexture? {
 			val level = blockEntity.level ?: return null
 			val handler = blockEntity.getCapability(CameraViewerHandler.BLOCK_VOID)
 			if (handler.boundPos == BlockPos.ZERO) return null
 			if (!level.isAreaLoaded(handler.boundPos, 100)) return null
 			val cameraEntity = level.getBlockEntity(handler.boundPos) as? BreadModBlockEntity ?: return null
-			return this.textures.getOrPut(handler.boundPos) {
+			val texture = this.textures.getOrPut(handler.boundPos) {
 				CameraTexture(
 					handler.boundPos,
 					width,
@@ -62,13 +62,17 @@ class CameraTexture(
 					modLocation("camera_texture_${this.textureCounter++}")
 				)
 			}
+			texture.shouldTick = shouldTick
+			return texture
 		}
 	}
 
 	val frameBuffer: MainTarget = MainTarget(this.width, this.height)
 	var initialized: Boolean = false
+	var shouldTick: Boolean = true
 
 	fun init() {
+
 		val level = this.cameraEntity.level ?: return
 		if (General.textureLock) return
 		if (Companion.camera.entity == null)
@@ -105,6 +109,7 @@ class CameraTexture(
 
 	override fun tick() {
 		if (!this.initialized) return
+		if (!this.shouldTick) return
 		executeOnRenderThread { this.updateTexture() }
 	}
 

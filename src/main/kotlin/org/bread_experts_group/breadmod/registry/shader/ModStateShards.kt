@@ -18,5 +18,6 @@ object ModStateShards {
 	val ASTRAL_SHARD: ShaderStateShard = ShaderStateShard(ModRenderType::ASTRAL_INSTANCE)
 	val RAINBOW_SHARD: ShaderStateShard = ShaderStateShard(ModRenderType::RAINBOW_INSTANCE)
 	val TRANSLUCENT_TEX_SHARD: ShaderStateShard = ShaderStateShard(ModRenderType::TRANSLUCENT_TEX_INSTANCE)
-	val POSITION_TEX_COLOR_NO_CUTOUT: ShaderStateShard = ShaderStateShard(ModRenderType::POSITION_TEX_COLOR_NO_CUTOUT_INSTANCE)
+	val POSITION_TEX_COLOR_NO_CUTOUT: ShaderStateShard =
+		ShaderStateShard(ModRenderType::POSITION_TEX_COLOR_NO_CUTOUT_INSTANCE)
 }

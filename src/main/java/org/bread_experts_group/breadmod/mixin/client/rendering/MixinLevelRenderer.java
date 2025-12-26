@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
 import org.bread_experts_group.breadmod.registry.shader.ModPostChains;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -115,5 +116,10 @@ public abstract class MixinLevelRenderer {
 	private Entity renderLevelCameraGetEntity(Entity original, @Local(ordinal = 0) Entity entity) {
 		if (CameraTexture.Companion.getTargetBeingRendered() != null && entity instanceof LocalPlayer) return entity;
 		return original;
+	}
+
+	@Unique
+	public void breadmod$renderLevel() {
+
 	}
 }

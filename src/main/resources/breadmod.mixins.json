@@ -30,7 +30,6 @@
     "client.rendering.InvokerIVertexConsumerExtension",
     "client.rendering.MixinAbstractWidget",
     "client.rendering.MixinFrustum",
-    "client.rendering.MixinGameRenderer",
     "client.rendering.MixinGuiGraphics",
     "client.rendering.MixinLevelRenderer",
     "client.rendering.MixinTextureManager",

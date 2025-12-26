@@ -62,10 +62,11 @@ class ToolGunItem : Item(
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
 		val stack = getStackInPlayerHand(player, usedHand)
 		if (stack.`is`(ModItems.TOOL_GUN)) {
-			val mode = ToolGunData.get(stack).getMode()
-			if (mode.actionPre(level, player, stack, usedHand)) {
-				mode.action(level, player, stack, usedHand)
-				mode.actionPost(level, player, stack, usedHand)
+			val data = ToolGunData.get(stack)
+			val mode = data.getMode()
+			if (mode.actionPre(level, player, stack, usedHand, data)) {
+				mode.action(level, player, stack, usedHand, data)
+				mode.actionPost(level, player, stack, usedHand, data)
 
 				if (level.isClientSide) {
 					(IClientItemExtensions.of(stack).customRenderer as ToolGunItemRenderer).triggerDelta()
@@ -128,11 +129,9 @@ class ToolGunItem : Item(
 
 	override fun onKeyboardPress(keyEvent: Key, heldStack: ItemStack, player: Player) {
 		val data = ToolGunData.get(heldStack)
-		if (data.getMode().keyMatchesInput(openModeGui, keyEvent) && localClient.screen == null) {
+		if (keyEvent.key == openModeGui.key.value && localClient.screen == null) {
 			localClient.setScreen(ToolGunScreen(Companion.TOOL_GUN_SCREEN_NAME, heldStack))
-		} else {
-			(data.keyData[keyEvent.key] ?: return).second.invoke(keyEvent, heldStack, player, data)
-		}
+		} else (data.keyData[keyEvent.key] ?: return).second.invoke(keyEvent, heldStack, player, data)
 	}
 
 	override fun appendHoverText(

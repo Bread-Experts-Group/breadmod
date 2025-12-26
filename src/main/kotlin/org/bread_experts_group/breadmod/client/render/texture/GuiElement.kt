@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.solidColorTexture
 import org.bread_experts_group.breadmod.client.render.translate
+import java.util.Objects
 
 // todo maybe look into making this an AbstractWidget in the future
 //  (i need some method or toggle to tell the render part to render normally, scaled, static sprite frame, etc..)
@@ -67,7 +68,7 @@ class GuiElement(
 
 	private fun color(color: Int): Float = this.color[color] / 255f
 
-	private fun getAsStaticTexture() =
+	private fun getAsStaticTexture(): ResourceLocation =
 		this.atlasSprite.contents().name().withPrefix("textures/gui/sprites/").withSuffix(".png")
 
 	init {
@@ -241,4 +242,13 @@ class GuiElement(
 		y,
 		uWidth = clamp(progressInput, 0, this.textureWidth)
 	)
+
+	override fun equals(other: Any?): Boolean =
+		if (other is GuiElement)
+			this.location == other.location &&
+					this.textureWidth == other.textureWidth &&
+					this.textureHeight == other.textureHeight
+		else false
+
+	override fun hashCode(): Int = Objects.hash(this.location, this.textureWidth, this.textureHeight)
 }

@@ -58,6 +58,7 @@ object ModGuiElements {
 	val BACKGROUND_ALT: GuiElement = GuiElement(modLocation("background_alt"), 20, 20)
 	val FLAME: GuiElement = GuiElement(modLocation("flame"), 14, 14)
 	val FLAT_BACKGROUND: GuiElement = GuiElement.ofSolidColor(198, 198, 198)
+	val FLOPPY_DISK: GuiElement = GuiElement(modLocation("computer", "floppy_disk"))
 
 	// Wheat Crusher
 	val WHEAT_CRUSHER_LEFT_WHEEL: GuiElement =

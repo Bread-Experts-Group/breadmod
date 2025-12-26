@@ -22,7 +22,7 @@ class HitboxPacket : CustomPacketPayload {
 			context.enqueueWork {
 				val player = context.player()
 				val level = player.level()
-				player.rayCast(10.0, hitbox())?.let { result ->
+				player.rayCast(10.0, hitbox(player))?.let { result ->
 					val state = level.getBlockState(result.blockPosition)
 					val entity = level.getBlockEntity(result.hit.originBlockPos) as? BreadModBlockEntity
 					val blockPos = result.hit.originBlockPos

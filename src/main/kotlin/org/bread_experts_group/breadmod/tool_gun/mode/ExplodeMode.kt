@@ -13,6 +13,7 @@ import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.tool_gun.gui.components.ModeWidget.Builder
 import org.bread_experts_group.breadmod.util.BreadModExplosion
@@ -36,7 +37,7 @@ class ExplodeMode : IToolGunMode {
 		val tooltip: MutableComponent = modTranslatable("tool_gun", "explode", "mode", "tooltip")
 	}
 
-	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand, data: ToolGunData) {
 		if (!level.isClientSide) {
 			val targetBlock = player.rayCast(500.0, blocks()) ?: return
 			BreadModExplosion

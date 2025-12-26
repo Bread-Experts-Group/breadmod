@@ -64,7 +64,7 @@ class CreatorMode : IToolGunMode {
 	private var preparedEntityTag: CompoundTag = CompoundTag()
 	private var placingEntity: Boolean = true
 
-	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand, data: ToolGunData) {
 //		this.logger.info("block: ${this.preparedBlock}")
 //		this.logger.info("entity: ${this.preparedEntityTag}")
 		val block = player.rayCast(50.0, blocks()) ?: return
@@ -88,9 +88,7 @@ class CreatorMode : IToolGunMode {
 		}
 		into[KeyMappings.toolGunAltOne.key.value] =
 			KeyData(Component.literal("change place mode")) { event, _, _, data ->
-				if (this.keyMatchesInput(KeyMappings.toolGunAltOne, event) && this.isKeyboardPress(event)) {
-					data.setValue("placing_entity", !this.placingEntity)
-				}
+				if (event.action == InputConstants.PRESS) data.setValue("placing_entity", !this.placingEntity)
 			}
 	}
 
@@ -124,15 +122,14 @@ class CreatorMode : IToolGunMode {
 			packedOverlay: Int
 		) {
 			this.drawTextOnScreen(
-				"placing: ${if (this.mode.placingEntity) "Entity" else "Block"}",
+				Component.literal("placing: ${if (this.mode.placingEntity) "Entity" else "Block"}"),
 				Color.WHITE,
 				Color.BLACK,
 				false,
-				localClient.font,
 				poseStack,
 				buffer,
-				IToolGunModeRenderer.SCREEN_TEXT_X + 0.008,
-				IToolGunModeRenderer.SCREEN_TEXT_Y - 0.015
+				0.008,
+				0.015
 			)
 		}
 

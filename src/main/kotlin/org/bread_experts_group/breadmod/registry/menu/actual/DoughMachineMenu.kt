@@ -29,10 +29,10 @@ class DoughMachineMenu(
 		this.addInventorySlots(inventory, 8, 142, 84)
 		val capability = this.entity.getCapability(Capabilities.ItemHandler.BLOCK)
 		this.addSlot(LambdaSlotItemHandler(capability, 0, 10, 34))
-		this.addSlot(LambdaSlotItemHandler(capability, 1, 45, 45))
+		this.addSlot(LambdaSlotItemHandler(capability, 1, 45, 34))
 		this.addSlot(LambdaSlotItemHandler.playerReadOnly(capability, 2, 98, 35))
 		this.addSlot(
-			LambdaSlotItemHandler.fluidHandlerOnly(capability, 3, 0, 0)
+			LambdaSlotItemHandler.fluidHandlerOnly(capability, 3, 153, 7)
 			{ it.`is`(FluidTags.WATER) }
 		)
 	}

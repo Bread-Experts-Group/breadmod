@@ -26,7 +26,7 @@ class EntityTab(screen: CreatorScreen) : ContainerWidget<CreatorScreen>(
 				val entity = this.screen.currentEntity as LivingEntity
 				entity.health = 100f
 				entity.attributes.getInstance(Attributes.MAX_HEALTH)?.let { it.baseValue = 100.0 }
-				this.screen.data.setValueDirect { it.putEntity("entity", entity) }
+				this.screen.data.setValueBulk { it.putEntity("entity", entity) }
 			}
 		)
 	}

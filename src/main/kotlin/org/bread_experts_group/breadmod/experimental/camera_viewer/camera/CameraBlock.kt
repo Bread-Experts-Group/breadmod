@@ -18,7 +18,7 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityM
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler.Companion.getLerpTicker
 
-class CameraBlock : BreadModBlock(Properties.of().noOcclusion().noCollission()) {
+class CameraBlock : BreadModBlock(Properties.of().noOcclusion().noCollission().instabreak()) {
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
 		builder.add(BlockStateProperties.HORIZONTAL_FACING)
 	}

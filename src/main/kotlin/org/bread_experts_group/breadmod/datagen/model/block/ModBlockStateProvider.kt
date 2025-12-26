@@ -66,21 +66,6 @@ class ModBlockStateProvider(
 			ModBlocks.NUKE.block,
 			this.models().getBuilder("breadmod:block/nuke")
 		)
-		this.horizontalBlock(ModBlocks.MONITOR.block) {
-			this.models().cube(
-				"breadmod:block/monitor",
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top"),
-				this.modLoc("${ModelProvider.BLOCK_FOLDER}/monitor/monitor_top")
-			)
-		}
-		this.simpleBlockItem(
-			ModBlocks.MONITOR.block,
-			this.models().getBuilder("breadmod:block/monitor")
-		)
 		this.horizontalBlock(ModBlocks.RADIO_BLOCK.block) {
 			this.models().orientable(
 				"breadmod:block/radio_block",

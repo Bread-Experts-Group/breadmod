@@ -131,7 +131,6 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSe
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.network.serverbound.BreadModBEUpdateRequestPacket
-import org.bread_experts_group.breadmod.network.serverbound.ComputerKeystrokePacket
 import org.bread_experts_group.breadmod.network.serverbound.CreateModelBlockItemPacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.HitboxPacket
@@ -307,7 +306,7 @@ object Registry {
 					if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
 
 					if (event.action == InputConstants.PRESS && event.button == InputConstants.MOUSE_BUTTON_RIGHT) {
-						player.rayCast(10.0, hitbox())?.let { result ->
+						player.rayCast(10.0, hitbox(player))?.let { result ->
 							val level = player.level()
 							val state = level.getBlockState(result.blockPosition)
 							val entity = level.getBlockEntity(result.hit.originBlockPos) as? BreadModBlockEntity
@@ -701,7 +700,6 @@ object Registry {
 			// Serverbound packets
 			ClearGridPacket.register(registrar)
 			ToolGunModeChangePacket.register(registrar)
-			ComputerKeystrokePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)

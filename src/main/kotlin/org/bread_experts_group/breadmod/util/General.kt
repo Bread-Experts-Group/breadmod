@@ -44,6 +44,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeInput
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.EntityGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -55,6 +56,7 @@ import net.minecraft.world.level.block.Rotation.COUNTERCLOCKWISE_90
 import net.minecraft.world.level.block.Rotation.NONE
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
@@ -108,8 +110,9 @@ fun logDebugInfo(message: Any?) {
 	if (SharedConstants.IS_RUNNING_IN_IDE) LogManager.getLogger().info(message)
 }
 
-fun displayClientMessage(message: Any?): Unit =
-	localClient.player!!.displayClientMessage(Component.literal("$message"), true)
+fun displayClientMessage(message: Any?) {
+	(localClient.player ?: return).displayClientMessage(Component.literal("$message"), true)
+}
 
 /**
  * Retrieves an instance of the provided [path]
@@ -153,9 +156,9 @@ fun <T> Level.getCapability(
 private val shapeOrigin: Vec3 = Vec3(-0.5, -0.5, -0.5)
 
 fun AABB.rotate(rotation: Rotation): AABB = when (rotation) {
-	NONE                -> this
-	CLOCKWISE_90        -> AABB(-this.minZ, this.minY, this.minX, -this.maxZ, this.maxY, this.maxX)
-	CLOCKWISE_180       -> AABB(-this.minX, this.minY, -this.minZ, -this.maxX, this.maxY, -this.maxZ)
+	NONE -> this
+	CLOCKWISE_90 -> AABB(-this.minZ, this.minY, this.minX, -this.maxZ, this.maxY, this.maxX)
+	CLOCKWISE_180 -> AABB(-this.minX, this.minY, -this.minZ, -this.maxX, this.maxY, -this.maxZ)
 	COUNTERCLOCKWISE_90 -> AABB(this.minZ, this.minY, -this.minX, this.maxZ, this.maxY, -this.maxX)
 }
 
@@ -244,8 +247,8 @@ fun blocks(
 	val blockPos = BlockPos(to.toVec3i())
 	val state = level.getBlockState(blockPos)
 	val shape = state.getShape(level, blockPos)
-	if (filterBlocks.contains(state.block)) null
-	if (shape.clip(from, to, blockPos) != null) state else null
+	if (filterBlocks.contains(state.block)) null else
+		if (shape.clip(from, to, blockPos) != null) state else null
 }
 
 fun entities(vararg filterTypes: EntityType<*> = arrayOf(EntityType.PLAYER)): (EntityGetter, Vec3, Vec3) -> Entity? =
@@ -256,16 +259,15 @@ fun entities(vararg filterTypes: EntityType<*> = arrayOf(EntityType.PLAYER)): (E
 		else entities
 	}
 
-fun hitbox(): (Level, Vec3, Vec3) -> Hitbox? =
-	{ _, from, to ->
-		HitboxHandler.hitboxes.filter { it.value.pos.distanceTo(from) < it.value.bounds.size + 10.0 }
-			.firstNotNullOfOrNull { (pos, hitbox) ->
-				if (hitbox.bounds.move(pos).clip(from, to).isPresent) hitbox else null
-			}
+fun hitbox(player: Player): (Level, Vec3, Vec3) -> Hitbox? =
+	{ level, from, to ->
+		val clip = level.clip(ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player))
+		if (clip.type != net.minecraft.world.phys.HitResult.Type.MISS) null else
+			HitboxHandler.hitboxes.filter { it.value.pos.distanceTo(from) < it.value.bounds.size + 10.0 }
+				.firstNotNullOfOrNull { (pos, hitbox) ->
+					if (hitbox.bounds.move(pos).clip(from, to).isPresent) hitbox else null
+				}
 	}
-
-fun BlockPos.MutableBlockPos.isZero(): Boolean = this.x == 0 && this.y == 0 && this.z == 0
-
 //data class GridHitResult(
 //	val grid: PhysicsGrid,
 //	val state: BlockState,
@@ -294,6 +296,10 @@ fun BlockPos.MutableBlockPos.isZero(): Boolean = this.x == 0 && this.y == 0 && t
 //}
 
 /// End raycast functions ///
+fun BlockPos.isZero(): Boolean = this.x == 0 && this.y == 0 && this.z == 0
+fun BlockPos.isNotZero(): Boolean = this.x != 0 || this.y != 0 || this.z != 0
+
+operator fun MobEffectInstance.component1(): Holder<MobEffect> = this.effect
 operator fun MobEffectInstance.component2(): Int = this.amplifier
 fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 fun Vector3f.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
@@ -311,8 +317,15 @@ operator fun Vector3f.component3(): Float = this.z
 operator fun BlockPos.component1(): Int = this.x
 operator fun BlockPos.component2(): Int = this.y
 operator fun BlockPos.component3(): Int = this.z
+operator fun BlockPos.minus(other: BlockPos): BlockPos = BlockPos(this.x - other.x, this.y - other.y, this.z - other.z)
+operator fun BlockPos.times(other: BlockPos): BlockPos = BlockPos(this.x * other.x, this.y * other.y, this.z * other.z)
 
-operator fun MobEffectInstance.component1(): Holder<MobEffect> = this.effect
+operator fun BoundingBox.component1(): Int = this.minX()
+operator fun BoundingBox.component2(): Int = this.minY()
+operator fun BoundingBox.component3(): Int = this.minZ()
+operator fun BoundingBox.component4(): Int = this.maxX()
+operator fun BoundingBox.component5(): Int = this.maxY()
+operator fun BoundingBox.component6(): Int = this.maxZ()
 
 /**
  * Translates a [Direction] to a side relative to another [Direction].
@@ -327,9 +340,9 @@ fun translateDirection(translateFor: Direction, side: Direction): Direction =
 	else when (translateFor) {
 		NORTH -> side.opposite
 		SOUTH -> side
-		EAST  -> side.clockWise
-		WEST  -> side.counterClockWise
-		else  -> translateFor
+		EAST -> side.clockWise
+		WEST -> side.counterClockWise
+		else -> translateFor
 	}
 
 fun Direction.toYRotFixed(): Float {
@@ -554,49 +567,53 @@ fun directionalTargetFaceSection(
 ): Boolean = when (direction) {
 	NORTH -> targetFaceSection(targetPos.x, targetPos.y, minxXNorthEast, minY, maxXNorthEast, maxY)
 	SOUTH -> targetFaceSection(targetPos.x, targetPos.y, minxXSouthWest, minY, maxXSouthWest, maxY)
-	WEST  -> targetFaceSection(targetPos.z, targetPos.y, minxXSouthWest, minY, maxXSouthWest, maxY)
-	EAST  -> targetFaceSection(targetPos.z, targetPos.y, minxXNorthEast, minY, maxXNorthEast, maxY)
-	UP    -> targetFaceSection(targetPos.x, targetPos.z, minxXNorthEast, minY, maxXNorthEast, maxY)
-	DOWN  -> targetFaceSection(targetPos.x, targetPos.z, minxXSouthWest, minY, minxXSouthWest, maxY)
+	WEST -> targetFaceSection(targetPos.z, targetPos.y, minxXSouthWest, minY, maxXSouthWest, maxY)
+	EAST -> targetFaceSection(targetPos.z, targetPos.y, minxXNorthEast, minY, maxXNorthEast, maxY)
+	UP -> targetFaceSection(targetPos.x, targetPos.z, minxXNorthEast, minY, maxXNorthEast, maxY)
+	DOWN -> targetFaceSection(targetPos.x, targetPos.z, minxXSouthWest, minY, minxXSouthWest, maxY)
 }
 
 /// End Face Targeting Functions ///
 inline fun <reified T> CompoundTag.getValue(value: String): T = when (T::class) {
-	Tag::class         -> this.get(value) as T
+	Tag::class -> this.get(value) as T
 	CompoundTag::class -> this.getCompound(value) as T
-	Boolean::class     -> this.getBoolean(value) as T
-	Int::class         -> this.getInt(value) as T
-	Float::class       -> this.getFloat(value) as T
-	Byte::class        -> this.getByte(value) as T
-	ByteArray::class   -> this.getByteArray(value) as T
-	Double::class      -> this.getDouble(value) as T
-	IntArray::class    -> this.getIntArray(value) as T
-	Long::class        -> this.getLong(value) as T
-	LongArray::class   -> this.getLongArray(value) as T
-	Short::class       -> this.getShort(value) as T
-	String::class      -> this.getString(value) as T
-	TagType::class     -> this.getTagType(value) as T
-	UUID::class        -> this.getUUID(value) as T
-	else               -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
+	Boolean::class -> this.getBoolean(value) as T
+	Int::class -> this.getInt(value) as T
+	Float::class -> this.getFloat(value) as T
+	Byte::class -> this.getByte(value) as T
+	ByteArray::class -> this.getByteArray(value) as T
+	Double::class -> this.getDouble(value) as T
+	IntArray::class -> this.getIntArray(value) as T
+	Long::class -> this.getLong(value) as T
+	LongArray::class -> this.getLongArray(value) as T
+	Short::class -> this.getShort(value) as T
+	String::class -> this.getString(value) as T
+	TagType::class -> this.getTagType(value) as T
+	UUID::class -> this.getUUID(value) as T
+	BlockPos::class -> this.getBlockPos(value) as T
+	BlockPos.MutableBlockPos::class -> this.getBlockPos(value).mutable() as T
+	else -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
 }
 
 inline fun <reified T> CompoundTag.putValue(key: String, value: T) {
 	when (T::class) {
-		Tag::class         -> this.put(key, value as Tag)
+		Tag::class -> this.put(key, value as Tag)
 		CompoundTag::class -> this.put(key, value as CompoundTag)
-		Boolean::class     -> this.putBoolean(key, value as Boolean)
-		Int::class         -> this.putInt(key, value as Int)
-		Float::class       -> this.putFloat(key, value as Float)
-		Byte::class        -> this.putByte(key, value as Byte)
-		ByteArray::class   -> this.putByteArray(key, value as ByteArray)
-		Double::class      -> this.putDouble(key, value as Double)
-		IntArray::class    -> this.putIntArray(key, value as IntArray)
-		Long::class        -> this.putLong(key, value as Long)
-		LongArray::class   -> this.putLongArray(key, value as LongArray)
-		Short::class       -> this.putShort(key, value as Short)
-		String::class      -> this.putString(key, value as String)
-		UUID::class        -> this.putUUID(key, value as UUID)
-		else               -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
+		Boolean::class -> this.putBoolean(key, value as Boolean)
+		Int::class -> this.putInt(key, value as Int)
+		Float::class -> this.putFloat(key, value as Float)
+		Byte::class -> this.putByte(key, value as Byte)
+		ByteArray::class -> this.putByteArray(key, value as ByteArray)
+		Double::class -> this.putDouble(key, value as Double)
+		IntArray::class -> this.putIntArray(key, value as IntArray)
+		Long::class -> this.putLong(key, value as Long)
+		LongArray::class -> this.putLongArray(key, value as LongArray)
+		Short::class -> this.putShort(key, value as Short)
+		String::class -> this.putString(key, value as String)
+		UUID::class -> this.putUUID(key, value as UUID)
+		BlockPos::class -> this.putBlockPos(key, value as BlockPos)
+		BlockPos.MutableBlockPos::class -> this.putBlockPos(key, (value as BlockPos.MutableBlockPos).immutable())
+		else -> throw IllegalArgumentException("${T::class.simpleName} is not supported, sorry!")
 	}
 }
 
@@ -621,8 +638,9 @@ fun CompoundTag.getBlockState(key: String): BlockState =
 	BlockState.CODEC.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull()?.first
 		?: Blocks.AIR.defaultBlockState()
 
-fun <T : RecipeInput> CompoundTag.putRecipe(key: String, value: Recipe<T>) =
+fun <T : RecipeInput> CompoundTag.putRecipe(key: String, value: Recipe<T>) {
 	this.put(key, Recipe.CODEC.encodeStart(NbtOps.INSTANCE, value).result().get())
+}
 
 @Suppress("UNCHECKED_CAST")
 fun <I : RecipeInput, R : Recipe<I>> CompoundTag.getRecipe(key: String): R? =
@@ -665,7 +683,3 @@ fun LivingEntity.setAttribute(attribute: Holder<Attribute>, value: Double) {
 
 fun LivingEntity.getAttributeInstance(attribute: Holder<Attribute>): AttributeInstance =
 	this.attributes.getInstance(attribute) ?: throw NullPointerException()
-/// !!! NOTICE !!! ///
-// Definitions above this line are for public use by other mods, possibly even external ones!
-// Make sure to write good Javadoc for them!
-/// INTERNAL DEFINITIONS FOLLOW ///

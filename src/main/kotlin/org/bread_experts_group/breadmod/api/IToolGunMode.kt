@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.api
 
 import com.mojang.serialization.Codec
-import net.minecraft.client.KeyMapping
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.chat.Component
@@ -12,7 +11,6 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.neoforged.neoforge.client.event.InputEvent
-import net.neoforged.neoforge.client.event.InputEvent.Key
 import net.neoforged.neoforge.client.event.InputEvent.MouseButton
 import net.neoforged.neoforge.client.event.InputEvent.MouseScrollingEvent
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
@@ -47,18 +45,24 @@ interface IToolGunMode {
 	 * Main action method for this [IToolGunMode].
 	 * Triggered using right click.
 	 */
-	fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand)
+	fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand, data: ToolGunData)
 
 	/**
 	 * Fired when the tool gun's use function is called, fired before [action].
 	 * if the returned value is false, cancel the main tool gun action.
 	 */
-	fun actionPre(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand): Boolean = true
+	fun actionPre(
+		level: Level,
+		player: Player,
+		stack: ItemStack,
+		usedHand: InteractionHand,
+		data: ToolGunData
+	): Boolean = true
 
 	/**
 	 * Fired when the tool gun's use function is called, fired after [action].
 	 */
-	fun actionPost(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {}
+	fun actionPost(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand, data: ToolGunData) {}
 
 	/**
 	 * Fires every tick.
@@ -94,12 +98,9 @@ interface IToolGunMode {
 	 *
 	 * - [KeyData] is passed into the [ToolGunOverlay] to display info about the specified key.
 	 * - Any extra data that's set here is automatically synced to the server.
+	 * - Only runs on client.
 	 */
 	fun registerKeys(into: MutableMap<Int, KeyData>) {}
-
-	/** @return true if [event] action is equal to 1. */
-	fun isKeyboardPress(event: Key): Boolean = event.action == 1
-	fun keyMatchesInput(key: KeyMapping, event: Key): Boolean = event.key == key.key.value
 
 	/**
 	 * @return the id of this mode after the last slash as a string.

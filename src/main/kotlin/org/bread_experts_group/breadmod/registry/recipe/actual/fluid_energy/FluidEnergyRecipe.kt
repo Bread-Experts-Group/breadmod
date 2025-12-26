@@ -13,6 +13,7 @@ import net.neoforged.neoforge.fluids.FluidStack
 import org.bread_experts_group.breadmod.registry.recipe.ModRecipeSerializers
 import org.bread_experts_group.breadmod.util.int
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.Optional
 
 /** Convenience type for [FluidEnergyBuilder]. */
@@ -83,29 +84,25 @@ abstract class FluidEnergyRecipe(
 	 * Compares [rItemInputs] and [rFluidInputs] with the [input]s items and fluids.
 	 */
 	override fun matches(input: FluidEnergyInput, level: Level): Boolean {
-		var itemsSatisfied = false
-		var fluidsSatisfied = false
-//		val reliesOnEnergy = this.rEnergy != null && this.rEnergy != BigDecimal.ZERO
-//		if (reliesOnEnergy && input.energy == null) return false
-		if (this.rItemInputs.isNotEmpty() && input.item != null) {
-			itemsSatisfied = this.rItemInputs.all { rInput ->
+		val itemsSatisfied = if (this.rItemInputs.isNotEmpty() && input.item != null) {
+			this.rItemInputs.all { rInput ->
 				input.item.slots.any { (_, slot) ->
 					rInput.test(slot.item) && rInput.testComponents(slot.components)
 				}
 			}
-		}
-
-		if (this.rFluidInputs.isNotEmpty() && input.fluid != null) {
-			fluidsSatisfied = this.rFluidInputs.all { rInput ->
+		} else true
+		val fluidsSatisfied = if (this.rFluidInputs.isNotEmpty() && input.fluid != null) {
+			this.rFluidInputs.all { rInput ->
 				input.fluid.tanks.any { (_, tank) ->
 					rInput.test(tank.fluid) && rInput.testComponents(tank.components)
 				}
 			}
-		}
+		} else true
+		val energySatisfied = if (this.rEnergy != null && this.rEnergy != BigInteger.ZERO && input.energy != null) {
+			input.energy.energyStored >= this.rEnergy.int
+		} else true
 
-//		if (reliesOnFluids) throw UnsupportedOperationException()
-//		if (reliesOnEnergy) throw UnsupportedOperationException()
-		return itemsSatisfied || fluidsSatisfied
+		return itemsSatisfied && fluidsSatisfied && energySatisfied
 	}
 
 	/**
@@ -118,7 +115,7 @@ abstract class FluidEnergyRecipe(
 	fun consumeItemsAndFluids(input: FluidEnergyInput) {
 		this.rItemInputs.forEach {
 			var remainder = it.left?.second ?: it.right?.amount ?: return@forEach
-			for (slotID in input.item!!.slots.keys) {
+			for (slotID in (input.item ?: return@forEach).slots.keys) {
 				val extracted = input.item.bigExtractItem(slotID, remainder, true)
 				if (extracted.value == it.resolveInputItem()) {
 					input.item.bigExtractItem(slotID, remainder, false)
@@ -147,6 +144,8 @@ abstract class FluidEnergyRecipe(
 		return false
 	}
 
+	fun assembleOutputs(input: FluidEnergyInput): Pair<ItemStack, FluidStack> = TODO()
+
 	override fun assemble(input: FluidEnergyInput, registries: HolderLookup.Provider): ItemStack {
 		this.rItemOutputs.forEach {
 			var remainder = it.amount
@@ -164,5 +163,5 @@ abstract class FluidEnergyRecipe(
 		return ItemStack.EMPTY
 	}
 
-	override fun getResultItem(registries: HolderLookup.Provider): ItemStack = throw UnsupportedOperationException()
+	override fun getResultItem(registries: HolderLookup.Provider): ItemStack = ItemStack.EMPTY
 }

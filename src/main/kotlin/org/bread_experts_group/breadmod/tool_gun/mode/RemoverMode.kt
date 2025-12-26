@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.tool_gun.mode
 
+import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.MultiBufferSource
@@ -23,8 +24,8 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.KeyMappings
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
@@ -58,7 +59,7 @@ class RemoverMode : IToolGunMode {
 	}
 
 	private var targetEntities: Boolean = false
-	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand, data: ToolGunData) {
 		if (!player.isShiftKeyDown) {
 			if (this.targetEntities) {
 				val entity = player.rayCast(500.0, entities())
@@ -120,9 +121,7 @@ class RemoverMode : IToolGunMode {
 	override fun registerKeys(into: MutableMap<Int, KeyData>) {
 		into[KeyMappings.toolGunAltOne.key.value] =
 			KeyData(Component.literal("test")) { event, _, _, data ->
-				if (this.keyMatchesInput(KeyMappings.toolGunAltOne, event) && this.isKeyboardPress(event)) {
-					data.setValue("targetAlt", !this.targetEntities)
-				}
+				if (event.action == InputConstants.PRESS) data.setValue("targetAlt", !this.targetEntities)
 			}
 	}
 
@@ -158,15 +157,14 @@ class RemoverMode : IToolGunMode {
 			packedOverlay: Int,
 		) {
 			this.drawTextOnScreen(
-				"Targeting: ${if (this.mode.targetEntities) "Entity" else "Block"}",
+				Component.literal("Targeting: ${if (this.mode.targetEntities) "Entity" else "Block"}"),
 				Color.WHITE,
 				Color.BLACK,
 				false,
-				localClient.font,
 				poseStack,
 				buffer,
-				IToolGunModeRenderer.SCREEN_TEXT_X + 0.008,
-				IToolGunModeRenderer.SCREEN_TEXT_Y - 0.015
+				0.008,
+				0.015
 			)
 		}
 

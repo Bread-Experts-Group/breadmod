@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.resources.model.BakedModel
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
@@ -135,24 +136,22 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					currentMode.getDisplayName(),
 					Color.RED.rgb, 0,
 					false,
-					localClient.font,
 					poseStack,
 					buffer,
-					posX = -0.035,
-					posY = 0.414
+					0.009,
+					-0.008
 				)
 				this.caseOhSize =
 					this.caseOhSize.add(this.caseOhInstrument.nextDouble(0.0, 1234511121314.0).toBigDecimal())
 				modeRenderer.drawTextOnScreen(
-					"CASEOH: ${this.caseOhSize.toDouble().formatMetric()}g",
+					Component.literal("CASEOH: ${this.caseOhSize.toDouble().formatMetric()}g"),
 					Color.RED.rgb,
 					0,
 					false,
-					localClient.font,
 					poseStack,
 					buffer,
-					posX = -0.035,
-					posY = 0.361
+					0.009,
+					-0.061
 				)
 			}
 			modeRenderer.renderScreenStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
@@ -234,7 +233,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val currentMode = ToolGunData.get(stack).getMode()
+		val data = ToolGunData.get(stack)
 		this.renderToolGun(
 			stack,
 			displayContext,
@@ -242,7 +241,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			buffer,
 			packedLight,
 			packedOverlay,
-			currentMode
+			data.getMode()
 		)
 	}
 

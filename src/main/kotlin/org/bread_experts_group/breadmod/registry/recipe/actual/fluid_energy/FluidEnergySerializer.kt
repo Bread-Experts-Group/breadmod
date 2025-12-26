@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.U_LONG_CODEC
 import org.bread_experts_group.breadmod.network.BreadModCodecs.U_LONG_STREAM_CODEC
 import org.bread_experts_group.breadmod.util.listOf
 import org.bread_experts_group.breadmod.util.ofOptional
+import org.bread_experts_group.breadmod.util.optional
 import java.util.Optional
 
 class FluidEnergySerializer<R : FluidEnergyRecipe>(
@@ -23,13 +24,13 @@ class FluidEnergySerializer<R : FluidEnergyRecipe>(
 	override fun codec(): MapCodec<R> = RecordCodecBuilder.mapCodec { inst ->
 		inst.group(
 			Codec.optionalField("item_in", InputOption.ITEM_CODEC.listOf(), true)
-				.forGetter { if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemInputs) },
+				.forGetter { if (it.rItemInputs.isEmpty()) Optional.empty() else it.rItemInputs.optional() },
 			Codec.optionalField("item_out", BIG_DESCRIPTOR_ITEM_CODEC.listOf(), true)
-				.forGetter { if (it.rItemOutputs.isEmpty()) Optional.empty() else Optional.of(it.rItemOutputs) },
+				.forGetter { if (it.rItemOutputs.isEmpty()) Optional.empty() else it.rItemOutputs.optional() },
 			Codec.optionalField("fluid_in", InputOption.FLUID_CODEC.listOf(), true)
-				.forGetter { if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidInputs) },
+				.forGetter { if (it.rFluidInputs.isEmpty()) Optional.empty() else it.rFluidInputs.optional() },
 			Codec.optionalField("fluid_out", BIG_DESCRIPTOR_FLUID_CODEC.listOf(), true)
-				.forGetter { if (it.rFluidOutputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidOutputs) },
+				.forGetter { if (it.rFluidOutputs.isEmpty()) Optional.empty() else it.rFluidOutputs.optional() },
 			U_LONG_CODEC.fieldOf("time").forGetter(FluidEnergyRecipe::rTime),
 			Codec.optionalField("energy", BreadModCodecs.BIG_DECIMAL_CODEC, true)
 				.forGetter { Optional.ofNullable(it.rEnergy) }
@@ -38,13 +39,13 @@ class FluidEnergySerializer<R : FluidEnergyRecipe>(
 
 	override fun streamCodec(): StreamCodec<RegistryFriendlyByteBuf, R> = StreamCodec.composite(
 		InputOption.ITEM_STREAM_CODEC.listOf().ofOptional(),
-		{ if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemInputs) },
+		{ if (it.rItemInputs.isEmpty()) Optional.empty() else it.rItemInputs.optional() },
 		BIG_DESCRIPTOR_ITEM_STREAM_CODEC.listOf().ofOptional(),
-		{ if (it.rItemInputs.isEmpty()) Optional.empty() else Optional.of(it.rItemOutputs) },
+		{ if (it.rItemInputs.isEmpty()) Optional.empty() else it.rItemOutputs.optional() },
 		InputOption.FLUID_STREAM_CODEC.listOf().ofOptional(),
-		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidInputs) },
+		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else it.rFluidInputs.optional() },
 		BIG_DESCRIPTOR_FLUID_STREAM_CODEC.listOf().ofOptional(),
-		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else Optional.of(it.rFluidOutputs) },
+		{ if (it.rFluidInputs.isEmpty()) Optional.empty() else it.rFluidOutputs.optional() },
 		U_LONG_STREAM_CODEC, FluidEnergyRecipe::rTime,
 		BreadModCodecs.BIG_DECIMAL_STREAM_CODEC.ofOptional(), { Optional.ofNullable(it.rEnergy) },
 		this.recipe

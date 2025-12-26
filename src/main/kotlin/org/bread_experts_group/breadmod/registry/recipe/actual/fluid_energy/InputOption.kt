@@ -16,8 +16,6 @@ import net.minecraft.world.level.material.Fluids
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.ofOptional
-import org.bread_experts_group.breadmod.util.toKotlinPair
-import org.bread_experts_group.breadmod.util.toMojangPair
 import java.math.BigDecimal
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -39,35 +37,27 @@ class InputOption<T : Any> private constructor(
 		val ITEM_CODEC: Codec<InputOption<Item>> =
 			RecordCodecBuilder<RegistryFriendlyByteBuf, InputOption<Item>>.create { inst ->
 				inst.group(
-					Codec.pair(
+					BreadModCodecs.kotlinPair(
 						TagKey.codec(Registries.ITEM).fieldOf("tag").codec(),
 						BreadModCodecs.BIG_DECIMAL_CODEC.fieldOf("count").codec()
-					).optionalFieldOf("input_tag").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
+					).optionalFieldOf("input_tag").forGetter { Optional.ofNullable(it.left) },
 					BreadModCodecs.BIG_DESCRIPTOR_ITEM_CODEC.optionalFieldOf("input_big_descriptor")
 						.forGetter { Optional.ofNullable(it.right) }
 				).apply(inst) { first, second ->
-					InputOption(
-						Item::class,
-						first.getOrNull()?.toKotlinPair(),
-						second.getOrNull()
-					)
+					InputOption(Item::class, first.getOrNull(), second.getOrNull())
 				}
 			}
 		val FLUID_CODEC: Codec<InputOption<Fluid>> =
 			RecordCodecBuilder<RegistryFriendlyByteBuf, InputOption<Item>>.create { inst ->
 				inst.group(
-					Codec.pair(
+					BreadModCodecs.kotlinPair(
 						TagKey.codec(Registries.FLUID).fieldOf("tag").codec(),
 						BreadModCodecs.BIG_DECIMAL_CODEC.fieldOf("amount").codec()
-					).optionalFieldOf("input_tag").forGetter { Optional.ofNullable(it.left?.toMojangPair()) },
+					).optionalFieldOf("input_tag").forGetter { Optional.ofNullable(it.left) },
 					BreadModCodecs.BIG_DESCRIPTOR_FLUID_CODEC.optionalFieldOf("input_big_descriptor")
 						.forGetter { Optional.ofNullable(it.right) }
 				).apply(inst) { first, second ->
-					InputOption(
-						Fluid::class,
-						first.getOrNull()?.toKotlinPair(),
-						second.getOrNull()
-					)
+					InputOption(Fluid::class, first.getOrNull(), second.getOrNull())
 				}
 			}
 		val ITEM_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, InputOption<Item>> = StreamCodec.composite(

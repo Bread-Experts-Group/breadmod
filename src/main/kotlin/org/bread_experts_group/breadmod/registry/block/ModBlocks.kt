@@ -67,7 +67,6 @@ import org.bread_experts_group.breadmod.registry.block.actual.ItemPedestalBlock
 import org.bread_experts_group.breadmod.registry.block.actual.KeyboardBlock
 import org.bread_experts_group.breadmod.registry.block.actual.MicrowaveBlock
 import org.bread_experts_group.breadmod.registry.block.actual.ModelBlock
-import org.bread_experts_group.breadmod.registry.block.actual.MonitorBlock
 import org.bread_experts_group.breadmod.registry.block.actual.NukeBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RadioBlock
 import org.bread_experts_group.breadmod.registry.block.actual.RandomSoundBlock
@@ -141,12 +140,6 @@ object ModBlocks : RegistryProvider(
 		{ Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERITE_BLOCK).strength(25f, 1200f)) },
 		Properties().fireResistant()
 	)
-
-	@DataGenerateLootDropSelf
-	@DataGenerateTagBlock("minecraft:mineable/pickaxe")
-	@DataGenerateLanguage
-	val MONITOR: DeferredItem<BlockItem> =
-		this.registerBlockItem("monitor", ::MonitorBlock)
 
 	@DataGenerateTagBlock(
 		"minecraft:mineable/hoe",
@@ -404,6 +397,7 @@ object ModBlocks : RegistryProvider(
 
 	@DataGenerateLanguage
 	@DataGenerateLootDropSelf
+	@DataGenerateTagBlock("minecraft:mineable/pickaxe")
 	val CAMERA_VIEWER: DeferredItem<BlockItem> = this.registerBlockItem(
 		"camera_viewer",
 		::CameraViewerBlock

@@ -96,8 +96,6 @@ class CreatorScreen(
 		(this.children()[1] as ContainerWidget<*>).tick()
 	}
 
-	var leftPos: Int = 0
-	var topPos: Int = 0
 	var currentBlock: BlockState = Blocks.GRASS_BLOCK.defaultBlockState()
 	var currentEntity: Entity = Cow(EntityType.COW, this.level)
 
@@ -114,8 +112,7 @@ class CreatorScreen(
 	fun getGuiTicks(): Int = localClient.gui.guiTicks
 
 	override fun init() {
-		this.leftPos = (this.width - 256) / 2
-		this.topPos = (this.height - 256) / 2
+		super.init()
 		this.addRenderableWidget(BlockTab(this, this.level))
 		this.addRenderableWidget(EntityTab(this).also(EntityTab::disable))
 		this.addRenderableWidget(GenericButton(this.leftPos, this.topPos + 3, 44, 12, "BLOCK") { _, _ ->

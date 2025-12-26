@@ -15,6 +15,7 @@ import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.api.ToolGunMode
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.data_holders.common.KeyData
+import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.gui.screen.ModelScreen
 
 @ToolGunMode
@@ -23,7 +24,8 @@ class ModelMode : IToolGunMode {
 		level: Level,
 		player: Player,
 		stack: ItemStack,
-		usedHand: InteractionHand
+		usedHand: InteractionHand,
+		data: ToolGunData
 	) {
 	}
 

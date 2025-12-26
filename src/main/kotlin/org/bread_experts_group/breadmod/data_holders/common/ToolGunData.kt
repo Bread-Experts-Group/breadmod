@@ -42,7 +42,8 @@ data class ToolGunData(
 		 * Loads tool gun modes.
 		 */
 		fun initializeToolGunModes() {
-			LibraryScanner.piggyback(data = ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
+			check(Registry.toolGunModes.isEmpty()) { "Tool gun modes are already initialized!" }
+			LibraryScanner.piggyback(ModList.get().allScanData).getClassesAnnotatedWith(ToolGunMode::class)
 				.forEach {
 					val mode = it.createInstance() as IToolGunMode
 					if (Registry.toolGunModes[mode.getUid()] == null) {
@@ -61,6 +62,9 @@ data class ToolGunData(
 
 	fun getMode(): IToolGunMode = Registry.toolGunModes.getOrDefault(this.id, EmptyMode)
 
+	@Suppress("UNCHECKED_CAST")
+	fun <T : IToolGunMode> getModeOfType(): T = this.getMode() as T
+
 	fun syncToServer(): Unit = PacketDistributor.sendToServer(ToolGunDataSyncPacket(this))
 
 	/**
@@ -74,6 +78,7 @@ data class ToolGunData(
 	 * Called when a new mode is loaded or data is updated via sync.
 	 */
 	fun loadData(level: Level) {
+		check(!this.dataLoaded) { "Mode data is already loaded!" }
 		val data = this.extraData.getCompound(this.getMode().getModeName())
 		this.getMode().loadExtraData(data, level)
 		this.dataLoaded = true
@@ -93,11 +98,12 @@ data class ToolGunData(
 	}
 
 	/**
-	 * Directly sets a value in [extraData], regardless if the value exists or not.
+	 * Use this for setting multiple objects in the [extraData] at once.
 	 *
+	 * - Does not check if entered entries exist in [extraData], use with caution.
 	 * - Automatically syncs to the server.
 	 */
-	fun setValueDirect(invoker: (CompoundTag) -> Unit) {
+	fun setValueBulk(invoker: (CompoundTag) -> Unit) {
 		this.extraData.getCompound(this.getMode().getModeName()).also(invoker)
 		this.syncToServer()
 	}

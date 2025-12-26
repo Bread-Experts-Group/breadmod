@@ -185,7 +185,7 @@ class BlockTab(screen: CreatorScreen, val level: Level) : ContainerWidget<Creato
 		this.addChild(
 			"send_button",
 			GenericButton(this.x + 195, this.y + 192, 60, 12, "Send to server") { _, _ ->
-				this.screen.data.setValueDirect { it.putBlockState("block", this.screen.currentBlock) }
+				this.screen.data.setValueBulk { it.putBlockState("block", this.screen.currentBlock) }
 			}
 		)
 		this.addChild(

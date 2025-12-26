@@ -41,7 +41,7 @@ class RayCastTestMode : IToolGunMode {
 	var direction: Direction = Direction.NORTH
 	var showDebugData: Boolean = true
 
-	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand) {
+	override fun action(level: Level, player: Player, stack: ItemStack, usedHand: InteractionHand, data: ToolGunData) {
 		player.rayCast(100.0, blocks())?.let {
 			this.hitPos = it.hitPosition
 			this.blockHitPos.set(it.blockPosition)
@@ -59,7 +59,7 @@ class RayCastTestMode : IToolGunMode {
 
 	override fun registerKeys(into: MutableMap<Int, KeyData>) {
 		into[InputConstants.KEY_G] = KeyData(Component.literal("show debug")) { event, _, _, data ->
-			if (this.isKeyboardPress(event) && localClient.screen == null) data.setValue(
+			if (event.action == InputConstants.PRESS && localClient.screen == null) data.setValue(
 				"showDebug",
 				!this.showDebugData
 			)

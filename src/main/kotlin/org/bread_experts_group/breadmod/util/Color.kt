@@ -5,6 +5,7 @@ import net.minecraft.network.chat.MutableComponent
 import kotlin.math.roundToInt
 
 object Color {
+	val NONE: Int = this.color(a = 0)
 	val WHITE: Int = this.color(255, 255, 255)
 	val BLACK: Int = this.color()
 	val GRAY: Int = this.color(128, 128, 128)
@@ -21,6 +22,14 @@ object Color {
 	val CORNFLOWER_BLUE: Int = this.color(97, 149, 237)
 	val SAFFRON: Int = this.color(243, 179, 48)
 	val LAVENDER_MAGENTA: Int = this.color(236, 91, 211)
+	val ALL_COLORS: List<Int> = listOf(
+		this.WHITE, this.BLACK, this.GRAY, this.LIGHT_GRAY,
+		this.DARK_GRAY, this.RED, this.PINK, this.ORANGE,
+		this.YELLOW, this.GREEN, this.MAGENTA, this.CYAN,
+		this.BLUE, this.CORNFLOWER_BLUE, this.SAFFRON, this.LAVENDER_MAGENTA
+	)
+
+	fun randomColor(): Int = this.ALL_COLORS.random()
 
 	fun Int.component(literal: String): MutableComponent = Component.literal(literal).withColor(this)
 	fun Char.component(color: Int): MutableComponent = Component.literal(this.toString()).withColor(color)

@@ -10,6 +10,8 @@ import net.neoforged.neoforge.client.event.InputEvent
 interface IKeyboardItem {
 	/**
 	 * Fires when a key is pressed.
+	 *
+	 * Only runs clientside.
 	 */
 	fun onKeyboardPress(keyEvent: InputEvent.Key, heldStack: ItemStack, player: Player)
 }
