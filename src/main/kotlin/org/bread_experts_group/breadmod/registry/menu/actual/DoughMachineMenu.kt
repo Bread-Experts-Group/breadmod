@@ -23,7 +23,7 @@ class DoughMachineMenu(
 ) {
 	override val progressWidth: Int = 24
 	override val containerSlotCount: Int = 4
-	override fun ofScreen(title: Component): BreadModScreen = DoughMachineScreen(this, title)
+	override fun ofScreen(title: Component): BreadModScreen<*> = DoughMachineScreen(this, title)
 
 	init {
 		this.addInventorySlots(inventory, 8, 142, 84)

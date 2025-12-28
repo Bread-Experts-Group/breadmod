@@ -21,7 +21,10 @@ class FluidEnergyMenu(
 	inventory,
 	entity
 ) {
-	override fun ofScreen(title: Component): BreadModScreen = FluidEnergyScreen(this, title)
+	override val progressWidth: Int = -1
+	override val containerSlotCount: Int = 8
+
+	override fun ofScreen(title: Component): BreadModScreen<*> = FluidEnergyScreen(this, title)
 
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)
@@ -31,11 +34,9 @@ class FluidEnergyMenu(
 		this.addSlot(LambdaSlotItemHandler(capability, 2, 15, 48))
 		this.addSlot(LambdaSlotItemHandler(capability, 3, 32, 48))
 
-		this.addSlot(LambdaSlotItemHandler.fluidHandlerOnly(capability, 4, 103, 33))
-		this.addSlot(LambdaSlotItemHandler.fluidHandlerOnly(capability, 5, 129, 33))
-		this.addSlot(LambdaSlotItemHandler.fluidHandlerOnly(capability, 6, 103, 59))
-		this.addSlot(LambdaSlotItemHandler.fluidHandlerOnly(capability, 7, 129, 59))
+		this.addSlot(LambdaSlotItemHandler.playerReadOnly(capability, 4, 103, 33))
+		this.addSlot(LambdaSlotItemHandler.playerReadOnly(capability, 5, 129, 33))
+		this.addSlot(LambdaSlotItemHandler.playerReadOnly(capability, 6, 103, 59))
+		this.addSlot(LambdaSlotItemHandler.playerReadOnly(capability, 7, 129, 59))
 	}
-
-	override val containerSlotCount: Int = 8
 }

@@ -16,6 +16,8 @@ class WheatCrusherRecipe(
 	rTime: ULong,
 	rEnergy: BigDecimal?
 ) : FluidEnergyRecipe(rItemInputs, rItemOutputs, emptyList(), emptyList(), rTime, rEnergy) {
+	override val slots: Pair<List<Int>, List<Int>> = listOf(0) to listOf(1)
+
 	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.WHEAT_CRUSHING.get()
 	override fun getType(): RecipeType<*> = ModRecipeTypes.WHEAT_CRUSHING.get()
 }

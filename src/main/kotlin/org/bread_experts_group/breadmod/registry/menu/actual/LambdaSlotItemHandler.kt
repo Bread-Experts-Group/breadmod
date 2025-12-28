@@ -40,8 +40,7 @@ class LambdaSlotItemHandler(
 			handler, index, x, y,
 			lMayPlace = {
 				val contained = FluidUtil.getFluidContained(it)
-				if (contained.isEmpty) return@LambdaSlotItemHandler false
-				restrict(contained.get())
+				if (contained.isEmpty) false else restrict(contained.get())
 			},
 			jadeGraphic = ModGuiElements.BUCKET_SLOT
 		)

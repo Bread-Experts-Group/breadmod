@@ -2,13 +2,13 @@ package org.bread_experts_group.breadmod.registry.block.actual
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
@@ -53,14 +53,10 @@ class WheatCrusherBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)
 		)
 	}
 
-	override val serverTickBM: BreadModTicker<ServerLevel> = tick@{ entity, level, state, pos ->
+	override val commonTickBM: BreadModTicker<Level> = tick@{ entity, level, state, pos ->
 		val recipeHandler = entity.getRecipeHandler<WheatCrusherRecipe>()
 		val recipe = recipeHandler.recipe ?: return@tick
-		if (recipeHandler.advanceAndFinishRecipe()) {
-			recipeHandler.progress = 0uL
-			recipe.value.consumeItemsAndFluids(recipeHandler.input)
-			this.synchronizeEntity(entity)
-		}
+		if (recipeHandler.advanceAndFinishRecipe()) recipe.value.consumeItemsAndFluids(recipeHandler.input)
 	}
 
 	override fun canHarvestBlock(state: BlockState, level: BlockGetter, pos: BlockPos, player: Player): Boolean =

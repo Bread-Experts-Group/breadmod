@@ -35,6 +35,20 @@ data class BigDescriptor<T>(
 	val value: T,
 	val components: DataComponentMap = DataComponentMap.EMPTY
 ) {
+	companion object {
+		fun ofItemStack(stack: ItemStack): BigDescriptor<Item> = BigDescriptor(
+			stack.count.toBigDecimal(),
+			stack.item,
+			stack.components
+		)
+
+		fun ofFluidStack(stack: FluidStack): BigDescriptor<Fluid> = BigDescriptor(
+			stack.amount.toBigDecimal(),
+			stack.fluid,
+			stack.components
+		)
+	}
+
 	constructor(
 		amount: Int, value: T,
 		components: DataComponentMap = DataComponentMap.EMPTY
@@ -81,20 +95,31 @@ abstract class FluidEnergyRecipe(
 	val rEnergy: BigDecimal?
 ) : Recipe<FluidEnergyInput> {
 	/**
+	 * Maps out input / output slots in the respective blocks utilizing this recipe.
+	 */
+	protected abstract val slots: Pair<List<Int>, List<Int>>
+	private val consumedPerProgress: BigDecimal? = this.rEnergy?.divide(BigDecimal(this.rTime.toString()))
+
+	/**
 	 * Compares [rItemInputs] and [rFluidInputs] with the [input]s items and fluids.
 	 */
 	override fun matches(input: FluidEnergyInput, level: Level): Boolean {
 		val itemsSatisfied = if (this.rItemInputs.isNotEmpty() && input.item != null) {
 			this.rItemInputs.all { rInput ->
-				input.item.slots.any { (_, slot) ->
-					rInput.test(slot.item) && rInput.testComponents(slot.components)
+				val inSlots = input.item.slots.filter { it.key in this.slots.first }
+				inSlots.any { (_, slot) ->
+					rInput.test(slot.item) &&
+							rInput.testComponents(slot.components) &&
+							rInput.testAmount(slot.amount)
 				}
 			}
 		} else true
 		val fluidsSatisfied = if (this.rFluidInputs.isNotEmpty() && input.fluid != null) {
 			this.rFluidInputs.all { rInput ->
 				input.fluid.tanks.any { (_, tank) ->
-					rInput.test(tank.fluid) && rInput.testComponents(tank.components)
+					rInput.test(tank.fluid) &&
+							rInput.testComponents(tank.components) &&
+							rInput.testAmount(tank.amount)
 				}
 			}
 		} else true
@@ -107,15 +132,13 @@ abstract class FluidEnergyRecipe(
 
 	/**
 	 * Used to determine if this recipe can fit in a grid of the given width/height
-	 *
-	 * ##### Javadoc copied from superclass.
 	 */
 	override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
 	fun consumeItemsAndFluids(input: FluidEnergyInput) {
-		this.rItemInputs.forEach {
+		if (input.item != null) this.rItemInputs.forEach {
 			var remainder = it.left?.second ?: it.right?.amount ?: return@forEach
-			for (slotID in (input.item ?: return@forEach).slots.keys) {
+			for (slotID in this.slots.first) {
 				val extracted = input.item.bigExtractItem(slotID, remainder, true)
 				if (extracted.value == it.resolveInputItem()) {
 					input.item.bigExtractItem(slotID, remainder, false)
@@ -127,7 +150,6 @@ abstract class FluidEnergyRecipe(
 		// TODO Fluids
 	}
 
-	val consumedPerProgress: BigDecimal? = this.rEnergy?.divide(BigDecimal(this.rTime.toString()))
 	fun consumeEnergyTick(input: FluidEnergyInput): Boolean {
 		if (this.consumedPerProgress != null) {
 			val extracted = input.energy!!.extractBigEnergy(
@@ -144,12 +166,12 @@ abstract class FluidEnergyRecipe(
 		return false
 	}
 
-	fun assembleOutputs(input: FluidEnergyInput): Pair<ItemStack, FluidStack> = TODO()
+	fun assembleOutputs(input: FluidEnergyInput): Pair<List<ItemStack>, List<FluidStack>> = TODO()
 
 	override fun assemble(input: FluidEnergyInput, registries: HolderLookup.Provider): ItemStack {
-		this.rItemOutputs.forEach {
+		if (input.item != null) this.rItemOutputs.forEach {
 			var remainder = it.amount
-			for (slotID in input.item!!.slots.keys) {
+			for (slotID in this.slots.second) {
 				val inserted = input.item.bigInsertItem(
 					slotID,
 					BigDescriptor(remainder, it.value, it.components),

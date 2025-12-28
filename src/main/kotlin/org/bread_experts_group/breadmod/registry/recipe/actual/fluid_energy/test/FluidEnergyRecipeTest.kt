@@ -19,6 +19,8 @@ class FluidEnergyRecipeTest(
 	rTime: ULong,
 	rEnergy: BigDecimal?
 ) : FluidEnergyRecipe(rItemInputs, rItemOutputs, rFluidInputs, rFluidOutputs, rTime, rEnergy) {
+	override val slots: Pair<List<Int>, List<Int>> = listOf(0, 1, 2, 3) to listOf(4, 5, 6, 7)
+
 	override fun getType(): RecipeType<*> = ModRecipeTypes.FLUID_ENERGY_TEST.get()
 	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.FLUID_ENERGY_TEST.get()
 }

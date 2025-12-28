@@ -28,6 +28,7 @@ import org.bread_experts_group.breadmod.util.Color.component
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.math.BigDecimal
 
+// TODO recipe assembling tries to put outputs in the input slots
 class FERecipeHandler<T : FluidEnergyRecipe>(
 	recipeType: RecipeType<T>
 ) : ParentedHandler<BreadModBlockEntity>, INBTSerializable<Tag>, DataComponentSerializable {
@@ -47,6 +48,11 @@ class FERecipeHandler<T : FluidEnergyRecipe>(
 	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	private val recipeDial: RecipeManager.CachedCheck<FluidEnergyInput, T> = RecipeManager.createCheck(recipeType)
 	var recipeComputationSuspended: Boolean = false
+		private set
+	var progress: ULong = 0u
+		private set
+	var recipe: RecipeHolder<T>? = null
+		private set
 
 	/**
 	 * Advances this [recipe], and assembles the results upon completion.
@@ -56,9 +62,9 @@ class FERecipeHandler<T : FluidEnergyRecipe>(
 		val level = this.parent.level ?: return false
 		this.progress++
 		if (this.progress >= recipe.value.rTime) {
-			this.recipeComputationSuspended = true
-			this.recipe = null
 			recipe.value.assemble(this.input, level.registryAccess())
+			this.parent.setChanged()
+			this.reset()
 			return true
 		}
 		return false
@@ -73,22 +79,24 @@ class FERecipeHandler<T : FluidEnergyRecipe>(
 		}
 	}
 
+	private fun checkInput() {
+		val recipe = this.recipe?.value ?: return
+		val level = this.parent.level ?: return
+		val matches = recipe.matches(this.input, level)
+		if (!matches) this.reset()
+	}
+
 	override fun onParentReady() {
 		val item = this.parent.getCapabilityOrNull(Capabilities.ItemHandler.BLOCK) as? ExtendedItemHandler
 		val fluid = this.parent.getCapabilityOrNull(Capabilities.FluidHandler.BLOCK) as? ExtendedFluidHandler
 		val energy = this.parent.getCapabilityOrNull(Capabilities.EnergyStorage.BLOCK) as? ExtendedEnergyHandler
 		this.input = FluidEnergyInput(item, fluid, energy)
-		item?.stateListeners?.add { this.computeRecipe() }
-		fluid?.stateListeners?.add { this.computeRecipe() }
-		energy?.stateListeners?.add { this.computeRecipe() }
+		item?.stateListeners?.add { this.computeRecipe(); this.checkInput() }
+		fluid?.stateListeners?.add { this.computeRecipe(); this.checkInput() }
+		energy?.stateListeners?.add { this.computeRecipe(); this.checkInput() }
 	}
 
-	//
-	var progress: ULong = 0u
-	var recipe: RecipeHolder<T>? = null
-		private set
-
-	fun flushRecipe() {
+	fun reset() {
 		this.recipe = null
 		this.progress = 0u
 	}

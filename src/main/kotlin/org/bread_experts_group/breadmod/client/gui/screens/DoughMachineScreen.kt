@@ -10,7 +10,7 @@ import org.bread_experts_group.breadmod.util.Color
 class DoughMachineScreen(
 	menu: DoughMachineMenu,
 	title: Component
-) : BreadModScreen(menu, title) {
+) : BreadModScreen<DoughMachineMenu>(menu, title) {
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		ModGuiElements.BACKGROUND.blitScaled(guiGraphics, this.leftPos, this.topPos, 176, 166)
 		ModGuiElements.DOUGH_MACHINE_ARROW.blit(guiGraphics, this.leftPos + 66, this.topPos + 33)

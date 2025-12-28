@@ -310,7 +310,6 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 				}
 			}
 		}
-		this.synchronizeEntity(entity)
 	}
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {

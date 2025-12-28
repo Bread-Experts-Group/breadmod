@@ -59,7 +59,6 @@ object MachTrailBufferTask {
 					passthrough[0] = currentOpacity - 0.1f * partialTick
 					false
 				} else {
-					machTrailModel.clonePlayer.discard()
 					true
 				}
 			},

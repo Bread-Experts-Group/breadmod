@@ -120,7 +120,6 @@ import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
 import org.bread_experts_group.breadmod.experimental.physics_grid.ClearGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
-import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
@@ -130,7 +129,6 @@ import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIn
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
-import org.bread_experts_group.breadmod.network.serverbound.BreadModBEUpdateRequestPacket
 import org.bread_experts_group.breadmod.network.serverbound.CreateModelBlockItemPacket
 import org.bread_experts_group.breadmod.network.serverbound.GasGasGasNukePacket
 import org.bread_experts_group.breadmod.network.serverbound.HitboxPacket
@@ -695,14 +693,12 @@ object Registry {
 			ScreenBleedSetPacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
 			DoubleOrNothingPacket.register(registrar)
-			BreadModBlockEntityUpdatePacket.register(registrar)
 			// Serverbound packets
 			ClearGridPacket.register(registrar)
 			ToolGunModeChangePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)
 			GasGasGasNukePacket.register(registrar)
-			BreadModBEUpdateRequestPacket.register(registrar)
 			HitboxPacket.register(registrar)
 			CreateModelBlockItemPacket.register(registrar)
 		}

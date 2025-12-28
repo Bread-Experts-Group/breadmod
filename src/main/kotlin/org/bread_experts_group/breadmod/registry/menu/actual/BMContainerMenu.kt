@@ -110,7 +110,7 @@ abstract class BMContainerMenu(
 		inventory: Inventory,
 		entity: BreadModBlockEntity
 	) : Entity(type, id, inventory, entity) {
-		open val progressWidth: Int = 0
+		abstract val progressWidth: Int
 		val scaledProgress: Int
 			get() {
 				val recipeHandler = this.entity.getCapabilityOrNull(FERecipeHandler.BLOCK_VOID) ?: return 0

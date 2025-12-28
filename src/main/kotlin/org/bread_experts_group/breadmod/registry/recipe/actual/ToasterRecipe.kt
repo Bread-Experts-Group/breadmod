@@ -14,6 +14,8 @@ class ToasterRecipe(
 	rItemOutputs: List<BigDescriptor<Item>>,
 	rTime: ULong
 ) : FluidEnergyRecipe(rItemInputs, rItemOutputs, emptyList(), emptyList(), rTime, null) {
+	override val slots: Pair<List<Int>, List<Int>> = listOf(0) to listOf(0)
+
 	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.TOASTER.get()
 	override fun getType(): RecipeType<*> = ModRecipeTypes.TOASTING.get()
 }

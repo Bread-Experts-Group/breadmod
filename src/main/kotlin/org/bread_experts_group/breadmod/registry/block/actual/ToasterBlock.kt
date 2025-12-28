@@ -7,7 +7,6 @@ import net.minecraft.core.Direction
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.network.chat.Component
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
@@ -74,7 +73,7 @@ class ToasterBlock : BreadModBlock(
 		)
 	}
 
-	override val serverTickBM: BreadModTicker<ServerLevel> = tick@{ entity, level, state, pos ->
+	override val commonTickBM: BreadModTicker<Level> = tick@{ entity, level, state, pos ->
 		if (!state.getValue(TRIGGERED)) return@tick
 		val recipeHandler = entity.getRecipeHandler<ToasterRecipe>()
 		val recipe = recipeHandler.recipe
@@ -123,7 +122,7 @@ class ToasterBlock : BreadModBlock(
 		if (player.isCrouching && recipeState.progress == 0uL) {
 			level.setBlockAndUpdate(pos, state.setValue(TRIGGERED, true))
 		} else if (!player.isCrouching && recipeState.progress > 0uL) {
-			recipeState.flushRecipe()
+			recipeState.reset()
 			storageState.dropContents(pos, level)
 			state.setValue(TRIGGERED, false)
 		}
@@ -148,11 +147,7 @@ class ToasterBlock : BreadModBlock(
 			(stack.`is`(TOASTABLE) || stack.`is`(EXPLODES_IN_TOASTER))
 		) {
 			val stack = getStackInPlayerHand(player)
-			val inserted = storageState.insertItem(
-				0,
-				getStackInPlayerHand(player),
-				false
-			)
+			val inserted = storageState.insertItem(0, stack, false)
 			if (inserted.count != stack.count) {
 				if (!player.isCreative) stack.count = inserted.count
 				level.playSound(

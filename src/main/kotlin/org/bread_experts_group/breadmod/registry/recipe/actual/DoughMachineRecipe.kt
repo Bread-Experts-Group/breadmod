@@ -19,6 +19,8 @@ class DoughMachineRecipe(
 	rTime: ULong,
 	rEnergy: BigDecimal?
 ) : FluidEnergyRecipe(rItemInputs, rItemOutputs, rFluidInputs, rFluidOutputs, rTime, rEnergy) {
+	override val slots: Pair<List<Int>, List<Int>> = listOf(0) to listOf(1)
+
 	override fun getSerializer(): RecipeSerializer<*> = ModRecipeSerializers.DOUGH_MACHINE.get()
 	override fun getType(): RecipeType<*> = ModRecipeTypes.DOUGH_MACHINE.get()
 }

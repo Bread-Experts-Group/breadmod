@@ -18,8 +18,6 @@ import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.Font.DisplayMode
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
-import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.LightTexture
@@ -106,34 +104,6 @@ fun getFluidSpriteAndTint(fluid: Fluid, flowing: Boolean): Pair<TextureAtlasSpri
 	val fluidSprite = if (flowing) handler.flowingTexture else handler.stillTexture
 	val fluidSpriteApplied = localClient.getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluidSprite)
 	return fluidSpriteApplied to handler.tintColor
-}
-
-fun LocalPlayer.copy(): LocalPlayer {
-	val player = object : LocalPlayer(
-		localClient,
-		this.level() as ClientLevel,
-		this.connection,
-		this.stats,
-		this.recipeBook,
-		this.isShiftKeyDown,
-		this.isSprinting
-	) {
-		override fun shouldShowName(): Boolean = false
-		override fun isCustomNameVisible(): Boolean = false
-	}
-	player.inventory.armor.forEachIndexed { index, _ ->
-		player.inventory.armor[index] = this.inventory.armor[index]
-	}
-	player.attackAnim = this.attackAnim
-	player.speed = this.speed
-	player.yBodyRotO = this.yBodyRotO
-	player.yBodyRot = this.yBodyRot
-	player.yHeadRotO = this.yHeadRotO
-	player.yHeadRot = this.yHeadRot
-	player.swingTime = this.swingTime
-	player.xRotO = this.xRotO
-	player.xRot = this.xRot
-	return player
 }
 
 private fun drawTextureWithMasking(

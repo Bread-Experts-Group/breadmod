@@ -136,6 +136,11 @@ class InputOption<T : Any> private constructor(
 		else -> false
 	}
 
+	fun testAmount(input: BigDecimal): Boolean {
+		val optionAmount = this.left?.second ?: this.right?.amount ?: return false
+		return input >= optionAmount
+	}
+
 	fun getTagItems(): List<Item> = this.tagItems
 	fun getTagFluids(): List<Fluid> = this.tagFluids
 

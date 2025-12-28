@@ -13,5 +13,5 @@ abstract class BreadModMenu(
 	val inventory: Inventory,
 	val entity: BreadModBlockEntity
 ) : AbstractContainerMenu(menuType, id) {
-	abstract fun ofScreen(title: Component): BreadModScreen
+	abstract fun ofScreen(title: Component): BreadModScreen<*>
 }

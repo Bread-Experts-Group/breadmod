@@ -39,12 +39,10 @@ import org.bread_experts_group.breadmod.util.Color.GRAY
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
 import org.bread_experts_group.breadmod.util.Color.SAFFRON
 import org.bread_experts_group.breadmod.util.Color.component
-import org.bread_experts_group.breadmod.util.floatRoundEven
 import org.bread_experts_group.breadmod.util.int
 import org.bread_experts_group.breadmod.util.percentRoundEven
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class ExtendedItemHandler(
@@ -135,18 +133,15 @@ class ExtendedItemHandler(
 		stack: ItemStack,
 		simulate: Boolean
 	): ItemStack {
-		val transaction = this.bigInsertItem(
-			slot,
-			BigDescriptor<Item>(BigDecimal(stack.count), stack.item, stack.components),
-			simulate
-		)
+		val transaction = this.bigInsertItem(slot, BigDescriptor.ofItemStack(stack), simulate)
 		val stack = ItemStack(transaction.value, transaction.amount.int)
 		stack.applyComponents(transaction.components)
 		return stack
 	}
 
 	val emptyTransaction: BigDescriptor<Item> = BigDescriptor(
-		BigDecimal.ZERO, Items.AIR,
+		BigDecimal.ZERO,
+		Items.AIR,
 		DataComponentMap.EMPTY
 	)
 
@@ -169,11 +164,11 @@ class ExtendedItemHandler(
 		slot: Int,
 		amount: Int,
 		simulate: Boolean
-	): ItemStack = this.bigExtractItem(slot, BigDecimal(amount), simulate).itemStack()
+	): ItemStack = this.bigExtractItem(slot, amount.toBigDecimal(), simulate).itemStack()
 
 	override fun getSlotLimit(slot: Int): Int = this.slots[slot]?.capacity?.int ?: 0
 	override fun isItemValid(slot: Int, stack: ItemStack): Boolean =
-		this.slots[slot]?.validity?.invoke(stack.item, BigDecimal(stack.count), stack.components) ?: true
+		this.slots[slot]?.validity?.invoke(stack.item, stack.count.toBigDecimal(), stack.components) ?: true
 
 	val big100: BigDecimal = BigDecimal.valueOf(100)
 	override fun collectHoverText(tooltipComponents: MutableList<Component>) {
@@ -260,13 +255,16 @@ class ExtendedItemHandler(
 			}
 		var amount: BigDecimal = BigDecimal.ZERO
 			set(value) {
-				if (this.item == Items.AIR) field = BigDecimal.ZERO
-				else field = value
+				field = if (this.item == Items.AIR) BigDecimal.ZERO else value
 			}
 		var components: DataComponentMap = DataComponentMap.EMPTY
 		fun itemStack(): ItemStack {
-			val percent = this.amount.divide(this.capacity, floatRoundEven).toFloat()
-			val stack = ItemStack(this.item, (Item.ABSOLUTE_MAX_STACK_SIZE * percent).roundToInt())
+			// todo band-aid fix, needs better arithmetic (affects jade tooltip, quickMoveStack, and count rendering in guis)
+//			val percent = this.amount.divide(this.capacity, floatRoundEven).toFloat()
+			val stack = ItemStack(
+				this.item,
+				/*(Item.ABSOLUTE_MAX_STACK_SIZE * percent).roundToInt()*/ this.amount.toInt()
+			)
 			stack.applyComponents(this.components)
 			return stack
 		}

@@ -296,8 +296,6 @@ class ModBlockStateProvider(
 		}
 		// Creative Generator
 		this.horizontalBlockBenchModel(ModBlocks.CREATIVE_GENERATOR.block, "creative_generator")
-		// Coffee Machine
-		this.horizontalBlockBenchModelWithItem(ModBlocks.COFFEE_MACHINE.block, "coffee_machine")
 	}
 
 	private fun blockBenchBlockModel(model: String): ModelFile.ExistingModelFile =

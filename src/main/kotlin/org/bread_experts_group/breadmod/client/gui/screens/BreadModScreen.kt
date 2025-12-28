@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.client.gui.screens
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.gui.screens.inventory.MenuAccess
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.neoforged.neoforge.capabilities.Capabilities
@@ -23,10 +22,10 @@ import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.math.BigDecimal
 import kotlin.math.roundToInt
 
-abstract class BreadModScreen(
-	val menu: BreadModMenu,
+abstract class BreadModScreen<T : BreadModMenu>(
+	val menu: T,
 	title: Component
-) : AbstractContainerScreen<BreadModMenu>(menu, menu.inventory, title), MenuAccess<BreadModMenu> {
+) : AbstractContainerScreen<BreadModMenu>(menu, menu.inventory, title) {
 	companion object {
 		@DataGenerateLanguage(name = "Energy")
 		val ENERGY_LABEL: MutableComponent = modTranslatable(path = arrayOf("energy"))

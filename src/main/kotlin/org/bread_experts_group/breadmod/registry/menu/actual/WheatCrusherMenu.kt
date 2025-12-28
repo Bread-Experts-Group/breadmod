@@ -22,7 +22,7 @@ class WheatCrusherMenu(
 ) {
 	override val progressWidth: Int = 48
 	override val containerSlotCount: Int = 2
-	override fun ofScreen(title: Component): BreadModScreen = WheatCrusherScreen(this, title)
+	override fun ofScreen(title: Component): BreadModScreen<*> = WheatCrusherScreen(this, title)
 
 	init {
 		this.addInventorySlots(inventory, 8, 174, 116)

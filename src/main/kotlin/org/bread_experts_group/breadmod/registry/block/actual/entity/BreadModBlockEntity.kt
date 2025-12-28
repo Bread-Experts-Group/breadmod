@@ -7,6 +7,9 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
@@ -15,9 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.common.util.INBTSerializable
-import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
-import org.bread_experts_group.breadmod.network.serverbound.BreadModBEUpdateRequestPacket
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.handler.DataComponentSerializable
 import org.bread_experts_group.breadmod.registry.block.handler.DiscardableHandler
@@ -60,11 +61,8 @@ class BreadModBlockEntity(
 	}
 
 	@Suppress("UNCHECKED_CAST")
-	fun <T, C> getCapabilityOrNull(capability: BaseCapability<T, C>, context: C? = null): T? {
-		if (this.level?.isClientSide == true)
-			PacketDistributor.sendToServer(BreadModBEUpdateRequestPacket(this.blockPos))
-		return this.capabilities[capability]?.get(context) as? T
-	}
+	fun <T, C> getCapabilityOrNull(capability: BaseCapability<T, C>, context: C? = null): T? =
+		this.capabilities[capability]?.get(context) as? T
 
 	fun <T, C> getCapability(capability: BaseCapability<T, C>, context: C? = null): T =
 		this.getCapabilityOrNull(capability, context)
@@ -143,4 +141,7 @@ class BreadModBlockEntity(
 		}
 		super.setRemoved()
 	}
+
+	override fun getUpdatePacket(): Packet<ClientGamePacketListener?> = ClientboundBlockEntityDataPacket.create(this)
+	override fun getUpdateTag(registries: Provider): CompoundTag = this.saveWithFullMetadata(registries)
 }

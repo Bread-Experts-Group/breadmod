@@ -11,7 +11,7 @@ import org.bread_experts_group.breadmod.util.Color
 class FluidEnergyScreen(
 	menu: FluidEnergyMenu,
 	title: Component
-) : BreadModScreen(menu, title) {
+) : BreadModScreen<FluidEnergyMenu>(menu, title) {
 	override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
 		guiGraphics.fill(
 			RenderType.gui(),

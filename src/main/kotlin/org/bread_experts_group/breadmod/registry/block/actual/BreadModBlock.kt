@@ -18,7 +18,6 @@ import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
-import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.BaseEntityBlock
@@ -32,12 +31,10 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
 import net.neoforged.neoforge.fluids.FluidUtil
-import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
-import org.bread_experts_group.breadmod.network.clientbound.BreadModBlockEntityUpdatePacket
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
@@ -68,17 +65,6 @@ abstract class BreadModBlock(
 		val blockEntityType = this.blockEntityType ?: return null
 		val blockEntity = BreadModBlockEntity(blockEntityType.get(), pos, state, this.ofCapabilities())
 		return blockEntity
-	}
-
-	fun synchronizeEntity(entity: BlockEntity) {
-		val level = entity.level as? ServerLevel ?: return
-		PacketDistributor.sendToPlayersTrackingChunk(
-			level, ChunkPos(entity.blockPos),
-			BreadModBlockEntityUpdatePacket(
-				entity.blockPos, entity.saveCustomOnly(level.registryAccess())
-			)
-		)
-		entity.setChanged()
 	}
 
 	open val commonTickBM: BreadModTicker<Level> = null
