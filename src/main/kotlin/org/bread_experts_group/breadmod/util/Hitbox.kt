@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
-import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 
@@ -42,7 +41,7 @@ class Hitbox(
 		poseStack.offsetRenderToCameraPos(this.pos, event.camera, false)
 		DebugRenderer.renderFilledBox(
 			poseStack,
-			localClient.renderBuffers().bufferSource(),
+			bufferSource,
 			this.bounds,
 			0.9f,
 			0.5f,

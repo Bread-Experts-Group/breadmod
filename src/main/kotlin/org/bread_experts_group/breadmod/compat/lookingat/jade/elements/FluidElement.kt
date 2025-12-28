@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.compat.lookingat.jade
+package org.bread_experts_group.breadmod.compat.lookingat.jade.elements
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.core.Direction
@@ -7,15 +7,15 @@ import net.minecraft.world.phys.Vec2
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderFluid
+import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.drawBorder
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.drawDirectionCube
 import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.drawScrollingStringBM
-import org.bread_experts_group.breadmod.compat.lookingat.jade.JadeDrawingCommon.fixedLengthScrollingComponent
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.util.Color
 import snownee.jade.api.ui.Element
 
-class FluidBarElement(
+class FluidElement(
 	private val tank: ExtendedFluidHandler.Tank,
 	private val direction: Direction?
 ) : Element() {
@@ -52,7 +52,7 @@ class FluidBarElement(
 		// Fluid Amount
 		guiGraphics.drawScrollingStringBM(
 			localClient.font,
-			fixedLengthScrollingComponent(
+			JadeDrawingCommon.fixedLengthScrollingComponent(
 				this.tank.amount,
 				this.tank.capacity,
 				"B",

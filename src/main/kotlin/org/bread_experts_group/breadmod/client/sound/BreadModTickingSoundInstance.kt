@@ -59,6 +59,8 @@ abstract class BreadModTickingSoundInstance(
 		Registry.playingSounds[this.originPos] = this
 	}
 
+	fun isActive(): Boolean = Registry.playingSounds[this.originPos] != null
+
 	fun stop() {
 		this.stopped = true
 		this.looping = false

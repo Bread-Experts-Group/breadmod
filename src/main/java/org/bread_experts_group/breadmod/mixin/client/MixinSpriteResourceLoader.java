@@ -3,29 +3,21 @@ package org.bread_experts_group.breadmod.mixin.client;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.atlas.SpriteResourceLoader;
-import net.minecraft.client.resources.metadata.animation.AnimationFrame;
-import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
 import org.bread_experts_group.breadmod.mixinutil.General;
-import org.bread_experts_group.image.gif.GIFReaderSpi;
-import org.bread_experts_group.stream.FailQuickInputStream;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Mixin(SpriteResourceLoader.class)
@@ -155,7 +147,7 @@ interface MixinSpriteResourceLoader {
 			}
 
 			cir.setReturnValue(result[0]);
-		} else if (false) { // path.endsWith(".gif") || path.endsWith(".apng") TODO reintroduce APNG/GIF when available again ...
+		} /*else if (false) { // path.endsWith(".gif") || path.endsWith(".apng") TODO reintroduce APNG/GIF when available again ...
 			try {
 				final InputStream resourceStream = pResource.open();
 				ImageReader reader;
@@ -207,7 +199,7 @@ interface MixinSpriteResourceLoader {
 						new ResourceMetadata.Builder().put(AnimationMetadataSection.SERIALIZER, new AnimationMetadataSection(
 								animationFrames,
 								frameWidth, frameHeight,
-								1 /*baseFrame.delay*/,
+								1 *//*baseFrame.delay*//*,
 								false
 						)).build()
 				));
@@ -217,6 +209,6 @@ interface MixinSpriteResourceLoader {
 		}
 
 		// Allow assets that can't be decoded by default to use the missing texture.
-		// JPG support?
+		// JPG support? */
 	}
 }

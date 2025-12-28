@@ -59,7 +59,7 @@ class ModRecipeProvider(
 		this.wheatCrushing(
 			Items.WHEAT to 1,
 			ModItems.FLOUR.get() to 2,
-			5u * 20u,
+			5 * 20,
 			2000,
 			recipeOutput,
 			"wheat_to_flour"
@@ -67,7 +67,7 @@ class ModRecipeProvider(
 		this.wheatCrushing(
 			Items.HAY_BLOCK to 1,
 			ModItems.FLOUR.get() to 18,
-			15u * 20u,
+			15 * 20,
 			6000,
 			recipeOutput,
 			"hay_block_to_flour"
@@ -79,7 +79,7 @@ class ModRecipeProvider(
 			Fluids.WATER to 100,
 			Items.TNT to 1,
 			Fluids.LAVA to 500,
-			10u * 20u,
+			10 * 20,
 			5000,
 			recipeOutput,
 			"dough_machine_test"
@@ -90,7 +90,7 @@ class ModRecipeProvider(
 			Fluids.WATER to 250,
 			ModItems.DOUGH.get() to 1,
 			null,
-			5u * 20u,
+			5 * 20,
 			1000,
 			recipeOutput,
 			"flour_to_dough"
@@ -101,7 +101,7 @@ class ModRecipeProvider(
 			null,
 			ModItems.ULTIMATE_BREAD.get() to 1,
 			Fluids.WATER to 1000,
-			5u * 20u,
+			5 * 20,
 			5000,
 			recipeOutput,
 			"ultimate_bread_crafting"
@@ -115,7 +115,7 @@ class ModRecipeProvider(
 			.itemRequired(ModItems.FLOUR.get(), 8).finish()
 			.itemRequired(Items.APPLE, 8).finish()
 			.fluidRequired(Fluids.LAVA, 500).finish()
-			.timeRequired(100u)
+			.timeRequired(100)
 			.save(recipeOutput, modLocation("fluid_energy", "test_one"))
 		FluidEnergyBuilder(
 			::FluidEnergyRecipeTest,
@@ -123,7 +123,7 @@ class ModRecipeProvider(
 		)
 			.itemRequired(ModItems.FLOUR.get(), 8).finish()
 			.itemRequired(Items.SPONGE, 8).finish()
-			.timeRequired(100u)
+			.timeRequired(100)
 			.save(recipeOutput, modLocation("fluid_energy", "test_two"))
 
 		FluidEnergyBuilder(
@@ -135,7 +135,7 @@ class ModRecipeProvider(
 		)
 			.itemRequired(ModItems.FLOUR.get(), 8).finish()
 			.itemRequired(Items.REDSTONE, 8).finish()
-			.timeRequired(50u)
+			.timeRequired(50)
 			.save(recipeOutput, modLocation("fluid_energy", "test_three"))
 
 		FluidEnergyBuilder(
@@ -151,7 +151,7 @@ class ModRecipeProvider(
 			.withComponents(DataComponents.ITEM_NAME to Component.literal("Silly Water"))
 			.finish()
 			.fluidRequired(FluidTags.LAVA, 1000)
-			.timeRequired(100u)
+			.timeRequired(100)
 			.save(recipeOutput, modLocation("fluid_energy", "test_four"))
 		// Crafting Table recipes
 		nineBlockStorageRecipes(
@@ -586,7 +586,7 @@ class ModRecipeProvider(
 	private fun wheatCrushing(
 		input: Pair<Item, Int>,
 		result: Pair<Item, Int>,
-		ticks: ULong,
+		ticks: Long,
 		energy: Int,
 		output: RecipeOutput,
 		name: String
@@ -605,7 +605,7 @@ class ModRecipeProvider(
 		fluidInput: Pair<Fluid, Int>?,
 		itemOutput: Pair<Item, Int>?,
 		fluidOutput: Pair<Fluid, Int>?,
-		ticks: ULong,
+		ticks: Long,
 		energy: Int,
 		output: RecipeOutput,
 		name: String

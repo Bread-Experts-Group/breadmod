@@ -124,7 +124,7 @@ class CreatorScreen(
 			(this.children()[1] as ContainerWidget<*>).enable()
 		})
 		Companion.bgSound.shouldPlay = true
-		if (!localClient.soundManager.isActive(Companion.bgSound)) localClient.soundManager.play(Companion.bgSound)
+		if (!Companion.bgSound.isActive()) Companion.bgSound.play()
 	}
 
 	override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean =

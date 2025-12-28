@@ -39,7 +39,7 @@ class FluidEnergyBuilder(
 	)
 
 	override fun group(groupName: String?): FluidEnergyBuilder = this
-	fun timeRequired(time: ULong): FluidEnergyBuilder = this.also { this.time = time }
+	fun timeRequired(time: Long): FluidEnergyBuilder = this.also { this.time = time.toULong() }
 	fun timeRequiredInSeconds(seconds: ULong): FluidEnergyBuilder = this.also { this.time = seconds * 20uL }
 	fun energyRequired(energy: BigDecimal): FluidEnergyBuilder = this.also { this.energy = energy }
 	fun energyRequired(energy: Int): FluidEnergyBuilder = this.energyRequired(BigDecimal(energy))

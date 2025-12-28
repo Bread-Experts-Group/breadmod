@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.compat.lookingat.jade
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.compat.lookingat.jade.elements.FluidElement
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
@@ -13,7 +14,7 @@ import snownee.jade.api.JadeIds
 import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 
-object ExpansibleTankDisplayProvider : IBlockComponentProvider {
+object ExtendedFluidTankProvider : IBlockComponentProvider {
 	@DataGenerateLanguage(name = "Fluid Data Provider", prefix = "config.jade.plugin_")
 	override fun getUid(): ResourceLocation = modLocation("fluid_data_provider")
 	override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
@@ -33,7 +34,7 @@ object ExpansibleTankDisplayProvider : IBlockComponentProvider {
 		}*/
 
 		fluidHandler.tanks.forEach { (_, tank) ->
-			tooltip.add(FluidBarElement(tank, accessor.side))
+			tooltip.add(FluidElement(tank, accessor.side))
 		}
 	}
 

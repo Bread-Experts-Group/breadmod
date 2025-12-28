@@ -13,8 +13,9 @@ import snownee.jade.api.WailaPlugin
 class JadePlugin : IWailaPlugin {
 	override fun registerClient(registration: IWailaClientRegistration) {
 //		registration.registerBlockComponent(ExpansibleTankDisplayProvider, FluidTankJadeBlock::class.java)
-		registration.registerBlockComponent(ExpansibleTankDisplayProvider, FluidEnergyBlock::class.java)
-		registration.registerBlockComponent(ExpansibleTankDisplayProvider, DoughMachineBlock::class.java)
+		registration.registerBlockComponent(ExtendedFluidTankProvider, FluidEnergyBlock::class.java)
+		registration.registerBlockComponent(ExtendedFluidTankProvider, DoughMachineBlock::class.java)
+		registration.registerBlockComponent(ExtendedEnergyStorageProvider, DoughMachineBlock::class.java)
 
 //		registration.registerBlockComponent(ExpansibleCellDisplayProvider, DoughMachineBlock::class.java)
 //		registration.registerBlockComponent(ExpansibleCellDisplayProvider, FluidEnergyBlock::class.java)
