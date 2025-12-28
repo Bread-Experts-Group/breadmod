@@ -1,10 +1,14 @@
+@file:Suppress("ImplicitThis", "UnstableApiUsage")
+
 pluginManagement {
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
 		maven {
 			name = "NeoForge Releases"
-			url = uri("https://maven.neoforged.net/releases")
+//			url = uri("https://maven.neoforged.net/releases")
+			// todo REPLACE WITH BEG MAVEN WHEN IT EXISTS
+			url = uri("file:///home/logan/.m2/repository")
 		}
 	}
 }

@@ -6,7 +6,7 @@ import org.slf4j.event.Level
 import java.util.Properties
 
 plugins {
-	kotlin("jvm") version "2.2.0"
+	kotlin("jvm") version "2.3.0"
 	id("org.jetbrains.dokka-javadoc") version "2.0.0"
 	id("idea")
 	id("net.neoforged.moddev") version "2.0.116"
@@ -71,6 +71,7 @@ repositories {
 		forRepository {
 			maven {
 				name = "Bread Experts Group Maven"
+				// todo REPLACE WITH BEG MAVEN WHEN IT EXISTS
 				url = uri("file:///home/logan/.m2/repository")
 			}
 		}
@@ -153,10 +154,10 @@ neoForge {
 dependencies {
 	// Mod Dependencies //
 	jarJar(implementation(breadServerLib) {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.0-RC3") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:2.2.0-RC2") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0-RC3") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0-RC3") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:2.3.0") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.0") {})
 	// Mod Compatibility //
 	// Jade (WAILA)
 	implementation("curse.maven:jade-324717:5976517")
@@ -188,7 +189,7 @@ dependencies {
 	runtimeOnly("curse.maven:worldedit-225608:5830452")
 }
 kotlin {
-	jvmToolchain(21)
+	jvmToolchain(25)
 	compilerOptions {
 		freeCompilerArgs.add("-Xcontext-parameters")
 	}

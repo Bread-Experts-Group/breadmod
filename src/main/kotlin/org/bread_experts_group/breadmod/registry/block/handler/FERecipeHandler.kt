@@ -28,7 +28,6 @@ import org.bread_experts_group.breadmod.util.Color.component
 import org.bread_experts_group.breadmod.util.floatRoundEven
 import java.math.BigDecimal
 
-// TODO recipe assembling tries to put outputs in the input slots
 class FERecipeHandler<T : FluidEnergyRecipe>(
 	recipeType: RecipeType<T>
 ) : ParentedHandler<BreadModBlockEntity>, INBTSerializable<Tag>, DataComponentSerializable {

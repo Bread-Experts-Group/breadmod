@@ -23,7 +23,7 @@ internal object PingCommand {
 					Arena.ofConfined().use { arena ->
 						// Allocate off-heap memory and
 						// copy the argument, a Java string, into off-heap memory
-						val nativeString = arena.allocateUtf8String("test string")
+//						val nativeString = arena.allocateUtf8String("test string")
 						// Link and call the C function strlen
 						// Obtain an instance of the native linker
 						val linker = Linker.nativeLinker()
@@ -36,7 +36,7 @@ internal object PingCommand {
 						// Create a downcall handle for the C function
 						val strlen: MethodHandle = linker.downcallHandle(strlenAddr, strlenSig)
 						// Call the C function directly from Java
-						ctx.source.sendSystemMessage(Component.literal((strlen.invokeExact(nativeString) as Long).toString()))
+//						ctx.source.sendSystemMessage(Component.literal((strlen.invokeExact(nativeString) as Long).toString()))
 					}
 					ctx.source.sendSystemMessage(Component.literal("NTV"))
 					Command.SINGLE_SUCCESS

@@ -24,7 +24,6 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.Rotation
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
@@ -329,8 +328,6 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 				.setValue(TRIPLE_BLOCK, LOWER)
 		} else null
 	}
-
-	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
 	override fun setPlacedBy(level: Level, pos: BlockPos, state: BlockState, placer: LivingEntity?, stack: ItemStack) {
 		level.setBlockAndUpdate(pos.above(), state.setValue(TRIPLE_BLOCK, MIDDLE))

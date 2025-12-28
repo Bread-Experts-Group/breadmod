@@ -185,7 +185,7 @@ object BreadModCodecs {
 				val dataComponentMapBuilder = DataComponentMap.builder()
 				val componentMap: MutableMap<Int, TypedDataComponent<*>> =
 					buffer.readMapRegFriendly(
-						{ size -> mutableMapOf() },
+						{ _ -> mutableMapOf() },
 						ByteBufCodecs.INT,
 						TypedDataComponent.STREAM_CODEC
 					)

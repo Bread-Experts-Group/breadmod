@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.tool_gun.gui.components.creator_widgets
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
-import net.minecraft.client.gui.components.Button.OnPress
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.level.block.state.BlockState
@@ -11,7 +10,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty
 import net.minecraft.world.level.block.state.properties.EnumProperty
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 import net.minecraft.world.level.block.state.properties.Property
-import net.minecraft.world.level.block.state.properties.Property.Value
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
@@ -50,73 +48,74 @@ class StatePropertyWidget<T : Property<*>>(
 		)
 	}
 
+	// todo internal compiler error is being caused here for some reason, might be a kotlin bug
 	override fun initContainer() {
-		when (this.property) {
-			is IntegerProperty -> {
-				var xOffset = 0
-				var yOffset = 0
-				this.property.allValues.toList().forEach { intValue: Value<Int> ->
-					this.addChild(
-						"${this.property.name}_${intValue.value}",
-						this.makeButton(xOffset, yOffset, intValue.value.toString()) { _, _ ->
-							this.setInt(this.property, intValue.value)
-						}
-					)
-					if (intValue.value == 2) {
-						yOffset = 14
-						xOffset -= 132
-					}
-					xOffset += 44
-				}
-			}
-			is BooleanProperty -> {
-				var xOffset = 0
-				this.property.allValues.toList().forEach { boolValue ->
-					this.addChild(
-						"${this.property.name}_${boolValue.value}",
-						this.makeButton(xOffset, 0, boolValue.value.toString()) { _, _ ->
-							this.setBool(this.property, boolValue.value)
-						}
-					)
-					xOffset += 44
-				}
-			}
-			is DirectionProperty -> {
-				var xOffset = 0
-				var yOffset = 0
-				Direction.entries.forEach { direction ->
-					this.addChild(
-						"${this.property.name}_${direction.name}",
-						this.makeButton(xOffset, yOffset, direction.name) { _, _ ->
-							this.setDirection(this.property, direction)
-						},
-						isActive = direction in this.property.possibleValues
-					)
-					if (Direction.entries.indexOf(direction) == 2) {
-						yOffset = 14
-						xOffset -= 132
-					}
-					xOffset += 44
-				}
-			}
-			is EnumProperty<*> -> {
-				var xOffset = 0
-				var yOffset = 0
-				this.ordinalsFromEnumProperty(this.property).forEach { ordinal ->
-					val enum = this.property.possibleValues.toList()[ordinal]
-					this.addChild(
-						"${this.property.name}_$ordinal",
-						this.makeButton(xOffset, yOffset, enum.name) { _, _ -> this.setEnum(this.property, ordinal) }
-					)
-					if (ordinal == 2) {
-						yOffset = 14
-						xOffset -= 132
-					}
-					xOffset += 44
-				}
-			}
-			else -> this.logger.warn("unhandled property type: ${this.property}, report to mod dev.")
-		}
+//		when (this.property) {
+//			is IntegerProperty -> {
+//				var xOffset = 0
+//				var yOffset = 0
+//				this.property.allValues.toList().forEach { intValue ->
+//					this.addChild(
+//						"${this.property.name}_${intValue.value}",
+//						this.makeButton(xOffset, yOffset, intValue.value.toString()) { _, _ ->
+//							this.setInt(this.property, intValue.value)
+//						}
+//					)
+//					if (intValue.value == 2) {
+//						yOffset = 14
+//						xOffset -= 132
+//					}
+//					xOffset += 44
+//				}
+//			}
+//			is BooleanProperty -> {
+//				var xOffset = 0
+//				this.property.allValues.toList().forEach { boolValue ->
+//					this.addChild(
+//						"${this.property.name}_${boolValue.value}",
+//						this.makeButton(xOffset, 0, boolValue.value.toString()) { _, _ ->
+//							this.setBool(this.property, boolValue.value)
+//						}
+//					)
+//					xOffset += 44
+//				}
+//			}
+//			is DirectionProperty -> {
+//				var xOffset = 0
+//				var yOffset = 0
+//				Direction.entries.forEach { direction ->
+//					this.addChild(
+//						"${this.property.name}_${direction.name}",
+//						this.makeButton(xOffset, yOffset, direction.name) { _, _ ->
+//							this.setDirection(this.property, direction)
+//						},
+//						isActive = direction in this.property.possibleValues
+//					)
+//					if (Direction.entries.indexOf(direction) == 2) {
+//						yOffset = 14
+//						xOffset -= 132
+//					}
+//					xOffset += 44
+//				}
+//			}
+//			is EnumProperty<*> -> {
+//				var xOffset = 0
+//				var yOffset = 0
+//				this.ordinalsFromEnumProperty(this.property).forEach { ordinal ->
+//					val enum = this.property.possibleValues.toList()[ordinal]
+//					this.addChild(
+//						"${this.property.name}_$ordinal",
+//						this.makeButton(xOffset, yOffset, enum.name) { _, _ -> this.setEnum(this.property, ordinal) }
+//					)
+//					if (ordinal == 2) {
+//						yOffset = 14
+//						xOffset -= 132
+//					}
+//					xOffset += 44
+//				}
+//			}
+//			else -> this.logger.warn("unhandled property type: ${this.property}, report to mod dev.")
+//		}
 	}
 
 	private fun makeButton(xOffset: Int, yOffset: Int, text: String, onClick: (Button, Int) -> Unit): GenericButton =
