@@ -8,14 +8,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.util.logDebugInfo
-import org.bread_experts_group.coder.format.parse.id3.ID3Parser
-import org.bread_experts_group.coder.format.parse.id3.frame.ID3CommentFrame
-import org.bread_experts_group.coder.format.parse.id3.frame.ID3Header
-import org.bread_experts_group.coder.format.parse.id3.frame.ID3PictureFrame2
-import org.bread_experts_group.coder.format.parse.id3.frame.ID3PictureFrame3
-import org.bread_experts_group.coder.format.parse.id3.frame.ID3PopularimeterFrame
-import org.bread_experts_group.coder.format.parse.id3.frame.ID3TextFrame
-import org.bread_experts_group.coder.format.parse.id3.frame.ID3URLLinkFrame
 import org.lwjgl.BufferUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -23,6 +15,7 @@ import java.net.URI
 import java.nio.ByteBuffer
 import javax.imageio.ImageIO
 
+// todo FIX
 abstract class BaseAudioStream(val uri: URI) : AudioStream {
 	protected val logger: Logger = LogManager.getLogger()
 	var title: Component = Component.empty() // MP3: TIT2 / TT2
@@ -56,8 +49,8 @@ abstract class BaseAudioStream(val uri: URI) : AudioStream {
 	var genre: Component = Component.empty() // WAV: IGNR
 	var extra: MutableList<Component> = mutableListOf<Component>()
 
-	fun decodeMetadata(id3: ID3Parser) {
-		val id3Header = (id3.firstOrNull() ?: return).resultSafe as ID3Header
+	fun decodeMetadata(id3: /*ID3Parser*/ Nothing) {
+/*		val id3Header = (id3.firstOrNull() ?: return).resultSafe as ID3Header
 		val version = "(v${id3Header.major}.${id3Header.minor})"
 		for (f in id3) when (val f = f.resultSafe) {
 			is ID3TextFrame -> when (f.tag) {
@@ -81,7 +74,7 @@ abstract class BaseAudioStream(val uri: URI) : AudioStream {
 			is ID3PictureFrame2 -> this.setImageData(f.data, f.imageType)
 			is ID3PictureFrame3 -> this.setImageData(f.data, f.mimeType)
 			else -> this.logger.warn("Unsupported frame type: $f")
-		}
+		}*/
 	}
 
 	var image: ImageData = ImageData.EMPTY // MP3: APIC / PIC

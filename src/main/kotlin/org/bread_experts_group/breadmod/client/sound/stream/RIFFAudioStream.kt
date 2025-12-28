@@ -1,20 +1,14 @@
 package org.bread_experts_group.breadmod.client.sound.stream
 
-import net.minecraft.network.chat.Component
-import org.bread_experts_group.coder.format.parse.id3.ID3Parser
-import org.bread_experts_group.coder.format.parse.riff.RIFFParser
-import org.bread_experts_group.coder.format.parse.riff.chunk.RIFFAudioFormatChunk
-import org.bread_experts_group.coder.format.parse.riff.chunk.RIFFContainerChunk
-import org.bread_experts_group.coder.format.parse.riff.chunk.RIFFID3Chunk
-import org.bread_experts_group.coder.format.parse.riff.chunk.RIFFTextChunk
 import java.net.URI
 import javax.sound.sampled.AudioFormat
 
+// todo FIX
 class RIFFAudioStream(uri: URI) : BaseAudioStream(uri) {
-	private val audioFormatChunk: RIFFAudioFormatChunk
-	override val audioData: ByteArray
+	private val audioFormatChunk: /*RIFFAudioFormatChunk*/ Nothing = TODO()
+	override val audioData: ByteArray = TODO()
 
-	init {
+/*	init {
 		lateinit var preppedFormat: RIFFAudioFormatChunk
 		lateinit var preppedData: ByteArray
 		val container = RIFFParser().setInput(this.uri.toURL().openStream()).first().resultSafe as RIFFContainerChunk
@@ -37,12 +31,12 @@ class RIFFAudioStream(uri: URI) : BaseAudioStream(uri) {
 		}
 		this.audioFormatChunk = preppedFormat
 		this.audioData = preppedData
-	}
+	}*/
 
-	override fun getFormat(): AudioFormat = AudioFormat(
+	override fun getFormat(): AudioFormat = /*AudioFormat(
 		this.audioFormatChunk.sampleRate.toFloat(),
 		this.audioFormatChunk.bitsPerSample,
 		this.audioFormatChunk.numberOfChannels,
 		true, false
-	)
+	)*/ TODO()
 }

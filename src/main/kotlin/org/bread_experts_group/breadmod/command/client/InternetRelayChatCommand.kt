@@ -10,8 +10,6 @@ import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.network.chat.Component
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
-import org.bread_experts_group.protocol.old.irc.IRCMessage
-import org.bread_experts_group.stream.writeString
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -19,6 +17,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.Stack
 
+// todo FIX
 internal object InternetRelayChatCommand {
 	var currentSocket = Socket()
 	var managingThread: Thread? = null
@@ -34,7 +33,7 @@ internal object InternetRelayChatCommand {
 					ctx.source.sendSystemMessage(
 						Component.literal("< " + toSend.take(toSend.length - 2)).withStyle(ChatFormatting.LIGHT_PURPLE)
 					)
-					fqOut.writeString(toSend)
+//					fqOut.writeString(toSend)
 				}
 			} catch (_: IOException) {
 				this.currentSocket.close()
@@ -44,11 +43,11 @@ internal object InternetRelayChatCommand {
 		try {
 			val fqIn = this.currentSocket.inputStream
 			while (true) {
-				val message = IRCMessage.read(fqIn)
-				ctx.source.sendSystemMessage(
-					Component.literal(message.toString())
-						.withStyle(ChatFormatting.YELLOW)
-				)
+//				val message = IRCMessage.read(fqIn)
+//				ctx.source.sendSystemMessage(
+//					Component.literal(message.toString())
+//						.withStyle(ChatFormatting.YELLOW)
+//				)
 			}
 		} catch (_: IOException) {
 			ctx.source.sendSystemMessage(
