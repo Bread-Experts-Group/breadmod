@@ -106,7 +106,7 @@ abstract class FluidEnergyRecipe(
 	override fun matches(input: FluidEnergyInput, level: Level): Boolean {
 		val itemsSatisfied = if (this.rItemInputs.isNotEmpty() && input.item != null) {
 			this.rItemInputs.all { rInput ->
-				val inSlots = input.item.slots.filter { it.key in this.slots.first }
+				val inSlots = input.item.slots.filter { (key) -> key in this.slots.first }
 				inSlots.any { (_, slot) ->
 					rInput.test(slot.item) &&
 							rInput.testComponents(slot.components) &&
@@ -139,10 +139,10 @@ abstract class FluidEnergyRecipe(
 		if (input.item != null) this.rItemInputs.forEach {
 			var remainder = it.left?.second ?: it.right?.amount ?: return@forEach
 			for (slotID in this.slots.first) {
-				val extracted = input.item.bigExtractItem(slotID, remainder, true)
-				if (extracted.value == it.resolveInputItem()) {
+				val (amount, value, _) = input.item.bigExtractItem(slotID, remainder, true)
+				if (value == it.resolveInputItem()) {
 					input.item.bigExtractItem(slotID, remainder, false)
-					remainder -= extracted.amount
+					remainder -= amount
 					if (remainder <= BigDecimal.ZERO) break
 				}
 			}
@@ -172,12 +172,12 @@ abstract class FluidEnergyRecipe(
 		if (input.item != null) this.rItemOutputs.forEach {
 			var remainder = it.amount
 			for (slotID in this.slots.second) {
-				val inserted = input.item.bigInsertItem(
+				val (amount, _, _) = input.item.bigInsertItem(
 					slotID,
 					BigDescriptor(remainder, it.value, it.components),
 					false
 				)
-				remainder = inserted.amount
+				remainder = amount
 				if (remainder <= BigDecimal.ZERO) break
 			}
 		}

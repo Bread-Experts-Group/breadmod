@@ -100,7 +100,7 @@ class ExtendedFluidHandler(
 
 	override fun serializeDataComponent(map: DataComponentMap.Builder) {
 		val tanks = mutableListOf<Tank>()
-		this.tanks.forEach { tanks.add(it.key, it.value) }
+		this.tanks.forEach { (index, tank) -> tanks.add(index, tank) }
 		map.set(TANKS, tanks)
 	}
 

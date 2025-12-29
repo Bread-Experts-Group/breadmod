@@ -182,18 +182,24 @@ fun GuiGraphics.drawCenteredWordWrap(font: Font, text: FormattedText, x: Int, y:
 		yOffset += 9
 	}
 }
+
 fun GuiGraphics.renderFluid(
 	x: Float, y: Float, width: Int, height: Int,
-	tank: ExtendedFluidHandler.Tank,
+	tank: ExtendedFluidHandler.Tank, flowing: Boolean
+): Unit = this.renderFluid(x, y, width, height, tank.fluid, tank.amount, tank.capacity, flowing)
+
+fun GuiGraphics.renderFluid(
+	x: Float, y: Float, width: Int, height: Int,
+	fluid: Fluid, stored: BigDecimal, capacity: BigDecimal,
 	flowing: Boolean
 ) {
-	if (tank.fluid.fluidType.isAir
+	if (fluid.fluidType.isAir
 		|| width <= 0
 		|| height <= 0
-		|| tank.amount == BigDecimal.ZERO
+		|| stored == BigDecimal.ZERO
 	) return
-	val scaledAmount = min(tank.amount.divide(tank.capacity).toFloat() * height, height.toFloat())
-	val (sprite, tint) = getFluidSpriteAndTint(tank.fluid, flowing)
+	val scaledAmount = min(stored.divide(capacity).toFloat() * height, height.toFloat())
+	val (sprite, tint) = getFluidSpriteAndTint(fluid, flowing)
 	var color = tint
 	if (sprite == null) {
 		val maxY: Float = y + height

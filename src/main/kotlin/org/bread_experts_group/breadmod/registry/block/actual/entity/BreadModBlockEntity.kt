@@ -17,11 +17,15 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.capabilities.BaseCapability
+import net.neoforged.neoforge.capabilities.Capabilities
 import net.neoforged.neoforge.common.util.INBTSerializable
 import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
 import org.bread_experts_group.breadmod.registry.block.handler.DataComponentSerializable
 import org.bread_experts_group.breadmod.registry.block.handler.DiscardableHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler
 import org.bread_experts_group.breadmod.registry.block.handler.ParentedHandler
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
@@ -38,8 +42,8 @@ class BreadModBlockEntity(
 	capabilityConstructors: CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(),
 ) : BlockEntity(type, pos, state), MenuProvider {
 	private val capabilities: CapabilityMap<Any> = capabilityConstructors.mapValues { (c, m) ->
-		m.mapValues {
-			val actual = it.value.invoke(this)
+		m.mapValues { (_, value) ->
+			val actual = value.invoke(this)
 			@Suppress("UNCHECKED_CAST")
 			if (actual is ParentedHandler<*>) (actual as ParentedHandler<BlockEntity>).parent = this
 			actual
@@ -53,6 +57,18 @@ class BreadModBlockEntity(
 			}
 		}
 	}
+
+	fun getItemHandler(): ExtendedItemHandler? = this.getCapabilityOrNull(
+		Capabilities.ItemHandler.BLOCK
+	) as? ExtendedItemHandler
+
+	fun getFluidHandler(): ExtendedFluidHandler? = this.getCapabilityOrNull(
+		Capabilities.FluidHandler.BLOCK
+	) as? ExtendedFluidHandler
+
+	fun getEnergyHandler(): ExtendedEnergyHandler? = this.getCapabilityOrNull(
+		Capabilities.EnergyStorage.BLOCK
+	) as? ExtendedEnergyHandler
 
 	override fun getDisplayName(): Component = (this.blockState.block as BreadModBlock).getDisplayName(this)
 	override fun createMenu(containerId: Int, playerInventory: Inventory, player: Player): BreadModMenu {

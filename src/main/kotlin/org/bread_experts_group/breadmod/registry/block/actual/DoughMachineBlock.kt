@@ -33,7 +33,7 @@ class DoughMachineBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal())
 		)
-		val energy = ExtendedEnergyHandler(BigDecimal(10000))
+		val energy = ExtendedEnergyHandler(BigDecimal(1000000), BigDecimal(5000))
 		val energyStorage = { _: BreadModBlockEntity -> energy }
 		val fluid = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))
 		val fluidStorage = { _: BreadModBlockEntity -> fluid }

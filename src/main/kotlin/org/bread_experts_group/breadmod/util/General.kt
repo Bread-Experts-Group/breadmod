@@ -16,7 +16,6 @@ import net.minecraft.core.Vec3i
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.Tag
 import net.minecraft.nbt.TagType
 import net.minecraft.network.chat.Component
@@ -41,8 +40,6 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.Recipe
-import net.minecraft.world.item.crafting.RecipeInput
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.EntityGetter
@@ -231,7 +228,7 @@ fun gridBlocks(
 	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)
 ): (PhysicsGrid, Entity, Vec3, Vec3) -> BlockState? = { grid, entity, from, to ->
 	val shapes = grid.getNearbyShapesAndPos(entity)
-	val found = shapes.find { pair -> pair.second.toAabbs().find { it.clip(from, to).isPresent } != null }
+	val found = shapes.find { (_, shape) -> shape.toAabbs().find { it.clip(from, to).isPresent } != null }
 	if (found != null) {
 		val pos = found.first
 		val state = grid.microLevel.getBlockState(pos)
@@ -263,7 +260,7 @@ fun hitbox(player: Player): (Level, Vec3, Vec3) -> Hitbox? =
 	{ level, from, to ->
 		val clip = level.clip(ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player))
 		if (clip.type != net.minecraft.world.phys.HitResult.Type.MISS) null else
-			HitboxHandler.hitboxes.filter { it.value.pos.distanceTo(from) < it.value.bounds.size + 10.0 }
+			HitboxHandler.hitboxes.filter { (_, value) -> value.pos.distanceTo(from) < value.bounds.size + 10.0 }
 				.firstNotNullOfOrNull { (pos, hitbox) ->
 					if (hitbox.bounds.move(pos).clip(from, to).isPresent) hitbox else null
 				}
@@ -617,6 +614,18 @@ inline fun <reified T> CompoundTag.putValue(key: String, value: T) {
 	}
 }
 
+fun CompoundTag.putBigDecimal(key: String, value: BigDecimal) {
+	this.putString(key, value.toPlainString())
+}
+
+fun CompoundTag.getBigDecimal(key: String): BigDecimal = BigDecimal(this.getString(key))
+
+fun CompoundTag.putFluid(key: String, value: Fluid) {
+	this.putInt(key, BuiltInRegistries.FLUID.getId(value))
+}
+
+fun CompoundTag.getFluid(key: String): Fluid = BuiltInRegistries.FLUID.byIdOrThrow(this.getInt(key))
+
 fun CompoundTag.putBlockPos(key: String, value: BlockPos) {
 	this.put(key, CompoundTag().also { posTag ->
 		posTag.putInt("x", value.x)
@@ -631,20 +640,19 @@ fun CompoundTag.getBlockPos(key: String): BlockPos {
 }
 
 fun CompoundTag.putBlockState(key: String, value: BlockState) {
-	this.put(key, BlockState.CODEC.encodeStart(NbtOps.INSTANCE, value).result().get())
+	this.putInt(key, Block.BLOCK_STATE_REGISTRY.getId(value))
 }
 
 fun CompoundTag.getBlockState(key: String): BlockState =
-	BlockState.CODEC.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull()?.first
-		?: Blocks.AIR.defaultBlockState()
+	Block.BLOCK_STATE_REGISTRY.byIdOrThrow(this.getInt(key))
 
-fun <T : RecipeInput> CompoundTag.putRecipe(key: String, value: Recipe<T>) {
+/*fun <T : RecipeInput> CompoundTag.putRecipe(key: String, value: Recipe<T>) {
 	this.put(key, Recipe.CODEC.encodeStart(NbtOps.INSTANCE, value).result().get())
 }
 
 @Suppress("UNCHECKED_CAST")
 fun <I : RecipeInput, R : Recipe<I>> CompoundTag.getRecipe(key: String): R? =
-	Recipe.CODEC.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull() as? R
+	Recipe.CODEC.decode(NbtOps.INSTANCE, this.get(key)).result().getOrNull() as? R*/
 
 fun CompoundTag.putEntity(key: String, value: Entity?): CompoundTag {
 	if (value == null) return CompoundTag()
