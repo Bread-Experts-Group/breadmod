@@ -1,5 +1,6 @@
 package org.bread_experts_group.breadmod.compat.lookingat.jade
 
+import net.minecraft.nbt.ListTag
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.material.Fluid
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
@@ -44,7 +45,7 @@ object ExtendedHandlerComponentProvider : IBlockComponentProvider {
 	private fun getFluidStats(accessor: BlockAccessor): List<Triple<Fluid, BigDecimal, BigDecimal>>? {
 		val data = accessor.serverData
 		if (!data.contains("bm_fluid_tanks")) return null
-		val tag = data.getList("bm_fluid_tanks", 9)
+		val tag = data.get("bm_fluid_tanks") as? ListTag ?: return null
 
 		return buildList {
 			repeat(tag.size) { i ->
