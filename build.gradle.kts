@@ -9,7 +9,7 @@ plugins {
 	kotlin("jvm") version "2.3.0"
 	id("org.jetbrains.dokka-javadoc") version "2.0.0"
 	id("idea")
-	id("net.neoforged.moddev") version "2.0.116"
+	id("net.neoforged.moddev") version "2.0.134"
 	`maven-publish`
 	`java-library`
 	signing
@@ -125,21 +125,19 @@ neoForge {
 			// systemProperty 'forge.logging.markers', 'REGISTRIES'
 			logLevel = Level.INFO
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create(breadServerLib) {
-					isTransitive = false
-				}
+				dependencies.create(breadServerLib) { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.2.0-RC3") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.3.0") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.2.0-RC2") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.3.0") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0-RC3") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0-RC3") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.0") { isTransitive = false }
 			)
 		}
 	}

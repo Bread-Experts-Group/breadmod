@@ -6,9 +6,7 @@ pluginManagement {
 		gradlePluginPortal()
 		maven {
 			name = "NeoForge Releases"
-//			url = uri("https://maven.neoforged.net/releases")
-			// todo REPLACE WITH BEG MAVEN WHEN IT EXISTS
-			url = uri("file:///home/logan/.m2/repository")
+			url = uri("https://maven.neoforged.net/releases")
 		}
 	}
 }
