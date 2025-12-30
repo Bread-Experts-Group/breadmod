@@ -7,7 +7,7 @@ import java.util.Properties
 
 plugins {
 	kotlin("jvm") version "2.3.0"
-	id("org.jetbrains.dokka-javadoc") version "2.0.0"
+	id("org.jetbrains.dokka-javadoc") version "2.1.0"
 	id("idea")
 	id("net.neoforged.moddev") version "2.0.134"
 	`maven-publish`
@@ -23,7 +23,7 @@ private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.ena
 private fun RunModel.addAgent(): Unit =
 	jvmArgument("-javaagent:${file("breadmod_agent/build/libs/breadmod_agent-1.5.1-agent.jar").absolutePath}")
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:D1F2N6P75"
+private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:D1F3N6P0"
 
 idea {
 	module {
@@ -67,19 +67,6 @@ repositories {
 	maven {
 		name = "Bread Experts Group Maven"
 		url = uri("https://maven.breadexperts.group/")
-	}
-
-	exclusiveContent {
-		forRepository {
-			maven {
-				name = "Bread Experts Group Maven"
-				// todo REPLACE WITH BEG MAVEN WHEN IT EXISTS
-				url = uri("file:///home/logan/.m2/repository")
-			}
-		}
-		filter {
-			includeGroup("org.bread_experts_group")
-		}
 	}
 }
 
@@ -296,3 +283,7 @@ sourceSets.main.get().resources {
 }
 
 neoForge.ideSyncTask(tasks["generateModMetadata"])
+
+tasks.classes {
+	dependsOn(project(":breadmod_agent").tasks.build)
+}
