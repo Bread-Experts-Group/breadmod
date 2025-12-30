@@ -43,15 +43,15 @@ class HellNawButtonBlock : ButtonBlock(
 		val direction = state.getValue(FACING)
 		val flag = state.getValue(POWERED)
 		return when (state.getValue(FACE) as AttachFace) {
-			AttachFace.FLOOR   -> if (flag) this.floorPressedAABB else this.floorAABB
+			AttachFace.FLOOR -> if (flag) this.floorPressedAABB else this.floorAABB
 			AttachFace.CEILING -> if (flag) this.ceilingPressedAABB else this.ceilingAABB
-			AttachFace.WALL    -> {
+			AttachFace.WALL -> {
 				val voxelShape = when (direction) {
-					Direction.EAST                                -> if (flag) this.eastPressedAABB else this.eastAABB
-					Direction.WEST                                -> if (flag) this.westPressedAABB else this.westAABB
-					Direction.SOUTH                               -> if (flag) this.southPressedAABB else this.southAABB
+					Direction.EAST -> if (flag) this.eastPressedAABB else this.eastAABB
+					Direction.WEST -> if (flag) this.westPressedAABB else this.westAABB
+					Direction.SOUTH -> if (flag) this.southPressedAABB else this.southAABB
 					Direction.DOWN, Direction.UP, Direction.NORTH -> if (flag) this.northPressedAABB else this.northAABB
-					else                                          -> throw RuntimeException("invalid direction")
+					else -> throw RuntimeException("invalid direction")
 				}
 				return voxelShape
 			}

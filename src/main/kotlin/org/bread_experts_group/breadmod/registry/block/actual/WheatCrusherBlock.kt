@@ -35,21 +35,21 @@ class WheatCrusherBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
 			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal())
 		)
-		val energy = ExtendedEnergyHandler(BigDecimal(10000))
-		val energyStorage = { _: BreadModBlockEntity -> energy }
-		val recipe = FERecipeHandler(ModRecipeTypes.WHEAT_CRUSHING.get())
 		return mapOf(
-			Capabilities.ItemHandler.BLOCK to mapOf(null to { _ -> itemStorage }),
-			Capabilities.EnergyStorage.BLOCK to mapOf(
-				null to energyStorage,
-				Direction.UP to energyStorage,
-				Direction.DOWN to energyStorage,
-				Direction.NORTH to energyStorage,
-				Direction.SOUTH to energyStorage,
-				Direction.EAST to energyStorage,
-				Direction.WEST to energyStorage,
+			Capabilities.ItemHandler.BLOCK to mapOf(
+				null to { _ -> itemStorage },
+				Direction.UP to { _ -> itemStorage.newProxy(0 to 0) },
+				Direction.DOWN to { _ -> itemStorage.newProxy(0 to 1) }
 			),
-			FERecipeHandler.BLOCK_VOID to mapOf(null to { _ -> recipe })
+			this.setupHandlerPair(
+				Capabilities.EnergyStorage.BLOCK,
+				ExtendedEnergyHandler(BigDecimal(10000)),
+				*BreadModBlock.ALL_DIRECTIONS
+			),
+			this.setupHandlerPair(
+				FERecipeHandler.BLOCK_VOID,
+				FERecipeHandler(ModRecipeTypes.WHEAT_CRUSHING.get())
+			)
 		)
 	}
 

@@ -16,6 +16,9 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import org.bread_experts_group.breadmod.util.combine
+import org.bread_experts_group.breadmod.util.east
+import org.bread_experts_group.breadmod.util.south
+import org.bread_experts_group.breadmod.util.west
 import java.util.stream.Stream
 
 class GeneratorBlock : Block(Properties.of()) {
@@ -43,75 +46,9 @@ class GeneratorBlock : Block(Properties.of()) {
 			box(1.0, 1.0, 5.0, 15.0, 15.0, 15.0),
 			box(2.0, 0.0, 1.0, 4.0, 1.0, 15.0)
 		).combine()
-		val SHAPE_SOUTH: VoxelShape = Stream.of(
-			box(2.0, 0.0, 1.0, 4.0, 1.0, 15.0),
-			box(0.0, 0.0, 15.0, 16.0, 1.0, 16.0),
-			box(0.0, 0.0, 0.0, 16.0, 1.0, 1.0),
-			box(15.0, 1.0, 0.0, 16.0, 16.0, 1.0),
-			box(0.0, 1.0, 0.0, 1.0, 16.0, 1.0),
-			box(0.0, 1.0, 15.0, 1.0, 16.0, 16.0),
-			box(15.0, 1.0, 15.0, 16.0, 16.0, 16.0),
-			box(15.0, 15.0, 1.0, 16.0, 16.0, 15.0),
-			box(0.0, 15.0, 1.0, 1.0, 16.0, 15.0),
-			box(1.0, 15.0, 12.0, 15.0, 16.0, 14.0),
-			box(1.0, 15.0, 2.0, 15.0, 16.0, 4.0),
-			box(4.0, 15.0, 4.0, 12.0, 16.0, 12.0),
-			box(0.0, 12.0, 7.0, 1.0, 15.0, 9.0),
-			box(0.0, 7.0, 12.0, 1.0, 9.0, 15.0),
-			box(0.0, 7.0, 1.0, 1.0, 9.0, 4.0),
-			box(0.0, 4.0, 4.0, 1.0, 12.0, 12.0),
-			box(1.0, 5.0, 11.0, 15.0, 12.0, 16.0),
-			box(7.0, 1.0, 11.0, 16.0, 5.0, 15.0),
-			box(5.0, 1.0, 11.0, 7.0, 5.0, 14.0),
-			box(1.0, 1.0, 1.0, 15.0, 15.0, 11.0),
-			box(12.0, 0.0, 1.0, 14.0, 1.0, 15.0)
-		).combine()
-		val SHAPE_EAST: VoxelShape = Stream.of(
-			box(1.0, 0.0, 12.0, 15.0, 1.0, 14.0),
-			box(15.0, 0.0, 0.0, 16.0, 1.0, 16.0),
-			box(0.0, 0.0, 0.0, 1.0, 1.0, 16.0),
-			box(0.0, 1.0, 0.0, 1.0, 16.0, 1.0),
-			box(0.0, 1.0, 15.0, 1.0, 16.0, 16.0),
-			box(15.0, 1.0, 15.0, 16.0, 16.0, 16.0),
-			box(15.0, 1.0, 0.0, 16.0, 16.0, 1.0),
-			box(1.0, 15.0, 0.0, 15.0, 16.0, 1.0),
-			box(1.0, 15.0, 15.0, 15.0, 16.0, 16.0),
-			box(12.0, 15.0, 1.0, 14.0, 16.0, 15.0),
-			box(2.0, 15.0, 1.0, 4.0, 16.0, 15.0),
-			box(4.0, 15.0, 4.0, 12.0, 16.0, 12.0),
-			box(7.0, 12.0, 15.0, 9.0, 15.0, 16.0),
-			box(12.0, 7.0, 15.0, 15.0, 9.0, 16.0),
-			box(1.0, 7.0, 15.0, 4.0, 9.0, 16.0),
-			box(4.0, 4.0, 15.0, 12.0, 12.0, 16.0),
-			box(11.0, 5.0, 1.0, 16.0, 12.0, 15.0),
-			box(11.0, 1.0, 0.0, 15.0, 5.0, 9.0),
-			box(11.0, 1.0, 9.0, 14.0, 5.0, 11.0),
-			box(1.0, 1.0, 1.0, 11.0, 15.0, 15.0),
-			box(1.0, 0.0, 2.0, 15.0, 1.0, 4.0)
-		).combine()
-		val SHAPE_WEST: VoxelShape = Stream.of(
-			box(1.0, 0.0, 2.0, 15.0, 1.0, 4.0),
-			box(0.0, 0.0, 0.0, 1.0, 1.0, 16.0),
-			box(15.0, 0.0, 0.0, 16.0, 1.0, 16.0),
-			box(15.0, 1.0, 15.0, 16.0, 16.0, 16.0),
-			box(15.0, 1.0, 0.0, 16.0, 16.0, 1.0),
-			box(0.0, 1.0, 0.0, 1.0, 16.0, 1.0),
-			box(0.0, 1.0, 15.0, 1.0, 16.0, 16.0),
-			box(1.0, 15.0, 15.0, 15.0, 16.0, 16.0),
-			box(1.0, 15.0, 0.0, 15.0, 16.0, 1.0),
-			box(2.0, 15.0, 1.0, 4.0, 16.0, 15.0),
-			box(12.0, 15.0, 1.0, 14.0, 16.0, 15.0),
-			box(4.0, 15.0, 4.0, 12.0, 16.0, 12.0),
-			box(7.0, 12.0, 0.0, 9.0, 15.0, 1.0),
-			box(1.0, 7.0, 0.0, 4.0, 9.0, 1.0),
-			box(12.0, 7.0, 0.0, 15.0, 9.0, 1.0),
-			box(4.0, 4.0, 0.0, 12.0, 12.0, 1.0),
-			box(0.0, 5.0, 1.0, 5.0, 12.0, 15.0),
-			box(1.0, 1.0, 7.0, 5.0, 5.0, 16.0),
-			box(2.0, 1.0, 5.0, 5.0, 5.0, 7.0),
-			box(5.0, 1.0, 1.0, 15.0, 15.0, 15.0),
-			box(1.0, 0.0, 12.0, 15.0, 1.0, 14.0)
-		).combine()
+		val SHAPE_SOUTH: VoxelShape = this.SHAPE_NORTH.south()
+		val SHAPE_EAST: VoxelShape = this.SHAPE_NORTH.east()
+		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.west()
 	}
 
 	override fun createBlockStateDefinition(builder: Builder<Block, BlockState>) {
@@ -127,8 +64,8 @@ class GeneratorBlock : Block(Properties.of()) {
 		when (state.getValue(HORIZONTAL_FACING)) {
 			NORTH -> Companion.SHAPE_NORTH
 			SOUTH -> Companion.SHAPE_SOUTH
-			EAST  -> Companion.SHAPE_EAST
-			WEST  -> Companion.SHAPE_WEST
-			else  -> Shapes.block()
+			EAST -> Companion.SHAPE_EAST
+			WEST -> Companion.SHAPE_WEST
+			else -> Shapes.block()
 		}
 }

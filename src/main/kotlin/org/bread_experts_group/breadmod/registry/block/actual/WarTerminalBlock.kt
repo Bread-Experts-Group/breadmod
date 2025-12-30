@@ -26,43 +26,29 @@ import org.bread_experts_group.breadmod.data_holders.server.WarTimerData.Compani
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerToggle
 import org.bread_experts_group.breadmod.util.combine
+import org.bread_experts_group.breadmod.util.east
+import org.bread_experts_group.breadmod.util.south
+import org.bread_experts_group.breadmod.util.west
 import java.util.stream.Stream
 
-class WarTerminalBlock : Block(Properties.of()) {
+class WarTerminalBlock : BreadModBlock(Properties.of()) {
 	private companion object {
-		val northAABB: VoxelShape = Stream.of(
+		val SHAPE_NORTH: VoxelShape = Stream.of(
 			box(0.0, 6.0, 0.0, 16.0, 7.0, 1.0),
 			box(0.0, 0.0, 1.0, 16.0, 7.0, 5.0),
 			box(0.0, 0.0, 5.0, 16.0, 16.0, 16.0)
 		).combine()
-		val southAABB: VoxelShape = Stream.of(
-			box(0.0, 6.0, 15.0, 16.0, 7.0, 16.0),
-			box(0.0, 0.0, 11.0, 16.0, 7.0, 15.0),
-			box(0.0, 0.0, 0.0, 16.0, 16.0, 11.0)
-		).combine()
-		val eastAABB: VoxelShape = Stream.of(
-			box(15.0, 6.0, 0.0, 16.0, 7.0, 16.0),
-			box(11.0, 0.0, 0.0, 15.0, 7.0, 16.0),
-			box(0.0, 0.0, 0.0, 11.0, 16.0, 16.0)
-		).combine()
-		val westAABB: VoxelShape = Stream.of(
-			box(0.0, 6.0, 0.0, 1.0, 7.0, 16.0),
-			box(1.0, 0.0, 0.0, 5.0, 7.0, 16.0),
-			box(5.0, 0.0, 0.0, 16.0, 16.0, 16.0)
-		).combine()
+		val SHAPE_SOUTH: VoxelShape = this.SHAPE_NORTH.south()
+		val SHAPE_EAST: VoxelShape = this.SHAPE_NORTH.east()
+		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.west()
 	}
 
-	init {
-		this.registerDefaultState(
-			this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)
-		)
-	}
+	override fun getStateForPlacement(context: BlockPlaceContext): BlockState =
+		this.defaultBlockState()
+			.setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection.opposite)
 
-	override fun getStateForPlacement(pContext: BlockPlaceContext): BlockState =
-		this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, pContext.horizontalDirection.opposite)
-
-	override fun createBlockStateDefinition(pBuilder: StateDefinition.Builder<Block, BlockState>) {
-		pBuilder.add(BlockStateProperties.HORIZONTAL_FACING)
+	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
+		builder.add(BlockStateProperties.HORIZONTAL_FACING)
 	}
 
 	override fun playerWillDestroy(
@@ -78,7 +64,7 @@ class WarTerminalBlock : Block(Properties.of()) {
 				if (check.active) increaseTime(player, check, 30)
 			} else {
 				warTimerMap[player] = WarTimerData(timeLeft = 0)
-				val data = warTimerMap[player]!!
+				val data = warTimerMap[player] ?: return@forEach
 				WarOverlay.timeLeft = data.timeLeft
 				data.increaseTime += 30
 				PacketDistributor.sendToPlayer(player, WarTimerIncrement(true, data.increaseTime))
@@ -88,25 +74,19 @@ class WarTerminalBlock : Block(Properties.of()) {
 		return super.playerWillDestroy(level, pos, state, thisPlayer)
 	}
 
-	@Deprecated(
-		"Deprecated in Java", ReplaceWith(
-			"super.getShape(pState, pLevel, pPos, pContext)",
-			"net.minecraft.world.level.block.Block"
-		)
-	)
 	override fun getShape(
-		pState: BlockState,
-		pLevel: BlockGetter,
-		pPos: BlockPos,
-		pContext: CollisionContext
-	): VoxelShape = when (pState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
-		Direction.SOUTH -> Companion.southAABB
-		Direction.EAST  -> Companion.eastAABB
-		Direction.WEST  -> Companion.westAABB
-		else            -> Companion.northAABB
+		state: BlockState,
+		level: BlockGetter,
+		pos: BlockPos,
+		context: CollisionContext
+	): VoxelShape = when (state.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+		Direction.SOUTH -> Companion.SHAPE_SOUTH
+		Direction.EAST -> Companion.SHAPE_EAST
+		Direction.WEST -> Companion.SHAPE_WEST
+		else -> Companion.SHAPE_NORTH
 	}
 
-	override fun appendHoverText(
+	override fun appendHoverTextAdditional(
 		stack: ItemStack,
 		context: TooltipContext,
 		tooltipComponents: MutableList<Component>,

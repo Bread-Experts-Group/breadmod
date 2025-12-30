@@ -15,7 +15,6 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.Rotation
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.ENABLED
@@ -28,7 +27,9 @@ import org.bread_experts_group.breadmod.client.render.entity.block.CreativeGener
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedEnergyHandler
 import org.bread_experts_group.breadmod.util.combine
-import org.bread_experts_group.breadmod.util.rotate
+import org.bread_experts_group.breadmod.util.east
+import org.bread_experts_group.breadmod.util.south
+import org.bread_experts_group.breadmod.util.west
 import java.util.stream.Stream
 
 class CreativeGeneratorBlock : BreadModBlock(
@@ -69,9 +70,9 @@ class CreativeGeneratorBlock : BreadModBlock(
 			box(15.0, 1.0, 15.0, 16.0, 15.0, 16.0),
 			box(15.0, 1.0, 0.0, 16.0, 15.0, 1.0)
 		).combine()
-		val SHAPE_SOUTH: VoxelShape = this.SHAPE_NORTH.rotate(Rotation.CLOCKWISE_180)
-		val SHAPE_EAST: VoxelShape = this.SHAPE_NORTH.rotate(Rotation.CLOCKWISE_90)
-		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
+		val SHAPE_SOUTH: VoxelShape = this.SHAPE_NORTH.south()
+		val SHAPE_EAST: VoxelShape = this.SHAPE_NORTH.east()
+		val SHAPE_WEST: VoxelShape = this.SHAPE_NORTH.west()
 	}
 
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
@@ -89,7 +90,7 @@ class CreativeGeneratorBlock : BreadModBlock(
 		}
 	}
 
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::CreativeGeneratorRenderer
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {

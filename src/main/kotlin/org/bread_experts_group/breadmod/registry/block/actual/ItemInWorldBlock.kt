@@ -25,14 +25,11 @@ class ItemInWorldBlock : BreadModBlock(
 		.pushReaction(PushReaction.DESTROY)
 ) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val inventory = SlotQueueHandler()
-		return mapOf(
-			SlotQueueHandler.BLOCK_VOID to mapOf(null to { _ -> inventory })
-		)
-	}
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(
+		this.setupHandlerPair(SlotQueueHandler.BLOCK_VOID, SlotQueueHandler())
+	)
 
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::ItemInWorldRenderer
 
 	override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {

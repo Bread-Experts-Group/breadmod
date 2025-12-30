@@ -24,7 +24,7 @@ import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.phys.BlockHitResult
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 
-class RandomSoundBlock : Block(
+class RandomSoundBlock : BreadModBlock(
 	Properties.of()
 		.strength(4f, 6f)
 		.mapColor(MapColor.COLOR_GRAY)
@@ -90,7 +90,7 @@ class RandomSoundBlock : Block(
 		return true
 	}
 
-	override fun appendHoverText(
+	override fun appendHoverTextAdditional(
 		stack: ItemStack,
 		context: Item.TooltipContext,
 		tooltipComponents: MutableList<Component>,

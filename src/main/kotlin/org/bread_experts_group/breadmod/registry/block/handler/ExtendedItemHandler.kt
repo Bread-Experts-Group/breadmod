@@ -30,6 +30,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.ITEM_ID_SERIALIZE
 import org.bread_experts_group.breadmod.network.BreadModCodecs.compose
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedItemHandler.Slot.Companion.SLOT_ITEM_ID_SERIALIZER
+import org.bread_experts_group.breadmod.registry.block.handler.proxy.ExtendedItemHandlerProxy
 import org.bread_experts_group.breadmod.registry.entity.ModEntityTypes
 import org.bread_experts_group.breadmod.registry.entity.actual.BigItemContainer
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
@@ -59,6 +60,9 @@ class ExtendedItemHandler(
 	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
 	val slots: MutableMap<Int, Slot> = mutableMapOf(*slots.mapIndexed { index, slot -> index to slot }.toTypedArray())
+
+	fun newProxy(vararg slotMap: Pair<Int, Int>): ExtendedItemHandlerProxy =
+		ExtendedItemHandlerProxy(this, *slotMap)
 
 	fun dropContents(pos: BlockPos, level: Level) {
 		val accumulated = mutableMapOf<Item, MutableMap<DataComponentMap, BigDecimal>>()
@@ -133,9 +137,9 @@ class ExtendedItemHandler(
 		stack: ItemStack,
 		simulate: Boolean
 	): ItemStack {
-		val transaction = this.bigInsertItem(slot, BigDescriptor.ofItemStack(stack), simulate)
-		val stack = ItemStack(transaction.value, transaction.amount.int)
-		stack.applyComponents(transaction.components)
+		val (amount, value, components) = this.bigInsertItem(slot, BigDescriptor.ofItemStack(stack), simulate)
+		val stack = ItemStack(value, amount.int)
+		stack.applyComponents(components)
 		return stack
 	}
 
@@ -194,7 +198,7 @@ class ExtendedItemHandler(
 
 	override fun serializeDataComponent(map: DataComponentMap.Builder) {
 		val slots = mutableListOf<Slot>()
-		this.slots.forEach { slots.add(it.key, it.value) }
+		this.slots.forEach { (index, slot) -> slots.add(index, slot) }
 		map.set(SLOTS, slots)
 	}
 

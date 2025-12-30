@@ -55,12 +55,12 @@ class RadioBlock : BreadModBlock(
 			LerpLabels.TILT_BETA to LerpTicker.LerpParams(clampMin = 0f, clampMax = 3.15f)
 		)
 		return mapOf(
-			RadioStateHandler.BLOCK_VOID to mapOf(null to { _ -> state }),
-			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp })
+			this.setupHandlerPair(RadioStateHandler.BLOCK_VOID, RadioStateHandler()),
+			this.setupHandlerPair(LerpTickerHandler.BLOCK_VOID, lerp)
 		)
 	}
 
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::RadioRenderer
 
 	override val clientTickBM: BreadModTicker<ClientLevel> by lazy {

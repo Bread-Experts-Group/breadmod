@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState
 
 class ItemPedestalBlock : BreadModBlock(Properties.of()) {
 	override fun entityInside(state: BlockState, level: Level, pos: BlockPos, entity: Entity) {
-		entity as? ItemEntity ?: return
+		val itemEntity = entity as? ItemEntity ?: return
 	}
 
 	override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL

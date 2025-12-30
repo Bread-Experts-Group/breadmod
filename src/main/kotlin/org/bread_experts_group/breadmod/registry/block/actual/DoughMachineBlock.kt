@@ -5,7 +5,6 @@ import net.minecraft.core.Direction
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.MenuType
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.block.Block
@@ -27,35 +26,22 @@ class DoughMachineBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
 	override fun ofMenu(): (MenuType<*>, Int, Inventory, BreadModBlockEntity) -> BreadModMenu = ::DoughMachineMenu
 	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val itemStorage = ExtendedItemHandler(
-			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
-			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
-			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal()),
-			ExtendedItemHandler.Slot(Item.DEFAULT_MAX_STACK_SIZE.toBigDecimal())
-		)
-		val energy = ExtendedEnergyHandler(BigDecimal(1000000), BigDecimal(5000))
-		val energyStorage = { _: BreadModBlockEntity -> energy }
-		val fluid = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))
-		val fluidStorage = { _: BreadModBlockEntity -> fluid }
+		val itemStorage = ExtendedItemHandler.ofSlotsWithCapacity(4, 64)
 		return mapOf(
-			Capabilities.ItemHandler.BLOCK to mapOf(null to { _ -> itemStorage }),
-			Capabilities.EnergyStorage.BLOCK to mapOf(
-				null to energyStorage,
-				Direction.UP to energyStorage,
-				Direction.DOWN to energyStorage,
-				Direction.NORTH to energyStorage,
-				Direction.SOUTH to energyStorage,
-				Direction.EAST to energyStorage,
-				Direction.WEST to energyStorage,
+			Capabilities.ItemHandler.BLOCK to mapOf(
+				null to { _ -> itemStorage },
+				Direction.UP to { _ -> itemStorage.newProxy(0 to 0, 1 to 1) },
+				Direction.DOWN to { _ -> itemStorage.newProxy(0 to 2, 1 to 3) },
 			),
-			Capabilities.FluidHandler.BLOCK to mapOf(
-				null to fluidStorage,
-				Direction.UP to fluidStorage,
-				Direction.DOWN to fluidStorage,
-				Direction.NORTH to fluidStorage,
-				Direction.SOUTH to fluidStorage,
-				Direction.EAST to fluidStorage,
-				Direction.WEST to fluidStorage,
+			this.setupHandlerPair(
+				Capabilities.EnergyStorage.BLOCK,
+				ExtendedEnergyHandler(BigDecimal(1000000), BigDecimal(5500)),
+				*BreadModBlock.ALL_DIRECTIONS
+			),
+			this.setupHandlerPair(
+				Capabilities.FluidHandler.BLOCK,
+				ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000))),
+				*BreadModBlock.ALL_DIRECTIONS
 			)
 		)
 	}

@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.registry.block.actual
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -32,24 +31,16 @@ import kotlin.math.roundToInt
 
 class EnergyStorageBlock : BreadModBlock(Properties.of()) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val container = ExtendedEnergyHandler(BigDecimal(10000000))
-		val storage = { _: BreadModBlockEntity -> container }
-		return mapOf(
-			Capabilities.EnergyStorage.BLOCK to mapOf(
-				null to storage,
-				Direction.UP to storage,
-				Direction.DOWN to storage,
-				Direction.NORTH to storage,
-				Direction.SOUTH to storage,
-				Direction.EAST to storage,
-				Direction.WEST to storage,
-			),
-			EnergyStorageStateHandler.BLOCK_VOID to mapOf(null to { _ -> EnergyStorageStateHandler() })
-		)
-	}
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(
+		this.setupHandlerPair(
+			Capabilities.EnergyStorage.BLOCK,
+			ExtendedEnergyHandler(BigDecimal(10000000)),
+			*BreadModBlock.ALL_DIRECTIONS
+		),
+		this.setupHandlerPair(EnergyStorageStateHandler.BLOCK_VOID, EnergyStorageStateHandler())
+	)
 
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::EnergyStorageRenderer
 
 	override val serverTickBM: BreadModTicker<ServerLevel> = { entity, level, state, pos ->

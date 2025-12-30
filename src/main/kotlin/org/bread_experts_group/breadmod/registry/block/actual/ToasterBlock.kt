@@ -64,14 +64,17 @@ class ToasterBlock : BreadModBlock(
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::ToasterRenderer
 
-	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val storage = ExtendedItemHandler.ofSlotsWithCapacity(1, 2)
-		val recipe = FERecipeHandler(ModRecipeTypes.TOASTING.get())
-		return mapOf(
-			Capabilities.ItemHandler.BLOCK to mapOf(null to { _ -> storage }),
-			FERecipeHandler.BLOCK_VOID to mapOf(null to { _ -> recipe })
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(
+		this.setupHandlerPair(
+			Capabilities.ItemHandler.BLOCK,
+			ExtendedItemHandler.ofSlotsWithCapacity(1, 2),
+			Direction.UP, Direction.DOWN
+		),
+		this.setupHandlerPair(
+			FERecipeHandler.BLOCK_VOID,
+			FERecipeHandler(ModRecipeTypes.TOASTING.get())
 		)
-	}
+	)
 
 	override val commonTickBM: BreadModTicker<Level> = tick@{ entity, level, state, pos ->
 		if (!state.getValue(TRIGGERED)) return@tick

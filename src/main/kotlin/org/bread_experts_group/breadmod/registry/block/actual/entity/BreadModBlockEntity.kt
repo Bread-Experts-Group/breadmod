@@ -153,7 +153,7 @@ class BreadModBlockEntity(
 
 	override fun setRemoved() {
 		this.capabilities.forEach { (capability, _) ->
-			(this.getCapability(capability) as? DiscardableHandler)?.discard()
+			(this.getCapabilityOrNull(capability) as? DiscardableHandler)?.discard()
 		}
 		super.setRemoved()
 	}

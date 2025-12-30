@@ -24,7 +24,6 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.Rotation
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING
@@ -60,10 +59,13 @@ import org.bread_experts_group.breadmod.registry.block.handler.state.DoubleOrNot
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.Hitbox
 import org.bread_experts_group.breadmod.util.combine
-import org.bread_experts_group.breadmod.util.rotate
+import org.bread_experts_group.breadmod.util.east
+import org.bread_experts_group.breadmod.util.south
+import org.bread_experts_group.breadmod.util.west
 import java.util.Random
 import java.util.stream.Stream
 
+@Suppress("Destructure")
 class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 	companion object {
 		// shapes lower
@@ -86,17 +88,17 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 			box(0.0, 7.0, 3.0, 1.0, 8.0, 4.0),
 			box(0.0, 7.0, 4.0, 1.0, 9.0, 5.0)
 		).combine()
-		val SHAPE_LOWER_SOUTH: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(Rotation.CLOCKWISE_180)
-		val SHAPE_LOWER_EAST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(Rotation.CLOCKWISE_90)
-		val SHAPE_LOWER_WEST: VoxelShape = this.SHAPE_LOWER_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
+		val SHAPE_LOWER_SOUTH: VoxelShape = this.SHAPE_LOWER_NORTH.south()
+		val SHAPE_LOWER_EAST: VoxelShape = this.SHAPE_LOWER_NORTH.east()
+		val SHAPE_LOWER_WEST: VoxelShape = this.SHAPE_LOWER_NORTH.west()
 		val SHAPE_MIDDLE_NORTH: VoxelShape = Stream.of(
 			box(15.0, 0.0, 8.0, 16.0, 16.0, 16.0),
 			box(1.0, 0.0, 9.0, 15.0, 16.0, 16.0),
 			box(0.0, 0.0, 8.0, 1.0, 16.0, 16.0)
 		).combine()
-		val SHAPE_MIDDLE_SOUTH: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(Rotation.CLOCKWISE_180)
-		val SHAPE_MIDDLE_EAST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(Rotation.CLOCKWISE_90)
-		val SHAPE_MIDDLE_WEST: VoxelShape = this.SHAPE_MIDDLE_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
+		val SHAPE_MIDDLE_SOUTH: VoxelShape = this.SHAPE_MIDDLE_NORTH.south()
+		val SHAPE_MIDDLE_EAST: VoxelShape = this.SHAPE_MIDDLE_NORTH.east()
+		val SHAPE_MIDDLE_WEST: VoxelShape = this.SHAPE_MIDDLE_NORTH.west()
 
 		// shapes upper
 		val SHAPE_UPPER_NORTH: VoxelShape = Stream.of(
@@ -109,9 +111,9 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 			box(15.0, 0.0, 8.0, 16.0, 7.0, 16.0),
 			box(1.0, 10.0, 10.8, 15.0, 15.0, 11.0)
 		).combine()
-		val SHAPE_UPPER_SOUTH: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(Rotation.CLOCKWISE_180)
-		val SHAPE_UPPER_EAST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(Rotation.CLOCKWISE_90)
-		val SHAPE_UPPER_WEST: VoxelShape = this.SHAPE_UPPER_NORTH.rotate(Rotation.COUNTERCLOCKWISE_90)
+		val SHAPE_UPPER_SOUTH: VoxelShape = this.SHAPE_UPPER_NORTH.south()
+		val SHAPE_UPPER_EAST: VoxelShape = this.SHAPE_UPPER_NORTH.east()
+		val SHAPE_UPPER_WEST: VoxelShape = this.SHAPE_UPPER_NORTH.west()
 		val SHEARS_TAG: TagKey<Item> = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:tools/shear"))
 		val BOWS_TAG: TagKey<Item> = TagKey.create(Registries.ITEM, ResourceLocation.parse("c:tools/bow"))
 		val SOUNDS: List<DeferredHolder<SoundEvent, SoundEvent>> = listOf(
@@ -214,43 +216,53 @@ class DoubleOrNothingBlock : BreadModBlock(Properties.of()) {
 		}
 	}
 
-	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val state = DoubleOrNothingStateHandler()
-		val lerp = LerpTickerHandler(
-			LerpLabels.ZOOM to LerpTicker.LerpParams(clampMin = 0f, clampMax = 0.55f),
-			LerpLabels.TILT_P to LerpTicker.LerpParams(clampMin = 0f, clampMax = 20f),
-			LerpLabels.TILT_N to LerpTicker.LerpParams(clampMin = -20f, clampMax = 0f)
-		)
-		return mapOf(
-			DoubleOrNothingStateHandler.BLOCK_VOID to mapOf(null to { _ -> state }),
-			LerpTickerHandler.BLOCK_VOID to mapOf(null to { _ -> lerp }),
-			HitboxHandler.BLOCK_VOID to mapOf(null to { entity ->
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(
+		this.setupHandlerPair(DoubleOrNothingStateHandler.BLOCK_VOID, DoubleOrNothingStateHandler()),
+		this.setupHandlerPair(
+			LerpTickerHandler.BLOCK_VOID,
+			LerpTickerHandler(
+				LerpLabels.ZOOM to LerpTicker.LerpParams(clampMin = 0f, clampMax = 0.55f),
+				LerpLabels.TILT_P to LerpTicker.LerpParams(clampMin = 0f, clampMax = 20f),
+				LerpLabels.TILT_N to LerpTicker.LerpParams(clampMin = -20f, clampMax = 0f)
+			)
+		),
+		this.setupHandlerPair(
+			HitboxHandler.BLOCK_VOID,
+			{ entity ->
 				val pos = entity.blockPos
 				val facing = entity.blockState.getValue(HORIZONTAL_FACING)
 				val offset = pos.relative(facing).center
-				val nsOffset = if (facing == Direction.SOUTH) 0.219 else if (facing == Direction.NORTH) -0.219 else 0.0
-				val ewOffset = if (facing == Direction.WEST) 0.219 else if (facing == Direction.EAST) -0.219 else 0.0
+				val nsOffset = when (facing) {
+					Direction.SOUTH -> 0.219
+					Direction.NORTH -> -0.219
+					else -> 0.0
+				}
+				val ewOffset = when (facing) {
+					Direction.WEST -> 0.219
+					Direction.EAST -> -0.219
+					else -> 0.0
+				}
 				HitboxHandler(
 					Hitbox(
 						0.185,
 						pos,
 						offset.relative(facing, -0.88).add(nsOffset, 0.0, ewOffset)
-					) { level, pos, state, player, entity ->
+					) { level, pos, _, player, _ ->
 						this.triggerDouble(level, pos, player)
 					},
 					Hitbox(
 						0.185,
 						pos,
 						offset.relative(facing, -0.88).add(-nsOffset, 0.0, -ewOffset)
-					) { level, pos, state, player, entity ->
+					) { level, pos, _, player, _ ->
 						this.triggerCashout(level, pos, player)
 					}
 				)
-			})
+			}
 		)
-	}
+	)
 
-	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
+	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::DoubleOrNothingRenderer
 
 	override val commonTickBM: BreadModTicker<Level> = { entity, level, _, pos ->

@@ -30,6 +30,7 @@ import org.bread_experts_group.breadmod.network.BreadModCodecs.FLUID_ID_SERIALIZ
 import org.bread_experts_group.breadmod.network.BreadModCodecs.compose
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler.Tank.Companion.TANK_FLUID_ID_SERIALIZER
+import org.bread_experts_group.breadmod.registry.block.handler.proxy.ExtendedFluidHandlerProxy
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.Color.DARK_GRAY
 import org.bread_experts_group.breadmod.util.Color.LIGHT_GRAY
@@ -50,6 +51,9 @@ class ExtendedFluidHandler(
 	override fun getTankCapacity(tank: Int): Int = if (this.tanks.containsKey(tank)) Int.MAX_VALUE else 0
 	override fun isFluidValid(tank: Int, stack: FluidStack): Boolean = this.tanks[tank]?.validity
 		?.invoke(stack.fluid, BigDecimal(stack.amount), stack.components) ?: true
+
+	fun newProxy(vararg tankMap: Pair<Int, Int>): ExtendedFluidHandlerProxy =
+		ExtendedFluidHandlerProxy(this, *tankMap)
 
 	fun bigFill(
 		fluid: Fluid,

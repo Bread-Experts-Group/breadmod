@@ -626,7 +626,7 @@ object Registry {
 		}
 		NeoForge.EVENT_BUS.addListener { _: ServerStoppingEvent ->
 			if (FMLEnvironment.dist.isClient) {
-				CameraTexture.textures.forEach { it.value.close() }
+				CameraTexture.textures.forEach { (_, texture) -> texture.close() }
 				CameraTexture.textures.clear()
 			}
 		}
@@ -714,7 +714,7 @@ object Registry {
 					event.registerBlockEntity(
 						capability as BlockCapability<Any, Any>,
 						(block.blockEntityType ?: return@addListener).get()
-					) { entity, context -> (entity as BreadModBlockEntity).getCapability(capability, context) }
+					) { entity, context -> (entity as BreadModBlockEntity).getCapabilityOrNull(capability, context) }
 				}
 			}
 		}

@@ -31,6 +31,6 @@ class ModelBlock : BreadModBlock(BlockBehaviour.Properties.of().noOcclusion()) {
 		this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.horizontalDirection)
 
 	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(
-		ModelHandler.BLOCK_VOID to mapOf(null to { _ -> ModelHandler() })
+		this.setupHandlerPair(ModelHandler.BLOCK_VOID, ModelHandler())
 	)
 }

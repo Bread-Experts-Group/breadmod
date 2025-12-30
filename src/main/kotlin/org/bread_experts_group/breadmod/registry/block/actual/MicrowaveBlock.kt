@@ -31,7 +31,6 @@ import org.bread_experts_group.breadmod.util.combine
 import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.rotate
 import org.bread_experts_group.breadmod.util.targetFaceSection
-import java.math.BigDecimal
 import java.util.stream.Stream
 
 class MicrowaveBlock : BreadModBlock(Properties.of()) {
@@ -66,12 +65,13 @@ class MicrowaveBlock : BreadModBlock(Properties.of()) {
 	}
 
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val storage = ExtendedItemHandler(ExtendedItemHandler.Slot(BigDecimal.ONE))
-		return mapOf(
-			Capabilities.ItemHandler.BLOCK to mapOf(null to { _ -> storage })
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(
+		this.setupHandlerPair(
+			Capabilities.ItemHandler.BLOCK,
+			ExtendedItemHandler.ofSlotsWithCapacity(1, 64),
+			*BreadModBlock.ALL_DIRECTIONS
 		)
-	}
+	)
 
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>)? =
 		::MicrowaveRenderer

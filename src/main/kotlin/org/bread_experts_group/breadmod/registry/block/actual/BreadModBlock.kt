@@ -6,6 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.HitResult
+import net.neoforged.neoforge.capabilities.BaseCapability
 import net.neoforged.neoforge.fluids.FluidUtil
 import net.neoforged.neoforge.registries.DeferredHolder
 import org.apache.logging.log4j.LogManager
@@ -44,6 +46,10 @@ typealias BreadModTicker<T> = ((entity: BreadModBlockEntity, level: T, state: Bl
 abstract class BreadModBlock(
 	blockProperties: Properties
 ) : BaseEntityBlock(blockProperties) {
+	companion object {
+		val ALL_DIRECTIONS: Array<Direction> = Direction.entries.toTypedArray()
+	}
+
 	protected val logger: Logger by lazy { LogManager.getLogger("${this.descriptionId} / ${this.name.string}") }
 	final override fun codec(): MapCodec<out BaseEntityBlock> = BlockBehaviour.simpleCodec { this }
 	override fun getRenderShape(state: BlockState): RenderShape = MODEL
@@ -63,9 +69,26 @@ abstract class BreadModBlock(
 	final override fun newBlockEntity(pos: BlockPos, state: BlockState): BreadModBlockEntity? {
 		if (!this.shouldCreateEntity(pos to state)) return null
 		val blockEntityType = this.blockEntityType ?: return null
-		val blockEntity = BreadModBlockEntity(blockEntityType.get(), pos, state, this.ofCapabilities())
-		return blockEntity
+		return BreadModBlockEntity(blockEntityType.get(), pos, state, this.ofCapabilities())
 	}
+
+	@Suppress("UNCHECKED_CAST")
+	protected fun <T> setupHandlerPair(
+		capability: BaseCapability<T, *>,
+		handler: (BreadModBlockEntity) -> T,
+		vararg sides: Direction
+	): Pair<BaseCapability<*, *>, Map<Any?, Function1<BreadModBlockEntity, Any>>> = capability to buildMap {
+		// Cast as Any so it can be passed into ofCapabilities without type issues.
+		this[null] = handler as (BreadModBlockEntity) -> Any // Null direction so mods like jade can access it.
+		sides.forEach { this[it] = handler }
+	}
+
+	protected fun <T> setupHandlerPair(
+		capability: BaseCapability<T, *>,
+		handler: T,
+		vararg sides: Direction,
+	): Pair<BaseCapability<*, *>, Map<Any?, Function1<BreadModBlockEntity, Any>>> =
+		this.setupHandlerPair(capability, { _ -> handler }, *sides)
 
 	open val commonTickBM: BreadModTicker<Level> = null
 
@@ -101,10 +124,10 @@ abstract class BreadModBlock(
 		|| (level.isClientSide && this.clientTickBM != null)
 		|| (!level.isClientSide && this.serverTickBM != null)
 	) {
-		if (level.isClientSide) BlockEntityTicker<T> { level, pos, state, entity ->
+		if (level.isClientSide) BlockEntityTicker { level, pos, state, entity ->
 			this.clientTickBM?.invoke(entity as BreadModBlockEntity, level as ClientLevel, state, pos)
 			this.commonTickBM?.invoke(entity as BreadModBlockEntity, level, state, pos)
-		} else BlockEntityTicker<T> { level, pos, state, entity ->
+		} else BlockEntityTicker { level, pos, state, entity ->
 			this.serverTickBM?.invoke(entity as BreadModBlockEntity, level as ServerLevel, state, pos)
 			this.commonTickBM?.invoke(entity as BreadModBlockEntity, level, state, pos)
 		}

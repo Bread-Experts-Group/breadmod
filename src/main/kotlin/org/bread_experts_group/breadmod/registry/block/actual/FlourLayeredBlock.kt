@@ -22,6 +22,5 @@ class FlourLayeredBlock : SnowLayerBlock(
 		level: BlockGetter,
 		pos: BlockPos,
 		direction: Direction
-	): Int =
-		150
+	): Int = 150
 }

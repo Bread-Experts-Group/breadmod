@@ -166,6 +166,10 @@ fun VoxelShape.rotate(rotation: Rotation): VoxelShape = combineShapes(
 	this.toAabbs().map { Shapes.create(it.move(shapeOrigin).rotate(rotation).move(-shapeOrigin)) }
 )
 
+fun VoxelShape.south(): VoxelShape = this.rotate(Rotation.CLOCKWISE_180)
+fun VoxelShape.east(): VoxelShape = this.rotate(Rotation.CLOCKWISE_90)
+fun VoxelShape.west(): VoxelShape = this.rotate(Rotation.COUNTERCLOCKWISE_90)
+
 /// Start raycast functions ///
 class HitResult<T>(
 	val positionFrom: Vec3,

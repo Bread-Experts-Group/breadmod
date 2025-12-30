@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.registry.block.actual
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
@@ -21,27 +20,17 @@ import org.bread_experts_group.breadmod.registry.block.actual.util.ModBlockState
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
 import org.bread_experts_group.breadmod.registry.block.handler.state.DieselGeneratorStateHandler
 import java.math.BigDecimal
-import java.util.Optional
 
 class DieselGeneratorBlock : BreadModBlock(Properties.ofFullCopy(Blocks.IRON_BLOCK)) {
 	override fun shouldCreateEntity(with: Pair<BlockPos, BlockState>?): Boolean = true
-	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> {
-		val state = DieselGeneratorStateHandler()
-		val fluids = ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000)))
-		val storage = { _: BreadModBlockEntity -> fluids }
-		return mapOf(
-			DieselGeneratorStateHandler.BLOCK_VOID to mapOf(Optional.empty<Any>() to { _ -> state }),
-			Capabilities.FluidHandler.BLOCK to mapOf(
-				null to storage,
-				Direction.UP to storage,
-				Direction.DOWN to storage,
-				Direction.NORTH to storage,
-				Direction.SOUTH to storage,
-				Direction.EAST to storage,
-				Direction.WEST to storage,
-			)
+	override fun ofCapabilities(): CapabilityMap<(BreadModBlockEntity) -> Any> = mapOf(
+		this.setupHandlerPair(DieselGeneratorStateHandler.BLOCK_VOID, DieselGeneratorStateHandler()),
+		this.setupHandlerPair(
+			Capabilities.FluidHandler.BLOCK,
+			ExtendedFluidHandler(ExtendedFluidHandler.Tank(BigDecimal.valueOf(10_000))),
+			*BreadModBlock.ALL_DIRECTIONS
 		)
-	}
+	)
 
 	override fun ofRenderer(): ((BlockEntityRendererProvider.Context) -> BlockEntityRenderer<out BreadModBlockEntity>) =
 		::DieselGeneratorRenderer

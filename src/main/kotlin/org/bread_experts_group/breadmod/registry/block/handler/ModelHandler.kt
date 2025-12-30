@@ -25,6 +25,7 @@ class ModelHandler : DataComponentSerializable, INBTSerializable<ListTag> {
 	}
 
 	var blocks: List<Model> = listOf()
+
 	override fun serializeDataComponent(map: DataComponentMap.Builder) {
 		map.set(ModDataComponents.MODEL_DATA, this.blocks)
 	}
