@@ -22,7 +22,6 @@ import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.translate
-import org.bread_experts_group.breadmod.experimental.physics_grid.micro.ServerMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
@@ -163,7 +162,7 @@ class PhysicsGrid private constructor(
 
 	fun getNearbyShapesAndPos(entity: Entity): List<Pair<BlockPos, VoxelShape>> {
 		val nearbyBlocks =
-			this.microLevel.blocks.filter { this.pos.add(it.component1().toVec3()).distanceTo(entity.position()) < 5.0 }
+			this.microLevel.blocks.filter { (pos, _) -> this.pos.add(pos.toVec3()).distanceTo(entity.position()) < 5.0 }
 		return buildList {
 			nearbyBlocks.forEach { (pos, state) ->
 				val (x, y, z) = this@PhysicsGrid.pos.add(pos.toVec3())

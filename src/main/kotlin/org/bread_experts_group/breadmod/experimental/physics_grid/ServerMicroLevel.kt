@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.physics_grid.micro
+package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
@@ -13,13 +13,11 @@ import net.minecraft.world.phys.BlockHitResult
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.util.minus
 import org.bread_experts_group.breadmod.util.toVec3
-import sun.misc.Unsafe
 
 class ServerMicroLevel : ServerLevel(
-	MicroMinecraftServer(),
+	null,
 	null,
 	null,
 	null,
@@ -37,16 +35,13 @@ class ServerMicroLevel : ServerLevel(
 			blocks: MutableMap<BlockPos, BlockState>,
 			blockEntities: MutableMap<BlockPos, BlockEntity>
 		): ServerMicroLevel {
-			val theUnsafe = Unsafe::class.java.getDeclaredField("theUnsafe")
-			theUnsafe.isAccessible = true
-			val unsafe = theUnsafe.get(null) as Unsafe
-			val microLevel = unsafe.allocateInstance(ServerMicroLevel::class.java) as ServerMicroLevel
+			val microLevel = ServerMicroLevel()
 			microLevel.init(blocks, blockEntities)
 			return microLevel
 		}
 	}
 
-	private lateinit var logger: Logger
+	private val logger: Logger = LogManager.getLogger()
 	private lateinit var grid: PhysicsGrid
 	lateinit var blocks: MutableMap<BlockPos, BlockState>
 	lateinit var blockEntities: MutableMap<BlockPos, BlockEntity>
@@ -55,7 +50,6 @@ class ServerMicroLevel : ServerLevel(
 		blocks: MutableMap<BlockPos, BlockState>,
 		blockEntities: MutableMap<BlockPos, BlockEntity>
 	) {
-		this.logger = LogManager.getLogger()
 		this.blocks = blocks
 		this.blockEntities = blockEntities
 	}
@@ -89,4 +83,6 @@ class ServerMicroLevel : ServerLevel(
 		localClient.player!!.displayClientMessage(Component.literal("${result.blockPos}, ${result.location}"), true)
 		return result
 	}
+
+	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}"
 }
