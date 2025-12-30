@@ -14,6 +14,7 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -26,11 +27,8 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMes
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
-import org.bread_experts_group.breadmod.util.div
 import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.minus
-import org.bread_experts_group.breadmod.util.plus
-import org.bread_experts_group.breadmod.util.times
 import org.bread_experts_group.breadmod.util.toVec3
 
 class PhysicsGrid private constructor(
@@ -50,26 +48,15 @@ class PhysicsGrid private constructor(
 
 		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext, level: Level) {
 			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
-			val a = posA
-			val b = posB
 			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
 			val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
-			val center = ((a.center / 2.0) - (b.center / 2.0)).minus(0.5, 0.5, 0.5)
-			val bounding = AABB(
-				0.0,
-				0.0,
-				0.0,
-				a.x - b.x - 1.0,
-				a.y - b.y - 1.0,
-				a.z - b.z - 1.0
-			).move(targetPos.minus(center.times(2.0)))
-			val centerOffset = a.toVec3() + center
+			val bounding = AABB.of(BoundingBox.fromCorners(posA, posB)).move(targetPos - posA.toVec3())
 			logDebugInfo(bounding)
-			BlockPos.betweenClosedStream(a, b).forEach { pos ->
+			BlockPos.betweenClosedStream(posA, posB).forEach { pos ->
 				val immutable = pos.immutable()
 				val state = level.getBlockState(immutable)
 				if (state.isAir) return@forEach
-				val posOffset = BlockPos(immutable.x - a.x, immutable.y - a.y, immutable.z - a.z)
+				val posOffset = BlockPos(immutable.x - posA.x, immutable.y - posA.y, immutable.z - posA.z)
 				val blockEntity = level.getBlockEntity(immutable)
 				if (blockEntity != null) blockEntities[posOffset] = blockEntity
 				blocks[posOffset] = state
@@ -78,7 +65,7 @@ class PhysicsGrid private constructor(
 				PhysicsGrid(
 					ServerMicroLevel.create(blocks, blockEntities),
 					targetPos,
-					center,
+					bounding.center,
 					bounding
 				)
 			)
