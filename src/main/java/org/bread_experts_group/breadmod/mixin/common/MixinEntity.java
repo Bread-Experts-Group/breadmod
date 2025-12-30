@@ -39,7 +39,7 @@ abstract class MixinEntity {
 		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
 		Collection<PhysicsGrid> grids = PhysicsGrid.Companion.getGrids();
 		grids.forEach((grid) -> {
-			if (entity != null && entity.getBoundingBox().intersects(grid.getBounding())) {
+			if (entity != null && entity.getBoundingBox().intersects(grid.getBounding().inflate(0.5))) {
 				allShapes.addAll(grid.getNearbyShapes(entity));
 			}
 		});
