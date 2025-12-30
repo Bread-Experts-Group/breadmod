@@ -464,6 +464,7 @@
           <option value="CAST_NEVER_SUCCEEDS" />
           <option value="UnreachableCode" />
           <option value="Destructure" />
+          <option value="Unused" />
         </list>
       </option>
     </inspection_tool>

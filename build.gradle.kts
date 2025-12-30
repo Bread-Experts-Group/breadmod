@@ -20,6 +20,8 @@ version = project.properties["mod_version"] as String
 
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
+private fun RunModel.addAgent(): Unit =
+	jvmArgument("-javaagent:${file("breadmod_agent/build/libs/breadmod_agent-1.5.1-agent.jar").absolutePath}")
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
 private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:D1F2N6P75"
 
@@ -97,12 +99,14 @@ neoForge {
 		create("client") {
 			client()
 			enableTestNamespaces()
+			addAgent()
 			devLogin = true
 		}
 		create("server") {
 			server()
 			programArgument("--nogui")
 			enableTestNamespaces()
+			addAgent()
 		}
 		create("gameTestServer") {
 			type = "gameTestServer"
