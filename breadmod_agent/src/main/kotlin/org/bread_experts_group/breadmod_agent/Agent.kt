@@ -82,22 +82,29 @@ class Agent {
 							}
 							"org/bread_experts_group/breadmod/experimental/physics_grid/ServerMicroLevel" -> {
 								val model = classFile.parse(classfileBuffer)
-								classFile.transformClass(model) { classBuilder, classElement ->
-									if (classElement is MethodModel && classElement.methodName().equalsString("<init>")) {
+								var index = 0
+								val bytes = classFile.transformClass(model) { classBuilder, classElement ->
+									if (classElement is MethodModel &&
+										classElement.methodName().equalsString("<init>")
+									) {
 										classBuilder.transformMethod(classElement) { methodBuilder, methodElement ->
 											if (methodElement is CodeModel) methodBuilder.transformCode(methodElement) { codeBuilder, codeElement ->
-												codeBuilder
-													.aload(0)
-													.invokespecial(
-														ClassDesc.of(ServerLevel::class.java.name),
-														ConstantDescs.INIT_NAME,
-														MethodTypeDesc.of(ConstantDescs.CD_void)
-													)
-													.return_()
+												when (index) {
+													21 -> codeBuilder
+														.aload(0)
+														.invokespecial(
+															ClassDesc.of(ServerLevel::class.java.name),
+															ConstantDescs.INIT_NAME,
+															MethodTypeDesc.of(ConstantDescs.CD_void)
+														)
+													else if (index !in 21 .. 35) -> codeBuilder.with(codeElement)
+												}
+												index++
 											} else methodBuilder.with(methodElement)
 										}
 									} else classBuilder.with(classElement)
 								}
+								bytes
 							}
 							else -> null
 						}

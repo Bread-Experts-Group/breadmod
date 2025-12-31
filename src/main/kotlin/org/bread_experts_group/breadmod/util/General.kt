@@ -67,7 +67,6 @@ import net.neoforged.neoforge.registries.DeferredItem
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.registry.block.handler.HitboxHandler
 import org.joml.Vector3f
 import java.lang.reflect.Method
@@ -218,7 +217,8 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3, Vec3) -> T?): Hit
 	length
 ) { from, to -> selector(this.level(), from, to) }
 
-fun <T> Entity.gridRayCast(length: Double, selector: (PhysicsGrid, Entity, Vec3, Vec3) -> T?): HitResult<T>? {
+// todo probably need to dust off and clean this code for grid block detection...
+/*fun <T> Entity.gridRayCast(length: Double, selector: (PhysicsGrid, Entity, Vec3, Vec3) -> T?): HitResult<T>? {
 	val grid = PhysicsGrid.getClosestGrid(this) ?: return null
 	return rayCast(
 		grid.microLevel,
@@ -240,7 +240,7 @@ fun gridBlocks(
 		if (state.block in filterBlocks) null
 		state
 	} else null
-}
+}*/
 
 fun blocks(
 	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)
@@ -269,32 +269,6 @@ fun hitbox(player: Player): (Level, Vec3, Vec3) -> Hitbox? =
 					if (hitbox.bounds.move(pos).clip(from, to).isPresent) hitbox else null
 				}
 	}
-//data class GridHitResult(
-//	val grid: PhysicsGrid,
-//	val state: BlockState,
-//	val hitResult: net.minecraft.world.phys.HitResult
-//)
-//
-//fun blockPhysicsGrid(
-//	filter: (PhysicsGrid) -> Boolean,
-//	from: Vec3, to: Vec3, hitFluids: Boolean,
-//	collisionContext: CollisionContext
-//): GridHitResult? {
-//	return null
-//	grid@ for ((_, grid) in PhysicsGridGlobals.grids) {
-//		if (!filter.invoke(grid)) continue@grid
-//		val hitResult = grid.clip(
-//			ClipContext(
-//				from, to, ClipContext.Block.OUTLINE,
-//				if (hitFluids) ClipContext.Fluid.ANY else ClipContext.Fluid.NONE,
-//				collisionContext
-//			)
-//		)
-//		if (hitResult.type != net.minecraft.world.phys.HitResult.Type.MISS)
-//			return GridHitResult(grid, grid.getBlockState(hitResult.blockPos), hitResult)
-//	}
-//	return null
-//}
 
 /// End raycast functions ///
 fun BlockPos.isZero(): Boolean = this.x == 0 && this.y == 0 && this.z == 0

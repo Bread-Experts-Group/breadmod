@@ -1,8 +1,9 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import net.minecraft.core.BlockPos
-import net.minecraft.network.chat.Component
+import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -10,52 +11,35 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.Vec3
+import net.minecraft.world.phys.shapes.VoxelShape
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.util.minus
-import org.bread_experts_group.breadmod.util.toVec3
+import org.bread_experts_group.breadmod.util.component1
+import org.bread_experts_group.breadmod.util.component2
+import org.bread_experts_group.breadmod.util.component3
+import java.util.function.Supplier
 
-class ServerMicroLevel : ServerLevel(
-	null,
-	null,
-	null,
-	null,
-	null,
-	null,
-	null,
-	false,
-	0,
-	null,
-	true,
-	null
-) {
-	companion object {
-		fun create(
-			blocks: MutableMap<BlockPos, BlockState>,
-			blockEntities: MutableMap<BlockPos, BlockEntity>
-		): ServerMicroLevel {
-			val microLevel = ServerMicroLevel()
-			microLevel.init(blocks, blockEntities)
-			return microLevel
+// todo remember to adjust bytecode changes in the agent if you modify <init>!
+/**
+ * The super constructor in this class is replaced at runtime with a no-args constructor via the breadmod agent.
+ */
+class ServerMicroLevel(
+	val blocks: MutableMap<BlockPos, BlockState>,
+	val blockEntities: MutableMap<BlockPos, BlockEntity>
+) : ServerLevel(null, null, null, null, null, null, null, false, 0, null, true, null) {
+	private val logger: Logger = LogManager.getLogger("PhysicsGrid")
+	val shapes: MutableList<Pair<BlockPos, VoxelShape>> = this.blocks.map { (pos, state) ->
+		pos to state.getShape(this, pos)
+	}.toMutableList()
+
+	fun moveShapes(offset: Vec3) {
+		repeat(this.shapes.size) { index ->
+			val (pos, shape) = this.shapes[index]
+			val (x, y, z) = offset/*.add(pos.toVec3())*/
+			this.shapes[index] = pos to shape.move(x, y, z)
 		}
-	}
-
-	private val logger: Logger = LogManager.getLogger()
-	private lateinit var grid: PhysicsGrid
-	lateinit var blocks: MutableMap<BlockPos, BlockState>
-	lateinit var blockEntities: MutableMap<BlockPos, BlockEntity>
-
-	private fun init(
-		blocks: MutableMap<BlockPos, BlockState>,
-		blockEntities: MutableMap<BlockPos, BlockEntity>
-	) {
-		this.blocks = blocks
-		this.blockEntities = blockEntities
-	}
-
-	fun initGrid(grid: PhysicsGrid) {
-		this.grid = grid
 	}
 
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
@@ -63,6 +47,8 @@ class ServerMicroLevel : ServerLevel(
 		this.logger.fatal("nuclear bomb")
 		return false
 	}
+
+	override fun getProfilerSupplier(): Supplier<ProfilerFiller> = { localClient.profiler }
 
 	override fun getBlockState(pos: BlockPos): BlockState =
 		this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
@@ -72,17 +58,12 @@ class ServerMicroLevel : ServerLevel(
 
 	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
 
+	// todo grid clipping isn't accurate (shapes are in their proper spot according to the renderer), probably because of the limited nature of HitResult
+	//  most likely need to use our own ray casting to properly target the grid blocks, maybe a custom HitResult class?
 	override fun clip(context: ClipContext): BlockHitResult {
-		val initial = super.clip(context)
-		val result = BlockHitResult(
-			initial.location - this.grid.pos,
-			initial.direction,
-			BlockPos.containing(initial.blockPos.toVec3() - this.grid.pos),
-			initial.isInside
-		)
-		localClient.player!!.displayClientMessage(Component.literal("${result.blockPos}, ${result.location}"), true)
-		return result
+		val result = this.shapes.firstNotNullOfOrNull { (pos, shape) -> shape.clip(context.from, context.to, pos) }
+		return result ?: BlockHitResult.miss(context.to, Direction.NORTH, BlockPos.ZERO)
 	}
 
-	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}"
+	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}]"
 }

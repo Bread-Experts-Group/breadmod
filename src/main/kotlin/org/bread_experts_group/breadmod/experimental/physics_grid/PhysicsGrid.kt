@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
-import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
@@ -37,8 +36,6 @@ class PhysicsGrid private constructor(
 	val center: Vec3,
 	val bounding: AABB
 ) {
-	val random: RandomSource = RandomSource.create(42)
-
 	companion object {
 		val gridMeshes: MutableMap<PhysicsGrid, GridMesh> = mutableMapOf()
 		val grids: MutableList<PhysicsGrid> = mutableListOf()
@@ -63,7 +60,7 @@ class PhysicsGrid private constructor(
 			}
 			Companion.grids.add(
 				PhysicsGrid(
-					ServerMicroLevel.create(blocks, blockEntities),
+					ServerMicroLevel(blocks, blockEntities),
 					targetPos,
 					bounding.center,
 					bounding
@@ -75,14 +72,30 @@ class PhysicsGrid private constructor(
 	init {
 		val player = localClient.player!!
 		player.sendSystemMessage(Component.literal("blocks: ${this.microLevel.blocks.size}"))
-		this.microLevel.initGrid(this)
+		this.microLevel.moveShapes(this.pos)
 		this.attachRenderer()
 	}
 
 	fun attachRenderer() {
-		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
+		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS, { event, _ ->
 			val gridMesh = Companion.gridMeshes.getOrPut(this) { GridMesh(this) }
 			val poseStack = event.poseStack
+/*			this.microLevel.shapes.forEach { (_, shape) ->
+				shape.toAabbs().forEach {
+					poseStack.pushPose()
+					poseStack.offsetRenderToCameraPos(shape.bounds().minPosition, event.camera)
+					DebugRenderer.renderFilledBox(
+						poseStack,
+						localClient.renderBuffers().bufferSource(),
+						it,
+						0.7f,
+						0.7f,
+						1f,
+						0.2f
+					)
+					poseStack.popPose()
+				}
+			}*/
 			gridMesh.compile(poseStack)
 			val shaderInstance = RenderSystem.getShader() ?: return@add true
 			val (x, y, z) = event.camera.position

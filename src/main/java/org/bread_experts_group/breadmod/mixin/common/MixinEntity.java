@@ -5,6 +5,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -56,50 +57,14 @@ abstract class MixinEntity {
 			Vec3 vec3 = this.getEyePosition(partialTicks);
 			Vec3 vec31 = this.getViewVector(partialTicks);
 			Vec3 vec32 = vec3.add(vec31.x * hitDistance, vec31.y * hitDistance, vec31.z * hitDistance);
-			breadmod$getThis().level().addParticle(ParticleTypes.END_ROD, vec32.x, vec32.y, vec32.z, 0.0, 0.0, 0.0);
-			cir.setReturnValue(grid.getMicroLevel().clip(new ClipContext(vec3, vec32, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, breadmod$getThis())));
+			BlockHitResult result = grid.getMicroLevel().clip(new ClipContext(vec3, vec32, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, breadmod$getThis()));
+			double x = result.getLocation().x;
+			double y = result.getLocation().y;
+			double z = result.getLocation().z;
+			breadmod$getThis().level().addParticle(ParticleTypes.END_ROD, x, y, z, 0.0, 0.0, 0.0);
+			cir.setReturnValue(result);
 		}
-//		org.bread_experts_group.breadmod.util.HitResult<BlockState> gridCast =
-//				GeneralKt.gridRayCast(breadmod$getThis(), hitDistance, GeneralKt.gridBlocks());
-//		if (gridCast != null) {
-//			cir.setReturnValue(new BlockHitResult(gridCast.getHitPosition(), gridCast.getHitSide(), gridCast.getBlockPosition(), false));
-//		}
 	}
-
-	// todo do when we have a working server level impl
-	//	@Inject(method = "pick", at = @At("HEAD"), cancellable = true)
-//	private void pick(
-//			double hitDistance, float partialTicks,
-//			boolean hitFluids,
-//			CallbackInfoReturnable<net.minecraft.world.phys.HitResult> cir
-//	) {
-//		Vec3 eyePosition = this.getEyePosition(partialTicks);
-//		Vec3 viewVector = this.getViewVector(partialTicks);
-//		Vec3 destination = eyePosition.add(
-//				viewVector.x * hitDistance,
-//				viewVector.y * hitDistance,
-//				viewVector.z * hitDistance
-//		);
-//		GridHitResult selected = GeneralKt.blockPhysicsGrid(
-//				(grid) -> grid instanceof ClientPhysicsGrid,
-//				eyePosition,
-//				destination,
-//				false,
-//				CollisionContext.of(breadmod$getThis())
-//		);
-//		if (selected != null) {
-//			cir.setReturnValue(
-//					new GridBlockHitResult(
-//							selected.getHitResult().getLocation(),
-//							Direction.getNearest(selected.getHitResult().getLocation()),
-//							BlockPos.containing(selected.getHitResult().getLocation().add(selected.getGrid().getPosition())),
-//							selected.getGrid(),
-//							BlockPos.containing(selected.getHitResult().getLocation()),
-//							selected.getState()
-//					)
-//			);
-//		}
-//	}
 
 //	@Shadow
 //	public boolean noPhysics;
