@@ -1,12 +1,8 @@
 package org.bread_experts_group.breadmod.mixin.common;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
@@ -45,25 +41,6 @@ abstract class MixinEntity {
 			}
 		});
 		cir.setReturnValue(allShapes);
-	}
-
-	@Inject(method = "pick", at = @At("HEAD"), cancellable = true)
-	private void pickGrid(
-			double hitDistance, float partialTicks, boolean hitFluids,
-			CallbackInfoReturnable<HitResult> cir
-	) {
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
-		if (grid != null) {
-			Vec3 vec3 = this.getEyePosition(partialTicks);
-			Vec3 vec31 = this.getViewVector(partialTicks);
-			Vec3 vec32 = vec3.add(vec31.x * hitDistance, vec31.y * hitDistance, vec31.z * hitDistance);
-			BlockHitResult result = grid.getMicroLevel().clip(new ClipContext(vec3, vec32, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, breadmod$getThis()));
-			double x = result.getLocation().x;
-			double y = result.getLocation().y;
-			double z = result.getLocation().z;
-			breadmod$getThis().level().addParticle(ParticleTypes.END_ROD, x, y, z, 0.0, 0.0, 0.0);
-			cir.setReturnValue(result);
-		}
 	}
 
 //	@Shadow

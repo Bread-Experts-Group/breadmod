@@ -12,17 +12,17 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.ClientHooks;
 import org.bread_experts_group.breadmod.client.render.RenderGeneralKt;
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture;
+import org.bread_experts_group.breadmod.experimental.physics_grid.GridHitResult;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.bread_experts_group.breadmod.registry.shader.ModPostChains;
 import org.bread_experts_group.breadmod.util.GeneralKt;
 import org.joml.Matrix4f;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -109,29 +109,30 @@ public abstract class MixinLevelRenderer {
 	@Inject(
 			method = "renderLevel",
 	at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/world/phys/BlockHitResult;getBlockPos()Lnet/minecraft/core/BlockPos;")
-	)
+			value = "FIELD",
+			target = "Lnet/minecraft/client/Minecraft;hitResult:Lnet/minecraft/world/phys/HitResult;",
+			ordinal = 1,
+			opcode = Opcodes.GETFIELD
+	))
 	private void renderGridHitbox(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera,
 	                              GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f frustumMatrix,
 	                              Matrix4f projectionMatrix, CallbackInfo ci,
 	                              @Local PoseStack poseStack, @Local MultiBufferSource.BufferSource bufferSource
     ) {
-		HitResult hitResult = this.minecraft.hitResult;
-		if (hitResult instanceof BlockHitResult blockHitResult) {
+		if (this.minecraft.hitResult instanceof GridHitResult gridHitResult) {
 			PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(camera.getEntity());
 			if (grid != null) {
 				if (!ClientHooks.onDrawHighlight(
-						breadmod$getThis(), camera, blockHitResult, deltaTracker,
+						breadmod$getThis(), camera, gridHitResult, deltaTracker,
 						poseStack, bufferSource)
 				) {
-					Vec3 resultPos = GeneralKt.toVec3(blockHitResult.getBlockPos());
+					Vec3 resultPos = GeneralKt.toVec3(gridHitResult.getPos());
 					Vec3 relativePos = grid.getPos().add(resultPos);
-					BlockState state = grid.getMicroLevel().getBlockState(blockHitResult.getBlockPos());
+					BlockState state = gridHitResult.getState();
 					renderShape(
 							poseStack,
 							bufferSource.getBuffer(RenderType.lines()),
-							state.getShape(grid.getMicroLevel(), blockHitResult.getBlockPos()),
+							state.getShape(grid.getMicroLevel(), gridHitResult.getPos()),
 							relativePos.x - camera.getPosition().x,
 							relativePos.y - camera.getPosition().y,
 							relativePos.z - camera.getPosition().z,

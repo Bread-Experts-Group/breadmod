@@ -12,8 +12,8 @@
     "common.MixinInventoryChangeTrigger",
     "common.MixinLightningBolt",
     "common.MixinLivingEntity",
-    "common.MixinRayTracing",
-    "common.MixinServerPlayer"
+    "common.MixinServerPlayer",
+    "compat.jade.MixinRayTracing"
   ],
   "client": [
     "client.IAccessorDirectoryLister",
@@ -30,6 +30,7 @@
     "client.rendering.InvokerIVertexConsumerExtension",
     "client.rendering.MixinAbstractWidget",
     "client.rendering.MixinFrustum",
+    "client.rendering.MixinGameRenderer",
     "client.rendering.MixinGuiGraphics",
     "client.rendering.MixinLevelRenderer",
     "client.rendering.MixinTextureManager",

@@ -1,11 +1,12 @@
-package org.bread_experts_group.breadmod.mixin.common;
+package org.bread_experts_group.breadmod.mixin.compat.jade;
 
 import org.spongepowered.asm.mixin.Mixin;
 import snownee.jade.overlay.RayTracing;
 
+// todo add back jade redirect
 @Mixin(RayTracing.class)
 public class MixinRayTracing {
-//	@Inject(
+	//	@Inject(
 //			method = "wrapBlock",
 //			at = @At(
 //					value = "INVOKE",

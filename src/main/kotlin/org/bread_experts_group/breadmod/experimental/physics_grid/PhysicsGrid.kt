@@ -7,10 +7,13 @@ import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.levelgen.structure.BoundingBox
@@ -28,7 +31,9 @@ import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
 import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.minus
+import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.toVec3
+import org.bread_experts_group.breadmod.util.toVec3i
 
 class PhysicsGrid private constructor(
 	val microLevel: ServerMicroLevel,
@@ -44,7 +49,7 @@ class PhysicsGrid private constructor(
 			this.grids.firstOrNull { entity.boundingBox.intersects(it.bounding) }
 
 		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext, level: Level) {
-			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
+			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3().add(0.5, 0.5, 0.5)
 			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
 			val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
 			val bounding = AABB.of(BoundingBox.fromCorners(posA, posB)).move(targetPos - posA.toVec3())
@@ -72,30 +77,30 @@ class PhysicsGrid private constructor(
 	init {
 		val player = localClient.player!!
 		player.sendSystemMessage(Component.literal("blocks: ${this.microLevel.blocks.size}"))
-		this.microLevel.moveShapes(this.pos)
 		this.attachRenderer()
+	}
+
+	private val blockFilter: List<Block> = listOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR, Blocks.LIGHT)
+	fun gridBlockCast(entity: Entity, hitDistance: Double): GridHitResult? {
+		val cast = entity.rayCast<Triple<Vec3, Pair<Direction, BlockState>, BlockPos>>(hitDistance) { _, from, to ->
+			val relativeFrom = from - this.pos
+			val relativeTo = to - this.pos
+			val blockPos = BlockPos(relativeTo.toVec3i())
+			val found = this.microLevel.blocks[blockPos]
+			if (found != null) {
+				val shape = found.getShape(this.microLevel, blockPos)
+				val clip = shape.clip(relativeFrom, relativeTo, blockPos) ?: return@rayCast null
+				if (found.block !in this.blockFilter) Triple(relativeTo, clip.direction to found, blockPos) else null
+			} else null
+		} ?: return null
+		val (localVec, pair, localPos) = cast.hit
+		return GridHitResult(localVec, pair.first, localPos, pair.second)
 	}
 
 	fun attachRenderer() {
 		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS, { event, _ ->
 			val gridMesh = Companion.gridMeshes.getOrPut(this) { GridMesh(this) }
 			val poseStack = event.poseStack
-/*			this.microLevel.shapes.forEach { (_, shape) ->
-				shape.toAabbs().forEach {
-					poseStack.pushPose()
-					poseStack.offsetRenderToCameraPos(shape.bounds().minPosition, event.camera)
-					DebugRenderer.renderFilledBox(
-						poseStack,
-						localClient.renderBuffers().bufferSource(),
-						it,
-						0.7f,
-						0.7f,
-						1f,
-						0.2f
-					)
-					poseStack.popPose()
-				}
-			}*/
 			gridMesh.compile(poseStack)
 			val shaderInstance = RenderSystem.getShader() ?: return@add true
 			val (x, y, z) = event.camera.position
