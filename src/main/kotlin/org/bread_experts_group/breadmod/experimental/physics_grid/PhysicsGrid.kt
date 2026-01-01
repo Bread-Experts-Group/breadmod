@@ -24,6 +24,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
 import org.bread_experts_group.breadmod.util.component1
@@ -65,7 +66,7 @@ class PhysicsGrid private constructor(
 			}
 			Companion.grids.add(
 				PhysicsGrid(
-					ServerMicroLevel(blocks, blockEntities),
+					ServerMicroLevel(level, blocks, blockEntities),
 					targetPos,
 					bounding.center,
 					bounding
@@ -98,17 +99,15 @@ class PhysicsGrid private constructor(
 	}
 
 	fun attachRenderer() {
-		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS, { event, _ ->
+		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
 			val gridMesh = Companion.gridMeshes.getOrPut(this) { GridMesh(this) }
 			val poseStack = event.poseStack
 			gridMesh.compile(poseStack)
 			val shaderInstance = RenderSystem.getShader() ?: return@add true
-			val (x, y, z) = event.camera.position
-			poseStack.pushPose()
-			poseStack.mulPose(event.modelViewMatrix)
-			poseStack.translate(-x, -y, -z)
-			poseStack.translate(this.pos)
 			gridMesh.getBuffers().forEach { buffer ->
+				poseStack.pushPose()
+				poseStack.mulPose(event.modelViewMatrix)
+				poseStack.offsetRenderToCameraPos(this.pos, event.camera, false)
 				buffer.bind()
 				buffer.drawWithShader(
 					poseStack.last().pose(),
@@ -117,8 +116,8 @@ class PhysicsGrid private constructor(
 				)
 				shaderInstance.clear()
 				VertexBuffer.unbind()
+				poseStack.popPose()
 			}
-			poseStack.popPose()
 
 			poseStack.pushPose()
 			poseStack.initialTranslate(event.camera)
@@ -146,6 +145,7 @@ class PhysicsGrid private constructor(
 				)
 				poseStack.popPose()
 			}
+			poseStack.popPose()
 			if (!Companion.grids.contains(this)) {
 				gridMesh.close()
 				Companion.gridMeshes.remove(this)

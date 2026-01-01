@@ -90,14 +90,14 @@ class Agent {
 										classBuilder.transformMethod(classElement) { methodBuilder, methodElement ->
 											if (methodElement is CodeModel) methodBuilder.transformCode(methodElement) { codeBuilder, codeElement ->
 												when (index) {
-													21 -> codeBuilder
+													16 -> codeBuilder
 														.aload(0)
 														.invokespecial(
 															ClassDesc.of(ServerLevel::class.java.name),
 															ConstantDescs.INIT_NAME,
 															MethodTypeDesc.of(ConstantDescs.CD_void)
 														)
-													else if (index !in 21 .. 35) -> codeBuilder.with(codeElement)
+													else if (index !in 16 .. 30) -> codeBuilder.with(codeElement)
 												}
 												index++
 											} else methodBuilder.with(methodElement)
