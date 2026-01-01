@@ -119,6 +119,7 @@ import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
 import org.bread_experts_group.breadmod.experimental.physics_grid.ClearGridPacket
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
@@ -604,7 +605,8 @@ object Registry {
 			grid.microLevel.setBlock(event.pos, event.placedBlock, 0, 0)
 			event.isCanceled = true
 		}*/
-		NeoForge.EVENT_BUS.addListener { _: ServerTickEvent.Post ->
+		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
+			PhysicsGrid.grids.forEach { grid -> grid.serverTick(event.server) }
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
 //			PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)

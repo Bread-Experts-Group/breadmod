@@ -86,7 +86,7 @@ public abstract class MixinMinecraft {
 		LocalPlayer player = this.player;
 		if (player == null) return original;
 		BlockHitResult hitResult = (BlockHitResult) this.hitResult;
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(player);
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(player);
 		return (grid != null && hitResult != null) ? grid.getMicroLevel().getBlockState(hitResult.getBlockPos()) : original;
 	}
 }

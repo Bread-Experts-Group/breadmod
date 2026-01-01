@@ -8,14 +8,15 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.network.chat.Component
+import net.minecraft.server.MinecraftServer
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.UseOnContext
-import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.levelgen.structure.BoundingBox
@@ -28,30 +29,31 @@ import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ServerMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
+import org.bread_experts_group.breadmod.util.displayClientMessage
 import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.minus
 import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.toVec3
 import org.bread_experts_group.breadmod.util.toVec3i
 
-class PhysicsGrid private constructor(
-	val microLevel: ServerMicroLevel,
-	val pos: Vec3,
-	val center: Vec3,
-	val bounding: AABB
-) {
+class PhysicsGrid private constructor(val pos: Vec3, val center: Vec3, val bounding: AABB) {
 	companion object {
 		val gridMeshes: MutableMap<PhysicsGrid, GridMesh> = mutableMapOf()
+
+		@JvmField
 		val grids: MutableList<PhysicsGrid> = mutableListOf()
 
+		@JvmStatic
 		fun getClosestGrid(entity: Entity): PhysicsGrid? =
 			this.grids.firstOrNull { entity.boundingBox.intersects(it.bounding) }
 
-		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext, level: Level) {
+		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext) {
+			val level = context.level
 			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
 			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
 			val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
@@ -63,26 +65,24 @@ class PhysicsGrid private constructor(
 				if (state.isAir) return@forEach
 				val posOffset = BlockPos(immutable.x - posA.x, immutable.y - posA.y, immutable.z - posA.z)
 				val blockEntity = level.getBlockEntity(immutable)
-				if (blockEntity != null) blockEntities[posOffset] = blockEntity
+				if (blockEntity != null && state.block is EntityBlock) {
+					val newEntity = (state.block as EntityBlock).newBlockEntity(posOffset, state)
+					if (newEntity != null) blockEntities[posOffset] = newEntity
+				}
 				blocks[posOffset] = state
 			}
-			Companion.grids.add(
-				PhysicsGrid(
-					ServerMicroLevel(level, blocks, blockEntities),
-					targetPos,
-					bounding.center,
-					bounding
-				)
-			)
+			val grid = PhysicsGrid(targetPos, bounding.center, bounding)
+			grid.microLevel = ServerMicroLevel(grid, level, blocks, blockEntities)
+			grid.microLevel.initBlockEntities()
+			Companion.grids.add(grid)
+			// todo move to clientbound packet
+			displayClientMessage("blocks: ${grid.microLevel.blocks.size}")
+			grid.attachRenderer()
 		}
 	}
 
-	init {
-		val player = localClient.player!!
-		player.sendSystemMessage(Component.literal("blocks: ${this.microLevel.blocks.size}"))
-		this.attachRenderer()
-	}
-
+	lateinit var microLevel: ServerMicroLevel
+	val playersInGrid: ArrayList<ServerPlayer> = arrayListOf()
 	private val blockFilter: List<Block> = listOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR, Blocks.LIGHT)
 	fun gridBlockCast(entity: Entity, hitDistance: Double): GridHitResult? {
 		val cast = entity.rayCast<Triple<Vec3, Pair<Direction, BlockState>, BlockPos>>(hitDistance) { _, from, to ->
@@ -103,6 +103,14 @@ class PhysicsGrid private constructor(
 	fun gridBlockCast(player: Player): GridHitResult? {
 		val attribute = (player.attributes.getInstance(Attributes.ENTITY_INTERACTION_RANGE) ?: return null).value
 		return this.gridBlockCast(player, attribute)
+	}
+
+	fun serverTick(server: MinecraftServer) {
+		server.playerList.players.forEach { player ->
+			val intersects = player.boundingBox.intersects(this.bounding)
+			if (intersects && !this.playersInGrid.contains(player)) this.playersInGrid.add(player)
+			else this.playersInGrid.removeIf { !intersects }
+		}
 	}
 
 	fun attachRenderer() {

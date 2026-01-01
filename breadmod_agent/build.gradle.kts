@@ -30,6 +30,7 @@ dependencies {
 	testImplementation(kotlin("test"))
 	implementation(kotlin("reflect"))
 	implementation("org.bread_experts_group:bread_server_lib-code:D1F2N6P75")
+	compileOnly(rootProject)
 }
 
 tasks.jar {

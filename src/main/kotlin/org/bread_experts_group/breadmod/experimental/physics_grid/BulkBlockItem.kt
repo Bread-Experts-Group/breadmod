@@ -9,13 +9,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.client.event.InputEvent
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.experimental.physics_grid.render.ThingFinder
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
-import org.bread_experts_group.breadmod.util.logDebugInfo
 
 class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var posA: BlockPos = BlockPos.ZERO
@@ -34,8 +29,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			return InteractionResult.sidedSuccess(context.level.isClientSide)
 		}
 		if (this.posA != BlockPos.ZERO && this.posB != BlockPos.ZERO) {
-//			this.addThingFinderRender(context)
-			PhysicsGrid.add(this.posA, this.posB, context, context.level)
+			PhysicsGrid.add(this.posA, this.posB, context)
 		}
 		this.posA = BlockPos.ZERO
 		this.posB = BlockPos.ZERO
@@ -48,25 +42,5 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 			PacketDistributor.sendToServer(ClearGridPacket())
 			scrollingEvent.isCanceled = true
 		}
-	}
-
-	fun addThingFinderRender(context: UseOnContext) {
-		val list = mutableListOf<BlockPos>()
-		BlockPos.betweenClosedStream(this.posA, this.posB).forEach { pos ->
-			list.add(pos.immutable())
-		}
-		logDebugInfo(list.size)
-		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, pass ->
-			val flag = pass[0] as Boolean
-			if (!flag) {
-				ThingFinder.oreBlocksList = list
-				logDebugInfo(ThingFinder.oreBlocksList.size)
-				logDebugInfo("generating VBO")
-				ThingFinder.generateVBO(context.player ?: return@add true)
-				pass[0] = true
-			}
-			ThingFinder.render(event, localClient.player!!)
-			false
-		}, mutableListOf(false))
 	}
 }

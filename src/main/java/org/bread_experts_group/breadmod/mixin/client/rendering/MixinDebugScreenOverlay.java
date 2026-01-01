@@ -29,7 +29,7 @@ abstract class MixinDebugScreenOverlay {
 	private BlockState getGridBlock(BlockState original) {
 		Player player = this.minecraft.player;
 		if (player == null) return original;
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(player);
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(player);
 		if (grid == null) return original;
 		GridHitResult cast = grid.gridBlockCast(player);
 		return (cast != null) ? cast.getState() : original;
@@ -44,7 +44,7 @@ abstract class MixinDebugScreenOverlay {
 	private BlockPos getGridPos(BlockPos original) {
 		Player player = this.minecraft.player;
 		if (player == null) return original;
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(player);
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(player);
 		if (grid == null) return original;
 		GridHitResult cast = grid.gridBlockCast(player);
 		return (cast != null) ? cast.getLocalPos() : original;

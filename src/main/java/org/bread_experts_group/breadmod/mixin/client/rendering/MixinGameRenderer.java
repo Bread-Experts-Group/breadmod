@@ -18,7 +18,7 @@ abstract class MixinGameRenderer {
 			@Local(argsOnly = true) Entity entity,
 			@Local(ordinal = 2) double hitDistance
 	) {
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(entity);
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(entity);
 		if (grid != null) {
 			GridHitResult result = grid.gridBlockCast(entity, hitDistance);
 			if (result != null) return result;

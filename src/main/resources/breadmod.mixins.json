@@ -11,11 +11,13 @@
     "client.IMultiPartBlockStateBuilderAccessor",
     "common.IAccessorEntity",
     "common.MixinActiveProfiler",
-    "common.MixinEntity",
     "common.MixinInventoryChangeTrigger",
     "common.MixinLightningBolt",
     "common.MixinLivingEntity",
     "common.MixinServerPlayer",
+    "common.physics_grid.MixinEntity",
+    "common.physics_grid.MixinServerGamePacketListenerImpl",
+    "common.physics_grid.MixinServerPlayerGameMode",
     "compat.jade.MixinRayTracing"
   ],
   "client": [

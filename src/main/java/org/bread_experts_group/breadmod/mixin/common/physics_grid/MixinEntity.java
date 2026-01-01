@@ -1,8 +1,9 @@
-package org.bread_experts_group.breadmod.mixin.common;
+package org.bread_experts_group.breadmod.mixin.common.physics_grid;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -32,7 +33,7 @@ abstract class MixinEntity {
 			CallbackInfoReturnable<List<VoxelShape>> cir
 	) {
 		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
-		Collection<PhysicsGrid> grids = PhysicsGrid.Companion.getGrids();
+		Collection<PhysicsGrid> grids = PhysicsGrid.grids;
 		grids.forEach((grid) -> {
 			if (entity != null && entity.getBoundingBox().intersects(grid.getBounding().inflate(0.5))) {
 				allShapes.addAll(grid.getNearbyShapes(entity));
@@ -79,7 +80,7 @@ abstract class MixinEntity {
 			)
 	)
 	private BlockState spawnSprintParticle(BlockState original) {
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(breadmod$getThis());
 		if (grid != null) {
 			Vec3 localized = breadmod$getThis().position().subtract(grid.getPos());
 			return grid.getMicroLevel().getBlockState(BlockPos.containing(localized.subtract(0.0, 0.1, 0.0)));
@@ -87,42 +88,16 @@ abstract class MixinEntity {
 		return original;
 	}
 
-	// todo try to get working later
-	/*@ModifyExpressionValue(
-			method = "playStepSound",
-			at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;"
-			)
+	@Inject(
+			method = "vibrationAndSoundEffectsFromBlock",
+			at = @At("HEAD")
 	)
-	private SoundType playGridStepSound(SoundType original) {
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
-		System.out.println(grid);
-		if (grid != null) {
-			Vec3 localized = breadmod$getThis().position().subtract(grid.getPos());
-			BlockPos pos = BlockPos.containing(localized.subtract(0.0, 0.1, 0.0));
-			BlockState state = grid.getMicroLevel().getBlockState(pos);
-			return state.getSoundType(grid.getMicroLevel(), pos, breadmod$getThis());
-		}
-		return original;
+	private void probeSoundAttempt(
+			BlockPos pos, BlockState state, boolean playStepSound, boolean broadcastGameEvent,
+			Vec3 entityPos, CallbackInfoReturnable<Boolean> cir
+	) {
+		if (breadmod$getThis() instanceof Player) System.out.println(pos + ", " + state + ", " + playStepSound);
 	}
-
-	@Definition(id = "moveDist", field = "Lnet/minecraft/world/entity/Entity;moveDist:F")
-	@Definition(id = "nextStep", field = "Lnet/minecraft/world/entity/Entity;nextStep:F")
-	@Expression("this.moveDist > this.nextStep")
-	@ModifyExpressionValue(method = "move", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
-	private boolean test(boolean original) {
-		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
-		return grid != null && breadmod$getThis().onGround() || original;
-	}
-
-	@ModifyExpressionValue(
-			method = "move",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isAir()Z", ordinal = 0)
-	)
-	private boolean test1(boolean original) {
-		return false;
-	}*/
 //
 //	@Shadow
 //	public abstract Vec3 getEyePosition();

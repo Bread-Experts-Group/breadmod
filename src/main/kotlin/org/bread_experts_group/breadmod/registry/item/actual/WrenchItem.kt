@@ -8,19 +8,16 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
-import net.minecraft.world.level.ClipContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.BlockHitResult
-import net.neoforged.neoforge.capabilities.Capabilities
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.registry.Registry.logger
 import org.bread_experts_group.breadmod.util.normalizeHitLoc
 import org.bread_experts_group.breadmod.util.targetFace
 
 class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
-		if (level.isClientSide) {
+/*		if (level.isClientSide) {
 			val partialTick = localClient.timer.gameTimeDeltaTicks
 			val vec3 = player.getEyePosition(partialTick)
 			val vec31 = player.getViewVector(partialTick)
@@ -31,7 +28,7 @@ class WrenchItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 //			logger.info(clip.blockPos)
 //			logger.info(level.getBlockState(clip.blockPos))
 			logger.info("item handler id for ${clip.direction}: ${level.getCapability(Capabilities.ItemHandler.BLOCK, clip.blockPos, clip.direction).toString()}")
-		}
+		}*/
 		return super.use(level, player, usedHand)
 	}
 
