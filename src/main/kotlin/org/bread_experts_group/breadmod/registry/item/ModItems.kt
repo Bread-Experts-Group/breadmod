@@ -37,7 +37,6 @@ import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelLaye
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagItem
 import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraBinderItem
-import org.bread_experts_group.breadmod.experimental.particle.RadioactiveMaterial
 import org.bread_experts_group.breadmod.experimental.physics_grid.BulkBlockItem
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
@@ -457,14 +456,6 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 
 	@DataGenerateLanguage
 	val GLUON_GUN: DeferredItem<Item> = this.registerItem("gluon_gun")
-
-	@DataGenerateLanguage
-	@DataGenerateLanguage(name = "Free Energy: %s eV", suffix = ".energy")
-	@DataGenerateLanguage(name = "Total Energy: %s J", suffix = ".total_energy")
-	val RADIOACTIVE_MATERIAL: DeferredItem<Item> = this.registerItem(
-		"radioactive_material",
-		::RadioactiveMaterial
-	)
 
 	@DataGenerateLanguage
 	val FORKLIFT: DeferredItem<Item> = this.registerItem("forklift") {

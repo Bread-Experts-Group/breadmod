@@ -12,7 +12,6 @@ import net.minecraft.world.item.crafting.RecipeHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import org.bread_experts_group.breadmod.data_holders.common.MachSpeedData
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
-import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
@@ -35,12 +34,6 @@ object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
 		"current_mode", DataComponentType.builder<ToolGunData>()
 			.persistent(BreadModCodecs.TOOL_GUN_CODEC)
 			.networkSynchronized(BreadModCodecs.TOOL_GUN_STREAM_CODEC)
-			.cacheEncoding()::build
-	)
-	val CLOSED_SYSTEM: Supplier<DataComponentType<ClosedSystem>> = this.registry.register(
-		"closed_system", DataComponentType.builder<ClosedSystem>()
-			.persistent(BreadModCodecs.CLOSED_SYSTEM_CODEC)
-			.networkSynchronized(BreadModCodecs.CLOSED_SYSTEM_STREAM_CODEC)
 			.cacheEncoding()::build
 	)
 	val MACH_SPEED: Supplier<DataComponentType<MachSpeedData>> = this.registry.register(

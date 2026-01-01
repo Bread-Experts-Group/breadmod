@@ -38,7 +38,6 @@ import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.connection.ConnectionType
 import org.apache.logging.log4j.LogManager
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
-import org.bread_experts_group.breadmod.experimental.particle.ClosedSystem
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.BigDescriptor
 import org.bread_experts_group.breadmod.util.ofOptional
 import org.joml.Quaternionf
@@ -229,16 +228,6 @@ object BreadModCodecs {
 		ByteBufCodecs.TRUSTED_COMPOUND_TAG, ToolGunData::extraData,
 		ByteBufCodecs.VAR_INT, ToolGunData::modeIndex,
 		::ToolGunData
-	)
-	val CLOSED_SYSTEM_CODEC: Codec<ClosedSystem> =
-		RecordCodecBuilder.create { instance ->
-			instance.group(
-				CompoundTag.CODEC.fieldOf("value").forGetter(ClosedSystem::toNBT)
-			).apply(instance, ClosedSystem::createFromTag)
-		}
-	val CLOSED_SYSTEM_STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ClosedSystem> = StreamCodec.composite(
-		ByteBufCodecs.TRUSTED_COMPOUND_TAG,
-		ClosedSystem::toNBT, ClosedSystem::createFromTag
 	)
 	val BLOCKSTATE_STREAM_CODEC: StreamCodec<ByteBuf, BlockState> = ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY)
 	val BLOCK_MAP_STREAM_CODEC: StreamCodec<FriendlyByteBuf, Map<BlockPos, BlockState>> =

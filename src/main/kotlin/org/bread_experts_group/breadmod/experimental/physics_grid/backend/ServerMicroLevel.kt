@@ -2,6 +2,9 @@ package org.bread_experts_group.breadmod.experimental.physics_grid.backend
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
+import net.minecraft.core.RegistryAccess
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
@@ -21,6 +24,7 @@ import net.minecraft.world.phys.Vec3
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
+import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import java.util.function.Supplier
 
@@ -120,6 +124,25 @@ class ServerMicroLevel(
 	val blocks: MutableMap<BlockPos, BlockState>,
 	val blockEntities: MutableMap<BlockPos, BlockEntity>
 ) : ServerLevel(null, null, null, null, null, null, null, false, 0, null, true, null) {
+	companion object {
+		fun getLevelBaseForData(server: MinecraftServer): ServerLevel? = server.getLevel(OVERWORLD)
+		fun getNameSpaceAndNameHuffmanSD(server: MinecraftServer): BlockNamesHuffmanSavedData? {
+			val dataBase = this.getLevelBaseForData(server) ?: return null
+			return dataBase.dataStorage.get(
+				BlockNamesHuffmanSavedData.FACTORY,
+				"__beg_microlevel_blocks_huffman"
+			)
+		}
+
+		fun computeNameSpaceAndNameHuffmanSD(server: MinecraftServer) {
+			val dataBase = this.getLevelBaseForData(server) ?: return
+			dataBase.dataStorage.set(
+				"__beg_microlevel_blocks_huffman",
+				BlockNamesHuffmanSavedData.create(BuiltInRegistries.BLOCK)
+			)
+		}
+	}
+
 	private val logger: Logger = LogManager.getLogger("PhysicsGrid")
 
 	init {
@@ -178,4 +201,8 @@ class ServerMicroLevel(
 	}
 
 	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}]"
+
+	override fun registryAccess(): RegistryAccess {
+		return super.registryAccess()
+	}
 }
