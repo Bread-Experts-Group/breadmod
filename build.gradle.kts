@@ -87,12 +87,6 @@ neoForge {
 			client()
 			enableTestNamespaces()
 			addAgent()
-			jvmArguments = listOf(
-				"--enable-native-access=org.lwjgl",
-				"--enable-native-access=org.lwjgl.stb",
-				"--enable-native-access=org.lwjgl.opengl",
-				"--enable-native-access=com.sun.jna"
-			)
 			devLogin = true
 		}
 		create("server") {

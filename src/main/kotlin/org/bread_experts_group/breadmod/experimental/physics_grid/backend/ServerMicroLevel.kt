@@ -202,7 +202,5 @@ class ServerMicroLevel(
 
 	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}]"
 
-	override fun registryAccess(): RegistryAccess {
-		return super.registryAccess()
-	}
+	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()
 }

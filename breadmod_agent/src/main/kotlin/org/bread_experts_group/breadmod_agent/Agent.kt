@@ -161,23 +161,23 @@ class Agent {
 							}
 							ServerMicroLevel::class.java.name -> {
 								val model = classFile.parse(classfileBuffer)
-								val bytes = classFile.transformClass(model) { classBuilder, classElement ->
-									val init =
-										classBuilder.modifyInit(classElement) { codeBuilder, codeElement, index ->
-											when (index) {
-												20 -> codeBuilder
-													.aload(0)
-													.invokespecial(
-														ServerLevel::class.classDesc,
-														ConstantDescs.INIT_NAME,
-														MethodTypeDesc.of(ConstantDescs.CD_void)
-													)
-												else if (index !in 20 .. 34) -> codeBuilder.with(codeElement)
-											}
+								classFile.transformClass(model) { classBuilder, classElement ->
+									val init = classBuilder.modifyInit(
+										classElement
+									) { codeBuilder, codeElement, index ->
+										when (index) {
+											20 -> codeBuilder
+												.aload(0)
+												.invokespecial(
+													ServerLevel::class.classDesc,
+													ConstantDescs.INIT_NAME,
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+											else if (index !in 20 .. 34) -> codeBuilder.with(codeElement)
 										}
+									}
 									if (!init) classBuilder.with(classElement)
 								}
-								bytes
 							}
 							else -> null
 						}
