@@ -1,13 +1,15 @@
 package org.bread_experts_group.breadmod.mixin.common;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,10 +21,6 @@ import java.util.List;
 
 @Mixin(Entity.class)
 abstract class MixinEntity {
-	@Shadow public abstract Vec3 getEyePosition(float partialTicks);
-
-	@Shadow public abstract Vec3 getViewVector(float partialTicks);
-
 	@Unique
 	private Entity breadmod$getThis() {
 		return (Entity) (Object) this;
@@ -73,24 +71,58 @@ abstract class MixinEntity {
 //		} else this.breadmod$lastPlatformPos = null;
 //	}
 //
-//	@Inject(
-//			method = "spawnSprintParticle",
-//			at = @At(
-//					value = "INVOKE",
-//					target = "Lnet/minecraft/world/level/block/state/BlockState;addRunningEffects(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Z",
-//					shift = At.Shift.BEFORE
-//			)
-//	)
-//	private void spawnSprintParticle(CallbackInfo ci, @Local LocalRef<BlockState> blockstate) {
-//		GridHitResult selected = GeneralKt.blockPhysicsGrid(
-//				(grid) -> grid instanceof ClientPhysicsGrid,
-//				this.position(),
-//				this.position().subtract(0.0, -0.1, 0.0),
-//				false,
-//				CollisionContext.of(breadmod$getThis())
-//		);
-//		if (selected != null) blockstate.set(selected.getState());
-//	}
+	@ModifyExpressionValue(
+			method = "spawnSprintParticle",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/Level;getBlockState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/state/BlockState;"
+			)
+	)
+	private BlockState spawnSprintParticle(BlockState original) {
+		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
+		if (grid != null) {
+			Vec3 localized = breadmod$getThis().position().subtract(grid.getPos());
+			return grid.getMicroLevel().getBlockState(BlockPos.containing(localized.subtract(0.0, 0.1, 0.0)));
+		}
+		return original;
+	}
+
+	// todo try to get working later
+	/*@ModifyExpressionValue(
+			method = "playStepSound",
+			at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/block/state/BlockState;getSoundType(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/world/level/block/SoundType;"
+			)
+	)
+	private SoundType playGridStepSound(SoundType original) {
+		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
+		System.out.println(grid);
+		if (grid != null) {
+			Vec3 localized = breadmod$getThis().position().subtract(grid.getPos());
+			BlockPos pos = BlockPos.containing(localized.subtract(0.0, 0.1, 0.0));
+			BlockState state = grid.getMicroLevel().getBlockState(pos);
+			return state.getSoundType(grid.getMicroLevel(), pos, breadmod$getThis());
+		}
+		return original;
+	}
+
+	@Definition(id = "moveDist", field = "Lnet/minecraft/world/entity/Entity;moveDist:F")
+	@Definition(id = "nextStep", field = "Lnet/minecraft/world/entity/Entity;nextStep:F")
+	@Expression("this.moveDist > this.nextStep")
+	@ModifyExpressionValue(method = "move", at = @At(value = "MIXINEXTRAS:EXPRESSION"))
+	private boolean test(boolean original) {
+		PhysicsGrid grid = PhysicsGrid.Companion.getClosestGrid(breadmod$getThis());
+		return grid != null && breadmod$getThis().onGround() || original;
+	}
+
+	@ModifyExpressionValue(
+			method = "move",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;isAir()Z", ordinal = 0)
+	)
+	private boolean test1(boolean original) {
+		return false;
+	}*/
 //
 //	@Shadow
 //	public abstract Vec3 getEyePosition();

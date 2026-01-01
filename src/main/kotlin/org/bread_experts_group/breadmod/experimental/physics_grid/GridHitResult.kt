@@ -9,9 +9,9 @@ import net.minecraft.world.phys.Vec3
 class GridHitResult(
 	localHit: Vec3,
 	direction: Direction,
-	val pos: BlockPos,
+	val localPos: BlockPos,
 	val state: BlockState
-) : BlockHitResult(localHit, direction, pos, false) {
+) : BlockHitResult(localHit, direction, localPos, false) {
 	override fun toString(): String =
-		"GridHitResult[pos=${this.pos}, state=${this.state.block}, direction=${this.direction}]"
+		"GridHitResult[pos=${this.localPos}, state=${this.state.block}, direction=${this.direction}]"
 }

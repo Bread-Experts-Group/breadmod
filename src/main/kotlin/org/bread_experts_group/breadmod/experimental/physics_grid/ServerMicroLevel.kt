@@ -13,6 +13,7 @@ import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.Fluids
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import java.util.function.Supplier
 
 /* Current Opcode stack (THIS CHANGES WHEN YOU ADD FIELDS & CONSTRUCTOR ARGS)
@@ -85,6 +86,10 @@ class ServerMicroLevel(
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
 		this.blocks[pos] = state
 		this.logger.fatal("nuclear bomb")
+		// todo test recompiling
+		if (this.sourceLevel.isClientSide) executeOnRenderThread {
+			PhysicsGrid.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
+		}
 		return false
 	}
 

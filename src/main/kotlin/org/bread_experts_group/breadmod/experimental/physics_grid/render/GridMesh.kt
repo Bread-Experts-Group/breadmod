@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexBuffer
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.RandomSource
+import net.minecraft.world.level.block.RenderShape
 import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.translate
@@ -34,6 +35,14 @@ class GridMesh(private val grid: PhysicsGrid) {
 		this.vertexBuffers.values.forEach(VertexBuffer::close)
 	}
 
+	fun markForRecompile() {
+		this.close()
+		this.vertexBuffers.clear()
+		this.bufferBuilders.clear()
+		this.meshes.clear()
+		this.isCompiled = false
+	}
+
 	fun getBuffers(): Collection<VertexBuffer> = this.vertexBuffers.values
 
 	fun compile(poseStack: PoseStack) {
@@ -50,6 +59,7 @@ class GridMesh(private val grid: PhysicsGrid) {
 			for (renderType in bakedModel.getRenderTypes(state, random, ModelData.EMPTY)) {
 				val builder = this.getOrBeginBufferBuilder(renderType)
 				try {
+					if (state.renderShape == RenderShape.INVISIBLE || state.renderShape == RenderShape.ENTITYBLOCK_ANIMATED) continue
 					modelBlockRenderer.tesselateBlock(
 						level,
 						bakedModel,

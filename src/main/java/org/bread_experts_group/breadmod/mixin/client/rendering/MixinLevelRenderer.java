@@ -126,13 +126,13 @@ public abstract class MixinLevelRenderer {
 						breadmod$getThis(), camera, gridHitResult, deltaTracker,
 						poseStack, bufferSource)
 				) {
-					Vec3 resultPos = GeneralKt.toVec3(gridHitResult.getPos());
+					Vec3 resultPos = GeneralKt.toVec3(gridHitResult.getLocalPos());
 					Vec3 relativePos = grid.getPos().add(resultPos);
 					BlockState state = gridHitResult.getState();
 					renderShape(
 							poseStack,
 							bufferSource.getBuffer(RenderType.lines()),
-							state.getShape(grid.getMicroLevel(), gridHitResult.getPos()),
+							state.getShape(grid.getMicroLevel(), gridHitResult.getLocalPos()),
 							relativePos.x - camera.getPosition().x,
 							relativePos.y - camera.getPosition().y,
 							relativePos.z - camera.getPosition().z,

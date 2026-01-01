@@ -465,6 +465,7 @@
           <option value="UnreachableCode" />
           <option value="Destructure" />
           <option value="Unused" />
+          <option value="KDocMissingDocumentation" />
         </list>
       </option>
     </inspection_tool>

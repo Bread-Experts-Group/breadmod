@@ -187,6 +187,7 @@ import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.reflect.LibraryScanner.Companion.getScanner
 import kotlin.reflect.full.primaryConstructor
 
+@Suppress("KDocMissingDocumentation")
 object Registry {
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
@@ -596,6 +597,13 @@ object Registry {
 		}
 		// Common Event Registration
 		// Game Bus
+		// todo maybe come back to this at a later date, but the issue of the blocks being placed at the real world coords relative to the grid is stopping this from working
+/*		NeoForge.EVENT_BUS.addListener { event: EntityPlaceEvent ->
+			val entity = event.entity ?: return@addListener
+			val grid = PhysicsGrid.getClosestGrid(entity) ?: return@addListener
+			grid.microLevel.setBlock(event.pos, event.placedBlock, 0, 0)
+			event.isCanceled = true
+		}*/
 		NeoForge.EVENT_BUS.addListener { _: ServerTickEvent.Post ->
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }

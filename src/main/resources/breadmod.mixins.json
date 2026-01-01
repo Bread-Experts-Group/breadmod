@@ -4,6 +4,9 @@
   "package": "org.bread_experts_group.breadmod.mixin",
   "compatibilityLevel": "JAVA_21",
   "refmap": "breadmod_neoforge.refmap.json",
+  "mixinextras": {
+    "minVersion": "0.5.0-beta.1"
+  },
   "mixins": [
     "client.IMultiPartBlockStateBuilderAccessor",
     "common.IAccessorEntity",
@@ -29,6 +32,7 @@
     "client.MixinTranslatableContents",
     "client.rendering.InvokerIVertexConsumerExtension",
     "client.rendering.MixinAbstractWidget",
+    "client.rendering.MixinDebugScreenOverlay",
     "client.rendering.MixinFrustum",
     "client.rendering.MixinGameRenderer",
     "client.rendering.MixinGuiGraphics",

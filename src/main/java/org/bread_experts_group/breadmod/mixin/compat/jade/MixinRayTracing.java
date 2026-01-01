@@ -1,25 +1,18 @@
 package org.bread_experts_group.breadmod.mixin.compat.jade;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import org.bread_experts_group.breadmod.experimental.physics_grid.GridHitResult;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
 import snownee.jade.overlay.RayTracing;
 
-// todo add back jade redirect
 @Mixin(RayTracing.class)
 public class MixinRayTracing {
-	//	@Inject(
-//			method = "wrapBlock",
-//			at = @At(
-//					value = "INVOKE",
-//					target = "Lnet/minecraft/world/phys/BlockHitResult;getBlockPos()Lnet/minecraft/core/BlockPos;"
-//			),
-//			cancellable = true
-//	)
-//	private static void wrapBlock(
-//			BlockGetter level,
-//			BlockHitResult hit,
-//			CollisionContext context,
-//			CallbackInfoReturnable<BlockState> cir
-//	) {
-//		if (hit instanceof GridBlockHitResult gHit) cir.setReturnValue(gHit.getState());
-//	}
+	@ModifyReturnValue(method = "wrapBlock", at = @At("RETURN"))
+	private static BlockState wrapBlock(BlockState original, @Local(argsOnly = true) BlockHitResult hit) {
+		return (hit instanceof GridHitResult gridHitResult) ? gridHitResult.getState() : original;
+	}
 }

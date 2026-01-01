@@ -10,6 +10,8 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.ai.attributes.Attributes
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -50,7 +52,7 @@ class PhysicsGrid private constructor(
 			this.grids.firstOrNull { entity.boundingBox.intersects(it.bounding) }
 
 		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext, level: Level) {
-			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3().add(0.5, 0.5, 0.5)
+			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
 			val blocks: MutableMap<BlockPos, BlockState> = mutableMapOf()
 			val blockEntities: MutableMap<BlockPos, BlockEntity> = mutableMapOf()
 			val bounding = AABB.of(BoundingBox.fromCorners(posA, posB)).move(targetPos - posA.toVec3())
@@ -96,6 +98,11 @@ class PhysicsGrid private constructor(
 		} ?: return null
 		val (localVec, pair, localPos) = cast.hit
 		return GridHitResult(localVec, pair.first, localPos, pair.second)
+	}
+
+	fun gridBlockCast(player: Player): GridHitResult? {
+		val attribute = (player.attributes.getInstance(Attributes.ENTITY_INTERACTION_RANGE) ?: return null).value
+		return this.gridBlockCast(player, attribute)
 	}
 
 	fun attachRenderer() {
@@ -155,11 +162,13 @@ class PhysicsGrid private constructor(
 	}
 
 	fun getNearbyShapes(entity: Entity): List<VoxelShape> {
-		val nearbyBlocks =
-			this.microLevel.blocks.filter { this.pos.add(it.component1().toVec3()).distanceTo(entity.position()) < 5.0 }
+		val nearbyBlocks = this.microLevel.blocks.filter { (blockPos, _) ->
+			this.pos.add(blockPos.toVec3()).distanceTo(entity.position()) < 5.0
+		}
 		return buildList {
 			nearbyBlocks.forEach { (pos, state) ->
 				val (x, y, z) = this@PhysicsGrid.pos.add(pos.toVec3())
+				if (state.getCollisionShape(this@PhysicsGrid.microLevel, pos).isEmpty) return@forEach
 				this.add(state.getShape(this@PhysicsGrid.microLevel, pos).move(x, y, z))
 			}
 		}
