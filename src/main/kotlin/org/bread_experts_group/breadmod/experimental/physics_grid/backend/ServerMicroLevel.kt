@@ -5,6 +5,7 @@ import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.level.ServerChunkCache
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
@@ -188,6 +189,8 @@ class ServerMicroLevel(
 	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
 	override fun getBlockEntity(pos: BlockPos): BlockEntity? = this.blockEntities[pos]
 	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
+
+	override fun getChunkSource(): ServerChunkCache = MicroLevelChunkSource(this)
 
 	// Ticking
 	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
