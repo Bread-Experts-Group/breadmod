@@ -1,13 +1,17 @@
 package org.bread_experts_group.breadmod_agent
 
+import com.google.common.collect.Lists
+import net.minecraft.server.level.ServerChunkCache
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.chunk.ChunkSource
 import net.minecraft.world.level.gameevent.GameEventDispatcher
 import net.minecraft.world.level.redstone.CollectingNeighborUpdater
 import net.minecraft.world.level.redstone.NeighborUpdater
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.capabilities.CapabilityListenerHolder
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkSource
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ServerMicroLevel
 import org.bread_experts_group.breadmod_agent.AgentUtil.classDesc
 import org.bread_experts_group.breadmod_agent.AgentUtil.modifyInit
@@ -38,6 +42,7 @@ class Agent {
 				): ByteArray? {
 					var hasServerLevelConstructor = false
 					var hasLevelConstructor = false
+					var hasServerChunkCacheConstructor = false
 					return runCatching {
 						when (AgentUtil.parseClassName(className)) {
 							ServerLevel::class.java.name -> {
@@ -153,10 +158,101 @@ class Agent {
 													"neighborUpdater",
 													NeighborUpdater::class.classDesc
 												)
+												.aload(0)
+												.new_(ArrayList::class.classDesc)
+												.dup()
+												.invokespecial(
+													ArrayList::class.classDesc,
+													"<init>",
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+												.putfield(
+													Level::class.classDesc,
+													"freshBlockEntities",
+													ArrayList::class.classDesc
+												)
+												.aload(0)
+												.new_(ArrayList::class.classDesc)
+												.dup()
+												.invokespecial(
+													ArrayList::class.classDesc,
+													"<init>",
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+												.putfield(
+													Level::class.classDesc,
+													"pendingFreshBlockEntities",
+													ArrayList::class.classDesc
+												)
+												.aload(0)
+												.invokestatic(
+													Lists::class.classDesc,
+													"newArrayList",
+													MethodTypeDesc.of(ArrayList::class.classDesc)
+												)
+												.putfield(
+													Level::class.classDesc,
+													"pendingBlockEntityTickers",
+													ConstantDescs.CD_List
+												)
+												.aload(0)
+												.invokestatic(
+													Lists::class.classDesc,
+													"newArrayList",
+													MethodTypeDesc.of(ArrayList::class.classDesc)
+												)
+												.putfield(
+													Level::class.classDesc,
+													"blockEntityTickers",
+													ConstantDescs.CD_List
+												)
 												.return_()
 										}
 									}
 									classBuilder.with(classElement)
+								}
+							}
+							ServerChunkCache::class.java.name -> {
+								val model = classFile.parse(classfileBuffer)
+								classFile.transformClass(model) { classBuilder, classElement ->
+									if (!hasServerChunkCacheConstructor) {
+										hasServerChunkCacheConstructor = true
+										classBuilder.withMethodBody(
+											"<init>",
+											MethodTypeDesc.of(ConstantDescs.CD_void),
+											ACC_PUBLIC
+										) { codeBuilder ->
+											codeBuilder
+												.aload(0)
+												.invokespecial(
+													ChunkSource::class.classDesc,
+													"<init>",
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+												.return_()
+										}
+									}
+									classBuilder.with(classElement)
+								}
+							}
+							MicroLevelChunkSource::class.java.name -> {
+								val model = classFile.parse(classfileBuffer)
+								classFile.transformClass(model) { classBuilder, classElement ->
+									val init = classBuilder.modifyInit(
+										classElement
+									) { codeBuilder, codeElement, index ->
+										when (index) {
+											9 -> codeBuilder
+												.aload(0)
+												.invokespecial(
+													ServerChunkCache::class.classDesc,
+													"<init>",
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+											else if (index !in 9 .. 24) -> codeBuilder.with(codeElement)
+										}
+									}
+									if (!init) classBuilder.with(classElement)
 								}
 							}
 							ServerMicroLevel::class.java.name -> {

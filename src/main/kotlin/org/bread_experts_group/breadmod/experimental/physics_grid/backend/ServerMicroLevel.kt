@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.profiling.ProfilerFiller
+import net.minecraft.world.TickRateManager
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.level.Level
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.util.logDebugInfo
 import java.util.function.BooleanSupplier
 import java.util.function.Supplier
 
@@ -159,7 +161,13 @@ class ServerMicroLevel(
 
 	fun initBlockEntities() {
 		this.blockEntities.forEach { (_, entity) -> entity.level = this }
+		this.blockEntities.values.forEach {
+			logDebugInfo(this.getChunkAt(it.blockPos))
+			this.setBlockEntity(it)
+		}
 	}
+
+	override fun dimensionType(): DimensionType = this.sourceLevel.dimensionType()
 
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
 		this.logger.fatal("nuclear bomb")
@@ -219,6 +227,16 @@ class ServerMicroLevel(
 //				) TODO: This packet must contain the local grid, as it is sent from the server. For now, playing locally..
 			}
 		}
+		this.tickBlockEntities()
+	}
+
+	override fun tickRateManager(): TickRateManager = object : TickRateManager() {
+		override fun runsNormally(): Boolean = true
+	}
+
+	override fun neighborChanged(pos: BlockPos, block: Block, fromPos: BlockPos) {
+		println("NC $pos, $block, $fromPos")
+		super.neighborChanged(pos, block, fromPos)
 	}
 
 	override fun playSeededSound(
