@@ -13,6 +13,7 @@ import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -20,12 +21,15 @@ import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.Fluids
+import net.minecraft.world.level.storage.LevelData
 import net.minecraft.world.phys.Vec3
+import net.minecraft.world.ticks.LevelTicks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import java.util.function.BooleanSupplier
 import java.util.function.Supplier
 
 /* Current Opcode stack (THIS CHANGES WHEN YOU ADD FIELDS & CONSTRUCTOR ARGS)
@@ -156,8 +160,13 @@ class ServerMicroLevel(
 	}
 
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
-		this.blocks[pos] = state
 		this.logger.fatal("nuclear bomb")
+		var oldState = this.blocks[pos]
+		if (oldState == state) return false
+		if (oldState == null) oldState = Blocks.AIR.defaultBlockState()
+		else oldState.onRemove(this, pos, state, false)
+		this.blocks[pos] = state
+		state.onPlace(this, pos, oldState, false)
 		// todo test recompiling
 		/*if (this.sourceLevel.isClientSide)*/ executeOnRenderThread {
 			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
@@ -175,12 +184,21 @@ class ServerMicroLevel(
 	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 	override fun mayInteract(player: Player, pos: BlockPos): Boolean = true
 
-	override fun getBlockState(pos: BlockPos): BlockState =
-		this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
-
+	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
 	override fun getBlockEntity(pos: BlockPos): BlockEntity? = this.blockEntities[pos]
-
 	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
+
+	// Ticking
+	private val blockTicks: LevelTicks<Block> = ServerMicroLevelBlockTicks(this::getGameTime)
+	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
+	override fun tick(hasTimeLeft: BooleanSupplier) {
+		this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
+	}
+
+	override fun neighborChanged(pos: BlockPos, block: Block, fromPos: BlockPos) {
+		println("NC $pos, $block, $fromPos")
+		super.neighborChanged(pos, block, fromPos)
+	}
 
 	// todo fake minecraft server
 	override fun playSeededSound(
@@ -201,6 +219,7 @@ class ServerMicroLevel(
 	}
 
 	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}]"
-
 	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()
+	override fun getGameTime(): Long = this.sourceLevel.gameTime
+	override fun getLevelData(): LevelData = this.sourceLevel.levelData
 }

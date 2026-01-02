@@ -337,7 +337,7 @@ object Registry {
 								}
 							}
 						}
-//						PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
+						PhysicsGrid.grids.forEach { it.microLevel.tick { true } }
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
