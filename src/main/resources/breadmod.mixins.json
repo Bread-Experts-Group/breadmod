@@ -11,6 +11,7 @@
     "client.IMultiPartBlockStateBuilderAccessor",
     "common.IAccessorEntity",
     "common.MixinActiveProfiler",
+    "common.MixinContainer",
     "common.MixinInventoryChangeTrigger",
     "common.MixinLightningBolt",
     "common.MixinLivingEntity",
