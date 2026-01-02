@@ -10,8 +10,10 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
+import net.minecraft.util.AbortableIterationConsumer
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.TickRateManager
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.level.Level
@@ -19,21 +21,28 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
+import net.minecraft.world.level.entity.EntityTypeTest
+import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.storage.LevelData
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
 import net.neoforged.neoforge.common.CommonHooks
+import net.neoforged.neoforge.entity.PartEntity
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.util.logDebugInfo
+import java.util.UUID
 import java.util.function.BooleanSupplier
+import java.util.function.Consumer
 import java.util.function.Supplier
 
 /* Current Opcode stack (THIS CHANGES WHEN YOU ADD FIELDS & CONSTRUCTOR ARGS)
@@ -196,9 +205,31 @@ class ServerMicroLevel(
 
 	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
 	override fun getBlockEntity(pos: BlockPos): BlockEntity? = this.blockEntities[pos]
-	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
+	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState() // TODO: Fluids
+
+	override fun getEntities(): LevelEntityGetter<Entity> = object : LevelEntityGetter<Entity> {
+		override fun <U : Entity> get(
+			test: EntityTypeTest<Entity, U>,
+			bounds: AABB,
+			consumer: AbortableIterationConsumer<U>
+		) {
+		}
+
+		override fun <U : Entity> get(test: EntityTypeTest<Entity, U>, consumer: AbortableIterationConsumer<U>) {
+		}
+
+		override fun get(boundingBox: AABB, consumer: Consumer<Entity>) {
+		}
+
+		override fun get(id: Int): Entity? = null
+		override fun get(uuid: UUID): Entity? = null
+		override fun getAll(): Iterable<Entity> = emptyList()
+	} // TODO: Entities
+
+	override fun getPartEntities(): Collection<PartEntity<*>> = emptyList() // TODO: Part entities
 
 	override fun getChunkSource(): ServerChunkCache = MicroLevelChunkSource(this)
+	override fun getWorldBorder(): WorldBorder = WorldBorder()
 
 	// Ticking
 	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
@@ -234,11 +265,6 @@ class ServerMicroLevel(
 		override fun runsNormally(): Boolean = true
 	}
 
-	override fun neighborChanged(pos: BlockPos, block: Block, fromPos: BlockPos) {
-		println("NC $pos, $block, $fromPos")
-		super.neighborChanged(pos, block, fromPos)
-	}
-
 	override fun playSeededSound(
 		player: Player?,
 		x: Double,
@@ -259,6 +285,10 @@ class ServerMicroLevel(
 
 	override fun blockEvent(pos: BlockPos, block: Block, eventID: Int, eventParam: Int) {
 		this.events.add(MicroLevelBlockEvent(pos, block, eventID, eventParam))
+	}
+
+	override fun levelEvent(player: Player?, type: Int, pos: BlockPos, data: Int) {
+		println("e $player, $type, $pos, $data")
 	}
 
 	private val gameEventDispatcher: MicroLevelGameEventDispatcher = MicroLevelGameEventDispatcher(this)
