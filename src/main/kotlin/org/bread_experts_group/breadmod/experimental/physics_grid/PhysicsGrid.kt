@@ -72,7 +72,10 @@ class PhysicsGrid private constructor(val pos: Vec3, val center: Vec3, val bound
 				blocks[posOffset] = state
 			}
 			val grid = PhysicsGrid(targetPos, bounding.center, bounding)
-			grid.microLevel = ServerMicroLevel(grid, level, blocks, blockEntities)
+			grid.microLevel = ServerMicroLevel(
+				grid, level,
+				blocks, blockEntities
+			)
 			grid.microLevel.initBlockEntities()
 			Companion.grids.add(grid)
 			// todo move to clientbound packet

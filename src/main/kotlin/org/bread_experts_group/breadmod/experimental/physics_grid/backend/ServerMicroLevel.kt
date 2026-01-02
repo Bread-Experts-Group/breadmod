@@ -24,6 +24,7 @@ import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.storage.LevelData
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
+import net.neoforged.neoforge.common.CommonHooks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
@@ -189,18 +190,34 @@ class ServerMicroLevel(
 	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
 
 	// Ticking
+	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
 	private val blockTicks: LevelTicks<Block> = ServerMicroLevelBlockTicks(this::getGameTime)
 	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
 	override fun tick(hasTimeLeft: BooleanSupplier) {
 		this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
+		while (this.events.isNotEmpty()) {
+			val (pos, block, eventID, eventParam) = this.events.removeLast()
+			val state = this.getBlockState(pos)
+			if (state.`is`(block) && state.triggerEvent(this, pos, eventID, eventParam)) {
+//				val position = pos.toVec3() + this.grid.pos
+//				this.sourceLevel.server?.playerList?.broadcast(
+//					null,
+//					position.x,
+//					position.y,
+//					position.z,
+//					64.0,
+//					this.sourceLevel.dimension(),
+//					ClientboundBlockEventPacket(
+//						BlockPos(position.toVec3i()),
+//						block,
+//						eventID,
+//						eventParam
+//					)
+//				) TODO: This packet must contain the local grid, as it is sent from the server. For now, playing locally..
+			}
+		}
 	}
 
-	override fun neighborChanged(pos: BlockPos, block: Block, fromPos: BlockPos) {
-		println("NC $pos, $block, $fromPos")
-		super.neighborChanged(pos, block, fromPos)
-	}
-
-	// todo fake minecraft server
 	override fun playSeededSound(
 		player: Player?,
 		x: Double,
@@ -211,11 +228,22 @@ class ServerMicroLevel(
 		volume: Float,
 		pitch: Float,
 		seed: Long
-	) {
+	): Unit = this.sourceLevel.playSeededSound(
+		player,
+		x + this.grid.pos.x,
+		y + this.grid.pos.y,
+		z + this.grid.pos.z,
+		sound, category, volume, pitch, seed
+	)
+
+	override fun blockEvent(pos: BlockPos, block: Block, eventID: Int, eventParam: Int) {
+		this.events.add(MicroLevelBlockEvent(pos, block, eventID, eventParam))
 	}
 
-	// todo chunk source & game event dispatcher
-	override fun gameEvent(gameEvent: Holder<GameEvent?>, pos: Vec3, context: GameEvent.Context) {
+	private val gameEventDispatcher: MicroLevelGameEventDispatcher = MicroLevelGameEventDispatcher(this)
+	override fun gameEvent(gameEvent: Holder<GameEvent>, pos: Vec3, context: GameEvent.Context) {
+		if (CommonHooks.onVanillaGameEvent(this, gameEvent, pos, context))
+			this.gameEventDispatcher.post(gameEvent, pos, context)
 	}
 
 	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}]"
