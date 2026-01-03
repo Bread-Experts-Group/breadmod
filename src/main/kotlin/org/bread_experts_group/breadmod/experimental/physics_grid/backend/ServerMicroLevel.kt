@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
+import net.minecraft.util.RandomSource
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.TickRateManager
 import net.minecraft.world.entity.Entity
@@ -28,6 +29,7 @@ import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.gameevent.GameEvent
+import net.minecraft.world.level.levelgen.XoroshiroRandomSource
 import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
@@ -42,6 +44,8 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import java.nio.ByteBuffer
+import java.security.SecureRandom
 import java.util.function.BooleanSupplier
 import java.util.function.Supplier
 
@@ -75,10 +79,19 @@ class ServerMicroLevel(
 		}
 	}
 
-	private val logger: Logger = LogManager.getLogger("ServerMicroLevel")
-
 	init {
 		this.players = this.grid.playersInGrid
+	}
+
+	private val logger: Logger = LogManager.getLogger("ServerMicroLevel")
+	private val randomSeeder: SecureRandom = SecureRandom()
+	private val seederBuffer: ByteBuffer = ByteBuffer.allocate(16)
+	override fun getRandom(): RandomSource {
+		this.seederBuffer.clear()
+		val seedBytes = this.randomSeeder.generateSeed(16)
+		this.seederBuffer.put(seedBytes)
+		this.seederBuffer.flip()
+		return XoroshiroRandomSource(this.seederBuffer.getLong(), this.seederBuffer.getLong())
 	}
 
 	override fun players(): List<ServerPlayer> = this.grid.playersInGrid
@@ -123,6 +136,12 @@ class ServerMicroLevel(
 		}
 	}
 
+	override fun destroyBlock(pos: BlockPos, dropBlock: Boolean, entity: Entity?, recursionLeft: Int): Boolean {
+		println("Want to destroy $pos, $dropBlock, $entity, $recursionLeft")
+		return false
+//		return super.destroyBlock(pos, dropBlock, entity, recursionLeft)
+	}
+
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
 		val status = super.setBlock(pos, state, flags, recursionLeft)
 		if (status) executeOnRenderThread {
@@ -151,6 +170,7 @@ class ServerMicroLevel(
 
 	// TODO: Lighting
 	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {
+		override fun getRawBrightness(blockPos: BlockPos, amount: Int): Int = 16
 	}
 
 	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
@@ -210,7 +230,17 @@ class ServerMicroLevel(
 	}
 
 	override fun tickChunk(chunk: LevelChunk, randomTickSpeed: Int) {
-		// TODO: Random ticking
+		if (randomTickSpeed > 0) {
+			var skipping = 0
+			(chunk as MicroLevelServerChunkAccess).blocks.forEach { (pos, state) ->
+				if (skipping-- > 0) return@forEach
+				else if (skipping <= 0) skipping = this.random.nextInt(0, (16 * 16 * 16) / randomTickSpeed)
+				if (!state.isRandomlyTicking) return@forEach
+				state.randomTick(this, pos.toBlockPos(), this.random)
+			}
+		}
+		// TODO : MUST BE CLIENT SIDE :
+		// TODO : ANIMATE
 	}
 
 	private val tickRateManager: TickRateManager = object : TickRateManager() {
