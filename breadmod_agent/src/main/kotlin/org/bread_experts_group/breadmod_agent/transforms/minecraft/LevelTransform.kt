@@ -124,6 +124,19 @@ class LevelTransform(
 					"blockEntityTickers",
 					ConstantDescs.CD_List
 				)
+				.aload(0)
+				.new_(ArrayList::class.classDesc)
+				.dup()
+				.invokespecial(
+					ArrayList::class.classDesc,
+					ConstantDescs.INIT_NAME,
+					Companion.DEFAULT_VOID
+				)
+				.putfield(
+					Level::class.classDesc,
+					"capturedBlockSnapshots",
+					ArrayList::class.classDesc
+				)
 				.return_()
 		}
 		classBuilder.with(classElement)

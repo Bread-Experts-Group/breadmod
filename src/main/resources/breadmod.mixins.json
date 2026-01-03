@@ -19,7 +19,6 @@
     "common.physics_grid.MixinEntityPhysGrid",
     "common.physics_grid.MixinServerGamePacketListenerPhysGrid",
     "common.physics_grid.MixinServerPlayerGameModePhysGrid",
-    "common.physics_grid.MixinUseOnContext",
     "compat.jade.MixinRayTracing"
   ],
   "client": [

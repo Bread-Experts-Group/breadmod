@@ -7,7 +7,6 @@ import net.minecraft.world.level.chunk.status.ChunkStatus
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkMap
 import java.util.function.BooleanSupplier
 
-// todo ChunkMap, mekanism's BEs require it
 class ServerMicroLevelChunkSource(
 	private val parent: ServerMicroLevel
 ) : ServerChunkCache(

@@ -31,6 +31,7 @@ import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunkAccess
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
@@ -55,7 +56,9 @@ class PhysicsGrid(val pos: Vec3, val bounding: AABB) {
 
 		@JvmStatic
 		fun getClosestGrid(entity: Entity): PhysicsGrid? = this.localGrids.firstOrNull {
-			entity.boundingBox.intersects(it.bounding)
+			val levelDist = if (entity.level().isClientSide) it.microLevel is ClientMicroLevel
+			else it.microLevel is ServerMicroLevel
+			entity.boundingBox.intersects(it.bounding) && levelDist
 		}
 
 		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext) {
