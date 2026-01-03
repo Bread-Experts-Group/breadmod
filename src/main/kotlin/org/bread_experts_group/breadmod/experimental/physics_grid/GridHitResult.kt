@@ -12,6 +12,8 @@ class GridHitResult(
 	val localPos: BlockPos,
 	val state: BlockState
 ) : BlockHitResult(localHit, direction, localPos, false) {
+	override fun getType(): Type = Type.BLOCK
+
 	override fun toString(): String =
 		"GridHitResult[pos=${this.localPos}, state=${this.state.block}, direction=${this.direction}]"
 }

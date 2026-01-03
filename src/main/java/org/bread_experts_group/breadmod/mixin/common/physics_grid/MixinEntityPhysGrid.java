@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.mixin.common.physics_grid;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.BlockPos;
@@ -9,12 +10,13 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.bread_experts_group.breadmod.experimental.physics_grid.GridHitResult;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,12 +29,6 @@ import java.util.List;
 
 @Mixin(Entity.class)
 abstract class MixinEntityPhysGrid {
-	@Shadow
-	public float moveDist;
-
-	@Shadow
-	private float nextStep;
-
 	@Unique
 	private Entity breadmod$getThis() {
 		return (Entity) (Object) this;
@@ -126,6 +122,19 @@ abstract class MixinEntityPhysGrid {
 			blockState.set(localState);
 			blockState1.set(localState);
 		}
+	}
+
+	@ModifyReturnValue(
+			method = "pick",
+			at = @At("RETURN")
+	)
+	private HitResult redirectToGridResult(HitResult original, @Local(argsOnly = true) double hitDistance) {
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(breadmod$getThis());
+		if (grid != null) {
+			GridHitResult cast = grid.gridBlockCast(breadmod$getThis(), hitDistance);
+			return (cast != null) ? cast : original;
+		}
+		return original;
 	}
 //
 //	@Shadow
