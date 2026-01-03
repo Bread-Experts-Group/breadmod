@@ -3,7 +3,9 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexBuffer
 import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.MinecraftServer
@@ -66,8 +68,12 @@ class PhysicsGrid private constructor(val pos: Vec3, val center: Vec3, val bound
 				val posOffset = BlockPos(immutable.x - posA.x, immutable.y - posA.y, immutable.z - posA.z)
 				val blockEntity = level.getBlockEntity(immutable)
 				if (blockEntity != null && state.block is EntityBlock) {
+					val data = blockEntity.saveWithId(level.registryAccess())
 					val newEntity = (state.block as EntityBlock).newBlockEntity(posOffset, state)
-					if (newEntity != null) blockEntities[posOffset] = newEntity
+					if (newEntity != null) {
+						newEntity.loadWithComponents(data, level.registryAccess())
+						blockEntities[posOffset] = newEntity
+					}
 				}
 				blocks[posOffset] = state
 			}
@@ -115,6 +121,7 @@ class PhysicsGrid private constructor(val pos: Vec3, val center: Vec3, val bound
 
 	fun attachRenderer() {
 		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
+			val bufferSource = localClient.renderBuffers().bufferSource()
 			val gridMesh = Companion.gridMeshes.getOrPut(this) { GridMesh(this) }
 			val poseStack = event.poseStack
 			gridMesh.compile(poseStack)
@@ -138,7 +145,7 @@ class PhysicsGrid private constructor(val pos: Vec3, val center: Vec3, val bound
 			poseStack.initialTranslate(event.camera)
 			LevelRenderer.renderLineBox(
 				poseStack,
-				localClient.renderBuffers().bufferSource().getBuffer(RenderType.lines()),
+				bufferSource.getBuffer(RenderType.lines()),
 				this.bounding,
 				1f,
 				1f,
@@ -146,21 +153,21 @@ class PhysicsGrid private constructor(val pos: Vec3, val center: Vec3, val bound
 				1f
 			)
 			poseStack.translate(this.pos)
-			// TODO: BE Rendering
-//			this.microLevel.blockEntities.forEach { (pos, blockEntity) ->
-//				poseStack.pushPose()
-//				poseStack.translate(pos)
-//				val renderer = localClient.blockEntityRenderDispatcher.getRenderer(blockEntity)
-//				renderer?.render(
-//					blockEntity,
-//					1f,
-//					poseStack,
-//					localClient.renderBuffers().bufferSource(),
-//					LightTexture.FULL_BRIGHT,
-//					OverlayTexture.NO_OVERLAY
-//				)
-//				poseStack.popPose()
-//			}
+			(this.microLevel.getChunk(0, 0) as MicroLevelServerChunkAccess).blocks.forEach { (pos, _) ->
+				val blockEntity = this.microLevel.getBlockEntity(pos.toBlockPos()) ?: return@forEach
+				poseStack.pushPose()
+				poseStack.translate(pos.toBlockPos())
+				val renderer = localClient.blockEntityRenderDispatcher.getRenderer(blockEntity)
+				renderer?.render(
+					blockEntity,
+					1f,
+					poseStack,
+					bufferSource,
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY
+				)
+				poseStack.popPose()
+			}
 			poseStack.popPose()
 			if (!Companion.grids.contains(this)) {
 				gridMesh.close()
