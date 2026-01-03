@@ -15,6 +15,7 @@ import net.minecraft.world.level.redstone.CollectingNeighborUpdater
 import net.minecraft.world.level.redstone.NeighborUpdater
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.capabilities.CapabilityListenerHolder
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ClientMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkMap
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkSource
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ServerMicroLevel
@@ -397,6 +398,26 @@ class Agent {
 													MethodTypeDesc.of(ConstantDescs.CD_void)
 												)
 											else if (index > 28) -> codeBuilder.with(codeElement)
+										}
+									}
+									if (!init) classBuilder.with(classElement)
+								}
+							}
+							ClientMicroLevel::class.java.name -> {
+								val model = classFile.parse(classfileBuffer)
+								classFile.transformClass(model) { classBuilder, classElement ->
+									val init = classBuilder.modifyInit(
+										classElement
+									) { codeBuilder, codeElement, index ->
+										when (index) {
+											18 -> codeBuilder
+												.aload(0)
+												.invokespecial(
+													ServerLevel::class.classDesc,
+													ConstantDescs.INIT_NAME,
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+											else if (index > 18) -> codeBuilder.with(codeElement)
 										}
 									}
 									if (!init) classBuilder.with(classElement)

@@ -236,12 +236,11 @@ class ServerMicroLevel(
 			(chunk as MicroLevelServerChunkAccess).blocks.forEach { (pos, state) ->
 				if (skipping-- > 0) return@forEach
 				else if (skipping <= 0) skipping = this.random.nextInt(0, (16 * 16 * 16) / randomTickSpeed)
-				if (!state.isRandomlyTicking) return@forEach
-				state.randomTick(this, pos.toBlockPos(), this.random)
+				// TODO : MUST BE CLIENT SIDE :
+				state.block.animateTick(state, this, pos.toBlockPos(), this.random)
+				if (state.isRandomlyTicking) state.randomTick(this, pos.toBlockPos(), this.random)
 			}
 		}
-		// TODO : MUST BE CLIENT SIDE :
-		// TODO : ANIMATE
 	}
 
 	private val tickRateManager: TickRateManager = object : TickRateManager() {
