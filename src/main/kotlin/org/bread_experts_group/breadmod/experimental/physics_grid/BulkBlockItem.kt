@@ -1,10 +1,11 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid
 
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionResult
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
@@ -58,8 +59,15 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		return super.useOn(context)
 	}
 
-	override fun onMouseScroll(scrollingEvent: InputEvent.MouseScrollingEvent, heldStack: ItemStack, player: Player) {
+	override fun onMouseScroll(
+		scrollingEvent: InputEvent.MouseScrollingEvent,
+		heldStack: ItemStack,
+		level: ClientLevel,
+		player: LocalPlayer
+	) {
 		if (player.isCrouching) {
+			PhysicsGrid.gridMeshes.forEach { (_, mesh) -> mesh.close() }
+			PhysicsGrid.gridMeshes.clear()
 			PhysicsGrid.grids.clear()
 			PacketDistributor.sendToServer(ClearGridPacket())
 			scrollingEvent.isCanceled = true

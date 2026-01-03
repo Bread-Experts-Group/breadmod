@@ -1,19 +1,24 @@
 package org.bread_experts_group.breadmod.mixin.common.physics_grid;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
@@ -21,7 +26,13 @@ import java.util.Collection;
 import java.util.List;
 
 @Mixin(Entity.class)
-abstract class MixinEntity {
+abstract class MixinEntityPhysGrid {
+	@Shadow
+	public float moveDist;
+
+	@Shadow
+	private float nextStep;
+
 	@Unique
 	private Entity breadmod$getThis() {
 		return (Entity) (Object) this;
@@ -71,7 +82,7 @@ abstract class MixinEntity {
 //			}
 //		} else this.breadmod$lastPlatformPos = null;
 //	}
-//
+
 	@ModifyExpressionValue(
 			method = "spawnSprintParticle",
 			at = @At(
@@ -89,14 +100,32 @@ abstract class MixinEntity {
 	}
 
 	@Inject(
-			method = "vibrationAndSoundEffectsFromBlock",
-			at = @At("HEAD")
+			method = "move",
+			at = @At(
+					value = "FIELD",
+					target = "Lnet/minecraft/world/entity/Entity;moveDist:F",
+					shift = At.Shift.AFTER,
+					opcode = Opcodes.PUTFIELD
+			)
 	)
-	private void probeSoundAttempt(
-			BlockPos pos, BlockState state, boolean playStepSound, boolean broadcastGameEvent,
-			Vec3 entityPos, CallbackInfoReturnable<Boolean> cir
+	private void redirectValuesForBlockSounds(
+			MoverType type,
+			 Vec3 pos, CallbackInfo ci,
+			@Local(ordinal = 0) LocalRef<BlockState> blockState,
+			 @Local(ordinal = 1) LocalRef<BlockState> blockState1,
+			@Local(ordinal = 0) LocalRef<BlockPos> getOnPosLegacy,
+			@Local(ordinal = 1) LocalRef<BlockPos> getOnPos
 	) {
-		if (breadmod$getThis() instanceof Player) System.out.println(pos + ", " + state + ", " + playStepSound);
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(breadmod$getThis());
+		if (grid != null) {
+			Vec3 localized = breadmod$getThis().position().subtract(grid.getPos());
+			BlockPos localPos = BlockPos.containing(localized.subtract(0.0, 0.1, 0.0));
+			BlockState localState = grid.getMicroLevel().getBlockState(localPos);
+			getOnPos.set(localPos);
+			getOnPosLegacy.set(localPos);
+			blockState.set(localState);
+			blockState1.set(localState);
+		}
 	}
 //
 //	@Shadow

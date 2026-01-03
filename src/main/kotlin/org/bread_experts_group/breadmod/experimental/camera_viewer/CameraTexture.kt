@@ -43,6 +43,7 @@ class CameraTexture(
 ) : AbstractTexture(), Tickable {
 	companion object {
 		val camera: DummyCamera = DummyCamera()
+		@JvmField
 		var targetBeingRendered: RenderTarget? = null
 		private var textureCounter: Int = 0
 		private val frameTargets: MutableMap<BlockPos, TextureTarget> = mutableMapOf()

@@ -2,6 +2,8 @@ package org.bread_experts_group.breadmod.tool_gun
 
 import net.minecraft.ChatFormatting
 import net.minecraft.client.model.HumanoidModel.ArmPose
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -87,7 +89,12 @@ class ToolGunItem : Item(
 		val TOOL_GUN_SCREEN_NAME: Component = Component.translatable(this.TOOL_GUN_DEF, "screen_name")
 	}
 
-	override fun onMouseScroll(scrollingEvent: MouseScrollingEvent, heldStack: ItemStack, player: Player) {
+	override fun onMouseScroll(
+		scrollingEvent: MouseScrollingEvent,
+		heldStack: ItemStack,
+		level: ClientLevel,
+		player: LocalPlayer
+	) {
 		val data = ToolGunData.get(heldStack)
 		if (player.isCrouching) {
 			scrollingEvent.isCanceled = true
@@ -117,12 +124,12 @@ class ToolGunItem : Item(
 		player?.let { newData.getMode().tick(level, it, stack, newData) }
 	}
 
-	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, player: Player) {
+	override fun onMouseInputPre(mouseEvent: Pre, heldStack: ItemStack, level: ClientLevel, player: LocalPlayer) {
 		val mode = ToolGunData.get(heldStack).getMode()
 		mode.mouseButtonPreAction(mouseEvent, heldStack, player)
 	}
 
-	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, player: Player) {
+	override fun onMouseInputPost(mouseEvent: Post, heldStack: ItemStack, level: ClientLevel, player: LocalPlayer) {
 		val mode = ToolGunData.get(heldStack).getMode()
 		mode.mouseButtonPostAction(mouseEvent, heldStack, player)
 	}
