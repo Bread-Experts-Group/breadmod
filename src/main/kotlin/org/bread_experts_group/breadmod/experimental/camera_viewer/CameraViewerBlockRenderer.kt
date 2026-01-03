@@ -19,6 +19,10 @@ import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlo
 import org.bread_experts_group.breadmod.util.Color
 
 class CameraViewerBlockRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(context) {
+	companion object {
+		var viewerBeingRendered: CameraViewerBlockRenderer? = null
+	}
+
 	private val bg: ResourceLocation = solidColorTexture(0, 0, 0, "viewer_bg")
 
 	override fun renderBM(
@@ -29,6 +33,8 @@ class CameraViewerBlockRenderer(context: BlockEntityRendererProvider.Context) : 
 		packedLight: Int,
 		packedOverlay: Int
 	) {
+		if (Companion.viewerBeingRendered == this) return
+		Companion.viewerBeingRendered = this
 		val state = blockEntity.blockState
 		val powered = state.getValue(BlockStateProperties.POWERED)
 		val mainCamera = localClient.gameRenderer.mainCamera.position
@@ -44,6 +50,7 @@ class CameraViewerBlockRenderer(context: BlockEntityRendererProvider.Context) : 
 		poseStack.translateDiv16(1.1f, -1.1f, -0.001f)
 		drawQuad(poseStack, bufferSource, RenderType.text(textureLoc))
 		poseStack.popPose()
+		Companion.viewerBeingRendered = null
 	}
 
 	override fun renderGuiGraphics(
