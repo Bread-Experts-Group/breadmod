@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod_agent
 
 import com.google.common.collect.Lists
-import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.server.level.ChunkMap
 import net.minecraft.server.level.PlayerMap
@@ -11,12 +10,24 @@ import net.minecraft.util.RandomSource
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.chunk.ChunkSource
 import net.minecraft.world.level.chunk.storage.ChunkStorage
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ClientMicroLevel
 import net.minecraft.world.level.gameevent.GameEventDispatcher
 import net.minecraft.world.level.redstone.CollectingNeighborUpdater
 import net.minecraft.world.level.redstone.NeighborUpdater
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.capabilities.CapabilityListenerHolder
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkMap
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkSource
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ServerMicroLevel
+import org.bread_experts_group.breadmod_agent.transforms.breadmod.ClientMicroLevelTransform
+import org.bread_experts_group.breadmod_agent.transforms.breadmod.MicroLevelChunkMapTransform
+import org.bread_experts_group.breadmod_agent.transforms.breadmod.ServerMicroLevelTransform
+import org.bread_experts_group.breadmod_agent.transforms.minecraft.ChunkMapTransform
+import org.bread_experts_group.breadmod_agent.transforms.minecraft.ChunkStorageTransform
+import org.bread_experts_group.breadmod_agent.transforms.minecraft.ClientLevelTransform
+import org.bread_experts_group.breadmod_agent.transforms.minecraft.LevelTransform
+import org.bread_experts_group.breadmod_agent.transforms.minecraft.ServerChunkCacheTransform
+import org.bread_experts_group.breadmod_agent.transforms.minecraft.ServerLevelTransform
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevelChunkSource
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
@@ -57,6 +68,26 @@ class Agent {
 					var hasChunkStorageConstructor = false
 					return runCatching {
 						when (AgentUtil.parseClassName(className)) {
+							ServerLevel::class.java.name ->
+								ServerLevelTransform(classFile, classfileBuffer).parse()
+							ClientLevel::class.java.name ->
+								ClientLevelTransform(classFile, classfileBuffer).parse()
+							Level::class.java.name ->
+								LevelTransform(classFile, classfileBuffer).parse()
+							ServerChunkCache::class.java.name ->
+								ServerChunkCacheTransform(classFile, classfileBuffer).parse()
+							ChunkMap::class.java.name ->
+								ChunkMapTransform(classFile, classfileBuffer).parse()
+							ChunkStorage::class.java.name ->
+								ChunkStorageTransform(classFile, classfileBuffer).parse()
+							MicroLevelChunkMap::class.java.name ->
+								MicroLevelChunkMapTransform(classFile, classfileBuffer).parse()
+							MicroLevelChunkSource::class.java.name ->
+								MicroLevelChunkMapTransform(classFile, classfileBuffer).parse()
+							ServerMicroLevel::class.java.name ->
+								ServerMicroLevelTransform(classFile, classfileBuffer).parse()
+							ClientMicroLevel::class.java.name ->
+								ClientMicroLevelTransform(classFile, classfileBuffer).parse()
 							ServerLevel::class.java.name -> {
 								val model = classFile.parse(classfileBuffer)
 								classFile.transformClass(model) { classBuilder, classElement ->
