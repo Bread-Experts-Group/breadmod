@@ -5,6 +5,7 @@ import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.LevelChunk
 import org.apache.logging.log4j.LogManager
@@ -19,8 +20,27 @@ class MicroLevelServerChunkAccess(
 	fun getBlockState(pos: Point3<Int>): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
 	override fun getBlockState(pos: BlockPos): BlockState = this.getBlockState(pos.toPoint3())
 
-	private fun updateBlockEntityTicker(blockEntity: BlockEntity) {
-		this.logger.fatal("TODO: Update ticker on $blockEntity")
+	private val tickingBlockEntities: MutableMap<Point3<Int>, MicroLevelBlockEntityTickerShell> = mutableMapOf()
+	private fun <T : BlockEntity> updateBlockEntityTicker(blockEntity: T) {
+		val state = blockEntity.blockState
+
+		@Suppress("UNCHECKED_CAST")
+		val ticker = state.getTicker(this.parent, blockEntity.type as BlockEntityType<T>)
+		if (ticker == null) {
+			this.logger.fatal("Remove ticker $blockEntity")
+//			this.removeBlockEntityTicker(blockEntity.blockPos)
+			return
+		}
+		val newTicker = MicroLevelBlockEntityTicker(this.parent, this, blockEntity, ticker)
+		val posP3 = blockEntity.blockPos.toPoint3()
+		val lastTicker = this.tickingBlockEntities[posP3]
+		if (lastTicker != null) {
+			lastTicker.ticker = newTicker
+			return
+		}
+		val shell = MicroLevelBlockEntityTickerShell(newTicker)
+		this.tickingBlockEntities[posP3] = shell
+		this.parent.addBlockEntityTicker(shell)
 	}
 
 	override fun setBlockState(pos: BlockPos, state: BlockState, isMoving: Boolean): BlockState? {
@@ -49,7 +69,7 @@ class MicroLevelServerChunkAccess(
 
 	@Suppress("PROPERTY_HIDES_JAVA_FIELD")
 	private val blockEntities: MutableMap<Point3<Int>, BlockEntity> = mutableMapOf()
-	fun createBlockEntity(pos: Point3<Int>): BlockEntity? {
+	private fun createBlockEntity(pos: Point3<Int>): BlockEntity? {
 		val state = this.getBlockState(pos)
 		return if (state.hasBlockEntity()) (state.block as EntityBlock).newBlockEntity(pos.toBlockPos(), state)
 		else null

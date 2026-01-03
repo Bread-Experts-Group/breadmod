@@ -19,6 +19,7 @@ import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.TickingBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
@@ -109,6 +110,12 @@ class ServerMicroLevel(
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
 
 	// Ticking
+	@Suppress("PROPERTY_HIDES_JAVA_FIELD")
+	private val blockEntityTickers: MutableList<TickingBlockEntity> = mutableListOf()
+	override fun addBlockEntityTicker(ticker: TickingBlockEntity) {
+		this.blockEntityTickers.add(ticker)
+	}
+
 	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
 	private val blockTicks: LevelTicks<Block> = ServerMicroLevelBlockTicks(this::getGameTime)
 	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
@@ -134,6 +141,14 @@ class ServerMicroLevel(
 //						eventParam
 //					)
 //				) TODO: This packet must contain the local grid, as it is sent from the server. For now, playing locally..
+			}
+		}
+		this.blockEntityTickers.removeIf {
+			if (it.isRemoved) true
+			else {
+				// TODO: shouldTickBlocksAt
+				it.tick()
+				false
 			}
 		}
 	}
