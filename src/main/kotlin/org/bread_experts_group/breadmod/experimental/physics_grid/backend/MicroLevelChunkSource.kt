@@ -12,6 +12,6 @@ class MicroLevelChunkSource(
 	false, null, null, null
 ) {
 	override fun getChunk(x: Int, z: Int, chunkStatus: ChunkStatus, requireChunk: Boolean): ChunkAccess {
-		return MicroLevelChunkAccess(this.parent)
+		return MicroLevelServerChunkAccess(this.parent)
 	}
 }

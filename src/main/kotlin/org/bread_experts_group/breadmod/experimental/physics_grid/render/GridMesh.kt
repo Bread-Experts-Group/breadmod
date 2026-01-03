@@ -13,6 +13,8 @@ import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelServerChunkAccess
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 
 // todo transparency sorting
 class GridMesh(private val grid: PhysicsGrid) {
@@ -52,10 +54,11 @@ class GridMesh(private val grid: PhysicsGrid) {
 		val random = RandomSource.create()
 		val level = localClient.level ?: return
 
-		this.grid.microLevel.blocks.forEach { (pos, state) ->
+		(this.grid.microLevel.getChunk(0, 0) as MicroLevelServerChunkAccess).blocks.forEach { (pos, state) ->
+			val blockPos = pos.toBlockPos()
 			val bakedModel = dispatcher.getBlockModel(state)
 			poseStack.pushPose()
-			poseStack.translate(pos)
+			poseStack.translate(blockPos)
 			for (renderType in bakedModel.getRenderTypes(state, random, ModelData.EMPTY)) {
 				val builder = this.getOrBeginBufferBuilder(renderType)
 				try {
@@ -64,14 +67,14 @@ class GridMesh(private val grid: PhysicsGrid) {
 						level,
 						bakedModel,
 						state,
-						pos.above(255),
+						blockPos.above(255),
 						poseStack,
 						builder,
 						true,
 						random,
-						state.getSeed(pos),
+						state.getSeed(blockPos),
 						OverlayTexture.NO_OVERLAY,
-						bakedModel.getModelData(level, pos, state, ModelData.EMPTY),
+						bakedModel.getModelData(level, blockPos, state, ModelData.EMPTY),
 						renderType
 					)
 				} catch (e: Exception) {

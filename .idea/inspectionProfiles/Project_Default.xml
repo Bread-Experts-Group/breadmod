@@ -466,6 +466,7 @@
           <option value="Destructure" />
           <option value="Unused" />
           <option value="KDocMissingDocumentation" />
+          <option value="PROPERTY_HIDES_JAVA_FIELD" />
         </list>
       </option>
     </inspection_tool>

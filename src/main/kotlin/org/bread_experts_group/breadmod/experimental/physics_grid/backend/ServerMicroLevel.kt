@@ -10,26 +10,22 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
-import net.minecraft.util.AbortableIterationConsumer
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.TickRateManager
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
+import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
-import net.minecraft.world.level.entity.EntityTypeTest
 import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.material.FluidState
-import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.level.storage.LevelData
-import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
 import net.neoforged.neoforge.common.CommonHooks
@@ -39,10 +35,7 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
-import org.bread_experts_group.breadmod.util.logDebugInfo
-import java.util.UUID
 import java.util.function.BooleanSupplier
-import java.util.function.Consumer
 import java.util.function.Supplier
 
 /**
@@ -50,10 +43,12 @@ import java.util.function.Supplier
  */
 class ServerMicroLevel(
 	private val grid: PhysicsGrid,
-	private val sourceLevel: Level,
-	val blocks: MutableMap<BlockPos, BlockState>,
-	val blockEntities: MutableMap<BlockPos, BlockEntity>
-) : ServerLevel(null, null, null, null, null, null, null, false, 0, null, true, null) {
+	private val sourceLevel: Level
+) : ServerLevel(
+	null, null, null, null,
+	null, null, null, false,
+	0, null, true, null
+) {
 	companion object {
 		fun getLevelBaseForData(server: MinecraftServer): ServerLevel? = server.getLevel(OVERWORLD)
 		fun getNameSpaceAndNameHuffmanSD(server: MinecraftServer): BlockNamesHuffmanSavedData? {
@@ -73,7 +68,7 @@ class ServerMicroLevel(
 		}
 	}
 
-	private val logger: Logger = LogManager.getLogger("PhysicsGrid")
+	private val logger: Logger = LogManager.getLogger("ServerMicroLevel")
 
 	init {
 		this.players = this.grid.playersInGrid
@@ -81,24 +76,8 @@ class ServerMicroLevel(
 
 	override fun players(): List<ServerPlayer> = this.grid.playersInGrid
 
-	fun initBlockEntities() {
-		this.blockEntities.forEach { (_, entity) -> entity.level = this }
-		this.blockEntities.values.forEach {
-			logDebugInfo(this.getChunkAt(it.blockPos))
-			this.setBlockEntity(it)
-		}
-	}
-
-	override fun dimensionType(): DimensionType = this.sourceLevel.dimensionType()
-
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
-		this.logger.fatal("nuclear bomb")
-		var oldState = this.blocks[pos]
-		if (oldState == state) return false
-		if (oldState == null) oldState = Blocks.AIR.defaultBlockState()
-		else oldState.onRemove(this, pos, state, false)
-		this.blocks[pos] = state
-		state.onPlace(this, pos, oldState, false)
+		this.getChunk(pos).setBlockState(pos, state, false)
 		// todo test recompiling
 		/*if (this.sourceLevel.isClientSide)*/ executeOnRenderThread {
 			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
@@ -116,33 +95,18 @@ class ServerMicroLevel(
 	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 	override fun mayInteract(player: Player, pos: BlockPos): Boolean = true
 
-	override fun getBlockState(pos: BlockPos): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
-	override fun getBlockEntity(pos: BlockPos): BlockEntity? = this.blockEntities[pos]
-	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState() // TODO: Fluids
+	override fun getBlockState(pos: BlockPos): BlockState = this.getChunk(pos).getBlockState(pos)
+	override fun getFluidState(pos: BlockPos): FluidState = this.getChunk(pos).getFluidState(pos)
+	override fun getBlockEntity(pos: BlockPos): BlockEntity? = this.getChunk(pos).getBlockEntity(pos)
 
-	override fun getEntities(): LevelEntityGetter<Entity> = object : LevelEntityGetter<Entity> {
-		override fun <U : Entity> get(
-			test: EntityTypeTest<Entity, U>,
-			bounds: AABB,
-			consumer: AbortableIterationConsumer<U>
-		) {
-		}
-
-		override fun <U : Entity> get(test: EntityTypeTest<Entity, U>, consumer: AbortableIterationConsumer<U>) {
-		}
-
-		override fun get(boundingBox: AABB, consumer: Consumer<Entity>) {
-		}
-
-		override fun get(id: Int): Entity? = null
-		override fun get(uuid: UUID): Entity? = null
-		override fun getAll(): Iterable<Entity> = emptyList()
-	} // TODO: Entities
-
+	private val entityGetter: MicroLevelEntityGetter = MicroLevelEntityGetter()
+	override fun getEntities(): LevelEntityGetter<Entity> = this.entityGetter
 	override fun getPartEntities(): Collection<PartEntity<*>> = emptyList() // TODO: Part entities
 
-	override fun getChunkSource(): ServerChunkCache = MicroLevelChunkSource(this)
-	override fun getWorldBorder(): WorldBorder = WorldBorder()
+	private val chunkSource: MicroLevelChunkSource = MicroLevelChunkSource(this)
+	private val worldBorder: WorldBorder = WorldBorder()
+	override fun getChunkSource(): ServerChunkCache = this.chunkSource
+	override fun getWorldBorder(): WorldBorder = this.worldBorder
 
 	// Ticking
 	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
@@ -154,6 +118,7 @@ class ServerMicroLevel(
 			val (pos, block, eventID, eventParam) = this.events.removeLast()
 			val state = this.getBlockState(pos)
 			if (state.`is`(block) && state.triggerEvent(this, pos, eventID, eventParam)) {
+				this.logger.fatal("B This message must be sent to the client micro level! : $pos, $block, $eventID, $eventParam [${this.grid}]")
 //				val position = pos.toVec3() + this.grid.pos
 //				this.sourceLevel.server?.playerList?.broadcast(
 //					null,
@@ -171,7 +136,6 @@ class ServerMicroLevel(
 //				) TODO: This packet must contain the local grid, as it is sent from the server. For now, playing locally..
 			}
 		}
-		this.tickBlockEntities()
 	}
 
 	override fun tickRateManager(): TickRateManager = object : TickRateManager() {
@@ -201,7 +165,7 @@ class ServerMicroLevel(
 	}
 
 	override fun levelEvent(player: Player?, type: Int, pos: BlockPos, data: Int) {
-		println("e $player, $type, $pos, $data")
+		this.logger.fatal("L This message must be sent to the client micro level! : $player, $type, $pos, $data [${this.grid}]")
 	}
 
 	private val gameEventDispatcher: MicroLevelGameEventDispatcher = MicroLevelGameEventDispatcher(this)
@@ -210,8 +174,10 @@ class ServerMicroLevel(
 			this.gameEventDispatcher.post(gameEvent, pos, context)
 	}
 
-	override fun toString(): String = "ServerMicroLevel[blocks=${this.blocks.size}]"
+	override fun toString(): String = "ServerMicroLevel"
 	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()
 	override fun getGameTime(): Long = this.sourceLevel.gameTime
 	override fun getLevelData(): LevelData = this.sourceLevel.levelData
+	override fun getRecipeManager(): RecipeManager = this.sourceLevel.recipeManager
+	override fun dimensionType(): DimensionType = this.sourceLevel.dimensionType()
 }

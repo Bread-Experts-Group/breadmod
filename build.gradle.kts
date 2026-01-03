@@ -23,7 +23,7 @@ private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.ena
 private fun RunModel.addAgent(): Unit =
 	jvmArgument("-javaagent:${file("breadmod_agent/build/libs/breadmod_agent-1.5.1-agent.jar").absolutePath}")
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:D1F3N6P0"
+private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:D1F4N6P1"
 
 idea {
 	module {

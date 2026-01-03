@@ -7,12 +7,12 @@ import net.minecraft.world.phys.Vec3
 
 class MicroLevelGameEventDispatcher(private val parent: ServerMicroLevel) : GameEventDispatcher(parent) {
 	override fun post(gameEvent: Holder<GameEvent>, pos: Vec3, context: GameEvent.Context) {
-		println("$gameEvent, $pos, $context")
+		println("***2 $gameEvent, $pos, $context")
 		this.parent
 			.getChunk(0, 0)
 			.getListenerRegistry(0)
 			.visitInRangeListeners(gameEvent, pos, context) { listener, posS ->
-				println("$listener, $posS")
+				println("***3 $listener, $posS")
 			}
 	}
 }

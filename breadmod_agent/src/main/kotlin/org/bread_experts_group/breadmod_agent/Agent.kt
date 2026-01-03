@@ -262,14 +262,14 @@ class Agent {
 										classElement
 									) { codeBuilder, codeElement, index ->
 										when (index) {
-											20 -> codeBuilder
+											28 -> codeBuilder
 												.aload(0)
 												.invokespecial(
 													ServerLevel::class.classDesc,
 													ConstantDescs.INIT_NAME,
 													MethodTypeDesc.of(ConstantDescs.CD_void)
 												)
-											else if (index !in 20 .. 34) -> codeBuilder.with(codeElement)
+											else if (index > 28) -> codeBuilder.with(codeElement)
 										}
 									}
 									if (!init) classBuilder.with(classElement)
