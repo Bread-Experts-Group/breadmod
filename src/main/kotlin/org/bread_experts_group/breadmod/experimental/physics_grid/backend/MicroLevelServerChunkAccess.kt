@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.LevelChunk
+import net.minecraft.world.level.material.FluidState
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.numeric.geometry.point.Point3
@@ -18,7 +19,9 @@ class MicroLevelServerChunkAccess(
 	private val logger: Logger = LogManager.getLogger("ServerMicroLevel / ServerChunkAccess")
 	val blocks: MutableMap<Point3<Int>, BlockState> = mutableMapOf()
 	fun getBlockState(pos: Point3<Int>): BlockState = this.blocks[pos] ?: Blocks.AIR.defaultBlockState()
+	fun getFluidState(pos: Point3<Int>): FluidState = this.getBlockState(pos).fluidState
 	override fun getBlockState(pos: BlockPos): BlockState = this.getBlockState(pos.toPoint3())
+	override fun getFluidState(x: Int, y: Int, z: Int): FluidState = this.getFluidState(Point3(x, y, z))
 
 	private val tickingBlockEntities: MutableMap<Point3<Int>, MicroLevelBlockEntityTickerShell> = mutableMapOf()
 	private fun <T : BlockEntity> updateBlockEntityTicker(blockEntity: T) {

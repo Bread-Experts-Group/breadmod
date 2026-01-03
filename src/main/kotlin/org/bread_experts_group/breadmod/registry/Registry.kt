@@ -340,7 +340,6 @@ object Registry {
 								}
 							}
 						}
-						PhysicsGrid.grids.forEach { it.microLevel.tick { true } }
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
@@ -350,6 +349,7 @@ object Registry {
 						if (renderer is RendererWithBEWLRLerpTicker<*>) renderer.lerpTicker.tick()
 					}
 					this.playingSounds.values.forEach { it.tick(localClient.player ?: return@forEach) }
+					PhysicsGrid.grids.forEach { it.microLevel.tick { true } }
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
 					event.dispatcher.register(

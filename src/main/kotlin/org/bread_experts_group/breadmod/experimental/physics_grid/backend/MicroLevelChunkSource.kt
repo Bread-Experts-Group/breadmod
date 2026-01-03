@@ -1,8 +1,10 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid.backend
 
 import net.minecraft.server.level.ServerChunkCache
+import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.chunk.ChunkAccess
 import net.minecraft.world.level.chunk.status.ChunkStatus
+import java.util.function.BooleanSupplier
 
 class MicroLevelChunkSource(
 	private val parent: ServerMicroLevel
@@ -14,5 +16,12 @@ class MicroLevelChunkSource(
 	val singletonChunk: MicroLevelServerChunkAccess = MicroLevelServerChunkAccess(this.parent)
 	override fun getChunk(x: Int, z: Int, chunkStatus: ChunkStatus, requireChunk: Boolean): ChunkAccess {
 		return this.singletonChunk
+	}
+
+	override fun tick(hasTimeLeft: BooleanSupplier, tickChunks: Boolean) {
+		if (this.parent.tickRateManager().runsNormally()) this.parent.tickChunk(
+			this.singletonChunk,
+			this.parent.gameRules.getInt(GameRules.RULE_RANDOMTICKING)
+		)
 	}
 }

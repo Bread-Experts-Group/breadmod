@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid.backend
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
@@ -16,17 +17,21 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.item.crafting.RecipeManager
+import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.TickingBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
+import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.lighting.LevelLightEngine
+import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
+import net.minecraft.world.level.redstone.NeighborUpdater
 import net.minecraft.world.level.storage.LevelData
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
@@ -78,23 +83,57 @@ class ServerMicroLevel(
 
 	override fun players(): List<ServerPlayer> = this.grid.playersInGrid
 
-	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
-		this.getChunk(pos).setBlockState(pos, state, false)
-		// todo test recompiling
-		/*if (this.sourceLevel.isClientSide)*/ executeOnRenderThread {
-			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
-		}
-		return false
+	override fun sendBlockUpdated(pos: BlockPos, oldState: BlockState, newState: BlockState, flags: Int) {
+//		this.chunkSource.blockChanged(pos)
 	}
 
-	override fun dimensionTypeRegistration(): Holder<DimensionType> = this.sourceLevel.dimensionTypeRegistration()
-	override fun getProfilerSupplier(): Supplier<ProfilerFiller> = this.sourceLevel.profilerSupplier
-	override fun getProfiler(): ProfilerFiller = this.sourceLevel.profiler
+	override fun neighborChanged(pos: BlockPos, block: Block, fromPos: BlockPos) {
+		val toState = this.getBlockState(pos)
+		NeighborUpdater.executeUpdate(this, toState, pos, block, fromPos, false)
+	}
+
+	override fun neighborChanged(state: BlockState, pos: BlockPos, block: Block, fromPos: BlockPos, isMoving: Boolean) {
+		TODO("NOTIFY $pos, $block, $fromPos, $isMoving")
+	}
+
+	override fun updateNeighborsAt(pos: BlockPos, block: Block) {
+		/*
+		 net.neoforged.neoforge.event.EventHooks.onNeighborNotify(this, pos, this.getBlockState(pos), java.util.EnumSet.allOf(Direction.class), false).isCanceled();
+		 */
+		NeighborUpdater.UPDATE_ORDER.forEach { direction ->
+			val toPos = pos.relative(direction)
+			val toState = this.getBlockState(toPos)
+			NeighborUpdater.executeUpdate(this, toState, toPos, block, pos, false)
+		}
+	}
+
+	override fun updateNeighborsAtExceptFromFacing(pos: BlockPos, blockType: Block, skipSide: Direction) {
+		/*
+		java.util.EnumSet<Direction> directions = java.util.EnumSet.allOf(Direction.class);
+        directions.remove(skipSide);
+        if (net.neoforged.neoforge.event.EventHooks.onNeighborNotify(this, pos, this.getBlockState(pos), directions, false).isCanceled())
+            return;
+		 */
+		super.updateNeighborsAtExceptFromFacing(pos, blockType, skipSide)
+		NeighborUpdater.UPDATE_ORDER.forEach { direction ->
+			if (direction == skipSide) return@forEach
+			val toPos = pos.relative(direction)
+			val toState = this.getBlockState(toPos)
+			NeighborUpdater.executeUpdate(this, toState, toPos, blockType, pos, false)
+		}
+	}
+
+	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
+		val status = super.setBlock(pos, state, flags, recursionLeft)
+		if (status) executeOnRenderThread {
+			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
+		}
+		return status
+	}
 
 	override fun getMinBuildHeight(): Int = -64
 	override fun getMaxBuildHeight(): Int = 365
 	override fun hasChunk(chunkX: Int, chunkZ: Int): Boolean = true
-	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 	override fun mayInteract(player: Player, pos: BlockPos): Boolean = true
 
 	override fun getBlockState(pos: BlockPos): BlockState = this.getChunk(pos).getBlockState(pos)
@@ -111,8 +150,10 @@ class ServerMicroLevel(
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
 
 	// TODO: Lighting
-	override fun getLightEngine(): LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {
+	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {
 	}
+
+	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
 
 	// Ticking
 	override fun shouldTickBlocksAt(chunkPos: Long): Boolean {
@@ -127,15 +168,20 @@ class ServerMicroLevel(
 	}
 
 	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
-	private val blockTicks: LevelTicks<Block> = ServerMicroLevelBlockTicks(this::getGameTime)
+	private val blockTicks: LevelTicks<Block> = ServerMicroLevelTicks()
+	private val fluidTicks: LevelTicks<Fluid> = ServerMicroLevelTicks()
 	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
+	override fun getFluidTicks(): LevelTicks<Fluid> = this.fluidTicks
 	override fun tick(hasTimeLeft: BooleanSupplier) {
-		this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
-		while (this.events.isNotEmpty()) {
-			val (pos, block, eventID, eventParam) = this.events.removeLast()
-			val state = this.getBlockState(pos)
-			if (state.`is`(block) && state.triggerEvent(this, pos, eventID, eventParam)) {
-				this.logger.fatal("B This message must be sent to the client micro level! : $pos, $block, $eventID, $eventParam [${this.grid}]")
+		this.chunkSource.tick(hasTimeLeft, true)
+		if (this.tickRateManager.runsNormally()) {
+			this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
+			this.fluidTicks.tick(this.gameTime, 65536, this::tickFluid)
+			while (this.events.isNotEmpty()) {
+				val (pos, block, eventID, eventParam) = this.events.removeLast()
+				val state = this.getBlockState(pos)
+				if (state.`is`(block) && state.triggerEvent(this, pos, eventID, eventParam)) {
+					this.logger.fatal("B This message must be sent to the client micro level! : $pos, $block, $eventID, $eventParam [${this.grid}]")
 //				val position = pos.toVec3() + this.grid.pos
 //				this.sourceLevel.server?.playerList?.broadcast(
 //					null,
@@ -151,21 +197,27 @@ class ServerMicroLevel(
 //						eventParam
 //					)
 //				) TODO: This packet must contain the local grid, as it is sent from the server. For now, playing locally..
+				}
 			}
 		}
 		this.blockEntityTickers.removeIf {
 			if (it.isRemoved) true
 			else {
-				// TODO: shouldTickBlocksAt
-				it.tick()
+				if (this.shouldTickBlocksAt(it.pos)) it.tick()
 				false
 			}
 		}
 	}
 
-	override fun tickRateManager(): TickRateManager = object : TickRateManager() {
+	override fun tickChunk(chunk: LevelChunk, randomTickSpeed: Int) {
+		// TODO: Random ticking
+	}
+
+	private val tickRateManager: TickRateManager = object : TickRateManager() {
 		override fun runsNormally(): Boolean = true
 	}
+
+	override fun tickRateManager(): TickRateManager = this.tickRateManager
 
 	override fun playSeededSound(
 		player: Player?,
@@ -205,4 +257,9 @@ class ServerMicroLevel(
 	override fun getLevelData(): LevelData = this.sourceLevel.levelData
 	override fun getRecipeManager(): RecipeManager = this.sourceLevel.recipeManager
 	override fun dimensionType(): DimensionType = this.sourceLevel.dimensionType()
+	override fun getGameRules(): GameRules = this.sourceLevel.gameRules
+	override fun dimensionTypeRegistration(): Holder<DimensionType> = this.sourceLevel.dimensionTypeRegistration()
+	override fun getProfilerSupplier(): Supplier<ProfilerFiller> = this.sourceLevel.profilerSupplier
+	override fun getProfiler(): ProfilerFiller = this.sourceLevel.profiler
+	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 }
