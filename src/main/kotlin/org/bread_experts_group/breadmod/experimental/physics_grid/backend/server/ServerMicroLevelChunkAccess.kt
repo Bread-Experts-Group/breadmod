@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.physics_grid.backend
+package org.bread_experts_group.breadmod.experimental.physics_grid.backend.server
 
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.ChunkPos
@@ -11,9 +11,13 @@ import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.material.FluidState
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEntityTicker
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEntityTickerShell
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toPoint3
 import org.bread_experts_group.numeric.geometry.point.Point3
 
-class MicroLevelServerChunkAccess(
+class ServerMicroLevelChunkAccess(
 	private val parent: ServerMicroLevel
 ) : LevelChunk(parent, ChunkPos.ZERO) {
 	private val logger: Logger = LogManager.getLogger("ServerMicroLevel / ServerChunkAccess")
@@ -53,7 +57,7 @@ class MicroLevelServerChunkAccess(
 		oldState?.onRemove(this.parent, pos, state, isMoving)
 		state.onPlace(this.parent, pos, state, isMoving)
 		if (state.hasBlockEntity()) {
-			var oldEntity = this.getBlockEntity(pos, LevelChunk.EntityCreationType.CHECK)
+			var oldEntity = this.getBlockEntity(pos, EntityCreationType.CHECK)
 			if (oldEntity != null && !oldEntity.isValidBlockState(state)) {
 				this.removeBlockEntity(pos)
 				oldEntity = null

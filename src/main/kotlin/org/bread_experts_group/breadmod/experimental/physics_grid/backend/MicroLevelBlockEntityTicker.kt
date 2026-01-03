@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.TickingBlockEntity
 import net.minecraft.world.level.chunk.ChunkAccess
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
 
 class MicroLevelBlockEntityTicker<T : BlockEntity>(
 	private val parent: ServerMicroLevel,

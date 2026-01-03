@@ -28,7 +28,7 @@ public class MixinServerGamePacketListenerPhysGrid {
 	)
 	private ServerLevel redirectLevel(ServerLevel original, @Local(argsOnly = true) ServerboundUseItemOnPacket packet) {
 		PhysicsGrid grid = PhysicsGrid.getClosestGrid(this.player);
-		return (grid != null) ? grid.getMicroLevel() : original;
+		return (grid != null) ? (ServerLevel) grid.getMicroLevel() : original;
 	}
 
 	@Definition(id = "player", field = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;player:Lnet/minecraft/server/level/ServerPlayer;")

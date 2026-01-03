@@ -126,6 +126,7 @@ import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.NewPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
@@ -349,7 +350,6 @@ object Registry {
 						if (renderer is RendererWithBEWLRLerpTicker<*>) renderer.lerpTicker.tick()
 					}
 					this.playingSounds.values.forEach { it.tick(localClient.player ?: return@forEach) }
-					PhysicsGrid.grids.forEach { it.microLevel.tick { true } }
 				}
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
 					event.dispatcher.register(
@@ -601,19 +601,10 @@ object Registry {
 		}
 		// Common Event Registration
 		// Game Bus
-		// todo maybe come back to this at a later date, but the issue of the blocks being placed at the real world coords relative to the grid is stopping this from working
-/*		NeoForge.EVENT_BUS.addListener { event: EntityPlaceEvent ->
-			val entity = event.entity ?: return@addListener
-			val grid = PhysicsGrid.getClosestGrid(entity) ?: return@addListener
-			grid.microLevel.setBlock(event.pos, event.placedBlock, 0, 0)
-			event.isCanceled = true
-		}*/
 		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
-			PhysicsGrid.grids.forEach { grid -> grid.serverTick(event.server) }
+			PhysicsGrid.localGrids.forEach { grid -> grid.tick(event.server) }
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
-			// todo server/client separation for grids
-//			PhysicsGrid.grids.forEach { it.microLevel.tick { true } }
 		}
 //		NeoForge.EVENT_BUS.addListener { event: ServerAboutToStartEvent ->
 //			loadToolGunModes()
@@ -703,6 +694,7 @@ object Registry {
 			WarTimerToggle.register(registrar)
 			MachTrailPacket.register(registrar)
 			BeamPacket.register(registrar)
+			NewPhysicsGridPacket.register(registrar)
 			SpreadParticlesPacket.register(registrar)
 			ScreenBleedSetPacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)

@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod_agent
 
 import com.google.common.collect.Lists
+import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.server.level.ChunkMap
 import net.minecraft.server.level.PlayerMap
@@ -15,10 +16,11 @@ import net.minecraft.world.level.redstone.CollectingNeighborUpdater
 import net.minecraft.world.level.redstone.NeighborUpdater
 import net.neoforged.neoforge.attachment.AttachmentHolder
 import net.neoforged.neoforge.capabilities.CapabilityListenerHolder
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ClientMicroLevel
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkMap
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkSource
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.ServerMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevelChunkSource
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunkSource
 import org.bread_experts_group.breadmod_agent.AgentUtil.classDesc
 import org.bread_experts_group.breadmod_agent.AgentUtil.modifyInit
 import java.lang.classfile.ClassFile
@@ -50,6 +52,7 @@ class Agent {
 					var hasLevelConstructor = false
 					var hasClientLevelConstructor = false
 					var hasServerChunkCacheConstructor = false
+					var hasClientChunkCacheConstructor = false
 					var hasChunkMapConstructor = false
 					var hasChunkStorageConstructor = false
 					return runCatching {
@@ -363,7 +366,7 @@ class Agent {
 									if (!init) classBuilder.with(classElement)
 								}
 							}
-							MicroLevelChunkSource::class.java.name -> {
+							ServerMicroLevelChunkSource::class.java.name -> {
 								val model = classFile.parse(classfileBuffer)
 								classFile.transformClass(model) { classBuilder, classElement ->
 									val init = classBuilder.modifyInit(
@@ -403,6 +406,49 @@ class Agent {
 									if (!init) classBuilder.with(classElement)
 								}
 							}
+							ClientChunkCache::class.java.name -> {
+								val model = classFile.parse(classfileBuffer)
+								classFile.transformClass(model) { classBuilder, classElement ->
+									if (!hasClientChunkCacheConstructor) {
+										hasClientChunkCacheConstructor = true
+										classBuilder.withMethodBody(
+											"<init>",
+											MethodTypeDesc.of(ConstantDescs.CD_void),
+											ACC_PUBLIC
+										) { codeBuilder ->
+											codeBuilder
+												.aload(0)
+												.invokespecial(
+													ChunkSource::class.classDesc,
+													"<init>",
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+												.return_()
+										}
+									}
+									classBuilder.with(classElement)
+								}
+							}
+							ClientMicroLevelChunkSource::class.java.name -> {
+								val model = classFile.parse(classfileBuffer)
+								classFile.transformClass(model) { classBuilder, classElement ->
+									val init = classBuilder.modifyInit(
+										classElement
+									) { codeBuilder, codeElement, index ->
+										when (index) {
+											10 -> codeBuilder
+												.aload(0)
+												.invokespecial(
+													ClientChunkCache::class.classDesc,
+													"<init>",
+													MethodTypeDesc.of(ConstantDescs.CD_void)
+												)
+											else if (index > 10) -> codeBuilder.with(codeElement)
+										}
+									}
+									if (!init) classBuilder.with(classElement)
+								}
+							}
 							ClientMicroLevel::class.java.name -> {
 								val model = classFile.parse(classfileBuffer)
 								classFile.transformClass(model) { classBuilder, classElement ->
@@ -410,14 +456,14 @@ class Agent {
 										classElement
 									) { codeBuilder, codeElement, index ->
 										when (index) {
-											18 -> codeBuilder
+											22 -> codeBuilder
 												.aload(0)
 												.invokespecial(
-													ServerLevel::class.classDesc,
+													ClientLevel::class.classDesc,
 													ConstantDescs.INIT_NAME,
 													MethodTypeDesc.of(ConstantDescs.CD_void)
 												)
-											else if (index > 18) -> codeBuilder.with(codeElement)
+											else if (index > 22) -> codeBuilder.with(codeElement)
 										}
 									}
 									if (!init) classBuilder.with(classElement)

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.physics_grid.backend
+package org.bread_experts_group.breadmod.experimental.physics_grid.backend.server
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -45,6 +45,10 @@ import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEvent
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelGameEventDispatcher
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 import java.nio.ByteBuffer
 import java.security.SecureRandom
 import java.util.function.BooleanSupplier
@@ -164,7 +168,7 @@ class ServerMicroLevel(
 	override fun getEntities(): LevelEntityGetter<Entity> = this.entityGetter
 	override fun getPartEntities(): Collection<PartEntity<*>> = emptyList() // TODO: Part entities
 
-	private val chunkSource: MicroLevelChunkSource = MicroLevelChunkSource(this)
+	private val chunkSource: ServerMicroLevelChunkSource = ServerMicroLevelChunkSource(this)
 	private val worldBorder: WorldBorder = WorldBorder()
 	override fun getChunkSource(): ServerChunkCache = this.chunkSource
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
@@ -194,6 +198,7 @@ class ServerMicroLevel(
 	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
 	override fun getFluidTicks(): LevelTicks<Fluid> = this.fluidTicks
 	override fun tick(hasTimeLeft: BooleanSupplier) {
+		println("Ticking ${this.sourceLevel}")
 		this.chunkSource.tick(hasTimeLeft, true)
 		if (this.tickRateManager.runsNormally()) {
 			this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
@@ -233,11 +238,9 @@ class ServerMicroLevel(
 	override fun tickChunk(chunk: LevelChunk, randomTickSpeed: Int) {
 		if (randomTickSpeed > 0) {
 			var skipping = 0
-			(chunk as MicroLevelServerChunkAccess).blocks.forEach { (pos, state) ->
+			(chunk as ServerMicroLevelChunkAccess).blocks.forEach { (pos, state) ->
 				if (skipping-- > 0) return@forEach
 				else if (skipping <= 0) skipping = this.random.nextInt(0, (16 * 16 * 16) / randomTickSpeed)
-				// TODO : MUST BE CLIENT SIDE :
-				state.block.animateTick(state, this, pos.toBlockPos(), this.random)
 				if (state.isRandomlyTicking) state.randomTick(this, pos.toBlockPos(), this.random)
 			}
 		}

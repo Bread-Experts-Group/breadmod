@@ -40,7 +40,7 @@ abstract class MixinEntityPhysGrid {
 			CallbackInfoReturnable<List<VoxelShape>> cir
 	) {
 		List<VoxelShape> allShapes = new ArrayList<>(cir.getReturnValue());
-		Collection<PhysicsGrid> grids = PhysicsGrid.grids;
+		Collection<PhysicsGrid> grids = PhysicsGrid.localGrids;
 		grids.forEach((grid) -> {
 			if (entity != null && entity.getBoundingBox().intersects(grid.getBounding().inflate(0.5))) {
 				allShapes.addAll(grid.getNearbyShapes(entity));

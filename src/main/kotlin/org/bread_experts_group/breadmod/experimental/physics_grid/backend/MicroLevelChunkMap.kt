@@ -1,6 +1,8 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid.backend
 
 import net.minecraft.server.level.ChunkMap
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunkSource
 
 /*
 0, LocalVariable[name=this, slot=0, type=Lorg/bread_experts_group/breadmod/experimental/physics_grid/backend/MicroLevelChunkMap;]
@@ -49,7 +51,7 @@ import net.minecraft.server.level.ChunkMap
  */
 class MicroLevelChunkMap(
 	val microLevel: ServerMicroLevel,
-	val microChunkCache: MicroLevelChunkSource
+	val microChunkCache: ServerMicroLevelChunkSource
 ) : ChunkMap(
 	microLevel, null, null,
 	null, null, null,

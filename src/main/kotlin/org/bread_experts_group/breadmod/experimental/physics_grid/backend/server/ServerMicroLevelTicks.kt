@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.physics_grid.backend
+package org.bread_experts_group.breadmod.experimental.physics_grid.backend.server
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Vec3i
