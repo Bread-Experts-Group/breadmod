@@ -25,6 +25,7 @@ import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.gameevent.GameEvent
+import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.storage.LevelData
 import net.minecraft.world.phys.Vec3
@@ -109,7 +110,16 @@ class ServerMicroLevel(
 	override fun getChunkSource(): ServerChunkCache = this.chunkSource
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
 
+	// TODO: Lighting
+	override fun getLightEngine(): LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {
+	}
+
 	// Ticking
+	override fun shouldTickBlocksAt(chunkPos: Long): Boolean {
+		// TODO: shouldTickBlocksAt
+		return true
+	}
+
 	@Suppress("PROPERTY_HIDES_JAVA_FIELD")
 	private val blockEntityTickers: MutableList<TickingBlockEntity> = mutableListOf()
 	override fun addBlockEntityTicker(ticker: TickingBlockEntity) {

@@ -3,6 +3,7 @@ package org.bread_experts_group.breadmod.experimental.physics_grid.backend
 import net.minecraft.core.Holder
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.gameevent.GameEventDispatcher
+import net.minecraft.world.level.gameevent.GameEventListener
 import net.minecraft.world.phys.Vec3
 
 class MicroLevelGameEventDispatcher(private val parent: ServerMicroLevel) : GameEventDispatcher(parent) {
@@ -12,7 +13,12 @@ class MicroLevelGameEventDispatcher(private val parent: ServerMicroLevel) : Game
 			.getChunk(0, 0)
 			.getListenerRegistry(0)
 			.visitInRangeListeners(gameEvent, pos, context) { listener, posS ->
-				println("***3 $listener, $posS")
+				if (listener.deliveryMode == GameEventListener.DeliveryMode.BY_DISTANCE) {
+					println("by distance $listener, $posS")
+				} else {
+					println("unspecified $listener, $posS")
+					listener.handleGameEvent(this.parent, gameEvent, context, pos)
+				}
 			}
 	}
 }
