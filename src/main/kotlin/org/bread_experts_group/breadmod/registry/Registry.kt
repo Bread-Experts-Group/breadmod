@@ -270,9 +270,10 @@ object Registry {
 				}
 				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
 					val player = localClient.player ?: return@addListener
+					val level = player.level() as ClientLevel
 					val stack = player.getItemInHand(player.usedItemHand)
 					val item = stack.item
-					if (item is IMouseItem) item.onMouseScroll(event, stack, player)
+					if (item is IMouseItem) item.onMouseScroll(event, stack, level, player)
 				}
 				NeoForge.EVENT_BUS.addListener { event: InputEvent.Key ->
 					val player = localClient.player ?: return@addListener
@@ -295,15 +296,17 @@ object Registry {
 				}
 				NeoForge.EVENT_BUS.addListener { event: InputEvent.MouseButton.Pre ->
 					val player = localClient.player ?: return@addListener
+					val level = player.level() as ClientLevel
 					val stack = getStackInPlayerHand(player)
 					val item = stack.item
-					if (item is IMouseItem) item.onMouseInputPre(event, stack, player)
+					if (item is IMouseItem) item.onMouseInputPre(event, stack, level, player)
 				}
 				NeoForge.EVENT_BUS.addListener { event: InputEvent.MouseButton.Post ->
 					val player = localClient.player ?: return@addListener
+					val level = player.level() as ClientLevel
 					val stack = getStackInPlayerHand(player)
 					val item = stack.item
-					if (item is IMouseItem) item.onMouseInputPost(event, stack, player)
+					if (item is IMouseItem) item.onMouseInputPost(event, stack, level, player)
 
 					if (event.action == InputConstants.PRESS && event.button == InputConstants.MOUSE_BUTTON_RIGHT) {
 						player.rayCast(10.0, hitbox(player))?.let { result ->

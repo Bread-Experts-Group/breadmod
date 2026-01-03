@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ServerGamePacketListenerImpl.class)
-public class MixinServerGamePacketListenerImpl {
+public class MixinServerGamePacketListenerPhysGrid {
 	@Shadow
 	public ServerPlayer player;
 

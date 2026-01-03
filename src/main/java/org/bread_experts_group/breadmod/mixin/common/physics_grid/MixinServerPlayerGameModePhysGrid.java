@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerGameMode.class)
-abstract class MixinServerPlayerGameMode {
+abstract class MixinServerPlayerGameModePhysGrid {
 	@Inject(
 			method = "useItemOn",
 			at = @At("HEAD")

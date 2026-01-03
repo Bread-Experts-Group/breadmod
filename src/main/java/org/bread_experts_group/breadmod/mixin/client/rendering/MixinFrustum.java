@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinFrustum {
 	@Inject(method = "offsetToFullyIncludeCameraCube", at = @At("HEAD"), cancellable = true)
 	private void offsetToFullyIncludeCameraCube(int offset, CallbackInfoReturnable<Frustum> cir) {
-		if (CameraTexture.Companion.getTargetBeingRendered() != null) {
+		if (CameraTexture.targetBeingRendered != null) {
 			cir.setReturnValue((Frustum) (Object) this);
 		}
 	}
