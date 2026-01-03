@@ -7,7 +7,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import org.bread_experts_group.breadmod.util.GeneralKt;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +21,7 @@ abstract class MixinServerPlayerGameModePhysGrid {
 	private void probeUseItemOn(
 			ServerPlayer player, Level level, ItemStack stack, InteractionHand hand,
 			BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir
-	) {
-		GeneralKt.logDebugInfo(level);
+			) {
+//		GeneralKt.logDebugInfo("useItemOn[" + level + ", " + hitResult.getBlockPos() + "]");
 	}
 }

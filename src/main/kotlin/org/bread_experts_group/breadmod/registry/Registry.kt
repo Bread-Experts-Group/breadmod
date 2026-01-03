@@ -612,7 +612,8 @@ object Registry {
 			PhysicsGrid.grids.forEach { grid -> grid.serverTick(event.server) }
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
-//			PhysicsGridGlobals.grids.values.forEach(PhysicsGrid::tick)
+			// todo server/client separation for grids
+//			PhysicsGrid.grids.forEach { it.microLevel.tick { true } }
 		}
 //		NeoForge.EVENT_BUS.addListener { event: ServerAboutToStartEvent ->
 //			loadToolGunModes()

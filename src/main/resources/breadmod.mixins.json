@@ -19,6 +19,7 @@
     "common.physics_grid.MixinEntityPhysGrid",
     "common.physics_grid.MixinServerGamePacketListenerPhysGrid",
     "common.physics_grid.MixinServerPlayerGameModePhysGrid",
+    "common.physics_grid.MixinUseOnContext",
     "compat.jade.MixinRayTracing"
   ],
   "client": [
@@ -35,6 +36,7 @@
     "client.physics_grid.MixinGameRendererPhysGrid",
     "client.physics_grid.MixinLevelRendererPhysGrid",
     "client.physics_grid.MixinMinecraftPhysGrid",
+    "client.physics_grid.MixinMultiPlayerGameMode",
     "client.rendering.InvokerIVertexConsumerExtension",
     "client.rendering.MixinAbstractWidget",
     "client.rendering.MixinDebugScreenOverlay",

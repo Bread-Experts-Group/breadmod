@@ -9,11 +9,10 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.UseOnContext
-import net.neoforged.neoforge.capabilities.Capabilities
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.registry.entity.actual.FakePlayer
 import org.bread_experts_group.breadmod.util.itemTooltip
+import org.bread_experts_group.breadmod.util.logDebugInfo
 
 class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(6).build()).rarity(Rarity.EPIC)) {
 	val logger: Logger = LogManager.getLogger("Test Bread Item")
@@ -28,18 +27,20 @@ class TestBreadItem : Item(Properties().food(FoodProperties.Builder().nutrition(
 	}
 
 	override fun useOn(context: UseOnContext): InteractionResult {
-		val cap = context.level.getCapability(Capabilities.FluidHandler.BLOCK, context.clickedPos, context.clickedFace)
-		if (!context.level.isClientSide && cap != null) this.logger.info(
-			"Fluid capability found {}, Direction: {}, Hashcode: {}",
-			context.clickedPos, context.clickedFace.name, cap.hashCode()
-		)
-		return InteractionResult.CONSUME
-	}
-
-	override fun onItemUseFirst(stack: ItemStack, context: UseOnContext): InteractionResult {
-		val pos = context.clickedPos.above()
-		val fakePlayer = FakePlayer(context.level, pos, context.player)
-		context.level.addFreshEntity(fakePlayer)
+//		val cap = context.level.getCapability(Capabilities.FluidHandler.BLOCK, context.clickedPos, context.clickedFace)
+//		if (!context.level.isClientSide && cap != null) this.logger.info(
+//			"Fluid capability found {}, Direction: {}, Hashcode: {}",
+//			context.clickedPos, context.clickedFace.name, cap.hashCode()
+//		)
+		val state = context.level.getBlockState(context.clickedPos)
+		logDebugInfo("TestBreadItem[${context.level}, ${context.clickedPos}, ${context.player}, $state]")
 		return InteractionResult.PASS
 	}
+
+//	override fun onItemUseFirst(stack: ItemStack, context: UseOnContext): InteractionResult {
+//		val pos = context.clickedPos.above()
+//		val fakePlayer = FakePlayer(context.level, pos, context.player)
+//		context.level.addFreshEntity(fakePlayer)
+//		return InteractionResult.PASS
+//	}
 }

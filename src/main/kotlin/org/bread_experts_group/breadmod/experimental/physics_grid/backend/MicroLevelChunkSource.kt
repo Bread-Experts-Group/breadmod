@@ -6,6 +6,7 @@ import net.minecraft.world.level.chunk.ChunkAccess
 import net.minecraft.world.level.chunk.status.ChunkStatus
 import java.util.function.BooleanSupplier
 
+// todo ChunkMap, mekanism's BEs require it
 class MicroLevelChunkSource(
 	private val parent: ServerMicroLevel
 ) : ServerChunkCache(
@@ -13,6 +14,10 @@ class MicroLevelChunkSource(
 	null, null, 0, 0,
 	false, null, null, null
 ) {
+	init {
+		this.chunkMap = MicroLevelChunkMap(this.parent, this)
+	}
+
 	val singletonChunk: MicroLevelServerChunkAccess = MicroLevelServerChunkAccess(this.parent)
 	override fun getChunk(x: Int, z: Int, chunkStatus: ChunkStatus, requireChunk: Boolean): ChunkAccess {
 		return this.singletonChunk
@@ -24,4 +29,6 @@ class MicroLevelChunkSource(
 			this.parent.gameRules.getInt(GameRules.RULE_RANDOMTICKING)
 		)
 	}
+
+	override fun hasChunk(x: Int, z: Int): Boolean = true
 }

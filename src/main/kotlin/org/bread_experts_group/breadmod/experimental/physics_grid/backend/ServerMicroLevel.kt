@@ -5,6 +5,7 @@ import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.ResourceKey
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerChunkCache
 import net.minecraft.server.level.ServerLevel
@@ -292,4 +293,5 @@ class ServerMicroLevel(
 	override fun getProfilerSupplier(): Supplier<ProfilerFiller> = this.sourceLevel.profilerSupplier
 	override fun getProfiler(): ProfilerFiller = this.sourceLevel.profiler
 	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
+	override fun dimension(): ResourceKey<Level> = this.sourceLevel.dimension()
 }
