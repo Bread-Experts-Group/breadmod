@@ -10,7 +10,7 @@ import java.lang.classfile.ClassFile
 import java.lang.constant.ConstantDescs
 import java.lang.constant.MethodTypeDesc
 
-class MicroLevelChunkSourceTransform(
+class ServerMicroLevelChunkSourceTransform(
 	classFile: ClassFile,
 	inputBytes: ByteArray
 ) : ClassTransform(classFile, inputBytes) {

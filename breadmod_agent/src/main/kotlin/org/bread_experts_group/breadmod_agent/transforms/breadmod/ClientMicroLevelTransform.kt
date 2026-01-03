@@ -1,6 +1,6 @@
 package org.bread_experts_group.breadmod_agent.transforms.breadmod
 
-import net.minecraft.server.level.ServerLevel
+import net.minecraft.client.multiplayer.ClientLevel
 import org.bread_experts_group.breadmod_agent.AgentUtil.classDesc
 import org.bread_experts_group.breadmod_agent.AgentUtil.modifyInit
 import org.bread_experts_group.breadmod_agent.transforms.ClassTransform
@@ -19,14 +19,14 @@ class ClientMicroLevelTransform(
 			classElement
 		) { codeBuilder, codeElement, index ->
 			when (index) {
-				18 -> codeBuilder
+				26 -> codeBuilder
 					.aload(0)
 					.invokespecial(
-						ServerLevel::class.classDesc,
+						ClientLevel::class.classDesc,
 						ConstantDescs.INIT_NAME,
 						MethodTypeDesc.of(ConstantDescs.CD_void)
 					)
-				else if (index > 18) -> codeBuilder.with(codeElement)
+				else if (index > 26) -> codeBuilder.with(codeElement)
 			}
 		}
 		if (!init) classBuilder.with(classElement)

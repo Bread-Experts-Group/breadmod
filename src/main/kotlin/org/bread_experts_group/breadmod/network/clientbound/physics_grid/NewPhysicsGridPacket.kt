@@ -9,6 +9,7 @@ import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
 
@@ -33,7 +34,7 @@ data class NewPhysicsGridPacket(val position: Vec3, val bounding: AABB) : Custom
 		fun handleClientboundPacket(data: NewPhysicsGridPacket, context: IPayloadContext) {
 			context.enqueueWork {
 				val newGrid = PhysicsGrid(data.position, data.bounding)
-				newGrid.microLevel = ClientMicroLevel(newGrid)
+				newGrid.microLevel = ClientMicroLevel(localClient.level ?: return@enqueueWork, newGrid)
 				PhysicsGrid.localGrids.add(newGrid)
 				newGrid.attachRenderer()
 			}
