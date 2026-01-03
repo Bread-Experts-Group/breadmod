@@ -11,7 +11,8 @@ class MicroLevelChunkSource(
 	null, null, 0, 0,
 	false, null, null, null
 ) {
+	val singletonChunk: MicroLevelServerChunkAccess = MicroLevelServerChunkAccess(this.parent)
 	override fun getChunk(x: Int, z: Int, chunkStatus: ChunkStatus, requireChunk: Boolean): ChunkAccess {
-		return MicroLevelServerChunkAccess(this.parent)
+		return this.singletonChunk
 	}
 }
