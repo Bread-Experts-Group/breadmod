@@ -42,7 +42,7 @@ class CameraViewerBlockRenderer(context: BlockEntityRendererProvider.Context) : 
 		val shouldTick = pos.closerThan(mainCamera, this.viewDistance.toDouble())
 		val texture = CameraTexture.get(blockEntity, 400, 400, shouldTick)
 		if (texture != null && !texture.initialized) texture.init()
-		val textureLoc = /*if (!powered) this.bg else */texture?.location ?: MissingTextureAtlasSprite.getLocation()
+		val textureLoc = if (!powered) this.bg else texture?.location ?: MissingTextureAtlasSprite.getLocation()
 
 		poseStack.pushPose()
 		poseStack.translateOnBlockSide(blockEntity.blockState)

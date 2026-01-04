@@ -24,8 +24,8 @@ class Hitbox(
 		size: Double,
 		originBlockPos: BlockPos,
 		pos: Vec3,
-		onHitCommon: HitboxParams<Level> = { _, _, _, _, _ -> },
-	) : this(AABB.ofSize(Vec3.ZERO, size, size, size), originBlockPos, pos, onHitCommon)
+		onHit: HitboxParams<Level> = { _, _, _, _, _ -> },
+	) : this(AABB.ofSize(Vec3.ZERO, size, size, size), originBlockPos, pos, onHit)
 
 	fun render(event: RenderLevelStageEvent, bufferSource: MultiBufferSource) {
 		if (event.stage != RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) return

@@ -24,11 +24,14 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
+import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.lighting.LevelLightEngine
+import net.neoforged.neoforge.entity.PartEntity
 import net.neoforged.neoforge.event.EventHooks
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
 import java.util.function.Supplier
 
 class ClientMicroLevel(
@@ -39,6 +42,10 @@ class ClientMicroLevel(
 	0, 0, null, null, false,
 	0
 ) {
+	private val entityGetter: MicroLevelEntityGetter = MicroLevelEntityGetter()
+	override fun getEntities(): LevelEntityGetter<Entity> = this.entityGetter
+	override fun getPartEntities(): Collection<PartEntity<*>> = emptyList() // TODO: Part entities
+
 	private val chunkSource: ClientMicroLevelChunkSource = ClientMicroLevelChunkSource(this)
 	override fun getChunkSource(): ClientChunkCache = this.chunkSource
 
