@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.experimental.physics_grid.backend.clien
 
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance
 import net.minecraft.client.resources.sounds.SimpleSoundInstance
 import net.minecraft.core.BlockPos
@@ -150,6 +151,7 @@ class ClientMicroLevel(
 	}
 
 	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
+	override fun effects(): DimensionSpecialEffects = this.sourceLevel.effects()
 
 	private val worldBorder: WorldBorder = WorldBorder()
 	override fun getWorldBorder(): WorldBorder = this.worldBorder

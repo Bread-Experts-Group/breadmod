@@ -328,8 +328,7 @@ object Registry {
 								)
 								return@addListener
 							}
-							result.hit.onHitClient(level as ClientLevel, blockPos, state, player, entity)
-							result.hit.onHitCommon(level, result.hit.originBlockPos, state, player, entity)
+							result.hit.onHit(level, result.hit.originBlockPos, state, player, entity)
 						}
 						PacketDistributor.sendToServer(HitboxPacket())
 					}

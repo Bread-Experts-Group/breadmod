@@ -1,10 +1,8 @@
 package org.bread_experts_group.breadmod.util
 
-import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.debug.DebugRenderer
 import net.minecraft.core.BlockPos
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
@@ -20,18 +18,14 @@ class Hitbox(
 	var bounds: AABB,
 	val originBlockPos: BlockPos,
 	val pos: Vec3,
-	val onHitCommon: HitboxParams<Level> = { _, _, _, _, _ -> },
-	val onHitClient: HitboxParams<ClientLevel> = { _, _, _, _, _ -> },
-	val onHitServer: HitboxParams<ServerLevel> = { _, _, _, _, _ -> }
+	val onHit: HitboxParams<Level> = { _, _, _, _, _ -> },
 ) {
 	constructor(
 		size: Double,
 		originBlockPos: BlockPos,
 		pos: Vec3,
 		onHitCommon: HitboxParams<Level> = { _, _, _, _, _ -> },
-		onHitClient: HitboxParams<ClientLevel> = { _, _, _, _, _ -> },
-		onHitServer: HitboxParams<ServerLevel> = { _, _, _, _, _ -> }
-	) : this(AABB.ofSize(Vec3.ZERO, size, size, size), originBlockPos, pos, onHitCommon, onHitClient, onHitServer)
+	) : this(AABB.ofSize(Vec3.ZERO, size, size, size), originBlockPos, pos, onHitCommon)
 
 	fun render(event: RenderLevelStageEvent, bufferSource: MultiBufferSource) {
 		if (event.stage != RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) return

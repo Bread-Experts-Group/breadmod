@@ -68,14 +68,16 @@ class CameraViewerBlock : BreadModBlock(BlockBehaviour.Properties.of()) {
 		return InteractionResult.PASS
 	}
 
-	override val commonTickBM: BreadModTicker<Level> = ticker@{ entity, level, _, pos ->
-		val handler = entity.getCapability(CameraViewerHandler.BLOCK_VOID)
-		if (handler.boundPos == BlockPos.ZERO) return@ticker
-		val cameraExists = level.getBlockState(handler.boundPos).`is`(ModBlocks.CAMERA_BLOCK)
-		if (!cameraExists) {
-			if (CameraTexture.textures[pos] != null) CameraTexture.textures.remove(pos)?.close()
-			handler.boundPos = BlockPos.ZERO
-			entity.setChanged()
+	override val clientTickBM: BreadModTicker<Level> by lazy {
+		ticker@{ entity, level, _, pos ->
+			val handler = entity.getCapability(CameraViewerHandler.BLOCK_VOID)
+			if (handler.boundPos == BlockPos.ZERO) return@ticker
+			val cameraExists = level.getBlockState(handler.boundPos).`is`(ModBlocks.CAMERA_BLOCK)
+			if (!cameraExists) {
+				if (CameraTexture.textures[pos] != null) CameraTexture.textures.remove(pos)?.close()
+				handler.boundPos = BlockPos.ZERO
+				entity.setChanged()
+			}
 		}
 	}
 }

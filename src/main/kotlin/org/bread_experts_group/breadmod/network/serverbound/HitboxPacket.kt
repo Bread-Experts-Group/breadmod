@@ -3,7 +3,6 @@ package org.bread_experts_group.breadmod.network.serverbound
 import io.netty.buffer.ByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
-import net.minecraft.server.level.ServerLevel
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
@@ -30,8 +29,7 @@ class HitboxPacket : CustomPacketPayload {
 						HitboxHandler.hitboxes.remove(result.hit.pos)
 						return@enqueueWork
 					}
-					result.hit.onHitServer(level as ServerLevel, blockPos, state, player, entity)
-					result.hit.onHitCommon(level, blockPos, state, player, entity)
+					result.hit.onHit(level, blockPos, state, player, entity)
 					player.swing(player.usedItemHand, true)
 				}
 			}
