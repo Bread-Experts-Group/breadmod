@@ -5,6 +5,7 @@ import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance
 import net.minecraft.client.resources.sounds.SimpleSoundInstance
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.particles.ParticleOptions
@@ -22,6 +23,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
+import net.minecraft.world.level.lighting.LevelLightEngine
 import net.neoforged.neoforge.event.EventHooks
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -142,10 +144,21 @@ class ClientMicroLevel(
 		)
 	}
 
+	// TODO: Lighting
+	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {
+		override fun getRawBrightness(blockPos: BlockPos, amount: Int): Int = 16
+	}
+
+	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
+
 	private val worldBorder: WorldBorder = WorldBorder()
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
 
 	override fun toString(): String = "ClientMicroLevel"
+	override fun getShade(direction: Direction, shade: Boolean): Float = this.sourceLevel.getShade(direction, shade)
+	override fun getShade(normalX: Float, normalY: Float, normalZ: Float, shade: Boolean): Float = this.sourceLevel
+		.getShade(normalX, normalY, normalZ, shade)
+
 	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()
 	override fun dimension(): ResourceKey<Level?> = this.sourceLevel.dimension()
@@ -156,4 +169,5 @@ class ClientMicroLevel(
 	override fun getGameRules(): GameRules = this.sourceLevel.gameRules
 	override fun getProfilerSupplier(): Supplier<ProfilerFiller> = this.sourceLevel.profilerSupplier
 	override fun getProfiler(): ProfilerFiller = this.sourceLevel.profiler
+	override fun getLevelData(): ClientLevelData = this.sourceLevel.levelData
 }

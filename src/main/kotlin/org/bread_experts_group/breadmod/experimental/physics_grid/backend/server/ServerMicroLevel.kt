@@ -6,6 +6,7 @@ import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
 import net.minecraft.network.protocol.game.ClientboundBlockEventPacket
+import net.minecraft.network.protocol.game.ClientboundLevelEventPacket
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.resources.ResourceKey
@@ -52,6 +53,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroL
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelGameEventDispatcher
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockEventPhysicsGridPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateLevelEventPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundEntityPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundPhysicsGridPacket
 import org.bread_experts_group.breadmod.util.plus
@@ -241,11 +243,30 @@ class ServerMicroLevel(
 	}
 
 	override fun levelEvent(player: Player?, type: Int, pos: BlockPos, data: Int) {
-		TODO("L This message must be sent to the client micro level! : $player, $type, $pos, $data [${this.grid}]")
+		this.server.playerList.broadcast(
+			player,
+			pos.x.toDouble(),
+			pos.y.toDouble(),
+			pos.z.toDouble(),
+			64.0,
+			this.sourceLevel.dimension(),
+			ClientboundCustomPayloadPacket(
+				EncapsulateLevelEventPhysicsGridPacket(
+					this.grid.id,
+					ClientboundLevelEventPacket(
+						type,
+						pos,
+						data,
+						false
+					)
+				)
+			)
+		)
 	}
 
 	private val gameEventDispatcher: MicroLevelGameEventDispatcher = MicroLevelGameEventDispatcher(this)
 	override fun gameEvent(gameEvent: Holder<GameEvent>, pos: Vec3, context: GameEvent.Context) {
+		super.gameEvent(gameEvent, pos, context)
 		if (CommonHooks.onVanillaGameEvent(this, gameEvent, pos, context))
 			this.gameEventDispatcher.post(gameEvent, pos, context)
 	}
