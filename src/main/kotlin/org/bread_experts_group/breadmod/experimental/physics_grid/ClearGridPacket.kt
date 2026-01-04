@@ -16,7 +16,7 @@ class ClearGridPacket : CustomPacketPayload {
 
 		fun handleServerbound(context: IPayloadContext) {
 			context.enqueueWork {
-				PhysicsGrid.localGrids.clear()
+				PhysicsGrid.serverGrids.clear()
 			}
 		}
 

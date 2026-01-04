@@ -68,7 +68,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		if (player.isCrouching) {
 			PhysicsGrid.gridMeshes.forEach { (_, mesh) -> mesh.close() }
 			PhysicsGrid.gridMeshes.clear()
-			PhysicsGrid.localGrids.clear()
+			PhysicsGrid.clientGrids.clear()
 			PacketDistributor.sendToServer(ClearGridPacket())
 			scrollingEvent.isCanceled = true
 		}

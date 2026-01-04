@@ -189,7 +189,7 @@ class ServerMicroLevel(
 	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
 	override fun getFluidTicks(): LevelTicks<Fluid> = this.fluidTicks
 	override fun tick(hasTimeLeft: BooleanSupplier) {
-		println("Ticking ${this.sourceLevel}")
+//		println("Ticking ${this.sourceLevel}")
 		this.chunkSource.tick(hasTimeLeft, true)
 		if (this.tickRateManager.runsNormally()) {
 			this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)

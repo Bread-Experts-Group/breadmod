@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
-import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.neoforged.neoforge.network.handling.IPayloadContext
@@ -20,40 +19,42 @@ data class NewPhysicsGridPacket(
 	val id: Long,
 	val position: Vec3,
 	val bounding: AABB,
-	val immediateBlocks: Map<BlockPos, BlockState>
+	val posA: BlockPos,
+	val posB: BlockPos
 ) : CustomPacketPayload {
 	constructor(
 		id: Long,
 		position: Vec3,
 		center: Vec3,
 		size: Vec3,
-		immediateBlocks: Map<BlockPos, BlockState>
-	) : this(id, position, AABB.ofSize(center, size.x, size.y, size.z), immediateBlocks)
+		posA: BlockPos,
+		posB: BlockPos
+	) : this(id, position, AABB.ofSize(center, size.x, size.y, size.z), posA, posB)
 
 	companion object {
 		val TYPE: CustomPacketPayload.Type<NewPhysicsGridPacket> =
 			CustomPacketPayload.Type(modLocation("new_phys_grid"))
 		val STREAM_CODEC: StreamCodec<ByteBuf, NewPhysicsGridPacket> = StreamCodec.composite(
 			ByteBufCodecs.VAR_LONG, NewPhysicsGridPacket::id,
-			ByteBufCodecs.fromCodec(Vec3.CODEC), NewPhysicsGridPacket::position,
-			ByteBufCodecs.fromCodec(Vec3.CODEC), { (_, _, bounding, _) -> bounding.center },
-			ByteBufCodecs.fromCodec(Vec3.CODEC), { (_, _, bounding, _) ->
+			BreadModCodecs.VEC3_STREAM_CODEC, NewPhysicsGridPacket::position,
+			BreadModCodecs.VEC3_STREAM_CODEC, { (_, _, bounding, _, _) -> bounding.center },
+			BreadModCodecs.VEC3_STREAM_CODEC, { (_, _, bounding, _, _) ->
 				Vec3(bounding.xsize, bounding.ysize, bounding.zsize)
 			},
-			ByteBufCodecs.map(
-				::HashMap,
-				BlockPos.STREAM_CODEC,
-				BreadModCodecs.BLOCKSTATE_STREAM_CODEC
-			), NewPhysicsGridPacket::immediateBlocks,
+			BlockPos.STREAM_CODEC, NewPhysicsGridPacket::posA,
+			BlockPos.STREAM_CODEC, NewPhysicsGridPacket::posB,
 			::NewPhysicsGridPacket
 		)
 
 		fun handleClientboundPacket(data: NewPhysicsGridPacket, context: IPayloadContext) {
 			context.enqueueWork {
+				val level = localClient.level ?: return@enqueueWork
 				val newGrid = PhysicsGrid(data.position, data.bounding)
-				newGrid.microLevel = ClientMicroLevel(localClient.level ?: return@enqueueWork, newGrid)
-				data.immediateBlocks.forEach { (pos, state) -> newGrid.microLevel.setBlock(pos, state, 0) }
-				PhysicsGrid.localGrids[data.id] = newGrid
+				val (blocks, blockEntities) = PhysicsGrid.collectBlocksAndEntities(data.posA, data.posB, level)
+				newGrid.microLevel = ClientMicroLevel(level, newGrid)
+				blocks.forEach { (pos, state) -> newGrid.microLevel.setBlock(pos, state, 0) }
+				blockEntities.forEach { (_, blockEntity) -> newGrid.microLevel.setBlockEntity(blockEntity) }
+				PhysicsGrid.clientGrids[data.id] = newGrid
 				newGrid.attachRenderer()
 			}
 		}
