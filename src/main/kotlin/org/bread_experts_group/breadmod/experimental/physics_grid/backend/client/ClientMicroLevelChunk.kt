@@ -7,8 +7,15 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.Fluids
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toPoint3
+import org.bread_experts_group.numeric.geometry.point.Point3
 
 class ClientMicroLevelChunk(val parent: ClientMicroLevel) : LevelChunk(parent, ChunkPos.ZERO) {
+	val blocks: MutableMap<Point3<Int>, BlockState> = mutableMapOf()
 	override fun getBlockState(pos: BlockPos): BlockState = Blocks.AIR.defaultBlockState()
 	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
+	override fun setBlockState(pos: BlockPos, state: BlockState, isMoving: Boolean): BlockState? {
+		return this.blocks.put(pos.toPoint3(), state)
+//		return super.setBlockState(pos, state, isMoving) TODO
+	}
 }

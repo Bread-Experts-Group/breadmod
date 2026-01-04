@@ -4,7 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexBuffer
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.LevelRenderer
+import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.server.MinecraftServer
@@ -32,8 +34,8 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevelChunk
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunkAccess
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toVec3
 import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
@@ -52,15 +54,16 @@ class PhysicsGrid(val pos: Vec3, val bounding: AABB) {
 		val gridMeshes: MutableMap<PhysicsGrid, GridMesh> = mutableMapOf()
 
 		@JvmField
-		val localGrids: MutableList<PhysicsGrid> = mutableListOf()
+		val localGrids: MutableMap<Long, PhysicsGrid> = mutableMapOf()
 
 		@JvmStatic
-		fun getClosestGrid(entity: Entity): PhysicsGrid? = this.localGrids.firstOrNull {
+		fun getClosestGrid(entity: Entity): PhysicsGrid? = this.localGrids.values.firstOrNull {
 			val levelDist = if (entity.level().isClientSide) it.microLevel is ClientMicroLevel
 			else it.microLevel is ServerMicroLevel
 			entity.boundingBox.intersects(it.bounding) && levelDist
 		}
 
+		private var nextID: Long = 0L
 		fun add(posA: BlockPos, posB: BlockPos, context: UseOnContext) {
 			val level = (context.level as? ServerLevel) ?: return
 			val targetPos = context.clickedPos.relative(context.clickedFace).toVec3()
@@ -88,10 +91,13 @@ class PhysicsGrid(val pos: Vec3, val bounding: AABB) {
 			grid.microLevel = ServerMicroLevel(grid, level)
 			blocks.forEach { (pos, state) -> grid.microLevel.setBlock(pos, state, 0) }
 			blockEntities.forEach { (_, blockEntity) -> grid.microLevel.setBlockEntity(blockEntity) }
-			Companion.localGrids.add(grid)
+			Companion.localGrids[this.nextID] = grid
 			PacketDistributor.sendToPlayersInDimension(
 				level,
-				NewPhysicsGridPacket(targetPos, bounding),
+				NewPhysicsGridPacket(
+					this.nextID++, targetPos, bounding,
+					blocks
+				),
 			)
 		}
 	}
@@ -164,24 +170,23 @@ class PhysicsGrid(val pos: Vec3, val bounding: AABB) {
 				1f
 			)
 			poseStack.translate(this.pos)
-			// TODO: Client level blocks
-//			(this.microLevel.getChunk(0, 0) as ServerMicroLevelChunkAccess).blocks.forEach { (pos, _) ->
-//				val blockEntity = this.microLevel.getBlockEntity(pos.toBlockPos()) ?: return@forEach
-//				poseStack.pushPose()
-//				poseStack.translate(pos.toBlockPos())
-//				val renderer = localClient.blockEntityRenderDispatcher.getRenderer(blockEntity)
-//				renderer?.render(
-//					blockEntity,
-//					1f,
-//					poseStack,
-//					bufferSource,
-//					LightTexture.FULL_BRIGHT,
-//					OverlayTexture.NO_OVERLAY
-//				)
-//				poseStack.popPose()
-//			}
+			(this.microLevel.getChunk(0, 0) as ClientMicroLevelChunk).blocks.forEach { (pos, _) ->
+				val blockEntity = this.microLevel.getBlockEntity(pos.toBlockPos()) ?: return@forEach
+				poseStack.pushPose()
+				poseStack.translate(pos.toBlockPos())
+				val renderer = localClient.blockEntityRenderDispatcher.getRenderer(blockEntity)
+				renderer?.render(
+					blockEntity,
+					1f,
+					poseStack,
+					bufferSource,
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY
+				)
+				poseStack.popPose()
+			}
 			poseStack.popPose()
-			if (!Companion.localGrids.contains(this)) {
+			if (!Companion.localGrids.values.contains(this)) {
 				gridMesh.close()
 				Companion.gridMeshes.remove(this)
 				true
@@ -190,21 +195,19 @@ class PhysicsGrid(val pos: Vec3, val bounding: AABB) {
 	}
 
 	fun getNearbyShapes(entity: Entity): List<VoxelShape> {
-		// TODO: client micro level
-		return emptyList()
-//		val nearbyBlocks = (this.microLevel.getChunk(0, 0) as ServerMicroLevelChunkAccess).blocks
-//			.filter { (blockPos, _) -> this.pos.add(blockPos.toVec3()).distanceTo(entity.position()) < 5.0 }
-//		return buildList {
-//			nearbyBlocks.forEach { (pos, state) ->
-//				val (x, y, z) = this@PhysicsGrid.pos.add(pos.toVec3())
-//				if (state.getCollisionShape(this@PhysicsGrid.microLevel, pos.toBlockPos()).isEmpty) return@forEach
-//				this.add(state.getShape(this@PhysicsGrid.microLevel, pos.toBlockPos()).move(x, y, z))
-//			}
-//		}
+		val nearbyBlocks = (this.microLevel.getChunk(0, 0) as ClientMicroLevelChunk).blocks
+			.filter { (blockPos, _) -> this.pos.add(blockPos.toVec3()).distanceTo(entity.position()) < 5.0 }
+		return buildList {
+			nearbyBlocks.forEach { (pos, state) ->
+				val (x, y, z) = this@PhysicsGrid.pos.add(pos.toVec3())
+				if (state.getCollisionShape(this@PhysicsGrid.microLevel, pos.toBlockPos()).isEmpty) return@forEach
+				this.add(state.getShape(this@PhysicsGrid.microLevel, pos.toBlockPos()).move(x, y, z))
+			}
+		}
 	}
 
 	fun getNearbyShapesAndPos(entity: Entity): List<Pair<BlockPos, VoxelShape>> {
-		val nearbyBlocks = (this.microLevel.getChunk(0, 0) as ServerMicroLevelChunkAccess).blocks
+		val nearbyBlocks = (this.microLevel.getChunk(0, 0) as ClientMicroLevelChunk).blocks
 			.filter { (pos, _) -> this.pos.add(pos.toVec3()).distanceTo(entity.position()) < 5.0 }
 		return buildList {
 			nearbyBlocks.forEach { (pos, state) ->

@@ -2,11 +2,14 @@ package org.bread_experts_group.breadmod.experimental.physics_grid.backend.clien
 
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.dimension.DimensionType
+import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 
 class ClientMicroLevel(
@@ -19,6 +22,16 @@ class ClientMicroLevel(
 ) {
 	private val chunkSource: ClientMicroLevelChunkSource = ClientMicroLevelChunkSource(this)
 	override fun getChunkSource(): ClientChunkCache = this.chunkSource
+
+	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
+//		return super.setBlock(pos, state, flags, recursionLeft) TODO !
+		val status = this.getChunk(0, 0).setBlockState(pos, state, flags and 64 != 0) != null
+		if (status) executeOnRenderThread {
+			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
+		}
+		return status
+	}
+
 	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()
 	override fun dimension(): ResourceKey<Level?> = this.sourceLevel.dimension()
 	override fun dimensionType(): DimensionType = this.sourceLevel.dimensionType()

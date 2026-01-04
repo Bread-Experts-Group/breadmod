@@ -42,7 +42,6 @@ import net.neoforged.neoforge.common.CommonHooks
 import net.neoforged.neoforge.entity.PartEntity
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEvent
@@ -145,14 +144,6 @@ class ServerMicroLevel(
 		println("Want to destroy $pos, $dropBlock, $entity, $recursionLeft")
 		return false
 //		return super.destroyBlock(pos, dropBlock, entity, recursionLeft)
-	}
-
-	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
-		val status = super.setBlock(pos, state, flags, recursionLeft)
-		if (status) executeOnRenderThread {
-			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
-		}
-		return status
 	}
 
 	override fun getMinBuildHeight(): Int = -64

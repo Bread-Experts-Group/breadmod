@@ -6,9 +6,15 @@ import com.mojang.blaze3d.vertex.MeshData
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexBuffer
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.RandomSource
+import net.minecraft.world.level.block.RenderShape
+import net.neoforged.neoforge.client.model.data.ModelData
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevelChunk
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 
 // todo transparency sorting
 class GridMesh(private val grid: PhysicsGrid) {
@@ -44,39 +50,38 @@ class GridMesh(private val grid: PhysicsGrid) {
 	fun compile(poseStack: PoseStack) {
 		if (this.isCompiled) return
 		val dispatcher = localClient.blockRenderer
-		dispatcher.modelRenderer
-		RandomSource.create()
-		localClient.level ?: return
-		// TODO: client micro level
-//		(this.grid.microLevel.getChunk(0, 0) as ServerMicroLevelChunkAccess).blocks.forEach { (pos, state) ->
-//			val blockPos = pos.toBlockPos()
-//			val bakedModel = dispatcher.getBlockModel(state)
-//			poseStack.pushPose()
-//			poseStack.translate(blockPos)
-//			for (renderType in bakedModel.getRenderTypes(state, random, ModelData.EMPTY)) {
-//				val builder = this.getOrBeginBufferBuilder(renderType)
-//				try {
-//					if (state.renderShape == RenderShape.INVISIBLE || state.renderShape == RenderShape.ENTITYBLOCK_ANIMATED) continue
-//					modelBlockRenderer.tesselateBlock(
-//						level,
-//						bakedModel,
-//						state,
-//						blockPos.above(255),
-//						poseStack,
-//						builder,
-//						true,
-//						random,
-//						state.getSeed(blockPos),
-//						OverlayTexture.NO_OVERLAY,
-//						bakedModel.getModelData(level, blockPos, state, ModelData.EMPTY),
-//						renderType
-//					)
-//				} catch (e: Exception) {
-//					e.printStackTrace()
-//				}
-//			}
-//			poseStack.popPose()
-//		}
+		val modelBlockRenderer = dispatcher.modelRenderer
+		val random = RandomSource.create()
+		val level = localClient.level ?: return
+		(this.grid.microLevel.getChunk(0, 0) as ClientMicroLevelChunk).blocks.forEach { (pos, state) ->
+			val blockPos = pos.toBlockPos()
+			val bakedModel = dispatcher.getBlockModel(state)
+			poseStack.pushPose()
+			poseStack.translate(blockPos)
+			for (renderType in bakedModel.getRenderTypes(state, random, ModelData.EMPTY)) {
+				val builder = this.getOrBeginBufferBuilder(renderType)
+				try {
+					if (state.renderShape == RenderShape.INVISIBLE || state.renderShape == RenderShape.ENTITYBLOCK_ANIMATED) continue
+					modelBlockRenderer.tesselateBlock(
+						level,
+						bakedModel,
+						state,
+						blockPos.above(255),
+						poseStack,
+						builder,
+						true,
+						random,
+						state.getSeed(blockPos),
+						OverlayTexture.NO_OVERLAY,
+						bakedModel.getModelData(level, blockPos, state, ModelData.EMPTY),
+						renderType
+					)
+				} catch (e: Exception) {
+					e.printStackTrace()
+				}
+			}
+			poseStack.popPose()
+		}
 
 		this.bufferBuilders.forEach { (renderType, builder) ->
 			val mesh = this.meshes.getOrPut(renderType) { builder.buildOrThrow() }
