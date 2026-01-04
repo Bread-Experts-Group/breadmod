@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.experimental.physics_grid
 
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.VertexBuffer
-import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.RenderType
@@ -140,7 +139,7 @@ class PhysicsGrid(
 	}
 
 	fun tick(server: MinecraftServer) {
-		if (this.microLevel is ClientLevel) return
+		if (this.microLevel.isClientSide) return
 		server.playerList.players.forEach { player ->
 			val intersects = player.boundingBox.intersects(this.bounding)
 			if (intersects && !this.playersInGrid.contains(player)) this.playersInGrid.add(player)
