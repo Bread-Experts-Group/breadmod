@@ -126,6 +126,7 @@ import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.NewPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
@@ -695,6 +696,7 @@ object Registry {
 			MachTrailPacket.register(registrar)
 			BeamPacket.register(registrar)
 			NewPhysicsGridPacket.register(registrar)
+			EncapsulateSoundPhysicsGridPacket.register(registrar)
 			SpreadParticlesPacket.register(registrar)
 			ScreenBleedSetPacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
