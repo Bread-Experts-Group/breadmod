@@ -85,6 +85,7 @@ neoForge {
 	runs {
 		create("client") {
 			client()
+			gameDirectory.set(File("./run/client"))
 			enableTestNamespaces()
 			addAgent()
 			devLogin = true
@@ -92,6 +93,7 @@ neoForge {
 		create("server") {
 			server()
 			programArgument("--nogui")
+			gameDirectory.set(File("./run/server"))
 			enableTestNamespaces()
 			addAgent()
 		}
@@ -101,6 +103,7 @@ neoForge {
 		}
 		create("data") {
 			data()
+			gameDirectory.set(File("./run/data"))
 			programArguments.addAll(
 				"--mod", getModId(),
 				"--all",
