@@ -2,14 +2,24 @@ package org.bread_experts_group.breadmod.experimental.physics_grid.backend.clien
 
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.resources.sounds.EntityBoundSoundInstance
+import net.minecraft.client.resources.sounds.SimpleSoundInstance
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
+import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.resources.ResourceKey
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundSource
+import net.minecraft.util.RandomSource
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.dimension.DimensionType
+import net.neoforged.neoforge.event.EventHooks
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
+import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 
 class ClientMicroLevel(
@@ -30,6 +40,95 @@ class ClientMicroLevel(
 			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
 		}
 		return status
+	}
+
+	override fun addParticle(
+		particleData: ParticleOptions,
+		forceAlwaysRender: Boolean,
+		x: Double,
+		y: Double,
+		z: Double,
+		xSpeed: Double,
+		ySpeed: Double,
+		zSpeed: Double
+	) {
+		this.sourceLevel.addParticle(
+			particleData, forceAlwaysRender,
+			x + this.grid.pos.x,
+			y + this.grid.pos.y,
+			z + this.grid.pos.z,
+			xSpeed, ySpeed, zSpeed
+		)
+	}
+
+	override fun addParticle(
+		particleData: ParticleOptions,
+		x: Double,
+		y: Double,
+		z: Double,
+		xSpeed: Double,
+		ySpeed: Double,
+		zSpeed: Double
+	) {
+		this.sourceLevel.addParticle(
+			particleData,
+			x + this.grid.pos.x,
+			y + this.grid.pos.y,
+			z + this.grid.pos.z,
+			xSpeed, ySpeed, zSpeed
+		)
+	}
+
+	override fun playSeededSound(
+		player: Player?,
+		entity: Entity,
+		sound: Holder<SoundEvent?>,
+		category: SoundSource,
+		volume: Float,
+		pitch: Float,
+		seed: Long
+	) {
+		val event = EventHooks.onPlaySoundAtEntity(entity, sound, category, volume, pitch)
+		val eventSound = event.sound
+		if (event.isCanceled || eventSound == null || player != localClient.player) return
+		localClient.soundManager.play(
+			EntityBoundSoundInstance(
+				eventSound.value(),
+				event.source,
+				event.newVolume,
+				event.newPitch,
+				entity,
+				seed
+			)
+		)
+	}
+
+	override fun playSeededSound(
+		player: Player?,
+		x: Double,
+		y: Double,
+		z: Double,
+		sound: Holder<SoundEvent?>,
+		category: SoundSource,
+		volume: Float,
+		pitch: Float,
+		seed: Long
+	) {
+		val event = EventHooks.onPlaySoundAtPosition(this, x, y, z, sound, category, volume, pitch)
+		val eventSound = event.sound
+		if (event.isCanceled || eventSound == null || player != localClient.player) return
+		localClient.soundManager.play(
+			SimpleSoundInstance(
+				sound.value(),
+				event.source,
+				event.newVolume,
+				event.newPitch,
+				RandomSource.create(seed),
+				x + this.grid.pos.x,
+				y + this.grid.pos.y,
+				z + this.grid.pos.z
+			)
+		)
 	}
 
 	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()

@@ -5,6 +5,9 @@ import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
+import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket
+import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerChunkCache
@@ -29,21 +32,28 @@ import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.entity.LevelEntityGetter
+import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource
 import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.redstone.NeighborUpdater
 import net.minecraft.world.level.storage.LevelData
+import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
+import net.neoforged.neoforge.common.CommonHooks
 import net.neoforged.neoforge.entity.PartEntity
+import net.neoforged.neoforge.event.EventHooks
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEvent
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelGameEventDispatcher
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundEntityPhysicsGridPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundPhysicsGridPacket
 import java.nio.ByteBuffer
 import java.security.SecureRandom
 import java.util.function.BooleanSupplier
@@ -54,7 +64,7 @@ import java.util.function.Supplier
  */
 class ServerMicroLevel(
 	private val grid: PhysicsGrid,
-	private val sourceLevel: Level
+	private val sourceLevel: ServerLevel
 ) : ServerLevel(
 	null, null, null, null,
 	null, null, null, false,
@@ -261,8 +271,32 @@ class ServerMicroLevel(
 		pitch: Float,
 		seed: Long
 	) {
-		// TODO !!!
-		super.playSeededSound(player, entity, sound, category, volume, pitch, seed)
+		val event = EventHooks.onPlaySoundAtEntity(entity, sound, category, volume, pitch)
+		val eventSound = event.sound
+		if (event.isCanceled || eventSound == null) return
+		val eventVolume = event.newVolume
+		val eventCategory = event.source
+		this.server.playerList.broadcast(
+			player,
+			entity.x,
+			entity.y,
+			entity.z,
+			eventSound.value().getRange(eventVolume).toDouble(),
+			this.dimension(),
+			ClientboundCustomPayloadPacket(
+				EncapsulateSoundEntityPhysicsGridPacket(
+					this.grid.id,
+					ClientboundSoundEntityPacket(
+						eventSound,
+						eventCategory,
+						entity,
+						eventVolume,
+						event.newPitch,
+						seed
+					)
+				)
+			)
+		)
 	}
 
 	override fun playSeededSound(
@@ -276,8 +310,32 @@ class ServerMicroLevel(
 		pitch: Float,
 		seed: Long
 	) {
-		// TODO !!!
-		super.playSeededSound(player, x, y, z, sound, category, volume, pitch, seed)
+		val event = EventHooks.onPlaySoundAtPosition(this, x, y, z, sound, category, volume, pitch)
+		val eventSound = event.sound
+		if (event.isCanceled || eventSound == null) return
+		val eventVolume = event.newVolume
+		val eventCategory = event.source
+		this.server.playerList.broadcast(
+			player,
+			x + this.grid.pos.x,
+			y + this.grid.pos.y,
+			z + this.grid.pos.z,
+			eventSound.value().getRange(eventVolume).toDouble(),
+			this.dimension(),
+			ClientboundCustomPayloadPacket(
+				EncapsulateSoundPhysicsGridPacket(
+					this.grid.id,
+					ClientboundSoundPacket(
+						eventSound,
+						eventCategory,
+						x, y, z,
+						eventVolume,
+						event.newPitch,
+						seed
+					)
+				)
+			)
+		)
 	}
 
 	override fun toString(): String = "ServerMicroLevel"
@@ -292,4 +350,5 @@ class ServerMicroLevel(
 	override fun getProfiler(): ProfilerFiller = this.sourceLevel.profiler
 	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 	override fun dimension(): ResourceKey<Level> = this.sourceLevel.dimension()
+	override fun getServer(): MinecraftServer = this.sourceLevel.server
 }

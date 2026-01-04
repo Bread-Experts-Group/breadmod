@@ -49,7 +49,11 @@ import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.toVec3
 import org.bread_experts_group.breadmod.util.toVec3i
 
-class PhysicsGrid(val pos: Vec3, val bounding: AABB) {
+class PhysicsGrid(
+	val id: Long,
+	val pos: Vec3,
+	val bounding: AABB
+) {
 	companion object {
 		val gridMeshes: MutableMap<PhysicsGrid, GridMesh> = mutableMapOf()
 
@@ -98,14 +102,15 @@ class PhysicsGrid(val pos: Vec3, val bounding: AABB) {
 			val (blocks, blockEntities) = this.collectBlocksAndEntities(posA, posB, level)
 			val bounding = AABB.of(BoundingBox.fromCorners(posA, posB)).move(targetPos - posA.toVec3())
 			logDebugInfo(bounding)
-			val grid = PhysicsGrid(targetPos, bounding)
+			val id = this.nextID++
+			val grid = PhysicsGrid(id, targetPos, bounding)
 			grid.microLevel = ServerMicroLevel(grid, level)
 			blocks.forEach { (pos, state) -> grid.microLevel.setBlock(pos, state, 0) }
 			blockEntities.forEach { (_, blockEntity) -> grid.microLevel.setBlockEntity(blockEntity) }
-			Companion.serverGrids[this.nextID] = grid
+			Companion.serverGrids[id] = grid
 			PacketDistributor.sendToPlayersInDimension(
 				level,
-				NewPhysicsGridPacket(this.nextID++, targetPos, bounding, posA, posB),
+				NewPhysicsGridPacket(id, targetPos, bounding, posA, posB),
 			)
 		}
 	}

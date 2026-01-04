@@ -49,7 +49,7 @@ data class NewPhysicsGridPacket(
 		fun handleClientboundPacket(data: NewPhysicsGridPacket, context: IPayloadContext) {
 			context.enqueueWork {
 				val level = localClient.level ?: return@enqueueWork
-				val newGrid = PhysicsGrid(data.position, data.bounding)
+				val newGrid = PhysicsGrid(data.id, data.position, data.bounding)
 				val (blocks, blockEntities) = PhysicsGrid.collectBlocksAndEntities(data.posA, data.posB, level)
 				newGrid.microLevel = ClientMicroLevel(level, newGrid)
 				blocks.forEach { (pos, state) -> newGrid.microLevel.setBlock(pos, state, 0) }
