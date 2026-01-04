@@ -1,28 +1,38 @@
 package org.bread_experts_group.breadmod.mixin.common.physics_grid;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
-import org.bread_experts_group.breadmod.util.GeneralKt;
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerGameMode.class)
 abstract class MixinServerPlayerGameModePhysGrid {
-	@Inject(
+	@Shadow
+	@Final
+	protected ServerPlayer player;
+
+	@ModifyExpressionValue(
 			method = "useItemOn",
-			at = @At("HEAD")
+			at = @At(
+					value = "NEW",
+					target = "(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/item/context/UseOnContext;"
+			)
 	)
-	private void probeUseItemOn(
-			ServerPlayer player, Level level, ItemStack stack, InteractionHand hand,
-			BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir
-			) {
-		GeneralKt.logDebugInfo("(ServerPlayerGameMode) useItemOn[" + level + ", " + hitResult.getBlockPos() + ", " + level.getBlockState(hitResult.getBlockPos()) + "]");
+	private UseOnContext redirectContextLevel(
+			UseOnContext original,
+			@Local(argsOnly = true) InteractionHand hand,
+			@Local(argsOnly = true) BlockHitResult result
+	) {
+		ServerPlayer player = this.player;
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(player);
+		return (grid != null) ? new UseOnContext(grid.microLevel, player, hand, player.getItemInHand(hand), result) : original;
 	}
 }

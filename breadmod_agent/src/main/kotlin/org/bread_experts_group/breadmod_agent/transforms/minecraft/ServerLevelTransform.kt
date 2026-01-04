@@ -26,10 +26,14 @@ class ServerLevelTransform(
 		) { codeBuilder ->
 			codeBuilder
 				.aload(0)
+				.iconst_0()
 				.invokespecial(
 					ClassDesc.of(Level::class.java.name),
 					ConstantDescs.INIT_NAME,
-					Companion.DEFAULT_VOID
+					MethodTypeDesc.of(
+						ConstantDescs.CD_void,
+						ConstantDescs.CD_boolean
+					)
 				)
 				.aload(0)
 				.new_(CapabilityListenerHolder::class.classDesc)

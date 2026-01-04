@@ -8,6 +8,7 @@ import java.lang.classfile.ClassFile
 import java.lang.classfile.ClassFile.ACC_PUBLIC
 import java.lang.constant.ClassDesc
 import java.lang.constant.ConstantDescs
+import java.lang.constant.MethodTypeDesc
 
 class ClientLevelTransform(
 	classFile: ClassFile,
@@ -21,10 +22,14 @@ class ClientLevelTransform(
 		) { codeBuilder ->
 			codeBuilder
 				.aload(0)
+				.iconst_1()
 				.invokespecial(
 					ClassDesc.of(Level::class.java.name),
 					ConstantDescs.INIT_NAME,
-					Companion.DEFAULT_VOID
+					MethodTypeDesc.of(
+						ConstantDescs.CD_void,
+						ConstantDescs.CD_boolean
+					)
 				)
 				.return_()
 		}

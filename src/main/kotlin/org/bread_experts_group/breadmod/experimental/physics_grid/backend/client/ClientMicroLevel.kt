@@ -12,9 +12,12 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
+import net.minecraft.world.item.crafting.RecipeManager
+import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
@@ -23,6 +26,7 @@ import net.neoforged.neoforge.event.EventHooks
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import java.util.function.Supplier
 
 class ClientMicroLevel(
 	private val sourceLevel: ClientLevel,
@@ -141,9 +145,15 @@ class ClientMicroLevel(
 	private val worldBorder: WorldBorder = WorldBorder()
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
 
+	override fun toString(): String = "ClientMicroLevel"
 	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()
 	override fun dimension(): ResourceKey<Level?> = this.sourceLevel.dimension()
 	override fun dimensionType(): DimensionType = this.sourceLevel.dimensionType()
 	override fun dimensionTypeRegistration(): Holder<DimensionType?> = this.sourceLevel.dimensionTypeRegistration()
+	override fun getGameTime(): Long = this.sourceLevel.gameTime
+	override fun getRecipeManager(): RecipeManager = this.sourceLevel.recipeManager
+	override fun getGameRules(): GameRules = this.sourceLevel.gameRules
+	override fun getProfilerSupplier(): Supplier<ProfilerFiller> = this.sourceLevel.profilerSupplier
+	override fun getProfiler(): ProfilerFiller = this.sourceLevel.profiler
 }

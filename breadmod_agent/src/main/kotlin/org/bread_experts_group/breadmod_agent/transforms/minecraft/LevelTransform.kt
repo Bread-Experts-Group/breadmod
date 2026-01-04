@@ -23,7 +23,10 @@ class LevelTransform(
 	override fun transform(): (ClassBuilder, ClassElement) -> Unit = { classBuilder, classElement ->
 		classBuilder.addMethod(
 			ConstantDescs.INIT_NAME,
-			Companion.DEFAULT_VOID,
+			MethodTypeDesc.of(
+				ConstantDescs.CD_void,
+				ConstantDescs.CD_boolean
+			),
 			ACC_PUBLIC
 		) { codeBuilder ->
 			codeBuilder
@@ -136,6 +139,13 @@ class LevelTransform(
 					Level::class.classDesc,
 					"capturedBlockSnapshots",
 					ArrayList::class.classDesc
+				)
+				.aload(0)
+				.iload(1)
+				.putfield(
+					Level::class.classDesc,
+					"isClientSide",
+					ConstantDescs.CD_boolean
 				)
 				.return_()
 		}
