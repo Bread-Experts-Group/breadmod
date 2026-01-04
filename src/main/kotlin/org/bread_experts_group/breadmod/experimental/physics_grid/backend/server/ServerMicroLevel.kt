@@ -29,16 +29,13 @@ import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.entity.LevelEntityGetter
-import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource
 import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.redstone.NeighborUpdater
 import net.minecraft.world.level.storage.LevelData
-import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
-import net.neoforged.neoforge.common.CommonHooks
 import net.neoforged.neoforge.entity.PartEntity
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -46,7 +43,6 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuff
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEvent
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelGameEventDispatcher
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 import java.nio.ByteBuffer
 import java.security.SecureRandom

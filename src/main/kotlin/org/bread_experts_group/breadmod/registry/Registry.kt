@@ -603,7 +603,7 @@ object Registry {
 		// Common Event Registration
 		// Game Bus
 		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
-			PhysicsGrid.localGrids.forEach { (_, grid) -> grid.tick(event.server) }
+			PhysicsGrid.serverGrids.forEach { (_, grid) -> grid.tick(event.server) }
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
 		}

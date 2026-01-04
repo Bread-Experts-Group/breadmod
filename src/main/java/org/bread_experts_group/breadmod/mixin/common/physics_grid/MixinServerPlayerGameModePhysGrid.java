@@ -23,6 +23,6 @@ abstract class MixinServerPlayerGameModePhysGrid {
 			ServerPlayer player, Level level, ItemStack stack, InteractionHand hand,
 			BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir
 			) {
-		GeneralKt.logDebugInfo("(ServerPlayerGameMode) useItemOn[" + level + ", " + hitResult.getBlockPos() + "]");
+		GeneralKt.logDebugInfo("(ServerPlayerGameMode) useItemOn[" + level + ", " + hitResult.getBlockPos() + ", " + level.getBlockState(hitResult.getBlockPos()) + "]");
 	}
 }
