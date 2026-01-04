@@ -1,10 +1,17 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid.backend.server
 
+import net.minecraft.core.BlockPos
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket
 import net.minecraft.server.level.ServerChunkCache
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.chunk.ChunkAccess
 import net.minecraft.world.level.chunk.status.ChunkStatus
+import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkMap
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockUpdatePhysicsGridPacket
+import org.bread_experts_group.breadmod.util.toVec3
+import org.bread_experts_group.breadmod.util.toVec3i
 import java.util.function.BooleanSupplier
 
 class ServerMicroLevelChunkSource(
@@ -27,6 +34,22 @@ class ServerMicroLevelChunkSource(
 		if (this.parent.tickRateManager().runsNormally()) this.parent.tickChunk(
 			this.singletonChunk,
 			this.parent.gameRules.getInt(GameRules.RULE_RANDOMTICKING)
+		)
+	}
+
+	override fun blockChanged(pos: BlockPos) {
+		/*
+        TODO: this.broadcastBlockEntityIfNeeded(list1, level, blockpos, blockstate);
+		 */
+		PacketDistributor.sendToPlayersTrackingChunk(
+			this.parent.sourceLevel,
+			ChunkPos(
+				BlockPos(this.parent.grid.pos.add(pos.toVec3()).toVec3i())
+			),
+			EncapsulateBlockUpdatePhysicsGridPacket(
+				this.parent.grid.id,
+				ClientboundBlockUpdatePacket(pos, this.parent.getBlockState(pos))
+			)
 		)
 	}
 

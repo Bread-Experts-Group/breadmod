@@ -126,6 +126,8 @@ import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockEventPhysicsGridPacket
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockUpdatePhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundEntityPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.NewPhysicsGridPacket
@@ -699,6 +701,8 @@ object Registry {
 			NewPhysicsGridPacket.register(registrar)
 			EncapsulateSoundEntityPhysicsGridPacket.register(registrar)
 			EncapsulateSoundPhysicsGridPacket.register(registrar)
+			EncapsulateBlockEventPhysicsGridPacket.register(registrar)
+			EncapsulateBlockUpdatePhysicsGridPacket.register(registrar)
 			SpreadParticlesPacket.register(registrar)
 			ScreenBleedSetPacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)

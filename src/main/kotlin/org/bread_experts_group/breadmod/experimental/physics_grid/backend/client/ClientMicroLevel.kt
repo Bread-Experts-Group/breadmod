@@ -14,8 +14,10 @@ import net.minecraft.sounds.SoundSource
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
 import net.neoforged.neoforge.event.EventHooks
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
@@ -32,6 +34,11 @@ class ClientMicroLevel(
 ) {
 	private val chunkSource: ClientMicroLevelChunkSource = ClientMicroLevelChunkSource(this)
 	override fun getChunkSource(): ClientChunkCache = this.chunkSource
+
+	override fun setServerVerifiedBlockState(pos: BlockPos, state: BlockState, flags: Int) {
+		// TODO("$pos, $state, $flags VER") if (!this.blockStatePredictionHandler.updateKnownServerState(pos, state)) {
+		this.setBlock(pos, state, flags, 512)
+	}
 
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
 //		return super.setBlock(pos, state, flags, recursionLeft) TODO !
@@ -131,6 +138,10 @@ class ClientMicroLevel(
 		)
 	}
 
+	private val worldBorder: WorldBorder = WorldBorder()
+	override fun getWorldBorder(): WorldBorder = this.worldBorder
+
+	override fun enabledFeatures(): FeatureFlagSet = this.sourceLevel.enabledFeatures()
 	override fun registryAccess(): RegistryAccess = this.sourceLevel.registryAccess()
 	override fun dimension(): ResourceKey<Level?> = this.sourceLevel.dimension()
 	override fun dimensionType(): DimensionType = this.sourceLevel.dimensionType()

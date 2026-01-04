@@ -1,11 +1,11 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid.backend.server
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
+import net.minecraft.network.protocol.game.ClientboundBlockEventPacket
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.resources.ResourceKey
@@ -37,7 +37,6 @@ import net.minecraft.world.level.levelgen.XoroshiroRandomSource
 import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
-import net.minecraft.world.level.redstone.NeighborUpdater
 import net.minecraft.world.level.storage.LevelData
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
@@ -52,8 +51,11 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroL
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelGameEventDispatcher
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockEventPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundEntityPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundPhysicsGridPacket
+import org.bread_experts_group.breadmod.util.plus
+import org.bread_experts_group.breadmod.util.toVec3
 import java.nio.ByteBuffer
 import java.security.SecureRandom
 import java.util.function.BooleanSupplier
@@ -63,8 +65,8 @@ import java.util.function.Supplier
  * The super constructor in this class is replaced at runtime with a no-args constructor via the breadmod agent.
  */
 class ServerMicroLevel(
-	private val grid: PhysicsGrid,
-	private val sourceLevel: ServerLevel
+	val grid: PhysicsGrid,
+	val sourceLevel: ServerLevel
 ) : ServerLevel(
 	null, null, null, null,
 	null, null, null, false,
@@ -107,49 +109,26 @@ class ServerMicroLevel(
 	override fun players(): List<ServerPlayer> = this.grid.playersInGrid
 
 	override fun sendBlockUpdated(pos: BlockPos, oldState: BlockState, newState: BlockState, flags: Int) {
-//		this.chunkSource.blockChanged(pos)
+		this.chunkSource.blockChanged(pos)
+		// TODO: Entities?
 	}
 
-	override fun neighborChanged(pos: BlockPos, block: Block, fromPos: BlockPos) {
-		val toState = this.getBlockState(pos)
-		NeighborUpdater.executeUpdate(this, toState, pos, block, fromPos, false)
-	}
-
-	override fun neighborChanged(state: BlockState, pos: BlockPos, block: Block, fromPos: BlockPos, isMoving: Boolean) {
-		TODO("NOTIFY $pos, $block, $fromPos, $isMoving")
-	}
-
-	override fun updateNeighborsAt(pos: BlockPos, block: Block) {
-		/*
-		 net.neoforged.neoforge.event.EventHooks.onNeighborNotify(this, pos, this.getBlockState(pos), java.util.EnumSet.allOf(Direction.class), false).isCanceled();
-		 */
-		NeighborUpdater.UPDATE_ORDER.forEach { direction ->
-			val toPos = pos.relative(direction)
-			val toState = this.getBlockState(toPos)
-			NeighborUpdater.executeUpdate(this, toState, toPos, block, pos, false)
+	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
+//		if (flags and 4 != 0) TODO("Prevent rerender")
+//		if (flags and 8 != 0) TODO("Force main thread rerender")
+//		if (flags and 32 != 0) TODO("Prevent neighbor drops")
+		val oldState = this.getChunk(0, 0).setBlockState(pos, state, flags and 64 != 0) ?: return false
+		val setState = this.getBlockState(pos)
+		if (setState == state) {
+			// TODO: setBlocksDirty
+			if (flags and 2 != 0 && flags and 4 == 0) this.sendBlockUpdated(pos, oldState, state, flags)
+			if (flags and 1 == 1) {
+				this.blockUpdated(pos, oldState.block)
+				if (state.hasAnalogOutputSignal()) this.updateNeighbourForOutputSignal(pos, state.block)
+			}
+			if (flags and 16 != 0) TODO("Prevent neighbor reactions")
 		}
-	}
-
-	override fun updateNeighborsAtExceptFromFacing(pos: BlockPos, blockType: Block, skipSide: Direction) {
-		/*
-		java.util.EnumSet<Direction> directions = java.util.EnumSet.allOf(Direction.class);
-        directions.remove(skipSide);
-        if (net.neoforged.neoforge.event.EventHooks.onNeighborNotify(this, pos, this.getBlockState(pos), directions, false).isCanceled())
-            return;
-		 */
-		super.updateNeighborsAtExceptFromFacing(pos, blockType, skipSide)
-		NeighborUpdater.UPDATE_ORDER.forEach { direction ->
-			if (direction == skipSide) return@forEach
-			val toPos = pos.relative(direction)
-			val toState = this.getBlockState(toPos)
-			NeighborUpdater.executeUpdate(this, toState, toPos, blockType, pos, false)
-		}
-	}
-
-	override fun destroyBlock(pos: BlockPos, dropBlock: Boolean, entity: Entity?, recursionLeft: Int): Boolean {
-		println("Want to destroy $pos, $dropBlock, $entity, $recursionLeft")
-		return false
-//		return super.destroyBlock(pos, dropBlock, entity, recursionLeft)
+		return true
 	}
 
 	override fun getMinBuildHeight(): Int = -64
@@ -178,10 +157,8 @@ class ServerMicroLevel(
 	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
 
 	// Ticking
-	override fun shouldTickBlocksAt(chunkPos: Long): Boolean {
-		// TODO: shouldTickBlocksAt
-		return true
-	}
+	// TODO: shouldTickBlocksAt
+	override fun shouldTickBlocksAt(chunkPos: Long): Boolean = true
 
 	@Suppress("PROPERTY_HIDES_JAVA_FIELD")
 	private val blockEntityTickers: MutableList<TickingBlockEntity> = mutableListOf()
@@ -203,22 +180,26 @@ class ServerMicroLevel(
 				val (pos, block, eventID, eventParam) = this.events.removeLast()
 				val state = this.getBlockState(pos)
 				if (state.`is`(block) && state.triggerEvent(this, pos, eventID, eventParam)) {
-					this.logger.fatal("B This message must be sent to the client micro level! : $pos, $block, $eventID, $eventParam [${this.grid}]")
-//				val position = pos.toVec3() + this.grid.pos
-//				this.sourceLevel.server?.playerList?.broadcast(
-//					null,
-//					position.x,
-//					position.y,
-//					position.z,
-//					64.0,
-//					this.sourceLevel.dimension(),
-//					ClientboundBlockEventPacket(
-//						BlockPos(position.toVec3i()),
-//						block,
-//						eventID,
-//						eventParam
-//					)
-//				) TODO: This packet must contain the local grid, as it is sent from the server. For now, playing locally..
+					val position = pos.toVec3() + this.grid.pos
+					this.server.playerList.broadcast(
+						null,
+						position.x,
+						position.y,
+						position.z,
+						64.0,
+						this.sourceLevel.dimension(),
+						ClientboundCustomPayloadPacket(
+							EncapsulateBlockEventPhysicsGridPacket(
+								this.grid.id,
+								ClientboundBlockEventPacket(
+									pos,
+									block,
+									eventID,
+									eventParam
+								)
+							)
+						)
+					)
 				}
 			}
 		}
@@ -253,7 +234,7 @@ class ServerMicroLevel(
 	}
 
 	override fun levelEvent(player: Player?, type: Int, pos: BlockPos, data: Int) {
-		this.logger.fatal("L This message must be sent to the client micro level! : $player, $type, $pos, $data [${this.grid}]")
+		TODO("L This message must be sent to the client micro level! : $player, $type, $pos, $data [${this.grid}]")
 	}
 
 	private val gameEventDispatcher: MicroLevelGameEventDispatcher = MicroLevelGameEventDispatcher(this)
