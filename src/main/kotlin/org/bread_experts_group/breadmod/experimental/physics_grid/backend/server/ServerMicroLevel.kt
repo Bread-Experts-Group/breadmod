@@ -126,7 +126,14 @@ class ServerMicroLevel(
 				this.blockUpdated(pos, oldState.block)
 				if (state.hasAnalogOutputSignal()) this.updateNeighbourForOutputSignal(pos, state.block)
 			}
-			if (flags and 16 != 0) TODO("Prevent neighbor reactions")
+			if (flags and 16 != 0) {
+				val modified = flags and 0b11111111111111111111111111011110.toInt()
+				oldState.updateIndirectNeighbourShapes(this, pos, modified, recursionLeft - 1)
+				state.updateNeighbourShapes(this, pos, modified, recursionLeft - 1)
+				state.updateIndirectNeighbourShapes(this, pos, modified, recursionLeft - 1)
+			}
+			this.onBlockStateChange(pos, oldState, setState)
+			state.onBlockStateChange(this, pos, oldState)
 		}
 		return true
 	}
