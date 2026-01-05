@@ -59,8 +59,9 @@ abstract class MixinLevelRendererPhysGrid {
 						breadmod$getThis(), camera, gridHitResult, deltaTracker,
 						poseStack, bufferSource)
 				) {
+					float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 					Vec3 resultPos = GeneralKt.toVec3(gridHitResult.getLocalPos());
-					Vec3 relativePos = grid.getPos().add(resultPos);
+					Vec3 relativePos = grid.getPosLerped(partialTick).add(resultPos);
 					BlockState state = gridHitResult.getState();
 					renderShape(
 							poseStack,

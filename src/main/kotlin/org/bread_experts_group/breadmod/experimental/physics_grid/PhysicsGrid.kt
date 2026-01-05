@@ -11,7 +11,6 @@ import net.minecraft.core.Direction
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
@@ -53,7 +52,8 @@ import org.bread_experts_group.breadmod.util.toVec3i
 class PhysicsGrid(
 	val id: Long,
 	var pos: Vec3,
-	var bounding: AABB
+	var bounding: AABB,
+	val level: Level
 ) {
 	companion object {
 		val gridMeshes: MutableMap<PhysicsGrid, GridMesh> = mutableMapOf()
@@ -104,7 +104,7 @@ class PhysicsGrid(
 			val bounding = AABB.of(BoundingBox.fromCorners(posA, posB)).move(targetPos - posA.toVec3())
 			logDebugInfo(bounding)
 			val id = this.nextID++
-			val grid = PhysicsGrid(id, targetPos, bounding)
+			val grid = PhysicsGrid(id, targetPos, bounding, level)
 			grid.microLevel = ServerMicroLevel(grid, level)
 			blocks.forEach { (pos, state) -> grid.microLevel.setBlock(pos, state, 0) }
 			blockEntities.forEach { (_, blockEntity) -> grid.microLevel.setBlockEntity(blockEntity) }
@@ -142,15 +142,24 @@ class PhysicsGrid(
 		return this.gridBlockCast(player, attribute)
 	}
 
+	fun getPosLerped(partialTick: Float): Vec3 {
+		val delta = if (this.delta == Vec3.ZERO) 1.0 else partialTick.toDouble()
+		return this.oldPos.lerp(this.pos, delta)
+	}
+
 	fun movementTick() {
+		if (this.delta == BlockPos.ZERO) return
 		this.oldPos = this.pos
 		this.pos += this.delta
 		this.bounding = this.bounding.move(this.delta)
-		this.delta = Vec3(
-			Mth.clamp(this.delta.x - 0.075, 0.0, Double.MAX_VALUE),
-			Mth.clamp(this.delta.y - 0.075, 0.0, Double.MAX_VALUE),
-			Mth.clamp(this.delta.z - 0.075, 0.0, Double.MAX_VALUE)
-		)
+		val entities = this.level.getEntities(null, this.bounding)
+		entities.forEach { entity ->
+			/*if (entity.onGround())*/ entity.setPos(entity.position() + this.delta)
+		}
+		val x = this.delta.x + if (this.delta.x < 0) ((-this.delta.x) / 10) else -(this.delta.x / 10)
+		val y = this.delta.y + if (this.delta.y < 0) ((-this.delta.y) / 10) else -(this.delta.y / 10)
+		val z = this.delta.z + if (this.delta.z < 0) ((-this.delta.z) / 10) else -(this.delta.z / 10)
+		this.delta = Vec3(x, y, z)
 	}
 
 	fun tick(server: MinecraftServer) {
@@ -164,11 +173,12 @@ class PhysicsGrid(
 	}
 
 	fun attachRenderer() {
+		val renderBounding = AABB(0.0, 0.0, 0.0, this.bounding.xsize, this.bounding.ysize, this.bounding.zsize)
 		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
-			val partialTick = event.partialTick.getGameTimeDeltaPartialTick(false).toDouble()
-			val delta = if (this.delta == Vec3.ZERO) 1.0 else partialTick
-			val pos = this.oldPos.lerp(this.pos, delta)
+			val partialTick = event.partialTick.getGameTimeDeltaPartialTick(false)
+			val pos = this.getPosLerped(partialTick)
 			val bufferSource = localClient.renderBuffers().bufferSource()
+			// Rendering the grid's blocks
 			val gridMesh = Companion.gridMeshes.getOrPut(this) { GridMesh(this) }
 			val poseStack = event.poseStack
 			gridMesh.compile(poseStack)
@@ -187,18 +197,22 @@ class PhysicsGrid(
 				VertexBuffer.unbind()
 				poseStack.popPose()
 			}
-
+			// Rendering the grid's bounding box
 			poseStack.pushPose()
-			poseStack.initialTranslate(event.camera)
+			poseStack.offsetRenderToCameraPos(pos, event.camera, false)
 			LevelRenderer.renderLineBox(
 				poseStack,
 				bufferSource.getBuffer(RenderType.lines()),
-				this.bounding,
+				renderBounding,
 				1f,
 				1f,
 				1f,
 				1f
 			)
+			poseStack.popPose()
+			// Rendering block entities
+			poseStack.pushPose()
+			poseStack.initialTranslate(event.camera)
 			poseStack.translate(pos)
 			(this.microLevel.getChunk(0, 0) as ClientMicroLevelChunk).blocks.forEach { (pos, _) ->
 				val blockEntity = this.microLevel.getBlockEntity(pos.toBlockPos()) ?: return@forEach
@@ -216,6 +230,7 @@ class PhysicsGrid(
 				poseStack.popPose()
 			}
 			poseStack.popPose()
+			// Removing the renderer if the grid doesn't exist anymore
 			if (!Companion.clientGrids.values.contains(this)) {
 				gridMesh.close()
 				Companion.gridMeshes.remove(this)

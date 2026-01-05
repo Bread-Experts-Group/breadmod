@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.math.Axis
 import net.minecraft.client.gui.GuiGraphics
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.metadata.gui.GuiMetadataSection
 import net.minecraft.client.resources.metadata.gui.GuiSpriteScaling
@@ -32,7 +31,7 @@ class GuiElement(
 	val textureHeight: Int = 16
 ) {
 	companion object {
-		val MISSING: GuiElement = GuiElement(MissingTextureAtlasSprite.getLocation())
+		val MISSING: GuiElement = GuiElement(ResourceLocation.withDefaultNamespace("missingno"))
 		val BLOCKHEAD: GuiElement = GuiElement(
 			modLocation("textures", "tool_gun", "gui", "blockhead.png"),
 			256, 256
@@ -73,11 +72,11 @@ class GuiElement(
 
 	init {
 		val sprite = localClient.guiSprites.getSprite(this.location)
-		if (sprite.contents().name() == MissingTextureAtlasSprite.getLocation()) {
+		if (sprite.contents().name() == ResourceLocation.withDefaultNamespace("missingno")) {
 			this.isSprite = false
 			this.isAnimatedSprite = false
 			this.spriteScalingType = GuiSpriteScaling.DEFAULT.type()
-			this.atlasSprite = localClient.guiSprites.getSprite(MissingTextureAtlasSprite.getLocation())
+			this.atlasSprite = localClient.guiSprites.getSprite(ResourceLocation.withDefaultNamespace("missingno"))
 		} else {
 			this.isSprite = true
 			this.spriteScalingType = sprite.contents().metadata().getSection(GuiMetadataSection.TYPE)
