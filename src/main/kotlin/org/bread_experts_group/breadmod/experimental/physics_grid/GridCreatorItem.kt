@@ -4,7 +4,6 @@ import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
-import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -12,15 +11,14 @@ import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.network.PacketDistributor
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 
-class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
+class GridCreatorItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
 	private var posA: BlockPos = BlockPos.ZERO
 	private var posB: BlockPos = BlockPos.ZERO
 
 	override fun useOn(context: UseOnContext): InteractionResult {
-		if (!context.level.isClientSide) {
+		/*if (!context.level.isClientSide) {
 			context.player?.sendSystemMessage(
 				Component.literal(
 					ServerMicroLevel.getNameSpaceAndNameHuffmanSD(
@@ -38,7 +36,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 					).toString()
 				)
 			)
-		}
+		}*/
 
 		if (context.clickedPos is BlockPos.MutableBlockPos) return super.useOn(context)
 		if (this.posA == BlockPos.ZERO) {
@@ -59,6 +57,7 @@ class BulkBlockItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IM
 		return super.useOn(context)
 	}
 
+	// todo relaying client grid removal to other players
 	override fun onMouseScroll(
 		scrollingEvent: InputEvent.MouseScrollingEvent,
 		heldStack: ItemStack,

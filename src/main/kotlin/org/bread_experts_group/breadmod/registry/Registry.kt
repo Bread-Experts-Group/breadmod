@@ -348,6 +348,9 @@ object Registry {
 					}
 				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
+					PhysicsGrid.clientGrids.forEach { (_, grid) ->
+						grid.movementTick()
+					}
 					val inventory = (localClient.player ?: return@addListener).allSlots
 					inventory.forEach {
 						val renderer = IClientItemExtensions.of(it).customRenderer
@@ -606,7 +609,10 @@ object Registry {
 		// Common Event Registration
 		// Game Bus
 		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
-			PhysicsGrid.serverGrids.forEach { (_, grid) -> grid.tick(event.server) }
+			PhysicsGrid.serverGrids.forEach { (_, grid) ->
+				grid.tick(event.server)
+				grid.movementTick()
+			}
 			warTimerMap.forEach { (player, data) -> data.tick(player) }
 			screenBleedMap.forEach { (player, data) -> data.tick(player) }
 		}

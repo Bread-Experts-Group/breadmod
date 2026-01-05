@@ -7,24 +7,15 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.level.Level
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.util.plus
+import org.bread_experts_group.breadmod.util.toVec3
 
 class PushGridItem : Item(Item.Properties().stacksTo(1).rarity(Rarity.RARE)) {
-//	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
-//		val stack = player.getItemInHand(usedHand)
-//		if (!level.isClientSide) return InteractionResultHolder.pass(stack) // TODO, proper sync of the grids
-//		val result = blockPhysicsGrid(
-//			{ it is ClientPhysicsGrid },
-//			player.eyePosition,
-//			player.calculateViewVector(player.xRot, player.yRot),
-//			false,
-//			CollisionContext.of(player)
-//		)
-//		if (result != null) {
-//			result.grid.velocity = result.grid.velocity.add(0.25, 0.0, 0.0)
-//		}
-//		return InteractionResultHolder.consume(stack)
-//	}
-	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack?> {
-		return super.use(level, player, usedHand)
+	override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
+		val grid = PhysicsGrid.getClosestGrid(player) ?: return super.use(level, player, usedHand)
+		val lookingDirection = player.direction.normal.toVec3()
+		grid.delta += lookingDirection
+		return InteractionResultHolder.sidedSuccess(player.getItemInHand(usedHand), level.isClientSide)
 	}
 }

@@ -37,7 +37,7 @@ import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelLaye
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagItem
 import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraBinderItem
-import org.bread_experts_group.breadmod.experimental.physics_grid.BulkBlockItem
+import org.bread_experts_group.breadmod.experimental.physics_grid.GridCreatorItem
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
@@ -417,8 +417,9 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 
 	@DataGenerateModelHandheldItem
 	@DataGenerateLanguage
-	val BULK_BLOCK_ITEM: DeferredItem<Item> = this.registerItem("bulk_block_creator", ::BulkBlockItem)
+	val GRID_CREATOR: DeferredItem<Item> = this.registerItem("grid_creator", ::GridCreatorItem)
 
+	@DataGenerateModelHandheldItem
 	@DataGenerateLanguage
 	val PUSH_GRID_ITEM: DeferredItem<Item> = this.registerItem("push_grid_tool", ::PushGridItem)
 

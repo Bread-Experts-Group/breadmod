@@ -11,6 +11,7 @@ import net.minecraft.core.Direction
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.player.Player
@@ -44,14 +45,15 @@ import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
 import org.bread_experts_group.breadmod.util.logDebugInfo
 import org.bread_experts_group.breadmod.util.minus
+import org.bread_experts_group.breadmod.util.plus
 import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.toVec3
 import org.bread_experts_group.breadmod.util.toVec3i
 
 class PhysicsGrid(
 	val id: Long,
-	val pos: Vec3,
-	val bounding: AABB
+	var pos: Vec3,
+	var bounding: AABB
 ) {
 	companion object {
 		val gridMeshes: MutableMap<PhysicsGrid, GridMesh> = mutableMapOf()
@@ -114,6 +116,8 @@ class PhysicsGrid(
 		}
 	}
 
+	var delta: Vec3 = Vec3.ZERO
+	var oldPos: Vec3 = this.pos
 	lateinit var microLevel: Level
 	val playersInGrid: ArrayList<ServerPlayer> = arrayListOf()
 	private val blockFilter: List<Block> = listOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR, Blocks.LIGHT)
@@ -138,6 +142,17 @@ class PhysicsGrid(
 		return this.gridBlockCast(player, attribute)
 	}
 
+	fun movementTick() {
+		this.oldPos = this.pos
+		this.pos += this.delta
+		this.bounding = this.bounding.move(this.delta)
+		this.delta = Vec3(
+			Mth.clamp(this.delta.x - 0.075, 0.0, Double.MAX_VALUE),
+			Mth.clamp(this.delta.y - 0.075, 0.0, Double.MAX_VALUE),
+			Mth.clamp(this.delta.z - 0.075, 0.0, Double.MAX_VALUE)
+		)
+	}
+
 	fun tick(server: MinecraftServer) {
 		if (this.microLevel.isClientSide) return
 		server.playerList.players.forEach { player ->
@@ -150,6 +165,9 @@ class PhysicsGrid(
 
 	fun attachRenderer() {
 		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
+			val partialTick = event.partialTick.getGameTimeDeltaPartialTick(false).toDouble()
+			val delta = if (this.delta == Vec3.ZERO) 1.0 else partialTick
+			val pos = this.oldPos.lerp(this.pos, delta)
 			val bufferSource = localClient.renderBuffers().bufferSource()
 			val gridMesh = Companion.gridMeshes.getOrPut(this) { GridMesh(this) }
 			val poseStack = event.poseStack
@@ -158,7 +176,7 @@ class PhysicsGrid(
 			gridMesh.getBuffers().forEach { buffer ->
 				poseStack.pushPose()
 				poseStack.mulPose(event.modelViewMatrix)
-				poseStack.offsetRenderToCameraPos(this.pos, event.camera, false)
+				poseStack.offsetRenderToCameraPos(pos, event.camera, false)
 				buffer.bind()
 				buffer.drawWithShader(
 					poseStack.last().pose(),
@@ -181,7 +199,7 @@ class PhysicsGrid(
 				1f,
 				1f
 			)
-			poseStack.translate(this.pos)
+			poseStack.translate(pos)
 			(this.microLevel.getChunk(0, 0) as ClientMicroLevelChunk).blocks.forEach { (pos, _) ->
 				val blockEntity = this.microLevel.getBlockEntity(pos.toBlockPos()) ?: return@forEach
 				poseStack.pushPose()

@@ -17,6 +17,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.GridHitResult;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,6 +30,12 @@ import java.util.List;
 
 @Mixin(Entity.class)
 abstract class MixinEntityPhysGrid {
+	@Shadow
+	public abstract void addDeltaMovement(Vec3 addend);
+
+	@Shadow
+	public abstract void move(MoverType type, Vec3 pos);
+
 	@Unique
 	private Entity breadmod$getThis() {
 		return (Entity) (Object) this;
@@ -78,6 +85,15 @@ abstract class MixinEntityPhysGrid {
 //				this.breadmod$lastPlatformPos = gridPosition;
 //			}
 //		} else this.breadmod$lastPlatformPos = null;
+//	}
+
+//	@Inject(
+//			method = "baseTick",
+//			at = @At("TAIL")
+//	)
+//	private void addDeltaToEntities(CallbackInfo ci) {
+//		PhysicsGrid grid = PhysicsGrid.getClosestGrid(breadmod$getThis());
+//		if (grid != null && breadmod$getThis().onGround()) this.move(MoverType.SELF, grid.getDelta());
 //	}
 
 	@ModifyExpressionValue(
