@@ -142,6 +142,8 @@ import org.bread_experts_group.breadmod.network.serverbound.HitboxPacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
+import org.bread_experts_group.breadmod.network.serverbound.physics_grid.EncapsulatePlayerActionPhysicsGridPacket
+import org.bread_experts_group.breadmod.network.serverbound.physics_grid.EncapsulateUseItemOnPhysicsGridPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.KeyMappings.placeItemKey
 import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltFour
@@ -319,7 +321,7 @@ object Registry {
 							val level = player.level()
 							val state = level.getBlockState(result.blockPosition)
 							val entity = level.getBlockEntity(result.hit.originBlockPos) as? BreadModBlockEntity
-							val blockPos = result.hit.originBlockPos
+							result.hit.originBlockPos
 							if (entity == null) {
 								HitboxHandler.hitboxes.remove(result.hit.pos)
 								player.displayClientMessage(
@@ -717,6 +719,8 @@ object Registry {
 			GasGasGasSoundPacket.register(registrar)
 			DoubleOrNothingPacket.register(registrar)
 			// Serverbound packets
+			EncapsulateUseItemOnPhysicsGridPacket.register(registrar)
+			EncapsulatePlayerActionPhysicsGridPacket.register(registrar)
 			ToolGunModeChangePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)

@@ -17,7 +17,7 @@ class ClientMicroLevelChunk(val parent: ClientMicroLevel) : LevelChunk(parent, C
 
 	override fun getFluidState(pos: BlockPos): FluidState = Fluids.EMPTY.defaultFluidState()
 	override fun setBlockState(pos: BlockPos, state: BlockState, isMoving: Boolean): BlockState? {
-		return this.blocks.put(pos.toPoint3(), state)
+		return this.blocks.put(pos.toPoint3(), state) ?: Blocks.AIR.defaultBlockState()
 //		return super.setBlockState(pos, state, isMoving) TODO
 	}
 }

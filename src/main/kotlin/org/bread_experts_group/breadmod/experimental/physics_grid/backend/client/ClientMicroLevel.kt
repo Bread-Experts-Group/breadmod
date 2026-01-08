@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.experimental.physics_grid.backend.clien
 
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.particle.TerrainParticle
 import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.resources.sounds.EntityBoundSoundInstance
 import net.minecraft.client.resources.sounds.SimpleSoundInstance
@@ -13,6 +14,7 @@ import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundSource
+import net.minecraft.util.Mth
 import net.minecraft.util.RandomSource
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.Entity
@@ -21,11 +23,16 @@ import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
 import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.lighting.LevelLightEngine
+import net.minecraft.world.phys.shapes.VoxelShape
+import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions
+import net.neoforged.neoforge.client.model.data.ModelData
+import net.neoforged.neoforge.client.model.data.ModelDataManager
 import net.neoforged.neoforge.entity.PartEntity
 import net.neoforged.neoforge.event.EventHooks
 import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
@@ -33,10 +40,13 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
 import java.util.function.Supplier
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sqrt
 
 class ClientMicroLevel(
 	private val sourceLevel: ClientLevel,
-	private val grid: PhysicsGrid
+	val grid: PhysicsGrid
 ) : ClientLevel(
 	null, null, null, null,
 	0, 0, null, null, false,
@@ -55,10 +65,11 @@ class ClientMicroLevel(
 	}
 
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
+		val status = super.setBlock(pos, state, flags, recursionLeft)
 		executeOnRenderThread {
 			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.recompile() }
 		}
-		return super.setBlock(pos, state, flags, recursionLeft)
+		return status
 	}
 
 	override fun addParticle(
@@ -148,6 +159,115 @@ class ClientMicroLevel(
 				z + this.grid.pos.z
 			)
 		)
+	}
+
+	private fun playSoundGrid(
+		x: Double, y: Double, z: Double,
+		sound: SoundEvent,
+		category: SoundSource,
+		volume: Float,
+		pitch: Float,
+		distanceDelay: Boolean
+	) {
+		val rX = x + this.grid.pos.x
+		val rY = y + this.grid.pos.y
+		val rZ = z + this.grid.pos.z
+		val d0 = localClient.gameRenderer.mainCamera.getPosition().distanceToSqr(rX, rY, rZ)
+		val ssi = SimpleSoundInstance(
+			sound, category, volume, pitch, RandomSource.create(this.random.nextLong()),
+			rX, rY, rZ
+		)
+		if (distanceDelay && d0 > 100.0) {
+			val d1 = sqrt(d0) / 40.0
+			localClient.soundManager.playDelayed(ssi, (d1 * 20.0).toInt())
+		} else localClient.soundManager.play(ssi)
+	}
+
+	override fun playLocalSound(
+		x: Double,
+		y: Double,
+		z: Double,
+		sound: SoundEvent,
+		category: SoundSource,
+		volume: Float,
+		pitch: Float,
+		distanceDelay: Boolean
+	): Unit = this.playSoundGrid(x, y, z, sound, category, volume, pitch, distanceDelay)
+
+	private val manager: ModelDataManager = ModelDataManager(this)
+	override fun getModelData(pos: BlockPos): ModelData = this.manager.getAt(pos)
+
+	private fun destroyEffectsGrid(pos: BlockPos, state: BlockState) {
+		if (!state.isAir && !IClientBlockExtensions.of(state)
+				.addDestroyEffects(state, this, pos, localClient.particleEngine)
+		) {
+			val shape: VoxelShape = state.getShape(this, pos)
+			shape.forAllBoxes { xPosAdjBound: Double, yPosAdjBound: Double, zPosAdjBound: Double,
+				xPosAdjMax: Double, yPosAdjMax: Double, zPosAdjMax: Double ->
+				val xPosAdj = min(1.0, xPosAdjMax - xPosAdjBound)
+				val yPosAdj = min(1.0, yPosAdjMax - yPosAdjBound)
+				val zPosAdj = min(1.0, zPosAdjMax - zPosAdjBound)
+				val xPlanes = max(2, Mth.ceil(xPosAdj / 0.25))
+				val yPlanes = max(2, Mth.ceil(yPosAdj / 0.25))
+				val zPlanes = max(2, Mth.ceil(zPosAdj / 0.25))
+				for (xPlane in 0 ..< xPlanes) {
+					for (yPlane in 0 ..< yPlanes) {
+						for (zPlane in 0 ..< zPlanes) {
+							val xSpeed = (xPlane + 0.5) / xPlanes
+							val ySpeed = (yPlane + 0.5) / yPlanes
+							val zSpeed = (zPlane + 0.5) / zPlanes
+							val xAdj = xSpeed * xPosAdj + xPosAdjBound
+							val yAdj = ySpeed * yPosAdj + yPosAdjBound
+							val zAdj = zSpeed * zPosAdj + zPosAdjBound
+							localClient.particleEngine.add(
+								TerrainParticle(
+									this,
+									pos.x + this.grid.pos.x + xAdj,
+									pos.y + this.grid.pos.y + yAdj,
+									pos.z + this.grid.pos.z + zAdj,
+									xSpeed - 0.5,
+									ySpeed - 0.5,
+									zSpeed - 0.5,
+									state,
+									pos
+								)//.updateSprite(state, pos)
+								// TODO: this might cause weirdness with grass and such, not sure how to proceed yet
+							)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	override fun levelEvent(player: Player?, type: Int, pos: BlockPos, data: Int) {
+		when (type) {
+			2001 -> {
+				val state = Block.stateById(data)
+				if (!state.isAir && !IClientBlockExtensions.of(state)
+						.playBreakSound(state, this, pos)
+				) {
+					val soundType = state.getSoundType(this, pos, null)
+					this.playLocalSound(
+						pos,
+						soundType.breakSound,
+						SoundSource.BLOCKS,
+						(soundType.getVolume() + 1.0f) / 2.0f,
+						soundType.getPitch() * 0.8f,
+						false
+					)
+				}
+
+				this.destroyEffectsGrid(pos, state)
+			}
+			else -> TODO("Level event type $type in LevelRenderer.java/levelEvent")
+		}
+	}
+
+	override fun globalLevelEvent(id: Int, pos: BlockPos, data: Int) {
+		when (id) {
+			else -> TODO("Level event type $id in LevelRenderer.java/globalLevelEvent")
+		}
 	}
 
 	// TODO: Lighting
