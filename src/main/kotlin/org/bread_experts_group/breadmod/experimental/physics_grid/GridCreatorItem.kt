@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.client.event.InputEvent
-import net.neoforged.neoforge.network.PacketDistributor
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
 
 class GridCreatorItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), IMouseItem {
@@ -57,18 +56,15 @@ class GridCreatorItem : Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), 
 		return super.useOn(context)
 	}
 
-	// todo relaying client grid removal to other players
 	override fun onMouseScroll(
 		scrollingEvent: InputEvent.MouseScrollingEvent,
 		heldStack: ItemStack,
 		level: ClientLevel,
 		player: LocalPlayer
 	) {
-		if (player.isCrouching) {
-			PhysicsGrid.gridMeshes.forEach { (_, mesh) -> mesh.close() }
-			PhysicsGrid.gridMeshes.clear()
-			PhysicsGrid.clientGrids.clear()
-			PacketDistributor.sendToServer(ClearGridPacket())
+		if (player.isShiftKeyDown) {
+			val grid = PhysicsGrid.getClosestGrid(player) ?: return
+			GridPacket.clearGrid(grid.id)
 			scrollingEvent.isCanceled = true
 		}
 	}

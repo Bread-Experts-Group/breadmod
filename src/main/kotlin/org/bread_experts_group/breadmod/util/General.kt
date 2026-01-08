@@ -594,6 +594,19 @@ inline fun <reified T> CompoundTag.putValue(key: String, value: T) {
 	}
 }
 
+fun CompoundTag.putVec3(key: String, value: Vec3) {
+	this.put(key, CompoundTag().also { vecTag ->
+		vecTag.putDouble("x", value.x)
+		vecTag.putDouble("y", value.y)
+		vecTag.putDouble("z", value.z)
+	})
+}
+
+fun CompoundTag.getVec3(key: String): Vec3 {
+	val vecTag = this.getCompound(key)
+	return Vec3(vecTag.getDouble("x"), vecTag.getDouble("y"), vecTag.getDouble("z"))
+}
+
 fun CompoundTag.putBigDecimal(key: String, value: BigDecimal) {
 	this.putString(key, value.toPlainString())
 }

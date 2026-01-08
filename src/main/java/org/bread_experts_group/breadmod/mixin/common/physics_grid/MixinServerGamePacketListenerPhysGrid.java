@@ -42,4 +42,16 @@ public class MixinServerGamePacketListenerPhysGrid {
 		PhysicsGrid grid = PhysicsGrid.getClosestGrid(this.player);
 		return grid != null || original;
 	}
+
+	@ModifyExpressionValue(
+			method = "handlePlayerAction",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/Level;getMaxBuildHeight()I"
+			)
+	)
+	private int getGridBuildHeight(int original) {
+		PhysicsGrid grid = PhysicsGrid.getClosestGrid(this.player);
+		return (grid != null) ? grid.microLevel.getMaxBuildHeight() : original;
+	}
 }

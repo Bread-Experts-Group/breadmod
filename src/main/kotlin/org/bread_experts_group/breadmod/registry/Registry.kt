@@ -118,7 +118,7 @@ import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
-import org.bread_experts_group.breadmod.experimental.physics_grid.ClearGridPacket
+import org.bread_experts_group.breadmod.experimental.physics_grid.GridPacket
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
@@ -697,6 +697,8 @@ object Registry {
 		}
 		modBus.addListener { event: RegisterPayloadHandlersEvent ->
 			val registrar: PayloadRegistrar = event.registrar("1.4.0")
+			// Client & Server
+			GridPacket.register(registrar)
 			// Clientbound packets
 			WarTimerIncrement.register(registrar)
 			WarTimerSet.register(registrar)
@@ -715,7 +717,6 @@ object Registry {
 			GasGasGasSoundPacket.register(registrar)
 			DoubleOrNothingPacket.register(registrar)
 			// Serverbound packets
-			ClearGridPacket.register(registrar)
 			ToolGunModeChangePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)

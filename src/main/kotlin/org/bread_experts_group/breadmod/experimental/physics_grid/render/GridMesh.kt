@@ -37,7 +37,7 @@ class GridMesh(private val grid: PhysicsGrid) {
 		this.vertexBuffers.values.forEach(VertexBuffer::close)
 	}
 
-	fun markForRecompile() {
+	fun recompile() {
 		this.close()
 		this.vertexBuffers.clear()
 		this.bufferBuilders.clear()

@@ -55,12 +55,10 @@ class ClientMicroLevel(
 	}
 
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
-//		return super.setBlock(pos, state, flags, recursionLeft) TODO !
-		val status = this.getChunk(0, 0).setBlockState(pos, state, flags and 64 != 0) != null
-		if (status) executeOnRenderThread {
-			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.markForRecompile() }
+		executeOnRenderThread {
+			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.recompile() }
 		}
-		return status
+		return super.setBlock(pos, state, flags, recursionLeft)
 	}
 
 	override fun addParticle(

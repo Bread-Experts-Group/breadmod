@@ -92,7 +92,7 @@ neoForge {
 		}
 		create("client_noLogin") {
 			client()
-			gameDirectory.set(File("./run/client"))
+			gameDirectory.set(File("./run/client_no_login"))
 			enableTestNamespaces()
 			addAgent()
 		}
@@ -105,7 +105,6 @@ neoForge {
 		}
 		create("server_noOnline") {
 			server()
-			programArgument("--nogui")
 			gameDirectory.set(File("./run/server_no_online"))
 			enableTestNamespaces()
 			addAgent()
