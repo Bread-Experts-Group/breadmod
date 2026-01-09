@@ -19,8 +19,7 @@
     "common.physics_grid.MixinEntity",
     "common.physics_grid.MixinServerGamePacketListenerImpl",
     "common.physics_grid.MixinServerPlayerGameMode",
-    "compat.jade.MixinRayTracing",
-    "compat.mekanism.MixinMekanismContainerType"
+    "compat.jade.MixinRayTracing"
   ],
   "client": [
     "client.IAccessorDirectoryLister",
@@ -45,6 +44,7 @@
     "client.rendering.MixinLevelRenderer",
     "client.rendering.MixinTextureManager",
     "client.rendering.MixinVertexConsumer",
+    "compat.mekanism.MixinMekanismContainerType",
     "compat.projecte.MixinLayerYue"
   ],
   "injectors": {
