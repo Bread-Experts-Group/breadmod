@@ -5,11 +5,13 @@ import net.minecraft.core.Holder
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket
+import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket
 import net.minecraft.network.protocol.game.ClientboundBlockEventPacket
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket
 import net.minecraft.network.protocol.game.ClientboundSoundEntityPacket
 import net.minecraft.network.protocol.game.ClientboundSoundPacket
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerChunkCache
 import net.minecraft.server.level.ServerLevel
@@ -45,6 +47,7 @@ import net.minecraft.world.ticks.LevelTicks
 import net.neoforged.neoforge.common.CommonHooks
 import net.neoforged.neoforge.entity.PartEntity
 import net.neoforged.neoforge.event.EventHooks
+import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
@@ -53,6 +56,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroL
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelGameEventDispatcher
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
+import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockDestructionPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockEventPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateLevelEventPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundEntityPhysicsGridPacket
@@ -153,6 +157,10 @@ class ServerMicroLevel(
 	private val entityGetter: MicroLevelEntityGetter = MicroLevelEntityGetter()
 	override fun getEntities(): LevelEntityGetter<Entity> = this.entityGetter
 	override fun getPartEntities(): Collection<PartEntity<*>> = emptyList() // TODO: Part entities
+	override fun addFreshEntity(entity: Entity): Boolean {
+		println("TODO: Add enttiy $entity")
+		return true
+	}
 
 	private val chunkSource: ServerMicroLevelChunkSource = ServerMicroLevelChunkSource(this)
 	private val worldBorder: WorldBorder = WorldBorder()
@@ -175,6 +183,29 @@ class ServerMicroLevel(
 	override fun addBlockEntityTicker(ticker: TickingBlockEntity) {
 		this.blockEntityTickers.add(ticker)
 	}
+
+	override fun destroyBlockProgress(breakerId: Int, pos: BlockPos, progress: Int) {
+		this.sourceLevel.server.playerList.players.forEach { player ->
+			if (player.level() === this.sourceLevel && player.id == breakerId) {
+				val d0: Double = (pos.x + this.grid.pos.x) - player.x
+				val d1: Double = (pos.y + this.grid.pos.y) - player.y
+				val d2: Double = (pos.z + this.grid.pos.z) - player.z
+				if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0) {
+					PacketDistributor.sendToPlayer(
+						player,
+						EncapsulateBlockDestructionPhysicsGridPacket(
+							this.grid.id,
+							ClientboundBlockDestructionPacket(breakerId, pos, progress)
+						)
+					)
+				}
+			}
+		}
+	}
+
+	override fun getRandomSequence(
+		location: ResourceLocation
+	): RandomSource = this.sourceLevel.getRandomSequence(location)
 
 	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
 	private val blockTicks: LevelTicks<Block> = ServerMicroLevelTicks()
@@ -238,9 +269,7 @@ class ServerMicroLevel(
 	}
 
 	override fun tickRateManager(): TickRateManager = this.tickRateManager
-
 	override fun getBiomeManager(): BiomeManager = this.sourceLevel.biomeManager
-
 	override fun blockEvent(pos: BlockPos, block: Block, eventID: Int, eventParam: Int) {
 		this.events.add(MicroLevelBlockEvent(pos, block, eventID, eventParam))
 	}
