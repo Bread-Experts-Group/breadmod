@@ -25,6 +25,7 @@ import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.biome.BiomeManager
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.TickingBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.dimension.DimensionType
@@ -43,6 +44,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroL
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
+import java.util.function.BooleanSupplier
 import java.util.function.Supplier
 import kotlin.math.max
 import kotlin.math.min
@@ -66,6 +68,21 @@ class ClientMicroLevel(
 	override fun setServerVerifiedBlockState(pos: BlockPos, state: BlockState, flags: Int) {
 		// TODO("$pos, $state, $flags VER") if (!this.blockStatePredictionHandler.updateKnownServerState(pos, state)) {
 		this.setBlock(pos, state, flags, 512)
+	}
+
+	override fun addBlockEntityTicker(ticker: TickingBlockEntity) {
+		this.blockEntityTickers.add(ticker)
+	}
+
+	override fun tick(hasTimeLeft: BooleanSupplier) {
+		this.chunkSource.tick(hasTimeLeft, true)
+		this.blockEntityTickers.removeIf {
+			if (it.isRemoved) true
+			else {
+				if (this.shouldTickBlocksAt(it.pos)) it.tick()
+				false
+			}
+		}
 	}
 
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {

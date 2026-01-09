@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.physics_grid.backend.server
+package org.bread_experts_group.breadmod.experimental.physics_grid.backend
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Vec3i
@@ -10,7 +10,7 @@ import net.minecraft.world.ticks.ScheduledTick
 import java.util.PriorityQueue
 import java.util.function.BiConsumer
 
-class ServerMicroLevelTicks<T : Any> : LevelTicks<T>(null, null) {
+class MicroLevelTicks<T : Any> : LevelTicks<T>(null, null) {
 	private val tickOperations: MutableMap<Long, PriorityQueue<ScheduledTick<T>>> = mutableMapOf()
 	private var thisOperation: PriorityQueue<ScheduledTick<T>>? = null
 	override fun tick(gameTime: Long, maxAllowedTicks: Int, ticker: BiConsumer<BlockPos, T>) {

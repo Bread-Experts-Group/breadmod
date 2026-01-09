@@ -120,6 +120,7 @@ import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
 import org.bread_experts_group.breadmod.experimental.physics_grid.GridPacket
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
@@ -352,6 +353,7 @@ object Registry {
 				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
 					PhysicsGrid.clientGrids.forEach { (_, grid) ->
+						(grid.microLevel as ClientMicroLevel).tick { true }
 						grid.movementTick()
 					}
 					val inventory = (localClient.player ?: return@addListener).allSlots

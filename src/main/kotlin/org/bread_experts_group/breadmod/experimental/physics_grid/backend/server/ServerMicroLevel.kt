@@ -55,6 +55,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEvent
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelGameEventDispatcher
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelTicks
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockDestructionPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockEventPhysicsGridPacket
@@ -178,8 +179,6 @@ class ServerMicroLevel(
 	// TODO: shouldTickBlocksAt
 	override fun shouldTickBlocksAt(chunkPos: Long): Boolean = true
 
-	@Suppress("PROPERTY_HIDES_JAVA_FIELD")
-	private val blockEntityTickers: MutableList<TickingBlockEntity> = mutableListOf()
 	override fun addBlockEntityTicker(ticker: TickingBlockEntity) {
 		this.blockEntityTickers.add(ticker)
 	}
@@ -208,8 +207,8 @@ class ServerMicroLevel(
 	): RandomSource = this.sourceLevel.getRandomSequence(location)
 
 	private val events: ArrayDeque<MicroLevelBlockEvent> = ArrayDeque()
-	private val blockTicks: LevelTicks<Block> = ServerMicroLevelTicks()
-	private val fluidTicks: LevelTicks<Fluid> = ServerMicroLevelTicks()
+	private val blockTicks: LevelTicks<Block> = MicroLevelTicks()
+	private val fluidTicks: LevelTicks<Fluid> = MicroLevelTicks()
 	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
 	override fun getFluidTicks(): LevelTicks<Fluid> = this.fluidTicks
 	override fun tick(hasTimeLeft: BooleanSupplier) {

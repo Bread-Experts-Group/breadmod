@@ -186,8 +186,8 @@ class PhysicsGrid(
 			val gridMesh = Companion.gridMeshes.getOrPut(this) { GridMesh(this) }
 			val poseStack = event.poseStack
 			gridMesh.compile(poseStack)
-			val shaderInstance = RenderSystem.getShader() ?: return@add true
 			gridMesh.getBuffers().forEach { buffer ->
+				val shaderInstance = RenderSystem.getShader() ?: return@add true
 				poseStack.pushPose()
 				poseStack.mulPose(event.modelViewMatrix)
 				poseStack.offsetRenderToCameraPos(pos, event.camera, false)
