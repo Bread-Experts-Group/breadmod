@@ -9,13 +9,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid;
 import org.objectweb.asm.Opcodes;
-import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 @Mixin(Minecraft.class)
 abstract class MixinMinecraft {
@@ -26,10 +27,6 @@ abstract class MixinMinecraft {
 	@Shadow
 	@Nullable
 	public HitResult hitResult;
-
-	@Shadow
-	@Final
-	private static Logger LOGGER;
 
 	@ModifyExpressionValue(
 			method = "startUseItem",
@@ -89,5 +86,25 @@ abstract class MixinMinecraft {
 		PhysicsGrid grid = PhysicsGrid.getClosestGrid(this.player);
 		if (grid != null) return (ClientLevel) grid.microLevel;
 		return original;
+	}
+
+	@Inject(
+			method = "tick",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/multiplayer/ClientLevel;animateTick(III)V",
+					shift = At.Shift.AFTER
+			)
+	)
+	private void gridAnimateTick(CallbackInfo ci) {
+		Collection<PhysicsGrid> grids = PhysicsGrid.clientGrids.values();
+		grids.forEach((grid) -> {
+			ClientLevel level = (ClientLevel) grid.microLevel;
+			if (this.player != null) level.animateTick(
+					this.player.getBlockX(),
+					this.player.getBlockY(),
+					this.player.getBlockZ()
+			);
+		});
 	}
 }

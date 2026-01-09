@@ -67,7 +67,11 @@ class PhysicsGrid(
 		@JvmStatic
 		fun getClosestGrid(entity: Entity): PhysicsGrid? {
 			val gridDist = if (entity.level().isClientSide) this.clientGrids else this.serverGrids
-			return gridDist.values.firstOrNull { entity.boundingBox.intersects(it.bounding) }
+			val collide = gridDist.values.firstOrNull { entity.boundingBox.intersects(it.bounding) }
+			if (collide != null) return collide
+			return entity.rayCast(50.0) { _, _, to ->
+				gridDist.values.firstOrNull { it.bounding.contains(to) }
+			}?.hit
 		}
 
 		fun collectBlocksAndEntities(
@@ -239,13 +243,12 @@ class PhysicsGrid(
 		})
 	}
 
-	fun getNearbyShapes(entity: Entity): List<VoxelShape> {
-		val isClient = entity.level().isClientSide
+	fun getNearbyShapes(isClient: Boolean, position: Vec3): List<VoxelShape> {
 		val chunk = this.microLevel.getChunk(0, 0)
 		val blocks = if (isClient) (chunk as ClientMicroLevelChunk).blocks
 		else (chunk as ServerMicroLevelChunkAccess).blocks
 		val nearbyBlocks = blocks.filter { (blockPos, _) ->
-			this.pos.add(blockPos.toVec3()).distanceTo(entity.position()) < 5.0
+			this.pos.add(blockPos.toVec3()).distanceTo(position) < 5.0
 		}
 		return buildList {
 			nearbyBlocks.forEach { (pos, state) ->
@@ -256,7 +259,10 @@ class PhysicsGrid(
 		}
 	}
 
-	fun getNearbyShapesAndPos(entity: Entity): List<Pair<BlockPos, VoxelShape>> {
+	fun getNearbyShapes(entity: Entity): List<VoxelShape> =
+		this.getNearbyShapes(entity.level().isClientSide, entity.position())
+
+/*	fun getNearbyShapesAndPos(entity: Entity): List<Pair<BlockPos, VoxelShape>> {
 		val nearbyBlocks = (this.microLevel.getChunk(0, 0) as ClientMicroLevelChunk).blocks
 			.filter { (pos, _) -> this.pos.add(pos.toVec3()).distanceTo(entity.position()) < 5.0 }
 		return buildList {
@@ -269,5 +275,5 @@ class PhysicsGrid(
 				)
 			}
 		}
-	}
+	}*/
 }

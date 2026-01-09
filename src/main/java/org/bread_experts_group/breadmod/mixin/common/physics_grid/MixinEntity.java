@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Mixin(Entity.class)
-abstract class MixinEntityPhysGrid {
+abstract class MixinEntity {
 	@Shadow
 	public abstract void addDeltaMovement(Vec3 addend);
 
@@ -52,6 +52,8 @@ abstract class MixinEntityPhysGrid {
 		grids.forEach((grid) -> {
 			if (entity != null && entity.getBoundingBox().intersects(grid.getBounding().inflate(0.5))) {
 				allShapes.addAll(grid.getNearbyShapes(entity));
+			} else {
+				allShapes.addAll(grid.getNearbyShapes(level.isClientSide, boundingBox.getCenter()));
 			}
 		});
 		cir.setReturnValue(allShapes);

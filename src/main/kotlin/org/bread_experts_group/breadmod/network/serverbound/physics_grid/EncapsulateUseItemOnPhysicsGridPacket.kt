@@ -7,16 +7,15 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
-import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
+import org.bread_experts_group.breadmod.network.payloadType
 
 data class EncapsulateUseItemOnPhysicsGridPacket(
 	val id: Long,
 	val encapsulate: ServerboundUseItemOnPacket
 ) : CustomPacketPayload {
 	companion object {
-		val TYPE: CustomPacketPayload.Type<EncapsulateUseItemOnPhysicsGridPacket> =
-			CustomPacketPayload.Type(BreadMod.Companion.modLocation("use_itm_on_phys_grid"))
+		val TYPE: CustomPacketPayload.Type<EncapsulateUseItemOnPhysicsGridPacket> = payloadType("use_itm_on_phys_grid")
 		val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, EncapsulateUseItemOnPhysicsGridPacket> =
 			StreamCodec.composite(
 				ByteBufCodecs.VAR_LONG, EncapsulateUseItemOnPhysicsGridPacket::id,
@@ -28,6 +27,7 @@ data class EncapsulateUseItemOnPhysicsGridPacket(
 			context.enqueueWork {
 				val grid = PhysicsGrid.Companion.serverGrids[data.id] ?: return@enqueueWork
 				println("GRID ... $data, $grid ?")
+				context.handle(data.encapsulate)
 			}
 		}
 

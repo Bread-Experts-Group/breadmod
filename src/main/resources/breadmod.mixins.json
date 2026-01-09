@@ -16,10 +16,11 @@
     "common.MixinLivingEntity",
     "common.MixinServerPlayer",
     "common.physics_grid.MixinContainerPhysGrid",
-    "common.physics_grid.MixinEntityPhysGrid",
-    "common.physics_grid.MixinServerGamePacketListenerPhysGrid",
-    "common.physics_grid.MixinServerPlayerGameModePhysGrid",
-    "compat.jade.MixinRayTracing"
+    "common.physics_grid.MixinEntity",
+    "common.physics_grid.MixinServerGamePacketListenerImpl",
+    "common.physics_grid.MixinServerPlayerGameMode",
+    "compat.jade.MixinRayTracing",
+    "compat.mekanism.MixinMekanismContainerType"
   ],
   "client": [
     "client.IAccessorDirectoryLister",

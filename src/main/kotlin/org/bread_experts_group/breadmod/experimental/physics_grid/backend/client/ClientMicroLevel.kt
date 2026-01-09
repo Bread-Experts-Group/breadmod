@@ -23,6 +23,7 @@ import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.biome.BiomeManager
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
@@ -39,6 +40,9 @@ import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
+import org.bread_experts_group.breadmod.util.component1
+import org.bread_experts_group.breadmod.util.component2
+import org.bread_experts_group.breadmod.util.component3
 import java.util.function.Supplier
 import kotlin.math.max
 import kotlin.math.min
@@ -230,7 +234,7 @@ class ClientMicroLevel(
 									zSpeed - 0.5,
 									state,
 									pos
-								)//.updateSprite(state, pos)
+								)/*.updateSprite(state, pos)*/
 								// TODO: this might cause weirdness with grass and such, not sure how to proceed yet
 							)
 						}
@@ -269,6 +273,13 @@ class ClientMicroLevel(
 			else -> TODO("Level event type $id in LevelRenderer.java/globalLevelEvent")
 		}
 	}
+
+	override fun animateTick(posX: Int, posY: Int, posZ: Int) {
+		val (x, y, z) = this.grid.pos
+		super.animateTick(posX - x.toInt(), posY - y.toInt(), posZ - z.toInt())
+	}
+
+	override fun getBiomeManager(): BiomeManager = this.sourceLevel.biomeManager
 
 	// TODO: Lighting
 	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {

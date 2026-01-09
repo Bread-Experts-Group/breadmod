@@ -211,27 +211,21 @@ abstract class MixinMultiPlayerGameMode {
 
 	@Inject(at = @At("HEAD"), method = "startPrediction", cancellable = true)
 	private void encapsulateStartPrediction(ClientLevel level, PredictiveAction action, CallbackInfo ci) {
-		if (level instanceof ClientMicroLevel) {
-			try (BlockStatePredictionHandler bsph = level.getBlockStatePredictionHandler().startPredicting()) {
-				int i = bsph.currentSequence();
+		if (level instanceof ClientMicroLevel microLevel) {
+			try (BlockStatePredictionHandler handler = level.getBlockStatePredictionHandler().startPredicting()) {
+				int i = handler.currentSequence();
 				Packet<ServerGamePacketListener> packet = action.predict(i);
 				switch (packet) {
 					case ServerboundPlayerActionPacket sp: {
 						PacketDistributor.sendToServer(
-								new EncapsulatePlayerActionPhysicsGridPacket(
-										((ClientMicroLevel) level).getGrid().getId(),
-										sp
-								)
+								new EncapsulatePlayerActionPhysicsGridPacket(microLevel.getGrid().getId(), sp)
 						);
 						break;
 					}
 
 					case ServerboundUseItemOnPacket sp: {
 						PacketDistributor.sendToServer(
-								new EncapsulateUseItemOnPhysicsGridPacket(
-										((ClientMicroLevel) level).getGrid().getId(),
-										sp
-								)
+								new EncapsulateUseItemOnPhysicsGridPacket(microLevel.getGrid().getId(), sp)
 						);
 						break;
 					}

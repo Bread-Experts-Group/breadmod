@@ -25,6 +25,7 @@ import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.item.crafting.RecipeManager
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.biome.BiomeManager
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.TickingBlockEntity
@@ -237,6 +238,8 @@ class ServerMicroLevel(
 	}
 
 	override fun tickRateManager(): TickRateManager = this.tickRateManager
+
+	override fun getBiomeManager(): BiomeManager = this.sourceLevel.biomeManager
 
 	override fun blockEvent(pos: BlockPos, block: Block, eventID: Int, eventParam: Int) {
 		this.events.add(MicroLevelBlockEvent(pos, block, eventID, eventParam))

@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ServerPlayerGameMode.class)
-abstract class MixinServerPlayerGameModePhysGrid {
+abstract class MixinServerPlayerGameMode {
 	@Shadow
 	@Final
 	protected ServerPlayer player;

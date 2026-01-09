@@ -175,10 +175,10 @@ dependencies {
 	// Mekanism
 	val mekanismVersion = "${mcVersion()}-10.7.9.72"
 	compileOnly("mekanism:Mekanism:${mekanismVersion}:api")
-	runtimeOnly("mekanism:Mekanism:${mekanismVersion}")
-	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:additions")
-	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:generators")
-	runtimeOnly("mekanism:Mekanism:${mekanismVersion}:tools")
+	implementation("mekanism:Mekanism:${mekanismVersion}")
+	implementation("mekanism:Mekanism:${mekanismVersion}:additions")
+	implementation("mekanism:Mekanism:${mekanismVersion}:generators")
+	implementation("mekanism:Mekanism:${mekanismVersion}:tools")
 	// Create
 //	val createVersion = "6.0.0-4"
 //	val ponderVersion = "1.0.39"
