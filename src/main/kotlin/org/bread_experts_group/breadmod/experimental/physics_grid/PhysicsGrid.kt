@@ -74,6 +74,13 @@ class PhysicsGrid(
 			}?.hit
 		}
 
+		@JvmStatic
+		fun redirectLevelToGrid(original: Level?): Level? {
+			val player = localClient.player ?: return original
+			val grid = this.getClosestGrid(player)
+			return grid?.microLevel
+		}
+
 		fun collectBlocksAndEntities(
 			posA: BlockPos,
 			posB: BlockPos,
@@ -179,7 +186,9 @@ class PhysicsGrid(
 	fun attachRenderer() {
 		val renderBounding = AABB(0.0, 0.0, 0.0, this.bounding.xsize, this.bounding.ysize, this.bounding.zsize)
 		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
-			val partialTick = event.partialTick.getGameTimeDeltaPartialTick(false)
+			val partialTick = event.partialTick.getGameTimeDeltaPartialTick(
+				this.microLevel.tickRateManager().runsNormally()
+			)
 			val pos = this.getPosLerped(partialTick)
 			val bufferSource = localClient.renderBuffers().bufferSource()
 			// Rendering the grid's blocks
@@ -225,7 +234,7 @@ class PhysicsGrid(
 				val renderer = localClient.blockEntityRenderDispatcher.getRenderer(blockEntity)
 				renderer?.render(
 					blockEntity,
-					1f,
+					partialTick,
 					poseStack,
 					bufferSource,
 					LightTexture.FULL_BRIGHT,

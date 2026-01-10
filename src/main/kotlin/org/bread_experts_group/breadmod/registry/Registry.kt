@@ -337,7 +337,8 @@ object Registry {
 						PacketDistributor.sendToServer(HitboxPacket())
 					}
 				}
-				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Pre ->
+				NeoForge.EVENT_BUS.addListener { event: ClientTickEvent.Pre ->
+					if (localClient.level?.tickRateManager()?.runsNormally() != true) return@addListener
 					if (!localClient.isPaused || !localClient.isLocalServer) {
 						if (machTrailMap.isNotEmpty()) {
 							machTrailMap.forEach { (_, machTrailData) ->
@@ -353,6 +354,7 @@ object Registry {
 				}
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
 					PhysicsGrid.clientGrids.forEach { (_, grid) ->
+						if (!grid.microLevel.tickRateManager().runsNormally()) return@forEach
 						(grid.microLevel as ClientMicroLevel).tick { true }
 						grid.movementTick()
 					}
@@ -615,11 +617,18 @@ object Registry {
 		// Game Bus
 		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
 			PhysicsGrid.serverGrids.forEach { (_, grid) ->
+				if (!grid.microLevel.tickRateManager().runsNormally()) return@forEach
 				grid.tick(event.server)
 				grid.movementTick()
 			}
-			warTimerMap.forEach { (player, data) -> data.tick(player) }
-			screenBleedMap.forEach { (player, data) -> data.tick(player) }
+			warTimerMap.forEach { (player, data) ->
+				if (!player.level().tickRateManager().runsNormally()) return@forEach
+				data.tick(player)
+			}
+			screenBleedMap.forEach { (player, data) ->
+				if (!player.level().tickRateManager().runsNormally()) return@forEach
+				data.tick(player)
+			}
 		}
 //		NeoForge.EVENT_BUS.addListener { event: ServerAboutToStartEvent ->
 //			loadToolGunModes()

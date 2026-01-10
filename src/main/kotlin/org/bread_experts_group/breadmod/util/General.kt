@@ -278,7 +278,9 @@ operator fun MobEffectInstance.component1(): Holder<MobEffect> = this.effect
 operator fun MobEffectInstance.component2(): Int = this.amplifier
 fun Vec3.toVec3i(): Vec3i = Vec3i(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 fun Vector3f.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
+fun Vec3.toBlockPos(): BlockPos = BlockPos(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z))
 fun Vec3i.toVec3(): Vec3 = Vec3(this.x.toDouble(), this.y.toDouble(), this.z.toDouble())
+fun Vec3.negate(): Vec3 = Vec3(-this.x, -this.y, -this.z)
 
 operator fun Vec3.unaryMinus(): Vec3 = Vec3(-this.x, -this.y, -this.z)
 operator fun Vec3i.unaryMinus(): Vec3i = Vec3i(-this.x, -this.y, -this.z)

@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.mixin.compat.projecte;
+package org.bread_experts_group.breadmod.mixin.client.compat.projecte;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import moze_intel.projecte.rendering.LayerYue;

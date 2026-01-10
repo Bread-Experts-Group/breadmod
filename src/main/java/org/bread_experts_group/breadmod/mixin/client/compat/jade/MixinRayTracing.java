@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.mixin.compat.jade;
+package org.bread_experts_group.breadmod.mixin.client.compat.jade;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;

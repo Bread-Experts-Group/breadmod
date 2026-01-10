@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.border.WorldBorder
 import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.dimension.DimensionType
+import net.minecraft.world.level.entity.EntityTypeTest
 import net.minecraft.world.level.entity.LevelEntityGetter
 import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource
@@ -42,6 +43,7 @@ import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.storage.LevelData
+import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import net.minecraft.world.ticks.LevelTicks
 import net.neoforged.neoforge.common.CommonHooks
@@ -63,10 +65,12 @@ import org.bread_experts_group.breadmod.network.clientbound.physics_grid.Encapsu
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundEntityPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundPhysicsGridPacket
 import org.bread_experts_group.breadmod.util.plus
+import org.bread_experts_group.breadmod.util.toBlockPos
 import org.bread_experts_group.breadmod.util.toVec3
 import java.nio.ByteBuffer
 import java.security.SecureRandom
 import java.util.function.BooleanSupplier
+import java.util.function.Predicate
 import java.util.function.Supplier
 
 /**
@@ -168,12 +172,24 @@ class ServerMicroLevel(
 	override fun getChunkSource(): ServerChunkCache = this.chunkSource
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
 
-	// TODO: Lighting
-	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {
-		override fun getRawBrightness(blockPos: BlockPos, amount: Int): Int = 16
+	// TODO: Lighting inheriting local light and sky light from the source level
+	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, true, false) {
+		override fun getRawBrightness(blockPos: BlockPos, amount: Int): Int {
+			val source = this@ServerMicroLevel.sourceLevel
+			val grid = this@ServerMicroLevel.grid
+			val adjustedPos = grid.pos.toBlockPos().offset(blockPos)
+			return source.getRawBrightness(adjustedPos, amount)
+		}
 	}
 
 	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
+
+	// todo
+	override fun canSeeSky(blockPos: BlockPos): Boolean = super.canSeeSky(blockPos)
+
+	override fun canSeeSkyFromBelowWater(pos: BlockPos): Boolean {
+		return super.canSeeSkyFromBelowWater(pos)
+	}
 
 	// Ticking
 	// TODO: shouldTickBlocksAt
@@ -212,6 +228,7 @@ class ServerMicroLevel(
 	override fun getBlockTicks(): LevelTicks<Block> = this.blockTicks
 	override fun getFluidTicks(): LevelTicks<Fluid> = this.fluidTicks
 	override fun tick(hasTimeLeft: BooleanSupplier) {
+		this.lightEngine.runLightUpdates()
 		this.chunkSource.tick(hasTimeLeft, true)
 		if (this.tickRateManager.runsNormally()) {
 			this.blockTicks.tick(this.gameTime, 65536, this::tickBlock)
@@ -263,9 +280,9 @@ class ServerMicroLevel(
 		}
 	}
 
-	private val tickRateManager: TickRateManager = object : TickRateManager() {
+	private val tickRateManager: TickRateManager = /*object : TickRateManager() {
 		override fun runsNormally(): Boolean = true
-	}
+	}*/ this.sourceLevel.tickRateManager()
 
 	override fun tickRateManager(): TickRateManager = this.tickRateManager
 	override fun getBiomeManager(): BiomeManager = this.sourceLevel.biomeManager
@@ -294,6 +311,12 @@ class ServerMicroLevel(
 			)
 		)
 	}
+
+	override fun <T : Entity?> getEntities(
+		entityTypeTest: EntityTypeTest<Entity, T>,
+		bounds: AABB,
+		predicate: Predicate<in T>
+	): List<T> = this.sourceLevel.getEntities(entityTypeTest, bounds.move(this.grid.pos), predicate)
 
 	private val gameEventDispatcher: MicroLevelGameEventDispatcher = MicroLevelGameEventDispatcher(this)
 	override fun gameEvent(gameEvent: Holder<GameEvent>, pos: Vec3, context: GameEvent.Context) {

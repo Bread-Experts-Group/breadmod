@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundSource
 import net.minecraft.util.Mth
 import net.minecraft.util.RandomSource
 import net.minecraft.util.profiling.ProfilerFiller
+import net.minecraft.world.TickRateManager
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.flag.FeatureFlagSet
@@ -44,6 +45,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroL
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
+import org.bread_experts_group.breadmod.util.toBlockPos
 import java.util.function.BooleanSupplier
 import java.util.function.Supplier
 import kotlin.math.max
@@ -74,7 +76,10 @@ class ClientMicroLevel(
 		this.blockEntityTickers.add(ticker)
 	}
 
+	override fun tickRateManager(): TickRateManager = this.sourceLevel.tickRateManager()
+
 	override fun tick(hasTimeLeft: BooleanSupplier) {
+		this.lightEngine.runLightUpdates()
 		this.chunkSource.tick(hasTimeLeft, true)
 		this.blockEntityTickers.removeIf {
 			if (it.isRemoved) true
@@ -298,12 +303,25 @@ class ClientMicroLevel(
 
 	override fun getBiomeManager(): BiomeManager = this.sourceLevel.biomeManager
 
-	// TODO: Lighting
-	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, false, false) {
-		override fun getRawBrightness(blockPos: BlockPos, amount: Int): Int = 16
+	// TODO: Lighting inheriting local light and sky light from the source level
+	private val levelLightEngine: LevelLightEngine = object : LevelLightEngine(this.chunkSource, true, false) {
+		override fun getRawBrightness(blockPos: BlockPos, amount: Int): Int {
+			val source = this@ClientMicroLevel.sourceLevel
+			val grid = this@ClientMicroLevel.grid
+			val adjustedPos = grid.pos.toBlockPos().offset(blockPos)
+			return source.getRawBrightness(adjustedPos, amount)
+		}
 	}
 
 	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
+
+	// todo
+	override fun canSeeSky(blockPos: BlockPos): Boolean = super.canSeeSky(blockPos)
+
+	override fun canSeeSkyFromBelowWater(pos: BlockPos): Boolean {
+		return super.canSeeSkyFromBelowWater(pos)
+	}
+
 	override fun effects(): DimensionSpecialEffects = this.sourceLevel.effects()
 
 	private val worldBorder: WorldBorder = WorldBorder()

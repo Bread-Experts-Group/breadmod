@@ -19,6 +19,7 @@ import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.DoorBlock
@@ -45,6 +46,7 @@ import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraViewerB
 import org.bread_experts_group.breadmod.experimental.camera_viewer.camera.CameraBlock
 import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraItem
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorBlock
+import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
@@ -438,13 +440,20 @@ object ModBlocks : RegistryProvider(
 				if (menu != null) {
 					actual.menuType = this.menuRegistry.register(id) { _: ResourceLocation ->
 						IMenuTypeExtension.create { id, inventory, byteBuf ->
+							val pos = byteBuf.readBlockPos()
+							val level: Level = if (byteBuf.capacity() > 8) {
+								val gridID = byteBuf.readLong()
+								val isClient = inventory.player.level().isClientSide
+								val grid = if (isClient) PhysicsGrid.clientGrids[gridID]
+								else PhysicsGrid.serverGrids[gridID]
+								grid?.microLevel ?: inventory.player.level()
+							} else inventory.player.level()
 							@Suppress("UNCHECKED_CAST")
 							menu(
 								actual.menuType!!.get(), id, inventory,
-								inventory.player
-									.level()
+								level
 									.getBlockEntity(
-										byteBuf.readBlockPos(),
+										pos,
 										actual.blockEntityType!!.get() as BlockEntityType<BreadModBlockEntity>
 									)
 									.get()

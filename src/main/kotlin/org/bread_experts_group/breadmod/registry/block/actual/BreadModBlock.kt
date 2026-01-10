@@ -37,6 +37,8 @@ import net.neoforged.neoforge.registries.DeferredHolder
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.ModDataComponents.BLOCK_ENTITY_HANDLER_INFORMATION
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.actual.entity.CapabilityMap
 import org.bread_experts_group.breadmod.registry.menu.BreadModMenu
@@ -109,7 +111,11 @@ abstract class BreadModBlock(
 	fun openContainerMenu(level: Level, pos: BlockPos, player: Player): InteractionResult {
 		val entity = level.getBlockEntity(pos) as? BreadModBlockEntity
 		if (entity != null && this.menuType != null) {
-			player.openMenu(entity, pos)
+			player.openMenu(entity) { buf ->
+				buf.writeBlockPos(pos)
+				if (level is ClientMicroLevel) buf.writeLong(level.grid.id)
+				else if (level is ServerMicroLevel) buf.writeLong(level.grid.id)
+			}
 			return InteractionResult.sidedSuccess(level.isClientSide)
 		}
 		return InteractionResult.PASS

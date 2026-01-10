@@ -1,15 +1,15 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid.backend
 
 import net.minecraft.core.BlockPos
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.entity.TickingBlockEntity
 import net.minecraft.world.level.chunk.ChunkAccess
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
 
-class MicroLevelBlockEntityTicker<T : BlockEntity>(
-	private val parent: ServerMicroLevel,
+class MicroLevelBlockEntityTicker<T : BlockEntity, L : Level>(
+	private val parent: L,
 	private val access: ChunkAccess,
 	private val blockEntity: T,
 	private val ticker: BlockEntityTicker<T>
