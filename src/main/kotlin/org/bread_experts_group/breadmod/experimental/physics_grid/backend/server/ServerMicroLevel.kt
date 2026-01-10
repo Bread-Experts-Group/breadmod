@@ -163,8 +163,9 @@ class ServerMicroLevel(
 	override fun getEntities(): LevelEntityGetter<Entity> = this.entityGetter
 	override fun getPartEntities(): Collection<PartEntity<*>> = emptyList() // TODO: Part entities
 	override fun addFreshEntity(entity: Entity): Boolean {
-		println("TODO: Add enttiy $entity")
-		return true
+		entity.addDeltaMovement(this.grid.delta)
+		entity.setPos(entity.position().add(this.grid.pos))
+		return this.sourceLevel.addFreshEntity(entity)
 	}
 
 	private val chunkSource: ServerMicroLevelChunkSource = ServerMicroLevelChunkSource(this)
@@ -183,13 +184,6 @@ class ServerMicroLevel(
 	}
 
 	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
-
-	// todo
-	override fun canSeeSky(blockPos: BlockPos): Boolean = super.canSeeSky(blockPos)
-
-	override fun canSeeSkyFromBelowWater(pos: BlockPos): Boolean {
-		return super.canSeeSkyFromBelowWater(pos)
-	}
 
 	// Ticking
 	// TODO: shouldTickBlocksAt

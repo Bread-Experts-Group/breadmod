@@ -67,11 +67,6 @@ class ClientMicroLevel(
 	private val chunkSource: ClientMicroLevelChunkSource = ClientMicroLevelChunkSource(this)
 	override fun getChunkSource(): ClientChunkCache = this.chunkSource
 
-	override fun setServerVerifiedBlockState(pos: BlockPos, state: BlockState, flags: Int) {
-		// TODO("$pos, $state, $flags VER") if (!this.blockStatePredictionHandler.updateKnownServerState(pos, state)) {
-		this.setBlock(pos, state, flags, 512)
-	}
-
 	override fun addBlockEntityTicker(ticker: TickingBlockEntity) {
 		this.blockEntityTickers.add(ticker)
 	}
@@ -314,13 +309,6 @@ class ClientMicroLevel(
 	}
 
 	override fun getLightEngine(): LevelLightEngine = this.levelLightEngine
-
-	// todo
-	override fun canSeeSky(blockPos: BlockPos): Boolean = super.canSeeSky(blockPos)
-
-	override fun canSeeSkyFromBelowWater(pos: BlockPos): Boolean {
-		return super.canSeeSkyFromBelowWater(pos)
-	}
 
 	override fun effects(): DimensionSpecialEffects = this.sourceLevel.effects()
 
