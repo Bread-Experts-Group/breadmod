@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.main.iml" />

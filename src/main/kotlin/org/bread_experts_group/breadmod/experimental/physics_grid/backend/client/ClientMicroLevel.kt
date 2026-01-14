@@ -64,7 +64,7 @@ class ClientMicroLevel(
 	override fun getEntities(): LevelEntityGetter<Entity> = this.entityGetter
 	override fun getPartEntities(): Collection<PartEntity<*>> = emptyList() // TODO: Part entities
 
-	private val chunkSource: ClientMicroLevelChunkSource = ClientMicroLevelChunkSource(this)
+	private val chunkSource: ClientMicroLevelChunkCache = ClientMicroLevelChunkCache(this)
 	override fun getChunkSource(): ClientChunkCache = this.chunkSource
 
 	override fun addBlockEntityTicker(ticker: TickingBlockEntity) {

@@ -14,7 +14,7 @@ import org.bread_experts_group.breadmod.util.toVec3
 import org.bread_experts_group.breadmod.util.toVec3i
 import java.util.function.BooleanSupplier
 
-class ServerMicroLevelChunkSource(
+class ServerMicroLevelChunkCache(
 	private val parent: ServerMicroLevel
 ) : ServerChunkCache(
 	null, null, null, null,
@@ -25,16 +25,21 @@ class ServerMicroLevelChunkSource(
 		this.chunkMap = MicroLevelChunkMap(this.parent, this)
 	}
 
-	val singletonChunk: ServerMicroLevelChunkAccess = ServerMicroLevelChunkAccess(this.parent)
+	val singletonChunk: ServerMicroLevelChunk = ServerMicroLevelChunk(this.parent)
 	override fun getChunk(x: Int, z: Int, chunkStatus: ChunkStatus, requireChunk: Boolean): ChunkAccess {
 		return this.singletonChunk
 	}
 
 	override fun tick(hasTimeLeft: BooleanSupplier, tickChunks: Boolean) {
-		if (this.parent.tickRateManager().runsNormally()) this.parent.tickChunk(
-			this.singletonChunk,
-			this.parent.gameRules.getInt(GameRules.RULE_RANDOMTICKING)
-		)
+		if (this.parent.tickRateManager().runsNormally()) {
+			val holder = ServerChunkCache.ChunkAndHolder(
+				this.singletonChunk,
+				(this.chunkMap as MicroLevelChunkMap).singletonHolder
+			)
+
+			this.parent.tickChunk(holder.chunk, this.parent.gameRules.getInt(GameRules.RULE_RANDOMTICKING))
+			holder.holder.broadcastChanges(holder.chunk)
+		}
 	}
 
 	override fun blockChanged(pos: BlockPos) {

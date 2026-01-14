@@ -53,6 +53,7 @@ import net.neoforged.neoforge.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.bread_experts_group.breadmod.experimental.physics_grid.BlockNamesHuffmanSavedData
+import org.bread_experts_group.breadmod.experimental.physics_grid.GridPacket
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelBlockEvent
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
@@ -76,6 +77,7 @@ import java.util.function.Supplier
 /**
  * The super constructor in this class is replaced at runtime with a no-args constructor via the breadmod agent.
  */
+@Suppress("KDocMissingDocumentation")
 class ServerMicroLevel(
 	val grid: PhysicsGrid,
 	val sourceLevel: ServerLevel
@@ -147,6 +149,7 @@ class ServerMicroLevel(
 			this.onBlockStateChange(pos, oldState, setState)
 			state.onBlockStateChange(this, pos, oldState)
 		}
+		GridPacket.recompileGridMeshOnClient(this.grid.id)
 		return true
 	}
 
@@ -168,7 +171,7 @@ class ServerMicroLevel(
 		return this.sourceLevel.addFreshEntity(entity)
 	}
 
-	private val chunkSource: ServerMicroLevelChunkSource = ServerMicroLevelChunkSource(this)
+	private val chunkSource: ServerMicroLevelChunkCache = ServerMicroLevelChunkCache(this)
 	private val worldBorder: WorldBorder = WorldBorder()
 	override fun getChunkSource(): ServerChunkCache = this.chunkSource
 	override fun getWorldBorder(): WorldBorder = this.worldBorder
@@ -254,6 +257,18 @@ class ServerMicroLevel(
 				}
 			}
 		}
+//		// todo client packet testing... MixinClientPacketListener
+//		(this.getChunk(0, 0) as ServerMicroLevelChunk).let { chunkSource ->
+////			logDebugInfo(chunkSource)
+//			if (chunkSource.isUnsaved) {
+//				chunkSource.blockEntities.forEach { (_, entity) ->
+//					entity.updatePacket?.let { packet ->
+//						this.players().forEach { it.connection.send(packet) }
+//					}
+//				}
+//				chunkSource.isUnsaved = false
+//			}
+//		}
 		this.blockEntityTickers.removeIf {
 			if (it.isRemoved) true
 			else {
@@ -266,7 +281,7 @@ class ServerMicroLevel(
 	override fun tickChunk(chunk: LevelChunk, randomTickSpeed: Int) {
 		if (randomTickSpeed > 0) {
 			var skipping = 0
-			(chunk as ServerMicroLevelChunkAccess).blocks.forEach { (pos, state) ->
+			(chunk as ServerMicroLevelChunk).blocks.forEach { (pos, state) ->
 				if (skipping-- > 0) return@forEach
 				else if (skipping <= 0) skipping = this.random.nextInt(0, (16 * 16 * 16) / randomTickSpeed)
 				if (state.isRandomlyTicking) state.randomTick(this, pos.toBlockPos(), this.random)

@@ -24,6 +24,8 @@ class ExtendedEnergyHandler(
 	private val maxIn: BigDecimal = bigCapacity,
 	private val maxOut: BigDecimal = bigCapacity
 ) : ParentedHandler<BreadModBlockEntity>, IEnergyStorage, DataComponentSerializable, INBTSerializable<Tag> {
+	var previousLevel: Int = 0
+	var currentLevel: Int = 0
 	override val stateListeners: MutableList<() -> Unit> = mutableListOf()
 	override lateinit var parent: BreadModBlockEntity
 	var bigAmount: BigDecimal = BigDecimal.ZERO

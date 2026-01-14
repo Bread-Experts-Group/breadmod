@@ -1,6 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.physics_grid.backend.server
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.SectionPos
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.EntityBlock
@@ -17,7 +18,7 @@ import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBloc
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toPoint3
 import org.bread_experts_group.numeric.geometry.point.Point3
 
-class ServerMicroLevelChunkAccess(
+class ServerMicroLevelChunk(
 	private val parent: ServerMicroLevel
 ) : LevelChunk(parent, ChunkPos.ZERO) {
 	private val logger: Logger = LogManager.getLogger("ServerMicroLevel / ServerChunkAccess")
@@ -50,6 +51,8 @@ class ServerMicroLevelChunkAccess(
 		this.parent.addBlockEntityTicker(shell)
 	}
 
+	// todo the BlockEntity appears to not be discarded when breaking the block, checking issue?
+	//  implemented a fix on the client side so only the server needs it now
 	override fun setBlockState(pos: BlockPos, state: BlockState, isMoving: Boolean): BlockState? {
 		val oldState = this.blocks.put(pos.toPoint3(), state)
 		if (oldState == state) return null
@@ -64,7 +67,7 @@ class ServerMicroLevelChunkAccess(
 			}
 
 			if (oldEntity == null) {
-				val newEntity = (state.block as EntityBlock).newBlockEntity(pos, state)
+				val newEntity = (state.block as? EntityBlock)?.newBlockEntity(pos, state)
 				if (newEntity != null) this.addAndRegisterBlockEntity(newEntity)
 			} else {
 				oldEntity.blockState = state
@@ -72,6 +75,16 @@ class ServerMicroLevelChunkAccess(
 			}
 		}
 		return oldState
+	}
+
+	override fun removeBlockEntity(pos: BlockPos) {
+		val blockEntity = this.blockEntities.remove(pos.toPoint3())
+		if (blockEntity != null) {
+			this.removeGameEventListener(blockEntity, this.parent)
+			blockEntity.setRemoved()
+		}
+
+		this.removeBlockEntityTicker(pos)
 	}
 
 	@Suppress("PROPERTY_HIDES_JAVA_FIELD")
@@ -136,7 +149,8 @@ class ServerMicroLevelChunkAccess(
 	fun addGameEventListener(entity: BlockEntity) {
 		val entityBlock = entity.blockState.block as? EntityBlock ?: return
 		val gameEventListener = entityBlock.getListener(this.parent, entity) ?: return
-		this.getListenerRegistry(0).register(gameEventListener)
+		val sectionY = SectionPos.blockToSectionCoord(entity.blockPos.y)
+		this.getListenerRegistry(sectionY).register(gameEventListener)
 		// TODO: SectionPos.blockToSectionCoord(blockEntity.getBlockPos().getY()) ?
 	}
 }

@@ -10,9 +10,9 @@ import net.minecraft.world.level.chunk.ChunkSource
 import net.minecraft.world.level.chunk.storage.ChunkStorage
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelChunkMap
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevelChunkSource
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevelChunkCache
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunkSource
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunkCache
 import org.bread_experts_group.breadmod_agent.AgentUtil.classDesc
 import org.bread_experts_group.breadmod_agent.AgentUtil.modifyInit
 import org.bread_experts_group.breadmod_agent.transforms.breadmod.ClientMicroLevelTransform
@@ -66,7 +66,7 @@ class Agent {
 								ChunkStorageTransform(classFile, classfileBuffer).parse()
 							MicroLevelChunkMap::class.java.name ->
 								MicroLevelChunkMapTransform(classFile, classfileBuffer).parse()
-							ServerMicroLevelChunkSource::class.java.name ->
+							ServerMicroLevelChunkCache::class.java.name ->
 								ServerMicroLevelChunkSourceTransform(classFile, classfileBuffer).parse()
 							ServerMicroLevel::class.java.name ->
 								ServerMicroLevelTransform(classFile, classfileBuffer).parse()
@@ -95,7 +95,7 @@ class Agent {
 									classBuilder.with(classElement)
 								}
 							}
-							ClientMicroLevelChunkSource::class.java.name -> {
+							ClientMicroLevelChunkCache::class.java.name -> {
 								val model = classFile.parse(classfileBuffer)
 								classFile.transformClass(model) { classBuilder, classElement ->
 									val init = classBuilder.modifyInit(

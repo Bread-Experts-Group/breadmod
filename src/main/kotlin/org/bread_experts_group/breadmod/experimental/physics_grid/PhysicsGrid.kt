@@ -34,7 +34,7 @@ import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevelChunk
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevel
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunkAccess
+import org.bread_experts_group.breadmod.experimental.physics_grid.backend.server.ServerMicroLevelChunk
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toBlockPos
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.toVec3
 import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
@@ -184,7 +184,10 @@ class PhysicsGrid(
 	}
 
 	fun attachRenderer() {
-		val renderBounding = AABB(0.0, 0.0, 0.0, this.bounding.xsize, this.bounding.ysize, this.bounding.zsize)
+		val renderBounding = AABB(
+			this.bounding.minPosition - this.pos,
+			this.bounding.maxPosition - this.pos
+		)
 		RenderBuffer.add(RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS, { event, _ ->
 			val partialTick = event.partialTick.getGameTimeDeltaPartialTick(
 				this.microLevel.tickRateManager().runsNormally()
@@ -255,7 +258,7 @@ class PhysicsGrid(
 	fun getNearbyShapes(isClient: Boolean, position: Vec3): List<VoxelShape> {
 		val chunk = this.microLevel.getChunk(0, 0)
 		val blocks = if (isClient) (chunk as ClientMicroLevelChunk).blocks
-		else (chunk as ServerMicroLevelChunkAccess).blocks
+		else (chunk as ServerMicroLevelChunk).blocks
 		val nearbyBlocks = blocks.filter { (blockPos, _) ->
 			this.pos.add(blockPos.toVec3()).distanceTo(position) < 5.0
 		}

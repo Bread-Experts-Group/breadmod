@@ -45,6 +45,9 @@ sealed class GridPacket(
 					val id = packet.data.getLong("grid_id")
 					PhysicsGrid.gridMeshes.remove(PhysicsGrid.clientGrids.remove(id))?.close()
 				}
+				GridPacketType.UPDATE_RENDER -> {
+					PhysicsGrid.gridMeshes[packet.getGrid(context)]?.recompile()
+				}
 			}
 		}
 
@@ -60,6 +63,7 @@ sealed class GridPacket(
 					PhysicsGrid.serverGrids.remove(packet.data.getLong("grid_id"))
 					PacketDistributor.sendToAllPlayers(Client(packet.type, packet.data))
 				}
+				GridPacketType.UPDATE_RENDER -> {}
 			}
 		}
 
@@ -76,13 +80,19 @@ sealed class GridPacket(
 			PacketDistributor.sendToServer(Server(GridPacketType.CLEAR, tag))
 		}
 
+		fun recompileGridMeshOnClient(gridID: Long) {
+			val tag = CompoundTag()
+			tag.putLong("grid_id", gridID)
+			PacketDistributor.sendToAllPlayers(Client(GridPacketType.UPDATE_RENDER, tag))
+		}
+
 		fun register(registrar: PayloadRegistrar): PayloadRegistrar =
 			registrar
 				.playToClient(this.TYPE_CLIENT, this.STREAM_CODEC_CLIENT, this::handleClientbound)
 				.playToServer(this.TYPE_SERVER, this.STREAM_CODEC_SERVER, this::handleServerbound)
 	}
 
-	enum class GridPacketType { MOVEMENT, CLEAR }
+	enum class GridPacketType { MOVEMENT, CLEAR, UPDATE_RENDER }
 
 	private class Client(type: GridPacketType, data: CompoundTag) : GridPacket(type, data) {
 		override fun type(): CustomPacketPayload.Type<Client> = Companion.TYPE_CLIENT

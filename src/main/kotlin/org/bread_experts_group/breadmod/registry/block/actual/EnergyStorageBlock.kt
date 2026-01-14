@@ -45,13 +45,13 @@ class EnergyStorageBlock : BreadModBlock(Properties.of()) {
 
 	override val serverTickBM: BreadModTicker<ServerLevel> = { entity, level, state, pos ->
 		val energy = entity.getCapability(Capabilities.EnergyStorage.BLOCK) as ExtendedEnergyHandler
-		level.setBlockAndUpdate(
+		val calculated = ((energy.bigAmount.divide(energy.bigCapacity, floatRoundEven)).toFloat() / (1 / 13f))
+			.roundToInt()
+		energy.previousLevel = energy.currentLevel
+		energy.currentLevel = calculated
+		if (energy.previousLevel != energy.currentLevel) level.setBlockAndUpdate(
 			pos,
-			state.setValue(
-				ModBlockStateProperties.STORAGE_LEVEL,
-				((energy.bigAmount.divide(energy.bigCapacity, floatRoundEven)).toFloat() / (1 / 13f))
-					.roundToInt()
-			)
+			state.setValue(ModBlockStateProperties.STORAGE_LEVEL, calculated)
 		)
 	}
 
