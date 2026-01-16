@@ -17,6 +17,8 @@ import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderType.SMALL_BUFFER_SIZE
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.resources.ResourceLocation
+import org.bread_experts_group.breadmod.client.render.solidColorTexture
+import org.bread_experts_group.breadmod.util.Color
 import java.util.function.Function
 
 /**
@@ -100,6 +102,20 @@ object ModRenderType {
 				.createCompositeState(false)
 		)
 	}
+	val LIDAR: RenderType = RenderType.create(
+		"lidar",
+		DefaultVertexFormat.PARTICLE,
+		VertexFormat.Mode.QUADS,
+		SMALL_BUFFER_SIZE,
+		true,
+		true,
+		RenderType.CompositeState.builder()
+			.setShaderState(ModStateShards.POSITION_TEX_COLOR_NO_CUTOUT)
+			.setTextureState(RenderStateShard.TextureStateShard(solidColorTexture(Color.WHITE, "white"), false, false))
+			.setOutputState(ModStateShards.LIDAR_TARGET)
+			.setTransparencyState(NO_TRANSPARENCY)
+			.createCompositeState(false)
+	)
 	private val SUN: Function<ResourceLocation, RenderType> = Util.memoize { texture ->
 		val textureState = TextureStateShard(texture, false, false)
 		RenderType.create(

@@ -13,17 +13,24 @@ object ModPostChains {
 		private set
 	lateinit var bloomEmissiveTarget: RenderTarget
 		private set
+	lateinit var lidar: PostChain
+		private set
+	lateinit var lidarTarget: RenderTarget
+		private set
 
 	fun init(provider: ResourceProvider) {
 		if (this.ready) this.bloom.close()
 		this.bloom = this.newPostChain("bloom", provider)
+		this.lidar = this.newPostChain("lidar", provider)
 		this.resize(localClient.window.width, localClient.window.height)
 		this.bloomEmissiveTarget = this.bloom.getTempTarget("emissive")
+		this.lidarTarget = this.lidar.getTempTarget("lidar")
 		this.ready = true
 	}
 
 	fun resize(w: Int, h: Int) {
 		this.bloom.resize(w, h)
+		this.lidar.resize(w, h)
 	}
 
 	private fun newPostChain(shader: String, provider: ResourceProvider): PostChain =

@@ -42,10 +42,12 @@ import net.minecraft.network.chat.FormattedText
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.util.RandomSource
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -696,9 +698,13 @@ fun PoseStack.translateOnBlockSide(
 		?: return
 	if (direction != null) facing = translateDirection(facing, direction)
 
-	this.mulPose(Axis.YN.rotationDegrees(facing.toYRot()))
+	this.translateToSide(facing, posX, posY, posZ)
+}
+
+fun PoseStack.translateToSide(side: Direction, posX: Double = 0.0, posY: Double = 0.0, posZ: Double = 0.0) {
+	this.mulPose(Axis.YN.rotationDegrees(side.toYRot()))
 	this.translate(posX, posY, posZ)
-	when (facing) {
+	when (side) {
 		Direction.NORTH -> this.translate(-1.0, 1.0, TRANSLATE_OFFSET)
 		Direction.EAST -> this.translate(-1.0, 1.0, 1 + TRANSLATE_OFFSET)
 		Direction.WEST -> this.translate(0.0, 1.0, TRANSLATE_OFFSET)
@@ -776,6 +782,16 @@ fun renderBloom(deltaTracker: DeltaTracker) {
 	if (ModPostChains.ready) {
 		ModPostChains.bloom.process(deltaTracker.gameTimeDeltaTicks)
 		ModPostChains.bloomEmissiveTarget.clear(Minecraft.ON_OSX)
+		localClient.mainRenderTarget.bindWrite(false)
+		RenderSystem.clear(256, Minecraft.ON_OSX)
+	}
+}
+
+fun renderLidar(deltaTracker: DeltaTracker) {
+	val player = localClient.player ?: return
+	if (player.getItemBySlot(EquipmentSlot.HEAD).item == Items.IRON_HELMET) {
+		ModPostChains.lidar.process(deltaTracker.gameTimeDeltaTicks)
+		ModPostChains.lidarTarget.clear(Minecraft.ON_OSX)
 		localClient.mainRenderTarget.bindWrite(false)
 		RenderSystem.clear(256, Minecraft.ON_OSX)
 	}

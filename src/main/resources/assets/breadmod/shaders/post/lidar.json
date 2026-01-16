@@ -1,0 +1,19 @@
+{
+  "targets": [
+    "lidar",
+    "final"
+  ],
+  "passes": [
+    {
+      "name": "breadmod:blend",
+      "intarget": "lidar",
+      "outtarget": "minecraft:main",
+      "auxtargets": [
+        {
+          "name": "AlphaOverSampler",
+          "id": "final"
+        }
+      ]
+    }
+  ]
+}

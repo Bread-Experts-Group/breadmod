@@ -87,6 +87,7 @@ public abstract class MixinLevelRenderer {
 	                         Matrix4f projectionMatrix, CallbackInfo ci
 	) {
 		RenderGeneralKt.renderBloom(deltaTracker);
+		RenderGeneralKt.renderLidar(deltaTracker);
 	}
 
 	@Inject(method = "resize", at = @At("TAIL"))

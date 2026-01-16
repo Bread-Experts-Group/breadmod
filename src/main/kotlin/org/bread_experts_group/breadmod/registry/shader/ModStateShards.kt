@@ -13,6 +13,14 @@ object ModStateShards {
 	}, {
 		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(true)
 	})
+	val LIDAR_TARGET: OutputStateShard = OutputStateShard("emissive_target", {
+		if (ModPostChains.ready) {
+//			ModPostChains.lidarTarget.copyDepthFrom(localClient.mainRenderTarget)
+			ModPostChains.lidarTarget.bindWrite(false)
+		}
+	}, {
+		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(true)
+	})
 	val SUN_SHARD: ShaderStateShard = ShaderStateShard(ModRenderType::SUN_INSTANCE)
 	val GLOW_SHARD: ShaderStateShard = ShaderStateShard(ModRenderType::GLOW_INSTANCE)
 	val ASTRAL_SHARD: ShaderStateShard = ShaderStateShard(ModRenderType::ASTRAL_INSTANCE)
