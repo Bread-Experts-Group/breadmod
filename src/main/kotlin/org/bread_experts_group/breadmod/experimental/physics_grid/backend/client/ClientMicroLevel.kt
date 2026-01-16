@@ -42,6 +42,7 @@ import org.bread_experts_group.breadmod.client.render.executeOnRenderThread
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.MicroLevelEntityGetter
+import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
 import org.bread_experts_group.breadmod.util.component1
 import org.bread_experts_group.breadmod.util.component2
 import org.bread_experts_group.breadmod.util.component3
@@ -88,7 +89,7 @@ class ClientMicroLevel(
 	override fun setBlock(pos: BlockPos, state: BlockState, flags: Int, recursionLeft: Int): Boolean {
 		val status = super.setBlock(pos, state, flags, recursionLeft)
 		executeOnRenderThread {
-			PhysicsGrid.Companion.gridMeshes.forEach { (_, mesh) -> mesh.recompile() }
+			GridMesh.meshes.forEach { (_, mesh) -> mesh.recompile() }
 		}
 		return status
 	}

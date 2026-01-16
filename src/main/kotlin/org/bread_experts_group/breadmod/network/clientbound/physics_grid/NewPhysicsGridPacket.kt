@@ -13,6 +13,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
+import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 
 data class NewPhysicsGridPacket(
@@ -55,7 +56,7 @@ data class NewPhysicsGridPacket(
 				blocks.forEach { (pos, state) -> newGrid.microLevel.setBlock(pos, state, 0) }
 				blockEntities.forEach { (_, blockEntity) -> newGrid.microLevel.setBlockEntity(blockEntity) }
 				PhysicsGrid.clientGrids[data.id] = newGrid
-				newGrid.attachRenderer()
+				GridMesh.create(newGrid)
 			}
 		}
 

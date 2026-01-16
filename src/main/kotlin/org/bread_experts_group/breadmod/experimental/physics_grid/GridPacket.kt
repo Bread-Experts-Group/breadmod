@@ -11,6 +11,7 @@ import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import net.neoforged.neoforge.network.registration.PayloadRegistrar
 import org.apache.logging.log4j.LogManager
+import org.bread_experts_group.breadmod.experimental.physics_grid.render.GridMesh
 import org.bread_experts_group.breadmod.network.payloadType
 import org.bread_experts_group.breadmod.util.getVec3
 import org.bread_experts_group.breadmod.util.plus
@@ -43,10 +44,10 @@ sealed class GridPacket(
 				}
 				GridPacketType.CLEAR -> {
 					val id = packet.data.getLong("grid_id")
-					PhysicsGrid.gridMeshes.remove(PhysicsGrid.clientGrids.remove(id))?.close()
+					GridMesh.meshes.remove(PhysicsGrid.clientGrids.remove(id))?.close()
 				}
 				GridPacketType.UPDATE_RENDER -> {
-					PhysicsGrid.gridMeshes[packet.getGrid(context)]?.recompile()
+					GridMesh.meshes[packet.getGrid(context)]?.recompile()
 				}
 			}
 		}
