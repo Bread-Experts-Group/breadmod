@@ -93,6 +93,7 @@ import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRend
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
 import org.bread_experts_group.breadmod.client.render.item.CreativeGeneratorItemRenderer
+import org.bread_experts_group.breadmod.client.render.item.IRenderingItem
 import org.bread_experts_group.breadmod.client.render.item.ModelBlockItemRenderer
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -238,15 +239,20 @@ object Registry {
 					WarRenderer.render(event)
 					RenderBuffer.handle(event)
 					val player = localClient.player ?: return@addListener
+					val bufferSource = localClient.renderBuffers().bufferSource()
 					val stack = getStackInPlayerHand(player)
 					if (stack.item is ToolGunItem) {
 						val data = ToolGunData.get(stack)
 						data.getMode().getCustomRenderer().renderLevelStageEvent(
 							event,
-							localClient.renderBuffers().bufferSource(),
+							bufferSource,
 							player,
 							data
 						)
+					}
+					if (stack.item is IRenderingItem && player.isHolding(stack.item)) {
+						val renderingItem = stack.item as IRenderingItem
+						renderingItem.renderLevelStageEvent(event, bufferSource, player)
 					}
 
 					HitboxHandler.hitboxes.forEach { (_, hitbox) ->

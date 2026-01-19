@@ -9,28 +9,33 @@ import org.bread_experts_group.breadmod.client.render.localClient
 object ModPostChains {
 	var ready: Boolean = false
 		private set
-	lateinit var bloom: PostChain
+	lateinit var bloomChain: PostChain
 		private set
-	lateinit var bloomEmissiveTarget: RenderTarget
+	lateinit var emissiveTarget: RenderTarget
 		private set
-	lateinit var lidar: PostChain
+	lateinit var lidarChain: PostChain
 		private set
 	lateinit var lidarTarget: RenderTarget
 		private set
 
 	fun init(provider: ResourceProvider) {
-		if (this.ready) this.bloom.close()
-		this.bloom = this.newPostChain("bloom", provider)
-		this.lidar = this.newPostChain("lidar", provider)
+		if (this.ready) {
+			this.bloomChain.close()
+			this.lidarChain.close()
+		}
+
+		this.bloomChain = this.newPostChain("bloom", provider)
+		this.lidarChain = this.newPostChain("lidar", provider)
+		this.emissiveTarget = this.bloomChain.getTempTarget("emissive")
+		this.lidarTarget = this.lidarChain.getTempTarget("lidar")
+
 		this.resize(localClient.window.width, localClient.window.height)
-		this.bloomEmissiveTarget = this.bloom.getTempTarget("emissive")
-		this.lidarTarget = this.lidar.getTempTarget("lidar")
 		this.ready = true
 	}
 
 	fun resize(w: Int, h: Int) {
-		this.bloom.resize(w, h)
-		this.lidar.resize(w, h)
+		this.bloomChain.resize(w, h)
+		this.lidarChain.resize(w, h)
 	}
 
 	private fun newPostChain(shader: String, provider: ResourceProvider): PostChain =

@@ -1,5 +1,8 @@
+@file:Suppress("KDocMissingDocumentation")
+
 package org.bread_experts_group.breadmod.client.render
 
+import com.mojang.blaze3d.pipeline.RenderTarget
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.BufferBuilder
@@ -23,6 +26,7 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.LightTexture.FULL_BRIGHT
 import net.minecraft.client.renderer.MultiBufferSource
+import net.minecraft.client.renderer.PostChain
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.block.ModelBlockRenderer
@@ -47,7 +51,6 @@ import net.minecraft.world.inventory.InventoryMenu
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -64,6 +67,7 @@ import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.client.gui.components.ContainerWidget
 import org.bread_experts_group.breadmod.client.render.buffer.RenderBuffer
 import org.bread_experts_group.breadmod.registry.block.handler.ExtendedFluidHandler
+import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.shader.ModPostChains
 import org.bread_experts_group.breadmod.registry.shader.ModVertexFormats
 import org.bread_experts_group.breadmod.util.Color
@@ -778,21 +782,22 @@ fun checkerboardTexture(
 	return localClient.textureManager.register("bm_color_tex_${firstColor}_${secondColor}_$id", DynamicTexture(native))
 }
 
-fun renderBloom(deltaTracker: DeltaTracker) {
+private fun processPost(post: PostChain, target: RenderTarget, deltaTracker: DeltaTracker) {
 	if (ModPostChains.ready) {
-		ModPostChains.bloom.process(deltaTracker.gameTimeDeltaTicks)
-		ModPostChains.bloomEmissiveTarget.clear(Minecraft.ON_OSX)
+		post.process(deltaTracker.gameTimeDeltaTicks)
+		target.clear(Minecraft.ON_OSX)
 		localClient.mainRenderTarget.bindWrite(false)
 		RenderSystem.clear(256, Minecraft.ON_OSX)
 	}
 }
 
+fun renderBloom(deltaTracker: DeltaTracker) {
+	processPost(ModPostChains.bloomChain, ModPostChains.emissiveTarget, deltaTracker)
+}
+
 fun renderLidar(deltaTracker: DeltaTracker) {
 	val player = localClient.player ?: return
-	if (player.getItemBySlot(EquipmentSlot.HEAD).item == Items.IRON_HELMET) {
-		ModPostChains.lidar.process(deltaTracker.gameTimeDeltaTicks)
-		ModPostChains.lidarTarget.clear(Minecraft.ON_OSX)
-		localClient.mainRenderTarget.bindWrite(false)
-		RenderSystem.clear(256, Minecraft.ON_OSX)
+	if (player.getItemBySlot(EquipmentSlot.HEAD).`is`(ModItems.LIDAR_HELMET)) {
+		processPost(ModPostChains.lidarChain, ModPostChains.lidarTarget, deltaTracker)
 	}
 }

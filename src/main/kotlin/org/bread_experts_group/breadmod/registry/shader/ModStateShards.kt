@@ -7,8 +7,8 @@ import org.bread_experts_group.breadmod.client.render.localClient
 object ModStateShards {
 	val EMISSIVE_TARGET: OutputStateShard = OutputStateShard("emissive_target", {
 		if (ModPostChains.ready) {
-			ModPostChains.bloomEmissiveTarget.copyDepthFrom(localClient.mainRenderTarget)
-			ModPostChains.bloomEmissiveTarget.bindWrite(false)
+			ModPostChains.emissiveTarget.copyDepthFrom(localClient.mainRenderTarget)
+			ModPostChains.emissiveTarget.bindWrite(false)
 		}
 	}, {
 		if (ModPostChains.ready) localClient.mainRenderTarget.bindWrite(true)

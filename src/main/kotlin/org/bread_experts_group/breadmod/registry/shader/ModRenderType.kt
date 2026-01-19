@@ -107,8 +107,8 @@ object ModRenderType {
 		DefaultVertexFormat.PARTICLE,
 		VertexFormat.Mode.QUADS,
 		SMALL_BUFFER_SIZE,
-		true,
-		true,
+		false,
+		false,
 		RenderType.CompositeState.builder()
 			.setShaderState(ModStateShards.POSITION_TEX_COLOR_NO_CUTOUT)
 			.setTextureState(RenderStateShard.TextureStateShard(solidColorTexture(Color.WHITE, "white"), false, false))

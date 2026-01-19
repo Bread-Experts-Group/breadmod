@@ -6,6 +6,11 @@
   "passes": [
     {
       "name": "breadmod:blend",
+      "intarget": "minecraft:main",
+      "outtarget": "final"
+    },
+    {
+      "name": "breadmod:blend",
       "intarget": "lidar",
       "outtarget": "minecraft:main",
       "auxtargets": [

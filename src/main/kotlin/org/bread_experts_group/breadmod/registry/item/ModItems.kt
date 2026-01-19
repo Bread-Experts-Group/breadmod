@@ -37,6 +37,8 @@ import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelLaye
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagItem
 import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraBinderItem
+import org.bread_experts_group.breadmod.experimental.lidar.LidarGunItem
+import org.bread_experts_group.breadmod.experimental.lidar.LidarHelmetItem
 import org.bread_experts_group.breadmod.experimental.physics_grid.GridCreatorItem
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
@@ -65,6 +67,7 @@ import kotlin.reflect.KClass
  * @author Miko Elbrecht, Logan McLean
  * @since 1.0.0
  */
+@Suppress("KDocMissingDocumentation")
 object ModItems : RegistryProvider(Registries.ITEM) {
 	private val registry: DeferredRegister<Item> = this.getRegistry(Registries.ITEM)
 	fun itemIterator(): Iterator<DeferredItem<Item>> = object : Iterator<DeferredItem<Item>> {
@@ -117,6 +120,12 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 
 	@DataGenerateLanguage
 	val TOOL_GUN: DeferredItem<ToolGunItem> = this.registerItem("tool_gun", ::ToolGunItem)
+
+	@DataGenerateLanguage
+	val LIDAR_GUN: DeferredItem<LidarGunItem> = this.registerItem("lidar_gun", ::LidarGunItem)
+
+	@DataGenerateLanguage
+	val LIDAR_HELMET: DeferredItem<LidarHelmetItem> = this.registerItem("lidar_helmet", ::LidarHelmetItem)
 
 	@DataGenerateModelSingleItem
 	@DataGenerateLanguage

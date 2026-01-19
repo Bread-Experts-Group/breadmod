@@ -2,6 +2,7 @@ package org.bread_experts_group.breadmod.util
 
 import io.netty.buffer.ByteBuf
 import net.minecraft.SharedConstants
+import net.minecraft.client.Camera
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.DOWN
@@ -106,8 +107,8 @@ fun logDebugInfo(message: Any?) {
 	if (SharedConstants.IS_RUNNING_IN_IDE) LogManager.getLogger().info(message)
 }
 
-fun displayClientMessage(message: Any?) {
-	(localClient.player ?: return).displayClientMessage(Component.literal("$message"), true)
+fun displayClientMessage(message: Any?, actionBar: Boolean = true) {
+	(localClient.player ?: return).displayClientMessage(Component.literal("$message"), actionBar)
 }
 
 /**
@@ -217,30 +218,15 @@ fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3, Vec3) -> T?): Hit
 	length
 ) { from, to -> selector(this.level(), from, to) }
 
-// todo probably need to dust off and clean this code for grid block detection...
-/*fun <T> Entity.gridRayCast(length: Double, selector: (PhysicsGrid, Entity, Vec3, Vec3) -> T?): HitResult<T>? {
-	val grid = PhysicsGrid.getClosestGrid(this) ?: return null
+fun <T> Camera.raycast(length: Double, selector: (Level, Vec3, Vec3) -> T?): HitResult<T>? {
+	val player = localClient.player ?: return null
 	return rayCast(
-		grid.microLevel,
-		this.eyePosition,
-		this.calculateViewVector(this.xRot, this.yRot),
+		player.level(),
+		this.position,
+		player.calculateViewVector(player.xRot, player.yRot),
 		length
-	) { from, to -> selector(grid, this, from, to) }
+	) { from, to -> selector(player.level(), from, to) }
 }
-
-fun gridBlocks(
-	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)
-): (PhysicsGrid, Entity, Vec3, Vec3) -> BlockState? = { grid, entity, from, to ->
-	val shapes = grid.getNearbyShapesAndPos(entity)
-	val found = shapes.find { (_, shape) -> shape.toAabbs().find { it.clip(from, to).isPresent } != null }
-	if (found != null) {
-		val pos = found.first
-		val state = grid.microLevel.getBlockState(pos)
-		displayClientMessage("$pos, $state")
-		if (state.block in filterBlocks) null
-		state
-	} else null
-}*/
 
 fun blocks(
 	vararg filterBlocks: Block = arrayOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR)
