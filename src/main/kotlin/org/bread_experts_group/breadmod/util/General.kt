@@ -211,10 +211,17 @@ private fun <T> rayCast(
 	return result
 }
 
-fun <T> Entity.rayCast(length: Double, selector: (Level, Vec3, Vec3) -> T?): HitResult<T>? = rayCast(
+/**
+ * @param deviation causes the ray to be offset by a random direction, higher values increase the offset distance.
+ */
+fun <T> Entity.rayCast(
+	length: Double,
+	selector: (Level, Vec3, Vec3) -> T?,
+	deviation: Float = 0f
+): HitResult<T>? = rayCast(
 	this.level(),
 	this.eyePosition,
-	this.calculateViewVector(this.xRot, this.yRot),
+	this.calculateViewVector(this.xRot, this.yRot).offsetRandom(this.random, deviation),
 	length
 ) { from, to -> selector(this.level(), from, to) }
 

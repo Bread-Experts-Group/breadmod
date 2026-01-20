@@ -55,9 +55,9 @@ class PhysicsGrid(
 			val gridDist = if (entity.level().isClientSide) this.clientGrids else this.serverGrids
 			val collide = gridDist.values.firstOrNull { entity.boundingBox.intersects(it.bounding) }
 			if (collide != null) return collide
-			return entity.rayCast(50.0) { _, _, to ->
+			return entity.rayCast(50.0, { _, _, to ->
 				gridDist.values.firstOrNull { it.bounding.contains(to) }
-			}?.hit
+			})?.hit
 		}
 
 		@JvmStatic
@@ -119,7 +119,7 @@ class PhysicsGrid(
 	val playersInGrid: ArrayList<ServerPlayer> = arrayListOf()
 	private val blockFilter: List<Block> = listOf(Blocks.AIR, Blocks.VOID_AIR, Blocks.CAVE_AIR, Blocks.LIGHT)
 	fun gridBlockCast(entity: Entity, hitDistance: Double): GridHitResult? {
-		val cast = entity.rayCast<Triple<Vec3, Pair<Direction, BlockState>, BlockPos>>(hitDistance) { _, from, to ->
+		val cast = entity.rayCast<Triple<Vec3, Pair<Direction, BlockState>, BlockPos>>(hitDistance, { _, from, to ->
 			val relativeFrom = from - this.pos
 			val relativeTo = to - this.pos
 			val blockPos = BlockPos(relativeTo.toVec3i())
@@ -129,7 +129,7 @@ class PhysicsGrid(
 				val clip = shape.clip(relativeFrom, relativeTo, blockPos) ?: return@rayCast null
 				if (found.block !in this.blockFilter) Triple(relativeTo, clip.direction to found, blockPos) else null
 			} else null
-		} ?: return null
+		}) ?: return null
 		val (localVec, pair, localPos) = cast.hit
 		return GridHitResult(localVec, pair.first, localPos, pair.second)
 	}
