@@ -13,7 +13,7 @@ class SectionMesh(private val section: LidarSection) {
 	private var vertexBuffer: VertexBuffer? = null
 	private var isCompiled: Boolean = false
 
-	fun recompile() {
+	fun markForRecompile() {
 		this.vertexBuffer?.close()
 		this.byteBufferBuilder?.close()
 		this.byteBufferBuilder = null
@@ -35,7 +35,7 @@ class SectionMesh(private val section: LidarSection) {
 			this.renderType.mode,
 			this.renderType.format
 		)
-		this.section.lidarBlocks.forEach { (pos, block) ->
+		this.section.lidarBlocks.forEach { (_, block) ->
 			poseStack.pushPose()
 			block.renderSides(poseStack, camera, bufferBuilder)
 			poseStack.popPose()

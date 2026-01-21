@@ -67,6 +67,19 @@ object ModArmorMaterials : RegistryProvider(Registries.ARMOR_MATERIAL) {
 			1f
 		)
 	}
+	val LIDAR: Holder<ArmorMaterial> = this.registry.register("lidar") { ->
+		ArmorMaterial(
+			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->
+				map[ArmorItem.Type.HELMET] = 3
+			},
+			0,
+			SoundEvents.ARMOR_EQUIP_IRON,
+			{ Ingredient.EMPTY },
+			listOf(),
+			1f,
+			1f
+		)
+	}
 	val GLUON_GUN_BACKPACK: Holder<ArmorMaterial> = this.registry.register("gluon_backpack") { ->
 		ArmorMaterial(
 			Util.make(EnumMap(ArmorItem.Type::class.java)) { map ->

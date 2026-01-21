@@ -536,22 +536,21 @@ fun ItemRenderer.renderItemModel(
 	packedOverlay: Int,
 	packedLight: Int,
 	fabulous: Boolean = true,
-	overrideRenderType: Boolean = false,
-	renderTypeOverride: RenderType = RenderType.solid()
+	renderTypeOverride: RenderType? = null
 ) {
 	model.getRenderPasses(stack, fabulous).forEach { passes ->
 		passes.getRenderTypes(stack, fabulous).forEach { renderType ->
 			val buffer = if (fabulous) {
 				ItemRenderer.getFoilBufferDirect(
 					bufferSource,
-					if (overrideRenderType) renderTypeOverride else renderType,
+					renderTypeOverride ?: renderType,
 					true,
 					stack.hasFoil()
 				)
 			} else
 				ItemRenderer.getFoilBuffer(
 					bufferSource,
-					if (overrideRenderType) renderTypeOverride else renderType,
+					renderTypeOverride ?: renderType,
 					true,
 					stack.hasFoil()
 				)

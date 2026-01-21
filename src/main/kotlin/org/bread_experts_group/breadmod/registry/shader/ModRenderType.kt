@@ -101,6 +101,10 @@ object ModRenderType {
 				.createCompositeState(false)
 		)
 	}
+
+	/**
+	 * A clone of RenderType#debugQuads, but the output state is set to the lidar RenderTarget.
+	 */
 	val LIDAR: RenderType = RenderType.create(
 		"lidar",
 		DefaultVertexFormat.POSITION_COLOR,

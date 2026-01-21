@@ -18,7 +18,7 @@ import org.bread_experts_group.breadmod.client.model.ChefHatModel.Companion.HAT_
 import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
-import java.awt.Color
+import org.bread_experts_group.breadmod.util.Color
 
 /**
  * Armor layer for the Chef Hat model.
@@ -49,7 +49,7 @@ class ChefHatArmorLayer(
 		val entityModel = this.parentModel
 
 		if (item is ChefHatItem) {
-			val color = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(stack, Color.WHITE.rgb))
+			val color = FastColor.ARGB32.opaque(DyedItemColor.getOrDefault(stack, Color.WHITE))
 
 			poseStack.pushPose()
 			when (entityModel) {
@@ -57,7 +57,7 @@ class ChefHatArmorLayer(
 					entityModel.head.translateAndRotate(poseStack)
 					poseStack.translate(0.0, -0.5, 0.0)
 				}
-				is FoxModel<*>      -> {
+				is FoxModel<*> -> {
 					entityModel.head.translateAndRotate(poseStack)
 					poseStack.translate(0.06, -0.1, -0.13)
 					poseStack.scaleFlat(0.9f)

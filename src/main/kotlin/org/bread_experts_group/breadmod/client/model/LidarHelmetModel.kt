@@ -7,51 +7,33 @@ import net.minecraft.client.model.geom.EntityModelSet
 import net.minecraft.client.model.geom.ModelLayerLocation
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
+import net.minecraft.client.model.geom.builders.CubeDeformation
 import net.minecraft.client.model.geom.builders.CubeListBuilder
 import net.minecraft.client.model.geom.builders.LayerDefinition
 import net.minecraft.client.model.geom.builders.MeshDefinition
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.resources.ResourceLocation
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
-import org.bread_experts_group.breadmod.client.model.ChefHatModel.Companion.HAT_TEXTURE
-import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.registry.item.actual.armor.ChefHatItem
 
-/**
- * Model data for the Chef Hat.
- *
- * @see ChefHatItem
- * @see ChefHatArmorLayer
- * @author Logan McLean
- * @since 1.0.0
- */
-class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::entityTranslucent) {
+class LidarHelmetModel(private val modelSet: EntityModelSet) : Model(RenderType::entitySolid) {
 	companion object {
-		/**
-		 * Model layer location for the chef hat.
-		 *
-		 * @see HAT_TEXTURE
-		 */
-		val HAT_LAYER: ModelLayerLocation = ModelLayerLocation(modLocation("chef_hat"), "main")
-
-		/**
-		 * Texture location for the chef hat.
-		 */
-		val HAT_TEXTURE: ResourceLocation = modLocation("textures/models/armor/chef_hat.png")
+		val HELMET_LAYER: ModelLayerLocation = ModelLayerLocation(modLocation("lidar_helmet"), "main")
+		val HELMET_TEXTURE: ResourceLocation = modLocation("textures/models/armor/lidar_helmet.png")
 		fun createLayerDefinition(): LayerDefinition =
-			LayerDefinition.create(this.createMesh(), 40, 27)
+			LayerDefinition.create(this.createMesh(), 64, 64)
 
 		private fun createMesh(): MeshDefinition {
 			val meshDefinition = MeshDefinition()
 			val partDefinition = meshDefinition.root
 
 			partDefinition.addOrReplaceChild(
-				"chef_hat", CubeListBuilder.create().texOffs(0, 0)
-					.texOffs(0, 0)
-					.addBox(-4.5f, -3f, -4.5f, 9f, 3f, 9f)
-					.texOffs(0, 12)
-					.addBox(-5f, -8f, -5f, 10f, 5f, 10f),
+				"lidar_helmet",
+				CubeListBuilder.create()
+					.texOffs(0, 8).addBox(-5.0f, -1.0f, -3.0f, 1.0f, 2.0f, 10.0f, CubeDeformation.NONE)
+					.texOffs(0, 20).addBox(4.0f, -1.0f, -3.0f, 1.0f, 2.0f, 10.0f, CubeDeformation.NONE)
+					.texOffs(22, 8).addBox(-4.0f, -1.0f, 6.0f, 8.0f, 2.0f, 1.0f, CubeDeformation.NONE)
+					.texOffs(0, 0).addBox(-6.0f, -2.0f, -7.0f, 12.0f, 4.0f, 4.0f, CubeDeformation.NONE),
 				PartPose.ZERO
 			)
 
@@ -59,11 +41,8 @@ class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::ent
 		}
 	}
 
-	private val parts: List<ModelPart> = this.modelSet.bakeLayer(Companion.HAT_LAYER).allParts.toList()
+	private val parts: List<ModelPart> = this.modelSet.bakeLayer(Companion.HELMET_LAYER).allParts.toList()
 
-	/**
-	 * Bakes and renders this model to the buffer.
-	 */
 	override fun renderToBuffer(
 		poseStack: PoseStack,
 		buffer: VertexConsumer,
@@ -72,9 +51,6 @@ class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::ent
 		color: Int
 	): Unit = this.parts.forEach { it.render(poseStack, buffer, packedLight, packedOverlay, color) }
 
-	/**
-	 * [renderToBuffer] with the [VertexConsumer] already specified
-	 */
 	fun render(
 		poseStack: PoseStack,
 		packedLight: Int,
@@ -82,7 +58,7 @@ class ChefHatModel(private val modelSet: EntityModelSet) : Model(RenderType::ent
 		color: Int
 	): Unit = this.renderToBuffer(
 		poseStack,
-		localClient.renderBuffers().bufferSource().getBuffer(this.renderType(Companion.HAT_TEXTURE)),
+		localClient.renderBuffers().bufferSource().getBuffer(this.renderType(Companion.HELMET_TEXTURE)),
 		packedLight,
 		packedOverlay,
 		color

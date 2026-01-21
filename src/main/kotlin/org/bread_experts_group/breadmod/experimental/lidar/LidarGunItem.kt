@@ -37,10 +37,6 @@ import kotlin.math.floor
 import kotlin.math.round
 
 class LidarGunItem : Item(Properties()), IRenderingItem {
-	companion object {
-		var dotCounter: Int = 0
-	}
-
 	private fun Double.reverse(): Double = round((1 - this) * 100) / 100
 
 	/**
@@ -59,7 +55,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 			EAST -> Vec3(nY.reverse(), nZ.reverse(), nX)
 		}
 	}
-	// todo z offset for non-full block shapes.
+
 	/**
 	 * Not to be confused with LidarBlock#getPixelPos,
 	 * that method handles transforming the longs representing the pixels into their relative positions.
@@ -91,13 +87,12 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 	private fun fireLidar(player: Player) {
 		player.rayCast(50.0, blocks(), 0.1f)?.let { hit ->
 			val section = LidarHandler.getSection(hit.blockPosition, player.level())
-			section.addRenderer()
 			val block = section.getBlock(hit.blockPosition)
 			val absoluteIndex = this.getAbsolutePixelIndex(hit)
 			// todo zIndex in this method needs to be replaced with a better way to place the dot on the correct z plane of the block
 			//  not to mention some blocks have more than one offset per block side so this solution falls apart at that.
 			block.setPixelForIndexAndSide(absoluteIndex, hit.hitSide, this.getPixelPos(hit).z, true)
-			section.sectionMesh.recompile()
+			section.setDynamicRendering()
 		}
 	}
 
@@ -107,7 +102,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 		if (event.stage == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			val poseStack = event.poseStack
 			poseStack.pushPose()
-			event.camera.raycast(50.0, blocks(), 0.01)?.let { hit ->
+			event.camera.raycast(100.0, blocks(), 0.01)?.let { hit ->
 //				val block = LidarHandler.getSection(hit.blockPosition, level).getBlock(hit.blockPosition)
 				val blockPos = hit.blockPosition.toVec3()
 				poseStack.offsetRenderToCameraPos(blockPos, event.camera, false)
@@ -134,7 +129,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 		if (!level.isClientSide) return
 		if (!localClient.options.keyUse.isDown) return
 		if (!player.isHolding(this)) return
-		// todo currently tied to framerate, need to add a limiter.
+		// todo currently tied to framerate, need to add a limiter or use inventoryTick...
 		this.fireLidar(player)
 	}
 }

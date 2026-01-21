@@ -78,8 +78,7 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 		packedLight: Int,
 		packedOverlay: Int,
 		currentMode: IToolGunMode,
-		overrideRenderType: Boolean = false,
-		renderTypeOverride: RenderType = RenderType.solid()
+		renderTypeOverride: RenderType? = null
 	) {
 		val rotation = this.lerpTicker.getLerpedOrRawValue(LerpLabels.ROTATION, LerpLabels.DELTA)
 		val recoil = this.lerpTicker.getLerpedOrRawValue(LerpLabels.RECOIL, LerpLabels.DELTA)
@@ -109,7 +108,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					buffer,
 					packedOverlay,
 					packedLight,
-					overrideRenderType = overrideRenderType,
 					renderTypeOverride = renderTypeOverride
 				)
 				poseStack.pushPose()
@@ -174,7 +172,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 				buffer,
 				packedOverlay,
 				packedLight,
-				overrideRenderType = overrideRenderType,
 				renderTypeOverride = renderTypeOverride
 			)
 			modeRenderer.renderCoilStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
@@ -208,7 +205,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			buffer,
 			packedOverlay,
 			packedLight,
-			overrideRenderType = overrideRenderType,
 			renderTypeOverride = renderTypeOverride
 		)
 		if (coilSpin) poseStack.mulPose(Axis.XN.rotationDegrees(rotation))
@@ -220,7 +216,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 			buffer,
 			packedOverlay,
 			packedLight,
-			overrideRenderType = overrideRenderType,
 			renderTypeOverride = renderTypeOverride
 		)
 	}

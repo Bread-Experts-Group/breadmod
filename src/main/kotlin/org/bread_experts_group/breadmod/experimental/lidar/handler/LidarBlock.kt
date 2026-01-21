@@ -18,7 +18,6 @@ import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.render.translateToSide
-import org.bread_experts_group.breadmod.experimental.lidar.LidarGunItem
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.toVec3
 import kotlin.math.floor
@@ -49,7 +48,7 @@ class LidarBlock(
 		val side = this.getOrPutSide(direction, zIndex).first
 		val final = (side[longIndex] or (1L shl arrayIndex))
 		if ((side[longIndex] ushr arrayIndex) and 1L != 0L) return // Return if the targeted pixel is already filled
-		LidarGunItem.dotCounter++
+		LidarHandler.dotCounter++
 		side[longIndex] = if (value) final else final.inv()
 	}
 
@@ -105,7 +104,6 @@ class LidarBlock(
 //						val color = if (distance < 5) colors[2] else if (distance < 15) colors[1] else colors[0]
 						poseStack.translate(pixelPos)
 						poseStack.scaleFlat(1 / 16f)
-						// todo figure out why the compiled mesh is not retaining the color val above, but retains a constant color
 						drawQuad(
 							poseStack,
 							renderType = ModRenderType.LIDAR,

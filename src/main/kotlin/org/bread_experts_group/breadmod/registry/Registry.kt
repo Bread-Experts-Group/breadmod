@@ -81,6 +81,7 @@ import org.bread_experts_group.breadmod.client.gui.screens.BreadModScreen
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
 import org.bread_experts_group.breadmod.client.model.ForkliftModel
 import org.bread_experts_group.breadmod.client.model.GluonGunBackpackModel
+import org.bread_experts_group.breadmod.client.model.LidarHelmetModel
 import org.bread_experts_group.breadmod.client.render.RendererWithBEWLRLerpTicker
 import org.bread_experts_group.breadmod.client.render.WarRenderer
 import org.bread_experts_group.breadmod.client.render.buffer.MachTrailBufferTask.machTrailMap
@@ -92,8 +93,10 @@ import org.bread_experts_group.breadmod.client.render.entity.PrimedHappyBlockRen
 import org.bread_experts_group.breadmod.client.render.entity.PrimedNukeBlockRenderer
 import org.bread_experts_group.breadmod.client.render.entity.layers.ChefHatArmorLayer
 import org.bread_experts_group.breadmod.client.render.entity.layers.GluonGunBackpackArmorLayer
+import org.bread_experts_group.breadmod.client.render.entity.layers.LidarHelmetArmorLayer
 import org.bread_experts_group.breadmod.client.render.item.CreativeGeneratorItemRenderer
 import org.bread_experts_group.breadmod.client.render.item.IRenderingItem
+import org.bread_experts_group.breadmod.client.render.item.LidarGunRenderer
 import org.bread_experts_group.breadmod.client.render.item.ModelBlockItemRenderer
 import org.bread_experts_group.breadmod.client.render.itemColor
 import org.bread_experts_group.breadmod.client.render.localClient
@@ -117,7 +120,7 @@ import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvide
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
-import org.bread_experts_group.breadmod.experimental.lidar.LidarGunItem
+import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarHandler
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
 import org.bread_experts_group.breadmod.experimental.physics_grid.GridPacket
@@ -236,12 +239,14 @@ object Registry {
 				NeoForge.EVENT_BUS.addListener { event: ScreenEvent.Render.Post ->
 					ScreenBleedOverlay.renderBleed(event.guiGraphics)
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: RenderLevelStageEvent ->
-					WarRenderer.render(event)
-					RenderBuffer.handle(event)
 					val player = localClient.player ?: return@addListener
 					val bufferSource = localClient.renderBuffers().bufferSource()
 					val stack = getStackInPlayerHand(player)
+					WarRenderer.render(event)
+					RenderBuffer.handle(event)
+					LidarHandler.renderSections(event, bufferSource)
 					if (stack.item is ToolGunItem) {
 						val data = ToolGunData.get(stack)
 						data.getMode().getCustomRenderer().renderLevelStageEvent(
@@ -257,9 +262,9 @@ object Registry {
 					}
 
 					HitboxHandler.hitboxes.forEach { (_, hitbox) ->
-						hitbox.render(event, localClient.renderBuffers().bufferSource())
+						hitbox.render(event, bufferSource)
 					}
-
+					// todo test code that needs to be turned into something resembling the camera texture, except it isn't limited by the tick rate.
 					if (MirrorRenderer.blockEntities.isNotEmpty() && event.stage == AFTER_LEVEL) {
 						MirrorRenderer.blockEntities.forEach { entity ->
 							val texture = MirrorRenderer.textures.getOrPut(entity.blockPos) {
@@ -285,6 +290,7 @@ object Registry {
 						}
 					}
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
 					val player = localClient.player ?: return@addListener
 					val level = player.level() as ClientLevel
@@ -292,6 +298,7 @@ object Registry {
 					val item = stack.item
 					if (item is IMouseItem) item.onMouseScroll(event, stack, level, player)
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: InputEvent.Key ->
 					val player = localClient.player ?: return@addListener
 					val level = localClient.level ?: return@addListener
@@ -311,6 +318,7 @@ object Registry {
 						}
 					}
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: InputEvent.MouseButton.Pre ->
 					val player = localClient.player ?: return@addListener
 					val level = player.level() as ClientLevel
@@ -318,6 +326,7 @@ object Registry {
 					val item = stack.item
 					if (item is IMouseItem) item.onMouseInputPre(event, stack, level, player)
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: InputEvent.MouseButton.Post ->
 					val player = localClient.player ?: return@addListener
 					val level = player.level() as ClientLevel
@@ -344,6 +353,7 @@ object Registry {
 						PacketDistributor.sendToServer(HitboxPacket())
 					}
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: ClientTickEvent.Pre ->
 					if (localClient.level?.tickRateManager()?.runsNormally() != true) return@addListener
 					if (!localClient.isPaused || !localClient.isLocalServer) {
@@ -359,6 +369,7 @@ object Registry {
 						}
 					}
 				}
+
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
 					PhysicsGrid.clientGrids.forEach { (_, grid) ->
 						if (!grid.microLevel.tickRateManager().runsNormally()) return@forEach
@@ -371,7 +382,9 @@ object Registry {
 						if (renderer is RendererWithBEWLRLerpTicker<*>) renderer.lerpTicker.tick()
 					}
 					this.playingSounds.values.forEach { it.tick(localClient.player ?: return@forEach) }
+					LidarHandler.tick()
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->
 					event.dispatcher.register(
 						Commands.literal(BreadMod.ID)
@@ -379,6 +392,7 @@ object Registry {
 							.then(PingCommand.register())
 					)
 				}
+
 				NeoForge.EVENT_BUS.addListener { event: LivingEquipmentChangeEvent ->
 					val entity = event.entity
 					val toStack = event.to
@@ -409,6 +423,7 @@ object Registry {
 						}
 					}
 				}
+
 				modBus.addListener { event: RegisterItemDecorationsEvent ->
 					event.register(ModItems.TOOL_GUN.asItem()) { guiGraphics, _, stack, xOffset, yOffset ->
 						val mode = ToolGunData.get(stack).getMode()
@@ -428,6 +443,7 @@ object Registry {
 						false
 					}
 				}
+
 				modBus.addListener { event: RegisterKeyMappingsEvent ->
 					event.register(openModeGui)
 					event.register(toolGunAltOne)
@@ -436,6 +452,7 @@ object Registry {
 					event.register(toolGunAltFour)
 					event.register(placeItemKey)
 				}
+
 				modBus.addListener { event: RegisterShadersEvent ->
 					event.registerShader(
 						ShaderInstance(
@@ -481,6 +498,7 @@ object Registry {
 					) { ModRenderType.POSITION_TEX_COLOR_NO_CUTOUT_INSTANCE = it }
 					ModPostChains.init(event.resourceProvider)
 				}
+
 				modBus.addListener { event: RegisterClientExtensionsEvent ->
 					event.registerFluidType(BreadLiquidBlock.ClientExtensions, ModFluids.BREAD_LIQUID.type.get())
 					event.registerItem(ToolGunItem.ToolGunItemExtensions, ModItems.TOOL_GUN)
@@ -491,11 +509,17 @@ object Registry {
 							this@Registry.itemRenderers.getOrPut(this.renderer, ::CreativeGeneratorItemRenderer)
 					}, ModBlocks.CREATIVE_GENERATOR.asItem())
 					event.registerItem(object : IClientItemExtensions {
+						val renderer: String = "lidar_gun"
+						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
+							this@Registry.itemRenderers.getOrPut(this.renderer, ::LidarGunRenderer)
+					}, ModItems.LIDAR_GUN.asItem())
+					event.registerItem(object : IClientItemExtensions {
 						val renderer: String = "model_item"
 						override fun getCustomRenderer(): BlockEntityWithoutLevelRenderer =
 							this@Registry.itemRenderers.getOrPut(this.renderer, ::ModelBlockItemRenderer)
 					}, ModBlocks.MODEL_BLOCK.asItem())
 				}
+
 				modBus.addListener { event: EntityRenderersEvent.RegisterRenderers ->
 					event.registerEntityRenderer(ModEntityTypes.BIG_ITEM_CONTAINER.get(), ::BigItemContainerRenderer)
 					event.registerEntityRenderer(ModEntityTypes.HAPPY_BLOCK_ENTITY.get(), ::PrimedHappyBlockRenderer)
@@ -514,19 +538,8 @@ object Registry {
 						)
 					}
 				}
+
 				modBus.addListener { event: RegisterGuiLayersEvent ->
-					event.registerAboveAll(
-						modLocation("lidar_overlay")
-					) { guiGraphics, _ ->
-						guiGraphics.drawString(
-							localClient.font,
-							LidarGunItem.dotCounter.toString(),
-							10,
-							10,
-							Color.WHITE,
-							true
-						)
-					}
 					event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
 					event.registerAbove(VanillaGuiLayers.CHAT, modLocation("irc_overlay"), InternetChatRelayOverlay())
 					event.registerAboveAll(modLocation("test_overlay"), TestOverlay())
@@ -537,6 +550,7 @@ object Registry {
 						ToolGunOverlay()
 					)
 				}
+
 				modBus.addListener { event: RegisterColorHandlersEvent.Item ->
 					event.register(
 						itemColor,
@@ -553,6 +567,7 @@ object Registry {
 //						cable.resolveColor()
 //					}, ModBlocks.CABLE.asItem())
 				}
+
 				modBus.addListener { event: RegisterColorHandlersEvent.Block ->
 					event.register({ _, getter, pos, _ ->
 						if (getter != null && pos != null) {
@@ -565,9 +580,11 @@ object Registry {
 //						(state.block as? CableBlock ?: return@register Color.WHITE).resolveColor()
 //					}, ModBlocks.CABLE.asBlock())
 				}
+
 				modBus.addListener { event: ModelEvent.RegisterAdditional ->
 					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/item"))
 					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/$TOOL_GUN_DEF/coil"))
+					event.register(modModelLoc("${ModelProvider.ITEM_FOLDER}/lidar_gun_item"))
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/generator_on"))
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/toaster/handle"))
 					event.register(modModelLoc("${ModelProvider.BLOCK_FOLDER}/creative_generator_star"))
@@ -582,9 +599,10 @@ object Registry {
 					event.register(modModelLoc("$dieselGeneratorPath/turbo_upgrade"))
 					event.register(modModelLoc("$dieselGeneratorPath/battery_upgrade"))
 				}
+
 				modBus.addListener { event: EntityRenderersEvent.AddLayers ->
 					@Suppress("UNCHECKED_CAST")
-					fun addHatLayer(type: EntityType<*>, event: EntityRenderersEvent.AddLayers) {
+					fun addHatLayer(type: EntityType<*>) {
 						if (event.getRenderer(type) is LivingEntityRenderer<*, *>) {
 							val renderer = event.getRenderer(type)
 									as LivingEntityRenderer<LivingEntity, EntityModel<LivingEntity>>
@@ -599,19 +617,26 @@ object Registry {
 							event.getSkin(skin) ?: return@addListener
 						entity.addLayer(ChefHatArmorLayer(entity))
 						entity.addLayer(GluonGunBackpackArmorLayer(entity))
+						entity.addLayer(LidarHelmetArmorLayer(entity))
 					}
 //                    addHatLayer(EntityType.ZOMBIE, event)
-					addHatLayer(EntityType.ARMOR_STAND, event)
-					addHatLayer(EntityType.FOX, event)
+					addHatLayer(EntityType.ARMOR_STAND)
+					addHatLayer(EntityType.FOX)
 				}
+
 				modBus.addListener { event: EntityRenderersEvent.RegisterLayerDefinitions ->
 					event.registerLayerDefinition(ChefHatModel.HAT_LAYER, ChefHatModel::createLayerDefinition)
+					event.registerLayerDefinition(
+						LidarHelmetModel.HELMET_LAYER,
+						LidarHelmetModel::createLayerDefinition
+					)
 					event.registerLayerDefinition(
 						GluonGunBackpackModel.BACKPACK_LAYER,
 						GluonGunBackpackModel::createLayerDefinition
 					)
 					event.registerLayerDefinition(ForkliftModel.FORKLIFT_LAYER, ForkliftModel::createLayerDefinition)
 				}
+
 				modBus.addListener { event: RegisterMenuScreensEvent ->
 					for (deferredBlock in ModBlocks.blockIterator()) {
 						val block = deferredBlock.get()
@@ -649,6 +674,7 @@ object Registry {
 				data.tick(player)
 			}
 		}
+
 //		NeoForge.EVENT_BUS.addListener { event: ServerAboutToStartEvent ->
 //			loadToolGunModes()
 //		}
@@ -660,6 +686,7 @@ object Registry {
 //					.then(Commands.literal("clearGrids").executes { PhysicsGridGlobals.grids.clear(); 1 })
 			)
 		}
+
 		NeoForge.EVENT_BUS.addListener { event: EntityInteract ->
 			val item = event.itemStack.item
 			if (item is IEntityInteractingItem) item.onInteractWithEntity(
@@ -672,6 +699,7 @@ object Registry {
 				event.itemStack
 			)
 		}
+
 		NeoForge.EVENT_BUS.addListener { _: ServerStoppingEvent ->
 			if (FMLEnvironment.dist.isClient) {
 				CameraTexture.textures.forEach { (_, texture) -> texture.close() }
@@ -760,9 +788,11 @@ object Registry {
 			HitboxPacket.register(registrar)
 			CreateModelBlockItemPacket.register(registrar)
 		}
+
 		modBus.addListener { event: EntityAttributeCreationEvent ->
 			event.put(ModEntityTypes.FAKE_PLAYER.get(), FakePlayer.createAttributes().build())
 		}
+
 		modBus.addListener { event: RegisterCapabilitiesEvent ->
 			for (deferredBlock in ModBlocks.blockIterator()) {
 				val block = deferredBlock.get()
