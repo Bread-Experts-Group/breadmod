@@ -2,7 +2,6 @@ package org.bread_experts_group.breadmod.experimental.lidar
 
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.MultiBufferSource
-import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction.DOWN
 import net.minecraft.core.Direction.EAST
 import net.minecraft.core.Direction.NORTH
@@ -22,43 +21,42 @@ import org.bread_experts_group.breadmod.client.render.offsetRenderToCameraPos
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.render.translateToSide
-import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarBlock
 import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarHandler
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.HitResult
 import org.bread_experts_group.breadmod.util.blocks
-import org.bread_experts_group.breadmod.util.displayClientMessage
-import org.bread_experts_group.breadmod.util.normalizeHitLoc
+import org.bread_experts_group.breadmod.util.component1
+import org.bread_experts_group.breadmod.util.component2
+import org.bread_experts_group.breadmod.util.component3
+import org.bread_experts_group.breadmod.util.normalizedHitPos
 import org.bread_experts_group.breadmod.util.rayCast
 import org.bread_experts_group.breadmod.util.raycast
 import org.bread_experts_group.breadmod.util.times
 import org.bread_experts_group.breadmod.util.toVec3
-import org.joml.Vector2d
 import kotlin.math.floor
 import kotlin.math.round
 
 class LidarGunItem : Item(Properties()), IRenderingItem {
-	// todo move to using the LidarHandler with sections
-	val lidarBlocks: MutableMap<BlockPos, LidarBlock> = mutableMapOf()
+	companion object {
+		var dotCounter: Int = 0
+	}
 
 	private fun Double.reverse(): Double = round((1 - this) * 100) / 100
 
 	/**
-	 * @return The raw x and y coordinate of the block face before processing.
+	 * @return The raw x, y and z coordinate of the block face before processing.
 	 */
-	private fun getHitLoc(hit: HitResult<BlockState>): Vector2d {
+	private fun getHitLoc(hit: HitResult<BlockState>): Vec3 {
 		val pos = hit.blockPosition
 		val loc = hit.hitPosition
-		val nX = normalizeHitLoc(loc.x, pos.x)
-		val nY = normalizeHitLoc(loc.y, pos.y)
-		val nZ = normalizeHitLoc(loc.z, pos.z)
+		val (nX, nY, nZ) = normalizedHitPos(loc, pos)
 		return when (hit.hitSide) {
-			DOWN -> Vector2d(nX, nZ.reverse())
-			UP -> Vector2d(nX, nZ)
-			NORTH -> Vector2d(nX.reverse(), nY.reverse())
-			SOUTH -> Vector2d(nX, nY.reverse())
-			WEST -> Vector2d(nY.reverse(), nZ)
-			EAST -> Vector2d(nY.reverse(), nZ.reverse())
+			DOWN -> Vec3(nX, nZ.reverse(), nY)
+			UP -> Vec3(nX, nZ, nY)
+			NORTH -> Vec3(nX.reverse(), nY.reverse(), nZ)
+			SOUTH -> Vec3(nX, nY.reverse(), nZ)
+			WEST -> Vec3(nY.reverse(), nZ, nX)
+			EAST -> Vec3(nY.reverse(), nZ.reverse(), nX)
 		}
 	}
 	// todo z offset for non-full block shapes.
@@ -72,13 +70,14 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 		val loc = this.getHitLoc(hit)
 		val floorX = floor(loc.x * 16) / 16
 		val floorY = floor(loc.y * 16) / 16
+		val floorZ = loc.z
 		return when (hit.hitSide) {
-			DOWN -> Vec3(floorY, floorX + 0.0625, 0.0)
-			UP -> Vec3(-floorY + 1 - 0.0625, -floorX, 0.0)
-			NORTH -> Vec3(floorX, -floorY, 0.0)
-			SOUTH -> Vec3(floorX, -floorY, 0.0)
-			WEST -> Vec3(floorY, -floorX, 0.0)
-			EAST -> Vec3(floorY, -floorX, 0.0)
+			DOWN -> Vec3(floorY, floorX + 0.0625, -floorZ)
+			UP -> Vec3(-floorY + 1 - 0.0625, -floorX, floorZ - 1)
+			NORTH -> Vec3(floorX, -floorY, -floorZ)
+			SOUTH -> Vec3(floorX, -floorY, floorZ - 1)
+			WEST -> Vec3(floorY, -floorX, -floorZ)
+			EAST -> Vec3(floorY, -floorX, floorZ - 1)
 		}
 	}
 
@@ -90,27 +89,26 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 	}
 
 	private fun fireLidar(player: Player) {
-		val level = player.level()
-		if (!level.isClientSide) return
-		if (!localClient.options.keyUse.isDown) return
-		if (!player.isHolding(this)) return
 		player.rayCast(50.0, blocks(), 0.1f)?.let { hit ->
-			val section = LidarHandler.getSection(hit.blockPosition)
+			val section = LidarHandler.getSection(hit.blockPosition, player.level())
 			section.addRenderer()
 			val block = section.getBlock(hit.blockPosition)
 			val absoluteIndex = this.getAbsolutePixelIndex(hit)
-			block.addRenderer()
-			block.setPixelForIndexAndSide(absoluteIndex, hit.hitSide, true)
+			// todo zIndex in this method needs to be replaced with a better way to place the dot on the correct z plane of the block
+			//  not to mention some blocks have more than one offset per block side so this solution falls apart at that.
+			block.setPixelForIndexAndSide(absoluteIndex, hit.hitSide, this.getPixelPos(hit).z, true)
+			section.sectionMesh.recompile()
 		}
 	}
 
 	private var debug: Boolean = false
 	private fun renderLidarTarget(event: RenderLevelStageEvent) {
+//		val level = localClient.player?.level() ?: return
 		if (event.stage == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			val poseStack = event.poseStack
 			poseStack.pushPose()
-			event.camera.raycast(50.0, blocks())?.let { hit ->
-				val block = LidarHandler.getSection(hit.blockPosition).getBlock(hit.blockPosition)
+			event.camera.raycast(50.0, blocks(), 0.01)?.let { hit ->
+//				val block = LidarHandler.getSection(hit.blockPosition, level).getBlock(hit.blockPosition)
 				val blockPos = hit.blockPosition.toVec3()
 				poseStack.offsetRenderToCameraPos(blockPos, event.camera, false)
 				poseStack.translateToSide(hit.hitSide)
@@ -118,7 +116,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 				val absoluteIndex = this.getAbsolutePixelIndex(hit)
 				// divide the 0..255 index of the pixels to 0..3 index of the arrays
 				val arrayIndex = absoluteIndex / 64
-				displayClientMessage(block.formatString(arrayIndex, hit.hitSide))
+//				displayClientMessage(block.formatString(arrayIndex, hit.hitSide))
 				poseStack.scaleFlat(1 / 16f)
 				drawQuad(poseStack, renderType = ModRenderType.LIDAR)
 			}
@@ -126,20 +124,17 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 		}
 	}
 
-	private var lastTimeMillis: Long = System.currentTimeMillis() + 10
 	override fun renderLevelStageEvent(
 		event: RenderLevelStageEvent,
 		bufferSource: MultiBufferSource,
 		player: LocalPlayer
 	) {
 		if (this.debug) this.renderLidarTarget(event)
-		// todo doesn't seem like the best way to artificially limit the firing speed
-		//  since it seems to cause "bursts" of dots to be drawn and then back to the normal handful,
-		//  but it'll work for now.
-		val systemTime = System.currentTimeMillis()
-		if (systemTime >= this.lastTimeMillis) {
-			this.fireLidar(player)
-			this.lastTimeMillis += 10
-		}
+		val level = player.level()
+		if (!level.isClientSide) return
+		if (!localClient.options.keyUse.isDown) return
+		if (!player.isHolding(this)) return
+		// todo currently tied to framerate, need to add a limiter.
+		this.fireLidar(player)
 	}
 }

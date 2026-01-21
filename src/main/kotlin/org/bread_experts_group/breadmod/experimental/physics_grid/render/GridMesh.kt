@@ -146,7 +146,6 @@ class GridMesh(private val grid: PhysicsGrid) {
 			buffer.upload(mesh)
 			VertexBuffer.unbind()
 		}
-		this.vertexBuffers
 		this.isCompiled = true
 	}
 

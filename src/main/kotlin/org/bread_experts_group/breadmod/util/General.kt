@@ -191,6 +191,7 @@ private fun <T> rayCast(
 	level: Level,
 	positionFrom: Vec3, directionTo: Vec3,
 	length: Double,
+	stepSize: Double,
 	selector: (Vec3, Vec3) -> T?
 ): HitResult<T>? {
 	var result: HitResult<T>? = null
@@ -206,7 +207,7 @@ private fun <T> rayCast(
 			result = HitResult(positionFrom, directionTo, hitPosition, shape, blockPos, length, distance, hit)
 			break
 		}
-		distance += 0.01
+		distance += stepSize
 	} while (distance < length)
 	return result
 }
@@ -217,21 +218,24 @@ private fun <T> rayCast(
 fun <T> Entity.rayCast(
 	length: Double,
 	selector: (Level, Vec3, Vec3) -> T?,
-	deviation: Float = 0f
+	deviation: Float = 0f,
+	stepSize: Double = 0.01
 ): HitResult<T>? = rayCast(
 	this.level(),
 	this.eyePosition,
 	this.calculateViewVector(this.xRot, this.yRot).offsetRandom(this.random, deviation),
-	length
+	length,
+	stepSize
 ) { from, to -> selector(this.level(), from, to) }
 
-fun <T> Camera.raycast(length: Double, selector: (Level, Vec3, Vec3) -> T?): HitResult<T>? {
+fun <T> Camera.raycast(length: Double, selector: (Level, Vec3, Vec3) -> T?, stepSize: Double = 0.01): HitResult<T>? {
 	val player = localClient.player ?: return null
 	return rayCast(
 		player.level(),
 		this.position,
 		player.calculateViewVector(player.xRot, player.yRot),
-		length
+		length,
+		stepSize
 	) { from, to -> selector(player.level(), from, to) }
 }
 

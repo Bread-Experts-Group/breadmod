@@ -117,6 +117,7 @@ import org.bread_experts_group.breadmod.datagen.sound.ModSoundDefinitionsProvide
 import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
+import org.bread_experts_group.breadmod.experimental.lidar.LidarGunItem
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
 import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
 import org.bread_experts_group.breadmod.experimental.physics_grid.GridPacket
@@ -514,6 +515,18 @@ object Registry {
 					}
 				}
 				modBus.addListener { event: RegisterGuiLayersEvent ->
+					event.registerAboveAll(
+						modLocation("lidar_overlay")
+					) { guiGraphics, _ ->
+						guiGraphics.drawString(
+							localClient.font,
+							LidarGunItem.dotCounter.toString(),
+							10,
+							10,
+							Color.WHITE,
+							true
+						)
+					}
 					event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
 					event.registerAbove(VanillaGuiLayers.CHAT, modLocation("irc_overlay"), InternetChatRelayOverlay())
 					event.registerAboveAll(modLocation("test_overlay"), TestOverlay())
