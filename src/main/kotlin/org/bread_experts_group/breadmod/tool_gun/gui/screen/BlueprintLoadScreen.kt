@@ -37,7 +37,7 @@ class BlueprintLoadScreen : PositionedScreen(Component.empty()) {
 		val bufferSource = guiGraphics.bufferSource()
 		this.renderBlurredBackground(partialTick)
 		ModGuiElements.BACKGROUND.blitScaled(guiGraphics, this.leftPos, this.topPos, 256, 256)
-		val blueprint = Companion.blueprints[0]
+//		val blueprint = Companion.blueprints[0]
 
 		poseStack.pushPose()
 		poseStack.translate(150f, 150f, 200f)

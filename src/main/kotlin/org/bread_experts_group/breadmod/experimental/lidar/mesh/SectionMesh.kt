@@ -1,4 +1,4 @@
-package org.bread_experts_group.breadmod.experimental.lidar.handler
+package org.bread_experts_group.breadmod.experimental.lidar.mesh
 
 import com.mojang.blaze3d.vertex.BufferBuilder
 import com.mojang.blaze3d.vertex.ByteBufferBuilder
@@ -6,7 +6,9 @@ import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexBuffer
 import net.minecraft.client.Camera
 import net.minecraft.client.renderer.RenderType
+import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarSection
 
+// todo make an abstract "mesh" class then extend into section / block meshes
 class SectionMesh(private val section: LidarSection) {
 	private val renderType: RenderType = RenderType.debugQuads()
 	private var byteBufferBuilder: ByteBufferBuilder? = null
@@ -37,7 +39,7 @@ class SectionMesh(private val section: LidarSection) {
 		)
 		this.section.lidarBlocks.forEach { (_, block) ->
 			poseStack.pushPose()
-			block.renderSides(poseStack, camera, bufferBuilder)
+			block.render(poseStack, camera, bufferBuilder, true)
 			poseStack.popPose()
 		}
 		val mesh = bufferBuilder.build() ?: return

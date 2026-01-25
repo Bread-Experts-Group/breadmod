@@ -208,7 +208,7 @@ object Registry {
 	val toolGunModes: MutableMap<ResourceLocation, IToolGunMode> = mutableMapOf()
 	val toolGunRendererCache: MutableMap<ResourceLocation, IToolGunModeRenderer> = mutableMapOf()
 	val itemRenderers: MutableMap<String, BlockEntityWithoutLevelRenderer> = mutableMapOf()
-	val playingSounds: MutableMap<Vec3, BreadModTickingSoundInstance> = mutableMapOf()
+	val tickingSoundInstances: MutableMap<Vec3, BreadModTickingSoundInstance> = mutableMapOf()
 	val logger: Logger = LogManager.getLogger("Bread Mod Registry")
 	private val registerList: Array<RegistryProvider> = arrayOf(
 		ModItems,
@@ -381,8 +381,8 @@ object Registry {
 						val renderer = IClientItemExtensions.of(it).customRenderer
 						if (renderer is RendererWithBEWLRLerpTicker<*>) renderer.lerpTicker.tick()
 					}
-					this.playingSounds.values.forEach { it.tick(localClient.player ?: return@forEach) }
-					LidarHandler.tick()
+					this.tickingSoundInstances.values.forEach { it.tick(localClient.player ?: return@forEach) }
+					LidarHandler.tick(localClient.player ?: return@addListener)
 				}
 
 				NeoForge.EVENT_BUS.addListener { event: RegisterClientCommandsEvent ->

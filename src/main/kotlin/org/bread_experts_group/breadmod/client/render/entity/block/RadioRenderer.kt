@@ -15,7 +15,7 @@ import org.bread_experts_group.breadmod.client.render.renderTextNoBg
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
-import org.bread_experts_group.breadmod.registry.Registry.playingSounds
+import org.bread_experts_group.breadmod.registry.Registry.tickingSoundInstances
 import org.bread_experts_group.breadmod.registry.block.actual.entity.BreadModBlockEntity
 import org.bread_experts_group.breadmod.registry.block.handler.LerpTickerHandler.Companion.getLerpTicker
 import org.bread_experts_group.breadmod.util.Color
@@ -49,7 +49,7 @@ class RadioRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(
 		packedLight: Int,
 		packedOverlay: Int
 	) {
-		val soundInstance = playingSounds[blockEntity.blockPos.center] as? StereoSoundInstance ?: return
+		val soundInstance = tickingSoundInstances[blockEntity.blockPos.center] as? StereoSoundInstance ?: return
 
 		this.positionDisplay(poseStack, blockEntity, partialTick)
 		this.drawBg(poseStack, guiGraphics)
@@ -155,7 +155,6 @@ class RadioRenderer(context: BlockEntityRendererProvider.Context) : BreadModBER(
 		return aabb.expandTowards(0.0, aabb.ysize, 0.0)
 	}
 
-	// TODO: chris review these names
 	enum class LerpLabels {
 		TILT_ALPHA,
 		TILT_BETA

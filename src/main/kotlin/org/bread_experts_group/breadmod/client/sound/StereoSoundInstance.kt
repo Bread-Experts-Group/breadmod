@@ -19,7 +19,7 @@ import org.bread_experts_group.breadmod.client.sound.stream.BaseAudioStream
 import org.bread_experts_group.breadmod.client.sound.stream.ImageData
 import org.bread_experts_group.breadmod.client.sound.stream.MP3AudioStream
 import org.bread_experts_group.breadmod.client.sound.stream.RIFFAudioStream
-import org.bread_experts_group.breadmod.registry.Registry.playingSounds
+import org.bread_experts_group.breadmod.registry.Registry.tickingSoundInstances
 import java.net.URI
 import java.util.concurrent.CompletableFuture
 
@@ -30,7 +30,7 @@ class StereoSoundInstance(
 	companion object {
 		fun destroy(isClientSide: Boolean, pos: BlockPos): Boolean {
 			if (!isClientSide) return false
-			val instance = playingSounds[pos.center] as? StereoSoundInstance ?: return false
+			val instance = tickingSoundInstances[pos.center] as? StereoSoundInstance ?: return false
 			instance.stop()
 			if (instance.stream.image != ImageData.EMPTY)
 				localClient.textureManager.release(instance.stream.image.location)
@@ -78,6 +78,6 @@ class StereoSoundInstance(
 
 	override fun tick(player: LocalPlayer) {
 		super.tick(player)
-		this.setVolume(this.volume)
+		this.setChannelVolume(this.volume)
 	}
 }

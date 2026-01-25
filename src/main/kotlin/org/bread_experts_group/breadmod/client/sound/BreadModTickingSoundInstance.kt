@@ -56,19 +56,20 @@ abstract class BreadModTickingSoundInstance(
 
 	fun play() {
 		this.soundManager.play(this)
-		Registry.playingSounds[this.originPos] = this
+		Registry.tickingSoundInstances[this.originPos] = this
 	}
 
-	fun isActive(): Boolean = Registry.playingSounds[this.originPos] != null
+	fun isActive(): Boolean = Registry.tickingSoundInstances[this.originPos] != null
 
-	fun stop() {
+	fun stop(stopTicking: Boolean = false) {
 		this.stopped = true
 		this.looping = false
 		this.soundManager.stop(this)
+		if (stopTicking) this.remove()
 	}
 
 	fun remove() {
-		Registry.playingSounds.remove(this.originPos)
+		Registry.tickingSoundInstances.remove(this.originPos)
 	}
 
 	fun isPaused(): Boolean {
@@ -82,15 +83,22 @@ abstract class BreadModTickingSoundInstance(
 	}
 
 	fun togglePause() {
+		if (this.isPaused()) this.unpause() else this.pause()
+	}
+
+	fun pause() {
 		val handle = this.getChannelHandle() ?: return
 		handle.execute { channel ->
-			if (this.isPaused()) {
-				this.onTogglePause(channel, true)
-				channel.pause()
-			} else {
-				this.onTogglePause(channel, false)
-				channel.unpause()
-			}
+			this.onTogglePause(channel, true)
+			channel.pause()
+		}
+	}
+
+	fun unpause() {
+		val handle = this.getChannelHandle() ?: return
+		handle.execute { channel ->
+			this.onTogglePause(channel, false)
+			channel.unpause()
 		}
 	}
 
@@ -105,7 +113,9 @@ abstract class BreadModTickingSoundInstance(
 		}
 	}
 
-	fun setVolume(newVolume: Float) {
+	fun setChannelVolume(): Unit = this.setChannelVolume(this.volume)
+
+	fun setChannelVolume(newVolume: Float) {
 		val handle = this.getChannelHandle() ?: return
 		handle.execute { channel ->
 			channel.setVolume(newVolume)
@@ -122,7 +132,8 @@ abstract class BreadModTickingSoundInstance(
 		this.volume = normalized.toFloat()
 	}
 
-	fun getChannelHandle(): ChannelAccess.ChannelHandle? = localClient.soundManager.soundEngine.instanceToChannel[this]
+	private fun getChannelHandle(): ChannelAccess.ChannelHandle? =
+		localClient.soundManager.soundEngine.instanceToChannel[this]
 
 	open fun onTogglePause(channel: Channel, isPausing: Boolean) {}
 
@@ -136,5 +147,6 @@ abstract class BreadModTickingSoundInstance(
 		}
 		if (this.stopped) this.stop()
 		this.updateVolumeFromPlayerPosition(player)
+		this.setChannelVolume(0.5f)
 	}
 }

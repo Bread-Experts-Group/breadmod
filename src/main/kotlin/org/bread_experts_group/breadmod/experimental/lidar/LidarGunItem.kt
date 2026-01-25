@@ -1,5 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.lidar
 
+import com.mojang.blaze3d.platform.InputConstants
+import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.core.Direction.DOWN
@@ -8,11 +10,16 @@ import net.minecraft.core.Direction.NORTH
 import net.minecraft.core.Direction.SOUTH
 import net.minecraft.core.Direction.UP
 import net.minecraft.core.Direction.WEST
+import net.minecraft.sounds.SoundSource
 import net.minecraft.util.Mth
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
+import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.bread_experts_group.breadmod.client.render.drawQuad
 import org.bread_experts_group.breadmod.client.render.item.IRenderingItem
@@ -22,7 +29,10 @@ import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.render.translateToSide
 import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarHandler
+import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarSound
+import org.bread_experts_group.breadmod.registry.item.IMouseItem
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
+import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.HitResult
 import org.bread_experts_group.breadmod.util.blocks
 import org.bread_experts_group.breadmod.util.component1
@@ -36,7 +46,7 @@ import org.bread_experts_group.breadmod.util.toVec3
 import kotlin.math.floor
 import kotlin.math.round
 
-class LidarGunItem : Item(Properties()), IRenderingItem {
+class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 	private fun Double.reverse(): Double = round((1 - this) * 100) / 100
 
 	/**
@@ -84,8 +94,8 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 		return Mth.clamp(x, 0, 15) + (Mth.clamp(y, 0, 15) * 16)
 	}
 
-	private fun fireLidar(player: Player) {
-		player.rayCast(50.0, blocks(), 0.1f)?.let { hit ->
+	private fun fireLidar(player: Player, deviation: Float, offsetX: Float, offsetY: Float) {
+		player.rayCast(100.0, blocks(), deviation, offsetX, offsetY)?.let { hit ->
 			val section = LidarHandler.getSection(hit.blockPosition, player.level())
 			val block = section.getBlock(hit.blockPosition)
 			val absoluteIndex = this.getAbsolutePixelIndex(hit)
@@ -102,7 +112,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 		if (event.stage == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
 			val poseStack = event.poseStack
 			poseStack.pushPose()
-			event.camera.raycast(100.0, blocks(), 0.01)?.let { hit ->
+			event.camera.raycast(100.0, blocks())?.let { hit ->
 //				val block = LidarHandler.getSection(hit.blockPosition, level).getBlock(hit.blockPosition)
 				val blockPos = hit.blockPosition.toVec3()
 				poseStack.offsetRenderToCameraPos(blockPos, event.camera, false)
@@ -119,17 +129,58 @@ class LidarGunItem : Item(Properties()), IRenderingItem {
 		}
 	}
 
+	override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
+		val player = entity as? Player ?: return
+		if (level.isClientSide && isSelected) {
+			if (LidarHandler.burstScanTimeRemaining > 0) {
+				repeat(50) {
+					this.fireLidar(player, 0.013f, -LidarHandler.burstY, it.toFloat() + 0.5f)
+					this.fireLidar(player, 0.013f, -LidarHandler.burstY, -it.toFloat() - 0.5f)
+					this.fireLidar(player, 0.013f, LidarHandler.burstY, it.toFloat() + 0.5f)
+					this.fireLidar(player, 0.013f, LidarHandler.burstY, -it.toFloat() - 0.5f)
+
+//					this.fireLidar(player, 0.013f, it.toFloat() + 0.5f, -LidarHandler.burstY)
+//					this.fireLidar(player, 0.013f, -it.toFloat() - 0.5f, -LidarHandler.burstY)
+//					this.fireLidar(player, 0.013f, it.toFloat() + 0.5f, LidarHandler.burstY)
+//					this.fireLidar(player, 0.013f, -it.toFloat() - 0.5f, LidarHandler.burstY)
+				}
+				LidarHandler.burstY -= 0.18f
+			}
+			LidarHandler.burstScanTimeRemaining -= 1
+			if (LidarHandler.burstScanTimeRemaining == 0) {
+				LidarHandler.isBurstScanning = false
+				LidarHandler.burstY = 0f
+			}
+		}
+	}
+
 	override fun renderLevelStageEvent(
 		event: RenderLevelStageEvent,
 		bufferSource: MultiBufferSource,
 		player: LocalPlayer
 	) {
-		if (this.debug) this.renderLidarTarget(event)
-		val level = player.level()
-		if (!level.isClientSide) return
-		if (!localClient.options.keyUse.isDown) return
 		if (!player.isHolding(this)) return
+		if (this.debug) this.renderLidarTarget(event)
 		// todo currently tied to framerate, need to add a limiter or use inventoryTick...
-		this.fireLidar(player)
+		if (localClient.options.keyUse.isDown) {
+			this.fireLidar(player, 0f, 0f, 0f)
+		}
+	}
+
+	override fun onMouseInputPre(
+		mouseEvent: InputEvent.MouseButton.Pre,
+		heldStack: ItemStack,
+		level: ClientLevel,
+		player: LocalPlayer
+	) {
+		if (mouseEvent.button == 0 && mouseEvent.action == InputConstants.PRESS) {
+			level.playLocalSound(player, ModSounds.LIDAR_BURST.get(), SoundSource.AMBIENT, 1f, 1f)
+			LidarHandler.burstScanTimeRemaining = 180
+			LidarHandler.isBurstScanning = true
+			LidarHandler.burstY = 32f
+		}
+		if (mouseEvent.button != 1) return
+		if (LidarHandler.lidarSound == null) LidarHandler.lidarSound = LidarSound(player.position())
+		LidarHandler.onMouseInput(mouseEvent)
 	}
 }

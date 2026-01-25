@@ -151,6 +151,14 @@ object ModSounds : RegistryProvider(Registries.SOUND_EVENT) {
 	@DataGenerateLanguage(name = "The Moon")
 	val THE_MOON: SoundHolder = this.registerSoundEvents("the_moon")
 
+	@DataGenerateSound
+	@DataGenerateLanguage(name = "Lidar Scan")
+	val LIDAR_SCAN: SoundHolder = this.registerSoundEvents("lidar_scan_loop")
+
+	@DataGenerateSound
+	@DataGenerateLanguage(name = "Lidar Burst")
+	val LIDAR_BURST: SoundHolder = this.registerSoundEvents("lidar_burst_01")
+
 	private fun registerSoundEvents(name: String): SoundHolder {
 		val registry = this.getRegistry(Registries.SOUND_EVENT)
 		return registry.register(name) { -> SoundEvent.createVariableRangeEvent(modLocation(name)) }

@@ -15,6 +15,7 @@ import net.minecraft.world.phys.AABB
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.bread_experts_group.breadmod.client.render.initialTranslate
 import org.bread_experts_group.breadmod.client.render.localClient
+import org.bread_experts_group.breadmod.experimental.lidar.mesh.SectionMesh
 import org.bread_experts_group.breadmod.registry.shader.ModPostChains
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.Color
@@ -27,7 +28,7 @@ class LidarSection(val sectionPos: SectionPos, private val level: Level) {
 	val bounding: AABB = AABB.of(BoundingBox.fromCorners(this.minX, this.maxX))
 	private var renderBounding: Boolean = false
 	var isRenderingMesh: Boolean = false
-	var renderingTimeout: Int = 40
+	var renderingTimeout: Int = 20
 
 	fun getBlock(blockPos: BlockPos): LidarBlock = this.lidarBlocks.getOrPut(blockPos) {
 		val state = this.level.getBlockState(blockPos)
@@ -42,7 +43,7 @@ class LidarSection(val sectionPos: SectionPos, private val level: Level) {
 	fun setDynamicRendering() {
 		if (!LidarHandler.tickingSections.contains(this)) LidarHandler.tickingSections.add(this)
 		this.isRenderingMesh = false
-		this.renderingTimeout = 40
+		this.renderingTimeout = 20
 	}
 
 	fun tick() {
@@ -55,7 +56,7 @@ class LidarSection(val sectionPos: SectionPos, private val level: Level) {
 
 	private fun renderBlocks(poseStack: PoseStack, camera: Camera, bufferSource: MultiBufferSource) {
 		this.lidarBlocks.forEach { (_, block) ->
-			block.renderSides(poseStack, camera, bufferSource.getBuffer(ModRenderType.LIDAR), false)
+			block.render(poseStack, camera, bufferSource.getBuffer(ModRenderType.LIDAR), false)
 		}
 	}
 

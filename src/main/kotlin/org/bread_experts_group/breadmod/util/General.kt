@@ -219,11 +219,13 @@ fun <T> Entity.rayCast(
 	length: Double,
 	selector: (Level, Vec3, Vec3) -> T?,
 	deviation: Float = 0f,
+	offsetX: Float = 0f,
+	offsetY: Float = 0f,
 	stepSize: Double = 0.01
 ): HitResult<T>? = rayCast(
 	this.level(),
 	this.eyePosition,
-	this.calculateViewVector(this.xRot, this.yRot).offsetRandom(this.random, deviation),
+	this.calculateViewVector(this.xRot + offsetX, this.yRot + offsetY).offsetRandom(this.random, deviation),
 	length,
 	stepSize
 ) { from, to -> selector(this.level(), from, to) }

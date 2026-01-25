@@ -22,10 +22,7 @@ import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.toVec3
 import kotlin.math.floor
 
-class LidarBlock(
-	private val blockPos: BlockPos,
-	private val mapColor: Int
-) {
+class LidarBlock(private val blockPos: BlockPos, private val mapColor: Int) {
 	private val sides: MutableMap<Direction, Pair<LongArray, Double>> = mutableMapOf()
 
 	private fun getOrPutSide(direction: Direction, zIndex: Double): Pair<LongArray, Double> =
@@ -82,13 +79,9 @@ class LidarBlock(
 		}
 	}
 
-	fun renderSides(poseStack: PoseStack, camera: Camera, consumer: VertexConsumer, forCompile: Boolean = true) {
-//		val playerPos = localClient.player?.position() ?: return
-//		val blockCenter = this.blockPos.center
-//		val colors = arrayOf(Color.GREEN, Color.YELLOW, Color.RED)
+	fun render(poseStack: PoseStack, camera: Camera, consumer: VertexConsumer, forCompile: Boolean) {
 		this.sides.forEach { (direction, pair) ->
 			val (longArray, zIndex) = pair
-//			val color = if (this.mapColor == 0) Color.DARK_GRAY else this.mapColor
 			poseStack.pushPose()
 			if (!forCompile) poseStack.offsetRenderToCameraPos(this.blockPos.toVec3(), camera, false)
 			else poseStack.translate(this.blockPos)
@@ -100,8 +93,6 @@ class LidarBlock(
 					// Check if the current bit in SIZE_BITS is 1
 					if ((long ushr bit) and 1L != 0L) {
 						val pixelPos = this.getPixelPos(direction, index, bit, zIndex)
-//						val distance = playerPos.distanceTo(blockCenter.plus(pixelPos))
-//						val color = if (distance < 5) colors[2] else if (distance < 15) colors[1] else colors[0]
 						poseStack.translate(pixelPos)
 						poseStack.scaleFlat(1 / 16f)
 						drawQuad(

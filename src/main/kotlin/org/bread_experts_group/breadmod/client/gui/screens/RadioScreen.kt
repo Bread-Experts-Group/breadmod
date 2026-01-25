@@ -11,7 +11,7 @@ import org.bread_experts_group.breadmod.client.gui.components.GenericEditBox
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.client.sound.StereoSoundInstance
-import org.bread_experts_group.breadmod.registry.Registry.playingSounds
+import org.bread_experts_group.breadmod.registry.Registry.tickingSoundInstances
 import java.net.URI
 
 class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
@@ -23,7 +23,7 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick)
 		ModGuiElements.BACKGROUND.blitScaled(guiGraphics, this.leftPos, this.topPos, 176, 150)
 		val pos = this.pos.center
-		(playingSounds[pos] as? StereoSoundInstance)?.stream?.image?.let {
+		(tickingSoundInstances[pos] as? StereoSoundInstance)?.stream?.image?.let {
 			guiGraphics.pose().pushPose()
 			guiGraphics.pose().scaleFlat(0.5f)
 			guiGraphics.blit(it.location, this.leftPos, this.topPos, 0f, 0f, 128, 128, 128, 128)
@@ -34,7 +34,7 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 	private var uri: URI? = null
 
 	init {
-		val playingSound = playingSounds[this.pos.center] as? StereoSoundInstance
+		val playingSound = tickingSoundInstances[this.pos.center] as? StereoSoundInstance
 		if (playingSound != null) this.uri = playingSound.uri
 	}
 
@@ -62,8 +62,8 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 5, 40, 20, "button") { _, _ ->
 			Thread.ofVirtual().start {
 				val pos = this.pos.center
-				playingSounds[pos] = StereoSoundInstance(this.uri ?: return@start, pos)
-				(playingSounds[pos] ?: return@start).play()
+				tickingSoundInstances[pos] = StereoSoundInstance(this.uri ?: return@start, pos)
+				(tickingSoundInstances[pos] ?: return@start).play()
 			}
 		})
 
@@ -71,14 +71,14 @@ class RadioScreen(private val pos: BlockPos) : Screen(Component.empty()) {
 			Thread.ofVirtual().start {
 				val pos = this.pos.center
 				this@RadioScreen.trySetURL("file:///home/logan/beginning.mp3")
-				playingSounds[pos] = StereoSoundInstance(this.uri ?: return@start, pos)
-				(playingSounds[pos] ?: return@start).play()
+				tickingSoundInstances[pos] = StereoSoundInstance(this.uri ?: return@start, pos)
+				(tickingSoundInstances[pos] ?: return@start).play()
 			}
 		})
 
 		this.addRenderableWidget(GenericButton(this.leftPos + 5, this.topPos + 30, 70, 20, "pause/play") { _, _ ->
 			val pos = this.pos.center
-			val instance = playingSounds[pos] ?: return@GenericButton
+			val instance = tickingSoundInstances[pos] ?: return@GenericButton
 			instance.togglePause()
 		})
 

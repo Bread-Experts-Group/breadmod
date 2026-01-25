@@ -12,9 +12,7 @@ class MachSoundInstance(
 	override fun tick(player: LocalPlayer) {
 		super.tick(player)
 		if (!player.isRemoved) {
-			this.x = player.x
-			this.y = player.y
-			this.z = player.z
+			this.setPos(player.position())
 		} else this.kill()
 	}
 

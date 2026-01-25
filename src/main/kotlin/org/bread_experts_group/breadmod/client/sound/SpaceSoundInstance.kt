@@ -12,7 +12,7 @@ class SpaceSoundInstance(
 		super.tick(player)
 		if (!this.entity.isDeadOrDying) {
 			this.setPos(this.entity.position())
-			this.setVolume(this.volume)
+			this.setChannelVolume(this.volume)
 		} else this.kill()
 	}
 }
