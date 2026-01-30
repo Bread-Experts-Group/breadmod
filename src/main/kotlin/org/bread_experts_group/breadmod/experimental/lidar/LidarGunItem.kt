@@ -102,7 +102,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 			// todo zIndex in this method needs to be replaced with a better way to place the dot on the correct z plane of the block
 			//  not to mention some blocks have more than one offset per block side so this solution falls apart at that.
 			block.setPixelForIndexAndSide(absoluteIndex, hit.hitSide, this.getPixelPos(hit).z, true)
-			section.setDynamicRendering()
+			section.setMeshInvalid()
 		}
 	}
 
@@ -118,9 +118,9 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 				poseStack.offsetRenderToCameraPos(blockPos, event.camera, false)
 				poseStack.translateToSide(hit.hitSide)
 				poseStack.translate(this.getPixelPos(hit))
-				val absoluteIndex = this.getAbsolutePixelIndex(hit)
+//				val absoluteIndex = this.getAbsolutePixelIndex(hit)
 				// divide the 0..255 index of the pixels to 0..3 index of the arrays
-				val arrayIndex = absoluteIndex / 64
+//				val arrayIndex = absoluteIndex / 64
 //				displayClientMessage(block.formatString(arrayIndex, hit.hitSide))
 				poseStack.scaleFlat(1 / 16f)
 				drawQuad(poseStack, renderType = ModRenderType.LIDAR)

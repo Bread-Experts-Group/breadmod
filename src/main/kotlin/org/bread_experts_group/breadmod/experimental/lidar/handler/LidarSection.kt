@@ -1,9 +1,7 @@
 package org.bread_experts_group.breadmod.experimental.lidar.handler
 
 import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.VertexBuffer
 import net.minecraft.client.Camera
-import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.LevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -14,9 +12,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.phys.AABB
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
 import org.bread_experts_group.breadmod.client.render.initialTranslate
-import org.bread_experts_group.breadmod.client.render.localClient
-import org.bread_experts_group.breadmod.experimental.lidar.mesh.SectionMesh
-import org.bread_experts_group.breadmod.registry.shader.ModPostChains
+import org.bread_experts_group.breadmod.experimental.lidar.SectionMesh
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.util.Color
 
@@ -38,9 +34,9 @@ class LidarSection(val sectionPos: SectionPos, private val level: Level) {
 	}
 
 	/**
-	 * Marks this [LidarSection] as needing to render each block individually, instead of as one mesh.
+	 * Marks this [LidarSection]'s Mesh as invalid, and needing to be recompiled.
 	 */
-	fun setDynamicRendering() {
+	fun setMeshInvalid() {
 		if (!LidarHandler.tickingSections.contains(this)) LidarHandler.tickingSections.add(this)
 		this.isRenderingMesh = false
 		this.renderingTimeout = 20
@@ -49,12 +45,16 @@ class LidarSection(val sectionPos: SectionPos, private val level: Level) {
 	fun tick() {
 		if (this.renderingTimeout != 0) this.renderingTimeout--
 		else {
-			this.sectionMesh.markForRecompile()
+			this.sectionMesh.recompile()
 			this.isRenderingMesh = true
 		}
 	}
 
-	private fun renderBlocks(poseStack: PoseStack, camera: Camera, bufferSource: MultiBufferSource) {
+	private fun renderBlocks(
+		poseStack: PoseStack,
+		camera: Camera,
+		bufferSource: MultiBufferSource
+	) {
 		this.lidarBlocks.forEach { (_, block) ->
 			block.render(poseStack, camera, bufferSource.getBuffer(ModRenderType.LIDAR), false)
 		}
@@ -63,7 +63,7 @@ class LidarSection(val sectionPos: SectionPos, private val level: Level) {
 	fun render(event: RenderLevelStageEvent, bufferSource: MultiBufferSource) {
 		val poseStack = event.poseStack
 		val camera = event.camera
-		val player = localClient.player ?: return
+//		val player = localClient.player ?: return
 		if (this.renderBounding) {
 			poseStack.pushPose()
 			poseStack.initialTranslate(camera)
@@ -83,32 +83,24 @@ class LidarSection(val sectionPos: SectionPos, private val level: Level) {
 		} else {
 			// Swap to dynamic rendering when the player is inside the section,
 			// todo expand to include adjacent sections if the player is close enough for proximity based dot coloring in the future
-			if (this.bounding.intersects(player.boundingBox)) {
-				this.renderBlocks(poseStack, camera, bufferSource)
+//			if (this.bounding.intersects(player.boundingBox)) {
+//				this.renderBlocks(poseStack, camera, bufferSource)
+//			} else {
+			if (this.sectionMesh.isReady()) {
+				this.sectionMesh.render(
+					poseStack,
+					camera,
+					event.modelViewMatrix,
+					event.projectionMatrix,
+					event.partialTick
+				)
 			} else {
-				if (this.sectionMesh.ready()) {
-					val buffer = this.sectionMesh.getBuffer()
-					val shaderInstance = GameRenderer.getPositionColorShader() ?: return
-					poseStack.pushPose()
-					poseStack.mulPose(event.modelViewMatrix)
-					poseStack.initialTranslate(camera)
-					ModPostChains.lidarTarget.bindWrite(false)
-					buffer.bind()
-					buffer.drawWithShader(
-						poseStack.last().pose(),
-						event.projectionMatrix,
-						shaderInstance
-					)
-					VertexBuffer.unbind()
-					localClient.mainRenderTarget.bindWrite(false)
-					poseStack.popPose()
-				} else {
-					// Keep rendering the blocks until the section is finished compiling,
-					// this prevents the section from vanishing for a few milliseconds.
-					this.renderBlocks(poseStack, camera, bufferSource)
-					this.sectionMesh.compile(poseStack, camera)
-				}
+				// Keep rendering the blocks until the section is finished compiling,
+				// this prevents the section from vanishing for a few milliseconds.
+				this.renderBlocks(poseStack, camera, bufferSource)
+				this.sectionMesh.compile(poseStack, camera)
 			}
+//			}
 		}
 	}
 }
