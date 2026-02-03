@@ -16,6 +16,7 @@ import org.bread_experts_group.breadmod.client.render.renderText
 import org.bread_experts_group.breadmod.client.render.scaleFlat
 import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarHandler
 import org.bread_experts_group.breadmod.util.Color
+import kotlin.math.round
 
 class LidarGunRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
@@ -50,16 +51,22 @@ class LidarGunRenderer : BlockEntityWithoutLevelRenderer(
 		poseStack.mulPose(Axis.YN.rotationDegrees(90f))
 		poseStack.translate(0.41, -0.715, -0.63)
 		poseStack.scaleFlat(0.0025f)
+		this.renderText("Dots: ${LidarHandler.dotCounter}", poseStack, buffer)
+		poseStack.translate(0.0, 8.0, 0.0)
+		this.renderText("Size: ${round(LidarHandler.currentDeviation * 100).toInt()}%", poseStack, buffer)
+		poseStack.popPose()
+		poseStack.popPose()
+	}
+
+	private fun renderText(text: String, poseStack: PoseStack, bufferSource: MultiBufferSource) {
 		localClient.font.renderText(
-			Component.literal("${LidarHandler.dotCounter}").visualOrderText,
+			Component.literal(text).visualOrderText,
 			Color.RED,
 			Color.NONE,
 			poseStack,
-			buffer,
+			bufferSource,
 			false,
 			LightTexture.FULL_BRIGHT
 		)
-		poseStack.popPose()
-		poseStack.popPose()
 	}
 }

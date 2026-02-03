@@ -16,6 +16,7 @@ class LidarSound(playerPos: Vec3) : BreadModTickingSoundInstance(
 		this.setPos(player.position())
 		this.volume = 0.5f
 		this.setChannelVolume()
+		this.setChannelPitch(1f + (LidarHandler.currentDeviation / 20f))
 	}
 
 	override fun isLooping(): Boolean = true

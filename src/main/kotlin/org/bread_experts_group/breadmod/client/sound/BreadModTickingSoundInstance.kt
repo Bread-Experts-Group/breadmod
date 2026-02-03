@@ -122,6 +122,13 @@ abstract class BreadModTickingSoundInstance(
 		}
 	}
 
+	fun setChannelPitch(newPitch: Float) {
+		val handle = this.getChannelHandle() ?: return
+		handle.execute { channel ->
+			channel.setPitch(newPitch)
+		}
+	}
+
 	fun updateVolumeFromPlayerPosition(player: LocalPlayer) {
 		val playerPos = player.position()
 		val normalized = clamp(
@@ -147,6 +154,5 @@ abstract class BreadModTickingSoundInstance(
 		}
 		if (this.stopped) this.stop()
 		this.updateVolumeFromPlayerPosition(player)
-		this.setChannelVolume(0.5f)
 	}
 }

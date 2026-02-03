@@ -162,9 +162,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 		if (!player.isHolding(this)) return
 		if (this.debug) this.renderLidarTarget(event)
 		// todo currently tied to framerate, need to add a limiter or use inventoryTick...
-		if (localClient.options.keyUse.isDown) {
-			this.fireLidar(player, 0f, 0f, 0f)
-		}
+		if (localClient.options.keyUse.isDown) this.fireLidar(player, LidarHandler.currentDeviation, 0f, 0f)
 	}
 
 	override fun onMouseInputPre(
@@ -173,7 +171,8 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 		level: ClientLevel,
 		player: LocalPlayer
 	) {
-		if (mouseEvent.button == 0 && mouseEvent.action == InputConstants.PRESS) {
+		if (localClient.screen != null) return
+		if (mouseEvent.button == 0 && mouseEvent.action == InputConstants.PRESS && !LidarHandler.isBurstScanning) {
 			level.playLocalSound(player, ModSounds.LIDAR_BURST.get(), SoundSource.AMBIENT, 1f, 1f)
 			LidarHandler.burstScanTimeRemaining = 180
 			LidarHandler.isBurstScanning = true
@@ -182,5 +181,17 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 		if (mouseEvent.button != 1) return
 		if (LidarHandler.lidarSound == null) LidarHandler.lidarSound = LidarSound(player.position())
 		LidarHandler.onMouseInput(mouseEvent)
+	}
+
+	override fun onMouseScroll(
+		scrollingEvent: InputEvent.MouseScrollingEvent,
+		heldStack: ItemStack,
+		level: ClientLevel,
+		player: LocalPlayer
+	) {
+		if (localClient.options.keyUse.isDown) {
+			scrollingEvent.isCanceled = true
+			LidarHandler.currentDeviation += (scrollingEvent.scrollDeltaY / 100.0).toFloat()
+		}
 	}
 }

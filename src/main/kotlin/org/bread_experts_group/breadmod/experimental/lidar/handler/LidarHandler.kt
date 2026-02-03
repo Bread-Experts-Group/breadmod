@@ -21,6 +21,10 @@ object LidarHandler {
 			field = clamp(value, 0, Int.MAX_VALUE)
 		}
 	var burstY: Float = 0f
+	var currentDeviation: Float = 0.1f
+		set(value) {
+			field = clamp(value, 0f, 1f)
+		}
 
 	// Trying to instantiate this too early just causes it to not play at all.
 	// So we set it when the player uses the lidar gun.
