@@ -23,17 +23,21 @@ import org.bread_experts_group.breadmod.util.toVec3
 import kotlin.math.floor
 
 class LidarBlock(private val blockPos: BlockPos, private val mapColor: Int) {
-	private val sides: MutableMap<Direction, Pair<LongArray, Double>> = mutableMapOf()
+	private val sides: MutableMap<Direction, Map<Double, LongArray>> = mutableMapOf()
 
-	private fun getOrPutSide(direction: Direction, zIndex: Double): Pair<LongArray, Double> =
+	// todo making the sides field store each array per z index is somewhat better, but it feels brittle.
+	//  maybe find a better way to go about this
+	private fun getOrPutSide(direction: Direction, zIndex: Double): LongArray =
 		this.sides.getOrPut(direction) {
-			longArrayOf(
-				0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000,
-				0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000,
-				0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000,
-				0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
-			) to zIndex
-		}
+			mapOf(
+				zIndex to longArrayOf(
+					0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000,
+					0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000,
+					0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000,
+					0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000000
+				)
+			)
+		}[zIndex] ?: longArrayOf()
 
 	/**
 	 * @param value switches the bit in the long to 1 if true, 0 if false.
@@ -42,19 +46,12 @@ class LidarBlock(private val blockPos: BlockPos, private val mapColor: Int) {
 	fun setPixelForIndexAndSide(index: Int, direction: Direction, zIndex: Double, value: Boolean) {
 		val longIndex: Int = index / 64
 		val arrayIndex: Int = index - (longIndex * 64)
-		val side = this.getOrPutSide(direction, zIndex).first
+		val side = this.getOrPutSide(direction, zIndex)
+		if (side.isEmpty()) return
 		val final = (side[longIndex] or (1L shl arrayIndex))
 		if ((side[longIndex] ushr arrayIndex) and 1L != 0L) return // Return if the targeted pixel is already filled
 		LidarHandler.dotCounter++
 		side[longIndex] = if (value) final else final.inv()
-	}
-
-	/**
-	 * Converts the long in the specified [index] to a human-readable string.
-	 */
-	fun formatString(index: Int, direction: Direction): String {
-		val side = this.sides[direction]?.first ?: return "null"
-		return "index: $index[${side[index].toULong().toString(2).padStart(64, '0')}]"
 	}
 
 	private fun getPixelPos(
@@ -80,40 +77,41 @@ class LidarBlock(private val blockPos: BlockPos, private val mapColor: Int) {
 	}
 
 	fun render(poseStack: PoseStack, camera: Camera, consumer: VertexConsumer, forCompile: Boolean) {
-		this.sides.forEach { (direction, pair) ->
-			val (longArray, zIndex) = pair
-			poseStack.pushPose()
-			if (!forCompile) poseStack.offsetRenderToCameraPos(this.blockPos.toVec3(), camera, false)
-			else poseStack.translate(this.blockPos)
-			poseStack.translateToSide(direction)
-			for (index in longArray.indices) {
-				val long = longArray[index]
-				for (bit in 0 ..< Long.SIZE_BITS) {
-					poseStack.pushPose()
-					// Check if the current bit in SIZE_BITS is 1
-					if ((long ushr bit) and 1L != 0L) {
-						val pixelPos = this.getPixelPos(direction, index, bit, zIndex)
-						poseStack.translate(pixelPos)
-						poseStack.scaleFlat(1 / 16f)
-						drawQuad(
-							poseStack,
-							renderType = ModRenderType.LIDAR,
-							color = this.mapColor,
-							consumer = consumer
-						)
-						poseStack.translate(1f, 0f, 0f)
-						poseStack.mulPose(Axis.YN.rotationDegrees(180f))
-						drawQuad(
-							poseStack,
-							renderType = ModRenderType.LIDAR,
-							color = this.mapColor,
-							consumer = consumer
-						)
+		this.sides.forEach { (direction, map) ->
+			map.forEach { (zIndex, longArray) ->
+				poseStack.pushPose()
+				if (!forCompile) poseStack.offsetRenderToCameraPos(this.blockPos.toVec3(), camera, false)
+				else poseStack.translate(this.blockPos)
+				poseStack.translateToSide(direction)
+				for (index in longArray.indices) {
+					val long = longArray[index]
+					for (bit in 0 ..< Long.SIZE_BITS) {
+						poseStack.pushPose()
+						// Check if the current bit in SIZE_BITS is 1
+						if ((long ushr bit) and 1L != 0L) {
+							val pixelPos = this.getPixelPos(direction, index, bit, zIndex)
+							poseStack.translate(pixelPos)
+							poseStack.scaleFlat(1 / 16f)
+							drawQuad(
+								poseStack,
+								renderType = ModRenderType.LIDAR,
+								color = this.mapColor,
+								consumer = consumer
+							)
+							poseStack.translate(1f, 0f, 0f)
+							poseStack.mulPose(Axis.YN.rotationDegrees(180f))
+							drawQuad(
+								poseStack,
+								renderType = ModRenderType.LIDAR,
+								color = this.mapColor,
+								consumer = consumer
+							)
+						}
+						poseStack.popPose()
 					}
-					poseStack.popPose()
 				}
+				poseStack.popPose()
 			}
-			poseStack.popPose()
 		}
 	}
 }

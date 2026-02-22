@@ -74,8 +74,8 @@ import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.api.IToolGunMode
 import org.bread_experts_group.breadmod.api.IToolGunModeRenderer
 import org.bread_experts_group.breadmod.client.gui.overlays.InternetChatRelayOverlay
+import org.bread_experts_group.breadmod.client.gui.overlays.LidarOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.ScreenBleedOverlay
-import org.bread_experts_group.breadmod.client.gui.overlays.TestOverlay
 import org.bread_experts_group.breadmod.client.gui.overlays.WarOverlay
 import org.bread_experts_group.breadmod.client.gui.screens.BreadModScreen
 import org.bread_experts_group.breadmod.client.model.ChefHatModel
@@ -151,6 +151,8 @@ import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacke
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
 import org.bread_experts_group.breadmod.network.serverbound.physics_grid.EncapsulatePlayerActionPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.serverbound.physics_grid.EncapsulateUseItemOnPhysicsGridPacket
+import org.bread_experts_group.breadmod.registry.KeyMappings.lidarBurstScan
+import org.bread_experts_group.breadmod.registry.KeyMappings.lidarMap
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
 import org.bread_experts_group.breadmod.registry.KeyMappings.placeItemKey
 import org.bread_experts_group.breadmod.registry.KeyMappings.toolGunAltFour
@@ -451,6 +453,8 @@ object Registry {
 					event.register(toolGunAltThree)
 					event.register(toolGunAltFour)
 					event.register(placeItemKey)
+					event.register(lidarBurstScan)
+					event.register(lidarMap)
 				}
 
 				modBus.addListener { event: RegisterShadersEvent ->
@@ -541,9 +545,9 @@ object Registry {
 
 				modBus.addListener { event: RegisterGuiLayersEvent ->
 					event.registerAboveAll(modLocation("war_overlay"), WarOverlay())
-					event.registerAbove(VanillaGuiLayers.CHAT, modLocation("irc_overlay"), InternetChatRelayOverlay())
-					event.registerAboveAll(modLocation("test_overlay"), TestOverlay())
 					event.registerAboveAll(modLocation("screen_bleed_overlay"), ScreenBleedOverlay())
+					event.registerAbove(VanillaGuiLayers.CHAT, modLocation("irc_overlay"), InternetChatRelayOverlay())
+					event.registerAbove(VanillaGuiLayers.CHAT, modLocation("lidar_overlay"), LidarOverlay())
 					event.registerBelow(
 						VanillaGuiLayers.DEBUG_OVERLAY,
 						modLocation("tool_gun_overlay"),

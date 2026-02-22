@@ -14,7 +14,7 @@ object KeyMappings {
 	/**
 	 * Key for placing an item in world.
 	 */
-	@DataGenerateLanguage("en_us")
+	@DataGenerateLanguage()
 	val placeItemKey: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.place_item_in_world",
 		KeyConflictContext.IN_GAME,
@@ -26,7 +26,7 @@ object KeyMappings {
 	/**
 	 * Key for opening the mode change gui in the tool gun.
 	 */
-	@DataGenerateLanguage("en_us", "Tool Gun: Open mode screen")
+	@DataGenerateLanguage(name = "Tool Gun: Open mode screen")
 	val openModeGui: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.tool_gun_mode_screen",
 		KeyConflictContext.IN_GAME,
@@ -35,7 +35,7 @@ object KeyMappings {
 		this.categoryLangKey
 	)
 
-	@DataGenerateLanguage("en_us", "Tool Gun: Alt control 1")
+	@DataGenerateLanguage(name = "Tool Gun: Alt control 1")
 	val toolGunAltOne: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.tool_gun_alt_one",
 		KeyConflictContext.IN_GAME,
@@ -44,7 +44,7 @@ object KeyMappings {
 		this.categoryLangKey
 	)
 
-	@DataGenerateLanguage("en_us", "Tool Gun: Alt control 2")
+	@DataGenerateLanguage(name = "Tool Gun: Alt control 2")
 	val toolGunAltTwo: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.tool_gun_alt_two",
 		KeyConflictContext.IN_GAME,
@@ -53,7 +53,7 @@ object KeyMappings {
 		this.categoryLangKey
 	)
 
-	@DataGenerateLanguage("en_us", "Tool Gun: Alt control 3")
+	@DataGenerateLanguage(name = "Tool Gun: Alt control 3")
 	val toolGunAltThree: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.tool_gun_alt_three",
 		KeyConflictContext.IN_GAME,
@@ -62,12 +62,30 @@ object KeyMappings {
 		this.categoryLangKey
 	)
 
-	@DataGenerateLanguage("en_us", "Tool Gun: Alt control 4")
+	@DataGenerateLanguage(name = "Tool Gun: Alt control 4")
 	val toolGunAltFour: KeyMapping = KeyMapping(
 		"controls.${BreadMod.ID}.tool_gun_alt_four",
 		KeyConflictContext.IN_GAME,
 		KeyModifier.ALT,
 		InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_O),
+		this.categoryLangKey
+	)
+
+	@DataGenerateLanguage("Lidar: Burst Scan")
+	val lidarBurstScan: KeyMapping = KeyMapping(
+		"controls.${BreadMod.ID}.lidar_burst_scan",
+		KeyConflictContext.IN_GAME,
+		KeyModifier.NONE,
+		InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_B),
+		this.categoryLangKey
+	)
+
+	@DataGenerateLanguage("Lidar: Map")
+	val lidarMap: KeyMapping = KeyMapping(
+		"controls.${BreadMod.ID}.lidar_map",
+		KeyConflictContext.IN_GAME,
+		KeyModifier.NONE,
+		InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_M),
 		this.categoryLangKey
 	)
 }

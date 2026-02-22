@@ -44,6 +44,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.FastColor
 import net.minecraft.util.FormattedCharSequence
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.EquipmentSlot
@@ -572,6 +573,22 @@ fun ModelManager.getModel(location: String): BakedModel =
 
 fun Minecraft.getModel(location: String): BakedModel = this.modelManager.getModel(location)
 
+fun GuiGraphics.blitWithColor(
+	textureLoc: ResourceLocation,
+	width: Int,
+	height: Int,
+	x: Int,
+	y: Int,
+	color: Int
+) {
+	val red = FastColor.ARGB32.red(color)
+	val green = FastColor.ARGB32.green(color)
+	val blue = FastColor.ARGB32.blue(color)
+	RenderSystem.setShaderColor(red.toFloat() / 255f, green.toFloat() / 255f, blue.toFloat() / 255f, 1f)
+	this.blit(textureLoc, x, y, 0f, 0f, width, height, width, height)
+	RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
+}
+
 private fun Font.drawAdjustableShadowText(
 	text: FormattedCharSequence,
 	x: Float,
@@ -754,6 +771,15 @@ fun PoseStack.drawTextOnBlockSide(
 		packedLight,
 		dropShadowOffset
 	)
+	this.popPose()
+}
+
+/**
+ * Pushes this pose, runs the provided lambda then pops this pose.
+ */
+fun PoseStack.pushPop(run: (PoseStack) -> Unit) {
+	this.pushPose()
+	run(this)
 	this.popPose()
 }
 

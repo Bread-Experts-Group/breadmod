@@ -13,6 +13,7 @@ import net.minecraft.core.Direction.WEST
 import net.minecraft.sounds.SoundSource
 import net.minecraft.util.Mth
 import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -30,7 +31,10 @@ import org.bread_experts_group.breadmod.client.render.translate
 import org.bread_experts_group.breadmod.client.render.translateToSide
 import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarHandler
 import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarSound
+import org.bread_experts_group.breadmod.registry.KeyMappings
+import org.bread_experts_group.breadmod.registry.item.IKeyboardItem
 import org.bread_experts_group.breadmod.registry.item.IMouseItem
+import org.bread_experts_group.breadmod.registry.item.ModItems
 import org.bread_experts_group.breadmod.registry.shader.ModRenderType
 import org.bread_experts_group.breadmod.registry.sound.ModSounds
 import org.bread_experts_group.breadmod.util.HitResult
@@ -46,7 +50,7 @@ import org.bread_experts_group.breadmod.util.toVec3
 import kotlin.math.floor
 import kotlin.math.round
 
-class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
+class LidarGunItem : Item(Properties().stacksTo(1)), IRenderingItem, IMouseItem, IKeyboardItem {
 	private fun Double.reverse(): Double = round((1 - this) * 100) / 100
 
 	/**
@@ -99,8 +103,6 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 			val section = LidarHandler.getSection(hit.blockPosition, player.level())
 			val block = section.getBlock(hit.blockPosition)
 			val absoluteIndex = this.getAbsolutePixelIndex(hit)
-			// todo zIndex in this method needs to be replaced with a better way to place the dot on the correct z plane of the block
-			//  not to mention some blocks have more than one offset per block side so this solution falls apart at that.
 			block.setPixelForIndexAndSide(absoluteIndex, hit.hitSide, this.getPixelPos(hit).z, true)
 			section.setMeshInvalid()
 		}
@@ -159,6 +161,7 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 		bufferSource: MultiBufferSource,
 		player: LocalPlayer
 	) {
+		if (!player.getItemBySlot(EquipmentSlot.HEAD).`is`(ModItems.LIDAR_HELMET)) return
 		if (!player.isHolding(this)) return
 		if (this.debug) this.renderLidarTarget(event)
 		// todo currently tied to framerate, need to add a limiter or use inventoryTick...
@@ -171,13 +174,8 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 		level: ClientLevel,
 		player: LocalPlayer
 	) {
+		if (!player.getItemBySlot(EquipmentSlot.HEAD).`is`(ModItems.LIDAR_HELMET)) return
 		if (localClient.screen != null) return
-		if (mouseEvent.button == 0 && mouseEvent.action == InputConstants.PRESS && !LidarHandler.isBurstScanning) {
-			level.playLocalSound(player, ModSounds.LIDAR_BURST.get(), SoundSource.AMBIENT, 1f, 1f)
-			LidarHandler.burstScanTimeRemaining = 180
-			LidarHandler.isBurstScanning = true
-			LidarHandler.burstY = 32f
-		}
 		if (mouseEvent.button != 1) return
 		if (LidarHandler.lidarSound == null) LidarHandler.lidarSound = LidarSound(player.position())
 		LidarHandler.onMouseInput(mouseEvent)
@@ -189,9 +187,24 @@ class LidarGunItem : Item(Properties()), IRenderingItem, IMouseItem {
 		level: ClientLevel,
 		player: LocalPlayer
 	) {
+		if (!player.getItemBySlot(EquipmentSlot.HEAD).`is`(ModItems.LIDAR_HELMET)) return
 		if (localClient.options.keyUse.isDown) {
 			scrollingEvent.isCanceled = true
 			LidarHandler.currentDeviation += (scrollingEvent.scrollDeltaY / 100.0).toFloat()
+		}
+	}
+
+	override fun onKeyboardPress(
+		keyEvent: InputEvent.Key,
+		heldStack: ItemStack,
+		player: Player
+	) {
+		val level = player.level()
+		if (keyEvent.key == KeyMappings.lidarBurstScan.key.value && keyEvent.action == InputConstants.PRESS && !LidarHandler.isBurstScanning) {
+			level.playLocalSound(player, ModSounds.LIDAR_BURST.get(), SoundSource.AMBIENT, 1f, 1f)
+			LidarHandler.burstScanTimeRemaining = 180
+			LidarHandler.isBurstScanning = true
+			LidarHandler.burstY = 32f
 		}
 	}
 }
