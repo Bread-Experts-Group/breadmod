@@ -1,15 +1,12 @@
 package org.bread_experts_group.breadmod.registry
 
 import com.mojang.blaze3d.platform.InputConstants
-import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
-import net.minecraft.client.renderer.FogRenderer
 import net.minecraft.client.renderer.ShaderInstance
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
@@ -47,7 +44,6 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterShadersEvent
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL
 import net.neoforged.neoforge.client.event.ScreenEvent
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent
@@ -121,8 +117,6 @@ import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
 import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarHandler
-import org.bread_experts_group.breadmod.experimental.mirror.MirrorRenderer
-import org.bread_experts_group.breadmod.experimental.mirror.MirrorTexture
 import org.bread_experts_group.breadmod.experimental.physics_grid.GridPacket
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
@@ -266,31 +260,6 @@ object Registry {
 					HitboxHandler.hitboxes.forEach { (_, hitbox) ->
 						hitbox.render(event, bufferSource)
 					}
-					// todo test code that needs to be turned into something resembling the camera texture, except it isn't limited by the tick rate.
-					if (MirrorRenderer.blockEntities.isNotEmpty() && event.stage == AFTER_LEVEL) {
-						MirrorRenderer.blockEntities.forEach { entity ->
-							val texture = MirrorRenderer.textures.getOrPut(entity.blockPos) {
-								MirrorTexture(modLocation("mirror_${MirrorTexture.counter++}"))
-							}
-
-							texture.bind()
-							MirrorTexture.camera.setEntity(entity.level ?: return@forEach)
-							texture.setupCamera(entity)
-
-							MirrorTexture.textureTarget.clear(true)
-							MirrorTexture.textureTarget.bindWrite(true)
-							CameraTexture.targetBeingRendered = MirrorTexture.textureTarget
-
-							RenderSystem.clear(16640, Minecraft.ON_OSX)
-							FogRenderer.setupNoFog()
-							RenderSystem.enableCull()
-
-							texture.renderLevel(MirrorTexture.textureTarget)
-							texture.writeToFrameBuffer(MirrorTexture.textureTarget)
-							CameraTexture.targetBeingRendered = null
-							localClient.mainRenderTarget.bindWrite(true)
-						}
-					}
 				}
 
 				NeoForge.EVENT_BUS.addListener { event: MouseScrollingEvent ->
@@ -356,7 +325,7 @@ object Registry {
 					}
 				}
 
-				NeoForge.EVENT_BUS.addListener { event: ClientTickEvent.Pre ->
+				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Pre ->
 					if (localClient.level?.tickRateManager()?.runsNormally() != true) return@addListener
 					if (!localClient.isPaused || !localClient.isLocalServer) {
 						if (machTrailMap.isNotEmpty()) {

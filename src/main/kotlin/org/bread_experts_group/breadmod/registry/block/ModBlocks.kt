@@ -45,7 +45,6 @@ import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagBlock
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraViewerBlock
 import org.bread_experts_group.breadmod.experimental.camera_viewer.camera.CameraBlock
 import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraItem
-import org.bread_experts_group.breadmod.experimental.mirror.MirrorBlock
 import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
@@ -411,13 +410,6 @@ object ModBlocks : RegistryProvider(
 		"camera_block",
 		::CameraBlock,
 		::CameraItem
-	)
-
-	@DataGenerateLanguage
-	@DataGenerateLootDropSelf
-	val MIRROR: DeferredItem<BlockItem> = this.registerBlockItem(
-		"mirror",
-		::MirrorBlock
 	)
 
 	fun <T : Block> registerBlock(

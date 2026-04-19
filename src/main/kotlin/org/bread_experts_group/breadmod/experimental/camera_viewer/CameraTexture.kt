@@ -73,7 +73,6 @@ class CameraTexture(
 	var shouldTick: Boolean = true
 
 	fun init() {
-
 		val level = this.cameraEntity.level ?: return
 		if (General.textureLock) return
 		if (Companion.camera.entity == null)

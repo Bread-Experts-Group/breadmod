@@ -54,12 +54,12 @@ object BreadModExplosion {
 			val damageSourceLow = this.level.damageSources().explosion(source, source)
 			val damageSourceHigh = ModDamageType.Companion.EXPLOSION_DAMAGE_HIGH.source(this.level)
 			val damageSourceVeryHigh = ModDamageType.Companion.EXPLOSION_DAMAGE_VERY_HIGH.source(this.level)
-			this.hitEntities.forEach { entity, rayPower ->
+			this.hitEntities.forEach { (entity, rayPower) ->
 				entity.hurt(
 					when (rayPower) {
-						in 0f .. 500f     -> damageSourceLow
+						in 0f .. 500f -> damageSourceLow
 						in 501f .. 10000f -> damageSourceHigh
-						else              -> damageSourceVeryHigh
+						else -> damageSourceVeryHigh
 					},
 					rayPower
 				)
@@ -76,7 +76,7 @@ object BreadModExplosion {
 	// THANK YOU Fnord @ https://stackoverflow.com/a/26127012
 	// https://arxiv.org/pdf/0912.4540
 	val getPoints: Function<Int, Set<Vec3>> = Util.memoize { count: Int ->
-		buildSet<Vec3> {
+		buildSet {
 			val phi = Math.PI * (Math.sqrt(5.0) - 1.0)
 			val samples = count // Move this to a configuration option?
 			repeat(samples) { i ->

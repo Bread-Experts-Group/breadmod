@@ -27,7 +27,7 @@ class KotlinPairCodec<F, S>(val first: Codec<F>, val second: Codec<S>) : Codec<P
 
 	@Suppress("ImplicitThis")
 	override fun equals(other: Any?): Boolean {
-		if (this == other) return true
+		if (this === other) return true
 		if (other == null || this::class.java != other::class.java) return false
 		val pairCodec = other as? KotlinPairCodec<*, *>
 		return Objects.equals(this.first, pairCodec?.first) &&
