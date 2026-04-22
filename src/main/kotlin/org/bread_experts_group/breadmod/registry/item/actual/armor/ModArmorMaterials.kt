@@ -9,11 +9,12 @@ import net.minecraft.world.item.ArmorMaterial
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.neoforged.neoforge.registries.DeferredRegister
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import java.util.EnumMap
 
-object ModArmorMaterials : RegistryProvider(Registries.ARMOR_MATERIAL) {
+object ModArmorMaterials : RegistryProvider(BreadMod.ID, Registries.ARMOR_MATERIAL) {
 	private val registry: DeferredRegister<ArmorMaterial> = this.getRegistry(Registries.ARMOR_MATERIAL)
 	val BREAD: Holder<ArmorMaterial> = this.registry.register("bread") { ->
 		ArmorMaterial(

@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.network.BreadModCodecs
 import org.bread_experts_group.breadmod.network.BreadModCodecs.BLOCK_MAP_STREAM_CODEC
 import org.bread_experts_group.breadmod.registry.RegistryProvider
@@ -15,6 +16,7 @@ import org.bread_experts_group.breadmod.util.listOf
 
 @Suppress("unused")
 object ModEntityDataSerializers : RegistryProvider(
+	BreadMod.ID,
 	NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS
 ) {
 	private val registry: DeferredRegister<EntityDataSerializer<*>> = this.getRegistry(

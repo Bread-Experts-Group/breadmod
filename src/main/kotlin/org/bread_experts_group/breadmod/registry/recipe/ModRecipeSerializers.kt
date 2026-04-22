@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer
 import net.neoforged.neoforge.registries.DeferredRegister
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
 import org.bread_experts_group.breadmod.registry.recipe.actual.MicrowaveRecipe
@@ -22,7 +23,7 @@ import java.util.Optional
 import java.util.function.Supplier
 import kotlin.jvm.optionals.getOrNull
 
-object ModRecipeSerializers : RegistryProvider(Registries.RECIPE_SERIALIZER) {
+object ModRecipeSerializers : RegistryProvider(BreadMod.ID, Registries.RECIPE_SERIALIZER) {
 	private val registry: DeferredRegister<RecipeSerializer<*>> = this.getRegistry(Registries.RECIPE_SERIALIZER)
 	private fun <R : FluidEnergyRecipe> registerFERSupplier(
 		name: String,

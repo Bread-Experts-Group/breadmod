@@ -5,6 +5,7 @@ import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.MobCategory
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.RegistryProvider
@@ -15,7 +16,7 @@ import org.bread_experts_group.breadmod.registry.entity.actual.PrimedHappyBlock
 import org.bread_experts_group.breadmod.registry.entity.actual.PrimedNukeBlock
 import java.util.function.Supplier
 
-object ModEntityTypes : RegistryProvider(Registries.ENTITY_TYPE) {
+object ModEntityTypes : RegistryProvider(BreadMod.ID, Registries.ENTITY_TYPE) {
 	private val registry: DeferredRegister<EntityType<*>> = this.getRegistry(Registries.ENTITY_TYPE)
 
 	@DataGenerateLanguage(name = "Big Item Container")

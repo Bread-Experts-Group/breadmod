@@ -117,22 +117,12 @@ import org.bread_experts_group.breadmod.datagen.tag.ModTagProvider
 import org.bread_experts_group.breadmod.event.InventoryChangeEvent
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraTexture
 import org.bread_experts_group.breadmod.experimental.lidar.handler.LidarHandler
-import org.bread_experts_group.breadmod.experimental.physics_grid.GridPacket
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
-import org.bread_experts_group.breadmod.experimental.physics_grid.backend.client.ClientMicroLevel
 import org.bread_experts_group.breadmod.network.clientbound.BeamPacket
 import org.bread_experts_group.breadmod.network.clientbound.DoubleOrNothingPacket
 import org.bread_experts_group.breadmod.network.clientbound.GasGasGasSoundPacket
 import org.bread_experts_group.breadmod.network.clientbound.MachTrailPacket
 import org.bread_experts_group.breadmod.network.clientbound.ScreenBleedSetPacket
 import org.bread_experts_group.breadmod.network.clientbound.SpreadParticlesPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockDestructionPhysicsGridPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockEventPhysicsGridPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateBlockUpdatePhysicsGridPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateLevelEventPhysicsGridPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundEntityPhysicsGridPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.EncapsulateSoundPhysicsGridPacket
-import org.bread_experts_group.breadmod.network.clientbound.physics_grid.NewPhysicsGridPacket
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerIncrement
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSet
 import org.bread_experts_group.breadmod.network.clientbound.war_timer.WarTimerSynchronization
@@ -143,8 +133,6 @@ import org.bread_experts_group.breadmod.network.serverbound.HitboxPacket
 import org.bread_experts_group.breadmod.network.serverbound.PlaceItemInWorldPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunDataSyncPacket
 import org.bread_experts_group.breadmod.network.serverbound.ToolGunModeChangePacket
-import org.bread_experts_group.breadmod.network.serverbound.physics_grid.EncapsulatePlayerActionPhysicsGridPacket
-import org.bread_experts_group.breadmod.network.serverbound.physics_grid.EncapsulateUseItemOnPhysicsGridPacket
 import org.bread_experts_group.breadmod.registry.KeyMappings.lidarBurstScan
 import org.bread_experts_group.breadmod.registry.KeyMappings.lidarMap
 import org.bread_experts_group.breadmod.registry.KeyMappings.openModeGui
@@ -342,11 +330,6 @@ object Registry {
 				}
 
 				NeoForge.EVENT_BUS.addListener { _: ClientTickEvent.Post ->
-					PhysicsGrid.clientGrids.forEach { (_, grid) ->
-						if (!grid.microLevel.tickRateManager().runsNormally()) return@forEach
-						(grid.microLevel as ClientMicroLevel).tick { true }
-						grid.movementTick()
-					}
 					val inventory = (localClient.player ?: return@addListener).allSlots
 					inventory.forEach {
 						val renderer = IClientItemExtensions.of(it).customRenderer
@@ -633,11 +616,6 @@ object Registry {
 		// Common Event Registration
 		// Game Bus
 		NeoForge.EVENT_BUS.addListener { event: ServerTickEvent.Post ->
-			PhysicsGrid.serverGrids.forEach { (_, grid) ->
-				if (!grid.microLevel.tickRateManager().runsNormally()) return@forEach
-				grid.tick(event.server)
-				grid.movementTick()
-			}
 			warTimerMap.forEach { (player, data) ->
 				if (!player.level().tickRateManager().runsNormally()) return@forEach
 				data.tick(player)
@@ -732,7 +710,6 @@ object Registry {
 		modBus.addListener { event: RegisterPayloadHandlersEvent ->
 			val registrar: PayloadRegistrar = event.registrar("1.4.0")
 			// Client & Server
-			GridPacket.register(registrar)
 			// Clientbound packets
 			WarTimerIncrement.register(registrar)
 			WarTimerSet.register(registrar)
@@ -740,20 +717,11 @@ object Registry {
 			WarTimerToggle.register(registrar)
 			MachTrailPacket.register(registrar)
 			BeamPacket.register(registrar)
-			NewPhysicsGridPacket.register(registrar)
-			EncapsulateSoundEntityPhysicsGridPacket.register(registrar)
-			EncapsulateSoundPhysicsGridPacket.register(registrar)
-			EncapsulateBlockEventPhysicsGridPacket.register(registrar)
-			EncapsulateBlockDestructionPhysicsGridPacket.register(registrar)
-			EncapsulateBlockUpdatePhysicsGridPacket.register(registrar)
-			EncapsulateLevelEventPhysicsGridPacket.register(registrar)
 			SpreadParticlesPacket.register(registrar)
 			ScreenBleedSetPacket.register(registrar)
 			GasGasGasSoundPacket.register(registrar)
 			DoubleOrNothingPacket.register(registrar)
 			// Serverbound packets
-			EncapsulateUseItemOnPhysicsGridPacket.register(registrar)
-			EncapsulatePlayerActionPhysicsGridPacket.register(registrar)
 			ToolGunModeChangePacket.register(registrar)
 			ToolGunDataSyncPacket.register(registrar)
 			PlaceItemInWorldPacket.register(registrar)

@@ -12,6 +12,7 @@ import net.neoforged.neoforge.fluids.FluidType
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelSingleItem
 import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagFluid
@@ -21,6 +22,7 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.function.Supplier
 
 object ModFluids : RegistryProvider(
+	BreadMod.ID,
 	Registries.FLUID,
 	NeoForgeRegistries.Keys.FLUID_TYPES
 ) {

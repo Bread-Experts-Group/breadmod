@@ -30,6 +30,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers
 import net.minecraft.world.item.context.UseOnContext
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.datagen.model.item.DataGenerateModelHandheldItem
@@ -39,7 +40,6 @@ import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagItem
 import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraBinderItem
 import org.bread_experts_group.breadmod.experimental.lidar.LidarGunItem
 import org.bread_experts_group.breadmod.experimental.lidar.LidarHelmetItem
-import org.bread_experts_group.breadmod.experimental.physics_grid.GridCreatorItem
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.entity.actual.Forklift
 import org.bread_experts_group.breadmod.registry.item.actual.BreadAmuletItem
@@ -47,7 +47,6 @@ import org.bread_experts_group.breadmod.registry.item.actual.DopedBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.FineShineItem
 import org.bread_experts_group.breadmod.registry.item.actual.GravityCoilItem
 import org.bread_experts_group.breadmod.registry.item.actual.OilDrumItem
-import org.bread_experts_group.breadmod.registry.item.actual.PushGridItem
 import org.bread_experts_group.breadmod.registry.item.actual.SpeedCoilItem
 import org.bread_experts_group.breadmod.registry.item.actual.TestBreadItem
 import org.bread_experts_group.breadmod.registry.item.actual.UltimateBreadItem
@@ -68,7 +67,7 @@ import kotlin.reflect.KClass
  * @since 1.0.0
  */
 @Suppress("KDocMissingDocumentation")
-object ModItems : RegistryProvider(Registries.ITEM) {
+object ModItems : RegistryProvider(BreadMod.ID, Registries.ITEM) {
 	private val registry: DeferredRegister<Item> = this.getRegistry(Registries.ITEM)
 	fun itemIterator(): Iterator<DeferredItem<Item>> = object : Iterator<DeferredItem<Item>> {
 		val registryIterator = this@ModItems.registry.entries.iterator()
@@ -423,14 +422,6 @@ object ModItems : RegistryProvider(Registries.ITEM) {
 	@DataGenerateModelHandheldItem
 	@DataGenerateLanguage
 	val WRENCH: DeferredItem<Item> = this.registerItem("wrench", ::WrenchItem)
-
-	@DataGenerateModelHandheldItem
-	@DataGenerateLanguage
-	val GRID_CREATOR: DeferredItem<Item> = this.registerItem("grid_creator", ::GridCreatorItem)
-
-	@DataGenerateModelHandheldItem
-	@DataGenerateLanguage
-	val PUSH_GRID_ITEM: DeferredItem<Item> = this.registerItem("push_grid_tool", ::PushGridItem)
 
 	@DataGenerateLanguage
 	val SPEED_COIL: DeferredItem<Item> = this.registerItem("speed_coil", ::SpeedCoilItem)

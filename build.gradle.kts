@@ -20,10 +20,7 @@ version = project.properties["mod_version"] as String
 
 private fun getModId(): String = project.properties["mod_id"] as String
 private fun RunModel.enableTestNamespaces(): Unit = systemProperty("neoforge.enabledGameTestNamespaces", getModId())
-private fun RunModel.addAgent(): Unit =
-	jvmArgument("-javaagent:${file("breadmod_agent/build/libs/breadmod_agent-1.5.1-agent.jar").absolutePath}")
 private fun mcVersion(): String = project.properties["minecraft_version"] as String
-private val breadServerLib: String = "org.bread_experts_group:bread_server_lib-code:D1F4N6P1"
 
 idea {
 	module {
@@ -87,27 +84,23 @@ neoForge {
 			client()
 			gameDirectory.set(File("./run/client"))
 			enableTestNamespaces()
-			addAgent()
 			devLogin = true
 		}
 		create("client_noLogin") {
 			client()
 			gameDirectory.set(File("./run/client_no_login"))
 			enableTestNamespaces()
-			addAgent()
 		}
 		create("server") {
 			server()
 			programArgument("--nogui")
 			gameDirectory.set(File("./run/server"))
 			enableTestNamespaces()
-			addAgent()
 		}
 		create("server_noOnline") {
 			server()
 			gameDirectory.set(File("./run/server_no_online"))
 			enableTestNamespaces()
-			addAgent()
 		}
 		create("gameTestServer") {
 			type = "gameTestServer"
@@ -130,9 +123,6 @@ neoForge {
 			// "REGISTRYDUMP": For getting the contents of all registries.
 			// systemProperty 'forge.logging.markers', 'REGISTRIES'
 			logLevel = Level.INFO
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create(breadServerLib) { isTransitive = false }
-			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
 				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.3.0") { isTransitive = false }
 			)
@@ -157,7 +147,6 @@ neoForge {
 
 dependencies {
 	// Mod Dependencies //
-	jarJar(implementation(breadServerLib) {})
 	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0") {})
 	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:2.3.0") {})
 	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0") {})
@@ -193,7 +182,7 @@ dependencies {
 	runtimeOnly("curse.maven:worldedit-225608:5830452")
 }
 kotlin {
-	jvmToolchain(25)
+	jvmToolchain(21)
 	compilerOptions {
 		freeCompilerArgs.add("-Xcontext-parameters")
 	}
@@ -298,7 +287,3 @@ sourceSets.main.get().resources {
 }
 
 neoForge.ideSyncTask(tasks["generateModMetadata"])
-
-tasks.classes {
-	dependsOn(project(":breadmod_agent").tasks.build)
-}

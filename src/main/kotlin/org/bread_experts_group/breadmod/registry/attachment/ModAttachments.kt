@@ -5,9 +5,10 @@ import net.neoforged.neoforge.attachment.AttachmentType
 import net.neoforged.neoforge.registries.DeferredHolder
 import net.neoforged.neoforge.registries.DeferredRegister
 import net.neoforged.neoforge.registries.NeoForgeRegistries
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 
-object ModAttachments : RegistryProvider(NeoForgeRegistries.Keys.ATTACHMENT_TYPES) {
+object ModAttachments : RegistryProvider(BreadMod.ID, NeoForgeRegistries.Keys.ATTACHMENT_TYPES) {
 	private val registry: DeferredRegister<AttachmentType<*>> = this.getRegistry(
 		NeoForgeRegistries.Keys.ATTACHMENT_TYPES
 	)

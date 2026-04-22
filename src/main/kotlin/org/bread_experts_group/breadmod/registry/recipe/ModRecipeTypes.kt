@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.neoforged.neoforge.registries.DeferredRegister
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.recipe.actual.DoughMachineRecipe
@@ -13,7 +14,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.WheatCrusherRecip
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test.FluidEnergyRecipeTest
 import java.util.function.Supplier
 
-object ModRecipeTypes : RegistryProvider(Registries.RECIPE_TYPE) {
+object ModRecipeTypes : RegistryProvider(BreadMod.ID, Registries.RECIPE_TYPE) {
 	private val registry: DeferredRegister<RecipeType<*>> = this.getRegistry(Registries.RECIPE_TYPE)
 	val WHEAT_CRUSHING: Supplier<RecipeType<WheatCrusherRecipe>> = this.registerRecipeType("wheat_crushing")
 	val DOUGH_MACHINE: Supplier<RecipeType<DoughMachineRecipe>> = this.registerRecipeType("dough_machine")

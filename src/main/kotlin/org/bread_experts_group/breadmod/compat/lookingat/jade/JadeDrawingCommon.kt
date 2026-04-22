@@ -18,16 +18,55 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.texture.ModGuiElements
 import org.bread_experts_group.breadmod.util.Color
 import org.bread_experts_group.breadmod.util.Color.mix
-import org.bread_experts_group.formatMetric
 import snownee.jade.api.config.IWailaConfig
 import snownee.jade.overlay.OverlayRenderer
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.pow
 import kotlin.math.sin
 
 object JadeDrawingCommon {
+	// Copied from BSL
+	val si: List<Pair<String, Double>> = listOf(
+		"Q" to 10.0.pow(30.0),
+		"R" to 10.0.pow(27.0),
+		"Y" to 10.0.pow(24.0),
+		"Z" to 10.0.pow(21.0),
+		"E" to 10.0.pow(18.0),
+		"P" to 10.0.pow(15.0),
+		"T" to 10.0.pow(12.0),
+		"G" to 10.0.pow(9.0),
+		"M" to 10.0.pow(6.0),
+		"k" to 10.0.pow(3.0),
+		"h" to 10.0.pow(2.0),
+		"da" to 10.0.pow(1.0),
+		"" to 1.0,
+		"d" to 10.0.pow(-1.0),
+		"c" to 10.0.pow(-2.0),
+		"m" to 10.0.pow(-3.0),
+		"μ" to 10.0.pow(-6.0),
+		"n" to 10.0.pow(-9.0),
+		"p" to 10.0.pow(-12.0),
+		"f" to 10.0.pow(-15.0),
+		"a" to 10.0.pow(-18.0),
+		"z" to 10.0.pow(-21.0),
+		"y" to 10.0.pow(-24.0),
+		"r" to 10.0.pow(-27.0),
+		"q" to 10.0.pow(-30.0)
+	)
+
+	// Copied from BSL
+	fun Double.formatMetric(decimals: Int = 2): String {
+		val (sign, divisor) = this@JadeDrawingCommon.si.firstOrNull { (_, second) -> this >= second }
+			?: this@JadeDrawingCommon.si.last()
+		return String.format(
+			"%.0${decimals}f $sign",
+			this / divisor
+		)
+	}
+
 	private val uvs: Map<Direction?, Int> = mapOf(
 		*listOf(
 			null,

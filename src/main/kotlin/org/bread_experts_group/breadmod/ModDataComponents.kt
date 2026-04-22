@@ -22,7 +22,7 @@ import java.math.BigDecimal
 import java.util.UUID
 import java.util.function.Supplier
 
-object ModDataComponents : RegistryProvider(Registries.DATA_COMPONENT_TYPE) {
+object ModDataComponents : RegistryProvider(BreadMod.ID, Registries.DATA_COMPONENT_TYPE) {
 	private val registry: DeferredRegister<DataComponentType<*>> = this.getRegistry(Registries.DATA_COMPONENT_TYPE)
 	val TIME_LEFT: Supplier<DataComponentType<Long>> = this.registry.register(
 		"time_left", DataComponentType.builder<Long>()

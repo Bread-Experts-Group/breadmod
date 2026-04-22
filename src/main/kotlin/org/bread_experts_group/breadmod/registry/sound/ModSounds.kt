@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.sounds.SoundEvent
 import net.neoforged.neoforge.registries.DeferredHolder
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modLocation
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.datagen.sound.DataGenerateSound
@@ -12,7 +13,7 @@ import org.bread_experts_group.breadmod.registry.RegistryProvider
 
 private typealias SoundHolder = DeferredHolder<SoundEvent, SoundEvent>
 
-object ModSounds : RegistryProvider(Registries.SOUND_EVENT) {
+object ModSounds : RegistryProvider(BreadMod.ID, Registries.SOUND_EVENT) {
 	@DataGenerateSound
 	@DataGenerateLanguage(name = "Secret Hoppin' Plays")
 	val SECRET_HOPPIN: SoundHolder = this.registerSoundEvents("secret_hoppin")

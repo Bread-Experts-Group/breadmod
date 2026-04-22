@@ -3,16 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_agent/breadmod.breadmod_agent.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_neoforge.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_neoforge.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_neoforge.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_neoforge.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_neoforge.test.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_neoforge.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.iml" filepath="$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/breadmod_agent/org.bread_experts_group.breadmod.breadmod_agent.main.iml" filepath="$PROJECT_DIR$/.idea/modules/breadmod_agent/org.bread_experts_group.breadmod.breadmod_agent.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/org.bread_experts_group.breadmod.main.iml" />
     </modules>
   </component>

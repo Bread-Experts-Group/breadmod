@@ -7,6 +7,7 @@ import net.minecraft.world.item.alchemy.PotionContents
 import net.minecraft.world.item.component.DyedItemColor
 import net.minecraft.world.level.block.Blocks
 import net.neoforged.neoforge.registries.DeferredRegister
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.BreadMod.Companion.modTranslatable
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
 import org.bread_experts_group.breadmod.registry.RegistryProvider
@@ -16,7 +17,7 @@ import org.bread_experts_group.breadmod.registry.item.ModItems
 import java.util.Optional
 import java.util.function.Supplier
 
-object ModCreativeTabs : RegistryProvider(Registries.CREATIVE_MODE_TAB) {
+object ModCreativeTabs : RegistryProvider(BreadMod.ID, Registries.CREATIVE_MODE_TAB) {
 	private val registry: DeferredRegister<CreativeModeTab> = this.getRegistry(Registries.CREATIVE_MODE_TAB)
 	private fun constructTab(
 		name: String,

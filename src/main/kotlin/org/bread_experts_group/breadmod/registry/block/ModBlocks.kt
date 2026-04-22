@@ -34,6 +34,7 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
+import org.bread_experts_group.breadmod.BreadMod
 import org.bread_experts_group.breadmod.ModDataComponents
 import org.bread_experts_group.breadmod.api.ILightColored
 import org.bread_experts_group.breadmod.datagen.lang.DataGenerateLanguage
@@ -45,7 +46,6 @@ import org.bread_experts_group.breadmod.datagen.tag.DataGenerateTagBlock
 import org.bread_experts_group.breadmod.experimental.camera_viewer.CameraViewerBlock
 import org.bread_experts_group.breadmod.experimental.camera_viewer.camera.CameraBlock
 import org.bread_experts_group.breadmod.experimental.camera_viewer.item.CameraItem
-import org.bread_experts_group.breadmod.experimental.physics_grid.PhysicsGrid
 import org.bread_experts_group.breadmod.registry.RegistryProvider
 import org.bread_experts_group.breadmod.registry.block.actual.BreadBlock
 import org.bread_experts_group.breadmod.registry.block.actual.BreadModBlock
@@ -86,6 +86,7 @@ import java.util.function.Supplier
 import kotlin.math.roundToInt
 
 object ModBlocks : RegistryProvider(
+	BreadMod.ID,
 	Registries.BLOCK,
 	Registries.MENU,
 	Registries.BLOCK_ENTITY_TYPE
@@ -433,13 +434,7 @@ object ModBlocks : RegistryProvider(
 					actual.menuType = this.menuRegistry.register(id) { _: ResourceLocation ->
 						IMenuTypeExtension.create { id, inventory, byteBuf ->
 							val pos = byteBuf.readBlockPos()
-							val level: Level = if (byteBuf.capacity() > 8) {
-								val gridID = byteBuf.readLong()
-								val isClient = inventory.player.level().isClientSide
-								val grid = if (isClient) PhysicsGrid.clientGrids[gridID]
-								else PhysicsGrid.serverGrids[gridID]
-								grid?.microLevel ?: inventory.player.level()
-							} else inventory.player.level()
+							val level: Level = inventory.player.level()
 							@Suppress("UNCHECKED_CAST")
 							menu(
 								actual.menuType!!.get(), id, inventory,

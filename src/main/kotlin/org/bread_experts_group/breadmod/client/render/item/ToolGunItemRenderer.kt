@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.resources.model.BakedModel
-import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemDisplayContext
 import net.minecraft.world.item.ItemDisplayContext.GUI
 import net.minecraft.world.item.ItemStack
@@ -21,19 +20,14 @@ import org.bread_experts_group.breadmod.client.render.localClient
 import org.bread_experts_group.breadmod.client.render.renderItemModel
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.tool_gun.ToolGunItem.Companion.TOOL_GUN_DEF
-import org.bread_experts_group.formatMetric
 import java.awt.Color
 import java.lang.Math.clamp
-import java.math.BigDecimal
-import java.security.SecureRandom
 
 // todo render BEWLRs in items/blockitems if they're rendered onto the tool gun
 class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 	localClient.blockEntityRenderDispatcher,
 	localClient.entityModels
 ), RendererWithBEWLRLerpTicker<ToolGunItemRenderer.LerpLabels> {
-	private val caseOhInstrument: SecureRandom = SecureRandom()
-	private var caseOhSize: BigDecimal = BigDecimal.TWO
 	override val lerpTicker: LerpTicker.BEWLR<LerpLabels> = object : LerpTicker.BEWLR<LerpLabels>(
 		LerpLabels.DELTA to LerpParams(incrementAmount = -0.075f, clampMin = 0f, clampMax = 2f),
 		LerpLabels.ROTATION to LerpParams(isHandledManually = true),
@@ -138,18 +132,6 @@ class ToolGunItemRenderer : BlockEntityWithoutLevelRenderer(
 					buffer,
 					0.009,
 					-0.008
-				)
-				this.caseOhSize =
-					this.caseOhSize.add(this.caseOhInstrument.nextDouble(0.0, 1234511121314.0).toBigDecimal())
-				modeRenderer.drawTextOnScreen(
-					Component.literal("CASEOH: ${this.caseOhSize.toDouble().formatMetric()}g"),
-					Color.RED.rgb,
-					0,
-					false,
-					poseStack,
-					buffer,
-					0.009,
-					-0.061
 				)
 			}
 			modeRenderer.renderScreenStage(stack, displayContext, poseStack, buffer, packedLight, packedOverlay)
