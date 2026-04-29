@@ -9,7 +9,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/breadmod_agent" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="true" />

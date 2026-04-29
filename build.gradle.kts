@@ -3,16 +3,17 @@
 import net.neoforged.moddevgradle.dsl.RunModel
 import org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask
 import org.slf4j.event.Level
-import java.util.Properties
+
+private val kotlinVersion: String = "2.3.21"
 
 plugins {
-	kotlin("jvm") version "2.3.0"
+	kotlin("jvm") version "2.3.21"
 	id("org.jetbrains.dokka-javadoc") version "2.1.0"
 	id("idea")
 	id("net.neoforged.moddev") version "2.0.134"
 	`maven-publish`
 	`java-library`
-	signing
+//	signing
 }
 
 group = project.properties["mod_group_id"] as String
@@ -124,16 +125,16 @@ neoForge {
 			// systemProperty 'forge.logging.markers', 'REGISTRIES'
 			logLevel = Level.INFO
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:2.3.0") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:2.3.0") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion") { isTransitive = false }
 			)
 			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.0") { isTransitive = false }
+				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion") { isTransitive = false }
 			)
 		}
 	}
@@ -147,10 +148,10 @@ neoForge {
 
 dependencies {
 	// Mod Dependencies //
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:2.3.0") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.0") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion") {})
+	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion") {})
 	// Mod Compatibility //
 	// Jade (WAILA)
 	implementation("curse.maven:jade-324717:5976517")
@@ -192,9 +193,6 @@ tasks.register<Jar>("dokkaJavadocJar") {
 	from(tasks.dokkaGeneratePublicationJavadoc.flatMap(DokkaGeneratePublicationTask::outputDirectory))
 	archiveClassifier.set("javadoc")
 }
-private val localProperties: Properties = Properties().apply {
-	rootProject.file("local.properties").reader().use(::load)
-}
 publishing {
 	publications {
 		create<MavenPublication>("mavenKotlin") {
@@ -206,10 +204,6 @@ publishing {
 				name = "Bread Mod"
 				description = "The Bread Mod."
 				url = "https://breadexperts.group"
-				signing {
-					sign(publishing.publications["mavenKotlin"])
-					sign(configurations.archives.get())
-				}
 				licenses {
 					license {
 						name = "GNU General Public License v3.0"
@@ -236,20 +230,8 @@ publishing {
 			}
 		}
 	}
-	repositories {
-		maven {
-			url = uri("https://maven.breadexperts.group/")
-			credentials {
-				username = localProperties["mavenUser"] as String
-				password = localProperties["mavenPassword"] as String
-			}
-		}
-	}
 }
-signing {
-	useGpgCmd()
-	sign(publishing.publications["mavenKotlin"])
-}
+
 tasks.javadoc {
 	if (JavaVersion.current().isJava9Compatible) {
 		(options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
