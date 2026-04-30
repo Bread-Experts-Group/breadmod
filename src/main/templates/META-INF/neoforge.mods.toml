@@ -1,5 +1,5 @@
-modLoader = "javafml"
-loaderVersion = "${loader_version_range}"
+modLoader = "bm_upwards"
+loaderVersion = "a"
 license = "${mod_license}"
 
 [[mods]]

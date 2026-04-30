@@ -1,7 +1,6 @@
 package org.bread_experts_group.breadmod.compat.jei
 
 import mezz.jei.api.IModPlugin
-import mezz.jei.api.JeiPlugin
 import mezz.jei.api.registration.IGuiHandlerRegistration
 import mezz.jei.api.registration.IRecipeCatalystRegistration
 import mezz.jei.api.registration.IRecipeCategoryRegistration
@@ -29,7 +28,7 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.crafting.ToastSli
 import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.FluidEnergyRecipe
 import java.util.function.Supplier
 
-@JeiPlugin
+//@JeiPlugin
 @Suppress("unused")
 class BreadModJeiPlugin : IModPlugin {
 	override fun getPluginUid(): ResourceLocation = modLocation("jei_plugin")

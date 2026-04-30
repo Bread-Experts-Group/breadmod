@@ -14,7 +14,8 @@
     "common.MixinInventoryChangeTrigger",
     "common.MixinLightningBolt",
     "common.MixinLivingEntity",
-    "common.MixinServerPlayer"
+    "common.MixinServerPlayer",
+    "common.MixinSynchedEntityData"
   ],
   "client": [
     "client.IAccessorDirectoryLister",

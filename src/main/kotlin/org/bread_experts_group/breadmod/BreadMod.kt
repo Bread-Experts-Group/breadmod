@@ -6,10 +6,10 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModContainer
-import net.neoforged.fml.common.Mod
 import net.neoforged.fml.config.ModConfig
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.bread_experts_group.UpwardsMod
 import org.bread_experts_group.breadmod.data_holders.common.ToolGunData
 import org.bread_experts_group.breadmod.registry.ModConfiguration
 import org.bread_experts_group.breadmod.registry.Registry
@@ -18,7 +18,7 @@ import org.bread_experts_group.breadmod.registry.item.integration.ModIntegration
 /**
  * Main mod class.
  */
-@Mod(BreadMod.ID)
+@UpwardsMod(modID = BreadMod.ID, dependencyLocation = "libs")
 class BreadMod(eventBus: IEventBus, container: ModContainer) {
 	companion object {
 		const val ID: String = "breadmod"

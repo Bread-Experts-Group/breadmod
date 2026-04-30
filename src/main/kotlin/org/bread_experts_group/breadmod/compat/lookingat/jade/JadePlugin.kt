@@ -7,10 +7,9 @@ import org.bread_experts_group.breadmod.registry.recipe.actual.fluid_energy.test
 import snownee.jade.api.IWailaClientRegistration
 import snownee.jade.api.IWailaCommonRegistration
 import snownee.jade.api.IWailaPlugin
-import snownee.jade.api.WailaPlugin
 import kotlin.reflect.KClass
 
-@WailaPlugin
+//@WailaPlugin
 @Suppress("unused")
 class JadePlugin : IWailaPlugin {
 	override fun registerClient(registration: IWailaClientRegistration) {

@@ -13,7 +13,6 @@ plugins {
 	id("net.neoforged.moddev") version "2.0.134"
 	`maven-publish`
 	`java-library`
-//	signing
 }
 
 group = project.properties["mod_group_id"] as String
@@ -30,9 +29,7 @@ idea {
 	}
 }
 
-base {
-	archivesName = getModId()
-}
+base.archivesName = getModId()
 
 repositories {
 	mavenCentral()
@@ -62,10 +59,10 @@ repositories {
 		name = "ForgeConfigAPIPort"
 		url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/")
 	}
-	maven {
-		name = "Bread Experts Group Maven"
-		url = uri("https://maven.breadexperts.group/")
-	}
+//	maven {
+//		name = "Bread Experts Group Maven"
+//		url = uri("https://maven.breadexperts.group/")
+//	}
 }
 
 neoForge {
@@ -87,9 +84,9 @@ neoForge {
 			enableTestNamespaces()
 			devLogin = true
 		}
-		create("client_noLogin") {
+		create("clientNoDevLogin") {
 			client()
-			gameDirectory.set(File("./run/client_no_login"))
+			gameDirectory.set(File("./run/client"))
 			enableTestNamespaces()
 		}
 		create("server") {
@@ -98,15 +95,16 @@ neoForge {
 			gameDirectory.set(File("./run/server"))
 			enableTestNamespaces()
 		}
-		create("server_noOnline") {
-			server()
-			gameDirectory.set(File("./run/server_no_online"))
-			enableTestNamespaces()
-		}
-		create("gameTestServer") {
-			type = "gameTestServer"
-			enableTestNamespaces()
-		}
+//		create("server_noOnline") {
+//			server()
+//			gameDirectory.set(File("./run/server"))
+//			enableTestNamespaces()
+//			addAgent()
+//		}
+//		create("gameTestServer") {
+//			type = "gameTestServer"
+//			enableTestNamespaces()
+//		}
 		create("data") {
 			data()
 			gameDirectory.set(File("./run/data"))
@@ -124,18 +122,6 @@ neoForge {
 			// "REGISTRYDUMP": For getting the contents of all registries.
 			// systemProperty 'forge.logging.markers', 'REGISTRIES'
 			logLevel = Level.INFO
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") { isTransitive = false }
-			)
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") { isTransitive = false }
-			)
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion") { isTransitive = false }
-			)
-			additionalRuntimeClasspathConfiguration.dependencies.add(
-				dependencies.create("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion") { isTransitive = false }
-			)
 		}
 	}
 
@@ -145,18 +131,21 @@ neoForge {
 		}
 	}
 }
+private val upwardsLibraries: Configuration by configurations.creating
+
+configurations {
+	implementation.get().extendsFrom(upwardsLibraries)
+}
 
 dependencies {
-	// Mod Dependencies //
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion") {})
-	jarJar(implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion") {})
+	upwardsLibraries("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+	upwardsLibraries("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+	upwardsLibraries("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+	upwardsLibraries("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
+
+	implementation(project(":upwards"))
 	// Mod Compatibility //
-	// Jade (WAILA)
 	implementation("curse.maven:jade-324717:5976517")
-//    runtimeOnly "curse.maven:the-one-probe-245211:5836106"
-	runtimeOnly("curse.maven:packet-fixer-689467:6195911")
 	implementation("curse.maven:projecte-226410:6611984")
 	// Just Enough Items (JEI)
 	val jeiVersion = "19.21.2.313"
@@ -242,14 +231,16 @@ tasks.processResources {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.register<ProcessResources>("generateModMetadata")
-tasks.named<ProcessResources>("generateModMetadata") {
+tasks.register<Copy>("pullUpwardsLibraries") {
+	from(upwardsLibraries).into("./TEST")
+}
+
+tasks.register<ProcessResources>("generateModMetadata") {
 	val replaceProperties = mapOf(
 		"minecraft_version" to "${project.properties["minecraft_version"]}",
 		"minecraft_version_range" to "${project.properties["minecraft_version_range"]}",
 		"neo_version" to "${project.properties["neo_version"]}",
 		"neo_version_range" to "${project.properties["neo_version_range"]}",
-		"loader_version_range" to "${project.properties["loader_version_range"]}",
 		"mod_id" to "${project.properties["mod_id"]}",
 		"mod_name" to "${project.properties["mod_name"]}",
 		"mod_license" to "${project.properties["mod_license"]}",

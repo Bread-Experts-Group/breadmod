@@ -3,6 +3,9 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="21">
       <module name="breadmod.breadmod_agent" target="25" />
+      <module name="breadmod.untitled" target="25" />
+      <module name="breadmod.untitled.main" target="25" />
+      <module name="breadmod.untitled.test" target="25" />
       <module name="org.bread_experts_group.breadmod.breadmod_agent.main" target="25" />
       <module name="org.bread_experts_group.breadmod.breadmod_agent.test" target="25" />
     </bytecodeTargetLevel>
