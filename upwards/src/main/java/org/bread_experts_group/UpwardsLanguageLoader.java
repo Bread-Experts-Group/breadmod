@@ -4,6 +4,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.BusBuilder;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingException;
 import net.neoforged.fml.ModLoadingIssue;
 import net.neoforged.fml.event.IModBusEvent;
@@ -12,23 +13,23 @@ import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.language.IModLanguageLoader;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.neoforged.neoforgespi.locating.IModFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
 public final class UpwardsLanguageLoader implements IModLanguageLoader {
-	private final Logger logger = LogManager.getLogger("BM Upwards Loader");
-
 	@Override
 	public String name() {
 		return "bm_upwards";
@@ -37,6 +38,20 @@ public final class UpwardsLanguageLoader implements IModLanguageLoader {
 	@Override
 	public String version() {
 		return "a";
+	}
+
+	private void addPath(ArrayList<Object> classPath, Path path) {
+		if (Files.isDirectory(path)) {
+			classPath.add(path);
+			return;
+		}
+		try {
+			Path temp = Files.createTempFile(null, "jar");
+			Files.copy(path, temp, StandardCopyOption.REPLACE_EXISTING);
+			classPath.add(new JarFile(temp.toFile()));
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	@Override
@@ -59,18 +74,24 @@ public final class UpwardsLanguageLoader implements IModLanguageLoader {
 		Map<String, Object> annotationData = annotation.annotationData();
 		ModContainer container;
 		try {
-			ArrayList<Path> localClassPath = new ArrayList<>();
+			ArrayList<Object> localClassPath = new ArrayList<>();
 			Path modPath = modFile.getFilePath();
-			if (modPath.endsWith("java/main")) {
-				localClassPath.add(modPath.resolve("../../kotlin/main"));
-			}
-			localClassPath.add(modPath);
+			if (modPath.endsWith("java/main")) localClassPath.add(modPath.resolve("../../kotlin/main"));
+			addPath(localClassPath, modPath);
 			Path path = modFile.findResource((String) annotationData.get("dependencyLocation"));
 			try (Stream<Path> fileList = Files.list(path)) {
-				fileList.forEach(localClassPath::add);
+				fileList.forEach(entry -> addPath(localClassPath, entry));
 			}
-			Path[] urls = localClassPath.toArray(new Path[0]);
-			ClassLoader classLoader = new LimitedClassLoader(urls, this.getClass().getClassLoader());
+			Object[] paths = localClassPath.toArray(new Object[0]);
+
+			String piggyback = (String) annotationData.get("piggybackModID");
+			ClassLoader parent;
+			if (piggyback != null) {
+				parent = ((UpwardsModContainer) ModList.get().getModContainerById(piggyback).orElseThrow()).classLoader;
+			} else {
+				parent = this.getClass().getClassLoader();
+			}
+			ClassLoader classLoader = new LimitedClassLoader(paths, parent);
 
 			Class<?> modClass = classLoader.loadClass(annotation.memberName());
 			Constructor<?>[] constructors = modClass.getConstructors();

@@ -7,14 +7,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 
-public final class UpwardsModContainer extends ModContainer {
+final class UpwardsModContainer extends ModContainer {
 	private final IEventBus modBus;
 	private final Object[] constructorParameters;
 	private final Constructor<?> modConstructor;
 
-	private Object mod;
+	@SuppressWarnings("InstanceVariableMayNotBeInitialized")
+	ClassLoader classLoader;
 
-	public UpwardsModContainer(
+	UpwardsModContainer(
 			IModInfo info, IEventBus modBus, Object[] constructorParameters, Constructor<?> modConstructor
 	) {
 		super(info);
@@ -31,7 +32,8 @@ public final class UpwardsModContainer extends ModContainer {
 	@Override
 	protected void constructMod() {
 		try {
-			this.mod = this.modConstructor.newInstance(this.constructorParameters);
+			Object mod = this.modConstructor.newInstance(this.constructorParameters);
+			this.classLoader = mod.getClass().getClassLoader();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
