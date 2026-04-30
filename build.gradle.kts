@@ -231,10 +231,6 @@ tasks.processResources {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.register<Copy>("pullUpwardsLibraries") {
-	from(upwardsLibraries).into("./TEST")
-}
-
 tasks.register<ProcessResources>("generateModMetadata") {
 	val replaceProperties = mapOf(
 		"minecraft_version" to "${project.properties["minecraft_version"]}",
@@ -259,4 +255,9 @@ sourceSets.main.get().resources {
 	srcDirs("src/generated/resources", tasks["generateModMetadata"])
 }
 
-neoForge.ideSyncTask(tasks["generateModMetadata"])
+neoForge.ideSyncTask(
+	tasks.register<Copy>("pullUpwardsLibraries") {
+		dependsOn(tasks["generateModMetadata"])
+		from(upwardsLibraries).into("./src/main/resources/libs")
+	}
+)
