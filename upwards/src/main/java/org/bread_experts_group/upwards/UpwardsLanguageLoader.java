@@ -1,4 +1,4 @@
-package org.bread_experts_group;
+package org.bread_experts_group.upwards;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.BusBuilder;

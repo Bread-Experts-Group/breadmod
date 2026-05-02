@@ -1,4 +1,4 @@
-package org.bread_experts_group;
+package org.bread_experts_group.upwards;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
