@@ -258,6 +258,7 @@ sourceSets.main.get().resources {
 neoForge.ideSyncTask(
 	tasks.register<Copy>("pullUpwardsLibraries") {
 		dependsOn(tasks["generateModMetadata"])
+		delete("./src/main/resources/libs")
 		from(upwardsLibraries).into("./src/main/resources/libs")
 	}
 )
