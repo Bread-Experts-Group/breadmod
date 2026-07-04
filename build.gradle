@@ -1,0 +1,49 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    // see https://fabricmc.net/develop/ for new versions
+    id 'fabric-loom' version '1.17-SNAPSHOT' apply false
+    // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
+    id 'net.neoforged.moddev' version '2.0.141' apply false
+
+    id 'org.jetbrains.kotlin.jvm' apply false
+}
+
+subprojects {
+    repositories {
+        mavenLocal()
+    }
+
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    if (project.hasProperty('serialization_version')) {
+        apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
+    }
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+    dependencies {
+        implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.encoding = 'UTF-8'
+        it.options.release = 21
+    }
+
+    tasks.withType(KotlinCompile).tap {
+        configureEach {
+            compilerOptions {
+                if (!project.name.equals("common")) {
+                    source(project(":common").sourceSets.main.allSource)
+                }
+                javaParameters = true
+            }
+        }
+    }
+
+    tasks.withType(GenerateModuleMetadata).tap {
+        configureEach {
+            enabled = false
+        }
+    }
+}

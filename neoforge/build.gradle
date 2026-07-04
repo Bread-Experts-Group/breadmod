@@ -1,0 +1,47 @@
+//file:noinspection GroovyAssignabilityCheck
+
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    version = neoforge_version
+    // Automatically enable neoforge AccessTransformers if the file exists
+    accessTransformers.from project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+    runs {
+        configureEach {
+            systemProperty('neoforge.enabledGameTestNamespaces', mod_id)
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})" // Unify the run config names with fabric
+        }
+        client {
+            client()
+        }
+        data {
+            data()
+            programArguments.addAll '--all', '--mod', "${mod_id}", '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        server {
+            server()
+        }
+    }
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet project(":common").sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    // todo neoforge complains about duplicates
+//    implementation(additionalRuntimeClasspath "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}")
+//    implementation(additionalRuntimeClasspath "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}")
+    implementation "org.bread_experts_group:breadlib-neoforge-$minecraft_version:$breadlib_version"
+}
