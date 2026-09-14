@@ -26,3 +26,7 @@ run
 /forge/runs/
 /neoforge/run
 /logs/
+/fabric/src/main/generated/
+/forge/run-data/
+/runs/
+/buildSrc/.kotlin/
