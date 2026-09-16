@@ -45,7 +45,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "breadlib_mod_template"
+rootProject.name = "breadmod"
 include("common")
 include("fabric")
 include("neoforge")

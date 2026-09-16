@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "org.bread_experts_group.breadlib_mod_template.BreadLibModTemplateFabric"
+      "org.bread_experts_group.breadmod.BreadmodFabric"
     ]
   },
   "mixins": [
