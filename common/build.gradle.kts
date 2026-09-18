@@ -41,8 +41,4 @@ artifacts {
     add("commonJava", sourceSets.main.get().java.sourceDirectories.singleFile)
     add("commonResources", sourceSets.main.get().resources.sourceDirectories.singleFile)
 }
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
 

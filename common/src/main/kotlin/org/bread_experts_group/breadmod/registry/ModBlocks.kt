@@ -10,6 +10,6 @@ import org.bread_experts_group.breadmod.Breadmod
 object ModBlocks {
     val REGISTRY: RegistryProvider.Blocks = RegistryProvider.getBlocks(Breadmod.MOD_ID)
 
-    val TEST_BLOCK: RegistryBlockItem<Block, BlockItem> =
-        REGISTRY.registerSimpleBlock<Block>("test_block", BlockBehaviour.Properties.of()).withItem()
+    val BREAD_BLOCK: RegistryBlockItem<Block, BlockItem> =
+        REGISTRY.registerSimpleBlock<Block>("bread_block", BlockBehaviour.Properties.of()).withItem()
 }

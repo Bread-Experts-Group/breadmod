@@ -16,7 +16,7 @@ object ModCreativeTabs {
         CreativeModeTab.builder(CreativeModeTab.Row.TOP, 1)
             .displayItems { parameters, output ->
                 output.accept(ModItems.TEST_ITEM.get())
-                output.accept(ModBlocks.TEST_BLOCK.get())
+                output.accept(ModBlocks.BREAD_BLOCK.get())
             }
             .title(Component.literal("itemGroup.test_tab"))
             .icon { ModItems.TEST_ITEM.toStack() }
